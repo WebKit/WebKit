@@ -45,7 +45,6 @@ SourceInfo::SourceInfo(PassRefPtr<TrackSourceInfo> trackSourceInfo)
 
 const AtomicString& SourceInfo::kind() const
 {
-    static NeverDestroyed<AtomicString> none("none", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> audioKind("audio", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> videoKind("video", AtomicString::ConstructFromLiteral);
 
@@ -54,32 +53,6 @@ const AtomicString& SourceInfo::kind() const
         return audioKind;
     case TrackSourceInfo::Video:
         return videoKind;
-    case TrackSourceInfo::None:
-        return none;
-    }
-
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
-}
-
-const AtomicString& SourceInfo::facing() const
-{
-    static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> leftFacing("left", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
-
-    switch (m_trackSourceInfo->facing()) {
-    case TrackSourceInfo::None:
-        return emptyAtom;
-    case TrackSourceInfo::User:
-        return userFacing;
-    case TrackSourceInfo::Environment:
-        return environmentFacing;
-    case TrackSourceInfo::Left:
-        return leftFacing;
-    case TrackSourceInfo::Right:
-        return rightFacing;
     }
 
     ASSERT_NOT_REACHED();

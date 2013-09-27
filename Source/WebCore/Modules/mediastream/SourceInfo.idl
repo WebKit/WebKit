@@ -28,8 +28,7 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM,
 ] interface SourceInfo {
-    readonly attribute DOMString id;
+    readonly attribute DOMString sourceId;
     readonly attribute DOMString kind;
     readonly attribute DOMString label;
-    readonly attribute DOMString facing;
 };

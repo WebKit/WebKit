@@ -155,8 +155,8 @@ bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTra
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
     Vector<RefPtr<TrackSourceInfo>> sources(2);
 
-    sources[0] = TrackSourceInfo::create(emptyString(), TrackSourceInfo::Audio, "Mock audio device", TrackSourceInfo::None);
-    sources[1] = TrackSourceInfo::create(emptyString(), TrackSourceInfo::Video, "Mock video device", TrackSourceInfo::Environment);
+    sources[0] = TrackSourceInfo::create("Mock_audio_device_ID", TrackSourceInfo::Audio, "Mock audio device");
+    sources[1] = TrackSourceInfo::create("Mock_video_device_ID", TrackSourceInfo::Video, "Mock video device");
 
     requestClient->didCompleteRequest(sources);
     return true;

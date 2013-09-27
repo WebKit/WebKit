@@ -36,32 +36,28 @@ namespace WebCore {
 
 class TrackSourceInfo : public RefCounted<TrackSourceInfo> {
 public:
-    enum SourceKind { NoSource, Audio, Video };
-    enum VideoFacingMode { None, User, Environment, Left, Right };
+    enum SourceKind { Audio, Video };
 
-    static PassRefPtr<TrackSourceInfo> create(const AtomicString& id, SourceKind kind, const AtomicString& label, VideoFacingMode facing)
+    static PassRefPtr<TrackSourceInfo> create(const AtomicString& id, SourceKind kind, const AtomicString& label)
     {
-        return adoptRef(new TrackSourceInfo(id, kind, label, facing));
+        return adoptRef(new TrackSourceInfo(id, kind, label));
     }
 
     const AtomicString& id() const { return m_id; }
     const AtomicString& label() const { return m_label; }
     SourceKind kind() const { return m_kind; }
-    VideoFacingMode facing() const { return m_facing; }
 
 private:
-    TrackSourceInfo(const AtomicString& id, SourceKind kind, const AtomicString& label, VideoFacingMode facing)
+    TrackSourceInfo(const AtomicString& id, SourceKind kind, const AtomicString& label)
         : m_id(id)
         , m_kind(kind)
         , m_label(label)
-        , m_facing(facing)
     {
     }
     
     AtomicString m_id;
     SourceKind m_kind;
     AtomicString m_label;
-    VideoFacingMode m_facing;
 };
 
 class MediaStreamTrackSourcesRequestClient : public RefCounted<MediaStreamTrackSourcesRequestClient> {

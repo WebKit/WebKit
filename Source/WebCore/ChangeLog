@@ -1,3 +1,27 @@
+2013-09-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] update SourceInfo object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121941
+
+        Reviewed by Dean Jackson.
+
+        No new tests, existing test updated.
+
+        * Modules/mediastream/SourceInfo.cpp:
+        (WebCore::SourceInfo::kind): Get rid of "none".
+        * Modules/mediastream/SourceInfo.h:
+        (WebCore::SourceInfo::sourceId): Renamed from "id".
+        * Modules/mediastream/SourceInfo.idl:
+
+        * platform/mediastream/MediaStreamTrackSourcesRequestClient.h:
+        (WebCore::TrackSourceInfo::create):
+        (WebCore::TrackSourceInfo::kind):
+        (WebCore::TrackSourceInfo::TrackSourceInfo):
+
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockMediaStreamCenter::getMediaStreamTrackSources): "facing" isn't a part of sourceInfo.
+            Return a non-NULL ID because a source must always have one.
+
 2013-09-26  Dean Jackson  <dino@apple.com>
 
         Provide 2D Matrix decomposition for animation

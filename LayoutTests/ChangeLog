@@ -1,3 +1,13 @@
+2013-09-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] update SourceInfo object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121941
+
+        Reviewed by Dean Jackson.
+
+        * fast/mediastream/MediaStreamTrack-getSources-expected.txt:
+        * fast/mediastream/MediaStreamTrack-getSources.html:
+
 2013-09-26  Dean Jackson  <dino@apple.com>
 
         Provide 2D Matrix decomposition for animation

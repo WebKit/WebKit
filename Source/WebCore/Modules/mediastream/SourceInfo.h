@@ -42,10 +42,9 @@ class SourceInfo : public RefCounted<SourceInfo>, public ScriptWrappable {
 public:
     static PassRefPtr<SourceInfo> create(PassRefPtr<TrackSourceInfo>);
 
-    const AtomicString& id() const { return m_trackSourceInfo->id(); }
+    const AtomicString& sourceId() const { return m_trackSourceInfo->id(); }
     const AtomicString& label() const { return m_trackSourceInfo->label(); }
     const AtomicString& kind() const;
-    const AtomicString& facing() const;
 
 private:
     SourceInfo(PassRefPtr<TrackSourceInfo>);

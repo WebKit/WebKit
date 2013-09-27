@@ -9,8 +9,8 @@
         <script>
             description("Tests MediaStreamTrack::getSources.");
 
-            var sources = null;
-            var previousId;
+            var sources1 = null;
+            var sources2 = null;
             var timer = null;
 
             function finishTest()
@@ -25,42 +25,52 @@
                 finishTest();
             }
 
-            function getUserMedia(constraints, callback)
+            function getUserMedia(_constraints, _callback)
             {
                 try {
                     primeTimeout("Timeout waiting for webkitGetUserMedia()");
-                    navigator.webkitGetUserMedia(constraints, callback, error);
+                    constraints = _constraints;
+                    callback = _callback;
+                debug("<br>*** calling navigator.webkitGetUserMedia() ***");
+                    shouldNotThrow("navigator.webkitGetUserMedia(constraints, callback, error)");
                 } catch (e) {
                     testFailed('webkitGetUserMedia threw exception :' + e);
                     finishTest();
                 }
             }
 
-            function gotSources2(s)
+            function gotSources2(sources)
             {
-                testPassed('gotSources2 was called.');
-                sources = s;
-                shouldBeTrue('sources.length > 0');
-                shouldBeTrue('sources[0].id === previousId');
-                shouldBeTrue('sources[0].label.length > 0');
+                testPassed('callback called.');
+                sources2 = sources;
+                shouldBeTrue('sources2.length == sources1.length');
+                for (i = 0; i < sources2.length; ++i) {
+                    shouldBeTrue("sources2[" + i + "].sourceId === sources1[" + i + "].sourceId");
+                    shouldBeTrue("sources2[" + i + "].label === sources1[" + i + "].label");
+                    shouldBeTrue("sources2[" + i + "].kind === sources1[" + i + "].kind");
+                }
 
                 finishTest();
             }
 
-            function gotStream(s)
+            function gotStream(stream)
             {
-                testPassed('gotStream was called.');
-
+                testPassed('callback called.');
                 primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+
+                debug("<br>*** calling MediaStreamTrack.getSources() ***");
                 shouldNotThrow('MediaStreamTrack.getSources(gotSources2);');
             }
 
-            function gotSources1(s)
+            function gotSources1(sources)
             {
-                testPassed('gotSources1 was called.');
-                sources = s;
-                shouldBeTrue('sources.length > 0');
-                previousId = sources[0].id;
+                testPassed('callback called.');
+                sources1 = sources;
+                for (i = 0; i < sources1.length; ++i) {
+                    debug("sources1[" + i + "].sourceId = \"" + sources1[i].sourceId + "\"");
+                    debug("sources1[" + i + "].label = \"" + sources1[i].label + "\"");
+                    debug("sources1[" + i + "].kind = \"" + sources1[i].kind + "\"");
+                }
 
                 getUserMedia({audio:true, video:true}, gotStream);
             }
@@ -72,6 +82,7 @@
             }
 
             primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+            debug("<br>*** calling MediaStreamTrack.getSources() ***");
             shouldNotThrow('MediaStreamTrack.getSources(gotSources1);');
 
             window.jsTestIsAsync = true;
