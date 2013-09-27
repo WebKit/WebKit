@@ -36,7 +36,7 @@
 #include "MediaStreamCenterGStreamer.h"
 
 #include "MediaStreamDescriptor.h"
-#include "MediaStreamSourcesQueryClient.h"
+#include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
