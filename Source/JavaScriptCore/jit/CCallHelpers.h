@@ -367,7 +367,7 @@ public:
     // at least 4 argument registers, e.g. X86_64, ARMv7.
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 4
     template<GPRReg destA, GPRReg destB>
-    void setupTwoStubArgs(GPRReg srcA, GPRReg srcB)
+    void setupTwoStubArgsGPR(GPRReg srcA, GPRReg srcB)
     {
         // Assuming that srcA != srcB, there are 7 interesting states the registers may be in:
         // (1) both are already in arg regs, the right way around.
@@ -396,7 +396,7 @@ public:
     }
 #if CPU(X86_64)
     template<FPRReg destA, FPRReg destB>
-    void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
+    void setupTwoStubArgsFPR(FPRReg srcA, FPRReg srcB)
     {
         // Assuming that srcA != srcB, there are 7 interesting states the registers may be in:
         // (1) both are already in arg regs, the right way around.
@@ -444,7 +444,7 @@ public:
 #endif
     void setupStubArguments(GPRReg arg1, GPRReg arg2)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
     }
     void setupStubArguments(GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
@@ -452,7 +452,7 @@ public:
         // Then we can use setupTwoStubArgs to fix arg2/arg3.
         if (arg2 != GPRInfo::argumentGPR1 && arg3 != GPRInfo::argumentGPR1) {
             move(arg1, GPRInfo::argumentGPR1);
-            setupTwoStubArgs<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
+            setupTwoStubArgsGPR<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
             return;
         }
 
@@ -460,7 +460,7 @@ public:
         // Then we can use setupTwoStubArgs to fix arg1/arg3.
         if (arg1 != GPRInfo::argumentGPR2 && arg3 != GPRInfo::argumentGPR2) {
             move(arg2, GPRInfo::argumentGPR2);
-            setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3>(arg1, arg3);
+            setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3>(arg1, arg3);
             return;
         }
 
@@ -468,7 +468,7 @@ public:
         // Then we can use setupTwoStubArgs to fix arg1/arg2.
         if (arg1 != GPRInfo::argumentGPR3 && arg2 != GPRInfo::argumentGPR3) {
             move(arg3, GPRInfo::argumentGPR3);
-            setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
+            setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2>(arg1, arg2);
             return;
         }
 
@@ -512,7 +512,7 @@ public:
 
     ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
     {
-        setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
+        setupTwoStubArgsFPR<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
     }
     
     ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
@@ -709,7 +709,7 @@ public:
 
     ALWAYS_INLINE void setupArguments(GPRReg arg1, GPRReg arg2)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1, arg2);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR0, GPRInfo::argumentGPR1>(arg1, arg2);
     }
     
     ALWAYS_INLINE void setupArguments(TrustedImmPtr arg1)
@@ -838,7 +838,7 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm32 arg2, GPRReg arg3)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3>(arg1, arg3);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3>(arg1, arg3);
         move(arg2, GPRInfo::argumentGPR2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
@@ -900,14 +900,14 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
         move(arg1, GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, GPRReg arg3)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg2, arg3);
         move(arg1, GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
@@ -1061,7 +1061,7 @@ public:
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 5
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2, TrustedImm32 arg3, GPRReg arg4)
     {
-        setupTwoStubArgs<GPRInfo::argumentGPR1, GPRInfo::argumentGPR4>(arg1, arg4);
+        setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR4>(arg1, arg4);
         move(arg2, GPRInfo::argumentGPR2);
         move(arg3, GPRInfo::argumentGPR3);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);

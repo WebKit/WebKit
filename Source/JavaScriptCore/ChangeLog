@@ -1,3 +1,20 @@
+2013-09-27  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Fixed Win64 build after r156184.
+        https://bugs.webkit.org/show_bug.cgi?id=121994
+
+        Reviewed by Oliver Hunt.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupTwoStubArgsGPR):
+        (JSC::CCallHelpers::setupTwoStubArgsFPR):
+        Renamed from setupTwoStubArgs.
+        Visual Studio x64 compiler fails to see that this is an overloaded template function.
+        (JSC::CCallHelpers::setupStubArguments):
+        (JSC::CCallHelpers::setupArguments):
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        Use setupTwoStubArgsGPR or setupTwoStubArgsFPR instead of setupTwoStubArgs.
+
 2013-09-27  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         LLInt alignment problem on ARM in debug mode
