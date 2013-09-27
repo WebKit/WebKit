@@ -22,8 +22,8 @@
 #include "JSTestEventConstructor.h"
 
 #include "JSDictionary.h"
-#include "URL.h"
 #include "TestEventConstructor.h"
+#include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>

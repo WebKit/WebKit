@@ -21,9 +21,9 @@
 #include "config.h"
 #include "WebDOMTestActiveDOMObject.h"
 
-#include "URL.h"
 #include "Node.h"
 #include "TestActiveDOMObject.h"
+#include "URL.h"
 #include "WebDOMNode.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

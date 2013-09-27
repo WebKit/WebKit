@@ -21,8 +21,8 @@
 #include "config.h"
 #include "WebDOMTestCustomNamedGetter.h"
 
-#include "URL.h"
 #include "TestCustomNamedGetter.h"
+#include "URL.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>

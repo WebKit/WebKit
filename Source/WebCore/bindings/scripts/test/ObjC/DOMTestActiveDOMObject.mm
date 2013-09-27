@@ -33,10 +33,10 @@
 #import "DOMTestActiveDOMObjectInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "URL.h"
 #import "Node.h"
 #import "TestActiveDOMObject.h"
 #import "ThreadCheck.h"
+#import "URL.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>

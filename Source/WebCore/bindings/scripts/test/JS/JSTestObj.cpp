@@ -41,7 +41,6 @@
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
 #include "JSbool.h"
-#include "URL.h"
 #include "SVGDocument.h"
 #include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -51,6 +50,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "TestObj.h"
+#include "URL.h"
 #include "bool.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>

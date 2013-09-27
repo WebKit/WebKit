@@ -21,10 +21,10 @@
 #include "config.h"
 #include "WebDOMTestTypedefs.h"
 
-#include "URL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"
+#include "URL.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

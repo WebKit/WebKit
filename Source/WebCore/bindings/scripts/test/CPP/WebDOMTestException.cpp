@@ -21,8 +21,8 @@
 #include "config.h"
 #include "WebDOMTestException.h"
 
-#include "URL.h"
 #include "TestException.h"
+#include "URL.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include <wtf/GetPtr.h>

@@ -33,9 +33,9 @@
 #import "DOMTestCustomNamedGetterInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "URL.h"
 #import "TestCustomNamedGetter.h"
 #import "ThreadCheck.h"
+#import "URL.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
