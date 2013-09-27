@@ -51,6 +51,9 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
         return true;
     }
 
+    if (!m_frame.page())
+        return false;
+
     const bool allowed = m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
     if (!allowed && reason == AboutToExecuteScript)
         m_frame.loader().client().didNotAllowScript();
