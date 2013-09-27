@@ -1,3 +1,11 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Fix Python scripts test failures.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.modifiers_and_return_type): Added this back. Used only by tests
+        now, not by the checker itself.
+
 2013-09-27  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK][WK2] Logging of accessibility events is not disabled between tests

@@ -517,6 +517,14 @@ class _FunctionState(object):
         self._clean_lines = clean_lines
         self._parameter_list = None
 
+    def modifiers_and_return_type(self):
+         """Returns the modifiers and the return type."""
+         # Go backwards from where the function name is until we encounter one of several things:
+         #   ';' or '{' or '}' or 'private:', etc. or '#' or return Position(0, 0)
+         elided = self._clean_lines.elided
+         start_modifiers = _rfind_in_lines(r';|\{|\}|((private|public|protected):)|(#.*)', elided, self.parameter_start_position, Position(0, 0))
+         return SingleLineView(elided, start_modifiers, self.function_name_start_position).single_line.strip()
+
     def parameter_list(self):
         if not self._parameter_list:
             # Store the final result as a tuple since that is immutable.
