@@ -1,3 +1,10 @@
+2013-09-27  Alexey Proskuryakov  <ap@apple.com>
+
+        animations/transform-non-accelerated.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=122038
+
+        * platform/mac/TestExpectations: Marking as such.
+
 2013-09-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156569.
