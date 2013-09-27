@@ -1338,3 +1338,11 @@ webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure T
 webkit.org/b/114193 transitions/cancel-transition.html [ Pass Failure ]
 
 webkit.org/b/121998 http/tests/inspector/network/network-iframe-load-and-delete.html [ Pass Failure ]
+
+webkit.org/b/121990 accessibility/media-element.html [ Failure ]
+webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
+webkit.org/b/121992 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-hide-on-click.html [ Timeout Failure ]
+webkit.org/b/121995 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Timeout Failure ]
+

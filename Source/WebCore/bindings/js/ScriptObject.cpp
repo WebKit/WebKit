@@ -40,6 +40,10 @@
 #include "JSInspectorFrontendHost.h"
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+#include "JSMediaControlsHost.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -89,6 +93,16 @@ bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, Inje
     return handleException(scriptState);
 }
 #endif // ENABLE(INSPECTOR)
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, MediaControlsHost* value)
+{
+    JSLockHolder lock(scriptState);
+    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    globalObject->putDirect(scriptState->vm(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
+    return handleException(scriptState);
+}
+#endif
 
 bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, ScriptObject& value)
 {

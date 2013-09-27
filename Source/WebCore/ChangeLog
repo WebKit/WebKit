@@ -1,3 +1,178 @@
+2013-09-06  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Implement the media controls in JavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=120895
+
+        Reviewed by Dean Jackson.
+
+        Re-implement the existing MediaControls constellation of classes in JavaScript
+        and CSS. This will allow different ports to configure their controls without
+        dependencies on the layout requirements of any other port's controls.
+
+        Define and turn on ENABLE_MEDIA_CONTROLS_SCRIPT:
+        * Configurations/FeatureDefines.xcconfig:
+
+        Add new source files to the project:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add a new class MediaControlsHost which the script controls can use to
+        communicate with the HTMLMediaElement without exposing private interfaces
+        to web facing scripts:
+        * Modules/mediacontrols/MediaControlsHost.cpp: Added.
+        (WebCore::MediaControlsHost::automaticKeyword): Static method.
+        (WebCore::MediaControlsHost::forcedOnlyKeyword): Ditto.
+        (WebCore::MediaControlsHost::alwaysOnKeyword): Ditto.
+        (WebCore::MediaControlsHost::create): Simple factory.
+        (WebCore::MediaControlsHost::MediaControlsHost): Simple constructor.
+        (WebCore::MediaControlsHost::~MediaControlsHost): Simple destructor.
+        (WebCore::MediaControlsHost::sortedTrackListForMenu): Pass through to CaptionUserPreferences.
+        (WebCore::MediaControlsHost::displayNameForTrack): Ditto.
+        (WebCore::MediaControlsHost::captionMenuOffItem): Pass through to TextTrack.
+        (WebCore::MediaControlsHost::captionMenuAutomaticItem): Ditto.
+        (WebCore::MediaControlsHost::captionDisplayMode): Pass through to CaptionUserPreferences.
+        (WebCore::MediaControlsHost::setSelectedTextTrack): Pass through to HTMLMediaElement.
+        (WebCore::MediaControlsHost::textTrackContainer): Lazily create a MediaControlTextTrackContainerElement.
+        (WebCore::MediaControlsHost::updateTextTrackContainer): Pass through to MediaControlTextTrackContainerElement.
+        * Modules/mediacontrols/MediaControlsHost.h: Added.
+        * Modules/mediacontrols/MediaControlsHost.idl: Added.
+        * Modules/mediacontrols/mediaControlsApple.css: Added.
+
+        Add convenience methods for adding a MediaControlsHost to a VM.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/js/ScriptObject.h:
+
+        Add the new controller .js implementation:
+        * Modules/mediacontrols/mediaControlsApple.js: Added.
+        (createControls): Global method to create a new Controller object.
+        (Controller): Constructor. Create and configure the default set of controls.
+        (Controller.prototype.addListeners): Adds event listeners to the this.video object.
+        (Controller.prototype.removeListeners): Removes listeners from same.
+        (Controller.prototype.handleEvent): Makes Controller an EventHandler, making registration and
+                deregistration simpler.
+        (Controller.prototype.createBase): Creates the base controls object and the text track container.
+        (Controller.prototype.createControls): Creates the controls panel object and controller UI.
+        (Controller.prototype.setControlsType): Switches between Full Screen and Inline style of controller.
+        (Controller.prototype.disconnectControls): Disconnects all UI elements from the DOM.
+        (Controller.prototype.configureInlineControls): Configures existing controls for Inline mode.
+        (Controller.prototype.configureFullScreenControls): Ditto, for Full Screen Mode.
+
+        Add listeners for HTMLMediaElement events:
+        (Controller.prototype.onloadstart): Update the status display.
+        (Controller.prototype.onerror): Ditto.
+        (Controller.prototype.onabort): Ditto.
+        (Controller.prototype.onsuspend): Ditto.
+        (Controller.prototype.onprogress): Ditto.
+        (Controller.prototype.onstalled): Ditto.
+        (Controller.prototype.onwaiting): Ditto.
+        (Controller.prototype.onreadystatechange): Ditto.
+        (Controller.prototype.ontimeupdate): Update the timeline and time displays.
+        (Controller.prototype.ondurationchange): Ditto.
+        (Controller.prototype.onplaying): Update the play button.
+        (Controller.prototype.onplay): Ditto.
+        (Controller.prototype.onpause): Ditto.
+        (Controller.prototype.onratechange): Ditto.
+        (Controller.prototype.onvolumechange): Update the volume and mute UI.
+        (Controller.prototype.ontexttrackchange): Update the text track container and captions button.
+        (Controller.prototype.ontexttrackadd): Ditto.
+        (Controller.prototype.ontexttrackremove): Ditto.
+        (Controller.prototype.ontexttrackcuechange): Ditto.
+        (Controller.prototype.onfullscreenchange): Reconfigure the controls.
+
+        Add listeners for UI element events:
+        (Controller.prototype.onwrappermousemove): Show the controls and start the hide timer.
+        (Controller.prototype.onwrappermouseout): Hide the controls and stop the hide timer.
+        (Controller.prototype.onrewindbuttonclicked): Rewind.
+        (Controller.prototype.onplaybuttonclicked): Toggle pause.
+        (Controller.prototype.ontimelinechange): Update the currentTime.
+        (Controller.prototype.ontimelinedown):
+        (Controller.prototype.ontimelineup):
+        (Controller.prototype.ontimelinemouseover): Show the thumbnail view if available.
+        (Controller.prototype.ontimelinemouseout): Hide same.
+        (Controller.prototype.ontimelinemousemove): Move the thumbnail view.
+        (Controller.prototype.onmutebuttonclicked): Mute audio.
+        (Controller.prototype.onminbuttonclicked): Increase volume to max.
+        (Controller.prototype.onmaxbuttonclicked): Decrease volume to min.
+        (Controller.prototype.onvolumesliderchange): Update the current volume.
+        (Controller.prototype.oncaptionbuttonclicked): Show or hide the track menu.
+        (Controller.prototype.onfullscreenbuttonclicked): Enter or exit fullscreen.
+        (Controller.prototype.oncontrolschange): Show or hide the controls panel.
+        (Controller.prototype.onseekbackmousedown): Start seeking and enable the seek timer.
+        (Controller.prototype.onseekbackmouseup): Stop seeking and disable the seek timer.
+        (Controller.prototype.onseekforwardmousedown): Start seekind and enable the seek timer.
+        (Controller.prototype.onseekforwardmouseup): Stop seekind and disable the seek timer.
+
+        Add action methods (which are mostly self explanatory):
+        (Controller.prototype.updateDuration):
+        (Controller.prototype.updatePlaying):
+        (Controller.prototype.showControls): 
+        (Controller.prototype.hideControls):
+        (Controller.prototype.removeControls):
+        (Controller.prototype.addControls):
+        (Controller.prototype.updateTime):
+        (Controller.prototype.updateReadyState):
+        (Controller.prototype.setStatusHidden):        
+        (Controller.prototype.updateThumbnailTrack):
+        (Controller.prototype.updateCaptionButton):
+        (Controller.prototype.updateCaptionContainer):
+        (Controller.prototype.buildCaptionMenu):
+        (Controller.prototype.captionItemSelected):
+        (Controller.prototype.destroyCaptionMenu):
+        (Controller.prototype.updateVolume):
+
+        Add utility methods:
+        (Controller.prototype.isFullScreen):
+        (Controller.prototype.canPlay):
+        (Controller.prototype.nextRate):
+        (Controller.prototype.seekBackFaster):
+        (Controller.prototype.seekForwardFaster):
+        (Controller.prototype.formatTime):
+        (Controller.prototype.trackHasThumbnails):
+
+        Add the stylesheet for the javascript controls (which are mostly) copied from
+        the (deleted) mediaControlsQuickTime.css and fullscreenQuickTime.css files:
+        * Modules/mediacontrols/mediaControlsApple.css: Added.
+        * css/fullscreenQuickTime.css: Removed.
+        * css/mediaControlsQuickTime.css: Removed.
+
+        Inject new stylesheets into UA sheets:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+
+        Use the new javascript controls rather than MediaControls:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::childShouldCreateRenderer): Use the javascript controls if available.
+        (WebCore::HTMLMediaElement::updateTextTrackDisplay): Ditto.
+        (WebCore::HTMLMediaElement::mediaControls): Ditto.
+        (WebCore::HTMLMediaElement::hasMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::createMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::configureMediaControls): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Ditto.
+        (WebCore::HTMLMediaElement::ensureIsolatedWorld): Create a new VM for the controls script.
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript): Inject the media controls script into the VM.
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot): Inject the MediaControlsHost into the VM and call
+                the scripts global factory function.
+        * html/HTMLMediaElement.h:
+
+        Remove most of the drawing code from RenderThemeMac and RenderThemeWin and
+        add accessors for the new .js and .css file data:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsStyleSheet): Empty virtual method.
+        (WebCore::RenderTheme::mediaControlsScript): Ditto.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet): Add accessor for mediaControlsApple.css.
+        (WebCore::RenderThemeMac::mediaControlsScript): Add accessor for mediaControlsApple.js.
+        (WebCore::RenderThemeMac::adjustSliderThumbSize): Remove the call to adjustMediaSliderThumbSize.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::mediaControlsStyleSheet):
+        (WebCore::RenderThemeWin::mediaControlsScript):
+        * rendering/RenderThemeWin.h:
+
 2013-09-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css-shapes] Shapes are not resolved the same way in shape-inside and clip-path

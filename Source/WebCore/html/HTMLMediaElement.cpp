@@ -45,7 +45,6 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -53,8 +52,10 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
+#include "JSHTMLMediaElement.h"
 #include "Language.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MediaController.h"
 #include "MediaControls.h"
 #include "MediaDocument.h"
@@ -70,9 +71,11 @@
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
 #include "PageGroup.h"
+#include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -137,6 +140,13 @@
 
 #if USE(AUDIO_SESSION)
 #include "AudioSessionManager.h"
+#endif
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+#include "JSMediaControlsHost.h"
+#include "MediaControlsHost.h"
+#include "ScriptObject.h"
+#include "UserAgentScripts.h"
 #endif
 
 using namespace std;
@@ -573,6 +583,9 @@ RenderElement* HTMLMediaElement::createRenderer(RenderArena& arena, RenderStyle&
 
 bool HTMLMediaElement::childShouldCreateRenderer(const Node* child) const
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+#else
     if (!hasMediaControls())
         return false;
     // <media> doesn't allow its content, including shadow subtree, to
@@ -582,6 +595,7 @@ bool HTMLMediaElement::childShouldCreateRenderer(const Node* child) const
     return mediaControls()->treeScope() == child->treeScope()
         && hasShadowRootParent(child)
         && HTMLElement::childShouldCreateRenderer(child);
+#endif
 }
 
 Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode* insertionPoint)
@@ -4505,6 +4519,10 @@ bool HTMLMediaElement::closedCaptionsVisible() const
 #if ENABLE(VIDEO_TRACK)
 void HTMLMediaElement::updateTextTrackDisplay()
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    ensureUserAgentShadowRoot();
+    return;
+#endif
     if (!hasMediaControls() && !createMediaControls())
         return;
     
@@ -4634,11 +4652,19 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
 MediaControls* HTMLMediaElement::mediaControls() const
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    return 0;
+#else
     return toMediaControls(userAgentShadowRoot()->firstChild());
+#endif
 }
 
 bool HTMLMediaElement::hasMediaControls() const
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    return false;
+#else
+
     if (ShadowRoot* userAgent = userAgentShadowRoot()) {
         Node* node = userAgent->firstChild();
         ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isMediaControls());
@@ -4646,10 +4672,15 @@ bool HTMLMediaElement::hasMediaControls() const
     }
 
     return false;
+#endif
 }
 
 bool HTMLMediaElement::createMediaControls()
 {
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    ensureUserAgentShadowRoot();
+    return false;
+#else
     if (hasMediaControls())
         return true;
 
@@ -4668,11 +4699,18 @@ bool HTMLMediaElement::createMediaControls()
         mediaControls->hide();
 
     return true;
+#endif
 }
 
 void HTMLMediaElement::configureMediaControls()
 {
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (!controls() || !inDocument())
+        return;
+
+    ensureUserAgentShadowRoot();
+    return;
+#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (!controls() || !inDocument()) {
         if (hasMediaControls())
             mediaControls()->hide();
@@ -4683,7 +4721,7 @@ void HTMLMediaElement::configureMediaControls()
         return;
 
     mediaControls()->show();
-#else
+#else 
     if (m_player)
         m_player->setControls(controls());
 
@@ -4717,6 +4755,14 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
 
     m_haveVisibleTextTrack = haveVisibleTextTrack;
     m_closedCaptionsVisible = m_haveVisibleTextTrack;
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (!m_haveVisibleTextTrack)
+        return;
+
+    ensureUserAgentShadowRoot();
+    return;
+#endif
 
     if (!m_haveVisibleTextTrack && !hasMediaControls())
         return;
@@ -5120,5 +5166,85 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
     m_restrictions = NoRestrictions;
 }
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+DOMWrapperWorld* HTMLMediaElement::ensureIsolatedWorld()
+{
+    if (!m_isolatedWorld)
+        m_isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM());
+    return m_isolatedWorld.get();
 }
+
+bool HTMLMediaElement::ensureMediaControlsInjectedScript()
+{
+    Page* page = document().page();
+    if (!page)
+        return false;
+
+    String mediaControlsScript = RenderTheme::themeForPage(page)->mediaControlsScript();
+    if (!mediaControlsScript.length())
+        return false;
+
+    DOMWrapperWorld* world = ensureIsolatedWorld();
+    ScriptController& scriptController = page->mainFrame().script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+
+    JSC::JSValue overlayValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
+    if (overlayValue.isFunction())
+        return true;
+
+    scriptController.evaluateInWorld(ScriptSourceCode(mediaControlsScript), world);
+    if (exec->hadException()) {
+        exec->clearException();
+        return false;
+    }
+
+    return true;
+}
+
+void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+{
+    Page* page = document().page();
+    if (!page)
+        return;
+
+    DOMWrapperWorld* world = ensureIsolatedWorld();
+    if (!world)
+        return;
+
+    if (!ensureMediaControlsInjectedScript())
+        return;
+
+    ScriptController& scriptController = page->mainFrame().script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    JSC::ExecState* exec = globalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
+
+    // It is expected the JS file provides a createControls(shadowRoot, video, mediaControlsHost) function.
+    JSC::JSValue overlayValue = globalObject->get(exec, JSC::Identifier(exec, "createControls"));
+    if (overlayValue.isUndefinedOrNull())
+        return;
+
+    if (!m_mediaControlsHost)
+        m_mediaControlsHost = MediaControlsHost::create(this);
+
+    JSC::MarkedArgumentBuffer argList;
+    argList.append(toJS(exec, globalObject, root));
+    argList.append(toJS(exec, globalObject, this));
+    argList.append(toJS(exec, globalObject, m_mediaControlsHost.get()));
+
+    JSC::JSObject* overlay = overlayValue.toObject(exec);
+    JSC::CallData callData;
+    JSC::CallType callType = overlay->methodTable()->getCallData(overlay, callData);
+    if (callType == JSC::CallTypeNone)
+        return;
+
+    JSC::call(exec, overlay, callType, callData, globalObject, argList);
+    if (exec->hadException())
+        exec->clearException();
+}
+#endif
+
+}
+
 #endif

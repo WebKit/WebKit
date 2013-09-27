@@ -25,6 +25,9 @@
     <Filter Include="Modules\quota">
       <UniqueIdentifier>{47f62e6e-87ae-4091-993d-d1d78f2c8ba9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\mediacontrols">
+      <UniqueIdentifier>{63ec45f2-29a3-4f42-90af-dd4fedaca99b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Modules\mediasource">
       <UniqueIdentifier>{614031cc-d79e-45b1-939e-dabeefe1fc9d}</UniqueIdentifier>
     </Filter>
@@ -447,6 +450,9 @@
     <ClCompile Include="..\Modules\quota\StorageInfo.cpp">
       <Filter>Modules\quota</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
+      <Filter>Modules\mediacontrols</Filter>
+    </CLCompile>
     <ClCompile Include="..\Modules\mediasource\MediaSource.cpp">
       <Filter>Modules\mediasource</Filter>
     </ClCompile>
@@ -5974,7 +5980,10 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSLocation.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaError.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaControlsHost.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaError.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaList.cpp">
@@ -7299,6 +7308,9 @@
     <ClInclude Include="..\Modules\quota\StorageUsageCallback.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\mediacontrols\MediaControlsHost.h">
+      <Filter>Modules\mediacontrols</Filter>
+    </CLCompile>
     <ClInclude Include="..\Modules\mediasource\MediaSource.h">
       <Filter>Modules\mediasource</Filter>
     </ClInclude>
@@ -13737,6 +13749,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSLocation.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaControlsHost.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaError.h">

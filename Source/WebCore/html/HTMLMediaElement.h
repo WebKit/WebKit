@@ -48,6 +48,8 @@
 #include "VideoTrack.h"
 #endif
 
+
+
 namespace WebCore {
 
 #if USE(AUDIO_SESSION)
@@ -63,6 +65,7 @@ class HTMLTrackElement;
 class KURL;
 class MediaController;
 class MediaControls;
+class MediaControlsHost;
 class MediaError;
 class PageActivityAssertionToken;
 class TimeRanges;
@@ -622,6 +625,12 @@ private:
     bool shouldDisableSleep() const;
 #endif
 
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    DOMWrapperWorld* ensureIsolatedWorld();
+    bool ensureMediaControlsInjectedScript();
+#endif
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
@@ -774,6 +783,11 @@ private:
 
     OwnPtr<PageActivityAssertionToken> m_activityToken;
     size_t m_reportedExtraMemoryCost;
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    RefPtr<MediaControlsHost> m_mediaControlsHost;
+    RefPtr<DOMWrapperWorld> m_isolatedWorld;
+#endif
 };
 
 #if ENABLE(VIDEO_TRACK)

@@ -25,11 +25,15 @@
 
                 // click the button
                 var button = document.getElementById('button');
-                eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
 
-                testRunner.notifyDone();
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
             
             function deleteAudio()
@@ -73,15 +77,15 @@
                 log("clicking on thumb");
                 eventSender.mouseDown();
                 eventSender.mouseMoveTo(x, y + 20);
-
-                // Remove the element after seeking started
-                audio.addEventListener("seeking", deleteAudio);
             }
 
 
             function start()
             {
                 setSrcByTagName("audio", findMediaFile("audio", "content/test"));
+
+                // Remove the element after seeking started
+                audio.addEventListener("seeking", deleteAudio);
             }
 
         </script>
