@@ -147,7 +147,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_window.platformWebView = this;
     [m_window setColorSpace:[[NSScreen mainScreen] colorSpace]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
-    [[m_window contentView] setWantsLayer:YES];
     [[m_window contentView] addSubview:m_view];
     [m_window orderBack:nil];
     [m_window setReleasedWhenClosed:NO];
