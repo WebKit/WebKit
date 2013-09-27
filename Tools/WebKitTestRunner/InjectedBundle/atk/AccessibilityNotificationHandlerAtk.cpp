@@ -244,8 +244,8 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
 
 bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
 {
-    // Only disconnect if logging is off and there is no notification handler.
-    if (loggingAccessibilityEvents || !notificationHandlers.isEmpty() || globalNotificationHandler)
+    // Only disconnect if there is no notification handler.
+    if (!notificationHandlers.isEmpty() || globalNotificationHandler)
         return false;
 
     // AtkObject signals.
