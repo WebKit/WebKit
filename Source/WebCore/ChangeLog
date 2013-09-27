@@ -1,3 +1,9 @@
+2013-09-27  Andreas Kling  <akling@apple.com>
+
+        Re-indent Settings.h
+
+        Rubber-stamped by Anders Carlsson.
+
 2013-09-27  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream API] update SourceInfo object to match spec
