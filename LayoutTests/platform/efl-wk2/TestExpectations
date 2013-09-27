@@ -74,7 +74,6 @@ webkit.org/b/97560 http/tests/inspector/extensions-useragent.html [ Failure Pass
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
 Bug(EFL) editing/selection/first-letter-selection-crash.html [ Crash Pass ]
-Bug(EFL) editing/selection/fake-doubleclick.html [ Failure Pass ]
 Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass ]
 Bug(EFL) media/video-played-reset.html [ Failure Pass ]
 Bug(EFL) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass ]

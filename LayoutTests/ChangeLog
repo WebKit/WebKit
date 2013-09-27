@@ -1,3 +1,13 @@
+2013-09-27  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] editing/selection/fake-doubleclick.html rebaseline after r140111
+        https://bugs.webkit.org/show_bug.cgi?id=121831
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/editing/selection/fake-doubleclick-expected.txt:
+
 2013-09-27  Zalan Bujtas  <zalan@apple.com>
 
         Unexpected word wrapping for wrapped content then raw content.
