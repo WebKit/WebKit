@@ -1,4 +1,13 @@
 =================
+WebKitGTK+  2.2.0
+=================
+
+What's new in WebKitGTK+ 2.2.0?
+
+  - Bump the GTK+ Wayland dependency to 3.10
+  - Fix the build with GTK+ 2.0.
+
+=================
 WebKitGTK+ 2.1.92
 =================
 
