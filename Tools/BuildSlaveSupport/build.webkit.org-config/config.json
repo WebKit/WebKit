@@ -226,6 +226,7 @@
                     {
                       "name": "Qt Mountain Lion Release", "type": "BuildAndTestWebKit2", "builddir": "qt-mountainlion-release",
                       "platform": "qt-5.0-mac-wk2", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--pixel"],
                       "slavenames": ["oslo-mountainlion"]
                     },
                     {
