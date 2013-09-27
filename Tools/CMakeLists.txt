@@ -7,7 +7,7 @@ if ("${PORT}" STREQUAL "Efl")
     add_subdirectory(EWebLauncher/ControlTheme)
 
     if (ENABLE_WEBKIT)
-        add_subdirectory(DumpRenderTree/efl)
+        add_subdirectory(DumpRenderTree)
         add_subdirectory(EWebLauncher)
     endif ()
 

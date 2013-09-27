@@ -1,3 +1,17 @@
+2013-09-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Add general CMakeLists.txt for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=119268
+
+        Reviewed by Gyuyoung Kim.
+
+        The new file allows better sharing between ports.
+
+        * CMakeLists.txt:
+        * DumpRenderTree/CMakeLists.txt: Added.
+        * DumpRenderTree/PlatformEfl.cmake: Added.
+        * DumpRenderTree/efl/CMakeLists.txt: Removed.
+
 2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix force_static_libs_as_shared in WebKit2
