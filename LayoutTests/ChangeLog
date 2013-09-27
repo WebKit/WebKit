@@ -1,5 +1,12 @@
 2013-09-27  Alexey Proskuryakov  <ap@apple.com>
 
+        REGRESSION(r156546): 18 media tests broken
+        https://bugs.webkit.org/show_bug.cgi?id=122021
+
+        * platform/mac/TestExpectations: Adding one more test, media/track/track-cue-rendering-vertical.html
+
+2013-09-27  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac] Intermittent crash on media/video-controls-captions-trackmenu.html
         https://bugs.webkit.org/show_bug.cgi?id=110173
 
