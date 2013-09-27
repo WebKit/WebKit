@@ -52,7 +52,7 @@ private:
     explicit RemoteLayerTreeContext(WebPage*);
 
     // WebCore::GraphicsLayerFactory
-    virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
+    virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
     void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeContext>*);
     void flushLayers();

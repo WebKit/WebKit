@@ -92,9 +92,9 @@ private:
 
     LayerTreeContext m_layerTreeContext;
 
-    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
-    typedef HashMap<PageOverlay*, OwnPtr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
+    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+    typedef HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
     PageOverlayLayerMap m_pageOverlayLayers;
 
     OwnPtr<LayerHostingContext> m_layerHostingContext;

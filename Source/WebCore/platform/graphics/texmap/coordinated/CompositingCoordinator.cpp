@@ -264,7 +264,7 @@ void CompositingCoordinator::paintContents(const GraphicsLayer* graphicsLayer, G
     m_client->paintLayerContents(graphicsLayer, graphicsContext, clipRect);
 }
 
-PassOwnPtr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
 {
     CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
     layer->setCoordinator(this);
@@ -272,7 +272,7 @@ PassOwnPtr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLa
     m_state.layersToCreate.append(layer->id());
     layer->setNeedsVisibleRectAdjustment();
     m_client->notifyFlushRequired();
-    return adoptPtr(layer);
+    return std::unique_ptr<GraphicsLayer>(layer);
 }
 
 float CompositingCoordinator::deviceScaleFactor() const

@@ -273,10 +273,10 @@ static inline bool supportsAcceleratedFilterAnimations()
 }
 #endif
 
-PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
 {
     if (!factory)
-        return adoptPtr(new GraphicsLayerCA(client));
+        return std::make_unique<GraphicsLayerCA>(client);
 
     return factory->createGraphicsLayer(client);
 }

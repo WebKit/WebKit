@@ -274,15 +274,14 @@ void LayerTreeHostMac::notifyFlushRequired(const WebCore::GraphicsLayer*)
 
 void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
-    if (graphicsLayer == m_nonCompositedContentLayer) {
+    if (graphicsLayer == m_nonCompositedContentLayer.get()) {
         m_webPage->drawRect(graphicsContext, clipRect);
         return;
     }
 
-    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it) {
-        if (it->value == graphicsLayer) {
-            m_webPage->drawPageOverlay(it->key, graphicsContext, clipRect);
+    for (auto& pageOverlayLayer : m_pageOverlayLayers) {
+        if (pageOverlayLayer.value.get() == graphicsLayer) {
+            m_webPage->drawPageOverlay(pageOverlayLayer.key, graphicsContext, clipRect);
             break;
         }
     }
@@ -385,7 +384,7 @@ bool LayerTreeHostMac::flushPendingLayerChanges()
 
 void LayerTreeHostMac::createPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    OwnPtr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), this);
+    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     layer->setName("LayerTreeHost page overlay content");
 #endif
@@ -398,12 +397,12 @@ void LayerTreeHostMac::createPageOverlayLayer(PageOverlay* pageOverlay)
 
     m_rootLayer->addChild(layer.get());
 
-    m_pageOverlayLayers.add(pageOverlay, layer.release());
+    m_pageOverlayLayers.add(pageOverlay, std::move(layer));
 }
 
 void LayerTreeHostMac::destroyPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    OwnPtr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
+    std::unique_ptr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
     ASSERT(layer);
 
     layer->removeFromParent();

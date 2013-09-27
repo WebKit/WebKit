@@ -42,11 +42,6 @@ static uint64_t generateLayerID()
     return ++layerID;
 }
 
-PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* client, RemoteLayerTreeContext* context)
-{
-    return adoptPtr(new RemoteGraphicsLayer(client, context));
-}
-
 RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeContext* context)
     : GraphicsLayer(client)
     , m_layerID(generateLayerID())

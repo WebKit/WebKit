@@ -1,3 +1,29 @@
+2013-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Use std::unique_ptr for GraphicsLayer creation
+        https://bugs.webkit.org/show_bug.cgi?id=122020
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::getOrCreateLayer):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::paintContents):
+        (WebKit::LayerTreeHostMac::createPageOverlayLayer):
+        (WebKit::LayerTreeHostMac::destroyPageOverlayLayer):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::createGraphicsLayer):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::paintContents):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::destroyPageOverlayLayer):
+
 2013-09-27  Beth Dakin  <bdakin@apple.com>
 
         ScrollbarPainterController should adopt the api to lock overlay scrollbar state

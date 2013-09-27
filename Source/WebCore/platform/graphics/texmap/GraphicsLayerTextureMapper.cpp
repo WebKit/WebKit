@@ -35,10 +35,10 @@ TextureMapperLayer* toTextureMapperLayer(GraphicsLayer* layer)
     return layer ? toGraphicsLayerTextureMapper(layer)->layer() : 0;
 }
 
-PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
 {
     if (!factory)
-        return adoptPtr(new GraphicsLayerTextureMapper(client));
+        return std::make_unique<GraphicsLayerTextureMapper>(client);
 
     return factory->createGraphicsLayer(client);
 }

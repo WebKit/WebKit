@@ -410,7 +410,7 @@ private:
 
 private:
     RenderView& m_renderView;
-    OwnPtr<GraphicsLayer> m_rootContentLayer;
+    std::unique_ptr<GraphicsLayer> m_rootContentLayer;
     Timer<RenderLayerCompositor> m_updateCompositingLayersTimer;
 
     bool m_hasAcceleratedCompositing;
@@ -439,26 +439,26 @@ private:
     RootLayerAttachment m_rootLayerAttachment;
 
     // Enclosing clipping layer for iframe content
-    OwnPtr<GraphicsLayer> m_clipLayer;
-    OwnPtr<GraphicsLayer> m_scrollLayer;
+    std::unique_ptr<GraphicsLayer> m_clipLayer;
+    std::unique_ptr<GraphicsLayer> m_scrollLayer;
 
     HashSet<RenderLayer*> m_viewportConstrainedLayers;
     HashSet<RenderLayer*> m_viewportConstrainedLayersNeedingUpdate;
 
     // Enclosing layer for overflow controls and the clipping layer
-    OwnPtr<GraphicsLayer> m_overflowControlsHostLayer;
+    std::unique_ptr<GraphicsLayer> m_overflowControlsHostLayer;
 
     // Layers for overflow controls
-    OwnPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
-    OwnPtr<GraphicsLayer> m_layerForVerticalScrollbar;
-    OwnPtr<GraphicsLayer> m_layerForScrollCorner;
+    std::unique_ptr<GraphicsLayer> m_layerForHorizontalScrollbar;
+    std::unique_ptr<GraphicsLayer> m_layerForVerticalScrollbar;
+    std::unique_ptr<GraphicsLayer> m_layerForScrollCorner;
 #if ENABLE(RUBBER_BANDING)
-    OwnPtr<GraphicsLayer> m_layerForOverhangAreas;
-    OwnPtr<GraphicsLayer> m_contentShadowLayer;
-    OwnPtr<GraphicsLayer> m_layerForTopOverhangArea;
-    OwnPtr<GraphicsLayer> m_layerForBottomOverhangArea;
-    OwnPtr<GraphicsLayer> m_layerForHeader;
-    OwnPtr<GraphicsLayer> m_layerForFooter;
+    std::unique_ptr<GraphicsLayer> m_layerForOverhangAreas;
+    std::unique_ptr<GraphicsLayer> m_contentShadowLayer;
+    std::unique_ptr<GraphicsLayer> m_layerForTopOverhangArea;
+    std::unique_ptr<GraphicsLayer> m_layerForBottomOverhangArea;
+    std::unique_ptr<GraphicsLayer> m_layerForHeader;
+    std::unique_ptr<GraphicsLayer> m_layerForFooter;
 #endif
 
     OwnPtr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.

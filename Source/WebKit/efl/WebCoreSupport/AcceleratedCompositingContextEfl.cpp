@@ -97,7 +97,7 @@ void AcceleratedCompositingContext::renderLayers()
 void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* rootLayer)
 {
     if (!rootLayer) {
-        m_rootGraphicsLayer.clear();
+        m_rootGraphicsLayer = nullptr;
         m_rootTextureMapperLayer = 0;
         return;
     }

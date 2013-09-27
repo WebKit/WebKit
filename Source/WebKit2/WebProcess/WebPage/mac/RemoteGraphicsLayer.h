@@ -34,14 +34,12 @@ class RemoteLayerTreeContext;
 
 class RemoteGraphicsLayer : public WebCore::GraphicsLayer {
 public:
-    static PassOwnPtr<WebCore::GraphicsLayer> create(WebCore::GraphicsLayerClient*, RemoteLayerTreeContext*);
+    RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeContext*);
     virtual ~RemoteGraphicsLayer();
 
     uint64_t layerID() const { return m_layerID; }
 
 private:
-    RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeContext*);
-
     // WebCore::GraphicsLayer
     virtual void setName(const String&) OVERRIDE;
 

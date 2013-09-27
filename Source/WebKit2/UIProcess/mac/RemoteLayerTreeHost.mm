@@ -76,11 +76,11 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 
 GraphicsLayer* RemoteLayerTreeHost::getOrCreateLayer(uint64_t layerID)
 {
-    auto addResult = m_layers.add(layerID, nullptr);
-    if (addResult.isNewEntry)
-        addResult.iterator->value = GraphicsLayer::create(0, this);
+    std::unique_ptr<GraphicsLayer>& layer = m_layers.add(layerID, nullptr).iterator->value;
+    if (!layer)
+        layer = GraphicsLayer::create(0, this);
 
-    return addResult.iterator->value.get();
+    return layer.get();
 }
 
 } // namespace WebKit

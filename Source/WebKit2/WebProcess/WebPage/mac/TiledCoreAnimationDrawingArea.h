@@ -127,7 +127,7 @@ private:
 
     RetainPtr<CALayer> m_debugInfoLayer;
 
-    typedef HashMap<PageOverlay*, OwnPtr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
+    typedef HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
     PageOverlayLayerMap m_pageOverlayLayers;
     mutable HashMap<const WebCore::GraphicsLayer*, RetainPtr<CALayer>> m_pageOverlayPlatformLayers;
 

@@ -344,8 +344,8 @@ void TiledCoreAnimationDrawingArea::notifyFlushRequired(const GraphicsLayer*)
 
 void TiledCoreAnimationDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
-        if (it->value == graphicsLayer) {
+    for (auto it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
+        if (it->value.get() == graphicsLayer) {
             m_webPage->drawPageOverlay(it->key, graphicsContext, clipRect);
             break;
         }
@@ -613,7 +613,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
 void TiledCoreAnimationDrawingArea::createPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    OwnPtr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), this);
+    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
     layer->setName("page overlay content");
 #endif
@@ -636,12 +636,12 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer(PageOverlay* pageOver
 
     [CATransaction commit];
 
-    m_pageOverlayLayers.add(pageOverlay, layer.release());
+    m_pageOverlayLayers.add(pageOverlay, std::move(layer));
 }
 
 void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    OwnPtr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
+    std::unique_ptr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
     ASSERT(layer);
 
     [CATransaction begin];

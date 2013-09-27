@@ -122,7 +122,7 @@ private:
     virtual void removeUpdateAtlas(uint32_t atlasID) OVERRIDE;
 
     // GraphicsLayerFactory
-    virtual PassOwnPtr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient*) OVERRIDE;
+    virtual std::unique_ptr<GraphicsLayer> createGraphicsLayer(GraphicsLayerClient*) OVERRIDE;
 
     void initializeRootCompositingLayerIfNeeded();
     void flushPendingImageBackingChanges();
@@ -135,7 +135,7 @@ private:
     Page* m_page;
     CompositingCoordinator::Client* m_client;
 
-    OwnPtr<GraphicsLayer> m_rootLayer;
+    std::unique_ptr<GraphicsLayer> m_rootLayer;
     GraphicsLayer* m_rootCompositingLayer;
 
     CoordinatedGraphicsState m_state;

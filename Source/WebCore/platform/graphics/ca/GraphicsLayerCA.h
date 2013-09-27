@@ -194,7 +194,7 @@ private:
     typedef String CloneID; // Identifier for a given clone, based on original/replica branching down the tree.
     static bool isReplicatedRootClone(const CloneID& cloneID) { return cloneID[0U] & 1; }
 
-    typedef HashMap<CloneID, RefPtr<PlatformCALayer> > LayerMap;
+    typedef HashMap<CloneID, RefPtr<PlatformCALayer>> LayerMap;
     LayerMap* primaryLayerClones() const { return m_structuralLayer.get() ? m_structuralLayerClones.get() : m_layerClones.get(); }
     LayerMap* animatedLayerClones(AnimatedPropertyID) const;
 

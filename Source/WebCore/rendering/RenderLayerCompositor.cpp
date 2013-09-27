@@ -1711,10 +1711,10 @@ void RenderLayerCompositor::updateRootLayerPosition()
         }
     }
 
-    updateLayerForTopOverhangArea(m_layerForTopOverhangArea);
-    updateLayerForBottomOverhangArea(m_layerForBottomOverhangArea);
-    updateLayerForHeader(m_layerForHeader);
-    updateLayerForFooter(m_layerForFooter);
+    updateLayerForTopOverhangArea(m_layerForTopOverhangArea != nullptr);
+    updateLayerForBottomOverhangArea(m_layerForBottomOverhangArea != nullptr);
+    updateLayerForHeader(m_layerForHeader != nullptr);
+    updateLayerForFooter(m_layerForFooter != nullptr);
 #endif
 }
 

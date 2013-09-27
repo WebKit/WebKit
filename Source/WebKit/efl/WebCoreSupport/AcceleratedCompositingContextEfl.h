@@ -53,7 +53,7 @@ private:
     Evas_Object* m_view;
 
     OwnPtr<TextureMapper> m_textureMapper;
-    OwnPtr<GraphicsLayer> m_rootGraphicsLayer;
+    std::unique_ptr<GraphicsLayer> m_rootGraphicsLayer;
     TextureMapperLayer* m_rootTextureMapperLayer;
 
     RefPtr<GraphicsContext3D> m_context3D;

@@ -57,7 +57,7 @@ private:
     WebPageProxy* m_webPageProxy;
 
     WebCore::GraphicsLayer* m_rootLayer;
-    HashMap<uint64_t, OwnPtr<WebCore::GraphicsLayer>> m_layers;
+    HashMap<uint64_t, std::unique_ptr<WebCore::GraphicsLayer>> m_layers;
 };
 
 } // namespace WebKit

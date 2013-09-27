@@ -86,9 +86,9 @@ RemoteLayerTreeTransaction& RemoteLayerTreeContext::currentTransaction()
     return *m_currentTransaction;
 }
 
-PassOwnPtr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)
+std::unique_ptr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)
 {
-    return RemoteGraphicsLayer::create(client, this);
+    return std::make_unique<RemoteGraphicsLayer>(client, this);
 }
 
 void RemoteLayerTreeContext::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeContext>*)

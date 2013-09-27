@@ -77,7 +77,7 @@ void TextureMapperLayerClientQt::setRootGraphicsLayer(GraphicsLayer* layer)
         m_rootTextureMapperLayer->setTextureMapper(m_textureMapper.get());
         syncRootLayer();
     } else {
-        m_rootGraphicsLayer.clear();
+        m_rootGraphicsLayer = nullptr;
         m_rootTextureMapperLayer = 0;
     }
 }
