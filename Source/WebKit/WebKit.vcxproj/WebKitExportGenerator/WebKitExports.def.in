@@ -111,7 +111,7 @@ EXPORTS
         symbolWithPointer(?fastFree@WTF@@YAXPAX@Z, ?fastFree@WTF@@YAXPEAX@Z)
         symbolWithPointer(?fastCalloc@WTF@@YAPAXII@Z, ?fastCalloc@WTF@@YAPEAX_K0@Z)
         symbolWithPointer(??0CSSComputedStyleDeclaration@WebCore@@AAE@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NABVString@3@@Z, ??0CSSComputedStyleDeclaration@WebCore@@AEAA@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NAEBVString@3@@Z)
-        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@AEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
+        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@AEAVDocument@1@AEBVURL@1@AEBVString@WTF@@@Z)
         symbolWithPointer(??0Mutex@WTF@@QAE@XZ, ??0Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??0ThreadCondition@WTF@@QAE@XZ, ??0ThreadCondition@WTF@@QEAA@XZ)
         symbolWithPointer(??1HitTestResult@WebCore@@QAE@XZ, ??1HitTestResult@WebCore@@QEAA@XZ)
@@ -377,7 +377,7 @@ EXPORTS
         symbolWithPointer(?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ, ?getCGImageArray@BitmapImage@WebCore@@UEAA?AV?$RetainPtr@PEBU__CFArray@@@WTF@@XZ)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #elif USE(CAIRO)
-        symbolWithPointer(?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAE?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
+        symbolWithPointer(?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAE?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ, ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UEAA?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #endif

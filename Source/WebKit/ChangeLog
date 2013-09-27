@@ -1,3 +1,10 @@
+2013-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        [Windows] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Fixed linker symbols I broke last time.
+
 2013-09-27  Alex Christensen  <alex.christensen@flexsim.com>
 
         [Windows] Unreviewed build fix for Win64.
