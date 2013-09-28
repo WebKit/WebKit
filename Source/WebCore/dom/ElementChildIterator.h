@@ -52,6 +52,8 @@ public:
     ElementChildIteratorAdapter(ContainerNode* root);
     ElementChildIterator<ElementType> begin();
     ElementChildIterator<ElementType> end();
+    ElementType* first();
+    ElementType* last();
 
 private:
     const ContainerNode* m_root;
@@ -63,6 +65,8 @@ public:
     ElementChildConstIteratorAdapter(const ContainerNode* root);
     ElementChildConstIterator<ElementType> begin() const;
     ElementChildConstIterator<ElementType> end() const;
+    const ElementType* first() const;
+    const ElementType* last() const;
 
 private:
     const ContainerNode* m_root;
@@ -133,6 +137,18 @@ inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType
     return ElementChildIterator<ElementType>(m_root);
 }
 
+template <typename ElementType>
+inline ElementType* ElementChildIteratorAdapter<ElementType>::first()
+{
+    return Traversal<ElementType>::firstChild(m_root);
+}
+
+template <typename ElementType>
+inline ElementType* ElementChildIteratorAdapter<ElementType>::last()
+{
+    return Traversal<ElementType>::lastChild(m_root);
+}
+
 // ElementChildConstIteratorAdapter
 
 template <typename ElementType>
@@ -151,6 +167,18 @@ template <typename ElementType>
 inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::end() const
 {
     return ElementChildConstIterator<ElementType>(m_root);
+}
+
+template <typename ElementType>
+inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::first() const
+{
+    return Traversal<ElementType>::firstChild(m_root);
+}
+
+template <typename ElementType>
+inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() const
+{
+    return Traversal<ElementType>::lastChild(m_root);
 }
 
 // Standalone functions

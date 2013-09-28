@@ -228,10 +228,7 @@ void SVGFontFaceElement::rebuildFontFace()
     }
 
     // we currently ignore all but the first src element, alternatively we could concat them
-    SVGFontFaceSrcElement* srcElement = 0;
-    auto firstFontFaceSrcElementChild = childrenOfType<SVGFontFaceSrcElement>(this).begin();
-    if (firstFontFaceSrcElementChild != childrenOfType<SVGFontFaceSrcElement>(this).end())
-        srcElement = &*firstFontFaceSrcElementChild;
+    auto srcElement = childrenOfType<SVGFontFaceSrcElement>(this).first();
 
     bool describesParentFont = isSVGFontElement(parentNode());
     RefPtr<CSSValueList> list;

@@ -90,11 +90,7 @@ RenderElement* HTMLFieldSetElement::createRenderer(RenderArena& arena, RenderSty
 
 const HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    auto legendDescendants = descendantsOfType<HTMLLegendElement>(this);
-    auto firstLegend = legendDescendants.begin();
-    if (firstLegend != legendDescendants.end())
-        return &*firstLegend;
-    return nullptr;
+    return descendantsOfType<HTMLLegendElement>(this).first();
 }
 
 PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()

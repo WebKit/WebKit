@@ -794,10 +794,7 @@ void Document::childrenChanged(const ChildChange& change)
     }
 #endif
 
-    Element* newDocumentElement = 0;
-    auto firstElementChild = elementChildren(this).begin();
-    if (firstElementChild != elementChildren(this).end())
-        newDocumentElement = &*firstElementChild;
+    Element* newDocumentElement = elementChildren(this).first();
 
     if (newDocumentElement == m_documentElement)
         return;
@@ -1586,9 +1583,8 @@ void Document::removeTitle(Element* titleElement)
 
     // Update title based on first title element in the head, if one exists.
     if (HTMLElement* headElement = head()) {
-        auto firstTitle = childrenOfType<HTMLTitleElement>(headElement).begin();
-        if (firstTitle != childrenOfType<HTMLTitleElement>(headElement).end())
-            setTitleElement(firstTitle->textWithDirection(), &*firstTitle);
+        if (auto firstTitle = childrenOfType<HTMLTitleElement>(headElement).first())
+            setTitleElement(firstTitle->textWithDirection(), firstTitle);
     }
 
     if (!m_titleElement)

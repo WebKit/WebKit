@@ -953,14 +953,8 @@ String SVGElement::title() const
 
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
-    // If a title child was found, return the text contents.
-    auto titleDescendants = descendantsOfType<SVGTitleElement>(this);
-    auto firstTitle = titleDescendants.begin();
-    if (firstTitle != titleDescendants.end())
-        return const_cast<SVGTitleElement&>(*firstTitle).innerText();
-
-    // Otherwise return a null/empty string.
-    return String();
+    auto firstTitle = descendantsOfType<SVGTitleElement>(this).first();
+    return firstTitle ? const_cast<SVGTitleElement*>(firstTitle)->innerText() : String();
 }
 
 bool SVGElement::rendererIsNeeded(const RenderStyle& style)

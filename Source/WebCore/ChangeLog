@@ -1,3 +1,41 @@
+2013-09-28  Antti Koivisto  <antti@apple.com>
+
+        Add first()/last() to ElementIteratorAdapters
+        https://bugs.webkit.org/show_bug.cgi?id=122067
+
+        Reviewed by Darin Adler.
+
+        Add a convenient way for getting the first and last element if it exists.
+        
+        Use it in some places.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canvasHasFallbackContent):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::removeTitle):
+        * dom/ElementChildIterator.h:
+        (WebCore::::first):
+        (WebCore::::last):
+        * dom/ElementDescendantIterator.h:
+        (WebCore::::first):
+        (WebCore::::last):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::legend):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::associatedControl):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::title):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
         Fix some failures with newer versions of clang.

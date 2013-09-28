@@ -548,8 +548,7 @@ void HTMLMediaElement::finishParsingChildren()
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return;
 
-    auto trackDescendants = descendantsOfType<HTMLTrackElement>(this);
-    if (trackDescendants.begin() != trackDescendants.end())
+    if (descendantsOfType<HTMLTrackElement>(this).first())
         scheduleDelayedAction(ConfigureTextTracks);
 #endif
 }
@@ -939,10 +938,9 @@ void HTMLMediaElement::selectMediaResource()
         // Otherwise, if the media element does not have a src attribute but has a source 
         // element child, then let mode be children and let candidate be the first such 
         // source element child in tree order.
-        auto source = childrenOfType<HTMLSourceElement>(this).begin();
-        if (source != childrenOfType<HTMLSourceElement>(this).end()) {
+        if (auto firstSource = childrenOfType<HTMLSourceElement>(this).first()) {
             mode = children;
-            m_nextChildNodeToConsider = &*source;
+            m_nextChildNodeToConsider = firstSource;
             m_currentSourceNode = 0;
         } else {
             // Otherwise the media element has neither a src attribute nor a source element 
