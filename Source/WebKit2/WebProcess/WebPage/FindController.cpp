@@ -387,7 +387,6 @@ void FindController::didMoveToWebPage(PageOverlay*, WebPage*)
 static const float shadowOffsetX = 0.0;
 static const float shadowOffsetY = 1.0;
 static const float shadowBlurRadius = 2.0;
-static const float whiteFrameThickness = 1.0;
 
 static const float overlayBackgroundRed = 0.1;
 static const float overlayBackgroundGreen = 0.1;

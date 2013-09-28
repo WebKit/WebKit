@@ -36,8 +36,6 @@
 
 using namespace WebCore;
 
-static const char* const oracleJavaAppletPluginBundleIdentifier =  "com.oracle.java.JavaAppletPlugin";
-
 namespace WebKit {
 
 Vector<String> PluginInfoStore::pluginsDirectories()

@@ -1,3 +1,16 @@
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
+        WebKit2 fails to build with newer versions of clang.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/VisitedLinkTable.cpp: #if a function that's only used inside an ASSERT.
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm: Remove an unused constant.
+        * UIProcess/mac/WKFullScreenWindowController.mm: Ditto.
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm: Ditto.
+        * WebProcess/WebPage/FindController.cpp: Ditto.
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: Remove two unused constants.
+
 2013-09-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         CookieStorageShim should be PLATFORM(MAC) guarded

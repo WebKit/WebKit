@@ -42,12 +42,14 @@ VisitedLinkTable::~VisitedLinkTable()
 {
 }
 
+#if !ASSERT_DISABLED
 static inline bool isPowerOf2(unsigned v)
 {
     // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
     
     return !(v & (v - 1)) && v;
 }
+#endif
 
 void VisitedLinkTable::setSharedMemory(PassRefPtr<SharedMemory> sharedMemory)
 {

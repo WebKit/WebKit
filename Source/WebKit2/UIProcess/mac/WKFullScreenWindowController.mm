@@ -51,7 +51,6 @@ using namespace WebCore;
 
 static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame);
 
-static const CFTimeInterval defaultAnimationDuration = 0.5;
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
 enum FullScreenState : NSInteger {

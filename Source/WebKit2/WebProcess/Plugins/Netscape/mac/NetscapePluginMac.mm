@@ -43,7 +43,6 @@ namespace WebKit {
 
 #ifndef NP_NO_CARBON
 static const double nullEventIntervalActive = 0.02;
-static const double nullEventIntervalNotActive = 0.25;
 
 static unsigned buttonStateFromLastMouseEvent;
 
