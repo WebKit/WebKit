@@ -1,3 +1,15 @@
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
+        WebKit fails to build with newer versions of clang.
+
+        Reviewed by Sam Weinig.
+
+        * Carbon/HIWebView.mm: Remove an unused function.
+        * History/BinaryPropertyList.cpp: #if a constant that's only used in 64-bit.
+        * Misc/WebIconDatabase.mm: Remove two unused constants.
+        * Plugins/WebBaseNetscapePluginView.mm: Remove an unused constant.
+        * WebCoreSupport/WebEditorClient.mm: Ditto.
+
 2013-09-27  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to Pasteboard implementation for iOS.

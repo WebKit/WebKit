@@ -37,7 +37,10 @@ static const UInt8 booleanTrueMarkerByte = 0x09;
 static const UInt8 oneByteIntegerMarkerByte = 0x10;
 static const UInt8 twoByteIntegerMarkerByte = 0x11;
 static const UInt8 fourByteIntegerMarkerByte = 0x12;
+#ifdef __LP64__
 static const UInt8 eightByteIntegerMarkerByte = 0x13;
+#endif
+
 static const UInt8 asciiStringMarkerByte = 0x50;
 static const UInt8 asciiStringWithSeparateLengthMarkerByte = 0x5F;
 static const UInt8 unicodeStringMarkerByte = 0x60;

@@ -91,9 +91,6 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
     return static_cast<WebViewInsertAction>(coreAction);
 }
 
-static const int InvalidCorrectionPanelTag = 0;
-
-
 @interface WebUndoStep : NSObject
 {
     RefPtr<UndoStep> m_step;   

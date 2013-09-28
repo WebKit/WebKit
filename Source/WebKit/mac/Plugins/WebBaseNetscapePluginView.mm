@@ -67,8 +67,6 @@
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 
-static const NSTimeInterval ClearSubstituteImageDelay = 0.5;
-
 using namespace WebCore;
 
 @implementation WebBaseNetscapePluginView

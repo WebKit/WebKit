@@ -48,9 +48,6 @@
 
 using namespace WebCore;
 
-NSString * const WebIconDatabaseVersionKey =    @"WebIconDatabaseVersion";
-NSString * const WebURLToIconURLKey =           @"WebSiteURLToIconURLKey";
-
 NSString *WebIconDatabaseDidAddIconNotification =          @"WebIconDatabaseDidAddIconNotification";
 NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotificationUserInfoURLKey";
 NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidRemoveAllIconsNotification";

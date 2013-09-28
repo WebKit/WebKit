@@ -191,14 +191,6 @@ static OSStatus			WindowHandler( EventHandlerCallRef inCallRef, EventRef inEvent
 static void				StartUpdateObserver( HIWebView* view );
 static void				StopUpdateObserver( HIWebView* view );
 
-static inline void HIRectToQDRect( const HIRect* inRect, Rect* outRect )
-{
-    outRect->top = (SInt16)CGRectGetMinY( *inRect );
-    outRect->left = (SInt16)CGRectGetMinX( *inRect );
-    outRect->bottom = (SInt16)CGRectGetMaxY( *inRect );
-    outRect->right = (SInt16)CGRectGetMaxX( *inRect );
-}
-
 //----------------------------------------------------------------------------------
 // HIWebViewCreate
 //----------------------------------------------------------------------------------
