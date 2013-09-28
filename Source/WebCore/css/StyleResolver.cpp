@@ -3872,9 +3872,16 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 continue;
 
             ShadowValue* item = static_cast<ShadowValue*>(cssValue);
-            IntPoint location(item->x->computeLength<int>(style, rootStyle, zoomFactor),
-                              item->y->computeLength<int>(style, rootStyle, zoomFactor));
+            int x = item->x->computeLength<int>(style, rootStyle, zoomFactor);
+            if (item->x->isViewportPercentageLength())
+                x = viewportPercentageValue(*item->x, x);
+            int y = item->y->computeLength<int>(style, rootStyle, zoomFactor);
+            if (item->y->isViewportPercentageLength())
+                y = viewportPercentageValue(*item->y, y);
+            IntPoint location(x, y);
             int blur = item->blur ? item->blur->computeLength<int>(style, rootStyle, zoomFactor) : 0;
+            if (item->blur && item->blur->isViewportPercentageLength())
+                blur = viewportPercentageValue(*item->blur, blur);
             Color color;
             if (item->color)
                 color = colorFromPrimitiveValue(item->color.get());

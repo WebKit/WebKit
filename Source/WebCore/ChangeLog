@@ -1,5 +1,27 @@
 2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
+        filter: drop-shadow doesnot support viewport units
+        https://bugs.webkit.org/show_bug.cgi?id=122053
+
+        Reviewed by Darin Adler.
+
+        drop-shadow properties were not applied incase its values
+        were given in vh, vw, vmax, vmin units.
+
+        Tests: fast/css/drop-shadow-viewport-height.html
+               fast/css/drop-shadow-viewport-vmax.html
+               fast/css/drop-shadow-viewport-vmin.html
+               fast/css/drop-shadow-viewport-width.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        Calculating the drop-shadow values which has been specified in viewport
+        units.The vh/vw units are calcultated as percent of viewport height and
+        viewport width respectively. 1vmax: 1vw or 1vh, whatever is largest.
+        1vmin: 1vw or 1vh, whatever is smallest.
+
+2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
         REGRESSION (r154614): Setting the document scroll position isn't symmetric; can successfully set document.body.scrollTop, but can only read from document.documentElement.scrollTop
         https://bugs.webkit.org/show_bug.cgi?id=121876
 
