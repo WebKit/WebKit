@@ -77,8 +77,8 @@ private:
 
 #if USE(TEXTURE_MAPPER_GL)
     OwnPtr<WebCore::RedirectedXCompositeWindow> m_redirectedWindow;
-    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_rootLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
     double m_lastFlushTime;
     double m_redrawPendingTime;
@@ -92,7 +92,7 @@ private:
     void clearEverywhere();
 #elif USE(TEXTURE_MAPPER)
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
-    OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_rootGraphicsLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif
 
