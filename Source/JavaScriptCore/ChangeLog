@@ -1,3 +1,15 @@
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
+        JavaScriptCore fails to build with newer versions of clang.
+
+        Reviewed by Sam Weinig.
+
+        * interpreter/Interpreter.cpp: Remove an unused function.
+        * parser/SourceProvider.cpp: Ditto.
+        * runtime/GCActivityCallback.cpp: #if a constant that's only used on non-CF platforms.
+        * runtime/JSCJSValue.cpp: Remove an unused constant.
+        * runtime/JSString.cpp: Ditto.
+
 2013-09-27  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of SetMyScope/SetCallee; use normal variables for the scope and callee of inlined call frames of closures

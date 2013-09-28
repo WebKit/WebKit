@@ -433,12 +433,6 @@ static bool unwindCallFrame(StackVisitor& visitor)
     return !callerFrame->hasHostCallFrameFlag();
 }
 
-static ALWAYS_INLINE const String getSourceURLFromCallFrame(CallFrame* callFrame)
-{
-    ASSERT(!callFrame->hasHostCallFrameFlag());
-    return callFrame->codeBlock()->ownerExecutable()->sourceURL();
-}
-
 static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
 {
     switch (visitor->codeType()) {

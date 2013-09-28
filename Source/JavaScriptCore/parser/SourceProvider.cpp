@@ -42,11 +42,6 @@ SourceProvider::~SourceProvider()
 {
 }
 
-static inline size_t charPositionExtractor(const size_t* value)
-{
-    return *value;
-}
-
 static TCMalloc_SpinLock providerIdLock = SPINLOCK_INITIALIZER;
 
 void SourceProvider::getID()

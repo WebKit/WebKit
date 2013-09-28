@@ -38,8 +38,6 @@
 
 namespace JSC {
 
-static const double D32 = 4294967296.0;
-
 // ECMA 9.4
 double JSValue::toInteger(ExecState* exec) const
 {
