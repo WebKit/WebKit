@@ -1,5 +1,19 @@
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Fix some failures with newer versions of clang.
+
+        Some CoreGraphics headers generate warnings under newer versions of clang. Since they're system headers the warnings would
+        usually be suppressed, but we're adding the frameworks to the non-system framework search path so they're no longer treated
+        as system headers. We address this by removing the system paths from FRAMEWORK_SEARCH_PATHS and using the -iframework compiler
+        flag in OTHER_CFLAGS to add the paths to the system framework search path. We have to set OTHER_CFLAGS at the target level
+        in order for it to coexist with the ASAN-related OTHER_CFLAGS that's set in DebugRelease.xcconfig.
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebCore.xcconfig:
+
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
         Take Xcode's advice and enable some extra warnings.
 
         Reviewed by Sam Weinig.

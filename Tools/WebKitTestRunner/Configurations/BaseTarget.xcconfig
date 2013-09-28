@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Apple Inc. All rights reserved.
+// Copyright (C) 2013 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,11 +21,4 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-#include "BaseTarget.xcconfig"
-
-PRODUCT_NAME = TestNetscapePlugIn
-WRAPPER_EXTENSION = plugin
-INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist
-INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins"
-WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas
-LIBRARY_STYLE = BUNDLE
+OTHER_CFLAGS = $(inherited) -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
