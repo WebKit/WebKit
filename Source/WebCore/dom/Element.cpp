@@ -803,14 +803,42 @@ int Element::scrollTop()
 
 void Element::setScrollLeft(int newLeft)
 {
+    if (document().documentElement() == this && document().inQuirksMode())
+        return;
+
     document().updateLayoutIgnorePendingStylesheets();
+
+    if (!document().hasLivingRenderTree())
+        return;
+
+    if (document().documentElement() == this) {
+        RenderView& renderView = *document().renderView();
+        int zoom = renderView.style()->effectiveZoom();
+        renderView.frameView().setScrollPosition(IntPoint(newLeft * zoom, renderView.frameView().scrollY() * zoom));
+        return;
+    }
+
     if (RenderBox* rend = renderBox())
         rend->setScrollLeft(static_cast<int>(newLeft * rend->style()->effectiveZoom()));
 }
 
 void Element::setScrollTop(int newTop)
 {
+    if (document().documentElement() == this && document().inQuirksMode())
+        return;
+
     document().updateLayoutIgnorePendingStylesheets();
+
+    if (!document().hasLivingRenderTree())
+        return;
+
+    if (document().documentElement() == this) {
+        RenderView& renderView = *document().renderView();
+        int zoom = renderView.style()->effectiveZoom();
+        renderView.frameView().setScrollPosition(IntPoint(renderView.frameView().scrollX() * zoom, newTop * zoom));
+        return;
+    }
+
     if (RenderBox* rend = renderBox())
         rend->setScrollTop(static_cast<int>(newTop * rend->style()->effectiveZoom()));
 }

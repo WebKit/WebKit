@@ -1,3 +1,35 @@
+2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        REGRESSION (r154614): Setting the document scroll position isn't symmetric; can successfully set document.body.scrollTop, but can only read from document.documentElement.scrollTop
+        https://bugs.webkit.org/show_bug.cgi?id=121876
+
+        Reviewed by Darin Adler.
+
+        Non-Quirks mode should set/get scrolltop/scrollleft through
+        document.documentElement.scrollTop/document.documentElement.scrollLeft
+        Quirks mode should set/get scrolltop/scrollleft through
+        document.body.scrollTop/document.body.scrollLeft.
+
+        Tests: fast/dom/Element/body-scrollLeft-Quirks.html
+               fast/dom/Element/body-scrollLeft.html
+               fast/dom/Element/body-scrollTop-Quirks.html
+               fast/dom/Element/body-scrollTop.html
+               fast/dom/Element/documentElement-scrollLeft-Quirks.html
+               fast/dom/Element/documentElement-scrollLeft.html
+               fast/dom/Element/documentElement-scrollTop-Quirks.html
+               fast/dom/Element/documentElement-scrollTop.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::setScrollTop):
+        Need to set the scrollTop and scrollLeft after checking if document
+        is in quirks or non-quirks mode. Incase it is body.scrollLeft/
+        body.scrollTop set only if document is in quirks mode. If document is
+        non-quirks mode set documentElement.scrollLeft/documentElement.scrollTop.
+
 2013-09-28  Andreas Kling  <akling@apple.com>
 
         Pass VM instead of ExecState to JSFunction constructors.

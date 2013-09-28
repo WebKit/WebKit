@@ -1,3 +1,35 @@
+2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        REGRESSION (r154614): Setting the document scroll position isn't symmetric; can successfully set document.body.scrollTop, but can only read from document.documentElement.scrollTop
+        https://bugs.webkit.org/show_bug.cgi?id=121876
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Element/body-scrollLeft-Quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollLeft-Quirks.html: Added.
+        * fast/dom/Element/body-scrollLeft-expected.txt: Added.
+        * fast/dom/Element/body-scrollLeft.html: Added.
+        * fast/dom/Element/body-scrollTop-Quirks-expected.txt: Added.
+        * fast/dom/Element/body-scrollTop-Quirks.html: Added.
+        * fast/dom/Element/body-scrollTop-expected.txt: Added.
+        * fast/dom/Element/body-scrollTop.html: Added.
+        * fast/dom/Element/documentElement-scrollLeft-Quirks-expected.txt: Added.
+        * fast/dom/Element/documentElement-scrollLeft-Quirks.html: Added.
+        * fast/dom/Element/documentElement-scrollLeft-expected.txt: Added.
+        * fast/dom/Element/documentElement-scrollLeft.html: Added.
+        * fast/dom/Element/documentElement-scrollTop-Quirks-expected.txt: Added.
+        * fast/dom/Element/documentElement-scrollTop-Quirks.html: Added.
+        * fast/dom/Element/documentElement-scrollTop-expected.txt: Added.
+        * fast/dom/Element/documentElement-scrollTop.html: Added.
+        Added test cases for verifying that Non-Quirks mode should set
+        scrolltop/scrollleft through document.documentElement.scrollTop/
+        document.documentElement.scrollLeft and Quirks mode should set/get
+        scrolltop/scrollleft through document.body.scrollTop/document.body.scrollLeft.
+
+        * fast/multicol/scrolling-overflow.html:
+        Rebaselining existing tests as per the new behavior. To set
+        document.body.scrollLeft document to be in Quirks mode.
+
 2013-09-27  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: Positive margins
