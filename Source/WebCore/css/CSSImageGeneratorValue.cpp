@@ -237,7 +237,7 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
 bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
 {
     if (value->isImageValue())
-        return static_cast<CSSImageValue*>(value)->cachedOrPendingImage()->isPendingImage();
+        return toCSSImageValue(value)->cachedOrPendingImage()->isPendingImage();
     
     if (value->isImageGeneratorValue())
         return static_cast<CSSImageGeneratorValue*>(value)->isPending();
@@ -256,7 +256,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, Cac
         return 0;
 
     if (value->isImageValue()) {
-        StyleCachedImage* styleCachedImage = static_cast<CSSImageValue*>(value)->cachedImage(cachedResourceLoader);
+        StyleCachedImage* styleCachedImage = toCSSImageValue(value)->cachedImage(cachedResourceLoader);
         if (!styleCachedImage)
             return 0;
 

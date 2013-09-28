@@ -416,7 +416,7 @@ void CSSValue::destroy()
         delete static_cast<CSSCrossfadeValue*>(this);
         return;
     case ImageClass:
-        delete static_cast<CSSImageValue*>(this);
+        delete toCSSImageValue(this);
         return;
     case InheritedClass:
         delete static_cast<CSSInheritedValue*>(this);

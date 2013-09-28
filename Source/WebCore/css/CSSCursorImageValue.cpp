@@ -75,12 +75,11 @@ CSSCursorImageValue::~CSSCursorImageValue()
 
     HashSet<SVGElement*>::const_iterator it = m_referencedElements.begin();
     HashSet<SVGElement*>::const_iterator end = m_referencedElements.end();
-    String url = static_cast<CSSImageValue*>(m_imageValue.get())->url();
 
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
         referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(toCSSImageValue(m_imageValue.get())->url(), referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
 #endif
@@ -110,8 +109,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     if (!isSVGCursor())
         return false;
 
-    String url = static_cast<CSSImageValue*>(m_imageValue.get())->url();
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
+    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(toCSSImageValue(m_imageValue.get())->url(), element->document())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         SVGLengthContext lengthContext(0);
         m_hasHotSpot = true;
@@ -150,9 +148,8 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
         // to change the URL of the CSSImageValue (which would then change behavior like cssText),
         // we create an alternate CSSImageValue to use.
         if (isSVGCursor() && loader && loader->document()) {
-            RefPtr<CSSImageValue> imageValue = static_cast<CSSImageValue*>(m_imageValue.get());
             // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
-            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(imageValue->url(), *loader->document())) {
+            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(toCSSImageValue(m_imageValue.get())->url(), *loader->document())) {
                 RefPtr<CSSImageValue> svgImageValue = CSSImageValue::create(cursorElement->href());
                 StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader);
                 m_image = cachedImage;
@@ -162,7 +159,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 #endif
 
         if (m_imageValue->isImageValue())
-            m_image = static_cast<CSSImageValue*>(m_imageValue.get())->cachedImage(loader);
+            m_image = toCSSImageValue(m_imageValue.get())->cachedImage(loader);
     }
 
     if (m_image && m_image->isCachedImage())
@@ -189,8 +186,7 @@ StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
 bool CSSCursorImageValue::isSVGCursor() const
 {
     if (m_imageValue->isImageValue()) {
-        RefPtr<CSSImageValue> imageValue = static_cast<CSSImageValue*>(m_imageValue.get());
-        URL kurl(ParsedURLString, imageValue->url());
+        URL kurl(ParsedURLString, toCSSImageValue(m_imageValue.get())->url());
         return kurl.hasFragmentIdentifier();
     }
     return false;

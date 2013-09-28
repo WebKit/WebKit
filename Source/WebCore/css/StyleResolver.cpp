@@ -2172,7 +2172,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 }
 
                 if (item->isImageValue()) {
-                    state.style()->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(item)), didSet);
+                    state.style()->setContent(cachedOrPendingFromValue(CSSPropertyContent, toCSSImageValue(item)), didSet);
                     didSet = true;
                     continue;
                 }
@@ -3093,7 +3093,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue* value)
 {
     if (value->isImageValue())
-        return cachedOrPendingFromValue(property, static_cast<CSSImageValue*>(value));
+        return cachedOrPendingFromValue(property, toCSSImageValue(value));
 
     if (value->isImageGeneratorValue()) {
         if (value->isGradientValue())
