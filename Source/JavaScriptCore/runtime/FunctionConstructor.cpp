@@ -118,7 +118,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
         return exec->vm().throwException(exec, exception);
     }
 
-    return JSFunction::create(exec, function, globalObject);
+    return JSFunction::create(exec->vm(), function, globalObject);
 }
 
 // ECMA 15.3.2 The Function Constructor

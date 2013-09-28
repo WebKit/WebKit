@@ -335,10 +335,10 @@ public:
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
     JSFunction* applyFunction() const { return m_applyFunction.get(); }
-    GetterSetter* throwTypeErrorGetterSetter(ExecState* exec)
+    GetterSetter* throwTypeErrorGetterSetter(VM& vm)
     {
         if (!m_throwTypeErrorGetterSetter)
-            createThrowTypeError(exec);
+            createThrowTypeError(vm);
         return m_throwTypeErrorGetterSetter.get();
     }
 
@@ -544,7 +544,7 @@ private:
     JS_EXPORT_PRIVATE void init(JSObject* thisValue);
     void reset(JSValue prototype);
 
-    void createThrowTypeError(ExecState*);
+    void createThrowTypeError(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 };

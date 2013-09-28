@@ -58,11 +58,10 @@ namespace JSC {
     public:
         typedef JSDestructibleObject Base;
 
-        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+        JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
-        static JSFunction* create(ExecState* exec, FunctionExecutable* executable, JSScope* scope)
+        static JSFunction* create(VM& vm, FunctionExecutable* executable, JSScope* scope)
         {
-            VM& vm = exec->vm();
             JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
             ASSERT(function->structure()->globalObject());
             function->finishCreation(vm);
@@ -162,7 +161,7 @@ namespace JSC {
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
+        JS_EXPORT_PRIVATE JSFunction(VM&, JSGlobalObject*, Structure*);
         JSFunction(VM&, FunctionExecutable*, JSScope*);
         
         void finishCreation(VM&, NativeExecutable*, int length, const String& name);

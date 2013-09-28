@@ -1,3 +1,20 @@
+2013-09-28  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSFunction constructors.
+        <https://webkit.org/b/122014>
+
+        Reviewed by Geoffrey Garen.
+
+        JSFunction doesn't need the ExecState for anything during its
+        construction, so reduce the amount of loads by just passing the
+        VM around instead.
+
+        Factored out putDirectNonIndexAccessor() from the existing
+        putDirectAccessor() to avoid snowballing the patch (and because
+        it's kinda neat to avoid the extra branch.)
+
+        JSC release binary size -= 9680 bytes.
+
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
         JavaScriptCore fails to build with newer versions of clang.

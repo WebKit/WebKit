@@ -1155,7 +1155,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
     STUB_INIT_STACK_FRAME(stackFrame);
     
     ASSERT(stackFrame.callFrame->codeBlock()->codeType() != FunctionCode || !stackFrame.callFrame->codeBlock()->needsFullScopeChain() || stackFrame.callFrame->uncheckedR(stackFrame.callFrame->codeBlock()->activationRegister().offset()).jsValue());
-    return JSFunction::create(stackFrame.callFrame, stackFrame.args[0].function(), stackFrame.callFrame->scope());
+    return JSFunction::create(stackFrame.callFrame->vm(), stackFrame.args[0].function(), stackFrame.callFrame->scope());
 }
 
 inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
@@ -1930,7 +1930,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
     CallFrame* callFrame = stackFrame.callFrame;
 
     FunctionExecutable* function = stackFrame.args[0].function();
-    JSFunction* func = JSFunction::create(callFrame, function, callFrame->scope());
+    JSFunction* func = JSFunction::create(callFrame->vm(), function, callFrame->scope());
     ASSERT(callFrame->codeBlock()->codeType() != FunctionCode || !callFrame->codeBlock()->needsFullScopeChain() || callFrame->uncheckedR(callFrame->codeBlock()->activationRegister().offset()).jsValue());
 
     return func;

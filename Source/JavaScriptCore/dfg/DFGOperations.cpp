@@ -857,7 +857,7 @@ JSCell* JIT_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSCell* funct
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
+    return JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
 }
 
 EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
@@ -865,7 +865,7 @@ EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSCell* funct
     ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSValue::encode(JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
+    return JSValue::encode(JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
 }
 
 JSCell* JIT_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)
@@ -877,7 +877,7 @@ JSCell* JIT_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
 
     FunctionExecutable* functionExecutable =
         static_cast<FunctionExecutable*>(functionExecutableAsCell);
-    return JSFunction::create(exec, functionExecutable, exec->scope());
+    return JSFunction::create(vm, functionExecutable, exec->scope());
 }
 
 size_t JIT_OPERATION operationIsObject(ExecState* exec, EncodedJSValue value)

@@ -240,9 +240,9 @@ void JSGlobalObject::reset(JSValue prototype)
     m_applyFunction.set(vm, this, applyFunction);
     m_objectPrototype.set(vm, this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(vm, this, jsNull())));
     GetterSetter* protoAccessor = GetterSetter::create(vm);
-    protoAccessor->setGetter(vm, JSFunction::create(exec, this, 0, String(), globalFuncProtoGetter));
-    protoAccessor->setSetter(vm, JSFunction::create(exec, this, 0, String(), globalFuncProtoSetter));
-    m_objectPrototype->putDirectAccessor(exec, vm.propertyNames->underscoreProto, protoAccessor, Accessor | DontEnum);
+    protoAccessor->setGetter(vm, JSFunction::create(vm, this, 0, String(), globalFuncProtoGetter));
+    protoAccessor->setSetter(vm, JSFunction::create(vm, this, 0, String(), globalFuncProtoSetter));
+    m_objectPrototype->putDirectNonIndexAccessor(vm, vm.propertyNames->underscoreProto, protoAccessor, Accessor | DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     
     m_typedArrays[toIndex(TypeInt8)].prototype.set(vm, this, JSInt8ArrayPrototype::create(exec, this, JSInt8ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
@@ -384,7 +384,7 @@ void JSGlobalObject::reset(JSValue prototype)
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
 
 
-    m_evalFunction.set(vm, this, JSFunction::create(exec, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
+    m_evalFunction.set(vm, this, JSFunction::create(vm, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
     putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), DontEnum);
 
     putDirectWithoutTransition(vm, vm.propertyNames->JSON, JSONObject::create(exec, this, JSONObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
@@ -548,10 +548,9 @@ bool JSGlobalObject::stringPrototypeChainIsSane()
         && objectPrototypeIsSane();
 }
 
-void JSGlobalObject::createThrowTypeError(ExecState* exec)
+void JSGlobalObject::createThrowTypeError(VM& vm)
 {
-    VM& vm = exec->vm();
-    JSFunction* thrower = JSFunction::create(exec, this, 0, String(), globalFuncThrowTypeError);
+    JSFunction* thrower = JSFunction::create(vm, this, 0, String(), globalFuncThrowTypeError);
     GetterSetter* getterSetter = GetterSetter::create(vm);
     getterSetter->setGetter(vm, thrower);
     getterSetter->setSetter(vm, thrower);

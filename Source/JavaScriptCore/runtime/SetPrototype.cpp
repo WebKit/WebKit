@@ -62,9 +62,9 @@ void SetPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);
 
     GetterSetter* accessor = GetterSetter::create(vm);
-    JSFunction* function = JSFunction::create(exec, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);
+    JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);
     accessor->setGetter(vm, function);
-    putDirectAccessor(exec, vm.propertyNames->size, accessor, DontEnum | Accessor);
+    putDirectNonIndexAccessor(vm, vm.propertyNames->size, accessor, DontEnum | Accessor);
 }
 
 ALWAYS_INLINE static MapData* getMapData(CallFrame* callFrame, JSValue thisValue)

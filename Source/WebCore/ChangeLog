@@ -1,3 +1,12 @@
+2013-09-28  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSFunction constructors.
+        <https://webkit.org/b/122014>
+
+        Reviewed by Geoffrey Garen.
+
+        Updated for new JSFunction::create() signature.
+
 2013-09-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue() for CSSImageValue 

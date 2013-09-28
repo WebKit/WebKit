@@ -106,21 +106,23 @@ void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
     if (m_overrodeCaller)
         return;
 
+    VM& vm = exec->vm();
     m_overrodeCaller = true;
     PropertyDescriptor descriptor;
-    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Accessor);
-    methodTable()->defineOwnProperty(this, exec, exec->propertyNames().caller, descriptor, false);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(vm), DontEnum | DontDelete | Accessor);
+    methodTable()->defineOwnProperty(this, exec, vm.propertyNames->caller, descriptor, false);
 }
 
 void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
 {
     if (m_overrodeCallee)
         return;
-    
+
+    VM& vm = exec->vm();
     m_overrodeCallee = true;
     PropertyDescriptor descriptor;
-    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(exec), DontEnum | DontDelete | Accessor);
-    methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
+    descriptor.setAccessorDescriptor(globalObject()->throwTypeErrorGetterSetter(vm), DontEnum | DontDelete | Accessor);
+    methodTable()->defineOwnProperty(this, exec, vm.propertyNames->callee, descriptor, false);
 }
 
 bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

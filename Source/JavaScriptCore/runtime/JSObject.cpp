@@ -1192,8 +1192,11 @@ void JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSV
         return;
     }
 
-    VM& vm = exec->vm();
+    putDirectNonIndexAccessor(exec->vm(), propertyName, value, attributes);
+}
 
+void JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
+{
     PutPropertySlot slot;
     putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot, getCallableObject(value));
 
@@ -2202,18 +2205,20 @@ void JSObject::putDirectNativeFunction(ExecState* exec, JSGlobalObject* globalOb
 {
     StringImpl* name = propertyName.publicName();
     ASSERT(name);
-    
-    JSFunction* function = JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
-    putDirect(exec->vm(), propertyName, function, attributes);
+
+    VM& vm = exec->vm();
+    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic);
+    putDirect(vm, propertyName, function, attributes);
 }
 
 void JSObject::putDirectNativeFunctionWithoutTransition(ExecState* exec, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
 {
     StringImpl* name = propertyName.publicName();
     ASSERT(name);
-    
-    JSFunction* function = JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
-    putDirectWithoutTransition(exec->vm(), propertyName, function, attributes);
+
+    VM& vm = exec->vm();
+    JSFunction* function = JSFunction::create(vm, globalObject, functionLength, name, nativeFunction, intrinsic);
+    putDirectWithoutTransition(vm, propertyName, function, attributes);
 }
 
 ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength)
