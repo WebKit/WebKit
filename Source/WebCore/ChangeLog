@@ -1,3 +1,148 @@
+2013-09-28  Darin Adler  <darin@apple.com>
+
+        Add Frame::mainFrame and Frame::isMainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=122064
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in: Removed exports of FrameView::isMainFrameView and
+        Page::frameIsMainFrame. Since the new isMainFrame function is inline, it
+        does not need to be exported.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForFullStyleRecalc):
+        (WebCore::PageCache::markPagesForDeviceScaleChanged):
+        These two were the only functions I found that really wanted the equivalent
+        of Page::frameIsMainFrame, so wrote it out here instead of using a function
+        call.
+
+        * inspector/InspectorAgent.cpp: Removed the unused isMainResourceLoader function.
+        * inspector/InspectorAgent.h: Removed declarations of a few nonexistent or
+        unused private member functions. Also removed the InjectedScriptForOriginMap
+        typedef: It's mor readable to use the type directly
+
+        * loader/FrameLoader.h: Removed isLoadingMainFrame. It's not better than
+        calling frame().isMainFrame() directly.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Initialize m_mainFrame and call selfOnlyRef, keeping
+        the MainFrame alive as long as any of its subframes is alive.
+        (WebCore::Frame::~Frame): Call selfOnlyDeref.
+        (WebCore::Frame::createView): Use isMainFrame.
+        (WebCore::Frame::setPageAndTextZoomFactors): Ditto.
+
+        * page/Frame.h: Added Frame::mainFrame, Frame::isMainFrame, and Frame::m_mainFrame.
+
+        * page/FrameView.h: Removed the isMainFrameView function. It's not better than
+        calling frame().isMainFrame() directly.
+
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame): Initialize m_selfOnlyRefCount to 0.
+        (WebCore::MainFrame::selfOnlyRef): Added.
+        (WebCore::MainFrame::selfOnlyDeref): Added.
+        (WebCore::MainFrame::dropChildren): Added. Called when the self-only reference
+        count reaches 0 to avoid a reference cycle with subframes.
+
+        * page/MainFrame.h: Added new data members as mentioned above. Also, the
+        definition of the Frame::isMainFrame inline function goes here, since it can't
+        compile without the MainFrame class definition. This means that callers of
+        isMainFrame need to include MainFrame.h, which seems reasonable and is easy
+        to do.
+
+        * page/Page.cpp:
+        * page/Page.h: Added assertion to Page::mainFrame since it returns a reference.
+        Removed Page::frameIsMainFrame since it's not better than calling isMainFrame
+        on the frame.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::updateViewportArguments):
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::shouldShrinkToFit):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didClearWindowObjectInWorld):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::didLayout):
+        (WebCore::FrameLoader::checkLoadComplete):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        (WebCore::FrameLoader::loadProgressingStatusChanged):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+        (WebCore::HistoryController::updateBackForwardListClippedAtTarget):
+        (WebCore::HistoryController::pushState):
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::startLoader):
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::stopAutoscrollTimer):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * page/DOMWindow.cpp:
+        (WebCore::allowsBeforeUnloadListeners):
+        (WebCore::DOMWindow::focus):
+        (WebCore::DOMWindow::blur):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::allowedToChangeWindowGeometry):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::keyEvent):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::find):
+        (WebCore::FrameTree::traverseNextWithWrap):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::createScrollbar):
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::setHeaderHeight):
+        (WebCore::FrameView::setFooterHeight):
+        (WebCore::FrameView::minimumScrollPosition):
+        (WebCore::FrameView::maximumScrollPosition):
+        (WebCore::FrameView::shouldUpdateFixedElementsAfterScrolling):
+        (WebCore::FrameView::beginDeferredRepaints):
+        (WebCore::FrameView::endDeferredRepaints):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        (WebCore::FrameView::pagination):
+        (WebCore::FrameView::visibleContentScaleFactor):
+        (WebCore::FrameView::setVisibleScrollerThumbRect):
+        (WebCore::FrameView::scrollbarStyleChanged):
+        (WebCore::FrameView::paintScrollCorner):
+        (WebCore::FrameView::paintScrollbar):
+        (WebCore::FrameView::paintOverhangAreas):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        Use the new functions where possible instead of Page::frameIsMainFrame,
+        Page::mainFrame, FrameLoader::isLoadingMainFrame, and FrameView::isMainFrameView.
+
 2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         filter: drop-shadow doesnot support viewport units

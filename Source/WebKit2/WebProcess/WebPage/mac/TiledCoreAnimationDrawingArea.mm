@@ -706,7 +706,7 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 
 bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
 {
-    return frameView && frameView->isMainFrameView();
+    return frameView && frameView->frame().isMainFrame();
 }
 
 } // namespace WebKit

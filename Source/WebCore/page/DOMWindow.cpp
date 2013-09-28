@@ -215,10 +215,9 @@ static bool allowsBeforeUnloadListeners(DOMWindow* window)
     Frame* frame = window->frame();
     if (!frame)
         return false;
-    Page* page = frame->page();
-    if (!page)
+    if (!frame->page())
         return false;
-    return page->frameIsMainFrame(frame);
+    return frame->isMainFrame();
 }
 
 bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
@@ -906,7 +905,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     }
 
     // If we're a top level window, bring the window to the front.
-    if (page->frameIsMainFrame(m_frame) && allowFocus)
+    if (m_frame->isMainFrame() && allowFocus)
         page->chrome().focus();
 
     if (!m_frame)
@@ -932,7 +931,7 @@ void DOMWindow::blur()
     if (m_frame->settings().windowFocusRestricted())
         return;
 
-    if (m_frame != &page->mainFrame())
+    if (!m_frame->isMainFrame())
         return;
 
     page->chrome().unfocus();
@@ -947,7 +946,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
     if (!page)
         return;
 
-    if (m_frame != &page->mainFrame())
+    if (!m_frame->isMainFrame())
         return;
 
     if (context) {
@@ -1452,10 +1451,9 @@ bool DOMWindow::allowedToChangeWindowGeometry() const
 {
     if (!m_frame)
         return false;
-    const Page* page = m_frame->page();
-    if (!page)
+    if (!m_frame->page())
         return false;
-    if (m_frame != &page->mainFrame())
+    if (!m_frame->isMainFrame())
         return false;
     // Prevent web content from tricking the user into initiating a drag.
     if (m_frame->eventHandler().mousePressed())

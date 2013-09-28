@@ -35,7 +35,6 @@
 #include "InspectorController.h"
 
 #include "DOMWrapperWorld.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptHost.h"
@@ -69,6 +68,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "MainFrame.h"
 #include "PageConsoleAgent.h"
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
@@ -222,7 +222,7 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend
     // client that it's cleared so that the client can expose inspector bindings.
-    if (m_inspectorFrontendClient && m_page->frameIsMainFrame(frame))
+    if (m_inspectorFrontendClient && frame->isMainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 }
 

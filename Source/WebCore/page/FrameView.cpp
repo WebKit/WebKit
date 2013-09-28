@@ -204,7 +204,7 @@ FrameView::FrameView(Frame& frame)
 {
     init();
 
-    if (isMainFrameView()) {
+    if (frame.isMainFrame()) {
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
     }
@@ -410,11 +410,6 @@ void FrameView::clear()
     setScrollbarsSuppressed(true);
 }
 
-bool FrameView::isMainFrameView() const
-{
-    return frame().page() && frame().page()->frameIsMainFrame(&frame());
-}
-
 bool FrameView::didFirstLayout() const
 {
     return !m_firstLayout;
@@ -448,7 +443,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     // Autosized font sizes depend on the width of the viewing area.
     if (newRect.width() != oldRect.width()) {
         Page* page = frame().page();
-        if (isMainFrameView() && page->settings().textAutosizingEnabled()) {
+        if (frame().isMainFrame() && page->settings().textAutosizingEnabled()) {
             for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
                 frame().document()->textAutosizer()->recalculateMultipliers();
         }
@@ -538,7 +533,7 @@ void FrameView::updateCanHaveScrollbars()
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (!frame().settings().allowCustomScrollbarInMainFrame() && isMainFrameView())
+    if (!frame().settings().allowCustomScrollbarInMainFrame() && frame().isMainFrame())
         return ScrollView::createScrollbar(orientation);
 
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
@@ -614,7 +609,7 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     // there is a frameScaleFactor that is greater than one on the main frame. Also disregard hidden if there is a
     // header or footer.
 
-    bool overrideHidden = isMainFrameView() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
+    bool overrideHidden = frame().isMainFrame() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
     EOverflow overflowX = o->style()->overflowX();
     EOverflow overflowY = o->style()->overflowY();
@@ -920,7 +915,7 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
 void FrameView::setHeaderHeight(int headerHeight)
 {
     if (frame().page())
-        ASSERT(isMainFrameView());
+        ASSERT(frame().isMainFrame());
     m_headerHeight = headerHeight;
 
     if (RenderView* renderView = this->renderView())
@@ -930,7 +925,7 @@ void FrameView::setHeaderHeight(int headerHeight)
 void FrameView::setFooterHeight(int footerHeight)
 {
     if (frame().page())
-        ASSERT(isMainFrameView());
+        ASSERT(frame().isMainFrame());
     m_footerHeight = footerHeight;
 
     if (RenderView* renderView = this->renderView())
@@ -1596,7 +1591,7 @@ IntPoint FrameView::minimumScrollPosition() const
 {
     IntPoint minimumPosition(ScrollView::minimumScrollPosition());
 
-    if (isMainFrameView() && m_scrollPinningBehavior == PinToBottom)
+    if (frame().isMainFrame() && m_scrollPinningBehavior == PinToBottom)
         minimumPosition.setY(maximumScrollPosition().y());
     
     return minimumPosition;
@@ -1608,7 +1603,7 @@ IntPoint FrameView::maximumScrollPosition() const
 
     maximumOffset.clampNegativeToZero();
 
-    if (isMainFrameView() && m_scrollPinningBehavior == PinToTop)
+    if (frame().isMainFrame() && m_scrollPinningBehavior == PinToTop)
         maximumOffset.setY(minimumScrollPosition().y());
     
     return maximumOffset;
@@ -1994,11 +1989,12 @@ void FrameView::repaintFixedElementsAfterScrolling()
 bool FrameView::shouldUpdateFixedElementsAfterScrolling()
 {
 #if ENABLE(THREADED_SCROLLING)
+    // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
+
     Page* page = frame().page();
     if (!page)
         return true;
 
-    // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
     if (&page->mainFrame() != &frame())
         return true;
 
@@ -2186,9 +2182,8 @@ void FrameView::addedOrRemovedScrollbar()
 
 void FrameView::beginDeferredRepaints()
 {
-    Page* page = frame().page();
-    if (&page->mainFrame() != &frame()) {
-        page->mainFrame().view()->beginDeferredRepaints();
+    if (!frame().isMainFrame()) {
+        frame().mainFrame().view()->beginDeferredRepaints();
         return;
     }
 
@@ -2197,9 +2192,8 @@ void FrameView::beginDeferredRepaints()
 
 void FrameView::endDeferredRepaints()
 {
-    Page* page = frame().page();
-    if (&page->mainFrame() != &frame()) {
-        page->mainFrame().view()->endDeferredRepaints();
+    if (!frame().isMainFrame()) {
+        frame().mainFrame().view()->endDeferredRepaints();
         return;
     }
 
@@ -2742,7 +2736,7 @@ void FrameView::performPostLayoutTasks()
             frame().loader().didFirstLayout();
             if (requestedMilestones & DidFirstLayout)
                 milestonesAchieved |= DidFirstLayout;
-            if (isMainFrameView())
+            if (frame().isMainFrame())
                 page->startCountingRelevantRepaintedObjects();
         }
         updateIsVisuallyNonEmpty();
@@ -2755,7 +2749,7 @@ void FrameView::performPostLayoutTasks()
         }
     }
 
-    if (milestonesAchieved && page && page->frameIsMainFrame(&frame()))
+    if (milestonesAchieved && frame().isMainFrame())
         frame().loader().didLayout(milestonesAchieved);
 
 #if ENABLE(FONT_LOAD_EVENTS)
@@ -2818,7 +2812,7 @@ void FrameView::sendResizeEventIfNeeded()
     if (!shouldSendResizeEvent)
         return;
 
-    bool isMainFrame = isMainFrameView();
+    bool isMainFrame = frame().isMainFrame();
     bool canSendResizeEventSynchronously = isMainFrame && !isInLayout();
 
     // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
@@ -2994,7 +2988,7 @@ const Pagination& FrameView::pagination() const
     if (m_pagination != Pagination())
         return m_pagination;
 
-    if (isMainFrameView())
+    if (frame().isMainFrame())
         return frame().page()->pagination();
 
     return m_pagination;
@@ -3083,7 +3077,7 @@ IntRect FrameView::windowResizerRect() const
 
 float FrameView::visibleContentScaleFactor() const
 {
-    if (!isMainFrameView() || !frame().settings().applyPageScaleFactorInCompositor())
+    if (!frame().isMainFrame() || !frame().settings().applyPageScaleFactorInCompositor())
         return 1;
 
     return frame().page()->pageScaleFactor();
@@ -3091,7 +3085,7 @@ float FrameView::visibleContentScaleFactor() const
 
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
-    if (!isMainFrameView())
+    if (!frame().isMainFrame())
         return;
 
     frame().page()->chrome().client().notifyScrollerThumbIsVisibleInRect(scrollerThumb);
@@ -3163,7 +3157,7 @@ bool FrameView::shouldSuspendScrollAnimations() const
 
 void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
 {
-    if (!isMainFrameView())
+    if (!frame().isMainFrame())
         return;
 
     frame().page()->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
@@ -3269,7 +3263,7 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     }
 
     if (m_scrollCorner) {
-        if (isMainFrameView())
+        if (frame().isMainFrame())
             context->fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
@@ -3280,7 +3274,7 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
 
 void FrameView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
 {
-    if (bar->isCustomScrollbar() && isMainFrameView()) {
+    if (bar->isCustomScrollbar() && frame().isMainFrame()) {
         IntRect toFill = bar->frameRect();
         toFill.intersect(rect);
         context->fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
@@ -3621,7 +3615,7 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     if (frame().document()->printing())
         return;
 
-    if (isMainFrameView() && frame().page()->chrome().client().paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
+    if (frame().isMainFrame() && frame().page()->chrome().client().paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
         return;
 
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);

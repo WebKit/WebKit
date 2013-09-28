@@ -922,7 +922,7 @@ void ContextMenuController::populate()
                 }
 #endif
 
-                if (frame->page() && frame != &frame->page()->mainFrame())
+                if (frame->page() && !frame->isMainFrame())
                     appendItem(OpenFrameItem, m_contextMenu.get());
             }
         }

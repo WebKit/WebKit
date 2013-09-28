@@ -47,6 +47,7 @@
 #include "HTMLFormElement.h"
 #include "HTTPStatusCodes.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PluginDatabase.h"
@@ -183,7 +184,7 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
     bool isMainFrameRequest = false;
     if (loader) {
             const FrameLoader* frameLoader = loader->frameLoader();
-            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
+            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->frame().isMainFrame());
     }
 
     Ewk_Frame_Resource_Request request = { 0, firstParty.data(), httpMethod.data(), identifier, m_frame, isMainFrameRequest };
@@ -236,7 +237,7 @@ void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identi
     bool isMainFrameRequest = false;
     if (loader) {
             const FrameLoader* frameLoader = loader->frameLoader();
-            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->isLoadingMainFrame());
+            isMainFrameRequest = (loader == frameLoader->provisionalDocumentLoader() && frameLoader->frame().isMainFrame());
     }
 
     Ewk_Frame_Resource_Request request = { url.data(), firstParty.data(), httpMethod.data(), identifier, m_frame, isMainFrameRequest };
@@ -992,7 +993,7 @@ void FrameLoaderClientEfl::updateGlobalHistory()
         return;
 
     const FrameLoader* frameLoader = loader->frameLoader();
-    const bool isMainFrameRequest = frameLoader && (loader == frameLoader->provisionalDocumentLoader()) && frameLoader->isLoadingMainFrame();
+    const bool isMainFrameRequest = frameLoader && (loader == frameLoader->provisionalDocumentLoader()) && frameLoader->frame().isMainFrame();
     const CString& urlForHistory = loader->urlForHistory().string().utf8();
     const CString& title = loader->title().string().utf8();
     const CString& firstParty = loader->request().firstPartyForCookies().string().utf8();

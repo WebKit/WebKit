@@ -1,3 +1,14 @@
+2013-09-28  Darin Adler  <darin@apple.com>
+
+        Add Frame::mainFrame and Frame::isMainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=122064
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::assignIdentifierToInitialRequest):
+        Call isMainFrame.
+
 2013-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix after r156560.

@@ -166,7 +166,6 @@ public:
     ResourceError cancelledError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
-    bool isLoadingMainFrame() const;
 
     bool isReplacing() const;
     void setReplacing();

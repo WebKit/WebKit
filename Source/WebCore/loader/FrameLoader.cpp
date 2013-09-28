@@ -1831,7 +1831,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     setState(FrameStateCommittedPage);
 
 #if ENABLE(TOUCH_EVENTS)
-    if (isLoadingMainFrame())
+    if (m_frame.isMainFrame())
         m_frame.page()->chrome().client().needTouchEvents(false);
 #endif
 
@@ -1846,7 +1846,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
                 // If the first load within a frame is a navigation within a back/forward list that was attached
                 // without any of the items being loaded then we need to update the history in a similar manner as
                 // for a standard load with the exception of updating the back/forward list (<rdar://problem/8091103>).
-                if (!m_stateMachine.committedFirstRealDocumentLoad() && isLoadingMainFrame())
+                if (!m_stateMachine.committedFirstRealDocumentLoad() && m_frame.isMainFrame())
                     history().updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
 
                 history().updateForBackForwardNavigation();
@@ -1960,7 +1960,7 @@ void FrameLoader::prepareForCachedPageRestore()
 {
     ASSERT(!m_frame.tree().parent());
     ASSERT(m_frame.page());
-    ASSERT(m_frame.page()->frameIsMainFrame(&m_frame));
+    ASSERT(m_frame.isMainFrame());
 
     m_frame.navigationScheduler().cancel();
 
@@ -2025,11 +2025,6 @@ bool FrameLoader::isHostedByObjectElement() const
 {
     HTMLFrameOwnerElement* owner = m_frame.ownerElement();
     return owner && owner->hasTagName(objectTag);
-}
-
-bool FrameLoader::isLoadingMainFrame() const
-{
-    return m_frame.page() && m_frame.page()->frameIsMainFrame(&m_frame);
 }
 
 bool FrameLoader::isReplacing() const
@@ -2179,7 +2174,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             m_progressTracker->progressCompleted();
             if (Page* page = m_frame.page()) {
-                if (page->frameIsMainFrame(&m_frame))
+                if (m_frame.isMainFrame())
                     page->resetRelevantPaintedObjectCounter();
             }
 
@@ -2286,10 +2281,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 
 void FrameLoader::didLayout(LayoutMilestones milestones)
 {
-#if !ASSERT_DISABLED
-    if (Page* page = m_frame.page())
-        ASSERT(page->frameIsMainFrame(&m_frame));
-#endif
+    ASSERT(m_frame.isMainFrame());
 
     m_client.dispatchDidLayout(milestones);
 }
@@ -2353,7 +2345,7 @@ void FrameLoader::checkLoadComplete()
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
     Vector<Ref<Frame>, 16> frames;
-    for (Frame* frame = &m_frame.page()->mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &m_frame.mainFrame(); frame; frame = frame->tree().traverseNext())
         frames.append(*frame);
 
     // To process children before their parents, iterate the vector backwards.
@@ -2446,7 +2438,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     if (request.firstPartyForCookies().isEmpty()) {
-        if (mainResource && isLoadingMainFrame())
+        if (mainResource && m_frame.isMainFrame())
             request.setFirstPartyForCookies(request.url());
         else if (Document* document = m_frame.document())
             request.setFirstPartyForCookies(document->firstPartyForCookies());
@@ -2586,8 +2578,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         initialRequest.setHTTPReferrer(referrer);
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
-    if (Page* page = m_frame.page())
-        initialRequest.setFirstPartyForCookies(page->mainFrame().loader().documentLoader()->request().url());
+    initialRequest.setFirstPartyForCookies(m_frame.mainFrame().loader().documentLoader()->request().url());
     
     addExtraFieldsToSubresourceRequest(initialRequest);
 
@@ -2840,9 +2831,9 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
         // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
+        if ((isTargetItem || m_frame.isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (Page* page = m_frame.page()) {
-                if (HistoryItem* resetItem = page->mainFrame().loader().history().currentItem()) {
+                if (HistoryItem* resetItem = m_frame.mainFrame().loader().history().currentItem()) {
                     page->backForward().setCurrentItem(resetItem);
                     m_frame.loader().client().updateGlobalHistoryItemForPage();
                 }
@@ -2862,7 +2853,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
     if (Page* page = m_frame.page()) {
-        if (page->frameIsMainFrame(&m_frame))
+        if (m_frame.isMainFrame())
             page->inspectorController()->resume();
     }
 #endif
@@ -3322,14 +3313,14 @@ void FrameLoader::dispatchDidCommitLoad()
 
     m_client.dispatchDidCommitLoad();
 
-    if (isLoadingMainFrame()) {
+    if (m_frame.isMainFrame()) {
         m_frame.page()->resetSeenPlugins();
         m_frame.page()->resetSeenMediaEngines();
     }
 
     InspectorInstrumentation::didCommitLoad(&m_frame, m_documentLoader.get());
 
-    if (m_frame.page()->frameIsMainFrame(&m_frame))
+    if (m_frame.isMainFrame())
         m_frame.page()->featureObserver()->didCommitLoad();
 
 }
@@ -3368,7 +3359,7 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::loadProgressingStatusChanged()
 {
-    FrameView* view = m_frame.page()->mainFrame().view();
+    FrameView* view = m_frame.mainFrame().view();
     view->updateLayerFlushThrottlingInAllFrames();
     view->adjustTiledBackingCoverage();
 }

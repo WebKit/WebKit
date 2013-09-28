@@ -35,9 +35,21 @@ class MainFrame FINAL : public Frame {
 public:
     static RefPtr<MainFrame> create(Page&, FrameLoaderClient&);
 
+    void selfOnlyRef();
+    void selfOnlyDeref();
+
 private:
     MainFrame(Page&, FrameLoaderClient&);
+
+    void dropChildren();
+
+    unsigned m_selfOnlyRefCount;
 };
+
+inline bool Frame::isMainFrame() const
+{
+    return this == &m_mainFrame;
+}
 
 }
 

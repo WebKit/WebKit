@@ -400,7 +400,7 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (page->frameIsMainFrame(&cachedPage->cachedMainFrame()->view()->frame()))
+        if (&page->mainFrame() == &cachedPage->cachedMainFrame()->view()->frame())
             cachedPage->markForFullStyleRecalc();
     }
 }
@@ -411,7 +411,7 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (page->frameIsMainFrame(&cachedPage->cachedMainFrame()->view()->frame()))
+        if (&page->mainFrame() == &cachedPage->cachedMainFrame()->view()->frame())
             cachedPage->markForDeviceScaleChanged();
     }
 }

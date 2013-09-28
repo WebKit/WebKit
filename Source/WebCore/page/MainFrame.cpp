@@ -31,12 +31,39 @@ namespace WebCore {
 
 inline MainFrame::MainFrame(Page& page, FrameLoaderClient& client)
     : Frame(page, nullptr, client)
+    , m_selfOnlyRefCount(0)
 {
 }
 
 RefPtr<MainFrame> MainFrame::create(Page& page, FrameLoaderClient& client)
 {
     return adoptRef(new MainFrame(page, client));
+}
+
+void MainFrame::selfOnlyRef()
+{
+    if (m_selfOnlyRefCount++)
+        return;
+
+    ref();
+}
+
+void MainFrame::selfOnlyDeref()
+{
+    ASSERT(m_selfOnlyRefCount);
+    if (--m_selfOnlyRefCount)
+        return;
+
+    if (hasOneRef())
+        dropChildren();
+
+    deref();
+}
+
+void MainFrame::dropChildren()
+{
+    while (Frame* child = tree().firstChild())
+        tree().removeChild(child);
 }
 
 }

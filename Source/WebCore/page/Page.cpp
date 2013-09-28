@@ -239,11 +239,6 @@ Page::~Page()
     m_pageThrottler.clear();
 }
 
-bool Page::frameIsMainFrame(const Frame* frame)
-{
-    return frame == m_mainFrame.get();
-}
-
 ArenaSize Page::renderTreeSize() const
 {
     ArenaSize total(0, 0);

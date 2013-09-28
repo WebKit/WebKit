@@ -873,7 +873,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (world != mainThreadNormalWorld())
         return;
 
-    if (m_page->frameIsMainFrame(frame))
+    if (frame->isMainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
     if (!m_frontend)
@@ -905,7 +905,7 @@ void InspectorPageAgent::loadEventFired()
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
 {
-    if (m_page->frameIsMainFrame(loader->frame())) {
+    if (loader->frame()->isMainFrame()) {
         m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
         m_scriptPreprocessor = m_pendingScriptPreprocessor;
         m_pendingScriptToEvaluateOnLoadOnce = String();

@@ -116,10 +116,8 @@ void AutoscrollController::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
 #if ENABLE(PAN_SCROLLING)
     // If we're not in the top frame we notify it that we are not doing a panScroll any more.
-    if (Frame* mainFrame = getMainFrame(&frame)) {
-        if (&frame != mainFrame)
-            mainFrame->eventHandler().didPanScrollStop();
-    }
+    if (!frame.isMainFrame())
+        frame.mainFrame().eventHandler().didPanScrollStop();
 #endif
 }
 

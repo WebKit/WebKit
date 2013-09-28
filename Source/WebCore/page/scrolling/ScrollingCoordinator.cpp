@@ -102,7 +102,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     ASSERT(m_page);
 
     // We currently only handle the main frame.
-    if (&frameView->frame() != &m_page->mainFrame())
+    if (!frameView->frame().isMainFrame())
         return false;
 
     // We currently only support composited mode.

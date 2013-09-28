@@ -139,11 +139,6 @@ void InspectorAgent::domContentLoadedEventFired()
     m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
 }
 
-bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const URL& requestUrl)
-{
-    return m_inspectedPage->frameIsMainFrame(loader->frame()) && requestUrl == loader->requestURL();
-}
-
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))

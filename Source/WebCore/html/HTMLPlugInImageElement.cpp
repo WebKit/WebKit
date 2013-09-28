@@ -605,7 +605,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
         return;
     }
 
-    bool inMainFrame = document().page()->frameIsMainFrame(document().frame());
+    bool inMainFrame = document().frame()->isMainFrame();
 
     if (document().isPluginDocument() && inMainFrame) {
         LOG(Plugins, "%p Plug-in document in main frame", this);

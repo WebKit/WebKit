@@ -277,37 +277,35 @@ Frame* FrameTree::find(const AtomicString& name) const
     if (name == "_parent")
         return parent() ? parent() : m_thisFrame;
 
-    // Since "_blank" should never be any frame's name, the following just amounts to an optimization.
+    // Since "_blank" should never be any frame's name, the following is only an optimization.
     if (name == "_blank")
         return 0;
 
     // Search subtree starting with this frame first.
-    for (Frame* frame = m_thisFrame; frame; frame = frame->tree().traverseNext(m_thisFrame))
+    for (Frame* frame = m_thisFrame; frame; frame = frame->tree().traverseNext(m_thisFrame)) {
         if (frame->tree().uniqueName() == name)
             return frame;
+    }
 
-    // Search the entire tree for this page next.
-    Page* page = m_thisFrame->page();
-
-    // The frame could have been detached from the page, so check it.
-    if (!page)
-        return 0;
-
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
+    // Then the rest of the tree.
+    for (Frame* frame = &m_thisFrame->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->tree().uniqueName() == name)
             return frame;
+    }
 
     // Search the entire tree of each of the other pages in this namespace.
     // FIXME: Is random order OK?
+    Page* page = m_thisFrame->page();
+    if (!page)
+        return 0;
     const HashSet<Page*>& pages = page->group().pages();
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+    for (auto it = pages.begin(), end = pages.end(); it != end; ++it) {
         Page* otherPage = *it;
-        if (otherPage != page) {
-            for (Frame* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-                if (frame->tree().uniqueName() == name)
-                    return frame;
-            }
+        if (otherPage == page)
+            continue;
+        for (Frame* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            if (frame->tree().uniqueName() == name)
+                return frame;
         }
     }
 
@@ -367,7 +365,7 @@ Frame* FrameTree::traverseNextWithWrap(bool wrap) const
         return result;
 
     if (wrap)
-        return &m_thisFrame->page()->mainFrame();
+        return &m_thisFrame->mainFrame();
 
     return 0;
 }

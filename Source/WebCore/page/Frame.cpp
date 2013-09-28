@@ -152,7 +152,8 @@ static inline float parentTextZoomFactor(Frame* frame)
 }
 
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient& frameLoaderClient)
-    : m_page(&page)
+    : m_mainFrame(ownerElement ? page.mainFrame() : static_cast<MainFrame&>(*this))
+    , m_page(&page)
     , m_settings(&page.settings())
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
     , m_loader(*this, frameLoaderClient)
@@ -188,6 +189,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
         setTiledBackingStoreEnabled(settings().tiledBackingStoreEnabled());
 #endif
     } else {
+        m_mainFrame.selfOnlyRef();
         page.incrementSubframeCount();
         ownerElement->setContentFrame(this);
     }
@@ -225,6 +227,9 @@ Frame::~Frame()
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->frameDestroyed();
+
+    if (!isMainFrame())
+        m_mainFrame.selfOnlyDeref();
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)
@@ -645,7 +650,7 @@ void Frame::disconnectOwnerElement()
         if (m_page)
             m_page->decrementSubframeCount();
     }
-    m_ownerElement = 0;
+    m_ownerElement = nullptr;
 }
 
 String Frame::displayStringModifiedByEncoding(const String& str) const
@@ -713,7 +718,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     ASSERT(this);
     ASSERT(m_page);
 
-    bool isMainFrame = m_page->frameIsMainFrame(this);
+    bool isMainFrame = this->isMainFrame();
 
     if (isMainFrame && view())
         view()->setParentVisible(false);
@@ -886,7 +891,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
             view->layout();
     }
 
-    if (page->frameIsMainFrame(this))
+    if (isMainFrame())
         pageCache()->markPagesForFullStyleRecalc(page);
 }
 

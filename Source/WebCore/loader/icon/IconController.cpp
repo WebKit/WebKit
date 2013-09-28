@@ -37,7 +37,6 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "IconDatabase.h"
@@ -45,6 +44,7 @@
 #include "IconLoader.h"
 #include "IconURL.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "Settings.h"
 
@@ -130,7 +130,8 @@ void IconController::startLoader()
 {
     // FIXME: We kick off the icon loader when the frame is done receiving its main resource.
     // But we should instead do it when we're done parsing the head element.
-    if (!m_frame->loader().isLoadingMainFrame())
+
+    if (!m_frame->isMainFrame())
         return;
 
     if (!iconDatabase().isEnabled())

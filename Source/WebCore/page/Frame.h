@@ -64,6 +64,7 @@ namespace WebCore {
     class HTMLFrameOwnerElement;
     class HTMLTableCellElement;
     class IntRect;
+    class MainFrame;
     class Node;
     class Range;
     class RegularExpression;
@@ -108,6 +109,9 @@ namespace WebCore {
         void willDetachPage();
         void detachFromPage();
         void disconnectOwnerElement();
+
+        MainFrame& mainFrame() const;
+        bool isMainFrame() const;
 
         Page* page() const;
         HTMLFrameOwnerElement* ownerElement() const;
@@ -205,6 +209,7 @@ namespace WebCore {
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
+        MainFrame& m_mainFrame;
         Page* m_page;
         const RefPtr<Settings> m_settings;
         mutable FrameTree m_treeNode;
@@ -334,6 +339,11 @@ namespace WebCore {
     inline EventHandler& Frame::eventHandler() const
     {
         return *m_eventHandler;
+    }
+
+    inline MainFrame& Frame::mainFrame() const
+    {
+        return m_mainFrame;
     }
 
 } // namespace WebCore

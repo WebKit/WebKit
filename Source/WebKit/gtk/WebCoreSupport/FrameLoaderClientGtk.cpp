@@ -276,7 +276,7 @@ void FrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifie
     WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, "uri", request.url().string().utf8().data(), 0));
 
     if (loader == loader->frameLoader()->provisionalDocumentLoader()
-        && loader->frameLoader()->isLoadingMainFrame()) {
+        && loader->frameLoader()->frame().isMainFrame()) {
         webkit_web_view_add_main_resource(getViewFromFrame(m_frame), identifierString.get(), webResource);
         return;
     }

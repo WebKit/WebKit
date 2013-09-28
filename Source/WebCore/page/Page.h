@@ -162,9 +162,8 @@ public:
     EditorClient* editorClient() const { return m_editorClient; }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
-    MainFrame& mainFrame() { return *m_mainFrame; }
-    const MainFrame& mainFrame() const { return *m_mainFrame; }
-    bool frameIsMainFrame(const Frame*);
+    MainFrame& mainFrame() { ASSERT(m_mainFrame); return *m_mainFrame; }
+    const MainFrame& mainFrame() const { ASSERT(m_mainFrame); return *m_mainFrame; }
 
     bool openedByDOM() const;
     void setOpenedByDOM();

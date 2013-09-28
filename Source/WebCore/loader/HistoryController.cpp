@@ -81,7 +81,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         item->setScrollPoint(m_frame.view()->scrollPosition());
 
     Page* page = m_frame.page();
-    if (page && page->frameIsMainFrame(&m_frame))
+    if (page && m_frame.isMainFrame())
         item->setPageScaleFactor(page->pageScaleFactor());
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
@@ -134,13 +134,13 @@ void HistoryController::restoreScrollPositionAndViewState()
     // https://bugs.webkit.org/show_bug.cgi?id=98698
     if (FrameView* view = m_frame.view()) {
         Page* page = m_frame.page();
-        if (page && page->frameIsMainFrame(&m_frame)) {
+        if (page && m_frame.isMainFrame()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewRootLayerDidChange(view);
         }
 
         if (!view->wasScrolledByUser()) {
-            if (page && page->frameIsMainFrame(&m_frame) && m_currentItem->pageScaleFactor())
+            if (page && m_frame.isMainFrame() && m_currentItem->pageScaleFactor())
                 page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
             else
                 view->setScrollPosition(m_currentItem->scrollPoint());
@@ -464,9 +464,7 @@ void HistoryController::updateForCommit()
         // Tell all other frames in the tree to commit their provisional items and
         // restore their scroll position.  We'll avoid this frame (which has already
         // committed) and its children (which will be replaced).
-        Page* page = m_frame.page();
-        ASSERT(page);
-        page->mainFrame().loader().history().recursiveUpdateForCommit();
+        m_frame.mainFrame().loader().history().recursiveUpdateForCommit();
     }
 }
 
@@ -531,7 +529,7 @@ void HistoryController::updateForSameDocumentNavigation()
         return;
 
     addVisitedLink(page, m_frame.document()->url());
-    page->mainFrame().loader().history().recursiveUpdateForSameDocumentNavigation();
+    m_frame.mainFrame().loader().history().recursiveUpdateForSameDocumentNavigation();
 
     if (m_currentItem) {
         m_currentItem->setURL(m_frame.document()->url());
@@ -796,7 +794,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     if (m_frame.loader().documentLoader()->urlForHistory().isEmpty())
         return;
 
-    FrameLoader& frameLoader = page->mainFrame().loader();
+    FrameLoader& frameLoader = m_frame.mainFrame().loader();
 
     frameLoader.checkDidPerformFirstNavigation();
 
@@ -839,7 +837,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     ASSERT(page);
 
     // Get a HistoryItem tree for the current frame tree.
-    RefPtr<HistoryItem> topItem = page->mainFrame().loader().history().createItemTree(m_frame, false);
+    RefPtr<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
     
     // Override data in the current item (created by createItemTree) to reflect
     // the pushState() arguments.

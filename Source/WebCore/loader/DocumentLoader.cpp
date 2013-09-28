@@ -41,7 +41,6 @@
 #include "DocumentWriter.h"
 #include "Event.h"
 #include "FormState.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
@@ -51,6 +50,7 @@
 #include "IconController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PolicyChecker.h"
@@ -495,7 +495,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
 
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if (frameLoader()->isLoadingMainFrame())
+    if (frameLoader()->frame().isMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
 
     // If we're fielding a redirect in response to a POST, force a load from origin, since

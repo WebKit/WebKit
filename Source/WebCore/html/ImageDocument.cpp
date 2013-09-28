@@ -30,7 +30,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -38,6 +37,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
+#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -374,7 +374,7 @@ CachedImage* ImageDocument::cachedImage()
 
 bool ImageDocument::shouldShrinkToFit() const
 {
-    return frame()->settings().shrinksStandaloneImagesToFit() && frame()->page()->frameIsMainFrame(frame());
+    return frame()->settings().shrinksStandaloneImagesToFit() && frame()->isMainFrame();
 }
 
 void ImageEventListener::handleEvent(ScriptExecutionContext*, Event* event)

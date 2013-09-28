@@ -44,6 +44,7 @@
 #include "Image.h"
 #include "InputHandler.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "NetworkManager.h"
 #include "NodeList.h"
 #include "PNGImageEncoder.h"
@@ -54,9 +55,7 @@
 #include "ResourceBuffer.h"
 #include "ScopePointer.h"
 #include "SelectionHandler.h"
-#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "Settings.h"
-#endif
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TouchEventHandler.h"
@@ -971,7 +970,7 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
 
     // TargetType for subresource loads should have been set in CachedResource::load().
     if (isMainResourceLoad)
-        request.setTargetType(docLoader->frameLoader()->isLoadingMainFrame() ? ResourceRequest::TargetIsMainFrame : ResourceRequest::TargetIsSubframe);
+        request.setTargetType(docLoader->frameLoader()->frame().isMainFrame() ? ResourceRequest::TargetIsMainFrame : ResourceRequest::TargetIsSubframe);
 
     // Any processing which is done for all loads (both main and subresource) should go here.
     NetworkRequest platformRequest;

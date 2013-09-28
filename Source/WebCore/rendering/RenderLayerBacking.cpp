@@ -45,6 +45,7 @@
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
+#include "MainFrame.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RenderIFrame.h"
@@ -121,7 +122,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     Page* page = renderer().frame().page();
 
     if (layer->isRootLayer() && page) {
-        if (page->frameIsMainFrame(&renderer().frame()))
+        if (renderer().frame().isMainFrame())
             m_isMainFrameRenderViewLayer = true;
 
         m_usingTiledCacheLayer = page->chrome().client().shouldUseTiledBackingForFrameView(renderer().frame().view());
