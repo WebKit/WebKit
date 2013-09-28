@@ -37,28 +37,29 @@
 #include "PageGroup.h"
 #include "PlatformStrategies.h"
 #include "VisitedLinkStrategy.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-inline static const AtomicString* linkAttribute(Element* element)
+inline static const AtomicString* linkAttribute(Element& element)
 {
-    if (!element->isLink())
+    if (!element.isLink())
         return 0;
-    if (element->isHTMLElement())
-        return &element->fastGetAttribute(HTMLNames::hrefAttr);
-    if (element->isSVGElement())
-        return &element->getAttribute(XLinkNames::hrefAttr);
+    if (element.isHTMLElement())
+        return &element.fastGetAttribute(HTMLNames::hrefAttr);
+    if (element.isSVGElement())
+        return &element.getAttribute(XLinkNames::hrefAttr);
     return 0;
 }
 
-PassOwnPtr<VisitedLinkState> VisitedLinkState::create(Document* document)
+PassOwnPtr<VisitedLinkState> VisitedLinkState::create(Document& document)
 {
     return adoptPtr(new VisitedLinkState(document));
 }
 
-VisitedLinkState::VisitedLinkState(Document* document)
+VisitedLinkState::VisitedLinkState(Document& document)
     : m_document(document)
 {
 }
@@ -67,18 +68,18 @@ void VisitedLinkState::invalidateStyleForAllLinks()
 {
     if (m_linksCheckedForVisitedState.isEmpty())
         return;
-    for (Element* element = ElementTraversal::firstWithin(m_document); element; element = ElementTraversal::next(element)) {
+    for (Element* element = ElementTraversal::firstWithin(&m_document); element; element = ElementTraversal::next(element)) {
         if (element->isLink())
             element->setNeedsStyleRecalc();
     }
 }
 
-inline static LinkHash linkHashForElement(Document* document, Element* element)
+inline static LinkHash linkHashForElement(Document& document, Element& element)
 {
     if (isHTMLAnchorElement(element))
-        return toHTMLAnchorElement(element)->visitedLinkHash();
+        return toHTMLAnchorElement(element).visitedLinkHash();
     if (const AtomicString* attribute = linkAttribute(element))
-        return WebCore::visitedLinkHash(document->baseURL(), *attribute);
+        return WebCore::visitedLinkHash(document.baseURL(), *attribute);
     return 0;
 }
 
@@ -86,15 +87,15 @@ void VisitedLinkState::invalidateStyleForLink(LinkHash linkHash)
 {
     if (!m_linksCheckedForVisitedState.contains(linkHash))
         return;
-    for (Element* element = ElementTraversal::firstWithin(m_document); element; element = ElementTraversal::next(element)) {
-        if (linkHashForElement(m_document, element) == linkHash)
+    for (Element* element = ElementTraversal::firstWithin(&m_document); element; element = ElementTraversal::next(element)) {
+        if (linkHashForElement(m_document, *element) == linkHash)
             element->setNeedsStyleRecalc();
     }
 }
 
-EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
+EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element& element)
 {
-    ASSERT(element->isLink());
+    ASSERT(element.isLink());
 
     const AtomicString* attribute = linkAttribute(element);
     if (!attribute || attribute->isNull())
@@ -107,14 +108,14 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
 
     LinkHash hash;
     if (isHTMLAnchorElement(element))
-        hash = toHTMLAnchorElement(element)->visitedLinkHash();
+        hash = toHTMLAnchorElement(element).visitedLinkHash();
     else
-        hash = WebCore::visitedLinkHash(element->document().baseURL(), *attribute);
+        hash = WebCore::visitedLinkHash(element.document().baseURL(), *attribute);
 
     if (!hash)
         return InsideUnvisitedLink;
 
-    Frame* frame = element->document().frame();
+    Frame* frame = element.document().frame();
     if (!frame)
         return InsideUnvisitedLink;
 
@@ -124,8 +125,7 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
 
     m_linksCheckedForVisitedState.add(hash);
 
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element->document().baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element.document().baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
 }
-
 
 }

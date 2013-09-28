@@ -32,7 +32,6 @@
 #include "Element.h"
 #include "LinkHash.h"
 #include "RenderStyleConstants.h"
-#include "XLinkNames.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -43,18 +42,18 @@ class Document;
 class VisitedLinkState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<VisitedLinkState> create(Document*);
+    static PassOwnPtr<VisitedLinkState> create(Document&);
 
     void invalidateStyleForAllLinks();
     void invalidateStyleForLink(LinkHash);
     EInsideLink determineLinkState(Element*);
 
 private:
-    explicit VisitedLinkState(Document*);
+    explicit VisitedLinkState(Document&);
 
-    EInsideLink determineLinkStateSlowCase(Element*);
+    EInsideLink determineLinkStateSlowCase(Element&);
 
-    Document* m_document;
+    Document& m_document;
     HashSet<LinkHash, LinkHashHash> m_linksCheckedForVisitedState;
 };
 
@@ -62,7 +61,7 @@ inline EInsideLink VisitedLinkState::determineLinkState(Element* element)
 {
     if (!element || !element->isLink())
         return NotInsideLink;
-    return determineLinkStateSlowCase(element);
+    return determineLinkStateSlowCase(*element);
 }
 
 }

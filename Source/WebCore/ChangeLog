@@ -1,3 +1,12 @@
+2013-09-28  Sam Weinig  <sam@webkit.org>
+
+        CTTE: VisitedLinkState should hold a Document&
+        https://bugs.webkit.org/show_bug.cgi?id=122066
+
+        Reviewed by Antti Koivisto.
+
+        The Document can never be null, so use a reference.
+
 2013-09-27  Antti Koivisto  <antti@apple.com>
 
         Clean up code for getting first line style
