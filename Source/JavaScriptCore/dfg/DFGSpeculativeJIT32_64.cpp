@@ -3687,16 +3687,8 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetCallee: {
         GPRTemporary result(this);
-        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))), result.gpr());
+        m_jit.loadPtr(JITCompiler::payloadFor(JSStack::Callee), result.gpr());
         cellResult(result.gpr(), node);
-        break;
-    }
-        
-    case SetCallee: {
-        SpeculateCellOperand callee(this, node->child1());
-        m_jit.storePtr(callee.gpr(), JITCompiler::payloadFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))));
-        m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), JITCompiler::tagFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))));
-        noResult(node);
         break;
     }
         
@@ -3712,15 +3704,8 @@ void SpeculativeJIT::compile(Node* node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
-        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::ScopeChain))), resultGPR);
+        m_jit.loadPtr(JITCompiler::payloadFor(JSStack::ScopeChain), resultGPR);
         cellResult(resultGPR, node);
-        break;
-    }
-        
-    case SetMyScope: {
-        SpeculateCellOperand callee(this, node->child1());
-        m_jit.storePtr(callee.gpr(), JITCompiler::payloadFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::ScopeChain))));
-        noResult(node);
         break;
     }
         

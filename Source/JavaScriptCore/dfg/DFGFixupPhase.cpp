@@ -759,8 +759,6 @@ private:
         case PutClosureVar:
         case SkipTopScope:
         case SkipScope:
-        case SetCallee:
-        case SetMyScope:
         case PutStructure:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage:

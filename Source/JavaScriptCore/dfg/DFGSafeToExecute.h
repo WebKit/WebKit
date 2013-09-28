@@ -116,7 +116,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ToThis:
     case CreateThis:
     case GetCallee:
-    case SetCallee:
     case GetLocal:
     case SetLocal:
     case MovHintAndCheck:
@@ -165,7 +164,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ArrayifyToStructure:
     case GetScope:
     case GetMyScope:
-    case SetMyScope:
     case SkipTopScope:
     case SkipScope:
     case GetClosureRegisters:

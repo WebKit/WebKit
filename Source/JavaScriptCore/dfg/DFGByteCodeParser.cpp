@@ -209,8 +209,6 @@ private:
             return getJSConstant(constant);
         }
 
-        ASSERT(operand.offset() != JSStack::Callee);
-        
         // Is this an argument?
         if (operand.isArgument())
             return getArgument(operand);
@@ -221,32 +219,35 @@ private:
 
     Node* get(VirtualRegister operand)
     {
-        if (operand.offset() == JSStack::Callee) {
-            if (inlineCallFrame() && inlineCallFrame()->callee)
-                return cellConstant(inlineCallFrame()->callee.get());
-            
-            return getCallee();
-        }
+        if (inlineCallFrame()) {
+            if (JSFunction* callee = inlineCallFrame()->callee.get()) {
+                if (operand.offset() == JSStack::Callee)
+                    return cellConstant(callee);
+                if (operand.offset() == JSStack::ScopeChain)
+                    return cellConstant(callee->scope());
+            }
+        } else if (operand.offset() == JSStack::Callee)
+            return addToGraph(GetCallee);
+        else if (operand.offset() == JSStack::ScopeChain)
+            return addToGraph(GetMyScope);
         
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
     
     enum SetMode { NormalSet, SetOnEntry };
-    void setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setDirect(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         // Is this an argument?
-        if (operand.isArgument()) {
-            setArgument(operand, value, setMode);
-            return;
-        }
+        if (operand.isArgument())
+            return setArgument(operand, value, setMode);
 
         // Must be a local.
-        setLocal(operand, value, setMode);
+        return setLocal(operand, value, setMode);
     }
 
-    void set(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* set(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
-        setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
+        return setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
     }
     
     Node* injectLazyOperandSpeculation(Node* node)
@@ -302,7 +303,7 @@ private:
         return node;
     }
 
-    void setLocal(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setLocal(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         unsigned local = operand.toLocal();
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
@@ -320,6 +321,7 @@ private:
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(local) = node;
+        return node;
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
@@ -352,7 +354,7 @@ private:
         m_currentBlock->variablesAtTail.argument(argument) = node;
         return node;
     }
-    void setArgument(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
+    Node* setArgument(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         unsigned argument = operand.toArgument();
         ASSERT(argument < m_numArguments);
@@ -375,6 +377,7 @@ private:
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = node;
+        return node;
     }
     
     ArgumentPosition* findArgumentPositionForArgument(int argument)
@@ -460,9 +463,13 @@ private:
     void flush(InlineStackEntry* inlineStackEntry)
     {
         int numArguments;
-        if (InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame)
+        if (InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame) {
             numArguments = inlineCallFrame->arguments.size();
-        else
+            if (!inlineCallFrame->callee) {
+                flushDirect(inlineStackEntry->remapOperand(VirtualRegister(JSStack::Callee)));
+                flushDirect(inlineStackEntry->remapOperand(VirtualRegister(JSStack::ScopeChain)));
+            }
+        } else
             numArguments = inlineStackEntry->m_codeBlock->numParameters();
         for (unsigned argument = numArguments; argument-- > 1;)
             flushDirect(inlineStackEntry->remapOperand(virtualRegisterForArgument(argument)));
@@ -537,11 +544,6 @@ private:
         Node* result = addToGraph(JSConstant, OpInfo(constant));
         m_constants[constant].asJSValue = result;
         return result;
-    }
-
-    Node* getCallee()
-    {
-        return addToGraph(GetCallee);
     }
 
     // Helper functions to get/set the this value.
@@ -1107,8 +1109,6 @@ private:
                 return result;
             }
 
-            ASSERT(operand.offset() != JSStack::Callee);
-
             return VirtualRegister(operand.offset() + m_inlineCallFrame->stackOffset);
         }
     };
@@ -1320,8 +1320,13 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
 
     addToGraph(InlineStart, OpInfo(argumentPositionStart));
     if (callLinkStatus.isClosureCall()) {
-        addToGraph(SetCallee, callTargetNode);
-        addToGraph(SetMyScope, addToGraph(GetScope, callTargetNode));
+        VariableAccessData* calleeVariable =
+            set(VirtualRegister(JSStack::Callee), callTargetNode)->variableAccessData();
+        VariableAccessData* scopeVariable =
+            set(VirtualRegister(JSStack::ScopeChain), addToGraph(GetScope, callTargetNode))->variableAccessData();
+        
+        calleeVariable->mergeShouldNeverUnbox(true);
+        scopeVariable->mergeShouldNeverUnbox(true);
     }
     
     parseCodeBlock();
@@ -1821,12 +1826,7 @@ void ByteCodeParser::prepareToParseBlock()
 
 Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 {
-    Node* localBase;
-    if (inlineCallFrame() && !inlineCallFrame()->isClosureCall()) {
-        ASSERT(inlineCallFrame()->callee);
-        localBase = cellConstant(inlineCallFrame()->callee->scope());
-    } else
-        localBase = addToGraph(GetMyScope);
+    Node* localBase = get(VirtualRegister(JSStack::ScopeChain));
     if (skipTop) {
         ASSERT(!inlineCallFrame());
         localBase = addToGraph(SkipTopScope, localBase);

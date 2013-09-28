@@ -1204,10 +1204,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecFunction);
         break;
         
-    case SetCallee:
-    case SetMyScope:
-        break;
-            
     case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
     case SkipTopScope:

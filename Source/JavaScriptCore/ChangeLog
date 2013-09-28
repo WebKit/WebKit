@@ -1,5 +1,56 @@
 2013-09-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of SetMyScope/SetCallee; use normal variables for the scope and callee of inlined call frames of closures
+        https://bugs.webkit.org/show_bug.cgi?id=122047
+
+        Reviewed by Oliver Hunt.
+        
+        Currently we have the DFG reserve space for inline call frames at exactly the same stack
+        offsets that you would have gotten if the baseline interpreter/JIT had made the calls.
+        We need to get rid of that. One of the weirder parts of this is that we have special DFG
+        operations for accessing these inlined call frame headers. It's really hard for any
+        analysis of DFG IR to see what the liveness of any of those frame header "variables" is;
+        the liveness behaves like flushed arguments (it's all live until end of the inlinee) but
+        we don't have anything like a Flush node for those special variables.
+        
+        This patch gets rid of the special operations for accessing inline call frame headers.
+        GetMyScope and GetCallee still remain, and are only for accessing the machine call
+        frame's scope/callee entries. The inline call frame's scope/callee now behave like
+        normal variables, and have Flush behavior just like inline arguments.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getDirect):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::setDirect):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::remapOperand):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::getScope):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getCalleeLoadElimination):
+        (JSC::DFG::CSEPhase::getMyScopeLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2013-09-27  Filip Pizlo  <fpizlo@apple.com>
+
         Deoptimize 32-bit deoptimization
         https://bugs.webkit.org/show_bug.cgi?id=122025
 
