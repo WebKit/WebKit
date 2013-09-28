@@ -99,9 +99,6 @@ DEFINE_int32(malloc_devmem_start, 0,
 DEFINE_int32(malloc_devmem_limit, 0,
              "Physical memory limit location in MB for /dev/mem allocation."
              "  Setting this to 0 means no limit.");
-#else
-static const int32_t FLAGS_malloc_devmem_start = 0;
-static const int32_t FLAGS_malloc_devmem_limit = 0;
 #endif
 
 #ifndef WTF_CHANGES
@@ -402,11 +399,6 @@ void TCMalloc_SystemRelease(void* start, size_t length)
 #else
     const int advice = MADV_DONTNEED;
 #endif
-  if (FLAGS_malloc_devmem_start) {
-    // It's not safe to use MADV_DONTNEED if we've been mapping
-    // /dev/mem for heap memory
-    return;
-  }
   if (pagesize == 0) pagesize = getpagesize();
   const size_t pagemask = pagesize - 1;
 

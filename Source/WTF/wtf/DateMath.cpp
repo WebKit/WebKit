@@ -113,11 +113,6 @@ namespace WTF {
 
 /* Constants */
 
-static const double minutesPerDay = 24.0 * 60.0;
-static const double secondsPerYear = 24.0 * 60.0 * 60.0 * 365.0;
-
-static const double usecPerSec = 1000000.0;
-
 static const double maxUnixTime = 2145859200.0; // 12/31/2037
 // ECMAScript asks not to support for a date of which total
 // millisecond value is larger than the following value.

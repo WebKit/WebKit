@@ -1,3 +1,17 @@
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/15079224> WTF fails to build with newer versions of clang.
+
+        Reviewed by Sam Weinig.
+
+        * wtf/DateMath.cpp: Remove some unused constants.
+        * wtf/FastMalloc.cpp: #if some constants and functions that are unused in some configurations.
+        Remove a function that's unused on all platforms.
+        * wtf/TCSystemAlloc.cpp: Remove some unused constants.
+        (TCMalloc_SystemRelease): Remove an if whose body is never executed.
+        * wtf/dtoa.cpp: #if things such that storeInc is only defined when USE_LONG_LONG is undefined.
+        Remove an unused constant.
+
 2013-09-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [Nix] Updating Nix trunk files
