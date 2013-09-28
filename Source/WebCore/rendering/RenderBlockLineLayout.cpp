@@ -381,7 +381,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& l
             InlineBox* newBox = createInlineBoxForRenderer(obj, obj == this);
             ASSERT_WITH_SECURITY_IMPLICATION(newBox->isInlineFlowBox());
             parentBox = toInlineFlowBox(newBox);
-            parentBox->setFirstLineStyleBit(lineInfo.isFirstLine());
+            parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(isHorizontalWritingMode());
             if (!hasDefaultLineBoxContain)
                 parentBox->clearDescendantsHaveSameLineHeightAndBaseline();
@@ -622,13 +622,18 @@ public:
     HashSet<const SimpleFontData*> fallbackFonts;
 };
 
+static inline RenderStyle& lineStyle(RenderElement& renderer, const LineInfo& lineInfo)
+{
+    return lineInfo.isFirstLine() ? *renderer.firstLineStyle() : *renderer.style();
+}
+
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
     GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
     HashSet<const SimpleFontData*> fallbackFonts;
     GlyphOverflow glyphOverflow;
-    
-    const Font& font = renderer->style(lineInfo.isFirstLine())->font();
+
+    const Font& font = lineStyle(*renderer->parent(), lineInfo).font();
     // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
     if (lineBox->fitsToGlyphs()) {
         // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
@@ -644,10 +649,9 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
     
     LayoutUnit hyphenWidth = 0;
-    if (toInlineTextBox(run->m_box)->hasHyphen()) {
-        const Font& font = renderer->style(lineInfo.isFirstLine())->font();
+    if (toInlineTextBox(run->m_box)->hasHyphen())
         hyphenWidth = measureHyphenWidth(renderer, font, &fallbackFonts);
-    }
+
     float measuredWidth = 0;
 
     bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
@@ -912,7 +916,7 @@ BidiRun* RenderBlock::computeInlineDirectionPositionsForSegment(RootInlineBox* l
 
             if (int length = rt->textLength()) {
                 if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characterAt(r->m_start)))
-                    totalLogicalWidth += rt->style(lineInfo.isFirstLine())->font().wordSpacing();
+                    totalLogicalWidth += lineStyle(*rt->parent(), lineInfo).font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt->characterAt(r->m_stop - 1)) && r->m_stop == length;
             }
 
@@ -2214,12 +2218,15 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const Line
 
 static bool requiresLineBoxForContent(RenderInline* flow, const LineInfo& lineInfo)
 {
-    RenderObject* parent = flow->parent();
-    if (flow->document().inNoQuirksMode()
-        && (flow->style(lineInfo.isFirstLine())->lineHeight() != parent->style(lineInfo.isFirstLine())->lineHeight()
-        || flow->style()->verticalAlign() != parent->style()->verticalAlign()
-        || !parent->style()->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(flow->style()->font().fontMetrics())))
+    RenderElement* parent = flow->parent();
+    if (flow->document().inNoQuirksMode()) {
+        const RenderStyle& flowStyle = lineStyle(*flow, lineInfo);
+        const RenderStyle& parentStyle = lineStyle(*parent, lineInfo);
+        if (flowStyle.lineHeight() != parentStyle.lineHeight()
+            || flowStyle.verticalAlign() != parentStyle.verticalAlign()
+            || !parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(flowStyle.font().fontMetrics()))
         return true;
+    }
     return false;
 }
 
@@ -2905,10 +2912,10 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 }
             }
 
-            RenderStyle* style = t->style(lineInfo.isFirstLine());
-            const Font& f = style->font();
+            RenderStyle& style = lineStyle(*t->parent(), lineInfo);
+            const Font& f = style.font();
             bool isFixedPitch = f.isFixedPitch();
-            bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->locale());
+            bool canHyphenate = style.hyphens() == HyphensAuto && WebCore::canHyphenate(style.locale());
 
             unsigned lastSpace = current.m_pos;
             float wordSpacing = currentStyle->wordSpacing();
@@ -2936,7 +2943,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 renderTextInfo.m_text = t;
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
-                renderTextInfo.m_lineBreakIterator.resetStringAndReleaseIterator(t->text(), style->locale());
+                renderTextInfo.m_lineBreakIterator.resetStringAndReleaseIterator(t->text(), style.locale());
             } else if (renderTextInfo.m_layout && renderTextInfo.m_font != &f) {
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
@@ -2947,7 +2954,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
             // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
             // words with their trailing space, then subtract its width.
             HashSet<const SimpleFontData*> fallbackFonts;
-            float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(RenderBlock::constructTextRun(t, f, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
+            float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(RenderBlock::constructTextRun(t, f, &space, 1, &style), &fallbackFonts) + wordSpacing : 0;
 
             UChar lastCharacter = renderTextInfo.m_lineBreakIterator.lastCharacter();
             UChar secondToLastCharacter = renderTextInfo.m_lineBreakIterator.secondToLastCharacter();
@@ -2960,7 +2967,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 if (!collapseWhiteSpace || !currentCharacterIsSpace)
                     lineInfo.setEmpty(false, m_block, &width);
 
-                if (c == softHyphen && autoWrap && !hyphenWidth && style->hyphens() != HyphensNone) {
+                if (c == softHyphen && autoWrap && !hyphenWidth && style.hyphens() != HyphensNone) {
                     hyphenWidth = measureHyphenWidth(t, f, &fallbackFonts);
                     width.addUncommittedWidth(hyphenWidth, *current.m_obj);
                 }
@@ -2977,7 +2984,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 }
 
                 bool betweenWords = c == '\n' || (currWS != PRE && !atStart && isBreakable(renderTextInfo.m_lineBreakIterator, current.m_pos, current.m_nextBreakablePosition, breakNBSP)
-                    && (style->hyphens() != HyphensNone || (current.previousInSameNode() != softHyphen)));
+                    && (style.hyphens() != HyphensNone || (current.previousInSameNode() != softHyphen)));
 
                 if (betweenWords || midWordBreak) {
                     bool stoppedIgnoringSpaces = false;
@@ -3054,7 +3061,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                         }
                         if (lineWasTooWide || !width.fitsOnLine()) {
                             if (canHyphenate && !width.fitsOnLine()) {
-                                tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
+                                tryHyphenating(t, f, style.locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style.hyphenationLimitBefore(), style.hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
                                 if (m_hyphenated)
                                     goto end;
                             }
@@ -3065,7 +3072,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                                 lineInfo.setPreviousLineBrokeCleanly(true);
                                 wordMeasurement.endOffset = lBreak.m_pos;
                             }
-                            if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characterAt(lBreak.m_pos - 1) == softHyphen && style->hyphens() != HyphensNone)
+                            if (lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characterAt(lBreak.m_pos - 1) == softHyphen && style.hyphens() != HyphensNone)
                                 m_hyphenated = true;
                             if (lBreak.m_pos && lBreak.m_pos != (unsigned)wordMeasurement.endOffset && !wordMeasurement.width) {
                                 if (charWidth) {
@@ -3206,9 +3213,9 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
 
             if (!width.fitsOnLine()) {
                 if (canHyphenate)
-                    tryHyphenating(t, f, style->locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
+                    tryHyphenating(t, f, style.locale(), consecutiveHyphenatedLines, blockStyle->hyphenationLimitLines(), style.hyphenationLimitBefore(), style.hyphenationLimitAfter(), lastSpace, current.m_pos, width.currentWidth() - additionalTempWidth, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, current.m_nextBreakablePosition, m_hyphenated);
 
-                if (!m_hyphenated && lBreak.previousInSameNode() == softHyphen && style->hyphens() != HyphensNone)
+                if (!m_hyphenated && lBreak.previousInSameNode() == softHyphen && style.hyphens() != HyphensNone)
                     m_hyphenated = true;
 
                 if (m_hyphenated)

@@ -759,12 +759,7 @@ public:
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
     RenderStyle* style() const;
-    RenderStyle* firstLineStyle() const { return document().styleSheetCollection().usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
-    RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
-
-    // Used only by Element::pseudoStyleCacheIsInvalid to get a first line style based off of a
-    // given new style, without accessing the cache.
-    PassRefPtr<RenderStyle> uncachedFirstLineStyle(RenderStyle*) const;
+    RenderStyle* firstLineStyle() const;
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
@@ -970,8 +965,6 @@ private:
     RenderFlowThread* locateFlowThreadContainingBlock() const;
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
-
-    RenderStyle* cachedFirstLineStyle() const;
 
     Color selectionColor(int colorProperty) const;
 

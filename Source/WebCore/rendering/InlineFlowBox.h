@@ -73,6 +73,7 @@ public:
 #endif
 
     RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
+    RenderStyle& lineStyle() const { return isFirstLine() ? *renderer().firstLineStyle() : *renderer().style(); }
 
     InlineFlowBox* prevLineBox() const { return m_prevLineBox; }
     InlineFlowBox* nextLineBox() const { return m_nextLineBox; }
@@ -142,13 +143,13 @@ public:
     {
         if (!includeLogicalLeftEdge())
             return 0;
-        return isHorizontal() ? renderer().style(isFirstLineStyle())->borderLeftWidth() : renderer().style(isFirstLineStyle())->borderTopWidth();
+        return isHorizontal() ? lineStyle().borderLeftWidth() : lineStyle().borderTopWidth();
     }
     int borderLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
-        return isHorizontal() ? renderer().style(isFirstLineStyle())->borderRightWidth() : renderer().style(isFirstLineStyle())->borderBottomWidth();
+        return isHorizontal() ? lineStyle().borderRightWidth() : lineStyle().borderBottomWidth();
     }
     int paddingLogicalLeft() const
     {

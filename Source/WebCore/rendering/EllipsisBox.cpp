@@ -44,38 +44,38 @@ EllipsisBox::EllipsisBox(RenderBlock& renderer, const AtomicString& ellipsisStr,
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
-    RenderStyle* style = renderer().style(isFirstLineStyle());
-    Color textColor = style->visitedDependentColor(CSSPropertyWebkitTextFillColor);
+    RenderStyle& lineStyle = this->lineStyle();
+    Color textColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
     if (textColor != context->fillColor())
-        context->setFillColor(textColor, style->colorSpace());
+        context->setFillColor(textColor, lineStyle.colorSpace());
     bool setShadow = false;
-    if (style->textShadow()) {
-        context->setShadow(LayoutSize(style->textShadow()->x(), style->textShadow()->y()),
-                           style->textShadow()->radius(), style->textShadow()->color(), style->colorSpace());
+    if (lineStyle.textShadow()) {
+        context->setShadow(LayoutSize(lineStyle.textShadow()->x(), lineStyle.textShadow()->y()),
+            lineStyle.textShadow()->radius(), lineStyle.textShadow()->color(), lineStyle.colorSpace());
         setShadow = true;
     }
 
-    const Font& font = style->font();
+    const Font& font = lineStyle.font();
     if (selectionState() != RenderObject::SelectionNone) {
-        paintSelection(context, paintOffset, style, font);
+        paintSelection(context, paintOffset, &lineStyle, font);
 
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceBlackText() ? Color::black : renderer().selectionForegroundColor();
         if (foreground.isValid() && foreground != textColor)
-            context->setFillColor(foreground, style->colorSpace());
+            context->setFillColor(foreground, lineStyle.colorSpace());
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, &lineStyle, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
-        context->setFillColor(textColor, style->colorSpace());
+        context->setFillColor(textColor, lineStyle.colorSpace());
 
     if (setShadow)
         context->clearShadow();
 
-    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, style);
+    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, &lineStyle);
 }
 
 InlineBox* EllipsisBox::markupBox() const
@@ -104,17 +104,17 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     LayoutPoint adjustedPaintOffset = paintOffset;
     adjustedPaintOffset.move(x() + m_logicalWidth - markupBox->x(),
-        y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer().style(isFirstLineStyle())->fontMetrics().ascent()));
+        y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
 IntRect EllipsisBox::selectionRect()
 {
-    RenderStyle* style = renderer().style(isFirstLineStyle());
-    const Font& font = style->font();
+    RenderStyle& lineStyle = this->lineStyle();
+    const Font& font = lineStyle.font();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock()), rootBox.selectionHeightAdjustedForPrecedingBlock()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&renderer(), font, m_str, &lineStyle, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock()), rootBox.selectionHeightAdjustedForPrecedingBlock()));
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style, const Font& font)
@@ -147,9 +147,9 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (InlineBox* markupBox = this->markupBox()) {
-        RenderStyle* style = renderer().style(isFirstLineStyle());
+        RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - markupBox->x();
-        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer().style(isFirstLineStyle())->fontMetrics().ascent());
+        LayoutUnit mty = adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent());
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
             renderer().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;

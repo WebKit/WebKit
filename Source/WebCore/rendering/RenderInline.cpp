@@ -224,11 +224,11 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
 
     if (!alwaysCreateLineBoxes && checkFonts && document().styleSheetCollection().usesFirstLineRules()) {
         // Have to check the first line style as well.
-        parentStyle = parent()->style(true);
-        RenderStyle* childStyle = style(true);
+        parentStyle = parent()->firstLineStyle();
+        RenderStyle* childStyle = firstLineStyle();
         alwaysCreateLineBoxes = !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
-        || childStyle->verticalAlign() != BASELINE
-        || parentStyle->lineHeight() != childStyle->lineHeight();
+            || childStyle->verticalAlign() != BASELINE
+            || parentStyle->lineHeight() != childStyle->lineHeight();
     }
 
     if (alwaysCreateLineBoxes) {
@@ -570,8 +570,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
             RenderBox* currBox = toRenderBox(curr);
             if (currBox->inlineBoxWrapper()) {
                 const RootInlineBox& rootBox = currBox->inlineBoxWrapper()->root();
-                int logicalTop = rootBox.logicalTop() + (rootBox.renderer().style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox.isFirstLineStyle())->font().fontMetrics().height();
+                const RenderStyle& containerStyle = rootBox.isFirstLine() ? *container->firstLineStyle() : *container->style();
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                int logicalHeight = containerStyle.font().fontMetrics().height();
                 if (isHorizontal)
                     yield(FloatRect(currBox->inlineBoxWrapper()->x() - currBox->marginLeft(), logicalTop, currBox->width() + currBox->marginWidth(), logicalHeight));
                 else
@@ -585,8 +586,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
             else {
                 for (InlineFlowBox* childLine = currInline->firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
                     const RootInlineBox& rootBox = childLine->root();
-                    int logicalTop = rootBox.logicalTop() + (rootBox.renderer().style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent());
-                    int logicalHeight = container->style(rootBox.isFirstLineStyle())->font().fontMetrics().height();
+                    const RenderStyle& containerStyle = rootBox.isFirstLine() ? *container->firstLineStyle() : *container->style();
+                    int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                    int logicalHeight = containerStyle.fontMetrics().height();
                     if (isHorizontal)
                         yield(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
                             logicalTop,
@@ -603,8 +605,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
             RenderText* currText = toRenderText(curr);
             for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox()) {
                 const RootInlineBox& rootBox = childText->root();
-                int logicalTop = rootBox.logicalTop() + (rootBox.renderer().style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox.isFirstLineStyle())->font().fontMetrics().height();
+                const RenderStyle& containerStyle = rootBox.isFirstLine() ? *container->firstLineStyle() : *container->style();
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                int logicalHeight = containerStyle.font().fontMetrics().height();
                 if (isHorizontal)
                     yield(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
                 else
@@ -614,8 +617,9 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
             if (InlineBox* inlineBox = toRenderLineBreak(curr)->inlineBoxWrapper()) {
                 // FIXME: This could use a helper to share these with text path.
                 const RootInlineBox& rootBox = inlineBox->root();
-                int logicalTop = rootBox.logicalTop() + (rootBox.renderer().style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent());
-                int logicalHeight = container->style(rootBox.isFirstLineStyle())->font().fontMetrics().height();
+                const RenderStyle& containerStyle = rootBox.isFirstLine() ? *container->firstLineStyle() : *container->style();
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                int logicalHeight = containerStyle.fontMetrics().height();
                 if (isHorizontal)
                     yield(FloatRect(inlineBox->x(), logicalTop, inlineBox->logicalWidth(), logicalHeight));
                 else
@@ -1352,9 +1356,9 @@ InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
-        RenderStyle* s = style(firstLine);
-        if (s != style())
-            return s->computedLineHeight(&view());
+        const RenderStyle& firstLineStyle = *this->firstLineStyle();
+        if (&firstLineStyle != style())
+            return firstLineStyle.computedLineHeight(&view());
     }
 
     return style()->computedLineHeight(&view());
@@ -1362,7 +1366,8 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
 
 int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    const RenderStyle& style = firstLine ? *firstLineStyle() : *this->style();
+    const FontMetrics& fontMetrics = style.fontMetrics();
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 

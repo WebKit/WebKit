@@ -545,7 +545,7 @@ static void detachRenderTree(Element& current, DetachType detachType)
         current.didDetachRenderers();
 }
 
-static bool pseudoStyleCacheIsInvalid(RenderObject* renderer, RenderStyle* newStyle)
+static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newStyle)
 {
     const RenderStyle* currentStyle = renderer->style();
 

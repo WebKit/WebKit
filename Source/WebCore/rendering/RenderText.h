@@ -47,7 +47,7 @@ public:
     virtual bool isTextFragment() const;
 
     RenderStyle* style() const;
-    RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
+    RenderStyle* firstLineStyle() const;
 
     virtual String originalText() const;
 
@@ -247,6 +247,11 @@ void toRenderText(const RenderText&);
 inline RenderStyle* RenderText::style() const
 {
     return parent()->style();
+}
+
+inline RenderStyle* RenderText::firstLineStyle() const
+{
+    return parent()->firstLineStyle();
 }
 
 #ifdef NDEBUG

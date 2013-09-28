@@ -50,9 +50,9 @@ RenderLineBreak::~RenderLineBreak()
 LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
-        RenderStyle* s = style(firstLine);
-        if (s != style())
-            return s->computedLineHeight(&view());
+        const RenderStyle& firstLineStyle = *this->firstLineStyle();
+        if (&firstLineStyle != style())
+            return firstLineStyle.computedLineHeight(&view());
     }
 
     if (m_cachedLineHeight == invalidLineHeight)
@@ -63,7 +63,8 @@ LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direc
 
 int RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    const RenderStyle& style = firstLine ? *firstLineStyle() : *this->style();
+    const FontMetrics& fontMetrics = style.fontMetrics();
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 

@@ -1479,7 +1479,8 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
     if (from + len > textLength())
         len = textLength() - from;
 
-    return width(from, len, style(firstLine)->font(), xPos, fallbackFonts, glyphOverflow);
+    const RenderStyle& lineStyle = firstLine ? *firstLineStyle() : *style();
+    return width(from, len, lineStyle.font(), xPos, fallbackFonts, glyphOverflow);
 }
 
 float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

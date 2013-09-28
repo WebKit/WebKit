@@ -1,3 +1,16 @@
+2013-09-27  Antti Koivisto  <antti@apple.com>
+
+        Clean up code for getting first line style
+        https://bugs.webkit.org/show_bug.cgi?id=122037
+
+        Reviewed by Andreas Kling.
+
+        We have confusing RenderObject::style(bool firstLine). Get rid of it in favour of 
+        just using RenderObject::firstLineStyle() where appropriate.
+        
+        Also switch to RenderStyle references in many places and move first line style caching
+        code down to RenderElement.
+
 2013-09-28  Darin Adler  <darin@apple.com>
 
         Add Frame::mainFrame and Frame::isMainFrame

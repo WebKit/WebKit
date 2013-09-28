@@ -109,7 +109,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         child->setPrevOnLine(m_lastChild);
         m_lastChild = child;
     }
-    child->setFirstLineStyleBit(isFirstLineStyle());
+    child->setIsFirstLine(isFirstLine());
     child->setIsHorizontal(isHorizontal());
     if (child->behavesLikeText()) {
         if (child->renderer().parent() == &renderer())
@@ -121,19 +121,19 @@ void InlineFlowBox::addToLine(InlineBox* child)
     }
 
     if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer().isOutOfFlowPositioned()) {
-        RenderStyle* parentStyle = renderer().style(isFirstLineStyle());
-        RenderStyle* childStyle = child->renderer().style(isFirstLineStyle());
+        const RenderStyle& parentStyle = lineStyle();
+        const RenderStyle& childStyle = child->lineStyle();
         bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
         if (child->renderer().isReplaced())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
-                if (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
-                    || parentStyle->lineHeight() != childStyle->lineHeight()
-                    || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE)
+                if (!parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.font().fontMetrics())
+                    || parentStyle.lineHeight() != childStyle.lineHeight()
+                    || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             }
-            if (childStyle->hasTextCombine() || childStyle->textEmphasisMark() != TextEmphasisMarkNone)
+            if (childStyle.hasTextCombine() || childStyle.textEmphasisMark() != TextEmphasisMarkNone)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
             if (child->renderer().isLineBreak()) {
@@ -145,10 +145,10 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 InlineFlowBox* childFlowBox = toInlineFlowBox(child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
                 if (!childFlowBox->descendantsHaveSameLineHeightAndBaseline()
-                    || !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
-                    || parentStyle->lineHeight() != childStyle->lineHeight()
-                    || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE
-                    || childStyle->hasBorder() || childStyle->hasPadding() || childStyle->hasTextCombine())
+                    || !parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.font().fontMetrics())
+                    || parentStyle.lineHeight() != childStyle.lineHeight()
+                    || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE
+                    || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
             }
         }
@@ -158,17 +158,18 @@ void InlineFlowBox::addToLine(InlineBox* child)
     }
 
     if (!child->renderer().isOutOfFlowPositioned()) {
+        const RenderStyle& childStyle = child->lineStyle();
         if (child->behavesLikeText()) {
-            RenderStyle* childStyle = child->renderer().style(isFirstLineStyle());
+            RenderStyle* childStyle = &child->lineStyle();
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->textStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplaced()) {
             const RenderBox& box = toRenderBox(child->renderer());
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
-        } else if (!child->renderer().isLineBreak() && (child->renderer().style(isFirstLineStyle())->boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
-                   || (child->renderer().isListMarker() && !toRenderListMarker(child->renderer()).isInside())
-                   || child->renderer().style(isFirstLineStyle())->hasBorderImageOutsets()))
+        } else if (!child->renderer().isLineBreak() && (childStyle.boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
+            || (child->renderer().isListMarker() && !toRenderListMarker(child->renderer()).isInside())
+            || childStyle.hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
         
         if (knownToHaveNoOverflow() && child->isInlineFlowBox() && !toInlineFlowBox(child)->knownToHaveNoOverflow())
@@ -391,7 +392,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
             RenderText& rt = text->renderer();
             if (rt.textLength()) {
                 if (needsWordSpacing && isSpaceOrNewline(rt.characterAt(text->start())))
-                    logicalLeft += rt.style(isFirstLineStyle())->font().wordSpacing();
+                    logicalLeft += text->lineStyle().font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt.characterAt(text->end()));
             }
             text->setLogicalLeft(logicalLeft);
@@ -446,9 +447,10 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 {
     if (isHorizontal())
         return false;
-    
-    if (renderer().style(isFirstLineStyle())->fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
-        || renderer().style(isFirstLineStyle())->font().primaryFont()->hasVerticalGlyphs())
+
+    const RenderStyle& lineStyle = this->lineStyle();
+    if (lineStyle.fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
+        || lineStyle.font().primaryFont()->hasVerticalGlyphs())
         return true;
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
@@ -459,7 +461,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             if (toInlineFlowBox(curr)->requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
-            if (curr->renderer().style(isFirstLineStyle())->font().primaryFont()->hasVerticalGlyphs())
+            if (curr->lineStyle().font().primaryFont()->hasVerticalGlyphs())
                 return true;
             
             const Vector<const SimpleFontData*>* usedFonts = 0;
@@ -617,7 +619,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
 {
     bool isRootBox = isRootInlineBox();
     if (isRootBox) {
-        const FontMetrics& fontMetrics = renderer().style(isFirstLineStyle())->fontMetrics();
+        const FontMetrics& fontMetrics = lineStyle().fontMetrics();
         // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
         // so results in incorrect rendering of text decorations, most notably underlines.
         setLogicalTop(roundToInt(top + maxAscent - fontMetrics.ascent(baselineType)));
@@ -658,13 +660,14 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         LayoutUnit newLogicalTopIncludingMargins = newLogicalTop;
         LayoutUnit boxHeight = curr->logicalHeight();
         LayoutUnit boxHeightIncludingMargins = boxHeight;
-            
+
+        RenderStyle& childLineStyle = curr->lineStyle();
         if (curr->behavesLikeText() || curr->isInlineFlowBox()) {
-            const FontMetrics& fontMetrics = curr->renderer().style(isFirstLineStyle())->fontMetrics();
+            const FontMetrics& fontMetrics = childLineStyle.fontMetrics();
             newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (curr->isInlineFlowBox()) {
                 RenderBoxModelObject& boxObject = toRenderBoxModelObject(curr->renderer());
-                newLogicalTop -= boxObject.style(isFirstLineStyle())->isHorizontalWritingMode()
+                newLogicalTop -= childLineStyle.isHorizontalWritingMode()
                     ? boxObject.borderTop() + boxObject.paddingTop()
                     : boxObject.borderRight() + boxObject.paddingRight();
             }
@@ -700,9 +703,9 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             }
             if (curr->isInlineTextBox()) {
                 TextEmphasisPosition emphasisMarkPosition;
-                if (toInlineTextBox(curr)->getEmphasisMarkPosition(curr->renderer().style(isFirstLineStyle()), emphasisMarkPosition)) {
+                if (toInlineTextBox(curr)->getEmphasisMarkPosition(&childLineStyle, emphasisMarkPosition)) {
                     bool emphasisMarkIsOver = emphasisMarkPosition == TextEmphasisPositionOver;
-                    if (emphasisMarkIsOver != curr->renderer().style(isFirstLineStyle())->isFlippedLinesWritingMode())
+                    if (emphasisMarkIsOver != childLineStyle.isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
                     else
                         hasAnnotationsAfter = true;
@@ -788,25 +791,25 @@ inline void InlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualO
     if (!parent())
         return;
 
-    RenderStyle* style = renderer().style(isFirstLineStyle());
-    if (!style->boxShadow())
+    const RenderStyle& lineStyle = this->lineStyle();
+    if (!lineStyle.boxShadow())
         return;
 
     LayoutUnit boxShadowLogicalTop;
     LayoutUnit boxShadowLogicalBottom;
-    style->getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
+    lineStyle.getBoxShadowBlockDirectionExtent(boxShadowLogicalTop, boxShadowLogicalBottom);
     
     // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite shadow that applies, since
     // the line is "upside down" in terms of block coordinates.
-    LayoutUnit shadowLogicalTop = style->isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
-    LayoutUnit shadowLogicalBottom = style->isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
+    LayoutUnit shadowLogicalTop = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
+    LayoutUnit shadowLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
     
     LayoutUnit logicalTopVisualOverflow = min(pixelSnappedLogicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
     LayoutUnit logicalBottomVisualOverflow = max(pixelSnappedLogicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
     
     LayoutUnit boxShadowLogicalLeft;
     LayoutUnit boxShadowLogicalRight;
-    style->getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
+    lineStyle.getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
 
     LayoutUnit logicalLeftVisualOverflow = min(pixelSnappedLogicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
     LayoutUnit logicalRightVisualOverflow = max(pixelSnappedLogicalRight() + boxShadowLogicalRight, logicalVisualOverflow.maxX());
@@ -821,21 +824,21 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
     if (!parent())
         return;
     
-    RenderStyle* style = renderer().style(isFirstLineStyle());
-    if (!style->hasBorderImageOutsets())
+    const RenderStyle& lineStyle = this->lineStyle();
+    if (!lineStyle.hasBorderImageOutsets())
         return;
 
-    LayoutBoxExtent borderOutsets = style->borderImageOutsets();
+    LayoutBoxExtent borderOutsets = lineStyle.borderImageOutsets();
 
-    LayoutUnit borderOutsetLogicalTop = borderOutsets.logicalTop(style->writingMode());
-    LayoutUnit borderOutsetLogicalBottom = borderOutsets.logicalBottom(style->writingMode());
-    LayoutUnit borderOutsetLogicalLeft = borderOutsets.logicalLeft(style->writingMode());
-    LayoutUnit borderOutsetLogicalRight = borderOutsets.logicalRight(style->writingMode());
+    LayoutUnit borderOutsetLogicalTop = borderOutsets.logicalTop(lineStyle.writingMode());
+    LayoutUnit borderOutsetLogicalBottom = borderOutsets.logicalBottom(lineStyle.writingMode());
+    LayoutUnit borderOutsetLogicalLeft = borderOutsets.logicalLeft(lineStyle.writingMode());
+    LayoutUnit borderOutsetLogicalRight = borderOutsets.logicalRight(lineStyle.writingMode());
 
     // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
     // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
-    LayoutUnit outsetLogicalTop = style->isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
-    LayoutUnit outsetLogicalBottom = style->isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
+    LayoutUnit outsetLogicalTop = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
+    LayoutUnit outsetLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
 
     LayoutUnit logicalTopVisualOverflow = min(pixelSnappedLogicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
     LayoutUnit logicalBottomVisualOverflow = max(pixelSnappedLogicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
@@ -855,27 +858,27 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     if (textBox->knownToHaveNoOverflow())
         return;
 
-    RenderStyle* style = textBox->renderer().style(isFirstLineStyle());
+    RenderStyle& lineStyle = this->lineStyle();
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
-    bool isFlippedLine = style->isFlippedLinesWritingMode();
+    bool isFlippedLine = lineStyle.isFlippedLinesWritingMode();
 
     int topGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->bottom : glyphOverflow->top) : 0;
     int bottomGlyphEdge = glyphOverflow ? (isFlippedLine ? glyphOverflow->top : glyphOverflow->bottom) : 0;
     int leftGlyphEdge = glyphOverflow ? glyphOverflow->left : 0;
     int rightGlyphEdge = glyphOverflow ? glyphOverflow->right : 0;
 
-    int strokeOverflow = static_cast<int>(ceilf(style->textStrokeWidth() / 2.0f));
+    int strokeOverflow = static_cast<int>(ceilf(lineStyle.textStrokeWidth() / 2.0f));
     int topGlyphOverflow = -strokeOverflow - topGlyphEdge;
     int bottomGlyphOverflow = strokeOverflow + bottomGlyphEdge;
     int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
     TextEmphasisPosition emphasisMarkPosition;
-    if (style->textEmphasisMark() != TextEmphasisMarkNone && textBox->getEmphasisMarkPosition(style, emphasisMarkPosition)) {
-        int emphasisMarkHeight = style->font().emphasisMarkHeight(style->textEmphasisMarkString());
-        if ((emphasisMarkPosition == TextEmphasisPositionOver) == (!style->isFlippedLinesWritingMode()))
+    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox->getEmphasisMarkPosition(&lineStyle, emphasisMarkPosition)) {
+        int emphasisMarkHeight = lineStyle.font().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
+        if ((emphasisMarkPosition == TextEmphasisPositionOver) == (!lineStyle.isFlippedLinesWritingMode()))
             topGlyphOverflow = min(topGlyphOverflow, -emphasisMarkHeight);
         else
             bottomGlyphOverflow = max(bottomGlyphOverflow, emphasisMarkHeight);
@@ -883,18 +886,18 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
 
     // If letter-spacing is negative, we should factor that into right layout overflow. (Even in RTL, letter-spacing is
     // applied to the right, so this is not an issue with left overflow.
-    rightGlyphOverflow -= min(0, (int)style->font().letterSpacing());
+    rightGlyphOverflow -= min(0, (int)lineStyle.font().letterSpacing());
 
     LayoutUnit textShadowLogicalTop;
     LayoutUnit textShadowLogicalBottom;
-    style->getTextShadowBlockDirectionExtent(textShadowLogicalTop, textShadowLogicalBottom);
+    lineStyle.getTextShadowBlockDirectionExtent(textShadowLogicalTop, textShadowLogicalBottom);
     
     LayoutUnit childOverflowLogicalTop = min<LayoutUnit>(textShadowLogicalTop + topGlyphOverflow, topGlyphOverflow);
     LayoutUnit childOverflowLogicalBottom = max<LayoutUnit>(textShadowLogicalBottom + bottomGlyphOverflow, bottomGlyphOverflow);
    
     LayoutUnit textShadowLogicalLeft;
     LayoutUnit textShadowLogicalRight;
-    style->getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
+    lineStyle.getTextShadowInlineDirectionExtent(textShadowLogicalLeft, textShadowLogicalRight);
    
     LayoutUnit childOverflowLogicalLeft = min<LayoutUnit>(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     LayoutUnit childOverflowLogicalRight = max<LayoutUnit>(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
@@ -1306,62 +1309,64 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     // Move x/y to our coordinates.
     LayoutRect localRect(frameRect);
     flipForWritingMode(localRect);
-    LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
-    
-    GraphicsContext* context = paintInfo.context;
-    
+
     // You can use p::first-line to specify a background. If so, the root line boxes for
     // a line may actually have to paint a background.
-    RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
-    if ((!parent() && isFirstLineStyle() && styleToUse != renderer().style()) || (parent() && renderer().hasBoxDecorations())) {
-        LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
-        // Shadow comes first and is behind the background and border.
-        if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
-            paintBoxShadow(paintInfo, styleToUse, Normal, paintRect);
+    if (parent() && !renderer().hasBoxDecorations())
+        return;
+    RenderStyle& lineStyle = this->lineStyle();
+    if (!parent() && (!isFirstLine() || &lineStyle == renderer().style()))
+        return;
 
-        Color c = styleToUse->visitedDependentColor(CSSPropertyBackgroundColor);
-        paintFillLayers(paintInfo, c, styleToUse->backgroundLayers(), paintRect);
-        paintBoxShadow(paintInfo, styleToUse, Inset, paintRect);
+    LayoutPoint adjustedPaintoffset = paintOffset + localRect.location();
+    GraphicsContext* context = paintInfo.context;
+    LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
+    // Shadow comes first and is behind the background and border.
+    if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
+        paintBoxShadow(paintInfo, &lineStyle, Normal, paintRect);
 
-        // :first-line cannot be used to put borders on a line. Always paint borders with our
-        // non-first-line style.
-        if (parent() && renderer().style()->hasBorder()) {
-            const NinePieceImage& borderImage = renderer().style()->borderImage();
-            StyleImage* borderImageSource = borderImage.image();
-            bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), styleToUse->effectiveZoom());
-            if (hasBorderImage && !borderImageSource->isLoaded())
-                return; // Don't paint anything while we wait for the image to load.
+    Color c = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
+    paintFillLayers(paintInfo, c, lineStyle.backgroundLayers(), paintRect);
+    paintBoxShadow(paintInfo, &lineStyle, Inset, paintRect);
 
-            // The simple case is where we either have no border image or we are the only box for this object.  In those
-            // cases only a single call to draw is required.
-            if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
-                boxModelObject()->paintBorder(paintInfo, paintRect, renderer().style(isFirstLineStyle()), BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
-            else {
-                // We have a border image that spans multiple lines.
-                // We need to adjust tx and ty by the width of all previous lines.
-                // Think of border image painting on inlines as though you had one long line, a single continuous
-                // strip.  Even though that strip has been broken up across multiple lines, you still paint it
-                // as though you had one single line.  This means each line has to pick up the image where
-                // the previous line left off.
-                // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
-                // but it isn't even clear how this should work at all.
-                LayoutUnit logicalOffsetOnLine = 0;
-                for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-                    logicalOffsetOnLine += curr->logicalWidth();
-                LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
-                for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
-                    totalLogicalWidth += curr->logicalWidth();
-                LayoutUnit stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : LayoutUnit());
-                LayoutUnit stripY = adjustedPaintoffset.y() - (isHorizontal() ? LayoutUnit() : logicalOffsetOnLine);
-                LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
-                LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+    // :first-line cannot be used to put borders on a line. Always paint borders with our
+    // non-first-line style.
+    if (!parent() || !renderer().style()->hasBorder())
+        return;
+    const NinePieceImage& borderImage = renderer().style()->borderImage();
+    StyleImage* borderImageSource = borderImage.image();
+    bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), lineStyle.effectiveZoom());
+    if (hasBorderImage && !borderImageSource->isLoaded())
+        return; // Don't paint anything while we wait for the image to load.
 
-                LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
-                GraphicsContextStateSaver stateSaver(*context);
-                context->clip(clipRect);
-                boxModelObject()->paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), renderer().style(isFirstLineStyle()));
-            }
-        }
+    // The simple case is where we either have no border image or we are the only box for this object. In those
+    // cases only a single call to draw is required.
+    if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
+        boxModelObject()->paintBorder(paintInfo, paintRect, &lineStyle, BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
+    else {
+        // We have a border image that spans multiple lines.
+        // We need to adjust tx and ty by the width of all previous lines.
+        // Think of border image painting on inlines as though you had one long line, a single continuous
+        // strip. Even though that strip has been broken up across multiple lines, you still paint it
+        // as though you had one single line. This means each line has to pick up the image where
+        // the previous line left off.
+        // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
+        // but it isn't even clear how this should work at all.
+        LayoutUnit logicalOffsetOnLine = 0;
+        for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
+            logicalOffsetOnLine += curr->logicalWidth();
+        LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
+        for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
+            totalLogicalWidth += curr->logicalWidth();
+        LayoutUnit stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : LayoutUnit());
+        LayoutUnit stripY = adjustedPaintoffset.y() - (isHorizontal() ? LayoutUnit() : logicalOffsetOnLine);
+        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
+        LayoutUnit stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
+
+        LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
+        GraphicsContextStateSaver stateSaver(*context);
+        context->clip(clipRect);
+        boxModelObject()->paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), &lineStyle);
     }
 }
 
@@ -1536,14 +1541,14 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
         }
 
         if (curr->isInlineTextBox()) {
-            RenderStyle* style = curr->renderer().style(isFirstLineStyle());
+            RenderStyle& childLineStyle = curr->lineStyle();
             TextEmphasisPosition emphasisMarkPosition;
-            if (style->textEmphasisMark() != TextEmphasisMarkNone && toInlineTextBox(curr)->getEmphasisMarkPosition(style, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
-                if (!style->isFlippedLinesWritingMode()) {
-                    int topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && toInlineTextBox(curr)->getEmphasisMarkPosition(&childLineStyle, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
+                if (!childLineStyle.isFlippedLinesWritingMode()) {
+                    int topOfEmphasisMark = curr->logicalTop() - childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = max(result, allowedPosition - topOfEmphasisMark);
                 } else {
-                    int bottomOfEmphasisMark = curr->logicalBottom() + style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    int bottomOfEmphasisMark = curr->logicalBottom() + childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = max(result, bottomOfEmphasisMark - allowedPosition);
                 }
             }
@@ -1584,13 +1589,13 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
         }
 
         if (curr->isInlineTextBox()) {
-            RenderStyle* style = curr->renderer().style(isFirstLineStyle());
-            if (style->textEmphasisMark() != TextEmphasisMarkNone && style->textEmphasisPosition() == TextEmphasisPositionUnder) {
-                if (!style->isFlippedLinesWritingMode()) {
-                    LayoutUnit bottomOfEmphasisMark = curr->logicalBottom() + style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+            RenderStyle& childLineStyle = curr->lineStyle();
+            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && childLineStyle.textEmphasisPosition() == TextEmphasisPositionUnder) {
+                if (!childLineStyle.isFlippedLinesWritingMode()) {
+                    LayoutUnit bottomOfEmphasisMark = curr->logicalBottom() + childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = max(result, bottomOfEmphasisMark - allowedPosition);
                 } else {
-                    LayoutUnit topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
+                    LayoutUnit topOfEmphasisMark = curr->logicalTop() - childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = max(result, allowedPosition - topOfEmphasisMark);
                 }
             }

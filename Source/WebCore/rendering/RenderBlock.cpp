@@ -5615,7 +5615,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
-        RenderStyle* s = style(firstLine);
+        RenderStyle* s = firstLine ? firstLineStyle() : style();
         if (s != style())
             return s->computedLineHeight(&view());
     }
@@ -5658,7 +5658,8 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
         return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
     }
 
-    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    const RenderStyle* style = firstLine ? firstLineStyle() : this->style();
+    const FontMetrics& fontMetrics = style->fontMetrics();
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
@@ -5667,7 +5668,8 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
     if (!document().inNoQuirksMode() && replacedHeight)
         return replacedHeight;
 
-    if (!(style(isFirstLine)->lineBoxContain() & LineBoxContainBlock))
+    const RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
+    if (!(style->lineBoxContain() & LineBoxContainBlock))
         return 0;
 
     return std::max<LayoutUnit>(replacedHeight, lineHeight(isFirstLine, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
@@ -5680,7 +5682,7 @@ int RenderBlock::firstLineBoxBaseline() const
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->logicalTop() + style(true)->fontMetrics().ascent(firstRootBox()->baselineType());
+            return firstLineBox()->logicalTop() + firstLineStyle()->fontMetrics().ascent(firstRootBox()->baselineType());
         else
             return -1;
     }
@@ -5714,8 +5716,11 @@ int RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
                  + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
                  + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
         }
-        if (lastLineBox())
-            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->fontMetrics().ascent(lastRootBox()->baselineType());
+        if (lastLineBox()) {
+            bool isFirstLine = lastLineBox() == firstLineBox();
+            RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
+            return lastLineBox()->logicalTop() + style->fontMetrics().ascent(lastRootBox()->baselineType());
+        }
         return -1;
     } else {
         bool haveNormalFlowChild = false;

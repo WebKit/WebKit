@@ -58,6 +58,7 @@ public:
     }
 
     RenderText& renderer() const { return toRenderText(InlineBox::renderer()); }
+    RenderStyle& lineStyle() const { return isFirstLine() ? *renderer().firstLineStyle() : *renderer().style(); }
 
     virtual void destroy(RenderArena&) OVERRIDE FINAL;
 

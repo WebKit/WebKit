@@ -2232,58 +2232,6 @@ void RenderObject::layout()
     setNeedsLayout(false);
 }
 
-enum StyleCacheState {
-    Cached,
-    Uncached
-};
-
-static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderObject* renderer, RenderStyle* style)
-{
-    const RenderObject* rendererForFirstLineStyle = renderer;
-    if (renderer->isBeforeOrAfterContent())
-        rendererForFirstLineStyle = renderer->parent();
-
-    if (rendererForFirstLineStyle->isRenderBlockFlow() || rendererForFirstLineStyle->isRenderButton()) {
-        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle->firstLineBlock()) {
-            if (type == Cached)
-                return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style);
-            return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == renderer ? style : 0);
-        }
-    } else if (!rendererForFirstLineStyle->isAnonymous() && rendererForFirstLineStyle->isRenderInline()) {
-        RenderStyle* parentStyle = rendererForFirstLineStyle->parent()->firstLineStyle();
-        if (parentStyle != rendererForFirstLineStyle->parent()->style()) {
-            if (type == Cached) {
-                // A first-line style is in effect. Cache a first-line style for ourselves.
-                rendererForFirstLineStyle->style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
-                return rendererForFirstLineStyle->getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
-            }
-            return rendererForFirstLineStyle->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), parentStyle, style);
-        }
-    }
-    return 0;
-}
-
-PassRefPtr<RenderStyle> RenderObject::uncachedFirstLineStyle(RenderStyle* style) const
-{
-    if (!document().styleSheetCollection().usesFirstLineRules())
-        return 0;
-
-    ASSERT(!isText());
-
-    return firstLineStyleForCachedUncachedType(Uncached, this, style);
-}
-
-RenderStyle* RenderObject::cachedFirstLineStyle() const
-{
-    ASSERT(document().styleSheetCollection().usesFirstLineRules());
-
-    RenderStyle* style = this->style();
-    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, isText() ? parent() : this, style))
-        return firstLineStyle.get();
-
-    return style;
-}
-
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
 {
     if (pseudo < FIRST_INTERNAL_PSEUDOID && !style()->hasPseudoStyle(pseudo))
@@ -2354,7 +2302,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     TextDecoration currDecs = TextDecorationNone;
     Color resultColor;
     do {
-        styleToUse = curr->style(firstlineStyle);
+        styleToUse = firstlineStyle ? curr->firstLineStyle() : curr->style();
         currDecs = styleToUse->textDecoration();
         resultColor = decorationColor(styleToUse);
         // Parameter 'decorations' is cast as an int to enable the bitwise operations below.
@@ -2381,7 +2329,7 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
-        styleToUse = curr->style(firstlineStyle);
+        styleToUse = firstlineStyle ? curr->firstLineStyle() : curr->style();
         resultColor = decorationColor(styleToUse);
         if (decorations & TextDecorationUnderline)
             underline = resultColor;

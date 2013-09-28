@@ -140,15 +140,16 @@ float InlineBox::logicalHeight() const
 {
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
-    
+
+    const RenderStyle& lineStyle = this->lineStyle();
     if (renderer().isTextOrLineBreak())
-        return behavesLikeText() ? renderer().style(isFirstLineStyle())->fontMetrics().height() : 0;
+        return behavesLikeText() ? lineStyle.fontMetrics().height() : 0;
     if (renderer().isBox() && parent())
         return isHorizontal() ? toRenderBox(renderer()).height() : toRenderBox(renderer()).width();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
-    const FontMetrics& fontMetrics = renderer().style(isFirstLineStyle())->fontMetrics();
+    const FontMetrics& fontMetrics = lineStyle.fontMetrics();
     float result = fontMetrics.height();
     if (parent())
         result += flowObject->borderAndPaddingLogicalHeight();

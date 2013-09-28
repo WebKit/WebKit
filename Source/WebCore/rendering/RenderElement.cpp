@@ -53,6 +53,7 @@
 #include "RenderText.h"
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
+#include "StyleResolver.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -173,6 +174,56 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
     }
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+enum StyleCacheState {
+    Cached,
+    Uncached
+};
+
+static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderObject* renderer, RenderStyle* style)
+{
+    const RenderObject* rendererForFirstLineStyle = renderer;
+    if (renderer->isBeforeOrAfterContent())
+        rendererForFirstLineStyle = renderer->parent();
+
+    if (rendererForFirstLineStyle->isRenderBlockFlow() || rendererForFirstLineStyle->isRenderButton()) {
+        if (RenderBlock* firstLineBlock = rendererForFirstLineStyle->firstLineBlock()) {
+            if (type == Cached)
+                return firstLineBlock->getCachedPseudoStyle(FIRST_LINE, style);
+            return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == renderer ? style : 0);
+        }
+    } else if (!rendererForFirstLineStyle->isAnonymous() && rendererForFirstLineStyle->isRenderInline()) {
+        RenderStyle* parentStyle = rendererForFirstLineStyle->parent()->firstLineStyle();
+        if (parentStyle != rendererForFirstLineStyle->parent()->style()) {
+            if (type == Cached) {
+                // A first-line style is in effect. Cache a first-line style for ourselves.
+                rendererForFirstLineStyle->style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
+                return rendererForFirstLineStyle->getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
+            }
+            return rendererForFirstLineStyle->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), parentStyle, style);
+        }
+    }
+    return 0;
+}
+
+PassRefPtr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
+{
+    if (!document().styleSheetCollection().usesFirstLineRules())
+        return 0;
+
+    return firstLineStyleForCachedUncachedType(Uncached, this, style);
+}
+
+RenderStyle* RenderElement::cachedFirstLineStyle() const
+{
+    ASSERT(document().styleSheetCollection().usesFirstLineRules());
+
+    RenderStyle* style = this->style();
+    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, this, style))
+        return firstLineStyle.get();
+
+    return style;
 }
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const

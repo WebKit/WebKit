@@ -276,6 +276,15 @@ void RenderRubyRun::layout()
     computeOverflow(clientLogicalBottom());
 }
 
+static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const RenderRubyBase& rubyBase)
+{
+    if (!renderer || !renderer->isText())
+        return false;
+    const RenderStyle& rubyBaseStyle = firstLine ? *rubyBase.firstLineStyle() : *rubyBase.style();
+    const RenderStyle& style = firstLine ? *renderer->firstLineStyle() : *renderer->style();
+    return style.fontSize() <= rubyBaseStyle.fontSize();
+}
+
 void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, int& startOverhang, int& endOverhang) const
 {
     ASSERT(!needsLayout());
@@ -303,16 +312,16 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     startOverhang = style()->isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
     endOverhang = style()->isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
 
-    if (!startRenderer || !startRenderer->isText() || startRenderer->style(firstLine)->fontSize() > rubyBase->style(firstLine)->fontSize())
+    if (!shouldOverhang(firstLine, startRenderer, *rubyBase))
         startOverhang = 0;
-
-    if (!endRenderer || !endRenderer->isText() || endRenderer->style(firstLine)->fontSize() > rubyBase->style(firstLine)->fontSize())
+    if (!shouldOverhang(firstLine, endRenderer, *rubyBase))
         endOverhang = 0;
 
     // We overhang a ruby only if the neighboring render object is a text.
     // We can overhang the ruby by no more than half the width of the neighboring text
     // and no more than half the font size.
-    int halfWidthOfFontSize = rubyText->style(firstLine)->fontSize() / 2;
+    const RenderStyle& rubyTextStyle = firstLine ? *rubyText->firstLineStyle() : *rubyText->style();
+    int halfWidthOfFontSize = rubyTextStyle.fontSize() / 2;
     if (startOverhang)
         startOverhang = min<int>(startOverhang, min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));
     if (endOverhang)
