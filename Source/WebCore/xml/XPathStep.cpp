@@ -138,6 +138,7 @@ void Step::evaluate(Node* context, NodeSet& nodes) const
     }
 }
 
+#if !ASSERT_DISABLED
 static inline Node::NodeType primaryNodeType(Step::Axis axis)
 {
     switch (axis) {
@@ -149,6 +150,7 @@ static inline Node::NodeType primaryNodeType(Step::Axis axis)
             return Node::ELEMENT_NODE;
     }
 }
+#endif
 
 // Evaluate NodeTest without considering merged predicates.
 static inline bool nodeMatchesBasicTest(Node* node, Step::Axis axis, const Step::NodeTest& nodeTest)

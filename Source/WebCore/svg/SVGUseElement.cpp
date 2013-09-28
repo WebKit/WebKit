@@ -168,12 +168,14 @@ void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString
     reportAttributeParsingError(parseError, name, value);
 }
 
+#if !ASSERT_DISABLED
 static inline bool isWellFormedDocument(Document& document)
 {
     if (document.isSVGDocument() || document.isXHTMLDocument())
         return static_cast<XMLDocumentParser*>(document.parser())->wellFormed();
     return true;
 }
+#endif
 
 Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* rootParent)
 {

@@ -61,8 +61,6 @@
 
 namespace WebCore {
 
-static const char randomCharacterInSecWebSocketKey[] = "!\"#$%&'()*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
 static String resourceName(const URL& url)
 {
     StringBuilder name;

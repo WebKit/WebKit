@@ -91,7 +91,6 @@
 // FIXME: check the proper way to reference an undefined thread ID
 const int UndefinedThreadIdentifier = 0xffffffff;
 
-const unsigned MaxNodesToDeletePerQuantum = 10;
 const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {

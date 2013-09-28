@@ -44,11 +44,6 @@ static inline bool bytesEqual(const char* p, char b0, char b1)
     return p[0] == b0 && p[1] == b1;
 }
 
-static inline bool bytesEqual(const char* p, char b0, char b1, char b2)
-{
-    return p[0] == b0 && p[1] == b1 && p[2] == b2;
-}
-
 static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3, char b4)
 {
     return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4;
@@ -402,14 +397,6 @@ static int findXMLEncoding(const char* str, int len, int& encodingLength)
 
     encodingLength = end - pos;
     return pos;
-}
-
-// true if there is more to parse
-static inline bool skipWhitespace(const char*& pos, const char* dataEnd)
-{
-    while (pos < dataEnd && (*pos == '\t' || *pos == ' '))
-        ++pos;
-    return pos != dataEnd;
 }
 
 size_t TextResourceDecoder::checkForBOM(const char* data, size_t len)

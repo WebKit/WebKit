@@ -342,12 +342,6 @@
 //     - This is how a transaction ends normally.
 //     - state CleanupAndTerminate calls doCleanup().
 
-
-// There's no way of knowing exactly how much more space will be required when a statement hits the quota limit.
-// For now, we'll arbitrarily choose currentQuota + 1mb.
-// In the future we decide to track if a size increase wasn't enough, and ask for larger-and-larger increases until its enough.
-static const int DefaultQuotaSizeIncrease = 1048576;
-
 namespace WebCore {
 
 PassRefPtr<SQLTransactionBackend> SQLTransactionBackend::create(DatabaseBackend* db,

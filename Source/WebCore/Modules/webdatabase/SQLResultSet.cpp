@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-static unsigned const MaxErrorCode = 2;
-
 SQLResultSet::SQLResultSet()
     : m_rows(SQLResultSetRowList::create())
     , m_insertId(0)

@@ -32,13 +32,6 @@ SVGAnimatedAngleAnimator::SVGAnimatedAngleAnimator(SVGAnimationElement* animatio
 {
 }
 
-static inline SVGAngle& sharedSVGAngle(const String& valueAsString)
-{
-    DEFINE_STATIC_LOCAL(SVGAngle, sharedAngle, ());
-    sharedAngle.setValueAsString(valueAsString, ASSERT_NO_EXCEPTION);
-    return sharedAngle;
-}
-
 PassOwnPtr<SVGAnimatedType> SVGAnimatedAngleAnimator::constructFromString(const String& string)
 {
     OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createAngleAndEnumeration(new pair<SVGAngle, unsigned>);

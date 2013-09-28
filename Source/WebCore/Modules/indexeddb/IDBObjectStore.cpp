@@ -46,8 +46,6 @@
 
 namespace WebCore {
 
-static const unsigned short defaultDirection = IndexedDB::CursorNext;
-
 IDBObjectStore::IDBObjectStore(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
     : m_metadata(metadata)
     , m_transaction(transaction)

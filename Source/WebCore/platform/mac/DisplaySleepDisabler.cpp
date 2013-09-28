@@ -31,7 +31,9 @@
 
 namespace WebCore {
 
+#if PLATFORM(IOS)
 static const double systemActivityInterval = 1;
+#endif
 
 DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
     : m_disableDisplaySleepAssertion(0)

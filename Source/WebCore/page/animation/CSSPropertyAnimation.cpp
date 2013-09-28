@@ -93,12 +93,6 @@ static inline LengthSize blendFunc(const AnimationBase* anim, const LengthSize& 
                       blendFunc(anim, from.height(), to.height(), progress));
 }
 
-static inline IntSize blendFunc(const AnimationBase* anim, const IntSize& from, const IntSize& to, double progress)
-{
-    return IntSize(blendFunc(anim, from.width(), to.width(), progress),
-                   blendFunc(anim, from.height(), to.height(), progress));
-}
-
 static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from, ShadowStyle to, double progress)
 {
     if (from == to)

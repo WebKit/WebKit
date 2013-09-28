@@ -1,3 +1,37 @@
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
+        WebCore fails to build with newer versions of clang.
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBIndex.cpp: Remove an unused constant.
+        * Modules/indexeddb/IDBObjectStore.cpp: Ditto.
+        * Modules/webaudio/AudioContext.cpp: Ditto.
+        * Modules/webaudio/ScriptProcessorNode.cpp: Ditto.
+        * Modules/webdatabase/SQLResultSet.cpp: Ditto.
+        * Modules/webdatabase/SQLTransactionBackend.cpp: Ditto.
+        * Modules/websockets/WebSocketHandshake.cpp: Ditto.
+        * bindings/objc/DOM.mm: Disable a warning about overriding a protocol method in a cateogry around the one
+        place we do it. I don't understand why this generates a warning, nor can I see a different approach that
+        would not result in the warning being emitted.
+        * css/CSSGrammar.y.in: #if a function that's only used inside an #if.
+        * html/track/TextTrackCue.cpp: Remove an unused constant.
+        * loader/TextResourceDecoder.cpp: Remove two unused functions.
+        * page/ContentSecurityPolicy.cpp: Add #if's around constants and functions that are only used when CSP_NEXT is enabled.
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation): Reorder the ifs slightly to make the #if'ing easier.
+        * page/ContentSecurityPolicy.h: Add #if's around functions that are only used when CSP_NEXT is enabled.
+        * page/DOMSecurityPolicy.cpp: Ditto.
+        * page/DOMSecurityPolicy.h: Ditto.
+        * page/animation/CSSPropertyAnimation.cpp: Remove an unused function.
+        * platform/mac/DisplaySleepDisabler.cpp: Add an #if around a constant that's only used on iOS.
+        * platform/mac/WebCoreFullScreenWarningView.mm: Remove three unused constants.
+        * rendering/RenderLayer.cpp: Remove two unused constants.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::compositingLogEnabled): Move the #if around the function definition.
+        * svg/SVGAnimatedAngle.cpp: Remove an unused function.
+        * svg/SVGUseElement.cpp: #if a function that's only used inside an ASSERT.
+        * xml/XPathStep.cpp: Ditto.
+
 2013-09-27  Brady Eidson  <beidson@apple.com>
 
         IndexedDB IDL Refactoring.

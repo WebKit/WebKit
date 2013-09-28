@@ -56,7 +56,6 @@ namespace WebCore {
 
 static const int invalidCueIndex = -1;
 static const int undefinedPosition = -1;
-static const int autoSize = 0;
 
 static const String& startKeyword()
 {

@@ -137,9 +137,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const int MinimumWidthWhileResizing = 100;
-const int MinimumHeightWhileResizing = 40;
-
 bool ClipRect::intersects(const HitTestLocation& hitTestLocation) const
 {
     return hitTestLocation.intersects(m_rect);

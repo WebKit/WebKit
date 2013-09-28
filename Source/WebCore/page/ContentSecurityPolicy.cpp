@@ -125,7 +125,9 @@ static const char baseURI[] = "base-uri";
 static const char formAction[] = "form-action";
 static const char pluginTypes[] = "plugin-types";
 static const char scriptNonce[] = "script-nonce";
+#if ENABLE(CSP_NEXT)
 static const char reflectedXSS[] = "reflected-xss";
+#endif
 
 bool isDirectiveName(const String& name)
 {

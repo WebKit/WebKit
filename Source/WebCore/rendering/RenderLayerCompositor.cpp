@@ -205,14 +205,12 @@ struct CompositingState {
 };
 
 
+#if !LOG_DISABLED
 static inline bool compositingLogEnabled()
 {
-#if !LOG_DISABLED
     return LogCompositing.state == WTFLogChannelOn;
-#else
-    return false;
-#endif
 }
+#endif
 
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
@@ -636,7 +634,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 {
     if (!compositingLogEnabled())
         return;
-        
+
     RenderLayerBacking* backing = layer->backing();
     if (requiresCompositingLayer(layer) || layer->isRootLayer()) {
         ++m_obligateCompositedLayerCount;

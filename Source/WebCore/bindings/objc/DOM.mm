@@ -180,6 +180,9 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 @implementation DOMNode (WebCoreInternal)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+
 - (NSString *)description
 {
     if (!_internal)
@@ -192,6 +195,8 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
     return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
+
+#pragma clang diagnostic pop
 
 - (JSC::Bindings::RootObject*)_rootObject
 {

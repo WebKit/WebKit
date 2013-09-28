@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-const size_t DefaultBufferSize = 4096;
-
 PassRefPtr<ScriptProcessorNode> ScriptProcessorNode::create(AudioContext* context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {
     // Check for valid buffer size.
