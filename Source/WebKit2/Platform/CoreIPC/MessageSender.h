@@ -50,18 +50,20 @@ public:
         return sendMessage(std::move(encoder));
     }
 
-    template<typename U> bool sendSync(const U& message, typename U::Reply&& reply, double timeout = Connection::NoTimeout)
+    template<typename T>
+    bool sendSync(T&& message, typename T::Reply&& reply, double timeout = Connection::NoTimeout)
     {
-        static_assert(U::isSync, "Message is not sync!");
+        static_assert(T::isSync, "Message is not sync!");
 
-        return sendSync(message, std::move(reply), messageSenderDestinationID(), timeout);
+        return sendSync(std::forward<T>(message), std::move(reply), messageSenderDestinationID(), timeout);
     }
 
-    template<typename U> bool sendSync(const U& message, typename U::Reply&& reply, uint64_t destinationID, double timeout = Connection::NoTimeout)
+    template<typename T>
+    bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, double timeout = Connection::NoTimeout)
     {
         ASSERT(messageSenderConnection());
 
-        return messageSenderConnection()->sendSync(message, std::move(reply), destinationID, timeout);
+        return messageSenderConnection()->sendSync(std::move(message), std::move(reply), destinationID, timeout);
     }
 
     bool sendMessage(std::unique_ptr<MessageEncoder>);

@@ -47,8 +47,8 @@ public:
     void connect();
     void terminate();
 
-    template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename U> bool sendSync(const U& message, typename U::Reply&&, uint64_t destinationID, double timeout = 1);
+    template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
+    template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, double timeout = 1);
     
     CoreIPC::Connection* connection() const
     {
@@ -90,7 +90,7 @@ private:
 };
 
 template<typename T>
-bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
+bool ChildProcessProxy::send(T&& message, uint64_t destinationID, unsigned messageSendFlags)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -101,14 +101,14 @@ bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned 
 }
 
 template<typename U> 
-bool ChildProcessProxy::sendSync(const U& message, typename U::Reply&& reply, uint64_t destinationID, double timeout)
+bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, double timeout)
 {
     COMPILE_ASSERT(U::isSync, SyncMessageExpected);
 
     if (!m_connection)
         return false;
 
-    return connection()->sendSync(message, std::move(reply), destinationID, timeout);
+    return connection()->sendSync(std::forward<U>(message), std::move(reply), destinationID, timeout);
 }
 
 } // namespace WebKit

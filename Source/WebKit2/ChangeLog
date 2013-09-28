@@ -1,3 +1,33 @@
+2013-09-27  Anders Carlsson  <andersca@apple.com>
+
+        Message sending functions should only accept rvalues
+        https://bugs.webkit.org/show_bug.cgi?id=122041
+
+        Reviewed by Andreas Kling.
+
+        In order to safely encode move-only types, make all send variants accept rvalues only, except
+        for the "send to all processes" ones. For them, copy the message before sending. This ensures that trying
+        to send a move-only type in a message will fail to compile.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::sendSync):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::send):
+        (WebKit::ChildProcessProxy::sendSync):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::sendToNetworkingProcess):
+        (WebKit::WebContext::sendToNetworkingProcessRelaunchingIfNecessary):
+        (WebKit::WebContext::sendToAllProcesses):
+        (WebKit::WebContext::sendToAllProcessesRelaunchingThemIfNecessary):
+        (WebKit::WebContext::sendToOneProcess):
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup):
+
 2013-09-28  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix after r156560.

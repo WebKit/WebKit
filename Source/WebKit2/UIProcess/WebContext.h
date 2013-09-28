@@ -132,13 +132,13 @@ public:
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
     CoreIPC::Connection* networkingProcessConnection();
 
-    template<typename U> void sendToAllProcesses(const U& message);
-    template<typename U> void sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
-    template<typename U> void sendToOneProcess(const U& message);
+    template<typename T> void sendToAllProcesses(const T& message);
+    template<typename T> void sendToAllProcessesRelaunchingThemIfNecessary(const T& message);
+    template<typename T> void sendToOneProcess(T&& message);
 
     // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
-    template<typename U> void sendToNetworkingProcess(const U& message);
-    template<typename U> void sendToNetworkingProcessRelaunchingIfNecessary(const U& message);
+    template<typename T> void sendToNetworkingProcess(T&& message);
+    template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
     void processWillOpenConnection(WebProcessProxy*);
     void processWillCloseConnection(WebProcessProxy*);
@@ -497,17 +497,18 @@ private:
 #endif
 };
 
-template<typename U> inline void WebContext::sendToNetworkingProcess(const U& message)
+template<typename T>
+void WebContext::sendToNetworkingProcess(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
         if (!m_processes.isEmpty() && m_processes[0]->canSendMessage())
-            m_processes[0]->send(message, 0);
+            m_processes[0]->send(std::forward<T>(message), 0);
         return;
     case ProcessModelMultipleSecondaryProcesses:
 #if ENABLE(NETWORK_PROCESS)
         if (m_networkProcess->canSendMessage())
-            m_networkProcess->send(message, 0);
+            m_networkProcess->send(std::forward<T>(message), 0);
         return;
 #else
         break;
@@ -516,17 +517,18 @@ template<typename U> inline void WebContext::sendToNetworkingProcess(const U& me
     ASSERT_NOT_REACHED();
 }
 
-template<typename U> void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(const U& message)
+template<typename T>
+void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
         ensureSharedWebProcess();
-        m_processes[0]->send(message, 0);
+        m_processes[0]->send(std::forward<T>(message), 0);
         return;
     case ProcessModelMultipleSecondaryProcesses:
 #if ENABLE(NETWORK_PROCESS)
         ensureNetworkProcess();
-        m_networkProcess->send(message, 0);
+        m_networkProcess->send(std::forward<T>(message), 0);
         return;
 #else
         break;
@@ -535,17 +537,19 @@ template<typename U> void WebContext::sendToNetworkingProcessRelaunchingIfNecess
     ASSERT_NOT_REACHED();
 }
 
-template<typename U> inline void WebContext::sendToAllProcesses(const U& message)
+template<typename T>
+void WebContext::sendToAllProcesses(const T& message)
 {
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i) {
         WebProcessProxy* process = m_processes[i].get();
         if (process->canSendMessage())
-            process->send(message, 0);
+            process->send(T(message), 0);
     }
 }
 
-template<typename U> void WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const U& message)
+template<typename T>
+void WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
 {
 // FIXME (Multi-WebProcess): WebContext doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
     if (m_processModel == ProcessModelSharedSecondaryProcess)
@@ -553,7 +557,8 @@ template<typename U> void WebContext::sendToAllProcessesRelaunchingThemIfNecessa
     sendToAllProcesses(message);
 }
 
-template<typename U> inline void WebContext::sendToOneProcess(const U& message)
+template<typename T>
+void WebContext::sendToOneProcess(T&& message)
 {
     if (m_processModel == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
@@ -563,7 +568,7 @@ template<typename U> inline void WebContext::sendToOneProcess(const U& message)
     for (size_t i = 0; i < processCount; ++i) {
         WebProcessProxy* process = m_processes[i].get();
         if (process->canSendMessage()) {
-            process->send(message, 0);
+            process->send(std::forward<T>(message), 0);
             messageSent = true;
             break;
         }
@@ -573,7 +578,7 @@ template<typename U> inline void WebContext::sendToOneProcess(const U& message)
         warmInitialProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
-            process->send(message, 0);
+            process->send(std::forward<T>(message), 0);
     }
 }
 

@@ -165,8 +165,8 @@ public:
 
     static const int NoTimeout = -1;
 
-    template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(const T& message, typename T::Reply&& reply, uint64_t destinationID, double timeout = NoTimeout, unsigned syncSendFlags = 0);
+    template<typename T> bool send(T&& message, uint64_t destinationID, unsigned messageSendFlags = 0);
+    template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, double timeout = NoTimeout, unsigned syncSendFlags = 0);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
     std::unique_ptr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
@@ -324,7 +324,7 @@ private:
 #endif
 };
 
-template<typename T> bool Connection::send(const T& message, uint64_t destinationID, unsigned messageSendFlags)
+template<typename T> bool Connection::send(T&& message, uint64_t destinationID, unsigned messageSendFlags)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -334,7 +334,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     return sendMessage(std::move(encoder), messageSendFlags);
 }
 
-template<typename T> bool Connection::sendSync(const T& message, typename T::Reply&& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
+template<typename T> bool Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
 {
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
 
