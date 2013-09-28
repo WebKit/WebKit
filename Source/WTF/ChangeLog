@@ -1,5 +1,14 @@
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
+        Take Xcode's advice and enable some extra warnings.
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+
+2013-09-28  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/15079224> WTF fails to build with newer versions of clang.
 
         Reviewed by Sam Weinig.

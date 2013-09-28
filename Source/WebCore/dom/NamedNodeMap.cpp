@@ -72,7 +72,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, Excepti
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
 {
-    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : notFound;
+    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
