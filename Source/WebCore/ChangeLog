@@ -1,5 +1,12 @@
 2013-09-28  Antti Koivisto  <antti@apple.com>
 
+        Switch inline boxes to use const RenderStyle&
+        https://bugs.webkit.org/show_bug.cgi?id=122068
+
+        Reviewed by Sam Weinig.
+
+2013-09-28  Antti Koivisto  <antti@apple.com>
+
         Add first()/last() to ElementIteratorAdapters
         https://bugs.webkit.org/show_bug.cgi?id=122067
 

@@ -39,10 +39,10 @@ public:
     RenderBlock& renderer() const { return toRenderBlock(InlineBox::renderer()); }
 
 private:
-    void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, RenderStyle*);
+    void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle&);
     virtual int height() const { return m_height; }
     virtual RenderObject::SelectionState selectionState() { return m_selectionState; }
-    void paintSelection(GraphicsContext*, const LayoutPoint&, RenderStyle*, const Font&);
+    void paintSelection(GraphicsContext*, const LayoutPoint&, const RenderStyle&, const Font&);
     InlineBox* markupBox() const;
 
     bool m_shouldPaintMarkupBox;

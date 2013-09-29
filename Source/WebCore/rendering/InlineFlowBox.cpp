@@ -160,7 +160,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
     if (!child->renderer().isOutOfFlowPositioned()) {
         const RenderStyle& childStyle = child->lineStyle();
         if (child->behavesLikeText()) {
-            RenderStyle* childStyle = &child->lineStyle();
+            const RenderStyle* childStyle = &child->lineStyle();
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->textStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
         } else if (child->renderer().isReplaced()) {
@@ -661,7 +661,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         LayoutUnit boxHeight = curr->logicalHeight();
         LayoutUnit boxHeightIncludingMargins = boxHeight;
 
-        RenderStyle& childLineStyle = curr->lineStyle();
+        const RenderStyle& childLineStyle = curr->lineStyle();
         if (curr->behavesLikeText() || curr->isInlineFlowBox()) {
             const FontMetrics& fontMetrics = childLineStyle.fontMetrics();
             newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
@@ -703,7 +703,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             }
             if (curr->isInlineTextBox()) {
                 TextEmphasisPosition emphasisMarkPosition;
-                if (toInlineTextBox(curr)->getEmphasisMarkPosition(&childLineStyle, emphasisMarkPosition)) {
+                if (toInlineTextBox(curr)->getEmphasisMarkPosition(childLineStyle, emphasisMarkPosition)) {
                     bool emphasisMarkIsOver = emphasisMarkPosition == TextEmphasisPositionOver;
                     if (emphasisMarkIsOver != childLineStyle.isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
@@ -858,7 +858,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     if (textBox->knownToHaveNoOverflow())
         return;
 
-    RenderStyle& lineStyle = this->lineStyle();
+    const RenderStyle& lineStyle = this->lineStyle();
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
@@ -876,7 +876,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
     TextEmphasisPosition emphasisMarkPosition;
-    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox->getEmphasisMarkPosition(&lineStyle, emphasisMarkPosition)) {
+    if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox->getEmphasisMarkPosition(lineStyle, emphasisMarkPosition)) {
         int emphasisMarkHeight = lineStyle.font().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if ((emphasisMarkPosition == TextEmphasisPositionOver) == (!lineStyle.isFlippedLinesWritingMode()))
             topGlyphOverflow = min(topGlyphOverflow, -emphasisMarkHeight);
@@ -1238,14 +1238,14 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     }
 }
 
-void InlineFlowBox::paintBoxShadow(const PaintInfo& info, RenderStyle* s, ShadowStyle shadowStyle, const LayoutRect& paintRect)
+void InlineFlowBox::paintBoxShadow(const PaintInfo& info, const RenderStyle& style, ShadowStyle shadowStyle, const LayoutRect& paintRect)
 {
     if ((!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintBoxShadow(info, paintRect, s, shadowStyle);
+        boxModelObject()->paintBoxShadow(info, paintRect, &style, shadowStyle);
     else {
         // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
         // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
-        boxModelObject()->paintBoxShadow(info, paintRect, s, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
+        boxModelObject()->paintBoxShadow(info, paintRect, &style, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
     }
 }
 
@@ -1314,7 +1314,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     // a line may actually have to paint a background.
     if (parent() && !renderer().hasBoxDecorations())
         return;
-    RenderStyle& lineStyle = this->lineStyle();
+    const RenderStyle& lineStyle = this->lineStyle();
     if (!parent() && (!isFirstLine() || &lineStyle == renderer().style()))
         return;
 
@@ -1323,11 +1323,11 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
     // Shadow comes first and is behind the background and border.
     if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
-        paintBoxShadow(paintInfo, &lineStyle, Normal, paintRect);
+        paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
     Color c = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
     paintFillLayers(paintInfo, c, lineStyle.backgroundLayers(), paintRect);
-    paintBoxShadow(paintInfo, &lineStyle, Inset, paintRect);
+    paintBoxShadow(paintInfo, lineStyle, Inset, paintRect);
 
     // :first-line cannot be used to put borders on a line. Always paint borders with our
     // non-first-line style.
@@ -1541,9 +1541,9 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
         }
 
         if (curr->isInlineTextBox()) {
-            RenderStyle& childLineStyle = curr->lineStyle();
+            const RenderStyle& childLineStyle = curr->lineStyle();
             TextEmphasisPosition emphasisMarkPosition;
-            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && toInlineTextBox(curr)->getEmphasisMarkPosition(&childLineStyle, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
+            if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && toInlineTextBox(curr)->getEmphasisMarkPosition(childLineStyle, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = curr->logicalTop() - childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = max(result, allowedPosition - topOfEmphasisMark);
@@ -1589,7 +1589,7 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
         }
 
         if (curr->isInlineTextBox()) {
-            RenderStyle& childLineStyle = curr->lineStyle();
+            const RenderStyle& childLineStyle = curr->lineStyle();
             if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && childLineStyle.textEmphasisPosition() == TextEmphasisPositionUnder) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     LayoutUnit bottomOfEmphasisMark = curr->logicalBottom() + childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());

@@ -280,7 +280,7 @@ public:
 
     bool visibleToHitTesting() const { return renderer().style()->visibility() == VISIBLE && renderer().style()->pointerEvents() != PE_NONE; }
 
-    RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? *renderer().firstLineStyle() : *renderer().style(); }
+    const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? *renderer().firstLineStyle() : *renderer().style(); }
     
     EVerticalAlign verticalAlign() const { return lineStyle().verticalAlign(); }
 

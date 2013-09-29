@@ -1337,7 +1337,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         return;
 
     const Font& font = style()->font();
-    TextRun textRun = RenderBlock::constructTextRun(this, font, m_text, style());
+    TextRun textRun = RenderBlock::constructTextRun(this, font, m_text, *style());
 
     GraphicsContextStateSaver stateSaver(*context, false);
     if (!style()->isHorizontalWritingMode()) {
@@ -1372,10 +1372,10 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             int width = font.width(textRun);
             context->drawText(font, textRun, textOrigin);
             UChar suffixSpace[2] = { suffix, ' ' };
-            context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()), textOrigin + IntSize(width, 0));
+            context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, *style()), textOrigin + IntSize(width, 0));
         } else {
             UChar spaceSuffix[2] = { ' ', suffix };
-            TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, style());
+            TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, *style());
             int width = font.width(spaceSuffixRun);
             context->drawText(font, spaceSuffixRun, textOrigin);
             context->drawText(font, textRun, textOrigin + IntSize(width, 0));
@@ -1645,7 +1645,7 @@ void RenderListMarker::computePreferredLogicalWidths()
             else {
                 LayoutUnit itemWidth = font.width(m_text);
                 UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
-                LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
+                LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, *style()));
                 logicalWidth = itemWidth + suffixSpaceWidth;
             }
             break;
@@ -1870,7 +1870,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             const Font& font = style()->font();
             int itemWidth = font.width(m_text);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
-            int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
+            int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, *style()));
             relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }
 

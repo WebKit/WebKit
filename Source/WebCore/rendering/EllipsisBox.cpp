@@ -44,7 +44,7 @@ EllipsisBox::EllipsisBox(RenderBlock& renderer, const AtomicString& ellipsisStr,
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
-    RenderStyle& lineStyle = this->lineStyle();
+    const RenderStyle& lineStyle = this->lineStyle();
     Color textColor = lineStyle.visitedDependentColor(CSSPropertyWebkitTextFillColor);
     if (textColor != context->fillColor())
         context->setFillColor(textColor, lineStyle.colorSpace());
@@ -57,7 +57,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
 
     const Font& font = lineStyle.font();
     if (selectionState() != RenderObject::SelectionNone) {
-        paintSelection(context, paintOffset, &lineStyle, font);
+        paintSelection(context, paintOffset, lineStyle, font);
 
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceBlackText() ? Color::black : renderer().selectionForegroundColor();
@@ -66,7 +66,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, &lineStyle, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, lineStyle, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + lineStyle.fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -75,7 +75,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     if (setShadow)
         context->clearShadow();
 
-    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, &lineStyle);
+    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle);
 }
 
 InlineBox* EllipsisBox::markupBox() const
@@ -96,7 +96,7 @@ InlineBox* EllipsisBox::markupBox() const
     return anchorBox;
 }
 
-void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, RenderStyle* style)
+void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle& style)
 {
     InlineBox* markupBox = this->markupBox();
     if (!markupBox)
@@ -104,22 +104,22 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     LayoutPoint adjustedPaintOffset = paintOffset;
     adjustedPaintOffset.move(x() + m_logicalWidth - markupBox->x(),
-        y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
+        y() + style.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
 IntRect EllipsisBox::selectionRect()
 {
-    RenderStyle& lineStyle = this->lineStyle();
+    const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = lineStyle.font();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&renderer(), font, m_str, &lineStyle, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock()), rootBox.selectionHeightAdjustedForPrecedingBlock()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&renderer(), font, m_str, lineStyle, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock()), rootBox.selectionHeightAdjustedForPrecedingBlock()));
 }
 
-void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style, const Font& font)
+void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, const RenderStyle& style, const Font& font)
 {
-    Color textColor = style->visitedDependentColor(CSSPropertyColor);
+    Color textColor = style.visitedDependentColor(CSSPropertyColor);
     Color c = renderer().selectionBackgroundColor();
     if (!c.isValid() || !c.alpha())
         return;
@@ -138,7 +138,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(clipRect);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style.colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
@@ -147,7 +147,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (InlineBox* markupBox = this->markupBox()) {
-        RenderStyle& lineStyle = this->lineStyle();
+        const RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - markupBox->x();
         LayoutUnit mty = adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent());
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
