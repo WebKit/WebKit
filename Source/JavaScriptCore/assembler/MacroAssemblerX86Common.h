@@ -601,7 +601,19 @@ public:
         ASSERT(-128 <= imm.m_value && imm.m_value < 128);
         m_assembler.movb_i8m(imm.m_value, address.offset, address.base, address.index, address.scale);
     }
-    
+
+    static ALWAYS_INLINE RegisterID getUnusedRegister(BaseIndex address)
+    {
+        if (address.base != X86Registers::eax && address.index != X86Registers::eax)
+            return X86Registers::eax;
+
+        if (address.base != X86Registers::ebx && address.index != X86Registers::ebx)
+            return X86Registers::ebx;
+
+        ASSERT(address.base != X86Registers::ecx && address.index != X86Registers::ecx);
+        return X86Registers::ecx;
+    }
+
     void store8(RegisterID src, BaseIndex address)
     {
 #if CPU(X86)
@@ -609,15 +621,7 @@ public:
         // esp..edi are mapped to the 'h' registers!
         if (src >= 4) {
             // Pick a temporary register.
-            RegisterID temp;
-            if (address.base != X86Registers::eax && address.index != X86Registers::eax)
-                temp = X86Registers::eax;
-            else if (address.base != X86Registers::ebx && address.index != X86Registers::ebx)
-                temp = X86Registers::ebx;
-            else {
-                ASSERT(address.base != X86Registers::ecx && address.index != X86Registers::ecx);
-                temp = X86Registers::ecx;
-            }
+            RegisterID temp = getUnusedRegister(address);
 
             // Swap to the temporary register to perform the store.
             swap(src, temp);
@@ -636,16 +640,8 @@ public:
         // esp..edi are mapped to the 'h' registers!
         if (src >= 4) {
             // Pick a temporary register.
-            RegisterID temp;
-            if (address.base != X86Registers::eax && address.index != X86Registers::eax)
-                temp = X86Registers::eax;
-            else if (address.base != X86Registers::ebx && address.index != X86Registers::ebx)
-                temp = X86Registers::ebx;
-            else {
-                ASSERT(address.base != X86Registers::ecx && address.index != X86Registers::ecx);
-                temp = X86Registers::ecx;
-            }
-            
+            RegisterID temp = getUnusedRegister(address);
+
             // Swap to the temporary register to perform the store.
             swap(src, temp);
             m_assembler.movw_rm(temp, address.offset, address.base, address.index, address.scale);
