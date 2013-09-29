@@ -796,10 +796,10 @@ static IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBrea
     if (isFirstLine)
         shouldIndentText = IndentText;
 #if ENABLE(CSS3_TEXT)
-    else if (isAfterHardLineBreak && style->textIndentLine() == TextIndentEachLine) 
+    else if (isAfterHardLineBreak && style.textIndentLine() == TextIndentEachLine)
         shouldIndentText = IndentText;
 
-    if (style->textIndentType() == TextIndentHanging)
+    if (style.textIndentType() == TextIndentHanging)
         shouldIndentText = shouldIndentText == IndentText ? DoNotIndentText : IndentText;
 #else
     UNUSED_PARAM(isAfterHardLineBreak);
