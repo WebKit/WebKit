@@ -69,8 +69,9 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
 {
     ASSERT(thisObj->globalObject());
     ASSERT(entry->attributes() & Function);
+    VM& vm = exec->vm();
     unsigned attributes;
-    PropertyOffset offset = thisObj->getDirectOffset(exec->vm(), propertyName, attributes);
+    PropertyOffset offset = thisObj->getDirectOffset(vm, propertyName, attributes);
 
     if (!isValidOffset(offset)) {
         // If a property is ever deleted from an object with a static table, then we reify
@@ -79,9 +80,9 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
             return false;
     
         thisObj->putDirectNativeFunction(
-            exec, thisObj->globalObject(), propertyName, entry->functionLength(),
+            vm, thisObj->globalObject(), propertyName, entry->functionLength(),
             entry->function(), entry->intrinsic(), entry->attributes());
-        offset = thisObj->getDirectOffset(exec->vm(), propertyName, attributes);
+        offset = thisObj->getDirectOffset(vm, propertyName, attributes);
         ASSERT(isValidOffset(offset));
     }
 

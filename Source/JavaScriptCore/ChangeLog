@@ -1,3 +1,14 @@
+2013-09-29  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to simple builtin constructors.
+        <https://webkit.org/b/122077>
+
+        Reviewed by Sam Weinig.
+
+        None of the simple builtins need the ExecState for anything during
+        their construction, so reduce the amount of loads by just passing
+        the VM around instead.
+
 2013-09-29  Nadav Rotem  <nrotem@apple.com>
 
         Refactor code for finding x86 scratch register.

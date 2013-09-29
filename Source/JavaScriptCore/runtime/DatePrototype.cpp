@@ -501,8 +501,8 @@ const ClassInfo DatePrototype::s_info = {"Date", &DateInstance::s_info, 0, ExecS
 
 // ECMA 15.9.4
 
-DatePrototype::DatePrototype(ExecState* exec, Structure* structure)
-    : DateInstance(exec, structure)
+DatePrototype::DatePrototype(VM& vm, Structure* structure)
+    : DateInstance(vm, structure)
 {
 }
 

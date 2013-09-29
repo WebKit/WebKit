@@ -29,10 +29,9 @@ class BooleanPrototype : public BooleanObject {
 public:
     typedef BooleanObject Base;
 
-    static BooleanPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    static BooleanPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        VM& vm = exec->vm();
-        BooleanPrototype* prototype = new (NotNull, allocateCell<BooleanPrototype>(vm.heap)) BooleanPrototype(exec, structure);
+        BooleanPrototype* prototype = new (NotNull, allocateCell<BooleanPrototype>(vm.heap)) BooleanPrototype(vm, structure);
         prototype->finishCreation(vm, globalObject);
         return prototype;
     }
@@ -49,7 +48,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | BooleanObject::StructureFlags;
 
 private:
-    BooleanPrototype(ExecState*, Structure*);
+    BooleanPrototype(VM&, Structure*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 

@@ -1516,7 +1516,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            return DateInstance::create(m_exec, m_globalObject->dateStructure(), d);
+            return DateInstance::create(m_exec->vm(), m_globalObject->dateStructure(), d);
         }
         case FileTag: {
             RefPtr<File> file;

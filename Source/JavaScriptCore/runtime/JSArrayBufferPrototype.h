@@ -36,10 +36,10 @@ public:
 
 protected:
     JSArrayBufferPrototype(VM&, Structure*);
-    void finishCreation(ExecState*, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 
 public:
-    static JSArrayBufferPrototype* create(ExecState*, JSGlobalObject*, Structure*);
+    static JSArrayBufferPrototype* create(VM&, JSGlobalObject*, Structure*);
     
     DECLARE_INFO;
     

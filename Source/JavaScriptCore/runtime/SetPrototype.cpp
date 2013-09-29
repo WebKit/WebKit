@@ -47,10 +47,8 @@ static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(ExecState*);
 
-void SetPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);

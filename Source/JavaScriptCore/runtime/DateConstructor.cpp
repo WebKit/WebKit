@@ -94,6 +94,7 @@ bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 // ECMA 15.9.3
 JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
+    VM& vm = exec->vm();
     int numArgs = args.size();
 
     double value;
@@ -106,7 +107,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);
             if (primitive.isString())
-                value = parseDate(exec->vm(), primitive.getString(exec));
+                value = parseDate(vm, primitive.getString(exec));
             else
                 value = primitive.toNumber(exec);
         }
@@ -139,11 +140,11 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             t.setSecond(JSC::toInt32(doubleArguments[5]));
             t.setIsDST(-1);
             double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
-            value = gregorianDateTimeToMS(exec->vm(), t, ms, false);
+            value = gregorianDateTimeToMS(vm, t, ms, false);
         }
     }
 
-    return DateInstance::create(exec, globalObject->dateStructure(), value);
+    return DateInstance::create(vm, globalObject->dateStructure(), value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)

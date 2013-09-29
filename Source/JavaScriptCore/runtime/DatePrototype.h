@@ -29,15 +29,14 @@ namespace JSC {
 
     class DatePrototype : public DateInstance {
     private:
-        DatePrototype(ExecState*, Structure*);
+        DatePrototype(VM&, Structure*);
 
     public:
         typedef DateInstance Base;
 
-        static DatePrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        static DatePrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
         {
-            VM& vm = exec->vm();
-            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(vm.heap)) DatePrototype(exec, structure);
+            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(vm.heap)) DatePrototype(vm, structure);
             prototype->finishCreation(vm, globalObject);
             return prototype;
         }

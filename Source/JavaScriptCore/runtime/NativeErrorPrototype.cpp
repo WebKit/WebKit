@@ -28,8 +28,8 @@
 
 namespace JSC {
 
-NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, Structure* structure)
-    : ErrorPrototype(exec, structure)
+NativeErrorPrototype::NativeErrorPrototype(VM& vm, Structure* structure)
+    : ErrorPrototype(vm, structure)
 {
 }
 

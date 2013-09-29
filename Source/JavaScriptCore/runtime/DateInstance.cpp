@@ -34,8 +34,8 @@ namespace JSC {
 
 const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(DateInstance)};
 
-DateInstance::DateInstance(ExecState* exec, Structure* structure)
-    : JSWrapperObject(exec->vm(), structure)
+DateInstance::DateInstance(VM& vm, Structure* structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 

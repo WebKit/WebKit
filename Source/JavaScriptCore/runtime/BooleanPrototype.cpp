@@ -50,8 +50,8 @@ const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanPrototype);
 
-BooleanPrototype::BooleanPrototype(ExecState* exec, Structure* structure)
-    : BooleanObject(exec->vm(), structure)
+BooleanPrototype::BooleanPrototype(VM& vm, Structure* structure)
+    : BooleanObject(vm, structure)
 {
 }
 

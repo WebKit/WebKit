@@ -49,8 +49,8 @@ const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, E
 @end
 */
 
-ErrorPrototype::ErrorPrototype(ExecState* exec, Structure* structure)
-    : ErrorInstance(exec->vm(), structure)
+ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
+    : ErrorInstance(vm, structure)
 {
 }
 

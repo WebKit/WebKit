@@ -34,10 +34,10 @@ class WeakMapPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static WeakMapPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    static WeakMapPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        WeakMapPrototype* prototype = new (NotNull, allocateCell<WeakMapPrototype>(*exec->heap())) WeakMapPrototype(exec, structure);
-        prototype->finishCreation(exec, globalObject);
+        WeakMapPrototype* prototype = new (NotNull, allocateCell<WeakMapPrototype>(vm.heap)) WeakMapPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -49,11 +49,11 @@ public:
     }
 
 private:
-    WeakMapPrototype(ExecState* exec, Structure* structure)
-        : Base(exec->vm(), structure)
+    WeakMapPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
     {
     }
-    void finishCreation(ExecState*, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 }

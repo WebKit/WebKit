@@ -34,10 +34,10 @@ class SetPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static SetPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    static SetPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        SetPrototype* prototype = new (NotNull, allocateCell<SetPrototype>(*exec->heap())) SetPrototype(exec, structure);
-        prototype->finishCreation(exec, globalObject);
+        SetPrototype* prototype = new (NotNull, allocateCell<SetPrototype>(vm.heap)) SetPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -49,11 +49,11 @@ public:
     }
 
 private:
-    SetPrototype(ExecState* exec, Structure* structure)
-        : Base(exec->vm(), structure)
+    SetPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
     {
     }
-    void finishCreation(ExecState*, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 }

@@ -85,15 +85,13 @@ static EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 0, CREATE_METHOD_TABLE(StringPrototype) };
 
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState* exec, Structure* structure)
-    : StringObject(exec->vm(), structure)
+StringPrototype::StringPrototype(VM& vm, Structure* structure)
+    : StringObject(vm, structure)
 {
 }
 
-void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, JSString* nameAndMessage)
+void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSString* nameAndMessage)
 {
-    VM& vm = exec->vm();
-    
     Base::finishCreation(vm, nameAndMessage);
     ASSERT(inherits(info()));
 
@@ -134,14 +132,14 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     JSC_NATIVE_FUNCTION("trimRight", stringProtoFuncTrimRight, DontEnum, 0);
 
     // The constructor will be added later, after StringConstructor has been built
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
-StringPrototype* StringPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    JSString* empty = jsEmptyString(exec);
-    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, structure);
-    prototype->finishCreation(exec, globalObject, empty);
+    JSString* empty = jsEmptyString(&vm);
+    StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(vm.heap)) StringPrototype(vm, structure);
+    prototype->finishCreation(vm, globalObject, empty);
     return prototype;
 }
 

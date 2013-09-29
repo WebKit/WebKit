@@ -78,23 +78,19 @@ JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure)
 {
 }
 
-void JSArrayBufferPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    
     Base::finishCreation(vm);
     
     JSC_NATIVE_FUNCTION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, DontEnum, 2);
 }
 
-JSArrayBufferPrototype* JSArrayBufferPrototype::create(
-    ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+JSArrayBufferPrototype* JSArrayBufferPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
-    VM& vm = exec->vm();
     JSArrayBufferPrototype* prototype =
         new (NotNull, allocateCell<JSArrayBufferPrototype>(vm.heap))
         JSArrayBufferPrototype(vm, structure);
-    prototype->finishCreation(exec, globalObject);
+    prototype->finishCreation(vm, globalObject);
     return prototype;
 }
 

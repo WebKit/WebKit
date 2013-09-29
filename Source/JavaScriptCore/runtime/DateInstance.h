@@ -27,7 +27,7 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     protected:
-        JS_EXPORT_PRIVATE DateInstance(ExecState*, Structure*);
+        JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
         void finishCreation(VM&);
         JS_EXPORT_PRIVATE void finishCreation(VM&, double);
 
@@ -36,17 +36,17 @@ namespace JSC {
     public:
         typedef JSWrapperObject Base;
 
-        static DateInstance* create(ExecState* exec, Structure* structure, double date)
+        static DateInstance* create(VM& vm, Structure* structure, double date)
         {
-            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->vm(), date);
+            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(vm.heap)) DateInstance(vm, structure);
+            instance->finishCreation(vm, date);
             return instance;
         }
 
-        static DateInstance* create(ExecState* exec, Structure* structure)
+        static DateInstance* create(VM& vm, Structure* structure)
         {
-            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
-            instance->finishCreation(exec->vm());
+            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(vm.heap)) DateInstance(vm, structure);
+            instance->finishCreation(vm);
             return instance;
         }
 

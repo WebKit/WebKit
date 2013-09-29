@@ -40,19 +40,17 @@ static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(ExecState*);
 static EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(ExecState*);
 
-void WeakMapPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(exec->propertyNames().clear, protoFuncWeakMapClear, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(exec->propertyNames().deleteKeyword, protoFuncWeakMapDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(exec->propertyNames().get, protoFuncWeakMapGet, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(exec->propertyNames().has, protoFuncWeakMapHas, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(exec->propertyNames().set, protoFuncWeakMapSet, DontEnum, 2);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->clear, protoFuncWeakMapClear, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakMapHas, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->set, protoFuncWeakMapSet, DontEnum, 2);
 }
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)

@@ -34,10 +34,10 @@ class MapPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    static MapPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    static MapPrototype* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     {
-        MapPrototype* prototype = new (NotNull, allocateCell<MapPrototype>(*exec->heap())) MapPrototype(exec, structure);
-        prototype->finishCreation(exec, globalObject);
+        MapPrototype* prototype = new (NotNull, allocateCell<MapPrototype>(vm.heap)) MapPrototype(vm, structure);
+        prototype->finishCreation(vm, globalObject);
         return prototype;
     }
 
@@ -49,11 +49,11 @@ public:
     }
 
 private:
-    MapPrototype(ExecState* exec, Structure* structure)
-        : Base(exec->vm(), structure)
+    MapPrototype(VM& vm, Structure* structure)
+        : Base(vm, structure)
     {
     }
-    void finishCreation(ExecState*, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 }
