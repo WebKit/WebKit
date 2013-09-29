@@ -3385,7 +3385,6 @@
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97E4028F13A696ED00913D67 /* IconController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E4028D13A696ED00913D67 /* IconController.cpp */; };
 		97E4029013A696ED00913D67 /* IconController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E4028E13A696ED00913D67 /* IconController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		97F8E665151D4A4B00D2D181 /* WorkerGlobalScopeNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F8E661151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.cpp */; };
 		97F8E666151D4A4E00D2D181 /* WorkerGlobalScopeNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.h */; };
 		9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9831AE49154225A200FE2644 /* ReferrerPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5392,7 +5391,6 @@
 		CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEE393617974259001D7580 /* PublicURLManager.cpp */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
@@ -6691,10 +6689,10 @@
 		07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoStreamTrack.cpp; sourceTree = "<group>"; };
 		07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoStreamTrack.h; sourceTree = "<group>"; };
 		07C59B5217F4AC15000FBCBB /* VideoStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoStreamTrack.idl; sourceTree = "<group>"; };
-		07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAudioStreamTrack.cpp; path = JSAudioStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAudioStreamTrack.h; path = JSAudioStreamTrack.h; sourceTree = "<group>"; };
-		07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSVideoStreamTrack.cpp; path = JSVideoStreamTrack.cpp; sourceTree = "<group>"; };
-		07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSVideoStreamTrack.h; path = JSVideoStreamTrack.h; sourceTree = "<group>"; };
+		07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioStreamTrack.h; sourceTree = "<group>"; };
+		07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoStreamTrack.h; sourceTree = "<group>"; };
 		07C59B6117F4CF87000FBCBB /* MockMediaStreamCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MockMediaStreamCenter.cpp; path = mock/MockMediaStreamCenter.cpp; sourceTree = "<group>"; };
 		07C59B6217F4CF87000FBCBB /* MockMediaStreamCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockMediaStreamCenter.h; path = mock/MockMediaStreamCenter.h; sourceTree = "<group>"; };
 		07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateClient.h; sourceTree = "<group>"; };
@@ -10036,7 +10034,6 @@
 		97E4028E13A696ED00913D67 /* IconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconController.h; sourceTree = "<group>"; };
 		97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
 		97E9EC8C15DC492F004F2E71 /* JSVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVoidCallback.h; sourceTree = "<group>"; };
-		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
 		97F8E661151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerGlobalScopeNotifications.cpp; path = Modules/notifications/WorkerGlobalScopeNotifications.cpp; sourceTree = "<group>"; };
 		97F8E662151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerGlobalScopeNotifications.h; path = Modules/notifications/WorkerGlobalScopeNotifications.h; sourceTree = "<group>"; };
 		97F8E663151D4A3F00D2D181 /* WorkerGlobalScopeNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerGlobalScopeNotifications.idl; path = Modules/notifications/WorkerGlobalScopeNotifications.idl; sourceTree = "<group>"; };
@@ -12357,7 +12354,6 @@
 		CDEE393817974274001D7580 /* URLRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLRegistry.h; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
-		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
 		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
@@ -19259,8 +19255,6 @@
 				C0F2A43F13869A280066C534 /* preprocessor.pm */,
 				8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */,
 				8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */,
-				97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */,
-				CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */,
 				7C6136F91710C35200FF4A57 /* StaticString.pm */,
 			);
 			path = bindings;
@@ -23970,7 +23964,6 @@
 				416E75BE0EDF8FD700360E1D /* ScriptCallStack.h in Headers */,
 				F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */,
 				93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */,
-				CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */,
 				7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */,
 				9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */,
 				4998AED213FB224D0090B1AA /* ScriptedAnimationController.h in Headers */,
@@ -27165,7 +27158,6 @@
 				416E75BF0EDF8FD700360E1D /* ScriptCallStack.cpp in Sources */,
 				F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */,
 				93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */,
-				97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */,
 				A83E1C740E49042C00140B9C /* ScriptControllerMac.mm in Sources */,
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,
 				4998AED113FB224D0090B1AA /* ScriptedAnimationController.cpp in Sources */,

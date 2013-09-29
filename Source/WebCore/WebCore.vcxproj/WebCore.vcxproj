@@ -15629,7 +15629,6 @@
     <ClCompile Include="..\html\track\TrackEvent.cpp" />
     <ClCompile Include="..\html\track\WebVTTParser.cpp" />
     <ClCompile Include="..\html\track\WebVTTTokenizer.cpp" />
-    <ClCompile Include="..\bindings\ScriptControllerBase.cpp" />
     <ClCompile Include="..\bindings\generic\ActiveDOMCallback.cpp" />
     <ClCompile Include="..\bindings\generic\BindingSecurity.cpp" />
     <ClCompile Include="..\bindings\generic\RuntimeEnabledFeatures.cpp" />
@@ -20465,7 +20464,6 @@
     <ClInclude Include="..\html\track\WebVTTParser.h" />
     <ClInclude Include="..\html\track\WebVTTToken.h" />
     <ClInclude Include="..\html\track\WebVTTTokenizer.h" />
-    <ClInclude Include="..\bindings\ScriptControllerBase.h" />
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h" />
     <ClInclude Include="..\bindings\generic\BindingSecurity.h" />
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h" />

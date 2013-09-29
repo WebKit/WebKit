@@ -71,7 +71,6 @@ SOURCES += \
     bindings/generic/RuntimeEnabledFeatures.cpp
 
 SOURCES += \
-     bindings/ScriptControllerBase.cpp \
      bindings/js/ArrayValue.cpp \
      bindings/js/BindingState.cpp \
      bindings/js/CallbackFunction.cpp \
@@ -1313,7 +1312,6 @@ HEADERS += \
     accessibility/AccessibilityTableHeaderContainer.h \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
-    bindings/ScriptControllerBase.h \
     bindings/generic/ActiveDOMCallback.h \
     bindings/generic/BindingSecurity.h \
     bindings/generic/RuntimeEnabledFeatures.h

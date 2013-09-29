@@ -1,3 +1,26 @@
+2013-09-28  Sam Weinig  <sam@webkit.org>
+
+        Merge ScriptControllerBase into ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=122071
+
+        Reviewed by Antti Koivisto.
+
+        There is no need for ScriptControllerBase. Remove it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/ScriptControllerBase.cpp: Removed.
+        * bindings/ScriptControllerBase.h: Removed.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        (WebCore::ScriptController::executeScript):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/ScriptController.h:
+
 2013-09-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix after r156613 for ports enabling CSS3_TEXT.

@@ -23,6 +23,7 @@
 
 #include "BridgeJSC.h"
 #include "ContentSecurityPolicy.h"
+#include "DocumentLoader.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -51,8 +52,8 @@
 #include <heap/StrongInlines.h>
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSLock.h>
-#include <wtf/text/TextPosition.h>
 #include <wtf/Threading.h>
+#include <wtf/text/TextPosition.h>
 
 using namespace JSC;
 using namespace std;
@@ -474,6 +475,89 @@ bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
     DOMWrapperWorld* domWrapperWorld = currentWorld(callFrame);
     if (domWrapperWorld->isNormal())
         return false;
+    return true;
+}
+
+bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
+{
+    if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
+        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
+        if (reason == AboutToExecuteScript)
+            m_frame.document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Blocked script execution in '" + m_frame.document()->url().stringCenterEllipsizedToLength() + "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.");
+        return false;
+    }
+
+    if (m_frame.document() && m_frame.document()->isViewSource()) {
+        ASSERT(m_frame.document()->securityOrigin()->isUnique());
+        return true;
+    }
+
+    if (!m_frame.page())
+        return false;
+
+    const bool allowed = m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
+    if (!allowed && reason == AboutToExecuteScript)
+        m_frame.loader().client().didNotAllowScript();
+    return allowed;
+}
+
+ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
+{
+    UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    return executeScript(ScriptSourceCode(script, m_frame.document()->url()));
+}
+
+ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
+{
+    if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
+        return ScriptValue();
+
+    Ref<Frame> protect(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
+
+    return evaluate(sourceCode);
+}
+
+bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
+{
+    if (!protocolIsJavaScript(url))
+        return false;
+
+    if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url(), eventHandlerPosition().m_line))
+        return true;
+
+    // We need to hold onto the Frame here because executing script can
+    // destroy the frame.
+    Ref<Frame> protector(m_frame);
+    RefPtr<Document> ownerDocument(m_frame.document());
+
+    const int javascriptSchemeLength = sizeof("javascript:") - 1;
+
+    String decodedURL = decodeURLEscapeSequences(url.string());
+    ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength));
+
+    // If executing script caused this frame to be removed from the page, we
+    // don't want to try to replace its document!
+    if (!m_frame.page())
+        return true;
+
+    String scriptResult;
+    JSDOMWindowShell* shell = windowShell(mainThreadNormalWorld());
+    JSC::ExecState* exec = shell->window()->globalExec();
+    if (!result.getString(exec, scriptResult))
+        return true;
+
+    // FIXME: We should always replace the document, but doing so
+    //        synchronously can cause crashes:
+    //        http://bugs.webkit.org/show_bug.cgi?id=16782
+    if (shouldReplaceDocumentIfJavaScriptURL == ReplaceDocumentIfJavaScriptURL) {
+        // We're still in a frame, so there should be a DocumentLoader.
+        ASSERT(m_frame.document()->loader());
+        
+        // DocumentWriter::replaceDocument can cause the DocumentLoader to get deref'ed and possible destroyed,
+        // so protect it with a RefPtr.
+        if (RefPtr<DocumentLoader> loader = m_frame.document()->loader())
+            loader->writer()->replaceDocument(scriptResult, ownerDocument.get());
+    }
     return true;
 }
 

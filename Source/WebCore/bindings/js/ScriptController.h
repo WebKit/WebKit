@@ -24,7 +24,6 @@
 
 #include "FrameLoaderTypes.h"
 #include "JSDOMWindowShell.h"
-#include "ScriptControllerBase.h"
 #include <JavaScriptCore/JSBase.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
@@ -59,6 +58,11 @@ class SecurityOrigin;
 class Widget;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
+
+enum ReasonForCallingCanExecuteScripts {
+    AboutToExecuteScript,
+    NotAboutToExecuteScript
+};
 
 class ScriptController {
     friend class ScriptCachedFrameData;

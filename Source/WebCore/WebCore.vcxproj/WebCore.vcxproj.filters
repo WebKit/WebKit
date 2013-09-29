@@ -4359,9 +4359,6 @@
     <ClCompile Include="..\html\track\WebVTTTokenizer.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\ScriptControllerBase.cpp">
-      <Filter>bindings</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\generic\ActiveDOMCallback.cpp">
       <Filter>bindings\generic</Filter>
     </ClCompile>
@@ -11498,9 +11495,6 @@
     </ClInclude>
     <ClInclude Include="..\html\track\WebVTTTokenizer.h">
       <Filter>html\track</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\ScriptControllerBase.h">
-      <Filter>bindings</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h">
       <Filter>bindings\generic</Filter>
