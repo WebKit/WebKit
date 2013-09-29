@@ -1,3 +1,14 @@
+2013-09-29  Philip Rogers  <pdr@google.com>
+
+        Repaint borders and outlines on pseudo content changes
+        https://bugs.webkit.org/show_bug.cgi?id=122070
+
+        Reviewed by Andreas Kling.
+
+        * fast/repaint/hover-pseudo-borders.html: Added.
+        * platform/mac/fast/repaint/hover-pseudo-borders-expected.png: Added.
+        * platform/mac/fast/repaint/hover-pseudo-borders-expected.txt: Added.
+
 2013-09-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Skip the IndexedDB tests for now as the feature is going

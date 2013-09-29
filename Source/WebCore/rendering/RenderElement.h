@@ -113,7 +113,7 @@ private:
     virtual RenderObject* lastChildSlow() const OVERRIDE FINAL { return lastChild(); }
 
     bool shouldRepaintForStyleDifference(StyleDifference) const;
-    bool hasImmediateNonWhitespaceTextChild() const;
+    bool hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const;
 
     void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);

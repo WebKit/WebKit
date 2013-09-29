@@ -792,7 +792,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) con
     return false;
 }
 
-bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle* other, unsigned&) const
+bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle* other, unsigned&) const
 {
     if (inherited->color != other->inherited->color
         || inherited_flags._text_decorations != other->inherited_flags._text_decorations
@@ -864,8 +864,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return StyleDifferenceRecompositeLayer;
 #endif
 
-    if (changeRequiresRepaintIfText(other, changedContextSensitiveProperties))
-        return StyleDifferenceRepaintIfText;
+    if (changeRequiresRepaintIfTextOrBorderOrOutline(other, changedContextSensitiveProperties))
+        return StyleDifferenceRepaintIfTextOrBorderOrOutline;
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.

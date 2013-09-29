@@ -284,10 +284,12 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     return diff;
 }
 
-inline bool RenderElement::hasImmediateNonWhitespaceTextChild() const
+inline bool RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const
 {
     for (const RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->isText() && !toRenderText(renderer)->isAllCollapsibleWhitespace())
+            return true;
+        if (renderer->style()->hasOutline() || renderer->style()->hasBorder())
             return true;
     }
     return false;
@@ -295,7 +297,7 @@ inline bool RenderElement::hasImmediateNonWhitespaceTextChild() const
 
 inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff) const
 {
-    return diff == StyleDifferenceRepaint || (diff == StyleDifferenceRepaintIfText && hasImmediateNonWhitespaceTextChild());
+    return diff == StyleDifferenceRepaint || (diff == StyleDifferenceRepaintIfTextOrBorderOrOutline && hasImmediateNonWhitespaceTextChildOrBorderOrOutline());
 }
 
 void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
