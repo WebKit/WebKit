@@ -233,8 +233,6 @@ webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Cr
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
 
-Bug(GTK) storage/indexeddb/keypath-edges.html [ Crash Pass ]
-
 Bug(GTK) media/restore-from-page-cache.html [ Crash ]
 
 Bug(GTK) fast/parser/document-write-basic.html [ Crash ]

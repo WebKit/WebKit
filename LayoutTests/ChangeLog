@@ -1,3 +1,11 @@
+2013-09-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Skip the IndexedDB tests for now as the feature is going
+        through substantial changes that don't ensure constant proper functionality.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-09-28  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         filter: drop-shadow doesnot support viewport units
