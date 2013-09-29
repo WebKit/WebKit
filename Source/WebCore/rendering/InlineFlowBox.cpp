@@ -269,20 +269,20 @@ RenderLineBoxList& InlineFlowBox::rendererLineBoxes() const
     return toRenderInline(renderer()).lineBoxes();
 }
 
-static inline bool isLastChildForRenderer(RenderElement* ancestor, RenderObject* child)
+static inline bool isLastChildForRenderer(const RenderElement& ancestor, const RenderObject* child)
 {
     if (!child)
         return false;
     
-    if (child == ancestor)
+    if (child == &ancestor)
         return true;
 
-    RenderObject* curr = child;
-    RenderElement* parent = curr->parent();
+    const RenderObject* curr = child;
+    const RenderElement* parent = curr->parent();
     while (parent && (!parent->isRenderBlock() || parent->isInline())) {
         if (parent->lastChild() != curr)
             return false;
-        if (parent == ancestor)
+        if (parent == &ancestor)
             return true;
             
         curr = parent;
@@ -292,9 +292,9 @@ static inline bool isLastChildForRenderer(RenderElement* ancestor, RenderObject*
     return true;
 }
 
-static bool isAncestorAndWithinBlock(RenderObject& ancestor, RenderObject* child)
+static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderObject* child)
 {
-    RenderObject* object = child;
+    const RenderObject* object = child;
     while (object && (!object->isRenderBlock() || object->isInline())) {
         if (object == &ancestor)
             return true;
@@ -331,7 +331,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
 
         if (!lineBoxList.lastLineBox()->isConstructed()) {
             RenderInline& inlineFlow = toRenderInline(renderer());
-            bool isLastObjectOnLine = !isAncestorAndWithinBlock(renderer(), logicallyLastRunRenderer) || (isLastChildForRenderer(&renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
+            bool isLastObjectOnLine = !isAncestorAndWithinBlock(inlineFlow, logicallyLastRunRenderer) || (isLastChildForRenderer(renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
 
             // We include the border under these conditions:
             // (1) The next line was not created, or it is constructed. We check the previous line for rtl.
@@ -1018,10 +1018,10 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     // Check children first.
     // We need to account for culled inline parents of the hit-tested nodes, so that they may also get included in area-based hit-tests.
-    RenderObject* culledParent = 0;
+    RenderElement* culledParent = 0;
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
         if (curr->renderer().isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) {
-            RenderObject* newParent = 0;
+            RenderElement* newParent = 0;
             // Culled parents are only relevant for area-based hit-tests, so ignore it in point-based ones.
             if (locationInContainer.isRectBasedTest()) {
                 newParent = curr->renderer().parent();

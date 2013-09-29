@@ -40,13 +40,14 @@ namespace WebCore {
 
 class InlineIterator;
 class RenderBlock;
+class RenderElement;
 class RenderObject;
 
 struct LineSegmentIterator {
-    RenderObject* root;
+    RenderElement* root;
     RenderObject* object;
     unsigned offset;
-    LineSegmentIterator(RenderObject* root, RenderObject* object, unsigned offset)
+    LineSegmentIterator(RenderElement* root, RenderObject* object, unsigned offset)
         : root(root)
         , object(object)
         , offset(offset)

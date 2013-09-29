@@ -25,6 +25,7 @@
 
 #include "BidiRun.h"
 #include "RenderBlock.h"
+#include "RenderInline.h"
 #include "RenderText.h"
 #include <wtf/StdLibExtras.h>
 
@@ -43,7 +44,7 @@ public:
     {
     }
 
-    InlineIterator(RenderObject* root, RenderObject* o, unsigned p)
+    InlineIterator(RenderElement* root, RenderObject* o, unsigned p)
         : m_root(root)
         , m_obj(o)
         , m_pos(p)
@@ -67,7 +68,7 @@ public:
 
     RenderObject* object() const { return m_obj; }
     unsigned offset() const { return m_pos; }
-    RenderObject* root() const { return m_root; }
+    RenderElement* root() const { return m_root; }
 
     void fastIncrementInTextNode();
     void increment(InlineBidiResolver* = 0);
@@ -90,7 +91,7 @@ public:
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
 private:
-    RenderObject* m_root;
+    RenderElement* m_root;
 
     // FIXME: These should be private.
 public:
@@ -175,18 +176,17 @@ enum EmptyInlineBehavior {
     IncludeEmptyInlines,
 };
 
-static bool isEmptyInline(RenderObject* object)
+static bool isEmptyInline(const RenderInline& renderer)
 {
-    if (!object->isRenderInline())
-        return false;
-
-    for (RenderObject* curr = toRenderElement(object)->firstChild(); curr; curr = curr->nextSibling()) {
+    for (RenderObject* curr = renderer.firstChild(); curr; curr = curr->nextSibling()) {
         if (curr->isFloatingOrOutOfFlowPositioned())
             continue;
-        if (curr->isText() && toRenderText(curr)->isAllCollapsibleWhitespace())
+        if (curr->isText()) {
+            if (!toRenderText(curr)->isAllCollapsibleWhitespace())
+                return false;
             continue;
-
-        if (!isEmptyInline(curr))
+        }
+        if (!curr->isRenderInline() || !isEmptyInline(toRenderInline(*curr)))
             return false;
     }
     return true;
@@ -196,7 +196,7 @@ static bool isEmptyInline(RenderObject* object)
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
 template <class Observer>
-static inline RenderObject* bidiNextShared(RenderObject* root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextShared(RenderElement* root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
 {
     RenderObject* next = 0;
     // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
@@ -241,8 +241,7 @@ static inline RenderObject* bidiNextShared(RenderObject* root, RenderObject* cur
             break;
 
         if (isIteratorTarget(next)
-            || ((emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(next)) // Always return EMPTY inlines.
-                && next->isRenderInline()))
+            || (next->isRenderInline() && (emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(toRenderInline(*next)))))
             break;
         current = next;
     }
@@ -254,20 +253,20 @@ static inline RenderObject* bidiNextShared(RenderObject* root, RenderObject* cur
 }
 
 template <class Observer>
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderObject* root, RenderObject* current, Observer* observer)
+static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement* root, RenderObject* current, Observer* observer)
 {
     // The SkipEmptyInlines callers never care about endOfInlinePtr.
     return bidiNextShared(root, current, observer, SkipEmptyInlines);
 }
 
 // This makes callers cleaner as they don't have to specify a type for the observer when not providing one.
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderObject* root, RenderObject* current)
+static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement* root, RenderObject* current)
 {
     InlineBidiResolver* observer = 0;
     return bidiNextSkippingEmptyInlines(root, current, observer);
 }
 
-static inline RenderObject* bidiNextIncludingEmptyInlines(RenderObject* root, RenderObject* current, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement* root, RenderObject* current, bool* endOfInlinePtr = 0)
 {
     InlineBidiResolver* observer = 0; // Callers who include empty inlines, never use an observer.
     return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
@@ -281,7 +280,7 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement* root, I
 
     if (o->isRenderInline()) {
         notifyObserverEnteredObject(resolver, o);
-        if (!isEmptyInline(o))
+        if (!isEmptyInline(toRenderInline(*o)))
             o = bidiNextSkippingEmptyInlines(root, o, resolver);
         else {
             // Never skip empty inlines.

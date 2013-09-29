@@ -124,14 +124,14 @@ ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
 }
 #endif
 
-static inline LayoutUnit borderPaddingMarginStart(RenderInline* child)
+static inline LayoutUnit borderPaddingMarginStart(const RenderInline& child)
 {
-    return child->marginStart() + child->paddingStart() + child->borderStart();
+    return child.marginStart() + child.paddingStart() + child.borderStart();
 }
 
-static inline LayoutUnit borderPaddingMarginEnd(RenderInline* child)
+static inline LayoutUnit borderPaddingMarginEnd(const RenderInline& child)
 {
-    return child->marginEnd() + child->paddingEnd() + child->borderEnd();
+    return child.marginEnd() + child.paddingEnd() + child.borderEnd();
 }
 
 static inline bool shouldAddBorderPaddingMargin(RenderObject* child)
@@ -152,9 +152,9 @@ static LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = 
 {
     unsigned lineDepth = 1;
     LayoutUnit extraWidth = 0;
-    RenderObject* parent = child->parent();
+    RenderElement* parent = child->parent();
     while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
-        RenderInline* parentAsRenderInline = toRenderInline(parent);
+        const RenderInline& parentAsRenderInline = toRenderInline(*parent);
         if (!isEmptyInline(parentAsRenderInline)) {
             checkStartEdge = checkStartEdge && shouldAddBorderPaddingMargin(previousInFlowSibling(child));
             if (checkStartEdge)
@@ -622,7 +622,7 @@ public:
     HashSet<const SimpleFontData*> fallbackFonts;
 };
 
-static inline const RenderStyle& lineStyle(RenderElement& renderer, const LineInfo& lineInfo)
+static inline const RenderStyle& lineStyle(const RenderElement& renderer, const LineInfo& lineInfo)
 {
     return lineInfo.isFirstLine() ? *renderer.firstLineStyle() : *renderer.style();
 }
@@ -2216,11 +2216,11 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const Line
         || (whitespacePosition == TrailingWhitespace && style->whiteSpace() == PRE_WRAP && (!lineInfo.isEmpty() || !lineInfo.previousLineBrokeCleanly()));
 }
 
-static bool requiresLineBoxForContent(RenderInline* flow, const LineInfo& lineInfo)
+static bool requiresLineBoxForContent(const RenderInline& flow, const LineInfo& lineInfo)
 {
-    RenderElement* parent = flow->parent();
-    if (flow->document().inNoQuirksMode()) {
-        const RenderStyle& flowStyle = lineStyle(*flow, lineInfo);
+    RenderElement* parent = flow.parent();
+    if (flow.document().inNoQuirksMode()) {
+        const RenderStyle& flowStyle = lineStyle(flow, lineInfo);
         const RenderStyle& parentStyle = lineStyle(*parent, lineInfo);
         if (flowStyle.lineHeight() != parentStyle.lineHeight()
             || flowStyle.verticalAlign() != parentStyle.verticalAlign()
@@ -2230,24 +2230,24 @@ static bool requiresLineBoxForContent(RenderInline* flow, const LineInfo& lineIn
     return false;
 }
 
-static bool hasInlineDirectionBordersPaddingOrMargin(RenderInline* flow)
+static bool hasInlineDirectionBordersPaddingOrMargin(const RenderInline& flow)
 {
     // Where an empty inline is split across anonymous blocks we should only give lineboxes to the 'sides' of the
     // inline that have borders, padding or margin.
-    bool shouldApplyStartBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || !flow->isInlineElementContinuation();
-    if (shouldApplyStartBorderPaddingOrMargin && (flow->borderStart() || flow->marginStart() || flow->paddingStart()))
+    bool shouldApplyStartBorderPaddingOrMargin = !flow.parent()->isAnonymousBlock() || !flow.isInlineElementContinuation();
+    if (shouldApplyStartBorderPaddingOrMargin && (flow.borderStart() || flow.marginStart() || flow.paddingStart()))
         return true;
 
-    bool shouldApplyEndBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || flow->isInlineElementContinuation() || !flow->inlineElementContinuation();
-    return shouldApplyEndBorderPaddingOrMargin && (flow->borderEnd() || flow->marginEnd() || flow->paddingEnd());
+    bool shouldApplyEndBorderPaddingOrMargin = !flow.parent()->isAnonymousBlock() || flow.isInlineElementContinuation() || !flow.inlineElementContinuation();
+    return shouldApplyEndBorderPaddingOrMargin && (flow.borderEnd() || flow.marginEnd() || flow.paddingEnd());
 }
 
-static bool alwaysRequiresLineBox(RenderObject* flow)
+static bool alwaysRequiresLineBox(const RenderInline& flow)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes.
-    return isEmptyInline(flow) && hasInlineDirectionBordersPaddingOrMargin(toRenderInline(flow));
+    return isEmptyInline(flow) && hasInlineDirectionBordersPaddingOrMargin(flow);
 }
 
 static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
@@ -2258,15 +2258,20 @@ static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
     if (it.m_obj->isBR())
         return true;
 
-    if (it.m_obj->isRenderInline() && !alwaysRequiresLineBox(it.m_obj) && !requiresLineBoxForContent(toRenderInline(it.m_obj), lineInfo))
-        return false;
+    bool rendererIsEmptyInline = false;
+    if (it.m_obj->isRenderInline()) {
+        const RenderInline& inlineRenderer = toRenderInline(*it.m_obj);
+        if (!alwaysRequiresLineBox(inlineRenderer) && !requiresLineBoxForContent(inlineRenderer, lineInfo))
+            return false;
+        rendererIsEmptyInline = isEmptyInline(inlineRenderer);
+    }
 
     if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo, whitespacePosition))
         return true;
 
     UChar current = it.current();
     bool notJustWhitespace = current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || it.m_obj->preservesNewline()) && !skipNonBreakingSpace(it, lineInfo);
-    return notJustWhitespace || isEmptyInline(it.m_obj);
+    return notJustWhitespace || rendererIsEmptyInline;
 }
 
 bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
@@ -2607,7 +2612,7 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
         return true;
 
     // Avoid breaking before empty inlines.
-    if (next && isEmptyInline(next))
+    if (next && next->isRenderInline() && isEmptyInline(toRenderInline(*next)))
         return false;
 
     // Return early if we autowrap and the current character is a space as we will always want to break at such a position.
@@ -2617,8 +2622,11 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
     if (next && next->isLineBreakOpportunity())
         return autoWrap;
 
-    bool nextIsText = (next && (current.m_obj->isText() || isEmptyInline(current.m_obj)) && next->isText() && (autoWrap || next->style()->autoWrap()));
-    if (!nextIsText)
+    bool nextIsAutoWrappingText = (next && next->isText() && (autoWrap || next->style()->autoWrap()));
+    if (!nextIsAutoWrappingText)
+        return autoWrap;
+    bool currentIsTextOrEmptyInline = current.m_obj->isText() || (current.m_obj->isRenderInline() && isEmptyInline(toRenderInline(*current.m_obj)));
+    if (!currentIsTextOrEmptyInline)
         return autoWrap;
 
     bool canBreakHere = !currentCharacterIsSpace && textBeginsWithBreakablePosition(next);
@@ -2820,16 +2828,14 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
             // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for floating element.
             renderTextInfo.m_lineBreakIterator.updatePriorContext(replacementCharacter);
         } else if (current.m_obj->isRenderInline()) {
+            RenderInline& flowBox = toRenderInline(*current.m_obj);
             // Right now, we should only encounter empty inlines here.
-            ASSERT(isEmptyInline(current.m_obj));
-
-            RenderInline* flowBox = toRenderInline(current.m_obj);
-
+            ASSERT(isEmptyInline(flowBox));
             // Now that some inline flows have line boxes, if we are already ignoring spaces, we need
             // to make sure that we stop to include this object and then start ignoring spaces again.
             // If this object is at the start of the line, we need to behave like list markers and
             // start ignoring spaces.
-            bool requiresLineBox = alwaysRequiresLineBox(current.m_obj);
+            bool requiresLineBox = alwaysRequiresLineBox(flowBox);
             if (requiresLineBox || requiresLineBoxForContent(flowBox, lineInfo)) {
                 // An empty inline that only has line-height, vertical-align or font-metrics will only get a
                 // line box to affect the height of the line if the rest of the line is not empty.
@@ -2846,7 +2852,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                     currentCharacterIsWS = true;
                     ignoringSpaces = true;
                 } else {
-                    trailingObjects.appendBoxIfNeeded(flowBox);
+                    trailingObjects.appendBoxIfNeeded(&flowBox);
                 }
             }
 

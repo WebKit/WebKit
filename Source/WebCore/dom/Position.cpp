@@ -854,14 +854,31 @@ static int boundingBoxLogicalHeight(RenderObject *o, const IntRect &rect)
 bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement& renderer)
 {
     RenderObject* stop = renderer.nextInPreOrderAfterChildren();
-    for (RenderObject* o = renderer.firstChild(); o && o != stop; o = o->nextInPreOrder())
-        if (o->nonPseudoNode()) {
-            if ((o->isText() && boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
-                || (o->isLineBreak() && boundingBoxLogicalHeight(o, toRenderLineBreak(o)->linesBoundingBox()))
-                || (o->isBox() && toRenderBox(o)->pixelSnappedLogicalHeight())
-                || (o->isRenderInline() && isEmptyInline(o) && boundingBoxLogicalHeight(o, toRenderInline(o)->linesBoundingBox())))
+    for (RenderObject* o = renderer.firstChild(); o && o != stop; o = o->nextInPreOrder()) {
+        if (!o->nonPseudoNode())
+            continue;
+        if (o->isText()) {
+            if (boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
                 return true;
+            continue;
         }
+        if (o->isLineBreak()) {
+            if (boundingBoxLogicalHeight(o, toRenderLineBreak(o)->linesBoundingBox()))
+                return true;
+            continue;
+        }
+        if (o->isBox()) {
+            if (toRenderBox(o)->pixelSnappedLogicalHeight())
+                return true;
+            continue;
+        }
+        if (o->isRenderInline()) {
+            const RenderInline& renderInline = toRenderInline(*o);
+            if (isEmptyInline(renderInline) && boundingBoxLogicalHeight(o, renderInline.linesBoundingBox()))
+                return true;
+            continue;
+        }
+    }
     return false;
 }
 
