@@ -28,12 +28,12 @@ namespace JSC {
 
 class ArrayPrototype : public JSArray {
 private:
-    ArrayPrototype(JSGlobalObject*, Structure*);
+    ArrayPrototype(VM&, Structure*);
 
 public:
     typedef JSArray Base;
 
-    static ArrayPrototype* create(ExecState*, JSGlobalObject*, Structure*);
+    static ArrayPrototype* create(VM&, Structure*);
         
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
@@ -45,7 +45,7 @@ public:
     }
 
 protected:
-    void finishCreation(JSGlobalObject*);
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

@@ -115,22 +115,21 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
 @end
 */
 
-ArrayPrototype* ArrayPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+ArrayPrototype* ArrayPrototype::create(VM& vm, Structure* structure)
 {
-    ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
-    prototype->finishCreation(globalObject);
+    ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(vm.heap)) ArrayPrototype(vm, structure);
+    prototype->finishCreation(vm);
     return prototype;
 }
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure)
-    : JSArray(globalObject->vm(), structure, 0)
+ArrayPrototype::ArrayPrototype(VM& vm, Structure* structure)
+    : JSArray(vm, structure, 0)
 {
 }
 
-void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
+void ArrayPrototype::finishCreation(VM& vm)
 {
-    VM& vm = globalObject->vm();
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);

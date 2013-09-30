@@ -1,5 +1,15 @@
 2013-09-29  Andreas Kling  <akling@apple.com>
 
+        Pass VM instead of JSGlobalObject to ArrayPrototype constructor.
+        <https://webkit.org/b/122079>
+
+        Reviewed by Geoffrey Garen.
+
+        ArrayPrototype doesn't need the global object for anything during
+        construction, so reduce the amount of loads by just passing the VM.
+
+2013-09-29  Andreas Kling  <akling@apple.com>
+
         Pass VM instead of ExecState to simple builtin constructors.
         <https://webkit.org/b/122077>
 
