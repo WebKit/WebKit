@@ -102,8 +102,6 @@ struct SameSizeAsRenderObject {
 
 COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
 
-RenderObjectAncestorLineboxDirtySet* RenderObject::s_ancestorLineboxDirtySet = 0;
-
 void* RenderObject::operator new(size_t sz, RenderArena& renderArena)
 {
     return renderArena.allocate(sz);
@@ -1498,10 +1496,6 @@ void RenderObject::computeFloatRectForRepaint(const RenderLayerModelObject*, Flo
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::dirtyLinesFromChangedChild(RenderObject*)
-{
-}
-
 #ifndef NDEBUG
 
 void RenderObject::showTreeForThis() const
@@ -2025,8 +2019,6 @@ void RenderObject::willBeDestroyed()
         setHasLayer(false);
         toRenderLayerModelObject(this)->destroyLayer();
     }
-
-    setAncestorLineBoxDirty(false);
 
     clearLayoutRootIfNeeded();
 }

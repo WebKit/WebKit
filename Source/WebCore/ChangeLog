@@ -1,3 +1,40 @@
+2013-09-30  Antti Koivisto  <antti@apple.com>
+
+        Get rid of static map for marking ancestor line boxes dirty
+        https://bugs.webkit.org/show_bug.cgi?id=122080
+
+        Reviewed by Andreas Kling.
+        
+        This is ugly and shows up in profiles too. Use a bit in RenderElement instead.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        
+            Move dirtyLinesFromChangedChild down to RenderBlockFlow. It wouldn't do anything on other RenderBlocks.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        
+            Add m_ancestorLineBoxDirty bit. We have 32 unused bits here on 64bit systems.
+
+        (WebCore::RenderElement::dirtyLinesFromChangedChild):
+        (WebCore::RenderElement::ancestorLineBoxDirty):
+        (WebCore::RenderElement::setAncestorLineBoxDirty):
+        (WebCore::RenderObject::setNeedsLayout):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+            
+            Tighten the interface.
+
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderObject.h:
+        
+            Remove the static map.
+
 2013-09-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Implement the grid-area shorthand

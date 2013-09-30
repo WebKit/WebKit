@@ -66,6 +66,7 @@ bool RenderElement::s_noLongerAffectsParentBlock = false;
 
 RenderElement::RenderElement(Element* element)
     : RenderObject(element)
+    , m_ancestorLineBoxDirty(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
     , m_style(0)

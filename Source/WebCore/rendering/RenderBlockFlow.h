@@ -54,6 +54,8 @@ protected:
     virtual LayoutUnit collapsedMarginBefore() const OVERRIDE FINAL { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const OVERRIDE FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
+    virtual void dirtyLinesFromChangedChild(RenderObject* child) OVERRIDE FINAL { lineBoxes().dirtyLinesFromChangedChild(this, child); }
+
 public:
     class MarginValues {
     public:

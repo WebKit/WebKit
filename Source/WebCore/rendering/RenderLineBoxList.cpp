@@ -33,6 +33,7 @@
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderView.h"
@@ -310,9 +311,10 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     return false;
 }
 
-void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, RenderObject* child)
+void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* container, RenderObject* child)
 {
-    if (!container->parent() || (container->isRenderBlock() && (container->selfNeedsLayout() || !container->isRenderBlockFlow())))
+    ASSERT(container->isRenderInline() || container->isRenderBlockFlow());
+    if (!container->parent() || (container->isRenderBlockFlow() && container->selfNeedsLayout()))
         return;
 
     RenderInline* inlineContainer = container->isRenderInline() ? toRenderInline(container) : 0;

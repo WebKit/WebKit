@@ -561,8 +561,6 @@ private:
 
     void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert);
 
-    virtual void dirtyLinesFromChangedChild(RenderObject* child) OVERRIDE FINAL { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
-
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild);
