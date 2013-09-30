@@ -1,3 +1,13 @@
+2013-09-30  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build when building against an SDK.
+
+        Xcode helpfully prepends $(SDKROOT) to the paths in FRAMEWORK_SEARCH_PATHS when generating
+        the compiler command lines. It can't know to do this for the system framework search paths
+        we add manually via OTHER_CFLAGS though, so we need to prefix them with $(SDKROOT) ourself.
+
+        * Configurations/WebCore.xcconfig:
+
 2013-09-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.
