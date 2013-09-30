@@ -1,3 +1,9 @@
+2013-09-30  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Two tests are passing in WK2 after r156541.
+
+        * platform/gtk-wk2/TestExpectations: Removed passing tests.
+
 2013-09-30  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Accessibility tests pass after r156532 and r156551

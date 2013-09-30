@@ -359,11 +359,9 @@ Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
 # accessibility/ failures
 webkit.org/b/106338 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
-webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
 webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Failure ]
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/106346 accessibility/svg-remote-element.html [ Failure ]
-webkit.org/b/116973 platform/gtk/accessibility/caret-browsing-select-focus.html [ Failure ]
 
 # svg/ failures
 webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
