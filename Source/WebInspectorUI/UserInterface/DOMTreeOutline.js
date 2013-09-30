@@ -46,7 +46,7 @@ WebInspector.DOMTreeOutline = function(omitRootDOMNode, selectEnabled, showInEle
     this.element.addEventListener("drop", this._ondrop.bind(this), false);
     this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
-    this.element.classList.add("dom-tree-outline");
+    this.element.classList.add(WebInspector.DOMTreeOutline.StyleClassName);
     this.element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
     TreeOutline.call(this, this.element);
@@ -70,6 +70,8 @@ WebInspector.DOMTreeOutline = function(omitRootDOMNode, selectEnabled, showInEle
 }
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeOutline);
+
+WebInspector.DOMTreeOutline.StyleClassName = "dom-tree-outline";
 
 WebInspector.DOMTreeOutline.Event = {
     SelectedNodeChanged: "dom-tree-outline-selected-node-changed"

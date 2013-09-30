@@ -41,6 +41,7 @@ WebInspector.LogContentView = function(representedObject)
     this.messagesElement.addEventListener("blur", this._didBlur.bind(this));
     this.messagesElement.addEventListener("keydown", this._keyDown.bind(this));
     this.messagesElement.addEventListener("click", this._click.bind(this), true);
+    this.messagesElement.addEventListener("dragstart", this._ondragstart.bind(this), true);
     this.element.appendChild(this.messagesElement);
 
     this.prompt = WebInspector.quickConsole.prompt;
@@ -431,6 +432,14 @@ WebInspector.LogContentView.prototype = {
 
         event.stopPropagation();
         delete this._mouseInteractionShouldPreventClickPropagation;
+    },
+
+    _ondragstart: function(event)
+    {
+        if (event.target.enclosingNodeOrSelfWithClass(WebInspector.DOMTreeOutline.StyleClassName)) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     },
 
     handleEvent: function(event)
