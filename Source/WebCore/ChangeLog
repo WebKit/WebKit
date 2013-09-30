@@ -1,5 +1,25 @@
 2013-09-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Generate toCSSCrossfadeValue() instead of using manual function
+        https://bugs.webkit.org/show_bug.cgi?id=122057
+
+        Reviewed by Antti Koivisto.
+
+        Generated toCSSFooValue() supports more plenty functions rather than
+        to use manual cast function.
+
+        No new tests, no behavior changes.
+
+        * css/CSSCrossfadeValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+
+2013-09-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Generate toCSSFooValue() for CSSFilterImageValue and CSSInitialValue
         https://bugs.webkit.org/show_bug.cgi?id=122056
 

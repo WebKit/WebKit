@@ -413,7 +413,7 @@ void CSSValue::destroy()
         delete static_cast<CSSRadialGradientValue*>(this);
         return;
     case CrossfadeClass:
-        delete static_cast<CSSCrossfadeValue*>(this);
+        delete toCSSCrossfadeValue(this);
         return;
     case ImageClass:
         delete toCSSImageValue(this);
