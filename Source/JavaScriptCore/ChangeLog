@@ -1,3 +1,13 @@
+2013-09-30  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of JSGlobalObject to MathObject constructor.
+        <https://webkit.org/b/122119>
+
+        Reviewed by Geoffrey Garen.
+
+        The MathObject constructor was only using the global object to get
+        to the VM. finishCreation() still uses it to set up functions.
+
 2013-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the AlreadyInJSStack recoveries since they are totally redundant with the DisplacedInJSStack recoveries

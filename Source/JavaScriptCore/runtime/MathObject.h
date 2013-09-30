@@ -27,15 +27,15 @@ namespace JSC {
 
     class MathObject : public JSNonFinalObject {
     private:
-        MathObject(JSGlobalObject*, Structure*);
+        MathObject(VM&, Structure*);
 
     public:
         typedef JSNonFinalObject Base;
 
-        static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        static MathObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
         {
-            MathObject* object = new (NotNull, allocateCell<MathObject>(*exec->heap())) MathObject(globalObject, structure);
-            object->finishCreation(exec, globalObject);
+            MathObject* object = new (NotNull, allocateCell<MathObject>(vm.heap)) MathObject(vm, structure);
+            object->finishCreation(vm, globalObject);
             return object;
         }
 
@@ -47,7 +47,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*);
+        void finishCreation(VM&, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     };
 

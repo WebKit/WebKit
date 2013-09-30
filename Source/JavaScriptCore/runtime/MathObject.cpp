@@ -60,44 +60,44 @@ namespace JSC {
 
 const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(MathObject) };
 
-MathObject::MathObject(JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalObject->vm(), structure)
+MathObject::MathObject(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
 {
 }
 
-void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(globalObject->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, Identifier(&vm, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "acos"), 1, mathProtoFuncACos, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "asin"), 1, mathProtoFuncASin, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "atan"), 1, mathProtoFuncATan, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "cos"), 1, mathProtoFuncCos, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "max"), 2, mathProtoFuncMax, MaxIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "min"), 2, mathProtoFuncMin, MinIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "sin"), 1, mathProtoFuncSin, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "acos"), 1, mathProtoFuncACos, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "asin"), 1, mathProtoFuncASin, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan"), 1, mathProtoFuncATan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cos"), 1, mathProtoFuncCos, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "max"), 2, mathProtoFuncMax, MaxIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "min"), 2, mathProtoFuncMin, MinIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sin"), 1, mathProtoFuncSin, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
 }
 
 // ------------------------------ Functions --------------------------------
