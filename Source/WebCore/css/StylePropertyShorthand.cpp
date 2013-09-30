@@ -353,6 +353,17 @@ StylePropertyShorthand webkitMarginCollapseShorthand()
     return StylePropertyShorthand(CSSPropertyWebkitMarginCollapse, marginCollapseProperties, WTF_ARRAY_LENGTH(marginCollapseProperties));
 }
 
+StylePropertyShorthand webkitGridAreaShorthand()
+{
+    static const CSSPropertyID webkitGridAreaProperties[] = {
+        CSSPropertyWebkitGridRowStart,
+        CSSPropertyWebkitGridColumnStart,
+        CSSPropertyWebkitGridRowEnd,
+        CSSPropertyWebkitGridColumnEnd
+    };
+    return StylePropertyShorthand(CSSPropertyWebkitGridArea, webkitGridAreaProperties, WTF_ARRAY_LENGTH(webkitGridAreaProperties));
+}
+
 StylePropertyShorthand webkitGridColumnShorthand()
 {
     static const CSSPropertyID webkitGridColumnProperties[] = {
@@ -545,6 +556,8 @@ StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
         return webkitFlexShorthand();
     case CSSPropertyWebkitFlexFlow:
         return webkitFlexFlowShorthand();
+    case CSSPropertyWebkitGridArea:
+        return webkitGridAreaShorthand();
     case CSSPropertyWebkitGridColumn:
         return webkitGridColumnShorthand();
     case CSSPropertyWebkitGridRow:

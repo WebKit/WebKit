@@ -1,3 +1,34 @@
+2013-09-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement the grid-area shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=103334
+
+        Reviewed by Andreas Kling.
+
+        Based on Blink r151684 by <jchaffraix@chromium.org>
+
+        Test: fast/css-grid-layout/grid-item-area-get-set.html
+
+        Added support to specify grid positions using the
+        '-webkit-grid-area' shorthand. Named grid areas are still not
+        allowed, to be done in a follow up patch as it likely requires
+        '-webkit-grid-template' support.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridItemPositionShorthand):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitGridAreaShorthand):
+        (WebCore::shorthandForProperty):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2013-09-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue for CSSGradientValue, CSSLinearGradientValue and CSSRadialGradient

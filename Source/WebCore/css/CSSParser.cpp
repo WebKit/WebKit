@@ -2702,6 +2702,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseGridPosition();
         break;
 
+    case CSSPropertyWebkitGridArea:
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow: {
         if (!cssGridLayoutEnabled())
@@ -4892,24 +4893,30 @@ bool CSSParser::parseGridItemPositionShorthand(CSSPropertyID shorthandId, bool i
 {
     ShorthandScope scope(this, shorthandId);
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
-    ASSERT(shorthand.length() == 2);
     if (!parseValue(shorthand.properties()[0], important))
         return false;
 
-    if (!m_valueList->current()) {
-        // Only one value was specified, the opposite value should be set to 'auto'.
-        // FIXME: If the first property was <ident>, the opposite value should be the same <ident>.
-        addProperty(shorthand.properties()[1], cssValuePool().createIdentifierValue(CSSValueAuto), important);
-        return true;
+    size_t index = 1;
+    for (; index < shorthand.length(); ++index) {
+        if (!m_valueList->current())
+            break;
+
+        if (!isForwardSlashOperator(m_valueList->current()))
+            return false;
+
+        if (!m_valueList->next())
+            return false;
+
+        if (!parseValue(shorthand.properties()[index], important))
+            return false;
     }
 
-    if (!isForwardSlashOperator(m_valueList->current()))
-        return false;
+    // Only some values out of the {2|4} positions were specified, the other values should be set to 'auto'.
+    // FIXME: If the first property was <ident>, the opposite value should be the same <ident>.
+    for (; index < shorthand.length(); ++index)
+        addProperty(shorthand.properties()[index], cssValuePool().createIdentifierValue(CSSValueAuto), important);
 
-    if (!m_valueList->next())
-        return false;
-
-    return parseValue(shorthand.properties()[1], important);
+    return true;
 }
 
 bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)

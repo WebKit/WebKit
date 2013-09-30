@@ -303,6 +303,7 @@ z-index
 -webkit-flex-wrap
 -webkit-justify-content
 -webkit-font-size-delta
+-webkit-grid-area
 -webkit-grid-auto-columns
 -webkit-grid-auto-rows
 -webkit-grid-column-end

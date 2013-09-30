@@ -1,3 +1,15 @@
+2013-09-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement the grid-area shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=103334
+
+        Reviewed by Andreas Kling.
+
+        From Blink r151684 by <jchaffraix@chromium.org>
+
+        * fast/css-grid-layout/grid-item-area-get-set-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-area-get-set.html: Added.
+
 2013-09-30  Vani Hegde  <vani.hegde@samsung.com>
 
         user-select: none cursor turns to I-beam on mouse dragging

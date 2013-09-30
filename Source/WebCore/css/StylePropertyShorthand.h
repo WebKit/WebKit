@@ -99,6 +99,7 @@ StylePropertyShorthand webkitColumnsShorthand();
 StylePropertyShorthand webkitColumnRuleShorthand();
 StylePropertyShorthand webkitFlexFlowShorthand();
 StylePropertyShorthand webkitFlexShorthand();
+StylePropertyShorthand webkitGridAreaShorthand();
 StylePropertyShorthand webkitGridColumnShorthand();
 StylePropertyShorthand webkitGridRowShorthand();
 StylePropertyShorthand webkitMarginCollapseShorthand();
