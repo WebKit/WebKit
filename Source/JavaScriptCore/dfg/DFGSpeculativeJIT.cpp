@@ -1739,8 +1739,8 @@ void SpeculativeJIT::compileCurrentBlock()
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
             if (m_currentNode->hasResult()) {
-                GenerationInfo& info = m_generationInfo[m_currentNode->virtualRegister()];
-                dataLogF("-> %s, vr#%d", dataFormatToString(info.registerFormat()), (int)m_currentNode->virtualRegister());
+                GenerationInfo& info = m_generationInfo[m_currentNode->virtualRegister().toLocal()];
+                dataLogF("-> %s, vr#%d", dataFormatToString(info.registerFormat()), m_currentNode->virtualRegister().toLocal());
                 if (info.registerFormat() != DataFormatNone) {
                     if (info.registerFormat() == DataFormatDouble)
                         dataLogF(", %s", FPRInfo::debugName(info.fpr()));

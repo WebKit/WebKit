@@ -1,5 +1,12 @@
 2013-09-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        Unreviewed. Build fix for DEBUG_VERBOSE mode after r156511.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+
+2013-09-30  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Unreviewed. Speculative build fix on ARMv7 Thumb2 after r156490.
 
         * dfg/DFGSpeculativeJIT.cpp:
