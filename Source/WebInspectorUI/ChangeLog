@@ -1,5 +1,31 @@
 2013-09-30  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: rows in the Layer sidebar panel may have the incorrect background color
+        https://bugs.webkit.org/show_bug.cgi?id=122108
+
+        Reviewed by Darin Adler.
+
+        The LayerTreeDataGrid is a custom DataGrid subclass which exposes a .setChildren() method
+        used to sort chidren without DOM order manipulation, for performance reason. However, since
+        the way the alternating background color is usually implemented is based on the built-in
+        CSS pseudo-classes working with DOM order, the background colors of nodes in the LayerTreeDataGrid
+        can be incorrect depending on the sort order and the number of nodes. To fix this, we now manually
+        set "even" and "odd" CSS classes on those nodes when they're sorted such that we have a chance
+        to style them as intended. 
+
+        * UserInterface/LayerTreeDataGrid.js:
+        (WebInspector.LayerTreeDataGrid.prototype._updateChildren):
+        Check if the data grid node index is even or odd and reflect this via an exclusive "even"
+        or "odd" CSS class name.
+
+        * UserInterface/LayerTreeSidebarPanel.css:
+        (.layer-tree.panel .data-container tbody > tr.even):
+        (.layer-tree.panel .data-container tbody > tr.odd):
+        Apply alternating colors based on the exclusive "even" and "odd" CSS class names as applied in
+        WebInspector.LayerTreeDataGrid.prototype._updateChildren().
+
+2013-09-30  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: Popover displaying "reasons for compositing" may remain on screen after selected layer is removed
         https://bugs.webkit.org/show_bug.cgi?id=117575
 

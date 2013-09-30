@@ -166,6 +166,14 @@
     display: block;
 }
 
+.layer-tree.panel .data-container tbody > tr.even {
+    background-color: white;
+}
+
+.layer-tree.panel .data-container tbody > tr.odd {
+    background-color: rgb(243, 246, 250);
+}
+
 /* Bottom bar */
 
 .layer-tree.panel .bottom-bar {

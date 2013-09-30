@@ -92,6 +92,19 @@ WebInspector.LayerTreeDataGrid.prototype = {
             
             var ty = (i - child._domIndex) * 100;
             child.element.style.webkitTransform = "translateY(" + ty + "%)";
+
+            // Since the DOM order won't necessarily match the visual order of the
+            // children in the data grid we manually set "even" and "odd" and CSS
+            // class names on the data grid nodes so that they may be styled with
+            // a different mechanism than the built-in CSS pseudo-classes.
+            var classList = child.element.classList;
+            if (i % 2) {
+                classList.remove("odd");
+                classList.add("even");
+            } else {
+                classList.remove("even");
+                classList.add("odd");
+            }
         }
 
         this.hasChildren = this.children.length > 0;
