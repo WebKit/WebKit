@@ -2694,11 +2694,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             return;
         }
 
-        if (!value->isCSSLineBoxContainValue())
+        if (!value->isLineBoxContainValue())
             return;
 
-        CSSLineBoxContainValue* lineBoxContainValue = static_cast<CSSLineBoxContainValue*>(value);
-        state.style()->setLineBoxContain(lineBoxContainValue->value());
+        state.style()->setLineBoxContain(toCSSLineBoxContainValue(value)->value());
         return;
     }
 

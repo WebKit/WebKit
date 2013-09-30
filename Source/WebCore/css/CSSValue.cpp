@@ -449,7 +449,7 @@ void CSSValue::destroy()
         delete toWebKitCSSTransformValue(this);
         return;
     case LineBoxContainClass:
-        delete static_cast<CSSLineBoxContainValue*>(this);
+        delete toCSSLineBoxContainValue(this);
         return;
     case CalculationClass:
         delete static_cast<CSSCalcValue*>(this);
