@@ -1,3 +1,14 @@
+2013-09-30  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Mac-Lion build fix.
+
+        Use metadataItemsFromArray:withLocale: instead of
+        metadataItemsFromArray:filteredAndSortedAccordingToPreferredLanguages:
+        on Lion and earlier.
+
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack):
+
 2013-09-27  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add AudioTrack support to MediaPlayerPrivateAVFObC.

@@ -93,7 +93,11 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     NSArray *titles = [AVMetadataItem metadataItemsFromArray:[assetTrack commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
+#else
+        NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles withLocale:[NSLocale currentLocale]];
+#endif
         if ([titlesForPreferredLanguages count])
             setLabel([[titlesForPreferredLanguages objectAtIndex:0] stringValue]);
         else
