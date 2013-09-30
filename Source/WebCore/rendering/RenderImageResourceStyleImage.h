@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class RenderObject;
+class RenderElement;
 
 class RenderImageResourceStyleImage : public RenderImageResource {
 public:
@@ -42,24 +42,25 @@ public:
     {
         return adoptPtr(new RenderImageResourceStyleImage(styleImage));
     }
-    virtual void initialize(RenderObject*);
-    virtual void shutdown();
 
-    virtual bool hasImage() const { return true; }
-    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const;
-    virtual bool errorOccurred() const { return m_styleImage->errorOccurred(); }
+private:
+    virtual void initialize(RenderElement*) OVERRIDE;
+    virtual void shutdown() OVERRIDE;
 
-    virtual void setContainerSizeForRenderer(const IntSize&);
-    virtual bool usesImageContainerSize() const { return m_styleImage->usesImageContainerSize(); }
-    virtual bool imageHasRelativeWidth() const { return m_styleImage->imageHasRelativeWidth(); }
-    virtual bool imageHasRelativeHeight() const { return m_styleImage->imageHasRelativeHeight(); }
+    virtual bool hasImage() const OVERRIDE { return true; }
+    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const OVERRIDE;
+    virtual bool errorOccurred() const OVERRIDE { return m_styleImage->errorOccurred(); }
+
+    virtual void setContainerSizeForRenderer(const IntSize&) OVERRIDE;
+    virtual bool usesImageContainerSize() const OVERRIDE { return m_styleImage->usesImageContainerSize(); }
+    virtual bool imageHasRelativeWidth() const OVERRIDE { return m_styleImage->imageHasRelativeWidth(); }
+    virtual bool imageHasRelativeHeight() const OVERRIDE { return m_styleImage->imageHasRelativeHeight(); }
 
     virtual LayoutSize imageSize(float multiplier) const OVERRIDE { return m_styleImage->imageSize(m_renderer, multiplier); }
     virtual LayoutSize intrinsicSize(float multiplier) const OVERRIDE { return m_styleImage->imageSize(m_renderer, multiplier); }
 
-    virtual WrappedImagePtr imagePtr() const { return m_styleImage->data(); }
+    virtual WrappedImagePtr imagePtr() const OVERRIDE { return m_styleImage->data(); }
 
-private:
     explicit RenderImageResourceStyleImage(StyleImage*);
     RefPtr<StyleImage> m_styleImage;
 };

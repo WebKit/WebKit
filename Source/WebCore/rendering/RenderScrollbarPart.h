@@ -54,7 +54,7 @@ public:
     virtual LayoutUnit marginRight() const OVERRIDE { ASSERT(isIntegerValue(m_marginBox.right())); return m_marginBox.right(); }
 
     virtual bool isRenderScrollbarPart() const { return true; }
-    RenderObject* rendererOwningScrollbar() const;
+    RenderBox* rendererOwningScrollbar() const;
 
 protected:
     virtual void styleWillChange(StyleDifference diff, const RenderStyle* newStyle);

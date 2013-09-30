@@ -30,7 +30,7 @@ class CachedResourceLoader;
 class Element;
 class StyleCachedImage;
 class StyleImage;
-class RenderObject;
+class RenderElement;
 struct ResourceLoaderOptions;
 
 class CSSImageValue : public CSSValue {
@@ -54,7 +54,7 @@ public:
 
     bool equals(const CSSImageValue&) const;
 
-    bool knownToBeOpaque(const RenderObject*) const;
+    bool knownToBeOpaque(const RenderElement*) const;
 
     void setInitiator(const AtomicString& name) { m_initiatorName = name; }
 

@@ -56,7 +56,7 @@ HTMLMeterElement* MeterShadowElement::meterElement() const
 
 bool MeterShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
-    RenderObject* render = meterElement()->renderer();
+    auto render = meterElement()->renderer();
     return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
@@ -72,7 +72,7 @@ bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
     if (meterElement()->hasAuthorShadowRoot())
         return HTMLDivElement::rendererIsNeeded(style);
 
-    RenderObject* render = meterElement()->renderer();
+    auto render = meterElement()->renderer();
     return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 

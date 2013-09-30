@@ -386,7 +386,7 @@ NodeRareData& Node::ensureRareData()
 
     NodeRareData* data;
     if (isElementNode())
-        data = ElementRareData::create(m_data.m_renderer).leakPtr();
+        data = ElementRareData::create(toRenderElement(m_data.m_renderer)).leakPtr();
     else
         data = NodeRareData::create(m_data.m_renderer).leakPtr();
     ASSERT(data);
@@ -2192,7 +2192,7 @@ void Node::defaultEventHandler(Event* event)
 
             if (renderer) {
                 if (Frame* frame = document().frame())
-                    frame->eventHandler().startPanScrolling(renderer);
+                    frame->eventHandler().startPanScrolling(toRenderBox(renderer));
             }
         }
 #endif

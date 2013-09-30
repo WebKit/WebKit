@@ -45,7 +45,7 @@ class CSSStyleSheet;
 class Document;
 class Frame;
 class Page;
-class RenderObject;
+class RenderElement;
 class StylePropertySet;
 class StyleRule;
 
@@ -77,7 +77,7 @@ private:
     // It also adds any resources included in that stylesheet (including any imported stylesheets and their own resources).
     void serializeCSSStyleSheet(CSSStyleSheet*, const URL&);
 
-    void addImageToResources(CachedImage*, RenderObject*, const URL&);
+    void addImageToResources(CachedImage*, RenderElement*, const URL&);
     void retrieveResourcesForProperties(const StylePropertySet*, Document*);
     void retrieveResourcesForRule(StyleRule*, Document*);
 

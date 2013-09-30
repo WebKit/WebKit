@@ -59,7 +59,6 @@ class KeyboardEvent;
 class MouseEvent;
 class Node;
 class RenderArena;
-class RenderObject;
 class RenderStyle;
 class TouchEvent;
 

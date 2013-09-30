@@ -35,11 +35,13 @@
 
 namespace WebCore {
 
+class RenderElement;
+
 // An ImplicitAnimation tracks the state of a transition of a specific CSS property
-// for a single RenderObject.
+// for a single RenderElement.
 class ImplicitAnimation : public AnimationBase {
 public:
-    static PassRefPtr<ImplicitAnimation> create(const Animation& animation, CSSPropertyID animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
+    static PassRefPtr<ImplicitAnimation> create(const Animation& animation, CSSPropertyID animatingProperty, RenderElement* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
     {
         return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
@@ -52,7 +54,7 @@ public:
     virtual void pauseAnimation(double /*timeOffset*/);
     virtual void endAnimation();
 
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
+    virtual void animate(CompositeAnimation*, RenderElement*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle);
     virtual void reset(RenderStyle* to);
 
@@ -82,7 +84,7 @@ protected:
 #endif
 
 private:
-    ImplicitAnimation(const Animation&, CSSPropertyID, RenderObject*, CompositeAnimation*, RenderStyle*);
+    ImplicitAnimation(const Animation&, CSSPropertyID, RenderElement*, CompositeAnimation*, RenderStyle*);
     virtual ~ImplicitAnimation();
 
     CSSPropertyID m_transitionProperty; // Transition property as specified in the RenderStyle.

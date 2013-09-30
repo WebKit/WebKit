@@ -38,20 +38,20 @@
 #include "LayoutRect.h"
 #include "SVGFilterBuilder.h"
 #include "SourceGraphic.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
 class CachedShader;
 class CustomFilterProgram;
 class Document;
 class GraphicsContext;
+class RenderElement;
 class RenderLayer;
-class RenderObject;
+
+typedef Vector<RefPtr<FilterEffect>> FilterEffectList;
 
 enum FilterConsumer {
     FilterProperty,
@@ -77,6 +77,7 @@ public:
     GraphicsContext* filterContext() const;
 
     const LayoutRect& repaintRect() const { return m_repaintRect; }
+
 private:
     RenderLayer* m_renderLayer; // FIXME: this is mainly used to get the FilterEffectRenderer. FilterEffectRendererHelper should be weaned off it.
     LayoutPoint m_paintOffset;
@@ -85,32 +86,31 @@ private:
     bool m_startedFilterEffect;
 };
 
-class FilterEffectRenderer : public Filter
-{
+class FilterEffectRenderer FINAL : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<FilterEffectRenderer> create()
+    static RefPtr<FilterEffectRenderer> create()
     {
-        return adoptRef(new FilterEffectRenderer());
+        return adoptRef(new FilterEffectRenderer);
     }
 
-    virtual void setSourceImageRect(const FloatRect& sourceImageRect)
+    void setSourceImageRect(const FloatRect& sourceImageRect)
     { 
         m_sourceDrawingRegion = sourceImageRect;
         setMaxEffectRects(sourceImageRect);
         setFilterRegion(sourceImageRect);
         m_graphicsBufferAttached = false;
     }
-    virtual FloatRect sourceImageRect() const { return m_sourceDrawingRegion; }
+    virtual FloatRect sourceImageRect() const OVERRIDE { return m_sourceDrawingRegion; }
 
-    virtual void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
-    virtual FloatRect filterRegion() const { return m_filterRegion; }
+    void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
+    virtual FloatRect filterRegion() const OVERRIDE { return m_filterRegion; }
 
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    bool build(RenderObject* renderer, const FilterOperations&, FilterConsumer);
-    PassRefPtr<FilterEffect> buildReferenceFilter(RenderObject* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
+    bool build(RenderElement*, const FilterOperations&, FilterConsumer);
+    PassRefPtr<FilterEffect> buildReferenceFilter(RenderElement*, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
     bool updateBackingStoreRect(const FloatRect& filterRect);
     void allocateBackingStoreIfNeeded();
     void clearIntermediateResults();
@@ -124,6 +124,7 @@ public:
 #if ENABLE(CSS_SHADERS)
     bool hasCustomShaderFilter() const { return m_hasCustomShaderFilter; }
 #endif
+
 private:
     void setMaxEffectRects(const FloatRect& effectRect)
     {
@@ -132,11 +133,12 @@ private:
             effect->setMaxEffectRect(effectRect);
         }
     }
-    PassRefPtr<FilterEffect> lastEffect() const
+
+    FilterEffect* lastEffect() const
     {
-        if (m_effects.size() > 0)
-            return m_effects.last();
-        return 0;
+        if (!m_effects.isEmpty())
+            return m_effects.last().get();
+        return nullptr;
     }
 
     FilterEffectRenderer();

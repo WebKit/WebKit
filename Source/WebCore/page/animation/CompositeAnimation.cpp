@@ -35,7 +35,7 @@
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
 #include "Logging.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "RenderStyle.h"
 #include <wtf/text/CString.h>
 
@@ -80,7 +80,7 @@ void CompositeAnimation::clearRenderer()
     }
 }
 
-void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
+void CompositeAnimation::updateTransitions(RenderElement* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     // If currentStyle is null or there are no old or new transitions, just skip it
     if (!currentStyle || (!targetStyle->transitions() && m_transitions.isEmpty()))
@@ -203,7 +203,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
         m_transitions.remove(toBeRemoved[j]);
 }
 
-void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
+void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     // Nothing to do if we don't have any animations, and didn't have any before
     if (m_keyframeAnimations.isEmpty() && !targetStyle->hasAnimations())
@@ -295,7 +295,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
         m_keyframeAnimations.remove(animsToBeRemoved[j]);
 }
 
-PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
+PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderElement* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     RefPtr<RenderStyle> resultStyle;
 

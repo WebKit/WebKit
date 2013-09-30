@@ -4264,12 +4264,11 @@ void HTMLMediaElement::mediaVolumeDidChange()
 void HTMLMediaElement::defaultEventHandler(Event* event)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    RenderObject* r = renderer();
-    if (!r || !r->isWidget())
+    auto renderer = this->renderer();
+    if (!renderer || !renderer->isWidget())
         return;
 
-    Widget* widget = toRenderWidget(r)->widget();
-    if (widget)
+    if (Widget* widget = toRenderWidget(renderer)->widget())
         widget->handleEvent(event);
 #else
     HTMLElement::defaultEventHandler(event);

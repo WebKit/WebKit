@@ -36,10 +36,11 @@
 namespace WebCore {
 
 class FloatingObject;
-struct LineSegment;
 class RenderBlock;
 class RenderObject;
 class RenderRubyRun;
+
+struct LineSegment;
 
 enum IndentTextOrNot { DoNotIndentText, IndentText };
 

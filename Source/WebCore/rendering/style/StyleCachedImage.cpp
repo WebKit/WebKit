@@ -25,7 +25,7 @@
 #include "StyleCachedImage.h"
 
 #include "CachedImage.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
@@ -61,7 +61,7 @@ bool StyleCachedImage::errorOccurred() const
     return m_image->errorOccurred();
 }
 
-LayoutSize StyleCachedImage::imageSize(const RenderObject* renderer, float multiplier) const
+LayoutSize StyleCachedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
     return m_image->imageSizeForRenderer(renderer, multiplier);
 }
@@ -76,7 +76,7 @@ bool StyleCachedImage::imageHasRelativeHeight() const
     return m_image->imageHasRelativeHeight();
 }
 
-void StyleCachedImage::computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
+void StyleCachedImage::computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     m_image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
@@ -86,27 +86,27 @@ bool StyleCachedImage::usesImageContainerSize() const
     return m_image->usesImageContainerSize();
 }
 
-void StyleCachedImage::setContainerSizeForRenderer(const RenderObject* renderer, const IntSize& imageContainerSize, float imageContainerZoomFactor)
+void StyleCachedImage::setContainerSizeForRenderer(const RenderElement* renderer, const IntSize& imageContainerSize, float imageContainerZoomFactor)
 {
     m_image->setContainerSizeForRenderer(renderer, imageContainerSize, imageContainerZoomFactor);
 }
 
-void StyleCachedImage::addClient(RenderObject* renderer)
+void StyleCachedImage::addClient(RenderElement* renderer)
 {
     m_image->addClient(renderer);
 }
 
-void StyleCachedImage::removeClient(RenderObject* renderer)
+void StyleCachedImage::removeClient(RenderElement* renderer)
 {
     m_image->removeClient(renderer);
 }
 
-PassRefPtr<Image> StyleCachedImage::image(RenderObject* renderer, const IntSize&) const
+PassRefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const IntSize&) const
 {
     return m_image->imageForRenderer(renderer);
 }
 
-bool StyleCachedImage::knownToBeOpaque(const RenderObject* renderer) const
+bool StyleCachedImage::knownToBeOpaque(const RenderElement* renderer) const
 {
     return m_image->currentFrameKnownToBeOpaque(renderer);
 }

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class FloatPoint;
+class RenderElement;
 
 typedef void (*NodeCallback)(Node*, unsigned);
 
@@ -125,6 +126,8 @@ public:
 
     using Node::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
+
+    RenderElement* renderer() const;
 
 protected:
     explicit ContainerNode(Document*, ConstructionType = CreateContainer);

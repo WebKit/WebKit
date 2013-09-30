@@ -134,14 +134,14 @@ String AccessibilityImageMapLink::title() const
     return String();
 }
 
-RenderObject* AccessibilityImageMapLink::imageMapLinkRenderer() const
+RenderElement* AccessibilityImageMapLink::imageMapLinkRenderer() const
 {
-    if (!m_mapElement.get() || !m_areaElement.get())
-        return 0;
+    if (!m_mapElement || !m_areaElement)
+        return nullptr;
 
-    RenderObject* renderer = 0;
+    RenderElement* renderer = nullptr;
     if (m_parent && m_parent->isAccessibilityRenderObject())
-        renderer = static_cast<AccessibilityRenderObject*>(m_parent)->renderer();
+        renderer = toRenderElement(static_cast<AccessibilityRenderObject*>(m_parent)->renderer());
     else
         renderer = m_mapElement->renderer();
     
@@ -151,13 +151,13 @@ RenderObject* AccessibilityImageMapLink::imageMapLinkRenderer() const
 void AccessibilityImageMapLink::detachFromParent()
 {
     AccessibilityMockObject::detachFromParent();
-    m_areaElement = 0;
-    m_mapElement = 0;
+    m_areaElement = nullptr;
+    m_mapElement = nullptr;
 }
 
 Path AccessibilityImageMapLink::elementPath() const
 {
-    RenderObject* renderer = imageMapLinkRenderer();
+    auto renderer = imageMapLinkRenderer();
     if (!renderer)
         return Path();
     
@@ -166,7 +166,7 @@ Path AccessibilityImageMapLink::elementPath() const
     
 LayoutRect AccessibilityImageMapLink::elementRect() const
 {
-    RenderObject* renderer = imageMapLinkRenderer();
+    auto renderer = imageMapLinkRenderer();
     if (!renderer)
         return LayoutRect();
     

@@ -289,9 +289,7 @@ bool HTMLFormControlElement::isRequired() const
 
 static void updateFromElementCallback(Node* node, unsigned)
 {
-    ASSERT_ARG(node, node->isElementNode());
-    ASSERT_ARG(node, toElement(node)->isFormControlElement());
-    if (RenderObject* renderer = node->renderer())
+    if (auto renderer = toHTMLFormControlElement(node)->renderer())
         renderer->updateFromElement();
 }
 

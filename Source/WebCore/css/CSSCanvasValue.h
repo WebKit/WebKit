@@ -40,9 +40,9 @@ public:
 
     String customCSSText() const;
 
-    PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    PassRefPtr<Image> image(RenderElement*, const IntSize&);
     bool isFixedSize() const { return true; }
-    IntSize fixedSize(const RenderObject*);
+    IntSize fixedSize(const RenderElement*);
 
     bool isPending() const { return false; }
     void loadSubimages(CachedResourceLoader*) { }

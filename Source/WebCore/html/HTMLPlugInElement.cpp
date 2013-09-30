@@ -86,12 +86,8 @@ bool HTMLPlugInElement::willRespondToMouseClickEvents()
 {
     if (isDisabledFormControl())
         return false;
-    RenderObject* r = renderer();
-    if (!r)
-        return false;
-    if (!r->isEmbeddedObject() && !r->isWidget())
-        return false;
-    return true;
+    auto renderer = this->renderer();
+    return renderer && renderer->isWidget();
 }
 
 void HTMLPlugInElement::willDetachRenderers()
@@ -197,15 +193,18 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
-    RenderObject* r = renderer();
-    if (r && r->isEmbeddedObject()) {
-        if (toRenderEmbeddedObject(r)->isPluginUnavailable()) {
-            toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
+    auto renderer = this->renderer();
+    if (!renderer || !renderer->isWidget())
+        return;
+
+    if (renderer->isEmbeddedObject()) {
+        if (toRenderEmbeddedObject(renderer)->isPluginUnavailable()) {
+            toRenderEmbeddedObject(renderer)->handleUnavailablePluginIndicatorEvent(event);
             return;
         }
 
-        if (r->isSnapshottedPlugIn() && displayState() < Restarting) {
-            toRenderSnapshottedPlugIn(r)->handleEvent(event);
+        if (toRenderEmbeddedObject(renderer)->isSnapshottedPlugIn() && displayState() < Restarting) {
+            toRenderSnapshottedPlugIn(renderer)->handleEvent(event);
             HTMLFrameOwnerElement::defaultEventHandler(event);
             return;
         }
@@ -214,9 +213,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
             return;
     }
 
-    if (!r || !r->isWidget())
-        return;
-    RefPtr<Widget> widget = toRenderWidget(r)->widget();
+    RefPtr<Widget> widget = toRenderWidget(renderer)->widget();
     if (!widget)
         return;
     widget->handleEvent(event);
@@ -225,17 +222,17 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
-bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent* event) const
+bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent*) const
 {
-    UNUSED_PARAM(event);
+    // FIXME: Why is this check needed?
     if (!document().page())
         return false;
 
-    const PluginViewBase* plugin = pluginWidget() && pluginWidget()->isPluginViewBase() ? static_cast<const PluginViewBase*>(pluginWidget()) : 0;
-    if (plugin)
-        return plugin->supportsKeyboardFocus();
+    Widget* widget = pluginWidget();
+    if (!widget || !widget->isPluginViewBase())
+        return false;
 
-    return false;
+    return toPluginViewBase(widget)->supportsKeyboardFocus();
 }
 
 bool HTMLPlugInElement::isPluginElement() const

@@ -102,24 +102,24 @@ static bool isDeletableElement(const Node* node)
     if ((borderBoundingBox.width() * borderBoundingBox.height()) < minimumArea)
         return false;
 
-    if (renderer->isTable())
+    if (box->isTable())
         return true;
 
     if (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(iframeTag))
         return true;
 
-    if (renderer->isOutOfFlowPositioned())
+    if (box->isOutOfFlowPositioned())
         return true;
 
-    if (renderer->isRenderBlock() && !renderer->isTableCell()) {
-        RenderStyle* style = renderer->style();
+    if (box->isRenderBlock() && !box->isTableCell()) {
+        RenderStyle* style = box->style();
         if (!style)
             return false;
 
         // Allow blocks that have background images
         if (style->hasBackgroundImage()) {
             for (const FillLayer* background = style->backgroundLayers(); background; background = background->next()) {
-                if (background->image() && background->image()->canRender(renderer, 1))
+                if (background->image() && background->image()->canRender(box, 1))
                     return true;
             }
         }
@@ -142,7 +142,7 @@ static bool isDeletableElement(const Node* node)
         if (!parentStyle)
             return false;
 
-        if (renderer->hasBackground() && (!parentRenderer->hasBackground() || style->visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle->visitedDependentColor(CSSPropertyBackgroundColor)))
+        if (box->hasBackground() && (!parentRenderer->hasBackground() || style->visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle->visitedDependentColor(CSSPropertyBackgroundColor)))
             return true;
     }
 

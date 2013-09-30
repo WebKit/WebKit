@@ -44,7 +44,7 @@ RenderImageResource::~RenderImageResource()
 {
 }
 
-void RenderImageResource::initialize(RenderObject* renderer)
+void RenderImageResource::initialize(RenderElement* renderer)
 {
     ASSERT(!m_renderer);
     ASSERT(renderer);

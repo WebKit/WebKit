@@ -253,7 +253,7 @@ static unsigned verticalScrollDistance(Frame& frame)
     Element* focusedElement = frame.document()->focusedElement();
     if (!focusedElement)
         return 0;
-    RenderObject* renderer = focusedElement->renderer();
+    auto renderer = focusedElement->renderer();
     if (!renderer || !renderer->isBox())
         return 0;
     RenderStyle* style = renderer->style();

@@ -679,13 +679,13 @@ void HTMLSelectElement::scrollToSelection()
     if (usesMenuList())
         return;
 
-    if (RenderObject* renderer = this->renderer())
+    if (auto renderer = this->renderer())
         toRenderListBox(renderer)->selectionChanged();
 }
 
 void HTMLSelectElement::setOptionsChangedOnRenderer()
 {
-    if (RenderObject* renderer = this->renderer()) {
+    if (auto renderer = this->renderer()) {
         if (usesMenuList())
             toRenderMenuList(renderer)->setOptionsChanged(true);
         else
@@ -851,7 +851,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         deselectItemsWithoutValidation(element);
 
     // For the menu list case, this is what makes the selected element appear.
-    if (RenderObject* renderer = this->renderer())
+    if (auto renderer = this->renderer())
         renderer->updateFromElement();
 
     scrollToSelection();
@@ -860,7 +860,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         m_isProcessingUserDrivenChange = flags & UserDriven;
         if (flags & DispatchChangeEvent)
             dispatchChangeEventForMenuList();
-        if (RenderObject* renderer = this->renderer()) {
+        if (auto renderer = this->renderer()) {
             if (usesMenuList())
                 toRenderMenuList(renderer)->didSetSelectedIndex(listIndex);
             else if (renderer->isListBox())

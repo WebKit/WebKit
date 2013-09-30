@@ -48,7 +48,7 @@ public:
 
     // Most subclasses use RenderWidget (either RenderEmbeddedObject or RenderIFrame)
     // except for HTMLObjectElement and HTMLEmbedElement which may return any
-    // RenderObject when using fallback content.
+    // RenderElement when using fallback content.
     RenderWidget* renderWidget() const;
 
 #if ENABLE(SVG)

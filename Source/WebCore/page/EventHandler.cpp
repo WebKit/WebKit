@@ -344,7 +344,7 @@ EventHandler::EventHandler(Frame& frame)
     , m_touchPressed(false)
 #endif
 #if ENABLE(GESTURE_EVENTS)
-    , m_scrollGestureHandlingNode(0)
+    , m_scrollGestureHandlingNode(nullptr)
     , m_lastHitTestResultOverWidget(false)
 #endif
     , m_maxMouseMovedDuration(0)
@@ -413,7 +413,7 @@ void EventHandler::clear()
     m_originatingTouchPointTargetKey = 0;
 #endif
 #if ENABLE(GESTURE_EVENTS)
-    m_scrollGestureHandlingNode = 0;
+    m_scrollGestureHandlingNode = nullptr;
     m_lastHitTestResultOverWidget = false;
     m_previousGestureScrolledElement = nullptr;
     m_scrollbarHandlingScrollGesture = 0;
@@ -980,7 +980,7 @@ void EventHandler::didPanScrollStop()
     m_autoscrollController->didPanScrollStop();
 }
 
-void EventHandler::startPanScrolling(RenderObject* renderer)
+void EventHandler::startPanScrolling(RenderElement* renderer)
 {
     if (!renderer->isBox())
         return;
@@ -990,7 +990,7 @@ void EventHandler::startPanScrolling(RenderObject* renderer)
 
 #endif // ENABLE(PAN_SCROLLING)
 
-RenderObject* EventHandler::autoscrollRenderer() const
+RenderElement* EventHandler::autoscrollRenderer() const
 {
     return m_autoscrollController->autoscrollRenderer();
 }
@@ -1082,7 +1082,7 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
         node = m_mousePressNode.get();
     
     if (node) {
-        RenderObject* r = node->renderer();
+        auto r = node->renderer();
         if (r && !r->isListBox() && r->enclosingBox()->scroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
@@ -1103,7 +1103,7 @@ bool EventHandler::logicalScrollOverflow(ScrollLogicalDirection direction, Scrol
         node = m_mousePressNode.get();
     
     if (node) {
-        RenderObject* r = node->renderer();
+        auto r = node->renderer();
         if (r && !r->isListBox() && r->enclosingBox()->logicalScroll(direction, granularity)) {
             setFrameWasScrolledByUser();
             return true;
@@ -1176,7 +1176,7 @@ Frame* EventHandler::subframeForTargetNode(Node* node)
     if (!node)
         return 0;
 
-    RenderObject* renderer = node->renderer();
+    auto renderer = node->renderer();
     if (!renderer || !renderer->isWidget())
         return 0;
 
@@ -1290,7 +1290,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
     if (!node)
         return NoCursorChange;
 
-    RenderObject* renderer = node->renderer();
+    auto renderer = node->renderer();
     RenderStyle* style = renderer ? renderer->style() : 0;
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
@@ -1672,7 +1672,7 @@ static RenderLayer* layerForNode(Node* node)
     if (!node)
         return 0;
 
-    RenderObject* renderer = node->renderer();
+    auto renderer = node->renderer();
     if (!renderer)
         return 0;
 
@@ -2454,10 +2454,9 @@ EventHandler::DominantScrollGestureDirection EventHandler::dominantScrollGesture
 
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 {
-    Document* doc = m_frame.document();
+    Document* document = m_frame.document();
 
-    RenderObject* docRenderer = doc->renderView();
-    if (!docRenderer)
+    if (!document->renderView())
         return false;
     
     RefPtr<FrameView> protector(m_frame.view());
@@ -2472,7 +2471,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
     HitTestResult result(vPoint);
-    doc->renderView()->hitTest(request, result);
+    document->renderView()->hitTest(request, result);
 
     bool useLatchedWheelEventElement = e.useLatchedEventElement();
 
@@ -2887,7 +2886,7 @@ bool EventHandler::sendScrollEventToView(const PlatformGestureEvent& gestureEven
 
 void EventHandler::clearGestureScrollNodes()
 {
-    m_scrollGestureHandlingNode = 0;
+    m_scrollGestureHandlingNode = nullptr;
     m_previousGestureScrolledElement = nullptr;
 }
 

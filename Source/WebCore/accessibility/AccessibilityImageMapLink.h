@@ -75,7 +75,7 @@ private:
     virtual void detachFromParent() OVERRIDE;
 
     virtual Path elementPath() const;
-    RenderObject* imageMapLinkRenderer() const;
+    RenderElement* imageMapLinkRenderer() const;
     virtual void accessibilityText(Vector<AccessibilityText>&);
     virtual bool isImageMapLink() const { return true; }
     virtual bool supportsPath() const { return true; }

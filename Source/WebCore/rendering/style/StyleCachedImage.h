@@ -32,34 +32,35 @@ namespace WebCore {
 
 class CachedImage;
 
-class StyleCachedImage : public StyleImage, private CachedImageClient {
+class StyleCachedImage FINAL : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
     virtual ~StyleCachedImage();
 
-    virtual WrappedImagePtr data() const { return m_image.get(); }
-
-    virtual PassRefPtr<CSSValue> cssValue() const;
-    
-    virtual bool canRender(const RenderObject*, float multiplier) const;
-    virtual bool isLoaded() const;
-    virtual bool errorOccurred() const;
-    virtual LayoutSize imageSize(const RenderObject*, float multiplier) const OVERRIDE;
-    virtual bool imageHasRelativeWidth() const;
-    virtual bool imageHasRelativeHeight() const;
-    virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
-    virtual bool usesImageContainerSize() const;
-    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&, float);
-    virtual void addClient(RenderObject*);
-    virtual void removeClient(RenderObject*);
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
-    virtual bool knownToBeOpaque(const RenderObject*) const OVERRIDE;
     virtual CachedImage* cachedImage() const OVERRIDE { return m_image.get(); }
-    
+
 private:
-    explicit StyleCachedImage(CachedImage*);
+    virtual WrappedImagePtr data() const OVERRIDE { return m_image.get(); }
+
+    virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE;
     
+    virtual bool canRender(const RenderObject*, float multiplier) const OVERRIDE;
+    virtual bool isLoaded() const OVERRIDE;
+    virtual bool errorOccurred() const OVERRIDE;
+    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const OVERRIDE;
+    virtual bool imageHasRelativeWidth() const OVERRIDE;
+    virtual bool imageHasRelativeHeight() const OVERRIDE;
+    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
+    virtual bool usesImageContainerSize() const OVERRIDE;
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) OVERRIDE;
+    virtual void addClient(RenderElement*) OVERRIDE;
+    virtual void removeClient(RenderElement*) OVERRIDE;
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE;
+    virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE;
+
+    explicit StyleCachedImage(CachedImage*);
+
     CachedResourceHandle<CachedImage> m_image;
 };
 

@@ -43,7 +43,7 @@ using namespace std;
 
 namespace WebCore {
 
-PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const IntSize& size)
 {
     if (size.isEmpty())
         return 0;
@@ -132,7 +132,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     return result.release();
 }
 
-void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, RenderStyle* rootStyle, float maxLengthForRepeat)
+void CSSGradientValue::addStops(Gradient* gradient, RenderElement* renderer, RenderStyle* rootStyle, float maxLengthForRepeat)
 {
     RenderStyle* style = renderer->style();
 
@@ -459,7 +459,7 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
-bool CSSGradientValue::knownToBeOpaque(const RenderObject*) const
+bool CSSGradientValue::knownToBeOpaque(const RenderElement*) const
 {
     for (size_t i = 0; i < m_stops.size(); ++i) {
         if (m_stops[i].m_resolvedColor.hasAlpha())
@@ -643,7 +643,7 @@ static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& 
     firstPoint.set(halfWidth - endX, halfHeight + endY);
 }
 
-PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderElement* renderer, const IntSize& size)
 {
     ASSERT(!size.isEmpty());
 
@@ -983,7 +983,7 @@ static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRati
 }
 
 // FIXME: share code with the linear version
-PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderElement* renderer, const IntSize& size)
 {
     ASSERT(!size.isEmpty());
 

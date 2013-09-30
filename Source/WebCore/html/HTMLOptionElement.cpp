@@ -324,8 +324,8 @@ void HTMLOptionElement::didRecalcStyle(Style::Change)
 {
     // FIXME: This is nasty, we ask our owner select to repaint even if the new
     // style is exactly the same.
-    if (HTMLSelectElement* select = ownerSelectElement()) {
-        if (RenderObject* renderer = select->renderer())
+    if (auto select = ownerSelectElement()) {
+        if (auto renderer = select->renderer())
             renderer->repaint();
     }
 }

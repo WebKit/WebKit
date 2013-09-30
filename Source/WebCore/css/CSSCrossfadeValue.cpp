@@ -32,7 +32,7 @@
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "ImageBuffer.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
 #include <wtf/text/StringBuilder.h>
@@ -44,7 +44,7 @@ static inline double blendFunc(double from, double to, double progress)
     return blend(from, to, progress);
 }
 
-static bool subimageKnownToBeOpaque(CSSValue* value, const RenderObject* renderer)
+static bool subimageKnownToBeOpaque(CSSValue* value, const RenderElement* renderer)
 {
     if (value->isImageValue())
         return toCSSImageValue(value)->knownToBeOpaque(renderer);
@@ -78,7 +78,7 @@ String CSSCrossfadeValue::customCSSText() const
     return result.toString();
 }
 
-IntSize CSSCrossfadeValue::fixedSize(const RenderObject* renderer)
+IntSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
 {
     float percentage = m_percentageValue->getFloatValue();
     float inversePercentage = 1 - percentage;
@@ -108,7 +108,7 @@ bool CSSCrossfadeValue::isPending() const
         || CSSImageGeneratorValue::subimageIsPending(m_toValue.get());
 }
 
-bool CSSCrossfadeValue::knownToBeOpaque(const RenderObject* renderer) const
+bool CSSCrossfadeValue::knownToBeOpaque(const RenderElement* renderer) const
 {
     return subimageKnownToBeOpaque(m_fromValue.get(), renderer) && subimageKnownToBeOpaque(m_toValue.get(), renderer);
 }
@@ -138,7 +138,7 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
     m_crossfadeSubimageObserver.setReady(true);
 }
 
-PassRefPtr<Image> CSSCrossfadeValue::image(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const IntSize& size)
 {
     if (size.isEmpty())
         return 0;
@@ -163,11 +163,8 @@ PassRefPtr<Image> CSSCrossfadeValue::image(RenderObject* renderer, const IntSize
 
 void CSSCrossfadeValue::crossfadeChanged(const IntRect&)
 {
-    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
-    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr) {
-        RenderObject* client = const_cast<RenderObject*>(curr->key);
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-    }
+    for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
+        it->key->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
 void CSSCrossfadeValue::CrossfadeSubimageObserverProxy::imageChanged(CachedImage*, const IntRect* rect)

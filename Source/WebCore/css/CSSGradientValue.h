@@ -61,7 +61,7 @@ struct CSSGradientColorStop {
 
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
-    PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    PassRefPtr<Image> image(RenderElement*, const IntSize&);
 
     void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
@@ -82,10 +82,10 @@ public:
     CSSGradientType gradientType() const { return m_gradientType; }
 
     bool isFixedSize() const { return false; }
-    IntSize fixedSize(const RenderObject*) const { return IntSize(); }
+    IntSize fixedSize(const RenderElement*) const { return IntSize(); }
 
     bool isPending() const { return false; }
-    bool knownToBeOpaque(const RenderObject*) const;
+    bool knownToBeOpaque(const RenderElement*) const;
 
     void loadSubimages(CachedResourceLoader*) { }
     PassRefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver*);
@@ -112,7 +112,7 @@ protected:
     {
     }
 
-    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
+    void addStops(Gradient*, RenderElement*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
 
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
@@ -147,7 +147,7 @@ public:
     String customCSSText() const;
 
     // Create the gradient for a given size.
-    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+    PassRefPtr<Gradient> createGradient(RenderElement*, const IntSize&);
 
     PassRefPtr<CSSLinearGradientValue> clone() const
     {
@@ -195,7 +195,7 @@ public:
     void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
 
     // Create the gradient for a given size.
-    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+    PassRefPtr<Gradient> createGradient(RenderElement*, const IntSize&);
 
     bool equals(const CSSRadialGradientValue&) const;
 

@@ -200,7 +200,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!marker)
         return String();
 
-    if (RenderObject* renderer = m_innerNonSharedNode->renderer())
+    if (auto renderer = m_innerNonSharedNode->renderer())
         dir = renderer->style()->direction();
     return marker->description();
 }
@@ -228,7 +228,7 @@ String HitTestResult::title(TextDirection& dir) const
         if (titleNode->isElementNode()) {
             String title = toElement(titleNode)->title();
             if (!title.isEmpty()) {
-                if (RenderObject* renderer = titleNode->renderer())
+                if (auto renderer = titleNode->renderer())
                     dir = renderer->style()->direction();
                 return title;
             }
@@ -243,7 +243,7 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
         if (!truncatedNode->isElementNode())
             continue;
 
-        if (RenderObject* renderer = truncatedNode->renderer()) {
+        if (auto renderer = toElement(truncatedNode)->renderer()) {
             if (renderer->isRenderBlock()) {
                 RenderBlock* block = toRenderBlock(renderer);
                 if (block->style()->textOverflow()) {
@@ -293,7 +293,7 @@ Image* HitTestResult::image() const
     if (!m_innerNonSharedNode)
         return 0;
     
-    RenderObject* renderer = m_innerNonSharedNode->renderer();
+    auto renderer = m_innerNonSharedNode->renderer();
     if (renderer && renderer->isImage()) {
         RenderImage* image = static_cast<WebCore::RenderImage*>(renderer);
         if (image->cachedImage() && !image->cachedImage()->errorOccurred())

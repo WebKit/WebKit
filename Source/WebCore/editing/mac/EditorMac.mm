@@ -159,7 +159,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
         // unreproducible case where this didn't happen, so check for null also.
         for (Node* node = startNode; node && node != pastEnd; node = NodeTraversal::next(node)) {
-            RenderObject* renderer = node->renderer();
+            auto renderer = node->renderer();
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
@@ -359,7 +359,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
 {
-    RenderObject* renderer = imageElement.renderer();
+    auto renderer = imageElement.renderer();
     if (!renderer || !renderer->isImage())
         return;
 

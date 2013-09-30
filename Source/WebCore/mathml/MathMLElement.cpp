@@ -32,7 +32,6 @@
 #include "MathMLElement.h"
 
 #include "MathMLNames.h"
-#include "RenderObject.h"
 #include "RenderTableCell.h"
 
 namespace WebCore {

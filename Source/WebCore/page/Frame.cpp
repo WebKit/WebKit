@@ -571,7 +571,7 @@ RenderWidget* Frame::ownerRenderer() const
     HTMLFrameOwnerElement* ownerElement = m_ownerElement;
     if (!ownerElement)
         return 0;
-    RenderObject* object = ownerElement->renderer();
+    auto object = ownerElement->renderer();
     if (!object)
         return 0;
     // FIXME: If <object> is ever fixed to disassociate itself from frames
@@ -664,7 +664,7 @@ VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
     Node* node = result.innerNonSharedNode();
     if (!node)
         return VisiblePosition();
-    RenderObject* renderer = node->renderer();
+    auto renderer = node->renderer();
     if (!renderer)
         return VisiblePosition();
     VisiblePosition visiblePos = renderer->positionForPoint(result.localPoint());
@@ -1001,7 +1001,7 @@ struct ScopedFramePaintingState {
 DragImageRef Frame::nodeImage(Node* node)
 {
     if (!node->renderer())
-        return 0;
+        return nullptr;
 
     const ScopedFramePaintingState state(this, node);
 
@@ -1012,10 +1012,10 @@ DragImageRef Frame::nodeImage(Node* node)
     m_doc->updateLayout();
     m_view->setNodeToDraw(node); // Enable special sub-tree drawing mode.
 
-    // Document::updateLayout may have blown away the original RenderObject.
-    RenderObject* renderer = node->renderer();
+    // Document::updateLayout may have blown away the original renderer.
+    auto renderer = node->renderer();
     if (!renderer)
-      return 0;
+        return nullptr;
 
     LayoutRect topLevelRect;
     IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
@@ -1028,7 +1028,7 @@ DragImageRef Frame::nodeImage(Node* node)
 
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
-        return 0;
+        return nullptr;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
     buffer->context()->clip(FloatRect(0, 0, paintingRect.maxX(), paintingRect.maxY()));
 

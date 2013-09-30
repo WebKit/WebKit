@@ -26,11 +26,11 @@
 #include "config.h"
 #include "LayoutRepainter.h"
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
-LayoutRepainter::LayoutRepainter(RenderObject& object, bool checkForRepaint)
+LayoutRepainter::LayoutRepainter(RenderElement& object, bool checkForRepaint)
     : m_object(object)
     , m_repaintContainer(0)
     , m_checkForRepaint(checkForRepaint)

@@ -100,7 +100,7 @@ void MediaControlPanelElement::startDrag(const LayoutPoint& eventLocation)
     if (m_isBeingDragged)
         return;
 
-    RenderObject* renderer = this->renderer();
+    auto renderer = this->renderer();
     if (!renderer || !renderer->isBox())
         return;
 
@@ -1396,20 +1396,20 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
 PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
 {
     if (!hasChildNodes())
-        return 0;
+        return nullptr;
 
     Frame* frame = document().frame();
     if (!frame)
-        return 0;
+        return nullptr;
 
     document().updateLayout();
 
-    RenderObject* renderer = this->renderer();
+    auto renderer = this->renderer();
     if (!renderer)
-        return 0;
+        return nullptr;
 
     if (!renderer->hasLayer())
-        return 0;
+        return nullptr;
 
     RenderLayer* layer = toRenderLayerModelObject(renderer)->layer();
 
@@ -1418,9 +1418,10 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
         deviceScaleFactor = page->deviceScaleFactor();
 
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
+
     OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
-        return 0;
+        return nullptr;
 
     layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, 0, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 

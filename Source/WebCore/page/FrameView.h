@@ -49,6 +49,7 @@ class URL;
 class Node;
 class Page;
 class RenderBox;
+class RenderElement;
 class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
@@ -111,7 +112,7 @@ public:
     bool isInLayout() const { return m_inLayout; }
 
     RenderObject* layoutRoot(bool onlyDuringLayout = false) const;
-    void clearLayoutRoot() { m_layoutRoot = 0; }
+    void clearLayoutRoot() { m_layoutRoot = nullptr; }
     int layoutCount() const { return m_layoutCount; }
 
     bool needsLayout() const;
@@ -217,15 +218,15 @@ public:
     bool isOverlappedIncludingAncestors() const;
     void setContentIsOpaque(bool);
 
-    void addSlowRepaintObject(RenderObject*);
-    void removeSlowRepaintObject(RenderObject*);
-    bool hasSlowRepaintObject(RenderObject* o) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(o); }
+    void addSlowRepaintObject(RenderElement*);
+    void removeSlowRepaintObject(RenderElement*);
+    bool hasSlowRepaintObject(RenderElement* o) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(o); }
     bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->size(); }
 
     // Includes fixed- and sticky-position objects.
-    typedef HashSet<RenderObject*> ViewportConstrainedObjectSet;
-    void addViewportConstrainedObject(RenderObject*);
-    void removeViewportConstrainedObject(RenderObject*);
+    typedef HashSet<RenderElement*> ViewportConstrainedObjectSet;
+    void addViewportConstrainedObject(RenderElement*);
+    void removeViewportConstrainedObject(RenderElement*);
     const ViewportConstrainedObjectSet* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
     bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && m_viewportConstrainedObjects->size() > 0; }
 
@@ -331,10 +332,10 @@ public:
     void scrollElementToRect(Element*, const IntRect&);
 
     // Methods to convert points and rects between the coordinate space of the renderer, and this view.
-    IntRect convertFromRenderer(const RenderObject*, const IntRect&) const;
-    IntRect convertToRenderer(const RenderObject*, const IntRect&) const;
-    IntPoint convertFromRenderer(const RenderObject*, const IntPoint&) const;
-    IntPoint convertToRenderer(const RenderObject*, const IntPoint&) const;
+    IntRect convertFromRenderer(const RenderElement*, const IntRect&) const;
+    IntRect convertToRenderer(const RenderElement*, const IntRect&) const;
+    IntPoint convertFromRenderer(const RenderElement*, const IntPoint&) const;
+    IntPoint convertToRenderer(const RenderElement*, const IntPoint&) const;
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
 
@@ -459,7 +460,7 @@ private:
 
     bool shouldUpdateFixedElementsAfterScrolling();
 
-    void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
+    void applyOverflowToViewport(RenderElement*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
@@ -551,8 +552,7 @@ private:
     OwnPtr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const RefPtr<Frame> m_frame;
 
-    typedef HashSet<RenderObject*> RenderObjectSet;
-    OwnPtr<RenderObjectSet> m_slowRepaintObjects;
+    OwnPtr<HashSet<RenderElement*>> m_slowRepaintObjects;
 
     bool m_needsFullRepaint;
     
@@ -589,7 +589,7 @@ private:
     bool m_overflowStatusDirty;
     bool m_horizontalOverflow;
     bool m_verticalOverflow;    
-    RenderObject* m_viewportRenderer;
+    RenderElement* m_viewportRenderer;
 
     Pagination m_pagination;
 

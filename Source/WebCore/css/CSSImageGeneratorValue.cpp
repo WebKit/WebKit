@@ -33,7 +33,7 @@
 #include "CSSGradientValue.h"
 #include "CSSImageValue.h"
 #include "Image.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include <wtf/text/WTFString.h>
 
@@ -50,14 +50,14 @@ CSSImageGeneratorValue::~CSSImageGeneratorValue()
 {
 }
 
-void CSSImageGeneratorValue::addClient(RenderObject* renderer)
+void CSSImageGeneratorValue::addClient(RenderElement* renderer)
 {
     ASSERT(renderer);
     ref();
     m_clients.add(renderer);
 }
 
-void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
+void CSSImageGeneratorValue::removeClient(RenderElement* renderer)
 {
     ASSERT(renderer);
     m_clients.remove(renderer);
@@ -104,7 +104,7 @@ void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired(Deferrable
     m_owner.evictCachedGeneratedImage(m_size);
 }
 
-PassRefPtr<Image> CSSImageGeneratorValue::image(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const IntSize& size)
 {
     switch (classType()) {
     case CanvasClass:
@@ -146,7 +146,7 @@ bool CSSImageGeneratorValue::isFixedSize() const
     return false;
 }
 
-IntSize CSSImageGeneratorValue::fixedSize(const RenderObject* renderer)
+IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
 {
     switch (classType()) {
     case CanvasClass:
@@ -188,7 +188,7 @@ bool CSSImageGeneratorValue::isPending() const
     return false;
 }
 
-bool CSSImageGeneratorValue::knownToBeOpaque(const RenderObject* renderer) const
+bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) const
 {
     switch (classType()) {
     case CrossfadeClass:

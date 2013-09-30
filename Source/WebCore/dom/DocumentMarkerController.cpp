@@ -454,7 +454,7 @@ void DocumentMarkerController::removeMarkersFromList(MarkerMap::iterator iterato
     }
 
     if (needsRepainting) {
-        if (RenderObject* renderer = iterator->key->renderer())
+        if (auto renderer = iterator->key->renderer())
             renderer->repaint();
     }
 
@@ -493,7 +493,7 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes marker
             continue;
 
         // cause the node to be redrawn
-        if (RenderObject* renderer = node->renderer())
+        if (auto renderer = node->renderer())
             renderer->repaint();
     }
 }

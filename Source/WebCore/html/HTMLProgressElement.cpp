@@ -23,6 +23,7 @@
 #include "HTMLProgressElement.h"
 
 #include "Attribute.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "HTMLDivElement.h"
@@ -74,11 +75,8 @@ bool HTMLProgressElement::childShouldCreateRenderer(const Node* child) const
 RenderProgress* HTMLProgressElement::renderProgress() const
 {
     if (renderer() && renderer()->isProgress())
-        return static_cast<RenderProgress*>(renderer());
-
-    RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
-    ASSERT_WITH_SECURITY_IMPLICATION(!renderObject || renderObject->isProgress());
-    return static_cast<RenderProgress*>(renderObject);
+        return toRenderProgress(renderer());
+    return toRenderProgress(ElementTraversal::firstWithin(userAgentShadowRoot())->renderer());
 }
 
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

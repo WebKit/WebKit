@@ -92,7 +92,10 @@ RenderElement::~RenderElement()
             maskBoxImage->removeClient(this);
 
 #if ENABLE(CSS_SHAPES)
-        removeShapeImageClient(m_style->shapeInside());
+        if (auto shapeValue = m_style->shapeInside()) {
+            if (auto shapeImage = shapeValue->image())
+                shapeImage->removeClient(this);
+        }
 #endif
     }
 }
@@ -992,6 +995,8 @@ void RenderElement::willBeRemovedFromTree()
 
 void RenderElement::willBeDestroyed()
 {
+    animation().cancelAnimations(this);
+
     destroyLeftoverChildren();
 
     RenderObject::willBeDestroyed();
@@ -1005,12 +1010,13 @@ RenderElement* RenderElement::rendererForRootBackground()
         // to crawl around a render tree with potential :before/:after content and
         // anonymous blocks created by inline <body> tags etc. We can locate the <body>
         // render object very easily via the DOM.
-        HTMLElement* body = document().body();
-        RenderElement* bodyObject = (body && body->hasLocalName(HTMLNames::bodyTag)) ? body->renderer() : 0;
-        if (bodyObject)
-            return bodyObject;
+        if (auto body = document().body()) {
+            if (body->hasLocalName(HTMLNames::bodyTag)) {
+                if (auto renderer = body->renderer())
+                    return renderer;
+            }
+        }
     }
-
     return this;
 }
 
@@ -1029,11 +1035,9 @@ RenderElement* RenderElement::hoverAncestor() const
 
     if (hoverAncestor && hoverAncestor->isRenderNamedFlowThread()) {
         hoverAncestor = nullptr;
-
         if (Element* element = this->element()) {
-            ContainerNode* domAncestorNode = element->parentNode();
-            if (domAncestorNode)
-                hoverAncestor = toRenderElement(domAncestorNode->renderer());
+            if (auto parent = element->parentNode())
+                hoverAncestor = parent->renderer();
         }
     }
 

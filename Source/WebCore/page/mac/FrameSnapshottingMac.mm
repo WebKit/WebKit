@@ -135,7 +135,7 @@ NSImage* snapshotDragImage(Frame* frame, Node* node, NSRect* imageRect, NSRect* 
                                         // imply new styles, plus JS could have changed other things
 
 
-    // Document::updateLayout may have blown away the original RenderObject.
+    // Document::updateLayout may have blown away the original RenderElement.
     renderer = node->renderer();
     if (!renderer)
         return nil;

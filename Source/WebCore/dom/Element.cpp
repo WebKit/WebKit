@@ -603,17 +603,17 @@ void Element::scrollByPages(int pages)
     scrollByUnits(pages, ScrollByPage);
 }
 
-static float localZoomForRenderer(RenderObject* renderer)
+static float localZoomForRenderer(RenderElement* renderer)
 {
     // FIXME: This does the wrong thing if two opposing zooms are in effect and canceled each
     // other out, but the alternative is that we'd have to crawl up the whole render tree every
     // time (or store an additional bit in the RenderStyle to indicate that a zoom was specified).
     float zoomFactor = 1;
     if (renderer->style()->effectiveZoom() != 1) {
-        // Need to find the nearest enclosing RenderObject that set up
+        // Need to find the nearest enclosing RenderElement that set up
         // a differing zoom, and then we divide our result by it to eliminate the zoom.
-        RenderObject* prev = renderer;
-        for (RenderObject* curr = prev->parent(); curr; curr = curr->parent()) {
+        RenderElement* prev = renderer;
+        for (RenderElement* curr = prev->parent(); curr; curr = curr->parent()) {
             if (curr->style()->effectiveZoom() != prev->style()->effectiveZoom()) {
                 zoomFactor = prev->style()->zoom();
                 break;
@@ -626,7 +626,7 @@ static float localZoomForRenderer(RenderObject* renderer)
     return zoomFactor;
 }
 
-static int adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
+static int adjustForLocalZoom(LayoutUnit value, RenderElement* renderer)
 {
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
@@ -692,11 +692,13 @@ Element* Element::bindingsOffsetParent()
 Element* Element::offsetParent()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderObject* renderer = this->renderer()) {
-        if (RenderObject* offsetParent = renderer->offsetParent())
-            return toElement(offsetParent->node());
-    }
-    return 0;
+    auto renderer = this->renderer();
+    if (!renderer)
+        return nullptr;
+    auto offsetParent = renderer->offsetParent();
+    if (!offsetParent)
+        return nullptr;
+    return offsetParent->element();
 }
 
 int Element::clientLeft()
@@ -2350,7 +2352,7 @@ bool Element::updateExistingPseudoElement(PseudoElement* existingPseudoElement, 
     // FIXME: This is silly.
     // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
     // is false, otherwise we could continously create and destroy PseudoElements
-    // when RenderObject::isChildAllowed on our parent returns false for the
+    // when RenderElement::isChildAllowed on our parent returns false for the
     // PseudoElement's renderer for each style recalc.
     return renderer() && pseudoElementRendererIsNeeded(existingPseudoElement->renderStyle());
 }

@@ -192,7 +192,7 @@ inline RenderStyle* RenderObject::firstLineStyle() const
     return toRenderElement(this)->firstLineStyle();
 }
 
-inline RenderElement* Element::renderer() const
+inline RenderElement* ContainerNode::renderer() const
 {
     return toRenderElement(Node::renderer());
 }

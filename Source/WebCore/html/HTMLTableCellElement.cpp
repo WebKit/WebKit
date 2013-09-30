@@ -168,18 +168,16 @@ void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) c
 
 HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
 {
-    RenderObject* cellRenderer = renderer();
-    if (!cellRenderer)
-        return 0;
-    if (!cellRenderer->isTableCell())
-        return 0;
+    auto cellRenderer = renderer();
+    if (!cellRenderer || !cellRenderer->isTableCell())
+        return nullptr;
 
-    RenderTableCell* tableCellRenderer = toRenderTableCell(cellRenderer);
-    RenderTableCell* cellAboveRenderer = tableCellRenderer->table()->cellAbove(tableCellRenderer);
+    auto tableCellRenderer = toRenderTableCell(cellRenderer);
+    auto cellAboveRenderer = tableCellRenderer->table()->cellAbove(tableCellRenderer);
     if (!cellAboveRenderer)
-        return 0;
+        return nullptr;
 
-    return static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
+    return toHTMLTableCellElement(cellAboveRenderer->element());
 }
 
 #ifndef NDEBUG

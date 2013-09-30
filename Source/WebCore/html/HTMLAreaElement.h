@@ -41,8 +41,8 @@ public:
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
 
-    LayoutRect computeRect(RenderObject*) const;
-    Path computePath(RenderObject*) const;
+    LayoutRect computeRect(RenderElement*) const;
+    Path computePath(RenderElement*) const;
 
     // The parent map's image.
     HTMLImageElement* imageElement() const;

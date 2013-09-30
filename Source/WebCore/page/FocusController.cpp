@@ -52,7 +52,6 @@
 #include "NodeRenderingTraversal.h"
 #include "Page.h"
 #include "Range.h"
-#include "RenderObject.h"
 #include "RenderWidget.h"
 #include "ScrollAnimator.h"
 #include "Settings.h"

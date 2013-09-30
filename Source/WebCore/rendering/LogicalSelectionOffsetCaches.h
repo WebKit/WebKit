@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderObject* object)
+static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderElement* object)
 {
     return object->style()->position() != StaticPosition
         || (object->hasTransform() && object->isRenderBlock())
@@ -35,29 +35,29 @@ static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(Rende
         || object->isRenderView();
 }
 
-static inline bool isNonRenderBlockInline(RenderObject* object)
+static inline bool isNonRenderBlockInline(RenderElement* object)
 {
     return (object->isInline() && !object->isReplaced()) || !object->isRenderBlock();
 }
 
-static inline RenderObject* containingBlockForFixedPosition(RenderObject* parent)
+static inline RenderElement* containingBlockForFixedPosition(RenderElement* parent)
 {
-    RenderObject* object = parent;
+    RenderElement* object = parent;
     while (object && !object->canContainFixedPositionObjects())
         object = object->parent();
     ASSERT(!object || !object->isAnonymousBlock());
     return object;
 }
 
-static inline RenderObject* containingBlockForAbsolutePosition(RenderObject* parent)
+static inline RenderElement* containingBlockForAbsolutePosition(RenderElement* parent)
 {
-    RenderObject* object = parent;
+    RenderElement* object = parent;
     while (object && !isContainingBlockCandidateForAbsolutelyPositionedObject(object))
         object = object->parent();
 
     // For a relatively positioned inline, return its nearest non-anonymous containing block,
     // not the inline itself, to avoid having a positioned objects list in all RenderInlines
-    // and use RenderBlock* as RenderObject::containingBlock's return type.
+    // and use RenderBlock* as RenderElement::containingBlock's return type.
     // Use RenderBlock::container() to obtain the inline.
     if (object && object->isRenderInline())
         object = object->containingBlock();
@@ -68,9 +68,9 @@ static inline RenderObject* containingBlockForAbsolutePosition(RenderObject* par
     return object;
 }
 
-static inline RenderObject* containingBlockForObjectInFlow(RenderObject* parent)
+static inline RenderElement* containingBlockForObjectInFlow(RenderElement* parent)
 {
-    RenderObject* object = parent;
+    RenderElement* object = parent;
     while (object && isNonRenderBlockInline(object))
         object = object->parent();
     return object;
@@ -136,7 +136,7 @@ public:
     explicit LogicalSelectionOffsetCaches(RenderBlock* rootBlock)
     {
         ASSERT(rootBlock->isSelectionRoot());
-        RenderObject* parent = rootBlock->parent();
+        auto parent = rootBlock->parent();
 
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
         m_containingBlockForFixedPosition.setBlock(toRenderBlock(containingBlockForFixedPosition(parent)), 0);

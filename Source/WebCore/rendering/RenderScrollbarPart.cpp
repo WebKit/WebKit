@@ -209,10 +209,10 @@ void RenderScrollbarPart::paintIntoRect(GraphicsContext* graphicsContext, const 
     }
 }
 
-RenderObject* RenderScrollbarPart::rendererOwningScrollbar() const
+RenderBox* RenderScrollbarPart::rendererOwningScrollbar() const
 {
     if (!m_scrollbar)
-        return 0;
+        return nullptr;
     return m_scrollbar->owningRenderer();
 }
 

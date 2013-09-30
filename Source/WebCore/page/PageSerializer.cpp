@@ -291,7 +291,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
     }
 }
 
-void PageSerializer::addImageToResources(CachedImage* image, RenderObject* imageRenderer, const URL& url)
+void PageSerializer::addImageToResources(CachedImage* image, RenderElement* imageRenderer, const URL& url)
 {
     if (!url.isValid() || m_resourceURLs.contains(url))
         return;

@@ -632,36 +632,30 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     if (!startElement)
         return 0;
 
-    for (const RenderObject* renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
-        Node* node = renderer->nonPseudoNode();
-        if (!node)
-            // Anonymous render blocks don't correspond to actual DOM nodes, so we skip over them
-            // for the purposes of finding a draggable node.
+    for (auto renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
+        Element* element = renderer->nonPseudoElement();
+        if (!element) {
+            // Anonymous render blocks don't correspond to actual DOM elements, so we skip over them
+            // for the purposes of finding a draggable element.
             continue;
-        if (!(state.type & DragSourceActionSelection) && node->isTextNode() && node->canStartSelection())
-            // In this case we have a click in the unselected portion of text. If this text is
-            // selectable, we want to start the selection process instead of looking for a parent
-            // to try to drag.
-            return 0;
-        if (node->isElementNode()) {
-            EUserDrag dragMode = renderer->style()->userDrag();
-            if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == DRAG_ELEMENT) {
-                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionDHTML);
-                return toElement(node);
+        }
+        EUserDrag dragMode = renderer->style()->userDrag();
+        if ((m_dragSourceAction & DragSourceActionDHTML) && dragMode == DRAG_ELEMENT) {
+            state.type = static_cast<DragSourceAction>(state.type | DragSourceActionDHTML);
+            return element;
+        }
+        if (dragMode == DRAG_AUTO) {
+            if ((m_dragSourceAction & DragSourceActionImage)
+                && isHTMLImageElement(element)
+                && sourceFrame->settings().loadsImagesAutomatically()) {
+                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
+                return element;
             }
-            if (dragMode == DRAG_AUTO) {
-                if ((m_dragSourceAction & DragSourceActionImage)
-                    && isHTMLImageElement(node)
-                    && sourceFrame->settings().loadsImagesAutomatically()) {
-                    state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
-                    return toElement(node);
-                }
-                if ((m_dragSourceAction & DragSourceActionLink)
-                    && isHTMLAnchorElement(node)
-                    && toHTMLAnchorElement(node)->isLiveLink()) {
-                    state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
-                    return toElement(node);
-                }
+            if ((m_dragSourceAction & DragSourceActionLink)
+                && isHTMLAnchorElement(element)
+                && toHTMLAnchorElement(element)->isLiveLink()) {
+                state.type = static_cast<DragSourceAction>(state.type | DragSourceActionLink);
+                return element;
             }
         }
     }

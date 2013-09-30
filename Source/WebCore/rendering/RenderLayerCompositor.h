@@ -40,12 +40,10 @@ class FixedPositionViewportConstraints;
 class GraphicsLayer;
 class GraphicsLayerUpdater;
 class RenderEmbeddedObject;
+class RenderVideo;
 class RenderWidget;
 class ScrollingCoordinator;
 class StickyPositionViewportConstraints;
-#if ENABLE(VIDEO)
-class RenderVideo;
-#endif
 class TiledBacking;
 
 typedef unsigned LayerTreeFlags;
@@ -132,13 +130,13 @@ public:
     RenderLayerCompositor* enclosingCompositorFlushingLayers() const;
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
-    void didFlushChangesForLayer(RenderLayer*, const GraphicsLayer*);
+    void didFlushChangesForLayer(RenderLayer&, const GraphicsLayer*);
 
     // Called when something outside WebKit affects the visible rect (e.g. delegated scrolling). Might schedule a layer flush.
     void didChangeVisibleRect();
     
     // Rebuild the tree of compositing layers
-    void updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = 0);
+    void updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = nullptr);
     // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();
@@ -148,46 +146,46 @@ public:
     
     // Update the compositing state of the given layer. Returns true if that state changed.
     enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };
-    bool updateLayerCompositingState(RenderLayer*, CompositingChangeRepaint = CompositingChangeRepaintNow);
+    bool updateLayerCompositingState(RenderLayer&, CompositingChangeRepaint = CompositingChangeRepaintNow);
 
     // Update the geometry for compositing children of compositingAncestor.
-    void updateCompositingDescendantGeometry(RenderLayer* compositingAncestor, RenderLayer*, bool compositedChildrenOnly);
+    void updateCompositingDescendantGeometry(RenderLayer& compositingAncestor, RenderLayer&, bool compositedChildrenOnly);
     
     // Whether layer's backing needs a graphics layer to do clipping by an ancestor (non-stacking-context parent with overflow).
-    bool clippedByAncestor(RenderLayer*) const;
+    bool clippedByAncestor(RenderLayer&) const;
     // Whether layer's backing needs a graphics layer to clip z-order children of the given layer.
-    bool clipsCompositingDescendants(const RenderLayer*) const;
+    bool clipsCompositingDescendants(const RenderLayer&) const;
 
     // Whether the given layer needs an extra 'contents' layer.
-    bool needsContentsCompositingLayer(const RenderLayer*) const;
+    bool needsContentsCompositingLayer(const RenderLayer&) const;
 
     bool supportsFixedRootBackgroundCompositing() const;
-    bool needsFixedRootBackgroundLayer(const RenderLayer*) const;
+    bool needsFixedRootBackgroundLayer(const RenderLayer&) const;
     GraphicsLayer* fixedRootBackgroundLayer() const;
     
     // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
     // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
-    LayoutRect calculateCompositedBounds(const RenderLayer*, const RenderLayer* ancestorLayer) const;
+    LayoutRect calculateCompositedBounds(const RenderLayer&, const RenderLayer& ancestorLayer) const;
 
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
-    void repaintOnCompositingChange(RenderLayer*);
+    void repaintOnCompositingChange(RenderLayer&);
     
-    void repaintInCompositedAncestor(RenderLayer*, const LayoutRect&);
+    void repaintInCompositedAncestor(RenderLayer&, const LayoutRect&);
     
     // Notify us that a layer has been added or removed
-    void layerWasAdded(RenderLayer* parent, RenderLayer* child);
-    void layerWillBeRemoved(RenderLayer* parent, RenderLayer* child);
+    void layerWasAdded(RenderLayer& parent, RenderLayer& child);
+    void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
-    RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer* layer) const;
+    RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 
     // Repaint parts of all composited layers that intersect the given absolute rectangle (or the entire layer if the pointer is null).
     void repaintCompositedLayers(const IntRect* = 0);
 
     // Returns true if the given layer needs it own backing store.
-    bool requiresOwnBackingStore(const RenderLayer*, const RenderLayer* compositingAncestorLayer, const IntRect& layerCompositedBoundsInAncestor, const IntRect& ancestorCompositedBounds) const;
+    bool requiresOwnBackingStore(const RenderLayer&, const RenderLayer* compositingAncestorLayer, const IntRect& layerCompositedBoundsInAncestor, const IntRect& ancestorCompositedBounds) const;
 
-    RenderLayer* rootRenderLayer() const;
+    RenderLayer& rootRenderLayer() const;
     GraphicsLayer* rootGraphicsLayer() const;
     GraphicsLayer* scrollLayer() const;
 
@@ -210,8 +208,8 @@ public:
 
     void clearBackingForAllLayers();
     
-    void layerBecameComposited(const RenderLayer*) { ++m_compositedLayerCount; }
-    void layerBecameNonComposited(const RenderLayer*);
+    void layerBecameComposited(const RenderLayer&) { ++m_compositedLayerCount; }
+    void layerBecameNonComposited(const RenderLayer&);
     
 #if ENABLE(VIDEO)
     // Use by RenderVideo to ask if it should try to use accelerated compositing.
@@ -239,7 +237,7 @@ public:
     void frameViewDidLayout();
     void rootFixedBackgroundsChanged();
 
-    void scrollingLayerDidChange(RenderLayer*);
+    void scrollingLayerDidChange(RenderLayer&);
     void fixedRootBackgroundLayerChanged();
 
     String layerTreeAsText(LayerTreeFlags);
@@ -270,8 +268,8 @@ public:
     GraphicsLayer* updateLayerForFooter(bool wantsLayer);
 #endif
 
-    void updateViewportConstraintStatus(RenderLayer*);
-    void removeViewportConstrainedLayer(RenderLayer*);
+    void updateViewportConstraintStatus(RenderLayer&);
+    void removeViewportConstrainedLayer(RenderLayer&);
 
     void resetTrackedRepaintRects();
     void setTracksRepaints(bool);
@@ -282,7 +280,7 @@ public:
 
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
-    CompositingReasons reasonsForCompositing(const RenderLayer*) const;
+    CompositingReasons reasonsForCompositing(const RenderLayer&) const;
 
     void setLayerFlushThrottlingEnabled(bool);
     void disableLayerFlushThrottlingTemporarilyForInteraction();
@@ -304,42 +302,42 @@ private:
     virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const OVERRIDE;
     
     // Whether the given RL needs a compositing layer.
-    bool needsToBeComposited(const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool needsToBeComposited(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
     // Whether the layer has an intrinsic need for compositing layer.
-    bool requiresCompositingLayer(const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool requiresCompositingLayer(const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
     // Whether the layer could ever be composited.
-    bool canBeComposited(const RenderLayer*) const;
+    bool canBeComposited(const RenderLayer&) const;
 
     // Make or destroy the backing for this layer; returns true if backing changed.
-    bool updateBacking(RenderLayer*, CompositingChangeRepaint shouldRepaint);
+    bool updateBacking(RenderLayer&, CompositingChangeRepaint shouldRepaint);
 
-    void clearBackingForLayerIncludingDescendants(RenderLayer*);
+    void clearBackingForLayerIncludingDescendants(RenderLayer&);
 
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
-    void recursiveRepaintLayer(RenderLayer*, const IntRect* = 0);
+    void recursiveRepaintLayer(RenderLayer&, const IntRect* = nullptr);
 
-    void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
-    void addToOverlapMapRecursive(OverlapMap&, RenderLayer*, RenderLayer* ancestorLayer = 0);
+    void addToOverlapMap(OverlapMap&, RenderLayer&, IntRect& layerBounds, bool& boundsComputed);
+    void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
 
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);
 
     // Returns true if any layer's compositing changed
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer*, OverlapMap*, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap*, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
     
     // Recurses down the tree, parenting descendant compositing layers and collecting an array of child layers for the current compositing layer.
-    void rebuildCompositingLayerTree(RenderLayer*, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth);
+    void rebuildCompositingLayerTree(RenderLayer&, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth);
 
     // Recurses down the tree, updating layer geometry only.
-    void updateLayerTreeGeometry(RenderLayer*, int depth);
+    void updateLayerTreeGeometry(RenderLayer&, int depth);
     
     // Hook compositing layers together
-    void setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer);
-    void removeCompositedChildren(RenderLayer*);
+    void setCompositingParent(RenderLayer& childLayer, RenderLayer* parentLayer);
+    void removeCompositedChildren(RenderLayer&);
 
-    bool layerHas3DContent(const RenderLayer*) const;
-    bool isRunningAcceleratedTransformAnimation(RenderObject*) const;
+    bool layerHas3DContent(const RenderLayer&) const;
+    bool isRunningAcceleratedTransformAnimation(RenderLayerModelObject&) const;
 
-    bool hasAnyAdditionalCompositedLayers(const RenderLayer* rootLayer) const;
+    bool hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const;
 
     void ensureRootLayer();
     void destroyRootLayer();
@@ -362,25 +360,25 @@ private:
     ScrollingCoordinator* scrollingCoordinator() const;
 
     // Whether a running transition or animation enforces the need for a compositing layer.
-    bool requiresCompositingForAnimation(RenderObject*) const;
-    bool requiresCompositingForTransform(RenderObject*) const;
-    bool requiresCompositingForVideo(RenderObject*) const;
-    bool requiresCompositingForCanvas(RenderObject*) const;
-    bool requiresCompositingForPlugin(RenderObject*) const;
-    bool requiresCompositingForFrame(RenderObject*) const;
-    bool requiresCompositingForFilters(RenderObject*) const;
-    bool requiresCompositingForBlending(RenderObject* renderer) const;
+    bool requiresCompositingForAnimation(RenderLayerModelObject&) const;
+    bool requiresCompositingForTransform(RenderLayerModelObject&) const;
+    bool requiresCompositingForVideo(RenderLayerModelObject&) const;
+    bool requiresCompositingForCanvas(RenderLayerModelObject&) const;
+    bool requiresCompositingForPlugin(RenderLayerModelObject&) const;
+    bool requiresCompositingForFrame(RenderLayerModelObject&) const;
+    bool requiresCompositingForFilters(RenderLayerModelObject&) const;
+    bool requiresCompositingForBlending(RenderLayerModelObject&) const;
     bool requiresCompositingForScrollableFrame() const;
-    bool requiresCompositingForPosition(RenderObject*, const RenderLayer*, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
-    bool requiresCompositingForOverflowScrolling(const RenderLayer*) const;
-    bool requiresCompositingForIndirectReason(RenderObject*, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
+    bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RenderLayer::ViewportConstrainedNotCompositedReason* = 0) const;
+    bool requiresCompositingForOverflowScrolling(const RenderLayer&) const;
+    bool requiresCompositingForIndirectReason(RenderLayerModelObject&, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
-    void addViewportConstrainedLayer(RenderLayer*);
-    void registerOrUpdateViewportConstrainedLayer(RenderLayer*);
-    void unregisterViewportConstrainedLayer(RenderLayer*);
+    void addViewportConstrainedLayer(RenderLayer&);
+    void registerOrUpdateViewportConstrainedLayer(RenderLayer&);
+    void unregisterViewportConstrainedLayer(RenderLayer&);
 
-    FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer*) const;
-    StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer*) const;
+    FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;
+    StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer&) const;
 
     bool requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;
@@ -402,8 +400,8 @@ private:
     void paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>*);
 
 #if !LOG_DISABLED
-    const char* logReasonsForCompositing(const RenderLayer*);
-    void logLayerInfo(const RenderLayer*, int depth);
+    const char* logReasonsForCompositing(const RenderLayer&);
+    void logLayerInfo(const RenderLayer&, int depth);
 #endif
 
     bool mainFrameBackingIsTiled() const;

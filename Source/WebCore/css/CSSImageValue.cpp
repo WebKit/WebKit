@@ -115,7 +115,7 @@ PassRefPtr<CSSValue> CSSImageValue::cloneForCSSOM() const
     return uriValue.release();
 }
 
-bool CSSImageValue::knownToBeOpaque(const RenderObject* renderer) const
+bool CSSImageValue::knownToBeOpaque(const RenderElement* renderer) const
 {
     return m_image ? m_image->knownToBeOpaque(renderer) : false;
 }

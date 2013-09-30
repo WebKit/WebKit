@@ -580,7 +580,7 @@ bool Editor::hasBidiSelection() const
     } else
         startNode = m_frame.selection().selection().visibleStart().deepEquivalent().deprecatedNode();
 
-    RenderObject* renderer = startNode->renderer();
+    auto renderer = startNode->renderer();
     while (renderer && !renderer->isRenderBlock())
         renderer = renderer->parent();
 
@@ -1438,7 +1438,7 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     if (!node)
         return result;
 
-    RenderObject* renderer = node->renderer();
+    auto renderer = node->renderer();
     if (!renderer)
         return result;
 

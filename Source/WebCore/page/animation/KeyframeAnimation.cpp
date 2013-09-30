@@ -42,16 +42,16 @@ using namespace std;
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderObject* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
+KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
     : AnimationBase(animation, renderer, compAnim)
-    , m_keyframes(renderer, animation.name())
+    , m_keyframes(animation.name())
     , m_index(index)
     , m_startEventDispatched(false)
     , m_unanimatedStyle(unanimatedStyle)
 {
     // Get the keyframe RenderStyles
-    if (m_object && m_object->node() && m_object->node()->isElementNode())
-        m_object->document().ensureStyleResolver().keyframeStylesForAnimation(toElement(m_object->node()), unanimatedStyle, m_keyframes);
+    if (m_object && m_object->element())
+        m_object->document().ensureStyleResolver().keyframeStylesForAnimation(m_object->element(), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();
@@ -139,7 +139,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     prog = progress(scale, offset, timingFunction);
 }
 
-void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderObject*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
+void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderElement*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)
 {
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();
@@ -251,7 +251,7 @@ void KeyframeAnimation::pauseAnimation(double timeOffset)
 #endif
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->node());
+        setNeedsStyleRecalc(m_object->element());
 }
 
 void KeyframeAnimation::endAnimation()
@@ -265,7 +265,7 @@ void KeyframeAnimation::endAnimation()
 #endif
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->node());
+        setNeedsStyleRecalc(m_object->element());
 }
 
 bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listenerType) const
@@ -309,9 +309,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
 
     if (shouldSendEventForListener(listenerType)) {
         // Dispatch the event
-        RefPtr<Element> element;
-        if (m_object->node() && m_object->node()->isElementNode())
-            element = toElement(m_object->node());
+        RefPtr<Element> element = m_object->element();
 
         ASSERT(!element || !element->document().inPageCache());
         if (!element)

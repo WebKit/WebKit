@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class RenderElement;
+
 struct FillSize {
     FillSize()
         : type(SizeLength)
@@ -166,7 +168,7 @@ public:
         return m_next ? m_next->hasFixedImage() : false;
     }
 
-    bool hasOpaqueImage(const RenderObject*) const;
+    bool hasOpaqueImage(const RenderElement*) const;
     bool hasRepeatXY() const;
     bool clipOccludesNextLayers(bool firstLayer) const;
 

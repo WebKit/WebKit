@@ -36,6 +36,7 @@ namespace WebCore {
 
 class CachedImage;
 class CSSValue;
+class RenderElement;
 class RenderObject;
 
 typedef void* WrappedImagePtr;
@@ -54,18 +55,18 @@ public:
     virtual bool canRender(const RenderObject*, float /*multiplier*/) const { return true; }
     virtual bool isLoaded() const { return true; }
     virtual bool errorOccurred() const { return false; }
-    virtual LayoutSize imageSize(const RenderObject*, float multiplier) const = 0;
-    virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
+    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const = 0;
+    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual bool usesImageContainerSize() const = 0;
-    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize&, float) = 0;
-    virtual void addClient(RenderObject*) = 0;
-    virtual void removeClient(RenderObject*) = 0;
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const = 0;
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize&, float) = 0;
+    virtual void addClient(RenderElement*) = 0;
+    virtual void removeClient(RenderElement*) = 0;
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
     virtual float imageScaleFactor() const { return 1; }
-    virtual bool knownToBeOpaque(const RenderObject*) const = 0;
+    virtual bool knownToBeOpaque(const RenderElement*) const = 0;
     virtual CachedImage* cachedImage() const { return 0; }
 
     ALWAYS_INLINE bool isCachedImage() const { return m_isCachedImage; }
@@ -73,14 +74,9 @@ public:
     ALWAYS_INLINE bool isGeneratedImage() const { return m_isGeneratedImage; }
     ALWAYS_INLINE bool isCachedImageSet() const { return m_isCachedImageSet; }
     
-    static  bool imagesEquivalent(StyleImage* image1, StyleImage* image2)
+    static bool imagesEquivalent(StyleImage* image1, StyleImage* image2)
     {
-        if (image1 != image2) {
-            if (!image1 || !image2)
-                return false;
-            return *image1 == *image2;
-        }
-        return true;
+        return image1 == image2 || (image1 && image2 && *image1 == *image2);
     }
 
 protected:
@@ -91,10 +87,10 @@ protected:
         , m_isCachedImageSet(false)
     {
     }
-    bool m_isCachedImage:1;
-    bool m_isPendingImage:1;
-    bool m_isGeneratedImage:1;
-    bool m_isCachedImageSet:1;
+    bool m_isCachedImage : 1;
+    bool m_isPendingImage : 1;
+    bool m_isGeneratedImage : 1;
+    bool m_isCachedImageSet : 1;
 };
 
 }

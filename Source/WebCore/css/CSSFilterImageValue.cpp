@@ -34,7 +34,7 @@
 #include "CrossfadeGeneratedImage.h"
 #include "FilterEffectRenderer.h"
 #include "ImageBuffer.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
 #include "StyleResolver.h"
@@ -59,7 +59,7 @@ String CSSFilterImageValue::customCSSText() const
     return result.toString();
 }
 
-IntSize CSSFilterImageValue::fixedSize(const RenderObject* renderer)
+IntSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
 {
     CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
@@ -75,7 +75,7 @@ bool CSSFilterImageValue::isPending() const
     return CSSImageGeneratorValue::subimageIsPending(m_imageValue.get());
 }
 
-bool CSSFilterImageValue::knownToBeOpaque(const RenderObject*) const
+bool CSSFilterImageValue::knownToBeOpaque(const RenderElement*) const
 {
     return false;
 }
@@ -96,7 +96,7 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoad
     m_filterSubimageObserver.setReady(true);
 }
 
-PassRefPtr<Image> CSSFilterImageValue::image(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const IntSize& size)
 {
     if (size.isEmpty())
         return 0;
@@ -133,11 +133,8 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderObject* renderer, const IntSi
 
 void CSSFilterImageValue::filterImageChanged(const IntRect&)
 {
-    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
-    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr) {
-        RenderObject* client = const_cast<RenderObject*>(curr->key);
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
-    }
+    for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
+        it->key->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
 void CSSFilterImageValue::createFilterOperations(StyleResolver* resolver)

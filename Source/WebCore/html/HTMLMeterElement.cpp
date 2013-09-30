@@ -23,6 +23,7 @@
 #include "HTMLMeterElement.h"
 
 #include "Attribute.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
@@ -220,11 +221,8 @@ void HTMLMeterElement::didElementStateChange()
 RenderMeter* HTMLMeterElement::renderMeter() const
 {
     if (renderer() && renderer()->isMeter())
-        return static_cast<RenderMeter*>(renderer());
-
-    RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
-    ASSERT(!renderObject || renderObject->isMeter());
-    return static_cast<RenderMeter*>(renderObject);
+        return toRenderMeter(renderer());
+    return toRenderMeter(ElementTraversal::firstWithin(userAgentShadowRoot())->renderer());
 }
 
 void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)

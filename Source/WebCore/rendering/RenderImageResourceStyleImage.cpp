@@ -44,7 +44,7 @@ RenderImageResourceStyleImage::~RenderImageResourceStyleImage()
 {
 }
 
-void RenderImageResourceStyleImage::initialize(RenderObject* renderer)
+void RenderImageResourceStyleImage::initialize(RenderElement* renderer)
 {
     RenderImageResource::initialize(renderer);
 

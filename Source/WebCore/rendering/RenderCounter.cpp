@@ -93,35 +93,32 @@ static inline bool areRenderersElementsSiblings(RenderObject* first, RenderObjec
 
 // This function processes the renderer tree in the order of the DOM tree
 // including pseudo elements as defined in CSS 2.1.
-static RenderObject* nextInPreOrder(const RenderObject* object, const Element* stayWithin, bool skipDescendants = false)
+static RenderElement* nextInPreOrder(const RenderElement* element, const Element* stayWithin, bool skipDescendants = false)
 {
-    Element* self = toElement(object->node());
+    Element* self = element->element();
     Element* next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(self, stayWithin) : ElementTraversal::nextIncludingPseudo(self, stayWithin);
     while (next && !next->renderer())
         next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(next, stayWithin) : ElementTraversal::nextIncludingPseudo(next, stayWithin);
     return next ? next->renderer() : 0;
 }
 
-static bool planCounter(RenderObject* object, const AtomicString& identifier, bool& isReset, int& value)
+static bool planCounter(RenderElement* object, const AtomicString& identifier, bool& isReset, int& value)
 {
     ASSERT(object);
 
-    // Real text nodes don't have their own style so they can't have counters.
-    // We can't even look at their styles or we'll see extra resets and increments!
-    if (object->isText())
-        return false;
-    Node* generatingNode = object->generatingNode();
     // We must have a generating node or else we cannot have a counter.
-    if (!generatingNode)
+    Element* generatingElement = object->generatingElement();
+    if (!generatingElement)
         return false;
+
     RenderStyle* style = object->style();
     ASSERT(style);
 
     switch (style->styleType()) {
     case NOPSEUDO:
-        // Sometimes nodes have more then one renderer. Only the first one gets the counter
+        // Sometimes elements have more then one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
-        if (generatingNode->renderer() != object)
+        if (generatingElement->renderer() != object)
             return false;
         break;
     case BEFORE:
@@ -149,7 +146,7 @@ static bool planCounter(RenderObject* object, const AtomicString& identifier, bo
             isReset = false;
             return true;
         }
-        if (Node* e = object->node()) {
+        if (Element* e = object->element()) {
             if (e->hasTagName(olTag)) {
                 value = static_cast<HTMLOListElement*>(e)->start();
                 isReset = true;
@@ -299,8 +296,15 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
 {
     ASSERT(object);
 
-    if (object->hasCounterNodeMap()) {
-        if (CounterMap* nodeMap = counterMaps().get(object)) {
+    // Real text nodes don't have their own style so they can't have counters.
+    // We can't even look at their styles or we'll see extra resets and increments!
+    if (object->isText())
+        return nullptr;
+
+    RenderElement* element = toRenderElement(object);
+
+    if (element->hasCounterNodeMap()) {
+        if (CounterMap* nodeMap = counterMaps().get(element)) {
             if (CounterNode* node = nodeMap->get(identifier))
                 return node;
         }
@@ -308,21 +312,21 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
 
     bool isReset = false;
     int value = 0;
-    if (!planCounter(object, identifier, isReset, value) && !alwaysCreateCounter)
-        return 0;
+    if (!planCounter(element, identifier, isReset, value) && !alwaysCreateCounter)
+        return nullptr;
 
     RefPtr<CounterNode> newParent = 0;
     RefPtr<CounterNode> newPreviousSibling = 0;
-    RefPtr<CounterNode> newNode = CounterNode::create(object, isReset, value);
-    if (findPlaceForCounter(object, identifier, isReset, newParent, newPreviousSibling))
+    RefPtr<CounterNode> newNode = CounterNode::create(element, isReset, value);
+    if (findPlaceForCounter(element, identifier, isReset, newParent, newPreviousSibling))
         newParent->insertAfter(newNode.get(), newPreviousSibling.get(), identifier);
     CounterMap* nodeMap;
-    if (object->hasCounterNodeMap())
-        nodeMap = counterMaps().get(object);
+    if (element->hasCounterNodeMap())
+        nodeMap = counterMaps().get(element);
     else {
         nodeMap = new CounterMap;
-        counterMaps().set(object, adoptPtr(nodeMap));
-        object->setHasCounterNodeMap(true);
+        counterMaps().set(element, adoptPtr(nodeMap));
+        element->setHasCounterNodeMap(true);
     }
     nodeMap->set(identifier, newNode);
     if (newNode->parent())
@@ -330,9 +334,9 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
     // Checking if some nodes that were previously counter tree root nodes
     // should become children of this node now.
     CounterMaps& maps = counterMaps();
-    Element* stayWithin = parentOrPseudoHostElement(object);
+    Element* stayWithin = parentOrPseudoHostElement(element);
     bool skipDescendants;
-    for (RenderObject* currentRenderer = nextInPreOrder(object, stayWithin); currentRenderer; currentRenderer = nextInPreOrder(currentRenderer, stayWithin, skipDescendants)) {
+    for (RenderElement* currentRenderer = nextInPreOrder(element, stayWithin); currentRenderer; currentRenderer = nextInPreOrder(currentRenderer, stayWithin, skipDescendants)) {
         skipDescendants = false;
         if (!currentRenderer->hasCounterNodeMap())
             continue;
@@ -393,7 +397,7 @@ bool RenderCounter::isCounter() const
 String RenderCounter::originalText() const
 {
     if (!m_counterNode) {
-        RenderObject* beforeAfterContainer = parent();
+        RenderElement* beforeAfterContainer = parent();
         while (true) {
             if (!beforeAfterContainer)
                 return String();

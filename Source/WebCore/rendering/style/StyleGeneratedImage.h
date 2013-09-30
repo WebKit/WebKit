@@ -31,30 +31,31 @@ namespace WebCore {
 class CSSValue;
 class CSSImageGeneratorValue;
 
-class StyleGeneratedImage : public StyleImage {
+class StyleGeneratedImage FINAL : public StyleImage {
 public:
     static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* value)
     {
         return adoptRef(new StyleGeneratedImage(value));
     }
 
-    virtual WrappedImagePtr data() const { return m_imageGeneratorValue.get(); }
     CSSImageGeneratorValue* imageValue() const { return m_imageGeneratorValue.get(); }
 
-    virtual PassRefPtr<CSSValue> cssValue() const;
-
-    virtual LayoutSize imageSize(const RenderObject*, float multiplier) const OVERRIDE;
-    virtual bool imageHasRelativeWidth() const { return !m_fixedSize; }
-    virtual bool imageHasRelativeHeight() const { return !m_fixedSize; }
-    virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
-    virtual bool usesImageContainerSize() const { return !m_fixedSize; }
-    virtual void setContainerSizeForRenderer(const RenderObject*, const IntSize& containerSize, float) { m_containerSize = containerSize; }
-    virtual void addClient(RenderObject*);
-    virtual void removeClient(RenderObject*);
-    virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
-    virtual bool knownToBeOpaque(const RenderObject*) const OVERRIDE;
-    
 private:
+    virtual WrappedImagePtr data() const OVERRIDE { return m_imageGeneratorValue.get(); }
+
+    virtual PassRefPtr<CSSValue> cssValue() const OVERRIDE;
+
+    virtual LayoutSize imageSize(const RenderElement*, float multiplier) const OVERRIDE;
+    virtual bool imageHasRelativeWidth() const OVERRIDE { return !m_fixedSize; }
+    virtual bool imageHasRelativeHeight() const OVERRIDE { return !m_fixedSize; }
+    virtual void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
+    virtual bool usesImageContainerSize() const OVERRIDE { return !m_fixedSize; }
+    virtual void setContainerSizeForRenderer(const RenderElement*, const IntSize& containerSize, float) OVERRIDE { m_containerSize = containerSize; }
+    virtual void addClient(RenderElement*) OVERRIDE;
+    virtual void removeClient(RenderElement*) OVERRIDE;
+    virtual PassRefPtr<Image> image(RenderElement*, const IntSize&) const OVERRIDE;
+    virtual bool knownToBeOpaque(const RenderElement*) const OVERRIDE;
+
     StyleGeneratedImage(PassRefPtr<CSSImageGeneratorValue>);
     
     RefPtr<CSSImageGeneratorValue> m_imageGeneratorValue;

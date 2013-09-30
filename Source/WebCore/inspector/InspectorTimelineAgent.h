@@ -44,6 +44,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
 class Event;
 class FloatQuad;
 class Frame;
@@ -259,7 +260,7 @@ private:
     void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, TimelineRecordType);
     void clearRecordStack();
 
-    void localToPageQuad(const RenderObject& renderer, const LayoutRect&, FloatQuad*);
+    void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
     const TimelineTimeConverter& timeConverter() const { return m_timeConverter; }
     double timestamp();
     Page* page();

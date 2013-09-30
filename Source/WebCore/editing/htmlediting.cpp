@@ -326,11 +326,13 @@ Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 
 TextDirection directionOfEnclosingBlock(const Position& position)
 {
-    Node* enclosingBlockNode = enclosingBlock(position.containerNode());
-    if (!enclosingBlockNode)
+    auto block = enclosingBlock(position.containerNode());
+    if (!block)
         return LTR;
-    RenderObject* renderer = enclosingBlockNode->renderer();
-    return renderer ? renderer->style()->direction() : LTR;
+    auto renderer = block->renderer();
+    if (!renderer)
+        return LTR;
+    return renderer->style()->direction();
 }
 
 // This method is used to create positions in the DOM. It returns the maximum valid offset

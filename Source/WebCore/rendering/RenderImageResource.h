@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class RenderObject;
+class RenderElement;
 
 class RenderImageResource {
     WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_FAST_ALLOCATED;
@@ -45,7 +45,7 @@ public:
         return adoptPtr(new RenderImageResource);
     }
 
-    virtual void initialize(RenderObject*);
+    virtual void initialize(RenderElement*);
     virtual void shutdown();
 
     void setCachedImage(CachedImage*);
@@ -69,7 +69,7 @@ public:
 
 protected:
     RenderImageResource();
-    RenderObject* m_renderer;
+    RenderElement* m_renderer;
     CachedResourceHandle<CachedImage> m_cachedImage;
 
 private:

@@ -1,3 +1,397 @@
+2013-09-29  Darin Adler  <darin@apple.com>
+
+        Use RenderElement instead of RenderObject in many places
+        https://bugs.webkit.org/show_bug.cgi?id=122078
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in: Updated for name changes.
+
+        * dom/ContainerNode.h: Moved renderer() here from Element.
+        * dom/Element.h: Moved renderer() from here to ContainerNode.
+        * render/RenderElement.h: Moved renderer() from Element to ContainerNode.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::imageMapLinkRenderer):
+        (WebCore::AccessibilityImageMapLink::detachFromParent):
+        (WebCore::AccessibilityImageMapLink::elementPath):
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * bindings/objc/DOM.mm:
+        (-[DOMElement image]):
+        (-[DOMElement _font]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasChanged):
+        (WebCore::CSSCanvasValue::canvasResized):
+        (WebCore::CSSCanvasValue::canvasDestroyed):
+        (WebCore::CSSCanvasValue::fixedSize):
+        (WebCore::CSSCanvasValue::image):
+        * css/CSSCanvasValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::subimageKnownToBeOpaque):
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::knownToBeOpaque):
+        (WebCore::CSSCrossfadeValue::image):
+        (WebCore::CSSCrossfadeValue::crossfadeChanged):
+        * css/CSSCrossfadeValue.h:
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::fixedSize):
+        (WebCore::CSSFilterImageValue::knownToBeOpaque):
+        (WebCore::CSSFilterImageValue::image):
+        (WebCore::CSSFilterImageValue::filterImageChanged):
+        * css/CSSFilterImageValue.h:
+        * css/CSSFontSelector.cpp:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::CSSGradientValue::knownToBeOpaque):
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::fixedSize):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::addClient):
+        (WebCore::CSSImageGeneratorValue::removeClient):
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::CSSImageGeneratorValue::clients):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::knownToBeOpaque):
+        * css/CSSImageValue.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::removeMarkersFromList):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        * dom/Element.cpp:
+        (WebCore::localZoomForRenderer):
+        (WebCore::adjustForLocalZoom):
+        (WebCore::Element::offsetParent):
+        (WebCore::Element::updateExistingPseudoElement):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::create):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::ensureRareData):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasBidiSelection):
+        (WebCore::Editor::baseWritingDirectionForSelectionStart):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/htmlediting.cpp:
+        (WebCore::directionOfEnclosingBlock):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::getImage):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::getImage):
+        * editing/markup.cpp:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::computePath):
+        (WebCore::HTMLAreaElement::computeRect):
+        (WebCore::HTMLAreaElement::setFocus):
+        * html/HTMLAreaElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::updateFromElementCallback):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::rendererIsNeeded):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::x):
+        (WebCore::HTMLImageElement::y):
+        (WebCore::HTMLImageElement::willRespondToMouseClickEvents):
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::defaultEventHandler):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::renderMeter):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::didRecalcStyle):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::willRespondToMouseClickEvents):
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        (WebCore::HTMLPlugInElement::isKeyboardFocusable):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::defaultEventHandler):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::renderProgress):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::setOptionsChangedOnRenderer):
+        (WebCore::HTMLSelectElement::selectOption):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::cellAbove):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::hasVisibleTextArea):
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        * html/InputType.h:
+        * html/parser/HTMLResourcePreloader.cpp:
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::MediaControlElement::setDisplayType):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::startDrag):
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::rendererIsNeeded):
+        (WebCore::MeterInnerElement::rendererIsNeeded):
+        * inspector/InspectorOverlay.cpp:
+        * inspector/InspectorTimelineAgent.cpp:
+        * inspector/InspectorTimelineAgent.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::renderImageResource):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::currentFrameKnownToBeOpaque):
+        * loader/cache/CachedImage.h:
+        * mathml/MathMLElement.cpp:
+        * page/ContextMenuController.cpp:
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::startPanScrolling):
+        (WebCore::EventHandler::autoscrollRenderer):
+        (WebCore::EventHandler::scrollOverflow):
+        (WebCore::EventHandler::logicalScrollOverflow):
+        (WebCore::EventHandler::subframeForTargetNode):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::layerForNode):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::clearGestureScrollNodes):
+        * page/EventHandler.h:
+        * page/FocusController.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::ownerRenderer):
+        (WebCore::Frame::visiblePositionForPoint):
+        (WebCore::Frame::nodeImage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport):
+        (WebCore::FrameView::applyPaginationToViewport):
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::isEnclosedInCompositingLayer):
+        (WebCore::FrameView::embeddedContentBox):
+        (WebCore::FrameView::addSlowRepaintObject):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::addViewportConstrainedObject):
+        (WebCore::FrameView::removeViewportConstrainedObject):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::repaintSlowRepaintObjects):
+        (WebCore::FrameView::setViewportConstrainedObjectsNeedLayout):
+        (WebCore::FrameView::updateOverflowStatus):
+        (WebCore::FrameView::updateScrollCorner):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        * page/FrameView.h:
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::addImageToResources):
+        * page/PageSerializer.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::updateStateMachine):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::renderer):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::updateAnimations):
+        (WebCore::AnimationControllerPrivate::updateAnimationTimerForRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer):
+        (WebCore::AnimationControllerPrivate::suspendAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::resumeAnimationsForDocument):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationControllerPrivate::getAnimatedStyleForRenderer):
+        (WebCore::AnimationControllerPrivate::numberOfActiveAnimations):
+        (WebCore::AnimationController::cancelAnimations):
+        (WebCore::AnimationController::updateAnimations):
+        (WebCore::AnimationController::getAnimatedStyleForRenderer):
+        (WebCore::AnimationController::notifyAnimationStarted):
+        (WebCore::AnimationController::pauseAnimationAtTime):
+        (WebCore::AnimationController::pauseTransitionAtTime):
+        (WebCore::AnimationController::isRunningAnimationOnRenderer):
+        (WebCore::AnimationController::isRunningAcceleratedAnimationOnRenderer):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::crossfadeBlend):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        * page/animation/KeyframeAnimation.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/mac/FrameSnapshottingMac.mm:
+        (WebCore::snapshotDragImage):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::paint):
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::create):
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::owner):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/FilterEffectRenderer.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        (WebCore::HitTestResult::title):
+        (WebCore::HitTestResult::innerTextIfTruncated):
+        (WebCore::HitTestResult::image):
+        * rendering/LayoutRepainter.cpp:
+        (WebCore::LayoutRepainter::LayoutRepainter):
+        * rendering/LayoutRepainter.h:
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LineWidth.h:
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::isContainingBlockCandidateForAbsolutelyPositionedObject):
+        (WebCore::isNonRenderBlockInline):
+        (WebCore::containingBlockForFixedPosition):
+        (WebCore::containingBlockForAbsolutePosition):
+        (WebCore::containingBlockForObjectInFlow):
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::PaintInfo):
+        (WebCore::PaintInfo::updateSubtreePaintRootForChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::nextInPreOrder):
+        (WebCore::planCounter):
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::originalText):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::removeChildInternal):
+        (WebCore::RenderElement::willBeDestroyed):
+        (WebCore::RenderElement::rendererForRootBackground):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::initialize):
+        * rendering/RenderImageResource.h:
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::initialize):
+        * rendering/RenderImageResourceStyleImage.h:
+        (WebCore::RenderImageResourceStyleImage::create):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::canBeComposited):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing):
+        (WebCore::RenderLayerCompositor::requiresCompositingForTransform):
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFilters):
+        (WebCore::RenderLayerCompositor::requiresCompositingForBlending):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::isRunningAcceleratedTransformAnimation):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::mustRepaintFillLayers):
+        (WebCore::RenderObject::borderImageIsLoadedAndCanBeRendered):
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::rendererOwningScrollbar):
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::hasOpaqueImage):
+        * rendering/style/FillLayer.h:
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeList::KeyframeList):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::imageSize):
+        (WebCore::StyleCachedImage::computeIntrinsicDimensions):
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer):
+        (WebCore::StyleCachedImage::addClient):
+        (WebCore::StyleCachedImage::removeClient):
+        (WebCore::StyleCachedImage::image):
+        (WebCore::StyleCachedImage::knownToBeOpaque):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleCachedImageSet.cpp:
+        (WebCore::StyleCachedImageSet::imageSize):
+        (WebCore::StyleCachedImageSet::computeIntrinsicDimensions):
+        (WebCore::StyleCachedImageSet::setContainerSizeForRenderer):
+        (WebCore::StyleCachedImageSet::addClient):
+        (WebCore::StyleCachedImageSet::removeClient):
+        (WebCore::StyleCachedImageSet::image):
+        (WebCore::StyleCachedImageSet::knownToBeOpaque):
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize):
+        (WebCore::StyleGeneratedImage::computeIntrinsicDimensions):
+        (WebCore::StyleGeneratedImage::addClient):
+        (WebCore::StyleGeneratedImage::removeClient):
+        (WebCore::StyleGeneratedImage::image):
+        (WebCore::StyleGeneratedImage::knownToBeOpaque):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        (WebCore::StyleImage::imagesEquivalent):
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::cssImageValue):
+        (WebCore::StylePendingImage::cssImageGeneratorValue):
+        (WebCore::StylePendingImage::cssCursorImageValue):
+        (WebCore::StylePendingImage::cssImageSetValue):
+        (WebCore::StylePendingImage::computeIntrinsicDimensions):
+        * testing/Internals.cpp:
+        (WebCore::Internals::boundingBox):
+        (WebCore::Internals::isSelectPopupVisible):
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured):
+        Use RenderElement instead of RenderObject where it was easy to do so.
+        For local variables holding the return value of renderer() functions,
+        use auto instead, so the most-specific possible type will be used,
+        without having to figure out what that is in each case. Also use some
+        more OVERRIDE and FINAL and use nullptr instead of 0. And replace some
+        cryptic short local variable names with words.
+
 2013-09-29  Philip Rogers  <pdr@google.com>
 
         Repaint borders and outlines on pseudo content changes

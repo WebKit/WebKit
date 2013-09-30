@@ -52,8 +52,8 @@
 #if DRAW_FRAME_RATE
 #import "Font.h"
 #import "Document.h"
-#import "RenderObject.h"
 #import "RenderStyle.h"
+#import "RenderView.h"
 #endif
 
 SOFT_LINK_FRAMEWORK(QTKit)
@@ -1352,10 +1352,10 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
 #if DRAW_FRAME_RATE
     // Draw the frame rate only after having played more than 10 frames.
     if (m_frameCountWhilePlaying > 10) {
-        Frame* frame = m_player->frameView() ? &m_player->frameView()->frame() : NULL;
-        Document* document = frame ? frame->document() : NULL;
-        RenderObject* renderer = document ? document->renderView() : NULL;
-        RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
+        Frame* frame = m_player->frameView() ? &m_player->frameView()->frame() : nullptr;
+        Document* document = frame ? frame->document() : nullptr;
+        auto renderer = document ? document->renderView() : nullptr;
+        RenderStyle* styleToUse = renderer ? renderer->style() : nullptr;
         if (styleToUse) {
             double frameRate = (m_frameCountWhilePlaying - 1) / ( m_startedPlaying ? ([NSDate timeIntervalSinceReferenceDate] - m_timeStartedPlaying) :
                 (m_timeStoppedPlaying - m_timeStartedPlaying) );

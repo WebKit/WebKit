@@ -123,7 +123,7 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? sourceImage()->context() : 0;
 }
 
-PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
+PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
 #if ENABLE(SVG)
     if (!renderer)
@@ -146,7 +146,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
     if (!filter) {
         // Although we did not find the referenced filter, it might exist later
         // in the document
-        document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), toElement(renderer->node()));
+        document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), renderer->element());
         return 0;
     }
 
@@ -179,7 +179,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
 #endif
 }
 
-bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations, FilterConsumer consumer)
+bool FilterEffectRenderer::build(RenderElement* renderer, const FilterOperations& operations, FilterConsumer consumer)
 {
 #if ENABLE(CSS_SHADERS)
     m_hasCustomShaderFilter = false;

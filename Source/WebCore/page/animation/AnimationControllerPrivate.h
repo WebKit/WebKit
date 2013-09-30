@@ -47,7 +47,7 @@ class Document;
 class Element;
 class Frame;
 class Node;
-class RenderObject;
+class RenderElement;
 class RenderStyle;
 
 enum SetChanged {
@@ -65,8 +65,8 @@ public:
     double updateAnimations(SetChanged callSetChanged = DoNotCallSetChanged);
     void updateAnimationTimer(SetChanged callSetChanged = DoNotCallSetChanged);
 
-    CompositeAnimation& ensureCompositeAnimation(RenderObject*);
-    bool clear(RenderObject*);
+    CompositeAnimation& ensureCompositeAnimation(RenderElement*);
+    bool clear(RenderElement*);
 
     void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
     void startUpdateStyleIfNeededDispatcher();
@@ -86,14 +86,14 @@ public:
     void resumeAnimationsForDocument(Document*);
     void startAnimationsIfNotSuspended(Document*);
 
-    bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
-    bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
+    bool isRunningAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow) const;
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement*, CSSPropertyID, bool isRunningNow) const;
 
-    bool pauseAnimationAtTime(RenderObject*, const AtomicString& name, double t);
-    bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
+    bool pauseAnimationAtTime(RenderElement*, const AtomicString& name, double t);
+    bool pauseTransitionAtTime(RenderElement*, const String& property, double t);
     unsigned numberOfActiveAnimations(Document*) const;
 
-    PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderObject* renderer);
+    PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderElement* renderer);
 
     double beginAnimationUpdateTime();
     void setBeginAnimationUpdateTime(double t) { m_beginAnimationUpdateTime = t; }
@@ -108,7 +108,7 @@ public:
 
     void animationWillBeRemoved(AnimationBase*);
 
-    void updateAnimationTimerForRenderer(RenderObject*);
+    void updateAnimationTimerForRenderer(RenderElement*);
 
     bool allowsNewAnimationsWhileSuspended() const { return m_allowsNewAnimationsWhileSuspended; }
     void setAllowsNewAnimationsWhileSuspended(bool);
@@ -120,9 +120,7 @@ private:
     void fireEventsAndUpdateStyle();
     void startTimeResponse(double t);
 
-    typedef HashMap<RenderObject*, RefPtr<CompositeAnimation> > RenderObjectAnimationMap;
-
-    RenderObjectAnimationMap m_compositeAnimations;
+    HashMap<RenderElement*, RefPtr<CompositeAnimation>> m_compositeAnimations;
     Timer<AnimationControllerPrivate> m_animationTimer;
     Timer<AnimationControllerPrivate> m_updateStyleIfNeededDispatcher;
     Frame& m_frame;

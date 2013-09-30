@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
-#include "RenderObject.h"
 
 using namespace std;
 

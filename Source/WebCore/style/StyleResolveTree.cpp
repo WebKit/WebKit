@@ -227,7 +227,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
         nextRenderer = parentFlowRenderer->nextRendererForNode(&element);
     } else {
         // FIXME: Make this path Element only, handle the root special case separately.
-        parentRenderer = toRenderElement(renderingParentNode->renderer());
+        parentRenderer = renderingParentNode->renderer();
         nextRenderer = nextSiblingRenderer(element, renderingParentNode);
     }
 
@@ -359,7 +359,7 @@ static void createTextRendererIfNeeded(Text& textNode)
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&textNode);
     if (!renderingParentNode)
         return;
-    RenderElement* parentRenderer = toRenderElement(renderingParentNode->renderer());
+    RenderElement* parentRenderer = renderingParentNode->renderer();
     if (!parentRenderer || !parentRenderer->canHaveChildren())
         return;
     if (!renderingParentNode->childShouldCreateRenderer(&textNode))

@@ -366,10 +366,10 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     WebCore::RenderObject* renderer = core(self)->renderer();
     if (!renderer || !renderer->isImage())
         return nil;
-    WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();
+    WebCore::CachedImage* cachedImage = toRenderImage(renderer)->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->getNSImage();
+    return cachedImage->imageForRenderer(toRenderImage(renderer))->getNSImage();
 }
 
 @end
@@ -379,7 +379,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSFont *)_font
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
-    WebCore::RenderObject* renderer = core(self)->renderer();
+    auto renderer = core(self)->renderer();
     if (!renderer)
         return nil;
     return renderer->style()->font().primaryFont()->getNSFont();
@@ -388,7 +388,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSData *)_imageTIFFRepresentation
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
-    WebCore::RenderObject* renderer = core(self)->renderer();
+    auto renderer = core(self)->renderer();
     if (!renderer || !renderer->isImage())
         return nil;
     WebCore::CachedImage* cachedImage = static_cast<WebCore::RenderImage*>(renderer)->cachedImage();

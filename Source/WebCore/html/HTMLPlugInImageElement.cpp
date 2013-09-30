@@ -713,7 +713,7 @@ void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)
 
 void HTMLPlugInImageElement::defaultEventHandler(Event* event)
 {
-    RenderObject* r = renderer();
+    RenderElement* r = renderer();
     if (r && r->isEmbeddedObject()) {
         if (isPlugInImageElement() && displayState() == WaitingForSnapshot && event->isMouseEvent() && event->type() == eventNames().clickEvent) {
             MouseEvent* mouseEvent = toMouseEvent(event);

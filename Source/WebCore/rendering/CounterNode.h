@@ -37,18 +37,18 @@
 
 namespace WebCore {
 
-class RenderObject;
 class RenderCounter;
+class RenderElement;
 
 class CounterNode : public RefCounted<CounterNode> {
 public:
-    static PassRefPtr<CounterNode> create(RenderObject*, bool isReset, int value);
+    static PassRefPtr<CounterNode> create(RenderElement*, bool isReset, int value);
     ~CounterNode();
     bool actsAsReset() const { return m_hasResetType || !m_parent; }
     bool hasResetType() const { return m_hasResetType; }
     int value() const { return m_value; }
     int countInParent() const { return m_countInParent; }
-    RenderObject* owner() const { return m_owner; }
+    RenderElement* owner() const { return m_owner; }
     void addRenderer(RenderCounter*);
     void removeRenderer(RenderCounter*);
 
@@ -71,7 +71,7 @@ public:
     void removeChild(CounterNode*);
 
 private:
-    CounterNode(RenderObject*, bool isReset, int value);
+    CounterNode(RenderElement*, bool isReset, int value);
     int computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
@@ -81,7 +81,7 @@ private:
     bool m_hasResetType;
     int m_value;
     int m_countInParent;
-    RenderObject* m_owner;
+    RenderElement* m_owner;
     RenderCounter* m_rootRenderer;
 
     CounterNode* m_parent;

@@ -732,7 +732,7 @@ void RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout()
 
 RenderBlock* RenderObject::containingBlock() const
 {
-    RenderObject* o = parent();
+    RenderElement* o = parent();
     if (!o && isRenderScrollbarPart())
         o = toRenderScrollbarPart(this)->rendererOwningScrollbar();
 
@@ -757,8 +757,8 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
         return true;
 
     // Make sure we have a valid image.
-    StyleImage* img = layer->image();
-    if (!img || !img->canRender(renderer, renderer->style()->effectiveZoom()))
+    StyleImage* image = layer->image();
+    if (!image || !image->canRender(renderer, renderer->style()->effectiveZoom()))
         return false;
 
     if (!layer->xPosition().isZero() || !layer->yPosition().isZero())
@@ -774,9 +774,9 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
         if (size.width().isPercent() || size.height().isPercent())
             return true;
         // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for 'contain'.
-        if ((size.width().isAuto() || size.height().isAuto()) && img->isGeneratedImage())
+        if ((size.width().isAuto() || size.height().isAuto()) && image->isGeneratedImage())
             return true;
-    } else if (img->usesImageContainerSize())
+    } else if (image->usesImageContainerSize())
         return true;
 
     return false;
@@ -787,7 +787,7 @@ bool RenderObject::borderImageIsLoadedAndCanBeRendered() const
     ASSERT(style()->hasBorder());
 
     StyleImage* borderImage = style()->borderImage().image();
-    return borderImage && borderImage->canRender(this, style()->effectiveZoom()) && borderImage->isLoaded();
+    return borderImage && borderImage->canRender(toRenderElement(this), style()->effectiveZoom()) && borderImage->isLoaded();
 }
 
 bool RenderObject::mustRepaintBackgroundOrBorder() const
@@ -1985,8 +1985,6 @@ void RenderObject::willBeDestroyed()
     if (frame().eventHandler().autoscrollRenderer() == this)
         frame().eventHandler().stopAutoscrollTimer(true);
 
-    animation().cancelAnimations(this);
-
     // For accessibility management, notify the parent of the imminent change to its child set.
     // We do it now, before remove(), while the parent pointer is still available.
     if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -1994,7 +1992,7 @@ void RenderObject::willBeDestroyed()
 
     removeFromParent();
 
-    ASSERT(documentBeingDestroyed() || !view().frameView().hasSlowRepaintObject(this));
+    ASSERT(documentBeingDestroyed() || !isRenderElement() || !view().frameView().hasSlowRepaintObject(toRenderElement(this)));
 
     // The remove() call above may invoke axObjectCache()->childrenChanged() on the parent, which may require the AX render
     // object for this renderer. So we remove the AX render object now, after the renderer is removed.
@@ -2113,16 +2111,6 @@ void RenderObject::destroy()
     willBeDestroyed();
     arenaDelete(renderArena(), this);
 }
-
-#if ENABLE(CSS_SHAPES)
-void RenderObject::removeShapeImageClient(ShapeValue* shapeValue)
-{
-    if (!shapeValue)
-        return;
-    if (StyleImage* shapeImage = shapeValue->image())
-        shapeImage->removeClient(this);
-}
-#endif
 
 void RenderObject::arenaDelete(RenderArena& arena, void* base)
 {

@@ -38,23 +38,23 @@ namespace WebCore {
 
 class CachedResourceLoader;
 class GeneratedImage;
-class RenderObject;
+class RenderElement;
 class StyleResolver;
 
 class CSSImageGeneratorValue : public CSSValue {
 public:
     ~CSSImageGeneratorValue();
 
-    void addClient(RenderObject*);
-    void removeClient(RenderObject*);
+    void addClient(RenderElement*);
+    void removeClient(RenderElement*);
 
-    PassRefPtr<Image> image(RenderObject*, const IntSize&);
+    PassRefPtr<Image> image(RenderElement*, const IntSize&);
 
     bool isFixedSize() const;
-    IntSize fixedSize(const RenderObject*);
+    IntSize fixedSize(const RenderElement*);
 
     bool isPending() const;
-    bool knownToBeOpaque(const RenderObject*) const;
+    bool knownToBeOpaque(const RenderElement*) const;
 
     void loadSubimages(CachedResourceLoader*);
 
@@ -63,7 +63,7 @@ protected:
 
     GeneratedImage* cachedImageForSize(IntSize);
     void saveCachedImageForSize(IntSize, PassRefPtr<GeneratedImage>);
-    const HashCountedSet<RenderObject*>& clients() const { return m_clients; }
+    const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
 
     // Helper functions for Crossfade and Filter.
     static CachedImage* cachedImageForCSSValue(CSSValue*, CachedResourceLoader*);
@@ -88,7 +88,7 @@ private:
     friend class CachedGeneratedImage;
     void evictCachedGeneratedImage(IntSize);
 
-    HashCountedSet<RenderObject*> m_clients;
+    HashCountedSet<RenderElement*> m_clients;
     HashMap<IntSize, OwnPtr<CachedGeneratedImage> > m_images;
 };
 

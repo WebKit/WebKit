@@ -105,7 +105,7 @@ void MediaControlElement::setDisplayType(MediaControlElementType displayType)
         return;
 
     m_displayType = displayType;
-    if (RenderObject* object = m_element->renderer())
+    if (auto object = m_element->renderer())
         object->repaint();
 }
 

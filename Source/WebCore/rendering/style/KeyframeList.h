@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class RenderObject;
 class RenderStyle;
 
 class KeyframeValue {
@@ -63,7 +62,7 @@ private:
 
 class KeyframeList {
 public:
-    KeyframeList(RenderObject*, const AtomicString& animationName)
+    explicit KeyframeList(const AtomicString& animationName)
         : m_animationName(animationName)
     {
         insert(KeyframeValue(0, 0));

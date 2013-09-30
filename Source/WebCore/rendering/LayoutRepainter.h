@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
+class RenderElement;
 class RenderLayerModelObject;
-class RenderObject;
 
 class LayoutRepainter {
 public:
-    LayoutRepainter(RenderObject&, bool checkForRepaint);
+    LayoutRepainter(RenderElement&, bool checkForRepaint);
 
     bool checkForRepaint() const { return m_checkForRepaint; }
 
@@ -43,7 +43,7 @@ public:
     bool repaintAfterLayout();
 
 private:
-    RenderObject& m_object;
+    RenderElement& m_object;
     RenderLayerModelObject* m_repaintContainer;
     // We store these values as LayoutRects, but the final invalidations will be pixel snapped
     LayoutRect m_oldBounds;

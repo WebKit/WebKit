@@ -972,10 +972,6 @@ private:
 
     virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
 
-#if ENABLE(CSS_SHAPES)
-    void removeShapeImageClient(ShapeValue*);
-#endif
-
 #ifndef NDEBUG
     void checkBlockPositionedObjectsNeedLayout();
 #endif

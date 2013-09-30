@@ -27,7 +27,7 @@
 #include "CSSCanvasValue.h"
 
 #include "ImageBuffer.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -50,25 +50,23 @@ String CSSCanvasValue::customCSSText() const
 void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)
 {
     IntRect imageChangeRect = enclosingIntRect(changedRect);
-    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
-    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr)
-        const_cast<RenderObject*>(curr->key)->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
+    for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
+        it->key->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }
 
 void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
 {
-    HashCountedSet<RenderObject*>::const_iterator end = clients().end();
-    for (HashCountedSet<RenderObject*>::const_iterator curr = clients().begin(); curr != end; ++curr)
-        const_cast<RenderObject*>(curr->key)->imageChanged(static_cast<WrappedImagePtr>(this));
+    for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
+        it->key->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
 void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement* element)
 {
     ASSERT_UNUSED(element, element == m_element);
-    m_element = 0;
+    m_element = nullptr;
 }
 
-IntSize CSSCanvasValue::fixedSize(const RenderObject* renderer)
+IntSize CSSCanvasValue::fixedSize(const RenderElement* renderer)
 {
     if (HTMLCanvasElement* elt = element(renderer->document()))
         return IntSize(elt->width(), elt->height());
@@ -86,13 +84,13 @@ HTMLCanvasElement* CSSCanvasValue::element(Document& document)
     return m_element;
 }
 
-PassRefPtr<Image> CSSCanvasValue::image(RenderObject* renderer, const IntSize& /*size*/)
+PassRefPtr<Image> CSSCanvasValue::image(RenderElement* renderer, const IntSize& /*size*/)
 {
     ASSERT(clients().contains(renderer));
-    HTMLCanvasElement* elt = element(renderer->document());
-    if (!elt || !elt->buffer())
+    HTMLCanvasElement* element = this->element(renderer->document());
+    if (!element || !element->buffer())
         return 0;
-    return elt->copiedImage();
+    return element->copiedImage();
 }
 
 bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
