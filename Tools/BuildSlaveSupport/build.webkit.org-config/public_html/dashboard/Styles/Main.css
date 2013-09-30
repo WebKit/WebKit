@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+* {
+    box-sizing: border-box;
+    cursor: default;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+a:link {
+    cursor: pointer;
+}
+
+body {
+    background-color: rgb(233, 231, 223);
+    text-align: center;
+    margin: 50px;
+}
+
+table.queue-grid {
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: inline-table;
+}
+
+table.queue-grid tr.headers th {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: lowercase;
+    color: rgb(145, 135, 95);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    border-top: 1px solid rgb(211, 207, 191);
+    border-bottom: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr th:not(:last-child),
+table.queue-grid tr td:not(:last-child) {
+    border-right: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    background-color: rgb(229, 226, 217);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:first-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(left, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:last-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(right, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid td {
+    width: 200px;
+    vertical-align: top;
+}
+
+table.queue-grid td.logo {
+    position: relative;
+}
+
+table.queue-grid td.logo::before {
+    display: block;
+    content: "";
+    width: 200px;
+    height: 0;
+}
+
+table.queue-grid td.logo img.ring {
+    content: -webkit-image-set(url(../Images/PlatformRing@2x.png) 2x, url(../Images/PlatformRing.png) 1x);
+    width: 160px;
+    height: 163px;
+    position: absolute;
+    top: 20px;
+    left: 18px;
+    z-index: 1;
+}
+
+table.queue-grid td.logo img.logo {
+    width: 144px;
+    height: 144px;
+    position: absolute;
+    top: 29px;
+    left: 26px;
+}
+
+table.queue-grid tr.platform.mac-os-x-mavericks img.logo {
+    content: -webkit-image-set(url(../Images/Mavericks@2x.png) 2x, url(../Images/Mavericks.png) 1x);
+}
+
+table.queue-grid tr.platform.mac-os-x-mountain-lion img.logo {
+    content: -webkit-image-set(url(../Images/MountainLion@2x.png) 2x, url(../Images/MountainLion.png) 1x);
+}
+
+table.queue-grid tr.platform.mac-os-x-lion img.logo {
+    content: -webkit-image-set(url(../Images/Lion@2x.png) 2x, url(../Images/Lion.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-8 img.logo {
+    content: -webkit-image-set(url(../Images/Windows8@2x.png) 2x, url(../Images/Windows8.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-7 img.logo {
+    content: -webkit-image-set(url(../Images/Windows7@2x.png) 2x, url(../Images/Windows7.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-xp img.logo {
+    content: -webkit-image-set(url(../Images/WindowsXP@2x.png) 2x, url(../Images/WindowsXP.png) 1x);
+}

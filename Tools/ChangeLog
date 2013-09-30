@@ -1,3 +1,44 @@
+2013-09-30  Timothy Hatcher  <timothy@apple.com>
+
+        Add initial version of a new Buildbot dashboard view.
+
+        https://bugs.webkit.org/show_bug.cgi?id=122131
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Lion.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Lion@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Mavericks@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/PlatformRing.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/PlatformRing@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows7.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows7@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows8.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Windows8@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WindowsXP.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WindowsXP@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BaseObject.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTestResults.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Utilities.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotBuilderQueueView.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotQueueView.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotTesterQueueView.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html: Added.
+
 2013-09-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the code guarded by STYLE_SCOPED

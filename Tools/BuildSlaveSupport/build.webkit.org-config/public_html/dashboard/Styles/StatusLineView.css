@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.status-line {
+    text-align: left;
+    height: 32px;
+    padding: 2px 0;
+}
+
+.status-line.linked,
+.status-line.linked * {
+    cursor: pointer;
+}
+
+.status-line .bubble {
+    float: left;
+    min-width: 24px;
+    height: 24px;
+    color: white;
+    line-height: 24px;
+    font-size: 16px;
+    font-family: "HelveticaNeue-Medium", "Helvetica Neue", sans-serif;
+    text-align: center;
+    border-radius: 12px;
+    padding: 0 6px;
+    overflow: hidden;
+    margin-top: 2px;
+    margin-right: 6px;
+}
+
+.status-line.neutral .bubble {
+    background-color: rgb(181, 174, 148);
+}
+
+.status-line.good .bubble {
+    background-color: rgb(76, 151, 61);
+}
+
+.status-line .bubble.pictogram {
+    padding: 0;
+    max-width: 24px;
+}
+
+.status-line.good .bubble.pictogram {
+    font-family: "MonotypeGurmukhi", sans-serif;
+    line-height: 29px;
+}
+
+.status-line.danger .bubble {
+    background-color: rgb(230, 175, 44);
+}
+
+.status-line.neutral .bubble.pictogram,
+.status-line.danger .bubble.pictogram {
+    font-weight: bold;
+}
+
+.status-line.bad .bubble {
+    background-color: rgb(191, 67, 41);
+    -webkit-animation: glow-red 1.2s ease-in-out 0s infinite alternate;
+}
+
+.status-line.bad .bubble.pictogram {
+    font-family: "Menlo-Bold", sans-serif;
+    font-size: 23px;
+    line-height: 22px;
+}
+
+.status-line .label {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 10px;
+    text-transform: lowercase;
+    line-height: 11px;
+    padding-top: 1px;
+}
+
+.status-line .message {
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    text-transform: lowercase;
+}
+
+.status-line .message * {
+    color: inherit;
+}
+
+.status-line .message a:link {
+    text-decoration: none;
+}
+
+.status-line .message a:link:hover {
+    text-decoration: underline;
+}
+
+.status-line.no-label .message {
+    line-height: 28px;
+}
+
+.status-line:not(.no-label) .message {
+    line-height: 13px;
+}
+
+.status-line.neutral .label,
+.status-line.neutral .message {
+    color: rgb(145, 135, 95);
+}
+
+.status-line.good .label,
+.status-line.good .message {
+    color: rgb(76, 151, 61);
+}
+
+.status-line.danger .label,
+.status-line.danger .message {
+    color: rgb(230, 175, 44);
+}
+
+.status-line.bad .label,
+.status-line.bad .message {
+    color: rgb(191, 67, 41);
+}
+
+@-webkit-keyframes glow-red {
+    from {
+        background-color: rgb(191, 67, 41);
+        box-shadow: rgba(191, 67, 41, 0) 0 0 2px 2px;
+    }
+    to {
+        background-color: rgb(204, 61, 33);
+        box-shadow: rgba(204, 61, 33, 0.33) 0 0 4px 2px;
+    }
+}
