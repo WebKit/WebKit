@@ -1,5 +1,15 @@
 2013-09-30  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed WinCE build fix after r155289.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForResponse):
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClientWinCE::dispatchWillSubmitForm):
+
+2013-09-30  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix after r154178.
 
         * WebView.cpp:
