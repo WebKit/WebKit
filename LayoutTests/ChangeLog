@@ -1,3 +1,17 @@
+2013-09-30  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] Added passing expectation for fast/forms/textarea-metrics.html
+        https://bugs.webkit.org/show_bug.cgi?id=122107
+
+        Unreviewed EFL gardening.
+
+        fast/forms/textarea-metrics.html fails in WebKitTestRunner but returns expected
+        results in MiniBrowser. Since GTK uses platform dependent expectation file to
+        migitate this identical discrepancy, the same solution has been applied to EFL.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/textarea-metrics-expected.txt: Added.
+
 2013-09-30  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Fix incorrect click counting in EventSenderProxy

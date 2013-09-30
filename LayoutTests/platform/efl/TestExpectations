@@ -187,9 +187,6 @@ media/video-size-intrinsic-scale.html
 # BUG: the theme probably has a different thumb value
 fast/forms/range/slider-zoomed.html
 
-# BUG: wrong textarea sizes
-fast/forms/textarea-metrics.html
-
 # BUG: <select> element is not being scrolled as expected.
 fast/forms/listbox-selection-2.html
 
