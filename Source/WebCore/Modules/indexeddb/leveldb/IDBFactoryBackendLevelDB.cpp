@@ -33,8 +33,8 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseException.h"
-#include "IDBTracing.h"
 #include "IDBTransactionCoordinatorLevelDB.h"
+#include "Logging.h"
 #include "SecurityOrigin.h"
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
@@ -82,7 +82,7 @@ void IDBFactoryBackendLevelDB::removeIDBDatabaseBackend(const String& uniqueIden
 
 void IDBFactoryBackendLevelDB::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
-    IDB_TRACE("IDBFactoryBackendLevelDB::getDatabaseNames");
+    LOG(StorageAPI, "IDBFactoryBackendLevelDB::getDatabaseNames");
     RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening backing store for indexedDB.webkitGetDatabaseNames."));
@@ -100,7 +100,7 @@ void IDBFactoryBackendLevelDB::getDatabaseNames(PassRefPtr<IDBCallbacks> callbac
 
 void IDBFactoryBackendLevelDB::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
-    IDB_TRACE("IDBFactoryBackendLevelDB::deleteDatabase");
+    LOG(StorageAPI, "IDBFactoryBackendLevelDB::deleteDatabase");
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
 
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
@@ -160,7 +160,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendLevelDB::openBackingStore(PassRefPt
 
 void IDBFactoryBackendLevelDB::open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
-    IDB_TRACE("IDBFactoryBackendLevelDB::open");
+    LOG(StorageAPI, "IDBFactoryBackendLevelDB::open");
     RefPtr<SecurityOrigin> securityOrigin = prpSecurityOrigin;
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
 

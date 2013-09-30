@@ -33,8 +33,8 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
-#include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "Logging.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -56,7 +56,7 @@ IDBIndex::~IDBIndex()
 
 PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::openCursor");
+    LOG(StorageAPI, "IDBIndex::openCursor");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -77,7 +77,7 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
 
 PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::openCursor");
+    LOG(StorageAPI, "IDBIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
@@ -86,7 +86,7 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, con
 
 PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::count");
+    LOG(StorageAPI, "IDBIndex::count");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -102,7 +102,7 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
 
 PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::count");
+    LOG(StorageAPI, "IDBIndex::count");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
@@ -111,7 +111,7 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, const Sc
 
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::openKeyCursor");
+    LOG(StorageAPI, "IDBIndex::openKeyCursor");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -132,7 +132,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, const ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::openKeyCursor");
+    LOG(StorageAPI, "IDBIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
@@ -141,7 +141,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 
 PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::get");
+    LOG(StorageAPI, "IDBIndex::get");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
@@ -150,7 +150,7 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, const Scri
 
 PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::get");
+    LOG(StorageAPI, "IDBIndex::get");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -171,7 +171,7 @@ PassRefPtr<IDBRequest> IDBIndex::get(ScriptExecutionContext* context, PassRefPtr
 
 PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::getKey");
+    LOG(StorageAPI, "IDBIndex::getKey");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
@@ -181,7 +181,7 @@ PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, const S
 
 PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBIndex::getKey");
+    LOG(StorageAPI, "IDBIndex::getKey");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;

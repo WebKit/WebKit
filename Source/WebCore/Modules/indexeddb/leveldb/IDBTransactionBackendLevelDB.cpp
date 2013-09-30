@@ -33,8 +33,8 @@
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
-#include "IDBTracing.h"
 #include "IDBTransactionCoordinatorLevelDB.h"
+#include "Logging.h"
 
 namespace WebCore {
 
@@ -97,7 +97,7 @@ void IDBTransactionBackendLevelDB::abort()
 
 void IDBTransactionBackendLevelDB::abort(PassRefPtr<IDBDatabaseError> error)
 {
-    IDB_TRACE("IDBTransactionBackendLevelDB::abort");
+    LOG(StorageAPI, "IDBTransactionBackendLevelDB::abort");
     if (m_state == Finished)
         return;
 
@@ -181,7 +181,7 @@ void IDBTransactionBackendLevelDB::start()
 
 void IDBTransactionBackendLevelDB::commit()
 {
-    IDB_TRACE("IDBTransactionBackendLevelDB::commit");
+    LOG(StorageAPI, "IDBTransactionBackendLevelDB::commit");
 
     // In multiprocess ports, front-end may have requested a commit but an abort has already
     // been initiated asynchronously by the back-end.
@@ -231,7 +231,7 @@ void IDBTransactionBackendLevelDB::commit()
 
 void IDBTransactionBackendLevelDB::taskTimerFired(Timer<IDBTransactionBackendLevelDB>*)
 {
-    IDB_TRACE("IDBTransactionBackendLevelDB::taskTimerFired");
+    LOG(StorageAPI, "IDBTransactionBackendLevelDB::taskTimerFired");
     ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {

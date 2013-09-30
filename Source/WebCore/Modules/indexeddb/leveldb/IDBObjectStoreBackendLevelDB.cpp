@@ -37,8 +37,8 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
-#include "IDBTracing.h"
 #include "IDBTransactionBackendLevelDB.h"
+#include "Logging.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

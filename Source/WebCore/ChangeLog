@@ -1,3 +1,33 @@
+2013-09-30  Brady Eidson  <beidson@apple.com>
+
+        Remove IDBTracing.h.
+        https://bugs.webkit.org/show_bug.cgi?id=122118
+
+        Reviewed by Alexey Proskuryakov.
+
+        Global replace of "IDB_TRACE" with "LOG(StorageAPI)", and remove all notions of this header.
+
+        * GNUmakefile.list.am:
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        * Modules/indexeddb/IDBFactory.cpp:
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBTracing.h: Removed.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/IDBBindingUtilities.cpp:
+
 2013-09-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build fix after r156622. Build RenderLayerModelObject.cpp in a separate compilation unit

@@ -38,8 +38,8 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
-#include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
@@ -58,7 +58,7 @@ IDBObjectStore::IDBObjectStore(const IDBObjectStoreMetadata& metadata, IDBTransa
 
 PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 {
-    IDB_TRACE("IDBObjectStore::indexNames");
+    LOG(StorageAPI, "IDBObjectStore::indexNames");
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it)
         indexNames->append(it->value.name);
@@ -68,7 +68,7 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
 
 PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::get");
+    LOG(StorageAPI, "IDBObjectStore::get");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -119,25 +119,25 @@ static void generateIndexKeysForValue(DOMRequestState* requestState, const IDBIn
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::add");
+    LOG(StorageAPI, "IDBObjectStore::add");
     return put(IDBDatabaseBackendInterface::AddOnly, IDBAny::create(this), state, value, key, ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::add");
+    LOG(StorageAPI, "IDBObjectStore::add");
     return put(IDBDatabaseBackendInterface::AddOnly, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::put");
+    LOG(StorageAPI, "IDBObjectStore::put");
     return put(IDBDatabaseBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, key, ec);
 }
 
 PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::put");
+    LOG(StorageAPI, "IDBObjectStore::put");
     return put(IDBDatabaseBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
 }
 
@@ -239,7 +239,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode 
 
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::delete");
+    LOG(StorageAPI, "IDBObjectStore::delete");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -272,7 +272,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* co
 
 PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::clear");
+    LOG(StorageAPI, "IDBObjectStore::clear");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -374,7 +374,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::createIndex");
+    LOG(StorageAPI, "IDBObjectStore::createIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -430,7 +430,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::index");
+    LOG(StorageAPI, "IDBObjectStore::index");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -467,7 +467,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::deleteIndex");
+    LOG(StorageAPI, "IDBObjectStore::deleteIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return;
@@ -494,7 +494,7 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& directionString, IDBDatabaseBackendInterface::TaskType taskType, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::openCursor");
+    LOG(StorageAPI, "IDBObjectStore::openCursor");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;
@@ -524,7 +524,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
 
 PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBObjectStore::count");
+    LOG(StorageAPI, "IDBObjectStore::count");
     if (m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return 0;

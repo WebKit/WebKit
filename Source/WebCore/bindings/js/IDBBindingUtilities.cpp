@@ -32,7 +32,7 @@
 #include "DOMRequestState.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "IDBTracing.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 
 #include <runtime/DateInstance.h>
@@ -230,7 +230,7 @@ static bool canInjectNthValueOnKeyPath(ExecState* exec, JSValue rootValue, const
 
 bool injectIDBKeyIntoScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)
 {
-    IDB_TRACE("injectIDBKeyIntoScriptValue");
+    LOG(StorageAPI, "injectIDBKeyIntoScriptValue");
 
     ASSERT(keyPath.type() == IDBKeyPath::StringType);
 
@@ -256,7 +256,7 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKe
 
 PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(DOMRequestState* requestState, const ScriptValue& value, const IDBKeyPath& keyPath)
 {
-    IDB_TRACE("createIDBKeyFromScriptValueAndKeyPath");
+    LOG(StorageAPI, "createIDBKeyFromScriptValueAndKeyPath");
     ASSERT(!keyPath.isNull());
 
     ExecState* exec = requestState->exec();
@@ -279,7 +279,7 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(DOMRequestState* reques
 
 bool canInjectIDBKeyIntoScriptValue(DOMRequestState* requestState, const ScriptValue& scriptValue, const IDBKeyPath& keyPath)
 {
-    IDB_TRACE("canInjectIDBKeyIntoScriptValue");
+    LOG(StorageAPI, "canInjectIDBKeyIntoScriptValue");
 
     ASSERT(keyPath.type() == IDBKeyPath::StringType);
     Vector<String> keyPathElements;

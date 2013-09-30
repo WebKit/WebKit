@@ -3151,7 +3151,6 @@
 		9712A5EF15004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59615004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp */; };
 		9712A5F015004EDA0048AF10 /* IDBPendingTransactionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59715004EDA0048AF10 /* IDBPendingTransactionMonitor.h */; };
 		9712A5F215004EDA0048AF10 /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59915004EDA0048AF10 /* IDBRequest.h */; };
-		9712A5F415004EDA0048AF10 /* IDBTracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59B15004EDA0048AF10 /* IDBTracing.h */; };
 		9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59D15004EDA0048AF10 /* IDBTransaction.h */; };
 		9712A5FE15004EDA0048AF10 /* IDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5A515004EDA0048AF10 /* IDBVersionChangeEvent.cpp */; };
 		9712A5FF15004EDA0048AF10 /* IDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A615004EDA0048AF10 /* IDBVersionChangeEvent.h */; };
@@ -9766,7 +9765,6 @@
 		9712A59715004EDA0048AF10 /* IDBPendingTransactionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBPendingTransactionMonitor.h; path = Modules/indexeddb/IDBPendingTransactionMonitor.h; sourceTree = "<group>"; };
 		9712A59915004EDA0048AF10 /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBRequest.h; path = Modules/indexeddb/IDBRequest.h; sourceTree = "<group>"; };
 		9712A59A15004EDA0048AF10 /* IDBRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBRequest.idl; path = Modules/indexeddb/IDBRequest.idl; sourceTree = "<group>"; };
-		9712A59B15004EDA0048AF10 /* IDBTracing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTracing.h; path = Modules/indexeddb/IDBTracing.h; sourceTree = "<group>"; };
 		9712A59D15004EDA0048AF10 /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransaction.h; path = Modules/indexeddb/IDBTransaction.h; sourceTree = "<group>"; };
 		9712A59E15004EDA0048AF10 /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBTransaction.idl; path = Modules/indexeddb/IDBTransaction.idl; sourceTree = "<group>"; };
 		9712A5A515004EDA0048AF10 /* IDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBVersionChangeEvent.cpp; path = Modules/indexeddb/IDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
@@ -16775,7 +16773,6 @@
 				511EF29717F0FA6F00E4FA16 /* IDBRequest.cpp */,
 				9712A59915004EDA0048AF10 /* IDBRequest.h */,
 				9712A59A15004EDA0048AF10 /* IDBRequest.idl */,
-				9712A59B15004EDA0048AF10 /* IDBTracing.h */,
 				511EF29817F0FA6F00E4FA16 /* IDBTransaction.cpp */,
 				9712A59D15004EDA0048AF10 /* IDBTransaction.h */,
 				9712A59E15004EDA0048AF10 /* IDBTransaction.idl */,
@@ -22774,7 +22771,6 @@
 				9712A5EA15004EDA0048AF10 /* IDBObjectStore.h in Headers */,
 				9712A5F015004EDA0048AF10 /* IDBPendingTransactionMonitor.h in Headers */,
 				9712A5F215004EDA0048AF10 /* IDBRequest.h in Headers */,
-				9712A5F415004EDA0048AF10 /* IDBTracing.h in Headers */,
 				9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */,
 				9712A5FF15004EDA0048AF10 /* IDBVersionChangeEvent.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,

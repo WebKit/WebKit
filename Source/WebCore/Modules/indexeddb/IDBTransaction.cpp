@@ -38,7 +38,7 @@
 #include "IDBObjectStore.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBPendingTransactionMonitor.h"
-#include "IDBTracing.h"
+#include "Logging.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 
@@ -278,7 +278,7 @@ void IDBTransaction::unregisterRequest(IDBRequest* request)
 
 void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
 {
-    IDB_TRACE("IDBTransaction::onAbort");
+    LOG(StorageAPI, "IDBTransaction::onAbort");
     RefPtr<IDBDatabaseError> error = prpError;
     ASSERT(m_state != Finished);
 
@@ -312,7 +312,7 @@ void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
 
 void IDBTransaction::onComplete()
 {
-    IDB_TRACE("IDBTransaction::onComplete");
+    LOG(StorageAPI, "IDBTransaction::onComplete");
     ASSERT(m_state != Finished);
     m_state = Finishing;
     m_objectStoreCleanupMap.clear();
@@ -365,7 +365,7 @@ const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode
 
 bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
-    IDB_TRACE("IDBTransaction::dispatchEvent");
+    LOG(StorageAPI, "IDBTransaction::dispatchEvent");
     ASSERT(m_state != Finished);
     ASSERT(m_hasPendingActivity);
     ASSERT(scriptExecutionContext());

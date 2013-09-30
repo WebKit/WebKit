@@ -34,9 +34,9 @@
 #include "IDBFactoryBackendLevelDB.h"
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendLevelDB.h"
-#include "IDBTracing.h"
 #include "IDBTransactionBackendLevelDB.h"
 #include "IDBTransactionCoordinatorLevelDB.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/TemporaryChange.h>
 
@@ -548,7 +548,7 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendLevelDB::backingStore() const
 
 void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::createObjectStore");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createObjectStore");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -564,7 +564,7 @@ void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t
 
 void CreateObjectStoreOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("CreateObjectStoreOperation");
+    LOG(StorageAPI, "CreateObjectStoreOperation");
     if (!m_backingStore->createObjectStore(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreMetadata.id, m_objectStoreMetadata.name, m_objectStoreMetadata.keyPath, m_objectStoreMetadata.autoIncrement)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error creating object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
         transaction->abort(error.release());
@@ -574,7 +574,7 @@ void CreateObjectStoreOperation::perform(IDBTransactionBackendLevelDB* transacti
 
 void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t objectStoreId)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::deleteObjectStore");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteObjectStore");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -589,7 +589,7 @@ void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t
 
 void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::createIndex");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createIndex");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -608,7 +608,7 @@ void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objec
 
 void CreateIndexOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("CreateIndexOperation");
+    LOG(StorageAPI, "CreateIndexOperation");
     if (!m_backingStore->createIndex(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreId, m_indexMetadata.id, m_indexMetadata.name, m_indexMetadata.keyPath, m_indexMetadata.unique, m_indexMetadata.multiEntry)) {
         transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_indexMetadata.name.utf8().data())));
         return;
@@ -617,14 +617,14 @@ void CreateIndexOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void CreateIndexAbortOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("CreateIndexAbortOperation");
+    LOG(StorageAPI, "CreateIndexAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
     m_database->removeIndex(m_objectStoreId, m_indexId);
 }
 
 void IDBDatabaseBackendLevelDB::deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::deleteIndex");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteIndex");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -643,7 +643,7 @@ void IDBDatabaseBackendLevelDB::deleteIndex(int64_t transactionId, int64_t objec
 
 void DeleteIndexOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("DeleteIndexOperation");
+    LOG(StorageAPI, "DeleteIndexOperation");
     bool ok = m_backingStore->deleteIndex(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreId, m_indexMetadata.id);
     if (!ok) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting index '%s'.", m_indexMetadata.name.utf8().data()));
@@ -653,7 +653,7 @@ void DeleteIndexOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void DeleteIndexAbortOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("DeleteIndexAbortOperation");
+    LOG(StorageAPI, "DeleteIndexAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
     m_database->addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
 }
@@ -681,7 +681,7 @@ void IDBDatabaseBackendLevelDB::abort(int64_t transactionId, PassRefPtr<IDBDatab
 
 void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::get");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::get");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -691,7 +691,7 @@ void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId
 
 void GetOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("GetOperation");
+    LOG(StorageAPI, "GetOperation");
 
     RefPtr<IDBKey> key;
 
@@ -783,7 +783,7 @@ void GetOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::put");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::put");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -798,7 +798,7 @@ void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId
 
 void PutOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("PutOperation");
+    LOG(StorageAPI, "PutOperation");
     ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
     ASSERT(m_indexIds.size() == m_indexKeys.size());
     bool keyWasGenerated = false;
@@ -869,7 +869,7 @@ void PutOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::setIndexKeys");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexKeys");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -914,7 +914,7 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
 
 void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
 {
-    IDB_TRACE("IDBObjectStoreBackendLevelDB::setIndexesReady");
+    LOG(StorageAPI, "IDBObjectStoreBackendLevelDB::setIndexesReady");
 
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
@@ -925,14 +925,14 @@ void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, 
 
 void SetIndexesReadyOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("SetIndexesReadyOperation");
+    LOG(StorageAPI, "SetIndexesReadyOperation");
     for (size_t i = 0; i < m_indexCount; ++i)
         transaction->didCompletePreemptiveEvent();
 }
 
 void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::openCursor");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::openCursor");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -942,7 +942,7 @@ void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t object
 
 void OpenCursorOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("OpenCursorOperation");
+    LOG(StorageAPI, "OpenCursorOperation");
 
     // The frontend has begun indexing, so this pauses the transaction
     // until the indexing is complete. This can't happen any earlier
@@ -975,7 +975,7 @@ void OpenCursorOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::count");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::count");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -986,7 +986,7 @@ void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStore
 
 void CountOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("CountOperation");
+    LOG(StorageAPI, "CountOperation");
     uint32_t count = 0;
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
 
@@ -1008,7 +1008,7 @@ void CountOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::deleteRange");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteRange");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -1019,7 +1019,7 @@ void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objec
 
 void DeleteRangeOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("DeleteRangeOperation");
+    LOG(StorageAPI, "DeleteRangeOperation");
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
     if (backingStoreCursor) {
         do {
@@ -1035,7 +1035,7 @@ void DeleteRangeOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
-    IDB_TRACE("IDBDatabaseBackendLevelDB::clear");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::clear");
     IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -1046,7 +1046,7 @@ void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStore
 
 void ClearOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("ObjectStoreClearOperation");
+    LOG(StorageAPI, "ObjectStoreClearOperation");
     if (!m_backingStore->clearObjectStore(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId)) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
         return;
@@ -1056,7 +1056,7 @@ void ClearOperation::perform(IDBTransactionBackendLevelDB* transaction)
 
 void DeleteObjectStoreOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("DeleteObjectStoreOperation");
+    LOG(StorageAPI, "DeleteObjectStoreOperation");
     bool ok = m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreMetadata.id);
     if (!ok) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
@@ -1066,7 +1066,7 @@ void DeleteObjectStoreOperation::perform(IDBTransactionBackendLevelDB* transacti
 
 void IDBDatabaseBackendLevelDB::VersionChangeOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("VersionChangeOperation");
+    LOG(StorageAPI, "VersionChangeOperation");
     int64_t databaseId = m_database->id();
     uint64_t oldVersion = m_database->m_metadata.version;
 
@@ -1362,21 +1362,21 @@ void IDBDatabaseBackendLevelDB::close(PassRefPtr<IDBDatabaseCallbacks> prpCallba
 
 void CreateObjectStoreAbortOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("CreateObjectStoreAbortOperation");
+    LOG(StorageAPI, "CreateObjectStoreAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
     m_database->removeObjectStore(m_objectStoreId);
 }
 
 void DeleteObjectStoreAbortOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("DeleteObjectStoreAbortOperation");
+    LOG(StorageAPI, "DeleteObjectStoreAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
     m_database->addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
 }
 
 void IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::perform(IDBTransactionBackendLevelDB* transaction)
 {
-    IDB_TRACE("VersionChangeAbortOperation");
+    LOG(StorageAPI, "VersionChangeAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
     m_database->m_metadata.version = m_previousIntVersion;
 }

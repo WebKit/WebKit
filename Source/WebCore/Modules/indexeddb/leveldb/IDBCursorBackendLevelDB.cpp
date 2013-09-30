@@ -34,8 +34,8 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
-#include "IDBTracing.h"
 #include "IDBTransactionBackendLevelDB.h"
+#include "Logging.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -120,21 +120,21 @@ IDBCursorBackendLevelDB::~IDBCursorBackendLevelDB()
 
 void IDBCursorBackendLevelDB::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::continue");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::continue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(m_taskType, CursorIterationOperation::create(this, key, callbacks));
 }
 
 void IDBCursorBackendLevelDB::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::advance");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::advance");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
 void IDBCursorBackendLevelDB::CursorAdvanceOperation::perform(IDBTransactionBackendLevelDB*)
 {
-    IDB_TRACE("CursorAdvanceOperation");
+    LOG(StorageAPI, "CursorAdvanceOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
         m_cursor->m_cursor = 0;
         m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
@@ -146,7 +146,7 @@ void IDBCursorBackendLevelDB::CursorAdvanceOperation::perform(IDBTransactionBack
 
 void IDBCursorBackendLevelDB::CursorIterationOperation::perform(IDBTransactionBackendLevelDB*)
 {
-    IDB_TRACE("CursorIterationOperation");
+    LOG(StorageAPI, "CursorIterationOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
         m_cursor->m_cursor = 0;
         m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
@@ -158,7 +158,7 @@ void IDBCursorBackendLevelDB::CursorIterationOperation::perform(IDBTransactionBa
 
 void IDBCursorBackendLevelDB::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::delete");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::delete");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
     m_database->deleteRange(m_transaction->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
@@ -166,14 +166,14 @@ void IDBCursorBackendLevelDB::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbac
 
 void IDBCursorBackendLevelDB::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::prefetchContinue");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::prefetchContinue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
 }
 
 void IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::perform(IDBTransactionBackendLevelDB*)
 {
-    IDB_TRACE("CursorPrefetchIterationOperation");
+    LOG(StorageAPI, "CursorPrefetchIterationOperation");
 
     Vector<RefPtr<IDBKey> > foundKeys;
     Vector<RefPtr<IDBKey> > foundPrimaryKeys;
@@ -222,7 +222,7 @@ void IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::perform(IDBTrans
 
 void IDBCursorBackendLevelDB::prefetchReset(int usedPrefetches, int)
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::prefetchReset");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::prefetchReset");
     m_cursor = m_savedCursor;
     m_savedCursor = 0;
 
@@ -238,7 +238,7 @@ void IDBCursorBackendLevelDB::prefetchReset(int usedPrefetches, int)
 
 void IDBCursorBackendLevelDB::close()
 {
-    IDB_TRACE("IDBCursorBackendLevelDB::close");
+    LOG(StorageAPI, "IDBCursorBackendLevelDB::close");
     m_closed = true;
     m_cursor.clear();
     m_savedCursor.clear();

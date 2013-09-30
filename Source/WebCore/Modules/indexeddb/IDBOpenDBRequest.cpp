@@ -31,8 +31,8 @@
 #include "IDBDatabase.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBPendingTransactionMonitor.h"
-#include "IDBTracing.h"
 #include "IDBVersionChangeEvent.h"
+#include "Logging.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -65,7 +65,7 @@ EventTargetInterface IDBOpenDBRequest::eventTargetInterface() const
 
 void IDBOpenDBRequest::onBlocked(uint64_t oldVersion)
 {
-    IDB_TRACE("IDBOpenDBRequest::onBlocked()");
+    LOG(StorageAPI, "IDBOpenDBRequest::onBlocked()");
     if (!shouldEnqueueEvent())
         return;
     
@@ -74,7 +74,7 @@ void IDBOpenDBRequest::onBlocked(uint64_t oldVersion)
 
 void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend, const IDBDatabaseMetadata& metadata)
 {
-    IDB_TRACE("IDBOpenDBRequest::onUpgradeNeeded()");
+    LOG(StorageAPI, "IDBOpenDBRequest::onUpgradeNeeded()");
     if (m_contextStopped || !scriptExecutionContext()) {
         RefPtr<IDBDatabaseBackendInterface> db = prpDatabaseBackend;
         db->abort(m_transactionId);
@@ -106,7 +106,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
 
 void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpBackend, const IDBDatabaseMetadata& metadata)
 {
-    IDB_TRACE("IDBOpenDBRequest::onSuccess()");
+    LOG(StorageAPI, "IDBOpenDBRequest::onSuccess()");
     if (!shouldEnqueueEvent())
         return;
 

@@ -35,8 +35,8 @@
 #include "IDBKey.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
-#include "IDBTracing.h"
 #include "IDBTransaction.h"
+#include "Logging.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include <limits>
@@ -94,25 +94,25 @@ IDBCursor::~IDBCursor()
 
 const String& IDBCursor::direction() const
 {
-    IDB_TRACE("IDBCursor::direction");
+    LOG(StorageAPI, "IDBCursor::direction");
     return directionToString(m_direction);
 }
 
 const ScriptValue& IDBCursor::key() const
 {
-    IDB_TRACE("IDBCursor::key");
+    LOG(StorageAPI, "IDBCursor::key");
     return m_currentKeyValue;
 }
 
 const ScriptValue& IDBCursor::primaryKey() const
 {
-    IDB_TRACE("IDBCursor::primaryKey");
+    LOG(StorageAPI, "IDBCursor::primaryKey");
     return m_currentPrimaryKeyValue;
 }
 
 const ScriptValue& IDBCursor::value() const
 {
-    IDB_TRACE("IDBCursor::value");
+    LOG(StorageAPI, "IDBCursor::value");
     return m_currentValue;
 }
 
@@ -123,7 +123,7 @@ IDBAny* IDBCursor::source() const
 
 PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
-    IDB_TRACE("IDBCursor::update");
+    LOG(StorageAPI, "IDBCursor::update");
 
     if (!m_gotValue || isKeyCursor()) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -155,7 +155,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, ScriptValue& val
 void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
 {
     ec = 0;
-    IDB_TRACE("IDBCursor::advance");
+    LOG(StorageAPI, "IDBCursor::advance");
     if (!m_gotValue) {
         ec = IDBDatabaseException::InvalidStateError;
         return;
@@ -187,7 +187,7 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, const ScriptVa
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     ec = 0;
-    IDB_TRACE("IDBCursor::continue");
+    LOG(StorageAPI, "IDBCursor::continue");
     if (key && !key->isValid()) {
         ec = IDBDatabaseException::DataError;
         return;
@@ -229,7 +229,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     ec = 0;
-    IDB_TRACE("IDBCursor::delete");
+    LOG(StorageAPI, "IDBCursor::delete");
     if (!m_transaction->isActive()) {
         ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
