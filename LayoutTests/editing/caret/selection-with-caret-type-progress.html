@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description"></p>
+<div style="cursor:progress; border: 2px solid red;" id="test">Try selecting this text by dragging the mouse.</div>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Tests whether explicitly set caret style is retained on performing text selection');
+if (window.eventSender && window.internals) {
+    var div = document.getElementById("test");
+    div.focus();
+
+    var y = div.offsetTop + div.offsetHeight / 2;
+
+    function leapForwardAndMove(x) {
+        eventSender.leapForward(200);
+        eventSender.mouseMoveTo(div.offsetLeft + x, y);
+    }
+
+    eventSender.dragMode = false;
+    leapForwardAndMove(div.offsetLeft + 5);
+    eventSender.mouseDown();
+
+    leapForwardAndMove(div.offsetLeft + 10);
+    leapForwardAndMove(div.offsetLeft + 20);
+    leapForwardAndMove(div.offsetWidth - 10);
+
+    var cursorInfo = window.internals.getCurrentCursorInfo(document);
+    var currentCursorType = cursorInfo.substring(cursorInfo.indexOf('=') + 1, cursorInfo.lastIndexOf(' '));
+    shouldBeEqualToString('currentCursorType', 'Progress');
+} else {
+    debug('To test manually, select the text within the red bordered div above by dragging the mouse. Progress cursor should be displayed while doing so.');
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

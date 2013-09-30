@@ -1303,15 +1303,6 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
         cancelAutoHideCursorTimer();
 #endif
 
-    // During selection, use an I-beam no matter what we're over.
-    // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
-    if (m_mousePressed && m_mouseDownMayStartSelect
-#if ENABLE(DRAG_SUPPORT)
-        && !m_mouseDownMayStartDrag
-#endif
-        && m_frame.selection().isCaretOrRange() && !m_capturingMouseEventsNode)
-        return iBeam;
-
     if (renderer) {
         Cursor overrideCursor;
         switch (renderer->getCursor(roundedIntPoint(result.localPoint()), overrideCursor)) {
@@ -1373,6 +1364,18 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
                     inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint())));
             }
         }
+
+        // During selection, use an I-beam regardless of the content beneath the cursor when cursor style is not explicitly specified.
+        // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
+        if (m_mousePressed && m_mouseDownMayStartSelect
+#if ENABLE(DRAG_SUPPORT)
+            && !m_mouseDownMayStartDrag
+#endif
+            && m_frame.selection().isCaretOrRange()
+            && !m_capturingMouseEventsNode) {
+            return iBeam;
+        }
+
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
             return iBeam;
         return pointerCursor();

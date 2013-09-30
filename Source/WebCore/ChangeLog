@@ -1,3 +1,29 @@
+2013-09-30  Vani Hegde  <vani.hegde@samsung.com>
+
+        user-select: none cursor turns to I-beam on mouse dragging
+        https://bugs.webkit.org/show_bug.cgi?id=90159
+
+        Reviewed by Ryosuke Niwa.
+
+        When tried to select some text in an area that has style
+        cursor:default set, cursor type changes to text cursor ignoring
+        the cursor style that is explicitly set.
+
+        When the cursor style is explicitly set as default (or something else),
+        we should not change it to text cursor no matter what we are over
+        or what operation we are performing (be it hovering over the text
+        or selecting the text).
+
+        During text selection, changing the cursor type to text only when
+        there is no explicit cursor type set fixes the issue.
+
+        Test: editing/caret/selection-with-caret-type-progress.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        During selection, set the cursor style to text only if there is no
+        explicit cursor style set.
+
 2013-09-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue() for CSSCanvasValue
