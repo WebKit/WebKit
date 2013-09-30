@@ -429,6 +429,8 @@ webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
 webkit.org/b/86623 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/drag-list-item.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard/copy-inside-h1-preserves-h1.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard/copy-without-selection.html [ Failure ]
 
 # Missing drag'n'drop, needs baselines
 webkit.org/b/86623 editing/pasteboard/4947130.html [ Missing ]
@@ -1165,8 +1167,6 @@ webkit.org/b/85594 fast/dom/navigator-detached-no-crash.html [ Failure ]
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # EFL's DumpRenderTree should support LayoutTestController's dumpEditingCallbacks()
-webkit.org/b/84835 editing/pasteboard/copy-inside-h1-preserves-h1.html [ Failure ]
-webkit.org/b/84835 editing/pasteboard/copy-without-selection.html [ Failure ]
 webkit.org/b/84835 editing/execCommand/findString-diacriticals.html [ Failure ]
 
 # DRT doesn't check for isPrinting().

@@ -1,3 +1,18 @@
+2013-09-30  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] Gardening after the resolution of bug 84835
+        https://bugs.webkit.org/show_bug.cgi?id=122096
+
+        Unreviewed EFL gardening.
+
+        Removed expected failures for bug 84835.
+        editing/pasteboard/copy-inside-h1-preserves-h1 and
+        editing/pasteboard/copy-without-selection are still failing due to bug 86623
+        and have been marked accordingly.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-09-30  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Two tests are passing in WK2 after r156541.
