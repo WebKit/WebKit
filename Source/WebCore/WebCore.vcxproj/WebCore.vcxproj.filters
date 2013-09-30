@@ -390,19 +390,10 @@
     <ClCompile Include="..\Modules\indexeddb\IDBCursor.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\IDBCursorBackendImpl.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBDatabase.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\IDBDatabaseBackendImpl.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBFactory.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendImpl.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendInterface.cpp">
@@ -418,9 +409,6 @@
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBObjectStore.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\IDBObjectStoreBackendImpl.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBRequest.cpp">
@@ -449,9 +437,6 @@
     </ClCompile>
     <ClCompile Include="..\Modules\quota\StorageInfo.cpp">
       <Filter>Modules\quota</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
-      <Filter>Modules\mediacontrols</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\mediasource\MediaSource.cpp">
       <Filter>Modules\mediasource</Filter>
@@ -2109,9 +2094,6 @@
     <ClCompile Include="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp">
       <Filter>platform\text\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\text\transcoder\FontTranscoder.cpp">
-      <Filter>platform\text\transcoder</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\image-decoders\cairo\ImageDecoderCairo.cpp">
       <Filter>platform\image-decoders\cairo</Filter>
     </ClCompile>
@@ -2511,9 +2493,6 @@
     <ClCompile Include="..\rendering\RenderBoxModelObject.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderBR.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\RenderButton.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -2641,9 +2620,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderObject.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderObjectChildList.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderProgress.cpp">
@@ -2812,9 +2788,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderWidget.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderWordBreak.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RootInlineBox.cpp">
@@ -4290,9 +4263,6 @@
     <ClCompile Include="..\html\shadow\DetailsMarkerControl.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\shadow\HTMLContentElement.cpp">
-      <Filter>html\shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\shadow\InsertionPoint.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
@@ -5737,9 +5707,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLCollection.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLContentElement.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataListElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -5980,7 +5947,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaControlsHost.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaError.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaError.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMediaList.cpp">
@@ -7054,6 +7021,15 @@
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp" />
     <ClCompile Include="..\rendering\FloatingObjects.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBCursorBackendLevelDB.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBDatabaseBackendLevelDB.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp" />
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBObjectStoreBackendLevelDB.cpp" />
+    <ClCompile Include="..\platform\graphics\FloatPolygon.cpp" />
+    <ClCompile Include="..\rendering\LineWidth.cpp" />
+    <ClCompile Include="..\rendering\RenderLineBreak.cpp" />
+    <ClCompile Include="..\rendering\RenderElement.cpp" />
+    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -9045,9 +9021,6 @@
     <ClInclude Include="..\platform\text\WritingMode.h">
       <Filter>platform\text</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\text\transcoder\FontTranscoder.h">
-      <Filter>platform\text\transcoder</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\animation\Animation.h">
       <Filter>platform\animation</Filter>
     </ClInclude>
@@ -9462,9 +9435,6 @@
     <ClInclude Include="..\rendering\RenderBoxModelObject.h">
       <Filter>rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\RenderBR.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\rendering\RenderButton.h">
       <Filter>rendering</Filter>
     </ClInclude>
@@ -9583,9 +9553,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderObject.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderObjectChildList.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderProgress.h">
@@ -9748,9 +9715,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderWidget.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderWordBreak.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RootInlineBox.h">
@@ -11422,9 +11386,6 @@
       <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\DetailsMarkerControl.h">
-      <Filter>html\shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\shadow\HTMLContentElement.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\InsertionPoint.h">
@@ -13511,9 +13472,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLCollection.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLContentElement.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLDataListElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -14847,6 +14805,14 @@
     <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\mediacontrols\MediaControlsHost.cpp" />
+    <ClInclude Include="..\platform\graphics\FloatPolygon.h" />
+    <ClInclude Include="..\rendering\LineInfo.h" />
+    <ClInclude Include="..\rendering\LineLayoutState.h" />
+    <ClInclude Include="..\rendering\LineWidth.h" />
+    <ClInclude Include="..\rendering\RenderElement.h" />
+    <ClInclude Include="..\rendering\RenderLineBreak.h" />
+    <ClInclude Include="..\rendering\shapes\ShapeInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -14862,9 +14828,6 @@
       <Filter>css</Filter>
     </None>
     <None Include="..\css\fullscreen.css">
-      <Filter>css</Filter>
-    </None>
-    <None Include="..\css\fullscreenQuickTime.css">
       <Filter>css</Filter>
     </None>
     <None Include="..\css\html.css">
@@ -15683,9 +15646,6 @@
       <Filter>css</Filter>
     </None>
     <None Include="..\css\view-source.css">
-      <Filter>css</Filter>
-    </None>
-    <None Include="..\css\mediaControlsQuickTime.css">
       <Filter>css</Filter>
     </None>
     <None Include="..\css\svg.css">

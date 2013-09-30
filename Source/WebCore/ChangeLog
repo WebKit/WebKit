@@ -1,3 +1,13 @@
+2013-09-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r156622. Build RenderLayerModelObject.cpp in a separate compilation unit
+        from the RenderLayerAllnOne file so that the scalar and vector destructors are visible to other
+        elements of WebCore during the build.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Compile RenderLayerModelObject outside of the all-in-one file.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * rendering/RenderingAllInOne.cpp: Remove RenderLayerModelObject.cpp.
+
 2013-09-30  Mark Rowe  <mrowe@apple.com>
 
         Fix the build when building against an SDK.
