@@ -1,5 +1,16 @@
 2013-09-29  Darin Adler  <darin@apple.com>
 
+        Take some Xcode advice about turning on additional warnings in ANGLE and gtest
+        https://bugs.webkit.org/show_bug.cgi?id=122087
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Add some of the warnings that Xcode 5 suggested.
+        * src/compiler/preprocessor/Tokenizer.l: Defined YY_NO_INPUT so we don't compile
+        an unused function and get a warning.
+
+2013-09-29  Darin Adler  <darin@apple.com>
+
         Use RenderElement instead of RenderObject in many places
         https://bugs.webkit.org/show_bug.cgi?id=122078
 

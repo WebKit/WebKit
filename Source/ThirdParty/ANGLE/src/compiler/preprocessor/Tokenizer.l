@@ -72,6 +72,8 @@ typedef pp::SourceLocation YYLTYPE;
 #define YY_INPUT(buf, result, maxSize) \
     result = yyextra->input.read(buf, maxSize);
 
+#define YY_NO_INPUT
+
 %}
 
 %option noyywrap nounput never-interactive
