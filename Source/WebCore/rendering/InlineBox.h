@@ -185,7 +185,7 @@ public:
 
     InlineFlowBox* parent() const
     {
-        ASSERT(!m_hasBadParent);
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadParent);
         return m_parent;
     }
     void setParent(InlineFlowBox* par) { m_parent = par; }

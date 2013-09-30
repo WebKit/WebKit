@@ -1,3 +1,17 @@
+2013-09-30  Drew Yao  <ayao@apple.com>
+
+        ASSERT(!m_hasBadParent) in InlineBox::parent() should be ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=122032
+
+        Reviewed by Andreas Kling.
+
+        Convert assertion to ASSERT_WITH_SECURITY_IMPLICATION to help catch use after free bugs.
+
+        No new tests needed.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::parent):
+
 2013-09-30  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Don't attempt to destroy decoded frame if a BitmapImage doesn't have encoded raw data.
