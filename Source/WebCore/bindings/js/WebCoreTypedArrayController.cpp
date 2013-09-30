@@ -44,7 +44,7 @@ WebCoreTypedArrayController::~WebCoreTypedArrayController()
 
 JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
 {
-    return JSC::jsCast<JSC::JSArrayBuffer*>(toJS(state, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
+    return JSC::jsCast<JSC::JSArrayBuffer*>(WebCore::toJS(state, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
 }
 
 bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)

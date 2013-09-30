@@ -1,3 +1,11 @@
+2013-09-29  Darin Adler  <darin@apple.com>
+
+        Fix crashes caused by my recent attempt at a Windows build fix.
+
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        (WebCore::WebCoreTypedArrayController::toJS): Added back the prefix for the call to
+        WebCore::toJS, otherwise this function just calls itself infinitely recursively.
+
 2013-09-29  Sam Weinig  <sam@webkit.org>
 
         Cleanup PageThrottler and PageConsole a bit
