@@ -156,11 +156,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     // definitely in a well-known spot in the scratch buffer regardless of whether it had
     // originally been in a register or spilled. This allows us to decouple "where was
     // the variable" from "how was it represented". Consider that the
-    // AlreadyInJSStackAsUnboxedInt32 recovery: it tells us that the value is in a
-    // particular place and that that place holds an unboxed int32. We have three different
-    // places that a value could be (stack, displaced, register) and a bunch of different
-    // ways of representing a value. The number of recoveries is three * a bunch. The code
-    // below means that we have to have three + a bunch cases rather than three * a bunch.
+    // Int32DisplacedInJSStack recovery: it tells us that the value is in a
+    // particular place and that that place holds an unboxed int32. We have two different
+    // places that a value could be (displaced, register) and a bunch of different
+    // ways of representing a value. The number of recoveries is two * a bunch. The code
+    // below means that we have to have two + a bunch cases rather than two * a bunch.
     // Once we have loaded the value from wherever it was, the reboxing is the same
     // regardless of its location. Likewise, before we do the reboxing, the way we get to
     // the value (i.e. where we load it from) is the same regardless of its type. Because
@@ -234,7 +234,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
-        int operand = operands.operandForIndex(index);
         
         switch (recovery.technique()) {
         case DisplacedInJSStack:
@@ -243,13 +242,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case Int52DisplacedInJSStack:
         case StrictInt52DisplacedInJSStack:
             m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
-            m_jit.store64(GPRInfo::regT0, scratch + index);
-            break;
-            
-        case AlreadyInJSStackAsUnboxedInt32:
-        case AlreadyInJSStackAsUnboxedDouble:
-        case AlreadyInJSStackAsUnboxedInt52:
-            m_jit.load64(AssemblyHelpers::addressFor(operand), GPRInfo::regT0);
             m_jit.store64(GPRInfo::regT0, scratch + index);
             break;
             
@@ -274,7 +266,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedInt32:
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
             m_jit.load64(scratch + index, GPRInfo::regT0);
@@ -283,7 +274,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedInt52:
         case UnboxedInt52InGPR:
         case Int52DisplacedInJSStack:
             m_jit.load64(scratch + index, GPRInfo::regT0);
@@ -307,7 +297,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedDouble:
         case InFPR:
         case DoubleDisplacedInJSStack:
             m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);

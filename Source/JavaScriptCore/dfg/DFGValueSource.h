@@ -178,28 +178,10 @@ public:
         return valueSourceKindToDataFormat(kind());
     }
     
-    ValueRecovery valueRecovery() const
+    ValueRecovery valueRecovery(int operand) const
     {
         ASSERT(isTriviallyRecoverable());
         switch (kind()) {
-        case ValueInJSStack:
-            return ValueRecovery::alreadyInJSStack();
-            
-        case Int32InJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedInt32();
-            
-        case Int52InJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedInt52();
-            
-        case CellInJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedCell();
-            
-        case BooleanInJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedBoolean();
-            
-        case DoubleInJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedDouble();
-            
         case SourceIsDead:
             return ValueRecovery::constant(jsUndefined());
             
@@ -207,8 +189,7 @@ public:
             return ValueRecovery::argumentsThatWereNotCreated();
             
         default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return ValueRecovery();
+            return ValueRecovery::displacedInJSStack(VirtualRegister(operand), dataFormat());
         }
     }
     

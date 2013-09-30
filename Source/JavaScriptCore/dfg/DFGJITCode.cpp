@@ -92,31 +92,7 @@ void JITCode::reconstruct(
             continue;
         }
         
-        ValueRecovery recovery = recoveries[i];
-        JSValue value;
-        switch (recovery.technique()) {
-        case AlreadyInJSStack:
-        case AlreadyInJSStackAsUnboxedCell:
-        case AlreadyInJSStackAsUnboxedBoolean:
-            value = exec->r(operand).jsValue();
-            break;
-        case AlreadyInJSStackAsUnboxedInt32:
-            value = jsNumber(exec->r(operand).unboxedInt32());
-            break;
-        case AlreadyInJSStackAsUnboxedInt52:
-            value = jsNumber(exec->r(operand).unboxedInt52());
-            break;
-        case AlreadyInJSStackAsUnboxedDouble:
-            value = jsDoubleNumber(exec->r(operand).unboxedDouble());
-            break;
-        case Constant:
-            value = recovery.constant();
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        result[i] = value;
+        result[i] = recoveries[i].recover(exec);
     }
 }
 

@@ -71,6 +71,7 @@ namespace JSC {
         Instruction* vPC() const;
         int32_t unboxedInt32() const;
         int64_t unboxedInt52() const;
+        int64_t unboxedStrictInt52() const;
         bool unboxedBoolean() const;
         double unboxedDouble() const;
         JSCell* unboxedCell() const;
@@ -175,6 +176,11 @@ namespace JSC {
     ALWAYS_INLINE int64_t Register::unboxedInt52() const
     {
         return u.integer >> JSValue::int52ShiftAmount;
+    }
+
+    ALWAYS_INLINE int64_t Register::unboxedStrictInt52() const
+    {
+        return u.integer;
     }
 
     ALWAYS_INLINE bool Register::unboxedBoolean() const

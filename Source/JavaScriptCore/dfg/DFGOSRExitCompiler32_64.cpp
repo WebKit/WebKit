@@ -228,7 +228,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     for (size_t index = 0; index < operands.size(); ++index) {
         const ValueRecovery& recovery = operands[index];
-        int operand = operands.operandForIndex(index);
         
         switch (recovery.technique()) {
         case DisplacedInJSStack:
@@ -241,23 +240,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 GPRInfo::regT0);
             m_jit.load32(
                 AssemblyHelpers::payloadFor(recovery.virtualRegister()),
-                GPRInfo::regT1);
-            m_jit.store32(
-                GPRInfo::regT0,
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
-            m_jit.store32(
-                GPRInfo::regT1,
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
-            break;
-            
-        case AlreadyInJSStackAsUnboxedInt32:
-        case AlreadyInJSStackAsUnboxedCell:
-        case AlreadyInJSStackAsUnboxedBoolean:
-            m_jit.load32(
-                AssemblyHelpers::tagFor(operand),
-                GPRInfo::regT0);
-            m_jit.load32(
-                AssemblyHelpers::payloadFor(operand),
                 GPRInfo::regT1);
             m_jit.store32(
                 GPRInfo::regT0,
@@ -299,7 +281,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 AssemblyHelpers::payloadFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedInt32:
         case UnboxedInt32InGPR:
         case Int32DisplacedInJSStack:
             m_jit.load32(
@@ -313,7 +294,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 AssemblyHelpers::payloadFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedCell:
         case UnboxedCellInGPR:
         case CellDisplacedInJSStack:
             m_jit.load32(
@@ -327,7 +307,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 AssemblyHelpers::payloadFor(operand));
             break;
             
-        case AlreadyInJSStackAsUnboxedBoolean:
         case UnboxedBooleanInGPR:
         case BooleanDisplacedInJSStack:
             m_jit.load32(

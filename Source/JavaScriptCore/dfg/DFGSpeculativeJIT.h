@@ -2282,11 +2282,11 @@ public:
     Vector<OwnPtr<SlowPathGenerator>, 8> m_slowPathGenerators;
     Vector<SilentRegisterSavePlan> m_plans;
     
-    ValueRecovery computeValueRecoveryFor(const ValueSource&);
+    ValueRecovery computeValueRecoveryFor(int operand, const ValueSource&);
 
     ValueRecovery computeValueRecoveryFor(int operand)
     {
-        return computeValueRecoveryFor(valueSourceForOperand(VirtualRegister(operand)));
+        return computeValueRecoveryFor(operand, valueSourceForOperand(VirtualRegister(operand)));
     }
 };
 

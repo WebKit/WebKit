@@ -274,6 +274,26 @@ struct Node {
         return filterFlags(~flags);
     }
     
+    SpeculationDirection speculationDirection()
+    {
+        if (flags() & NodeExitsForward)
+            return ForwardSpeculation;
+        return BackwardSpeculation;
+    }
+    
+    void setSpeculationDirection(SpeculationDirection direction)
+    {
+        switch (direction) {
+        case ForwardSpeculation:
+            mergeFlags(NodeExitsForward);
+            return;
+        case BackwardSpeculation:
+            clearFlags(NodeExitsForward);
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
     void setOpAndDefaultFlags(NodeType op)
     {
         m_op = op;

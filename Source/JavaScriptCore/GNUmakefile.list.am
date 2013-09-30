@@ -167,6 +167,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/UnlinkedCodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/UnlinkedCodeBlock.h \
 	Source/JavaScriptCore/bytecode/ValueProfile.h \
+	Source/JavaScriptCore/bytecode/ValueRecovery.cpp \
 	Source/JavaScriptCore/bytecode/ValueRecovery.h \
 	Source/JavaScriptCore/bytecode/VirtualRegister.h \
 	Source/JavaScriptCore/bytecode/Watchpoint.cpp \

@@ -63,8 +63,6 @@ private:
     Arguments(CallFrame*);
     Arguments(CallFrame*, NoParametersType);
         
-    void tearOffForInlineCallFrame(VM& vm, Register*, InlineCallFrame*);
-
 public:
     DECLARE_INFO;
 

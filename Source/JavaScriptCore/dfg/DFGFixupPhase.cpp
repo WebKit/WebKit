@@ -1219,7 +1219,7 @@ private:
             case FlushedJSValue:
                 break;
             case FlushedDouble:
-                fixEdge<NumberUse>(node->child1(), ForwardSpeculation);
+                fixEdge<NumberUse>(node->child1());
                 break;
             case FlushedInt32:
                 fixEdge<Int32Use>(node->child1());
@@ -1407,11 +1407,11 @@ private:
     // edge, you either call fixEdge() or perform the equivalent functionality
     // yourself. Obviously, you should have a really good reason if you do the latter.
     template<UseKind useKind>
-    void fixEdge(Edge& edge, SpeculationDirection direction = BackwardSpeculation)
+    void fixEdge(Edge& edge)
     {
         if (isDouble(useKind)) {
             if (edge->shouldSpeculateInt32ForArithmetic()) {
-                injectInt32ToDoubleNode(edge, useKind, direction);
+                injectInt32ToDoubleNode(edge, useKind, m_currentNode->speculationDirection());
                 return;
             }
             
@@ -1424,6 +1424,7 @@ private:
                 Node* result = m_insertionSet.insertNode(
                     m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
                     m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
+                result->setSpeculationDirection(m_currentNode->speculationDirection());
                 edge = Edge(result, useKind);
                 return;
             }
@@ -1477,6 +1478,7 @@ private:
             Node* result = m_insertionSet.insertNode(
                 m_indexInBlock, SpecInt52, Int52ToValue,
                 m_currentNode->codeOrigin, Edge(edge.node(), UntypedUse));
+            result->setSpeculationDirection(m_currentNode->speculationDirection());
             edge = Edge(result, useKind);
             return;
         }

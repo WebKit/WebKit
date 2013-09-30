@@ -80,6 +80,7 @@ SOURCES += \
     bytecode/StructureStubClearingWatchpoint.cpp \
     bytecode/StructureStubInfo.cpp \
     bytecode/UnlinkedCodeBlock.cpp \
+    bytecode/ValueRecovery.cpp \
     bytecode/Watchpoint.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \

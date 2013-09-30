@@ -124,8 +124,10 @@ void VariableEventStream::reconstruct(
     // reflect this.
     if (!index) {
         valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
-        for (size_t i = 0; i < valueRecoveries.size(); ++i)
-            valueRecoveries[i] = ValueRecovery::alreadyInJSStack();
+        for (size_t i = 0; i < valueRecoveries.size(); ++i) {
+            valueRecoveries[i] = ValueRecovery::displacedInJSStack(
+                VirtualRegister(valueRecoveries.operandForIndex(i)), DataFormatJS);
+        }
         return;
     }
     
@@ -181,7 +183,7 @@ void VariableEventStream::reconstruct(
     for (unsigned i = 0; i < operandSources.size(); ++i) {
         ValueSource& source = operandSources[i];
         if (source.isTriviallyRecoverable()) {
-            valueRecoveries[i] = source.valueRecovery();
+            valueRecoveries[i] = source.valueRecovery(operandSources.operandForIndex(i));
             continue;
         }
         
@@ -277,13 +279,6 @@ void VariableEventStream::reconstruct(
         
         valueRecoveries[i] =
             ValueRecovery::displacedInJSStack(static_cast<VirtualRegister>(info.u.virtualReg), info.format);
-    }
-    
-    // Step 4: Make sure that for locals that coincide with true call frame headers, the exit compiler knows
-    // that those values don't have to be recovered. Signal this by using ValueRecovery::alreadyInJSStack()
-    for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
-        for (unsigned i = JSStack::CallFrameHeaderSize; i--;)
-            valueRecoveries.setLocal(VirtualRegister(inlineCallFrame->stackOffset).toLocal() - i - 1, ValueRecovery::alreadyInJSStack());
     }
 }
 

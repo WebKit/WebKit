@@ -2950,6 +2950,9 @@ private:
         case NumberUse:
             speculateNumber(edge);
             break;
+        case MachineIntUse:
+            speculateMachineInt(edge);
+            break;
         case BooleanUse:
             speculateBoolean(edge);
             break;
@@ -3130,6 +3133,15 @@ private:
         FTL_TYPE_CHECK(
             doubleValue(value), edge, SpecFullRealNumber,
             m_out.doubleNotEqualOrUnordered(value, value));
+    }
+    
+    void speculateMachineInt(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
+        Int52Kind kind;
+        lowWhicheverInt52(edge, kind);
     }
     
     void speculateBoolean(Edge edge)

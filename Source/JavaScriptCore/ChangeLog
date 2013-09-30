@@ -1,3 +1,100 @@
+2013-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of the AlreadyInJSStack recoveries since they are totally redundant with the DisplacedInJSStack recoveries
+        https://bugs.webkit.org/show_bug.cgi?id=122065
+
+        Reviewed by Mark Hahnenberg.
+        
+        This mostly just kills a bunch of code.
+        
+        But incidentaly while killing that code, I uncovered a bug in our FTL OSR entrypoint
+        creation phase. The phase inserts a sequence of SetLocal(ExtractOSREntryLocal) nodes.
+        If we hoist some type check into the local, then we might inject a conversion node
+        between the ExtractOSREntryLocal and the SetLocal - for example we might put in a
+        Int32ToDouble node. But currently the FixupPhase will make all conversion nodes placed
+        on an edge of a SetLocal use forward exit. This then confuses the OSR exit machinery.
+        When OSR exit sees a forward exit, it tries to "roll forward" execution from the exiting
+        node to the first node that has a different CodeOrigin. This only works if the nodes
+        after the forward exit are MovHints or other tnings that the OSR exit compiler can
+        forward-execute. But here, it will see a bunch of SetLocal and ExtractOSREntryLocal
+        nodes for the same bytecode index. Two possible solutions exist. We could teach the
+        forward-execution logic how to deal with multiple SetLocals and ExtractOSREntryLocals.
+        This would be a lot of complexity; right now it just needs to deal with exactly one
+        SetLocal-like operation. The alternative is to make sure that the conversion node that
+        we inject ends up exiting *backward* rather than forward.
+        
+        But making the conversion nodes exit backward is somewhat tricky. Before this patch,
+        conversion nodes always exit forward for SetLocals and backwards otherwise. It turns out
+        that the solution is to rationalize how we choose the speculation direciton for a
+        conversion node. The conversion node's speculation direction should be the same as the
+        speculation direction of the node for which it is doing a conversion. Since SetLocal's
+        already exit forward by default, this policy preserves our previous behavior. But it
+        also allows the OSR entrypoint creation phase to make its SetLocals exit backward
+        instead.
+        
+        Of course, if the SetLocal(ExtractOSREntryLocal) sequences exit backward, then we need
+        to make sure that the OSR exit machine knows that the local variables are indeed live.
+        Consider that if we have:
+        
+            a: ExtractOSREntryLocal(loc1)
+            b: SetLocal(@a, loc1)
+            c: ExtractOSRentryLocal(loc2)
+            d: SetLocal(@c, loc2)
+        
+        Without additional magic, the exit at @b will think that loc2 is dead and the OSR exit
+        compiler will clobber loc2 with Undefined. So we need to make sure that we actually
+        emit code like:
+        
+            a: ExtractOSREntryLocal(loc1)
+            b: ExtractOSREntryLocal(loc2)
+            c: SetLocal(@a, loc1)
+            d: SetLocal(@b, loc2)
+            e: SetLocal(@a, loc1)
+            f: SetLocal(@b, loc2)
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeOrigin.h:
+        * bytecode/ValueRecovery.cpp: Added.
+        (JSC::ValueRecovery::recover):
+        (JSC::ValueRecovery::dumpInContext):
+        (JSC::ValueRecovery::dump):
+        * bytecode/ValueRecovery.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::fixEdge):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::speculationDirection):
+        (JSC::DFG::Node::setSpeculationDirection):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInlineStart):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::valueRecovery):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateMachineInt):
+        * interpreter/Register.h:
+        (JSC::Register::unboxedStrictInt52):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/Arguments.h:
+
 2013-09-30  Alex Christensen  <alex.christensen@flexsim.com>
 
         Win64 compile fix after r1256490.

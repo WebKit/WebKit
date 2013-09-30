@@ -356,53 +356,9 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     m_registerArray = std::make_unique<WriteBarrier<Unknown>[]>(m_numArguments);
     m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
-    tearOffForInlineCallFrame(
-        callFrame->vm(), callFrame->registers() + inlineCallFrame->stackOffset,
-        inlineCallFrame);
-}
-
-void Arguments::tearOffForInlineCallFrame(VM& vm, Register* registers, InlineCallFrame* inlineCallFrame)
-{
     for (size_t i = 0; i < m_numArguments; ++i) {
         ValueRecovery& recovery = inlineCallFrame->arguments[i + 1];
-        // In the future we'll support displaced recoveries (indicating that the
-        // argument was flushed to a different location), but for now we don't do
-        // that so this code will fail if that were to happen. On the other hand,
-        // it's much less likely that we'll support in-register recoveries since
-        // this code does not (easily) have access to registers.
-        JSValue value;
-        Register* location = &registers[CallFrame::argumentOffset(i)];
-        switch (recovery.technique()) {
-        case AlreadyInJSStack:
-            value = location->jsValue();
-            break;
-        case AlreadyInJSStackAsUnboxedInt32:
-            value = jsNumber(location->unboxedInt32());
-            break;
-        case AlreadyInJSStackAsUnboxedInt52:
-            value = jsNumber(location->unboxedInt52());
-            break;
-        case AlreadyInJSStackAsUnboxedCell:
-            value = location->unboxedCell();
-            break;
-        case AlreadyInJSStackAsUnboxedBoolean:
-            value = jsBoolean(location->unboxedBoolean());
-            break;
-        case AlreadyInJSStackAsUnboxedDouble:
-#if USE(JSVALUE64)
-            value = jsNumber(*bitwise_cast<double*>(location));
-#else
-            value = location->jsValue();
-#endif
-            break;
-        case Constant:
-            value = recovery.constant();
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        trySetArgument(vm, i, value);
+        trySetArgument(callFrame->vm(), i, recovery.recover(callFrame));
     }
 }
 

@@ -1539,13 +1539,12 @@ void SpeculativeJIT::compileInlineStart(Node* node)
     unsigned argumentPositionStart = node->argumentPositionStart();
     CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
-        ValueRecovery recovery;
+        ValueSource valueSource;
         if (codeBlock->isCaptured(virtualRegisterForArgument(i)))
-            recovery = ValueRecovery::alreadyInJSStack();
+            valueSource = ValueSource(ValueInJSStack);
         else {
             ArgumentPosition& argumentPosition =
                 m_jit.graph().m_argumentPositions[argumentPositionStart + i];
-            ValueSource valueSource;
             switch (argumentPosition.flushFormat()) {
             case DeadFlush:
             case FlushedJSValue:
@@ -1567,8 +1566,9 @@ void SpeculativeJIT::compileInlineStart(Node* node)
                 valueSource = ValueSource(BooleanInJSStack);
                 break;
             }
-            recovery = computeValueRecoveryFor(valueSource);
         }
+        ValueRecovery recovery = computeValueRecoveryFor(
+            inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset(), valueSource);
         // The recovery should refer either to something that has already been
         // stored into the stack at the right place, or to a constant,
         // since the Arguments code isn't smart enough to handle anything else.
@@ -1898,10 +1898,10 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
 }
 
-ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSource)
+ValueRecovery SpeculativeJIT::computeValueRecoveryFor(int operand, const ValueSource& valueSource)
 {
     if (valueSource.isInJSStack())
-        return valueSource.valueRecovery();
+        return valueSource.valueRecovery(operand);
         
     ASSERT(valueSource.kind() == HaveNode);
     Node* node = valueSource.id().node(m_jit.graph());
