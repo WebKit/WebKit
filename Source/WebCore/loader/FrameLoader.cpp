@@ -1101,7 +1101,7 @@ void FrameLoader::completed()
 
     if (m_frame.view())
         m_frame.view()->maintainScrollPositionAtAnchor(0);
-    m_activityAssertion.clear();
+    m_activityAssertion = nullptr;
 }
 
 void FrameLoader::started()

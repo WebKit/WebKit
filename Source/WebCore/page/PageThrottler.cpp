@@ -31,42 +31,48 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 static const double kThrottleHysteresisSeconds = 2.0;
 
-PageThrottler::PageThrottler(Page* page)
+PageThrottler::PageThrottler(Page& page)
     : m_page(page)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
 {
-    m_page->chrome().client().incrementActivePageCount();
+    m_page.chrome().client().incrementActivePageCount();
 }
 
 PageThrottler::~PageThrottler()
 {
     setThrottled(false);
 
-    for (HashSet<PageActivityAssertionToken*>::iterator i = m_activityTokens.begin(); i != m_activityTokens.end(); ++i)
-        (*i)->invalidate();
+    for (auto it = m_activityTokens.begin(), end = m_activityTokens.end(); it != end; ++it)
+        (*it)->invalidate();
 
     if (m_throttleState != PageThrottledState)
-        m_page->chrome().client().decrementActivePageCount();
+        m_page.chrome().client().decrementActivePageCount();
+}
+
+std::unique_ptr<PageActivityAssertionToken> PageThrottler::createActivityToken()
+{
+    return std::make_unique<PageActivityAssertionToken>(*this);
 }
 
 void PageThrottler::throttlePage()
 {
     m_throttleState = PageThrottledState;
 
-    m_page->chrome().client().decrementActivePageCount();
+    m_page.chrome().client().decrementActivePageCount();
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(true);
     }
 
-    m_page->throttleTimers();
+    m_page.throttleTimers();
 }
 
 void PageThrottler::unthrottlePage()
@@ -78,14 +84,14 @@ void PageThrottler::unthrottlePage()
         return;
 
     if (oldState == PageThrottledState)
-        m_page->chrome().client().incrementActivePageCount();
+        m_page.chrome().client().incrementActivePageCount();
     
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(false);
     }
 
-    m_page->unthrottleTimers();
+    m_page.unthrottleTimers();
 }
 
 void PageThrottler::setThrottled(bool isThrottled)
@@ -128,11 +134,11 @@ void PageThrottler::throttleHysteresisTimerFired(Timer<PageThrottler>*)
     throttlePage();
 }
 
-void PageThrottler::addActivityToken(PageActivityAssertionToken* token)
+void PageThrottler::addActivityToken(PageActivityAssertionToken& token)
 {
-    ASSERT(token && !m_activityTokens.contains(token));
+    ASSERT(!m_activityTokens.contains(&token));
 
-    m_activityTokens.add(token);
+    m_activityTokens.add(&token);
 
     // If we've already got events that block throttling we can return early
     if (m_activityTokens.size() > 1)
@@ -148,11 +154,11 @@ void PageThrottler::addActivityToken(PageActivityAssertionToken* token)
     stopThrottleHysteresisTimer();
 }
 
-void PageThrottler::removeActivityToken(PageActivityAssertionToken* token)
+void PageThrottler::removeActivityToken(PageActivityAssertionToken& token)
 {
-    ASSERT(token && m_activityTokens.contains(token));
+    ASSERT(m_activityTokens.contains(&token));
 
-    m_activityTokens.remove(token);
+    m_activityTokens.remove(&token);
 
     if (m_activityTokens.size())
         return;

@@ -260,7 +260,7 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
         return false;
 
     m_state = Finishing;
-    m_activityAssertion.clear();
+    m_activityAssertion = nullptr;
     m_resource->error(CachedResource::LoadError);
     cancel();
     return true;
@@ -278,7 +278,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     Ref<SubresourceLoader> protect(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
-    m_activityAssertion.clear();
+    m_activityAssertion = nullptr;
     m_resource->setLoadFinishTime(finishTime);
     m_resource->finishLoading(resourceData());
 
@@ -303,7 +303,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     Ref<SubresourceLoader> protect(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
-    m_activityAssertion.clear();
+    m_activityAssertion = nullptr;
     if (m_resource->resourceToRevalidate())
         memoryCache()->revalidationFailed(m_resource);
     m_resource->setResourceError(error);
@@ -326,7 +326,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 
     Ref<SubresourceLoader> protect(*this);
     m_state = Finishing;
-    m_activityAssertion.clear();
+    m_activityAssertion = nullptr;
     if (m_resource->resourceToRevalidate())
         memoryCache()->revalidationFailed(m_resource);
     m_resource->setResourceError(error);

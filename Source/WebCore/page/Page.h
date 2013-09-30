@@ -395,8 +395,8 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
-    PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
-    PassOwnPtr<PageActivityAssertionToken> createActivityToken();
+    PageThrottler& pageThrottler() { return *m_pageThrottler; }
+    std::unique_ptr<PageActivityAssertionToken> createActivityToken();
 
     PageConsole& console() { return *m_console; }
 
@@ -546,8 +546,7 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
-    OwnPtr<PageThrottler> m_pageThrottler;
-
+    const OwnPtr<PageThrottler> m_pageThrottler;
     const OwnPtr<PageConsole> m_console;
 
     HashSet<String> m_seenPlugins;

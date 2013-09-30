@@ -55,9 +55,14 @@ namespace {
     int muteCount = 0;
 }
 
-PageConsole::PageConsole(Page* page) : m_page(page) { }
+PageConsole::PageConsole(Page& page)
+    : m_page(page)
+{
+}
 
-PageConsole::~PageConsole() { }
+PageConsole::~PageConsole()
+{
+}
 
 void PageConsole::printSourceURLAndLine(const String& sourceURL, unsigned lineNumber)
 {
@@ -161,24 +166,20 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (muteCount && source != ConsoleAPIMessageSource)
         return;
 
-    Page* page = this->page();
-    if (!page)
-        return;
-
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(&m_page, source, LogMessageType, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(&m_page, source, LogMessageType, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
 
     if (source == CSSMessageSource)
         return;
 
-    if (page->settings().privateBrowsingEnabled())
+    if (m_page.settings().privateBrowsingEnabled())
         return;
 
-    page->chrome().client().addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
+    m_page.chrome().client().addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
 
-    if (!page->settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
+    if (!m_page.settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;
 
     printSourceURLAndLine(url, lineNumber);

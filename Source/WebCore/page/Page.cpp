@@ -185,8 +185,8 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(PageThrottler::create(this))
-    , m_console(PageConsole::create(this))
+    , m_pageThrottler(createOwned<PageThrottler>(*this))
+    , m_console(createOwned<PageConsole>(*this))
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
 {
@@ -235,8 +235,6 @@ Page::~Page()
 #ifndef NDEBUG
     pageCounter.decrement();
 #endif
-
-    m_pageThrottler.clear();
 }
 
 ArenaSize Page::renderTreeSize() const
@@ -1505,9 +1503,9 @@ void Page::resetSeenMediaEngines()
     m_seenMediaEngines.clear();
 }
 
-PassOwnPtr<PageActivityAssertionToken> Page::createActivityToken()
+std::unique_ptr<PageActivityAssertionToken> Page::createActivityToken()
 {
-    return adoptPtr(new PageActivityAssertionToken(m_pageThrottler.get()));
+    return m_pageThrottler->createActivityToken();
 }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)

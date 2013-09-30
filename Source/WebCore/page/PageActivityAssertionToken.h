@@ -35,17 +35,15 @@ class PageThrottler;
 class PageActivityAssertionToken {
     WTF_MAKE_NONCOPYABLE(PageActivityAssertionToken);
 public:
+    PageActivityAssertionToken(PageThrottler&);
     ~PageActivityAssertionToken();
 
     void invalidate();
 
 private:
-    friend class Page;
-    PageActivityAssertionToken(PageThrottler*);
-
     PageThrottler* m_throttler;
 };
 
-}
+} // namespace WebCore
 
 #endif // PageActivityAssertionToken_h

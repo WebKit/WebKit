@@ -447,7 +447,7 @@ private:
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
-    OwnPtr<PageActivityAssertionToken> m_activityAssertion;
+    std::unique_ptr<PageActivityAssertionToken> m_activityAssertion;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

@@ -31,9 +31,12 @@
 
 #include "ConsoleTypes.h"
 #include "ScriptCallStack.h"
-#include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
+
+namespace JSC {
+class ExecState;
+}
 
 namespace WebCore {
 
@@ -42,8 +45,8 @@ class Page;
 
 class PageConsole {
 public:
-    static PassOwnPtr<PageConsole> create(Page* page) { return adoptPtr(new PageConsole(page)); }
-    virtual ~PageConsole();
+    PageConsole(Page&);
+    ~PageConsole();
 
     static void printSourceURLAndLine(const String& sourceURL, unsigned lineNumber);
     static void printMessageSourceAndLevelPrefix(MessageSource, MessageLevel);
@@ -59,11 +62,7 @@ public:
     static void setShouldPrintExceptions(bool);
 
 private:
-    PageConsole(Page*);
-
-    Page* page() { return m_page; };
-
-    Page* m_page;
+    Page& m_page;
 };
 
 } // namespace WebCore

@@ -1,3 +1,56 @@
+2013-09-29  Sam Weinig  <sam@webkit.org>
+
+        Cleanup PageThrottler and PageConsole a bit
+        https://bugs.webkit.org/show_bug.cgi?id=122085
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLMediaElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::completed):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/SubresourceLoader.h:
+        Store the PageActivityAssertionToken as a std::unique_ptr.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Use createOwned and pass this by reference for the PageThrottler and PageConsole.
+        (WebCore::Page::~Page):
+        Remove unnecessary clearing of an OwnPtr that is about to be destroyed.
+        * page/Page.h:
+        Make m_pageThrottler const and return it as a reference.
+
+        * page/PageActivityAssertionToken.cpp:
+        (WebCore::PageActivityAssertionToken::PageActivityAssertionToken):
+        (WebCore::PageActivityAssertionToken::~PageActivityAssertionToken):
+        * page/PageActivityAssertionToken.h:
+        Take the PageThrottler by reference in the constructor. It is never null.
+
+        * page/PageConsole.cpp:
+        (WebCore::PageConsole::PageConsole):
+        (WebCore::PageConsole::~PageConsole):
+        (WebCore::PageConsole::addMessage):
+        * page/PageConsole.h:
+        Pass and store the Page as a reference and remove an extraneous null check. Remove
+        the create function.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::PageThrottler::~PageThrottler):
+        (WebCore::PageThrottler::createActivityToken):
+        (WebCore::PageThrottler::throttlePage):
+        (WebCore::PageThrottler::unthrottlePage):
+        (WebCore::PageThrottler::addActivityToken):
+        (WebCore::PageThrottler::removeActivityToken):
+        * page/PageThrottler.h:
+        Pass and store the Page as a reference. Move the creation of PageActivityAssertionToken here
+        to aid encapsulation.
+
 2013-09-29  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.

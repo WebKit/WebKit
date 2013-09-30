@@ -781,7 +781,7 @@ private:
     OwnPtr<AudioSessionManagerToken> m_audioSessionManagerToken;
 #endif
 
-    OwnPtr<PageActivityAssertionToken> m_activityToken;
+    std::unique_ptr<PageActivityAssertionToken> m_activityToken;
     size_t m_reportedExtraMemoryCost;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

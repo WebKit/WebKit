@@ -30,17 +30,16 @@
 
 namespace WebCore {
 
-PageActivityAssertionToken::PageActivityAssertionToken(PageThrottler* throttler)
-    :m_throttler(throttler)
+PageActivityAssertionToken::PageActivityAssertionToken(PageThrottler& throttler)
+    : m_throttler(&throttler)
 {
-    if (m_throttler)
-        m_throttler->addActivityToken(this);
+    m_throttler->addActivityToken(*this);
 }
 
 PageActivityAssertionToken::~PageActivityAssertionToken()
 {
     if (m_throttler)
-        m_throttler->removeActivityToken(this);
+        m_throttler->removeActivityToken(*this);
 }
 
 void PageActivityAssertionToken::invalidate()
@@ -48,6 +47,6 @@ void PageActivityAssertionToken::invalidate()
     m_throttler = 0;
 }
 
-}
+} // namespace WebCore
 
 

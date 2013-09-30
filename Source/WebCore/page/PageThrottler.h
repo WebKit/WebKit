@@ -39,10 +39,10 @@ class PageActivityAssertionToken;
 
 class PageThrottler {
 public:
-    static PassOwnPtr<PageThrottler> create(Page* page)
-    {
-        return adoptPtr(new PageThrottler(page));
-    }
+    PageThrottler(Page&);
+    ~PageThrottler();
+
+    std::unique_ptr<PageActivityAssertionToken> createActivityToken();
 
     bool shouldThrottleAnimations() const { return m_throttleState != PageNotThrottledState; }
     bool shouldThrottleTimers() const { return m_throttleState != PageNotThrottledState; }
@@ -50,8 +50,6 @@ public:
     void setThrottled(bool);
 
     void reportInterestingEvent();
-
-    ~PageThrottler();
 
 private:
     enum PageThrottleState {
@@ -61,19 +59,17 @@ private:
     };
 
     friend class PageActivityAssertionToken;
-    void addActivityToken(PageActivityAssertionToken*);
-    void removeActivityToken(PageActivityAssertionToken*);
+    void addActivityToken(PageActivityAssertionToken&);
+    void removeActivityToken(PageActivityAssertionToken&);
 
-    PageThrottler(Page*);
     void startThrottleHysteresisTimer();
     void stopThrottleHysteresisTimer();
     void throttleHysteresisTimerFired(Timer<PageThrottler>*);
 
-    Page* m_page;
-
     void throttlePage();
     void unthrottlePage();
 
+    Page& m_page;
     PageThrottleState m_throttleState;
     Timer<PageThrottler> m_throttleHysteresisTimer;
     HashSet<PageActivityAssertionToken*> m_activityTokens;

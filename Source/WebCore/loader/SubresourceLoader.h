@@ -102,7 +102,7 @@ private:
     bool m_loadingMultipartContent;
     SubresourceLoaderState m_state;
     OwnPtr<RequestCountTracker> m_requestCountTracker;
-    OwnPtr<PageActivityAssertionToken> m_activityAssertion;
+    std::unique_ptr<PageActivityAssertionToken> m_activityAssertion;
 };
 
 }
