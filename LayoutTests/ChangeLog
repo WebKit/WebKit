@@ -1,3 +1,19 @@
+2013-09-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove timeout from shouldBecome* functions in js-test-pre
+        https://bugs.webkit.org/show_bug.cgi?id=122121
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed timeout. A 0.5 sec timeout never makes sense, and if something is stuck,
+        a test should just time out normally.
+
+        * resources/js-test-pre.js:
+        (_waitForCondition):
+        (shouldBecomeEqual):
+        (shouldBecomeEqualToString):
+        (shouldBecomeDifferent):
+
 2013-09-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, roll back in r156546 with rebaselined tests.

@@ -264,26 +264,19 @@ function dfgShouldBe(theFunction, _a, _b)
   return values.length;
 }
 
-// Execute condition every 5 milliseconds until it succeed or failureTime is reached.
-// completionHandler is executed on success, failureHandler is executed on timeout.
-function _waitForCondition(condition, failureTime, completionHandler, failureHandler)
+// Execute condition every 5 milliseconds until it succeeds.
+function _waitForCondition(condition, completionHandler)
 {
-  if (condition()) {
+  if (condition())
     completionHandler();
-  } else if (Date.now() > failureTime) {
-    failureHandler();
-  } else {
-    setTimeout(_waitForCondition, 5, condition, failureTime, completionHandler, failureHandler);
-  }
+  else
+    setTimeout(_waitForCondition, 5, condition, completionHandler);
 }
 
-function shouldBecomeEqual(_a, _b, completionHandler, timeout)
+function shouldBecomeEqual(_a, _b, completionHandler)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeEqual() expects string arguments");
-
-  if (timeout === undefined)
-    timeout = 500;
 
   var condition = function() {
     var exception;
@@ -302,20 +295,15 @@ function shouldBecomeEqual(_a, _b, completionHandler, timeout)
     }
     return false;
   };
-  var failureTime = Date.now() + timeout;
-  var failureHandler = function () {
-    testFailed(_a + " failed to change to " + _b + " in " + (timeout / 1000) + " seconds.");
-    completionHandler();
-  };
-  _waitForCondition(condition, failureTime, completionHandler, failureHandler);
+  _waitForCondition(condition, completionHandler);
 }
 
-function shouldBecomeEqualToString(value, reference, completionHandler, timeout)
+function shouldBecomeEqualToString(value, reference, completionHandler)
 {
   if (typeof value !== "string" || typeof reference !== "string")
     debug("WARN: shouldBecomeEqualToString() expects string arguments");
   var unevaledString = JSON.stringify(reference);
-  shouldBecomeEqual(value, unevaledString, completionHandler, timeout);
+  shouldBecomeEqual(value, unevaledString, completionHandler);
 }
 
 function shouldBeType(_a, _type) {
@@ -397,12 +385,10 @@ function shouldNotBe(_a, _b, quiet)
     testFailed(_a + " should not be " + _bv + ".");
 }
 
-function shouldBecomeDifferent(_a, _b, completionHandler, timeout)
+function shouldBecomeDifferent(_a, _b, completionHandler)
 {
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeDifferent() expects string arguments");
-  if (timeout === undefined)
-    timeout = 500;
 
   var condition = function() {
     var exception;
@@ -421,12 +407,7 @@ function shouldBecomeDifferent(_a, _b, completionHandler, timeout)
     }
     return false;
   };
-  var failureTime = Date.now() + timeout;
-  var failureHandler = function () {
-    testFailed(_a + " did not become different from " + _b + " in " + (timeout / 1000) + " seconds.");
-    completionHandler();
-  };
-  _waitForCondition(condition, failureTime, completionHandler, failureHandler);
+  _waitForCondition(condition, completionHandler);
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
