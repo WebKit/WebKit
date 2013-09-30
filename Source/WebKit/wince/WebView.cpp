@@ -411,12 +411,12 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONUP:
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
-            if (frame()->eventHandler() && view()->didFirstLayout())
+            if (view()->didFirstLayout())
                 handled = handleMouseEvent(hWnd, message, wParam, lParam);
             break;
 
         case WM_MOUSEWHEEL:
-            if (frame()->eventHandler() && view()->didFirstLayout())
+            if (view()->didFirstLayout())
                 handled = handleMouseWheel(hWnd, wParam, lParam, wParam & MK_SHIFT);
             break;
 
