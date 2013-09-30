@@ -1,3 +1,13 @@
+2013-09-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Compile errors in WebKit (via peavo@outlook.com).
+        https://bugs.webkit.org/show_bug.cgi?id=122106
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add link
+        declarations missed in r156655.
+
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
         Take Xcode's advice and enable some extra warnings.
