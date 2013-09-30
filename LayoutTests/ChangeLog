@@ -1,3 +1,14 @@
+2013-09-30  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Changed expectation for accessibility/file-upload-button-stringvalue.html after r156532
+        https://bugs.webkit.org/show_bug.cgi?id=122103
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/TestExpectations: file-upload-button-stringvalue.html fails on efl-wk1.
+        Unskipped accessibility/heading-level.html. It passes after r156551.
+        * platform/efl-wk2/accessibility/file-upload-button-stringvalue-expected.txt:
+
 2013-09-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r156546): media/video-no-audio.html broken
