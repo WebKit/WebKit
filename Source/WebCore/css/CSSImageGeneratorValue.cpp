@@ -113,7 +113,7 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const I
         return static_cast<CSSCrossfadeValue*>(this)->image(renderer, size);
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<CSSFilterImageValue*>(this)->image(renderer, size);
+        return toCSSFilterImageValue(this)->image(renderer, size);
 #endif
     case LinearGradientClass:
         return static_cast<CSSLinearGradientValue*>(this)->image(renderer, size);
@@ -155,7 +155,7 @@ IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
         return static_cast<CSSCrossfadeValue*>(this)->fixedSize(renderer);
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<CSSFilterImageValue*>(this)->fixedSize(renderer);
+        return toCSSFilterImageValue(this)->fixedSize(renderer);
 #endif
     case LinearGradientClass:
         return static_cast<CSSLinearGradientValue*>(this)->fixedSize(renderer);
@@ -220,7 +220,7 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
         break;
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        static_cast<CSSFilterImageValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSFilterImageValue(this)->loadSubimages(cachedResourceLoader);
         break;
 #endif
     case LinearGradientClass:

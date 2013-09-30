@@ -1,3 +1,26 @@
+2013-09-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toCSSFooValue() for CSSFilterImageValue and CSSInitialValue
+        https://bugs.webkit.org/show_bug.cgi?id=122056
+
+        Reviewed by Antti Koivisto.
+
+        Generate toCSSFooValue() for CSSFilterImageValue and CSSInitialValue, and use it.
+        This type cast function will help to detect bad-casts.
+
+        No new tests, no behavior changes.
+
+        * css/CSSFilterImageValue.h:
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        * css/CSSInitialValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::generatedOrPendingFromValue):
+
 2013-09-29  Darin Adler  <darin@apple.com>
 
         Fix crashes caused by my recent attempt at a Windows build fix.

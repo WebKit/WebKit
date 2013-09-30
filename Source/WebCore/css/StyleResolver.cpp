@@ -3125,7 +3125,7 @@ PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID 
 #if ENABLE(CSS_FILTERS)
     if (value->isFilterImageValue()) {
         // FilterImage needs to calculate FilterOperations.
-        static_cast<CSSFilterImageValue*>(value)->createFilterOperations(this);
+        toCSSFilterImageValue(value)->createFilterOperations(this);
     }
 #endif
     if (value->isPending()) {

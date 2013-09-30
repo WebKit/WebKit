@@ -422,7 +422,7 @@ void CSSValue::destroy()
         delete static_cast<CSSInheritedValue*>(this);
         return;
     case InitialClass:
-        delete static_cast<CSSInitialValue*>(this);
+        delete toCSSInitialValue(this);
         return;
     case PrimitiveClass:
         delete static_cast<CSSPrimitiveValue*>(this);
@@ -461,7 +461,7 @@ void CSSValue::destroy()
 #endif
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        delete static_cast<CSSFilterImageValue*>(this);
+        delete toCSSFilterImageValue(this);
         return;
     case WebKitCSSFilterClass:
         delete toWebKitCSSFilterValue(this);
