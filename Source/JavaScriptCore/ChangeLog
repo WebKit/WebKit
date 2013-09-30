@@ -1,3 +1,13 @@
+2013-09-30  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Win64 compile fix after r1256490.
+        https://bugs.webkit.org/show_bug.cgi?id=122117
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITStubsMSVC64.asm:
+        Implemented getHostCallReturnValue for Windows x86_64 processors.
+
 2013-09-30  Andreas Kling  <akling@apple.com>
 
         Pass VM instead of JSGlobalObject to RegExp constructor.

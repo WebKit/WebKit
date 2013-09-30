@@ -25,9 +25,12 @@
 
 EXTERN cti_vm_throw : near
 EXTERN cti_vm_handle_exception : near
+EXTERN getHostCallReturnValueWithExecState : near
+
 PUBLIC ctiTrampoline
 PUBLIC ctiVMThrowTrampoline
 PUBLIC ctiOpThrowNotCaught
+PUBLIC getHostCallReturnValue
 
 _TEXT   SEGMENT
 
@@ -91,6 +94,12 @@ ctiOpThrowNotCaught PROC
     pop rbp
     ret
 ctiOpThrowNotCaught ENDP
+
+getHostCallReturnValue PROC
+    sub r13, 40
+    mov r13, rdi
+    jmp getHostCallReturnValueWithExecState
+getHostCallReturnValue ENDP
 
 _TEXT   ENDS
 
