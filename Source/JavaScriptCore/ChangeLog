@@ -1,3 +1,15 @@
+2013-09-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix compilation for COMPILER(MSVC) && !CPU(X86) after r156490.
+        https://bugs.webkit.org/show_bug.cgi?id=122102
+
+        Reviewed by Geoffrey Garen.
+
+        _AddressOfReturnAddress() is supported for all platforms of
+        ths Microsoft compiler, so we can use it for !CPU(X86) too.
+
+        * jit/JITOperationWrappers.h:
+
 2013-09-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed. Build fix for DEBUG_VERBOSE mode after r156511.

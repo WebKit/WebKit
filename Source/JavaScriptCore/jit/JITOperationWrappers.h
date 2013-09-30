@@ -307,7 +307,7 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 0, SH4_SCRATCH_REGISTER)
 #define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 4, SH4_SCRATCH_REGISTER)
 
-#elif COMPILER(MSVC) && CPU(X86)
+#elif COMPILER(MSVC)
 
 #define _P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
     void* JIT_OPERATION function(ExecState* exec) { return function##WithReturnAddress(exec, ReturnAddressPtr(*(void**)_AddressOfReturnAddress())); }
