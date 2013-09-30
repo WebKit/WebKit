@@ -124,14 +124,14 @@ float deviceScaleFactor(Frame* frame)
 }
 
 Page::Page(PageClients& pageClients)
-    : m_chrome(createOwned<Chrome>(*this, *pageClients.chromeClient))
-    , m_dragCaretController(createOwned<DragCaretController>())
+    : m_chrome(std::make_unique<Chrome>(*this, *pageClients.chromeClient))
+    , m_dragCaretController(std::make_unique<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(createOwned<DragController>(*this, *pageClients.dragClient))
+    , m_dragController(std::make_unique<DragController>(*this, *pageClients.dragClient))
 #endif
-    , m_focusController(createOwned<FocusController>(*this))
+    , m_focusController(std::make_unique<FocusController>(*this))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(createOwned<ContextMenuController>(*this, *pageClients.contextMenuClient))
+    , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageClients.contextMenuClient))
 #endif
 #if ENABLE(INSPECTOR)
     , m_inspectorController(InspectorController::create(this, pageClients.inspectorClient))
@@ -140,8 +140,8 @@ Page::Page(PageClients& pageClients)
     , m_pointerLockController(PointerLockController::create(this))
 #endif
     , m_settings(Settings::create(this))
-    , m_progress(ProgressTracker::create())
-    , m_backForwardController(createOwned<BackForwardController>(*this, pageClients.backForwardClient))
+    , m_progress(std::make_unique<ProgressTracker>())
+    , m_backForwardController(std::make_unique<BackForwardController>(*this, pageClients.backForwardClient))
     , m_mainFrame(MainFrame::create(*this, *pageClients.loaderClientForMainFrame))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
@@ -185,8 +185,8 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
-    , m_pageThrottler(createOwned<PageThrottler>(*this))
-    , m_console(createOwned<PageConsole>(*this))
+    , m_pageThrottler(std::make_unique<PageThrottler>(*this))
+    , m_console(std::make_unique<PageConsole>(*this))
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
 {
@@ -440,7 +440,7 @@ void Page::setGroupName(const String& name)
     if (name.isEmpty())
         m_group = m_singlePageGroup.get();
     else {
-        m_singlePageGroup.clear();
+        m_singlePageGroup = nullptr;
         m_group = PageGroup::pageGroup(name);
         m_group->addPage(this);
     }
@@ -455,7 +455,7 @@ void Page::initGroup()
 {
     ASSERT(!m_singlePageGroup);
     ASSERT(!m_group);
-    m_singlePageGroup = PageGroup::create(this);
+    m_singlePageGroup = std::make_unique<PageGroup>(*this);
     m_group = m_singlePageGroup.get();
 }
 

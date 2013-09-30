@@ -91,11 +91,6 @@ ProgressTracker::~ProgressTracker()
 {
 }
 
-PassOwnPtr<ProgressTracker> ProgressTracker::create()
-{
-    return adoptPtr(new ProgressTracker);
-}
-
 double ProgressTracker::estimatedProgress() const
 {
     return m_progressValue;

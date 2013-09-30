@@ -1,3 +1,21 @@
+2013-09-29  Sam Weinig  <sam@webkit.org>
+
+        Convert a bunch of OwnPtrs on Page to std::unique_ptrs
+        https://bugs.webkit.org/show_bug.cgi?id=122086
+
+        Reviewed by Darin Adler.
+
+        * loader/ProgressTracker.cpp:
+        * loader/ProgressTracker.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setGroupName):
+        (WebCore::Page::initGroup):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        * page/PageGroup.h:
+
 2013-09-30  Antti Koivisto  <antti@apple.com>
 
         Remove FontTranscoder

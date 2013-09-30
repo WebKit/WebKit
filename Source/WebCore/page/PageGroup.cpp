@@ -67,23 +67,17 @@ PageGroup::PageGroup(const String& name)
 {
 }
 
-PageGroup::PageGroup(Page* page)
+PageGroup::PageGroup(Page& page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
     , m_groupSettings(GroupSettings::create())
 {
-    ASSERT(page);
-    addPage(page);
+    addPage(&page);
 }
 
 PageGroup::~PageGroup()
 {
     removeAllUserContent();
-}
-
-PassOwnPtr<PageGroup> PageGroup::create(Page* page)
-{
-    return adoptPtr(new PageGroup(page));
 }
 
 typedef HashMap<String, PageGroup*> PageGroupMap;

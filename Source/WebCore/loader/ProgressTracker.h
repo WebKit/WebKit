@@ -42,9 +42,9 @@ struct ProgressItem;
 class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
+    ProgressTracker();
     ~ProgressTracker();
 
-    static PassOwnPtr<ProgressTracker> create();
     static unsigned long createUniqueIdentifier();
 
     double estimatedProgress() const;
@@ -62,8 +62,6 @@ public:
     bool isMainLoadProgressing() const;
 
 private:
-    ProgressTracker();
-
     void reset();
     void finalProgressComplete();
 
