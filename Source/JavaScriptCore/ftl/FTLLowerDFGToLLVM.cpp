@@ -279,10 +279,10 @@ private:
             break;
         case ArithAdd:
         case ValueAdd:
-            compileAdd();
+            compileAddSub(Add);
             break;
         case ArithSub:
-            compileArithSub();
+            compileAddSub(Sub);
             break;
         case ArithMul:
             compileArithMul();
@@ -654,19 +654,22 @@ private:
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
     }
     
-    void compileAdd()
+    enum AddOrSubKind {Add, Sub};
+    void compileAddSub(AddOrSubKind opKind)
     {
+        bool isSub = opKind == Sub;
         switch (m_node->binaryUseKind()) {
         case Int32Use: {
             LValue left = lowInt32(m_node->child1());
             LValue right = lowInt32(m_node->child2());
             
             if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                setInt32(m_out.add(left, right));
+                setInt32(isSub ? m_out.sub(left, right) : m_out.add(left, right));
                 break;
             }
-            
-            LValue result = m_out.addWithOverflow32(left, right);
+
+            LValue result = isSub ? m_out.subWithOverflow32(left, right) : m_out.addWithOverflow32(left, right);
+
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
             setInt32(m_out.extractValue(result, 0));
             break;
@@ -678,69 +681,23 @@ private:
                 Int52Kind kind;
                 LValue left = lowWhicheverInt52(m_node->child1(), kind);
                 LValue right = lowInt52(m_node->child2(), kind);
-                setInt52(m_out.add(left, right), kind);
+                setInt52(isSub ? m_out.sub(left, right) : m_out.add(left, right), kind);
                 break;
             }
             
             LValue left = lowInt52(m_node->child1());
             LValue right = lowInt52(m_node->child2());
-            LValue result = m_out.addWithOverflow64(left, right);
+            LValue result = isSub ? m_out.subWithOverflow64(left, right) : m_out.addWithOverflow64(left, right);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
             setInt52(m_out.extractValue(result, 0));
             break;
         }
             
         case NumberUse: {
-            setDouble(
-                m_out.doubleAdd(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-    
-    void compileArithSub()
-    {
-        switch (m_node->binaryUseKind()) {
-        case Int32Use: {
-            LValue left = lowInt32(m_node->child1());
-            LValue right = lowInt32(m_node->child2());
-            
-            if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                setInt32(m_out.sub(left, right));
-                break;
-            }
-            
-            LValue result = m_out.subWithOverflow32(left, right);
-            speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt32(m_out.extractValue(result, 0));
-            break;
-        }
-            
-        case MachineIntUse: {
-            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)
-                && !m_state.forNode(m_node->child2()).couldBeType(SpecInt52)) {
-                Int52Kind kind;
-                LValue left = lowWhicheverInt52(m_node->child1(), kind);
-                LValue right = lowInt52(m_node->child2(), kind);
-                setInt52(m_out.sub(left, right), kind);
-                break;
-            }
-            
-            LValue left = lowInt52(m_node->child1());
-            LValue right = lowInt52(m_node->child2());
-            LValue result = m_out.subWithOverflow64(left, right);
-            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt52(m_out.extractValue(result, 0));
-            break;
-        }
-            
-        case NumberUse: {
-            setDouble(
-                m_out.doubleSub(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            LValue C1 = lowDouble(m_node->child1());
+            LValue C2 = lowDouble(m_node->child2());
+
+            setDouble(isSub ? m_out.doubleSub(C1, C2) : m_out.doubleAdd(C1, C2));
             break;
         }
             
