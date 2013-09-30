@@ -22,3 +22,4 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 OTHER_CFLAGS = $(inherited) -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks;
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);

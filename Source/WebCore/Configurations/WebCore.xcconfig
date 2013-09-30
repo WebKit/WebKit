@@ -44,6 +44,7 @@ FRAMEWORK_SEARCH_PATHS_iphonesimulator = $(FRAMEWORK_SEARCH_PATHS_iphoneos_$(CON
 FRAMEWORK_SEARCH_PATHS_macosx = $(STAGED_FRAMEWORKS_SEARCH_PATH) $(FRAMEWORK_SEARCH_PATHS);
 
 OTHER_CFLAGS = $(inherited) -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks -iframework $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS);
 
 STAGED_FRAMEWORKS_SEARCH_PATH = $(STAGED_FRAMEWORKS_SEARCH_PATH_$(USE_STAGING_INSTALL_PATH));
 STAGED_FRAMEWORKS_SEARCH_PATH_YES = $(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/StagedFrameworks/Safari;

@@ -1,3 +1,12 @@
+2013-09-29  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Lion build.
+
+        Ensure that C++ and Objective-C++ files build with the right compiler flags.
+
+        * DumpRenderTree/mac/Configurations/BaseTarget.xcconfig:
+        * WebKitTestRunner/Configurations/BaseTarget.xcconfig:
+
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
         Fix some failures with newer versions of clang.
