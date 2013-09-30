@@ -1,3 +1,9 @@
+2013-09-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Correct malformed XML in project files.
+
 2013-09-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed, roll back in r156546 with rebaselined tests.

@@ -452,7 +452,7 @@
     </ClCompile>
     <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
       <Filter>Modules\mediacontrols</Filter>
-    </CLCompile>
+    </ClCompile>
     <ClCompile Include="..\Modules\mediasource\MediaSource.cpp">
       <Filter>Modules\mediasource</Filter>
     </ClCompile>
@@ -7307,7 +7307,7 @@
     </ClInclude>
     <ClInclude Include="..\Modules\mediacontrols\MediaControlsHost.h">
       <Filter>Modules\mediacontrols</Filter>
-    </CLCompile>
+    </ClInclude>
     <ClInclude Include="..\Modules\mediasource\MediaSource.h">
       <Filter>Modules\mediasource</Filter>
     </ClInclude>
