@@ -1,5 +1,14 @@
 2013-09-30  Krzysztof Czech  <k.czech@samsung.com>
 
+        [EFL] Accessibility tests pass after r156532 and r156551
+        https://bugs.webkit.org/show_bug.cgi?id=122090
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+
+2013-09-30  Krzysztof Czech  <k.czech@samsung.com>
+
         [EFL] New test accessibility/table-with-hidden-head-section.html failing on EFL port
         https://bugs.webkit.org/show_bug.cgi?id=111850
 
