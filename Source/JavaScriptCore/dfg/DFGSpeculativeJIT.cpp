@@ -299,7 +299,7 @@ void SpeculativeJIT::runSlowPathGenerators()
 // On Windows we need to wrap fmod; on other platforms we can call it directly.
 // On ARMv7 we assert that all function pointers have to low bit set (point to thumb code).
 #if CALLING_CONVENTION_IS_STDCALL || CPU(ARM_THUMB2)
-static double DFG_OPERATION fmodAsDFGOperation(double x, double y)
+static double JIT_OPERATION fmodAsDFGOperation(double x, double y)
 {
     return fmod(x, y);
 }
