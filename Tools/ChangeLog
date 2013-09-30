@@ -1,3 +1,15 @@
+2013-09-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed test fix. Prevent crash when changing URL paths during testing.
+
+        A shared BSTR value (_bstr_t) was being reallocated outside the smart pointer, causing
+        it to be double-freed.
+
+        * WinLauncher/WinLauncher.cpp:
+        (EditProc): Be explicit about type passed to loadURL.
+        (loadURL): Create a shallow copy of the BSTR so we only allocate memory if needed. Use _bstr_t so
+        that reallocating the BSTR is done with the knowledge of the smart pointer.
+
 2013-09-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix force_static_libs_as_shared in WebKit2

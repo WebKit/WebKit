@@ -882,7 +882,7 @@ LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
             strPtr[strLen] = 0;
             _bstr_t bstr(strPtr);
-            loadURL(bstr);
+            loadURL(bstr.GetBSTR());
 
             return 0;
         } 
@@ -931,14 +931,15 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
-static void loadURL(BSTR urlBStr)
+static void loadURL(BSTR passedURL)
 {
-    if (urlBStr && urlBStr[0] && (PathFileExists(urlBStr) || PathIsUNC(urlBStr))) {
+    _bstr_t urlBStr(passedURL);
+    if (!!urlBStr && (::PathFileExists(urlBStr) || ::PathIsUNC(urlBStr))) {
         TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
         DWORD fileURLLength = sizeof(fileURL)/sizeof(fileURL[0]);
 
-        if (SUCCEEDED(UrlCreateFromPath(urlBStr, fileURL, &fileURLLength, 0)))
-            SysReAllocString(&urlBStr, fileURL);
+        if (SUCCEEDED(::UrlCreateFromPath(urlBStr, fileURL, &fileURLLength, 0)))
+            urlBStr = fileURL;
     }
 
     IWebFramePtr frame;
@@ -951,7 +952,7 @@ static void loadURL(BSTR urlBStr)
     if (FAILED(hr))
         return;
 
-    hr = request->initWithURL(wcsstr(urlBStr, L"://") ? urlBStr : _bstr_t(L"http://") + urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
+    hr = request->initWithURL(wcsstr(static_cast<wchar_t*>(urlBStr), L"://") ? urlBStr : _bstr_t(L"http://") + urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     if (FAILED(hr))
         return;
 
