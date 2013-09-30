@@ -1,3 +1,14 @@
+2013-09-30  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Fix incorrect click counting in EventSenderProxy
+        https://bugs.webkit.org/show_bug.cgi?id=122098
+
+        Reviewed by Gyuyoung Kim.
+
+        After fixing EventSenderProxy extend-selection-after-double-click.html runs correctly.
+
+        * platform/efl/TestExpectations:
+
 2013-09-30  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] Gardening after the resolution of bug 84835

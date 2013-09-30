@@ -113,7 +113,6 @@ fast/events/mouseout-on-window.html
 # BUG: wrong test results that need investigation
 compositing/images/direct-pdf-image.html
 compositing/reflections/backface-hidden-reflection.html
-editing/selection/extend-selection-after-double-click.html
 fast/forms/listbox-onchange.html
 fast/forms/onselect-textfield.html
 fast/forms/option-mouseevents.html

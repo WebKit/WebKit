@@ -1,3 +1,15 @@
+2013-09-30  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Fix incorrect click counting in EventSenderProxy
+        https://bugs.webkit.org/show_bug.cgi?id=122098
+
+        Reviewed by Gyuyoung Kim.
+
+        Previously used two types of recording time, which conflicted with each other.
+
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::mouseUp):
+
 2013-09-30  Zan Dobersek  <zdobersek@igalia.com>
 
         [webkitpy] Make the Xvfb screen depth overridable

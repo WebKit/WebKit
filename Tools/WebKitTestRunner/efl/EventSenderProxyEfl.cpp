@@ -366,7 +366,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
         m_mouseButton = kWKEventMouseButtonNoButton;
 
     m_clickPosition = m_position;
-    m_clickTime = ecore_time_get();
+    m_clickTime = currentEventTime();
 }
 
 void EventSenderProxy::mouseMoveTo(double x, double y)
