@@ -8503,7 +8503,6 @@
     <ClCompile Include="..\platform\text\cf\StringCF.cpp" />
     <ClCompile Include="..\platform\text\cf\StringImplCF.cpp" />
     <ClCompile Include="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp" />
-    <ClCompile Include="..\platform\text\transcoder\FontTranscoder.cpp" />
     <ClCompile Include="..\platform\image-decoders\ImageDecoder.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -19542,7 +19541,6 @@
     <ClInclude Include="..\platform\graphics\WidthCache.h" />
     <ClInclude Include="..\platform\graphics\WidthIterator.h" />
     <ClInclude Include="..\platform\text\WritingMode.h" />
-    <ClInclude Include="..\platform\text\transcoder\FontTranscoder.h" />
     <ClInclude Include="..\platform\image-decoders\ImageDecoder.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

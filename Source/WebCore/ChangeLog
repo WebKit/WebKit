@@ -1,3 +1,56 @@
+2013-09-30  Antti Koivisto  <antti@apple.com>
+
+        Remove FontTranscoder
+        https://bugs.webkit.org/show_bug.cgi?id=122088
+
+        Reviewed by Andreas Kling.
+
+        This overly generic class just implements mapping of backslash to yen symbol for some legacy Japanese fonts.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.cpp:
+        (WebCore::useBackslashAsYenSignForFamily):
+        
+            Move the family set to Font.cpp.
+
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::update):
+        
+            Keep the cached boolean up to date.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::useBackslashAsYenSymbol):
+        
+            Use descriptive name instead of talking about "transcoding".
+
+        * platform/text/transcoder: Removed.
+        * platform/text/transcoder/FontTranscoder.cpp: Removed.
+        * platform/text/transcoder/FontTranscoder.h: Removed.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::computeUseBackslashAsYenSymbol):
+        
+            Rename for clarity. 
+            Avoid unnecessary hash lookup, just check the cached bit in Font.
+
+        (WebCore::RenderText::styleDidChange):
+        (WebCore::RenderText::setTextInternal):
+        
+            "Transcoding" here was just a simple character replacement.
+
+        (WebCore::RenderText::textWithoutConvertingBackslashToYenSymbol):
+        
+            Renamed.
+
+        * rendering/RenderText.h:
+
 2013-09-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r156546): media/video-no-audio.html broken

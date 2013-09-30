@@ -257,7 +257,7 @@ public:
     static String normalizeSpaces(const LChar*, unsigned length);
     static String normalizeSpaces(const UChar*, unsigned length);
 
-    bool needsTranscoding() const { return m_needsTranscoding; }
+    bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
     FontGlyphs* glyphs() const { return m_glyphs.get(); }
 
 private:
@@ -318,7 +318,7 @@ private:
     mutable RefPtr<FontGlyphs> m_glyphs;
     short m_letterSpacing;
     short m_wordSpacing;
-    bool m_needsTranscoding;
+    mutable bool m_useBackslashAsYenSymbol;
     mutable unsigned m_typesettingFeatures : 2; // (TypesettingFeatures) Caches values computed from m_fontDescription.
 };
 

@@ -3372,7 +3372,7 @@ String AccessibilityRenderObject::passwordFieldValue() const
         return String();
 
     // Return the text that is actually being rendered in the input field.
-    return static_cast<RenderText*>(renderer)->textWithoutTranscoding();
+    return static_cast<RenderText*>(renderer)->textWithoutConvertingBackslashToYenSymbol();
 #else
     // It seems only GTK is interested in this at the moment.
     return String();

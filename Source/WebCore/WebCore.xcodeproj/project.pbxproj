@@ -4684,8 +4684,6 @@
 		B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D27914EAC0860090D75E /* JSFocusEvent.h */; };
 		B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
-		B734B183119B991D006587BD /* FontTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B734B182119B991D006587BD /* FontTranscoder.h */; };
 		B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B776D43C1104527500BEB0EC /* PrintContext.cpp */; };
 		B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */; };
 		B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */; settings = {ATTRIBUTES = (); }; };
@@ -11563,8 +11561,6 @@
 		B6D9D27214EABF030090D75E /* FocusEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusEvent.idl; sourceTree = "<group>"; };
 		B6D9D27914EAC0860090D75E /* JSFocusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFocusEvent.h; sourceTree = "<group>"; };
 		B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFocusEvent.cpp; sourceTree = "<group>"; };
-		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
-		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
 		B776D43C1104527500BEB0EC /* PrintContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintContext.cpp; sourceTree = "<group>"; };
 		B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorApplicationCacheAgent.cpp; sourceTree = "<group>"; };
@@ -19104,7 +19100,6 @@
 			children = (
 				B2B264590D00A77E000ACC1D /* cf */,
 				B2C3D9F90D006C1D00EF6F26 /* mac */,
-				B734B17F119B98DB006587BD /* transcoder */,
 				37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */,
 				B2C3D9F20D006C1D00EF6F26 /* BidiContext.cpp */,
 				B2C3D9F30D006C1D00EF6F26 /* BidiContext.h */,
@@ -19234,15 +19229,6 @@
 				973AA3F815D0891B00E38A85 /* BindingSecurity.h */,
 			);
 			name = generic;
-			sourceTree = "<group>";
-		};
-		B734B17F119B98DB006587BD /* transcoder */ = {
-			isa = PBXGroup;
-			children = (
-				B734B180119B9911006587BD /* FontTranscoder.cpp */,
-				B734B182119B991D006587BD /* FontTranscoder.h */,
-			);
-			name = transcoder;
 			sourceTree = "<group>";
 		};
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
@@ -22544,7 +22530,6 @@
 				B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */,
 				37202199106213C600F25C4B /* FontSmoothingMode.h in Headers */,
 				3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */,
-				B734B183119B991D006587BD /* FontTranscoder.h in Headers */,
 				A80E6CED0A1989CA007FB8C5 /* FontValue.h in Headers */,
 				BCE4413612F7490B009B84B8 /* FontWidthVariant.h in Headers */,
 				4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */,
@@ -25821,7 +25806,6 @@
 				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,
 				84B62685133138F90095A489 /* FontPlatformData.cpp in Sources */,
 				B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */,
-				B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* FontValue.cpp in Sources */,
 				4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */,
 				D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */,

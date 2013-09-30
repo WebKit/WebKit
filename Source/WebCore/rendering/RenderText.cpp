@@ -28,7 +28,6 @@
 #include "AXObjectCache.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
-#include "FontTranscoder.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Hyphenation.h"
@@ -145,7 +144,7 @@ RenderText::RenderText(Text* textNode, const String& text)
     , m_containsReversedText(false)
     , m_isAllASCII(text.containsOnlyASCII())
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
-    , m_needsTranscoding(false)
+    , m_useBackslashAsYenSymbol(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_candidateComputedTextSize(0)
 #endif
@@ -200,10 +199,17 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
-void RenderText::updateNeedsTranscoding()
+bool RenderText::computeUseBackslashAsYenSymbol() const
 {
+    const FontDescription& fontDescription = style()->font().fontDescription();
+    if (style()->font().useBackslashAsYenSymbol())
+        return true;
+    if (fontDescription.isSpecifiedFont())
+        return false;
     const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;
-    m_needsTranscoding = fontTranscoder().needsTranscoding(style()->font().fontDescription(), encoding);
+    if (encoding && encoding->backslashAsCurrencySymbol() != '\\')
+        return true;
+    return false;
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -220,10 +226,10 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     RenderStyle* newStyle = style();
     bool needsResetText = false;
     if (!oldStyle) {
-        updateNeedsTranscoding();
-        needsResetText = m_needsTranscoding;
-    } else if (oldStyle->font().needsTranscoding() != newStyle->font().needsTranscoding() || (newStyle->font().needsTranscoding() && oldStyle->font().firstFamily() != newStyle->font().firstFamily())) {
-        updateNeedsTranscoding();
+        m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
+        needsResetText = m_useBackslashAsYenSymbol;
+    } else if (oldStyle->font().useBackslashAsYenSymbol() != newStyle->font().useBackslashAsYenSymbol()) {
+        m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = true;
     }
 
@@ -1337,10 +1343,10 @@ void RenderText::setTextInternal(const String& text)
 {
     ASSERT(!text.isNull());
     m_text = text;
-    if (m_needsTranscoding) {
-        const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;
-        fontTranscoder().convert(m_text, style()->font().fontDescription(), encoding);
-    }
+
+    if (m_useBackslashAsYenSymbol)
+        m_text.replace('\\', yenSign);
+
     ASSERT(m_text);
 
     if (style()) {
@@ -1405,14 +1411,11 @@ void RenderText::setText(const String& text, bool force)
         cache->textChanged(this);
 }
 
-String RenderText::textWithoutTranscoding() const
+String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 {
-    // If m_text isn't transcoded or is secure, we can just return the modified text.
-    if (!m_needsTranscoding || style()->textSecurity() != TSNONE)
+    if (!m_useBackslashAsYenSymbol || style()->textSecurity() != TSNONE)
         return text();
 
-    // Otherwise, we should use original text. If text-transform is
-    // specified, we should transform the text on the fly.
     String text = originalText();
     applyTextTransform(style(), text, previousCharacter());
     return text;

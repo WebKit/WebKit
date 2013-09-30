@@ -5957,8 +5957,6 @@ platform_sources += \
 	Source/WebCore/platform/network/ProxyServer.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
-	Source/WebCore/platform/text/transcoder/FontTranscoder.cpp \
-	Source/WebCore/platform/text/transcoder/FontTranscoder.h \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \

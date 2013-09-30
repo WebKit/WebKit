@@ -81,7 +81,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/platform/qt \
     $$SOURCE_DIR/platform/sql \
     $$SOURCE_DIR/platform/text \
-    $$SOURCE_DIR/platform/text/transcoder \
     $$SOURCE_DIR/plugins \
     $$SOURCE_DIR/rendering \
     $$SOURCE_DIR/rendering/mathml \

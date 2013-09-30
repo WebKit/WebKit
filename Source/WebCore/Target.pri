@@ -1103,7 +1103,6 @@ SOURCES += \
     platform/ThreadTimers.cpp \
     platform/Timer.cpp \
     platform/text/UnicodeRange.cpp \
-    platform/text/transcoder/FontTranscoder.cpp \
     platform/UUID.cpp \
     platform/Widget.cpp \
     platform/PlatformStrategies.cpp \
@@ -2342,7 +2341,6 @@ HEADERS += \
     platform/text/TextEncodingRegistry.h \
     platform/text/TextStream.h \
     platform/text/UnicodeRange.h \
-    platform/text/transcoder/FontTranscoder.h \
     platform/ThreadGlobalData.h \
     platform/ThreadTimers.h \
     platform/Timer.h \

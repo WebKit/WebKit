@@ -26,13 +26,13 @@
 
 #include "FloatRect.h"
 #include "FontCache.h"
-#include "FontTranscoder.h"
 #include "IntPoint.h"
 #include "GlyphBuffer.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
@@ -61,6 +61,36 @@ const uint8_t Font::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+static bool useBackslashAsYenSignForFamily(const AtomicString& family)
+{
+    if (family.isEmpty())
+        return false;
+    static HashSet<AtomicString>* set;
+    if (!set) {
+        set = new HashSet<AtomicString>;
+        set->add("MS PGothic");
+        UChar unicodeNameMSPGothic[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
+        set->add(AtomicString(unicodeNameMSPGothic, WTF_ARRAY_LENGTH(unicodeNameMSPGothic)));
+
+        set->add("MS PMincho");
+        UChar unicodeNameMSPMincho[] = {0xFF2D, 0xFF33, 0x0020, 0xFF30, 0x660E, 0x671D};
+        set->add(AtomicString(unicodeNameMSPMincho, WTF_ARRAY_LENGTH(unicodeNameMSPMincho)));
+
+        set->add("MS Gothic");
+        UChar unicodeNameMSGothic[] = {0xFF2D, 0xFF33, 0x0020, 0x30B4, 0x30B7, 0x30C3, 0x30AF};
+        set->add(AtomicString(unicodeNameMSGothic, WTF_ARRAY_LENGTH(unicodeNameMSGothic)));
+
+        set->add("MS Mincho");
+        UChar unicodeNameMSMincho[] = {0xFF2D, 0xFF33, 0x0020, 0x660E, 0x671D};
+        set->add(AtomicString(unicodeNameMSMincho, WTF_ARRAY_LENGTH(unicodeNameMSMincho)));
+
+        set->add("Meiryo");
+        UChar unicodeNameMeiryo[] = {0x30E1, 0x30A4, 0x30EA, 0x30AA};
+        set->add(AtomicString(unicodeNameMeiryo, WTF_ARRAY_LENGTH(unicodeNameMeiryo)));
+    }
+    return set->contains(family);
+}
+
 Font::CodePath Font::s_codePath = Auto;
 
 TypesettingFeatures Font::s_defaultTypesettingFeatures = 0;
@@ -72,7 +102,7 @@ TypesettingFeatures Font::s_defaultTypesettingFeatures = 0;
 Font::Font()
     : m_letterSpacing(0)
     , m_wordSpacing(0)
-    , m_needsTranscoding(false)
+    , m_useBackslashAsYenSymbol(false)
     , m_typesettingFeatures(0)
 {
 }
@@ -81,7 +111,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
     : m_fontDescription(fd)
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
-    , m_needsTranscoding(fontTranscoder().needsTranscoding(fd))
+    , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(fd.firstFamily()))
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
 }
@@ -90,11 +120,11 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMo
     : m_glyphs(FontGlyphs::createForPlatformFont(fontData))
     , m_letterSpacing(0)
     , m_wordSpacing(0)
+    , m_useBackslashAsYenSymbol(false)
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
-    m_needsTranscoding = fontTranscoder().needsTranscoding(fontDescription());
 }
 
 Font::Font(const Font& other)
@@ -102,7 +132,7 @@ Font::Font(const Font& other)
     , m_glyphs(other.m_glyphs)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
-    , m_needsTranscoding(other.m_needsTranscoding)
+    , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
 }
@@ -113,7 +143,7 @@ Font& Font::operator=(const Font& other)
     m_glyphs = other.m_glyphs;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
-    m_needsTranscoding = other.m_needsTranscoding;
+    m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
     m_typesettingFeatures = other.m_typesettingFeatures;
     return *this;
 }
@@ -258,6 +288,7 @@ static PassRefPtr<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescriptio
 void Font::update(PassRefPtr<FontSelector> fontSelector) const
 {
     m_glyphs = retrieveOrAddCachedFontGlyphs(m_fontDescription, fontSelector.get());
+    m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
     m_typesettingFeatures = computeTypesettingFeatures();
 }
 
