@@ -793,6 +793,8 @@ have?(QTQUICK) {
         UIProcess/API/qt/qwebnavigationrequest_p.h \
         UIProcess/API/qt/qquickwebpage_p.h \
         UIProcess/API/qt/qquickwebpage_p_p.h \
+        UIProcess/API/qt/qwebnavigationhistory_p.h \
+        UIProcess/API/qt/qwebnavigationhistory_p_p.h \
         UIProcess/API/qt/qquickwebview_p.h \
         UIProcess/API/qt/qquickwebview_p_p.h \
         UIProcess/API/qt/qquicknetworkreply_p.h \
@@ -825,6 +827,7 @@ have?(QTQUICK) {
         UIProcess/API/qt/qwebloadrequest.cpp \
         UIProcess/API/qt/qwebnavigationrequest.cpp \
         UIProcess/API/qt/qquickwebpage.cpp \
+        UIProcess/API/qt/qwebnavigationhistory.cpp \
         UIProcess/API/qt/qquickwebview.cpp \
         UIProcess/API/qt/qwebiconimageprovider.cpp \
         UIProcess/API/qt/qquicknetworkreply.cpp \

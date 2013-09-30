@@ -1,3 +1,16 @@
+2013-09-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix force_static_libs_as_shared in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121961
+
+        Reviewed by Csaba Osztrogonác.
+
+        Get rid of the unused WebKit2QML library
+
+        * Target.pri:
+        * WebKit2.pro:
+        * WebKit2QML.pri: Removed.
+
 2013-09-29  Mark Rowe  <mrowe@apple.com>
 
         Fix the Lion build.

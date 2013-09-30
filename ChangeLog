@@ -1,3 +1,14 @@
+2013-09-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix force_static_libs_as_shared in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121961
+
+        Reviewed by Csaba Osztrogonác.
+
+        Get rid of the unused WebKit2QML library
+
+        * Source/api.pri:
+
 2013-09-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Tons of warnings caused by using FORTIFY_SOURCE in an unoptimized build
