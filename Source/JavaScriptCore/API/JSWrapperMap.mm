@@ -506,6 +506,12 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     return nil;
 }
 
+// This class ensures that the JSExport protocol is registered with the runtime.
+NS_ROOT_CLASS @interface JSExport <JSExport>
+@end
+@implementation JSExport
+@end
+
 Protocol *getJSExportProtocol()
 {
     static Protocol *protocol = objc_getProtocol("JSExport");

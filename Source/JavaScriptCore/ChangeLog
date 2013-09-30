@@ -1,3 +1,14 @@
+2013-09-30  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/15114974> Assertion failure under -[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:] if no classes conform to JSExport
+        https://bugs.webkit.org/show_bug.cgi?id=122124
+
+        Reviewed by Darin Adler.
+
+        * API/JSWrapperMap.mm: Defined an empty class that conforms to the JSExport protocol, to
+        ensure that the protocol is always registered with the runtime by the time
+        getJSExportProtocol() is called.
+
 2013-09-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the code guarded by STYLE_SCOPED
