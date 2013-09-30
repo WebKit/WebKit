@@ -30,17 +30,10 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp)
         {
-            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
-            object->finishCreation(globalObject);
-            return object;
-        }
-        
-        static RegExpObject* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-        {
-            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(vm.heap)) RegExpObject(globalObject, structure, regExp);
-            object->finishCreation(globalObject);
+            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(vm.heap)) RegExpObject(vm, structure, regExp);
+            object->finishCreation(vm);
             return object;
         }
 
@@ -81,8 +74,8 @@ namespace JSC {
         }
 
     protected:
-        JS_EXPORT_PRIVATE RegExpObject(JSGlobalObject*, Structure*, RegExp*);
-        JS_EXPORT_PRIVATE void finishCreation(JSGlobalObject*);
+        JS_EXPORT_PRIVATE RegExpObject(VM&, Structure*, RegExp*);
+        JS_EXPORT_PRIVATE void finishCreation(VM&);
 
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
 

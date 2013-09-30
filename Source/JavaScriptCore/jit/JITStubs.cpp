@@ -1948,7 +1948,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_regexp)
         VM_THROW_EXCEPTION();
     }
 
-    return RegExpObject::create(*stackFrame.vm, stackFrame.callFrame->lexicalGlobalObject(), stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), regExp);
+    return RegExpObject::create(*stackFrame.vm, stackFrame.callFrame->lexicalGlobalObject()->regExpStructure(), regExp);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)

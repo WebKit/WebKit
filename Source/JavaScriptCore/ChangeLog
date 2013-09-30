@@ -1,3 +1,16 @@
+2013-09-30  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of JSGlobalObject to RegExp constructor.
+        <https://webkit.org/b/122113>
+
+        Reviewed by Darin Adler.
+
+        RegExps don't need anything from the global object during their
+        construction and only use it to get to the VM. Reduce loads by
+        simply passing the VM around instead.
+
+        JSC release binary size -= 120 bytes(!)
+
 2013-09-30  Patrick Gansterer  <paroga@webkit.org>
 
         Fix compilation for COMPILER(MSVC) && !CPU(X86) after r156490.

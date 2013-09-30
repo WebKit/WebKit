@@ -63,17 +63,17 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, 0, ExecState::
 @end
 */
 
-RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-    : JSNonFinalObject(globalObject->vm(), structure)
-    , m_regExp(globalObject->vm(), this, regExp)
+RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp)
+    : JSNonFinalObject(vm, structure)
+    , m_regExp(vm, this, regExp)
     , m_lastIndexIsWritable(true)
 {
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }
 
-void RegExpObject::finishCreation(JSGlobalObject* globalObject)
+void RegExpObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 }
 

@@ -751,11 +751,11 @@ EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     NativeCallFrameTracer tracer(&vm, exec);
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     if (!regexp->isValid()) {
-        exec->vm().throwException(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+        vm.throwException(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
         return JSValue::encode(jsUndefined());
     }
     
-    return JSValue::encode(RegExpObject::create(exec->vm(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
+    return JSValue::encode(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
 JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec)

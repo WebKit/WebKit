@@ -298,7 +298,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
     RegExp* emptyRegex = RegExp::create(vm, "", NoFlags);
     
-    m_regExpPrototype.set(vm, this, RegExpPrototype::create(exec, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get()), emptyRegex));
+    m_regExpPrototype.set(vm, this, RegExpPrototype::create(vm, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get()), emptyRegex));
     m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
 
 #if ENABLE(PROMISES)

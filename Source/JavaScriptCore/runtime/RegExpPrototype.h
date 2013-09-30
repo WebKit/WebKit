@@ -30,10 +30,10 @@ namespace JSC {
     public:
         typedef RegExpObject Base;
 
-        static RegExpPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+        static RegExpPrototype* create(VM& vm, Structure* structure, RegExp* regExp)
         {
-            RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(globalObject, structure, regExp);
-            prototype->finishCreation(globalObject);
+            RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(vm.heap)) RegExpPrototype(vm, structure, regExp);
+            prototype->finishCreation(vm);
             return prototype;
         }
         
@@ -45,7 +45,7 @@ namespace JSC {
         }
 
     protected:
-        RegExpPrototype(JSGlobalObject*, Structure*, RegExp*);
+        RegExpPrototype(VM&, Structure*, RegExp*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
 
     private:

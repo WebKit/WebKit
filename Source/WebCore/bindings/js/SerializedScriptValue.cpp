@@ -1609,8 +1609,9 @@ private:
                 return JSValue();
             RegExpFlags reFlags = regExpFlags(flags->string());
             ASSERT(reFlags != InvalidFlags);
-            RegExp* regExp = RegExp::create(m_exec->vm(), pattern->string(), reFlags);
-            return RegExpObject::create(m_exec, m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
+            VM& vm = m_exec->vm();
+            RegExp* regExp = RegExp::create(vm, pattern->string(), reFlags);
+            return RegExpObject::create(vm, m_globalObject->regExpStructure(), regExp);
         }
         case ObjectReferenceTag: {
             unsigned index = 0;

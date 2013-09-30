@@ -60,8 +60,8 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, 
 @end
 */
 
-RegExpPrototype::RegExpPrototype(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-    : RegExpObject(globalObject, structure, regExp)
+RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure, RegExp* regExp)
+    : RegExpObject(vm, structure, regExp)
 {
 }
 
