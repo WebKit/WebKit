@@ -116,9 +116,9 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const I
         return toCSSFilterImageValue(this)->image(renderer, size);
 #endif
     case LinearGradientClass:
-        return static_cast<CSSLinearGradientValue*>(this)->image(renderer, size);
+        return toCSSLinearGradientValue(this)->image(renderer, size);
     case RadialGradientClass:
-        return static_cast<CSSRadialGradientValue*>(this)->image(renderer, size);
+        return toCSSRadialGradientValue(this)->image(renderer, size);
     default:
         ASSERT_NOT_REACHED();
     }
@@ -158,9 +158,9 @@ IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
         return toCSSFilterImageValue(this)->fixedSize(renderer);
 #endif
     case LinearGradientClass:
-        return static_cast<CSSLinearGradientValue*>(this)->fixedSize(renderer);
+        return toCSSLinearGradientValue(this)->fixedSize(renderer);
     case RadialGradientClass:
-        return static_cast<CSSRadialGradientValue*>(this)->fixedSize(renderer);
+        return toCSSRadialGradientValue(this)->fixedSize(renderer);
     default:
         ASSERT_NOT_REACHED();
     }
@@ -224,10 +224,10 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
         break;
 #endif
     case LinearGradientClass:
-        static_cast<CSSLinearGradientValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSLinearGradientValue(this)->loadSubimages(cachedResourceLoader);
         break;
     case RadialGradientClass:
-        static_cast<CSSRadialGradientValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSRadialGradientValue(this)->loadSubimages(cachedResourceLoader);
         break;
     default:
         ASSERT_NOT_REACHED();

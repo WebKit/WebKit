@@ -2160,7 +2160,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 CSSValue* item = i.value();
                 if (item->isImageGeneratorValue()) {
                     if (item->isGradientValue())
-                        state.style()->setContent(StyleGeneratedImage::create(static_cast<CSSGradientValue*>(item)->gradientWithStylesResolved(this).get()), didSet);
+                        state.style()->setContent(StyleGeneratedImage::create(toCSSGradientValue(item)->gradientWithStylesResolved(this).get()), didSet);
                     else
                         state.style()->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
                     didSet = true;
@@ -3096,7 +3096,7 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
 
     if (value->isImageGeneratorValue()) {
         if (value->isGradientValue())
-            return generatedOrPendingFromValue(property, static_cast<CSSGradientValue*>(value)->gradientWithStylesResolved(this).get());
+            return generatedOrPendingFromValue(property, toCSSGradientValue(value)->gradientWithStylesResolved(this).get());
         return generatedOrPendingFromValue(property, static_cast<CSSImageGeneratorValue*>(value));
     }
 
