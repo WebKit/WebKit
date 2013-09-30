@@ -1,3 +1,10 @@
+2013-09-29  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::evaluate):
+
 2013-09-28  Mark Rowe  <mrowe@apple.com>
 
         Fix some failures with newer versions of clang.
