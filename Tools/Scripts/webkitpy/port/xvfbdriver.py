@@ -65,6 +65,9 @@ class XvfbDriver(Driver):
                 if self._guard_lock.acquire_lock():
                     return i
 
+    def _xvfb_screen_depth(self):
+        return os.environ.get('XVFB_SCREEN_DEPTH', '24')
+
     def _start(self, pixel_tests, per_test_args):
         self.stop()
 
@@ -74,7 +77,7 @@ class XvfbDriver(Driver):
         display_id = self._next_free_display()
         self._lock_file = "/tmp/.X%d-lock" % display_id
 
-        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x8", "-nolisten", "tcp"]
+        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x%s" % self._xvfb_screen_depth(), "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
 
