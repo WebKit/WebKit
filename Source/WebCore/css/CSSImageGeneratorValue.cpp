@@ -108,7 +108,7 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const I
 {
     switch (classType()) {
     case CanvasClass:
-        return static_cast<CSSCanvasValue*>(this)->image(renderer, size);
+        return toCSSCanvasValue(this)->image(renderer, size);
     case CrossfadeClass:
         return toCSSCrossfadeValue(this)->image(renderer, size);
 #if ENABLE(CSS_FILTERS)
@@ -150,7 +150,7 @@ IntSize CSSImageGeneratorValue::fixedSize(const RenderElement* renderer)
 {
     switch (classType()) {
     case CanvasClass:
-        return static_cast<CSSCanvasValue*>(this)->fixedSize(renderer);
+        return toCSSCanvasValue(this)->fixedSize(renderer);
     case CrossfadeClass:
         return toCSSCrossfadeValue(this)->fixedSize(renderer);
 #if ENABLE(CSS_FILTERS)
@@ -216,7 +216,7 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
         toCSSCrossfadeValue(this)->loadSubimages(cachedResourceLoader);
         break;
     case CanvasClass:
-        static_cast<CSSCanvasValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSCanvasValue(this)->loadSubimages(cachedResourceLoader);
         break;
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:

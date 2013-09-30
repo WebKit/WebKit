@@ -94,6 +94,8 @@ private:
     HTMLCanvasElement* m_element;
 };
 
+CSS_VALUE_TYPE_CASTS(CanvasValue)
+
 } // namespace WebCore
 
 #endif // CSSCanvasValue_h

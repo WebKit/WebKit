@@ -389,7 +389,7 @@ void CSSValue::destroy()
         delete static_cast<CSSBorderImageSliceValue*>(this);
         return;
     case CanvasClass:
-        delete static_cast<CSSCanvasValue*>(this);
+        delete toCSSCanvasValue(this);
         return;
     case CursorImageClass:
         delete static_cast<CSSCursorImageValue*>(this);
