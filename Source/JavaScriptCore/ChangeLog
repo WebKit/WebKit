@@ -1,5 +1,15 @@
 2013-09-30  Andreas Kling  <akling@apple.com>
 
+        Pass VM instead of ExecState to ObjectPrototype constructor.
+        <https://webkit.org/b/122116>
+
+        Reviewed by Geoffrey Garen.
+
+        The ObjectPrototype constructor was only using the ExecState to get
+        to the VM.
+
+2013-09-30  Andreas Kling  <akling@apple.com>
+
         Pass VM instead of JSGlobalObject to MathObject constructor.
         <https://webkit.org/b/122119>
 

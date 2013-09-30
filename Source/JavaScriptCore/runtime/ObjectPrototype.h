@@ -29,7 +29,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        static ObjectPrototype* create(ExecState*, JSGlobalObject*, Structure*);
+        static ObjectPrototype* create(VM&, JSGlobalObject*, Structure*);
 
         DECLARE_INFO;
 
@@ -39,10 +39,10 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*);
+        void finishCreation(VM&, JSGlobalObject*);
 
     private:
-        ObjectPrototype(ExecState*, Structure*);
+        ObjectPrototype(VM&, Structure*);
     };
 
     JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState*);
