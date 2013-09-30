@@ -59,6 +59,7 @@ namespace WebCore {
 
 class WebCoreAVFResourceLoader;
 class InbandTextTrackPrivateAVFObjC;
+class AudioTrackPrivateAVFObjC;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
@@ -214,7 +215,11 @@ private:
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     RetainPtr<AVPlayerItemLegibleOutput> m_legibleOutput;
 #endif
-    
+
+#if ENABLE(VIDEO_TRACK)
+    Vector<RefPtr<AudioTrackPrivateAVFObjC>> m_audioTracks;
+#endif
+
     InbandTextTrackPrivateAVF* m_currentTrack;
 };
 

@@ -1,3 +1,13 @@
+2013-09-27  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add AudioTrack support to MediaPlayerPrivateAVFObC.
+        https://bugs.webkit.org/show_bug.cgi?id=122043
+
+        Reviewed by Eric Carlson.
+
+        * media/track/audio-track-expected.txt: Added.
+        * media/track/audio-track.html: Added.
+
 2013-09-30  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] Added passing expectation for fast/forms/textarea-metrics.html

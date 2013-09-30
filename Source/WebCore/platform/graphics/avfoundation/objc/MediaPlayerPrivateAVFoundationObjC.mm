@@ -29,6 +29,7 @@
 
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
+#import "AudioTrackPrivateAVFObjC.h"
 #import "BlockExceptions.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
@@ -1048,6 +1049,47 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         }
         setHasVideo(hasVideo);
         setHasAudio(hasAudio);
+
+
+#if ENABLE(VIDEO_TRACK)
+        RetainPtr<NSSet> audioTracks = adoptNS([[NSSet alloc] initWithArray:[tracks objectsAtIndexes:[tracks indexesOfObjectsPassingTest:^(id track, NSUInteger, BOOL*){
+            return [[[track assetTrack] mediaType] isEqualToString:AVMediaTypeAudio];
+        }]]]);
+        RetainPtr<NSMutableSet> oldAudioTracks = adoptNS([[NSMutableSet alloc] initWithCapacity:m_audioTracks.size()]);
+
+        typedef Vector<RefPtr<AudioTrackPrivateAVFObjC> > AudioTrackVector;
+        for (AudioTrackVector::iterator i = m_audioTracks.begin(); i != m_audioTracks.end(); ++i)
+            [oldAudioTracks.get() addObject:(*i)->playerItemTrack()];
+
+        RetainPtr<NSMutableSet> removedAVAudioTracks = adoptNS([oldAudioTracks.get() mutableCopy]);
+        [removedAVAudioTracks.get() minusSet:audioTracks.get()];
+
+        RetainPtr<NSMutableSet> addedAVAudioTracks = adoptNS([audioTracks.get() mutableCopy]);
+        [addedAVAudioTracks.get() minusSet:oldAudioTracks.get()];
+
+        AudioTrackVector replacementAudioTracks;
+        AudioTrackVector addedAudioTracks;
+        AudioTrackVector removedAudioTracks;
+        for (AudioTrackVector::iterator i = m_audioTracks.begin(); i != m_audioTracks.end(); ++i) {
+            if ([removedAVAudioTracks containsObject:(*i)->playerItemTrack()])
+                removedAudioTracks.append(*i);
+            else
+                replacementAudioTracks.append(*i);
+        }
+
+        for (AVPlayerItemTrack* playerItemTrack in addedAVAudioTracks.get())
+            addedAudioTracks.append(AudioTrackPrivateAVFObjC::create(playerItemTrack));
+
+        replacementAudioTracks.appendVector(addedAudioTracks);
+
+        m_audioTracks.swap(replacementAudioTracks);
+
+        for (AudioTrackVector::iterator i = removedAudioTracks.begin(); i != removedAudioTracks.end(); ++i)
+            player()->removeAudioTrack(*i);
+
+        for (AudioTrackVector::iterator i = addedAudioTracks.begin(); i != addedAudioTracks.end(); ++i)
+            player()->addAudioTrack(*i);
+#endif
     }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
@@ -1525,23 +1567,15 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     }
 
     AVAssetTrack *track = [tracks objectAtIndex:0];
-    NSString *language = [track extendedLanguageTag];
+    m_languageOfPrimaryAudioTrack = AudioTrackPrivateAVFObjC::languageForAVAssetTrack(track);
 
-    // If the language code is stored as a QuickTime 5-bit packed code there aren't enough bits for a full
-    // RFC 4646 language tag so extendedLanguageTag returns NULL. In this case languageCode will return the
-    // ISO 639-2/T language code so check it.
-    if (!language)
-        language = [track languageCode];
-
-    // Some legacy tracks have "und" as a language, treat that the same as no language at all.
-    if (language && ![language isEqualToString:@"und"]) {
-        m_languageOfPrimaryAudioTrack = language;
+#if !LOG_DISABLED
+    if (m_languageOfPrimaryAudioTrack == emptyString())
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - single audio track has no language, returning emptyString()", this);
+    else
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - returning language of single audio track: %s", this, m_languageOfPrimaryAudioTrack.utf8().data());
-        return m_languageOfPrimaryAudioTrack;
-    }
+#endif
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack(%p) - single audio track has no language, returning emptyString()", this);
-    m_languageOfPrimaryAudioTrack = emptyString();
     return m_languageOfPrimaryAudioTrack;
 }
 
