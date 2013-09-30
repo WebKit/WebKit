@@ -1,3 +1,20 @@
+2013-09-30  Robert Plociennik  <r.plociennik@samsung.com>
+
+        editing/execCommand/findString-diacriticals.html expects to fail
+        https://bugs.webkit.org/show_bug.cgi?id=122100
+
+        Reviewed by Alexey Proskuryakov.
+
+        Since all major platforms pass editing/execCommand/findString-diacriticals.html,
+        the test now globally expects "PASS" instead of "FAIL" rendering the individual
+        platform expectation files obsolete.
+
+        * editing/execCommand/findString-diacriticals-expected.txt: "PASS" -> "FAIL"
+        * platform/efl/TestExpectations: EFL passes editing/execCommand/findString-diacriticals.
+        * platform/gtk/editing/execCommand/findString-diacriticals-expected.txt: Removed.
+        * platform/mac/editing/execCommand/findString-diacriticals-expected.txt: Removed.
+        * platform/qt/editing/execCommand/findString-diacriticals-expected.txt: Removed.
+
 2013-09-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156656.
