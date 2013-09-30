@@ -34,39 +34,33 @@
 
 namespace WebCore {
 
-using namespace JSC;
-
 WebCoreTypedArrayController::WebCoreTypedArrayController()
-    : m_owner()
 {
 }
-WebCoreTypedArrayController::~WebCoreTypedArrayController() { }
 
-JSArrayBuffer* WebCoreTypedArrayController::toJS(
-    ExecState* exec, JSGlobalObject* globalObject, ArrayBuffer* native)
+WebCoreTypedArrayController::~WebCoreTypedArrayController()
 {
-    return jsCast<JSArrayBuffer*>(
-        WebCore::toJS(exec, jsCast<JSDOMGlobalObject*>(globalObject), native));
 }
 
-bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(
-    Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
+JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
 {
-    JSArrayBuffer* jsArrayBuffer = jsCast<JSArrayBuffer*>(handle.get().asCell());
-    if (!jsArrayBuffer->hasCustomProperties())
+    return JSC::jsCast<JSC::JSArrayBuffer*>(toJS(state, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
+}
+
+bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
+{
+    auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.get().asCell());
+    if (!wrapper.hasCustomProperties())
         return false;
-    ArrayBuffer* root = jsArrayBuffer->impl();
-    return visitor.containsOpaqueRoot(root);
+    return visitor.containsOpaqueRoot(wrapper.impl());
 }
 
-void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(
-    Handle<JSC::Unknown> handle, void* context)
+void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSArrayBuffer* jsArrayBuffer = static_cast<JSArrayBuffer*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsArrayBuffer->impl(), jsArrayBuffer);
-    jsArrayBuffer->impl()->deref();
+    auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.get().asCell());
+    auto& buffer = *wrapper.impl();
+    uncacheWrapper(static_cast<DOMWrapperWorld*>(context), &buffer, &wrapper);
+    buffer.deref();
 }
 
 } // namespace WebCore
-

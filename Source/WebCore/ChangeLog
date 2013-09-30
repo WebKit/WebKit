@@ -1,5 +1,20 @@
 2013-09-29  Darin Adler  <darin@apple.com>
 
+        Try to fix Windows build.
+
+        * bindings/js/WebCoreTypedArrayController.cpp: Windows has a symbol named Handle, so we need
+        to call JSC::Handle out by name. To fix that, I removed "using namespace JSC" entirely. And
+        just for fun, sort of "rewrote" this file.
+        (WebCore::WebCoreTypedArrayController::WebCoreTypedArrayController): Removed unneeded explicit
+        initialization of m_owner.
+        (WebCore::WebCoreTypedArrayController::~WebCoreTypedArrayController): Fixed formatting.
+        (WebCore::WebCoreTypedArrayController::toJS): Added lots of explicit JSC and got rid of local.
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots): Cut
+        down on locals, used auto& for type, and called it "wrapper" since that's what JSArrayBuffer is.
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize): More of the same.
+
+2013-09-29  Darin Adler  <darin@apple.com>
+
         Use RenderElement instead of RenderObject in many places
         https://bugs.webkit.org/show_bug.cgi?id=122078
 
