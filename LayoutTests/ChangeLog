@@ -1,3 +1,14 @@
+2013-09-30  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] New test accessibility/table-with-hidden-head-section.html failing on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=111850
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test passes after r156532.
+
+        * platform/efl/TestExpectations:
+
 2013-09-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Implement the grid-area shorthand
