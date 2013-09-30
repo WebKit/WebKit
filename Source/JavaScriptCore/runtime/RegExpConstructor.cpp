@@ -82,9 +82,9 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
-    : InternalFunction(globalObject, structure)
-    , m_cachedResult(globalObject->vm(), this, regExpPrototype->regExp())
+RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
+    : InternalFunction(vm, structure)
+    , m_cachedResult(vm, this, regExpPrototype->regExp())
     , m_multiline(false)
 {
 }

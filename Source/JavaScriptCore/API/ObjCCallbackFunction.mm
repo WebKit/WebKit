@@ -467,17 +467,17 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
-ObjCCallbackFunction::ObjCCallbackFunction(JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
-    : Base(globalObject, globalObject->objcCallbackFunctionStructure())
+ObjCCallbackFunction::ObjCCallbackFunction(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
+    : Base(vm, globalObject->objcCallbackFunctionStructure())
     , m_callback(callback)
     , m_impl(impl)
 {
 }
 
-ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
+ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
 {
-    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(*exec->heap())) ObjCCallbackFunction(globalObject, objCCallbackFunctionCallAsFunction, impl);
-    function->finishCreation(exec->vm(), name);
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(vm.heap)) ObjCCallbackFunction(vm, globalObject, objCCallbackFunctionCallAsFunction, impl);
+    function->finishCreation(vm, name);
     return function;
 }
 
@@ -589,7 +589,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSC::APIEntryShim shim(exec);
     OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(context, invocation, type, instanceClass, arguments.release(), result.release()));
     // FIXME: Maybe we could support having the selector as the name of the function to make it a bit more user-friendly from the JS side?
-    return toRef(JSC::ObjCCallbackFunction::create(exec, exec->lexicalGlobalObject(), "", impl.release()));
+    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), "", impl.release()));
 }
 
 JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protocol *protocol, BOOL isInstanceMethod, SEL sel, const char* types)

@@ -39,8 +39,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionConstructor);
 
 const ClassInfo FunctionConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionConstructor) };
 
-FunctionConstructor::FunctionConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+FunctionConstructor::FunctionConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

@@ -1,5 +1,21 @@
 2013-09-29  Andreas Kling  <akling@apple.com>
 
+        Pass VM instead of JSGlobalObject to function constructors.
+        <https://webkit.org/b/122082>
+
+        Reviewed by Darin Adler.
+
+        Functions don't need anything from the global object during their
+        construction and only use it to get to the VM. Reduce loads by
+        simply passing the VM around instead.
+
+        This patch is mostly mechanical, I just changed the signature of
+        InternalFunction and worked my way from there until it built.
+
+        JSC release binary size -= 4840 bytes.
+
+2013-09-29  Andreas Kling  <akling@apple.com>
+
         Pass VM instead of JSGlobalObject to ArrayPrototype constructor.
         <https://webkit.org/b/122079>
 

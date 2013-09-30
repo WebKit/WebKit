@@ -74,8 +74,8 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
-DateConstructor::DateConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure) 
+DateConstructor::DateConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

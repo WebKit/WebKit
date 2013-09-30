@@ -31,10 +31,9 @@ class BooleanConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
+    static BooleanConstructor* create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype)
     {
-        VM& vm = exec->vm();
-        BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm.heap)) BooleanConstructor(globalObject, structure);
+        BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm.heap)) BooleanConstructor(vm, structure);
         constructor->finishCreation(vm, booleanPrototype);
         return constructor;
     }
@@ -50,7 +49,7 @@ protected:
     void finishCreation(VM&, BooleanPrototype*);
 
 private:
-    BooleanConstructor(JSGlobalObject*, Structure*);
+    BooleanConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };

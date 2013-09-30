@@ -37,11 +37,11 @@ public:
     typedef InternalFunction Base;
 
 protected:
-    JSArrayBufferConstructor(JSGlobalObject*, Structure*);
+    JSArrayBufferConstructor(VM&, Structure*);
     void finishCreation(VM&, JSArrayBufferPrototype*);
 
 public:
-    static JSArrayBufferConstructor* create(CallFrame*, JSGlobalObject*, Structure*, JSArrayBufferPrototype*);
+    static JSArrayBufferConstructor* create(VM&, Structure*, JSArrayBufferPrototype*);
     
     DECLARE_INFO;
     

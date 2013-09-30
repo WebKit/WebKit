@@ -40,10 +40,9 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseResolverConstructor);
 
 const ClassInfo JSPromiseResolverConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromiseResolverConstructor) };
 
-JSPromiseResolverConstructor* JSPromiseResolverConstructor::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromiseResolverPrototype* promisePrototype)
+JSPromiseResolverConstructor* JSPromiseResolverConstructor::create(VM& vm, Structure* structure, JSPromiseResolverPrototype* promisePrototype)
 {
-    VM& vm = exec->vm();
-    JSPromiseResolverConstructor* constructor = new (NotNull, allocateCell<JSPromiseResolverConstructor>(vm.heap)) JSPromiseResolverConstructor(globalObject, structure);
+    JSPromiseResolverConstructor* constructor = new (NotNull, allocateCell<JSPromiseResolverConstructor>(vm.heap)) JSPromiseResolverConstructor(vm, structure);
     constructor->finishCreation(vm, promisePrototype);
     return constructor;
 }
@@ -53,8 +52,8 @@ Structure* JSPromiseResolverConstructor::createStructure(VM& vm, JSGlobalObject*
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromiseResolverConstructor::JSPromiseResolverConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure) 
+JSPromiseResolverConstructor::JSPromiseResolverConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

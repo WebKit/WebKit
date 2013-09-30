@@ -148,11 +148,12 @@ void JSPromiseResolver::resolve(ExecState* exec, JSValue value, ResolverMode mod
         CallData callData;
         CallType callType = JSC::getCallData(then, callData);
         if (callType != CallTypeNone) {
+            VM& vm = exec->vm();
             // 4.1. Let fulfillCallback be a promise callback for the context object and its resolve algorithm.
-            JSPromiseCallback* fulfillCallback = JSPromiseCallback::create(exec, globalObject(), globalObject()->promiseCallbackStructure(), this, JSPromiseCallback::Resolve);
+            JSPromiseCallback* fulfillCallback = JSPromiseCallback::create(vm, globalObject()->promiseCallbackStructure(), this, JSPromiseCallback::Resolve);
 
             // 4.2. Let rejectCallback be a promise callback for the context object and its reject algorithm.
-            JSPromiseCallback* rejectCallback = JSPromiseCallback::create(exec, globalObject(), globalObject()->promiseCallbackStructure(), this, JSPromiseCallback::Reject);
+            JSPromiseCallback* rejectCallback = JSPromiseCallback::create(vm, globalObject()->promiseCallbackStructure(), this, JSPromiseCallback::Reject);
             
             // 4.3. Call the JavaScript [[Call]] internal method of then with this value value and fulfillCallback
             //      and rejectCallback as arguments.

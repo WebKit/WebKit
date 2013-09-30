@@ -36,10 +36,9 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
+        static RegExpConstructor* create(VM& vm, Structure* structure, RegExpPrototype* regExpPrototype)
         {
-            VM& vm = exec->vm();
-            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(globalObject, structure, regExpPrototype);
+            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(vm, structure, regExpPrototype);
             constructor->finishCreation(vm, regExpPrototype);
             return constructor;
         }
@@ -76,7 +75,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | Base::StructureFlags;
 
     private:
-        RegExpConstructor(JSGlobalObject*, Structure*, RegExpPrototype*);
+        RegExpConstructor(VM&, Structure*, RegExpPrototype*);
         static void destroy(JSCell*);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);

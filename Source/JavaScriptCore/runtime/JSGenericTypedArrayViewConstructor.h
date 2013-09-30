@@ -36,13 +36,13 @@ public:
     typedef InternalFunction Base;
 
 protected:
-    JSGenericTypedArrayViewConstructor(JSGlobalObject*, Structure*);
+    JSGenericTypedArrayViewConstructor(VM&, Structure*);
     void finishCreation(VM&, JSObject* prototype, const String& name);
 
 public:
     static JSGenericTypedArrayViewConstructor* create(
-        JSGlobalObject*, Structure*, JSObject* prototype, const String& name);
-    
+        VM&, Structure*, JSObject* prototype, const String& name);
+
     DECLARE_INFO;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);

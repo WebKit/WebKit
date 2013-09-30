@@ -65,10 +65,9 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::
 @end
 */
 
-JSPromiseConstructor* JSPromiseConstructor::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromisePrototype* promisePrototype)
+JSPromiseConstructor* JSPromiseConstructor::create(VM& vm, Structure* structure, JSPromisePrototype* promisePrototype)
 {
-    VM& vm = exec->vm();
-    JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(vm.heap)) JSPromiseConstructor(globalObject, structure);
+    JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(vm.heap)) JSPromiseConstructor(vm, structure);
     constructor->finishCreation(vm, promisePrototype);
     return constructor;
 }
@@ -78,8 +77,8 @@ Structure* JSPromiseConstructor::createStructure(VM& vm, JSGlobalObject* globalO
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromiseConstructor::JSPromiseConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure) 
+JSPromiseConstructor::JSPromiseConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

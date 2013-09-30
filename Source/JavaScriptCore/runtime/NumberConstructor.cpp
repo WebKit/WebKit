@@ -55,8 +55,8 @@ const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure) 
+NumberConstructor::NumberConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

@@ -47,7 +47,7 @@ class ObjCCallbackFunction : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static ObjCCallbackFunction* create(ExecState*, JSGlobalObject*, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    static ObjCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl>);
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -61,7 +61,7 @@ public:
     ObjCCallbackFunctionImpl* impl() { return m_impl.get(); }
 
 protected:
-    ObjCCallbackFunction(JSGlobalObject*, JSObjectCallAsFunctionCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
 
 private:
     static CallType getCallData(JSCell*, CallData&);

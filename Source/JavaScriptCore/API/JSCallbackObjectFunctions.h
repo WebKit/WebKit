@@ -592,15 +592,15 @@ JSValue JSCallbackObject<Parent>::staticFunctionGetter(ExecState* exec, JSValue 
     PropertySlot slot2(thisObj);
     if (Parent::getOwnPropertySlot(thisObj, exec, propertyName, slot2))
         return slot2.getValue(exec, propertyName);
-    
+
     if (StringImpl* name = propertyName.publicName()) {
         for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass) {
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
                 if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
                     if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                        
-                        JSObject* o = JSCallbackFunction::create(exec, thisObj->globalObject(), callAsFunction, name);
-                        thisObj->putDirect(exec->vm(), propertyName, o, entry->attributes);
+                        VM& vm = exec->vm();
+                        JSObject* o = JSCallbackFunction::create(vm, thisObj->globalObject(), callAsFunction, name);
+                        thisObj->putDirect(vm, propertyName, o, entry->attributes);
                         return o;
                     }
                 }

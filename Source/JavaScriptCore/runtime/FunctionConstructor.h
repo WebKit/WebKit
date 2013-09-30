@@ -35,10 +35,9 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static FunctionConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, FunctionPrototype* functionPrototype)
+        static FunctionConstructor* create(VM& vm, Structure* structure, FunctionPrototype* functionPrototype)
         {
-            VM& vm = exec->vm();
-            FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(vm.heap)) FunctionConstructor(globalObject, structure);
+            FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(vm.heap)) FunctionConstructor(vm, structure);
             constructor->finishCreation(vm, functionPrototype);
             return constructor;
         }
@@ -51,7 +50,7 @@ namespace JSC {
         }
 
     private:
-        FunctionConstructor(JSGlobalObject*, Structure*);
+        FunctionConstructor(VM&, Structure*);
         void finishCreation(VM&, FunctionPrototype*);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);

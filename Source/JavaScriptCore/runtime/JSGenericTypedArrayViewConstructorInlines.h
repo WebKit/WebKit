@@ -34,8 +34,8 @@
 namespace JSC {
 
 template<typename ViewClass>
-JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : Base(globalObject, structure)
+JSGenericTypedArrayViewConstructor<ViewClass>::JSGenericTypedArrayViewConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure)
 {
 }
 
@@ -51,13 +51,12 @@ void JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation(VM& vm, JSObj
 template<typename ViewClass>
 JSGenericTypedArrayViewConstructor<ViewClass>*
 JSGenericTypedArrayViewConstructor<ViewClass>::create(
-    JSGlobalObject* globalObject, Structure* structure, JSObject* prototype,
+    VM& vm, Structure* structure, JSObject* prototype,
     const String& name)
 {
-    VM& vm = globalObject->vm();
     JSGenericTypedArrayViewConstructor* result =
         new (NotNull, allocateCell<JSGenericTypedArrayViewConstructor>(vm.heap))
-        JSGenericTypedArrayViewConstructor(globalObject, structure);
+        JSGenericTypedArrayViewConstructor(vm, structure);
     result->finishCreation(vm, prototype, name);
     return result;
 }

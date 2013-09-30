@@ -80,8 +80,8 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-ObjectConstructor::ObjectConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+ObjectConstructor::ObjectConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

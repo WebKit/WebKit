@@ -48,8 +48,8 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringConstructor);
 
-StringConstructor::StringConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+StringConstructor::StringConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

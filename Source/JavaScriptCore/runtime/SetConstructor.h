@@ -36,10 +36,9 @@ class SetConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static SetConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, SetPrototype* setPrototype)
+    static SetConstructor* create(VM& vm, Structure* structure, SetPrototype* setPrototype)
     {
-        VM& vm = exec->vm();
-        SetConstructor* constructor = new (NotNull, allocateCell<SetConstructor>(vm.heap)) SetConstructor(globalObject, structure);
+        SetConstructor* constructor = new (NotNull, allocateCell<SetConstructor>(vm.heap)) SetConstructor(vm, structure);
         constructor->finishCreation(vm, setPrototype);
         return constructor;
     }
@@ -52,8 +51,8 @@ public:
     }
 
 private:
-    SetConstructor(JSGlobalObject* globalObject, Structure* structure)
-        : Base(globalObject, structure)
+    SetConstructor(VM& vm, Structure* structure)
+        : Base(vm, structure)
     {
     }
     void finishCreation(VM&, SetPrototype*);

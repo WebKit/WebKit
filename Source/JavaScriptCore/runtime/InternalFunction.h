@@ -49,7 +49,7 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
-        JS_EXPORT_PRIVATE InternalFunction(JSGlobalObject*, Structure*);
+        JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*);
 
         JS_EXPORT_PRIVATE void finishCreation(VM&, const String& name);
 

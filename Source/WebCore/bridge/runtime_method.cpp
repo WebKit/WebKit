@@ -43,7 +43,7 @@ const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_
 
 RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Method* method)
     // Callers will need to pass in the right global object corresponding to this native object "method".
-    : InternalFunction(globalObject, structure)
+    : InternalFunction(globalObject->vm(), structure)
     , m_method(method)
 {
 }

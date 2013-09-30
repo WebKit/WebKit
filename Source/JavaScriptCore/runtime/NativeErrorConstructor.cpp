@@ -33,8 +33,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(NativeErrorConstructor) };
 
-NativeErrorConstructor::NativeErrorConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+NativeErrorConstructor::NativeErrorConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

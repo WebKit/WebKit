@@ -54,8 +54,8 @@ const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_in
 @end
 */
 
-ArrayConstructor::ArrayConstructor(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 

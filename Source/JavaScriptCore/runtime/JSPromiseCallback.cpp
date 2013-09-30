@@ -39,10 +39,10 @@ namespace JSC {
 
 const ClassInfo JSPromiseCallback::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromiseCallback) };
 
-JSPromiseCallback* JSPromiseCallback::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromiseResolver* resolver, Algorithm algorithm)
+JSPromiseCallback* JSPromiseCallback::create(VM& vm, Structure* structure, JSPromiseResolver* resolver, Algorithm algorithm)
 {
-    JSPromiseCallback* constructor = new (NotNull, allocateCell<JSPromiseCallback>(*exec->heap())) JSPromiseCallback(globalObject, structure, algorithm);
-    constructor->finishCreation(exec, resolver);
+    JSPromiseCallback* constructor = new (NotNull, allocateCell<JSPromiseCallback>(vm.heap)) JSPromiseCallback(vm, structure, algorithm);
+    constructor->finishCreation(vm, resolver);
     return constructor;
 }
 
@@ -51,16 +51,16 @@ Structure* JSPromiseCallback::createStructure(VM& vm, JSGlobalObject* globalObje
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromiseCallback::JSPromiseCallback(JSGlobalObject* globalObject, Structure* structure, Algorithm algorithm)
-    : InternalFunction(globalObject, structure)
+JSPromiseCallback::JSPromiseCallback(VM& vm, Structure* structure, Algorithm algorithm)
+    : InternalFunction(vm, structure)
     , m_algorithm(algorithm)
 {
 }
 
-void JSPromiseCallback::finishCreation(ExecState* exec, JSPromiseResolver* resolver)
+void JSPromiseCallback::finishCreation(VM& vm, JSPromiseResolver* resolver)
 {
-    Base::finishCreation(exec->vm(), "PromiseCallback");
-    m_resolver.set(exec->vm(), this, resolver);
+    Base::finishCreation(vm, "PromiseCallback");
+    m_resolver.set(vm, this, resolver);
 }
 
 void JSPromiseCallback::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -112,10 +112,10 @@ CallType JSPromiseCallback::getCallData(JSCell*, CallData& callData)
 
 const ClassInfo JSPromiseWrapperCallback::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromiseWrapperCallback) };
 
-JSPromiseWrapperCallback* JSPromiseWrapperCallback::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromiseResolver* resolver, JSValue callback)
+JSPromiseWrapperCallback* JSPromiseWrapperCallback::create(VM& vm, Structure* structure, JSPromiseResolver* resolver, JSValue callback)
 {
-    JSPromiseWrapperCallback* constructor = new (NotNull, allocateCell<JSPromiseWrapperCallback>(*exec->heap())) JSPromiseWrapperCallback(globalObject, structure);
-    constructor->finishCreation(exec, resolver, callback);
+    JSPromiseWrapperCallback* constructor = new (NotNull, allocateCell<JSPromiseWrapperCallback>(vm.heap)) JSPromiseWrapperCallback(vm, structure);
+    constructor->finishCreation(vm, resolver, callback);
     return constructor;
 }
 
@@ -124,16 +124,16 @@ Structure* JSPromiseWrapperCallback::createStructure(VM& vm, JSGlobalObject* glo
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSPromiseWrapperCallback::JSPromiseWrapperCallback(JSGlobalObject* globalObject, Structure* structure)
-    : InternalFunction(globalObject, structure)
+JSPromiseWrapperCallback::JSPromiseWrapperCallback(VM& vm, Structure* structure)
+    : InternalFunction(vm, structure)
 {
 }
 
-void JSPromiseWrapperCallback::finishCreation(ExecState* exec, JSPromiseResolver* resolver, JSValue callback)
+void JSPromiseWrapperCallback::finishCreation(VM& vm, JSPromiseResolver* resolver, JSValue callback)
 {
-    Base::finishCreation(exec->vm(), "PromiseWrapperCallback");
-    m_resolver.set(exec->vm(), this, resolver);
-    m_callback.set(exec->vm(), this, callback);
+    Base::finishCreation(vm, "PromiseWrapperCallback");
+    m_resolver.set(vm, this, resolver);
+    m_callback.set(vm, this, callback);
 }
 
 void JSPromiseWrapperCallback::visitChildren(JSCell* cell, SlotVisitor& visitor)

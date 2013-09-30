@@ -44,14 +44,14 @@ public:
         Reject,
     };
 
-    static JSPromiseCallback* create(ExecState*, JSGlobalObject*, Structure*, JSPromiseResolver*, Algorithm);
+    static JSPromiseCallback* create(VM&, Structure*, JSPromiseResolver*, Algorithm);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 private:
-    JSPromiseCallback(JSGlobalObject*, Structure*, Algorithm);
-    void finishCreation(ExecState*, JSPromiseResolver*);
+    JSPromiseCallback(VM&, Structure*, Algorithm);
+    void finishCreation(VM&, JSPromiseResolver*);
     static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
 
     static EncodedJSValue JSC_HOST_CALL callPromiseCallback(ExecState*);
@@ -67,14 +67,14 @@ class JSPromiseWrapperCallback : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static JSPromiseWrapperCallback* create(ExecState*, JSGlobalObject*, Structure*, JSPromiseResolver*, JSValue callback);
+    static JSPromiseWrapperCallback* create(VM&, Structure*, JSPromiseResolver*, JSValue callback);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 private:
-    JSPromiseWrapperCallback(JSGlobalObject*, Structure*);
-    void finishCreation(ExecState*, JSPromiseResolver*, JSValue callback);
+    JSPromiseWrapperCallback(VM&, Structure*);
+    void finishCreation(VM&, JSPromiseResolver*, JSValue callback);
     static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
 
     static EncodedJSValue JSC_HOST_CALL callPromiseWrapperCallback(ExecState*);

@@ -36,10 +36,9 @@ class MapConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static MapConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, MapPrototype* mapPrototype)
+    static MapConstructor* create(VM& vm, Structure* structure, MapPrototype* mapPrototype)
     {
-        VM& vm = exec->vm();
-        MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(vm.heap)) MapConstructor(globalObject, structure);
+        MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(vm.heap)) MapConstructor(vm, structure);
         constructor->finishCreation(vm, mapPrototype);
         return constructor;
     }
@@ -52,8 +51,8 @@ public:
     }
 
 private:
-    MapConstructor(JSGlobalObject* globalObject, Structure* structure)
-        : Base(globalObject, structure)
+    MapConstructor(VM& vm, Structure* structure)
+        : Base(vm, structure)
     {
     }
     void finishCreation(VM&, MapPrototype*);

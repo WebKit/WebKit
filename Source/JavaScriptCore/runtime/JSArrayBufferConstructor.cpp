@@ -40,9 +40,8 @@ const ClassInfo JSArrayBufferConstructor::s_info = {
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
 };
 
-JSArrayBufferConstructor::JSArrayBufferConstructor(
-    JSGlobalObject* globalObject, Structure* structure)
-    : Base(globalObject, structure)
+JSArrayBufferConstructor::JSArrayBufferConstructor(VM& vm, Structure* structure)
+    : Base(vm, structure)
 {
 }
 
@@ -53,12 +52,11 @@ void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* pr
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
 }
 
-JSArrayBufferConstructor* JSArrayBufferConstructor::create(CallFrame* callFrame, JSGlobalObject* globalObject, Structure* structure, JSArrayBufferPrototype* prototype)
+JSArrayBufferConstructor* JSArrayBufferConstructor::create(VM& vm, Structure* structure, JSArrayBufferPrototype* prototype)
 {
-    VM& vm = callFrame->vm();
     JSArrayBufferConstructor* result =
         new (NotNull, allocateCell<JSArrayBufferConstructor>(vm.heap))
-        JSArrayBufferConstructor(globalObject, structure);
+        JSArrayBufferConstructor(vm, structure);
     result->finishCreation(vm, prototype);
     return result;
 }

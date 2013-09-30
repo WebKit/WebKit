@@ -92,8 +92,8 @@ bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, P
 static InternalFunction* wrapCallback(ExecState* exec, JSGlobalObject* globalObject, JSValue callback, JSPromiseResolver* resolver, JSPromiseCallback::Algorithm algorithm)
 {
     if (!callback.isUndefined())
-        return JSPromiseWrapperCallback::create(exec, globalObject, globalObject->promiseWrapperCallbackStructure(), resolver, callback);
-    return JSPromiseCallback::create(exec, globalObject, globalObject->promiseCallbackStructure(), resolver, algorithm);
+        return JSPromiseWrapperCallback::create(exec->vm(), globalObject->promiseWrapperCallbackStructure(), resolver, callback);
+    return JSPromiseCallback::create(exec->vm(), globalObject->promiseCallbackStructure(), resolver, algorithm);
 }
 
 EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState* exec)
@@ -158,15 +158,16 @@ EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncCatch(ExecState* exec)
 
     JSFunction* callee = jsCast<JSFunction*>(exec->callee());
     JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = exec->vm();
 
     // 1. Let promise be a new promise.
-    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject);
+    JSPromise* promise = JSPromise::createWithResolver(vm, globalObject);
 
     // 2. Let resolver be promise's associated resolver.
     JSPromiseResolver* resolver = promise->resolver();
 
     // 3. Let fulfillCallback be a new promise callback for resolver and its fulfill algorithm.
-    InternalFunction* fulfillWrapper = JSPromiseCallback::create(exec, globalObject, globalObject->promiseCallbackStructure(), resolver, JSPromiseCallback::Fulfill);
+    InternalFunction* fulfillWrapper = JSPromiseCallback::create(vm, globalObject->promiseCallbackStructure(), resolver, JSPromiseCallback::Fulfill);
 
     // 4. Let rejectWrapper be a promise wrapper callback for resolver and rejectCallback if rejectCallback is
     //    not omitted and a promise callback for resolver and its reject algorithm otherwise.

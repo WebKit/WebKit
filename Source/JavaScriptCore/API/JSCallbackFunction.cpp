@@ -45,8 +45,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSCallbackFunction);
 
 const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackFunction) };
 
-JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, Structure* structure, JSObjectCallAsFunctionCallback callback)
-    : InternalFunction(globalObject, structure)
+JSCallbackFunction::JSCallbackFunction(VM& vm, Structure* structure, JSObjectCallAsFunctionCallback callback)
+    : InternalFunction(vm, structure)
     , m_callback(callback)
 {
 }
@@ -57,10 +57,10 @@ void JSCallbackFunction::finishCreation(VM& vm, const String& name)
     ASSERT(inherits(info()));
 }
 
-JSCallbackFunction* JSCallbackFunction::create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
+JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
 {
-    JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, globalObject->callbackFunctionStructure(), callback);
-    function->finishCreation(exec->vm(), name);
+    JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(vm.heap)) JSCallbackFunction(vm, globalObject->callbackFunctionStructure(), callback);
+    function->finishCreation(vm, name);
     return function;
 }
 

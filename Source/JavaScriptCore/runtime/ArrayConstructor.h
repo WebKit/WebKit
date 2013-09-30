@@ -33,10 +33,9 @@ class ArrayConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
+    static ArrayConstructor* create(VM& vm, Structure* structure, ArrayPrototype* arrayPrototype)
     {
-        VM& vm = exec->vm();
-        ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(vm.heap)) ArrayConstructor(globalObject, structure);
+        ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(vm.heap)) ArrayConstructor(vm, structure);
         constructor->finishCreation(vm, arrayPrototype);
         return constructor;
     }
@@ -53,7 +52,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:
-    ArrayConstructor(JSGlobalObject*, Structure*);
+    ArrayConstructor(VM&, Structure*);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     static ConstructType getConstructData(JSCell*, ConstructData&);
