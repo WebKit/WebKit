@@ -25,6 +25,7 @@ function Controller(root, video, host)
     this.updateCaptionButton();
     this.updateCaptionContainer();
     this.updateVolume();
+    this.updateHasAudio();
 };
 
 /* Enums */
@@ -112,6 +113,11 @@ Controller.prototype = {
         this.listenFor(this.video.textTracks, 'addtrack', this.handleTextTrackAdd);
         this.listenFor(this.video.textTracks, 'removetrack', this.handleTextTrackRemove);
 
+        /* audio tracks */
+        this.listenFor(this.video.audioTracks, 'change', this.updateHasAudio);
+        this.listenFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
+        this.listenFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
+
         /* controls attribute */
         this.controlsObserver = new MutationObserver(this.handleControlsChange.bind(this));
         this.controlsObserver.observe(this.video, { attributes: true, attributeFilter: ['controls'] });
@@ -127,6 +133,11 @@ Controller.prototype = {
         this.stopListeningFor(this.video.textTracks, 'change', this.handleTextTrackChange);
         this.stopListeningFor(this.video.textTracks, 'addtrack', this.handleTextTrackAdd);
         this.stopListeningFor(this.video.textTracks, 'removetrack', this.handleTextTrackRemove);
+
+        /* audio tracks */
+        this.stopListeningFor(this.video.audioTracks, 'change', this.updateHasAudio);
+        this.stopListeningFor(this.video.audioTracks, 'addtrack', this.updateHasAudio);
+        this.stopListeningFor(this.video.audioTracks, 'removetrack', this.updateHasAudio);
 
         /* controls attribute */
         this.controlsObserver.disconnect();
@@ -912,6 +923,14 @@ Controller.prototype = {
             this.captionMenu.parentNode.removeChild(this.captionMenu);
         delete this.captionMenu;
         delete this.captionMenuItems;
+    },
+
+    updateHasAudio: function()
+    {
+        if (this.video.audioTracks.length)
+            this.controls.muteBox.classList.remove(this.ClassNames.hidden);
+        else
+            this.controls.muteBox.classList.add(this.ClassNames.hidden);
     },
 
     updateVolume: function()

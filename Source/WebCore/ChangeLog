@@ -1,3 +1,23 @@
+2013-09-27  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r156546): media/video-no-audio.html broken
+        https://bugs.webkit.org/show_bug.cgi?id=122049
+
+        Reviewed by Eric Carlson.
+
+        Now that our video elements have audio tracks, use their presence or
+        absense to show or hide the volume controls.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller):
+        (Controller.prototype.addVideoListeners): Listen for audioTrack changes.
+        (Controller.prototype.removeVideoListeners): Stop listening to same.
+        (Controller.prototype.handleAudioTrackChange): Call this.updateHasAudio()
+        (Controller.prototype.handleAudioTrackAdd): Ditto.
+        (Controller.prototype.handleAudioTrackRemove): Ditto.
+        (Controller.prototype.updateHasAudio): Hide the volume controls if no
+            audioTracks are present, and vice versa.
+
 2013-09-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Mac-Lion build fix.
