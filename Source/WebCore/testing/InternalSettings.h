@@ -59,9 +59,6 @@ public:
         bool m_originalShadowDOMEnabled;
         bool m_originalAuthorShadowDOMForAnyElementEnabled;
 #endif
-#if ENABLE(STYLE_SCOPED)
-        bool m_originalStyleScoped;
-#endif
         EditingBehaviorType m_originalEditingBehavior;
 
         // Initially empty, only used if changed by a test.
@@ -111,7 +108,6 @@ public:
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
     void setAuthorShadowDOMForAnyElementEnabled(bool);
-    void setStyleScopedEnabled(bool);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);

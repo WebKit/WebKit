@@ -193,18 +193,10 @@ public:
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
     SelectorFilter& selectorFilter() { return m_selectorFilter; }
 
-#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM)
     StyleScopeResolver* ensureScopeResolver()
     {
-#if ENABLE(STYLE_SCOPED)
-#if ENABLE(SHADOW_DOM)
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled() || RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
-#else
-        ASSERT(RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
-#endif
-#else
         ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled());
-#endif
         if (!m_scopeResolver)
             m_scopeResolver = adoptPtr(new StyleScopeResolver());
         return m_scopeResolver.get();

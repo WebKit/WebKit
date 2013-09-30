@@ -542,7 +542,6 @@ static void resetDefaultsToConsistentValues()
     DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(true);
     DumpRenderTreeSupportGtk::setSeamlessIFramesEnabled(true);
     DumpRenderTreeSupportGtk::setShadowDOMEnabled(true);
-    DumpRenderTreeSupportGtk::setStyleScopedEnabled(true);
 
     if (gTestRunner) {
         gTestRunner->setAuthenticationPassword("");

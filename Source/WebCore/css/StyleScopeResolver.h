@@ -43,7 +43,7 @@ class ShadowRoot;
 class StyleRuleHost;
 struct RuleFeatureSet;
 
-#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM)
 
 class StyleScopeResolver {
 public:
@@ -118,7 +118,7 @@ public:
     RuleSet* ensureRuleSetFor(const ContainerNode*) { return 0; }
 };
 
-#endif // ENABLE(STYLE_SCOPED)
+#endif // ENABLE(SHADOW_DOM)
 
 } // namespace WebCore
 

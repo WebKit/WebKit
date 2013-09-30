@@ -230,7 +230,7 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
 
 void ElementRuleCollector::matchScopedAuthorRules(bool includeEmptyRules)
 {
-#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM)
     if (!m_scopeResolver)
         return;
 

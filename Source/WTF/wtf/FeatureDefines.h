@@ -762,10 +762,6 @@
 #define ENABLE_SQL_DATABASE 1
 #endif
 
-#if !defined(ENABLE_STYLE_SCOPED)
-#define ENABLE_STYLE_SCOPED 0
-#endif
-
 #if !defined(ENABLE_SUBPIXEL_LAYOUT)
 #define ENABLE_SUBPIXEL_LAYOUT 0
 #endif

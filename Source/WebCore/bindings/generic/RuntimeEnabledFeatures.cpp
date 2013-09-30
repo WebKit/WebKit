@@ -107,9 +107,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(CUSTOM_ELEMENTS)
     , m_isCustomDOMElementsEnabled(false)
 #endif
-#if ENABLE(STYLE_SCOPED)
-    , m_isStyleScopedEnabled(false)
-#endif
 #if ENABLE(INPUT_TYPE_DATE)
     , m_isInputTypeDateEnabled(true)
 #endif

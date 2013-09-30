@@ -504,19 +504,6 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     return representation;
 }
 
-size_t Internals::numberOfScopedHTMLStyleChildren(const Node* scope, ExceptionCode& ec) const
-{
-    if (scope && (scope->isElementNode() || scope->isShadowRoot()))
-#if ENABLE(STYLE_SCOPED)
-        return scope->numberOfScopedHTMLStyleChildren();
-#else
-        return 0;
-#endif
-
-    ec = INVALID_ACCESS_ERR;
-    return 0;
-}
-
 PassRefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Node* node, ExceptionCode& ec) const
 {
     if (!node) {

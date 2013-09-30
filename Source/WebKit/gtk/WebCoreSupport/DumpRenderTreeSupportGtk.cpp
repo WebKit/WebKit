@@ -606,13 +606,6 @@ void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 #endif
 }
 
-void DumpRenderTreeSupportGtk::setStyleScopedEnabled(bool enabled)
-{
-#if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(enabled);
-#endif
-}
-
 void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 {
     MutationObserver::deliverAllMutations();

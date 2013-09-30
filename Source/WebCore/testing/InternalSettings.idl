@@ -31,7 +31,6 @@
     [RaisesException] void setTouchEventEmulationEnabled(boolean enabled);
     [RaisesException] void setShadowDOMEnabled(boolean enabled);
     void setAuthorShadowDOMForAnyElementEnabled(boolean isEnabled);
-    void setStyleScopedEnabled(boolean isEnabled);
     [RaisesException] void setStandardFontFamily(DOMString family, DOMString script);
     [RaisesException] void setSerifFontFamily(DOMString family, DOMString script);
     [RaisesException] void setSansSerifFontFamily(DOMString family, DOMString script);

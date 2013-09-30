@@ -108,7 +108,6 @@ public:
     static void setExperimentalContentSecurityPolicyFeaturesEnabled(bool);
     static void setSeamlessIFramesEnabled(bool);
     static void setShadowDOMEnabled(bool);
-    static void setStyleScopedEnabled(bool);
 
     static void deliverAllMutationsIfNecessary();
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const char* urlScheme);

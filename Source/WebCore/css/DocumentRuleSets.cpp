@@ -94,7 +94,7 @@ void DocumentRuleSets::appendAuthorStyleSheets(unsigned firstNew, const Vector<R
         if (cssSheet->mediaQueries() && !medium->eval(cssSheet->mediaQueries(), resolver))
             continue;
         StyleSheetContents* sheet = cssSheet->contents();
-#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM)
         if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
             // FIXME: Remove a dependency to calling a StyleResolver's member function.
             // If we can avoid calling resolver->ensureScopeResolver() here, we don't have to include "StyleResolver.h".

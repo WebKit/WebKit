@@ -1,3 +1,51 @@
+2013-09-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the code guarded by STYLE_SCOPED
+        https://bugs.webkit.org/show_bug.cgi?id=122123
+
+        Reviewed by Anders Carlsson.
+
+        Start cleaning the code related to <style scoped>. This patch
+        only removes the code with #ifdef guards.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.exp.in:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchScopedAuthorRules):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::locateCousinList):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::ensureScopeResolver):
+        * css/StyleScopeResolver.cpp:
+        * css/StyleScopeResolver.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/ShadowRoot.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseAttribute):
+        (WebCore::HTMLStyleElement::insertedInto):
+        (WebCore::HTMLStyleElement::removedFrom):
+        * html/HTMLStyleElement.h:
+        * html/HTMLStyleElement.idl:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-09-30  Drew Yao  <ayao@apple.com>
 
         ASSERT(!m_hasBadParent) in InlineBox::parent() should be ASSERT_WITH_SECURITY_IMPLICATION

@@ -2728,10 +2728,6 @@ __ZN7WebCore8Document13svgExtensionsEv
 __ZN7WebCore8Document19accessSVGExtensionsEv
 #endif
 
-#if ENABLE(STYLE_SCOPED)
-__ZNK7WebCore4Node31numberOfScopedHTMLStyleChildrenEv
-#endif
-
 #if ENABLE(THREADED_SCROLLING)
 __ZN7WebCore13ScrollingTree37setScrollingPerformanceLoggingEnabledEb
 __ZN7WebCore13ScrollingTree21tryToHandleWheelEventERKNS_18PlatformWheelEventE

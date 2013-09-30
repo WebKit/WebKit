@@ -78,7 +78,6 @@ public:
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);
 
-    size_t numberOfScopedHTMLStyleChildren(const Node*, ExceptionCode&) const;
     PassRefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
 
 #if ENABLE(SHADOW_DOM)

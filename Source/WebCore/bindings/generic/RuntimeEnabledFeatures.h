@@ -244,11 +244,6 @@ public:
     void setCustomDOMElements(bool isEnabled) { m_isCustomDOMElementsEnabled = isEnabled; }
 #endif
 
-#if ENABLE(STYLE_SCOPED)
-    bool styleScopedEnabled() const { return m_isStyleScopedEnabled; }
-    void setStyleScopedEnabled(bool isEnabled) { m_isStyleScopedEnabled = isEnabled; }
-#endif
-
 #if ENABLE(INPUT_TYPE_DATE)
     bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
@@ -367,10 +362,6 @@ private:
 
 #if ENABLE(CUSTOM_ELEMENTS)
     bool m_isCustomDOMElementsEnabled;
-#endif
-
-#if ENABLE(STYLE_SCOPED)
-    bool m_isStyleScopedEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

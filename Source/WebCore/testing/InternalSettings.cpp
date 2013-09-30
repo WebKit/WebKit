@@ -73,9 +73,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
     , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled())
 #endif
-#if ENABLE(STYLE_SCOPED)
-    , m_originalStyleScoped(RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled())
-#endif
     , m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
@@ -108,9 +105,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(m_originalShadowDOMEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
-#endif
-#if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(m_originalStyleScoped);
 #endif
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 
@@ -259,15 +253,6 @@ void InternalSettings::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
     RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(isEnabled);
 #else
     UNUSED_PARAM(isEnabled);
-#endif
-}
-
-void InternalSettings::setStyleScopedEnabled(bool enabled)
-{
-#if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
 #endif
 }
 

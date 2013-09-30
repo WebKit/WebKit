@@ -33,7 +33,6 @@
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
 
-    [RaisesException] unsigned long numberOfScopedHTMLStyleChildren(Node scope);
     [RaisesException] CSSStyleDeclaration computedStyleIncludingVisitedInfo(Node node);
 
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM

@@ -2326,34 +2326,6 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
         node->incrementConnectedSubframeCount(count);
 }
 
-#if ENABLE(STYLE_SCOPED)
-// FIXME: What is this code doing in Node, srsly?
-void Node::registerScopedHTMLStyleChild()
-{
-    setHasScopedHTMLStyleChild(true);
-}
-
-void Node::unregisterScopedHTMLStyleChild()
-{
-    ASSERT(hasScopedHTMLStyleChild());
-    setHasScopedHTMLStyleChild(numberOfScopedHTMLStyleChildren());
-}
-
-size_t Node::numberOfScopedHTMLStyleChildren() const
-{
-    if (!isContainerNode())
-        return 0;
-    size_t count = 0;
-    auto styleDescendants = descendantsOfType<HTMLStyleElement>(toContainerNode(this));
-    for (auto style = styleDescendants.begin(), end = styleDescendants.end(); style != end; ++style) {
-        if (style->isRegisteredAsScoped())
-            count++;
-    }
-
-    return count;
-}
-#endif
-
 } // namespace WebCore
 
 #ifndef NDEBUG
