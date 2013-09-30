@@ -98,6 +98,12 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
     // Animated images >5MB are considered large enough that we'll only hang on
     // to one frame at a time.
     static const unsigned cLargeAnimationCutoff = 5242880;
+
+    // If we have decoded frames but there is no encoded data, we shouldn't destroy
+    // the decoded image since we won't be able to reconstruct it later.
+    if (!data() && m_frames.size())
+        return;
+
     unsigned allFrameBytes = 0;
     for (size_t i = 0; i < m_frames.size(); ++i)
         allFrameBytes += m_frames[i].m_frameBytes;

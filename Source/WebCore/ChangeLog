@@ -1,3 +1,20 @@
+2013-09-30  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't attempt to destroy decoded frame if a BitmapImage doesn't have encoded raw data.
+        https://bugs.webkit.org/show_bug.cgi?id=122115
+
+        Reviewed by Daniel Bates.
+
+        With BitmapImage::create(PassNativeImagePtr, ImageObserver*), a BitmapImage could be created by
+        passing a native image.  If this image is added to memory cache, we shouldn't attempt to destroy
+        its decoded frames since there is no encoded raw data and we won't be able to reconstruct the image again.
+
+        No new tests for now. Currently there isn't a code path to add to the memory cache a BitmapImage
+        that was created by adopting a native image. We'll add such a code path in a subsequent patch.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedDataIfNecessary):
+
 2013-09-30  Brady Eidson  <beidson@apple.com>
 
         Remove IDBTracing.h.
