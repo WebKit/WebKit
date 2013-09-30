@@ -145,17 +145,7 @@ private:
     const bool m_nonNegative;
 };
 
-inline CSSCalcValue* toCSSCalcValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isCalculationValue());
-    return static_cast<CSSCalcValue*>(value);
-}
-
-inline const CSSCalcValue* toCSSCalcValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isCalculationValue());
-    return static_cast<const CSSCalcValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(CalcValue)
 
 } // namespace WebCore
 

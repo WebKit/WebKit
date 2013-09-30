@@ -93,7 +93,7 @@ public:
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
     bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
     bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
-    bool isCalculationValue() const {return m_classType == CalculationClass; }
+    bool isCalcValue() const {return m_classType == CalculationClass; }
 #if ENABLE(CSS_FILTERS)
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }

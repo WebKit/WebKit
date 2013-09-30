@@ -2039,8 +2039,8 @@ static bool hasVariableReference(CSSValue* value)
         return primitiveValue->hasVariableReference();
     }
 
-    if (value->isCalculationValue())
-        return static_cast<CSSCalcValue*>(value)->hasVariableReference();
+    if (value->isCalcValue())
+        return toCSSCalcValue(value)->hasVariableReference();
 
     if (value->isReflectValue()) {
         CSSReflectValue* reflectValue = toCSSReflectValue(value);

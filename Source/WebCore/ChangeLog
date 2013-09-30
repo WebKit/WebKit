@@ -1,3 +1,23 @@
+2013-09-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toCSSCalcValue instead of using manual cast function
+        https://bugs.webkit.org/show_bug.cgi?id=122055
+
+        Reviewed by Antti Koivisto.
+
+        Generated type cast function supports more plenty functions rather than manual functions.
+        To use CSS_VALUE_TYPE_CAST, isCalculationValue() needs to be changed with isCalcValue().
+
+        No new tests, no behavior changes.
+
+        * css/CSSCalculationValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCalcValue):
+        * css/StyleResolver.cpp:
+        (WebCore::hasVariableReference):
+
 2013-09-30  Antti Koivisto  <antti@apple.com>
 
         Get rid of static map for marking ancestor line boxes dirty

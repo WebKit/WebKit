@@ -452,7 +452,7 @@ void CSSValue::destroy()
         delete toCSSLineBoxContainValue(this);
         return;
     case CalculationClass:
-        delete static_cast<CSSCalcValue*>(this);
+        delete toCSSCalcValue(this);
         return;
 #if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
