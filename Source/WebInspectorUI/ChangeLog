@@ -1,5 +1,18 @@
 2013-09-30  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: Popover displaying "reasons for compositing" may remain on screen after selected layer is removed
+        https://bugs.webkit.org/show_bug.cgi?id=117575
+
+        Ensure the popover attached to the selected data grid node is updated when the
+        content or sort order of the Layer sidebar panel is updated.
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._sortDataGrid):
+
+2013-09-30  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: nodes can be dragged from the console log
         https://bugs.webkit.org/show_bug.cgi?id=122105
 

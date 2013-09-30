@@ -178,6 +178,8 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
         nodes.sort(comparator);
 
         dataGrid.setChildren(nodes);
+
+        this._updatePopoverForSelectedNode();
     },
 
     _selectedDataGridNodeChanged: function()
