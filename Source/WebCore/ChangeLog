@@ -1,3 +1,16 @@
+2013-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Center misspelling dots across width of word
+        https://bugs.webkit.org/show_bug.cgi?id=122046
+
+        Reviewed by Darin Adler.
+
+        Test: editing/spelling/spelling.html
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+
 2013-10-01  Daniel Bates  <dabates@apple.com>
 
         [iOS] WebCore fails to build with newer versions of clang

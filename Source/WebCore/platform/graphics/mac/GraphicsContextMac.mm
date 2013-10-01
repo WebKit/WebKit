@@ -146,6 +146,8 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
         default:
             return;
     }
+    
+    FloatPoint offsetPoint = point;
 
     // Make sure to draw only complete dots.
     // NOTE: Code here used to shift the underline to the left and increase the width
@@ -155,8 +157,10 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     if (usingDot) {
         // allow slightly more considering that the pattern ends with a transparent pixel
         float widthMod = fmodf(width, patternWidth);
-        if (patternWidth - widthMod > cMisspellingLinePatternGapWidth)
+        if (patternWidth - widthMod > cMisspellingLinePatternGapWidth) {
+            offsetPoint.move(widthMod / 2, 0);
             width -= widthMod;
+        }
     }
     
     // FIXME: This code should not use NSGraphicsContext currentContext
@@ -172,9 +176,9 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 
     [patternColor set];
 
-    wkSetPatternPhaseInUserSpace(context, point);
+    wkSetPatternPhaseInUserSpace(context, offsetPoint);
 
-    NSRectFillUsingOperation(NSMakeRect(point.x(), point.y(), width, patternHeight), NSCompositeSourceOver);
+    NSRectFillUsingOperation(NSMakeRect(offsetPoint.x(), offsetPoint.y(), width, patternHeight), NSCompositeSourceOver);
     
     CGContextRestoreGState(context);
 }
