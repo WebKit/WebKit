@@ -1,3 +1,13 @@
+2013-10-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] JavaScriptCore fails to build with newer versions of clang
+        https://bugs.webkit.org/show_bug.cgi?id=122162
+
+        Reviewed by Darin Adler.
+
+        * runtime/GCActivityCallback.cpp: Add !PLATFORM(IOS)-guard around constant pagingTimeOut
+        as we don't compile the code that uses it on iOS.
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Remove support for DOMFileSystem
