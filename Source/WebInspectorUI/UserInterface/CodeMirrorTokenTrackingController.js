@@ -159,6 +159,14 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
 
     highlightRange: function(range)
     {
+        // Nothing to do if we're trying to highlight the same range.
+        if (this._codeMirrorMarkedText && this._codeMirrorMarkedText.className === this._classNameForHighlightedRange) {
+            var highlightedRange = this._codeMirrorMarkedText.find();
+            if (WebInspector.compareCodeMirrorPositions(highlightedRange.from, range.start) === 0 &&
+                WebInspector.compareCodeMirrorPositions(highlightedRange.to, range.end) === 0)
+                return;
+        }
+
         this.removeHighlightedRange();
 
         var className = this._classNameForHighlightedRange || "";
@@ -360,6 +368,32 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         if (this._hoveredTokenInfo.modeName !== "javascript")
             return null;
 
+        var startPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.start};
+        var endPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.end};
+
+        // If the hovered token is within a selection, use the selection as our expression.
+        if (this._codeMirror.somethingSelected()) {
+            var selectionRange = {
+                start: this._codeMirror.getCursor("start"),
+                end: this._codeMirror.getCursor("end")
+            };
+        
+            function tokenIsInRange(token, range)
+            {
+                return token.line >= range.start.line && token.ch >= range.start.ch &&
+                       token.line <= range.end.line && token.ch <= range.end.ch;
+            }
+        
+            if (tokenIsInRange(startPosition, selectionRange) || tokenIsInRange(endPosition, selectionRange)) {
+                return {
+                    hoveredToken: this._hoveredTokenInfo.token,
+                    hoveredTokenRange: selectionRange,
+                    expression: this._codeMirror.getSelection(),
+                    expressionRange: selectionRange,
+                };
+            }
+        } 
+
         // We only handle vars, definitions, properties, and the keyword 'this'.
         var type = this._hoveredTokenInfo.token.type;
         var isProperty = type.indexOf("property") !== -1;
@@ -379,8 +413,6 @@ WebInspector.CodeMirrorTokenTrackingController.prototype = {
         // Work out the full hovered expression.
         var expression = this._hoveredTokenInfo.token.string;
         var expressionStartPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.start};
-        var startPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.start};
-        var endPosition = {line: this._hoveredTokenInfo.position.line, ch: this._hoveredTokenInfo.token.end};
         while (true) {
             var token = this._codeMirror.getTokenAt(expressionStartPosition);
             var isDot = token && !token.type && token.string === ".";

@@ -1,5 +1,28 @@
 2013-10-01  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: evaluate and show a popover for selected text in JS source when paused
+        https://bugs.webkit.org/show_bug.cgi?id=122151
+
+        Reviewed by Joseph Pecoraro.
+
+        Identify if the hovered token is contained within the text selection (if any) and use
+        the selection as the hovered expression to allow the user to select text and hover it
+        to see what it evaluates to.
+
+        * UserInterface/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.highlightRange):
+        Check we're trying to highlight a different range before removing the highlight
+        and applying the new one, this prevents the marked text from flashing if it's
+        being re-hovered which would easily happen when hovering multiple tokens within
+        the same selection.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processJavaScriptExpression):
+        In the case where there is selected text, check whether the hovered token is at least
+        partially contained within the selection, and if so use the selection text as the
+        hovered expression to evaluate.
+
+2013-10-01  Antoine Quint  <graouts@apple.com>
+
         Console buttons don’t show after page reload
         https://bugs.webkit.org/show_bug.cgi?id=116515
 
