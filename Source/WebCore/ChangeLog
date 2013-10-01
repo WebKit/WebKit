@@ -1,3 +1,18 @@
+2013-10-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Texmap] CSS filter not working on software composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=122159
+
+        Reviewed by Noam Rosenthal.
+
+        Tell the rendering layer we do not support CSS filters when we do not. This
+        will make RenderLayer fall back to using its own software implementation.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setFilters):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::applyFilters):
+
 2013-10-01  Darin Adler  <darin@apple.com>
 
         Try to fix assertion failures seem on bots.
