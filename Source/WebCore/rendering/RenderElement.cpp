@@ -64,8 +64,9 @@ namespace WebCore {
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
 
-RenderElement::RenderElement(Element* element)
+RenderElement::RenderElement(Element* element, unsigned baseTypeFlags)
     : RenderObject(element)
+    , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
@@ -273,7 +274,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
-    if (diff == StyleDifferenceEqual && style() && isLayerModelObject()) {
+    if (diff == StyleDifferenceEqual && style() && isRenderLayerModelObject()) {
         if (hasLayer() != toRenderLayerModelObject(this)->requiresLayer())
             diff = StyleDifferenceLayout;
     }

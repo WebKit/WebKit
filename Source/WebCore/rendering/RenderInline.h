@@ -98,7 +98,6 @@ protected:
 private:
     virtual const char* renderName() const OVERRIDE;
 
-    virtual bool isRenderInline() const OVERRIDE FINAL { return true; }
     virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
 
     LayoutRect culledInlineVisualOverflowBoundingBox() const;

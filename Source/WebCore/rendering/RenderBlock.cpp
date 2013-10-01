@@ -149,8 +149,8 @@ private:
 
 // -------------------------------------------------------------------------------------------------------
 
-RenderBlock::RenderBlock(Element* element)
-    : RenderBox(element)
+RenderBlock::RenderBlock(Element* element, unsigned baseTypeFlags)
+    : RenderBox(element, baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)

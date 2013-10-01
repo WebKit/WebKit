@@ -1118,7 +1118,7 @@ String listMarkerText(EListStyleType type, int value)
 }
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem)
-    : RenderBox(0)
+    : RenderBox(nullptr, 0)
     , m_listItem(listItem)
 {
     // init RenderObject attributes

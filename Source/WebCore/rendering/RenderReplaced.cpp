@@ -43,14 +43,14 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Element* element)
-    : RenderBox(element)
+    : RenderBox(element, RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplaced(true);
 }
 
 RenderReplaced::RenderReplaced(Element* element, const LayoutSize& intrinsicSize)
-    : RenderBox(element)
+    : RenderBox(element, RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplaced(true);

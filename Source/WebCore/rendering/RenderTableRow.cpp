@@ -39,7 +39,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableRow::RenderTableRow(Element* element)
-    : RenderBox(element)
+    : RenderBox(element, 0)
     , m_rowIndex(unsetRowIndex)
 {
     // init RenderObject attributes

@@ -41,8 +41,6 @@ public:
     bool hasReplacedLogicalHeight() const;
 
 protected:
-    virtual bool isRenderReplaced() const OVERRIDE FINAL { return true; }
-
     virtual void willBeDestroyed();
 
     virtual void layout();

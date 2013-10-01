@@ -1,3 +1,15 @@
+2013-10-01  Antti Koivisto  <antti@apple.com>
+
+        Make tests for renderer base types non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=122185
+
+        Reviewed by Dave Hyatt.
+
+        Make isRenderFoo() functions for commonly tested base types use bit flags instead of virtual calls.
+        This is faster and we have space in RenderElement.
+        
+        These bits are not mutully exclusive. For testing leaf types we can add an enum.
+
 2013-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cleanup Document::dispatchFullScreenChangeOrErrorEvent

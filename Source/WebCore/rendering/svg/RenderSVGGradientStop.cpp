@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace SVGNames;
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement* element)
-    : RenderElement(element)
+    : RenderElement(element, 0)
 {
 }
 

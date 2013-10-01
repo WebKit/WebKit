@@ -76,7 +76,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow* block, LayoutUnit befor
 }
 
 RenderBlockFlow::RenderBlockFlow(Element* element)
-    : RenderBlock(element)
+    : RenderBlock(element, RenderBlockFlowFlag)
 {
     COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 }

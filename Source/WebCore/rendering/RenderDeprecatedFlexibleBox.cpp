@@ -121,7 +121,7 @@ private:
 };
 
 RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element)
-    : RenderBlock(&element)
+    : RenderBlock(&element, 0)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;

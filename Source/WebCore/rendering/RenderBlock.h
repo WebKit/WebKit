@@ -98,7 +98,7 @@ public:
 #endif
 
 protected:
-    explicit RenderBlock(Element*);
+    explicit RenderBlock(Element*, unsigned baseTypeFlags);
     virtual ~RenderBlock();
 
 public:
@@ -552,7 +552,6 @@ private:
 
     virtual const char* renderName() const OVERRIDE;
 
-    virtual bool isRenderBlock() const OVERRIDE FINAL { return true; }
     virtual bool isInlineBlockOrInlineTable() const OVERRIDE FINAL { return isInline() && isReplaced(); }
     virtual bool canHaveChildren() const OVERRIDE { return true; }
 

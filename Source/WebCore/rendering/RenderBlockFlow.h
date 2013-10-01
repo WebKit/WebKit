@@ -31,9 +31,7 @@ class RenderBlockFlow : public RenderBlock {
 public:
     explicit RenderBlockFlow(Element*);
     virtual ~RenderBlockFlow();
-    
-    virtual bool isRenderBlockFlow() const OVERRIDE FINAL { return true; }
-    
+        
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
 protected:
