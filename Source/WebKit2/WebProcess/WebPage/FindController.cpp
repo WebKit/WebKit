@@ -215,7 +215,7 @@ bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap
     if (!findIndicatorTextBackingStore)
         return false;
 
-    OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
+    auto graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
     graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
 
     IntRect paintRect = selectionRect;

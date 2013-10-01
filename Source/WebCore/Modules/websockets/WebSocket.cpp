@@ -526,9 +526,9 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
         size_t size = binaryData->size();
         RefPtr<RawData> rawData = RawData::create();
         binaryData->swap(*rawData->mutableData());
-        OwnPtr<BlobData> blobData = BlobData::create();
+        auto blobData = std::make_unique<BlobData>();
         blobData->appendData(rawData.release(), 0, BlobDataItem::toEndOfFile);
-        RefPtr<Blob> blob = Blob::create(blobData.release(), size);
+        RefPtr<Blob> blob = Blob::create(std::move(blobData), size);
         dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }

@@ -50,21 +50,21 @@ static String getContentTypeFromFileName(const String& name, File::ContentTypeLo
     return type;
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFileWithType(const String& path, const String& contentType)
+static std::unique_ptr<BlobData> createBlobDataForFileWithType(const String& path, const String& contentType)
 {
-    OwnPtr<BlobData> blobData = BlobData::create();
+    auto blobData = std::make_unique<BlobData>();
     ASSERT(Blob::isNormalizedContentType(contentType));
     blobData->setContentType(contentType);
     blobData->appendFile(path);
-    return blobData.release();
+    return blobData;
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFile(const String& path, File::ContentTypeLookupPolicy policy)
+static std::unique_ptr<BlobData> createBlobDataForFile(const String& path, File::ContentTypeLookupPolicy policy)
 {
     return createBlobDataForFileWithType(path, getContentTypeFromFileName(path, policy));
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName, File::ContentTypeLookupPolicy policy)
+static std::unique_ptr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName, File::ContentTypeLookupPolicy policy)
 {
     return createBlobDataForFileWithType(path, getContentTypeFromFileName(fileSystemName, policy));
 }

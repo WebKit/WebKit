@@ -43,18 +43,12 @@ namespace WebKit {
 
 class SynchronousNetworkLoaderClient : public NetworkLoaderClient {
 public:
-    static PassOwnPtr<NetworkLoaderClient> create(const WebCore::ResourceRequest& originalRequest, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
-    {
-        return adoptPtr(new SynchronousNetworkLoaderClient(originalRequest, reply));
-    }
-    
+    SynchronousNetworkLoaderClient(const WebCore::ResourceRequest& originalRequest, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
     virtual ~SynchronousNetworkLoaderClient() OVERRIDE;
 
     virtual bool isSynchronous() OVERRIDE { return true; }
 
 private:
-    SynchronousNetworkLoaderClient(const WebCore::ResourceRequest& originalRequest, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
-
     virtual void willSendRequest(NetworkResourceLoader*, WebCore::ResourceRequest& proposedRequest, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader*, const WebCore::ProtectionSpace&) OVERRIDE;

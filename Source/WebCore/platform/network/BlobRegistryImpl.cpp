@@ -128,7 +128,7 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
     }
 }
 
-void BlobRegistryImpl::registerBlobURL(const URL& url, PassOwnPtr<BlobData> blobData)
+void BlobRegistryImpl::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();

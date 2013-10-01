@@ -33,17 +33,11 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/TemporaryChange.h>
 
 using namespace WebCore;
 
 namespace WebKit {
-
-PassOwnPtr<RemoteLayerTreeContext> RemoteLayerTreeContext::create(WebPage* webPage)
-{
-    return adoptPtr(new RemoteLayerTreeContext(webPage));
-}
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
     : m_webPage(webPage)

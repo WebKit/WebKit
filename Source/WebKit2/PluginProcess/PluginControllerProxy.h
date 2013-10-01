@@ -53,7 +53,7 @@ class PluginControllerProxy : PluginController {
     WTF_MAKE_NONCOPYABLE(PluginControllerProxy);
 
 public:
-    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection*, const PluginCreationParameters&);
+    PluginControllerProxy(WebProcessConnection*, const PluginCreationParameters&);
     ~PluginControllerProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -78,8 +78,6 @@ public:
     PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> takeInitializationReply();
 
 private:
-    PluginControllerProxy(WebProcessConnection*, const PluginCreationParameters&);
-
     void startPaintTimer();
     void paint();
 
@@ -206,7 +204,7 @@ private:
     bool m_isComplexTextInputEnabled;
 
     // For CA plug-ins, this holds the information needed to export the layer hierarchy to the UI process.
-    OwnPtr<LayerHostingContext> m_layerHostingContext;
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 #endif
 
     // The contents scale factor of this plug-in.

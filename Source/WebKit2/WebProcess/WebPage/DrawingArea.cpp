@@ -38,16 +38,16 @@
 
 namespace WebKit {
 
-PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
     switch (parameters.drawingAreaType) {
     case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
+        return std::make_unique<DrawingAreaImpl>(webPage, parameters);
 #if PLATFORM(MAC)
     case DrawingAreaTypeTiledCoreAnimation:
-        return TiledCoreAnimationDrawingArea::create(webPage, parameters);
+        return std::make_unique<TiledCoreAnimationDrawingArea>(webPage, parameters);
     case DrawingAreaTypeRemoteLayerTree:
-        return RemoteLayerTreeDrawingArea::create(webPage, parameters);
+        return std::make_unique<RemoteLayerTreeDrawingArea>(webPage, parameters);
 #endif
     }
 

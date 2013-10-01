@@ -857,7 +857,7 @@ private:
     String m_userAgent;
 
     WebCore::IntSize m_viewSize;
-    OwnPtr<DrawingArea> m_drawingArea;
+    std::unique_ptr<DrawingArea> m_drawingArea;
 
     HashSet<PluginView*> m_pluginViews;
     bool m_hasSeenPlugin;

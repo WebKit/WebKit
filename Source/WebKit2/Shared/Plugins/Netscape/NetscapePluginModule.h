@@ -96,7 +96,7 @@ private:
     NPP_ShutdownProcPtr m_shutdownProcPtr;
     NPPluginFuncs m_pluginFuncs;
 
-    OwnPtr<Module> m_module;
+    std::unique_ptr<Module> m_module;
 };
     
 } // namespace WebKit

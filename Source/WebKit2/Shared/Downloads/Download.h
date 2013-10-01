@@ -29,7 +29,6 @@
 #include "MessageSender.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -73,7 +72,7 @@ class QtFileDownloader;
 class Download : public CoreIPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
-    static PassOwnPtr<Download> create(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
+    Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
     ~Download();
 
     void start();
@@ -114,8 +113,6 @@ public:
     void cancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
 
 private:
-    Download(DownloadManager&, uint64_t downloadID, const WebCore::ResourceRequest&);
-
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
     virtual uint64_t messageSenderDestinationID() OVERRIDE;

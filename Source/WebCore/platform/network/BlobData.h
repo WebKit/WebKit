@@ -167,7 +167,7 @@ typedef Vector<BlobDataItem> BlobDataItemList;
 class BlobData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<BlobData> create();
+    BlobData() { }
 
     // Detaches from current thread so that it can be passed to another thread.
     void detachFromCurrentThread();
@@ -193,8 +193,6 @@ private:
     friend class BlobRegistryImpl;
     friend class BlobStorageData;
 
-    BlobData() { }
-
     // This is only exposed to BlobStorageData.
     void appendData(const RawData&, long long offset, long long length);
 
@@ -208,15 +206,15 @@ private:
 // https://codereview.chromium.org/11192017/.
 class BlobDataHandle : public ThreadSafeRefCounted<BlobDataHandle> {
 public:
-    static PassRefPtr<BlobDataHandle> create(PassOwnPtr<BlobData> data, long long size)
+    static PassRefPtr<BlobDataHandle> create(std::unique_ptr<BlobData> data, long long size)
     {
-        return adoptRef(new BlobDataHandle(data, size));
+        return adoptRef(new BlobDataHandle(std::move(data), size));
     }
 
     ~BlobDataHandle();
 
 private:
-    BlobDataHandle(PassOwnPtr<BlobData>, long long size);
+    BlobDataHandle(std::unique_ptr<BlobData>, long long size);
     URL m_internalURL;
 };
 

@@ -31,7 +31,6 @@
 #include "Module.h"
 #include "NPRuntimeUtilities.h"
 #include "NetscapeBrowserFuncs.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -199,7 +198,7 @@ bool NetscapePluginModule::load()
 
 bool NetscapePluginModule::tryLoad()
 {
-    m_module = adoptPtr(new Module(m_pluginPath));
+    m_module = std::make_unique<Module>(m_pluginPath);
     if (!m_module->load())
         return false;
 

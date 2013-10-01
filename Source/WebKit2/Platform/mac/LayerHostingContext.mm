@@ -27,30 +27,29 @@
 #import "LayerHostingContext.h"
 
 #import <wtf/OwnPtr.h>
-#import <wtf/PassOwnPtr.h>
 #import <WebKitSystemInterface.h>
 
 namespace WebKit {
 
-PassOwnPtr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
+std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
 {
-    OwnPtr<LayerHostingContext> layerHostingContext = adoptPtr(new LayerHostingContext);
+    auto layerHostingContext = std::make_unique<LayerHostingContext>();
 
     layerHostingContext->m_layerHostingMode = LayerHostingModeDefault;
     layerHostingContext->m_context = WKCAContextMakeRemoteWithServerPort(serverPort);
 
-    return layerHostingContext.release();
+    return layerHostingContext;
 }
 
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-PassOwnPtr<LayerHostingContext> LayerHostingContext::createForWindowServer()
+std::unique_ptr<LayerHostingContext> LayerHostingContext::createForWindowServer()
 {
-    OwnPtr<LayerHostingContext> layerHostingContext = adoptPtr(new LayerHostingContext);
+    auto layerHostingContext = std::make_unique<LayerHostingContext>();
 
     layerHostingContext->m_layerHostingMode = LayerHostingModeInWindowServer;
     layerHostingContext->m_context = WKCAContextMakeRemoteForWindowServer();
 
-    return layerHostingContext.release();
+    return layerHostingContext;
 }
 #endif
 

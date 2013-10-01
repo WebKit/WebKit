@@ -35,11 +35,6 @@
 
 namespace WebKit {
 
-PassOwnPtr<NPObjectMessageReceiver> NPObjectMessageReceiver::create(NPRemoteObjectMap* npRemoteObjectMap, Plugin* plugin, uint64_t npObjectID, NPObject* npObject)
-{
-    return adoptPtr(new NPObjectMessageReceiver(npRemoteObjectMap, plugin, npObjectID, npObject));
-}
-
 NPObjectMessageReceiver::NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObjectMap, Plugin* plugin, uint64_t npObjectID, NPObject* npObject)
     : m_npRemoteObjectMap(npRemoteObjectMap)
     , m_plugin(plugin)

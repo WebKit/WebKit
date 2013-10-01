@@ -31,7 +31,6 @@
 #include "Connection.h"
 #include <WebCore/npruntime.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
@@ -44,7 +43,7 @@ class NPObjectMessageReceiver {
     WTF_MAKE_NONCOPYABLE(NPObjectMessageReceiver);
 
 public:
-    static PassOwnPtr<NPObjectMessageReceiver> create(NPRemoteObjectMap*, Plugin*, uint64_t npObjectID, NPObject*);
+    NPObjectMessageReceiver(NPRemoteObjectMap*, Plugin*, uint64_t npObjectID, NPObject*);
     ~NPObjectMessageReceiver();
 
     void didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
@@ -53,8 +52,6 @@ public:
     NPObject* npObject() const { return m_npObject; }
     
 private:
-    NPObjectMessageReceiver(NPRemoteObjectMap*, Plugin*, uint64_t npObjectID, NPObject*);
-
     // Message handlers.
     void deallocate();
     void hasMethod(const NPIdentifierData&, bool& returnValue);

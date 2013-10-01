@@ -30,7 +30,6 @@
 #include <mach-o/loader.h>
 #include <mach-o/swap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

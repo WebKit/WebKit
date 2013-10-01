@@ -47,7 +47,7 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, std::unique_ptr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
@@ -59,7 +59,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
             sandboxExtensions.appendVector(m_sandboxExtensions.get(items[i].url.string()));
     }
 
-    blobRegistry().registerBlobURL(url, data);
+    blobRegistry().registerBlobURL(url, std::move(data));
 
     if (!sandboxExtensions.isEmpty())
         m_sandboxExtensions.add(url.string(), sandboxExtensions);

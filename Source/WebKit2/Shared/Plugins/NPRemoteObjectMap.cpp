@@ -78,7 +78,7 @@ void NPRemoteObjectMap::npObjectProxyDestroyed(NPObject* npObject)
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject, Plugin* plugin)
 {
     uint64_t npObjectID = generateNPObjectID();
-    m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(this, plugin, npObjectID, npObject).leakPtr());
+    m_registeredNPObjects.set(npObjectID, std::make_unique<NPObjectMessageReceiver>(this, plugin, npObjectID, npObject).release());
 
     return npObjectID;
 }

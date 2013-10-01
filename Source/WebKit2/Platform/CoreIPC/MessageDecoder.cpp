@@ -67,9 +67,9 @@ bool MessageDecoder::shouldDispatchMessageWhenWaitingForSyncReply() const
 }
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-void MessageDecoder::setImportanceAssertion(PassOwnPtr<ImportanceAssertion> assertion)
+void MessageDecoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
 {
-    m_importanceAssertion = assertion;
+    m_importanceAssertion = std::move(assertion);
 }
 #endif
 

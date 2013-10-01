@@ -39,10 +39,12 @@ namespace WebKit {
 class LayerHostingContext {
     WTF_MAKE_NONCOPYABLE(LayerHostingContext);
 public:
-    static PassOwnPtr<LayerHostingContext> createForPort(mach_port_t serverPort);
+    static std::unique_ptr<LayerHostingContext> createForPort(mach_port_t serverPort);
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    static PassOwnPtr<LayerHostingContext> createForWindowServer();
+    static std::unique_ptr<LayerHostingContext> createForWindowServer();
 #endif
+
+    LayerHostingContext();
     ~LayerHostingContext();
 
     void setRootLayer(CALayer *);
@@ -57,8 +59,6 @@ public:
     CGColorSpaceRef colorSpace() const;
 
 private:
-    LayerHostingContext();
-
     LayerHostingMode m_layerHostingMode;
     RetainPtr<WKCAContextRef> m_context;
 };

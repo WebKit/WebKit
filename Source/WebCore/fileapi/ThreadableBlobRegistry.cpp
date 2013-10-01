@@ -49,9 +49,9 @@ namespace WebCore {
 struct BlobRegistryContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobRegistryContext(const URL& url, PassOwnPtr<BlobData> blobData)
+    BlobRegistryContext(const URL& url, std::unique_ptr<BlobData> blobData)
         : url(url.copy())
-        , blobData(blobData)
+        , blobData(std::move(blobData))
     {
         this->blobData->detachFromCurrentThread();
     }
@@ -69,12 +69,12 @@ public:
 
     URL url;
     URL srcURL;
-    OwnPtr<BlobData> blobData;
+    std::unique_ptr<BlobData> blobData;
 };
 
 #if ENABLE(BLOB)
 
-typedef HashMap<String, RefPtr<SecurityOrigin> > BlobUrlOriginMap;
+typedef HashMap<String, RefPtr<SecurityOrigin>> BlobUrlOriginMap;
 static ThreadSpecific<BlobUrlOriginMap>& originMap()
 {
     AtomicallyInitializedStatic(ThreadSpecific<BlobUrlOriginMap>*, map = new ThreadSpecific<BlobUrlOriginMap>);
@@ -84,15 +84,15 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
 static void registerBlobURLTask(void* context)
 {
     OwnPtr<BlobRegistryContext> blobRegistryContext = adoptPtr(static_cast<BlobRegistryContext*>(context));
-    blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->blobData.release());
+    blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobData));
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const URL& url, PassOwnPtr<BlobData> blobData)
+void ThreadableBlobRegistry::registerBlobURL(const URL& url, std::unique_ptr<BlobData> blobData)
 {
     if (isMainThread())
-        blobRegistry().registerBlobURL(url, blobData);
+        blobRegistry().registerBlobURL(url, std::move(blobData));
     else {
-        OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url, blobData));
+        OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url, std::move(blobData)));
         callOnMainThread(&registerBlobURLTask, context.leakPtr());
     }
 }

@@ -40,17 +40,17 @@ class BlobRegistrationData {
 WTF_MAKE_NONCOPYABLE(BlobRegistrationData);
 public:
     BlobRegistrationData();
-    BlobRegistrationData(PassOwnPtr<WebCore::BlobData>);
+    BlobRegistrationData(std::unique_ptr<WebCore::BlobData>);
     ~BlobRegistrationData();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, BlobRegistrationData&);
 
-    PassOwnPtr<WebCore::BlobData> releaseData() const;
+    std::unique_ptr<WebCore::BlobData> releaseData() const;
     const SandboxExtension::HandleArray& sandboxExtensions() const { return m_sandboxExtensions; }
 
 private:
-    mutable OwnPtr<WebCore::BlobData> m_data;
+    mutable std::unique_ptr<WebCore::BlobData> m_data;
     SandboxExtension::HandleArray m_sandboxExtensions;
 };
 

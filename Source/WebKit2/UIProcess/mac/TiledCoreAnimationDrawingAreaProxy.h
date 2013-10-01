@@ -27,7 +27,6 @@
 #define TiledCoreAnimationDrawingAreaProxy_h
 
 #include "DrawingAreaProxy.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

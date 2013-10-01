@@ -28,8 +28,6 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
-#include <wtf/PassOwnPtr.h>
-
 #if __has_include(<libproc_internal.h>)
 #include <libproc_internal.h>
 #endif
@@ -43,9 +41,10 @@ class ImportanceAssertion {
     WTF_MAKE_NONCOPYABLE(ImportanceAssertion);
 
 public:
-    static PassOwnPtr<ImportanceAssertion> create(mach_msg_header_t* header)
+    explicit ImportanceAssertion(mach_msg_header_t* header)
+        : m_assertion(0)
     {
-        return adoptPtr(new ImportanceAssertion(header));
+        proc_importance_assertion_begin_with_msg(header, 0, &m_assertion);
     }
 
     ~ImportanceAssertion()
@@ -54,12 +53,6 @@ public:
     }
 
 private:
-    ImportanceAssertion(mach_msg_header_t* header)
-        : m_assertion(0)
-    {
-        proc_importance_assertion_begin_with_msg(header, 0, &m_assertion);
-    }
-
     uint64_t m_assertion;
 };
 

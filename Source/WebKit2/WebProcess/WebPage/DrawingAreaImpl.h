@@ -42,14 +42,12 @@ class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
 public:
-    static PassOwnPtr<DrawingAreaImpl> create(WebPage*, const WebPageCreationParameters&);
+    DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
     void layerHostDidFlushLayers();
 
 private:
-    DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
-
     // DrawingArea
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;

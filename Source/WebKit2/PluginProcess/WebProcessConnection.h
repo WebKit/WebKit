@@ -57,7 +57,7 @@ public:
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);
 
-    void addPluginControllerProxy(PassOwnPtr<PluginControllerProxy>);
+    void addPluginControllerProxy(std::unique_ptr<PluginControllerProxy>);
 
     void destroyPluginControllerProxy(PluginControllerProxy*);
 
@@ -78,7 +78,7 @@ private:
 
     RefPtr<CoreIPC::Connection> m_connection;
 
-    HashMap<uint64_t, OwnPtr<PluginControllerProxy>> m_pluginControllers;
+    HashMap<uint64_t, std::unique_ptr<PluginControllerProxy>> m_pluginControllers;
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
     HashSet<uint64_t> m_asynchronousInstanceIDsToIgnore;
 };

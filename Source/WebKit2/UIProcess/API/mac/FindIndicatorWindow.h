@@ -29,7 +29,6 @@
 #import "WebKitSystemInterface.h"
 #import <WebCore/RunLoop.h>
 #import <wtf/Noncopyable.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 

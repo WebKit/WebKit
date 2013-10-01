@@ -28,7 +28,6 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadingPrimitives.h>
 
 template<typename T>
@@ -38,7 +37,7 @@ public:
     BlockingResponseMap() : m_canceled(false) { }
     ~BlockingResponseMap() { ASSERT(m_responses.isEmpty()); }
 
-    PassOwnPtr<T> waitForResponse(uint64_t requestID)
+    std::unique_ptr<T> waitForResponse(uint64_t requestID)
     {
         while (true) {
             MutexLocker locker(m_mutex);
@@ -46,8 +45,8 @@ public:
             if (m_canceled)
                 return nullptr;
 
-            if (OwnPtr<T> response = m_responses.take(requestID))
-                return response.release();
+            if (std::unique_ptr<T> response = m_responses.take(requestID))
+                return response;
 
             m_condition.wait(m_mutex);
         }
@@ -55,12 +54,12 @@ public:
         return nullptr;
     }
 
-    void didReceiveResponse(uint64_t requestID, PassOwnPtr<T> response)
+    void didReceiveResponse(uint64_t requestID, std::unique_ptr<T> response)
     {
         MutexLocker locker(m_mutex);
         ASSERT(!m_responses.contains(requestID));
 
-        m_responses.set(requestID, response);
+        m_responses.set(requestID, std::move(response));
         // FIXME: Waking up all threads is quite inefficient.
         m_condition.broadcast();
     }
@@ -77,7 +76,7 @@ private:
     Mutex m_mutex;
     ThreadCondition m_condition;
 
-    HashMap<uint64_t, OwnPtr<T>> m_responses;
+    HashMap<uint64_t, std::unique_ptr<T>> m_responses;
     bool m_canceled;
 };
 

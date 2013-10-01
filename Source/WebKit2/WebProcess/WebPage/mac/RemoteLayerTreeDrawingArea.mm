@@ -32,14 +32,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeDrawingArea> RemoteLayerTreeDrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
-{
-    return adoptPtr(new RemoteLayerTreeDrawingArea(webPage, parameters));
-}
-
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
-    , m_RemoteLayerTreeContext(RemoteLayerTreeContext::create(webPage))
+    , m_RemoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
 {
 }
 

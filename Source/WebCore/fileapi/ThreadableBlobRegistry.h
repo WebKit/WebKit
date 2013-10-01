@@ -31,7 +31,6 @@
 #ifndef ThreadableBlobRegistry_h
 #define ThreadableBlobRegistry_h
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -42,7 +41,7 @@ class SecurityOrigin;
 
 class ThreadableBlobRegistry {
 public:
-    static void registerBlobURL(const URL&, PassOwnPtr<BlobData>);
+    static void registerBlobURL(const URL&, std::unique_ptr<BlobData>);
     static void registerBlobURL(SecurityOrigin*, const URL&, const URL& srcURL);
     static void unregisterBlobURL(const URL&);
 

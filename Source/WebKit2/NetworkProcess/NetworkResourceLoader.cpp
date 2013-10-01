@@ -103,9 +103,9 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
     ASSERT(isMainThread());
     
     if (reply)
-        m_networkLoaderClient = SynchronousNetworkLoaderClient::create(m_request, reply);
+        m_networkLoaderClient = std::make_unique<SynchronousNetworkLoaderClient>(m_request, reply);
     else
-        m_networkLoaderClient = AsynchronousNetworkLoaderClient::create();
+        m_networkLoaderClient = std::make_unique<AsynchronousNetworkLoaderClient>();
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()

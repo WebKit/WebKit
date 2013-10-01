@@ -64,7 +64,7 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
     if (!bitmap)
         return nullptr;
 
-    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+    auto graphicsContext = bitmap->createGraphicsContext();
 
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 

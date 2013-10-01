@@ -54,11 +54,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, const PluginCreationParameters& creationParameters)
-{
-    return adoptPtr(new PluginControllerProxy(connection, creationParameters));
-}
-
 PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, const PluginCreationParameters& creationParameters)
     : m_connection(connection)
     , m_pluginInstanceID(creationParameters.pluginInstanceID)
@@ -183,7 +178,7 @@ void PluginControllerProxy::paint()
     ASSERT(m_plugin);
 
     // Create a graphics context.
-    OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+    auto graphicsContext = m_backingStore->createGraphicsContext();
 
 #if PLATFORM(MAC)
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI

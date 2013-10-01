@@ -46,7 +46,7 @@ public:
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    void setImportanceAssertion(PassOwnPtr<ImportanceAssertion>);
+    void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
 private:
@@ -55,7 +55,7 @@ private:
     StringReference m_messageName;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    OwnPtr<ImportanceAssertion> m_importanceAssertion;
+    std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
 #endif
 };
 

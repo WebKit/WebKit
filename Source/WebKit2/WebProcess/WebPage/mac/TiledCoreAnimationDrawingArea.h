@@ -50,12 +50,10 @@ class LayerHostingContext;
 
 class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::GraphicsLayerClient, WebCore::LayerFlushSchedulerClient {
 public:
-    static PassOwnPtr<TiledCoreAnimationDrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    TiledCoreAnimationDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
 
 private:
-    TiledCoreAnimationDrawingArea(WebPage*, const WebPageCreationParameters&);
-
     // DrawingArea
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
@@ -120,7 +118,7 @@ private:
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
-    OwnPtr<LayerHostingContext> m_layerHostingContext;
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;

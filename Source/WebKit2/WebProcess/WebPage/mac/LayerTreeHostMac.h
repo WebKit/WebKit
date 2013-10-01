@@ -97,7 +97,7 @@ private:
     typedef HashMap<PageOverlay*, std::unique_ptr<WebCore::GraphicsLayer>> PageOverlayLayerMap;
     PageOverlayLayerMap m_pageOverlayLayers;
 
-    OwnPtr<LayerHostingContext> m_layerHostingContext;
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 };
 

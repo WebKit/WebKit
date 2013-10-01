@@ -313,15 +313,13 @@ private:
     public:
         typedef void (*TimerFunc)(NPP, uint32_t timerID);
 
-        static PassOwnPtr<Timer> create(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
+        Timer(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
         ~Timer();
 
         void start();
         void stop();
 
     private:
-        Timer(NetscapePlugin*, unsigned timerID, unsigned interval, bool repeat, TimerFunc);
-
         void timerFired();
 
         // This is a weak pointer since Timer objects are destroyed before the NetscapePlugin object itself is destroyed.
@@ -334,7 +332,7 @@ private:
 
         WebCore::RunLoop::Timer<Timer> m_timer;
     };
-    typedef HashMap<unsigned, OwnPtr<Timer>> TimerMap;
+    typedef HashMap<unsigned, std::unique_ptr<Timer>> TimerMap;
     TimerMap m_timers;
     unsigned m_nextTimerID;
 

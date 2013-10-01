@@ -28,7 +28,6 @@
 
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -54,7 +53,7 @@ class BackingStore {
     WTF_MAKE_NONCOPYABLE(BackingStore);
 
 public:
-    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
+    BackingStore(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
     ~BackingStore();
 
     const WebCore::IntSize& size() const { return m_size; }
@@ -72,8 +71,6 @@ public:
     void incorporateUpdate(const UpdateInfo&);
 
 private:
-    BackingStore(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy*);
-
     void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 

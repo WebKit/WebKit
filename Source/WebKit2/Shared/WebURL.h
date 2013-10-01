@@ -50,9 +50,10 @@ public:
 
         ASSERT(baseURL);
         baseURL->parseURLIfNecessary();
-        URL* absoluteURL = new URL(*baseURL->m_parsedURL.get(), relativeURL);
+        auto absoluteURL = std::make_unique<URL>(*baseURL->m_parsedURL.get(), relativeURL);
+        const String& absoluteURLString = absoluteURL->string();
 
-        return adoptRef(new WebURL(adoptPtr(absoluteURL), absoluteURL->string()));
+        return adoptRef(new WebURL(std::move(absoluteURL), absoluteURLString));
     }
 
     bool isNull() const { return m_string.isNull(); }
@@ -90,9 +91,9 @@ private:
     {
     }
 
-    WebURL(PassOwnPtr<WebCore::URL> parsedURL, const String& string)
+    WebURL(std::unique_ptr<WebCore::URL> parsedURL, const String& string)
         : m_string(string)
-        , m_parsedURL(parsedURL)
+        , m_parsedURL(std::move(parsedURL))
     {
     }
 
@@ -100,11 +101,11 @@ private:
     {
         if (m_parsedURL)
             return;
-        m_parsedURL = WTF::adoptPtr(new WebCore::URL(WebCore::URL(), m_string));
+        m_parsedURL = std::make_unique<WebCore::URL>(WebCore::URL(), m_string);
     }
 
     String m_string;
-    mutable OwnPtr<WebCore::URL> m_parsedURL;
+    mutable std::unique_ptr<WebCore::URL> m_parsedURL;
 };
 
 } // namespace WebKit

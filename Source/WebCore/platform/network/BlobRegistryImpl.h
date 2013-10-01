@@ -58,7 +58,7 @@ private:
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
-    virtual void registerBlobURL(const URL&, PassOwnPtr<BlobData>) OVERRIDE;
+    virtual void registerBlobURL(const URL&, std::unique_ptr<BlobData>) OVERRIDE;
     virtual void registerBlobURL(const URL&, const URL& srcURL) OVERRIDE;
     virtual void unregisterBlobURL(const URL&) OVERRIDE;
     virtual bool isBlobRegistryImpl() const OVERRIDE { return true; }

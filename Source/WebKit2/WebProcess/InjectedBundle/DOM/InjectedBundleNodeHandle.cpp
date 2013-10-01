@@ -134,7 +134,7 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     if (!snapshot->bitmap())
         return 0;
 
-    OwnPtr<GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
     graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
     graphicsContext->applyDeviceScaleFactor(scaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());

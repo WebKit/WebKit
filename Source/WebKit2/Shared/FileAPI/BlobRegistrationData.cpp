@@ -41,8 +41,8 @@ BlobRegistrationData::BlobRegistrationData()
 {
 }
 
-BlobRegistrationData::BlobRegistrationData(PassOwnPtr<BlobData> data)
-    : m_data(data)
+BlobRegistrationData::BlobRegistrationData(std::unique_ptr<BlobData> data)
+    : m_data(std::move(data))
 {
     const BlobDataItemList& items = m_data->items();
     size_t fileCount = 0;
@@ -65,9 +65,9 @@ BlobRegistrationData::~BlobRegistrationData()
 {
 }
 
-PassOwnPtr<BlobData> BlobRegistrationData::releaseData() const
+std::unique_ptr<BlobData> BlobRegistrationData::releaseData() const
 {
-    return m_data.release();
+    return std::move(m_data);
 }
 
 void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
@@ -107,7 +107,7 @@ void BlobRegistrationData::encode(CoreIPC::ArgumentEncoder& encoder) const
 bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistrationData& result)
 {
     ASSERT(!result.m_data);
-    result.m_data = BlobData::create();
+    result.m_data = std::make_unique<BlobData>();
 
     String contentType;
     if (!decoder.decode(contentType))

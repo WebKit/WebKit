@@ -41,11 +41,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
-{
-    return adoptPtr(new DrawingAreaImpl(webPage, parameters));
-}
-
 DrawingAreaImpl::~DrawingAreaImpl()
 {
     if (m_layerTreeHost)
@@ -688,7 +683,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_scrollRect = IntRect();
     m_scrollOffset = IntSize();
 
-    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+    auto graphicsContext = bitmap->createGraphicsContext();
     graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     
     updateInfo.updateRectBounds = bounds;

@@ -31,7 +31,6 @@
 #include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace CoreIPC {
 class Connection;
@@ -57,7 +56,7 @@ class DrawingArea {
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
 public:
-    static PassOwnPtr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    static std::unique_ptr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
     void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);

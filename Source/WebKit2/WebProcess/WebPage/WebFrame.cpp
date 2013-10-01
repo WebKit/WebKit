@@ -104,7 +104,7 @@ static uint64_t generateListenerID()
 
 PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* coreFrame)
 {
-    RefPtr<WebFrame> frame = create(adoptPtr(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
+    RefPtr<WebFrame> frame = create(std::unique_ptr<WebFrameLoaderClient>(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
     page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()));
 
     frame->m_coreFrame = coreFrame;
@@ -115,7 +115,7 @@ PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::F
 
 PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
-    RefPtr<WebFrame> frame = create(adoptPtr(new WebFrameLoaderClient));
+    RefPtr<WebFrame> frame = create(std::make_unique<WebFrameLoaderClient>());
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
 
     RefPtr<Frame> coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());
@@ -129,9 +129,9 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
     return frame.release();
 }
 
-PassRefPtr<WebFrame> WebFrame::create(PassOwnPtr<WebFrameLoaderClient> frameLoaderClient)
+PassRefPtr<WebFrame> WebFrame::create(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
 {
-    RefPtr<WebFrame> frame = adoptRef(new WebFrame(frameLoaderClient));
+    RefPtr<WebFrame> frame = adoptRef(new WebFrame(std::move(frameLoaderClient)));
 
     // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
     frame->ref();
@@ -139,12 +139,12 @@ PassRefPtr<WebFrame> WebFrame::create(PassOwnPtr<WebFrameLoaderClient> frameLoad
     return frame.release();
 }
 
-WebFrame::WebFrame(PassOwnPtr<WebFrameLoaderClient> frameLoaderClient)
+WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
     : m_coreFrame(0)
     , m_policyListenerID(0)
     , m_policyFunction(0)
     , m_policyDownloadID(0)
-    , m_frameLoaderClient(frameLoaderClient)
+    , m_frameLoaderClient(std::move(frameLoaderClient))
     , m_loadListener(0)
     , m_frameID(generateFrameID())
 {

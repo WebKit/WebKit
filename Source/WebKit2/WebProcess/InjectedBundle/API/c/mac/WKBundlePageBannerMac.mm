@@ -36,12 +36,6 @@ using namespace WebKit;
 
 class PageBannerClientImpl : public PageBanner::Client {
 public:
-    static PassOwnPtr<PageBannerClientImpl> create(WKBundlePageBannerClient* client)
-    {
-        return adoptPtr(new PageBannerClientImpl(client));
-    }
-
-private:
     explicit PageBannerClientImpl(WKBundlePageBannerClient* client)
         : m_client()
     {
@@ -49,6 +43,7 @@ private:
             m_client = *client;
     }
 
+private:
     // PageBanner::Client.
     virtual void pageBannerDestroyed(PageBanner*)
     {
@@ -98,8 +93,8 @@ WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, 
     if (wkClient && wkClient->version)
         return 0;
 
-    OwnPtr<PageBannerClientImpl> clientImpl = PageBannerClientImpl::create(wkClient);
-    return toAPI(PageBanner::create(layer, height, clientImpl.leakPtr()).leakRef());
+    auto clientImpl = std::make_unique<PageBannerClientImpl>(wkClient);
+    return toAPI(PageBanner::create(layer, height, clientImpl.release()).leakRef());
 }
 
 CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)

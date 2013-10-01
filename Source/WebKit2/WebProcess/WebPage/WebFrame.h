@@ -141,8 +141,8 @@ public:
 #endif
 
 private:
-    static PassRefPtr<WebFrame> create(PassOwnPtr<WebFrameLoaderClient>);
-    WebFrame(PassOwnPtr<WebFrameLoaderClient>);
+    static PassRefPtr<WebFrame> create(std::unique_ptr<WebFrameLoaderClient>);
+    WebFrame(std::unique_ptr<WebFrameLoaderClient>);
 
     WebCore::Frame* m_coreFrame;
 
@@ -150,7 +150,7 @@ private:
     WebCore::FramePolicyFunction m_policyFunction;
     uint64_t m_policyDownloadID;
 
-    OwnPtr<WebFrameLoaderClient> m_frameLoaderClient;
+    std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;
     LoadListener* m_loadListener;
     
     uint64_t m_frameID;

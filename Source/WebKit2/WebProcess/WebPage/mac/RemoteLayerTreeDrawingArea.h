@@ -27,7 +27,6 @@
 #define RemoteLayerTreeDrawingArea_h
 
 #include "DrawingArea.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
@@ -35,12 +34,10 @@ class RemoteLayerTreeContext;
 
 class RemoteLayerTreeDrawingArea : public DrawingArea {
 public:
-    static PassOwnPtr<RemoteLayerTreeDrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
 
 private:
-    RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
-
     // DrawingArea
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
@@ -50,7 +47,7 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 
-    OwnPtr<RemoteLayerTreeContext> m_RemoteLayerTreeContext;
+    std::unique_ptr<RemoteLayerTreeContext> m_RemoteLayerTreeContext;
 };
 
 } // namespace WebKit

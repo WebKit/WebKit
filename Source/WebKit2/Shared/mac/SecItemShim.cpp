@@ -70,7 +70,7 @@ static uint64_t generateSecItemRequestID()
     return atomicIncrement(&uniqueSecItemRequestID);
 }
 
-static PassOwnPtr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
+static std::unique_ptr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
     uint64_t requestID = generateSecItemRequestID();
     if (!sharedProcess->parentProcessConnection()->send(Messages::SecItemShimProxy::SecItemRequest(requestID, SecItemRequestData(requestType, query, attributesToMatch)), 0))
@@ -81,7 +81,7 @@ static PassOwnPtr<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Ty
 
 static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    OwnPtr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::CopyMatching, query);
+    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::CopyMatching, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -91,7 +91,7 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 
 static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 {
-    OwnPtr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Add, query);
+    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Add, query);
     if (!response)
         return errSecInteractionNotAllowed;
 
@@ -102,7 +102,7 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 
 static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    OwnPtr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
+    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Update, query, attributesToUpdate);
     if (!response)
         return errSecInteractionNotAllowed;
     
@@ -111,7 +111,7 @@ static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attribut
 
 static OSStatus webSecItemDelete(CFDictionaryRef query)
 {
-    OwnPtr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Delete, query);
+    std::unique_ptr<SecItemResponseData> response = sendSecItemRequest(SecItemRequestData::Delete, query);
     if (!response)
         return errSecInteractionNotAllowed;
     
@@ -120,7 +120,7 @@ static OSStatus webSecItemDelete(CFDictionaryRef query)
 
 void SecItemShim::secItemResponse(uint64_t requestID, const SecItemResponseData& response)
 {
-    responseMap().didReceiveResponse(requestID, adoptPtr(new SecItemResponseData(response)));
+    responseMap().didReceiveResponse(requestID, std::make_unique<SecItemResponseData>(response));
 }
 
 void SecItemShim::initialize(ChildProcess* process)

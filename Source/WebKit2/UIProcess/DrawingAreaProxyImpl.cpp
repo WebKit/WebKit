@@ -269,7 +269,7 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         return;
 
     if (!m_backingStore)
-        m_backingStore = BackingStore::create(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
+        m_backingStore = std::make_unique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
 

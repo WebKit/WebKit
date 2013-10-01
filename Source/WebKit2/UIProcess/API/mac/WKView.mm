@@ -156,7 +156,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 @interface WKViewData : NSObject {
 @public
-    OwnPtr<PageClientImpl> _pageClient;
+    std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
     
     // Cache of the associated WKBrowsingContextController.
@@ -2365,16 +2365,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @implementation WKView (Internal)
 
-- (OwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
     if ([self _shouldUseTiledDrawingArea]) {
         if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
-            return RemoteLayerTreeDrawingAreaProxy::create(_data->_page.get());
+            return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_data->_page.get());
 
-        return createOwned<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
+        return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
     }
 
-    return createOwned<DrawingAreaProxyImpl>(_data->_page.get());
+    return std::make_unique<DrawingAreaProxyImpl>(_data->_page.get());
 }
 
 - (BOOL)_isFocused
@@ -3063,7 +3063,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data = [[WKViewData alloc] init];
 
-    _data->_pageClient = PageClientImpl::create(self);
+    _data->_pageClient = std::make_unique<PageClientImpl>(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef), toImpl(relatedPage));
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();

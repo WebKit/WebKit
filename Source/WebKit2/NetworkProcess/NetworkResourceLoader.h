@@ -166,7 +166,7 @@ private:
     uint64_t m_bytesReceived;
 
     bool m_handleConvertedToDownload;
-    OwnPtr<NetworkLoaderClient> m_networkLoaderClient;
+    std::unique_ptr<NetworkLoaderClient> m_networkLoaderClient;
 
     ResourceLoadIdentifier m_identifier;
     uint64_t m_webPageID;

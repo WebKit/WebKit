@@ -28,11 +28,6 @@
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeDrawingAreaProxy> RemoteLayerTreeDrawingAreaProxy::create(WebPageProxy* webPageProxy)
-{
-    return adoptPtr(new RemoteLayerTreeDrawingAreaProxy(webPageProxy));
-}
-
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(webPageProxy)

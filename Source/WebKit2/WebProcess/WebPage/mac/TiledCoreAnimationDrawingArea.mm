@@ -60,11 +60,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<TiledCoreAnimationDrawingArea> TiledCoreAnimationDrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
-{
-    return adoptPtr(new TiledCoreAnimationDrawingArea(webPage, parameters));
-}
-
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
     , m_layerTreeStateIsFrozen(false)

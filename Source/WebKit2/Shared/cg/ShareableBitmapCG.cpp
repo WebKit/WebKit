@@ -46,7 +46,7 @@ static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
     return info;
 }
 
-PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
@@ -59,7 +59,7 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
     CGContextScaleCTM(bitmapContext.get(), 1, -1);
 
-    return adoptPtr(new GraphicsContext(bitmapContext.get()));
+    return std::make_unique<GraphicsContext>(bitmapContext.get());
 }
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& destination, const IntRect& source)
@@ -74,7 +74,7 @@ void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor
 
 RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
 {
-    OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
+    auto graphicsContext = createGraphicsContext();
     RetainPtr<CGImageRef> image = adoptCF(CGBitmapContextCreateImage(graphicsContext->platformContext()));
     return image;
 }

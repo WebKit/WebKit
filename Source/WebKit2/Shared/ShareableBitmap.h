@@ -106,7 +106,7 @@ public:
     bool resize(const WebCore::IntSize& size);
 
     // Create a graphics context that can be used to paint into the backing store.
-    PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext();
+    std::unique_ptr<WebCore::GraphicsContext> createGraphicsContext();
 
     // Paint the backing store into the given context.
     void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& destination, const WebCore::IntRect& source);

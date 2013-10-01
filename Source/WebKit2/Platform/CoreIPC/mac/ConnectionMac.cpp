@@ -406,7 +406,7 @@ void Connection::receiveSourceEventHandler()
     ASSERT(decoder);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    decoder->setImportanceAssertion(ImportanceAssertion::create(header));
+    decoder->setImportanceAssertion(std::make_unique<ImportanceAssertion>(header));
 #endif
 
     if (decoder->messageReceiverName() == "IPC" && decoder->messageName() == "InitializeConnection") {

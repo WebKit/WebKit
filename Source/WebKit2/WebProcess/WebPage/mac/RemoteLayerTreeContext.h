@@ -38,7 +38,7 @@ class WebPage;
 
 class RemoteLayerTreeContext : public WebCore::GraphicsLayerFactory {
 public:
-    static PassOwnPtr<RemoteLayerTreeContext> create(WebPage*);
+    explicit RemoteLayerTreeContext(WebPage*);
     ~RemoteLayerTreeContext();
 
     void setRootLayer(WebCore::GraphicsLayer*);
@@ -49,8 +49,6 @@ public:
     RemoteLayerTreeTransaction& currentTransaction();
 
 private:
-    explicit RemoteLayerTreeContext(WebPage*);
-
     // WebCore::GraphicsLayerFactory
     virtual std::unique_ptr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 

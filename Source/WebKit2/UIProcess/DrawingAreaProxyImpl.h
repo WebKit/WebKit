@@ -31,7 +31,6 @@
 #include "LayerTreeContext.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 class Region;
@@ -114,7 +113,7 @@ private:
     bool m_hasReceivedFirstUpdate;
 
     bool m_isBackingStoreDiscardable;
-    OwnPtr<BackingStore> m_backingStore;
+    std::unique_ptr<BackingStore> m_backingStore;
 
     WebCore::RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
 };

@@ -46,7 +46,7 @@ BlobRegistry& blobRegistry();
 class BlobRegistry {
 public:
     // Registers a blob URL referring to the specified blob data.
-    virtual void registerBlobURL(const URL&, PassOwnPtr<BlobData>) = 0;
+    virtual void registerBlobURL(const URL&, std::unique_ptr<BlobData>) = 0;
     
     // Registers a new blob URL referring to the blob data identified by the specified srcURL.
     virtual void registerBlobURL(const URL&, const URL& srcURL) = 0;

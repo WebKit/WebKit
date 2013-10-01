@@ -30,7 +30,6 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include <WebCore/GraphicsContext.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

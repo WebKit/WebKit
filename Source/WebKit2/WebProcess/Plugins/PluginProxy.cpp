@@ -211,7 +211,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         m_connection->connection()->sendSync(Messages::PluginControllerProxy::PaintEntirePlugin(), Messages::PluginControllerProxy::PaintEntirePlugin::Reply(), m_pluginInstanceID);
     
         // Blit the plug-in backing store into our own backing store.
-        OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+        auto graphicsContext = m_backingStore->createGraphicsContext();
         graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
         graphicsContext->setCompositeOperation(CompositeCopy);
 
@@ -692,7 +692,7 @@ void PluginProxy::update(const IntRect& paintedRect)
 
     if (m_backingStore) {
         // Blit the plug-in backing store into our own backing store.
-        OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+        auto graphicsContext = m_backingStore->createGraphicsContext();
         graphicsContext->applyDeviceScaleFactor(contentsScaleFactor());
         graphicsContext->setCompositeOperation(CompositeCopy);
         m_pluginBackingStore->paint(*graphicsContext, contentsScaleFactor(), paintedRect.location(), paintedRect);

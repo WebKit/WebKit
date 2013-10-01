@@ -300,7 +300,7 @@ Blob* XMLHttpRequest::responseBlob()
         // instead of copying the bytes. Embedders who store blob data in the
         // same process as WebCore would at least to teach BlobData to take
         // a SharedBuffer, even if they don't get the Blob from the network layer directly.
-        OwnPtr<BlobData> blobData = BlobData::create();
+        auto blobData = std::make_unique<BlobData>();
         // If we errored out or got no data, we still return a blob, just an empty one.
         size_t size = 0;
         if (m_binaryResponseBuilder) {
@@ -312,7 +312,7 @@ Blob* XMLHttpRequest::responseBlob()
             blobData->setContentType(normalizedContentType); // responseMIMEType defaults to text/xml which may be incorrect.
             m_binaryResponseBuilder.clear();
         }
-        m_responseBlob = Blob::create(blobData.release(), size);
+        m_responseBlob = Blob::create(std::move(blobData), size);
     }
 
     return m_responseBlob.get();

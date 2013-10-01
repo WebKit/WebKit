@@ -1,3 +1,144 @@
+2013-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of more uses of OwnPtr and PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=122136
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.h:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/SynchronousNetworkLoaderClient.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        * Platform/CoreIPC/MessageDecoder.cpp:
+        (CoreIPC::MessageDecoder::setImportanceAssertion):
+        * Platform/CoreIPC/MessageDecoder.h:
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        * Platform/CoreIPC/mac/ImportanceAssertion.h:
+        (CoreIPC::ImportanceAssertion::ImportanceAssertion):
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        (WebKit::LayerHostingContext::createForWindowServer):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paint):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::addPluginControllerProxy):
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        (WebKit::WebProcessConnection::createPluginInternal):
+        * PluginProcess/WebProcessConnection.h:
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateFromCGImage):
+        * Shared/BlockingResponseMap.h:
+        (BlockingResponseMap::waitForResponse):
+        (BlockingResponseMap::didReceiveResponse):
+        * Shared/Downloads/Download.cpp:
+        * Shared/Downloads/Download.h:
+        * Shared/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::convertHandleToDownload):
+        * Shared/FileAPI/BlobRegistrationData.cpp:
+        (WebKit::BlobRegistrationData::BlobRegistrationData):
+        (WebKit::BlobRegistrationData::releaseData):
+        (WebKit::BlobRegistrationData::decode):
+        * Shared/FileAPI/BlobRegistrationData.h:
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::registerNPObject):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/ShareableBitmap.h:
+        * Shared/WebURL.h:
+        (WebKit::WebURL::create):
+        (WebKit::WebURL::WebURL):
+        (WebKit::WebURL::parseURLIfNecessary):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::makeCGImageCopy):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::sendSecItemRequest):
+        (WebKit::webSecItemCopyMatching):
+        (WebKit::webSecItemAdd):
+        (WebKit::webSecItemUpdate):
+        (WebKit::webSecItemDelete):
+        (WebKit::SecItemShim::secItemResponse):
+        * UIProcess/API/mac/FindIndicatorWindow.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView std::WebKit::]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/BackingStore.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        (WKBundlePageBannerCreateBannerWithCALayer):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::scheduleTimer):
+        (WebKit::NetscapePlugin::unscheduleTimer):
+        (WebKit::NetscapePlugin::snapshot):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::snapshot):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::update):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getFindIndicatorBitmapAndRect):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        (WebKit::WebFrame::create):
+        (WebKit::WebFrame::WebFrame):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+        (WebKit::WebPage::drawRectToImage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+
 2013-09-27  Anders Carlsson  <andersca@apple.com>
 
         Message sending functions should only accept rvalues

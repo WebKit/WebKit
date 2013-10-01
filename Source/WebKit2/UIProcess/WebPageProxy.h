@@ -1068,7 +1068,7 @@ private:
     WebPageContextMenuClient m_contextMenuClient;
 #endif
 
-    OwnPtr<DrawingAreaProxy> m_drawingArea;
+    std::unique_ptr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebProcessProxy> m_process;
     RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;

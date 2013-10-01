@@ -52,7 +52,6 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
-#import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 #import <WebKitSystemInterface.h>
@@ -120,11 +119,6 @@ using namespace WebKit;
 
 namespace WebKit {
 
-PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
-{
-    return adoptPtr(new PageClientImpl(wkView));
-}
-
 PageClientImpl::PageClientImpl(WKView* wkView)
     : m_wkView(wkView)
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
@@ -138,7 +132,7 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-OwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     return [m_wkView _createDrawingAreaProxy];
 }

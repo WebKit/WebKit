@@ -33,11 +33,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, float deviceScaleFactor, WebPageProxy* webPageProxy)
-{
-    return adoptPtr(new BackingStore(size, deviceScaleFactor, webPageProxy));
-}
-
 BackingStore::BackingStore(const IntSize& size, float deviceScaleFactor, WebPageProxy* webPageProxy)
     : m_size(size)
     , m_deviceScaleFactor(deviceScaleFactor)

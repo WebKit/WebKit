@@ -33,12 +33,10 @@ namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    static PassOwnPtr<RemoteLayerTreeDrawingAreaProxy> create(WebPageProxy*);
+    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
 private:
-    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
-
     virtual void sizeDidChange() OVERRIDE;
     virtual void deviceScaleFactorDidChange() OVERRIDE;
 
