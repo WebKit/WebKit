@@ -45,11 +45,6 @@ using namespace std;
 
 namespace WebCore {
 
-static NSString* const commonHeaderFields[] = {
-    @"Age", @"Cache-Control", @"Content-Type", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
-};
-static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(AtomicString*);
-
 void ResourceResponse::initNSURLResponse() const
 {
     // Work around a mistake in the NSURLResponse class - <rdar://problem/6875219>.
@@ -96,6 +91,10 @@ ResourceResponse::ResourceResponse(NSURLResponse* nsResponse)
 
 #else
 
+static NSString* const commonHeaderFields[] = {
+    @"Age", @"Cache-Control", @"Content-Type", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
+};
+
 NSURLResponse *ResourceResponse::nsURLResponse() const
 {
     if (!m_nsResponse && !m_isNull)
@@ -132,7 +131,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
             NSDictionary *headers = [httpResponse allHeaderFields];
             
-            for (int i = 0; i < numCommonHeaderFields; i++) {
+            for (unsigned i = 0; i < WTF_ARRAY_LENGTH(commonHeaderFields); ++i) {
                 if (NSString* headerValue = [headers objectForKey:commonHeaderFields[i]])
                     m_httpHeaderFields.set([commonHeaderFields[i] UTF8String], headerValue);
             }

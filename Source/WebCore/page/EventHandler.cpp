@@ -146,11 +146,14 @@ const double fakeMouseMoveDurationThreshold = 0.01;
 const double fakeMouseMoveShortInterval = 0.1;
 const double fakeMouseMoveLongInterval = 0.25;
 
+#if !PLATFORM(IOS)
 // The amount of time to wait for a cursor update on style and layout changes
 // Set to 50Hz, no need to be faster than common screen refresh rate
 const double cursorUpdateInterval = 0.02;
 
 const int maximumCursorSize = 128;
+#endif
+
 #if ENABLE(MOUSE_CURSOR_SCALE)
 // It's pretty unlikely that a scale of less than one would ever be used. But all we really
 // need to ensure here is that the scale isn't so small that integer overflow can occur when
@@ -283,6 +286,7 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
     return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement);
 }
 
+#if (ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)) || ENABLE(GESTURE_EVENTS)
 static inline bool shouldGesturesTriggerActive()
 {
     // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
@@ -290,6 +294,7 @@ static inline bool shouldGesturesTriggerActive()
     // know in advance what event types are supported.
     return false;
 }
+#endif
 
 #if !PLATFORM(MAC)
 

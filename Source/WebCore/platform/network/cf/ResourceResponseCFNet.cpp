@@ -60,15 +60,6 @@ CFURLResponseRef ResourceResponse::cfURLResponse() const
     return m_cfResponse.get();
 }
 
-static inline bool filenameHasSaneExtension(const String& filename)
-{
-    int dot = filename.find('.');
-
-    // The dot can't be the first or last character in the filename.
-    int length = filename.length();
-    return dot > 0 && dot < length - 1;
-}
-
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
 {
     if (m_initLevel > initLevel)

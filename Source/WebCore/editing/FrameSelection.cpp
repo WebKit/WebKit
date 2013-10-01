@@ -1746,10 +1746,12 @@ bool FrameSelection::isFocusedAndActive() const
     return m_focused && m_frame->page() && m_frame->page()->focusController().isActive();
 }
 
+#if ENABLE(TEXT_CARET)
 inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 {
     return frame->editor().lastEditCommand() && frame->editor().lastEditCommand()->shouldStopCaretBlinking();
 }
+#endif
 
 void FrameSelection::updateAppearance()
 {

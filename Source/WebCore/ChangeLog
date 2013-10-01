@@ -1,3 +1,18 @@
+2013-10-01  Daniel Bates  <dabates@apple.com>
+
+        [iOS] WebCore fails to build with newer versions of clang
+        https://bugs.webkit.org/show_bug.cgi?id=122161
+
+        Reviewed by Darin Adler.
+
+        * editing/FrameSelection.cpp: Add ENABLE(TEXT_CARET)-guard around shouldStopBlinkingDueToTypingCommand().
+        * page/EventHandler.cpp: Add !PLATFORM(IOS)-guard around constants cursorUpdateInterval and maximumCursorSize;
+        also add touch event/gesture event guard around shouldGesturesTriggerActive().
+        * platform/network/cf/ResourceResponseCFNet.cpp: Remove unused function filenameHasSaneExtension.
+        * platform/network/mac/ResourceResponseMac.mm: Only define static variables commonHeaderFields when building
+        without CFNetwork; also remove variable numCommonHeaderFields, instead use WTF_ARRAY_LENGTH(commonHeaderFields)
+        to compute the size of the fixed-sized array commonHeaderFields.
+
 2013-10-01  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Support "chapter" text tracks
