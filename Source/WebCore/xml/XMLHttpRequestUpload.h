@@ -43,8 +43,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class XMLHttpRequest;
 
-    // FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-    class XMLHttpRequestUpload : public EventTargetWithInlineData {
+    class XMLHttpRequestUpload FINAL : public EventTargetWithInlineData {
     public:
         static PassOwnPtr<XMLHttpRequestUpload> create(XMLHttpRequest* xmlHttpRequest)
         {
@@ -55,8 +54,8 @@ namespace WebCore {
         void deref() { m_xmlHttpRequest->deref(); }
         XMLHttpRequest* xmlHttpRequest() const { return m_xmlHttpRequest; }
 
-        virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return XMLHttpRequestUploadEventTargetInterfaceType; }
-        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_xmlHttpRequest->scriptExecutionContext(); }
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return XMLHttpRequestUploadEventTargetInterfaceType; }
+        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_xmlHttpRequest->scriptExecutionContext(); }
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);

@@ -53,8 +53,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class FileReader : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
+class FileReader FINAL : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
 public:
     static PassRefPtr<FileReader> create(ScriptExecutionContext*);
 
@@ -82,14 +81,14 @@ public:
     String stringResult();
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return FileReaderEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return FileReaderEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
 
     // FileReaderLoaderClient
-    virtual void didStartLoading();
-    virtual void didReceiveData();
-    virtual void didFinishLoading();
-    virtual void didFail(int errorCode);
+    virtual void didStartLoading() OVERRIDE;
+    virtual void didReceiveData() OVERRIDE;
+    virtual void didFinishLoading() OVERRIDE;
+    virtual void didFail(int errorCode) OVERRIDE;
 
     using RefCounted<FileReader>::ref;
     using RefCounted<FileReader>::deref;
@@ -102,15 +101,15 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
 
 private:
-    FileReader(ScriptExecutionContext*);
+    explicit FileReader(ScriptExecutionContext*);
 
     // ActiveDOMObject
     virtual bool canSuspend() const OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     void terminate();
     void readInternal(Blob*, FileReaderLoader::ReadType, ExceptionCode&);

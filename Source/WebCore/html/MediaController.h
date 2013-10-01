@@ -43,8 +43,7 @@ class HTMLMediaElement;
 class Event;
 class ScriptExecutionContext;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class MediaController : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
+class MediaController FINAL : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
 public:
     static PassRefPtr<MediaController> create(ScriptExecutionContext*);
     virtual ~MediaController();
@@ -55,58 +54,58 @@ public:
 
     const String& mediaGroup() const { return m_mediaGroup; }
     
-    virtual PassRefPtr<TimeRanges> buffered() const;
-    virtual PassRefPtr<TimeRanges> seekable() const;
-    virtual PassRefPtr<TimeRanges> played();
+    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
+    virtual PassRefPtr<TimeRanges> seekable() const OVERRIDE;
+    virtual PassRefPtr<TimeRanges> played() OVERRIDE;
     
-    virtual double duration() const;
-    virtual double currentTime() const;
-    virtual void setCurrentTime(double, ExceptionCode&);
+    virtual double duration() const OVERRIDE;
+    virtual double currentTime() const OVERRIDE;
+    virtual void setCurrentTime(double, ExceptionCode&) OVERRIDE;
     
-    virtual bool paused() const { return m_paused; }
-    virtual void play();
-    virtual void pause();
+    virtual bool paused() const OVERRIDE { return m_paused; }
+    virtual void play() OVERRIDE;
+    virtual void pause() OVERRIDE;
     void unpause();
     
-    virtual double defaultPlaybackRate() const { return m_defaultPlaybackRate; }
-    virtual void setDefaultPlaybackRate(double);
+    virtual double defaultPlaybackRate() const OVERRIDE { return m_defaultPlaybackRate; }
+    virtual void setDefaultPlaybackRate(double) OVERRIDE;
     
-    virtual double playbackRate() const;
-    virtual void setPlaybackRate(double);
+    virtual double playbackRate() const OVERRIDE;
+    virtual void setPlaybackRate(double) OVERRIDE;
     
-    virtual double volume() const { return m_volume; }
-    virtual void setVolume(double, ExceptionCode&);
+    virtual double volume() const OVERRIDE { return m_volume; }
+    virtual void setVolume(double, ExceptionCode&) OVERRIDE;
     
-    virtual bool muted() const { return m_muted; }
-    virtual void setMuted(bool);
+    virtual bool muted() const OVERRIDE { return m_muted; }
+    virtual void setMuted(bool) OVERRIDE;
     
-    virtual ReadyState readyState() const { return m_readyState; }
+    virtual ReadyState readyState() const OVERRIDE { return m_readyState; }
 
     enum PlaybackState { WAITING, PLAYING, ENDED };
     const AtomicString& playbackState() const;
 
-    virtual bool supportsFullscreen() const { return false; }
-    virtual bool isFullscreen() const { return false; }
-    virtual void enterFullscreen() { }
+    virtual bool supportsFullscreen() const OVERRIDE { return false; }
+    virtual bool isFullscreen() const OVERRIDE { return false; }
+    virtual void enterFullscreen() OVERRIDE { }
 
-    virtual bool hasAudio() const;
-    virtual bool hasVideo() const;
-    virtual bool hasClosedCaptions() const;
-    virtual void setClosedCaptionsVisible(bool);
-    virtual bool closedCaptionsVisible() const { return m_closedCaptionsVisible; }
+    virtual bool hasAudio() const OVERRIDE;
+    virtual bool hasVideo() const OVERRIDE;
+    virtual bool hasClosedCaptions() const OVERRIDE;
+    virtual void setClosedCaptionsVisible(bool) OVERRIDE;
+    virtual bool closedCaptionsVisible() const OVERRIDE { return m_closedCaptionsVisible; }
     
-    virtual bool supportsScanning() const;
+    virtual bool supportsScanning() const OVERRIDE;
     
-    virtual void beginScrubbing();
-    virtual void endScrubbing();
+    virtual void beginScrubbing() OVERRIDE;
+    virtual void endScrubbing() OVERRIDE;
     
-    virtual bool canPlay() const;
+    virtual bool canPlay() const OVERRIDE;
     
-    virtual bool isLiveStream() const;
+    virtual bool isLiveStream() const OVERRIDE;
     
-    virtual bool hasCurrentSrc() const;
+    virtual bool hasCurrentSrc() const OVERRIDE;
     
-    virtual void returnToRealtime();
+    virtual void returnToRealtime() OVERRIDE;
 
     bool isBlocked() const;
 
@@ -130,10 +129,10 @@ private:
     void startTimeupdateTimer();
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return MediaControllerEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; };
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MediaControllerEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; };
 
     friend class HTMLMediaElement;
     friend class MediaControllerEventListener;

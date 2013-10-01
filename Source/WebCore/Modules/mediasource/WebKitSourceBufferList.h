@@ -44,8 +44,7 @@ namespace WebCore {
 class WebKitSourceBuffer;
 class GenericEventQueue;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class WebKitSourceBufferList : public RefCounted<WebKitSourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
+class WebKitSourceBufferList FINAL : public RefCounted<WebKitSourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
 public:
     static PassRefPtr<WebKitSourceBufferList> create(ScriptExecutionContext* context)
     {
@@ -61,19 +60,19 @@ public:
     void clear();
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return WebKitSourceBufferListEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return WebKitSourceBufferListEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; }
 
     using RefCounted<WebKitSourceBufferList>::ref;
     using RefCounted<WebKitSourceBufferList>::deref;
 
 private:
-    WebKitSourceBufferList(ScriptExecutionContext*);
+    explicit WebKitSourceBufferList(ScriptExecutionContext*);
 
     void createAndFireEvent(const AtomicString&);
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     ScriptExecutionContext* m_scriptExecutionContext;
     GenericEventQueue m_asyncEventQueue;

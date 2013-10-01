@@ -47,8 +47,7 @@ namespace WebCore {
     // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
     typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
 
-    // FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-    class MessagePort : public RefCounted<MessagePort>, public EventTargetWithInlineData {
+    class MessagePort FINAL : public RefCounted<MessagePort>, public EventTargetWithInlineData {
     public:
         static PassRefPtr<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }
         virtual ~MessagePort();
@@ -74,9 +73,9 @@ namespace WebCore {
 
         void contextDestroyed();
 
-        virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return MessagePortEventTargetInterfaceType; }
-        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; }
-        virtual bool isMessagePort() const OVERRIDE FINAL { return true; }
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MessagePortEventTargetInterfaceType; }
+        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; }
+        virtual bool isMessagePort() const OVERRIDE { return true; }
 
         void dispatchMessages();
 
@@ -106,8 +105,8 @@ namespace WebCore {
     private:
         explicit MessagePort(ScriptExecutionContext&);
 
-        virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-        virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+        virtual void refEventTarget() OVERRIDE { ref(); }
+        virtual void derefEventTarget() OVERRIDE { deref(); }
 
         OwnPtr<MessagePortChannel> m_entangledChannel;
 

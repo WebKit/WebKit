@@ -45,8 +45,7 @@ class MediaKeyError;
 class MediaKeys;
 class CDMSession;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class MediaKeySession : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class MediaKeySession FINAL : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     static PassRefPtr<MediaKeySession> create(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
     ~MediaKeySession();
@@ -73,8 +72,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return MediaKeySessionEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ContextDestructionObserver::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MediaKeySessionEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
 protected:
     MediaKeySession(ScriptExecutionContext*, MediaKeys*, const String& keySystem);
@@ -100,8 +99,8 @@ protected:
     Timer<MediaKeySession> m_addKeyTimer;
 
 private:
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 };
 
 }

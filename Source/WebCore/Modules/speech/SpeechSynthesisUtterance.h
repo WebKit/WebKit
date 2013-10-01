@@ -37,8 +37,7 @@
 
 namespace WebCore {
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class SpeechSynthesisUtterance : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
+class SpeechSynthesisUtterance FINAL : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
     static PassRefPtr<SpeechSynthesisUtterance> create(ScriptExecutionContext*, const String&);
     
@@ -76,7 +75,7 @@ public:
     using RefCounted<SpeechSynthesisUtterance>::ref;
     using RefCounted<SpeechSynthesisUtterance>::deref;
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ContextDestructionObserver::scriptExecutionContext(); }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
@@ -85,9 +84,9 @@ private:
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 };
     
 } // namespace WebCore

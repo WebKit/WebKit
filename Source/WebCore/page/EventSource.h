@@ -48,8 +48,7 @@ class ResourceResponse;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class EventSource : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
+class EventSource FINAL : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<EventSource> create(ScriptExecutionContext*, const String& url, const Dictionary&, ExceptionCode&);
@@ -76,21 +75,21 @@ public:
     using RefCounted<EventSource>::ref;
     using RefCounted<EventSource>::deref;
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return EventSourceEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return EventSourceEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
     EventSource(ScriptExecutionContext*, const URL&, const Dictionary&);
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
-    virtual void didReceiveData(const char*, int);
-    virtual void didFinishLoading(unsigned long, double);
-    virtual void didFail(const ResourceError&);
-    virtual void didFailAccessControlCheck(const ResourceError&);
-    virtual void didFailRedirectCheck();
+    virtual void didReceiveResponse(unsigned long, const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char*, int) OVERRIDE;
+    virtual void didFinishLoading(unsigned long, double) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
+    virtual void didFailAccessControlCheck(const ResourceError&) OVERRIDE;
+    virtual void didFailRedirectCheck() OVERRIDE;
 
     virtual void stop() OVERRIDE;
 

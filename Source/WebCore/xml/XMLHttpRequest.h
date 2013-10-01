@@ -51,8 +51,7 @@ class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class XMLHttpRequest : public ScriptWrappable, public RefCounted<XMLHttpRequest>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
+class XMLHttpRequest FINAL : public ScriptWrappable, public RefCounted<XMLHttpRequest>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<XMLHttpRequest> create(ScriptExecutionContext*);
@@ -83,8 +82,8 @@ public:
     virtual void didTimeout();
 #endif
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return XMLHttpRequestEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return XMLHttpRequestEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
 
     const URL& url() const { return m_url; }
     String statusText(ExceptionCode&) const;
@@ -159,7 +158,7 @@ public:
     using RefCounted<XMLHttpRequest>::deref;
 
 private:
-    XMLHttpRequest(ScriptExecutionContext*);
+    explicit XMLHttpRequest(ScriptExecutionContext*);
 
     // ActiveDOMObject
     virtual void contextDestroyed() OVERRIDE;
@@ -168,8 +167,8 @@ private:
     virtual void resume() OVERRIDE;
     virtual void stop() OVERRIDE;
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     Document* document() const;
     SecurityOrigin* securityOrigin() const;
@@ -178,12 +177,12 @@ private:
     bool usesDashboardBackwardCompatibilityMode() const;
 #endif
 
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-    virtual void didReceiveData(const char* data, int dataLength);
-    virtual void didFinishLoading(unsigned long identifier, double finishTime);
-    virtual void didFail(const ResourceError&);
-    virtual void didFailRedirectCheck();
+    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char* data, int dataLength) OVERRIDE;
+    virtual void didFinishLoading(unsigned long identifier, double finishTime) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
+    virtual void didFailRedirectCheck() OVERRIDE;
 
     String responseMIMEType() const;
     bool responseIsXML() const;

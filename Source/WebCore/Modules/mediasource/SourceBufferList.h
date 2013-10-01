@@ -43,8 +43,7 @@ namespace WebCore {
 
 class SourceBuffer;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class SourceBufferList : public RefCounted<SourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
+class SourceBufferList FINAL : public RefCounted<SourceBufferList>, public ScriptWrappable, public EventTargetWithInlineData {
 public:
     static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context)
     {
@@ -61,19 +60,19 @@ public:
     void clear();
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return SourceBufferListEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return SourceBufferListEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return m_scriptExecutionContext; }
 
     using RefCounted<SourceBufferList>::ref;
     using RefCounted<SourceBufferList>::deref;
 
 private:
-    SourceBufferList(ScriptExecutionContext*);
+    explicit SourceBufferList(ScriptExecutionContext*);
 
     void scheduleEvent(const AtomicString&);
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     ScriptExecutionContext* m_scriptExecutionContext;
     GenericEventQueue m_asyncEventQueue;

@@ -1,3 +1,13 @@
+2013-10-01  Andreas Kling  <akling@apple.com>
+
+        Leaf EventTarget subclasses should be FINAL.
+        <https://webkit.org/b/122141>
+
+        Reviewed by Darin Adler.
+
+        Clear out a slew of FIXMEs now that HasMemoryCostMemberFunction
+        works on classes marked FINAL (fixed in bug 121747.)
+
 2013-10-01  Szabolcs Dávid  <davidsz@inf.u-szeged.hu>
 
         Rename URL type variables in Curl network backend.

@@ -52,14 +52,13 @@ class ResourceRequest;
 class ResourceResponse;
 class UserTiming;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class Performance : public ScriptWrappable, public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
+class Performance FINAL : public ScriptWrappable, public RefCounted<Performance>, public DOMWindowProperty, public EventTargetWithInlineData {
 public:
     static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
     ~Performance();
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return PerformanceEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return PerformanceEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     PerformanceNavigation* navigation() const;
     PerformanceTiming* timing() const;
@@ -94,8 +93,8 @@ public:
 private:
     explicit Performance(Frame*);
 
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
     bool isResourceTimingBufferFull();
 
     mutable RefPtr<PerformanceNavigation> m_navigation;

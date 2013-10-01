@@ -49,8 +49,7 @@ class MediaSource;
 class SourceBufferPrivate;
 class TimeRanges;
 
-// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
-class SourceBuffer : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable {
+class SourceBuffer FINAL : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable {
 public:
     static PassRefPtr<SourceBuffer> create(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
 
@@ -73,16 +72,16 @@ public:
     virtual void stop() OVERRIDE;
 
     // EventTarget interface
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return SourceBufferEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return SourceBufferEventTargetInterfaceType; }
 
     using RefCounted<SourceBuffer>::ref;
     using RefCounted<SourceBuffer>::deref;
 
 protected:
     // EventTarget interface
-    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
 private:
     SourceBuffer(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
