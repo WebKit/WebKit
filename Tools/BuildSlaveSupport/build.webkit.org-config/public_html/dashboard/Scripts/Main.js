@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var webkitBuildbot = new WebKitBuildbot;
-
 var categorizedQueuesByPlatformAndBuildType = {};
 
-for (var id in webkitBuildbot.queues) {
-    var queue = webkitBuildbot.queues[id];
+for (var id in buildbot.queues) {
+    var queue = buildbot.queues[id];
     var platform = categorizedQueuesByPlatformAndBuildType[queue.platform];
     if (!platform)
         platform = categorizedQueuesByPlatformAndBuildType[queue.platform] = {};
+    if (!platform.builders)
+        platform.builders = {};
 
     var categoryName;
     if (queue.builder) {

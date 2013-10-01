@@ -61,11 +61,7 @@ BuildbotTesterQueueView.prototype = {
 
                 --limit;
 
-                var message = "r" + iteration.openSourceRevision;
-
-                var messageLinkElement = document.createElement("a");
-                messageLinkElement.href = iteration.queue.buildbot.tracRevisionURL(iteration.openSourceRevision);
-                messageLinkElement.textContent = message;
+                var messageLinkElement = this.revisionLinksForIteration(iteration);
 
                 var layoutTestResults = iteration.layoutTestResults;
                 var javascriptTestResults = iteration.javascriptTestResults;
@@ -74,7 +70,7 @@ BuildbotTesterQueueView.prototype = {
                 var bindingTestResults = iteration.bindingTestResults;
 
                 if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.failureCount) {
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Good, "layout tests passed");
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Good, "all tests passed");
                     limit = 0;
                 } else if (layoutTestResults.failureCount && !javascriptTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.failureCount) {
                     var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);

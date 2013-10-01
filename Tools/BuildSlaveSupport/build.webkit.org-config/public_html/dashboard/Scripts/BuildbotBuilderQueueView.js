@@ -58,14 +58,6 @@ BuildbotBuilderQueueView.prototype = {
 
         this.element.removeChildren();
 
-        function createRevisionLink(iteration)
-        {
-            var messageLinkElement = document.createElement("a");
-            messageLinkElement.href = iteration.queue.buildbot.tracRevisionURL(iteration.openSourceRevision);
-            messageLinkElement.textContent = "r" + iteration.openSourceRevision;
-            return messageLinkElement;
-        }
-
         function appendBuilderQueueStatus(queue)
         {
             var pendingBuildCount = queue.pendingIterationsCount;
@@ -78,15 +70,17 @@ BuildbotBuilderQueueView.prototype = {
             var firstRecentFailedIteration = queue.firstRecentFailedIteration;
             if (firstRecentFailedIteration && firstRecentFailedIteration.loaded) {
                 var failureCount = queue.recentFailedIterationCount;
-                var message = createRevisionLink(firstRecentFailedIteration);
-                var status = new StatusLineView(message, StatusLineView.Status.Bad, failureCount > 1 ? "failed builds since" : "failed build", failureCount > 1 ? failureCount : null);
+                var message = this.revisionLinksForIteration(firstRecentFailedIteration);
+                var url = queue.buildbot.buildLogURLForIteration(firstRecentFailedIteration);
+                var status = new StatusLineView(message, StatusLineView.Status.Bad, failureCount > 1 ? "failed builds since" : "failed build", failureCount > 1 ? failureCount : null, url);
                 this.element.appendChild(status.element);
             }
 
             var mostRecentSuccessfulIteration = queue.mostRecentSuccessfulIteration;
             if (mostRecentSuccessfulIteration && mostRecentSuccessfulIteration.loaded) {
-                var message = createRevisionLink(mostRecentSuccessfulIteration);
-                var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentFailedIteration ? "last successful build" : "latest build");
+                var message = this.revisionLinksForIteration(mostRecentSuccessfulIteration);
+                var url = queue.buildbot.buildLogURLForIteration(mostRecentSuccessfulIteration);
+                var status = new StatusLineView(message, StatusLineView.Status.Good, firstRecentFailedIteration ? "last successful build" : "latest build", null, url);
                 this.element.appendChild(status.element);
             } else {
                 var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, firstRecentFailedIteration ? "last successful build" : "latest build");            

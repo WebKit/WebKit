@@ -59,6 +59,11 @@ WebKitBuildbot.prototype = {
         return "http://trac.webkit.org/changeset/" + revision;
     },
 
+    buildLogURLForIteration: function(iteration)
+    {
+        return this.baseURL + "/builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/compile-webkit/logs/stdio/text";
+    },
+
     layoutTestResultsURLForIteration: function(iteration)
     {
         return this.baseURL + "/results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")") + "/results.html";

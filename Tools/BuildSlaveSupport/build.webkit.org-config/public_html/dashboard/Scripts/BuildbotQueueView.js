@@ -71,6 +71,32 @@ BuildbotQueueView.prototype = {
         // Implemented by subclasses.
     },
 
+    revisionLinksForIteration: function(iteration)
+    {
+        function linkForRevision(revision, internal)
+        {
+            var linkElement = document.createElement("a");
+            linkElement.href = iteration.queue.buildbot.tracRevisionURL(revision, internal);
+            linkElement.textContent = "r" + revision;
+            linkElement.target = "_new";
+            return linkElement;
+        }
+
+        console.assert(iteration.openSourceRevision);
+        var openSourceLink = linkForRevision(iteration.openSourceRevision, false);
+
+        if (!iteration.internalRevision)
+            return openSourceLink;
+
+        var internalLink = linkForRevision(iteration.internalRevision, true);
+
+        var fragment = document.createDocumentFragment();
+        fragment.appendChild(openSourceLink);
+        fragment.appendChild(document.createTextNode(" \uff0b "));
+        fragment.appendChild(internalLink);
+        return fragment;
+    },
+
     _updateQueues: function()
     {
         this.releaseQueues.forEach(function(queue) { queue.update(); });
