@@ -1,3 +1,19 @@
+2013-10-01  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Support "chapter" text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=122000
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/in-band/track-in-band-mkv-chapters.html
+
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h: New class, needed for cues that aren't associated with GstPads.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Check for table of contents messages.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents): Parse table of contents messages into text tracks.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry): Recursive method for parsing all of the TOC entries.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add the processTableOfContents functions.
+
 2013-10-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Texmap] CSS filter not working on software composited layers

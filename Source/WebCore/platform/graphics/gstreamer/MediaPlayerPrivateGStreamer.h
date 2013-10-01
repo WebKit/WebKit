@@ -135,6 +135,10 @@ private:
 
     void setDownloadBuffering();
     void processBufferingStats(GstMessage*);
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    void processTableOfContents(GstMessage*);
+    void processTableOfContentsEntry(GstTocEntry*, GstTocEntry* parent);
+#endif
 
     virtual String engineDescription() const { return "GStreamer"; }
     virtual bool isLiveStream() const { return m_isStreaming; }
@@ -187,6 +191,7 @@ private:
     bool m_missingPlugins;
 #if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
     Vector<RefPtr<InbandTextTrackPrivateGStreamer> > m_textTracks;
+    RefPtr<InbandTextTrackPrivate> m_chaptersTrack;
 #endif
 };
 }

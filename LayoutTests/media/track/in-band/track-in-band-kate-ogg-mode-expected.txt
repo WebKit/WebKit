@@ -1,7 +1,6 @@
 Test that cues from in-band tracks are displayed immediately when a track is made visible.
 
 EVENT(canplaythrough)
-RUN(inbandTrack1 = video.textTracks[0])
 
 ** A hidden track should not have visible cues
 RUN(inbandTrack1.mode = 'hidden')

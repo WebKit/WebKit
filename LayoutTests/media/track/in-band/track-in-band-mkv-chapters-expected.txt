@@ -1,4 +1,4 @@
-Check that we don't have duplicate cues after seeking backwards.
+Check for chapter track from an mkv file.
 
 EVENT(canplaythrough)
 

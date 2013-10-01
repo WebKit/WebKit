@@ -1,11 +1,5 @@
 Test track order when using in-band and out-of-band text tracks.
 
-EVENT(addtrack)
-EXPECTED (event.track == 'video.textTracks[0]') OK
-
-EVENT(addtrack)
-EXPECTED (event.track == 'video.textTracks[1]') OK
-
 EVENT(canplaythrough)
 
 ** Check initial in-band track states

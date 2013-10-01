@@ -1,3 +1,33 @@
+2013-10-01  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Support "chapter" text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=122000
+
+        Reviewed by Eric Carlson.
+
+        * media/content/counting-subtitled-srt.mkv: Added chapters metadata.
+        * media/track/in-band/track-in-band-mkv-chapters-expected.txt: New test, similar to cues-added-one, but uses "chapters" track.
+        * media/track/in-band/track-in-band-mkv-chapters.html: Same.
+        * media/in-band-cues.js: Updated tests to handle the new "chapters" track.
+        * media/track/in-band/track-in-band-kate-ogg-cues-added-once-expected.txt: Same.
+        * media/track/in-band/track-in-band-kate-ogg-cues-added-once.html: Same.
+        * media/track/in-band/track-in-band-kate-ogg-mode-expected.txt: Same.
+        * media/track/in-band/track-in-band-kate-ogg-mode.html: Same.
+        * media/track/in-band/track-in-band-kate-ogg-style-expected.txt: Same.
+        * media/track/in-band/track-in-band-kate-ogg-track-order-expected.txt: Same.
+        * media/track/in-band/track-in-band-kate-ogg-track-order.html: Same.
+        * media/track/in-band/track-in-band-srt-mkv-cues-added-once-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-cues-added-once.html: Same.
+        * media/track/in-band/track-in-band-srt-mkv-kind-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-kind.html: Same.
+        * media/track/in-band/track-in-band-srt-mkv-language-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-language.html: Same.
+        * media/track/in-band/track-in-band-srt-mkv-mode-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-mode.html: Same.
+        * media/track/in-band/track-in-band-srt-mkv-style-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-track-order-expected.txt: Same.
+        * media/track/in-band/track-in-band-srt-mkv-track-order.html: Same.
+
 2013-10-01  Darin Adler  <darin@apple.com>
 
         Try to get another Windows test to pass.

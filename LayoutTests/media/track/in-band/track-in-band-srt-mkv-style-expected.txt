@@ -2,7 +2,6 @@ Test that style is applied to all cues correctly.
 EVENT(canplaythrough)
 
 ** Setting track 1 to showing and starting video
-RUN(inbandTrack1 = video.textTracks[0])
 RUN(video.play())
 EVENT(seeked)
 
