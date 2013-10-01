@@ -1,3 +1,16 @@
+2013-10-01  Szabolcs Dávid  <davidsz@inf.u-szeged.hu>
+
+        Rename URL type variables in Curl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=122158
+
+        Reviewed by Darin Adler.
+
+        I changed the name of the URL objects to match with the new class name.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getProtectionSpace):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2013-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Center misspelling dots across width of word
