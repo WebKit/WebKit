@@ -94,7 +94,7 @@ public:
 
     // PageClient
 
-    virtual OwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
+    virtual std::unique_ptr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
 
     virtual void pageDidRequestScroll(const WebCore::IntPoint& pos);
     virtual void processDidCrash();

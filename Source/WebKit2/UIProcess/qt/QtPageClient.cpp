@@ -63,7 +63,7 @@ void QtPageClient::initialize(QQuickWebView* webView, QtWebPageEventHandler* eve
     m_undoController = undoController;
 }
 
-OwnPtr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
+std::unique_ptr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
 {
     return QQuickWebViewPrivate::get(m_webView)->createDrawingAreaProxy();
 }

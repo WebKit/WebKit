@@ -635,9 +635,9 @@ void QQuickWebViewPrivate::processDidBecomeResponsive(WKPageRef, const void* cli
     emit q->experimental()->processDidBecomeResponsive();
 }
 
-OwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
+std::unique_ptr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
 {
-    return createOwned<WebKit::DrawingAreaProxyImpl>(webPageProxy.get());
+    return std::make_unique<WebKit::DrawingAreaProxyImpl>(webPageProxy.get());
 }
 
 void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)

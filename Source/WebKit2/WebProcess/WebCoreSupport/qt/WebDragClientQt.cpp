@@ -45,7 +45,7 @@ static PassRefPtr<ShareableBitmap> convertQPixmapToShareableBitmap(QPixmap* pixm
         return 0;
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(pixmap->size()), ShareableBitmap::SupportsAlpha);
-    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+    auto graphicsContext = bitmap->createGraphicsContext();
 
     graphicsContext->platformContext()->drawPixmap(0, 0, *pixmap);
     return bitmap.release();

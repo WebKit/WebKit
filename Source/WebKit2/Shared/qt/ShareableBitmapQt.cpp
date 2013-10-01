@@ -56,15 +56,15 @@ PassRefPtr<Image> ShareableBitmap::createImage()
     return BitmapImage::create(pixmap);
 }
 
-PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     // FIXME: Should this be OwnPtr<QImage>?
     QImage* image = new QImage(createQImage());
     QPainter* painter = new QPainter(image);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    OwnPtr<GraphicsContext> context = adoptPtr(new GraphicsContext(painter));
+    auto context = std::make_unique<GraphicsContext>(painter);
     context->takeOwnershipOfPlatformContext();
-    return context.release();
+    return context;
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

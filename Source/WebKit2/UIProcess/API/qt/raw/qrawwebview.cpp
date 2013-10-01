@@ -239,9 +239,9 @@ void QRawWebViewPrivate::doneWithKeyEvent(const WebKit::NativeWebKeyboardEvent& 
     m_client->doneWithKeyEvent(event.nativeEvent(), wasEventHandled);
 }
 
-OwnPtr<WebKit::DrawingAreaProxy> QRawWebViewPrivate::createDrawingAreaProxy()
+std::unique_ptr<WebKit::DrawingAreaProxy> QRawWebViewPrivate::createDrawingAreaProxy()
 {
-    return createOwned<WebKit::DrawingAreaProxyImpl>(m_webPageProxy.get());
+    return std::make_unique<WebKit::DrawingAreaProxyImpl>(m_webPageProxy.get());
 }
 
 QRawWebViewPrivate::QRawWebViewPrivate(WebKit::WebContext* context, WebKit::WebPageGroup* pageGroup, QRawWebViewClient* client)
