@@ -1,3 +1,24 @@
+2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r156527, moving baselines specific to GTK WK1
+        under the platform/gtk-wk1 directory.
+
+        * platform/gtk-wk1/js: Added.
+        * platform/gtk-wk1/js/dom: Added.
+        * platform/gtk-wk1/js/dom/function-length-expected.txt: Added.
+        * platform/gtk-wk1/scrollingcoordinator: Added.
+        * platform/gtk-wk1/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Added.
+        * platform/gtk-wk1/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Added.
+        * platform/gtk/js/dom/function-length-expected.txt: Removed.
+        * platform/gtk/scrollingcoordinator: Removed.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Removed.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Removed.
+        * platform/gtk/svg/custom/SVGPoint-matrixTransform-expected.txt:
+        * platform/gtk/svg/custom/getTransformToElement-expected.txt:
+        * platform/gtk/svg/custom/text-ctm-expected.txt:
+        * platform/gtk/svg/custom/text-hit-test-expected.txt:
+        * platform/gtk/svg/text/append-text-node-to-tspan-expected.txt:
+
 2013-09-30  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test media/click-volume-bar-not-pausing.html is flaky
