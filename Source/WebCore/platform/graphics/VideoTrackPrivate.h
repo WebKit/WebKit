@@ -75,7 +75,8 @@ public:
 
 protected:
     VideoTrackPrivate()
-        : m_selected(false)
+        : m_client(0)
+        , m_selected(false)
     {
     }
 

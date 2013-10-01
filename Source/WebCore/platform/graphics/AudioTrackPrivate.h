@@ -75,7 +75,8 @@ public:
 
 protected:
     AudioTrackPrivate()
-        : m_enabled(false)
+        : m_client(0)
+        , m_enabled(false)
     {
     }
 

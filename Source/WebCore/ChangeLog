@@ -1,3 +1,17 @@
+2013-10-01  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; The addedFunction and removedFunction arguments to determineChangedTracksFromNewTracksAndOldItems
+        were reversed, exposing an underlying, existing bug in AudioTrackPrivate and VideoTrack private. Give a default (null)
+        value to AudioTrackPrivate::m_client and VideoTrackPrivate::m_client and fix the ordering of arguments in
+        determineChangedTracksFromNewTracksAndOldItems.
+
+        * platform/graphics/AudioTrackPrivate.h:
+        (WebCore::AudioTrackPrivate::AudioTrackPrivate):
+        * platform/graphics/VideoTrackPrivate.h:
+        (WebCore::VideoTrackPrivate::VideoTrackPrivate):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::determineChangedTracksFromNewTracksAndOldItems):
+
 2013-09-30  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add support for VideoTrack to MediaPlayerPrivateAVFObjC
