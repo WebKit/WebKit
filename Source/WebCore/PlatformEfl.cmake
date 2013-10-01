@@ -58,7 +58,6 @@ list(APPEND WebCore_SOURCES
 
     platform/cairo/WidgetBackingStoreCairo.cpp
 
-    platform/efl/AsyncFileSystemEfl.cpp
     platform/efl/BatteryProviderEfl.cpp
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp

@@ -1,5 +1,13 @@
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
+        Fix the Efl and Gtk builds.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
         Remove support for DOMFileSystem
         https://bugs.webkit.org/show_bug.cgi?id=122137
 

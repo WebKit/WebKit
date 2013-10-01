@@ -6047,8 +6047,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.h \
 	Source/WebCore/platform/graphics/gtk/IconGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/ImageBufferGtk.cpp \
-	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
-	Source/WebCore/platform/gtk/AsyncFileSystemGtk.h \
 	Source/WebCore/platform/gtk/ClipboardUtilitiesGtk.cpp \
 	Source/WebCore/platform/gtk/ClipboardUtilitiesGtk.h \
 	Source/WebCore/platform/gtk/DataObjectGtk.cpp \
