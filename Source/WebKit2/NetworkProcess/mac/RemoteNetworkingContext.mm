@@ -30,6 +30,8 @@
 #import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
+#import <wtf/PassOwnPtr.h>
+#import <wtf/OwnPtr.h>
 
 using namespace WebCore;
 
