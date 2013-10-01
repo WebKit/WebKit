@@ -680,7 +680,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
 
             layer.ensureBacking();
 
-            // At this time, the ScrollingCooridnator only supports the top-level frame.
+            // At this time, the ScrollingCoordinator only supports the top-level frame.
             if (layer.isRootLayer() && !m_renderView.document().ownerElement()) {
                 layer.backing()->attachToScrollingCoordinatorWithParent(0);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -1371,6 +1371,11 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
     String layerTreeText = m_rootContentLayer->layerTreeAsText(layerTreeBehavior);
+
+    // Dump an empty layer tree only if the only composited layer is the main frame's tiled backing,
+    // so that tests expecting us to drop out of accelerated compositing when there are no layers succeed.
+    if (!hasAnyAdditionalCompositedLayers(rootRenderLayer()) && mainFrameBackingIsTiled() && !(layerTreeBehavior & LayerTreeAsTextIncludeTileCaches))
+        layerTreeText = "";
 
     // The true root layer is not included in the dump, so if we want to report
     // its repaint rects, they must be included here.

@@ -1,3 +1,41 @@
+2013-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        Tiled drawing GraphicsLayer tree dumps should match non-tiled more closely
+        https://bugs.webkit.org/show_bug.cgi?id=122172
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, but will be tested by all of the compositing tests after bug 121859 lands.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        Only dump drawsContent and backgroundColor if the client says we should.
+        Provide the ability to skip over a layer in the dump, making it appear as if that layer's
+        children are direct decendents of that layer's parent.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldSkipLayerInDump): Added.
+        (WebCore::GraphicsLayerClient::shouldDumpPropertyForLayer): Added.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldSkipLayerInDump):
+        Added. Always skip the root tile cache's flattening layer, as it is
+        uninteresting and does not exist in the non-tiled-drawing compositing case.
+
+        (WebCore::RenderLayerBacking::shouldDumpPropertyForLayer):
+        Don't dump drawsContent on the root tile cache.
+        Don't dump backgroundcolor on the root tile cache, unless it is non-white.
+        This may require some WebKit2-specific rebaselines, but they will occur later.
+
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        If the root tile cache has no composited children, don't dump anything,
+        to match the traditional case where we drop out of compositing when
+        we have no reason to be compositing. Except, do dump the root tile cache's
+        layers if we're specifically being asked to dump tile caches.
+
 2013-10-01  Joone Hur  <joone.hur@intel.com>
 
         Quirksmode: CSS1: WebKit fails dynamic :first-letter test

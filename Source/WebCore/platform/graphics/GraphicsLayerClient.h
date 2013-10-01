@@ -90,6 +90,9 @@ public:
 
     virtual bool isTrackingRepaints() const { return false; }
 
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const { return false; }
+    virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char*) const { return true; }
+
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
     // currently painting contents. An ASSERT fails, if it is.

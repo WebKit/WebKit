@@ -170,6 +170,8 @@ public:
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const OVERRIDE;
 
     virtual bool isTrackingRepaints() const OVERRIDE;
+    virtual bool shouldSkipLayerInDump(const GraphicsLayer*) const OVERRIDE;
+    virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const OVERRIDE;
 
 #ifndef NDEBUG
     virtual void verifyNotPainting();

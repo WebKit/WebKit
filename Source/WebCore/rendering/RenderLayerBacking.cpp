@@ -2089,6 +2089,28 @@ bool RenderLayerBacking::isTrackingRepaints() const
     return static_cast<GraphicsLayerClient&>(compositor()).isTrackingRepaints();
 }
 
+bool RenderLayerBacking::shouldSkipLayerInDump(const GraphicsLayer* layer) const
+{
+    // Skip the root tile cache's flattening layer.
+    return m_isMainFrameRenderViewLayer && layer && layer == m_childContainmentLayer.get();
+}
+
+bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName) const
+{
+    // For backwards compatibility with WebKit1 and other platforms,
+    // skip some properties on the root tile cache.
+    if (m_isMainFrameRenderViewLayer && layer == m_graphicsLayer.get()) {
+        if (!strcmp(propertyName, "drawsContent"))
+            return false;
+
+        // Background color could be of interest to tests or other dumpers if it's non-white.
+        if (!strcmp(propertyName, "backgroundColor") && layer->backgroundColor() == Color::white)
+            return false;
+    }
+
+    return true;
+}
+
 #ifndef NDEBUG
 void RenderLayerBacking::verifyNotPainting()
 {

@@ -629,7 +629,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(preserves3D " << m_preserves3D << ")\n";
     }
 
-    if (m_drawsContent) {
+    if (m_drawsContent && m_client->shouldDumpPropertyForLayer(this, "drawsContent")) {
         writeIndent(ts, indent + 1);
         ts << "(drawsContent " << m_drawsContent << ")\n";
     }
@@ -654,7 +654,7 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << ")\n";
     }
 
-    if (m_backgroundColor.isValid()) {
+    if (m_backgroundColor.isValid() && m_client->shouldDumpPropertyForLayer(this, "backgroundColor")) {
         writeIndent(ts, indent + 1);
         ts << "(backgroundColor " << m_backgroundColor.nameForRenderTreeAsText() << ")\n";
     }
@@ -744,14 +744,29 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     dumpAdditionalProperties(ts, indent, behavior);
     
     if (m_children.size()) {
-        writeIndent(ts, indent + 1);
-        ts << "(children " << m_children.size() << "\n";
-        
-        unsigned i;
-        for (i = 0; i < m_children.size(); i++)
-            m_children[i]->dumpLayer(ts, indent + 2, behavior);
-        writeIndent(ts, indent + 1);
-        ts << ")\n";
+        TextStream childrenStream;
+        unsigned totalChildCount = m_children.size();
+        for (size_t childIndex = 0; childIndex < m_children.size(); childIndex++) {
+            GraphicsLayer* child = m_children[childIndex];
+            if (!m_client->shouldSkipLayerInDump(child)) {
+                child->dumpLayer(childrenStream, indent + 2, behavior);
+                continue;
+            }
+            
+            const Vector<GraphicsLayer*>& grandChildren = child->children();
+            totalChildCount += grandChildren.size() - 1;
+            for (size_t grandChildIndex = 0; grandChildIndex < grandChildren.size(); grandChildIndex++)
+                grandChildren[grandChildIndex]->dumpLayer(childrenStream, indent + 2, behavior);
+        }
+
+        writeIndent(childrenStream, indent + 1);
+        childrenStream << ")\n";
+
+        if (totalChildCount) {
+            writeIndent(ts, indent + 1);
+            ts << "(children " << totalChildCount << "\n";
+            ts << childrenStream.release();
+        }
     }
 }
 
