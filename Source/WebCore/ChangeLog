@@ -1,3 +1,21 @@
+2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [InexedDB] Interfaces inheriting from EventTarget should generate JSC (un)wrapping functions
+        https://bugs.webkit.org/show_bug.cgi?id=122114
+
+        Reviewed by Darin Adler.
+
+        After r156590, four IndexedDB interfaces are inheriting from the EventTarget interface. Because of that,
+        they're now required to have interface-specific JSC wrapping and unwrapping functions generated since the
+        JSC wrapping and unwrapping functions for the EventTarget interface delegate these operations to these
+        interface-specific functions. If the functions are not generated and accessible, the EventTarget functions
+        end up recursively calling themselves.
+
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2013-09-30  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Build fix for EFL, Qt, Gtk port after r156688

@@ -31,7 +31,9 @@
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget,
-    JSNoStaticTables
+    JSNoStaticTables,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] interface IDBRequest : EventTarget {
     [GetterRaisesException] readonly attribute IDBAny result;
     [GetterRaisesException] readonly attribute DOMError error;

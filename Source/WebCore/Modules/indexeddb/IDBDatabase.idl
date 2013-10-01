@@ -28,7 +28,9 @@
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget,
-    JSNoStaticTables
+    JSNoStaticTables,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] interface IDBDatabase : EventTarget {
     readonly attribute DOMString name;
     readonly attribute unsigned long long version;
