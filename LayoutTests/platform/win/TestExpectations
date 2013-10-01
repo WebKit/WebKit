@@ -2157,6 +2157,7 @@ fast/forms/control-clip-overflow.html
 fast/forms/select-baseline.html
 fast/repaint/control-clip.html
 fast/selectors/064.html
+fast/selectors/166.html [ ImageOnlyFailure ]
 fast/table/append-cells2.html
 fast/table/remove-td-display-none.html
 fast/writing-mode/broken-ideograph-small-caps.html
@@ -2864,6 +2865,7 @@ webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Skip ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ]
 webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Skip ]
 webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Skip ]
+webkit.org/b/121509 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
 
 # The following test cases are crashing:
 webkit.org/b/121510 fast/parser/residual-style-hang.html	[ Skip ]
@@ -2892,6 +2894,9 @@ webkit.org/b/121510 media/track/track-remove-crash.html	[ Skip ]
 webkit.org/b/121510 media/track/track-cue-nothing-to-render.html	[ Skip ]
 webkit.org/b/121510 media/track/track-delete-during-setup.html	[ Skip ]
 webkit.org/b/121510 svg/W3C-SVG-1.1/animate-elem-02-t.svg	[ Skip ] 
+webkit.org/b/121510 fast/frames/seamless/seamless-nested-crash.html [ Skip ]
+webkit.org/b/121510 js/dom/function-constructor-this-value.html [ Skip ]
+
 
 # More skipped tests
 editing/selection/caret-ltr-right.html [ Skip ]
@@ -2979,4 +2984,5 @@ webkit.org/b/122166 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Failure ]
 webkit.org/b/122166 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
+webkit.org/b/122166 media/track/track-cue-rendering-tree-is-removed-properly.html [ Failure ]
 
