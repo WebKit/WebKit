@@ -573,7 +573,6 @@ WebView *createWebViewAndOffscreenWindow()
     [[window contentView] addSubview:webView];
     [window orderBack:nil];
     [window setAutodisplay:NO];
-    [window _setWindowResolution:1 displayIfChanged:YES];
 
     [window startListeningForAcceleratedCompositingChanges];
     
@@ -951,6 +950,11 @@ int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
+    
+    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+    [defaults release];
+    
     dumpRenderTree(argc, argv);
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts

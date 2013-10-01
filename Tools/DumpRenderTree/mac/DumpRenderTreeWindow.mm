@@ -120,9 +120,4 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
         [self setAutodisplay:YES];
 }
 
-- (CGFloat)backingScaleFactor
-{
-    return 1;
-}
-
 @end

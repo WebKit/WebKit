@@ -111,17 +111,6 @@ using namespace WTR;
     return NSMakeRect(_fakeOrigin.x, _fakeOrigin.y, currentFrame.size.width, currentFrame.size.height);
 }
 
-- (CGFloat)backingScaleFactor
-{
-    return 1;
-}
-
-@end
-
-@interface NSWindow (Details)
-
-- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
-
 @end
 
 namespace WTR {
@@ -150,7 +139,6 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     [[m_window contentView] addSubview:m_view];
     [m_window orderBack:nil];
     [m_window setReleasedWhenClosed:NO];
-    [m_window _setWindowResolution:1 displayIfChanged:YES];
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)

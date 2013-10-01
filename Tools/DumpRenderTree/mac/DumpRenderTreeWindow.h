@@ -32,12 +32,6 @@
 
 @class WebView;
 
-@interface NSWindow (Details)
-
-- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
-
-@end
-
 @interface DumpRenderTreeWindow : NSWindow
 {
 }
