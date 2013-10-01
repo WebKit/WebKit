@@ -1,3 +1,11 @@
+2013-10-01  Darin Adler  <darin@apple.com>
+
+        Try to get another Windows test to pass.
+
+        * platform/win/js/dom/global-constructors-attributes-expected.txt: Added.
+        Copy of the platform-independent results file, with items deleted for features
+        that are currently turned off for the Windows platform.
+
 2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Adding failure expectations for currently failing tests.
