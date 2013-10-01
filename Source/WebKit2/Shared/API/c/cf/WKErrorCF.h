@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 WK_EXPORT WKErrorRef WKErrorCreateWithCFError(CFErrorRef error);
-WK_EXPORT CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error);
+WK_EXPORT CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error) CF_RETURNS_RETAINED;
 
 #ifdef __cplusplus
 }

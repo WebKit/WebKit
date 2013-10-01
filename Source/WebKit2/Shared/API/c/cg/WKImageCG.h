@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT CGImageRef WKImageCreateCGImage(WKImageRef image);
+WK_EXPORT CGImageRef WKImageCreateCGImage(WKImageRef image) CF_RETURNS_RETAINED;
 
 WK_EXPORT WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options);
 

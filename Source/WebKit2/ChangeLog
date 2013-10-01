@@ -1,3 +1,19 @@
+2013-10-01  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/122190> WebKit2 APIs returning CF and NS types should explicitly declare whether they return retained objects.
+
+        This make the APIs easier to use under ARC and can help out the static analyzer.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/cf/WKErrorCF.h:
+        * Shared/API/c/cf/WKStringCF.h:
+        * Shared/API/c/cf/WKURLCF.h:
+        * Shared/API/c/cg/WKImageCG.h:
+        * Shared/API/c/mac/WKURLRequestNS.h:
+        * Shared/API/c/mac/WKURLResponseNS.h:
+        * UIProcess/API/C/cg/WKIconDatabaseCG.h:
+
 2013-10-01  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt][WK2] Fix build after r156688.
