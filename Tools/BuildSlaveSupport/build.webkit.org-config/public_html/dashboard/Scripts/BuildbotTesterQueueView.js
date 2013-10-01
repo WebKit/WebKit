@@ -56,18 +56,18 @@ BuildbotTesterQueueView.prototype = {
             var limit = 2;
             for (var i = 0; i < queue.iterations.length && limit > 0; ++i) {
                 var iteration = queue.iterations[i];
-                if (!iteration.finished)
+                if (!iteration.loaded || !iteration.finished)
                     continue;
 
                 --limit;
 
                 var messageLinkElement = this.revisionLinksForIteration(iteration);
 
-                var layoutTestResults = iteration.layoutTestResults;
-                var javascriptTestResults = iteration.javascriptTestResults;
-                var pythonTestResults = iteration.pythonTestResults;
-                var perlTestResults = iteration.perlTestResults;
-                var bindingTestResults = iteration.bindingTestResults;
+                var layoutTestResults = iteration.layoutTestResults || {};
+                var javascriptTestResults = iteration.javascriptTestResults || {};
+                var pythonTestResults = iteration.pythonTestResults || {};
+                var perlTestResults = iteration.perlTestResults || {};
+                var bindingTestResults = iteration.bindingTestResults || {};
 
                 if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.failureCount) {
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Good, "all tests passed");

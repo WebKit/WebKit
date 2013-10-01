@@ -1,3 +1,21 @@
+2013-10-01  Timothy Hatcher  <timothy@apple.com>
+
+        Fix some exceptions seen in the Buildbot Dashboard when looking at unloaded iterations.
+
+        Also fix some URLs to not have extras slashes and add a page title.
+
+        https://bugs.webkit.org/show_bug.cgi?id=122192
+
+        Reviewed by Joseph Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.buildLogURLForIteration):
+        (WebKitBuildbot.prototype.layoutTestResultsURLForIteration):
+        (WebKitBuildbot.prototype.javascriptTestResultsURLForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+
 2013-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Set NSApplication current event while sending events directly to views
