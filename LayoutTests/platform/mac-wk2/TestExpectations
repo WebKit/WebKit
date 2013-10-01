@@ -377,6 +377,9 @@ editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
 # textInputController.hasMarkedText is implemented, but gives a wrong result for some reason.
 platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
 
+# Tests that failed on Mountain Lion Release WK2 bot in r155992
+webaudio/codec-tests/wav/24bit-22khz-resample.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
