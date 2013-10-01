@@ -1,3 +1,12 @@
+2013-10-01  Darin Adler  <darin@apple.com>
+
+        Try to fix assertion failures seem on bots.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations): Rearrange code so this
+        won't try ot call toCSSPrimitiveValue on a non-primitive-value in the
+        DROP_SHADOW case.
+
 2013-10-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue for CSSPrimitiveValue

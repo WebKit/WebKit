@@ -3792,6 +3792,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
         // Check that all parameters are primitive values, with the
         // exception of drop shadow which has a ShadowValue parameter.
+        CSSPrimitiveValue* firstValue = nullptr;
         if (operationType != FilterOperation::DROP_SHADOW) {
             bool haveNonPrimitiveValue = false;
             for (unsigned j = 0; j < filterValue->length(); ++j) {
@@ -3802,9 +3803,10 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             }
             if (haveNonPrimitiveValue)
                 continue;
+            if (filterValue->length())
+                firstValue = toCSSPrimitiveValue(filterValue->itemWithoutBoundsCheck(0));
         }
 
-        CSSPrimitiveValue* firstValue = filterValue->length() ? toCSSPrimitiveValue(filterValue->itemWithoutBoundsCheck(0)) : 0;
         switch (filterValue->operationType()) {
         case WebKitCSSFilterValue::GrayscaleFilterOperation:
         case WebKitCSSFilterValue::SepiaFilterOperation:
