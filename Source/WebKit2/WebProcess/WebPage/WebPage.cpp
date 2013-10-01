@@ -294,7 +294,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
     // 4ms should be adopted project-wide now, https://bugs.webkit.org/show_bug.cgi?id=61214
-    Settings::setDefaultMinDOMTimerInterval(0.004);
+    Settings::setDefaultMinDOMTimerInterval(0.001);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebChromeClient(this);
