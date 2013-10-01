@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {HTML} at (0,0) size 800x66
+    RenderBody {BODY} at (8,16) size 784x34
+      RenderBlock {P} at (0,0) size 784x34
+        RenderInline (generated) at (0,0) size 5x17 [color=#CB000F]
+          RenderText {#text} at (0,0) size 5x17
+            text run at (0,0) width 5: "I"
+        RenderText {#text} at (5,0) size 147x17
+          text run at (5,0) width 147: " am adding a new text. "
+        RenderText {#text} at (152,0) size 775x34
+          text run at (152,0) width 378: "This is a test paragraph. You can insert extra text at its start; "
+          text run at (530,0) width 245: "the :first-letter styles should be updated"
+          text run at (0,17) width 179: "to accomodate this new text."

@@ -1,3 +1,20 @@
+2013-10-01  Joone Hur  <joone.hur@intel.com>
+
+        Quirksmode: CSS1: WebKit fails dynamic :first-letter test
+        https://bugs.webkit.org/show_bug.cgi?id=15602
+
+        Reviewed by David Hyatt.
+
+        Add a test case that ensures that CSS first-letter property should work 
+        properly when the first letter is changed by DOM scripting.
+
+        * fast/css/first-letter-block-change.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk-wk1/fast/css/first-letter-block-change-expected.png: Added.
+        * platform/gtk-wk2/fast/css/first-letter-block-change-expected.png: Added.
+        * platform/gtk/fast/css/first-letter-block-change-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2013-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

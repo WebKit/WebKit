@@ -1655,3 +1655,5 @@ webkit.org/b/118378 vibration/cancelVibration-after-pagevisibility-changed-to-hi
 
 webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 
+# This test case needs to be rebaselined. 
+webkit.org/b/15602 fast/css/first-letter-block-change.html [ Failure ]

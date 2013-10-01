@@ -1,3 +1,22 @@
+2013-10-01  Joone Hur  <joone.hur@intel.com>
+
+        Quirksmode: CSS1: WebKit fails dynamic :first-letter test
+        https://bugs.webkit.org/show_bug.cgi?id=15602
+
+        Reviewed by David Hyatt.
+
+        CSS first-letter property does not work properly when the first letter is changed 
+        by DOM scripting. 
+        This patch allows to check if the existing first-letter is no longer the
+        first-letter. In this case, it deletes the old first-letter object and creates 
+        a new one. For the remaining text, the oldRemainingText object is used 
+        again for containing the full text(first letter + remaining text). 
+
+        Test: fast/css/first-letter-block-change.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2013-10-01  Antti Koivisto  <antti@apple.com>
 
         Make tests for renderer base types non-virtual

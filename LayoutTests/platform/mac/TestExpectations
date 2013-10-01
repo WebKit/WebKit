@@ -1363,3 +1363,6 @@ webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ P
 webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failure ]
 
 webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
+
+# This test case needs to be rebaselined. 
+webkit.org/b/15602 fast/css/first-letter-block-change.html [ Failure ]
