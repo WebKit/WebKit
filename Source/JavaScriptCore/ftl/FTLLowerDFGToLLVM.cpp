@@ -662,16 +662,17 @@ private:
         case Int32Use: {
             LValue left = lowInt32(m_node->child1());
             LValue right = lowInt32(m_node->child2());
-            
+            LValue result = isSub ? m_out.sub(left, right) : m_out.add(left, right);
+
             if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                setInt32(isSub ? m_out.sub(left, right) : m_out.add(left, right));
+                setInt32(result);
                 break;
             }
 
-            LValue result = isSub ? m_out.subWithOverflow32(left, right) : m_out.addWithOverflow32(left, right);
+            LValue overflow = isSub ? m_out.subWithOverflow32(left, right) : m_out.addWithOverflow32(left, right);
 
-            speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt32(m_out.extractValue(result, 0));
+            speculate(Overflow, noValue(), 0, m_out.extractValue(overflow, 1));
+            setInt32(result);
             break;
         }
             
@@ -687,9 +688,11 @@ private:
             
             LValue left = lowInt52(m_node->child1());
             LValue right = lowInt52(m_node->child2());
-            LValue result = isSub ? m_out.subWithOverflow64(left, right) : m_out.addWithOverflow64(left, right);
-            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
-            setInt52(m_out.extractValue(result, 0));
+            LValue result = isSub ? m_out.sub(left, right) : m_out.add(left, right);
+
+            LValue overflow = isSub ? m_out.subWithOverflow64(left, right) : m_out.addWithOverflow64(left, right);
+            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflow, 1));
+            setInt52(result);
             break;
         }
             
@@ -713,14 +716,11 @@ private:
         case Int32Use: {
             LValue left = lowInt32(m_node->child1());
             LValue right = lowInt32(m_node->child2());
-            
-            LValue result;
-            if (bytecodeCanTruncateInteger(m_node->arithNodeFlags()))
-                result = m_out.mul(left, right);
-            else {
+            LValue result = m_out.mul(left, right);
+
+            if (!bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
                 LValue overflowResult = m_out.mulWithOverflow32(left, right);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-                result = m_out.extractValue(overflowResult, 0);
             }
             
             if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
@@ -744,11 +744,12 @@ private:
             Int52Kind kind;
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), opposite(kind));
-            
+            LValue result = m_out.mul(left, right);
+
+
             LValue overflowResult = m_out.mulWithOverflow64(left, right);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-            LValue result = m_out.extractValue(overflowResult, 0);
-            
+
             if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
                 LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
                 LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
@@ -1050,20 +1051,18 @@ private:
         case Int32Use: {
             LValue value = lowInt32(m_node->child1());
             
-            LValue result;
-            if (bytecodeCanTruncateInteger(m_node->arithNodeFlags()))
-                result = m_out.neg(value);
-            else if (bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
-                // We don't have a negate-with-overflow intrinsic. Hopefully this
-                // does the trick, though.
-                LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
-                speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-                result = m_out.extractValue(overflowResult, 0);
-            } else {
-                speculate(Overflow, noValue(), 0, m_out.testIsZero32(value, m_out.constInt32(0x7fffffff)));
-                result = m_out.neg(value);
+            LValue result = m_out.neg(value);
+            if (!bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
+                if (bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+                    // We don't have a negate-with-overflow intrinsic. Hopefully this
+                    // does the trick, though.
+                    LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
+                    speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
+                } else
+                    speculate(Overflow, noValue(), 0, m_out.testIsZero32(value, m_out.constInt32(0x7fffffff)));
+
             }
-            
+
             setInt32(result);
             break;
         }
@@ -1082,7 +1081,7 @@ private:
             LValue value = lowInt52(m_node->child1());
             LValue overflowResult = m_out.subWithOverflow64(m_out.int64Zero, value);
             speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
-            LValue result = m_out.extractValue(overflowResult, 0);
+            LValue result = m_out.neg(value);
             speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
             setInt52(result);
             break;

@@ -1,5 +1,47 @@
 2013-10-01  Nadav Rotem  <nrotem@apple.com>
 
+        FTL: split overflow checks into non-overflow arithmetic and an additional call to the overflow intrinsic check.
+        https://bugs.webkit.org/show_bug.cgi?id=122170
+
+        Reviewed by Filip Pizlo.
+
+        Overflow intrinsics are preventing SCEV and other LLVM analysis passes from analyzing loops. This patch changes the FTL-IR gen by splitting arithmetic calculations into two parts:
+        1. Generate the arithmetic calculation (that may overflow)
+        2. Generate the overflow check (that is only used by the OSR-exit logic).
+
+        We trust LLVM (SelectionDAG) to merge these calculations into a single opcode.
+
+        This JS function:
+
+        function foo() {
+            for (i=0; i < 10000000; i++) { }
+        }
+
+        Is now compiled into this LLVM-IR: 
+
+        "OSR exit continuation for @24<Int32>":           ; preds = %"Block #0", %"OSR exit continuation for @24<Int32>2"
+          %4 = phi i64 [ %10, %"OSR exit continuation for @24<Int32>2" ], [ -281474976710656, %"Block #0" ]
+          %5 = trunc i64 %4 to i32
+          %6 = add i32 %5, 1
+          %7 = tail call { i32, i1 } @llvm.sadd.with.overflow.i32(i32 %5, i32 1)
+          %8 = extractvalue { i32, i1 } %7, 1
+          br i1 %8, label %"OSR exit failCase for @24<Int32>1", label %"OSR exit continuation for @24<Int32>2"
+
+         And into this assembly:
+
+        LBB0_1:                                 ## %OSR exit continuation for @24<Int32>
+                                        ## =>This Inner Loop Header: Depth=1
+            movl  %ecx, %esi
+            incl  %esi
+            jo  LBB0_4
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileAddSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+
+2013-10-01  Nadav Rotem  <nrotem@apple.com>
+
         Consolidate multiple OSRExit calls into one.
         https://bugs.webkit.org/show_bug.cgi?id=122168
 
