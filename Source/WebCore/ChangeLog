@@ -1,5 +1,14 @@
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
+        More build fixing.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InstrumentingAgents.h:
+
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
         Fix the Efl and Gtk builds.
 
         * GNUmakefile.list.am:

@@ -51,7 +51,6 @@
 #include "InspectorDatabaseAgent.cpp"
 #include "InspectorDatabaseResource.cpp"
 #include "InspectorDebuggerAgent.cpp"
-#include "InspectorFileSystemAgent.cpp"
 #include "InspectorFrontendClientLocal.cpp"
 #include "InspectorFrontendHost.cpp"
 #include "InspectorHeapProfilerAgent.cpp"
