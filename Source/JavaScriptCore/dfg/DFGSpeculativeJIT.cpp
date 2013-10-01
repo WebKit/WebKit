@@ -46,8 +46,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_currentNode(0)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
-    , m_arguments(jit.codeBlock()->numParameters())
-    , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(VirtualRegister())
     , m_state(m_jit.graph())
     , m_interpreter(m_jit.graph(), m_state)
@@ -1537,48 +1535,11 @@ void SpeculativeJIT::compileInlineStart(Node* node)
     InlineCallFrame* inlineCallFrame = node->codeOrigin.inlineCallFrame;
     int argumentCountIncludingThis = inlineCallFrame->arguments.size();
     unsigned argumentPositionStart = node->argumentPositionStart();
-    CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
-        ValueSource valueSource;
-        if (codeBlock->isCaptured(virtualRegisterForArgument(i)))
-            valueSource = ValueSource(ValueInJSStack);
-        else {
-            ArgumentPosition& argumentPosition =
-                m_jit.graph().m_argumentPositions[argumentPositionStart + i];
-            switch (argumentPosition.flushFormat()) {
-            case DeadFlush:
-            case FlushedJSValue:
-                valueSource = ValueSource(ValueInJSStack);
-                break;
-            case FlushedDouble:
-                valueSource = ValueSource(DoubleInJSStack);
-                break;
-            case FlushedInt32:
-                valueSource = ValueSource(Int32InJSStack);
-                break;
-            case FlushedInt52:
-                valueSource = ValueSource(Int52InJSStack);
-                break;
-            case FlushedCell:
-                valueSource = ValueSource(CellInJSStack);
-                break;
-            case FlushedBoolean:
-                valueSource = ValueSource(BooleanInJSStack);
-                break;
-            }
-        }
-        ValueRecovery recovery = computeValueRecoveryFor(
-            inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset(), valueSource);
-        // The recovery should refer either to something that has already been
-        // stored into the stack at the right place, or to a constant,
-        // since the Arguments code isn't smart enough to handle anything else.
-        // The exception is the this argument, which we don't really need to be
-        // able to recover.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("\nRecovery for argument %d: ", i);
-        recovery.dump(WTF::dataFile());
-#endif
-        inlineCallFrame->arguments[i] = recovery;
+        ValueSource source = ValueSource::forFlushFormat(
+            m_jit.graph().m_argumentPositions[argumentPositionStart + i].flushFormat());
+        inlineCallFrame->arguments[i] = source.valueRecovery(
+            inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset());
     }
 }
 
@@ -1619,18 +1580,15 @@ void SpeculativeJIT::compileCurrentBlock()
     
     m_jit.jitAssertHasValidCallFrame();
 
-    ASSERT(m_arguments.size() == m_block->variablesAtHead.numberOfArguments());
-    for (size_t i = 0; i < m_arguments.size(); ++i) {
+    for (size_t i = 0; i < m_block->variablesAtHead.numberOfArguments(); ++i) {
         ValueSource valueSource = ValueSource(ValueInJSStack);
-        m_arguments[i] = valueSource;
         m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForArgument(i), valueSource.dataFormat()));
     }
     
     m_state.reset();
     m_state.beginBasicBlock(m_block);
     
-    ASSERT(m_variables.size() == m_block->variablesAtHead.numberOfLocals());
-    for (size_t i = 0; i < m_variables.size(); ++i) {
+    for (size_t i = 0; i < m_block->variablesAtHead.numberOfLocals(); ++i) {
         Node* node = m_block->variablesAtHead.local(i);
         ValueSource valueSource;
         if (!node)
@@ -1641,7 +1599,6 @@ void SpeculativeJIT::compileCurrentBlock()
             valueSource = ValueSource(SourceIsDead);
         else
             valueSource = ValueSource::forFlushFormat(node->variableAccessData()->flushFormat());
-        m_variables[i] = valueSource;
         // FIXME: Don't emit SetLocal(Dead). https://bugs.webkit.org/show_bug.cgi?id=108019
         m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForLocal(i), valueSource.dataFormat()));
     }
@@ -1788,11 +1745,6 @@ void SpeculativeJIT::checkArgumentTypes()
     m_codeOriginForExitTarget = CodeOrigin(0);
     m_codeOriginForExitProfile = CodeOrigin(0);
 
-    for (size_t i = 0; i < m_arguments.size(); ++i)
-        m_arguments[i] = ValueSource(ValueInJSStack);
-    for (size_t i = 0; i < m_variables.size(); ++i)
-        m_variables[i] = ValueSource(ValueInJSStack);
-    
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         Node* node = m_jit.graph().m_arguments[i];
         ASSERT(node->op() == SetArgument);
@@ -1896,19 +1848,6 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
         m_jit.noticeOSREntry(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
     }
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
-}
-
-ValueRecovery SpeculativeJIT::computeValueRecoveryFor(int operand, const ValueSource& valueSource)
-{
-    if (valueSource.isInJSStack())
-        return valueSource.valueRecovery(operand);
-        
-    ASSERT(valueSource.kind() == HaveNode);
-    Node* node = valueSource.id().node(m_jit.graph());
-    if (isConstant(node))
-        return ValueRecovery::constant(valueOfJSConstant(node));
-    
-    return ValueRecovery();
 }
 
 void SpeculativeJIT::compileDoublePutByVal(Node* node, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property)
