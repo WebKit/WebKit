@@ -242,7 +242,7 @@ bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
     if (value->isImageGeneratorValue())
         return static_cast<CSSImageGeneratorValue*>(value)->isPending();
 
-    if (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNone)
+    if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone)
         return false;
 
     ASSERT_NOT_REACHED();
@@ -269,7 +269,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, Cac
         return 0;
     }
 
-    if (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNone)
+    if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone)
         return 0;
 
     ASSERT_NOT_REACHED();

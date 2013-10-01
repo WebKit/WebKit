@@ -334,7 +334,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
                 if (exp->mediaFeature() == MediaFeatureNames::resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::max_resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::min_resolutionMediaFeature) {
                     CSSValue* cssValue =  exp->value();
                     if (cssValue && cssValue->isPrimitiveValue()) {
-                        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(cssValue);
+                        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(cssValue);
                         if (primitiveValue->isDotsPerInch() || primitiveValue->isDotsPerCentimeter())
                             addResolutionWarningMessageToConsole(document, mediaQuerySet->mediaText(), primitiveValue);
                     }

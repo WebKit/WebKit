@@ -62,10 +62,8 @@ PassRefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const IntSize
 
     if (isLinearGradientValue())
         gradient = toCSSLinearGradientValue(this)->createGradient(renderer, size);
-    else {
-        ASSERT(isRadialGradientValue());
+    else
         gradient = toCSSRadialGradientValue(this)->createGradient(renderer, size);
-    }
 
     RefPtr<GradientImage> newImage = GradientImage::create(gradient, size);
     if (cacheable)

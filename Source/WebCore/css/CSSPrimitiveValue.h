@@ -401,17 +401,8 @@ private:
     } m_value;
 };
 
-inline CSSPrimitiveValue* toCSSPrimitiveValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isPrimitiveValue());
-    return static_cast<CSSPrimitiveValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(PrimitiveValue)
 
-inline const CSSPrimitiveValue* toCSSPrimitiveValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isPrimitiveValue());
-    return static_cast<const CSSPrimitiveValue*>(value);
-}
 
 } // namespace WebCore
 

@@ -425,7 +425,7 @@ void CSSValue::destroy()
         delete toCSSInitialValue(this);
         return;
     case PrimitiveClass:
-        delete static_cast<CSSPrimitiveValue*>(this);
+        delete toCSSPrimitiveValue(this);
         return;
     case ReflectClass:
         delete toCSSReflectValue(this);

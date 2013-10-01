@@ -1,3 +1,144 @@
+2013-10-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toCSSFooValue for CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=122101
+
+        Reviewed by Antti Koivisto.
+
+        As a step of clean-up static_cast<> in CSSValues, this patch generates
+        toCSSFooPrimitiveValue() in order to detect bad casts as well as improves
+        code readability.
+
+        No new tests, no behavior changes.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::subimageIsPending):
+        (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::fillImageSet):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillRepeat):
+        (WebCore::CSSParser::parseDeprecatedRadialGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillAttachment):
+        (WebCore::CSSToStyleMap::mapFillClip):
+        (WebCore::CSSToStyleMap::mapFillComposite):
+        (WebCore::CSSToStyleMap::mapFillBlendMode):
+        (WebCore::CSSToStyleMap::mapFillOrigin):
+        (WebCore::CSSToStyleMap::mapFillRepeatX):
+        (WebCore::CSSToStyleMap::mapFillRepeatY):
+        (WebCore::CSSToStyleMap::mapFillSize):
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+        (WebCore::CSSToStyleMap::mapFillMaskSourceType):
+        (WebCore::CSSToStyleMap::mapAnimationDelay):
+        (WebCore::CSSToStyleMap::mapAnimationDirection):
+        (WebCore::CSSToStyleMap::mapAnimationDuration):
+        (WebCore::CSSToStyleMap::mapAnimationFillMode):
+        (WebCore::CSSToStyleMap::mapAnimationIterationCount):
+        (WebCore::CSSToStyleMap::mapAnimationName):
+        (WebCore::CSSToStyleMap::mapAnimationPlayState):
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        (WebCore::CSSToStyleMap::mapNinePieceImageRepeat):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyDefault::applyValue):
+        (WebCore::ApplyPropertyNumber::applyValue):
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyClip::applyValue):
+        (WebCore::ApplyPropertyColor::applyValue):
+        (WebCore::ApplyPropertyLength::applyValue):
+        (WebCore::ApplyPropertyString::applyValue):
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        (WebCore::ApplyPropertyFont::applyValue):
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyFontWeight::applyValue):
+        (WebCore::ApplyPropertyFontVariantLigatures::applyValue):
+        (WebCore::ApplyPropertyCounter::applyValue):
+        (WebCore::ApplyPropertyCursor::applyValue):
+        (WebCore::ApplyPropertyTextAlign::applyValue):
+        (WebCore::ApplyPropertyTextDecoration::applyValue):
+        (WebCore::ApplyPropertyMarqueeIncrement::applyValue):
+        (WebCore::ApplyPropertyMarqueeRepetition::applyValue):
+        (WebCore::ApplyPropertyMarqueeSpeed::applyValue):
+        (WebCore::ApplyPropertyTextUnderlinePosition::applyValue):
+        (WebCore::ApplyPropertyLineHeight::applyValue):
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue):
+        (WebCore::ApplyPropertyPageSize::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::ApplyPropertyResize::applyValue):
+        (WebCore::ApplyPropertyVerticalAlign::applyValue):
+        (WebCore::ApplyPropertyZoom::applyValue):
+        (WebCore::ApplyPropertyDisplay::applyValue):
+        (WebCore::ApplyPropertyClipPath::applyValue):
+        (WebCore::ApplyPropertyShape::applyValue):
+        (WebCore::ApplyPropertyImageResolution::applyValue):
+        (WebCore::ApplyPropertyTextIndent::applyValue):
+        * css/MediaList.cpp:
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::numberValue):
+        (WebCore::orientationMediaFeatureEval):
+        (WebCore::evalResolution):
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        (WebCore::resolutionMediaFeatureEval):
+        (WebCore::computeLength):
+        (WebCore::view_modeMediaFeatureEval):
+        (WebCore::pointerMediaFeatureEval):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackSize):
+        (WebCore::createGridTrackList):
+        (WebCore::createGridPosition):
+        (WebCore::hasVariableReference):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::parseCustomFilterArrayParameter):
+        (WebCore::StyleResolver::parseCustomFilterColorParameter):
+        (WebCore::StyleResolver::parseCustomFilterNumberParameter):
+        (WebCore::StyleResolver::parseCustomFilterParameter):
+        (WebCore::StyleResolver::parseCustomFilterParameterList):
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::getViewportArgumentValue):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        * editing/EditingStyle.cpp:
+        (WebCore::identifierForStyleProperty):
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle):
+        (WebCore::cssValueToRGBA):
+        (WebCore::EditingStyle::extractFontSizeDelta):
+        (WebCore::EditingStyle::textDirection):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        (WebCore::EditingStyle::legacyFontSize):
+        (WebCore::EditingStyle::textDirectionForSelection):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::fontWeightIsBold):
+        (WebCore::isTransparentColorValue):
+        * editing/markup.cpp:
+        (WebCore::propertyMissingOrEqualToNone):
+
 2013-10-01  Darin Adler  <darin@apple.com>
 
         Try to fix AVFoundation crashes seen on Lion bot.

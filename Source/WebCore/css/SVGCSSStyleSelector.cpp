@@ -107,7 +107,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
     ASSERT(value);
     CSSPrimitiveValue* primitiveValue = 0;
     if (value->isPrimitiveValue())
-        primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        primitiveValue = toCSSPrimitiveValue(value);
 
     const State& state = m_state;
     SVGRenderStyle* svgstyle = state.style()->accessSVGStyle();
@@ -285,7 +285,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 if (!currValue->isPrimitiveValue())
                     continue;
 
-                CSSPrimitiveValue* dash = static_cast<CSSPrimitiveValue*>(dashes->itemWithoutBoundsCheck(i));
+                CSSPrimitiveValue* dash = toCSSPrimitiveValue(dashes->itemWithoutBoundsCheck(i));
                 array.append(SVGLength::fromCSSPrimitiveValue(dash));
             }
 
