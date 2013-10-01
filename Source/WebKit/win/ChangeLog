@@ -1,3 +1,16 @@
+2013-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Implemented createWebViewWithRequest in WinLauncher.
+        https://bugs.webkit.org/show_bug.cgi?id=122069
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::createWindow):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchCreatePage):
+        Pass request url from the NavigationAction to createWebViewWithRequest.
+
 2013-09-30  Andreas Kling  <akling@apple.com>
 
         Try to fix the Windows build.

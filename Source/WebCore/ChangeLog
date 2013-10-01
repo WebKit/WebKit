@@ -1,3 +1,13 @@
+2013-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Added adoptCOM to COMPtr on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=122069
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/COMPtr.h:
+        (adoptCOM): Added.
+
 2013-10-01  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; The addedFunction and removedFunction arguments to determineChangedTracksFromNewTracksAndOldItems

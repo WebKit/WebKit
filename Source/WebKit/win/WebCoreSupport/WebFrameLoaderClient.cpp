@@ -529,7 +529,7 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
     }
 }
 
-Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction&)
+Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)
 {
     WebView* webView = m_webFrame->webView();
 
@@ -538,7 +538,8 @@ Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction&)
         return 0;
 
     COMPtr<IWebView> newWebView;
-    if (FAILED(ui->createWebViewWithRequest(webView, 0, &newWebView)))
+    COMPtr<WebMutableURLRequest> request = adoptCOM(WebMutableURLRequest::createInstance(ResourceRequest(navigationAction.url())));
+    if (FAILED(ui->createWebViewWithRequest(webView, request.get(), &newWebView)) || !newWebView)
         return 0;
 
     COMPtr<IWebFrame> mainFrame;

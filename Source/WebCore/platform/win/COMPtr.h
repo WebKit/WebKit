@@ -101,6 +101,11 @@ private:
     T* m_ptr;
 };
 
+template<typename T> inline COMPtr<T> adoptCOM(T *ptr)
+{
+    return COMPtr<T>(AdoptCOM, ptr);
+}
+
 template<typename T> inline void COMPtr<T>::clear()
 {
     if (T* ptr = m_ptr) {
