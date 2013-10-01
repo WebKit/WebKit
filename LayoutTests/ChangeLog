@@ -1,3 +1,9 @@
+2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Adding failure expectations for currently failing tests.
+
+        * platform/gtk/TestExpectations:
+
 2013-10-01  Darin Adler  <darin@apple.com>
 
         Move platform-specific test results from js to js/dom to match moves in r156066.

@@ -1377,6 +1377,13 @@ webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failur
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
+webkit.org/b/122147 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure ]
+webkit.org/b/122147 fast/css/drop-shadow-viewport-vmax.html [ ImageOnlyFailure ]
+webkit.org/b/122147 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
+webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]
+
+webkit.org/b/122150 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
