@@ -1,3 +1,29 @@
+2013-10-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Set NSApplication current event while sending events directly to views
+        https://bugs.webkit.org/show_bug.cgi?id=122179
+
+        Reviewed by Darin Adler.
+
+        DumpRenderTree and WebKitTestRunner send events directly to WebHMTLView or WKView,
+        which doesn't update [NSApp currentEvent]. But there are many places in WebKit that
+        use the current event.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController mouseDown:withModifiers:]):
+        (-[EventSendingController mouseUp:withModifiers:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController mouseScrollByX:andY:continuously:]):
+        (-[EventSendingController contextClick]):
+        (-[EventSendingController keyDown:withModifiers:withLocation:]):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        Update the current event. We were already using the SPI in WebKit.
+
 2013-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Buildbot Dashboard: Fix JSHint issue: 'perlTestResults' used out of scope.

@@ -34,6 +34,10 @@
 #import <WebKit2/WKString.h>
 #import <wtf/RetainPtr.h>
 
+@interface NSApplication (Details)
+- (void)_setCurrentEvent:(NSEvent *)event;
+@end
+
 namespace WTR {
 
 enum MouseAction {
@@ -159,7 +163,9 @@ void EventSenderProxy::mouseDown(unsigned buttonNumber, WKEventModifiers modifie
 
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
     if (targetView) {
+        [NSApp _setCurrentEvent:event];
         [targetView mouseDown:event];
+        [NSApp _setCurrentEvent:nil];
         if (buttonNumber == LeftMouseButton)
             m_leftMouseButtonDown = true;
     }
@@ -184,7 +190,9 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     // instead of rolling our own algorithm for selecting an event target.
     targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
     ASSERT(targetView);
+    [NSApp _setCurrentEvent:event];
     [targetView mouseUp:event];
+    [NSApp _setCurrentEvent:nil];
     if (buttonNumber == LeftMouseButton)
         m_leftMouseButtonDown = false;
     m_clickTime = currentEventTime();
@@ -208,8 +216,11 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
                                         pressure:0.0];
 
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
-    if (targetView)
+    if (targetView) {
+        [NSApp _setCurrentEvent:event];
         [targetView mouseMoved:event];
+        [NSApp _setCurrentEvent:nil];
+    }
 }
 
 void EventSenderProxy::leapForward(int milliseconds)
@@ -408,7 +419,9 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
                         isARepeat:NO
                         keyCode:keyCode];
 
+    [NSApp _setCurrentEvent:event];
     [[m_testController->mainWebView()->platformWindow() firstResponder] keyDown:event];
+    [NSApp _setCurrentEvent:nil];
 
     event = [NSEvent keyEventWithType:NSKeyUp
                         location:NSMakePoint(5, 5)
@@ -421,7 +434,9 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
                         isARepeat:NO
                         keyCode:keyCode];
 
+    [NSApp _setCurrentEvent:event];
     [[m_testController->mainWebView()->platformWindow() firstResponder] keyUp:event];
+    [NSApp _setCurrentEvent:nil];
 }
 
 void EventSenderProxy::mouseScrollBy(int x, int y)
@@ -433,8 +448,11 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
-    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]])
+    if (NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]]) {
+        [NSApp _setCurrentEvent:event];
         [targetView scrollWheel:event];
+        [NSApp _setCurrentEvent:nil];
+    }
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int x, int y, bool paged)

@@ -43,6 +43,10 @@
 
 extern "C" void _NSNewKillRingSequence();
 
+@interface NSApplication (Details)
+- (void)_setCurrentEvent:(NSEvent *)event;
+@end
+
 enum MouseAction {
     MouseDown,
     MouseUp,
@@ -353,7 +357,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
+        [NSApp _setCurrentEvent:event];
         [subView mouseDown:event];
+        [NSApp _setCurrentEvent:nil];
         if (buttonNumber == LeftMouseButton)
             leftMouseButtonDown = YES;
     }
@@ -422,7 +428,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     // instead of rolling our own algorithm for selecting an event target.
     targetView = targetView ? targetView : [[mainFrame frameView] documentView];
     assert(targetView);
+    [NSApp _setCurrentEvent:event];
     [targetView mouseUp:event];
+    [NSApp _setCurrentEvent:nil];
     if (buttonNumber == LeftMouseButton)
         leftMouseButtonDown = NO;
     lastClick = [event timestamp];
@@ -476,6 +484,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     NSView *subView = [[mainFrame webView] hitTest:[event locationInWindow]];
     if (subView) {
+        [NSApp _setCurrentEvent:event];
         if (leftMouseButtonDown) {
             if (draggingInfo) {
                 // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
@@ -486,6 +495,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                 [subView mouseDragged:event];
         } else
             [subView mouseMoved:event];
+        [NSApp _setCurrentEvent:nil];
     }
 }
 
@@ -505,8 +515,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     CFRelease(cgScrollEvent);
 
     NSView *subView = [[mainFrame webView] hitTest:[scrollEvent locationInWindow]];
-    if (subView)
+    if (subView) {
+        [NSApp _setCurrentEvent:scrollEvent];
         [subView scrollWheel:scrollEvent];
+        [NSApp _setCurrentEvent:nil];
+    }
 }
 
 - (void)continuousMouseScrollByX:(int)x andY:(int)y
@@ -538,7 +551,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     NSMutableArray *menuItemStrings = [NSMutableArray array];
     
     if (subView) {
+        [NSApp _setCurrentEvent:event];
         NSMenu* menu = [subView menuForEvent:event];
+        [NSApp _setCurrentEvent:nil];
 
         for (int i = 0; i < [menu numberOfItems]; ++i) {
             NSMenuItem* menuItem = [menu itemAtIndex:i];
@@ -774,7 +789,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         isARepeat:NO
                         keyCode:keyCode];
 
+    [NSApp _setCurrentEvent:event];
     [[[[mainFrame webView] window] firstResponder] keyDown:event];
+    [NSApp _setCurrentEvent:nil];
 
     event = [NSEvent keyEventWithType:NSKeyUp
                         location:NSMakePoint(5, 5)
@@ -787,7 +804,9 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         isARepeat:NO
                         keyCode:keyCode];
 
+    [NSApp _setCurrentEvent:event];
     [[[[mainFrame webView] window] firstResponder] keyUp:event];
+    [NSApp _setCurrentEvent:nil];
 }
 
 - (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
