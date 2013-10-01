@@ -2264,8 +2264,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDocumentCustom.cpp \
 	Source/WebCore/bindings/js/JSElementCustom.cpp \
-	Source/WebCore/bindings/js/JSEntryCustom.cpp \
-	Source/WebCore/bindings/js/JSEntrySyncCustom.cpp \
 	Source/WebCore/bindings/js/JSEventCustom.cpp \
 	Source/WebCore/bindings/js/JSEventListener.cpp \
 	Source/WebCore/bindings/js/JSEventListener.h \

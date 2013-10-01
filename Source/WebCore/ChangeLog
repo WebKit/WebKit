@@ -1,5 +1,11 @@
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
+        Fixing the build.
+
+        * GNUmakefile.list.am:
+
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
         More build fixing.
 
         * GNUmakefile.list.am:
