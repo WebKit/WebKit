@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include "SoftLinking.h"
 #include "SystemInfo.h"
+#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/win/GDIObject.h>
 

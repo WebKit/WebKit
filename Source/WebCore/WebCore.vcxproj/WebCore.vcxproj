@@ -6425,6 +6425,7 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\MathMLNames.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementFactory.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGNames.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScriptsData.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentStyleSheetsData.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -6565,7 +6566,7 @@
     <ClCompile Include="..\Modules\quota\StorageErrorCallback.cpp" />
     <ClCompile Include="..\Modules\quota\StorageInfo.cpp" />
     <ClCompile Include="..\Modules\quota\StorageQuota.cpp" />
-    <ClInclude Include="..\Modules\mediacontrols\MediaControlsHost.cpp" />
+    <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp" />
     <ClCompile Include="..\Modules\mediasource\MediaSource.cpp" />
     <ClCompile Include="..\Modules\mediasource\MediaSourceRegistry.cpp" />
     <ClCompile Include="..\Modules\mediasource\SourceBuffer.cpp" />
@@ -18226,6 +18227,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementFactory.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGNames.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentStyleSheets.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\WebKitFontFamilyNames.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\XMLNames.h" />
@@ -20611,6 +20613,8 @@
     <None Include="..\css\themeWin.css" />
     <None Include="..\css\themeWinQuirks.css" />
     <None Include="..\css\view-source.css" />
+    <None Include="..\Modules\mediacontrols\mediaControlsApple.css" />
+    <None Include="..\Modules\mediacontrols\mediaControlsApple.js" />
     <None Include="..\xml\XPathGrammar.y" />
     <None Include="..\bindings\scripts\CodeGenerator.pm" />
     <None Include="..\bindings\scripts\CodeGeneratorJS.pm" />

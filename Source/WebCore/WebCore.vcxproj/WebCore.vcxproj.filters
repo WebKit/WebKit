@@ -295,6 +295,12 @@
     <Filter Include="platform\graphics\egl">
       <UniqueIdentifier>{e27b348d-0b87-4e5f-b5b9-b99e283ea22b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rendering\shapes">
+      <UniqueIdentifier>{c1c88449-966f-4628-a88b-16c30f08dd7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\indexeddb\leveldb">
+      <UniqueIdentifier>{54c889f7-b5e7-491e-9029-65dc7185b9d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -2359,21 +2365,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\EllipsisBox.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\shapes\PolygonShape.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\shapes\RectangleShape.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\shapes\Shape.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\FilterEffectRenderer.cpp">
@@ -6853,9 +6844,6 @@
     <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\shapes\RasterShape.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -6871,21 +6859,69 @@
     <ClCompile Include="..\bindings\js\WebCoreTypedArrayController.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderBlockFlow.cpp" />
     <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp" />
-    <ClCompile Include="..\rendering\FloatingObjects.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBCursorBackendLevelDB.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBDatabaseBackendLevelDB.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBObjectStoreBackendLevelDB.cpp" />
-    <ClCompile Include="..\platform\graphics\FloatPolygon.cpp" />
-    <ClCompile Include="..\rendering\LineWidth.cpp" />
-    <ClCompile Include="..\rendering\RenderLineBreak.cpp" />
-    <ClCompile Include="..\rendering\RenderElement.cpp" />
-    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp" />
+    <ClCompile Include="..\rendering\FloatingObjects.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderBlockFlow.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderElement.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderLineBreak.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\FloatPolygon.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\Shape.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\PolygonShape.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\RasterShape.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\RectangleShape.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBCursorBackendLevelDB.cpp">
+      <Filter>Modules\indexeddb\leveldb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBDatabaseBackendLevelDB.cpp">
+      <Filter>Modules\indexeddb\leveldb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
+      <Filter>Modules\indexeddb\leveldb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBObjectStoreBackendLevelDB.cpp">
+      <Filter>Modules\indexeddb\leveldb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\LineWidth.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScriptsData.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
+      <Filter>Modules\mediacontrols</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -9094,24 +9130,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\EllipsisBox.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\PolygonShape.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\RectangleShape.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\Shape.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\ShapeInterval.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\shapes\ShapeOutsideInfo.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\FilterEffectRenderer.h">
@@ -14453,9 +14471,6 @@
     <ClInclude Include="..\dom\InlineStyleSheetOwner.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\shapes\RasterShape.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\style\StyleResolveTree.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -14468,21 +14483,64 @@
     <ClInclude Include="..\dom\TextNodeTraversal.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.h" />
-    <ClInclude Include="..\rendering\FloatingObjects.h" />
     <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\mediacontrols\MediaControlsHost.cpp" />
-    <ClInclude Include="..\platform\graphics\FloatPolygon.h" />
-    <ClInclude Include="..\rendering\LineInfo.h" />
-    <ClInclude Include="..\rendering\LineLayoutState.h" />
-    <ClInclude Include="..\rendering\LineWidth.h" />
-    <ClInclude Include="..\rendering\RenderElement.h" />
-    <ClInclude Include="..\rendering\RenderLineBreak.h" />
-    <ClInclude Include="..\rendering\shapes\ShapeInfo.h" />
+    <ClInclude Include="..\rendering\FloatingObjects.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderLineBreak.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderElement.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FloatPolygon.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\ShapeOutsideInfo.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\Shape.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\ShapeInfo.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\ShapeInsideInfo.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\ShapeInterval.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\RasterShape.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\PolygonShape.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\RectangleShape.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\LineWidth.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\LineLayoutState.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\LineInfo.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15329,6 +15387,12 @@
     </None>
     <None Include="..\Resources\plugIns.js">
       <Filter>plugins</Filter>
+    </None>
+    <None Include="..\Modules\mediacontrols\mediaControlsApple.css">
+      <Filter>Modules\mediacontrols</Filter>
+    </None>
+    <None Include="..\Modules\mediacontrols\mediaControlsApple.js">
+      <Filter>Modules\mediacontrols</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
