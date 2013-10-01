@@ -5241,6 +5241,11 @@
 		CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */; };
 		CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E2145767580078207D /* JSMediaController.cpp */; };
 		CD27F6E7145770D30078207D /* MediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E6145770D30078207D /* MediaController.cpp */; };
+		CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */; };
+		CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */; };
+		CD336F6417FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = CD336F6317FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h */; };
+		CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */; };
+		CD336F6817FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */; };
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
 		CD3A495217A9C8C600274E42 /* MediaSourceBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CD3A495117A9C8B600274E42 /* MediaSourceBase.h */; };
 		CD3A495417A9CC9000274E42 /* MediaSourceBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3A495017A9C8B600274E42 /* MediaSourceBase.cpp */; };
@@ -12104,6 +12109,11 @@
 		CD27F6E3145767580078207D /* JSMediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaController.h; sourceTree = "<group>"; };
 		CD27F6E4145767870078207D /* MediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaController.h; sourceTree = "<group>"; };
 		CD27F6E6145770D30078207D /* MediaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaController.cpp; sourceTree = "<group>"; };
+		CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVTrackPrivateAVFObjCImpl.mm; sourceTree = "<group>"; };
+		CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVTrackPrivateAVFObjCImpl.h; sourceTree = "<group>"; };
+		CD336F6317FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivateAVF.h; sourceTree = "<group>"; };
+		CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoTrackPrivateAVFObjC.cpp; path = objc/VideoTrackPrivateAVFObjC.cpp; sourceTree = "<group>"; };
+		CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoTrackPrivateAVFObjC.h; path = objc/VideoTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticLoggingKeys.cpp; sourceTree = "<group>"; };
 		CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingKeys.h; sourceTree = "<group>"; };
 		CD3A495017A9C8B600274E42 /* MediaSourceBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceBase.cpp; sourceTree = "<group>"; };
@@ -13336,6 +13346,7 @@
 				07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */,
 				076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */,
 				076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */,
+				CD336F6317FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h */,
 			);
 			path = avfoundation;
 			sourceTree = "<group>";
@@ -19841,6 +19852,8 @@
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				CD336F5F17F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm */,
+				CD336F6017F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h */,
 				CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */,
 				CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */,
 				07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */,
@@ -19851,6 +19864,8 @@
 				DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */,
 				CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */,
 				CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */,
+				CD336F6517FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp */,
+				CD336F6617FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h */,
 			);
 			name = objc;
 			sourceTree = "<group>";
@@ -23072,6 +23087,7 @@
 				8485227E1190162C006EDC7F /* JSSVGVKernElement.h in Headers */,
 				078E092017D14D1C00420AA1 /* RTCDTMFSender.h in Headers */,
 				71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */,
+				CD336F6417FA0A4D00DDDCD0 /* VideoTrackPrivateAVF.h in Headers */,
 				B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */,
 				65DF320409D1CC60000BE325 /* JSText.h in Headers */,
 				933A14B90B7D1D5200A53FFD /* JSTextEvent.h in Headers */,
@@ -23431,6 +23447,7 @@
 				9746AF2C14F4DDE6003E7A70 /* PositionCallback.h in Headers */,
 				9746AF2E14F4DDE6003E7A70 /* PositionError.h in Headers */,
 				9746AF3014F4DDE6003E7A70 /* PositionErrorCallback.h in Headers */,
+				CD336F6817FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.h in Headers */,
 				37919C240B7D188600A56998 /* PositionIterator.h in Headers */,
 				9746AF3214F4DDE6003E7A70 /* PositionOptions.h in Headers */,
 				C0F2A44113869AAB0066C534 /* preprocessor.pm in Headers */,
@@ -24403,6 +24420,7 @@
 				A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */,
 				BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */,
 				A833C80D0A2CF25600D57664 /* XMLNames.h in Headers */,
+				CD336F6217F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.h in Headers */,
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				1ACE53EB0A8D18E70022947D /* XMLSerializer.h in Headers */,
 				5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */,
@@ -25986,6 +26004,7 @@
 				1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */,
 				07969DB117D14151007FF842 /* JSRTCDTMFToneChangeEvent.cpp in Sources */,
 				BC5823F50C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp in Sources */,
+				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
 				938E65F709F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp in Sources */,
 				BC6D44EC0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp in Sources */,
 				BC6D44BE0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp in Sources */,
@@ -26402,6 +26421,7 @@
 				5DA5E0FC102B953800088CF9 /* JSWebSocket.cpp in Sources */,
 				65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */,
 				E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */,
+				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
 				E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */,
 				E182568F0EF2B02D00933242 /* JSWorkerGlobalScope.cpp in Sources */,
 				E1C36D340EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp in Sources */,

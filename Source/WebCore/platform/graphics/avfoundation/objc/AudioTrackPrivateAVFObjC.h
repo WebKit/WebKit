@@ -29,12 +29,13 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrackPrivateAVF.h"
-#include <wtf/RetainPtr.h>
+#include <wtf/OwnPtr.h>
 
-OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItemTrack;
 
 namespace WebCore {
+
+class AVTrackPrivateAVFObjCImpl;
 
 class AudioTrackPrivateAVFObjC : public AudioTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVFObjC)
@@ -47,16 +48,13 @@ public:
     virtual void setEnabled(bool);
 
     void setPlayerItemTrack(AVPlayerItemTrack*);
-    AVPlayerItemTrack* playerItemTrack() { return m_playerItemTrack.get(); }
-
-    static String languageForAVAssetTrack(AVAssetTrack*);
+    AVPlayerItemTrack* playerItemTrack();
 
 private:
     AudioTrackPrivateAVFObjC(AVPlayerItemTrack*);
 
     void resetPropertiesFromTrack();
-
-    RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
+    OwnPtr<AVTrackPrivateAVFObjCImpl> m_impl;
 };
 
 }

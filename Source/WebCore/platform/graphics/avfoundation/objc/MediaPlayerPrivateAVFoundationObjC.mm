@@ -30,6 +30,7 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
 #import "AudioTrackPrivateAVFObjC.h"
+#import "AVTrackPrivateAVFObjCImpl.h"
 #import "BlockExceptions.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
@@ -44,6 +45,7 @@
 #import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "UUID.h"
+#import "VideoTrackPrivateAVFObjC.h"
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
@@ -1052,43 +1054,8 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
 
 #if ENABLE(VIDEO_TRACK)
-        RetainPtr<NSSet> audioTracks = adoptNS([[NSSet alloc] initWithArray:[tracks objectsAtIndexes:[tracks indexesOfObjectsPassingTest:^(id track, NSUInteger, BOOL*){
-            return [[[track assetTrack] mediaType] isEqualToString:AVMediaTypeAudio];
-        }]]]);
-        RetainPtr<NSMutableSet> oldAudioTracks = adoptNS([[NSMutableSet alloc] initWithCapacity:m_audioTracks.size()]);
-
-        typedef Vector<RefPtr<AudioTrackPrivateAVFObjC> > AudioTrackVector;
-        for (AudioTrackVector::iterator i = m_audioTracks.begin(); i != m_audioTracks.end(); ++i)
-            [oldAudioTracks.get() addObject:(*i)->playerItemTrack()];
-
-        RetainPtr<NSMutableSet> removedAVAudioTracks = adoptNS([oldAudioTracks.get() mutableCopy]);
-        [removedAVAudioTracks.get() minusSet:audioTracks.get()];
-
-        RetainPtr<NSMutableSet> addedAVAudioTracks = adoptNS([audioTracks.get() mutableCopy]);
-        [addedAVAudioTracks.get() minusSet:oldAudioTracks.get()];
-
-        AudioTrackVector replacementAudioTracks;
-        AudioTrackVector addedAudioTracks;
-        AudioTrackVector removedAudioTracks;
-        for (AudioTrackVector::iterator i = m_audioTracks.begin(); i != m_audioTracks.end(); ++i) {
-            if ([removedAVAudioTracks containsObject:(*i)->playerItemTrack()])
-                removedAudioTracks.append(*i);
-            else
-                replacementAudioTracks.append(*i);
-        }
-
-        for (AVPlayerItemTrack* playerItemTrack in addedAVAudioTracks.get())
-            addedAudioTracks.append(AudioTrackPrivateAVFObjC::create(playerItemTrack));
-
-        replacementAudioTracks.appendVector(addedAudioTracks);
-
-        m_audioTracks.swap(replacementAudioTracks);
-
-        for (AudioTrackVector::iterator i = removedAudioTracks.begin(); i != removedAudioTracks.end(); ++i)
-            player()->removeAudioTrack(*i);
-
-        for (AudioTrackVector::iterator i = addedAudioTracks.begin(); i != addedAudioTracks.end(); ++i)
-            player()->addAudioTrack(*i);
+        updateAudioTracks();
+        updateVideoTracks();
 #endif
     }
 
@@ -1120,6 +1087,59 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
     setDelayCharacteristicsChangedNotification(false);
 }
+
+#if ENABLE(VIDEO_TRACK)
+template <typename RefT, typename PassRefT>
+void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* trackType, Vector<RefT>& oldItems, RefT (*itemFactory)(AVPlayerItemTrack*), MediaPlayer* player, void (MediaPlayer::*addedFunction)(PassRefT), void (MediaPlayer::*removedFunction)(PassRefT))
+{
+    RetainPtr<NSSet> newTracks = adoptNS([[NSSet alloc] initWithArray:[tracks objectsAtIndexes:[tracks indexesOfObjectsPassingTest:^(id track, NSUInteger, BOOL*){
+        return [[[track assetTrack] mediaType] isEqualToString:trackType];
+    }]]]);
+    RetainPtr<NSMutableSet> oldTracks = adoptNS([[NSMutableSet alloc] initWithCapacity:oldItems.size()]);
+
+    typedef Vector<RefT> ItemVector;
+    for (auto i = oldItems.begin(); i != oldItems.end(); ++i)
+        [oldTracks addObject:(*i)->playerItemTrack()];
+
+    RetainPtr<NSMutableSet> removedTracks = adoptNS([oldTracks mutableCopy]);
+    [removedTracks minusSet:newTracks.get()];
+
+    RetainPtr<NSMutableSet> addedTracks = adoptNS([newTracks mutableCopy]);
+    [addedTracks minusSet:oldTracks.get()];
+
+    ItemVector replacementItems;
+    ItemVector addedItems;
+    ItemVector removedItems;
+    for (auto i = oldItems.begin(); i != oldItems.end(); ++i) {
+        if ([removedTracks containsObject:(*i)->playerItemTrack()])
+            removedItems.append(*i);
+        else
+            replacementItems.append(*i);
+    }
+
+    for (AVPlayerItemTrack* track in addedTracks.get())
+        addedItems.append(itemFactory(track));
+
+    replacementItems.appendVector(addedItems);
+    oldItems.swap(replacementItems);
+
+    for (auto i = removedItems.begin(); i != removedItems.end(); ++i)
+        (player->*removedFunction)(*i);
+
+    for (auto i = addedItems.begin(); i != addedItems.end(); ++i)
+        (player->*addedFunction)(*i);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
+{
+    determineChangedTracksFromNewTracksAndOldItems([m_avPlayerItem tracks], AVMediaTypeAudio, m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
+{
+    determineChangedTracksFromNewTracksAndOldItems([m_avPlayerItem tracks], AVMediaTypeVideo, m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
+}
+#endif // ENABLE(VIDEO_TRACK)
 
 void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
 {
@@ -1567,7 +1587,7 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
     }
 
     AVAssetTrack *track = [tracks objectAtIndex:0];
-    m_languageOfPrimaryAudioTrack = AudioTrackPrivateAVFObjC::languageForAVAssetTrack(track);
+    m_languageOfPrimaryAudioTrack = AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(track);
 
 #if !LOG_DISABLED
     if (m_languageOfPrimaryAudioTrack == emptyString())

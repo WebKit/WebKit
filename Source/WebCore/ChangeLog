@@ -1,3 +1,69 @@
+2013-09-30  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add support for VideoTrack to MediaPlayerPrivateAVFObjC
+        https://bugs.webkit.org/show_bug.cgi?id=122122
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/video-track.html
+
+        Refactor the methods which query AVAssetTrack and AVPlayerItemTrack into an Impl class, and
+        use that class to reset the properties of both AudioTrackAVFObjC and the new VideoTrackAVFObjC.
+
+        Add new files to project:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add the new implementation class, shared by AudioTrackAVFObjC and VideoTrackAVFObjC:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h: Added.
+        (WebCore::AVTrackPrivateAVFObjCImpl::create): Simple factory.
+        (WebCore::AVTrackPrivateAVFObjCImpl::playerItemTrack): Simple getter.
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm: Added.
+        (WebCore::AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl): Simple constructor.
+        (WebCore::AVTrackPrivateAVFObjCImpl::enabled): Pass to AVPlayerItemTrack.
+        (WebCore::AVTrackPrivateAVFObjCImpl::setEnabled): Ditto.
+        (WebCore::AVTrackPrivateAVFObjCImpl::audioKind): Distinguish between Alternative and Main content.
+        (WebCore::AVTrackPrivateAVFObjCImpl::videoKind): Distinguish between Alternative, Main, Caption,
+            and Description content.
+        (WebCore::AVTrackPrivateAVFObjCImpl::id): Pass to AVAssetTrack.
+        (WebCore::AVTrackPrivateAVFObjCImpl::label): Retrieve the Title metadata in the user's preferred
+            language.
+        (WebCore::AVTrackPrivateAVFObjCImpl::language): Pass to languageForAVAssetTrack.
+        (WebCore::AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack): Moved from AudioTrackPrivateAVFObjC.
+        * platform/graphics/avfoundation/VideoTrackPrivateAVF.h: Copied from Source/WebCore/platform/graphics/avfoundation/AudioTrackPrivateAVF.h.
+        (WebCore::VideoTrackPrivateAVF::kind): Simple getter.
+        (WebCore::VideoTrackPrivateAVF::id): Ditto.
+        (WebCore::VideoTrackPrivateAVF::label): Ditto.
+        (WebCore::VideoTrackPrivateAVF::language): Ditto.
+        (WebCore::VideoTrackPrivateAVF::setKind): Simple setter.
+        (WebCore::VideoTrackPrivateAVF::setId): Ditto.
+        (WebCore::VideoTrackPrivateAVF::setLabel): Ditto.
+        (WebCore::VideoTrackPrivateAVF::setLanguage): Ditto.
+        (WebCore::VideoTrackPrivateAVF::VideoTrackPrivateAVF): Simple constructor.
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        (WebCore::AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC): Create a AVTrackPrivateAVFObjCImpl.
+        (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack): Retrieve properties from m_impl.
+        (WebCore::AudioTrackPrivateAVFObjC::setPlayerItemTrack): Create a new AVTrackPrivateAVFObjCImpl.
+        (WebCore::AudioTrackPrivateAVFObjC::playerItemTrack): Pass to m_impl.
+        (WebCore::AudioTrackPrivateAVFObjC::setEnabled): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Refactor implementation into
+            template method determineChangedTracksFromNewTracksAndOldItems().
+        (WebCore::determineChangedTracksFromNewTracksAndOldItems): Refactored.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks): Pass to determineChangedTracksFromNewTracksAndOldItems.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): Changed class hosting
+            languageForAVAssetTrack.
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp: Added.
+        (WebCore::VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC): Create a AVTrackPrivateAVFObjCImpl.
+        (WebCore::VideoTrackPrivateAVFObjC::resetPropertiesFromTrack): Retrieve properties from m_impl.
+        (WebCore::VideoTrackPrivateAVFObjC::setPlayerItemTrack): Create a new AVTrackPrivateAVFObjCImpl.
+        (WebCore::VideoTrackPrivateAVFObjC::playerItemTrack): Pass to m_impl.
+        (WebCore::VideoTrackPrivateAVFObjC::setSelected): Ditto.
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.h: Added.
+        (WebCore::VideoTrackPrivateAVFObjC::create): Simple factory.
+
 2013-10-01  Andreas Kling  <akling@apple.com>
 
         Leaf EventTarget subclasses should be FINAL.

@@ -23,47 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "AudioTrackPrivateAVFObjC.h"
-#import "AVTrackPrivateAVFObjCImpl.h"
+#ifndef VideoTrackPrivateAVF_h
+#define VideoTrackPrivateAVF_h
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "VideoTrackPrivate.h"
+
 namespace WebCore {
 
-AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-    : m_impl(AVTrackPrivateAVFObjCImpl::create(track))
-{
-    resetPropertiesFromTrack();
-}
+class VideoTrackPrivateAVF : public VideoTrackPrivate {
+    WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVF)
+public:
 
-void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
-{
-    setEnabled(m_impl->enabled());
-    setKind(m_impl->audioKind());
-    setId(m_impl->id());
-    setLabel(m_impl->label());
-    setLanguage(m_impl->language());
-}
+    virtual Kind kind() const OVERRIDE { return m_kind; }
+    virtual AtomicString id() const OVERRIDE { return m_id; }
+    virtual AtomicString label() const OVERRIDE { return m_label; }
+    virtual AtomicString language() const OVERRIDE { return m_language; }
 
-void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
-{
-    m_impl = AVTrackPrivateAVFObjCImpl::create(track);
-    resetPropertiesFromTrack();
-}
+protected:
+    void setKind(Kind kind) { m_kind = kind; }
+    void setId(AtomicString newId) { m_id = newId; }
+    void setLabel(AtomicString label) { m_label = label; }
+    void setLanguage(AtomicString language) { m_language = language; }
 
-AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
-{
-    return m_impl->playerItemTrack();
-}
+    Kind m_kind;
+    AtomicString m_id;
+    AtomicString m_label;
+    AtomicString m_language;
 
-void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
-{
-    AudioTrackPrivateAVF::setEnabled(enabled);
-    m_impl->setEnabled(enabled);
-}
+    VideoTrackPrivateAVF()
+        : m_kind(None)
+    {
+    }
+};
 
 }
 
-#endif
+#endif // ENABLE(VIDEO_TRACK)
 
+#endif // VideoTrackPrivateAVF_h

@@ -24,45 +24,45 @@
  */
 
 #import "config.h"
-#import "AudioTrackPrivateAVFObjC.h"
+#import "VideoTrackPrivateAVFObjC.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
 
 #if ENABLE(VIDEO_TRACK)
 
 namespace WebCore {
 
-AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-    : m_impl(AVTrackPrivateAVFObjCImpl::create(track))
+VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVPlayerItemTrack* track)
+: m_impl(AVTrackPrivateAVFObjCImpl::create(track))
 {
     resetPropertiesFromTrack();
 }
 
-void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
+void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
-    setEnabled(m_impl->enabled());
-    setKind(m_impl->audioKind());
+    setSelected(m_impl->enabled());
+    setKind(m_impl->videoKind());
     setId(m_impl->id());
     setLabel(m_impl->label());
     setLanguage(m_impl->language());
 }
 
-void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
+void VideoTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
 {
     m_impl = AVTrackPrivateAVFObjCImpl::create(track);
     resetPropertiesFromTrack();
 }
 
-AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
+AVPlayerItemTrack* VideoTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
 }
 
-void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
+void VideoTrackPrivateAVFObjC::setSelected(bool enabled)
 {
-    AudioTrackPrivateAVF::setEnabled(enabled);
+    VideoTrackPrivateAVF::setSelected(enabled);
     m_impl->setEnabled(enabled);
 }
-
+    
 }
 
 #endif

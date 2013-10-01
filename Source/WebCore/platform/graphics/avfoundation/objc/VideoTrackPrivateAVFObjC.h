@@ -23,47 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "AudioTrackPrivateAVFObjC.h"
-#import "AVTrackPrivateAVFObjCImpl.h"
+#ifndef VideoTrackPrivateAVFObjC_h
+#define VideoTrackPrivateAVFObjC_h
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "VideoTrackPrivateAVF.h"
+#include <wtf/OwnPtr.h>
+
+OBJC_CLASS AVPlayerItemTrack;
+
 namespace WebCore {
 
-AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-    : m_impl(AVTrackPrivateAVFObjCImpl::create(track))
-{
-    resetPropertiesFromTrack();
-}
+class AVTrackPrivateAVFObjCImpl;
 
-void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
-{
-    setEnabled(m_impl->enabled());
-    setKind(m_impl->audioKind());
-    setId(m_impl->id());
-    setLabel(m_impl->label());
-    setLanguage(m_impl->language());
-}
+class VideoTrackPrivateAVFObjC FINAL : public VideoTrackPrivateAVF {
+    WTF_MAKE_NONCOPYABLE(VideoTrackPrivateAVFObjC)
+public:
+    static RefPtr<VideoTrackPrivateAVFObjC> create(AVPlayerItemTrack* track)
+    {
+        return adoptRef(new VideoTrackPrivateAVFObjC(track));
+    }
 
-void AudioTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
-{
-    m_impl = AVTrackPrivateAVFObjCImpl::create(track);
-    resetPropertiesFromTrack();
-}
+    virtual void setSelected(bool) OVERRIDE;
 
-AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
-{
-    return m_impl->playerItemTrack();
-}
+    void setPlayerItemTrack(AVPlayerItemTrack*);
+    AVPlayerItemTrack* playerItemTrack();
 
-void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
-{
-    AudioTrackPrivateAVF::setEnabled(enabled);
-    m_impl->setEnabled(enabled);
-}
+private:
+    VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
+
+    void resetPropertiesFromTrack();
+    OwnPtr<AVTrackPrivateAVFObjCImpl> m_impl;
+};
 
 }
 
-#endif
+#endif // ENABLE(VIDEO_TRACK)
 
+#endif // VideoTrackPrivateAVFObjC_h
