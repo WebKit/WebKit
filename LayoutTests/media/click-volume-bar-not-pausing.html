@@ -8,7 +8,6 @@
         <script src="media-controls.js"></script>
         <script type="text/javascript">
             var mediaElement;
-            var skipOnFirstEmptyLoad = 0;
 
             function calculateElementCoordinates(id)
             {
@@ -31,8 +30,8 @@
             function clickVolumeSlider()
             {
                 if (!window.eventSender) {
-                    consoleWrite("ERROR: no event sender.");
-                    failTest();
+                    failTest("ERROR: no event sender.");
+                    return;
                 }
 
                 var muteButtonCoordinates;
@@ -62,14 +61,17 @@
 
             function frameLoaded()
             {
-                if (++skipOnFirstEmptyLoad == 1)
-                    return;
+                consoleWrite("Video frame loaded.");
 
                 var standaloneMediaDocument = document.getElementById("videoframe").contentDocument;
                 mediaElement = standaloneMediaDocument.querySelector("video");
+                if (!mediaElement) {
+                    failTest("ERROR: Video element was not found in frameLoaded().");
+                    return;
+                }
 
                 waitForEventAndFail("error");
-                waitForEvent('playing', playing);
+                waitForEventOnce('playing', playing);
 
                 mediaElement.pause();
                 mediaElement.play();
@@ -88,9 +90,13 @@
     </head>
     <body>
         <p>Click on volume bar on a MediaDocument does not pause.</p>
-        <iframe id="videoframe" width=380 height=330 onload="frameLoaded()"></iframe>
+        <iframe id="videoframe" width=380 height=330"></iframe>
         <script type="text/javascript">
-            document.getElementById("videoframe").src = findMediaFile("video", "content/test");
+            onload = function() {
+                var videoframe = document.getElementById("videoframe");
+                videoframe.onload = frameLoaded;
+                videoframe.src = findMediaFile("video", "content/test");
+            }
         </script>
     </body>
 </html>

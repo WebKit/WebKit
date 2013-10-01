@@ -1,3 +1,24 @@
+2013-09-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test media/click-volume-bar-not-pausing.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=122126
+
+        Reviewed by Darin Adler.
+
+        Speculative partial fix.
+
+        I'm not sure if it's possible to make this test completely controlled without
+        DOMFrameContentLoaded support - we need to do work when the <video> element is
+        already present, but playback hasn't started yet. As media documents use autoplay,
+        there is a race between load and playing events.
+
+        * media/click-volume-bar-not-pausing-expected.txt:
+        * media/click-volume-bar-not-pausing.html:
+          - Add video URL after initial content fully loads to avoid races with that.
+          - Added some state logging for clarity.
+          - Only listen for "playing" event once. If playback already started, we have a
+          playing event already queued, and would add another one with pause()/play().
+
 2013-09-30  Sam White  <samuel_white@apple.com>
 
         AX: Expose ARIA Busy Notifications
