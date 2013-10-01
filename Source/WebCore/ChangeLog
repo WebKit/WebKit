@@ -1,3 +1,11 @@
+2013-10-01  Darin Adler  <darin@apple.com>
+
+        Try to fix AVFoundation crashes seen on Lion bot.
+
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        Four AVFoundation string constants used in this file were new to 10.8.
+        For older versions of OS X, use hard-coded string constants instead.
+
 2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [InexedDB] Interfaces inheriting from EventTarget should generate JSC (un)wrapping functions

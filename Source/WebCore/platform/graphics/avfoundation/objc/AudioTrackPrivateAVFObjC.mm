@@ -40,21 +40,34 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItemTrack)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
 
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesVideoForAccessibility, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsAuxiliaryContent, NSString *)
-SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
 
 #define AVMetadataItem getAVMetadataItemClass()
 
+#define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
+#define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesVideoForAccessibility, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsAuxiliaryContent, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
+
 #define AVMediaCharacteristicIsMainProgramContent getAVMediaCharacteristicIsMainProgramContent()
 #define AVMediaCharacteristicDescribesVideoForAccessibility getAVMediaCharacteristicDescribesVideoForAccessibility()
 #define AVMediaCharacteristicIsAuxiliaryContent getAVMediaCharacteristicIsAuxiliaryContent()
 #define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
-#define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
-#define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
+
+#else
+
+#define AVMediaCharacteristicIsMainProgramContent @"public.main-program-content"
+#define AVMediaCharacteristicDescribesVideoForAccessibility @"public.accessibility.describes-video"
+#define AVMediaCharacteristicIsAuxiliaryContent @"public.auxiliary-content"
+#define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility @"public.accessibility.transcribes-spoken-dialog"
+
+#endif
 
 namespace WebCore {
 
