@@ -1,3 +1,13 @@
+2013-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Buildbot Dashboard: Fix JSHint issue: 'perlTestResults' used out of scope.
+        https://bugs.webkit.org/show_bug.cgi?id=122183
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.update):
+
 2013-10-01  Timothy Hatcher  <timothy@apple.com>
 
         Tweaks to the Buildbot Dashboard

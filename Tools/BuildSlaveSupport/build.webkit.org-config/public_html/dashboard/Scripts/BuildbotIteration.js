@@ -164,7 +164,7 @@ BuildbotIteration.prototype = {
 
             if (!this.bindingTestResults || !this.bindingTestResults.finished) {
                 var bindingTestResults = collectTestResults.call(this, data, "bindings-generation-tests");
-                this.bindingTestResults = perlTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
+                this.bindingTestResults = bindingTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
             }
 
             this.loaded = true;
