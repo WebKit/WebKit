@@ -178,7 +178,8 @@ public:
         AXRowExpanded,
         AXInvalidStatusChanged,
         AXTextChanged,
-        AXAriaAttributeChanged
+        AXAriaAttributeChanged,
+        AXElementBusyChanged
     };
 
     void postNotification(RenderObject*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);

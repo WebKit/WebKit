@@ -1,3 +1,15 @@
+2013-09-30  Sam White  <samuel_white@apple.com>
+
+        AX: Expose ARIA Busy Notifications
+        https://bugs.webkit.org/show_bug.cgi?id=121451
+
+        Reviewed by Chris Fleizach.
+
+        Added test to verify that elements post AXElementBusyChanged notifications when aria-busy is toggled.
+
+        * platform/mac/accessibility/element-busy-changed-expected.txt: Added.
+        * platform/mac/accessibility/element-busy-changed.html: Added.
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Remove support for DOMFileSystem
