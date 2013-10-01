@@ -1,3 +1,38 @@
+2013-10-01  Darin Adler  <darin@apple.com>
+
+        Move platform-specific test results from js to js/dom to match moves in r156066.
+
+        I see multiple check-ins with people doing this for some files, but these seem to have been missed.
+        Maybe some of these are unneeded and can be removed.
+
+        My hope is that this might help with some failures seen on the Windows bot.
+
+        * platform/blackberry/js/dom/constructor-length-expected.txt: Renamed from LayoutTests/platform/blackberry/js/constructor-length-expected.txt.
+        * platform/efl/js/dom/constructor-length-expected.txt: Renamed from LayoutTests/platform/efl/js/constructor-length-expected.txt.
+        * platform/efl/js/dom/dom-static-property-for-in-iteration-expected.txt: Renamed from LayoutTests/platform/efl/js/dom-static-property-for-in-iteration-expected.txt.
+        * platform/efl/js/dom/exception-linenums-in-html-3-expected.png: Renamed from LayoutTests/platform/efl/js/exception-linenums-in-html-3-expected.png.
+        * platform/efl/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Renamed from LayoutTests/platform/efl/js/global-constructors-attributes-dedicated-worker-expected.txt.
+        * platform/efl/js/dom/global-constructors-attributes-shared-worker-expected.txt: Renamed from LayoutTests/platform/efl/js/global-constructors-attributes-shared-worker-expected.txt.
+        * platform/efl/js/dom/missing-style-end-tag-js-expected.png: Renamed from LayoutTests/platform/efl/js/missing-style-end-tag-js-expected.png.
+        * platform/efl/js/dom/missing-title-end-tag-js-expected.png: Renamed from LayoutTests/platform/efl/js/missing-title-end-tag-js-expected.png.
+        * platform/gtk/js/dom/constructor-length-expected.txt: Renamed from LayoutTests/platform/gtk/js/constructor-length-expected.txt.
+        * platform/gtk/js/dom/exception-linenums-in-html-3-expected.png: Renamed from LayoutTests/platform/gtk/js/exception-linenums-in-html-3-expected.png.
+        * platform/gtk/js/dom/missing-style-end-tag-js-expected.png: Renamed from LayoutTests/platform/gtk/js/missing-style-end-tag-js-expected.png.
+        * platform/gtk/js/dom/missing-title-end-tag-js-expected.png: Renamed from LayoutTests/platform/gtk/js/missing-title-end-tag-js-expected.png.
+        * platform/mac/js/dom/exception-linenums-in-html-3-expected.png: Renamed from LayoutTests/platform/mac/js/exception-linenums-in-html-3-expected.png.
+        * platform/mac/js/dom/missing-style-end-tag-js-expected.png: Renamed from LayoutTests/platform/mac/js/missing-style-end-tag-js-expected.png.
+        * platform/mac/js/dom/missing-title-end-tag-js-expected.png: Renamed from LayoutTests/platform/mac/js/missing-title-end-tag-js-expected.png.
+        * platform/qt/js/dom/constructor-length-expected.txt: Renamed from LayoutTests/platform/qt/js/constructor-length-expected.txt.
+        * platform/qt/js/dom/date-DST-time-cusps-expected.txt: Renamed from LayoutTests/platform/qt/js/date-DST-time-cusps-expected.txt.
+        * platform/qt/js/dom/dom-static-property-for-in-iteration-expected.txt: Renamed from LayoutTests/platform/qt/js/dom-static-property-for-in-iteration-expected.txt.
+        * platform/qt/js/dom/exception-linenums-in-html-3-expected.png: Renamed from LayoutTests/platform/qt/js/exception-linenums-in-html-3-expected.png.
+        * platform/qt/js/dom/missing-style-end-tag-js-expected.png: Renamed from LayoutTests/platform/qt/js/missing-style-end-tag-js-expected.png.
+        * platform/qt/js/dom/missing-title-end-tag-js-expected.png: Renamed from LayoutTests/platform/qt/js/missing-title-end-tag-js-expected.png.
+        * platform/qt/js/dom/switch-behaviour-expected.txt: Renamed from LayoutTests/platform/qt/js/switch-behaviour-expected.txt.
+        * platform/win/js/dom/dom-static-property-for-in-iteration-expected.txt: Renamed from LayoutTests/platform/win/js/dom-static-property-for-in-iteration-expected.txt.
+        * platform/win/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Renamed from LayoutTests/platform/win/js/global-constructors-attributes-dedicated-worker-expected.txt.
+        * platform/win/js/dom/global-constructors-attributes-shared-worker-expected.txt: Renamed from LayoutTests/platform/win/js/global-constructors-attributes-shared-worker-expected.txt.
+
 2013-10-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining after r156527, moving baselines specific to GTK WK1
