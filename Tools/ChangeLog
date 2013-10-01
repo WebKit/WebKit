@@ -1,5 +1,15 @@
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
+        check-webkit-style should not warn about use of C++11 “>>”  instead of “> >"
+        https://bugs.webkit.org/show_bug.cgi?id=116474
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
         Remove support for DOMFileSystem
         https://bugs.webkit.org/show_bug.cgi?id=122137
 

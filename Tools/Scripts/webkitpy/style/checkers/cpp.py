@@ -1831,10 +1831,10 @@ def check_spacing(file_extension, clean_lines, line_number, error):
     # FIXME: It's not ok to have spaces around binary operators like .
 
     # You should always have whitespace around binary operators.
-    # Alas, we can't test < or > because they're legitimately used sans spaces
+    # Alas, we can't test <, >, <<, or >> because they're legitimately used sans spaces
     # (a->b, vector<int> a).  The only time we can tell is a < with no >, and
     # only if it's not template params list spilling into the next line.
-    matched = search(r'[^<>=!\s](==|!=|\+=|-=|\*=|/=|/|\|=|&=|<<=|>>=|<=|>=|\|\||\||&&|>>|<<)[^<>=!\s]', line)
+    matched = search(r'[^<>=!\s](==|!=|\+=|-=|\*=|/=|/|\|=|&=|<<=|>>=|<=|>=|\|\||\||&&)[^<>=!\s]', line)
     if not matched:
         # Note that while it seems that the '<[^<]*' term in the following
         # regexp could be simplified to '<.*', which would indeed match
