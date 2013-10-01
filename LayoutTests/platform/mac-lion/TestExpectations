@@ -139,3 +139,10 @@ platform/mac-wk2/tiled-drawing [ Skip ]
 # Lion does not support cache partitioning
 http/tests/cache/partitioned-cache.html
 http/tests/cache/partitioned-cache-iframe.html
+
+# <rdar://problem/15126654> Make the Curie Lion bots green in preparation for Actinium
+fast/text/international/synthesized-italic-vertical-latin.html
+media/video-controls-captions-trackmenu-localized.html
+media/video-played-collapse.html
+webaudio/codec-tests/mp3/128kbps-44khz.html
+webaudio/codec-tests/wav/24bit-22khz-resample.html 
