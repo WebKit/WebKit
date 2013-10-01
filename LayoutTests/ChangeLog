@@ -1,3 +1,17 @@
+2013-10-01  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] WebKitTestRunner's window snapshots are blank with tiled drawing
+        https://bugs.webkit.org/show_bug.cgi?id=122006
+        <rdar://problem/15095197>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that ensures that WebKitTestRunner's snapshots are not
+        completely blank with tiled drawing enabled.
+
+        * platform/mac-wk2/tiled-drawing/window-server-snapshots-work-expected-mismatch.html: Added.
+        * platform/mac-wk2/tiled-drawing/window-server-snapshots-work.html: Added.
+
 2013-09-30  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add support for VideoTrack to MediaPlayerPrivateAVFObjC
