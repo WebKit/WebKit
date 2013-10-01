@@ -34,7 +34,6 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "URL.h"
-#include "LocalFileSystem.h"
 #include "MemoryCache.h"
 #include "PageCache.h"
 #include "RuntimeEnabledFeatures.h"

@@ -1,5 +1,11 @@
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
+        Fix the build.
+
+        * ewk/ewk_settings.cpp:
+
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
         Remove support for DOMFileSystem
         https://bugs.webkit.org/show_bug.cgi?id=122137
 
