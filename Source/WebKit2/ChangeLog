@@ -1,13 +1,3 @@
-2013-09-24  Filip Pizlo  <fpizlo@apple.com>
-
-        Change the WK2 default minimum timer interval to 1ms
-        <rdar://problem/14912840>
-
-        Rubber stamped by Geoffrey Garen and Gavin Barraclough.
-
-        * WebProcess/WebPage/WebPage.cpp:
-        (WebKit::WebPage::WebPage):
-
 2013-09-04  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/14910916> Disable CSS_SHAPES on safari-537-branch
