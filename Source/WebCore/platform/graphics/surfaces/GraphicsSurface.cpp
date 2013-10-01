@@ -45,12 +45,12 @@ uint32_t GraphicsSurface::getTextureID()
     return platformGetTextureID();
 }
 
-PassOwnPtr<GraphicsContext> GraphicsSurface::beginPaint(const IntRect& rect, LockOptions lockOptions)
+std::unique_ptr<GraphicsContext> GraphicsSurface::beginPaint(const IntRect& rect, LockOptions lockOptions)
 {
     int stride = 0;
     char* bits = platformLock(rect, &stride, lockOptions);
-    OwnPtr<GraphicsContext> graphicsContext = platformBeginPaint(rect.size(), bits, stride);
-    return graphicsContext.release();
+    auto graphicsContext = platformBeginPaint(rect.size(), bits, stride);
+    return graphicsContext;
 }
 
 void GraphicsSurface::copyToGLTexture(uint32_t target, uint32_t texture, const IntRect& targetRect, const IntPoint& offset)

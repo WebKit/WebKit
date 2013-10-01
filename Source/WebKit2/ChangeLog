@@ -1,3 +1,33 @@
+2013-09-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build fix for EFL, Qt, Gtk port after r156688
+        https://bugs.webkit.org/show_bug.cgi?id=122139
+
+        Reviewed by Anders Carlsson.
+
+        Get rid of more uses of OwnPtr and PassOwnPtr.
+
+        * Shared/API/c/cairo/WKImageCairo.cpp:
+        (WKImageCreateFromCairoSurface):
+        * Shared/API/c/qt/WKImageQt.cpp:
+        (WKImageCreateFromQImage):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::createGraphicsContext):
+        (WebKit::WebCoordinatedSurface::paintToSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (CoreIPC::encodeImage):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createDrawingAreaProxy):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Remove support for DOMFileSystem

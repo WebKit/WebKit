@@ -45,7 +45,7 @@ static void encodeImage(ArgumentEncoder& encoder, const GdkPixbuf* pixbuf)
 {
     IntSize imageSize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
-    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+    auto graphicsContext = bitmap->createGraphicsContext();
 
     cairo_t* cr = graphicsContext->platformContext()->cr();
     gdk_cairo_set_source_pixbuf(cr, pixbuf, 0, 0);

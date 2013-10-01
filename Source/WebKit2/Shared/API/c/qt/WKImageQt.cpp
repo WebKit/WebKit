@@ -47,7 +47,7 @@ WKImageRef WKImageCreateFromQImage(const QImage& image)
     RefPtr<WebImage> webImage = WebImage::create(image.size(), static_cast<ImageOptions>(0));
     if (!webImage->bitmap())
         return 0;
-    OwnPtr<GraphicsContext> graphicsContext = webImage->bitmap()->createGraphicsContext();
+    auto graphicsContext = webImage->bitmap()->createGraphicsContext();
     QPainter* painter = graphicsContext->platformContext();
     painter->drawImage(QPoint(0, 0), image);
     return toAPI(webImage.release().leakRef());

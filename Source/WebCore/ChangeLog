@@ -1,3 +1,22 @@
+2013-09-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Build fix for EFL, Qt, Gtk port after r156688
+        https://bugs.webkit.org/show_bug.cgi?id=122139
+
+        Reviewed by Anders Carlsson.
+
+        Get rid of more uses of OwnPtr and PassOwnPtr.
+
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::beginPaint):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        * platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp:
+        (WebCore::GraphicsSurface::platformBeginPaint):
+        * platform/graphics/surfaces/glx/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurface::platformBeginPaint):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceQt.cpp:
+        (WebCore::GraphicsSurface::platformBeginPaint):
+
 2013-09-30  Sam White  <samuel_white@apple.com>
 
         AX: Expose ARIA Busy Notifications

@@ -103,7 +103,7 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::createWithSurface(const
 }
 #endif
 
-PassOwnPtr<WebCore::GraphicsContext> WebCoordinatedSurface::createGraphicsContext(const IntRect& rect)
+std::unique_ptr<GraphicsContext> WebCoordinatedSurface::createGraphicsContext(const IntRect& rect)
 {
 #if USE(GRAPHICS_SURFACE)
     if (isBackedByGraphicsSurface())
@@ -111,10 +111,10 @@ PassOwnPtr<WebCore::GraphicsContext> WebCoordinatedSurface::createGraphicsContex
 #endif
 
     ASSERT(m_bitmap);
-    OwnPtr<GraphicsContext> graphicsContext = m_bitmap->createGraphicsContext();
+    auto graphicsContext = m_bitmap->createGraphicsContext();
     graphicsContext->clip(rect);
     graphicsContext->translate(rect.x(), rect.y());
-    return graphicsContext.release();
+    return graphicsContext;
 }
 
 PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<ShareableBitmap> bitmap)
@@ -185,7 +185,7 @@ void WebCoordinatedSurface::paintToSurface(const IntRect& rect, CoordinatedSurfa
 {
     ASSERT(client);
 
-    OwnPtr<GraphicsContext> context = createGraphicsContext(rect);
+    auto context = createGraphicsContext(rect);
     client->paintToSurfaceContext(context.get());
 }
 

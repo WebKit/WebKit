@@ -470,7 +470,7 @@ void GraphicsSurface::platformDestroy()
 }
 
 #if !PLATFORM(QT)
-PassOwnPtr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize&, char*, int)
+std::unique_ptr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize&, char*, int)
 {
     notImplemented();
     return nullptr;

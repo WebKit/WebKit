@@ -51,11 +51,11 @@ static inline PassRefPtr<cairo_surface_t> createSurfaceFromData(void* data, cons
     return adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, size.width(), size.height(), stride));
 }
 
-PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
+std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RefPtr<cairo_surface_t> image = createCairoSurface();
     RefPtr<cairo_t> bitmapContext = adoptRef(cairo_create(image.get()));
-    return adoptPtr(new GraphicsContext(bitmapContext.get()));
+    return std::make_unique<GraphicsContext>(bitmapContext.get());
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

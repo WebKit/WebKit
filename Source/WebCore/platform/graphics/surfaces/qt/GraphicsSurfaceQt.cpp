@@ -34,7 +34,7 @@ void GraphicsSurface::didReleaseImage(void* data)
     surface->platformUnlock();
 }
 
-PassOwnPtr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize& size, char* bits, int stride)
+std::unique_ptr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize& size, char* bits, int stride)
 {
     QImage::Format format = (flags() & SupportsAlpha) ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32;
 
@@ -42,9 +42,9 @@ PassOwnPtr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize& s
     QImage* image = new QImage(reinterpret_cast<uchar*>(bits), size.width(), size.height(), stride, format, didReleaseImage, this);
     QPainter* painter = new QPainter(image);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    OwnPtr<GraphicsContext> graphicsContext = adoptPtr(new GraphicsContext(painter));
+    auto graphicsContext = std::make_unique<GraphicsContext>(painter);
     graphicsContext->takeOwnershipOfPlatformContext();
-    return graphicsContext.release();
+    return graphicsContext;
 }
 
 PassRefPtr<Image> GraphicsSurface::createReadOnlyImage(const IntRect& rect)
