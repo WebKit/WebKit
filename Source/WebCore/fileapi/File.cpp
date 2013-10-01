@@ -69,24 +69,6 @@ static std::unique_ptr<BlobData> createBlobDataForFileWithName(const String& pat
     return createBlobDataForFileWithType(path, getContentTypeFromFileName(fileSystemName, policy));
 }
 
-#if ENABLE(FILE_SYSTEM)
-static PassOwnPtr<BlobData> createBlobDataForFileWithMetadata(const String& fileSystemName, const FileMetadata& metadata)
-{
-    OwnPtr<BlobData> blobData = BlobData::create();
-    blobData->setContentType(getContentTypeFromFileName(fileSystemName, File::WellKnownContentTypes));
-    blobData->appendFile(metadata.platformPath, 0, metadata.length, metadata.modificationTime);
-    return blobData.release();
-}
-
-static PassOwnPtr<BlobData> createBlobDataForFileSystemURL(const URL& fileSystemURL, const FileMetadata& metadata)
-{
-    OwnPtr<BlobData> blobData = BlobData::create();
-    blobData->setContentType(getContentTypeFromFileName(fileSystemURL.path(), File::WellKnownContentTypes));
-    blobData->appendURL(fileSystemURL, 0, metadata.length, metadata.modificationTime);
-    return blobData.release();
-}
-#endif
-
 #if ENABLE(DIRECTORY_UPLOAD)
 PassRefPtr<File> File::createWithRelativePath(const String& path, const String& relativePath)
 {
@@ -100,20 +82,12 @@ File::File(const String& path, ContentTypeLookupPolicy policy)
     : Blob(createBlobDataForFile(path, policy), -1)
     , m_path(path)
     , m_name(pathGetFileName(path))
-#if ENABLE(FILE_SYSTEM)
-    , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
-#endif
 {
 }
 
 File::File(const String& path, const URL& url, const String& type)
     : Blob(url, type, -1)
     , m_path(path)
-#if ENABLE(FILE_SYSTEM)
-    , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
-#endif
 {
     m_name = pathGetFileName(path);
     // FIXME: File object serialization/deserialization does not include
@@ -125,39 +99,11 @@ File::File(const String& path, const String& name, ContentTypeLookupPolicy polic
     : Blob(createBlobDataForFileWithName(path, name, policy), -1)
     , m_path(path)
     , m_name(name)
-#if ENABLE(FILE_SYSTEM)
-    , m_snapshotSize(-1)
-    , m_snapshotModificationTime(invalidFileTime())
-#endif
 {
 }
-
-#if ENABLE(FILE_SYSTEM)
-File::File(const String& name, const FileMetadata& metadata)
-    : Blob(createBlobDataForFileWithMetadata(name, metadata), metadata.length)
-    , m_path(metadata.platformPath)
-    , m_name(name)
-    , m_snapshotSize(metadata.length)
-    , m_snapshotModificationTime(metadata.modificationTime)
-{
-}
-
-File::File(const URL& fileSystemURL, const FileMetadata& metadata)
-    : Blob(createBlobDataForFileSystemURL(fileSystemURL, metadata), metadata.length)
-    , m_fileSystemURL(fileSystemURL)
-    , m_snapshotSize(metadata.length)
-    , m_snapshotModificationTime(metadata.modificationTime)
-{
-}
-#endif
 
 double File::lastModifiedDate() const
 {
-#if ENABLE(FILE_SYSTEM)
-    if (hasValidSnapshotMetadata() && isValidFileTime(m_snapshotModificationTime))
-        return m_snapshotModificationTime * msPerSecond;
-#endif
-
     time_t modificationTime;
     if (getFileModificationTime(m_path, modificationTime) && isValidFileTime(modificationTime))
         return modificationTime * msPerSecond;
@@ -167,11 +113,6 @@ double File::lastModifiedDate() const
 
 unsigned long long File::size() const
 {
-#if ENABLE(FILE_SYSTEM)
-    if (hasValidSnapshotMetadata())
-        return m_snapshotSize;
-#endif
-
     // FIXME: JavaScript cannot represent sizes as large as unsigned long long, we need to
     // come up with an exception to throw if file size is not representable.
     long long size;
@@ -182,14 +123,6 @@ unsigned long long File::size() const
 
 void File::captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const
 {
-#if ENABLE(FILE_SYSTEM)
-    if (hasValidSnapshotMetadata()) {
-        snapshotSize = m_snapshotSize;
-        snapshotModificationTime = m_snapshotModificationTime;
-        return;
-    }
-#endif
-
     // Obtains a snapshot of the file by capturing its current size and modification time. This is used when we slice a file for the first time.
     // If we fail to retrieve the size or modification time, probably due to that the file has been deleted, 0 size is returned.
     FileMetadata metadata;

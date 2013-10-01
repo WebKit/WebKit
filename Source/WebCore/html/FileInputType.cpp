@@ -448,10 +448,6 @@ bool FileInputType::receiveDroppedFiles(const DragData* dragData)
     }
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    m_droppedFileSystemId = dragData->droppedFileSystemId();
-#endif
-
     Vector<FileChooserFileInfo> files;
     for (unsigned i = 0; i < paths.size(); ++i)
         files.append(FileChooserFileInfo(paths[i]));
@@ -465,13 +461,6 @@ bool FileInputType::receiveDroppedFiles(const DragData* dragData)
     }
     return true;
 }
-
-#if ENABLE(FILE_SYSTEM)
-String FileInputType::droppedFileSystemId()
-{
-    return m_droppedFileSystemId;
-}
-#endif
 
 Icon* FileInputType::icon() const
 {

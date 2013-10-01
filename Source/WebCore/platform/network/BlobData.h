@@ -111,18 +111,6 @@ struct BlobDataItem {
     {
     }
 
-#if ENABLE(FILE_SYSTEM)
-    // Constructor for URL type (e.g. FileSystem files).
-    BlobDataItem(const URL& url, long long offset, long long length, double expectedModificationTime)
-        : type(URL)
-        , url(url)
-        , offset(offset)
-        , length(length)
-        , expectedModificationTime(expectedModificationTime)
-    {
-    }
-#endif
-
     // Detaches from current thread so that it can be passed to another thread.
     void detachFromCurrentThread();
 
@@ -130,9 +118,6 @@ struct BlobDataItem {
         Data,
         File,
         Blob
-#if ENABLE(FILE_SYSTEM)
-        , URL
-#endif
     } type;
 
     // For Data type.
@@ -185,9 +170,6 @@ public:
     void appendFile(const String& path);
     void appendFile(const String& path, long long offset, long long length, double expectedModificationTime);
     void appendBlob(const URL&, long long offset, long long length);
-#if ENABLE(FILE_SYSTEM)
-    void appendURL(const URL&, long long offset, long long length, double expectedModificationTime);
-#endif
 
 private:
     friend class BlobRegistryImpl;

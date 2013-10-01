@@ -59,9 +59,6 @@ InstrumentingAgents::InstrumentingAgents()
 #if ENABLE(SQL_DATABASE)
     , m_inspectorDatabaseAgent(0)
 #endif
-#if ENABLE(FILE_SYSTEM)
-    , m_inspectorFileSystemAgent(0)
-#endif
     , m_inspectorApplicationCacheAgent(0)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_inspectorDebuggerAgent(0)
@@ -93,9 +90,6 @@ void InstrumentingAgents::reset()
     m_inspectorDOMStorageAgent = 0;
 #if ENABLE(SQL_DATABASE)
     m_inspectorDatabaseAgent = 0;
-#endif
-#if ENABLE(FILE_SYSTEM)
-    m_inspectorFileSystemAgent = 0;
 #endif
     m_inspectorApplicationCacheAgent = 0;
 #if ENABLE(JAVASCRIPT_DEBUGGER)

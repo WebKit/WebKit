@@ -43,18 +43,12 @@ public:
 #else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 #endif
-#if ENABLE(FILE_SYSTEM)
-    FormDataElement(const URL& url, long long start, long long length, double expectedFileModificationTime) : m_type(encodedURL), m_url(url), m_fileStart(start), m_fileLength(length), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(false) { }
-#endif
 
     enum Type {
         data,
         encodedFile
 #if ENABLE(BLOB)
         , encodedBlob
-#endif
-#if ENABLE(FILE_SYSTEM)
-        , encodedURL
 #endif
     } m_type;
     Vector<char> m_data;
@@ -85,10 +79,6 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
         return a.m_url == b.m_url;
 #else
         return a.m_filename == b.m_filename;
-#endif
-#if ENABLE(FILE_SYSTEM)
-    if (a.m_type == FormDataElement::encodedURL)
-        return a.m_url == b.m_url;
 #endif
 
     return true;
@@ -125,10 +115,6 @@ public:
 #if ENABLE(BLOB)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
     void appendBlob(const URL& blobURL);
-#endif
-#if ENABLE(FILE_SYSTEM)
-    void appendURL(const URL&);
-    void appendURLRange(const URL&, long long start, long long length, double expectedModificationTime);
 #endif
     char* expandDataStore(size_t);
 

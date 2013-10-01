@@ -640,14 +640,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     m_page->windowScreenDidChange((PlatformDisplayID)0);
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    static bool localFileSystemInitialized = false;
-    if (!localFileSystemInitialized) {
-        localFileSystemInitialized = true;
-        WebCore::LocalFileSystem::initializeLocalFileSystem("/");
-    }
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
     // The compositor will be needed for overlay rendering, so create it
     // unconditionally. It will allocate OpenGL objects lazily, so this incurs
@@ -4856,9 +4848,6 @@ void WebPage::clearNeverRememberSites()
 
 void WebPage::clearWebFileSystem()
 {
-#if ENABLE(FILE_SYSTEM)
-    Platform::WebFileSystem::deleteAllFileSystems();
-#endif
 }
 
 void WebPage::clearCache()

@@ -1,7 +1,6 @@
 set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/battery"
-    "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/gamepad"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
@@ -116,7 +115,6 @@ set(WebCore_INCLUDE_DIRECTORIES
 
 set(WebCore_IDL_INCLUDES
     Modules/battery
-    Modules/filesystem
     Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
@@ -152,33 +150,6 @@ set(WebCore_IDL_INCLUDES
 set(WebCore_IDL_FILES
     Modules/battery/BatteryManager.idl
     Modules/battery/NavigatorBattery.idl
-
-    Modules/filesystem/DOMFileSystem.idl
-    Modules/filesystem/DOMFileSystemSync.idl
-    Modules/filesystem/DOMWindowFileSystem.idl
-    Modules/filesystem/DataTransferItemFileSystem.idl
-    Modules/filesystem/DirectoryEntry.idl
-    Modules/filesystem/DirectoryEntrySync.idl
-    Modules/filesystem/DirectoryReader.idl
-    Modules/filesystem/DirectoryReaderSync.idl
-    Modules/filesystem/EntriesCallback.idl
-    Modules/filesystem/Entry.idl
-    Modules/filesystem/EntryArray.idl
-    Modules/filesystem/EntryArraySync.idl
-    Modules/filesystem/EntryCallback.idl
-    Modules/filesystem/EntrySync.idl
-    Modules/filesystem/ErrorCallback.idl
-    Modules/filesystem/FileCallback.idl
-    Modules/filesystem/FileEntry.idl
-    Modules/filesystem/FileEntrySync.idl
-    Modules/filesystem/FileSystemCallback.idl
-    Modules/filesystem/FileWriter.idl
-    Modules/filesystem/FileWriterCallback.idl
-    Modules/filesystem/FileWriterSync.idl
-    Modules/filesystem/HTMLInputElementFileSystem.idl
-    Modules/filesystem/Metadata.idl
-    Modules/filesystem/MetadataCallback.idl
-    Modules/filesystem/WorkerGlobalScopeFileSystem.idl
 
     Modules/gamepad/Gamepad.idl
     Modules/gamepad/GamepadList.idl
@@ -768,30 +739,6 @@ set(WebCore_SOURCES
     Modules/battery/BatteryManager.cpp
     Modules/battery/BatteryStatus.cpp
     Modules/battery/NavigatorBattery.cpp
-
-    Modules/filesystem/DOMFilePath.cpp
-    Modules/filesystem/DOMFileSystem.cpp
-    Modules/filesystem/DOMFileSystemBase.cpp
-    Modules/filesystem/DOMFileSystemSync.cpp
-    Modules/filesystem/DOMWindowFileSystem.cpp
-    Modules/filesystem/DirectoryEntry.cpp
-    Modules/filesystem/DirectoryEntrySync.cpp
-    Modules/filesystem/DirectoryReader.cpp
-    Modules/filesystem/DirectoryReaderSync.cpp
-    Modules/filesystem/Entry.cpp
-    Modules/filesystem/EntryArray.cpp
-    Modules/filesystem/EntryArraySync.cpp
-    Modules/filesystem/EntryBase.cpp
-    Modules/filesystem/EntrySync.cpp
-    Modules/filesystem/FileEntry.cpp
-    Modules/filesystem/FileEntrySync.cpp
-    Modules/filesystem/FileSystemCallbacks.cpp
-    Modules/filesystem/FileWriter.cpp
-    Modules/filesystem/FileWriterBase.cpp
-    Modules/filesystem/FileWriterSync.cpp
-    Modules/filesystem/HTMLInputElementFileSystem.cpp
-    Modules/filesystem/LocalFileSystem.cpp
-    Modules/filesystem/WorkerGlobalScopeFileSystem.cpp
 
     Modules/gamepad/Gamepad.cpp
     Modules/gamepad/GamepadList.cpp
@@ -1595,7 +1542,6 @@ set(WebCore_SOURCES
     inspector/InspectorDatabaseAgent.cpp
     inspector/InspectorDatabaseResource.cpp
     inspector/InspectorDebuggerAgent.cpp
-    inspector/InspectorFileSystemAgent.cpp
     inspector/InspectorFrontendClientLocal.cpp
     inspector/InspectorFrontendHost.cpp
     inspector/InspectorHeapProfilerAgent.cpp
@@ -1797,7 +1743,6 @@ set(WebCore_SOURCES
     page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
 
     platform/Arena.cpp
-    platform/AsyncFileSystem.cpp
     platform/CalculationValue.cpp
     platform/Clock.cpp
     platform/ClockGeneric.cpp

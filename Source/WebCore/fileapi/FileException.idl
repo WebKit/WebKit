@@ -30,7 +30,7 @@
 
 [
     NoInterfaceObject,
-    Conditional=BLOB|FILE_SYSTEM,
+    Conditional=BLOB,
     DoNotCheckConstants,
     JSNoStaticTables,
     ImplementationLacksVTable

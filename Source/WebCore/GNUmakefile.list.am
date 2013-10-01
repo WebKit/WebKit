@@ -165,14 +165,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDeviceMotionEvent.h \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.cpp \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.h \
-	DerivedSources/WebCore/JSDirectoryEntry.cpp \
-	DerivedSources/WebCore/JSDirectoryEntry.h \
-	DerivedSources/WebCore/JSDirectoryEntrySync.cpp \
-	DerivedSources/WebCore/JSDirectoryEntrySync.h \
-	DerivedSources/WebCore/JSDirectoryReader.cpp \
-	DerivedSources/WebCore/JSDirectoryReader.h \
-	DerivedSources/WebCore/JSDirectoryReaderSync.cpp \
-	DerivedSources/WebCore/JSDirectoryReaderSync.h \
 	DerivedSources/WebCore/JSDocument.cpp \
 	DerivedSources/WebCore/JSDocumentFragment.cpp \
 	DerivedSources/WebCore/JSDocumentFragment.h \
@@ -185,10 +177,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMCoreException.h \
 	DerivedSources/WebCore/JSDOMError.cpp \
 	DerivedSources/WebCore/JSDOMError.h \
-	DerivedSources/WebCore/JSDOMFileSystem.cpp \
-	DerivedSources/WebCore/JSDOMFileSystem.h \
-	DerivedSources/WebCore/JSDOMFileSystemSync.cpp \
-	DerivedSources/WebCore/JSDOMFileSystemSync.h \
 	DerivedSources/WebCore/JSDOMFormData.cpp \
 	DerivedSources/WebCore/JSDOMFormData.h \
 	DerivedSources/WebCore/JSDOMImplementation.cpp \
@@ -233,20 +221,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEntity.h \
 	DerivedSources/WebCore/JSEntityReference.cpp \
 	DerivedSources/WebCore/JSEntityReference.h \
-	DerivedSources/WebCore/JSEntriesCallback.cpp \
-	DerivedSources/WebCore/JSEntriesCallback.h \
-	DerivedSources/WebCore/JSEntry.cpp \
-	DerivedSources/WebCore/JSEntry.h \
-	DerivedSources/WebCore/JSEntryArray.cpp \
-	DerivedSources/WebCore/JSEntryArray.h \
-	DerivedSources/WebCore/JSEntryArraySync.cpp \
-	DerivedSources/WebCore/JSEntryArraySync.h \
-	DerivedSources/WebCore/JSEntryCallback.cpp \
-	DerivedSources/WebCore/JSEntryCallback.h \
-	DerivedSources/WebCore/JSEntrySync.cpp \
-	DerivedSources/WebCore/JSEntrySync.h \
-	DerivedSources/WebCore/JSErrorCallback.cpp \
-	DerivedSources/WebCore/JSErrorCallback.h \
 	DerivedSources/WebCore/JSErrorEvent.cpp \
 	DerivedSources/WebCore/JSErrorEvent.h \
 	DerivedSources/WebCore/JSEXTDrawBuffers.cpp \
@@ -262,12 +236,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEventTarget.cpp \
 	DerivedSources/WebCore/JSEventTarget.h \
 	DerivedSources/WebCore/JSFile.cpp \
-	DerivedSources/WebCore/JSFileCallback.cpp \
-	DerivedSources/WebCore/JSFileCallback.h \
-	DerivedSources/WebCore/JSFileEntry.cpp \
-	DerivedSources/WebCore/JSFileEntry.h \
-	DerivedSources/WebCore/JSFileEntrySync.cpp \
-	DerivedSources/WebCore/JSFileEntrySync.h \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
 	DerivedSources/WebCore/JSFile.h \
@@ -279,14 +247,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileReader.h \
 	DerivedSources/WebCore/JSFileReaderSync.cpp \
 	DerivedSources/WebCore/JSFileReaderSync.h \
-	DerivedSources/WebCore/JSFileSystemCallback.cpp \
-	DerivedSources/WebCore/JSFileSystemCallback.h \
-	DerivedSources/WebCore/JSFileWriter.cpp \
-	DerivedSources/WebCore/JSFileWriter.h \
-	DerivedSources/WebCore/JSFileWriterCallback.cpp \
-	DerivedSources/WebCore/JSFileWriterCallback.h \
-	DerivedSources/WebCore/JSFileWriterSync.cpp \
-	DerivedSources/WebCore/JSFileWriterSync.h \
 	DerivedSources/WebCore/JSFocusEvent.cpp \
 	DerivedSources/WebCore/JSFocusEvent.h \
 	DerivedSources/WebCore/JSFontLoader.cpp \
@@ -526,10 +486,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessageEvent.h \
 	DerivedSources/WebCore/JSMessagePort.cpp \
 	DerivedSources/WebCore/JSMessagePort.h \
-	DerivedSources/WebCore/JSMetadata.cpp \
-	DerivedSources/WebCore/JSMetadata.h \
-	DerivedSources/WebCore/JSMetadataCallback.cpp \
-	DerivedSources/WebCore/JSMetadataCallback.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
@@ -1199,30 +1155,6 @@ webcore_svg_built_sources += \
 dom_binding_idls += \
 	$(WebCore)/Modules/battery/BatteryManager.idl \
 	$(WebCore)/Modules/battery/NavigatorBattery.idl \
-	$(WebCore)/Modules/filesystem/DOMFileSystem.idl \
-	$(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
-	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-	$(WebCore)/Modules/filesystem/EntriesCallback.idl \
-	$(WebCore)/Modules/filesystem/Entry.idl \
-	$(WebCore)/Modules/filesystem/EntryArray.idl \
-	$(WebCore)/Modules/filesystem/EntryArraySync.idl \
-	$(WebCore)/Modules/filesystem/EntryCallback.idl \
-	$(WebCore)/Modules/filesystem/EntrySync.idl \
-	$(WebCore)/Modules/filesystem/ErrorCallback.idl \
-	$(WebCore)/Modules/filesystem/FileCallback.idl \
-	$(WebCore)/Modules/filesystem/FileEntry.idl \
-	$(WebCore)/Modules/filesystem/FileEntrySync.idl \
-	$(WebCore)/Modules/filesystem/FileSystemCallback.idl \
-	$(WebCore)/Modules/filesystem/FileWriter.idl \
-	$(WebCore)/Modules/filesystem/FileWriterCallback.idl \
-	$(WebCore)/Modules/filesystem/FileWriterSync.idl \
-	$(WebCore)/Modules/filesystem/Metadata.idl \
-	$(WebCore)/Modules/filesystem/MetadataCallback.idl \
-	$(WebCore)/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
 	$(WebCore)/Modules/gamepad/Gamepad.idl \
 	$(WebCore)/Modules/gamepad/GamepadList.idl \
 	$(WebCore)/Modules/gamepad/NavigatorGamepad.idl \
@@ -1805,63 +1737,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/battery/BatteryStatus.h \
 	Source/WebCore/Modules/battery/NavigatorBattery.cpp \
 	Source/WebCore/Modules/battery/NavigatorBattery.h \
-	Source/WebCore/Modules/filesystem/AsyncFileWriter.h \
-	Source/WebCore/Modules/filesystem/AsyncFileWriterClient.h \
-	Source/WebCore/Modules/filesystem/DOMFilePath.cpp \
-	Source/WebCore/Modules/filesystem/DOMFilePath.h \
-	Source/WebCore/Modules/filesystem/DOMFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/DOMFileSystem.h \
-	Source/WebCore/Modules/filesystem/DOMFileSystemBase.cpp \
-	Source/WebCore/Modules/filesystem/DOMFileSystemBase.h \
-	Source/WebCore/Modules/filesystem/DOMFileSystemSync.cpp \
-	Source/WebCore/Modules/filesystem/DOMFileSystemSync.h \
-	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.h \
-	Source/WebCore/Modules/filesystem/DirectoryReader.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReader.h \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.h \
-	Source/WebCore/Modules/filesystem/EntriesCallback.h \
-	Source/WebCore/Modules/filesystem/Entry.cpp \
-	Source/WebCore/Modules/filesystem/Entry.h \
-	Source/WebCore/Modules/filesystem/EntryArray.cpp \
-	Source/WebCore/Modules/filesystem/EntryArray.h \
-	Source/WebCore/Modules/filesystem/EntryArraySync.cpp \
-	Source/WebCore/Modules/filesystem/EntryArraySync.h \
-	Source/WebCore/Modules/filesystem/EntryBase.cpp \
-	Source/WebCore/Modules/filesystem/EntryBase.h \
-	Source/WebCore/Modules/filesystem/EntryCallback.h \
-	Source/WebCore/Modules/filesystem/EntrySync.cpp \
-	Source/WebCore/Modules/filesystem/EntrySync.h \
-	Source/WebCore/Modules/filesystem/ErrorCallback.h \
-	Source/WebCore/Modules/filesystem/FileCallback.h \
-	Source/WebCore/Modules/filesystem/FileEntry.cpp \
-	Source/WebCore/Modules/filesystem/FileEntry.h \
-	Source/WebCore/Modules/filesystem/FileEntrySync.cpp \
-	Source/WebCore/Modules/filesystem/FileEntrySync.h \
-	Source/WebCore/Modules/filesystem/FileSystemCallback.h \
-	Source/WebCore/Modules/filesystem/FileSystemCallbacks.cpp \
-	Source/WebCore/Modules/filesystem/FileSystemCallbacks.h \
-	Source/WebCore/Modules/filesystem/FileSystemFlags.h \
-	Source/WebCore/Modules/filesystem/FileSystemType.h \
-	Source/WebCore/Modules/filesystem/FileWriter.cpp \
-	Source/WebCore/Modules/filesystem/FileWriter.h \
-	Source/WebCore/Modules/filesystem/FileWriterBase.cpp \
-	Source/WebCore/Modules/filesystem/FileWriterBase.h \
-	Source/WebCore/Modules/filesystem/FileWriterBaseCallback.h \
-	Source/WebCore/Modules/filesystem/FileWriterCallback.h \
-	Source/WebCore/Modules/filesystem/FileWriterSync.cpp \
-	Source/WebCore/Modules/filesystem/FileWriterSync.h \
-	Source/WebCore/Modules/filesystem/LocalFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/LocalFileSystem.h \
-	Source/WebCore/Modules/filesystem/MetadataCallback.h \
-	Source/WebCore/Modules/filesystem/Metadata.h \
-	Source/WebCore/Modules/filesystem/WorkerGlobalScopeFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/WorkerGlobalScopeFileSystem.h \
 	Source/WebCore/Modules/gamepad/Gamepad.cpp \
 	Source/WebCore/Modules/gamepad/Gamepad.h \
 	Source/WebCore/Modules/gamepad/GamepadList.cpp \
@@ -5365,9 +5240,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/audio/HRTFPanner.h \
 	Source/WebCore/platform/audio/Panner.cpp \
 	Source/WebCore/platform/audio/Panner.h \
-	Source/WebCore/platform/AsyncFileSystem.cpp \
-	Source/WebCore/platform/AsyncFileSystem.h \
-	Source/WebCore/platform/AsyncFileSystemCallbacks.h \
 	Source/WebCore/platform/CalculationValue.cpp \
 	Source/WebCore/platform/CalculationValue.h \
 	Source/WebCore/platform/CrossThreadCopier.cpp \

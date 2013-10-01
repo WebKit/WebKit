@@ -37,7 +37,6 @@
 #include "ContextMenuItem.h"
 #include "ContextMenuController.h"
 #include "ContextMenuProvider.h"
-#include "DOMFileSystem.h"
 #include "DOMWrapperWorld.h"
 #include "Element.h"
 #include "FrameLoader.h"
@@ -317,14 +316,6 @@ void InspectorFrontendHost::removeFileSystem(const String& fileSystemPath)
     if (m_client)
         m_client->removeFileSystem(fileSystemPath);
 }
-
-#if ENABLE(FILE_SYSTEM)
-PassRefPtr<DOMFileSystem> InspectorFrontendHost::isolatedFileSystem(const String& fileSystemName, const String& rootURL)
-{
-    ScriptExecutionContext* context = m_frontendPage->mainFrame().document();
-    return DOMFileSystem::create(context, fileSystemName, FileSystemTypeIsolated, URL(ParsedURLString, rootURL), AsyncFileSystem::create());
-}
-#endif
 
 bool InspectorFrontendHost::isUnderTest()
 {

@@ -1,3 +1,13 @@
+2013-09-30  Sam Weinig  <sam@webkit.org>
+
+        Remove support for DOMFileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=122137
+
+        Reviewed by Anders Carlsson.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_file_system_path_set):
+
 2013-09-28  Darin Adler  <darin@apple.com>
 
         Add Frame::mainFrame and Frame::isMainFrame

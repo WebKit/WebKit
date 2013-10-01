@@ -70,13 +70,6 @@ int DragData::modifierKeyState() const
     return keyState;
 }
 
-#if ENABLE(FILE_SYSTEM)
-String DragData::droppedFileSystemId() const
-{
-    return String();
-}
-#endif
-
 } // namespace WebCore
 
 

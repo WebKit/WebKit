@@ -122,11 +122,6 @@ void BlobBuilder::append(Blob* blob)
         file->captureSnapshot(snapshotSize, snapshotModificationTime);
 
         m_size += snapshotSize;
-#if ENABLE(FILE_SYSTEM)
-        if (!file->fileSystemURL().isEmpty())
-            m_items.append(BlobDataItem(file->fileSystemURL(), 0, snapshotSize, snapshotModificationTime));
-        else
-#endif
         m_items.append(BlobDataItem(file->path(), 0, snapshotSize, snapshotModificationTime));
     } else {
         long long blobSize = static_cast<long long>(blob->size());

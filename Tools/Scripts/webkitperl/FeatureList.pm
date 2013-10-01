@@ -76,7 +76,6 @@ my (
     $directoryUploadSupport,
     $dom4EventsConstructor,
     $downloadAttributeSupport,
-    $fileSystemSupport,
     $filtersSupport,
     $fontLoadEventsSupport,
     $ftpDirSupport,
@@ -256,9 +255,6 @@ my @features = (
 
     { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isBlackBerry() || isEfl()), value => \$downloadAttributeSupport },
-
-    { option => "file-system", desc => "Toggle File System support",
-      define => "ENABLE_FILE_SYSTEM", default => isBlackBerry(), value => \$fileSystemSupport },
 
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isEfl() || isBlackBerry()), value => \$filtersSupport },

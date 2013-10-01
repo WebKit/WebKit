@@ -180,11 +180,6 @@ public:
     bool webkitSpeechGrammarListEnabled() const { return m_isScriptedSpeechEnabled; }
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    bool fileSystemEnabled() const;
-    void setFileSystemEnabled(bool isEnabled) { m_isFileSystemEnabled = isEnabled; }
-#endif
-
 #if ENABLE(JAVASCRIPT_I18N_API)
     bool javaScriptI18NAPIEnabled() const;
     void setJavaScriptI18NAPIEnabled(bool isEnabled) { m_isJavaScriptI18NAPIEnabled = isEnabled; }
@@ -313,9 +308,6 @@ private:
     bool m_isLangAttributeAwareFormControlUIEnabled;
 #if ENABLE(SCRIPTED_SPEECH)
     bool m_isScriptedSpeechEnabled;
-#endif
-#if ENABLE(FILE_SYSTEM)
-    bool m_isFileSystemEnabled;
 #endif
 
 #if ENABLE(JAVASCRIPT_I18N_API)

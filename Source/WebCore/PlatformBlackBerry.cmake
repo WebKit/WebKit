@@ -148,13 +148,6 @@ list(APPEND WebCore_SOURCES
     platform/network/blackberry/CredentialStorageBlackBerry.cpp
 )
 
-# File System support
-if (ENABLE_FILE_SYSTEM)
-    list(APPEND WebCore_SOURCES
-        platform/blackberry/AsyncFileSystemBlackBerry.cpp
-    )
-endif ()
-
 if (ENABLE_SMOOTH_SCROLLING)
     list(APPEND WebCore_SOURCES
         platform/blackberry/ScrollAnimatorBlackBerry.cpp

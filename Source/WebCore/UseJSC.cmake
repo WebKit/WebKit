@@ -217,13 +217,6 @@ if (ENABLE_SHARED_WORKERS)
     )
 endif ()
 
-if (ENABLE_FILE_SYSTEM)
-    list(APPEND WebCore_SOURCES
-        bindings/js/JSEntryCustom.cpp
-        bindings/js/JSEntrySyncCustom.cpp
-    )
-endif ()
-
 if (ENABLE_SVG)
     list(APPEND WebCore_SOURCES
         bindings/js/JSSVGElementInstanceCustom.cpp

@@ -351,11 +351,7 @@ const char* ewk_settings_default_user_agent_get()
  */
 void ewk_settings_file_system_path_set(const char* path)
 {
-#if ENABLE(FILE_SYSTEM)
-    WebCore::LocalFileSystem::initializeLocalFileSystem(String::fromUTF8(path));
-#else
     UNUSED_PARAM(path);
-#endif
 }
 
 void ewk_settings_application_cache_path_set(const char* path)

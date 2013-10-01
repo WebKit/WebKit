@@ -219,14 +219,9 @@ PassRefPtr<Blob> Blob::slice(long long start, long long end, const String& conte
     long long length = end - start;
     auto blobData = std::make_unique<BlobData>();
     blobData->setContentType(Blob::normalizedContentType(contentType));
-    if (isFile()) {
-#if ENABLE(FILE_SYSTEM)
-        if (!toFile(this)->fileSystemURL().isEmpty())
-            blobData->appendURL(toFile(this)->fileSystemURL(), start, length, modificationTime);
-        else
-#endif
+    if (isFile())
         blobData->appendFile(toFile(this)->path(), start, length, modificationTime);
-    } else
+    else
         blobData->appendBlob(m_internalURL, start, length);
 
     return Blob::create(std::move(blobData), length);

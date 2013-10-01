@@ -205,27 +205,6 @@ SOURCES += \
 
 
 SOURCES += \
-    Modules/filesystem/DOMFilePath.cpp \
-    Modules/filesystem/DOMFileSystem.cpp \
-    Modules/filesystem/DOMFileSystemBase.cpp \
-    Modules/filesystem/DOMFileSystemSync.cpp \
-    Modules/filesystem/DOMWindowFileSystem.cpp \
-    Modules/filesystem/DirectoryEntry.cpp \
-    Modules/filesystem/DirectoryEntrySync.cpp \
-    Modules/filesystem/DirectoryReader.cpp \
-    Modules/filesystem/DirectoryReaderSync.cpp \
-    Modules/filesystem/Entry.cpp \
-    Modules/filesystem/EntryArray.cpp \
-    Modules/filesystem/EntryArraySync.cpp \
-    Modules/filesystem/EntryBase.cpp \
-    Modules/filesystem/EntrySync.cpp \
-    Modules/filesystem/FileEntry.cpp \
-    Modules/filesystem/FileEntrySync.cpp \
-    Modules/filesystem/FileWriter.cpp \
-    Modules/filesystem/FileWriterBase.cpp \
-    Modules/filesystem/FileWriterSync.cpp \
-    Modules/filesystem/LocalFileSystem.cpp \
-    Modules/filesystem/WorkerGlobalScopeFileSystem.cpp \
     Modules/navigatorcontentutils/NavigatorContentUtils.cpp \
     Modules/notifications/DOMWindowNotifications.cpp \
     Modules/notifications/Notification.cpp \
@@ -3102,51 +3081,6 @@ enable?(DATA_TRANSFER_ITEMS) {
         dom/StringCallback.cpp \
         platform/qt/DataTransferItemQt.cpp \
         platform/qt/DataTransferItemListQt.cpp
-}
-
-enable?(FILE_SYSTEM) {
-    HEADERS += \
-        Modules/filesystem/AsyncFileWriter.h \
-        Modules/filesystem/DOMFilePath.h \
-        Modules/filesystem/DOMFileSystem.h \
-        Modules/filesystem/DOMFileSystemBase.h \
-        Modules/filesystem/DOMFileSystemSync.h \
-        Modules/filesystem/DirectoryEntry.h \
-        Modules/filesystem/DirectoryEntrySync.h \
-        Modules/filesystem/DirectoryReader.h \
-        Modules/filesystem/DirectoryReaderBase.h \
-        Modules/filesystem/DirectoryReaderSync.h \
-        Modules/filesystem/EntriesCallback.h \
-        Modules/filesystem/Entry.h \
-        Modules/filesystem/EntryArray.h \
-        Modules/filesystem/EntryArraySync.h \
-        Modules/filesystem/EntryBase.h \
-        Modules/filesystem/EntryCallback.h \
-        Modules/filesystem/EntrySync.h \
-        Modules/filesystem/ErrorCallback.h \
-        Modules/filesystem/FileCallback.h \
-        Modules/filesystem/FileEntry.h \
-        Modules/filesystem/FileEntrySync.h \
-        Modules/filesystem/FileSystemCallback.h \
-        Modules/filesystem/FileSystemCallbacks.h \
-        Modules/filesystem/FileSystemFlags.h \
-        Modules/filesystem/FileWriter.h \
-        Modules/filesystem/FileWriterBase.h \
-        Modules/filesystem/FileWriterBaseCallback.h \
-        Modules/filesystem/FileWriterCallback.h \
-        Modules/filesystem/FileWriterClient.h \
-        Modules/filesystem/FileWriterSync.h \
-        Modules/filesystem/LocalFileSystem.h \
-        Modules/filesystem/Metadata.h \
-        Modules/filesystem/MetadataCallback.h \
-        platform/AsyncFileSystem.h \
-        platform/AsyncFileSystemCallbacks.h \
-        platform/FileMetadata.h
-
-    SOURCES += \
-        bindings/js/JSEntryCustom.cpp \
-        bindings/js/JSEntrySyncCustom.cpp \
-        platform/AsyncFileSystem.cpp
 }
 
 enable?(MEDIA_SOURCE) {

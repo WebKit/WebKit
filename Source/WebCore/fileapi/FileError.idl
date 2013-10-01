@@ -29,7 +29,7 @@
  */
 
 [
-    Conditional=BLOB|FILE_SYSTEM,
+    Conditional=BLOB,
     JSNoStaticTables,
     ImplementationLacksVTable
 ] interface FileError {

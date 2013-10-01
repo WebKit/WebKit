@@ -303,72 +303,6 @@
     <ClCompile Include="..\bindings\js\JSIDBAnyCustom.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DirectoryEntry.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DirectoryEntrySync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DirectoryReader.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DirectoryReaderSync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DOMFilePath.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DOMFileSystem.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DOMFileSystemBase.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DOMFileSystemSync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\DOMWindowFileSystem.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\Entry.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\EntryArray.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\EntryArraySync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\EntryBase.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\EntrySync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileEntry.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileEntrySync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileSystemCallbacks.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileWriter.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileWriterBase.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\FileWriterSync.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\LocalFileSystem.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.cpp">
-      <Filter>Modules\filesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\geolocation\Coordinates.cpp">
       <Filter>Modules\geolocation</Filter>
     </ClCompile>
@@ -1060,9 +994,6 @@
       <Filter>loader\cache</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\Arena.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\AsyncFileSystem.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\CalculationValue.cpp">
@@ -4446,9 +4377,6 @@
     <ClCompile Include="..\bindings\js\JSDOMStringMapCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSEntrySyncCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSErrorHandler.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -5223,9 +5151,6 @@
     <ClCompile Include="..\bindings\js\JSHTMLDocumentCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSEntryCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSDOMWindowBase.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -5491,18 +5416,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSDeviceOrientationEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryEntry.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryEntrySync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryReader.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryReaderSync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDocument.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -5519,12 +5432,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMError.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFileSystem.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFileSystemSync.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFormData.cpp">
@@ -5581,27 +5488,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntityReference.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntriesCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntry.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryArray.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryArraySync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntrySync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSErrorCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSErrorEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -5620,15 +5506,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFile.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileEntry.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileEntrySync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileError.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -5642,18 +5519,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileReaderSync.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileSystemCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriter.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriterCallback.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriterSync.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontLoader.cpp">
@@ -5966,12 +5831,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMessagePort.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMetadata.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMetadataCallback.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMouseEvent.cpp">
@@ -7032,117 +6891,6 @@
     <ClCompile Include="..\rendering\shapes\ShapeInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\AsyncFileWriterClient.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DirectoryEntry.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DirectoryEntrySync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DirectoryReader.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DirectoryReaderBase.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DirectoryReaderSync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DOMFilePath.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DOMFileSystem.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DOMFileSystemBase.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DOMFileSystemSync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\DOMWindowFileSystem.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntriesCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\Entry.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntryArray.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntryArraySync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntryBase.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntryCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\EntrySync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\ErrorCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileEntry.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileEntrySync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileSystemCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileSystemCallbacks.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileSystemFlags.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileSystemType.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileWriter.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileWriterBase.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileWriterBaseCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileWriterCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\FileWriterSync.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\LocalFileSystem.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\Metadata.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\MetadataCallback.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\SyncCallbackHelper.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\filesystem\WorkerGlobalScopeFileSystem.h">
-      <Filter>Modules\filesystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
       <Filter>Modules\geolocation</Filter>
     </ClInclude>
@@ -8026,12 +7774,6 @@
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Arena.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\AsyncFileSystem.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\AsyncFileSystemCallbacks.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\CalculationValue.h">
@@ -13256,18 +12998,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSDeviceOrientationEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryEntry.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryEntrySync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryReader.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDirectoryReaderSync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDocument.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -13284,12 +13014,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMError.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFileSystem.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFileSystemSync.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDOMFormData.h">
@@ -13346,27 +13070,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntityReference.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntriesCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntry.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryArray.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryArraySync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntryCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEntrySync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSErrorCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSErrorEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -13385,15 +13088,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFile.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileEntry.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileEntrySync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileError.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -13407,18 +13101,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileReaderSync.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileSystemCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriter.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriterCallback.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFileWriterSync.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSFontLoader.h">
@@ -13725,12 +13407,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMessagePort.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMetadata.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMetadataCallback.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSMouseEvent.h">

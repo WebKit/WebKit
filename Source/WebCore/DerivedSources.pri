@@ -93,29 +93,6 @@ PLUGINS_EMBED = \
     $$PWD/Resources/plugIns.js
 
 IDL_BINDINGS += \
-    $$PWD/Modules/filesystem/DOMFileSystem.idl \
-    $$PWD/Modules/filesystem/DOMFileSystemSync.idl \
-    $$PWD/Modules/filesystem/DOMWindowFileSystem.idl \
-    $$PWD/Modules/filesystem/DirectoryEntry.idl \
-    $$PWD/Modules/filesystem/DirectoryEntrySync.idl \
-    $$PWD/Modules/filesystem/DirectoryReader.idl \
-    $$PWD/Modules/filesystem/DirectoryReaderSync.idl \
-    $$PWD/Modules/filesystem/EntriesCallback.idl \
-    $$PWD/Modules/filesystem/Entry.idl \
-    $$PWD/Modules/filesystem/EntryArray.idl \
-    $$PWD/Modules/filesystem/EntryArraySync.idl \
-    $$PWD/Modules/filesystem/EntryCallback.idl \
-    $$PWD/Modules/filesystem/EntrySync.idl \
-    $$PWD/Modules/filesystem/ErrorCallback.idl \
-    $$PWD/Modules/filesystem/FileCallback.idl \
-    $$PWD/Modules/filesystem/FileEntry.idl \
-    $$PWD/Modules/filesystem/FileEntrySync.idl \
-    $$PWD/Modules/filesystem/FileSystemCallback.idl \
-    $$PWD/Modules/filesystem/FileWriter.idl \
-    $$PWD/Modules/filesystem/FileWriterCallback.idl \
-    $$PWD/Modules/filesystem/Metadata.idl \
-    $$PWD/Modules/filesystem/MetadataCallback.idl \
-    $$PWD/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
     $$PWD/Modules/geolocation/Coordinates.idl \
     $$PWD/Modules/geolocation/Geolocation.idl \
     $$PWD/Modules/geolocation/Geoposition.idl \
@@ -766,7 +743,6 @@ generateBindings.script = $$PWD/bindings/scripts/generate-bindings.pl
 generateBindings.commands = $$setEnvironmentVariable(SOURCE_ROOT, $$toSystemPath($$PWD)) && perl -I$$PWD/bindings/scripts $$generateBindings.script \
                             --defines \"$$javascriptFeatureDefines()\" \
                             --generator JS \
-                            --include Modules/filesystem \
                             --include Modules/geolocation \
                             --include Modules/indexeddb \
                             --include Modules/mediasource \

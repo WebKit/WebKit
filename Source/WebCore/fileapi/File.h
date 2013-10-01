@@ -59,23 +59,6 @@ public:
     static PassRefPtr<File> createWithRelativePath(const String& path, const String& relativePath);
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-    // If filesystem files live in the remote filesystem, the port might pass the valid metadata (whose length field is non-negative) and cache in the File object.
-    //
-    // Otherwise calling size(), lastModifiedTime() and slice() will synchronously query the file metadata.
-    static PassRefPtr<File> createForFileSystemFile(const String& name, const FileMetadata& metadata)
-    {
-        return adoptRef(new File(name, metadata));
-    }
-
-    static PassRefPtr<File> createForFileSystemFile(const URL& url, const FileMetadata& metadata)
-    {
-        return adoptRef(new File(url, metadata));
-    }
-
-    URL fileSystemURL() const { return m_fileSystemURL; }
-#endif
-
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
     static PassRefPtr<File> createWithName(const String& path, const String& name, ContentTypeLookupPolicy policy = WellKnownContentTypes)
     {
@@ -108,25 +91,8 @@ private:
     File(const String& path, const URL& srcURL, const String& type);
     File(const String& path, const String& name, ContentTypeLookupPolicy);
 
-# if ENABLE(FILE_SYSTEM)
-    File(const String& name, const FileMetadata&);
-    File(const URL& fileSystemURL, const FileMetadata&);
-
-    // Returns true if this has a valid snapshot metadata (i.e. m_snapshotSize >= 0).
-    bool hasValidSnapshotMetadata() const { return m_snapshotSize >= 0; }
-#endif
-
     String m_path;
     String m_name;
-
-#if ENABLE(FILE_SYSTEM)
-    URL m_fileSystemURL;
-
-    // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and slice().
-    // Otherwise, the snapshot metadata are used directly in those methods.
-    const long long m_snapshotSize;
-    const double m_snapshotModificationTime;
-#endif
 
 #if ENABLE(DIRECTORY_UPLOAD)
     String m_relativePath;

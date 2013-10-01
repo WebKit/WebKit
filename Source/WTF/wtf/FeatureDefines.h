@@ -474,10 +474,6 @@
 #define ENABLE_FAST_MOBILE_SCROLLING 0
 #endif
 
-#if !defined(ENABLE_FILE_SYSTEM)
-#define ENABLE_FILE_SYSTEM 0
-#endif
-
 #if !defined(ENABLE_FILTERS)
 #define ENABLE_FILTERS 0
 #endif

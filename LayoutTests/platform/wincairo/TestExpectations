@@ -1854,16 +1854,6 @@ http/tests/media/video-served-as-text.html
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
 
-# FileSystem API is not supported.
-fast/filesystem
-http/tests/filesystem
-http/tests/inspector/filesystem
-http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
-http/tests/security/filesystem-iframe-from-remote.html
-http/tests/websocket/tests/hybi/send-file-blob.html
-http/tests/websocket/tests/hybi/send-file-blob-fail.html
-fast/dom/MutationObserver/filesystem-callback-delivery.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.
 plugins/iframe-shims.html

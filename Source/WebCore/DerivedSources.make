@@ -29,7 +29,6 @@
 VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/encryptedmedia \
-    $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/indieui \
@@ -70,30 +69,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/encryptedmedia/MediaKeyNeededEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeys.idl \
-    $(WebCore)/Modules/filesystem/DOMFileSystem.idl \
-    $(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
-    $(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
-    $(WebCore)/Modules/filesystem/DirectoryEntry.idl \
-    $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
-    $(WebCore)/Modules/filesystem/DirectoryReader.idl \
-    $(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-    $(WebCore)/Modules/filesystem/EntriesCallback.idl \
-    $(WebCore)/Modules/filesystem/Entry.idl \
-    $(WebCore)/Modules/filesystem/EntryArray.idl \
-    $(WebCore)/Modules/filesystem/EntryArraySync.idl \
-    $(WebCore)/Modules/filesystem/EntryCallback.idl \
-    $(WebCore)/Modules/filesystem/EntrySync.idl \
-    $(WebCore)/Modules/filesystem/ErrorCallback.idl \
-    $(WebCore)/Modules/filesystem/FileCallback.idl \
-    $(WebCore)/Modules/filesystem/FileEntry.idl \
-    $(WebCore)/Modules/filesystem/FileEntrySync.idl \
-    $(WebCore)/Modules/filesystem/FileSystemCallback.idl \
-    $(WebCore)/Modules/filesystem/FileWriter.idl \
-    $(WebCore)/Modules/filesystem/FileWriterCallback.idl \
-    $(WebCore)/Modules/filesystem/FileWriterSync.idl \
-    $(WebCore)/Modules/filesystem/Metadata.idl \
-    $(WebCore)/Modules/filesystem/MetadataCallback.idl \
-    $(WebCore)/Modules/filesystem/WorkerGlobalScopeFileSystem.idl \
     $(WebCore)/Modules/geolocation/Coordinates.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
     $(WebCore)/Modules/geolocation/Geoposition.idl \
