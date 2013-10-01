@@ -743,11 +743,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Notation').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'Notation').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Notation').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Notation').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'Notification').value is Notification
-PASS Object.getOwnPropertyDescriptor(global, 'Notification').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notification').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notification').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'Notification').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Option').value is Option
 PASS Object.getOwnPropertyDescriptor(global, 'Option').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Option').hasOwnProperty('set') is false
