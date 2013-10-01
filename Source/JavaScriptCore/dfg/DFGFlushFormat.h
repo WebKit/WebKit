@@ -32,6 +32,7 @@
 
 #include "DFGNodeFlags.h"
 #include "DFGUseKind.h"
+#include "DataFormat.h"
 #include "DumpContext.h"
 #include <wtf/PrintStream.h>
 
@@ -86,6 +87,28 @@ inline UseKind useKindFor(FlushFormat format)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return UntypedUse;
+}
+
+inline DataFormat dataFormatFor(FlushFormat format)
+{
+    switch (format) {
+    case DeadFlush:
+        return DataFormatDead;
+    case FlushedJSValue:
+        return DataFormatJS;
+    case FlushedDouble:
+        return DataFormatDouble;
+    case FlushedInt32:
+        return DataFormatInt32;
+    case FlushedInt52:
+        return DataFormatInt52;
+    case FlushedCell:
+        return DataFormatCell;
+    case FlushedBoolean:
+        return DataFormatBoolean;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return DataFormatDead;
 }
 
 } } // namespace JSC::DFG

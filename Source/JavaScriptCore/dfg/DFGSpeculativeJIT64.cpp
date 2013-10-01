@@ -2333,7 +2333,7 @@ void SpeculativeJIT::compile(Node* node)
             // Indicate that it's no longer necessary to retrieve the value of
             // this bytecode variable from registers or other locations in the stack,
             // but that it is stored as a double.
-            recordSetLocal(node->local(), ValueSource(DoubleInJSStack));
+            recordSetLocal(DataFormatDouble);
             break;
         }
             
@@ -2341,7 +2341,7 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateInt32Operand value(this, node->child1());
             m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
             noResult(node);
-            recordSetLocal(node->local(), ValueSource(Int32InJSStack));
+            recordSetLocal(DataFormatInt32);
             break;
         }
             
@@ -2349,7 +2349,7 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateInt52Operand value(this, node->child1());
             m_jit.store64(value.gpr(), JITCompiler::addressFor(node->local()));
             noResult(node);
-            recordSetLocal(node->local(), ValueSource(Int52InJSStack));
+            recordSetLocal(DataFormatInt52);
             break;
         }
             
@@ -2358,7 +2358,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg cellGPR = cell.gpr();
             m_jit.store64(cellGPR, JITCompiler::addressFor(node->local()));
             noResult(node);
-            recordSetLocal(node->local(), ValueSource(CellInJSStack));
+            recordSetLocal(DataFormatCell);
             break;
         }
             
@@ -2366,7 +2366,7 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateBooleanOperand boolean(this, node->child1());
             m_jit.store64(boolean.gpr(), JITCompiler::addressFor(node->local()));
             noResult(node);
-            recordSetLocal(node->local(), ValueSource(BooleanInJSStack));
+            recordSetLocal(DataFormatBoolean);
             break;
         }
             
@@ -2375,7 +2375,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.store64(value.gpr(), JITCompiler::addressFor(node->local()));
             noResult(node);
             
-            recordSetLocal(node->local(), ValueSource(ValueInJSStack));
+            recordSetLocal(DataFormatJS);
             
             // If we're storing an arguments object that has been optimized away,
             // our variable event stream for OSR exit now reflects the optimized

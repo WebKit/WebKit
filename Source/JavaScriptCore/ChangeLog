@@ -1,3 +1,74 @@
+2013-10-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Variable event stream (for DFG OSR exit) should be explicit about where on the stack a SetLocal put a value
+        https://bugs.webkit.org/show_bug.cgi?id=122178
+
+        Reviewed by Geoffrey Garen.
+        
+        Now if the DFG stores the value of a variable into the stack explicitly via a SetLocal,
+        it will record where on the stack it stored the value in addition to recording where on
+        the stack the bytecode would have done the SetLocal. Previously it just recorded the
+        format and the bytecode variable. Recording just the bytecode variable is currently fine
+        since the DFG always executes SetLocal's to the same stack location that the bytecode
+        would have used. But that prevents stack compression (webkit.org/b/122024) so this patch
+        allows the SetLocal to say both the bytecode variable that we're speaking of and the
+        actual stack location to which the SetLocal stored the value.
+        
+        This had to touch a lot of code, so I took the opportunity to also resolve
+        webkit.org/b/108019.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::hasOperand):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::dataFormatFor):
+        * dfg/DFGMinifiedID.h:
+        (JSC::DFG::MinifiedID::bits):
+        (JSC::DFG::MinifiedID::invalidID):
+        (JSC::DFG::MinifiedID::otherInvalidID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compileInlineStart):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::recordSetLocal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.cpp:
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::forFlushFormat):
+        (JSC::DFG::ValueSource::forDataFormat):
+        (JSC::DFG::ValueSource::isSet):
+        (JSC::DFG::ValueSource::kind):
+        (JSC::DFG::ValueSource::valueRecovery):
+        (JSC::DFG::ValueSource::id):
+        (JSC::DFG::ValueSource::virtualRegister):
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        (JSC::DFG::VariableEvent::dumpSpillInfo):
+        * dfg/DFGVariableEvent.h:
+        (JSC::DFG::VariableEvent::fillGPR):
+        (JSC::DFG::VariableEvent::fillPair):
+        (JSC::DFG::VariableEvent::fillFPR):
+        (JSC::DFG::VariableEvent::spill):
+        (JSC::DFG::VariableEvent::death):
+        (JSC::DFG::VariableEvent::setLocal):
+        (JSC::DFG::VariableEvent::movHint):
+        (JSC::DFG::VariableEvent::id):
+        (JSC::DFG::VariableEvent::gpr):
+        (JSC::DFG::VariableEvent::tagGPR):
+        (JSC::DFG::VariableEvent::payloadGPR):
+        (JSC::DFG::VariableEvent::fpr):
+        (JSC::DFG::VariableEvent::spillRegister):
+        (JSC::DFG::VariableEvent::bytecodeRegister):
+        (JSC::DFG::VariableEvent::machineRegister):
+        (JSC::DFG::VariableEvent::variableRepresentation):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+
 2013-10-01  Nadav Rotem  <nrotem@apple.com>
 
         FTL: split overflow checks into non-overflow arithmetic and an additional call to the overflow intrinsic check.

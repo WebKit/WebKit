@@ -2185,9 +2185,16 @@ public:
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
     
-    void recordSetLocal(VirtualRegister operand, ValueSource valueSource)
+    void recordSetLocal(
+        VirtualRegister bytecodeReg, VirtualRegister machineReg, DataFormat format)
     {
-        m_stream->appendAndLog(VariableEvent::setLocal(operand, valueSource.dataFormat()));
+        m_stream->appendAndLog(VariableEvent::setLocal(bytecodeReg, machineReg, format));
+    }
+    
+    void recordSetLocal(DataFormat format)
+    {
+        VariableAccessData* variable = m_currentNode->variableAccessData();
+        recordSetLocal(variable->local(), variable->local(), format);
     }
 
     GenerationInfo& generationInfoFromVirtualRegister(VirtualRegister virtualRegister)

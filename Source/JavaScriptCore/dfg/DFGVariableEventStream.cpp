@@ -142,6 +142,8 @@ void VariableEventStream::reconstruct(
 
     // Step 2: Create a mock-up of the DFG's state and execute the events.
     Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables);
+    for (unsigned i = operandSources.size(); i--;)
+        operandSources[i] = ValueSource(SourceIsDead);
     HashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
     for (unsigned i = startIndex; i < index; ++i) {
         const VariableEvent& event = at(i);
@@ -165,12 +167,12 @@ void VariableEventStream::reconstruct(
             break;
         }
         case MovHintEvent:
-            if (operandSources.hasOperand(event.operand()))
-                operandSources.setOperand(event.operand(), ValueSource(event.id()));
+            if (operandSources.hasOperand(event.bytecodeRegister()))
+                operandSources.setOperand(event.bytecodeRegister(), ValueSource(event.id()));
             break;
         case SetLocalEvent:
-            if (operandSources.hasOperand(event.operand()))
-                operandSources.setOperand(event.operand(), ValueSource::forDataFormat(event.dataFormat()));
+            if (operandSources.hasOperand(event.bytecodeRegister()))
+                operandSources.setOperand(event.bytecodeRegister(), ValueSource::forDataFormat(event.machineRegister(), event.dataFormat()));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -183,7 +185,7 @@ void VariableEventStream::reconstruct(
     for (unsigned i = 0; i < operandSources.size(); ++i) {
         ValueSource& source = operandSources[i];
         if (source.isTriviallyRecoverable()) {
-            valueRecoveries[i] = source.valueRecovery(operandSources.operandForIndex(i));
+            valueRecoveries[i] = source.valueRecovery();
             continue;
         }
         

@@ -61,8 +61,7 @@ enum VariableEventKind {
     // but that it has not been stored into that operand.
     MovHintEvent,
     
-    // A SetLocalEvent means that a node's value has actually been stored into the
-    // bytecode operand that it's associated with.
+    // A SetLocalEvent means that a node's value has been stored into the stack.
     SetLocalEvent,
     
     // Used to indicate an uninitialized VariableEvent. Don't use for other
@@ -104,8 +103,8 @@ public:
         ASSERT(!(dataFormat & DataFormatJS));
 #endif
         VariableEvent event;
-        event.m_id = id;
-        event.u.gpr = gpr;
+        event.m_which.id = id.bits();
+        event.m_representation.gpr = gpr;
         event.m_kind = kind;
         event.m_dataFormat = dataFormat;
         return event;
@@ -116,9 +115,9 @@ public:
     {
         ASSERT(kind == BirthToFill || kind == Fill);
         VariableEvent event;
-        event.m_id = id;
-        event.u.pair.tagGPR = tagGPR;
-        event.u.pair.payloadGPR = payloadGPR;
+        event.m_which.id = id.bits();
+        event.m_representation.pair.tagGPR = tagGPR;
+        event.m_representation.pair.payloadGPR = payloadGPR;
         event.m_kind = kind;
         event.m_dataFormat = DataFormatJS;
         return event;
@@ -129,8 +128,8 @@ public:
     {
         ASSERT(kind == BirthToFill || kind == Fill);
         VariableEvent event;
-        event.m_id = id;
-        event.u.fpr = fpr;
+        event.m_which.id = id.bits();
+        event.m_representation.fpr = fpr;
         event.m_kind = kind;
         event.m_dataFormat = DataFormatDouble;
         return event;
@@ -140,8 +139,8 @@ public:
     {
         ASSERT(kind == BirthToSpill || kind == Spill);
         VariableEvent event;
-        event.m_id = id;
-        event.u.virtualReg = virtualRegister.offset();
+        event.m_which.id = id.bits();
+        event.m_representation.virtualReg = virtualRegister.offset();
         event.m_kind = kind;
         event.m_dataFormat = format;
         return event;
@@ -150,25 +149,27 @@ public:
     static VariableEvent death(MinifiedID id)
     {
         VariableEvent event;
-        event.m_id = id;
+        event.m_which.id = id.bits();
         event.m_kind = Death;
         return event;
     }
     
-    static VariableEvent setLocal(VirtualRegister virtualRegister, DataFormat format)
+    static VariableEvent setLocal(
+        VirtualRegister bytecodeReg, VirtualRegister machineReg, DataFormat format)
     {
         VariableEvent event;
-        event.u.virtualReg = virtualRegister.offset();
+        event.m_which.virtualReg = machineReg.offset();
+        event.m_representation.virtualReg = bytecodeReg.offset();
         event.m_kind = SetLocalEvent;
         event.m_dataFormat = format;
         return event;
     }
     
-    static VariableEvent movHint(MinifiedID id, int operand)
+    static VariableEvent movHint(MinifiedID id, VirtualRegister bytecodeReg)
     {
         VariableEvent event;
-        event.m_id = id;
-        event.u.virtualReg = operand;
+        event.m_which.id = id.bits();
+        event.m_representation.virtualReg = bytecodeReg.offset();
         event.m_kind = MovHintEvent;
         return event;
     }
@@ -183,7 +184,7 @@ public:
         ASSERT(m_kind == BirthToFill || m_kind == Fill
                || m_kind == BirthToSpill || m_kind == Spill
                || m_kind == Death || m_kind == MovHintEvent);
-        return m_id;
+        return MinifiedID::fromBits(m_which.id);
     }
     
     DataFormat dataFormat() const
@@ -202,7 +203,7 @@ public:
 #if USE(JSVALUE32_64)
         ASSERT(!(m_dataFormat & DataFormatJS));
 #endif
-        return u.gpr;
+        return m_representation.gpr;
     }
     
 #if USE(JSVALUE32_64)
@@ -210,13 +211,13 @@ public:
     {
         ASSERT(m_kind == BirthToFill || m_kind == Fill);
         ASSERT(m_dataFormat & DataFormatJS);
-        return u.pair.tagGPR;
+        return m_representation.pair.tagGPR;
     }
     MacroAssembler::RegisterID payloadGPR() const
     {
         ASSERT(m_kind == BirthToFill || m_kind == Fill);
         ASSERT(m_dataFormat & DataFormatJS);
-        return u.pair.payloadGPR;
+        return m_representation.pair.payloadGPR;
     }
 #endif // USE(JSVALUE32_64)
     
@@ -224,22 +225,28 @@ public:
     {
         ASSERT(m_kind == BirthToFill || m_kind == Fill);
         ASSERT(m_dataFormat == DataFormatDouble);
-        return u.fpr;
+        return m_representation.fpr;
     }
     
-    VirtualRegister virtualRegister() const
+    VirtualRegister spillRegister() const
     {
         ASSERT(m_kind == BirthToSpill || m_kind == Spill);
-        return static_cast<VirtualRegister>(u.virtualReg);
+        return VirtualRegister(m_representation.virtualReg);
     }
     
-    int operand() const
+    VirtualRegister bytecodeRegister() const
     {
         ASSERT(m_kind == SetLocalEvent || m_kind == MovHintEvent);
-        return u.virtualReg;
+        return VirtualRegister(m_representation.virtualReg);
     }
     
-    const VariableRepresentation& variableRepresentation() const { return u; }
+    VirtualRegister machineRegister() const
+    {
+        ASSERT(m_kind == SetLocalEvent);
+        return VirtualRegister(m_which.virtualReg);
+    }
+    
+    const VariableRepresentation& variableRepresentation() const { return m_representation; }
     
     void dump(PrintStream&) const;
     
@@ -247,7 +254,10 @@ private:
     void dumpFillInfo(const char* name, PrintStream&) const;
     void dumpSpillInfo(const char* name, PrintStream&) const;
     
-    MinifiedID m_id;
+    union {
+        int virtualReg;
+        uintptr_t id;
+    } m_which;
     
     // For BirthToFill, Fill:
     //   - The GPR or FPR, or a GPR pair.
@@ -257,7 +267,7 @@ private:
     //   - The bytecode operand.
     // For Death:
     //   - Unused.
-    VariableRepresentation u;
+    VariableRepresentation m_representation;
     
     int8_t m_kind;
     int8_t m_dataFormat;

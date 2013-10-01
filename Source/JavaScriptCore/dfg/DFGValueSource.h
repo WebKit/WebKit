@@ -115,59 +115,67 @@ static inline bool isTriviallyRecoverable(ValueSourceKind kind)
 class ValueSource {
 public:
     ValueSource()
-        : m_value(idFromKind(SourceNotSet))
+        : m_kind(SourceNotSet)
     {
     }
     
     explicit ValueSource(ValueSourceKind valueSourceKind)
-        : m_value(idFromKind(valueSourceKind))
+        : m_kind(valueSourceKind)
     {
-        ASSERT(kind() != SourceNotSet);
-        ASSERT(kind() != HaveNode);
+        ASSERT(kind() == ArgumentsSource || kind() == SourceIsDead);
     }
     
     explicit ValueSource(MinifiedID id)
-        : m_value(id)
+        : m_kind(HaveNode)
+        , m_value(id.bits())
     {
         ASSERT(!!id);
         ASSERT(kind() == HaveNode);
     }
     
-    static ValueSource forFlushFormat(FlushFormat format)
+    ValueSource(ValueSourceKind valueSourceKind, VirtualRegister where)
+        : m_kind(valueSourceKind)
+        , m_value(static_cast<intptr_t>(where.offset()))
+    {
+        ASSERT(kind() != SourceNotSet);
+        ASSERT(kind() != HaveNode);
+    }
+    
+    static ValueSource forFlushFormat(VirtualRegister where, FlushFormat format)
     {
         switch (format) {
         case DeadFlush:
             return ValueSource(SourceIsDead);
         case FlushedJSValue:
-            return ValueSource(ValueInJSStack);
+            return ValueSource(ValueInJSStack, where);
         case FlushedDouble:
-            return ValueSource(DoubleInJSStack);
+            return ValueSource(DoubleInJSStack, where);
         case FlushedInt32:
-            return ValueSource(Int32InJSStack);
+            return ValueSource(Int32InJSStack, where);
         case FlushedInt52:
-            return ValueSource(Int52InJSStack);
+            return ValueSource(Int52InJSStack, where);
         case FlushedCell:
-            return ValueSource(CellInJSStack);
+            return ValueSource(CellInJSStack, where);
         case FlushedBoolean:
-            return ValueSource(BooleanInJSStack);
+            return ValueSource(BooleanInJSStack, where);
         }
         RELEASE_ASSERT_NOT_REACHED();
         return ValueSource();
     }
     
-    static ValueSource forDataFormat(DataFormat dataFormat)
+    static ValueSource forDataFormat(VirtualRegister where, DataFormat dataFormat)
     {
-        return ValueSource(dataFormatToValueSourceKind(dataFormat));
+        return ValueSource(dataFormatToValueSourceKind(dataFormat), where);
     }
     
     bool isSet() const
     {
-        return kindFromID(m_value) != SourceNotSet;
+        return kind() != SourceNotSet;
     }
     
     ValueSourceKind kind() const
     {
-        return kindFromID(m_value);
+        return m_kind;
     }
     
     bool isInJSStack() const { return JSC::DFG::isInJSStack(kind()); }
@@ -178,7 +186,7 @@ public:
         return valueSourceKindToDataFormat(kind());
     }
     
-    ValueRecovery valueRecovery(int operand) const
+    ValueRecovery valueRecovery() const
     {
         ASSERT(isTriviallyRecoverable());
         switch (kind()) {
@@ -189,34 +197,27 @@ public:
             return ValueRecovery::argumentsThatWereNotCreated();
             
         default:
-            return ValueRecovery::displacedInJSStack(VirtualRegister(operand), dataFormat());
+            return ValueRecovery::displacedInJSStack(virtualRegister(), dataFormat());
         }
     }
     
     MinifiedID id() const
     {
         ASSERT(kind() == HaveNode);
-        return m_value;
+        return MinifiedID::fromBits(m_value);
+    }
+    
+    VirtualRegister virtualRegister() const
+    {
+        ASSERT(isInJSStack());
+        return VirtualRegister(m_value);
     }
     
     void dump(PrintStream&) const;
     
 private:
-    static MinifiedID idFromKind(ValueSourceKind kind)
-    {
-        ASSERT(kind >= SourceNotSet && kind < HaveNode);
-        return MinifiedID::fromBits(MinifiedID::invalidID() - kind);
-    }
-    
-    static ValueSourceKind kindFromID(MinifiedID id)
-    {
-        uintptr_t kind = static_cast<uintptr_t>(MinifiedID::invalidID() - id.m_id);
-        if (kind >= static_cast<uintptr_t>(HaveNode))
-            return HaveNode;
-        return static_cast<ValueSourceKind>(kind);
-    }
-    
-    MinifiedID m_value;
+    ValueSourceKind m_kind;
+    uintptr_t m_value;
 };
 
 } } // namespace JSC::DFG

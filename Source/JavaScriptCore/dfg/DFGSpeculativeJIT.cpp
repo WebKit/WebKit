@@ -1520,7 +1520,7 @@ void SpeculativeJIT::compileMovHint(Node* node)
     if (child->op() == UInt32ToNumber)
         noticeOSRBirth(child->child1().node());
     
-    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local().offset()));
+    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local()));
 }
 
 void SpeculativeJIT::compileMovHintAndCheck(Node* node)
@@ -1537,9 +1537,9 @@ void SpeculativeJIT::compileInlineStart(Node* node)
     unsigned argumentPositionStart = node->argumentPositionStart();
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
         ValueSource source = ValueSource::forFlushFormat(
+            VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()),
             m_jit.graph().m_argumentPositions[argumentPositionStart + i].flushFormat());
-        inlineCallFrame->arguments[i] = source.valueRecovery(
-            inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset());
+        inlineCallFrame->arguments[i] = source.valueRecovery();
     }
 }
 
@@ -1581,8 +1581,9 @@ void SpeculativeJIT::compileCurrentBlock()
     m_jit.jitAssertHasValidCallFrame();
 
     for (size_t i = 0; i < m_block->variablesAtHead.numberOfArguments(); ++i) {
-        ValueSource valueSource = ValueSource(ValueInJSStack);
-        m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForArgument(i), valueSource.dataFormat()));
+        m_stream->appendAndLog(
+            VariableEvent::setLocal(
+                virtualRegisterForArgument(i), virtualRegisterForArgument(i), DataFormatJS));
     }
     
     m_state.reset();
@@ -1590,17 +1591,19 @@ void SpeculativeJIT::compileCurrentBlock()
     
     for (size_t i = 0; i < m_block->variablesAtHead.numberOfLocals(); ++i) {
         Node* node = m_block->variablesAtHead.local(i);
-        ValueSource valueSource;
         if (!node)
-            valueSource = ValueSource(SourceIsDead);
-        else if (node->variableAccessData()->isArgumentsAlias())
-            valueSource = ValueSource(ArgumentsSource);
+            continue; // No need to record dead SetLocal's.
+        
+        VariableAccessData* variable = node->variableAccessData();
+        DataFormat format;
+        if (variable->isArgumentsAlias())
+            format = DataFormatArguments;
         else if (!node->refCount())
-            valueSource = ValueSource(SourceIsDead);
+            continue; // No need to record dead SetLocal's.
         else
-            valueSource = ValueSource::forFlushFormat(node->variableAccessData()->flushFormat());
-        // FIXME: Don't emit SetLocal(Dead). https://bugs.webkit.org/show_bug.cgi?id=108019
-        m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForLocal(i), valueSource.dataFormat()));
+            format = dataFormatFor(variable->flushFormat());
+        m_stream->appendAndLog(
+            VariableEvent::setLocal(virtualRegisterForLocal(i), variable->local(), format));
     }
     
     m_lastSetOperand = VirtualRegister();
@@ -1650,7 +1653,7 @@ void SpeculativeJIT::compileCurrentBlock()
                 
             case ZombieHint: {
                 m_lastSetOperand = m_currentNode->local();
-                m_stream->appendAndLog(VariableEvent::setLocal(m_currentNode->local(), DataFormatDead));
+                recordSetLocal(DataFormatDead);
                 break;
             }
 

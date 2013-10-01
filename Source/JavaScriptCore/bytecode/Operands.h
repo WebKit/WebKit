@@ -156,6 +156,10 @@ public:
             return true;
         return static_cast<size_t>(VirtualRegister(operand).toLocal()) < numberOfLocals();
     }
+    bool hasOperand(VirtualRegister reg) const
+    {
+        return hasOperand(reg.offset());
+    }
     
     void setOperand(int operand, const T& value)
     {
