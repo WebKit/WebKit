@@ -652,12 +652,7 @@ void JIT::emitSub32Constant(int dst, int op, int32_t constant, ResultType opType
     // Int32 case.
     emitLoad(op, regT1, regT0);
     Jump notInt32 = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-#if ENABLE(JIT_CONSTANT_BLINDING)
-    addSlowCase(branchSub32(Overflow, regT0, Imm32(constant), regT2, regT3));
-#else
-    addSlowCase(branchSub32(Overflow, regT0, Imm32(constant), regT2));
-#endif
-    
+    addSlowCase(branchSub32(Overflow, regT0, Imm32(constant), regT2, regT3));   
     emitStoreInt32(dst, regT2, (op == dst));
 
     // Double case.

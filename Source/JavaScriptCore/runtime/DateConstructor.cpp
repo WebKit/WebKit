@@ -36,7 +36,7 @@
 #include <time.h>
 #include <wtf/MathExtras.h>
 
-#if OS(WINCE) && !PLATFORM(QT)
+#if OS(WINCE)
 extern "C" time_t time(time_t* timer); // Provided by libce.
 #endif
 

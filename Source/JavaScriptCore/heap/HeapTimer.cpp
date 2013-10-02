@@ -33,12 +33,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(QT)
-#include <QCoreApplication>
-#include <QMutexLocker>
-#include <QThread>
-#include <QTimerEvent>
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
 #include <Ecore.h>
 #endif
 
@@ -129,44 +124,6 @@ void HeapTimer::invalidate()
 {
 }
 
-#elif PLATFORM(QT)
-
-HeapTimer::HeapTimer(VM* vm)
-    : m_vm(vm)
-    , m_newThread(0)
-    , m_mutex(QMutex::NonRecursive)
-{
-    // The HeapTimer might be created before the runLoop is started,
-    // but we need to ensure the thread has an eventDispatcher already.
-    QEventLoop fakeLoop(this);
-}
-
-HeapTimer::~HeapTimer()
-{
-    QMutexLocker lock(&m_mutex);
-    m_timer.stop();
-}
-
-void HeapTimer::timerEvent(QTimerEvent*)
-{
-    QMutexLocker lock(&m_mutex);
-    if (m_newThread) {
-        // We need to wait with processing until we are on the right thread.
-        return;
-    }
-
-    APIEntryShim shim(m_vm);
-    doWork();
-}
-
-void HeapTimer::customEvent(QEvent*)
-{
-    ASSERT(m_newThread);
-    QMutexLocker lock(&m_mutex);
-    moveToThread(m_newThread);
-    m_newThread = 0;
-}
-
 #elif PLATFORM(EFL)
 
 HeapTimer::HeapTimer(VM* vm)
@@ -204,7 +161,6 @@ bool HeapTimer::timerEvent(void* info)
     
     return ECORE_CALLBACK_CANCEL;
 }
-
 #else
 HeapTimer::HeapTimer(VM* vm)
     : m_vm(vm)

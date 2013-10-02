@@ -44,7 +44,7 @@
 
 namespace JSC {
 
-#if USE(CF) || PLATFORM(QT) || PLATFORM(EFL)
+#if USE(CF) || PLATFORM(EFL)
 
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
 const double maxGCTimeSlice = 0.05; // The maximum amount of CPU time we want to use for opportunistic timer-triggered collections.
@@ -68,12 +68,6 @@ DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
     : GCActivityCallback(heap->vm(), runLoop)
     , m_delay(s_decade)
-{
-}
-#elif PLATFORM(QT)
-DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap->vm())
-    , m_delay(hour)
 {
 }
 #elif PLATFORM(EFL)
@@ -116,21 +110,6 @@ void DefaultGCActivityCallback::cancelTimer()
 {
     m_delay = s_decade;
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
-}
-#elif PLATFORM(QT)
-
-void DefaultGCActivityCallback::scheduleTimer(double newDelay)
-{
-    if (newDelay * timerSlop > m_delay)
-        return;
-    m_delay = newDelay;
-    m_timer.start(newDelay * 1000, this);
-}
-
-void DefaultGCActivityCallback::cancelTimer()
-{
-    m_delay = hour;
-    m_timer.stop();
 }
 #elif PLATFORM(EFL)
 void DefaultGCActivityCallback::scheduleTimer(double newDelay)

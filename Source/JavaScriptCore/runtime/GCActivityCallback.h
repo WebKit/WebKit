@@ -90,7 +90,7 @@ public:
 protected:
     DefaultGCActivityCallback(Heap*, CFRunLoopRef);
 #endif
-#if USE(CF) || PLATFORM(QT) || PLATFORM(EFL)
+#if USE(CF) || PLATFORM(EFL)
 protected:
     void cancelTimer();
     void scheduleTimer(double);

@@ -71,8 +71,6 @@ public:
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
     using MacroAssemblerBase::move;
-
-#if ENABLE(JIT_CONSTANT_BLINDING)
     using MacroAssemblerBase::add32;
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
@@ -85,7 +83,6 @@ public:
     using MacroAssemblerBase::sub32;
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
-#endif
 
     static const double twoToThe32; // This is super useful for some double code.
 
@@ -866,7 +863,6 @@ public:
         return branchSub64(cond, src1, src2, dest);
     }
 
-#if ENABLE(JIT_CONSTANT_BLINDING)
     using MacroAssemblerBase::and64;
     using MacroAssemblerBase::convertInt32ToDouble;
     using MacroAssemblerBase::store64;
@@ -1086,11 +1082,8 @@ public:
             store64(imm.asTrustedImm64(), dest);
     }
 
-#endif // ENABLE(JIT_CONSTANT_BLINDING)
-
 #endif // !CPU(X86_64)
 
-#if ENABLE(JIT_CONSTANT_BLINDING)
     bool shouldBlind(Imm32 imm)
     {
 #if ENABLE(FORCED_JIT_BLINDING)
@@ -1452,7 +1445,6 @@ public:
     {
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
-#endif // ENABLE(JIT_CONSTANT_BLINDING)
 };
 
 } // namespace JSC

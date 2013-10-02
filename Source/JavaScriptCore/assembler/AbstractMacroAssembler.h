@@ -34,15 +34,6 @@
 
 #if ENABLE(ASSEMBLER)
 
-
-#if PLATFORM(QT)
-#define ENABLE_JIT_CONSTANT_BLINDING 0
-#endif
-
-#ifndef ENABLE_JIT_CONSTANT_BLINDING
-#define ENABLE_JIT_CONSTANT_BLINDING 1
-#endif
-
 namespace JSC {
 
 inline bool isARMv7s()
@@ -229,12 +220,7 @@ public:
         const void* m_value;
     };
 
-    struct ImmPtr : 
-#if ENABLE(JIT_CONSTANT_BLINDING)
-        private TrustedImmPtr 
-#else
-        public TrustedImmPtr
-#endif
+    struct ImmPtr : private TrustedImmPtr
     {
         explicit ImmPtr(const void* value)
             : TrustedImmPtr(value)
@@ -269,13 +255,7 @@ public:
     };
 
 
-    struct Imm32 : 
-#if ENABLE(JIT_CONSTANT_BLINDING)
-        private TrustedImm32 
-#else
-        public TrustedImm32
-#endif
-    {
+    struct Imm32 : private TrustedImm32 {
         explicit Imm32(int32_t value)
             : TrustedImm32(value)
         {
@@ -314,12 +294,7 @@ public:
         int64_t m_value;
     };
 
-    struct Imm64 : 
-#if ENABLE(JIT_CONSTANT_BLINDING)
-        private TrustedImm64 
-#else
-        public TrustedImm64
-#endif
+    struct Imm64 : private TrustedImm64
     {
         explicit Imm64(int64_t value)
             : TrustedImm64(value)
@@ -794,11 +769,9 @@ protected:
     Vector<RegisterAllocationOffset, 10> m_registerAllocationForOffsets;
 #endif
 
-#if ENABLE(JIT_CONSTANT_BLINDING)
     static bool scratchRegisterForBlinding() { return false; }
     static bool shouldBlindForSpecificArch(uint32_t) { return true; }
     static bool shouldBlindForSpecificArch(uint64_t) { return true; }
-#endif
 
     friend class LinkBuffer;
     friend class RepatchBuffer;

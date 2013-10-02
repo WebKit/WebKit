@@ -98,13 +98,11 @@ public:
     static const RegisterID stackPointerRegister = X86Registers::esp;
     static const RegisterID framePointerRegister = X86Registers::ebp;
 
-#if ENABLE(JIT_CONSTANT_BLINDING)
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
 #if CPU(X86_64)
     static bool shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
 #if OS(DARWIN) // On 64-bit systems other than DARWIN uint64_t and uintptr_t are the same type so overload is prohibited.
     static bool shouldBlindForSpecificArch(uintptr_t value) { return value >= 0x00ffffff; }
-#endif
 #endif
 #endif
 

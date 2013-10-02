@@ -78,11 +78,6 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(QT)
-#include <QCoreApplication>
-#include <QDateTime>
-#endif
-
 #if PLATFORM(IOS)
 #include <fenv.h>
 #include <arm/arch.h>
@@ -572,10 +567,6 @@ int main(int argc, char** argv)
 #if PLATFORM(BLACKBERRY)
     // Write all WTF logs to the system log
     BlackBerry::Platform::setupApplicationLogging("jsc");
-#endif
-
-#if PLATFORM(QT)
-    QCoreApplication app(argc, argv);
 #endif
 
 #if PLATFORM(EFL)

@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-#if USE(CF) || PLATFORM(BLACKBERRY) || PLATFORM(QT)
+#if USE(CF) || PLATFORM(BLACKBERRY)
 
 static const double sweepTimeSlice = .01; // seconds
 static const double sweepTimeTotal = .10;
@@ -67,7 +67,7 @@ void IncrementalSweeper::cancelTimer()
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
-#elif PLATFORM(BLACKBERRY) || PLATFORM(QT)
+#elif PLATFORM(BLACKBERRY)
    
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : HeapTimer(heap->vm())
@@ -83,11 +83,7 @@ PassOwnPtr<IncrementalSweeper> IncrementalSweeper::create(Heap* heap)
 
 void IncrementalSweeper::scheduleTimer()
 {
-#if PLATFORM(QT)
-    m_timer.start(sweepTimeSlice * sweepTimeMultiplier * 1000, this);
-#else
     m_timer.start(sweepTimeSlice * sweepTimeMultiplier);
-#endif
 }
 
 void IncrementalSweeper::cancelTimer()

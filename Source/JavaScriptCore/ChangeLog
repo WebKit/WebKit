@@ -1,3 +1,46 @@
+2013-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of Qt code from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=122223
+
+        Reviewed by Oliver Hunt.
+
+        * API/JSStringRefQt.cpp: Removed.
+        * API/JSStringRefQt.h: Removed.
+        * API/OpaqueJSString.h:
+        * DerivedSources.pri: Removed.
+        * JavaScriptCore.pri: Removed.
+        * JavaScriptCore.pro: Removed.
+        * LLIntOffsetsExtractor.pro: Removed.
+        * Target.pri: Removed.
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::urshift32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::shouldBlindForSpecificArch):
+        * assembler/MacroAssemblerX86Common.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::timerEvent):
+        * heap/HeapTimer.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer):
+        * heap/IncrementalSweeper.h:
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSub32Constant):
+        * jsc.cpp:
+        (main):
+        * jsc.pro: Removed.
+        * runtime/DateConstructor.cpp:
+        * runtime/GCActivityCallback.cpp:
+        (JSC::DefaultGCActivityCallback::DefaultGCActivityCallback):
+        (JSC::DefaultGCActivityCallback::cancelTimer):
+        * runtime/GCActivityCallback.h:
+        * testRegExp.cpp:
+        (main):
+        * yarr/yarr.pri: Removed.
+
 2013-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use the new version of LLVM MCJIT memory manager APIs that take a SectionName
