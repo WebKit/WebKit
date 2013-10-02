@@ -73,9 +73,7 @@ JSValue JSInspectorFrontendHost::platform(ExecState* execState)
 
 JSValue JSInspectorFrontendHost::port(ExecState* execState)
 {
-#if PLATFORM(QT)
-    DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("qt")));
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("gtk")));
 #elif PLATFORM(EFL)
     DEFINE_STATIC_LOCAL(const String, port, (ASCIILiteral("efl")));

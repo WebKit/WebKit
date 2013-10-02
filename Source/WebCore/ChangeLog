@@ -1,5 +1,14 @@
 2013-10-02  Andreas Kling  <akling@apple.com>
 
+        Remove Qt-specific code in WebCore/{bindings,bridge,loader,icon,testing}.
+        <https://webkit.org/b/122242>
+
+        Reviewed by Anders Carlsson.
+
+        Purge PLATFORM(QT) blocks and Qt-specific files.
+
+2013-10-02  Andreas Kling  <akling@apple.com>
+
         Remove Qt-specific code in WebCore/{page,accessibility}.
         <https://webkit.org/b/122222>
 

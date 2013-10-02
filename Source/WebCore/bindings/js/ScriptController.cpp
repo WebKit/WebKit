@@ -383,7 +383,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(QT)
+#if !PLATFORM(MAC)
 PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     if (!widget->isPluginView())

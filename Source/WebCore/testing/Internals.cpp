@@ -146,11 +146,6 @@
 #include "Vibration.h"
 #endif
 
-#if PLATFORM(QT)
-#include "NetworkingContext.h"
-#include <QNetworkAccessManager>
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "MockMediaStreamCenter.h"
 #endif
@@ -276,13 +271,6 @@ void Internals::resetToConsistentState(Page* page)
         page->mainFrame().editor().toggleContinuousSpellChecking();
     if (page->mainFrame().editor().isOverwriteModeEnabled())
         page->mainFrame().editor().toggleOverwriteModeEnabled();
-
-#if PLATFORM(QT)
-    if (NetworkingContext* context = page->mainFrame().loader().networkingContext()) {
-        if (QNetworkAccessManager* qnam = context->networkAccessManager())
-            qnam->clearAccessCache();
-    }
-#endif
 }
 
 Internals::Internals(Document* document)

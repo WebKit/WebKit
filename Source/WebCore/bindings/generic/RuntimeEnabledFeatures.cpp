@@ -87,7 +87,7 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isEncryptedMediaEnabled(false)
 #endif
 #if ENABLE(VIDEO_TRACK)
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN)
     , m_isVideoTrackEnabled(true)
 #else
     , m_isVideoTrackEnabled(false)
