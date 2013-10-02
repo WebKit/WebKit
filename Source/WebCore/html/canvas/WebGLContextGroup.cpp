@@ -33,10 +33,6 @@
 #include "WebGLRenderingContext.h"
 #include "WebGLSharedObject.h"
 
-#if PLATFORM(QT)
-#undef emit
-#endif
-
 namespace WebCore {
 
 PassRefPtr<WebGLContextGroup> WebGLContextGroup::create()

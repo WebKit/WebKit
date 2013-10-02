@@ -95,7 +95,7 @@ bool HTMLAnchorElement::supportsFocus() const
 
 bool HTMLAnchorElement::isMouseFocusable() const
 {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT))
+#if !(PLATFORM(EFL) || PLATFORM(GTK))
     // Only allow links with tabIndex or contentEditable to be mouse focusable.
     // This is our rule for the Mac platform; on many other platforms we focus any link you click on.
     if (isLink())

@@ -42,7 +42,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if PLATFORM(BLACKBERRY) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(BLACKBERRY) || PLATFORM(GTK)
 const float ViewportArguments::deprecatedTargetDPI = 160;
 #endif
 

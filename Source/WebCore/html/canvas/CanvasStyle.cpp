@@ -43,13 +43,6 @@
 #include <CoreGraphics/CGContext.h>
 #endif
 
-#if PLATFORM(QT)
-#include <QPainter>
-#include <QBrush>
-#include <QPen>
-#include <QColor>
-#endif
-
 namespace WebCore {
 
 enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParsedSystemColor, ParseFailed };
@@ -257,12 +250,6 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context) const
         // We'll need a fancier Color abstraction to support CMYKA correctly
 #if USE(CG)
         CGContextSetCMYKStrokeColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
-#elif PLATFORM(QT)
-        QPen currentPen = context->platformContext()->pen();
-        QColor clr;
-        clr.setCmykF(m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
-        currentPen.setColor(clr);
-        context->platformContext()->setPen(currentPen);
 #else
         context->setStrokeColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
 #endif
@@ -295,12 +282,6 @@ void CanvasStyle::applyFillColor(GraphicsContext* context) const
         // We'll need a fancier Color abstraction to support CMYKA correctly
 #if USE(CG)
         CGContextSetCMYKFillColor(context->platformContext(), m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
-#elif PLATFORM(QT)
-        QBrush currentBrush = context->platformContext()->brush();
-        QColor clr;
-        clr.setCmykF(m_cmyka->c, m_cmyka->m, m_cmyka->y, m_cmyka->k, m_cmyka->a);
-        currentBrush.setColor(clr);
-        context->platformContext()->setBrush(currentBrush);
 #else
         context->setFillColor(m_cmyka->rgba, ColorSpaceDeviceRGB);
 #endif
