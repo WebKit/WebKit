@@ -1,3 +1,33 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        Convert PageGroup to using std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=122184
+
+        Reviewed by Anders Carlsson.
+
+        * page/CaptionUserPreferences.cpp:
+        * page/CaptionUserPreferences.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/CaptionUserPreferencesMediaAF.h:
+        * page/Frame.cpp:
+        * page/GroupSettings.h:
+        * page/Page.cpp:
+        * page/PageGroup.cpp:
+        * page/PageGroup.h:
+        * page/UserScriptTypes.h:
+        * page/UserStyleSheetTypes.h:
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        * workers/DedicatedWorkerThread.h:
+        * workers/SharedWorkerGlobalScope.cpp:
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/SharedWorkerThread.cpp:
+        * workers/SharedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerThread.cpp:
+        * workers/WorkerThread.h:
+
 2013-10-01  Tim Horton  <timothy_horton@apple.com>
 
         Tiled drawing GraphicsLayer tree dumps should match non-tiled more closely

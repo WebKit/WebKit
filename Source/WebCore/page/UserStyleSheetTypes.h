@@ -37,8 +37,8 @@ enum UserStyleLevel { UserStyleUserLevel, UserStyleAuthorLevel };
 class DOMWrapperWorld;
 class UserStyleSheet;
 
-typedef Vector<OwnPtr<UserStyleSheet> > UserStyleSheetVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, OwnPtr<UserStyleSheetVector> > UserStyleSheetMap;
+typedef Vector<std::unique_ptr<UserStyleSheet>> UserStyleSheetVector;
+typedef HashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserStyleSheetVector>> UserStyleSheetMap;
 
 } // namespace WebCore
  

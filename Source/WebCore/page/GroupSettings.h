@@ -26,7 +26,6 @@
 #ifndef GroupSettings_h
 #define GroupSettings_h
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,10 +35,7 @@ class PageGroup;
 class GroupSettings {
     WTF_MAKE_NONCOPYABLE(GroupSettings); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<GroupSettings> create()
-    {
-        return adoptPtr(new GroupSettings());
-    }
+    GroupSettings();
 
     void setLocalStorageQuotaBytes(unsigned);
     unsigned localStorageQuotaBytes() const { return m_localStorageQuotaBytes; }
@@ -51,8 +47,6 @@ public:
     const String& indexedDBDatabasePath() const { return m_indexedDBDatabasePath; }
 
 private:
-    GroupSettings();
-
     unsigned m_localStorageQuotaBytes;
     String m_indexedDBDatabasePath;
     int64_t m_indexedDBQuotaBytes;

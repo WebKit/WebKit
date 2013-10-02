@@ -76,7 +76,7 @@ public:
 
     URL m_scriptURL;
     String m_userAgent;
-    OwnPtr<GroupSettings> m_groupSettings;
+    std::unique_ptr<GroupSettings> m_groupSettings;
     String m_sourceCode;
     WorkerThreadStartMode m_startMode;
     String m_contentSecurityPolicy;
@@ -98,7 +98,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
     if (!settings)
         return;
 
-    m_groupSettings = GroupSettings::create();
+    m_groupSettings = std::make_unique<GroupSettings>();
     m_groupSettings->setLocalStorageQuotaBytes(settings->localStorageQuotaBytes());
     m_groupSettings->setIndexedDBQuotaBytes(settings->indexedDBQuotaBytes());
     m_groupSettings->setIndexedDBDatabasePath(settings->indexedDBDatabasePath().isolatedCopy());
@@ -146,7 +146,7 @@ void WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_groupSettings.release(), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
+        m_workerGlobalScope = createWorkerGlobalScope(m_startupData->m_scriptURL, m_startupData->m_userAgent, std::move(m_startupData->m_groupSettings), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType, m_startupData->m_topOrigin.release());
 
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,

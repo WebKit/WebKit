@@ -43,7 +43,7 @@ class TextTrackList;
 
 class CaptionUserPreferences {
 public:
-    static PassOwnPtr<CaptionUserPreferences> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferences(group)); }
+    CaptionUserPreferences(PageGroup&);
     virtual ~CaptionUserPreferences();
 
     enum CaptionDisplayMode {
@@ -87,17 +87,16 @@ public:
     virtual bool testingMode() const { return m_testingMode; }
     virtual void setTestingMode(bool override) { m_testingMode = override; }
     
-    PageGroup* pageGroup() const { return m_pageGroup; }
+    PageGroup& pageGroup() const { return m_pageGroup; }
 
 protected:
-    CaptionUserPreferences(PageGroup*);
     void updateCaptionStyleSheetOveride();
 
 private:
     void timerFired(Timer<CaptionUserPreferences>*);
     void notify();
 
-    PageGroup* m_pageGroup;
+    PageGroup& m_pageGroup;
     CaptionDisplayMode m_displayMode;
     Timer<CaptionUserPreferences> m_timer;
     String m_userPreferredLanguage;

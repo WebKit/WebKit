@@ -434,7 +434,7 @@ void Page::setGroupName(const String& name)
     if (m_group && !m_group->name().isEmpty()) {
         ASSERT(m_group != m_singlePageGroup.get());
         ASSERT(!m_singlePageGroup);
-        m_group->removePage(this);
+        m_group->removePage(*this);
     }
 
     if (name.isEmpty())
@@ -442,7 +442,7 @@ void Page::setGroupName(const String& name)
     else {
         m_singlePageGroup = nullptr;
         m_group = PageGroup::pageGroup(name);
-        m_group->addPage(this);
+        m_group->addPage(*this);
     }
 }
 

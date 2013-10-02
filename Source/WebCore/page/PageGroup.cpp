@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO_TRACK)
 #if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -63,16 +64,16 @@ PageGroup::PageGroup(const String& name)
     : m_name(name)
     , m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
-    , m_groupSettings(GroupSettings::create())
+    , m_groupSettings(std::make_unique<GroupSettings>())
 {
 }
 
 PageGroup::PageGroup(Page& page)
     : m_visitedLinksPopulated(false)
     , m_identifier(getUniqueIdentifier())
-    , m_groupSettings(GroupSettings::create())
+    , m_groupSettings(std::make_unique<GroupSettings>())
 {
-    addPage(&page);
+    addPage(page);
 }
 
 PageGroup::~PageGroup()
@@ -106,9 +107,7 @@ void PageGroup::closeLocalStorage()
     if (!pageGroups)
         return;
 
-    PageGroupMap::iterator end = pageGroups->end();
-
-    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+    for (auto it = pageGroups->begin(), end = pageGroups->end(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->close();
     }
@@ -119,8 +118,7 @@ void PageGroup::clearLocalStorageForAllOrigins()
     if (!pageGroups)
         return;
 
-    PageGroupMap::iterator end = pageGroups->end();
-    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+    for (auto it = pageGroups->begin(), end = pageGroups->end(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->clearAllOriginsForDeletion();
     }
@@ -131,8 +129,7 @@ void PageGroup::clearLocalStorageForOrigin(SecurityOrigin* origin)
     if (!pageGroups)
         return;
 
-    PageGroupMap::iterator end = pageGroups->end();
-    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+    for (auto it = pageGroups->begin(), end = pageGroups->end(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->clearOriginForDeletion(origin);
     }
@@ -143,8 +140,7 @@ void PageGroup::closeIdleLocalStorageDatabases()
     if (!pageGroups)
         return;
 
-    PageGroupMap::iterator end = pageGroups->end();
-    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+    for (auto it = pageGroups->begin(), end = pageGroups->end(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->closeIdleLocalStorageDatabases();
     }
@@ -155,8 +151,7 @@ void PageGroup::syncLocalStorage()
     if (!pageGroups)
         return;
 
-    PageGroupMap::iterator end = pageGroups->end();
-    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+    for (auto it = pageGroups->begin(), end = pageGroups->end(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->sync();
     }
@@ -170,18 +165,16 @@ unsigned PageGroup::numberOfPageGroups()
     return pageGroups->size();
 }
 
-void PageGroup::addPage(Page* page)
+void PageGroup::addPage(Page& page)
 {
-    ASSERT(page);
-    ASSERT(!m_pages.contains(page));
-    m_pages.add(page);
+    ASSERT(!m_pages.contains(&page));
+    m_pages.add(&page);
 }
 
-void PageGroup::removePage(Page* page)
+void PageGroup::removePage(Page& page)
 {
-    ASSERT(page);
-    ASSERT(m_pages.contains(page));
-    m_pages.remove(page);
+    ASSERT(m_pages.contains(&page));
+    m_pages.remove(&page);
 }
 
 bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
@@ -273,13 +266,13 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserScript> userScript = adoptPtr(new UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames));
+    auto userScript = std::make_unique<UserScript>(source, url, whitelist, blacklist, injectionTime, injectedFrames);
     if (!m_userScripts)
-        m_userScripts = adoptPtr(new UserScriptMap);
-    OwnPtr<UserScriptVector>& scriptsInWorld = m_userScripts->add(world, nullptr).iterator->value;
+        m_userScripts = std::make_unique<UserScriptMap>();
+    std::unique_ptr<UserScriptVector>& scriptsInWorld = m_userScripts->add(world, nullptr).iterator->value;
     if (!scriptsInWorld)
-        scriptsInWorld = adoptPtr(new UserScriptVector);
-    scriptsInWorld->append(userScript.release());
+        scriptsInWorld = std::make_unique<UserScriptVector>();
+    scriptsInWorld->append(std::move(userScript));
 }
 
 void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const URL& url,
@@ -290,13 +283,13 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
 {
     ASSERT_ARG(world, world);
 
-    OwnPtr<UserStyleSheet> userStyleSheet = adoptPtr(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level));
+    auto userStyleSheet = std::make_unique<UserStyleSheet>(source, url, whitelist, blacklist, injectedFrames, level);
     if (!m_userStyleSheets)
-        m_userStyleSheets = adoptPtr(new UserStyleSheetMap);
-    OwnPtr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(world, nullptr).iterator->value;
+        m_userStyleSheets = std::make_unique<UserStyleSheetMap>();
+    std::unique_ptr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(world, nullptr).iterator->value;
     if (!styleSheetsInWorld)
-        styleSheetsInWorld = adoptPtr(new UserStyleSheetVector);
-    styleSheetsInWorld->append(userStyleSheet.release());
+        styleSheetsInWorld = std::make_unique<UserStyleSheetVector>();
+    styleSheetsInWorld->append(std::move(userStyleSheet));
 
     if (injectionTime == InjectInExistingDocuments)
         invalidateInjectedStyleSheetCacheInAllFrames();
@@ -309,11 +302,11 @@ void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const URL& url
     if (!m_userScripts)
         return;
 
-    UserScriptMap::iterator it = m_userScripts->find(world);
+    auto it = m_userScripts->find(world);
     if (it == m_userScripts->end())
         return;
     
-    UserScriptVector* scripts = it->value.get();
+    auto scripts = it->value.get();
     for (int i = scripts->size() - 1; i >= 0; --i) {
         if (scripts->at(i)->url() == url)
             scripts->remove(i);
@@ -330,12 +323,12 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const URL&
     if (!m_userStyleSheets)
         return;
 
-    UserStyleSheetMap::iterator it = m_userStyleSheets->find(world);
+    auto it = m_userStyleSheets->find(world);
     bool sheetsChanged = false;
     if (it == m_userStyleSheets->end())
         return;
     
-    UserStyleSheetVector* stylesheets = it->value.get();
+    auto stylesheets = it->value.get();
     for (int i = stylesheets->size() - 1; i >= 0; --i) {
         if (stylesheets->at(i)->url() == url) {
             stylesheets->remove(i);
@@ -377,10 +370,10 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
 
 void PageGroup::removeAllUserContent()
 {
-    m_userScripts.clear();
+    m_userScripts = nullptr;
 
     if (m_userStyleSheets) {
-        m_userStyleSheets.clear();
+        m_userStyleSheets = nullptr;
         invalidateInjectedStyleSheetCacheInAllFrames();
     }
 }
@@ -388,8 +381,7 @@ void PageGroup::removeAllUserContent()
 void PageGroup::invalidateInjectedStyleSheetCacheInAllFrames()
 {
     // Clear our cached sheets and have them just reparse.
-    HashSet<Page*>::const_iterator end = m_pages.end();
-    for (HashSet<Page*>::const_iterator it = m_pages.begin(); it != end; ++it) {
+    for (auto it = m_pages.begin(), end = m_pages.end(); it != end; ++it) {
         for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             frame->document()->styleSheetCollection().invalidateInjectedStyleSheetCache();
             frame->document()->styleResolverChanged(DeferRecalcStyle);
@@ -400,23 +392,23 @@ void PageGroup::invalidateInjectedStyleSheetCacheInAllFrames()
 #if ENABLE(VIDEO_TRACK)
 void PageGroup::captionPreferencesChanged()
 {
-    for (HashSet<Page*>::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
-        (*i)->captionPreferencesChanged();
+    for (auto it = m_pages.begin(), end = m_pages.end(); it != end; ++it)
+        (*it)->captionPreferencesChanged();
     pageCache()->markPagesForCaptionPreferencesChanged();
 }
 
 CaptionUserPreferences* PageGroup::captionPreferences()
 {
-    if (!m_captionPreferences)
+    if (!m_captionPreferences) {
 #if (PLATFORM(MAC) && !PLATFORM(IOS)) || HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-        m_captionPreferences = CaptionUserPreferencesMediaAF::create(this);
+        m_captionPreferences = std::make_unique<CaptionUserPreferencesMediaAF>(*this);
 #else
-        m_captionPreferences = CaptionUserPreferences::create(this);
+        m_captionPreferences = std::make_unique<CaptionUserPreferences>(*this);
 #endif
+    }
 
     return m_captionPreferences.get();
 }
-
 #endif
 
 } // namespace WebCore

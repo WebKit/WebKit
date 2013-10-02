@@ -46,7 +46,7 @@ namespace WebCore {
         virtual ~DedicatedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, PassOwnPtr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
+        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
         virtual void runEventLoop() OVERRIDE;
 
     private:

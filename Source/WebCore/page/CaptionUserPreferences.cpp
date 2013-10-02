@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-CaptionUserPreferences::CaptionUserPreferences(PageGroup* group)
+CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
     : m_pageGroup(group)
     , m_displayMode(ForcedOnly)
     , m_timer(this, &CaptionUserPreferences::timerFired)
@@ -79,7 +79,7 @@ void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::Capti
 
 bool CaptionUserPreferences::userPrefersCaptions() const
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(m_pageGroup.pages().begin());
     if (!page)
         return false;
 
@@ -88,7 +88,7 @@ bool CaptionUserPreferences::userPrefersCaptions() const
 
 void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(m_pageGroup.pages().begin());
     if (!page)
         return;
 
@@ -98,7 +98,7 @@ void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 
 bool CaptionUserPreferences::userPrefersSubtitles() const
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(pageGroup().pages().begin());
     if (!page)
         return false;
 
@@ -107,7 +107,7 @@ bool CaptionUserPreferences::userPrefersSubtitles() const
 
 void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(m_pageGroup.pages().begin());
     if (!page)
         return;
 
@@ -117,7 +117,7 @@ void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
 
 bool CaptionUserPreferences::userPrefersTextDescriptions() const
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(m_pageGroup.pages().begin());
     if (!page)
         return false;
     
@@ -126,7 +126,7 @@ bool CaptionUserPreferences::userPrefersTextDescriptions() const
 
 void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
 {
-    Page* page = *(pageGroup()->pages().begin());
+    Page* page = *(m_pageGroup.pages().begin());
     if (!page)
         return;
     
@@ -136,7 +136,7 @@ void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
 
 void CaptionUserPreferences::captionPreferencesChanged()
 {
-    m_pageGroup->captionPreferencesChanged();
+    m_pageGroup.captionPreferencesChanged();
 }
 
 Vector<String> CaptionUserPreferences::preferredLanguages() const
@@ -238,13 +238,13 @@ void CaptionUserPreferences::updateCaptionStyleSheetOveride()
     // Identify our override style sheet with a unique URL - a new scheme and a UUID.
     DEFINE_STATIC_LOCAL(URL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
 
-    pageGroup()->removeUserStyleSheetFromWorld(mainThreadNormalWorld(), captionsStyleSheetURL);
+    m_pageGroup.removeUserStyleSheetFromWorld(mainThreadNormalWorld(), captionsStyleSheetURL);
 
     String captionsOverrideStyleSheet = captionsStyleSheetOverride();
     if (captionsOverrideStyleSheet.isEmpty())
         return;
 
-    pageGroup()->addUserStyleSheetToWorld(mainThreadNormalWorld(), captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(),
+    m_pageGroup.addUserStyleSheetToWorld(mainThreadNormalWorld(), captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(),
         Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
 }
 
