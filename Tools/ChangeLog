@@ -1,3 +1,12 @@
+2013-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Move AHEM____.TTF from qt/fonts/ to fonts/.
+
+        Rubber-stamped by Andreas Kling.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/fonts/AHEM____.TTF: Renamed from Tools/DumpRenderTree/qt/fonts/AHEM____.TTF.
+
 2013-10-02  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Remove Qt bots and EWS from trunk.
