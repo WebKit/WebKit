@@ -144,5 +144,5 @@ http/tests/cache/partitioned-cache-iframe.html
 fast/text/international/synthesized-italic-vertical-latin.html
 media/video-controls-captions-trackmenu-localized.html
 media/video-played-collapse.html
-webaudio/codec-tests/mp3/128kbps-44khz.html
+webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
 webaudio/codec-tests/wav/24bit-22khz-resample.html 
