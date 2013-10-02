@@ -1,3 +1,18 @@
+2013-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed rebaseline, try to add newlines back that keep disappearing on me.
+
+        * platform/mac-wk2/compositing/contents-opaque/body-background-painted-expected.txt:
+        * platform/mac-wk2/compositing/contents-opaque/body-background-skipped-expected.txt:
+        * platform/mac-wk2/compositing/repaint/fixed-background-scroll-expected.txt:
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-expected.txt:
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac-wk2/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac-wk2/compositing/tiling/tiled-layer-resize-expected.txt:
+
 2013-10-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Regions] Selection layout tests moved to specific folder
