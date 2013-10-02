@@ -99,7 +99,7 @@ class Attachment(object):
 
     def _calculate_queue_positions(self):
         all_work_items = WorkItems.all().fetch(limit=len(Queue.all()))
-        return dict([(items.queue.name(), items.display_position_for_attachment(self.id)) for items in all_work_items])
+        return dict([(items.queue.name(), items.display_position_for_attachment(self.id)) for items in all_work_items if items.queue])
 
     # FIXME: This is controller/view code and does not belong in a model.
     def _fetch_summary(self):
