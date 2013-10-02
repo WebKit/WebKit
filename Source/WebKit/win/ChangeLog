@@ -1,3 +1,10 @@
+2013-10-02  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WebScriptWorld.cpp:
+        (WebScriptWorld::findOrCreateWorld):
+
 2013-10-01  Sam Weinig  <sam@webkit.org>
 
         CTTE: DOMWrapperWorlds should be passed around by reference

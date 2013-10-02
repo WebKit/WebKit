@@ -82,7 +82,7 @@ COMPtr<WebScriptWorld> WebScriptWorld::findOrCreateWorld(DOMWrapperWorld& world)
     if (&world == &mainThreadNormalWorld())
         return standardWorld();
 
-    if (WebScriptWorld* existingWorld = allWorlds().get(world))
+    if (WebScriptWorld* existingWorld = allWorlds().get(&world))
         return existingWorld;
 
     return createInstance(&world);
