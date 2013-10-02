@@ -1,3 +1,27 @@
+2013-10-01  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(156464): 50% regression on SunSpider/string-fasta
+        https://bugs.webkit.org/show_bug.cgi?id=122202
+
+        Unreviewed, roll out r156464.
+
+        * js/destructuring-assignment-expected.txt: Removed.
+        * js/destructuring-assignment.html: Removed.
+        * js/mozilla/strict/13.1-expected.txt:
+        * js/mozilla/strict/regress-532254-expected.txt:
+        * js/mozilla/strict/script-tests/13.1.js:
+        * js/regress/destructuring-arguments-expected.txt: Removed.
+        * js/regress/destructuring-arguments-length-expected.txt: Removed.
+        * js/regress/destructuring-arguments-length.html: Removed.
+        * js/regress/destructuring-arguments.html: Removed.
+        * js/regress/destructuring-swap-expected.txt: Removed.
+        * js/regress/destructuring-swap.html: Removed.
+        * js/regress/script-tests/destructuring-arguments-length.js: Removed.
+        * js/regress/script-tests/destructuring-arguments.js: Removed.
+        * js/regress/script-tests/destructuring-swap.js: Removed.
+        * js/script-tests/destructuring-assignment.js: Removed.
+        * sputnik/Conformance/13_Function_Definition/S13_A5.html:
+
 2013-10-01  Tim Horton  <timothy_horton@apple.com>
 
         Tiled drawing GraphicsLayer tree dumps should match non-tiled more closely

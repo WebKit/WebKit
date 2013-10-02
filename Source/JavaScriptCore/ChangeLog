@@ -1,5 +1,58 @@
 2013-10-01  Filip Pizlo  <fpizlo@apple.com>
 
+        REGRESSION(156464): 50% regression on SunSpider/string-fasta
+        https://bugs.webkit.org/show_bug.cgi?id=122202
+
+        Unreviewed, roll out r156464.
+        
+        This is a progression on string-fasta, since it fixes the regression.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::paramString):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        (JSC::FuncExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::addVar):
+        * parser/NodeConstructors.h:
+        (JSC::CommaNode::CommaNode):
+        (JSC::ParameterNode::ParameterNode):
+        (JSC::ForInNode::ForInNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::create):
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FunctionParameters::~FunctionParameters):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isDotAccessorNode):
+        (JSC::CommaNode::append):
+        (JSC::ParameterNode::ident):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::identifiers):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseForStatement):
+        (JSC::::parseFormalParameters):
+        (JSC::::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::Scope::declareParameter):
+        (JSC::Parser::declareParameter):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/JSONObject.cpp:
+        * runtime/JSONObject.h:
+
+2013-10-01  Filip Pizlo  <fpizlo@apple.com>
+
         Variable event stream (for DFG OSR exit) should be explicit about where on the stack a SetLocal put a value
         https://bugs.webkit.org/show_bug.cgi?id=122178
 
