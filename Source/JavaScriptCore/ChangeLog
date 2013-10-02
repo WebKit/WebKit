@@ -1,3 +1,20 @@
+2013-10-02  Michael Saboff  <msaboff@apple.com>
+
+        Make Baseline JIT exception handling work like the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=122244
+
+        Reviewed by Filip Pizlo.
+
+        Added a jump list (m_exceptionChecks) to JIT as a common place for exception processing within
+        generated code.  Added exceptionCheck() helpers that check for an exception which add a branch
+        to the list.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::JIT::exceptionCheck):
+
 2013-10-02  Oliver Hunt  <oliver@apple.com>
 
         Fix MSVC build

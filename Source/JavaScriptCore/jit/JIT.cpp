@@ -38,6 +38,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "DFGCapabilities.h"
 #include "Interpreter.h"
 #include "JITInlines.h"
+#include "JITOperations.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
@@ -663,6 +664,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
     ASSERT(m_jmpTable.isEmpty());
     
+    privateCompileExceptionHandlers();
+    
     if (m_disassembler)
         m_disassembler->setEndOfCode(label());
 
@@ -815,6 +818,26 @@ void JIT::linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo* callLinkInfo)
 
     repatchBuffer.relink(callLinkInfo->callReturnLocation, callerCodeBlock->vm()->getCTIStub(oldStyleVirtualCallGenerator).code());
 }
+
+void JIT::privateCompileExceptionHandlers()
+{
+    if (m_exceptionChecks.empty())
+        return;
+    
+    m_exceptionChecks.link(this);
+    
+    // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
+    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+#if CPU(X86)
+    // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+    poke(GPRInfo::argumentGPR0);
+#endif
+    m_calls.append(CallRecord(call(), (unsigned)-1, FunctionPtr(lookupExceptionHandler).value()));
+    // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
+    // and the address of the handler in returnValueGPR2.
+    jump(GPRInfo::returnValueGPR2);
+}
+
 
 } // namespace JSC
 

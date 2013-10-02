@@ -421,6 +421,18 @@ namespace JSC {
         CodeRef privateCompileCTINativeCall(VM*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
+        void exceptionCheck(Jump jumpToHandler)
+        {
+            m_exceptionChecks.append(jumpToHandler);
+        }
+
+        void exceptionCheck()
+        {
+            m_exceptionChecks.append(emitExceptionCheck());
+        }
+
+        void privateCompileExceptionHandlers();
+
         static bool isDirectPutById(StructureStubInfo*);
 
         void addSlowCase(Jump);
@@ -901,6 +913,8 @@ namespace JSC {
         unsigned m_bytecodeOffset;
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
+
+        JumpList m_exceptionChecks;
 
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_byValInstructionIndex;
