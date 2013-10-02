@@ -379,6 +379,7 @@ platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
 
 # Tests that failed on Mountain Lion Release WK2 bot in r155992
 webaudio/codec-tests/wav/24bit-22khz-resample.html
+[ Lion ] webaudio/codec-tests/mp3/128kbps-44khz.html
 
 ### END OF (3) Unclassified failures
 ########################################
