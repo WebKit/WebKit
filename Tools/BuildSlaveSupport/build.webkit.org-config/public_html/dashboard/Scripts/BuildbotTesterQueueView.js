@@ -77,13 +77,13 @@ BuildbotTesterQueueView.prototype = {
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures", layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount, url);
                 } else if (!layoutTestResults.failureCount && javascriptTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.failureCount) {
                     var url = iteration.queue.buildbot.javascriptTestResultsURLForIteration(iteration);
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures", javascriptTestResults.failureCount, url);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, javascriptTestResults.failureCount === 1 ? "javascript test failure" : "javascript test failures", javascriptTestResults.failureCount, url);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.failureCount) {
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures", pythonTestResults.failureCount);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, pythonTestResults.failureCount === 1 ? "webkitpy test failure" : "webkitpy test failures", pythonTestResults.failureCount);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !pythonTestResults.failureCount && perlTestResults.failureCount && !bindingTestResults.failureCount) {
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "webkitperl test failure" : "webkitperl test failures", perlTestResults.failureCount);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, perlTestResults.failureCount === 1 ? "webkitperl test failure" : "webkitperl test failures", perlTestResults.failureCount);
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && bindingTestResults.failureCount) {
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "binding test failure" : "binding test failures", bindingTestResults.failureCount);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, bindingTestResults.failureCount === 1 ? "binding test failure" : "binding test failures", bindingTestResults.failureCount);
                 } else {
                     var totalFailures = layoutTestResults.failureCount + javascriptTestResults.failureCount + pythonTestResults.failureCount + perlTestResults.failureCount + bindingTestResults.failureCount;
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, totalFailures === 1 ? "test failure" : "test failures");
