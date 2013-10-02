@@ -1,3 +1,26 @@
+2013-10-02  Dan Bernstein  <mitz@apple.com>
+
+        The Objective-C API should be available in 10.8 builds
+        https://bugs.webkit.org/show_bug.cgi?id=122245
+
+        Reviewed by Mark Rowe.
+
+        Enabled the Objective-C API when building on OS X 10.8 with the modern Objective-C runtime,
+        but kept the availability attributes in API headers for 10.9 and later as they were.
+
+        * API/JSBase.h: When JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080 is defined, made
+        JSC_OBJC_API_ENABLED true on 10.8 and above.
+        * API/JSContext.h: When JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080 is defined, marked the class
+        as available on all OS X versions.
+        * API/JSManagedValue.h: Ditto.
+        * API/JSValue.h: Ditto.
+        * API/JSVirtualMachine.h: Ditto.
+        * Configurations/Base.xcconfig: Added JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080 to
+        GCC_PREPROCESSOR_DEFINITIONS.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added a script build phase to unifdef the
+        above header files with JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080 either defined or not based on
+        the OS X version we are targeting.
+
 2013-10-02  Michael Saboff  <msaboff@apple.com>
 
         Make Baseline JIT exception handling work like the DFG JIT

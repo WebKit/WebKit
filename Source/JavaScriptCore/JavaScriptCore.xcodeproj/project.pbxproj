@@ -4626,6 +4626,7 @@
 			buildPhases = (
 				5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */,
 				932F5B3F0822A1C700736975 /* Headers */,
+				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				932F5BD20822A1C700736975 /* Frameworks */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
@@ -4730,6 +4731,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names JS || exit $?\nfi";
+		};
+		3732811A17FCD235004AD519 /* Postprocess Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSBase.h",
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSContext.h",
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSManagedValue.h",
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSValue.h",
+				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/JSVirtualMachine.h",
+			);
+			name = "Postprocess Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n\nif [[ ${TARGET_MAC_OS_X_VERSION_MAJOR} == \"1080\" ]]; then\n    UNIFDEF_OPTION=\"-DJSC_OBJC_API_AVAILABLE_MAC_OS_X_1080\";\nelse\n    UNIFDEF_OPTION=\"-UJSC_OBJC_API_AVAILABLE_MAC_OS_X_1080\";\nfi\n\nfor HEADER in JSBase.h JSContext.h JSManagedValue.h JSValue.h JSVirtualMachine.h; do\n    unifdef -B ${UNIFDEF_OPTION} -o ${HEADER} ${HEADER}\n    if [[ $? > 1 ]]; then\n        exit 1;\n    fi\ndone";
 		};
 		5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -46,7 +46,11 @@
 // from the Objective-C heap. It is incorrect to store a JSValue into an 
 // Objective-C heap object, as this can very easily create a reference cycle, 
 // keeping the entire JSContext alive. 
+#ifndef JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080
 NS_CLASS_AVAILABLE(10_9, NA)
+#else
+OBJC_VISIBLE
+#endif
 @interface JSManagedValue : NSObject
 
 // Convenience method for creating JSManagedValues from JSValues.
