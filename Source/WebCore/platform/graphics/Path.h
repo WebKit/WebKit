@@ -34,9 +34,6 @@
 
 #if USE(CG)
 typedef struct CGPath PlatformPath;
-#elif PLATFORM(QT)
-#include <qpainterpath.h>
-typedef QPainterPath PlatformPath;
 #elif USE(CAIRO)
 namespace WebCore {
 class CairoPath;
@@ -56,12 +53,7 @@ typedef BlackBerry::Platform::Graphics::Path PlatformPath;
 typedef void PlatformPath;
 #endif
 
-#if PLATFORM(QT)
-/* QPainterPath is valued based */
-typedef PlatformPath PlatformPathPtr;
-#else
 typedef PlatformPath* PlatformPathPtr;
-#endif
 
 namespace WebCore {
 
@@ -113,11 +105,7 @@ namespace WebCore {
         float normalAngleAtLength(float length, bool& ok) const;
 
         void clear();
-#if PLATFORM(QT)
-        bool isNull() const { return false; }
-#else
         bool isNull() const { return !m_path; }
-#endif
         bool isEmpty() const;
         // Gets the current point of the current path, which is conceptually the final point reached by the path so far.
         // Note the Path can be empty (isEmpty() == true) and still have a current point.
@@ -147,14 +135,10 @@ namespace WebCore {
         void translate(const FloatSize&);
 
         // To keep Path() cheap, it does not allocate a PlatformPath immediately
-        // meaning Path::platformPath() can return null (except on Qt).
+        // meaning Path::platformPath() can return null.
         PlatformPathPtr platformPath() const { return m_path; }
-#if PLATFORM(QT)
-        PlatformPathPtr ensurePlatformPath() { return platformPath(); }
-#else
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
         PlatformPathPtr ensurePlatformPath();
-#endif
 
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);

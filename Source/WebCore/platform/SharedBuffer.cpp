@@ -327,7 +327,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
 #endif
 }
 
-#if !USE(CF) || PLATFORM(QT)
+#if !USE(CF)
 
 inline void SharedBuffer::clearPlatformData()
 {

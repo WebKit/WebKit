@@ -25,10 +25,6 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
-#if PLATFORM(QT)
-#include <QTouchEvent>
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {

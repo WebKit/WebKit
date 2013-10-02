@@ -60,7 +60,7 @@ int startOfLastWordBoundaryContext(const UChar* characters, int length)
     return 0;
 }
 
-#if !PLATFORM(MAC) && !PLATFORM(QT)
+#if !PLATFORM(MAC)
 
 int findNextWordFromIndex(const UChar* chars, int len, int position, bool forward)
 {
@@ -102,6 +102,6 @@ void findWordBoundary(const UChar* chars, int len, int position, int* start, int
     *start = textBreakPrevious(it);
 }
 
-#endif // !PLATFORM(MAC) && !PLATFORM(QT)
+#endif // !PLATFORM(MAC)
 
 } // namespace WebCore

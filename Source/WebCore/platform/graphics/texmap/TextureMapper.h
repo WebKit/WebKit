@@ -22,12 +22,6 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-#if defined(QT_OPENGL_ES_2) && !defined(TEXMAP_OPENGL_ES_2)
-    #define TEXMAP_OPENGL_ES_2
-#endif
-#endif
 #if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(NIX)) && USE(OPENGL_ES_2)
 #define TEXMAP_OPENGL_ES_2
 #endif

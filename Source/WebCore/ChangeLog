@@ -1,3 +1,12 @@
+2013-10-02  Andreas Kling  <akling@apple.com>
+
+        Remove Qt from WebCore/platform.
+        <https://webkit.org/b/122228>
+
+        Reviewed by Anders Carlsson.
+
+        Purge PLATFORM(QT) blocks and FooBarQt.* files.
+
 2013-10-02  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 

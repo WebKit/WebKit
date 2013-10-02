@@ -36,13 +36,6 @@
 typedef struct CGColor* CGColorRef;
 #endif
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QColor;
-QT_END_NAMESPACE
-#endif
-
 #if PLATFORM(GTK)
 typedef struct _GdkColor GdkColor;
 #ifndef GTK_API_VERSION_2
@@ -128,11 +121,6 @@ public:
     // This is an implementation of Porter-Duff's "source-over" equation
     Color blend(const Color&) const;
     Color blendWithWhite() const;
-
-#if PLATFORM(QT)
-    Color(const QColor&);
-    operator QColor() const;
-#endif
 
 #if PLATFORM(GTK)
     Color(const GdkColor&);

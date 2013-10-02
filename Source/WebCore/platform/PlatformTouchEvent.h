@@ -26,12 +26,6 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QTouchEvent;
-QT_END_NAMESPACE
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {

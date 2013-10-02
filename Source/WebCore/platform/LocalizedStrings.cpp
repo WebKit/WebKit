@@ -209,14 +209,6 @@ String contextMenuItemTagPaste()
     return WEB_UI_STRING("Paste", "Paste context menu item");
 }
 
-#if PLATFORM(QT)
-String contextMenuItemTagSelectAll()
-{
-    notImplemented();
-    return "Select All";
-}
-#endif
-
 String contextMenuItemTagNoGuessesFound()
 {
     return WEB_UI_STRING("No Guesses Found", "No Guesses Found context menu item");

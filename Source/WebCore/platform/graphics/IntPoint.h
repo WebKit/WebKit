@@ -34,7 +34,7 @@ typedef struct CGPoint CGPoint;
 #endif
 
 
-#if OS(DARWIN) && !PLATFORM(QT)
+#if OS(DARWIN)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
@@ -45,10 +45,6 @@ typedef struct _NSPoint NSPoint;
 #if PLATFORM(WIN)
 typedef struct tagPOINT POINT;
 typedef struct tagPOINTS POINTS;
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QPoint;
-QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _GdkPoint GdkPoint;
 #elif PLATFORM(BLACKBERRY)
@@ -115,7 +111,7 @@ public:
     operator CGPoint() const;
 #endif
 
-#if OS(DARWIN) && !PLATFORM(QT) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if OS(DARWIN) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
     operator NSPoint() const;
 #endif
@@ -125,9 +121,6 @@ public:
     operator POINT() const;
     IntPoint(const POINTS&);
     operator POINTS() const;
-#elif PLATFORM(QT)
-    IntPoint(const QPoint&);
-    operator QPoint() const;
 #elif PLATFORM(GTK)
     IntPoint(const GdkPoint&);
     operator GdkPoint() const;

@@ -113,10 +113,6 @@ protected:
 private:
     GraphicsSurface(const IntSize&, Flags);
 
-#if PLATFORM(QT)
-    static void didReleaseImage(void*);
-#endif
-
 private:
     uint32_t m_fbo;
     GraphicsSurfacePrivate* m_private;

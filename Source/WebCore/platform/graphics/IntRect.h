@@ -43,10 +43,6 @@ typedef struct _NSRect NSRect;
 
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QRect;
-QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
@@ -177,9 +173,6 @@ public:
 #if PLATFORM(WIN)
     IntRect(const RECT&);
     operator RECT() const;
-#elif PLATFORM(QT)
-    IntRect(const QRect&);
-    operator QRect() const;
 #elif PLATFORM(GTK)
 #ifdef GTK_API_VERSION_2
     IntRect(const GdkRectangle&);

@@ -51,8 +51,6 @@ class SimpleFontData;
 typedef cairo_glyph_t GlyphBufferGlyph;
 #elif USE(WINGDI)
 typedef wchar_t GlyphBufferGlyph;
-#elif PLATFORM(QT)
-typedef quint32 GlyphBufferGlyph;
 #elif PLATFORM(BLACKBERRY)
 typedef unsigned GlyphBufferGlyph;
 #else
@@ -72,19 +70,6 @@ public:
     void setWidth(CGFloat width) { this->CGSize::width = width; }
     CGFloat width() const { return this->CGSize::width; }
     CGFloat height() const { return this->CGSize::height; }
-};
-#elif PLATFORM(QT)
-struct GlyphBufferAdvance : public QPointF {
-public:
-    GlyphBufferAdvance() : QPointF() { }
-    GlyphBufferAdvance(const QPointF& advance)
-        : QPointF(advance)
-    {
-    }
-
-    void setWidth(qreal width) { QPointF::setX(width); }
-    qreal width() const { return QPointF::x(); }
-    qreal height() const { return QPointF::y(); }
 };
 #else
 typedef FloatSize GlyphBufferAdvance;
@@ -164,8 +149,6 @@ public:
 #if USE(CG)
         CGSize advance = { width, 0 };
         m_advances.append(advance);
-#elif PLATFORM(QT)
-        m_advances.append(QPointF(width, 0));
 #else
         m_advances.append(FloatSize(width, 0));
 #endif

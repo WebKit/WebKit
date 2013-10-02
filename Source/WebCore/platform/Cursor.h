@@ -40,8 +40,6 @@ typedef HICON HCURSOR;
 #include <wtf/RetainPtr.h>
 #elif PLATFORM(GTK)
 #include "GRefPtrGtk.h"
-#elif PLATFORM(QT)
-#include <QCursor>
 #elif PLATFORM(BLACKBERRY)
 #include <BlackBerryPlatformCursor.h>
 #endif
@@ -56,7 +54,7 @@ typedef HICON HCURSOR;
 #endif
 
 // Looks like it's just PLATFORM(BLACKBERRY) still not using this?
-#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(NIX)
+#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(NIX)
 #define WTF_USE_LAZY_NATIVE_CURSOR 1
 #endif
 
@@ -81,9 +79,6 @@ namespace WebCore {
     typedef GRefPtr<GdkCursor> PlatformCursor;
 #elif PLATFORM(EFL) || PLATFORM(NIX)
     typedef const char* PlatformCursor;
-#elif PLATFORM(QT) && !defined(QT_NO_CURSOR)
-    // Do not need to be shared but need to be created dynamically via ensurePlatformCursor.
-    typedef QCursor* PlatformCursor;
 #elif PLATFORM(BLACKBERRY)
     typedef BlackBerry::Platform::BlackBerryCursor PlatformCursor;
 #else

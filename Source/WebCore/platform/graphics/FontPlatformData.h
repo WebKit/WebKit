@@ -25,8 +25,6 @@
 // FIXME: This is temporary until all ports switch to using this file.
 #if PLATFORM(BLACKBERRY)
 #include "harfbuzz/FontPlatformDataHarfBuzz.h"
-#elif PLATFORM(QT)
-#include "qt/FontPlatformData.h"
 #elif USE(WINGDI)
 #include "wince/FontPlatformData.h"
 #elif PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(NIX)

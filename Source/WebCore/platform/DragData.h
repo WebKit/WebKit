@@ -47,11 +47,6 @@ typedef id DragDataRef;
 typedef void* DragDataRef;
 #endif
 
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QMimeData;
-QT_END_NAMESPACE
-typedef const QMimeData* DragDataRef;
 #elif PLATFORM(WIN)
 typedef struct IDataObject* DragDataRef;
 #include <wtf/text/WTFString.h>
@@ -120,7 +115,7 @@ public:
     const String& pasteboardName() const { return m_pasteboardName; }
 #endif
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     // This constructor should used only by WebKit2 IPC because DragData
     // is initialized by the decoder and not in the constructor.
     DragData() { }

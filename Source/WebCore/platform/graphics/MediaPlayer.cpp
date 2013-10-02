@@ -48,10 +48,6 @@
 #include "HTMLMediaSource.h"
 #endif
 
-#if PLATFORM(QT)
-#include <QtGlobal>
-#endif
-
 #if USE(GSTREAMER)
 #include "MediaPlayerPrivateGStreamer.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
@@ -62,7 +58,7 @@
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
 #endif
-#elif OS(WINCE) && !PLATFORM(QT)
+#elif OS(WINCE)
 #include "MediaPlayerPrivateWinCE.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivate
 #elif PLATFORM(WIN)
@@ -70,11 +66,6 @@
 #define PlatformMediaEngineClassName MediaPlayerPrivateQuickTimeVisualContext
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationCF.h"
-#endif
-#elif PLATFORM(QT)
-#if USE(QT_MULTIMEDIA) && !USE(GSTREAMER)
-#include "MediaPlayerPrivateQt.h"
-#define PlatformMediaEngineClassName MediaPlayerPrivateQt
 #endif
 #elif PLATFORM(BLACKBERRY)
 #include "MediaPlayerPrivateBlackBerry.h"

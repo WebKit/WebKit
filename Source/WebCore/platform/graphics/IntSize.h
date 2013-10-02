@@ -42,11 +42,6 @@ typedef struct _NSSize NSSize;
 
 #if PLATFORM(WIN)
 typedef struct tagSIZE SIZE;
-#elif PLATFORM(QT)
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QSize;
-QT_END_NAMESPACE
 #elif PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -143,11 +138,6 @@ public:
 #if PLATFORM(WIN)
     IntSize(const SIZE&);
     operator SIZE() const;
-#endif
-
-#if PLATFORM(QT)
-    IntSize(const QSize&);
-    operator QSize() const;
 #endif
 
 #if PLATFORM(BLACKBERRY)

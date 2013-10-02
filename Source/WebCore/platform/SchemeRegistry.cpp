@@ -38,9 +38,6 @@ static URLSchemesMap& localURLSchemes()
 #if PLATFORM(MAC)
         localSchemes.add("applewebdata");
 #endif
-#if PLATFORM(QT)
-        localSchemes.add("qrc");
-#endif
     }
 
     return localSchemes;

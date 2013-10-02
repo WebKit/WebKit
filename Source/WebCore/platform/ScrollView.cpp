@@ -1389,7 +1389,7 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePositionAtAl
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(QT) && !PLATFORM(MAC)
+#if !PLATFORM(MAC)
 
 void ScrollView::platformAddChild(Widget*)
 {

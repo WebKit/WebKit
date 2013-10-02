@@ -20,12 +20,7 @@
 #ifndef OpenGLShims_h
 #define OpenGLShims_h
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-#include <qopenglfunctions.h>
-#include <QOpenGLContext>
-#include <QSurface>
-#elif PLATFORM(NIX) && USE(OPENGL_ES_2)
+#if PLATFORM(NIX) && USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #else
 #include <GL/gl.h>

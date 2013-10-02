@@ -26,16 +26,7 @@
 #include "NotImplemented.h"
 #include "TextureMapperGL.h"
 
-#if PLATFORM(QT)
-// Qt headers must be included before glx headers.
-#include <QGuiApplication>
-#include <QOpenGLContext>
-#include <qpa/qplatformnativeinterface.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
-#else
 #include <opengl/GLDefs.h>
-#endif
 
 #include "GLXConfigSelector.h"
 
@@ -77,16 +68,7 @@ struct GraphicsSurfacePrivate {
     {
         GLXContext shareContextObject = 0;
 
-#if PLATFORM(QT)
-        if (shareContext) {
-            QPlatformNativeInterface* nativeInterface = QGuiApplication::platformNativeInterface();
-            shareContextObject = static_cast<GLXContext>(nativeInterface->nativeResourceForContext(QByteArrayLiteral("glxcontext"), shareContext));
-            if (!shareContextObject)
-                return;
-        }
-#else
         UNUSED_PARAM(shareContext);
-#endif
 
         GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::DoubleBuffered |
             GLPlatformSurface::SupportAlpha;
@@ -469,7 +451,6 @@ void GraphicsSurface::platformDestroy()
     m_private = 0;
 }
 
-#if !PLATFORM(QT)
 std::unique_ptr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize&, char*, int)
 {
     notImplemented();
@@ -481,6 +462,5 @@ PassRefPtr<Image> GraphicsSurface::createReadOnlyImage(const IntRect&)
     notImplemented();
     return 0;
 }
-#endif
 }
 #endif

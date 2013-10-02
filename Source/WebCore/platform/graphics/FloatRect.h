@@ -42,12 +42,6 @@ typedef struct _NSRect NSRect;
 #endif
 #endif
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QRectF;
-QT_END_NAMESPACE
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -190,12 +184,6 @@ public:
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     FloatRect(const NSRect&);
     operator NSRect() const;
-#endif
-
-#if PLATFORM(QT)
-    FloatRect(const QRectF&);
-    operator QRectF() const;
-    FloatRect normalized() const;
 #endif
 
 #if USE(CAIRO)

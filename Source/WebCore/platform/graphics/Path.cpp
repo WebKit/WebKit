@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(QT)
 static void pathLengthApplierFunction(void* info, const PathElement* element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
@@ -91,7 +90,6 @@ float Path::normalAngleAtLength(float length, bool& ok) const
     ok = traversalState.m_success;
     return traversalState.m_normalAngle;
 }
-#endif
 
 void Path::addRoundedRect(const RoundedRect& r)
 {
@@ -187,7 +185,7 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
     closeSubpath();
 }
 
-#if !USE(CG) && !PLATFORM(QT)
+#if !USE(CG)
 FloatRect Path::fastBoundingRect() const
 {
     return boundingRect();

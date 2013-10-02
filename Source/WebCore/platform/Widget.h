@@ -36,11 +36,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if PLATFORM(QT)
-#include <QPointer>
-#include <qglobal.h>
-#endif
-
 #if PLATFORM(MAC)
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
@@ -58,13 +53,6 @@ typedef struct _GtkContainer GtkContainer;
 typedef GtkWidget* PlatformWidget;
 #endif
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QObject;
-QT_END_NAMESPACE
-typedef QObject* PlatformWidget;
-#endif
-
 #if PLATFORM(BLACKBERRY) || PLATFORM(NIX)
 typedef void* PlatformWidget;
 #endif
@@ -78,10 +66,7 @@ typedef struct _Evas_Object Evas_Object;
 typedef Evas_Object* PlatformWidget;
 #endif
 
-#if PLATFORM(QT)
-class QWebPageClient;
-typedef QWebPageClient* PlatformPageClient;
-#elif PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY)
 #include "PageClientBlackBerry.h"
 typedef PageClientBlackBerry* PlatformPageClient;
 #elif PLATFORM(EFL)
@@ -212,11 +197,6 @@ public:
     Evas_Object* evasObject() { return m_evasObject; }
 #endif
 
-#if PLATFORM(QT)
-    QObject* bindingObject() const;
-    void setBindingObject(QObject*);
-#endif
-
     // Virtual methods to convert points to/from the containing ScrollView
     virtual IntRect convertToContainingView(const IntRect&) const;
     virtual IntRect convertFromContainingView(const IntRect&) const;
@@ -256,11 +236,6 @@ private:
 #if PLATFORM(EFL)
     Evas_Object* m_evasObject;
 #endif
-
-#if PLATFORM(QT)
-    QPointer<QObject> m_bindingObject;
-#endif
-
 };
 
 #if !PLATFORM(MAC)

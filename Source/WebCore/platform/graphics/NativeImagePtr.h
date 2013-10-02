@@ -30,12 +30,6 @@
 
 #if USE(CG)
 typedef struct CGImage* CGImageRef;
-#elif PLATFORM(QT)
-#include "NativeImageQt.h"
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QPixmap;
-QT_END_NAMESPACE
 #elif USE(CAIRO)
 #include "RefPtrCairo.h"
 #elif USE(WINGDI)
@@ -56,8 +50,6 @@ namespace WebCore {
 // pointers (see SVGImage::nativeImageForCurrentFrame()).
 #if USE(CG)
 typedef CGImageRef NativeImagePtr;
-#elif PLATFORM(QT)
-typedef QPixmap* NativeImagePtr;
 #elif USE(CAIRO)
 typedef RefPtr<cairo_surface_t> NativeImagePtr;
 typedef PassRefPtr<cairo_surface_t> PassNativeImagePtr;
