@@ -1,23 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/helper.js"></script>
 <style>
 body { width: 600px; }
 #footNote { font-size: 13px; }
 </style>
-<script>
-function selectText()
-{
-  var selection = window.getSelection();
-
-  var start = document.getElementById("start");
-  var end = document.getElementById("end");
-
-  selection.setBaseAndExtent(start, 0, end, 0);
-}
-</script>
 </head>
-<body onload="selectText()">
+<body onload="selectBaseAndExtent('start', 0, 'end', 1)">
 <div id="content">
     <h1 style="margin-top: 0px">Selecting text through different CSS-Region flows</h1>
     <div>

@@ -1,5 +1,6 @@
 <html>
 <head>
+    <script src="../resources/helper.js"></script>
     <style>
         #source {
             -webkit-flow-into: content;
@@ -24,19 +25,8 @@
             width: 600px;
         }
     </style>
-    <script>
-        function selectText() {
-            if (window.testRunner) {
-                eventSender.mouseMoveTo(100, 10);
-                eventSender.mouseDown();
-
-                eventSender.mouseMoveTo(100, 110);
-                eventSender.mouseUp();
-            }
-        }
-    </script>
 </head>
-<body onload="selectText();">
+<body onload="selectContentByRange(100, 10, 100, 110);">
     <div id="source">inside region inside region inside region inside region</div>
     <div id="outside">outside region outside region outside region outside region</div>
     <div id="region"></div>

@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
     <head>
+        <script src="../resources/helper.js"></script>
         <style>
             body { font: 20px/1 monospace; margin: 20px; }
             #region { -webkit-flow-from: undefined; width: 100px; height: 100px; border: 10px solid blue; }
@@ -23,10 +24,7 @@
                 var endPositionX = startPositionX + 100;
                 var endPositionY = startPositionY + 100;
 
-                eventSender.mouseMoveTo(startPositionX, startPositionY);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(endPositionX, endPositionY);
-                eventSender.mouseUp();
+                selectContentByRange(startPositionX, startPositionY, endPositionX, endPositionY);
 
                 document.getElementById("result").innerHTML = (selection.toString().length == 0) ? "PASS" : "FAIL";
             }

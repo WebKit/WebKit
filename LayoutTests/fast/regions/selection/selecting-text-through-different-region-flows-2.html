@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/helper.js"></script>
 <style>
 body { width: 600px; }
 
@@ -30,21 +31,7 @@ body { width: 600px; }
 </div>
 
 <script>
-if (window.testRunner) {
-    // We are positioning the mouse to the center of the contentText and start holding the mouse down
-    var start = document.getElementById("start");
-    var xStartPosition = start.offsetLeft + 0;
-    var yStartPosition = start.offsetTop + start.offsetHeight / 2;
-    eventSender.mouseMoveTo(xStartPosition, yStartPosition);
-    eventSender.mouseDown();
-
-    // We are positioning the mouse to the center of the footNote (what is a different region flow) and release the button
-    var end = document.getElementById("end");
-    var xEndPosition = end.offsetLeft + 0;
-    var yEndPosition = end.offsetTop + end.offsetHeight / 2;
-    eventSender.mouseMoveTo(xEndPosition, yEndPosition);
-    eventSender.mouseUp();
-}
+selectContentByIds("start", "end");
 </script>
 </body>
 </html>

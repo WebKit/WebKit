@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/helper.js"></script>
 <style>
 body { width: 600px; }
 
@@ -46,9 +47,7 @@ if (window.testRunner) {
     eventSender.mouseUp();
 
     // We are moving the mouse somewhere else and click to clear the selection
-    eventSender.mouseMoveTo(1, 1);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    mouseClick(1, 1);
 }
 </script>
 </body>

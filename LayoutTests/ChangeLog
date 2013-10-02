@@ -1,3 +1,31 @@
+2013-10-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Helper functions for selection layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=122128
+
+        Reviewed by Alexandru Chiculita.
+
+        Create new common JavaScript methods for CSS Regions layout tests
+        related to selection. Refactored tests in order to use them.
+
+        * fast/regions/resources/helper.js: Added new functions.
+        (selectContentByRange): Select from start to end position.
+        (selectContentByIds): Select from the beginning of the first element to the end
+        of the second one.
+        (selectBaseAndExtent): Select from start to end with given offsets using
+        Selection.setBaseAndExtent() method.
+        (mouseClick): Clicks in a given position.
+        * fast/regions/selection/selecting-text-in-empty-region.html: Refactored
+        test in order to use the new functions.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2-expected.html:
+        Ditto.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2.html:
+        Ditto.
+        * fast/regions/selection/selecting-text-through-different-region-flows.html:
+        Ditto.
+        * fast/regions/selection/selection-direction-expected.html: Ditto.
+        * fast/regions/selection/selection-direction.html: Ditto.
+
 2013-10-02  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css-shapes] shape-outside does not properly handle the container and the float having different writing modes
