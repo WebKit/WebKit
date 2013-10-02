@@ -156,15 +156,28 @@ BuildbotQueue.prototype = {
                 this._knownIterations[iteration.id] = iteration;
             }
 
-            function sortIterationsById(a, b)
-            {
-                return b.id > a.id;
-            }
-
-            this.iterations.sort(sortIterationsById);
+            this.sortIterations();
 
             if (newIterations.length)
                 this.dispatchEventToListeners(BuildbotQueue.Event.IterationsAdded, {addedIterations: newIterations});
         }.bind(this));
+    },
+
+    sortIterations: function()
+    {
+        function compareIterations(a, b)
+        {
+            var result = b.openSourceRevision - a.openSourceRevision;
+            if (result)
+                return result;
+
+            result = b.internalRevision - a.internalRevision;
+            if (result)
+                return result;
+
+            return b.id - a.id;
+        }
+
+        this.iterations.sort(compareIterations);
     }
 };

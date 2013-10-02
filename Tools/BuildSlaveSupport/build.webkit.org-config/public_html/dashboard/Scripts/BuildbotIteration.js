@@ -35,6 +35,9 @@ BuildbotIteration = function(queue, id, finished)
 
     this.loaded = false;
 
+    this.openSourceRevision = null;
+    this.internalRevision = null;
+
     this.layoutTestResults = null;
     this.javascriptTestResults = null;
     this.pythonTestResults = null;
@@ -173,6 +176,9 @@ BuildbotIteration.prototype = {
 
             if (!data.currentStep)
                 this.finished = true;
+
+            // Update the sorting since it is based on the revisions we just loaded.
+            this.queue.sortIterations();
 
             this.dispatchEventToListeners(BuildbotIteration.Event.Updated);
         }.bind(this));
