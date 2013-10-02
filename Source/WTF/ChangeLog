@@ -1,3 +1,15 @@
+2013-10-02  Nadav Rotem  <nrotem@apple.com>
+
+        Eliminate a branch in FastBitVector setAndCheck, make it vectorizable.
+        https://bugs.webkit.org/show_bug.cgi?id=122229
+
+        Reviewed by Geoffrey Garen.
+
+        The CPU is unlikely to predict the branch in setAndCheck. I changed the code to use conditional instructions.
+
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::setAndCheck):
+
 2013-10-02  Anders Carlsson  <andersca@apple.com>
 
         Remove Qt code from WTF
