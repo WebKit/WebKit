@@ -1527,7 +1527,7 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
             continue;
 #if ENABLE(CSS_VARIABLES)
         if (property.id() == CSSPropertyVariable) {
-            const AtomicString& name = static_cast<CSSVariableValue*>(property.value())->name();
+            const AtomicString& name = toCSSVariableValue(property.value())->name();
             if (seenVariables.contains(name))
                 continue;
             seenVariables.add(name);
@@ -3193,7 +3193,7 @@ void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 {
     if (lval) {
         if (lval->isBaseValueList())
-            static_cast<CSSValueList*>(lval.get())->append(rval);
+            toCSSValueList(lval.get())->append(rval);
         else {
             PassRefPtr<CSSValue> oldlVal(lval.release());
             PassRefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
@@ -3401,7 +3401,7 @@ void CSSParser::addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> r
 {
     if (lval) {
         if (lval->isValueList())
-            static_cast<CSSValueList*>(lval.get())->append(rval);
+            toCSSValueList(lval.get())->append(rval);
         else {
             PassRefPtr<CSSValue> oldVal(lval.release());
             PassRefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
@@ -11663,7 +11663,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createFontFaceRule()
         CSSProperty& property = m_parsedProperties[i];
         if (property.id() == CSSPropertyFontVariant && property.value()->isPrimitiveValue())
             property.wrapValueInCommaSeparatedList();
-        else if (property.id() == CSSPropertyFontFamily && (!property.value()->isValueList() || static_cast<CSSValueList*>(property.value())->length() != 1)) {
+        else if (property.id() == CSSPropertyFontFamily && (!property.value()->isValueList() || toCSSValueList(property.value())->length() != 1)) {
             // Unlike font-family property, font-family descriptor in @font-face rule
             // has to be a value list with exactly one family name. It cannot have a
             // have 'initial' value and cannot 'inherit' from parent.

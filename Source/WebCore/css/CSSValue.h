@@ -74,7 +74,9 @@ public:
     bool isCanvasValue() const { return m_classType == CanvasClass; }
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
+    bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
+    bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
     bool isGradientValue() const { return m_classType >= LinearGradientClass && m_classType <= RadialGradientClass; }

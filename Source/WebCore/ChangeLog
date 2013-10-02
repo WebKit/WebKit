@@ -1,3 +1,74 @@
+2013-10-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toCSSFooValue for CSS child values
+        https://bugs.webkit.org/show_bug.cgi?id=122157
+
+        Reviewed by Darin Adler.
+
+        As a step to cleanup static_cast<> for CSSFooValue, this patch adds toCSSFooValue()
+        for "CSSAspectRatioValue, CSSBorderImageSliceValue, CSSFunctionValue, CSSInheritedValue,
+        CSSValueList, CSSVariableValue, and CSSFontFaceSrcValue".
+
+        To use CSS_VALUE_TYPE_CASTS, isFunctionValue(), isFontFaceSrcValue() are added to
+        generate toCSSFunctionValue, toCSSFontFaceSrcValue().
+
+        No new tests, no behavior changes.
+
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSFunctionValue.h:
+        * css/CSSInheritedValue.h:
+        * css/CSSParser.cpp:
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::addFillValue):
+        (WebCore::CSSParser::addAnimationValue):
+        (WebCore::CSSParser::createFontFaceRule):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::wrapValueInCommaSeparatedList):
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapNinePieceImage):
+        (WebCore::CSSToStyleMap::mapNinePieceImageSlice):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFunctionValue):
+        (WebCore::CSSValue::isFontFaceSrcValue):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueListInspector::CSSValueListInspector):
+        * css/CSSVariableValue.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFillLayer::applyValue):
+        (WebCore::ApplyPropertyFontVariantLigatures::applyValue):
+        (WebCore::ApplyPropertyCounter::applyValue):
+        (WebCore::ApplyPropertyCursor::applyValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::ApplyPropertyAspectRatio::applyValue):
+        (WebCore::ApplyPropertyImageResolution::applyValue):
+        (WebCore::ApplyPropertyTextIndent::applyValue):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::compareAspectRatioValue):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridPosition):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::parseCustomFilterParameter):
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLTextDecorationEquivalent::valueIsPresentInStyle):
+        (WebCore::EditingStyle::mergeStyle):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::diffTextDecorations):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeToggleStyleInList):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+
 2013-10-01  Sam Weinig  <sam@webkit.org>
 
         Convert PageGroup to using std::unique_ptr

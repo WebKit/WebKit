@@ -557,7 +557,7 @@ public:
 #endif
         ) {
             /* Walk each value and put it into a layer, creating new layers as needed. */
-            CSSValueList* valueList = static_cast<CSSValueList*>(value);
+            CSSValueList* valueList = toCSSValueList(value);
             for (unsigned int i = 0; i < valueList->length(); i++) {
                 if (!currChild) {
                     /* Need to make a new layer to hold this value */
@@ -955,7 +955,7 @@ public:
         FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
 
         if (value->isValueList()) {
-            CSSValueList* valueList = static_cast<CSSValueList*>(value);
+            CSSValueList* valueList = toCSSValueList(value);
             for (size_t i = 0; i < valueList->length(); ++i) {
                 CSSValue* item = valueList->itemWithoutBoundsCheck(i);
                 ASSERT(item->isPrimitiveValue());
@@ -1155,7 +1155,7 @@ public:
         if (setCounterIncrementToNone)
             return;
         
-        CSSValueList* list = static_cast<CSSValueList*>(value);
+        CSSValueList* list = toCSSValueList(value);
         int length = list ? list->length() : 0;
         for (int i = 0; i < length; ++i) {
             CSSValue* currValue = list->itemWithoutBoundsCheck(i);
@@ -1198,7 +1198,7 @@ public:
     {
         styleResolver->style()->clearCursorList();
         if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
+            CSSValueList* list = toCSSValueList(value);
             int len = list->length();
             styleResolver->style()->setCursor(CURSOR_AUTO);
             for (int i = 0; i < len; i++) {
@@ -1650,7 +1650,7 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
+            CSSValueList* list = toCSSValueList(value);
             ASSERT(list->length() == 2);
             if (list->length() != 2)
                 return;
@@ -1869,7 +1869,7 @@ public:
             styleResolver->style()->setHasAspectRatio(false);
             return;
         }
-        CSSAspectRatioValue* aspectRatioValue = static_cast<CSSAspectRatioValue*>(value);
+        CSSAspectRatioValue* aspectRatioValue = toCSSAspectRatioValue(value);
         styleResolver->style()->setHasAspectRatio(true);
         styleResolver->style()->setAspectRatioDenominator(aspectRatioValue->denominatorValue());
         styleResolver->style()->setAspectRatioNumerator(aspectRatioValue->numeratorValue());
@@ -2063,7 +2063,7 @@ public:
     {
         if (!value->isValueList())
             return;
-        CSSValueList* valueList = static_cast<CSSValueList*>(value);
+        CSSValueList* valueList = toCSSValueList(value);
         ImageResolutionSource source = RenderStyle::initialImageResolutionSource();
         ImageResolutionSnap snap = RenderStyle::initialImageResolutionSnap();
         double resolution = RenderStyle::initialImageResolution();
@@ -2121,7 +2121,7 @@ public:
         TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
         TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
 #endif
-        CSSValueList* valueList = static_cast<CSSValueList*>(value);
+        CSSValueList* valueList = toCSSValueList(value);
         for (size_t i = 0; i < valueList->length(); ++i) {
             CSSValue* item = valueList->itemWithoutBoundsCheck(i);
             if (!item->isPrimitiveValue())

@@ -383,10 +383,10 @@ void CSSValue::destroy()
 
     switch (classType()) {
     case AspectRatioClass:
-        delete static_cast<CSSAspectRatioValue*>(this);
+        delete toCSSAspectRatioValue(this);
         return;
     case BorderImageSliceClass:
-        delete static_cast<CSSBorderImageSliceValue*>(this);
+        delete toCSSBorderImageSliceValue(this);
         return;
     case CanvasClass:
         delete toCSSCanvasValue(this);
@@ -398,13 +398,13 @@ void CSSValue::destroy()
         delete static_cast<FontValue*>(this);
         return;
     case FontFaceSrcClass:
-        delete static_cast<CSSFontFaceSrcValue*>(this);
+        delete toCSSFontFaceSrcValue(this);
         return;
     case FontFeatureClass:
         delete static_cast<FontFeatureValue*>(this);
         return;
     case FunctionClass:
-        delete static_cast<CSSFunctionValue*>(this);
+        delete toCSSFunctionValue(this);
         return;
     case LinearGradientClass:
         delete toCSSLinearGradientValue(this);
@@ -419,7 +419,7 @@ void CSSValue::destroy()
         delete toCSSImageValue(this);
         return;
     case InheritedClass:
-        delete static_cast<CSSInheritedValue*>(this);
+        delete toCSSInheritedValue(this);
         return;
     case InitialClass:
         delete toCSSInitialValue(this);
@@ -443,7 +443,7 @@ void CSSValue::destroy()
         delete static_cast<CSSUnicodeRangeValue*>(this);
         return;
     case ValueListClass:
-        delete static_cast<CSSValueList*>(this);
+        delete toCSSValueList(this);
         return;
     case WebKitCSSTransformClass:
         delete toWebKitCSSTransformValue(this);
@@ -483,7 +483,7 @@ void CSSValue::destroy()
 #endif
 #if ENABLE(CSS_VARIABLES)
     case VariableClass:
-        delete static_cast<CSSVariableValue*>(this);
+        delete toCSSVariableValue(this);
         return;
 #endif
 #if ENABLE(SVG)

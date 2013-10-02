@@ -253,11 +253,11 @@ void SVGFontFaceElement::rebuildFontFace()
     if (describesParentFont) {    
         // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
         RefPtr<CSSValue> src = m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc);
-        CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
+        CSSValueList* srcList = toCSSValueList(src.get());
 
         unsigned srcLength = srcList ? srcList->length() : 0;
         for (unsigned i = 0; i < srcLength; i++) {
-            if (CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->itemWithoutBoundsCheck(i)))
+            if (CSSFontFaceSrcValue* item = toCSSFontFaceSrcValue(srcList->itemWithoutBoundsCheck(i)))
                 item->setSVGFontFaceElement(this);
         }
     }

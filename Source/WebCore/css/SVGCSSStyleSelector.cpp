@@ -276,7 +276,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 break;
             }
 
-            CSSValueList* dashes = static_cast<CSSValueList*>(value);
+            CSSValueList* dashes = toCSSValueList(value);
 
             Vector<SVGLength> array;
             size_t length = dashes->length();
@@ -557,7 +557,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             if (!value->isValueList())
                 return;
 
-            CSSValueList *list = static_cast<CSSValueList*>(value);
+            CSSValueList* list = toCSSValueList(value);
             if (!list->length())
                 return;
 

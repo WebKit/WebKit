@@ -1982,8 +1982,7 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
         return true;
     }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(value->isValueList());
-    CSSValueList* values = static_cast<CSSValueList*>(value);
+    CSSValueList* values = toCSSValueList(value);
     ASSERT(values->length());
 
     bool isSpanPosition = false;
@@ -2100,8 +2099,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
 #if ENABLE(CSS_VARIABLES)
     if (id == CSSPropertyVariable) {
-        ASSERT_WITH_SECURITY_IMPLICATION(value->isVariableValue());
-        CSSVariableValue* variable = static_cast<CSSVariableValue*>(value);
+        CSSVariableValue* variable = toCSSVariableValue(value);
         ASSERT(!variable->name().isEmpty());
         ASSERT(!variable->value().isEmpty());
         state.style()->setVariable(variable->name(), variable->value());
@@ -2232,7 +2230,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             return;
         }
         if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
+            CSSValueList* list = toCSSValueList(value);
             Vector<std::pair<String, String> > quotes;
             for (size_t i = 0; i < list->length(); i += 2) {
                 CSSValue* first = list->itemWithoutBoundsCheck(i);
@@ -2701,7 +2699,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             return;
 
         FontDescription fontDescription = state.style()->fontDescription();
-        CSSValueList* list = static_cast<CSSValueList*>(value);
+        CSSValueList* list = toCSSValueList(value);
         RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
         int len = list->length();
         for (int i = 0; i < len; ++i) {
@@ -3526,7 +3524,7 @@ PassRefPtr<CustomFilterParameter> StyleResolver::parseCustomFilterParameter(cons
     if (!parameterValue->isValueList())
         return 0;
 
-    CSSValueList* values = static_cast<CSSValueList*>(parameterValue);
+    CSSValueList* values = toCSSValueList(parameterValue);
     if (!values->length())
         return 0;
 
@@ -3606,7 +3604,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
 {
     CSSValue* shadersValue = filterValue->itemWithoutBoundsCheck(0);
     ASSERT_WITH_SECURITY_IMPLICATION(shadersValue->isValueList());
-    CSSValueList* shadersList = static_cast<CSSValueList*>(shadersValue);
+    CSSValueList* shadersList = toCSSValueList(shadersValue);
 
     unsigned shadersListLength = shadersList->length();
     ASSERT(shadersListLength);

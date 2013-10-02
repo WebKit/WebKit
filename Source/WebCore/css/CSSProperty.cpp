@@ -54,7 +54,7 @@ void CSSProperty::wrapValueInCommaSeparatedList()
 {
     RefPtr<CSSValue> value = m_value.release();
     m_value = CSSValueList::createCommaSeparated();
-    static_cast<CSSValueList*>(m_value.get())->append(value.release());
+    toCSSValueList(m_value.get())->append(value.release());
 }
 
 enum LogicalBoxSide { BeforeSide, EndSide, AfterSide, StartSide };

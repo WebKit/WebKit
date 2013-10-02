@@ -44,6 +44,8 @@ private:
     }
 };
 
+CSS_VALUE_TYPE_CASTS(InheritedValue)
+
 } // namespace WebCore
 
 #endif // CSSInheritedValue_h

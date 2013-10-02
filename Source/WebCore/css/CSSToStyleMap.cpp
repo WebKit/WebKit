@@ -538,7 +538,7 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
         return;
 
     // Retrieve the border image value.
-    CSSValueList* borderImage = static_cast<CSSValueList*>(value);
+    CSSValueList* borderImage = toCSSValueList(value);
 
     // Set the image (this kicks off the load).
     CSSPropertyID imageProperty;
@@ -561,7 +561,7 @@ void CSSToStyleMap::mapNinePieceImage(CSSPropertyID property, CSSValue* value, N
         else if (current->isBorderImageSliceValue())
             mapNinePieceImageSlice(current, image);
         else if (current->isValueList()) {
-            CSSValueList* slashList = static_cast<CSSValueList*>(current);
+            CSSValueList* slashList = toCSSValueList(current);
             // Map in the image slices.
             if (slashList->item(0) && slashList->item(0)->isBorderImageSliceValue())
                 mapNinePieceImageSlice(slashList->item(0), image);
@@ -600,7 +600,7 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSValue* value, NinePieceImage& imag
         return;
 
     // Retrieve the border image value.
-    CSSBorderImageSliceValue* borderImageSlice = static_cast<CSSBorderImageSliceValue*>(value);
+    CSSBorderImageSliceValue* borderImageSlice = toCSSBorderImageSliceValue(value);
 
     // Set up a length box to represent our image slices.
     LengthBox box;

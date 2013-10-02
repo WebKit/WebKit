@@ -366,10 +366,9 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
     for (unsigned i = 0; i < size; ++i) {
         values[i] = getPropertyCSSValue(shorthand.properties()[i]);
         if (values[i]) {
-            if (values[i]->isBaseValueList()) {
-                CSSValueList* valueList = static_cast<CSSValueList*>(values[i].get());
-                numLayers = max(valueList->length(), numLayers);
-            } else
+            if (values[i]->isBaseValueList())
+                numLayers = max(toCSSValueList(values[i].get())->length(), numLayers);
+            else
                 numLayers = max<size_t>(1U, numLayers);
         }
     }
@@ -389,7 +388,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
             RefPtr<CSSValue> value;
             if (values[j]) {
                 if (values[j]->isBaseValueList())
-                    value = static_cast<CSSValueList*>(values[j].get())->item(i);
+                    value = toCSSValueList(values[j].get())->item(i);
                 else {
                     value = values[j];
 
@@ -414,7 +413,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
                     if (nextValue->isValueList())
-                        yValue = static_cast<CSSValueList*>(nextValue.get())->itemWithoutBoundsCheck(i);
+                        yValue = toCSSValueList(nextValue.get())->itemWithoutBoundsCheck(i);
                     else
                         yValue = nextValue;
 

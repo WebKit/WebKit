@@ -99,15 +99,15 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
     if (!fontFamily || !src || !fontFamily->isValueList() || !src->isValueList() || (unicodeRange && !unicodeRange->isValueList()))
         return;
 
-    CSSValueList* familyList = static_cast<CSSValueList*>(fontFamily.get());
+    CSSValueList* familyList = toCSSValueList(fontFamily.get());
     if (!familyList->length())
         return;
 
-    CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
+    CSSValueList* srcList = toCSSValueList(src.get());
     if (!srcList->length())
         return;
 
-    CSSValueList* rangeList = static_cast<CSSValueList*>(unicodeRange.get());
+    CSSValueList* rangeList = toCSSValueList(unicodeRange.get());
 
     unsigned traitsMask = 0;
 
@@ -178,7 +178,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
         } else if (!fontVariant->isValueList())
             return;
 
-        CSSValueList* variantList = static_cast<CSSValueList*>(fontVariant.get());
+        CSSValueList* variantList = toCSSValueList(fontVariant.get());
         unsigned numVariants = variantList->length();
         if (!numVariants)
             return;
@@ -207,7 +207,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
 
     for (int i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->itemWithoutBoundsCheck(i));
+        CSSFontFaceSrcValue* item = toCSSFontFaceSrcValue(srcList->itemWithoutBoundsCheck(i));
         OwnPtr<CSSFontFaceSource> source;
 
 #if ENABLE(SVG_FONTS)

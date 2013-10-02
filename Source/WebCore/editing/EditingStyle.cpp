@@ -238,7 +238,7 @@ bool HTMLTextDecorationEquivalent::valueIsPresentInStyle(Element* element, Style
     RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     if (!styleValue)
         styleValue = style->getPropertyCSSValue(CSSPropertyTextDecoration);
-    return matches(element) && styleValue && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(m_primitiveValue.get());
+    return matches(element) && styleValue && styleValue->isValueList() && toCSSValueList(styleValue.get())->hasValue(m_primitiveValue.get());
 }
 
 class HTMLAttributeEquivalent : public HTMLElementEquivalent {
@@ -1092,7 +1092,7 @@ void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverride
         // text decorations never override values
         if ((property.id() == CSSPropertyTextDecoration || property.id() == CSSPropertyWebkitTextDecorationsInEffect) && property.value()->isValueList() && value) {
             if (value->isValueList()) {
-                mergeTextDecorationValues(static_cast<CSSValueList*>(value.get()), static_cast<CSSValueList*>(property.value()));
+                mergeTextDecorationValues(toCSSValueList(value.get()), toCSSValueList(property.value()));
                 continue;
             }
             value = 0; // text-decoration: none is equivalent to not having the property
@@ -1432,7 +1432,7 @@ void StyleChange::extractTextStyles(Document* document, MutableStylePropertySet*
         RefPtr<CSSPrimitiveValue> underline = cssValuePool().createIdentifierValue(CSSValueUnderline);
         RefPtr<CSSPrimitiveValue> lineThrough = cssValuePool().createIdentifierValue(CSSValueLineThrough);
 
-        RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
+        RefPtr<CSSValueList> newTextDecoration = toCSSValueList(textDecoration.get())->copy();
         if (newTextDecoration->removeAll(underline.get()))
             m_applyUnderline = true;
         if (newTextDecoration->removeAll(lineThrough.get()))
@@ -1481,8 +1481,8 @@ static void diffTextDecorations(MutableStylePropertySet* style, CSSPropertyID pr
     if (!textDecoration || !textDecoration->isValueList() || !refTextDecoration || !refTextDecoration->isValueList())
         return;
 
-    RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
-    CSSValueList* valuesInRefTextDecoration = static_cast<CSSValueList*>(refTextDecoration);
+    RefPtr<CSSValueList> newTextDecoration = toCSSValueList(textDecoration.get())->copy();
+    CSSValueList* valuesInRefTextDecoration = toCSSValueList(refTextDecoration);
 
     for (size_t i = 0; i < valuesInRefTextDecoration->length(); i++)
         newTextDecoration->removeAll(valuesInRefTextDecoration->item(i));

@@ -182,7 +182,7 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
 static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)
 {
     if (value->isAspectRatioValue()) {
-        CSSAspectRatioValue* aspectRatio = static_cast<CSSAspectRatioValue*>(value);
+        CSSAspectRatioValue* aspectRatio = toCSSAspectRatioValue(value);
         return compareValue(width * static_cast<int>(aspectRatio->denominatorValue()), height * static_cast<int>(aspectRatio->numeratorValue()), op);
     }
 

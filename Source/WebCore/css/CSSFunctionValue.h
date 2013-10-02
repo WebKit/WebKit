@@ -57,6 +57,8 @@ private:
     RefPtr<CSSValueList> m_args;
 };
 
+CSS_VALUE_TYPE_CASTS(FunctionValue)
+
 }
 #endif
 
