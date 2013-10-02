@@ -86,6 +86,14 @@ PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSelectElement(tagName, document, form));
 }
 
+void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)
+{
+    // Even though the options didn't necessarily change, we will call setOptionsChangedOnRenderer for its side effect
+    // of recomputing the width of the element. We need to do that if the style change included a change in zoom level.
+    setOptionsChangedOnRenderer();
+    HTMLFormControlElement::didRecalcStyle(styleChange);
+}
+
 const AtomicString& HTMLSelectElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, selectMultiple, ("select-multiple", AtomicString::ConstructFromLiteral));

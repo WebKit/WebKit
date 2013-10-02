@@ -137,7 +137,9 @@ private:
     virtual void defaultEventHandler(Event*);
 
     void dispatchChangeEventForMenuList();
-    
+
+    virtual void didRecalcStyle(Style::Change) OVERRIDE FINAL;
+
     void recalcListItems(bool updateSelectedStates = true) const;
 
     void deselectItems(HTMLOptionElement* excludeElement = 0);

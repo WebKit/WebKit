@@ -1,0 +1,34 @@
+<html>
+<head>
+	<script>
+	    if (window.testRunner)
+		testRunner.dumpAsText()
+
+	    function runTest() {
+		document.getElementById('toZoom').style.zoom = 2;
+
+		// Comparing the result to the expectation.
+		var expectedWidth = 55;
+		var realWidth = window.getComputedStyle(document.getElementById("toZoom")).getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+		var result = "";
+		if (Math.abs(expectedWidth - realWidth) > 10)
+		    result = "FAIL";
+		else
+		    result = "PASS";
+		result += " expected width: " + expectedWidth + " width +/-10 allowance.";
+		document.getElementById('result').innerHTML = result;
+	    }
+	</script>
+</head>
+
+<body onload="runTest()">
+
+<select id="toZoom" MULTIPLE>
+	<option value="first">first
+	<option value="second">second
+</select>
+
+<div>The test passes if both dimensions (not only height) of the listbox is resized according to the zoom.</div>
+<div id="result"/>
+</body>
+</html>

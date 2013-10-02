@@ -1,3 +1,15 @@
+2013-10-02  Renata Hodovan  <reni@webkit.org>
+
+        HTML listbox is not resized horizontally when zooming
+        https://bugs.webkit.org/show_bug.cgi?id=20445
+
+        Reviewed by Darin Adler.
+
+        A test with a zoomed listbox is added to check whether the styleChange is catched.
+
+        * fast/transforms/listbox-zoom.html: Added.
+        * fast/transforms/listbox-zoom-expected.txt: Added.
+
 2013-10-01  Santosh Mahto  <santosh.ma@samsung.com>
 
         contenteditable justify commands applied to next paragraph as well
