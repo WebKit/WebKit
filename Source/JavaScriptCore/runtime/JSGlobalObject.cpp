@@ -32,6 +32,8 @@
 
 #include "Arguments.h"
 #include "ArrayConstructor.h"
+#include "ArrayIteratorConstructor.h"
+#include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
@@ -53,6 +55,7 @@
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
 #include "JSArrayBufferPrototype.h"
+#include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
@@ -382,7 +385,12 @@ void JSGlobalObject::reset(JSValue prototype)
     FOR_EACH_SIMPLE_BUILTIN_TYPE(PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE)
 
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
-
+    PrototypeMap& prototypeMap = vm.prototypeMap;
+    Structure* iteratorResultStructure = prototypeMap.emptyObjectStructureForPrototype(m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity());
+    PropertyOffset offset;
+    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, 0, offset);
+    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->value, 0, 0, offset);
+    m_iteratorResultStructure.set(vm, this, iteratorResultStructure);
 
     m_evalFunction.set(vm, this, JSFunction::create(vm, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
     putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), DontEnum);

@@ -1,3 +1,18 @@
+2013-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Implement Array key, value and entries iterators
+        https://bugs.webkit.org/show_bug.cgi?id=122195
+
+        Reviewed by Filip Pizlo.
+
+        Add tests
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/array-iterators-expected.txt: Added.
+        * js/array-iterators.html: Added.
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/array-iterators.js: Added.
+
 2013-09-25  Oliver Hunt  <oliver@apple.com>
 
         Implement prefixed-destructuring assignment

@@ -1,3 +1,53 @@
+2013-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Implement Array key, value and entries iterators
+        https://bugs.webkit.org/show_bug.cgi?id=122195
+
+        Reviewed by Filip Pizlo.
+
+        Add implementation of ES6 Array iterators for keys(), values() and entries()
+
+        Fairly self explanatory as we just need a simple implementation so that we can
+        implement and test other features.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ArrayIteratorConstructor.cpp: Added.
+        (JSC::ArrayIteratorConstructor::finishCreation):
+        * runtime/ArrayIteratorConstructor.h: Added.
+        (JSC::ArrayIteratorConstructor::create):
+        (JSC::ArrayIteratorConstructor::createStructure):
+        (JSC::ArrayIteratorConstructor::ArrayIteratorConstructor):
+        * runtime/ArrayIteratorPrototype.cpp: Added.
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::createIteratorResult):
+        (JSC::arrayIteratorPrototypeNext):
+        * runtime/ArrayIteratorPrototype.h: Added.
+        (JSC::ArrayIteratorPrototype::create):
+        (JSC::ArrayIteratorPrototype::createStructure):
+        (JSC::ArrayIteratorPrototype::ArrayIteratorPrototype):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncValues):
+        (JSC::arrayProtoFuncEntries):
+        (JSC::arrayProtoFuncKeys):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Identifier.h:
+        (JSC::Identifier::createEmptyUnique):
+        * runtime/JSArrayIterator.cpp: Added.
+        (JSC::JSArrayIterator::finishCreation):
+        * runtime/JSArrayIterator.h: Added.
+        (JSC::JSArrayIterator::createStructure):
+        (JSC::JSArrayIterator::create):
+        (JSC::JSArrayIterator::iterationKind):
+        (JSC::JSArrayIterator::iteratedObject):
+        (JSC::JSArrayIterator::nextIndex):
+        (JSC::JSArrayIterator::setNextIndex):
+        (JSC::JSArrayIterator::finish):
+        (JSC::JSArrayIterator::JSArrayIterator):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::iteratorResultStructure):
+
 2013-10-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         get_callee and to_this aren't properly cleared during finalizeUnconditionally

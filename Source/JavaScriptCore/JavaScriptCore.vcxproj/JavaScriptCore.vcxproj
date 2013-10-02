@@ -425,6 +425,8 @@
     <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
+    <ClInclude Include="..\runtime\ArrayIteratorConstructor.cpp" />
+    <ClInclude Include="..\runtime\ArrayIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayPrototype.cpp" />
     <ClCompile Include="..\runtime\BooleanConstructor.cpp" />
     <ClCompile Include="..\runtime\BooleanObject.cpp" />
@@ -460,6 +462,7 @@
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
     <ClCompile Include="..\runtime\JSActivation.cpp" />
     <ClCompile Include="..\runtime\JSArray.cpp" />
+    <ClCompile Include="..\runtime\JSArrayIterator.cpp" />
     <ClCompile Include="..\runtime\JSArrayBuffer.cpp" />
     <ClCompile Include="..\runtime\JSArrayBufferConstructor.cpp" />
     <ClCompile Include="..\runtime\JSArrayBufferPrototype.cpp" />
@@ -840,6 +843,8 @@
     <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />
     <ClInclude Include="..\runtime\ArrayConventions.h" />
+    <ClInclude Include="..\runtime\ArrayIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\ArrayIteratorPrototype.h" />
     <ClInclude Include="..\runtime\ArrayPrototype.h" />
     <ClInclude Include="..\runtime\ArrayStorage.h" />
     <ClInclude Include="..\runtime\BatchedTransitionOptimizer.h" />
@@ -898,6 +903,7 @@
     <ClInclude Include="..\runtime\JSArrayBufferPrototype.h" />
     <ClInclude Include="..\runtime\JSArrayBufferView.h" />
     <ClInclude Include="..\runtime\JSArrayBufferViewInlines.h" />
+    <ClCompile Include="..\runtime\JSArrayIterator.h" />
     <ClInclude Include="..\runtime\JSBoundFunction.h" />
     <ClInclude Include="..\runtime\JSCJSValue.h" />
     <ClInclude Include="..\runtime\JSCJSValueInlines.h" />

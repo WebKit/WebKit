@@ -748,6 +748,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ArrayConstructor.cpp \
 	Source/JavaScriptCore/runtime/ArrayConstructor.h \
 	Source/JavaScriptCore/runtime/ArrayConventions.h \
+	Source/JavaScriptCore/runtime/ArrayIteratorConstructor.cpp \
+    Source/JavaScriptCore/runtime/ArrayIteratorConstructor.h \
+    Source/JavaScriptCore/runtime/ArrayIteratorPrototype.cpp \
+    Source/JavaScriptCore/runtime/ArrayIteratorPrototype.h \
 	Source/JavaScriptCore/runtime/ArrayPrototype.cpp \
 	Source/JavaScriptCore/runtime/ArrayPrototype.h \
 	Source/JavaScriptCore/runtime/ArrayStorage.h \
@@ -853,6 +857,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSArrayBufferView.cpp \
 	Source/JavaScriptCore/runtime/JSArrayBufferView.h \
 	Source/JavaScriptCore/runtime/JSArrayBufferViewInlines.h \
+	Source/JavaScriptCore/runtime/JSArrayIterator.cpp \
+    Source/JavaScriptCore/runtime/JSArrayIterator.h \
 	Source/JavaScriptCore/runtime/JSCell.cpp \
 	Source/JavaScriptCore/runtime/JSCell.h \
 	Source/JavaScriptCore/runtime/JSDataView.cpp \

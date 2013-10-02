@@ -81,6 +81,7 @@ struct HashTable;
     macro(Error, error, error, ErrorInstance, Error) \
     macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer) \
     macro(WeakMap, weakMap, weakMap, JSWeakMap, WeakMap) \
+    macro(ArrayIterator, arrayIterator, arrayIterator, JSArrayIterator, ArrayIterator) \
 
 #define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     class JS ## capitalName; \
@@ -194,6 +195,8 @@ protected:
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     WriteBarrier<Structure> m_regExpStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
+    
+    WriteBarrier<Structure> m_iteratorResultStructure;
 
 #if ENABLE(PROMISES)
     WriteBarrier<Structure> m_promiseStructure;
@@ -402,6 +405,7 @@ public:
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+    Structure* iteratorResultStructure() const { return m_iteratorResultStructure.get(); }
 
 #if ENABLE(PROMISES)
     Structure* promiseStructure() const { return m_promiseStructure.get(); }
