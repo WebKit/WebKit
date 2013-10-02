@@ -1,3 +1,15 @@
+2013-10-02  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        Remove Qt bots and EWS from trunk.
+        https://bugs.webkit.org/show_bug.cgi?id=122210.
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Remove Qt EWS bots.
+
+        * QueueStatusServer/config/queues.py:
+        * Scripts/webkitpy/common/config/ews.json:
+
 2013-10-01  Timothy Hatcher  <timothy@apple.com>
 
         Fix singular labels for test failures.

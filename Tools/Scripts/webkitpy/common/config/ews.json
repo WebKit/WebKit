@@ -23,18 +23,6 @@
             "gyuyoung.kim@webkit.org"
         ]
     },
-    "Qt EWS": {
-        "port": "qt",
-        "watchers": [
-            "webkit-ews@sed.inf.u-szeged.hu"
-        ]
-    },
-    "Qt WK2 EWS": {
-        "port": "qt-wk2",
-        "watchers": [
-            "webkit-ews@sed.inf.u-szeged.hu"
-        ]
-    },
     "Win EWS": {
         "port": "win"
     },

@@ -30,8 +30,6 @@
 all_queue_names = [
     "commit-queue",
     "style-queue",
-    "qt-ews",
-    "qt-wk2-ews",
     "gtk-ews",
     "gtk-wk2-ews",
     "mac-ews",
