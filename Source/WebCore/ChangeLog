@@ -1,3 +1,19 @@
+2013-10-02  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css-shapes] shape-outside does not properly handle the container and the float having different writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=122243
+
+        Reviewed by Alexandru Chiculita.
+
+        The margin box offset needs to be computed based on the writing mode
+        of the container, not the writihg mode of the float itself. This
+        patch makes that happen.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes.html
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+
 2013-10-02  Andreas Kling  <akling@apple.com>
 
         Remove Qt-specific code in WebCore/{bindings,bridge,loader,icon,testing}.

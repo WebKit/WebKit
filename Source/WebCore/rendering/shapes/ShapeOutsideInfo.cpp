@@ -67,14 +67,14 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlock* con
         if (lineOverlapsShapeBounds()) {
             SegmentList segments = computeSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
             if (segments.size()) {
-                m_leftMarginBoxDelta = segments[0].logicalLeft + m_renderer->marginStart();
-                m_rightMarginBoxDelta = segments[segments.size()-1].logicalRight - m_renderer->logicalWidth() - m_renderer->marginEnd();
+                m_leftMarginBoxDelta = segments.first().logicalLeft + containingBlock->marginStartForChild(m_renderer);
+                m_rightMarginBoxDelta = segments.last().logicalRight - containingBlock->logicalWidthForChild(m_renderer) - containingBlock->marginEndForChild(m_renderer);
                 return;
             }
         }
 
-        m_leftMarginBoxDelta = m_renderer->logicalWidth() + m_renderer->marginStart();
-        m_rightMarginBoxDelta = -m_renderer->logicalWidth() - m_renderer->marginEnd();
+        m_leftMarginBoxDelta = containingBlock->logicalWidthForChild(m_renderer) + containingBlock->marginStartForChild(m_renderer);
+        m_rightMarginBoxDelta = -containingBlock->logicalWidthForChild(m_renderer) - containingBlock->marginEndForChild(m_renderer);
     }
 }
 
