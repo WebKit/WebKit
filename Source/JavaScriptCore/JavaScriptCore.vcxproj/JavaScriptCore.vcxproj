@@ -425,8 +425,8 @@
     <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
-    <ClInclude Include="..\runtime\ArrayIteratorConstructor.cpp" />
-    <ClInclude Include="..\runtime\ArrayIteratorPrototype.cpp" />
+    <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ArrayIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayPrototype.cpp" />
     <ClCompile Include="..\runtime\BooleanConstructor.cpp" />
     <ClCompile Include="..\runtime\BooleanObject.cpp" />
@@ -903,7 +903,7 @@
     <ClInclude Include="..\runtime\JSArrayBufferPrototype.h" />
     <ClInclude Include="..\runtime\JSArrayBufferView.h" />
     <ClInclude Include="..\runtime\JSArrayBufferViewInlines.h" />
-    <ClCompile Include="..\runtime\JSArrayIterator.h" />
+    <ClInclude Include="..\runtime\JSArrayIterator.h" />
     <ClInclude Include="..\runtime\JSBoundFunction.h" />
     <ClInclude Include="..\runtime\JSCJSValue.h" />
     <ClInclude Include="..\runtime\JSCJSValueInlines.h" />

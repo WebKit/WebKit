@@ -1,3 +1,9 @@
+2013-10-02  Oliver Hunt  <oliver@apple.com>
+
+        Fix MSVC build
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+
 2013-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Optimized VM access from C++ code
