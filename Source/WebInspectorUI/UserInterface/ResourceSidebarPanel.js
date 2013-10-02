@@ -248,6 +248,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     showSourceCode: function(sourceCode, positionToReveal, textRangeToSelect, forceUnformatted)
     {
+        console.assert(!positionToReveal || positionToReveal instanceof WebInspector.SourceCodePosition, positionToReveal);
         var representedObject = sourceCode;
 
         if (representedObject instanceof WebInspector.Script) {
@@ -259,16 +260,23 @@ WebInspector.ResourceSidebarPanel.prototype = {
         if (representedObject instanceof WebInspector.Resource && representedObject.isMainResource())
             representedObject = representedObject.parentFrame;
 
-        var contentView = WebInspector.contentBrowser.contentViewForRepresentedObject(representedObject);
+        var newContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(representedObject);
+        var cookie = {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber};
 
-        if (contentView instanceof WebInspector.FrameContentView)
-            contentView.showSourceCode(positionToReveal, textRangeToSelect, forceUnformatted);
-        else if (contentView instanceof WebInspector.ResourceClusterContentView)
-            contentView.showResponse(positionToReveal, textRangeToSelect, forceUnformatted);
-        else if (contentView instanceof WebInspector.ScriptContentView)
-            contentView.revealPosition(positionToReveal, textRangeToSelect, forceUnformatted);
+        var restoreCallback = function(contentView, savedCookie) {
+            var lineNumber = savedCookie.lineNumber;
+            var columnNumber = savedCookie.columnNumber;
+            var position = new WebInspector.SourceCodePosition(lineNumber, columnNumber);
 
-        WebInspector.contentBrowser.showContentView(contentView);
+            if (contentView instanceof WebInspector.FrameContentView)
+                contentView.showSourceCode(position)
+            else if (contentView instanceof WebInspector.ResourceClusterContentView)
+                contentView.showResponse(position)
+            else if (contentView instanceof WebInspector.ScriptContentView)
+                contentView.revealPosition(position)
+        };
+
+        WebInspector.contentBrowser.showContentView(newContentView, cookie, restoreCallback);
     },
 
     showSourceCodeLocation: function(sourceCodeLocation)

@@ -64,6 +64,13 @@ WebInspector.ContentViewContainer.prototype = {
     {
         if (this._currentIndex < 0 || this._currentIndex > this._backForwardList.length - 1)
             return null;
+        return this._backForwardList[this._currentIndex].contentView;
+    },
+
+    get currentBackForwardEntry()
+    {
+        if (this._currentIndex < 0 || this._currentIndex > this._backForwardList.length - 1)
+            return null;
         return this._backForwardList[this._currentIndex];
     },
 
@@ -126,7 +133,7 @@ WebInspector.ContentViewContainer.prototype = {
         return contentView;
     },
 
-    showContentView: function(contentView)
+    showContentView: function(contentView, cookie, restoreCallback)
     {
         console.assert(contentView instanceof WebInspector.ContentView);
         if (!(contentView instanceof WebInspector.ContentView))
@@ -138,10 +145,11 @@ WebInspector.ContentViewContainer.prototype = {
         if (contentView.parentContainer && contentView.parentContainer !== this)
             return null;
 
-        // Don't do anything if the content view is already the current content view.
-        var currentContentView = this.currentContentView;
-        if (currentContentView === contentView)
-            return contentView;
+        var currentEntry = this.currentBackForwardEntry;
+        var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie, restoreCallback);
+        // Don't do anything if we would have added an identical back/forward list entry.
+        if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie))
+            return currentEntry.contentView;
 
         // Showing a content view will truncate the back/forward list after the current index and insert the content view
         // at the end of the list. Finally, the current index will be updated to point to the end of the back/forward list.
@@ -150,29 +158,30 @@ WebInspector.ContentViewContainer.prototype = {
         var newIndex = this._currentIndex + 1;
 
         // Insert the content view at the new index. This will remove any content views greater than or equal to the index.
-        var removedItems = this._backForwardList.splice(newIndex, this._backForwardList.length - newIndex, contentView);
+        var removedEntries = this._backForwardList.splice(newIndex, this._backForwardList.length - newIndex, provisionalEntry);
 
         console.assert(newIndex === this._backForwardList.length - 1);
-        console.assert(this._backForwardList[newIndex] === contentView);
+        console.assert(this._backForwardList[newIndex] === provisionalEntry);
 
         // Disassociate with the removed content views.
-        for (var i = 0; i < removedItems.length; ++i) {
+        for (var i = 0; i < removedEntries.length; ++i) {
             // Skip disassociation if this content view is still in the back/forward list.
-            if (this._backForwardList.contains(removedItems[i]))
-                continue;
-
-            this._disassociateFromContentView(removedItems[i]);
+            var shouldDissociateContentView = this._backForwardList.some(function(existingEntry) {
+                return existingEntry.contentView === removedEntries[i].contentView;
+            });
+            if (shouldDissociateContentView)
+                this._disassociateFromContentView(removedEntries[i]);
         }
 
         // Associate with the new content view.
         contentView._parentContainer = this;
 
-        this.showBackForwardEntry(newIndex);
+        this.showBackForwardEntryForIndex(newIndex);
 
         return contentView;
     },
 
-    showBackForwardEntry: function(index)
+    showBackForwardEntryForIndex: function(index)
     {
         console.assert(index >= 0 && index <= this._backForwardList.length - 1);
         if (index < 0 || index > this._backForwardList.length - 1)
@@ -182,13 +191,15 @@ WebInspector.ContentViewContainer.prototype = {
             return;
 
         // Hide the currently visible content view.
-        var currentContentView = this.currentContentView;
-        if (currentContentView)
-            this._hideContentView(currentContentView);
+        var previousEntry = this.currentBackForwardEntry;
+        if (previousEntry)
+            this._hideEntry(previousEntry);
 
         this._currentIndex = index;
+        var currentEntry = this.currentBackForwardEntry;
+        console.assert(currentEntry);
 
-        this._showContentView(this.currentContentView);
+        this._showEntry(currentEntry);
 
         this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
     },
@@ -213,7 +224,7 @@ WebInspector.ContentViewContainer.prototype = {
 
         var currentlyShowing = (this.currentContentView === oldContentView);
         if (currentlyShowing)
-            this._hideContentView(oldContentView);
+            this._hideEntry(this.currentBackForwardEntry);
 
         // Disassociate with the old content view.
         this._disassociateFromContentView(oldContentView);
@@ -223,12 +234,13 @@ WebInspector.ContentViewContainer.prototype = {
 
         // Replace all occurrences of oldContentView with newContentView in the back/forward list.
         for (var i = 0; i < this._backForwardList.length; ++i) {
-            if (this._backForwardList[i] === oldContentView)
-                this._backForwardList[i] = newContentView;
+            if (this._backForwardList[i].contentView === oldContentView)
+                this._backForwardList[i].contentView = newContentView;
         }
 
+        // Re-show the current entry, because its content view instance was replaced.
         if (currentlyShowing) {
-            this._showContentView(newContentView);
+            this._showEntry(this.currentBackForwardEntry);
             this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     },
@@ -244,7 +256,7 @@ WebInspector.ContentViewContainer.prototype = {
         // If they all are we can use the quicker closeAllContentViews method.
         var allSamePrototype = true;
         for (var i = this._backForwardList.length - 1; i >= 0; --i) {
-            if (!(this._backForwardList[i] instanceof constructor)) {
+            if (!(this._backForwardList[i].contentView instanceof constructor)) {
                 allSamePrototype = false;
                 break;
             }
@@ -260,12 +272,12 @@ WebInspector.ContentViewContainer.prototype = {
         var backForwardListDidChange = false;
         // Hide and disassociate with all the content views that are instances of the constructor.
         for (var i = this._backForwardList.length - 1; i >= 0; --i) {
-            var contentView = this._backForwardList[i];
-            if (!(contentView instanceof constructor))
+            var entry = this._backForwardList[i];
+            if (!(entry.contentView instanceof constructor))
                 continue;
 
-            if (contentView === oldCurrentContentView)
-                this._hideContentView(contentView);
+            if (entry.contentView === oldCurrentContentView)
+                this._hideEntry(entry);
 
             if (this._currentIndex >= i) {
                 // Decrement the currentIndex since we will remove an item in the back/forward array
@@ -273,18 +285,18 @@ WebInspector.ContentViewContainer.prototype = {
                 --this._currentIndex;
             }
 
-            this._disassociateFromContentView(contentView);
+            this._disassociateFromContentView(entry.contentView);
 
             // Remove the item from the back/forward list.
             this._backForwardList.splice(i, 1);
             backForwardListDidChange = true;
         }
 
-        var currentContentView = this.currentContentView;
-        console.assert(currentContentView || (!currentContentView && this._currentIndex === -1));
+        var currentEntry = this.currentBackForwardEntry;
+        console.assert(currentEntry || (!currentEntry && this._currentIndex === -1));
 
-        if (currentContentView && (currentContentView !== oldCurrentContentView || backForwardListDidChange)) {
-            this._showContentView(currentContentView);
+        if (currentEntry && currentEntry.contentView !== oldCurrentContentView || backForwardListDidChange) {
+            this._showEntry(currentEntry);
             this.dispatchEventToListeners(WebInspector.ContentViewContainer.Event.CurrentContentViewDidChange);
         }
     },
@@ -298,10 +310,10 @@ WebInspector.ContentViewContainer.prototype = {
 
         // Hide and disassociate with all the content views.
         for (var i = 0; i < this._backForwardList.length; ++i) {
-            var contentView = this._backForwardList[i];
+            var entry = this._backForwardList[i];
             if (i === this._currentIndex)
-                this._hideContentView(contentView);
-            this._disassociateFromContentView(contentView);
+                this._hideEntry(entry);
+            this._disassociateFromContentView(entry.contentView);
         }
 
         this._backForwardList = [];
@@ -324,32 +336,32 @@ WebInspector.ContentViewContainer.prototype = {
     {
         if (!this.canGoBack())
             return;
-        this.showBackForwardEntry(this._currentIndex - 1);
+        this.showBackForwardEntryForIndex(this._currentIndex - 1);
     },
 
     goForward: function()
     {
         if (!this.canGoForward())
             return;
-        this.showBackForwardEntry(this._currentIndex + 1);
+        this.showBackForwardEntryForIndex(this._currentIndex + 1);
     },
 
     shown: function()
     {
-        var currentContentView = this.currentContentView;
-        if (!currentContentView)
+        var currentEntry = this.currentBackForwardEntry;
+        if (!currentEntry)
             return;
 
-        this._showContentView(currentContentView);
+        this._showEntry(currentEntry);
     },
 
     hidden: function()
     {
-        var currentContentView = this.currentContentView;
-        if (!currentContentView)
+        var currentEntry = this.currentBackForwardEntry;
+        if (!currentEntry)
             return;
 
-        this._hideContentView(currentContentView);
+        this._hideEntry(currentEntry);
     },
 
     // Private
@@ -381,72 +393,20 @@ WebInspector.ContentViewContainer.prototype = {
         contentView.closed();
     },
 
-    _saveScrollPositionsForContentView: function(contentView)
+    _showEntry: function(entry)
     {
-        var scrollableElements = contentView.scrollableElements || [];
-        for (var i = 0; i < scrollableElements.length; ++i) {
-            var element = scrollableElements[i];
-            if (!element)
-                continue;
-            if (contentView.shouldKeepElementsScrolledToBottom)
-                element._savedIsScrolledToBottom = element.isScrolledToBottom();
-            element._savedScrollTop = element.scrollTop;
-            element._savedScrollLeft = element.scrollLeft;
-        }
+        console.assert(entry instanceof WebInspector.BackForwardEntry);
+
+        this._addContentViewElement(entry.contentView);
+        entry.prepareToShow();
     },
 
-    _restoreScrollPositionsForContentView: function(contentView)
+    _hideEntry: function(entry)
     {
-        var scrollableElements = contentView.scrollableElements || [];
-        for (var i = 0; i < scrollableElements.length; ++i) {
-            var element = scrollableElements[i];
-            if (!element)
-                continue;
+        console.assert(entry instanceof WebInspector.BackForwardEntry);
 
-            // Restore the top scroll position by either scrolling to the bottom or to the saved position.
-            element.scrollTop = element._savedIsScrolledToBottom ? element.scrollHeight : element._savedScrollTop;
-
-            // Don't restore the left scroll position when scrolled to the bottom. This way the when content changes
-            // the user won't be left in a weird horizontal position.
-            element.scrollLeft = element._savedIsScrolledToBottom ? 0 : element._savedScrollLeft;
-        }
-    },
-
-    _showContentView: function(contentView)
-    {
-        if (contentView.visible)
-            return;
-
-        this._addContentViewElement(contentView);
-
-        this._prepareContentViewToShow(contentView);
-    },
-
-    _prepareContentViewToShow: function(contentView)
-    {
-        this._restoreScrollPositionsForContentView(contentView);
-
-        contentView.visible = true;
-        contentView.shown();
-        contentView.updateLayout();
-    },
-
-    _hideContentView: function(contentView)
-    {
-        if (!contentView.visible)
-            return;
-
-        this._prepareContentViewToHide(contentView);
-
-        this._removeContentViewElement(contentView);
-    },
-
-    _prepareContentViewToHide: function(contentView)
-    {
-        contentView.visible = false;
-        contentView.hidden();
-
-        this._saveScrollPositionsForContentView(contentView);
+        entry.prepareToHide();
+        this._removeContentViewElement(entry.contentView);
     }
 };
 

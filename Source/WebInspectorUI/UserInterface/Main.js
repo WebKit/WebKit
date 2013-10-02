@@ -511,7 +511,8 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
     // WebInspector.Frame.resourceForURL does not check the main resource, only sub-resources. So check both.
     var resource = frame.url === url ? frame.mainResource : frame.resourceForURL(url, searchChildFrames);
     if (resource) {
-        this.resourceSidebarPanel.showSourceCode(resource, lineNumber);
+        var position = new WebInspector.SourceCodePosition(lineNumber, 0);
+        this.resourceSidebarPanel.showSourceCode(resource, position);
         return;
     }
 

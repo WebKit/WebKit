@@ -1,3 +1,61 @@
+2013-10-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: save and restore source positions in back/forward history
+        https://bugs.webkit.org/show_bug.cgi?id=122062
+
+        Reviewed by Timothy Hatcher.
+
+        Previously, the back/forward entries comprised of only the content
+        views, but not their positions if navigated via hyperlink (i.e.,
+        handling script.js:42).  When multiple instances of the same
+        content view appeared in the back/forward list, the most recent
+        navigation was displayed rather than the linked position.
+
+        We now store context necessary to re-navigate such hyperlinks by
+        storing view- specific data inside a cookie object, and invoke a
+        supplied callback to take any position initialization actions,
+        such as calling TextEditor.revealPosition.  This state is
+        encapsulated into BackForwardEntry instances.
+
+        Functions that save and restore scroll positions inside content
+        views have been changed to store state in BackForwardEntry
+        instances, so multiple scroll positions can be saved for a content
+        view appearing in the navigation history more than once.
+
+        * UserInterface/BackForwardEntry.js: Added.
+        (WebInspector.BackForwardEntry):
+        (WebInspector.BackForwardEntry.prototype.get contentView):
+        (WebInspector.BackForwardEntry.prototype.get cookie):
+        (WebInspector.BackForwardEntry.prototype.prepareToShow):
+        (WebInspector.BackForwardEntry.prototype.prepareToHide):
+        (WebInspector.BackForwardEntry.prototype._restoreFromCookie):
+        (WebInspector.BackForwardEntry.prototype._restoreScrollPositions):
+        (WebInspector.BackForwardEntry.prototype._saveScrollPositions):
+        * UserInterface/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype.showContentView):
+        (WebInspector.ContentBrowser.prototype._updateContentViewNavigationItems):
+        (WebInspector.ContentBrowser.prototype._updateFindBanner):
+        * UserInterface/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.get currentContentView):
+        (WebInspector.ContentViewContainer.prototype.get currentBackForwardEntry):
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        (WebInspector.ContentViewContainer.prototype.showBackForwardEntryForIndex):
+        (WebInspector.ContentViewContainer.prototype.replaceContentView):
+        (WebInspector.ContentViewContainer.prototype.closeAllContentViewsOfPrototype):
+        (WebInspector.ContentViewContainer.prototype.closeAllContentViews):
+        (WebInspector.ContentViewContainer.prototype.goBack):
+        (WebInspector.ContentViewContainer.prototype.goForward):
+        (WebInspector.ContentViewContainer.prototype.shown):
+        (WebInspector.ContentViewContainer.prototype.hidden):
+        (WebInspector.ContentViewContainer.prototype._showEntry):
+        (WebInspector.ContentViewContainer.prototype._hideEntry):
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.openURL):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.restoreCallback):
+        (WebInspector.ResourceSidebarPanel.prototype.showSourceCode):
+
 2013-10-02  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: highlight newly added console messages in the Activity Viewer
