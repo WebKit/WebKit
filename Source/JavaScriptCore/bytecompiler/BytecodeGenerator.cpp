@@ -387,6 +387,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     if (isConstructor()) {
         emitCreateThis(&m_thisRegister);
     } else if (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks) {
+        m_codeBlock->addPropertyAccessInstruction(instructions().size());
         emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
         instructions().append(0);
@@ -1434,6 +1435,7 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     RefPtr<RegisterID> func = newTemporary(); 
 
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
     emitOpcode(op_get_callee);
     instructions().append(func->index());
     instructions().append(0);
