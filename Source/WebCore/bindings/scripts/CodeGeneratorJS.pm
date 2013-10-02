@@ -935,15 +935,15 @@ sub GenerateHeader
         push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
         push(@headerContent, "};\n");
         push(@headerContent, "\n");
-        push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, $implType*)\n");
+        push(@headerContent, "inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, $implType*)\n");
         push(@headerContent, "{\n");
         push(@headerContent, "    DEFINE_STATIC_LOCAL(JS${interfaceName}Owner, js${interfaceName}Owner, ());\n");
         push(@headerContent, "    return &js${interfaceName}Owner;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
-        push(@headerContent, "inline void* wrapperContext(DOMWrapperWorld* world, $implType*)\n");
+        push(@headerContent, "inline void* wrapperContext(DOMWrapperWorld& world, $implType*)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    return world;\n");
+        push(@headerContent, "    return &world;\n");
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
     }
@@ -2627,7 +2627,7 @@ sub GenerateImplementation
         push(@implContent, "void JS${interfaceName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
-        push(@implContent, "    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);\n");
+        push(@implContent, "    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);\n");
         push(@implContent, "    uncacheWrapper(world, js${interfaceName}->impl(), js${interfaceName});\n");
         push(@implContent, "    js${interfaceName}->releaseImpl();\n");
         push(@implContent, "}\n\n");

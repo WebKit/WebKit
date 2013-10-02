@@ -153,7 +153,7 @@ InspectorInstrumentationCookie::~InspectorInstrumentationCookie()
 {
 }
 
-void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, DOMWrapperWorld* world)
+void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, DOMWrapperWorld& world)
 {
     InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent();
     if (pageAgent)
@@ -162,12 +162,12 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
         inspectorAgent->didClearWindowObjectInWorld(frame, world);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (PageDebuggerAgent* debuggerAgent = instrumentingAgents->pageDebuggerAgent()) {
-        if (pageAgent && world == mainThreadNormalWorld() && frame == pageAgent->mainFrame())
+        if (pageAgent && &world == &mainThreadNormalWorld() && frame == pageAgent->mainFrame())
             debuggerAgent->didClearMainFrameWindowObject();
     }
 #endif
     if (PageRuntimeAgent* pageRuntimeAgent = instrumentingAgents->pageRuntimeAgent()) {
-        if (world == mainThreadNormalWorld())
+        if (&world == &mainThreadNormalWorld())
             pageRuntimeAgent->didCreateMainWorldContext(frame);
     }
 }

@@ -1488,7 +1488,7 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
     String scriptId;
     String sourceName;
     if (auto scriptListener = JSEventListener::cast(eventListener.get())) {
-        JSC::JSLockHolder lock(scriptListener->isolatedWorld()->vm());
+        JSC::JSLockHolder lock(scriptListener->isolatedWorld().vm());
         state = execStateFromNode(scriptListener->isolatedWorld(), &node->document());
         handler = scriptListener->jsFunction(&node->document());
         if (handler) {

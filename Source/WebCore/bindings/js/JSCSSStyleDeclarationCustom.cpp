@@ -371,7 +371,7 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
     if (!cssValue)
         return jsNull();
 
-    currentWorld(exec)->m_cssValueRoots.add(cssValue.get(), root(impl())); // Balanced by JSCSSValueOwner::finalize().
+    currentWorld(exec).m_cssValueRoots.add(cssValue.get(), root(impl())); // Balanced by JSCSSValueOwner::finalize().
     return toJS(exec, globalObject(), WTF::getPtr(cssValue));
 }
 

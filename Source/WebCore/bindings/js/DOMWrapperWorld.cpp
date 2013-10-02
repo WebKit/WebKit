@@ -36,18 +36,18 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::VM* vm, bool isNormal)
 {
     VM::ClientData* clientData = m_vm->clientData;
     ASSERT(clientData);
-    static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
+    static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(*this);
 }
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
     VM::ClientData* clientData = m_vm->clientData;
     ASSERT(clientData);
-    static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
+    static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(*this);
 
     // These items are created lazily.
     while (!m_scriptControllersWithWindowShells.isEmpty())
-        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(*this);
 }
 
 void DOMWrapperWorld::clearWrappers()
@@ -57,20 +57,20 @@ void DOMWrapperWorld::clearWrappers()
 
     // These items are created lazily.
     while (!m_scriptControllersWithWindowShells.isEmpty())
-        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(*this);
 }
 
-DOMWrapperWorld* normalWorld(JSC::VM& vm)
+DOMWrapperWorld& normalWorld(JSC::VM& vm)
 {
     VM::ClientData* clientData = vm.clientData;
     ASSERT(clientData);
     return static_cast<WebCoreJSClientData*>(clientData)->normalWorld();
 }
 
-DOMWrapperWorld* mainThreadNormalWorld()
+DOMWrapperWorld& mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonVM());
+    static DOMWrapperWorld& cachedNormalWorld = normalWorld(*JSDOMWindow::commonVM());
     return cachedNormalWorld;
 }
 

@@ -112,87 +112,87 @@ class DOMStringList;
         return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
 
-    inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld* world, JSC::ArrayBuffer*)
+    inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)
     {
-        return static_cast<WebCoreTypedArrayController*>(world->vm()->m_typedArrayController.get())->wrapperOwner();
+        return static_cast<WebCoreTypedArrayController*>(world.vm()->m_typedArrayController.get())->wrapperOwner();
     }
     
-    inline void* wrapperContext(DOMWrapperWorld* world, JSC::ArrayBuffer*)
+    inline void* wrapperContext(DOMWrapperWorld& world, JSC::ArrayBuffer*)
     {
-        return world;
+        return &world;
     }
 
-    inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld*, void*) { return 0; }
-    inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*, JSC::WeakHandleOwner*, void*) { return false; }
-    inline bool clearInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
+    inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld&, void*) { return 0; }
+    inline bool setInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMWrapper*, JSC::WeakHandleOwner*, void*) { return false; }
+    inline bool clearInlineCachedWrapper(DOMWrapperWorld&, void*, JSDOMWrapper*) { return false; }
 
-    inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject)
+    inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld& world, ScriptWrappable* domObject)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return 0;
         return domObject->wrapper();
     }
 
-    inline JSC::JSArrayBuffer* getInlineCachedWrapper(DOMWrapperWorld* world, JSC::ArrayBuffer* buffer)
+    inline JSC::JSArrayBuffer* getInlineCachedWrapper(DOMWrapperWorld& world, JSC::ArrayBuffer* buffer)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return 0;
         return buffer->m_wrapper.get();
     }
 
-    inline bool setInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
+    inline bool setInlineCachedWrapper(DOMWrapperWorld& world, ScriptWrappable* domObject, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return false;
         domObject->setWrapper(wrapper, wrapperOwner, context);
         return true;
     }
 
-    inline bool setInlineCachedWrapper(DOMWrapperWorld* world, JSC::ArrayBuffer* domObject, JSC::JSArrayBuffer* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
+    inline bool setInlineCachedWrapper(DOMWrapperWorld& world, JSC::ArrayBuffer* domObject, JSC::JSArrayBuffer* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return false;
         domObject->m_wrapper = JSC::Weak<JSC::JSArrayBuffer>(wrapper, wrapperOwner, context);
         return true;
     }
 
-    inline bool clearInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject, JSDOMWrapper* wrapper)
+    inline bool clearInlineCachedWrapper(DOMWrapperWorld& world, ScriptWrappable* domObject, JSDOMWrapper* wrapper)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return false;
         domObject->clearWrapper(wrapper);
         return true;
     }
 
-    inline bool clearInlineCachedWrapper(DOMWrapperWorld* world, JSC::ArrayBuffer* domObject, JSC::JSArrayBuffer* wrapper)
+    inline bool clearInlineCachedWrapper(DOMWrapperWorld& world, JSC::ArrayBuffer* domObject, JSC::JSArrayBuffer* wrapper)
     {
-        if (!world->isNormal())
+        if (!world.isNormal())
             return false;
         weakClear(domObject->m_wrapper, wrapper);
         return true;
     }
 
-    template <typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWorld* world, DOMClass* domObject)
+    template <typename DOMClass> inline JSC::JSObject* getCachedWrapper(DOMWrapperWorld& world, DOMClass* domObject)
     {
         if (JSC::JSObject* wrapper = getInlineCachedWrapper(world, domObject))
             return wrapper;
-        return world->m_wrappers.get(domObject);
+        return world.m_wrappers.get(domObject);
     }
 
-    template <typename DOMClass, typename WrapperClass> inline void cacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, WrapperClass* wrapper)
+    template <typename DOMClass, typename WrapperClass> inline void cacheWrapper(DOMWrapperWorld& world, DOMClass* domObject, WrapperClass* wrapper)
     {
         JSC::WeakHandleOwner* owner = wrapperOwner(world, domObject);
         void* context = wrapperContext(world, domObject);
         if (setInlineCachedWrapper(world, domObject, wrapper, owner, context))
             return;
-        weakAdd(world->m_wrappers, (void*)domObject, JSC::Weak<JSC::JSObject>(wrapper, owner, context));
+        weakAdd(world.m_wrappers, (void*)domObject, JSC::Weak<JSC::JSObject>(wrapper, owner, context));
     }
 
-    template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, WrapperClass* wrapper)
+    template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(DOMWrapperWorld& world, DOMClass* domObject, WrapperClass* wrapper)
     {
         if (clearInlineCachedWrapper(world, domObject, wrapper))
             return;
-        weakRemove(world->m_wrappers, (void*)domObject, wrapper);
+        weakRemove(world.m_wrappers, (void*)domObject, wrapper);
     }
     
     #define CREATE_DOM_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
@@ -577,7 +577,7 @@ class DOMStringList;
             }
         }
 
-        JSStringCache& stringCache = currentWorld(exec)->m_stringCache;
+        JSStringCache& stringCache = currentWorld(exec).m_stringCache;
         JSStringCache::AddResult addResult = stringCache.add(stringImpl, nullptr);
         if (addResult.isNewEntry)
             addResult.iterator->value = JSC::jsString(exec, String(stringImpl));

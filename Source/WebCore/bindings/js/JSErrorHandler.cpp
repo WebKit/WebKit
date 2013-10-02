@@ -45,8 +45,8 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
-    : JSEventListener(function, wrapper, isAttribute, isolatedWorld)
+JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
+    : JSEventListener(function, wrapper, isAttribute, world)
 {
 }
 

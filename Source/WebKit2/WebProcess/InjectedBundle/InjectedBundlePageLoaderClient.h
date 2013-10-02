@@ -77,12 +77,12 @@ public:
     void didLayoutForFrame(WebPage*, WebFrame*);
     void didLayout(WebPage*, WebCore::LayoutMilestones, RefPtr<APIObject>& userData);
 
-    void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
+    void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld&);
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);
     void willPerformClientRedirectForFrame(WebPage*, WebFrame*, const String& url, double delay, double date);
     void didHandleOnloadEventsForFrame(WebPage*, WebFrame*);
 
-    void globalObjectIsAvailableForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld*);
+    void globalObjectIsAvailableForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld&);
     void willDisconnectDOMWindowExtensionFromGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void didReconnectDOMWindowExtensionToGlobalObject(WebPage*, WebCore::DOMWindowExtension*);
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);

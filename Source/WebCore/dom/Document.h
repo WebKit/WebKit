@@ -112,7 +112,6 @@ class IntPoint;
 class LayoutPoint;
 class LayoutRect;
 class LiveNodeListBase;
-class DOMWrapperWorld;
 class JSNode;
 class Locale;
 class MediaCanStartListener;
@@ -1182,7 +1181,7 @@ public:
     PassRefPtr<FontLoader> fontloader();
 #endif
 
-    void ensurePlugInsInjectedScript(DOMWrapperWorld*);
+    void ensurePlugInsInjectedScript(DOMWrapperWorld&);
 
     void setVisualUpdatesAllowedByClient(bool);
 

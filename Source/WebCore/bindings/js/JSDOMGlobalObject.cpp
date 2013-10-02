@@ -47,6 +47,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, PassRefPtr<DO
     , m_currentEvent(0)
     , m_world(world)
 {
+    ASSERT(m_world);
 }
 
 void JSDOMGlobalObject::destroy(JSCell* cell)
@@ -124,12 +125,12 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
     return 0;
 }
 
-JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld* world)
+JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld& world)
 {
     return toJSDOMWindow(document->frame(), world);
 }
 
-JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld* world)
+JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld& world)
 {
     if (scriptExecutionContext->isDocument())
         return toJSDOMGlobalObject(toDocument(scriptExecutionContext), world);

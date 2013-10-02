@@ -356,6 +356,12 @@ void HTMLPlugInImageElement::checkSnapshotStatus()
     ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
 }
 
+static DOMWrapperWorld& plugInImageElementIsolatedWorld()
+{
+    static DOMWrapperWorld& isolatedWorld = *DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
+    return isolatedWorld;
+}
+
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     Page* page = document().page();
@@ -369,7 +375,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     
     String mimeType = loadedMimeType();
 
-    static DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
+    DOMWrapperWorld& isolatedWorld = plugInImageElementIsolatedWorld();
     document().ensurePlugInsInjectedScript(isolatedWorld);
 
     ScriptController& scriptController = page->mainFrame().script();

@@ -6026,7 +6026,7 @@ void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
     m_associatedFormControls.clear();
 }
 
-void Document::ensurePlugInsInjectedScript(DOMWrapperWorld* world)
+void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
 {
     if (m_hasInjectedPlugInsScript)
         return;

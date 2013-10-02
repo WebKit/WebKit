@@ -260,33 +260,23 @@ StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
     return result.iterator->value.get();
 }
 
-void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const URL& url,
-                                     const Vector<String>& whitelist, const Vector<String>& blacklist,
-                                     UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
+void PageGroup::addUserScriptToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
 {
-    ASSERT_ARG(world, world);
-
     auto userScript = std::make_unique<UserScript>(source, url, whitelist, blacklist, injectionTime, injectedFrames);
     if (!m_userScripts)
         m_userScripts = std::make_unique<UserScriptMap>();
-    std::unique_ptr<UserScriptVector>& scriptsInWorld = m_userScripts->add(world, nullptr).iterator->value;
+    std::unique_ptr<UserScriptVector>& scriptsInWorld = m_userScripts->add(&world, nullptr).iterator->value;
     if (!scriptsInWorld)
         scriptsInWorld = std::make_unique<UserScriptVector>();
     scriptsInWorld->append(std::move(userScript));
 }
 
-void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const URL& url,
-                                         const Vector<String>& whitelist, const Vector<String>& blacklist,
-                                         UserContentInjectedFrames injectedFrames,
-                                         UserStyleLevel level,
-                                         UserStyleInjectionTime injectionTime)
+void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld& world, const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, UserStyleInjectionTime injectionTime)
 {
-    ASSERT_ARG(world, world);
-
     auto userStyleSheet = std::make_unique<UserStyleSheet>(source, url, whitelist, blacklist, injectedFrames, level);
     if (!m_userStyleSheets)
         m_userStyleSheets = std::make_unique<UserStyleSheetMap>();
-    std::unique_ptr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(world, nullptr).iterator->value;
+    std::unique_ptr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(&world, nullptr).iterator->value;
     if (!styleSheetsInWorld)
         styleSheetsInWorld = std::make_unique<UserStyleSheetVector>();
     styleSheetsInWorld->append(std::move(userStyleSheet));
@@ -295,14 +285,12 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
         invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
-void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const URL& url)
+void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld& world, const URL& url)
 {
-    ASSERT_ARG(world, world);
-
     if (!m_userScripts)
         return;
 
-    auto it = m_userScripts->find(world);
+    auto it = m_userScripts->find(&world);
     if (it == m_userScripts->end())
         return;
     
@@ -316,14 +304,12 @@ void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const URL& url
         m_userScripts->remove(it);
 }
 
-void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const URL& url)
+void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld& world, const URL& url)
 {
-    ASSERT_ARG(world, world);
-
     if (!m_userStyleSheets)
         return;
 
-    auto it = m_userStyleSheets->find(world);
+    auto it = m_userStyleSheets->find(&world);
     bool sheetsChanged = false;
     if (it == m_userStyleSheets->end())
         return;
@@ -345,24 +331,20 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const URL&
     invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
-void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld* world)
+void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld& world)
 {
-    ASSERT_ARG(world, world);
-
     if (!m_userScripts)
         return;
 
-    m_userScripts->remove(world);
+    m_userScripts->remove(&world);
 }
 
-void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
+void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld& world)
 {
-    ASSERT_ARG(world, world);
-
     if (!m_userStyleSheets)
         return;
 
-    if (!m_userStyleSheets->remove(world))
+    if (!m_userStyleSheets->remove(&world))
         return;
 
     invalidateInjectedStyleSheetCacheInAllFrames();

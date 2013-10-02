@@ -681,7 +681,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 -(void)_injectOutlookQuirksScript
 {
     static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
-    core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
+    core(self)->group().addUserScriptToWorld(*core([WebScriptWorld world]),
         outlookQuirksScriptContents, URL(), Vector<String>(), Vector<String>(), InjectAtDocumentEnd, InjectInAllFrames);
 }
 
@@ -2688,8 +2688,11 @@ static Vector<String> toStringVector(NSArray* patterns)
     PageGroup* pageGroup = PageGroup::pageGroup(group);
     if (!pageGroup)
         return;
-    
-    pageGroup->addUserScriptToWorld(core(world), source, url, toStringVector(whitelist), toStringVector(blacklist), 
+
+    if (!world)
+        return;
+
+    pageGroup->addUserScriptToWorld(*core(world), source, url, toStringVector(whitelist), toStringVector(blacklist),
                                     injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
                                     injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
 }
@@ -2712,7 +2715,10 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->addUserStyleSheetToWorld(core(world), source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    if (!world)
+        return;
+
+    pageGroup->addUserStyleSheetToWorld(*core(world), source, url, toStringVector(whitelist), toStringVector(blacklist), injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
 }
 
 + (void)_removeUserScriptFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
@@ -2725,7 +2731,10 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserScriptFromWorld(core(world), url);
+    if (!world)
+        return;
+
+    pageGroup->removeUserScriptFromWorld(*core(world), url);
 }
 
 + (void)_removeUserStyleSheetFromGroup:(NSString *)groupName world:(WebScriptWorld *)world url:(NSURL *)url
@@ -2738,7 +2747,10 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserStyleSheetFromWorld(core(world), url);
+    if (!world)
+        return;
+
+    pageGroup->removeUserStyleSheetFromWorld(*core(world), url);
 }
 
 + (void)_removeUserScriptsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
@@ -2751,7 +2763,10 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserScriptsFromWorld(core(world));
+    if (!world)
+        return;
+
+    pageGroup->removeUserScriptsFromWorld(*core(world));
 }
 
 + (void)_removeUserStyleSheetsFromGroup:(NSString *)groupName world:(WebScriptWorld *)world
@@ -2764,7 +2779,10 @@ static Vector<String> toStringVector(NSArray* patterns)
     if (!pageGroup)
         return;
 
-    pageGroup->removeUserStyleSheetsFromWorld(core(world));
+    if (!world)
+        return;
+
+    pageGroup->removeUserStyleSheetsFromWorld(*core(world));
 }
 
 + (void)_removeAllUserContentFromGroup:(NSString *)groupName

@@ -868,9 +868,9 @@ void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)
     m_ignoreScriptsEnabledNotification = false;
 }
 
-void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
+void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
 {
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     if (frame->isMainFrame())

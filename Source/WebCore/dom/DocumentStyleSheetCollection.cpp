@@ -29,7 +29,6 @@
 #include "DocumentStyleSheetCollection.h"
 
 #include "CSSStyleSheet.h"
-#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLIFrameElement.h"

@@ -1262,7 +1262,7 @@ void WebFrameLoaderClient::documentElementAvailable()
 {
 }
 
-void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);
@@ -1279,7 +1279,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     if (delegatePrivate && delegatePrivate->didClearWindowObjectForFrameInScriptWorld(webView, m_webFrame, WebScriptWorld::findOrCreateWorld(world).get()) != E_NOTIMPL)
         return;
 
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     JSContextRef context = toRef(coreFrame->script().globalObject(world)->globalExec());

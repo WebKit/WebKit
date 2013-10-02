@@ -63,7 +63,7 @@ WebScriptWorld::~WebScriptWorld()
 
 WebScriptWorld* WebScriptWorld::standardWorld()
 {
-    static WebScriptWorld* standardWorld = createInstance(mainThreadNormalWorld()).leakRef();
+    static WebScriptWorld* standardWorld = createInstance(&mainThreadNormalWorld()).leakRef();
     return standardWorld;
 }
 
@@ -77,15 +77,15 @@ COMPtr<WebScriptWorld> WebScriptWorld::createInstance(PassRefPtr<DOMWrapperWorld
     return new WebScriptWorld(world);
 }
 
-COMPtr<WebScriptWorld> WebScriptWorld::findOrCreateWorld(DOMWrapperWorld* world)
+COMPtr<WebScriptWorld> WebScriptWorld::findOrCreateWorld(DOMWrapperWorld& world)
 {
-    if (world == mainThreadNormalWorld())
+    if (&world == &mainThreadNormalWorld())
         return standardWorld();
 
     if (WebScriptWorld* existingWorld = allWorlds().get(world))
         return existingWorld;
 
-    return createInstance(world);
+    return createInstance(&world);
 }
 
 ULONG WebScriptWorld::AddRef()

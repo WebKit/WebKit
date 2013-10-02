@@ -36,24 +36,24 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-    class Frame;
-    class JSDOMWindow;
-    class DOMWrapperWorld;
 
-    class ScriptCachedFrameData {
-        WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
-        typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow> > JSDOMWindowSet;
+class Frame;
+class JSDOMWindow;
+class DOMWrapperWorld;
 
-    public:
-        ScriptCachedFrameData(Frame&);
-        ~ScriptCachedFrameData();
+class ScriptCachedFrameData {
+    WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ScriptCachedFrameData(Frame&);
+    ~ScriptCachedFrameData();
 
-        void restore(Frame&);
-        void clear();
+    void restore(Frame&);
+    void clear();
 
-    private:
-        JSDOMWindowSet m_windows;
-    };
+private:
+    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow>> JSDOMWindowSet;
+    JSDOMWindowSet m_windows;
+};
 
 } // namespace WebCore
 

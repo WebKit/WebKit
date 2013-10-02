@@ -93,7 +93,7 @@ static WorldMap& allWorlds()
 
 + (WebScriptWorld *)standardWorld
 {
-    static WebScriptWorld *world = [[WebScriptWorld alloc] initWithWorld:mainThreadNormalWorld()];
+    static WebScriptWorld *world = [[WebScriptWorld alloc] initWithWorld:&mainThreadNormalWorld()];
     return world;
 }
 
@@ -123,17 +123,15 @@ DOMWrapperWorld* core(WebScriptWorld *world)
     return world ? world->_private->world.get() : 0;
 }
 
-+ (WebScriptWorld *)findOrCreateWorld:(DOMWrapperWorld*) world
++ (WebScriptWorld *)findOrCreateWorld:(DOMWrapperWorld&)world
 {
-    ASSERT_ARG(world, world);
-
-    if (world == mainThreadNormalWorld())
+    if (&world == &mainThreadNormalWorld())
         return [self standardWorld];
 
-    if (WebScriptWorld *existingWorld = allWorlds().get(world))
+    if (WebScriptWorld *existingWorld = allWorlds().get(&world))
         return existingWorld;
 
-    return [[[self alloc] initWithWorld:world] autorelease];
+    return [[[self alloc] initWithWorld:&world] autorelease];
 }
 
 @end

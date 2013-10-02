@@ -209,7 +209,7 @@ public:
     void handledOnloadEvents();
     String userAgent(const URL&) const;
 
-    void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
+    void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&);
     void dispatchDidClearWindowObjectsInAllWorlds();
     void dispatchDocumentElementAvailable();
 

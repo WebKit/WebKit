@@ -35,13 +35,12 @@
 
 namespace WebCore {
 
-DOMWindowExtension::DOMWindowExtension(Frame* frame, DOMWrapperWorld* world)
+DOMWindowExtension::DOMWindowExtension(Frame* frame, DOMWrapperWorld& world)
     : DOMWindowProperty(frame)
-    , m_world(world)
+    , m_world(&world)
     , m_wasDetached(false)
 {
     ASSERT(this->frame());
-    ASSERT(m_world);
 }
 
 void DOMWindowExtension::disconnectFrameForPageCache()

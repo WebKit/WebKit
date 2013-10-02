@@ -39,11 +39,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld& isolatedWorld)
     : EventListener(JSEventListenerType)
     , m_wrapper(wrapper)
     , m_isAttribute(isAttribute)
-    , m_isolatedWorld(isolatedWorld)
+    , m_isolatedWorld(&isolatedWorld)
 {
     if (wrapper) {
         JSC::Heap::writeBarrier(wrapper, function);
@@ -88,7 +88,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, m_isolatedWorld.get());
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, *m_isolatedWorld);
     if (!globalObject)
         return;
 

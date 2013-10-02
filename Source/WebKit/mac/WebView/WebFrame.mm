@@ -1092,6 +1092,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!string)
         return @"";
 
+    if (!world)
+        return @"";
+
     // Start off with some guess at a frame and a global object, we'll try to do better...!
     JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script().globalObject(mainThreadNormalWorld());
 
@@ -1105,7 +1108,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 
-    JSC::JSValue result = frame->script().executeScriptInWorld(core(world), string, true).jsValue();
+    JSC::JSValue result = frame->script().executeScriptInWorld(*core(world), string, true).jsValue();
 
     if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -1129,7 +1132,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     DOMWrapperWorld* coreWorld = core(world);
     if (!coreWorld)
         return 0;
-    return toGlobalRef(coreFrame->script().globalObject(coreWorld)->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(*coreWorld)->globalExec());
 }
 
 #if JSC_OBJC_API_ENABLED
@@ -1260,7 +1263,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!coreFrame)
         return 0;
 
-    JSDOMWindow* globalObject = coreFrame->script().globalObject(core(world));
+    if (!world)
+        return 0;
+
+    JSDOMWindow* globalObject = coreFrame->script().globalObject(*core(world));
     JSC::ExecState* exec = globalObject->globalExec();
 
     JSC::JSLockHolder lock(exec);

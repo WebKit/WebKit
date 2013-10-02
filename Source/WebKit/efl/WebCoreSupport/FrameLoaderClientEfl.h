@@ -81,7 +81,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchDidPushStateWithinPage();
     virtual void dispatchDidPopStateWithinPage();
     virtual void dispatchDidReplaceStateWithinPage();
-    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
+    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&);
 
     virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&);
     virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long  identifier, const ResourceResponse&);

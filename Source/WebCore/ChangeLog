@@ -1,3 +1,170 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        CTTE: DOMWrapperWorlds should be passed around by reference
+        https://bugs.webkit.org/show_bug.cgi?id=122206
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers):
+        (WebCore::normalWorld):
+        (WebCore::mainThreadNormalWorld):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::debuggerWorld):
+        (WebCore::pluginWorld):
+        (WebCore::currentWorld):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSCSSValueOwner::finalize):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::getInlineCachedWrapper):
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::clearInlineCachedWrapper):
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper):
+        (WebCore::jsStringWithCache):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::world):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::setWindow):
+        (WebCore::toJSDOMWindowShell):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::create):
+        (WebCore::JSDOMWindowShell::world):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::JSErrorHandler):
+        * bindings/js/JSErrorHandler.h:
+        (WebCore::JSErrorHandler::create):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create):
+        (WebCore::JSEventListener::isolatedWorld):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        * bindings/js/JSLazyEventListener.h:
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::JSMutationCallback):
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNodeOwner::finalize):
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::destroyWindowShell):
+        (WebCore::ScriptController::createWindowShell):
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::getAllWorlds):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::executeScriptInWorld):
+        (WebCore::ScriptController::shouldBypassMainWorldContentSecurityPolicy):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::globalObject):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::isContentScript):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::execStateFromNode):
+        (WebCore::execStateFromPage):
+        * bindings/js/ScriptState.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::WebCoreJSClientData::WebCoreJSClientData):
+        (WebCore::WebCoreJSClientData::normalWorld):
+        (WebCore::WebCoreJSClientData::getAllWorlds):
+        (WebCore::WebCoreJSClientData::rememberWorld):
+        (WebCore::WebCoreJSClientData::forgetWorld):
+        * bindings/js/WebCoreTypedArrayController.cpp:
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        * dom/Document.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::ensureIsolatedWorld):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        * html/HTMLMediaElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::plugInImageElementIsolatedWorld):
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didClearWindowObjectInWorld):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorld):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        * inspector/InspectorPageAgent.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectsInAllWorlds):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        (WebCore::FrameLoader::dispatchGlobalObjectAvailableInAllWorlds):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::dispatchGlobalObjectAvailable):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::DOMWindowExtension):
+        * page/DOMWindowExtension.h:
+        (WebCore::DOMWindowExtension::create):
+        (WebCore::DOMWindowExtension::world):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        (WebCore::Frame::injectUserScriptsForWorld):
+        * page/Frame.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserScriptToWorld):
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        (WebCore::PageGroup::removeUserScriptFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld):
+        (WebCore::PageGroup::removeUserScriptsFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld):
+        * page/PageGroup.h:
+
 2013-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, removing references to the recently removed Modules/filesystem directory.

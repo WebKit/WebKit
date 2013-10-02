@@ -1892,7 +1892,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
     }
 
     OwnPtr<ArrayBufferContentsArray> contents = adoptPtr(new ArrayBufferContentsArray(arrayBuffers.size()));
-    Vector<RefPtr<DOMWrapperWorld> > worlds;
+    Vector<Ref<DOMWrapperWorld>> worlds;
     static_cast<WebCoreJSClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
 
     HashSet<JSC::ArrayBuffer*> visited;

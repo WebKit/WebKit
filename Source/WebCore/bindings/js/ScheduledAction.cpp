@@ -49,7 +49,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld* isolatedWorld, ContentSecurityPolicy* policy)
+PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy* policy)
 {
     JSValue v = exec->argument(0);
     CallData callData;
@@ -65,9 +65,9 @@ PassOwnPtr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperW
     return adoptPtr(new ScheduledAction(exec, v, isolatedWorld));
 }
 
-ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld* isolatedWorld)
+ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld& isolatedWorld)
     : m_function(exec->vm(), function)
-    , m_isolatedWorld(isolatedWorld)
+    , m_isolatedWorld(&isolatedWorld)
 {
     // setTimeout(function, interval, arg0, arg1...).
     // Start at 2 to skip function and interval.
@@ -121,7 +121,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
 void ScheduledAction::execute(Document* document)
 {
-    JSDOMWindow* window = toJSDOMWindow(document->frame(), m_isolatedWorld.get());
+    JSDOMWindow* window = toJSDOMWindow(document->frame(), *m_isolatedWorld);
     if (!window)
         return;
 
@@ -132,7 +132,7 @@ void ScheduledAction::execute(Document* document)
     if (m_function)
         executeFunctionInContext(window, window->shell(), document);
     else
-        frame->script().executeScriptInWorld(m_isolatedWorld.get(), m_code);
+        frame->script().executeScriptInWorld(*m_isolatedWorld, m_code);
 }
 
 #if ENABLE(WORKERS)

@@ -85,7 +85,7 @@ namespace WebCore {
     JSC::JSValue toJS(JSC::ExecState*, DOMWindow*);
 
     // Returns JSDOMWindow or 0
-    JSDOMWindow* toJSDOMWindow(Frame*, DOMWrapperWorld*);
+    JSDOMWindow* toJSDOMWindow(Frame*, DOMWrapperWorld&);
     JSDOMWindow* toJSDOMWindow(JSC::JSValue);
 
 } // namespace WebCore

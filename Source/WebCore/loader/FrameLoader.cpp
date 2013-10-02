@@ -3248,13 +3248,13 @@ void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
     if (!m_frame.script().canExecuteScripts(NotAboutToExecuteScript))
         return;
 
-    Vector<RefPtr<DOMWrapperWorld> > worlds;
+    Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
     for (size_t i = 0; i < worlds.size(); ++i)
         dispatchDidClearWindowObjectInWorld(worlds[i].get());
 }
 
-void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     if (!m_frame.script().canExecuteScripts(NotAboutToExecuteScript) || !m_frame.script().existingWindowShell(world))
         return;
@@ -3271,7 +3271,7 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 
 void FrameLoader::dispatchGlobalObjectAvailableInAllWorlds()
 {
-    Vector<RefPtr<DOMWrapperWorld> > worlds;
+    Vector<Ref<DOMWrapperWorld>> worlds;
     ScriptController::getAllWorlds(worlds);
     for (size_t i = 0; i < worlds.size(); ++i)
         m_client.dispatchGlobalObjectAvailable(worlds[i].get());

@@ -1,3 +1,19 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        CTTE: DOMWrapperWorlds should be passed around by reference
+        https://bugs.webkit.org/show_bug.cgi?id=122206
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebScriptWorld.cpp:
+        (WebScriptWorld::standardWorld):
+        (WebScriptWorld::findOrCreateWorld):
+        * WebScriptWorld.h:
+        (WebScriptWorld::world):
+
 2013-10-01  Alex Christensen  <achristensen@webkit.org>
 
         Implemented createWebViewWithRequest in WinLauncher.

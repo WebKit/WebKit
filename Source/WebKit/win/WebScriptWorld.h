@@ -38,12 +38,12 @@ public:
     static WebScriptWorld* standardWorld();
     static COMPtr<WebScriptWorld> createInstance();
 
-    static COMPtr<WebScriptWorld> findOrCreateWorld(WebCore::DOMWrapperWorld*);
+    static COMPtr<WebScriptWorld> findOrCreateWorld(WebCore::DOMWrapperWorld&);
 
     virtual ULONG STDMETHODCALLTYPE AddRef();
     virtual ULONG STDMETHODCALLTYPE Release();
 
-    WebCore::DOMWrapperWorld* world() const { return m_world.get(); }
+    WebCore::DOMWrapperWorld& world() const { return *m_world; }
 
 private:
     static COMPtr<WebScriptWorld> createInstance(PassRefPtr<WebCore::DOMWrapperWorld>);

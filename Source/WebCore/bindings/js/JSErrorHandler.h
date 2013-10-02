@@ -37,15 +37,15 @@ namespace WebCore {
 
 class JSErrorHandler : public JSEventListener {
 public:
-    static PassRefPtr<JSErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+    static PassRefPtr<JSErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
     {
-        return adoptRef(new JSErrorHandler(listener, wrapper, isAttribute, isolatedWorld));
+        return adoptRef(new JSErrorHandler(listener, wrapper, isAttribute, world));
     }
 
     virtual ~JSErrorHandler();
 
 private:
-    JSErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
+    JSErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
     virtual void handleEvent(ScriptExecutionContext*, Event*);
 };
 

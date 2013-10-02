@@ -5164,11 +5164,11 @@ void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 }
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
-DOMWrapperWorld* HTMLMediaElement::ensureIsolatedWorld()
+DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld)
         m_isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM());
-    return m_isolatedWorld.get();
+    return *m_isolatedWorld;
 }
 
 bool HTMLMediaElement::ensureMediaControlsInjectedScript()
@@ -5181,7 +5181,7 @@ bool HTMLMediaElement::ensureMediaControlsInjectedScript()
     if (!mediaControlsScript.length())
         return false;
 
-    DOMWrapperWorld* world = ensureIsolatedWorld();
+    DOMWrapperWorld& world = ensureIsolatedWorld();
     ScriptController& scriptController = page->mainFrame().script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     JSC::ExecState* exec = globalObject->globalExec();
@@ -5205,9 +5205,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     if (!page)
         return;
 
-    DOMWrapperWorld* world = ensureIsolatedWorld();
-    if (!world)
-        return;
+    DOMWrapperWorld& world = ensureIsolatedWorld();
 
     if (!ensureMediaControlsInjectedScript())
         return;

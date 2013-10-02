@@ -90,20 +90,12 @@ namespace WebCore {
 
         StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
 
-        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const URL&,
-                                  const Vector<String>& whitelist, const Vector<String>& blacklist,
-                                  UserScriptInjectionTime, UserContentInjectedFrames);
-        void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const URL&,
-                                      const Vector<String>& whitelist, const Vector<String>& blacklist,
-                                      UserContentInjectedFrames,
-                                      UserStyleLevel level = UserStyleUserLevel,
-                                      UserStyleInjectionTime injectionTime = InjectInExistingDocuments);
-        void removeUserScriptFromWorld(DOMWrapperWorld*, const URL&);
-        void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const URL&);
-
-        void removeUserScriptsFromWorld(DOMWrapperWorld*);
-        void removeUserStyleSheetsFromWorld(DOMWrapperWorld*);
-
+        void addUserScriptToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime, UserContentInjectedFrames);
+        void addUserStyleSheetToWorld(DOMWrapperWorld&, const String& source, const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames, UserStyleLevel = UserStyleUserLevel, UserStyleInjectionTime = InjectInExistingDocuments);
+        void removeUserScriptFromWorld(DOMWrapperWorld&, const URL&);
+        void removeUserStyleSheetFromWorld(DOMWrapperWorld&, const URL&);
+        void removeUserScriptsFromWorld(DOMWrapperWorld&);
+        void removeUserStyleSheetsFromWorld(DOMWrapperWorld&);
         void removeAllUserContent();
 
         const UserScriptMap* userScripts() const { return m_userScripts.get(); }

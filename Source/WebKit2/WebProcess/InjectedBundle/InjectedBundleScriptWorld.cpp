@@ -47,20 +47,20 @@ PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create()
     return adoptRef(new InjectedBundleScriptWorld(ScriptController::createWorld()));
 }
 
-PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld* world)
+PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)
 {
-    if (world == mainThreadNormalWorld())
+    if (&world == &mainThreadNormalWorld())
         return normalWorld();
 
-    if (InjectedBundleScriptWorld* existingWorld = allWorlds().get(world))
+    if (InjectedBundleScriptWorld* existingWorld = allWorlds().get(&world))
         return existingWorld;
 
-    return adoptRef(new InjectedBundleScriptWorld(world));
+    return adoptRef(new InjectedBundleScriptWorld(&world));
 }
 
 InjectedBundleScriptWorld* InjectedBundleScriptWorld::normalWorld()
 {
-    static InjectedBundleScriptWorld* world = adoptRef(new InjectedBundleScriptWorld(mainThreadNormalWorld())).leakRef();
+    static InjectedBundleScriptWorld* world = adoptRef(new InjectedBundleScriptWorld(&mainThreadNormalWorld())).leakRef();
     return world;
 }
 
@@ -77,9 +77,9 @@ InjectedBundleScriptWorld::~InjectedBundleScriptWorld()
     allWorlds().remove(m_world.get());
 }
 
-DOMWrapperWorld* InjectedBundleScriptWorld::coreWorld() const
+DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld() const
 {
-    return m_world.get();
+    return *m_world.get();
 }
     
 void InjectedBundleScriptWorld::clearWrappers()

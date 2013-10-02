@@ -67,12 +67,12 @@ private:
     bool m_isNormal;
 };
 
-DOMWrapperWorld* normalWorld(JSC::VM&);
-DOMWrapperWorld* mainThreadNormalWorld();
-inline DOMWrapperWorld* debuggerWorld() { return mainThreadNormalWorld(); }
-inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
+DOMWrapperWorld& normalWorld(JSC::VM&);
+DOMWrapperWorld& mainThreadNormalWorld();
+inline DOMWrapperWorld& debuggerWorld() { return mainThreadNormalWorld(); }
+inline DOMWrapperWorld& pluginWorld() { return mainThreadNormalWorld(); }
 
-inline DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
+inline DOMWrapperWorld& currentWorld(JSC::ExecState* exec)
 {
     return JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
 }

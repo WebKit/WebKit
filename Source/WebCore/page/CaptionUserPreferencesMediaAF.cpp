@@ -32,7 +32,6 @@
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include "CoreText/CoreText.h"
 #endif
-#include "DOMWrapperWorld.h"
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "URL.h"

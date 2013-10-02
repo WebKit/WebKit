@@ -205,7 +205,7 @@ static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, cons
             continue;
         }
         // Hide listeners from other contexts.
-        if (jsListener->isolatedWorld() != currentWorld(exec))
+        if (&jsListener->isolatedWorld() != &currentWorld(exec))
             continue;
         JSObject* function = jsListener->jsFunction(document);
         if (!function)

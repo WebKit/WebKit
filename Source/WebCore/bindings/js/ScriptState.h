@@ -52,13 +52,13 @@ class WorkerGlobalScope;
 // For now, the separation is purely by convention.
 typedef JSC::ExecState ScriptState;
 
-DOMWindow* domWindowFromExecState(ScriptState*);
+DOMWindow* domWindowFromExecState(JSC::ExecState*);
 ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState*);
 
 JSC::ExecState* mainWorldExecState(Frame*);
 
-JSC::ExecState* execStateFromNode(DOMWrapperWorld*, Node*);
-JSC::ExecState* execStateFromPage(DOMWrapperWorld*, Page*);
+JSC::ExecState* execStateFromNode(DOMWrapperWorld&, Node*);
+JSC::ExecState* execStateFromPage(DOMWrapperWorld&, Page*);
 
 #if ENABLE(WORKERS)
 JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope*);

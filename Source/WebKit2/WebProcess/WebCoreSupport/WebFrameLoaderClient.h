@@ -195,9 +195,9 @@ private:
     virtual WebCore::ObjectContentType objectContentType(const WebCore::URL&, const String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
     virtual String overrideMediaType() const OVERRIDE;
 
-    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*) OVERRIDE;
+    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) OVERRIDE;
     
-    virtual void dispatchGlobalObjectAvailable(WebCore::DOMWrapperWorld*) OVERRIDE;
+    virtual void dispatchGlobalObjectAvailable(WebCore::DOMWrapperWorld&) OVERRIDE;
     virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension*) OVERRIDE;
     virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension*) OVERRIDE;
     virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) OVERRIDE;

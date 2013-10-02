@@ -369,7 +369,7 @@ void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners
 
 bool ScriptDebugServer::isContentScript(ExecState* exec)
 {
-    return currentWorld(exec) != mainThreadNormalWorld();
+    return &currentWorld(exec) != &mainThreadNormalWorld();
 }
 
 void ScriptDebugServer::detach(JSGlobalObject* globalObject)

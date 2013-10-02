@@ -257,7 +257,7 @@ void InjectedBundlePageLoaderClient::didLayout(WebPage* page, LayoutMilestones m
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
+void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld& world)
 {
     if (!m_client.didClearWindowObjectForFrame)
         return;
@@ -289,7 +289,7 @@ void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page
     m_client.didHandleOnloadEventsForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame(WebPage* page, WebFrame* frame, WebCore::DOMWrapperWorld* world)
+void InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame(WebPage* page, WebFrame* frame, WebCore::DOMWrapperWorld& world)
 {
     if (!m_client.globalObjectIsAvailableForFrame)
         return;

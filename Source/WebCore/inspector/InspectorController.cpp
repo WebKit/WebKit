@@ -211,9 +211,9 @@ bool InspectorController::hasInspectorFrontendClient() const
     return m_inspectorFrontendClient;
 }
 
-void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
+void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
 {
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend

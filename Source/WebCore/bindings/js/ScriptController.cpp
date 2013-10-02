@@ -92,30 +92,33 @@ ScriptController::~ScriptController()
     // It's likely that destroying m_windowShells will create a lot of garbage.
     if (!m_windowShells.isEmpty()) {
         while (!m_windowShells.isEmpty())
-            destroyWindowShell(m_windowShells.begin()->key.get());
+            destroyWindowShell(*m_windowShells.begin()->key);
         gcController().garbageCollectSoon();
     }
 }
 
-void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
+void ScriptController::destroyWindowShell(DOMWrapperWorld& world)
 {
-    ASSERT(m_windowShells.contains(world));
-    m_windowShells.remove(world);
-    world->didDestroyWindowShell(this);
+    ASSERT(m_windowShells.contains(&world));
+    m_windowShells.remove(&world);
+    world.didDestroyWindowShell(this);
 }
 
-JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
+JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
 {
-    ASSERT(!m_windowShells.contains(world));
-    Structure* structure = JSDOMWindowShell::createStructure(*world->vm(), jsNull());
-    Strong<JSDOMWindowShell> windowShell(*world->vm(), JSDOMWindowShell::create(m_frame.document()->domWindow(), structure, world));
+    ASSERT(!m_windowShells.contains(&world));
+
+    VM& vm = *world.vm();
+
+    Structure* structure = JSDOMWindowShell::createStructure(vm, jsNull());
+    Strong<JSDOMWindowShell> windowShell(vm, JSDOMWindowShell::create(vm, m_frame.document()->domWindow(), structure, world));
     Strong<JSDOMWindowShell> windowShell2(windowShell);
-    m_windowShells.add(world, windowShell);
-    world->didCreateWindowShell(this);
+    m_windowShells.add(&world, windowShell);
+    world.didCreateWindowShell(this);
     return windowShell.get();
 }
 
-ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld* world)
+ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     String sourceURL = jsSourceCode.provider()->url();
@@ -164,7 +167,7 @@ PassRefPtr<DOMWrapperWorld> ScriptController::createWorld()
     return DOMWrapperWorld::create(JSDOMWindow::commonVM());
 }
 
-void ScriptController::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
+void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
     static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM()->clientData)->getAllWorlds(worlds);
 }
@@ -205,11 +208,11 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
         gcController().garbageCollectSoon();
 }
 
-JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
+JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
 {
-    ASSERT(!m_windowShells.contains(world));
+    ASSERT(!m_windowShells.contains(&world));
 
-    JSLockHolder lock(world->vm());
+    JSLockHolder lock(world.vm());
 
     JSDOMWindowShell* windowShell = createWindowShell(world);
 
@@ -456,7 +459,7 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
+ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     ScriptSourceCode sourceCode(script, m_frame.document()->url());
@@ -472,8 +475,8 @@ bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
     CallFrame* callFrame = JSDOMWindow::commonVM()->topCallFrame;
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return false;
-    DOMWrapperWorld* domWrapperWorld = currentWorld(callFrame);
-    if (domWrapperWorld->isNormal())
+    DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);
+    if (domWrapperWorld.isNormal())
         return false;
     return true;
 }

@@ -627,7 +627,7 @@ private:
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
-    DOMWrapperWorld* ensureIsolatedWorld();
+    DOMWrapperWorld& ensureIsolatedWorld();
     bool ensureMediaControlsInjectedScript();
 #endif
 

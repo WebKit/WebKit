@@ -188,7 +188,7 @@ public:
     virtual WebCore::ObjectContentType objectContentType(const WebCore::URL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
     virtual WTF::String overrideMediaType() const OVERRIDE;
 
-    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*) OVERRIDE;
+    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) OVERRIDE;
     virtual void documentElementAvailable() OVERRIDE;
     virtual void didPerformFirstNavigation() const OVERRIDE;
 

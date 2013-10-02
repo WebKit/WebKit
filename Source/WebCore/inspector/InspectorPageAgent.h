@@ -141,7 +141,7 @@ public:
     DeviceOrientationData* overrideDeviceOrientation(DeviceOrientationData*);
 
     // InspectorInstrumentation API
-    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
+    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     void domContentEventFired();
     void loadEventFired();
     void frameNavigated(DocumentLoader*);

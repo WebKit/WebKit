@@ -1,3 +1,27 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        CTTE: DOMWrapperWorlds should be passed around by reference
+        https://bugs.webkit.org/show_bug.cgi?id=122206
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didClearWindowObjectForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::globalObjectIsAvailableForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::getOrCreate):
+        (WebKit::InjectedBundleScriptWorld::normalWorld):
+        (WebKit::InjectedBundleScriptWorld::coreWorld):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowScriptNPObject):
+        (WebKit::PluginView::pluginElementNPObject):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        (WebKit::WebFrameLoaderClient::dispatchGlobalObjectAvailable):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2013-10-01  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/122190> WebKit2 APIs returning CF and NS types should explicitly declare whether they return retained objects.

@@ -1441,7 +1441,7 @@ String WebFrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -1456,7 +1456,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
 }
 
 
-void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld* world)
+void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& world)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

@@ -1,3 +1,33 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        CTTE: DOMWrapperWorlds should be passed around by reference
+        https://bugs.webkit.org/show_bug.cgi?id=122206
+
+        Reviewed by Andreas Kling.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        (WebKit::NetscapePluginInstanceProxy::getPluginElementNPObject):
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+        (-[WebFrame _globalContextForScriptWorld:]):
+        (-[WebFrame jsWrapperForNode:inScriptWorld:]):
+        * WebView/WebScriptWorld.mm:
+        (+[WebScriptWorld standardWorld]):
+        (+[WebScriptWorld findOrCreateWorld:]):
+        * WebView/WebScriptWorldInternal.h:
+        * WebView/WebView.mm:
+        (-[WebView _injectOutlookQuirksScript]):
+        (+[WebView _addUserScriptToGroup:world:source:url:whitelist:blacklist:injectionTime:injectedFrames:]):
+        (+[WebView _addUserStyleSheetToGroup:world:source:url:whitelist:blacklist:injectedFrames:]):
+        (+[WebView _removeUserScriptFromGroup:world:url:]):
+        (+[WebView _removeUserStyleSheetFromGroup:world:url:]):
+        (+[WebView _removeUserScriptsFromGroup:world:]):
+        (+[WebView _removeUserStyleSheetsFromGroup:world:]):
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Remove support for DOMFileSystem

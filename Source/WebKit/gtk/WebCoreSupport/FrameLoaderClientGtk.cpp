@@ -575,9 +575,9 @@ String FrameLoaderClient::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void FrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     // Is this obsolete now?

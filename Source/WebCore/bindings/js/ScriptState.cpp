@@ -73,7 +73,7 @@ JSC::ExecState* mainWorldExecState(Frame* frame)
     return shell->window()->globalExec();
 }
 
-JSC::ExecState* execStateFromNode(DOMWrapperWorld* world, Node* node)
+JSC::ExecState* execStateFromNode(DOMWrapperWorld& world, Node* node)
 {
     if (!node)
         return 0;
@@ -85,7 +85,7 @@ JSC::ExecState* execStateFromNode(DOMWrapperWorld* world, Node* node)
     return frame->script().globalObject(world)->globalExec();
 }
 
-JSC::ExecState* execStateFromPage(DOMWrapperWorld* world, Page* page)
+JSC::ExecState* execStateFromPage(DOMWrapperWorld& world, Page* page)
 {
     return page->mainFrame().script().globalObject(world)->globalExec();
 }

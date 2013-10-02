@@ -39,7 +39,7 @@ class Frame;
 
 class DOMWindowExtension : public RefCounted<DOMWindowExtension>, public DOMWindowProperty {
 public:
-    static PassRefPtr<DOMWindowExtension> create(Frame* frame, DOMWrapperWorld* world)
+    static PassRefPtr<DOMWindowExtension> create(Frame* frame, DOMWrapperWorld& world)
     {
         return adoptRef(new DOMWindowExtension(frame, world));
     }
@@ -50,10 +50,10 @@ public:
     virtual void willDestroyGlobalObjectInFrame() OVERRIDE;
     virtual void willDetachGlobalObjectFromFrame() OVERRIDE;
 
-    DOMWrapperWorld* world() const { return m_world.get(); }
+    DOMWrapperWorld& world() const { return *m_world; }
 
 private:
-    DOMWindowExtension(Frame*, DOMWrapperWorld*);
+    DOMWindowExtension(Frame*, DOMWrapperWorld&);
 
     RefPtr<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;

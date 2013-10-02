@@ -453,9 +453,9 @@ String FrameLoaderClientEfl::overrideMediaType() const
     return String::fromUTF8(ewk_settings_css_media_type_get());
 }
 
-void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     Frame* coreFrame = EWKPrivate::coreFrame(m_frame);

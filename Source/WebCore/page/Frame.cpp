@@ -537,10 +537,10 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
         return;
 
     for (auto it = userScripts->begin(), end = userScripts->end(); it != end; ++it)
-        injectUserScriptsForWorld(it->key.get(), *it->value, injectionTime);
+        injectUserScriptsForWorld(*it->key.get(), *it->value, injectionTime);
 }
 
-void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVector& userScripts, UserScriptInjectionTime injectionTime)
+void Frame::injectUserScriptsForWorld(DOMWrapperWorld& world, const UserScriptVector& userScripts, UserScriptInjectionTime injectionTime)
 {
     if (userScripts.isEmpty())
         return;

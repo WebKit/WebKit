@@ -66,7 +66,7 @@ enum ReasonForCallingCanExecuteScripts {
 
 class ScriptController {
     friend class ScriptCachedFrameData;
-    typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowShell> > ShellMap;
+    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowShell>> ShellMap;
 
 public:
     explicit ScriptController(Frame&);
@@ -74,29 +74,29 @@ public:
 
     static PassRefPtr<DOMWrapperWorld> createWorld();
 
-    JSDOMWindowShell* createWindowShell(DOMWrapperWorld*);
-    void destroyWindowShell(DOMWrapperWorld*);
+    JSDOMWindowShell* createWindowShell(DOMWrapperWorld&);
+    void destroyWindowShell(DOMWrapperWorld&);
 
-    JSDOMWindowShell* windowShell(DOMWrapperWorld* world)
+    JSDOMWindowShell* windowShell(DOMWrapperWorld& world)
     {
-        ShellMap::iterator iter = m_windowShells.find(world);
+        ShellMap::iterator iter = m_windowShells.find(&world);
         return (iter != m_windowShells.end()) ? iter->value.get() : initScript(world);
     }
-    JSDOMWindowShell* existingWindowShell(DOMWrapperWorld* world) const
+    JSDOMWindowShell* existingWindowShell(DOMWrapperWorld& world) const
     {
-        ShellMap::const_iterator iter = m_windowShells.find(world);
+        ShellMap::const_iterator iter = m_windowShells.find(&world);
         return (iter != m_windowShells.end()) ? iter->value.get() : 0;
     }
-    JSDOMWindow* globalObject(DOMWrapperWorld* world)
+    JSDOMWindow* globalObject(DOMWrapperWorld& world)
     {
         return windowShell(world)->window();
     }
 
-    static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >&);
+    static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);
 
     ScriptValue executeScript(const ScriptSourceCode&);
     ScriptValue executeScript(const String& script, bool forceUserGesture = false);
-    ScriptValue executeScriptInWorld(DOMWrapperWorld*, const String& script, bool forceUserGesture = false);
+    ScriptValue executeScriptInWorld(DOMWrapperWorld&, const String& script, bool forceUserGesture = false);
 
     // Returns true if argument is a JavaScript URL.
     bool executeIfJavaScriptURL(const URL&, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL);
@@ -106,7 +106,7 @@ public:
     static void initializeThreading();
 
     ScriptValue evaluate(const ScriptSourceCode&);
-    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
+    ScriptValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&);
 
     WTF::TextPosition eventHandlerPosition() const;
 
@@ -164,7 +164,7 @@ public:
     bool shouldBypassMainWorldContentSecurityPolicy();
 
 private:
-    JSDOMWindowShell* initScript(DOMWrapperWorld* world);
+    JSDOMWindowShell* initScript(DOMWrapperWorld&);
 
     void disconnectPlatformScriptObjects();
 

@@ -75,7 +75,7 @@ public:
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
 
-    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
+    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
 
     void didCommitLoad();
     void domContentLoadedEventFired();

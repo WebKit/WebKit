@@ -1939,7 +1939,7 @@ String WebFrameLoaderClient::overrideMediaType() const
 void WebFrameLoaderClient::documentElementAvailable() {
 }
 
-void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& world)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -1950,7 +1950,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
         return;
     }
 
-    if (world != mainThreadNormalWorld())
+    if (&world != &mainThreadNormalWorld())
         return;
 
     Frame *frame = core(m_webFrame.get());

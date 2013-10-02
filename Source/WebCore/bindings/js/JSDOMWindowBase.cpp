@@ -54,7 +54,7 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info
 const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &shouldAllowAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop };
 
 JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(vm, structure, shell->world(), &s_globalObjectMethodTable)
+    : JSDOMGlobalObject(vm, structure, &shell->world(), &s_globalObjectMethodTable)
     , m_impl(window)
     , m_shell(shell)
 {
@@ -212,7 +212,7 @@ JSValue toJS(ExecState* exec, DOMWindow* domWindow)
     return frame->script().windowShell(currentWorld(exec));
 }
 
-JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld* world)
+JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld& world)
 {
     if (!frame)
         return 0;

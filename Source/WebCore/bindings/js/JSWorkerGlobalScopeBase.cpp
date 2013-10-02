@@ -50,7 +50,7 @@ const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope", &JSDOMG
 const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop };
 
 JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerGlobalScope> impl)
-    : JSDOMGlobalObject(vm, structure, normalWorld(vm), &s_globalObjectMethodTable)
+    : JSDOMGlobalObject(vm, structure, &normalWorld(vm), &s_globalObjectMethodTable)
     , m_impl(impl)
 {
 }

@@ -59,7 +59,7 @@ void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::
 {
     auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.get().asCell());
     auto& buffer = *wrapper.impl();
-    uncacheWrapper(static_cast<DOMWrapperWorld*>(context), &buffer, &wrapper);
+    uncacheWrapper(*static_cast<DOMWrapperWorld*>(context), &buffer, &wrapper);
     buffer.deref();
 }
 

@@ -39,12 +39,12 @@ namespace WebKit {
 class InjectedBundleScriptWorld : public TypedAPIObject<APIObject::TypeBundleScriptWorld> {
 public:
     static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
+    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static InjectedBundleScriptWorld* normalWorld();
 
     virtual ~InjectedBundleScriptWorld();
 
-    WebCore::DOMWrapperWorld* coreWorld() const;
+    WebCore::DOMWrapperWorld& coreWorld() const;
     
     void clearWrappers();
 

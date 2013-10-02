@@ -111,7 +111,7 @@ public:
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues);
     virtual WTF::String overrideMediaType() const;
-    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
+    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&);
     virtual void documentElementAvailable();
     virtual void didPerformFirstNavigation() const;
 

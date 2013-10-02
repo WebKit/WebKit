@@ -115,7 +115,7 @@ private:
 
 class InspectorInstrumentation {
 public:
-    static void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
+    static void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     static bool isDebuggerPaused(Frame*);
 
     static void willInsertDOMNode(Document*, Node* parent);
@@ -319,7 +319,7 @@ public:
 
 private:
 #if ENABLE(INSPECTOR)
-    static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
+    static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld&);
     static bool isDebuggerPausedImpl(InstrumentingAgents*);
 
     static void willInsertDOMNodeImpl(InstrumentingAgents*, Node* parent);
@@ -512,7 +512,7 @@ private:
 #endif
 };
 
-inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
+inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))

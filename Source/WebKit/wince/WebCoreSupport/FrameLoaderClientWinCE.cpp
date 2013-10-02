@@ -197,7 +197,7 @@ String FrameLoaderClientWinCE::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClientWinCE::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*)
+void FrameLoaderClientWinCE::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&)
 {
     notImplemented();
 }

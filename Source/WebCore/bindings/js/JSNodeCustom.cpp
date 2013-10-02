@@ -134,7 +134,7 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 void JSNodeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
+    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
     uncacheWrapper(world, jsNode->impl(), jsNode);
     jsNode->releaseImpl();
 }

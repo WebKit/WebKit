@@ -1,3 +1,16 @@
+2013-10-01  Sam Weinig  <sam@webkit.org>
+
+        CTTE: DOMWrapperWorlds should be passed around by reference
+        https://bugs.webkit.org/show_bug.cgi?id=122206
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Fix the build.

@@ -73,10 +73,9 @@ void ScriptCachedFrameData::restore(Frame& frame)
     ScriptController& scriptController = frame.script();
     ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
-    ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
-    for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
-        DOMWrapperWorld* world = iter->key.get();
-        JSDOMWindowShell* windowShell = iter->value.get();
+    for (auto it = windowShells.begin(), end = windowShells.end(); it != end; ++it) {
+        DOMWrapperWorld* world = it->key.get();
+        JSDOMWindowShell* windowShell = it->value.get();
 
         if (JSDOMWindow* window = m_windows.get(world).get())
             windowShell->setWindow(window->vm(), window);

@@ -33,9 +33,9 @@ namespace WebCore {
 
     class JSEventListener : public EventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
         {
-            return adoptRef(new JSEventListener(listener, wrapper, isAttribute, isolatedWorld));
+            return adoptRef(new JSEventListener(listener, wrapper, isAttribute, world));
         }
 
         static const JSEventListener* cast(const EventListener* listener)
@@ -53,7 +53,7 @@ namespace WebCore {
         bool isAttribute() const { return m_isAttribute; }
 
         JSC::JSObject* jsFunction(ScriptExecutionContext*) const;
-        DOMWrapperWorld* isolatedWorld() const { return m_isolatedWorld.get(); }
+        DOMWrapperWorld& isolatedWorld() const { return *m_isolatedWorld; }
 
         JSC::JSObject* wrapper() const { return m_wrapper.get(); }
         void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
@@ -64,7 +64,7 @@ namespace WebCore {
         virtual bool virtualisAttribute() const;
 
     protected:
-        JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
+        JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
         virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     private:
