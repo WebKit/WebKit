@@ -42,9 +42,11 @@ namespace JSC { namespace FTL {
 using namespace DFG;
 
 static uint8_t* mmAllocateCodeSection(
-    void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID)
+    void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID,
+    const char* sectionName)
 {
     UNUSED_PARAM(sectionID);
+    UNUSED_PARAM(sectionName);
     
     State& state = *static_cast<State*>(opaqueState);
     
@@ -61,13 +63,13 @@ static uint8_t* mmAllocateCodeSection(
 
 static uint8_t* mmAllocateDataSection(
     void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID,
-    LLVMBool isReadOnly)
+    const char* sectionName, LLVMBool isReadOnly)
 {
     // FIXME: fourthTier: FTL memory allocator should be able to allocate data
     // sections in non-executable memory.
     // https://bugs.webkit.org/show_bug.cgi?id=116189
     UNUSED_PARAM(isReadOnly);
-    return mmAllocateCodeSection(opaqueState, size, alignment, sectionID);
+    return mmAllocateCodeSection(opaqueState, size, alignment, sectionID, sectionName);
 }
 
 static LLVMBool mmApplyPermissions(void*, char**)

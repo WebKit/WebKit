@@ -1,5 +1,18 @@
 2013-10-01  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should use the new version of LLVM MCJIT memory manager APIs that take a SectionName
+        https://bugs.webkit.org/show_bug.cgi?id=122193
+
+        Reviewed by Geoffrey Garen.
+        
+        Update our usage of the LLVM C API since the API is about to change.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        (JSC::FTL::mmAllocateDataSection):
+
+2013-10-01  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(156464): 50% regression on SunSpider/string-fasta
         https://bugs.webkit.org/show_bug.cgi?id=122202
 
