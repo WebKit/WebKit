@@ -321,7 +321,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 void SliderThumbElement::startDragging()
 {
     if (Frame* frame = document().frame()) {
-        frame->eventHandler().setCapturingMouseEventsNode(this);
+        frame->eventHandler().setCapturingMouseEventsElement(this);
         m_inDragMode = true;
     }
 }
@@ -332,7 +332,7 @@ void SliderThumbElement::stopDragging()
         return;
 
     if (Frame* frame = document().frame())
-        frame->eventHandler().setCapturingMouseEventsNode(0);
+        frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     m_inDragMode = false;
     if (renderer())
         renderer()->setNeedsLayout(true);
@@ -398,7 +398,7 @@ void SliderThumbElement::willDetachRenderers()
 {
     if (m_inDragMode) {
         if (Frame* frame = document().frame())
-            frame->eventHandler().setCapturingMouseEventsNode(0);
+            frame->eventHandler().setCapturingMouseEventsElement(nullptr);
     }
 }
 

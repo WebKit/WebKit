@@ -138,7 +138,7 @@ public:
     bool mousePressed() const { return m_mousePressed; }
     void setMousePressed(bool pressed) { m_mousePressed = pressed; }
 
-    void setCapturingMouseEventsNode(PassRefPtr<Node>); // A caller is responsible for resetting capturing node to 0.
+    void setCapturingMouseEventsElement(PassRefPtr<Element>); // A caller is responsible for resetting capturing element to 0.
 
 #if ENABLE(DRAG_SUPPORT)
     bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
@@ -448,11 +448,11 @@ private:
 
     RenderLayer* m_resizeLayer;
 
-    RefPtr<Node> m_capturingMouseEventsNode;
-    bool m_eventHandlerWillResetCapturingMouseEventsNode;
+    RefPtr<Element> m_capturingMouseEventsElement;
+    bool m_eventHandlerWillResetCapturingMouseEventsElement;
     
-    RefPtr<Node> m_nodeUnderMouse;
-    RefPtr<Node> m_lastNodeUnderMouse;
+    RefPtr<Element> m_elementUnderMouse;
+    RefPtr<Element> m_lastElementUnderMouse;
     RefPtr<Frame> m_lastMouseMoveEventSubframe;
     RefPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;

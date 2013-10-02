@@ -96,7 +96,7 @@ void HTMLPlugInElement::willDetachRenderers()
 
     if (m_isCapturingMouseEvents) {
         if (Frame* frame = document().frame())
-            frame->eventHandler().setCapturingMouseEventsNode(0);
+            frame->eventHandler().setCapturingMouseEventsElement(nullptr);
         m_isCapturingMouseEvents = false;
     }
 

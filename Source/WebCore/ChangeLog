@@ -1,3 +1,19 @@
+2013-10-01  Andreas Kling  <akling@apple.com>
+
+        Move mouse event dispatch from Node to Element.
+        <https://webkit.org/b/122203>
+
+        Reviewed by Anders Carlsson.
+
+        We never dispatch mouse events on text or other non-element nodes,
+        so move the related logic to using Element.
+
+        Node::dispatchMouseEvent() moves to Element. I also changed the
+        relatedTarget argument to be an Element* since the related target
+        is never a Node either.
+
+        Most of this patch is *Node -> *Element renames in EventHandler.
+
 2013-10-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue for CSS child values

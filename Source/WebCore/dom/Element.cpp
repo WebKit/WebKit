@@ -240,6 +240,11 @@ bool Element::shouldUseInputMethod()
     return isContentEditable(UserSelectAllIsAlwaysNonEditable);
 }
 
+bool Element::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType, int detail, Element* relatedTarget)
+{
+    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document().defaultView(), event, detail, relatedTarget)));
+}
+
 bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
     return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document().defaultView()));
