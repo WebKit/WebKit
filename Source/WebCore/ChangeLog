@@ -1,3 +1,68 @@
+2013-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Update bindings test results.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectOwner::finalize):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetterOwner::finalize):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetOwner::finalize):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionOwner::finalize):
+        * bindings/scripts/test/JS/JSTestException.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceOwner::finalize):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerOwner::finalize):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorOwner::finalize):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjOwner::finalize):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsOwner::finalize):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceOwner::finalize):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsOwner::finalize):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+
 2013-10-02  Andreas Kling  <akling@apple.com>
 
         Remove Qt-specific code in WebCore/{rendering,editing,history}.

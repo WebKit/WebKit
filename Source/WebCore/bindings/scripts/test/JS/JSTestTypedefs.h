@@ -77,15 +77,15 @@ public:
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, TestTypedefs*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestTypedefs*)
 {
     DEFINE_STATIC_LOCAL(JSTestTypedefsOwner, jsTestTypedefsOwner, ());
     return &jsTestTypedefsOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld* world, TestTypedefs*)
+inline void* wrapperContext(DOMWrapperWorld& world, TestTypedefs*)
 {
-    return world;
+    return &world;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestTypedefs*);
