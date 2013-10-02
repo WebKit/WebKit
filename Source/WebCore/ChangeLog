@@ -1,3 +1,9 @@
+2013-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, removing references to the recently removed Modules/filesystem directory.
+
+        * GNUmakefile.am:
+
 2013-10-02  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Activate all regions to have layers, as CSS Regions create a new stacking context
