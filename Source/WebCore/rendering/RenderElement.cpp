@@ -781,22 +781,13 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 // when scrolling a page with a fixed background image. As an optimization, assuming there are
 // no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
 // ignore the CSS property "background-attachment: fixed".
-static bool shouldRepaintFixedBackgroundsOnScroll(FrameView* frameView)
+static bool shouldRepaintFixedBackgroundsOnScroll()
 {
-#if !ENABLE(FAST_MOBILE_SCROLLING) || !PLATFORM(QT)
-    UNUSED_PARAM(frameView);
-#endif
-
-    bool repaintFixedBackgroundsOnScroll = true;
 #if ENABLE(FAST_MOBILE_SCROLLING)
-#if PLATFORM(QT)
-    if (frameView->delegatesScrolling())
-        repaintFixedBackgroundsOnScroll = false;
+    return false;
 #else
-    repaintFixedBackgroundsOnScroll = false;
+    return true;
 #endif
-#endif
-    return repaintFixedBackgroundsOnScroll;
 }
 
 static inline bool rendererHasBackground(const RenderObject* renderer)
@@ -869,7 +860,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle* new
         s_noLongerAffectsParentBlock = false;
     }
 
-    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
 
     bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
     bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
@@ -985,7 +976,7 @@ void RenderElement::willBeRemovedFromTree()
         removeLayers(layer);
     }
 
-    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
     if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
         view().frameView().removeSlowRepaintObject(this);
 

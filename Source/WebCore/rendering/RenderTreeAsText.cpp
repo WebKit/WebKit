@@ -69,10 +69,6 @@
 #include "RenderLayerBacking.h"
 #endif
 
-#if PLATFORM(QT)
-#include <QVariant>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -503,23 +499,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             }
         }
     }
-
-#if PLATFORM(QT)
-    // Print attributes of embedded QWidgets. E.g. when the WebCore::Widget
-    // is invisible the QWidget should be invisible too.
-    if (o.isWidget()) {
-        const RenderWidget* part = toRenderWidget(const_cast<RenderObject*>(&o));
-        if (part->widget() && part->widget()->platformWidget()) {
-            QObject* wid = part->widget()->platformWidget();
-
-            ts << " [QT: ";
-            ts << "geometry: {" << wid->property("geometry").toRect() << "} ";
-            ts << "isHidden: " << !wid->property("isVisible").toBool() << " ";
-            ts << "isSelfVisible: " << part->widget()->isSelfVisible() << " ";
-            ts << "isParentVisible: " << part->widget()->isParentVisible() << " ] ";
-        }
-    }
-#endif
 }
 
 static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBox& run)

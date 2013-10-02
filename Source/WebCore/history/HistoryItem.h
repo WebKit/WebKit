@@ -39,12 +39,6 @@
 typedef struct objc_object* id;
 #endif
 
-#if PLATFORM(QT)
-#include <QVariant>
-#include <QByteArray>
-#include <QDataStream>
-#endif
-
 #if PLATFORM(BLACKBERRY)
 #include "HistoryItemViewState.h"
 #endif
@@ -197,14 +191,6 @@ public:
     void setTransientProperty(const String&, id);
 #endif
 
-#if PLATFORM(QT)
-    QVariant userData() const { return m_userData; }
-    void setUserData(const QVariant& userData) { m_userData = userData; }
-
-    static PassRefPtr<HistoryItem> restoreState(QDataStream& buffer, int version);
-    QDataStream& saveState(QDataStream& out, int version) const;
-#endif
-
 #if PLATFORM(BLACKBERRY)
     HistoryItemViewState& viewState() { return m_viewState; }
 #endif
@@ -291,10 +277,6 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
     OwnPtr<HashMap<String, RetainPtr<id> > > m_transientProperties;
-#endif
-
-#if PLATFORM(QT)
-    QVariant m_userData;
 #endif
 
 #if PLATFORM(BLACKBERRY)
