@@ -111,7 +111,10 @@ public:
     typedef int Clause;
     typedef int ConstDeclList;
     typedef int BinaryOperand;
-    
+    typedef int DeconstructionPattern;
+    typedef int ArrayPattern;
+    typedef int ObjectPattern;
+
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
     static const bool CanUseFunctionCache = true;
@@ -173,8 +176,8 @@ public:
     int createPropertyList(const JSTokenLocation&, Property, int) { return 1; }
     int createElementList(int, int) { return 1; }
     int createElementList(int, int, int) { return 1; }
-    int createFormalParameterList(const Identifier&) { return 1; }
-    int createFormalParameterList(int, const Identifier&) { return 1; }
+    int createFormalParameterList(DeconstructionPattern) { return 1; }
+    int createFormalParameterList(int, DeconstructionPattern) { return 1; }
     int createClause(int, int) { return 1; }
     int createClauseList(int) { return 1; }
     int createClauseList(int, int) { return 1; }
@@ -185,7 +188,6 @@ public:
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return 1; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int, int) { return 1; }
     int createForLoop(const JSTokenLocation&, int, int, int, int, int, int) { return 1; }
-    int createForInLoop(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return 1; }
     int createForInLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int) { return 1; }
     int createEmptyStatement(const JSTokenLocation&) { return 1; }
     int createVarStatement(const JSTokenLocation&, int, int, int) { return 1; }
@@ -250,7 +252,32 @@ public:
     const Identifier& getName(const Property& property) const { ASSERT(property.name); return *property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }
+    ExpressionType createDeconstructingAssignment(const JSTokenLocation&, int, ExpressionType)
+    {
+        return 1;
+    }
     
+    ArrayPattern createArrayPattern(const JSTokenLocation&)
+    {
+        return 1;
+    }
+    void appendArrayPatternSkipEntry(ArrayPattern, const JSTokenLocation&)
+    {
+    }
+    void appendArrayPatternEntry(ArrayPattern, const JSTokenLocation&, DeconstructionPattern)
+    {
+    }
+    ObjectPattern createObjectPattern(const JSTokenLocation&)
+    {
+        return 1;
+    }
+    void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, bool, const Identifier&, DeconstructionPattern)
+    {
+    }
+    DeconstructionPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, const JSTextPosition&)
+    {
+        return 1;
+    }
 private:
     int m_topBinaryExpr;
     int m_topUnaryToken;

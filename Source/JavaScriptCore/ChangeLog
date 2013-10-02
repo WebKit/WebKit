@@ -1,3 +1,13 @@
+2013-09-25  Oliver Hunt  <oliver@apple.com>
+
+        Implement prefixed-destructuring assignment
+        https://bugs.webkit.org/show_bug.cgi?id=121930
+
+        Reviewed by Mark Hahnenberg.
+
+        Relanding with fix after rollout - it helps to not completely destroy
+        optimisations for no reason.
+
 2013-10-02  Nadav Rotem  <nrotem@apple.com>
 
         FTL: Refactor compileArithDiv and compileArithMod into one function.

@@ -286,7 +286,10 @@ namespace JSC {
                 lineStart -= sourceOffset;
             else
                 lineStart = 0;
-            ASSERT(divotOffset >= lineStart);
+
+            if (divotOffset < lineStart)
+                return;
+
             unsigned column = divotOffset - lineStart;
 
             unsigned instructionOffset = instructions().size();
