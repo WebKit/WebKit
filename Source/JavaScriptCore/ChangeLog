@@ -1,3 +1,15 @@
+2013-10-02  Nadav Rotem  <nrotem@apple.com>
+
+        FTL: Refactor compileArithDiv and compileArithMod into one function.
+        https://bugs.webkit.org/show_bug.cgi?id=122205
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileAddSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDivMod):
+
 2013-10-02  Anders Carlsson  <andersca@apple.com>
 
         Get rid of Qt code from JavaScriptCore

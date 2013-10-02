@@ -279,19 +279,19 @@ private:
             break;
         case ArithAdd:
         case ValueAdd:
-            compileAddSub(Add);
+            compileAddSub();
             break;
         case ArithSub:
-            compileAddSub(Sub);
+            compileAddSub();
             break;
         case ArithMul:
             compileArithMul();
             break;
         case ArithDiv:
-            compileArithDiv();
+            compileArithDivMod();
             break;
         case ArithMod:
-            compileArithMod();
+            compileArithDivMod();
             break;
         case ArithMin:
         case ArithMax:
@@ -654,10 +654,9 @@ private:
         DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, speculate);
     }
     
-    enum AddOrSubKind {Add, Sub};
-    void compileAddSub(AddOrSubKind opKind)
+    void compileAddSub()
     {
-        bool isSub = opKind == Sub;
+        bool isSub =  m_node->op() == ArithSub;
         switch (m_node->binaryUseKind()) {
         case Int32Use: {
             LValue left = lowInt32(m_node->child1());
@@ -778,17 +777,17 @@ private:
             break;
         }
     }
-    
-    void compileArithDiv()
+
+    void compileArithDivMod()
     {
         switch (m_node->binaryUseKind()) {
         case Int32Use: {
             LValue numerator = lowInt32(m_node->child1());
             LValue denominator = lowInt32(m_node->child2());
             
-            LBasicBlock unsafeDenominator = FTL_NEW_BLOCK(m_out, ("ArithDiv unsafe denominator"));
-            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithDiv continuation"));
-            LBasicBlock done = FTL_NEW_BLOCK(m_out, ("ArithDiv done"));
+            LBasicBlock unsafeDenominator = FTL_NEW_BLOCK(m_out, ("ArithDivMod unsafe denominator"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithDivMod continuation"));
+            LBasicBlock done = FTL_NEW_BLOCK(m_out, ("ArithDivMod done"));
             
             Vector<ValueFromBlock, 3> results;
             
@@ -806,7 +805,7 @@ private:
                 m_out.jump(continuation);
             } else {
                 // This is the case where we convert the result to an int after we're done. So,
-                // if the denominator is zero, then the result should be result should be zero.
+                // if the denominator is zero, then the result should be zero.
                 // If the denominator is not zero (i.e. it's -1 because we're guarded by the
                 // check above) and the numerator is -2^31 then the result should be -2^31.
                 
@@ -831,8 +830,8 @@ private:
             m_out.appendTo(continuation, done);
             
             if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
-                LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithDiv zero numerator"));
-                LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithDiv numerator continuation"));
+                LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithDivMod zero numerator"));
+                LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithDivMod numerator continuation"));
                 
                 m_out.branch(m_out.isZero32(numerator), zeroNumerator, numeratorContinuation);
                 
@@ -846,15 +845,17 @@ private:
                 m_out.appendTo(numeratorContinuation, innerLastNext);
             }
             
-            LValue divisionResult = m_out.div(numerator, denominator);
+            LValue divModResult = m_node->op() == ArithDiv
+                ? m_out.div(numerator, denominator)
+                : m_out.rem(numerator, denominator);
             
             if (bytecodeUsesAsNumber(m_node->arithNodeFlags())) {
                 speculate(
                     Overflow, noValue(), 0,
-                    m_out.notEqual(m_out.mul(divisionResult, denominator), numerator));
+                    m_out.notEqual(m_out.mul(divModResult, denominator), numerator));
             }
             
-            results.append(m_out.anchor(divisionResult));
+            results.append(m_out.anchor(divModResult));
             m_out.jump(done);
             
             m_out.appendTo(done, lastNext);
@@ -864,8 +865,9 @@ private:
         }
             
         case NumberUse: {
-            setDouble(
-                m_out.doubleDiv(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            LValue C1 = lowDouble(m_node->child1());
+            LValue C2 = lowDouble(m_node->child2());
+            setDouble(m_node->op() == ArithDiv ? m_out.doubleDiv(C1, C2) : m_out.doubleRem(C1, C2));
             break;
         }
             
@@ -875,99 +877,6 @@ private:
         }
     }
     
-    void compileArithMod()
-    {
-        switch (m_node->binaryUseKind()) {
-        case Int32Use: {
-            LValue numerator = lowInt32(m_node->child1());
-            LValue denominator = lowInt32(m_node->child2());
-            
-            LBasicBlock unsafeDenominator = FTL_NEW_BLOCK(m_out, ("ArithMod unsafe denominator"));
-            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMod continuation"));
-            LBasicBlock done = FTL_NEW_BLOCK(m_out, ("ArithMod done"));
-            
-            Vector<ValueFromBlock, 3> results;
-            
-            LValue adjustedDenominator = m_out.add(denominator, m_out.int32One);
-            
-            m_out.branch(m_out.above(adjustedDenominator, m_out.int32One), continuation, unsafeDenominator);
-            
-            LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, continuation);
-            
-            LValue neg2ToThe31 = m_out.constInt32(-2147483647-1);
-            
-            // FIXME: -2^31 / -1 will actually yield negative zero, so we could have a
-            // separate case for that. But it probably doesn't matter so much.
-            if (bytecodeUsesAsNumber(m_node->arithNodeFlags())) {
-                LValue cond = m_out.bitOr(m_out.isZero32(denominator), m_out.equal(numerator, neg2ToThe31));
-                speculate(Overflow, noValue(), 0, cond);
-                m_out.jump(continuation);
-            } else {
-                // This is the case where we convert the result to an int after we're done. So,
-                // if the denominator is zero, then the result should be result should be zero.
-                // If the denominator is not zero (i.e. it's -1 because we're guarded by the
-                // check above) and the numerator is -2^31 then the result should be -2^31.
-                
-                LBasicBlock modByZero = FTL_NEW_BLOCK(m_out, ("ArithMod modulo by zero"));
-                LBasicBlock notModByZero = FTL_NEW_BLOCK(m_out, ("ArithMod not modulo by zero"));
-                LBasicBlock neg2ToThe31ByNeg1 = FTL_NEW_BLOCK(m_out, ("ArithMod -2^31/-1"));
-                
-                m_out.branch(m_out.isZero32(denominator), modByZero, notModByZero);
-                
-                m_out.appendTo(modByZero, notModByZero);
-                results.append(m_out.anchor(m_out.int32Zero));
-                m_out.jump(done);
-                
-                m_out.appendTo(notModByZero, neg2ToThe31ByNeg1);
-                m_out.branch(m_out.equal(numerator, neg2ToThe31), neg2ToThe31ByNeg1, continuation);
-                
-                m_out.appendTo(neg2ToThe31ByNeg1, continuation);
-                results.append(m_out.anchor(m_out.int32Zero));
-                m_out.jump(done);
-            }
-            
-            m_out.appendTo(continuation, done);
-            
-            LValue remainder = m_out.rem(numerator, denominator);
-            
-            if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
-                LBasicBlock negativeNumerator = FTL_NEW_BLOCK(m_out, ("ArithMod negative numerator"));
-                LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithMod numerator continuation"));
-                
-                m_out.branch(
-                    m_out.lessThan(numerator, m_out.int32Zero),
-                    negativeNumerator, numeratorContinuation);
-                
-                LBasicBlock innerLastNext = m_out.appendTo(negativeNumerator, numeratorContinuation);
-                
-                speculate(NegativeZero, noValue(), 0, m_out.isZero32(remainder));
-                
-                m_out.jump(numeratorContinuation);
-                
-                m_out.appendTo(numeratorContinuation, innerLastNext);
-            }
-            
-            results.append(m_out.anchor(remainder));
-            m_out.jump(done);
-            
-            m_out.appendTo(done, lastNext);
-            
-            setInt32(m_out.phi(m_out.int32, results));
-            break;
-        }
-            
-        case NumberUse: {
-            setDouble(
-                m_out.doubleRem(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    }
-
     void compileArithMinOrMax()
     {
         switch (m_node->binaryUseKind()) {
