@@ -1,3 +1,12 @@
+2013-10-02  Andreas Kling  <akling@apple.com>
+
+        Remove Qt-specific code in WebCore/{page,accessibility}.
+        <https://webkit.org/b/122222>
+
+        Reviewed by Anders Carlsson.
+
+        Purge PLATFORM(QT) blocks and FooBarQt.* files.
+
 2013-10-02  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Move ShapeInsideInfo::updateSegmentsForLine implementations into the cpp
