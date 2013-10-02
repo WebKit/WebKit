@@ -65,15 +65,13 @@ static const StylePropertySet& rightToLeftDeclaration()
 
 class MatchRequest {
 public:
-    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0)
+    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false)
         : ruleSet(ruleSet)
         , includeEmptyRules(includeEmptyRules)
-        , scope(scope)
     {
     }
     const RuleSet* ruleSet;
     const bool includeEmptyRules;
-    const ContainerNode* scope;
 };
 
 StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
@@ -167,8 +165,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     // c) the rules comes from a scoped style sheet within the same tree scope
     TreeScope* treeScope = element->treeScope();
     if (!MatchingUARulesScope::isMatchingUARules()
-        && !treeScope->applyAuthorStyles()
-        && (!matchRequest.scope || matchRequest.scope->treeScope() != treeScope))
+        && !treeScope->applyAuthorStyles())
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
@@ -199,7 +196,7 @@ void ElementRuleCollector::collectMatchingRulesForRegion(const MatchRequest& mat
         if (checkRegionSelector(regionSelector, m_regionForStyling->generatingElement())) {
             RuleSet* regionRules = matchRequest.ruleSet->regionSelectorsAndRuleSets().at(i).ruleSet.get();
             ASSERT(regionRules);
-            collectMatchingRules(MatchRequest(regionRules, matchRequest.includeEmptyRules, matchRequest.scope), ruleRange);
+            collectMatchingRules(MatchRequest(regionRules, matchRequest.includeEmptyRules), ruleRange);
         }
     }
 }
@@ -228,68 +225,6 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
     }
 }
 
-void ElementRuleCollector::matchScopedAuthorRules(bool includeEmptyRules)
-{
-#if ENABLE(SHADOW_DOM)
-    if (!m_scopeResolver)
-        return;
-
-    // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
-    if (m_scopeResolver->hasScopedStyles() && m_scopeResolver->ensureStackConsistency(m_state.element())) {
-        bool applyAuthorStyles = m_state.element()->treeScope()->applyAuthorStyles();
-        bool documentScope = true;
-        unsigned scopeSize = m_scopeResolver->stackSize();
-        for (unsigned i = 0; i < scopeSize; ++i) {
-            clearMatchedRules();
-            m_result.ranges.lastAuthorRule = m_result.matchedProperties.size() - 1;
-
-            const StyleScopeResolver::StackFrame& frame = m_scopeResolver->stackFrameAt(i);
-            documentScope = documentScope && !frame.m_scope->isInShadowTree();
-            if (documentScope) {
-                if (!applyAuthorStyles)
-                    continue;
-            } else {
-                if (!m_scopeResolver->matchesStyleBounds(frame))
-                    continue;
-            }
-
-            MatchRequest matchRequest(frame.m_ruleSet, includeEmptyRules, frame.m_scope);
-            StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
-            collectMatchingRules(matchRequest, ruleRange);
-            collectMatchingRulesForRegion(matchRequest, ruleRange);
-            sortAndTransferMatchedRules();
-        }
-    }
-
-    matchHostRules(includeEmptyRules);
-#else
-    UNUSED_PARAM(includeEmptyRules);
-#endif
-}
-
-void ElementRuleCollector::matchHostRules(bool includeEmptyRules)
-{
-#if ENABLE(SHADOW_DOM)
-    ASSERT(m_scopeResolver);
-
-    clearMatchedRules();
-    m_result.ranges.lastAuthorRule = m_result.matchedProperties.size() - 1;
-
-    Vector<RuleSet*> matchedRules;
-    m_scopeResolver->matchHostRules(m_state.element(), matchedRules);
-    if (matchedRules.isEmpty())
-        return;
-
-    for (unsigned i = matchedRules.size(); i > 0; --i) {
-        StyleResolver::RuleRange ruleRange = m_result.ranges.authorRuleRange();
-        collectMatchingRules(MatchRequest(matchedRules.at(i-1), includeEmptyRules, m_state.element()), ruleRange);
-    }
-    sortAndTransferMatchedRules();
-#else
-    UNUSED_PARAM(includeEmptyRules);
-#endif
-}
-
 void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 {
     clearMatchedRules();
@@ -305,8 +240,6 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     collectMatchingRulesForRegion(matchRequest, ruleRange);
 
     sortAndTransferMatchedRules();
-
-    matchScopedAuthorRules(includeEmptyRules);
 }
 
 void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
@@ -356,7 +289,7 @@ void ElementRuleCollector::matchUARules(RuleSet* rules)
     sortAndTransferMatchedRules();
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, const ContainerNode* scope, PseudoId& dynamicPseudo)
+inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, PseudoId& dynamicPseudo)
 {
     const StyleResolver::State& state = m_state;
 
@@ -383,7 +316,6 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, const Co
     SelectorChecker selectorChecker(document(), m_mode);
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), state.element(), SelectorChecker::VisitedMatchEnabled);
     context.elementStyle = state.style();
-    context.scope = scope;
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
@@ -421,7 +353,7 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
         if (hasInspectorFrontends)
             cookie = InspectorInstrumentation::willMatchRule(&document(), rule, m_inspectorCSSOMWrappers, document().styleSheetCollection());
         PseudoId dynamicPseudo = NOPSEUDO;
-        if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
+        if (ruleMatches(ruleData, dynamicPseudo)) {
             // For SharingRules testing, any match is good enough, we don't care what is matched.
             if (m_mode == SelectorChecker::SharingRules) {
                 addMatchedRule(&ruleData);

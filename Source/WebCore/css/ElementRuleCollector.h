@@ -76,13 +76,11 @@ private:
     void addElementStyleProperties(const StylePropertySet*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
-    void matchScopedAuthorRules(bool includeEmptyRules);
-    void matchHostRules(bool includeEmptyRules);
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, StyleResolver::RuleRange&);
-    bool ruleMatches(const RuleData&, const ContainerNode* scope, PseudoId&);
+    bool ruleMatches(const RuleData&, PseudoId&);
 
     void sortMatchedRules();
     void sortAndTransferMatchedRules();

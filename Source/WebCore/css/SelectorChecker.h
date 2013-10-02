@@ -48,7 +48,6 @@ class SelectorChecker {
 public:
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
-    enum BehaviorAtBoundary { DoesNotCrossBoundary, StaysWithinTreeScope };
 
     SelectorChecker(Document&, Mode);
 
@@ -66,7 +65,6 @@ public:
             , isSubSelector(false)
             , hasScrollbarPseudo(false)
             , hasSelectionPseudo(false)
-            , behaviorAtBoundary(DoesNotCrossBoundary)
         { }
 
         const CSSSelector* selector;
@@ -80,7 +78,6 @@ public:
         bool isSubSelector;
         bool hasScrollbarPseudo;
         bool hasSelectionPseudo;
-        BehaviorAtBoundary behaviorAtBoundary;
     };
 
     bool match(const SelectorCheckingContext& context, PseudoId& pseudoId) const
