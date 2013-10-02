@@ -1,3 +1,18 @@
+2013-10-02  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Move ShapeInsideInfo::updateSegmentsForLine implementations into the cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122236
+
+        Reviewed by Oliver Hunt.
+
+        There is no reason for updateSegmentsForLine methods to be inline. I moved them to the cpp.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::updateSegmentsForLine):
+        * rendering/shapes/ShapeInsideInfo.h:
+
 2013-10-02  Andreas Kling  <akling@apple.com>
 
         Remove Qt from WebCore/platform.

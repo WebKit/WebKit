@@ -69,30 +69,8 @@ public:
 
     static bool isEnabledFor(const RenderBlock* renderer);
 
-    bool updateSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)
-    {
-        m_segmentRanges.clear();
-        bool result = updateSegmentsForLine(lineOffset.height(), lineHeight);
-        for (size_t i = 0; i < m_segments.size(); i++) {
-            m_segments[i].logicalLeft -= lineOffset.width();
-            m_segments[i].logicalRight -= lineOffset.width();
-        }
-        return result;
-    }
-
-    bool updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
-    {
-        ASSERT(lineHeight >= 0);
-        m_shapeLineTop = lineTop - logicalTopOffset();
-        m_lineHeight = lineHeight;
-        m_segments.clear();
-        m_segmentRanges.clear();
-
-        if (lineOverlapsShapeBounds())
-            m_segments = computeSegmentsForLine(lineTop, lineHeight);
-
-        return m_segments.size();
-    }
+    bool updateSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight);
+    bool updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
 
     bool hasSegments() const
     {
