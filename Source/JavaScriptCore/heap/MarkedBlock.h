@@ -69,6 +69,8 @@ namespace JSC {
     // size.
 
     class MarkedBlock : public HeapBlock<MarkedBlock> {
+        friend class LLIntOffsetsExtractor;
+
     public:
         static const size_t atomSize = 8; // bytes
         static const size_t blockSize = 64 * KB;

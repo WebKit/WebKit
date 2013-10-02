@@ -34,6 +34,8 @@ class Heap;
 class WeakImpl;
 
 class WeakSet {
+    friend class LLIntOffsetsExtractor;
+
 public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = 0, void* context = 0);
     static void deallocate(WeakImpl*);

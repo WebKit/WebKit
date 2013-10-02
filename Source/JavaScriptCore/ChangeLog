@@ -1,3 +1,22 @@
+2013-10-02  Michael Saboff  <msaboff@apple.com>
+
+        The LLInt should not use JITStackFrame
+        https://bugs.webkit.org/show_bug.cgi?id=122231
+
+        Reviewed by Filip Pizlo.
+
+        Replaced uses of JITStackFrame::vm with code to either access the vm via the CodeBlock from
+        known JavaScript call frames or via the JSScope* for host call frames.  This eliminates
+        all uses of JITStackFrame from the LLInt.
+
+        * heap/MarkedBlock.h: Made LLIntOffsetsExtractor a friend to access member offsets.
+        * heap/WeakSet.h: Made LLIntOffsetsExtractor a friend to access member offsets.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): Added an ASSERT for the newly added MarkedBlockMask
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2013-10-01  Oliver Hunt  <oliver@apple.com>
 
         Implement Array key, value and entries iterators

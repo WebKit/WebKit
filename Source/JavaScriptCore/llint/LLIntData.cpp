@@ -125,6 +125,8 @@ void Data::performAssertions(VM& vm)
     
     ASSERT(ResolveModeAndType::mask == 0xffff);
 
+    ASSERT(MarkedBlock::blockMask == ~0xffff);
+
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED
     Vector<int> testVector;

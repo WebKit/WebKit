@@ -307,7 +307,8 @@ macro functionArityCheck(doneLabel, slow_path)
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     cCall2(slow_path, cfr, PC)   # This slow_path has a simple protocol: t0 = 0 => no error, t0 != 0 => error
     btiz t0, .isArityFixupNeeded
-    loadp JITStackFrame::vm[sp], t1
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
 .isArityFixupNeeded:
@@ -1726,7 +1727,8 @@ _llint_op_catch:
     # code must have known that we were throwing to the interpreter, and have
     # set VM::targetInterpreterPCForThrow.
     move t0, cfr
-    loadp JITStackFrame::vm[sp], t3
+    loadp CodeBlock[cfr], t3
+    loadp CodeBlock::m_vm[t3], t3
     loadi VM::targetInterpreterPCForThrow[t3], PC
     loadi VM::m_exception + PayloadOffset[t3], t0
     loadi VM::m_exception + TagOffset[t3], t1
@@ -1787,7 +1789,8 @@ _llint_throw_from_slow_path_trampoline:
     # When throwing from the interpreter (i.e. throwing from LLIntSlowPaths), so
     # the throw target is not necessarily interpreted code, we come to here.
     # This essentially emulates the JIT's throwing protocol.
-    loadp JITStackFrame::vm[sp], t1
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
     loadp VM::topCallFrame[t1], cfr
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
@@ -1795,7 +1798,8 @@ _llint_throw_from_slow_path_trampoline:
 
 _llint_throw_during_call_trampoline:
     preserveReturnAddressAfterCall(t2)
-    loadp JITStackFrame::vm[sp], t1
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
     loadp VM::topCallFrame[t1], cfr
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
@@ -1808,7 +1812,9 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     storei CellTag, ScopeChain + TagOffset[cfr]
     storei t1, ScopeChain + PayloadOffset[cfr]
     if X86
-        loadp JITStackFrame::vm + 4[sp], t3 # Additional offset for return address
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
         peek 0, t1
         storep t1, ReturnPC[cfr]
@@ -1819,9 +1825,13 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t0, cfr
         call executableOffsetToFunction[t1]
         addp 16 - 4, sp
-        loadp JITStackFrame::vm + 4[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL
-        loadp JITStackFrame::vm[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
         move t0, t2
         preserveReturnAddressAfterCall(t3)
@@ -1832,9 +1842,13 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t2, cfr
         call executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp JITStackFrame::vm[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif MIPS or SH4
-        loadp JITStackFrame::vm[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
         move t0, t2
         preserveReturnAddressAfterCall(t3)
@@ -1846,9 +1860,13 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t0, a0
         call executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp JITStackFrame::vm[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     elsif C_LOOP
-        loadp JITStackFrame::vm[sp], t3
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
         storep cfr, VM::topCallFrame[t3]
         move t0, t2
         preserveReturnAddressAfterCall(t3)
@@ -1859,8 +1877,10 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         move t2, cfr
         cloopCallNative executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
-        loadp JITStackFrame::vm[sp], t3
-    else  
+        loadp ScopeChain[cfr], t3
+        andp MarkedBlockMask, t3
+        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+    else
         error
     end
     bineq VM::m_exception + TagOffset[t3], EmptyValueTag, .exception
