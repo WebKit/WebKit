@@ -59,10 +59,6 @@
 #include <glib.h>
 #endif
 
-#if PLATFORM(QT)
-#include <QElapsedTimer>
-#endif
-
 namespace WTF {
 
 #if OS(WINDOWS)
@@ -283,20 +279,11 @@ double monotonicallyIncreasingTime()
     return ecore_time_get();
 }
 
-#elif USE(GLIB) && !PLATFORM(EFL) && !PLATFORM(QT)
+#elif USE(GLIB) && !PLATFORM(EFL)
 
 double monotonicallyIncreasingTime()
 {
     return static_cast<double>(g_get_monotonic_time() / 1000000.0);
-}
-
-#elif PLATFORM(QT)
-
-double monotonicallyIncreasingTime()
-{
-    ASSERT(QElapsedTimer::isMonotonic());
-    static QElapsedTimer timer;
-    return timer.nsecsElapsed() / 1.0e9;
 }
 
 #elif OS(QNX)

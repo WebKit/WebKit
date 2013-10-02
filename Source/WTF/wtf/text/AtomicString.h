@@ -150,10 +150,6 @@ public:
     AtomicString(NSString* s) : m_string(add((CFStringRef)s)) { }
     operator NSString*() const { return m_string; }
 #endif
-#if PLATFORM(QT)
-    AtomicString(const QString& s) : m_string(add(String(s).impl())) { }
-    operator QString() const { return m_string; }
-#endif
 #if PLATFORM(BLACKBERRY)
     AtomicString(const BlackBerry::Platform::String& s) : m_string(add(String(s).impl())) { }
     operator BlackBerry::Platform::String() const { return m_string; }

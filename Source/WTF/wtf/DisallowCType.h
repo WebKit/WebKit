@@ -41,7 +41,7 @@
 // or <glib/gi18n-lib.h>, which in turn include <xlocale/_ctype.h> which uses
 // isacii(). 
 #include <wtf/Platform.h>
-#if !PLATFORM(QT) && !(OS(DARWIN) && PLATFORM(GTK)) && !OS(QNX) && !defined(_LIBCPP_VERSION)
+#if !(OS(DARWIN) && PLATFORM(GTK)) && !OS(QNX) && !defined(_LIBCPP_VERSION)
 
 #include <ctype.h>
 

@@ -32,12 +32,6 @@
 #include <objc/objc.h>
 #endif
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QString;
-QT_END_NAMESPACE
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -351,11 +345,7 @@ public:
     // Return the string with case folded for case insensitive comparison.
     WTF_EXPORT_STRING_API String foldCase() const;
 
-#if !PLATFORM(QT)
     WTF_EXPORT_STRING_API static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-#else
-    WTF_EXPORT_STRING_API static String format(const char *, ...);
-#endif
 
     // Returns an uninitialized string. The characters needs to be written
     // into the buffer returned in data before the returned string is used.
@@ -421,12 +411,6 @@ public:
     // This conversion maps NULL to "", which loses the meaning of NULL, but we 
     // need this mapping because AppKit crashes when passed nil NSStrings.
     operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
-#endif
-
-#if PLATFORM(QT)
-    WTF_EXPORT_STRING_API String(const QString&);
-    WTF_EXPORT_STRING_API String(const QStringRef&);
-    WTF_EXPORT_STRING_API operator QString() const;
 #endif
 
 #if PLATFORM(BLACKBERRY)

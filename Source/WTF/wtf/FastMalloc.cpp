@@ -107,9 +107,7 @@
 #endif
 
 // Harden the pointers stored in the TCMalloc linked lists
-#if !PLATFORM(QT)
 #define ENABLE_TCMALLOC_HARDENING 1
-#endif
 
 // Use a background thread to periodically scavenge memory to release back to the system
 #if PLATFORM(IOS)
