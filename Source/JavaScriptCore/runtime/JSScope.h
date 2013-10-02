@@ -215,7 +215,7 @@ inline JSGlobalObject* JSScope::globalObject()
 
 inline VM* JSScope::vm()
 { 
-    return Heap::heap(this)->vm();
+    return MarkedBlock::blockFor(this)->vm();
 }
 
 inline Register& Register::operator=(JSScope* scope)
