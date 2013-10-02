@@ -521,7 +521,7 @@ Bug(GTK) fast/css/image-rendering.html [ Failure ]
 
 Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-Bug(GTK) fast/regions/selection-direction.html [ ImageOnlyFailure ]
+Bug(GTK) fast/regions/selection/selection-direction.html [ ImageOnlyFailure ]
 
 Bug(GTK) fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
 

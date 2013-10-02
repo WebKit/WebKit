@@ -1,3 +1,24 @@
+2013-10-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Selection layout tests moved to specific folder
+        https://bugs.webkit.org/show_bug.cgi?id=122099
+
+        Reviewed by Alexandru Chiculita.
+
+        Moved CSS Regions layout tests related to selection to
+        "fast/regions/selection/".
+
+        * fast/regions/selection/selecting-text-in-empty-region-expected.txt: Renamed from LayoutTests/fast/regions/selecting-text-in-empty-region-expected.txt.
+        * fast/regions/selection/selecting-text-in-empty-region.html: Renamed from LayoutTests/fast/regions/selecting-text-in-empty-region.html.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2-expected.html: Renamed from LayoutTests/fast/regions/selecting-text-through-different-region-flows-2-expected.html.
+        * fast/regions/selection/selecting-text-through-different-region-flows-2.html: Renamed from LayoutTests/fast/regions/selecting-text-through-different-region-flows-2.html.
+        * fast/regions/selection/selecting-text-through-different-region-flows-expected.html: Renamed from LayoutTests/fast/regions/selecting-text-through-different-region-flows-expected.html.
+        * fast/regions/selection/selecting-text-through-different-region-flows.html: Renamed from LayoutTests/fast/regions/selecting-text-through-different-region-flows.html.
+        * fast/regions/selection/selection-direction-expected.html: Renamed from LayoutTests/fast/regions/selection-direction-expected.html.
+        * fast/regions/selection/selection-direction.html: Renamed from LayoutTests/fast/regions/selection-direction.html.
+        * platform/gtk-wk2/TestExpectations: Update path in skipped tests.
+        * platform/qt-wk2/TestExpectations: Ditto.
+
 2013-10-02  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 
