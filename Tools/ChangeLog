@@ -1,3 +1,200 @@
+2013-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove Qt code from Tools/
+        https://bugs.webkit.org/show_bug.cgi?id=122227
+
+        Reviewed by Andreas Kling.
+
+        * DumpRenderTree/WorkQueue.cpp:
+        * DumpRenderTree/blackberry/src.pro: Removed.
+        * DumpRenderTree/qt/DumpRenderTree.pro: Removed.
+        * DumpRenderTree/qt/DumpRenderTree.qrc: Removed.
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp: Removed.
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp: Removed.
+        * DumpRenderTree/qt/DumpRenderTreeQt.h: Removed.
+        * DumpRenderTree/qt/EventSenderQt.cpp: Removed.
+        * DumpRenderTree/qt/EventSenderQt.h: Removed.
+        * DumpRenderTree/qt/GCControllerQt.cpp: Removed.
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro: Removed.
+        * DumpRenderTree/qt/TestRunnerQt.cpp: Removed.
+        * DumpRenderTree/qt/TestRunnerQt.h: Removed.
+        * DumpRenderTree/qt/TextInputControllerQt.cpp: Removed.
+        * DumpRenderTree/qt/TextInputControllerQt.h: Removed.
+        * DumpRenderTree/qt/WorkQueueItemQt.cpp: Removed.
+        * DumpRenderTree/qt/WorkQueueItemQt.h: Removed.
+        * DumpRenderTree/qt/fonts/AHEM____.TTF: Removed.
+        * DumpRenderTree/qt/resources/user.css: Removed.
+        * DumpRenderTree/qt/testplugin.cpp: Removed.
+        * DumpRenderTree/qt/testplugin.h: Removed.
+        * ImageDiff/ImageDiff.pro: Removed.
+        * ImageDiff/qt/ImageDiff.cpp: Removed.
+        * MiniBrowser/qt/BrowserWindow.cpp: Removed.
+        * MiniBrowser/qt/BrowserWindow.h: Removed.
+        * MiniBrowser/qt/MiniBrowser.pro: Removed.
+        * MiniBrowser/qt/MiniBrowser.qrc: Removed.
+        * MiniBrowser/qt/MiniBrowserApplication.cpp: Removed.
+        * MiniBrowser/qt/MiniBrowserApplication.h: Removed.
+        * MiniBrowser/qt/UrlLoader.cpp: Removed.
+        * MiniBrowser/qt/UrlLoader.h: Removed.
+        * MiniBrowser/qt/icons/checkbox_checked.png: Removed.
+        * MiniBrowser/qt/icons/checkbox_unchecked.png: Removed.
+        * MiniBrowser/qt/icons/contents_width.png: Removed.
+        * MiniBrowser/qt/icons/favicon.png: Removed.
+        * MiniBrowser/qt/icons/find.png: Removed.
+        * MiniBrowser/qt/icons/folder.png: Removed.
+        * MiniBrowser/qt/icons/info.png: Removed.
+        * MiniBrowser/qt/icons/next.png: Removed.
+        * MiniBrowser/qt/icons/plus.png: Removed.
+        * MiniBrowser/qt/icons/previous.png: Removed.
+        * MiniBrowser/qt/icons/refresh.png: Removed.
+        * MiniBrowser/qt/icons/stop.png: Removed.
+        * MiniBrowser/qt/icons/titlebar.png: Removed.
+        * MiniBrowser/qt/icons/touch.png: Removed.
+        * MiniBrowser/qt/icons/touchpoint.png: Removed.
+        * MiniBrowser/qt/icons/up.png: Removed.
+        * MiniBrowser/qt/js/MultiSelect.js: Removed.
+        * MiniBrowser/qt/main.cpp: Removed.
+        * MiniBrowser/qt/qml/AlertDialog.qml: Removed.
+        * MiniBrowser/qt/qml/AuthenticationDialog.qml: Removed.
+        * MiniBrowser/qt/qml/BrowserWindow.qml: Removed.
+        * MiniBrowser/qt/qml/CheckBox.qml: Removed.
+        * MiniBrowser/qt/qml/ColorChooser.qml: Removed.
+        * MiniBrowser/qt/qml/ConfirmDialog.qml: Removed.
+        * MiniBrowser/qt/qml/Dialog.qml: Removed.
+        * MiniBrowser/qt/qml/DialogButton.qml: Removed.
+        * MiniBrowser/qt/qml/DialogLineInput.qml: Removed.
+        * MiniBrowser/qt/qml/FilePicker.qml: Removed.
+        * MiniBrowser/qt/qml/ItemSelector.qml: Removed.
+        * MiniBrowser/qt/qml/MockTouchPoint.qml: Removed.
+        * MiniBrowser/qt/qml/PromptDialog.qml: Removed.
+        * MiniBrowser/qt/qml/ProxyAuthenticationDialog.qml: Removed.
+        * MiniBrowser/qt/qml/ScrollIndicator.qml: Removed.
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml: Removed.
+        * MiniBrowser/qt/raw/DerivedSources.pri: Removed.
+        * MiniBrowser/qt/raw/MiniBrowserRaw.pro: Removed.
+        * MiniBrowser/qt/raw/Target.pri: Removed.
+        * MiniBrowser/qt/raw/View.cpp: Removed.
+        * MiniBrowser/qt/raw/View.h: Removed.
+        * MiniBrowser/qt/utils.cpp: Removed.
+        * MiniBrowser/qt/utils.h: Removed.
+        * QtTestBrowser/QtTestBrowser.pro: Removed.
+        * QtTestBrowser/QtTestBrowser.qrc: Removed.
+        * QtTestBrowser/cookiejar.cpp: Removed.
+        * QtTestBrowser/cookiejar.h: Removed.
+        * QtTestBrowser/favicon.png: Removed.
+        * QtTestBrowser/fpstimer.cpp: Removed.
+        * QtTestBrowser/fpstimer.h: Removed.
+        * QtTestBrowser/launcherwindow.cpp: Removed.
+        * QtTestBrowser/launcherwindow.h: Removed.
+        * QtTestBrowser/locationedit.cpp: Removed.
+        * QtTestBrowser/locationedit.h: Removed.
+        * QtTestBrowser/mainwindow.cpp: Removed.
+        * QtTestBrowser/mainwindow.h: Removed.
+        * QtTestBrowser/qttestbrowser.cpp: Removed.
+        * QtTestBrowser/urlloader.cpp: Removed.
+        * QtTestBrowser/urlloader.h: Removed.
+        * QtTestBrowser/useragentlist.txt: Removed.
+        * QtTestBrowser/utils.cpp: Removed.
+        * QtTestBrowser/utils.h: Removed.
+        * QtTestBrowser/webinspector.h: Removed.
+        * QtTestBrowser/webpage.cpp: Removed.
+        * QtTestBrowser/webpage.h: Removed.
+        * QtTestBrowser/webview.cpp: Removed.
+        * QtTestBrowser/webview.h: Removed.
+        * TestWebKitAPI/DerivedSources.pri: Removed.
+        * TestWebKitAPI/InjectedBundle.pri: Removed.
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/TestWebKitAPI.pri: Removed.
+        * TestWebKitAPI/TestWebKitAPI.pro: Removed.
+        * TestWebKitAPI/Tests.pri: Removed.
+        * TestWebKitAPI/Tests/JavaScriptCore/JavaScriptCore.pro: Removed.
+        * TestWebKitAPI/Tests/WTF/IntegerToStringConversion.cpp:
+        * TestWebKitAPI/Tests/WTF/WTF.pro: Removed.
+        * TestWebKitAPI/Tests/WebKit2/WebKit2.pro: Removed.
+        * TestWebKitAPI/qt/InjectedBundleControllerQt.cpp: Removed.
+        * TestWebKitAPI/qt/PlatformUtilitiesQt.cpp: Removed.
+        * TestWebKitAPI/qt/PlatformWebViewQt.cpp: Removed.
+        * TestWebKitAPI/qt/main.cpp: Removed.
+        * Tools.pro: Removed.
+        * WebKitTestRunner/DerivedSources.pri: Removed.
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri: Removed.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.pro: Removed.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/Target.pri: Removed.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/qt/TestRunnerQt.cpp: Removed.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/Target.pri: Removed.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/WebKitTestRunner.pro: Removed.
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp: Removed.
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp: Removed.
+        * WebKitTestRunner/qt/TestControllerQt.cpp: Removed.
+        * WebKitTestRunner/qt/TestInvocationQt.cpp: Removed.
+        * WebKitTestRunner/qt/WebKitTestRunner.qrc: Removed.
+        * WebKitTestRunner/qt/main.cpp: Removed.
+        * WebKitTestRunner/qt/resources/user.css: Removed.
+        * qmake/.qmake.cache: Removed.
+        * qmake/.qmake.conf: Removed.
+        * qmake/README: Removed.
+        * qmake/config.tests/README: Removed.
+        * qmake/config.tests/fontconfig/fontconfig.cpp: Removed.
+        * qmake/config.tests/fontconfig/fontconfig.pro: Removed.
+        * qmake/config.tests/gccdepends/empty.cpp: Removed.
+        * qmake/config.tests/gccdepends/gccdepends.pro: Removed.
+        * qmake/config.tests/glx/glx.cpp: Removed.
+        * qmake/config.tests/glx/glx.pro: Removed.
+        * qmake/config.tests/gnuld/gnuld.pro: Removed.
+        * qmake/config.tests/gnuld/main.cpp: Removed.
+        * qmake/config.tests/libXcomposite/libXcomposite.cpp: Removed.
+        * qmake/config.tests/libXcomposite/libXcomposite.pro: Removed.
+        * qmake/config.tests/libXrender/libXrender.cpp: Removed.
+        * qmake/config.tests/libXrender/libXrender.pro: Removed.
+        * qmake/config.tests/libwebp/libwebp.cpp: Removed.
+        * qmake/config.tests/libwebp/libwebp.pro: Removed.
+        * qmake/config.tests/libxml2/libxml2.cpp: Removed.
+        * qmake/config.tests/libxml2/libxml2.pro: Removed.
+        * qmake/config.tests/libxslt/libxslt.cpp: Removed.
+        * qmake/config.tests/libxslt/libxslt.pro: Removed.
+        * qmake/config.tests/libzlib/libzlib.cpp: Removed.
+        * qmake/config.tests/libzlib/libzlib.pro: Removed.
+        * qmake/dump-features.pl: Removed.
+        * qmake/mkspecs/features/configure.prf: Removed.
+        * qmake/mkspecs/features/default_post.prf: Removed.
+        * qmake/mkspecs/features/default_pre.prf: Removed.
+        * qmake/mkspecs/features/features.prf: Removed.
+        * qmake/mkspecs/features/features.pri: Removed.
+        * qmake/mkspecs/features/force_static_libs_as_shared.prf: Removed.
+        * qmake/mkspecs/features/functions.prf: Removed.
+        * qmake/mkspecs/features/gprof.prf: Removed.
+        * qmake/mkspecs/features/mac/default_post.prf: Removed.
+        * qmake/mkspecs/features/mac/default_pre.prf: Removed.
+        * qmake/mkspecs/features/minimal_qt.prf: Removed.
+        * qmake/mkspecs/features/production_build.prf: Removed.
+        * qmake/mkspecs/features/rpath.prf: Removed.
+        * qmake/mkspecs/features/unix/default_post.prf: Removed.
+        * qmake/mkspecs/features/unix/default_pre.prf: Removed.
+        * qmake/mkspecs/features/unix/icc.prf: Removed.
+        * qmake/mkspecs/features/use_all_in_one_files.prf: Removed.
+        * qmake/mkspecs/features/valgrind.prf: Removed.
+        * qmake/mkspecs/features/webkit_modules.prf: Removed.
+        * qmake/mkspecs/features/win32/default_post.prf: Removed.
+        * qmake/mkspecs/features/win32/default_pre.prf: Removed.
+        * qmake/mkspecs/modules/angle.prf: Removed.
+        * qmake/mkspecs/modules/javascriptcore.prf: Removed.
+        * qmake/mkspecs/modules/webcore.prf: Removed.
+        * qmake/mkspecs/modules/webkit1.prf: Removed.
+        * qmake/mkspecs/modules/webkit2.prf: Removed.
+        * qmake/mkspecs/modules/wtf.prf: Removed.
+
 2013-10-02  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 

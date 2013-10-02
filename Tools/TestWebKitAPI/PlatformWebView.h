@@ -55,13 +55,6 @@ typedef struct _Evas_Object Evas_Object;
 #endif
 typedef Evas_Object* PlatformWKView;
 typedef Ecore_Evas* PlatformWindow;
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QQuickView;
-QT_END_NAMESPACE
-class QQuickWebView;
-typedef QQuickWebView* PlatformWKView;
-typedef QQuickView* PlatformWindow;
 #endif
 
 namespace TestWebKitAPI {

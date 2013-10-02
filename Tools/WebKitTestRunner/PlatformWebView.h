@@ -28,15 +28,7 @@
 
 #include <WebKit2/WKRetainPtr.h>
 
-#if defined(BUILDING_QT__)
-QT_BEGIN_NAMESPACE
-class QQuickView;
-class QEventLoop;
-QT_END_NAMESPACE
-class QQuickWebView;
-typedef QQuickWebView* PlatformWKView;
-typedef QQuickView* PlatformWindow;
-#elif defined(__APPLE__) && __APPLE__
+#if defined(__APPLE__) && __APPLE__
 #ifdef __OBJC__
 @class WKView;
 @class WebKitTestRunnerWindow;
@@ -77,16 +69,8 @@ public:
     void resizeTo(unsigned width, unsigned height);
     void focus();
 
-#if PLATFORM(QT)
-    bool sendEvent(QEvent*);
-    void postEvent(QEvent*);
-    void setModalEventLoop(QEventLoop* eventLoop) { m_modalEventLoop = eventLoop; }
-    // Window snapshot can be disabled on Qt with QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS=1 environment variable (necessary for xvfb)
-    static bool windowSnapshotEnabled();
-#else
     // Window snapshot is always enabled by default on all other platform.
     static bool windowSnapshotEnabled() { return true; }
-#endif
 
     WKRect windowFrame();
     void setWindowFrame(WKRect);
@@ -99,7 +83,7 @@ public:
     void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
     bool windowIsKey() const { return m_windowIsKey; }
 
-#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(EFL)
     bool viewSupportsOptions(WKDictionaryRef) const;
 #else
     bool viewSupportsOptions(WKDictionaryRef) const { return true; }
@@ -113,11 +97,8 @@ private:
     PlatformWindow m_window;
     bool m_windowIsKey;
     WKRetainPtr<WKDictionaryRef> m_options;
-#if PLATFORM(EFL) || PLATFORM(QT)
+#if PLATFORM(EFL)
     bool m_usingFixedLayout;
-#endif
-#if PLATFORM(QT)
-    QEventLoop* m_modalEventLoop;
 #endif
 };
 

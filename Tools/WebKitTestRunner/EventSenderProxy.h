@@ -29,10 +29,7 @@
 
 #include <wtf/Deque.h>
 
-#if PLATFORM(QT)
-#include <QEvent>
-#include <QTouchEvent>
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
 #include <gdk/gdk.h>
 #elif PLATFORM(EFL)
 #include <WebKit2/EWebKit2.h>
@@ -86,16 +83,11 @@ private:
     double currentEventTime() { return m_time; }
     void updateClickCountForButton(int button);
 
-#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     void replaySavedEvents();
 #endif
 
-#if PLATFORM(QT)
-#if ENABLE(TOUCH_EVENTS)
-    void sendTouchEvent(QEvent::Type);
-#endif
-    void sendOrQueueEvent(QEvent*);
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
     void sendOrQueueEvent(GdkEvent*);
     GdkEvent* createMouseButtonEvent(GdkEventType, unsigned button, WKEventModifiers);
 #elif PLATFORM(EFL)
@@ -118,15 +110,6 @@ private:
 #elif PLATFORM(GTK)
     Deque<WTREventQueueItem> m_eventQueue;
     unsigned m_mouseButtonCurrentlyDown;
-#elif PLATFORM(QT)
-    Qt::MouseButtons m_mouseButtons;
-
-#if ENABLE(TOUCH_EVENTS)
-    QList<QTouchEvent::TouchPoint> m_touchPoints;
-    Qt::KeyboardModifiers m_touchModifiers;
-    QPoint m_touchPointRadius;
-    bool m_touchActive;
-#endif
 #elif PLATFORM(EFL)
     Deque<WTREvent> m_eventQueue;
     WKEventMouseButton m_mouseButton;

@@ -42,11 +42,11 @@ template<> struct PrintfFormatTrait<long> { static const char format[]; };
 const char PrintfFormatTrait<long>::format[] = "%ld";
 
 template<> struct PrintfFormatTrait<long long> { static const char format[]; };
-#if OS(WINDOWS) && !PLATFORM(QT)
+#if OS(WINDOWS)
 const char PrintfFormatTrait<long long>::format[] = "%I64i";
 #else
 const char PrintfFormatTrait<long long>::format[] = "%lli";
-#endif // OS(WINDOWS) && !PLATFORM(QT)
+#endif // OS(WINDOWS)
 
 template<> struct PrintfFormatTrait<unsigned short> { static const char format[]; };
 const char PrintfFormatTrait<unsigned short>::format[] = "%hu";
@@ -58,11 +58,11 @@ template<> struct PrintfFormatTrait<unsigned long> { static const char format[];
 const char PrintfFormatTrait<unsigned long>::format[] = "%lu";
 
 template<> struct PrintfFormatTrait<unsigned long long> { static const char format[]; };
-#if OS(WINDOWS) && !PLATFORM(QT)
+#if OS(WINDOWS)
 const char PrintfFormatTrait<unsigned long long>::format[] = "%I64u";
 #else
 const char PrintfFormatTrait<unsigned long long>::format[] = "%llu";
-#endif // OS(WINDOWS) && !PLATFORM(QT)
+#endif // OS(WINDOWS)
 
 
 // FIXME: use snprintf from StringExtras.h
