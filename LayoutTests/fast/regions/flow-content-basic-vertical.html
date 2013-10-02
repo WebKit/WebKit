@@ -9,7 +9,10 @@
      result should be rejected. -->
 
     <style type="text/css">
-        html { -webkit-writing-mode: vertical-lr }
+        html {
+            -webkit-writing-mode: vertical-lr;
+            -webkit-font-smoothing: none;
+        }
 
         #source{
             -webkit-flow-into: main-thread;
@@ -17,8 +20,9 @@
         
         .region{
             -webkit-flow-from: main-thread;
-            width:100px;
-            height:300px;
+            width: 100px;
+            height: 300px;
+            border: solid 1px #888;
         }
         
         .pass{

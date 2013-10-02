@@ -316,11 +316,6 @@ bool RenderFlowThread::updateLayerToRegionMappings()
         if (!m_layerToRegionMap)
             m_layerToRegionMap = adoptPtr(new LayerToRegionMap());
         m_layerToRegionMap->swap(layerToRegionMap);
-
-        for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
-            RenderRegion* region = *iter;
-            region->setRequiresLayerForCompositing(regionToLayerListMap.contains(region));
-        }
     }
 
     m_layersToRegionMappingsDirty = false;

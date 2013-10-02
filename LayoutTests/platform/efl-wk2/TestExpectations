@@ -520,3 +520,6 @@ webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ C
 webkit.org/b/119789 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash ]
+
+# Tests need new generated expected results
+webkit.org/b/121828 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]

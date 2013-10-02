@@ -1,3 +1,36 @@
+2013-10-02  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Activate all regions to have layers, as CSS Regions create a new stacking context
+        https://bugs.webkit.org/show_bug.cgi?id=121828
+
+        Reviewed by Darin Adler.
+
+        The CSS Regions specification says "CSS Regions create a new stacking context." (http://dev.w3.org/csswg/css-regions/).
+
+        Divs that create stacking contexts are painted after the divs that don't create stacking contexts.
+
+        Test: fast/regions/layers/stacking-context-paint-order.html: While the existing region-sibling-paint-order.html
+        test verifies that regions paint correctly when the next sibling also creates a stacking context, this new test
+        verifies that regions paint correctly when the next sibling doesn't create a stacking context.
+
+        * rendering/RenderBlock.cpp: Remove code that is not needed now that all regions have layers.
+        * rendering/RenderBlock.h: Remove code that is not needed now that all regions have layers.
+        * rendering/RenderBox.cpp: Remove code that is not needed now that all regions have layers.
+        * rendering/RenderBox.h: Remove code that is not needed now that all regions have layers.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::updateLayerToRegionMappings): Remove code that is not needed now that all regions have layers.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::requiresLayer): Always. CSS Regions create Stacking Contexts. RenderMultiColumnSet
+        implements its own behaviour so the behaviour of each class is contained within its own files.
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::requiresLayer): RenderMultiColumnSet derives from RenderRegion, but unlike the
+        CSS Regions specification, the Multi-Columns CSS specification states that the column boxes do not establish new
+        Stacking Contexts.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList): There's no need to output " hasLayer" since all regions now have layers.
+
 2013-10-02  Renata Hodovan  <reni@webkit.org>
 
         HTML listbox is not resized horizontally when zooming

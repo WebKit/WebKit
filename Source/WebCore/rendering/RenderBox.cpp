@@ -260,21 +260,6 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         RenderBlock::removePositionedObject(this);
 }
 
-void RenderBox::updatePaintingContainerForFloatingObject()
-{
-    ASSERT(isFloating());
-    if (RenderBlock* parentBlock = outermostBlockContainingFloatingObject())
-        parentBlock->updateFloatingObjectsPaintingContainer(this);
-}
-
-bool RenderBox::updateLayerIfNeeded()
-{
-    bool didUpdateLayer = RenderBoxModelObject::updateLayerIfNeeded();
-    if (didUpdateLayer && isFloating())
-        updatePaintingContainerForFloatingObject();
-    return didUpdateLayer;
-}
-
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     s_hadOverflowClip = hasOverflowClip();

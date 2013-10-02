@@ -2796,3 +2796,12 @@ webkit.org/b/120671 editing/style/make-text-writing-direction-inline-win.html [ 
 
 # REGRESSION(r155771): js/stack-overflow-arrity-catch.html is crashing on non-Mac platforms
 webkit.org/b/121376 js/stack-overflow-arrity-catch.html [ Skip ]
+
+# Tests need new generated expected results
+webkit.org/b/121828 fast/regions/autoheight-regions-mark.html [ Missing ]
+webkit.org/b/121828 fast/regions/flows-dependency-dynamic-remove.html [ Missing ]
+webkit.org/b/121828 fast/regions/multiple-directionality-changes-in-variable-width-regions.html [ Missing ]
+webkit.org/b/121828 fast/regions/text-region-split-small-pagination.html [ Missing ]
+webkit.org/b/121828 fast/regions/top-overflow-out-of-second-region.html [ Missing ]
+webkit.org/b/121828 fast/repaint/region-painting-invalidation.html [ Missing ]
+webkit.org/b/121828 fast/repaint/region-painting-via-layout.html [ Missing ]

@@ -22,4 +22,4 @@ Flow Threads
             text run at (0,0) width 76: "some text to"
             text run at (0,18) width 29: "flow"
   Regions for flow 'namedFlow'
-    RenderRegion {DIV} #region hasLayer
+    RenderRegion {DIV} #region

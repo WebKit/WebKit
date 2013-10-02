@@ -10,39 +10,31 @@
 
     <style type="text/css">
         html {
+            -webkit-writing-mode: vertical-lr;
             -webkit-font-smoothing: none;
-        }
-
-        #source{
-            -webkit-flow-into: main-thread;
         }
         
         .region{
-            -webkit-flow-from: main-thread;
-            height:100px;
-            width:300px;
-            border: solid 1px #888;
+            position: relative; z-index: 1; /* regions create Stacking Contexts */
+            width: 100px;
+            height: 300px;
+            border: solid 1px #888; /* to stop the margin collapsing */
         }
         
         .pass{
             color: green;
         }
-        
-        .error{
-            color: red;
-        }
     </style>
 </head>
 <body>
-    <div id="source" class="pass">
-        <p>flow content</p>
-    </div>
     <div>
         The words "flow content" in green should display after this div, 
         and there should be two copies of this content that match.
     </div>
     <div id="region1" class="region">
-        <div class="error">FAIL if this text is displayed.</div>
+        <div id="source" class="pass">
+            <p>flow content</p>
+        </div>
     </div>
     <div>
         The words "flow content" in green should display after this div, 

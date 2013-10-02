@@ -3,10 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,16) size 784x244
-      RenderRegion {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
-      RenderRegion {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
-      RenderRegion {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
-      RenderRegion {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
+layer at (8,16) size 204x34
+  RenderRegion {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
+layer at (8,66) size 204x54
+  RenderRegion {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
+layer at (8,136) size 204x54
+  RenderRegion {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
+layer at (8,206) size 204x54
+  RenderRegion {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
 Flow Threads
   Thread with flow-name 'flow'
     layer at (0,0) size 200x180

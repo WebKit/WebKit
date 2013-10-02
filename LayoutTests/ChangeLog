@@ -1,3 +1,168 @@
+2013-10-02  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Activate all regions to have layers, as CSS Regions create a new stacking context
+        https://bugs.webkit.org/show_bug.cgi?id=121828
+
+        Reviewed by Darin Adler.
+
+        For the ref tests, the divs in the expected results coresponding to the regions now have a CSS style causing
+        them to also create Stacking Contexts.
+
+        Most of the tests in fast/regions/layers/ have been deleted because they aren't relevant anymore.
+
+        The change in most of the *-expected.txt files is that the " hasLayer" part has been removed (since all regions
+        now have layers).
+        
+        Platform (efl, efl-wk2, gtk, mac-lion, mac-wk2, qt, qt-wk2) specific expectated results need to be generated again.
+
+        * fast/regions/autoheight-regions-mark-expected.txt:
+        * fast/regions/flow-content-basic-expected.html: Added. The test is now a ref test.
+        * fast/regions/flow-content-basic-vertical-expected.html: Added. The test is now a ref test.
+        * fast/regions/flow-content-basic-vertical-rl-expected.html: Added.The test is now a ref test.
+        * fast/regions/flow-content-basic-vertical-rl.html:
+        * fast/regions/flow-content-basic-vertical.html:
+        * fast/regions/flow-content-basic.html:
+        * fast/regions/flows-dependency-dynamic-remove-expected.txt:
+        * fast/regions/flows-dependency-same-flow-expected.txt:
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.png: Removed.
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/dynamic-layer-added-with-no-layout.html: Removed.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.png: Removed.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout.html: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-expected.png: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.png: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt.html: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.png: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr.html: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.png: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl.html: Removed.
+        * fast/regions/layers/regions-promoted-to-layers.html: Removed.
+        * fast/regions/layers/stacking-context-paint-order-expected.html: Added.
+        * fast/regions/layers/stacking-context-paint-order.html: Added. While the existing region-sibling-paint-order.html
+        test verifies that regions paint correctly when the next sibling also creates a stacking context, this new test
+        verifies that regions paint correctly when the next sibling doesn't create a stacking context.
+        * fast/regions/region-sibling-paint-order-expected.html:
+        * fast/regions/region-sibling-paint-order.html:
+        * fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * fast/repaint/region-painting-composited-element-expected.html:
+        * fast/repaint/region-painting-in-composited-view-expected.html:
+        * fast/repaint/region-painting-in-composited-view.html:
+        * fast/repaint/region-painting-via-layout-expected.txt:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/efl-wk2/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/regions/autoheight-regions-mark-expected.png: Removed.
+        * platform/efl/fast/regions/autoheight-regions-mark-expected.txt: Removed.
+        * platform/efl/fast/regions/flow-content-basic-expected.png: Removed. The test is now a ref test.
+        * platform/efl/fast/regions/flow-content-basic-expected.txt: Removed.
+        * platform/efl/fast/regions/flow-content-basic-vertical-expected.png: Removed.
+        * platform/efl/fast/regions/flow-content-basic-vertical-expected.txt: Removed.
+        * platform/efl/fast/regions/flow-content-basic-vertical-rl-expected.png: Removed.
+        * platform/efl/fast/regions/flow-content-basic-vertical-rl-expected.txt: Removed.
+        * platform/efl/fast/regions/flows-dependency-dynamic-remove-expected.png: Removed.
+        * platform/efl/fast/regions/flows-dependency-dynamic-remove-expected.txt: Removed.
+        * platform/efl/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/region-dynamic-after-before-expected.txt:
+        * platform/efl/fast/regions/region-generated-content-before-after-expected.txt:
+        * platform/efl/fast/regions/text-region-split-small-pagination-expected.png: Removed.
+        * platform/efl/fast/regions/text-region-split-small-pagination-expected.txt: Removed.
+        * platform/efl/fast/regions/top-overflow-out-of-second-region-expected.png: Removed.
+        * platform/efl/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+        * platform/efl/fast/repaint/region-painting-invalidation-expected.png: Removed.
+        * platform/efl/fast/repaint/region-painting-invalidation-expected.txt: Removed.
+        * platform/efl/fast/repaint/region-painting-via-layout-expected.png: Removed.
+        * platform/efl/fast/repaint/region-painting-via-layout-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/regions/autoheight-regions-mark-expected.png: Removed.
+        * platform/gtk/fast/regions/autoheight-regions-mark-expected.txt: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-expected.png: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-expected.txt: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-expected.png: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-expected.txt: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-rl-expected.png: Removed.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-rl-expected.txt: Removed.
+        * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.png: Removed.
+        * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.txt: Removed.
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/region-dynamic-after-before-expected.txt:
+        * platform/gtk/fast/regions/region-generated-content-before-after-expected.txt:
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.png: Removed.
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.txt: Removed.
+        * platform/gtk/fast/regions/top-overflow-out-of-second-region-expected.png: Removed.
+        * platform/gtk/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/region-painting-invalidation-expected.png: Removed.
+        * platform/gtk/fast/repaint/region-painting-invalidation-expected.txt: Removed.
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.png: Removed.
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.txt: Removed.
+        * platform/mac-lion/TestExpectations:
+        * platform/mac-lion/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/mac-lion/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/fast/regions/flow-content-basic-expected.png: Removed.
+        * platform/mac/fast/regions/flow-content-basic-expected.txt: Removed.
+        * platform/mac/fast/regions/flow-content-basic-vertical-expected.png: Removed.
+        * platform/mac/fast/regions/flow-content-basic-vertical-expected.txt: Removed.
+        * platform/mac/fast/regions/flow-content-basic-vertical-rl-expected.png: Removed.
+        * platform/mac/fast/regions/flow-content-basic-vertical-rl-expected.txt: Removed.
+        * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/region-dynamic-after-before-expected.txt:
+        * platform/mac/fast/regions/region-generated-content-before-after-expected.txt:
+        * platform/mac/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.txt:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/mac/fast/repaint/region-painting-invalidation-expected.txt:
+        * platform/qt-wk2/TestExpectations:
+        * platform/qt-wk2/fast/regions/flow-content-basic-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/flow-content-basic-vertical-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/flow-content-basic-vertical-rl-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/text-region-split-small-pagination-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/top-overflow-out-of-second-region-expected.png: Removed.
+        * platform/qt-wk2/fast/repaint/region-painting-invalidation-expected.png: Removed.
+        * platform/qt-wk2/fast/repaint/region-painting-invalidation-expected.txt: Removed.
+        * platform/qt-wk2/fast/repaint/region-painting-via-layout-expected.png: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/regions/autoheight-regions-mark-expected.png: Removed.
+        * platform/qt/fast/regions/autoheight-regions-mark-expected.txt: Removed.
+        * platform/qt/fast/regions/flow-content-basic-expected.png: Removed.
+        * platform/qt/fast/regions/flow-content-basic-expected.txt: Removed.
+        * platform/qt/fast/regions/flow-content-basic-vertical-expected.png: Removed.
+        * platform/qt/fast/regions/flow-content-basic-vertical-expected.txt: Removed.
+        * platform/qt/fast/regions/flow-content-basic-vertical-rl-expected.png: Removed.
+        * platform/qt/fast/regions/flow-content-basic-vertical-rl-expected.txt: Removed.
+        * platform/qt/fast/regions/flows-dependency-dynamic-remove-expected.png: Removed.
+        * platform/qt/fast/regions/flows-dependency-dynamic-remove-expected.txt: Removed.
+        * platform/qt/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/text-region-split-small-pagination-expected.png: Removed.
+        * platform/qt/fast/regions/text-region-split-small-pagination-expected.txt: Removed.
+        * platform/qt/fast/regions/top-overflow-out-of-second-region-expected.png: Removed.
+        * platform/qt/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/qt/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * platform/qt/fast/repaint/region-painting-invalidation-expected.png: Removed.
+        * platform/qt/fast/repaint/region-painting-invalidation-expected.txt: Removed.
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.png: Removed.
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.txt: Removed.
+        * platform/win/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/win/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+
 2013-10-02  Renata Hodovan  <reni@webkit.org>
 
         HTML listbox is not resized horizontally when zooming

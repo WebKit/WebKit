@@ -8,6 +8,7 @@
     left: 0px;
     width: 100px;
     height: 50px;
+    z-index: 1; /*creates Stacking Context*/
 }
 
 #region1 {
@@ -33,7 +34,7 @@ function repaintTest()
 </script>
 </head>
 <body onload="runRepaintTest();">
-    <div id="region1"></div>
+    <div id="region1">1</div>
     <div id="region2"></div>
 </body>
 </html>

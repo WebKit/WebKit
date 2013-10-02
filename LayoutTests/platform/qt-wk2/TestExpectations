@@ -1007,6 +1007,13 @@ webkit.org/b/76986 scrollbars/scroll-rtl-or-bt-layer.html
 # [Qt] Images scale differently in WK1 and WK2
 webkit.org/b/92015 tables/mozilla_expected_failures/bugs/bug85016.html
 
+# Tests need new generated expected results
+webkit.org/b/121828 fast/regions/multiple-directionality-changes-in-variable-width-regions.html [ Missing ]
+webkit.org/b/121828 fast/regions/text-region-split-small-pagination.html [ Missing ]
+webkit.org/b/121828 fast/regions/top-overflow-out-of-second-region.html [ Missing ]
+webkit.org/b/121828 fast/repaint/region-painting-invalidation.html [ Missing ]
+webkit.org/b/121828 fast/repaint/region-painting-via-layout.html [ Missing ]
+
 # =========================================================================== #
 # - Regressions occured after Qt version update
 # =========================================================================== #

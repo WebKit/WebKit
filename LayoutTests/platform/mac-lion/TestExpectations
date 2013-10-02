@@ -156,3 +156,6 @@ webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-pa
 webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
 webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]   
 webkit.org/b/118870 [ Debug ] compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure ]
+
+# Tests need new generated expected results
+webkit.org/b/121828 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]

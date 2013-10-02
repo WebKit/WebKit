@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x116
   RenderBlock {HTML} at (0,0) size 800x116
     RenderBody {BODY} at (8,8) size 784x100
-      RenderRegion {DIV} at (0,0) size 50x50
-      RenderRegion {DIV} at (0,50) size 50x0
-      RenderRegion {DIV} at (0,50) size 50x0
-      RenderRegion {DIV} at (0,50) size 50x50
+layer at (8,8) size 50x50
+  RenderRegion {DIV} at (0,0) size 50x50
+layer at (8,58) size 50x50
+  RenderRegion {DIV} at (0,50) size 50x50
 layer at (8,50) size 50x450
   RenderRegion {DIV} at (8,50) size 50x450
 layer at (50,8) size 650x50
@@ -24,12 +24,12 @@ Flow Threads
     layer at (0,0) size 50x450
       RenderNamedFlowThread at (0,0) size 50x450
   Regions for flow 'flow3'
-    RenderRegion {DIV} #region3 hasLayer
+    RenderRegion {DIV} #region3
   Thread with flow-name 'flow4'
     layer at (0,0) size 650x50
       RenderNamedFlowThread at (0,0) size 650x50
   Regions for flow 'flow4'
-    RenderRegion {DIV} #region4 hasLayer
+    RenderRegion {DIV} #region4
   Thread with flow-name 'flow5'
   Regions for flow 'flow5'
     RenderRegion {DIV} #region5 hasAutoLogicalHeight

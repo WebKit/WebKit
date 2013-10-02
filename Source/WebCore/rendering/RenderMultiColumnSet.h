@@ -118,6 +118,10 @@ private:
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const OVERRIDE;
 
+    // RenderMultiColumnSet derives from RenderRegion, but unlike the CSS Regions specification, the Multi-Columns CSS
+    // specification states that the column boxes do not establish new Stacking Contexts.
+    virtual bool requiresLayer() const OVERRIDE FINAL { return RenderBlockFlow::requiresLayer(); }
+
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
 
     virtual const char* renderName() const;
