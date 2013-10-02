@@ -147,19 +147,20 @@ BuildbotQueue.prototype = {
                 if (!iteration) {
                     iteration = new BuildbotIteration(this, parseInt(data.cachedBuilds[i], 10), !(data.cachedBuilds[i] in currentBuilds));
                     newIterations.push(iteration);
+                    this.iterations.push(iteration);
+                    this._knownIterations[iteration.id] = iteration;
                 }
 
                 if (i >= loadingStop && (!iteration.finished || !iteration.loaded))
                     iteration.update();
-
-                this.iterations.push(iteration);
-                this._knownIterations[iteration.id] = iteration;
             }
+
+            if (!newIterations.length)
+                return;
 
             this.sortIterations();
 
-            if (newIterations.length)
-                this.dispatchEventToListeners(BuildbotQueue.Event.IterationsAdded, {addedIterations: newIterations});
+            this.dispatchEventToListeners(BuildbotQueue.Event.IterationsAdded, {addedIterations: newIterations});
         }.bind(this));
     },
 

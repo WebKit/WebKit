@@ -1,5 +1,16 @@
 2013-10-01  Timothy Hatcher  <timothy@apple.com>
 
+        Don't keep appending iterations each time the queue updates.
+
+        https://bugs.webkit.org/show_bug.cgi?id=122198
+
+        Reviewed by Joseph Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.update):
+
+2013-10-01  Timothy Hatcher  <timothy@apple.com>
+
         Properly sort iterations in the Dashboard by revision for out-of-order queues.
 
         https://bugs.webkit.org/show_bug.cgi?id=122196
