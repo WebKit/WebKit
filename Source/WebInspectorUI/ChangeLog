@@ -1,3 +1,36 @@
+2013-10-02  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: highlight newly added console messages in the Activity Viewer
+        https://bugs.webkit.org/show_bug.cgi?id=122093
+
+        Reviewed by Joseph Pecoraro.
+
+        Fade the appropriate console log button in the Activity Viewer for a short duration
+        to call attention to it when its count is incremented. The animation may be restarted
+        in-flight if the count is incremented as we were pulsing the opacity.
+
+        * UserInterface/DashboardView.css:
+        (.toolbar .dashboard > .item.pulsing):
+        (@-webkit-keyframes console-item-pulse):
+        New pulse animation for a console item in the Activity Viewer, the new "pulsing" CSS
+        class is applied in WebInspector.DashboardView.prototype._setConsoleItemValue().
+
+        * UserInterface/DashboardView.js:
+        (WebInspector.DashboardView.prototype.set logs):
+        (WebInspector.DashboardView.prototype.set issues):
+        (WebInspector.DashboardView.prototype.set errors):
+        Refactor setters to use the new WebInspector.DashboardView.prototype._setConsoleItemValue()
+        method.
+
+        (WebInspector.DashboardView.prototype._setConsoleItemValue):
+        We now set the ivar backing console item values in this new refactored method and additionally
+        apply an animation to the DOM element for the given item if its value is incremented such that
+        it pulses, subtly calling out the developer's attention to it.
+
+        * UserInterface/Utilities.js:
+        New Element.prototype.recalculateStyles() method to abstract the hack required to force
+        a style recalc on a given element.
+
 2013-10-01  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: evaluate and show a popover for selected text in JS source when paused

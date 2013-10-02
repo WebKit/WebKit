@@ -223,3 +223,14 @@ body.window-inactive .toolbar .dashboard {
 .toolbar.normal-size.icon-and-label-horizontal .dashboard > .item {
     margin: 4px 0;
 }
+
+/* Styles for the pulsing animated state of console items */
+
+.toolbar .dashboard > .item.pulsing {
+    -webkit-animation-name: console-item-pulse;
+    -webkit-animation-duration: 0.75s;
+}
+
+@-webkit-keyframes console-item-pulse {
+    50% { opacity: 0.6; }
+}

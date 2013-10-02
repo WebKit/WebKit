@@ -486,6 +486,14 @@ Object.defineProperty(Element.prototype, "isScrolledToBottom",
     }
 });
 
+Object.defineProperty(Element.prototype, "recalculateStyles",
+{
+    value: function()
+    {
+        this.ownerDocument.defaultView.getComputedStyle(this);
+    }
+});
+
 Object.defineProperty(DocumentFragment.prototype, "createChild",
 {
     value: Element.prototype.createChild
