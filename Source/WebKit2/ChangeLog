@@ -1,3 +1,17 @@
+2013-10-02  Daniel Bates  <dabates@apple.com>
+
+        Fix the Mac WebKit2 build following <http://trac.webkit.org/changeset/139241>
+        (https://bugs.webkit.org/show_bug.cgi?id=104197)
+
+        WebContextMac.mm fails to compile when building with network process disabled.
+
+        The constants WebKit2HTTPProxyDefaultsKey and WebKit2HTTPSProxyDefaultsKey,
+        defined in WebContextMac.mm, should only be defined when building with the
+        network process enabled as these constants are only referenced from
+        ENABLE(NETWORK_PROCESS)-guard code.
+
+        * UIProcess/mac/WebContextMac.mm:
+
 2013-10-01  Sam Weinig  <sam@webkit.org>
 
         CTTE: DOMWrapperWorlds should be passed around by reference
