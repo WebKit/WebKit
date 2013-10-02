@@ -45,13 +45,9 @@
 #if HAVE(XPC)
 #include <xpc/xpc.h>
 #endif
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QSocketNotifier;
-QT_END_NAMESPACE
 #endif
 
-#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
 #include "PlatformProcessIdentifier.h"
 #endif
 
@@ -139,8 +135,6 @@ public:
 
 #if OS(DARWIN)
     void setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT)
-    void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
@@ -318,9 +312,6 @@ private:
     Vector<int> m_fileDescriptors;
     size_t m_fileDescriptorsSize;
     int m_socketDescriptor;
-#if PLATFORM(QT)
-    QSocketNotifier* m_socketNotifier;
-#endif
 #endif
 };
 

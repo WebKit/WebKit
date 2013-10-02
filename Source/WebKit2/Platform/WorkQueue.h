@@ -41,17 +41,11 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if (PLATFORM(QT) && !OS(DARWIN)) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
 #include "PlatformProcessIdentifier.h"
 #endif
 
-#if PLATFORM(QT) && !OS(DARWIN)
-#include <QSocketNotifier>
-QT_BEGIN_NAMESPACE
-class QObject;
-class QThread;
-QT_END_NAMESPACE
-#elif PLATFORM(GTK)
+#if PLATFORM(GTK)
 #include <wtf/gobject/GRefPtr.h>
 typedef gboolean (*GSourceFunc) (gpointer data);
 #elif PLATFORM(EFL)
@@ -71,9 +65,6 @@ public:
 
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
-#elif PLATFORM(QT)
-    QSocketNotifier* registerSocketEventHandler(int, QSocketNotifier::Type, const Function<void()>&);
-    void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
 #elif PLATFORM(GTK)
     void registerSocketEventHandler(int, int, const Function<void()>& function, const Function<void()>& closeFunction);
     void unregisterSocketEventHandler(int);
@@ -92,10 +83,6 @@ private:
 #if OS(DARWIN)
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
-#elif PLATFORM(QT)
-    class WorkItemQt;
-    QThread* m_workThread;
-    friend class WorkItemQt;
 #elif PLATFORM(GTK)
     static void startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();

@@ -59,14 +59,14 @@ void initializeLogChannelsIfNecessary()
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
 }
 
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
 WTFLogChannel* logChannelByName(const String& name)
 {
     return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
 }
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL)
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)
 String logLevelString()
 {
     // FIXME: Each platform will need to define their own logLevelString();
