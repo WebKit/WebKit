@@ -765,6 +765,14 @@ void WebDOMTestObj::setNullableStringValue(int newNullableStringValue)
     impl()->setNullableStringValue(newNullableStringValue);
 }
 
+WebDOMString WebDOMTestObj::attribute() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    return static_cast<const WTF::String&>(impl()->attribute());
+}
+
 void WebDOMTestObj::voidMethod()
 {
     if (!impl())
@@ -1119,6 +1127,14 @@ void WebDOMTestObj::variadicNodeMethod(const WebDOMNode& head, const WebDOMNode&
         return;
 
     impl()->variadicNodeMethod(toWebCore(head), toWebCore(tail));
+}
+
+void WebDOMTestObj::any(float a, int b)
+{
+    if (!impl())
+        return;
+
+    impl()->any(a, b);
 }
 
 WebCore::TestObj* toWebCore(const WebDOMTestObj& wrapper)

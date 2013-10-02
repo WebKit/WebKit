@@ -45,6 +45,7 @@ WebKitDOMbool* webkit_dom_test_obj_strict_function(WebKitDOMTestObj*, const gcha
 void webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj*, const gchar*, const gchar*)
 void webkit_dom_test_obj_variadic_double_method(WebKitDOMTestObj*, gdouble, gdouble)
 void webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj*, WebKitDOMNode*, WebKitDOMNode*)
+void webkit_dom_test_obj_any(WebKitDOMTestObj*, gfloat, glong)
 glong webkit_dom_test_obj_get_read_only_long_attr(WebKitDOMTestObj*)
 gchar* webkit_dom_test_obj_get_read_only_string_attr(WebKitDOMTestObj*)
 WebKitDOMTestObj* webkit_dom_test_obj_get_read_only_test_obj_attr(WebKitDOMTestObj*)
@@ -140,3 +141,4 @@ glong webkit_dom_test_obj_get_nullable_long_settable_attribute(WebKitDOMTestObj*
 void webkit_dom_test_obj_set_nullable_long_settable_attribute(WebKitDOMTestObj*, glong)
 glong webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj*, GError**)
 void webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj*, glong)
+gchar* webkit_dom_test_obj_get_attribute(WebKitDOMTestObj*)

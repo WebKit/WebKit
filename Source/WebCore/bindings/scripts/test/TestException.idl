@@ -28,3 +28,8 @@
 exception TestException {
    readonly attribute DOMString name;
 };
+
+// Identifiers with a leading underscore, which should be removed.
+exception _attribute {
+   readonly attribute DOMString _readonly;
+};

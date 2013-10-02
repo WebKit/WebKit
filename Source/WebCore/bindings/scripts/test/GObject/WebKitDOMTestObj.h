@@ -543,6 +543,17 @@ WEBKIT_API void
 webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMNode* head, WebKitDOMNode* tail);
 
 /**
+ * webkit_dom_test_obj_any:
+ * @self: A #WebKitDOMTestObj
+ * @a: A #gfloat
+ * @b: A #glong
+ *
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b);
+
+/**
  * webkit_dom_test_obj_get_read_only_long_attr:
  * @self: A #WebKitDOMTestObj
  *
@@ -1510,6 +1521,16 @@ webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj* self, GError** e
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj* self, glong value);
+
+/**
+ * webkit_dom_test_obj_get_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_attribute(WebKitDOMTestObj* self);
 
 G_END_DECLS
 

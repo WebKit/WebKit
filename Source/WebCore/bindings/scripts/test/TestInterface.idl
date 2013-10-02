@@ -42,3 +42,7 @@
 
 TestInterface implements TestImplements;
 
+[
+    ImplementationLacksVTable
+] interface _readonly {
+};

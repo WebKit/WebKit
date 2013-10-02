@@ -65,7 +65,8 @@ public:
         WEBDOM_CONST_VALUE_12 = 0x01,
         WEBDOM_CONST_VALUE_13 = 0X20,
         WEBDOM_CONST_VALUE_14 = 0x1abc,
-        WEBDOM_CONST_JAVASCRIPT = 15
+        WEBDOM_CONST_JAVASCRIPT = 15,
+        WEBDOM_readonly = 0
     };
 
     int readOnlyLongAttr() const;
@@ -155,6 +156,7 @@ public:
     void setNullableLongSettableAttribute(int);
     int nullableStringValue() const;
     void setNullableStringValue(int);
+    WebDOMString attribute() const;
 
     void voidMethod();
     void voidMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
@@ -207,6 +209,7 @@ public:
     void variadicStringMethod(const WebDOMString& head, const WebDOMString& tail);
     void variadicDoubleMethod(double head, double tail);
     void variadicNodeMethod(const WebDOMNode& head, const WebDOMNode& tail);
+    void any(float a, int b);
 
     WebCore::TestObj* impl() const;
 

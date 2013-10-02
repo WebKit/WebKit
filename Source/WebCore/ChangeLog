@@ -1,18 +1,59 @@
-2013-10-02  Bem Jones-Bey  <bjonesbe@adobe.com>
+2013-10-02  Eric Carlson  <eric.carlson@apple.com>
 
-        [css-shapes] shape-outside does not properly handle the container and the float having different writing modes
-        https://bugs.webkit.org/show_bug.cgi?id=122243
+        IDL parser should remove a leading "_" from identifier names
+        https://bugs.webkit.org/show_bug.cgi?id=122239
 
-        Reviewed by Alexandru Chiculita.
+        Reviewed by Jer Noble.
 
-        The margin box offset needs to be computed based on the writing mode
-        of the container, not the writihg mode of the float itself. This
-        patch makes that happen.
+        No new tests, updated bindings tests and results.
 
-        Test: fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes.html
+        * bindings/scripts/IDLParser.pm:
+        (identifierRemoveNullablePrefix): Remove leading "_".
+        (parseInterface): Call identifierRemoveNullablePrefix.
+        (parseException): Ditto.
+        (parseEnum): Ditto.
+        (parseConst): Ditto.
+        (parseAttributeRest): Ditto.
+        (parseOperationRest): Ditto.
+        (parseOptionalOrRequiredArgument): Ditto.
+        (parseExceptionField): Ditto.
+        (parseNonAnyType): Ditto.
 
-        * rendering/shapes/ShapeOutsideInfo.cpp:
-        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+        Update tests and results.
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/CPP/WebDOMattribute.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMattribute.h: Added.
+        * bindings/scripts/test/CPP/WebDOMreadonly.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMreadonly.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.symbols:
+        * bindings/scripts/test/GObject/WebKitDOMattribute.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMattribute.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMattribute.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMattributePrivate.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMreadonly.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMreadonly.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMreadonly.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMreadonlyPrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSattribute.cpp: Added.
+        * bindings/scripts/test/JS/JSattribute.h: Added.
+        * bindings/scripts/test/JS/JSreadonly.cpp: Added.
+        * bindings/scripts/test/JS/JSreadonly.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/ObjC/DOMattribute.h: Added.
+        * bindings/scripts/test/ObjC/DOMattribute.mm: Added.
+        * bindings/scripts/test/ObjC/DOMattributeInternal.h: Added.
+        * bindings/scripts/test/ObjC/DOMreadonly.h: Added.
+        * bindings/scripts/test/ObjC/DOMreadonly.mm: Added.
+        * bindings/scripts/test/ObjC/DOMreadonlyInternal.h: Added.
+        * bindings/scripts/test/TestException.idl:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestObj.idl:
 
 2013-10-02  Andreas Kling  <akling@apple.com>
 

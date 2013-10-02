@@ -1,0 +1,1 @@
+gchar* webkit_dom_attribute_get_readonly(WebKitDOMattribute*)

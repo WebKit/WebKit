@@ -32,6 +32,9 @@
 
 enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
+// Leading underscore on an enum should be removed.
+enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
+
 [
     Constructor(TestCallback testCallback),
     InterfaceName=TestObject
@@ -264,6 +267,12 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     attribute long? nullableLongSettableAttribute;
 
     [GetterRaisesException] attribute long? nullableStringValue;
+
+    // Identifiers with a leading underscore, which should be removed.
+    const unsigned short               _readonly = 0;
+    readonly attribute DOMString       _attribute;
+    attribute _optional                attributeWithReservedEnumType;
+    void _any(float a, long b);
 };
 
 // The following comment should not generate any code.

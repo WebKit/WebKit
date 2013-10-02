@@ -60,7 +60,8 @@ enum {
     DOM_CONST_VALUE_12 = 0x01,
     DOM_CONST_VALUE_13 = 0X20,
     DOM_CONST_VALUE_14 = 0x1abc,
-    DOM_CONST_JAVASCRIPT = 15
+    DOM_CONST_JAVASCRIPT = 15,
+    DOM_readonly = 0
 };
 
 @interface DOMTestObj : DOMObject
@@ -123,6 +124,7 @@ enum {
 @property(readonly, copy) NSString *nullableStringAttribute;
 @property int nullableLongSettableAttribute;
 @property int nullableStringValue;
+@property(readonly, copy) NSString *attribute;
 
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
@@ -188,6 +190,7 @@ enum {
 - (void)variadicStringMethod:(NSString *)head tail:(NSString *)tail;
 - (void)variadicDoubleMethod:(double)head tail:(double)tail;
 - (void)variadicNodeMethod:(DOMNode *)head tail:(DOMNode *)tail;
+- (void)any:(float)a b:(int)b;
 @end
 
 #endif

@@ -131,6 +131,7 @@ enum {
     PROP_NULLABLE_STRING_ATTRIBUTE,
     PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE,
     PROP_NULLABLE_STRING_VALUE,
+    PROP_ATTRIBUTE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -559,6 +560,10 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         bool isNull = false;
         WebCore::ExceptionCode ec = 0;
         g_value_set_long(value, coreSelf->nullableStringValue(isNull, ec));
+        break;
+    }
+    case PROP_ATTRIBUTE: {
+        g_value_take_string(value, convertToUTF8String(coreSelf->attribute()));
         break;
     }
     default:
@@ -1127,6 +1132,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_ATTRIBUTE,
+        g_param_spec_string(
+            "attribute",
+            "TestObj:attribute",
+            "read-only gchar* TestObj:attribute",
+            "",
+            WEBKIT_PARAM_READABLE));
+
 }
 
 static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
@@ -1648,6 +1663,14 @@ void webkit_dom_test_obj_variadic_node_method(WebKitDOMTestObj* self, WebKitDOMN
     WebCore::Node* convertedHead = WebKit::core(head);
     WebCore::Node* convertedTail = WebKit::core(tail);
     item->variadicNodeMethod(convertedHead, convertedTail);
+}
+
+void webkit_dom_test_obj_any(WebKitDOMTestObj* self, gfloat a, glong b)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->any(a, b);
 }
 
 glong webkit_dom_test_obj_get_read_only_long_attr(WebKitDOMTestObj* self)
@@ -2586,5 +2609,14 @@ void webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj* self, glong
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->setNullableStringValue(value);
+}
+
+gchar* webkit_dom_test_obj_get_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->attribute());
+    return result;
 }
 
