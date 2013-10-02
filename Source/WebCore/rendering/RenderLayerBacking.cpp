@@ -1904,6 +1904,10 @@ void RenderLayerBacking::setBlendMode(BlendMode)
 void RenderLayerBacking::setContentsNeedDisplay()
 {
     ASSERT(!paintsIntoCompositedAncestor());
+
+    FrameView& frameView = owningLayer()->renderer().view().frameView();
+    if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
+        frameView.addTrackedRepaintRect(owningLayer()->absoluteBoundingBox());
     
     if (m_graphicsLayer && m_graphicsLayer->drawsContent())
         m_graphicsLayer->setNeedsDisplay();
@@ -1925,6 +1929,10 @@ void RenderLayerBacking::setContentsNeedDisplay()
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
     ASSERT(!paintsIntoCompositedAncestor());
+
+    FrameView& frameView = owningLayer()->renderer().view().frameView();
+    if (m_isMainFrameRenderViewLayer && frameView.isTrackingRepaints())
+        frameView.addTrackedRepaintRect(pixelSnappedIntRect(r));
 
     if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         IntRect layerDirtyRect = r;
@@ -2105,6 +2113,11 @@ bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, 
 
         // Background color could be of interest to tests or other dumpers if it's non-white.
         if (!strcmp(propertyName, "backgroundColor") && layer->backgroundColor() == Color::white)
+            return false;
+
+        // The root tile cache's repaints will show up at the top with FrameView's,
+        // so don't dump them twice.
+        if (!strcmp(propertyName, "repaintRects"))
             return false;
     }
 

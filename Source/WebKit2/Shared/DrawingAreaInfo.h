@@ -29,10 +29,11 @@
 namespace WebKit {
 
 enum DrawingAreaType {
-    DrawingAreaTypeImpl,
 #if PLATFORM(MAC)
     DrawingAreaTypeTiledCoreAnimation,
     DrawingAreaTypeRemoteLayerTree,
+#else
+    DrawingAreaTypeImpl,
 #endif
 };
 

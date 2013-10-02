@@ -150,19 +150,19 @@ static bool shouldOpenWebInspector(const char* pathOrURL)
 #endif
 
 #if PLATFORM(MAC)
-static bool shouldUseTiledDrawing(const char* pathOrURL)
+static bool shouldUseThreadedScrolling(const char* pathOrURL)
 {
     return strstr(pathOrURL, "tiled-drawing/") || strstr(pathOrURL, "tiled-drawing\\");
 }
 #endif
 
-static void updateTiledDrawingForCurrentTest(const char* pathOrURL)
+static void updateThreadedScrollingForCurrentTest(const char* pathOrURL)
 {
 #if PLATFORM(MAC)
     WKRetainPtr<WKMutableDictionaryRef> viewOptions = adoptWK(WKMutableDictionaryCreate());
-    WKRetainPtr<WKStringRef> useTiledDrawingKey = adoptWK(WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKRetainPtr<WKBooleanRef> useTiledDrawingValue = adoptWK(WKBooleanCreate(shouldUseTiledDrawing(pathOrURL)));
-    WKDictionaryAddItem(viewOptions.get(), useTiledDrawingKey.get(), useTiledDrawingValue.get());
+    WKRetainPtr<WKStringRef> useThreadedScrollingKey = adoptWK(WKStringCreateWithUTF8CString("ThreadedScrolling"));
+    WKRetainPtr<WKBooleanRef> useThreadedScrollingValue = adoptWK(WKBooleanCreate(shouldUseThreadedScrolling(pathOrURL)));
+    WKDictionaryAddItem(viewOptions.get(), useThreadedScrollingKey.get(), useThreadedScrollingValue.get());
 
     TestController::shared().ensureViewSupportsOptions(viewOptions.get());
 #else
@@ -201,7 +201,7 @@ void TestInvocation::invoke()
     TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
     sizeWebViewForCurrentTest(m_pathOrURL.c_str());
     updateLayoutType(m_pathOrURL.c_str());
-    updateTiledDrawingForCurrentTest(m_pathOrURL.c_str());
+    updateThreadedScrollingForCurrentTest(m_pathOrURL.c_str());
 
     m_textOutput.clear();
 

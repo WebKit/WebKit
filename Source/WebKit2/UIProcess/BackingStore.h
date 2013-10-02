@@ -29,10 +29,6 @@
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
 #if PLATFORM(QT)
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
@@ -59,9 +55,7 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-#if PLATFORM(MAC)
-    typedef CGContextRef PlatformGraphicsContext;
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     typedef QPainter* PlatformGraphicsContext;
 #elif USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
@@ -78,22 +72,7 @@ private:
     float m_deviceScaleFactor;
     WebPageProxy* m_webPageProxy;
 
-#if PLATFORM(MAC)
-    CGContextRef backingStoreContext();
-
-    void performWithScrolledRectTransform(const WebCore::IntRect&, void (^)(const WebCore::IntRect&, const WebCore::IntSize&));
-    void resetScrolledRect();
-
-    RetainPtr<CGLayerRef> m_cgLayer;
-    RetainPtr<CGContextRef> m_bitmapContext;
-
-    // The rectange that was scrolled most recently.
-    WebCore::IntRect m_scrolledRect;
-
-    // Contents of m_scrolledRect are offset by this amount (and wrapped around) with respect to
-    // their original location.
-    WebCore::IntSize m_scrolledRectOffset;
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     QPixmap m_pixmap;
 #elif USE(CAIRO)
     OwnPtr<WebCore::WidgetBackingStore> m_backingStore;

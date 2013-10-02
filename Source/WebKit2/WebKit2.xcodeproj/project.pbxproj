@@ -155,19 +155,12 @@
 		1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */; };
 		1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */; };
 		1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */; };
-		1A64218612DCF49200CAAE2C /* DrawingAreaProxyImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64218412DCF49200CAAE2C /* DrawingAreaProxyImpl.h */; };
-		1A64218712DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */; };
-		1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */; };
-		1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */; };
 		1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */; };
 		1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */; };
 		1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */; };
 		1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */; };
 		1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64245C12DE29A100CAAE2C /* UpdateInfo.h */; };
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
-		1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64256612DE42EC00CAAE2C /* BackingStore.h */; };
-		1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64256712DE42EC00CAAE2C /* BackingStore.cpp */; };
-		1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */; };
 		1A6506D2175015E700174518 /* MessageSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6506D1175015E700174518 /* MessageSender.cpp */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
@@ -204,8 +197,6 @@
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
-		1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */; };
-		1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
@@ -1507,10 +1498,6 @@
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
 		1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmap.cpp; sourceTree = "<group>"; };
 		1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmap.h; sourceTree = "<group>"; };
-		1A64218412DCF49200CAAE2C /* DrawingAreaProxyImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyImpl.h; sourceTree = "<group>"; };
-		1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyImpl.cpp; sourceTree = "<group>"; };
-		1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaImpl.h; sourceTree = "<group>"; };
-		1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaImpl.cpp; sourceTree = "<group>"; };
 		1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingArea.messages.in; sourceTree = "<group>"; };
 		1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessages.h; sourceTree = "<group>"; };
@@ -1519,9 +1506,6 @@
 		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
-		1A64256612DE42EC00CAAE2C /* BackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackingStore.h; sourceTree = "<group>"; };
-		1A64256712DE42EC00CAAE2C /* BackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackingStore.cpp; sourceTree = "<group>"; };
-		1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackingStoreMac.mm; sourceTree = "<group>"; };
 		1A6506D1175015E700174518 /* MessageSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSender.cpp; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
@@ -1561,8 +1545,6 @@
 		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
 		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
 		1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeContextMac.mm; sourceTree = "<group>"; };
-		1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHostMac.h; sourceTree = "<group>"; };
-		1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeHostMac.mm; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3789,8 +3771,6 @@
 				BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
 				1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */,
-				1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */,
-				1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */,
 				93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */,
 				93FC67A012D3CC7400A60610 /* EncoderAdapter.h */,
 				1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */,
@@ -3840,13 +3820,9 @@
 				31A2EC401489973700810D71 /* Notifications */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
 				1A44B95816B73F8C00B7BBD8 /* Storage */,
-				1A64256712DE42EC00CAAE2C /* BackingStore.cpp */,
-				1A64256612DE42EC00CAAE2C /* BackingStore.h */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
 				1A6422FC12DD08FE00CAAE2C /* DrawingAreaProxy.messages.in */,
-				1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */,
-				1A64218412DCF49200CAAE2C /* DrawingAreaProxyImpl.h */,
 				1A910070126675C4001842F5 /* FindIndicator.cpp */,
 				1A91006F126675C3001842F5 /* FindIndicator.h */,
 				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
@@ -4509,8 +4485,6 @@
 		BC963D6C113DD19500574BE2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A97E07316A5F578000BC9E5 /* LayerTreeHostMac.h */,
-				1A97E07416A5F578000BC9E5 /* LayerTreeHostMac.mm */,
 				7C6D37FA172F555F009D2847 /* PageBannerMac.mm */,
 				1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */,
 				1AB16AEB164B41E400290D62 /* RemoteGraphicsLayer.mm */,
@@ -4625,7 +4599,6 @@
 		BCCF085C113F3B7500C650C5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */,
 				B878B613133428DC006888E9 /* CorrectionPanel.h */,
 				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
 				1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */,
@@ -4999,7 +4972,6 @@
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
-				1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */,
 				E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */,
 				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
 				4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */,
@@ -5031,11 +5003,9 @@
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
 				BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */,
-				1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */,
 				0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */,
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
-				1A64218612DCF49200CAAE2C /* DrawingAreaProxyImpl.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
 				5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
@@ -5083,7 +5053,6 @@
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
-				1A97E07616A5F9E0000BC9E5 /* LayerTreeHostMac.h in Headers */,
 				1A1D8BA21731A36300141DA4 /* LocalStorageDatabase.h in Headers */,
 				1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
@@ -6153,8 +6122,6 @@
 				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
 				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
-				1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */,
-				1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */,
 				E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */,
 				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
 				BCF18638167D071E00A1A85A /* CacheModel.cpp in Sources */,
@@ -6186,10 +6153,8 @@
 				1AD25E95167AB08100EA9BCD /* DownloadProxyMap.cpp in Sources */,
 				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
 				BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */,
-				1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */,
 				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 				BC2652161182608100243E12 /* DrawingAreaProxy.cpp in Sources */,
-				1A64218712DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp in Sources */,
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */,
 				8CFECE941490F140002AAA32 /* EditorState.cpp in Sources */,
@@ -6235,7 +6200,6 @@
 				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
-				1A97E07716A5F9E0000BC9E5 /* LayerTreeHostMac.mm in Sources */,
 				1A1D8BA11731A36300141DA4 /* LocalStorageDatabase.cpp in Sources */,
 				1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,

@@ -73,10 +73,6 @@ private:
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 #endif
 
-#if PLATFORM(MAC)
-    virtual void setLayerHostingMode(uint32_t) OVERRIDE;
-#endif
-
 #if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 #endif

@@ -5,12 +5,7 @@
       (bounds 800.00 600.00)
       (contentsOpaque 1)
       (backgroundColor #FF0000)
-      (children 2
-        (GraphicsLayer
-          (position 50.00 50.00)
-          (bounds 100.00 100.00)
-          (contentsOpaque 1)
-        )
+      (children 1
         (GraphicsLayer
           (position 50.00 50.00)
           (bounds 100.00 100.00)
@@ -20,4 +15,3 @@
     )
   )
 )
-

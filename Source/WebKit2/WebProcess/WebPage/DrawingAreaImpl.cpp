@@ -255,20 +255,7 @@ void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
 
 void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
 {
-#if PLATFORM(MAC)
-    // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
-    // As a part of that work, we have to composite fixed position elements, and we have to allow those
-    // elements to create a stacking context.
-    m_webPage->corePage()->settings().setAcceleratedCompositingForFixedPositionEnabled(true);
-    m_webPage->corePage()->settings().setFixedPositionCreatesStackingContext(true);
-
-    // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
-    // is enabled on Mac so that scrollbars are always in their own layers.
-    if (m_webPage->corePage()->settings().acceleratedDrawingEnabled())
-        m_webPage->corePage()->settings().setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
-    else
-#endif
-        m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
+    m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
 }
 
 void DrawingAreaImpl::layerHostDidFlushLayers()
@@ -478,12 +465,7 @@ void DrawingAreaImpl::resumePainting()
     // FIXME: We shouldn't always repaint everything here.
     setNeedsDisplay();
 
-#if PLATFORM(MAC)
-    if (m_webPage->windowIsVisible())
-        m_webPage->corePage()->resumeScriptedAnimations();
-#else
     m_webPage->corePage()->resumeScriptedAnimations();
-#endif
 }
 
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
@@ -713,23 +695,6 @@ void DrawingAreaImpl::didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connect
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
-}
-#endif
-
-#if PLATFORM(MAC)
-void DrawingAreaImpl::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
-{
-    LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
-    m_webPage->setLayerHostingMode(layerHostingMode);
-
-    if (!m_layerTreeHost)
-        return;
-
-    LayerTreeContext oldLayerTreeContext = m_layerTreeHost->layerTreeContext();
-    m_layerTreeHost->setLayerHostingMode(layerHostingMode);
-
-    if (m_layerTreeHost->layerTreeContext() != oldLayerTreeContext)
-        m_webPage->send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
 }
 #endif
 

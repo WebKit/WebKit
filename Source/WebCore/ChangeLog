@@ -1,3 +1,31 @@
+2013-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 
+        https://bugs.webkit.org/show_bug.cgi?id=121859
+        <rdar://problem/15069359>
+
+        Reviewed by Anders Carlsson.
+
+        Test: platform/mac-wk2/tiled-drawing/window-server-snapshots-work.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addTrackedRepaintRect):
+        (WebCore::FrameView::repaintContentRectangle):
+        * page/FrameView.h:
+        Factor out the coordinate conversion and appending of new repaint rects on FrameView.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldDumpPropertyForLayer):
+        Don't dump repaint rects on the root tile cache, they'll be included at the top,
+        where FrameView's repaints are normally included.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        Push the root tile cache's tracked repaint rects to FrameView instead.
+
 2013-10-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean up more <style scoped> from style resolution

@@ -1,3 +1,25 @@
+2013-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 
+        https://bugs.webkit.org/show_bug.cgi?id=121859
+        <rdar://problem/15069359>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::shouldUseThreadedScrolling):
+        (WTR::updateThreadedScrollingForCurrentTest):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[TestRunnerWKView initWithFrame:contextRef:pageGroupRef:relatedToPage:useThreadedScrolling:]):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        Rename the tiled drawing switch to threaded scrolling, since that's really
+        all it switches now that we use tiled drawing everywhere.
+
+        Use an unbuffered window, as well, to avoid snapshotting issues on some platforms
+        and to more closely match the case we're interested in testing.
+
 2013-10-02  Anders Carlsson  <andersca@apple.com>
 
         Move AHEM____.TTF from qt/fonts/ to fonts/.

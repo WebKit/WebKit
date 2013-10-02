@@ -2078,17 +2078,23 @@ HostWindow* FrameView::hostWindow() const
     return 0;
 }
 
+void FrameView::addTrackedRepaintRect(const IntRect& r)
+{
+    if (!m_isTrackingRepaints || r.isEmpty())
+        return;
+
+    IntRect repaintRect = r;
+    repaintRect.move(-scrollOffset());
+    m_trackedRepaintRects.append(repaintRect);
+}
+
 const unsigned cRepaintRectUnionThreshold = 25;
 
 void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!frame().ownerElement());
 
-    if (m_isTrackingRepaints) {
-        IntRect repaintRect = r;
-        repaintRect.move(-scrollOffset());
-        m_trackedRepaintRects.append(repaintRect);
-    }
+    addTrackedRepaintRect(r);
 
     double delay = m_deferringRepaints ? 0 : adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {

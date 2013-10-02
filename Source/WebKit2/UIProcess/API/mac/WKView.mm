@@ -34,7 +34,6 @@
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
-#import "DrawingAreaProxyImpl.h"
 #import "EditorState.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
@@ -147,7 +146,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
-- (BOOL)_shouldUseTiledDrawingArea;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_setIsWindowOccluded:(BOOL)isWindowOccluded;
@@ -2117,60 +2115,10 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 }
 #endif
 
-static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
-{
-    if (!page->drawsBackground())
-        return;
-
-    CGContextSaveGState(context);
-    CGContextSetBlendMode(context, kCGBlendModeCopy);
-
-    CGColorRef backgroundColor;
-    if (page->drawsTransparentBackground())
-        backgroundColor = CGColorGetConstantColor(kCGColorClear);
-    else
-        backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-
-    CGContextSetFillColorWithColor(context, backgroundColor);
-    CGContextFillRect(context, rect);
-
-    CGContextRestoreGState(context);
-}
-
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     _data->_page->endPrinting();
-
-    if ([self _shouldUseTiledDrawingArea]) {
-        // Nothing to do here.
-        return;
-    }
-
-    CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-
-    if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
-        const NSRect *rectsBeingDrawn;
-        NSInteger numRectsBeingDrawn;
-        [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
-        for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
-            Region unpaintedRegion;
-            drawingArea->paint(context, enclosingIntRect(rectsBeingDrawn[i]), unpaintedRegion);
-
-            // If the window doesn't have a valid backing store, we need to fill the parts of the page that we
-            // didn't paint with the background color (white or clear), to avoid garbage in those areas.
-            if (!_data->_windowHasValidBackingStore || !drawingArea->hasReceivedFirstUpdate()) {
-                Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
-                for (size_t i = 0; i < unpaintedRects.size(); ++i)
-                    drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
-
-                _data->_windowHasValidBackingStore = YES;
-            }
-        }
-    } else 
-        drawPageBackground(context, _data->_page.get(), enclosingIntRect(rect));
-
-    _data->_page->didDraw();
 }
 
 - (BOOL)isOpaque
@@ -2337,11 +2285,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_resizeScrollOffset = NSZeroSize;
 }
 
-- (BOOL)_shouldUseTiledDrawingArea
-{
-    return NO;
-}
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 - (void)quickLookWithEvent:(NSEvent *)event
 {
@@ -2367,14 +2310,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
-    if ([self _shouldUseTiledDrawingArea]) {
-        if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
-            return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_data->_page.get());
+    if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
+        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_data->_page.get());
 
-        return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
-    }
-
-    return std::make_unique<DrawingAreaProxyImpl>(_data->_page.get());
+    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
 }
 
 - (BOOL)_isFocused
@@ -3088,12 +3027,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     
     [self _registerDraggedTypes];
 
-    if ([self _shouldUseTiledDrawingArea]) {
-        self.wantsLayer = YES;
+    self.wantsLayer = YES;
 
-        // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
-        self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
-    }
+    // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
+    self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
 
     WebContext::statistics().wkViewCount++;
 
@@ -3106,7 +3043,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 - (BOOL)wantsUpdateLayer
 {
-    return [self _shouldUseTiledDrawingArea];
+    return YES;
 }
 
 - (void)updateLayer

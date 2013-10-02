@@ -35,6 +35,10 @@
 
 using namespace WTR;
 
+enum {
+    _NSBackingStoreUnbuffered = 3
+};
+
 @interface WebKitTestRunnerWindow : NSWindow {
     PlatformWebView* _platformWebView;
     NSPoint _fakeOrigin;
@@ -43,27 +47,22 @@ using namespace WTR;
 @end
 
 @interface TestRunnerWKView : WKView {
-    BOOL _useTiledDrawing;
+    BOOL _useThreadedScrolling;
 }
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useTiledDrawing:(BOOL)useTiledDrawing;
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useThreadedScrolling:(BOOL)useThreadedScrolling;
 
-@property (nonatomic, assign) BOOL useTiledDrawing;
+@property (nonatomic, assign) BOOL useThreadedScrolling;
 @end
 
 @implementation TestRunnerWKView
 
-@synthesize useTiledDrawing = _useTiledDrawing;
+@synthesize useThreadedScrolling = _useThreadedScrolling;
 
-- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useTiledDrawing:(BOOL)useTiledDrawing
+- (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)context pageGroupRef:(WKPageGroupRef)pageGroup relatedToPage:(WKPageRef)relatedPage useThreadedScrolling:(BOOL)useThreadedScrolling
 {
-    _useTiledDrawing = useTiledDrawing;
+    _useThreadedScrolling = useThreadedScrolling;
     return [super initWithFrame:frame contextRef:context pageGroupRef:pageGroup relatedToPage:relatedPage];
-}
-
-- (BOOL)_shouldUseTiledDrawingArea
-{
-    return _useTiledDrawing;
 }
 
 - (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
@@ -119,20 +118,20 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     : m_windowIsKey(true)
     , m_options(options)
 {
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKTypeRef useTiledDrawingValue = options ? WKDictionaryGetItemForKey(options, useTiledDrawingKey.get()) : NULL;
-    bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
+    WKRetainPtr<WKStringRef> useThreadedScrollingKey(AdoptWK, WKStringCreateWithUTF8CString("ThreadedScrolling"));
+    WKTypeRef useThreadedScrollingValue = options ? WKDictionaryGetItemForKey(options, useThreadedScrollingKey.get()) : NULL;
+    bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
 
     // The tiled drawing specific tests also depend on threaded scrolling.
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
-    WKPreferencesSetThreadedScrollingEnabled(preferences, useTiledDrawing);
+    WKPreferencesSetThreadedScrollingEnabled(preferences, useThreadedScrolling);
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useTiledDrawing:useTiledDrawing];
+    m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useThreadedScrolling:useThreadedScrolling];
     [m_view setWindowOcclusionDetectionEnabled:NO];
 
     NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
-    m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+    m_window = [[WebKitTestRunnerWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:_NSBackingStoreUnbuffered defer:YES];
     m_window.platformWebView = this;
     [m_window setColorSpace:[[NSScreen mainScreen] colorSpace]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
@@ -230,11 +229,11 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
 {
-    WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
-    WKTypeRef useTiledDrawingValue = WKDictionaryGetItemForKey(options, useTiledDrawingKey.get());
-    bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
+    WKRetainPtr<WKStringRef> useThreadedScrollingKey(AdoptWK, WKStringCreateWithUTF8CString("ThreadedScrolling"));
+    WKTypeRef useThreadedScrollingValue = WKDictionaryGetItemForKey(options, useThreadedScrollingKey.get());
+    bool useThreadedScrolling = useThreadedScrollingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useThreadedScrollingValue));
 
-    return useTiledDrawing == [(TestRunnerWKView *)m_view useTiledDrawing];
+    return useThreadedScrolling == [(TestRunnerWKView *)m_view useThreadedScrolling];
 }
 
 } // namespace WTR

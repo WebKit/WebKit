@@ -26,10 +26,6 @@
 #include "config.h"
 #include "LayerTreeHost.h"
 
-#if PLATFORM(MAC)
-#include "LayerTreeHostMac.h"
-#endif
-
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHost.h"
 #endif
@@ -44,9 +40,7 @@ namespace WebKit {
 
 PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
 {
-#if PLATFORM(MAC)
-    return LayerTreeHostMac::create(webPage);
-#elif USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS)
     return CoordinatedLayerTreeHost::create(webPage);
 #elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
     return LayerTreeHostGtk::create(webPage);

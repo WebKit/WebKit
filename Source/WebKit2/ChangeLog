@@ -1,3 +1,55 @@
+2013-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 
+        https://bugs.webkit.org/show_bug.cgi?id=121859
+        <rdar://problem/15069359>
+
+        Reviewed by Anders Carlsson.
+
+        The Mac port will now use tiled drawing for all WebKit2 views.
+
+        * Shared/DrawingAreaInfo.h:
+        Don't include DrawingAreaTypeImpl as a valid DrawingAreaType on Mac.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        Remove our implementation of drawRect that paints from DrawingAreaImpl's backing store.
+
+        (-[WKView _shouldUseTiledDrawingArea]):
+        Removed. Always treated as if it were true, now.
+
+        (-[WKView _createDrawingAreaProxy]):
+        Always create a TiledCoreAnimationDrawingAreaProxy now.
+
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView wantsUpdateLayer]):
+        WKView always wants a layer, etc.
+
+        * UIProcess/BackingStore.h:
+        Remove Mac-specific BackingStore code, only used for DrawingAreaImpl on Mac.
+
+        * UIProcess/DrawingAreaProxy.h:
+        Remove an unneeded include.
+
+        * UIProcess/mac/BackingStoreMac.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove a bunch of files we don't need to build anymore.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        Never create a DrawingAreaImpl on Mac.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updatePreferences):
+        (WebKit::DrawingAreaImpl::resumePainting):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Remove Mac-specific DrawingAreaImpl code.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h: Removed.
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm: Removed.
+
 2013-10-02  Daniel Bates  <dabates@apple.com>
 
         Fix the Mac WebKit2 build following <http://trac.webkit.org/changeset/139241>

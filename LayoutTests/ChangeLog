@@ -1,3 +1,49 @@
+2013-10-02  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Stop using DrawingAreaImpl on PLATFORM(MAC) 
+        https://bugs.webkit.org/show_bug.cgi?id=121859
+        <rdar://problem/15069359>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac-wk2/TestExpectations:
+
+        * platform/mac-wk2/compositing/contents-opaque/body-background-painted-expected.txt: Added.
+        * platform/mac-wk2/compositing/contents-opaque/body-background-skipped-expected.txt: Added.
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-expected.txt: Added.
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-overflow-expected.txt: Added.
+        * platform/mac-wk2/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Added.
+        Add WebKit2 results, because we dump non-white background color on the root layer now.
+
+        * platform/mac-wk2/compositing/repaint/fixed-background-scroll-expected.txt: Added.
+        New WebKit2 result; repaint rects are showing up now.
+        
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-expected.txt:
+        * platform/mac-wk2/compositing/rtl/rtl-fixed-overflow-expected.txt:
+        Slightly adjusted results.
+
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-clamped-expected.txt: Added.
+        * platform/mac-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Added.
+        * platform/mac-wk2/compositing/tiling/tile-cache-zoomed-expected.txt: Added.
+        * platform/mac-wk2/compositing/tiling/tiled-layer-resize-expected.txt: Added.
+        New WebKit2 results; we show the root tile cache if layerTreeAsText is asked to dump tile caches.
+        
+        * platform/mac-wk2/editing/input/caret-at-the-edge-of-contenteditable-expected.txt: Added.
+        * platform/mac-wk2/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Added.
+        * platform/mac-wk2/fast/block/basic/020-expected.txt: Added.
+        * platform/mac-wk2/fast/dynamic/012-expected.txt: Added.
+        * platform/mac-wk2/fast/dynamic/layer-hit-test-crash-expected.txt: Added.
+        * platform/mac-wk2/fast/repaint/layer-hide-when-needs-layout-expected.txt: Added.
+        * platform/mac-wk2/fast/text/whitespace/028-expected.txt: Added.
+        * platform/mac-wk2/fast/layers/layer-visibility-expected.txt: Added.
+        * platform/mac-wk2/fast/layers/layer-visibility-sublayer-expected.txt: Added.
+        * platform/mac-wk2/fast/repaint/invisible-objects-expected.txt: Added.
+        New WebKit2 results; additional compositing layers.
+        
+        * platform/mac-wk2/tiled-drawing/window-server-snapshots-work-expected-mismatch.html: Added.
+        * platform/mac-wk2/tiled-drawing/window-server-snapshots-work.html: Added.
+        New test to ensure that window-server snapshots work with tiled drawing.
+
 2013-10-01  Oliver Hunt  <oliver@apple.com>
 
         Implement Array key, value and entries iterators
