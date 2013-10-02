@@ -1366,5 +1366,4 @@ webkit.org/b/122042 media/media-controller-playback.html [ Pass Failure ]
 
 webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
 
-# This test case needs to be rebaselined. 
-webkit.org/b/15602 fast/css/first-letter-block-change.html [ Failure ]
+webkit.org/b/15602 fast/css/first-letter-block-change.html [ Missing ]
