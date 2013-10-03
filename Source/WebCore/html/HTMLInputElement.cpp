@@ -1110,26 +1110,19 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     setAutofilled(false);
 }
 
-void* HTMLInputElement::preDispatchEventHandler(Event* event)
+void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& state)
 {
-    if (event->type() == eventNames().textInputEvent && m_inputType->shouldSubmitImplicitly(event)) {
-        event->stopPropagation();
-        return 0;
+    if (event.type() == eventNames().textInputEvent && m_inputType->shouldSubmitImplicitly(&event))
+        event.stopPropagation();
+    if (event.type() == eventNames().clickEvent && event.isMouseEvent() && toMouseEvent(&event)->button() == LeftButton) {
+        m_inputType->willDispatchClick(state);
+        state.stateful = true;
     }
-    if (event->type() != eventNames().clickEvent)
-        return 0;
-    if (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != LeftButton)
-        return 0;
-    // FIXME: Check whether there are any cases where this actually ends up leaking.
-    return m_inputType->willDispatchClick().leakPtr();
 }
 
-void HTMLInputElement::postDispatchEventHandler(Event* event, void* dataFromPreDispatch)
+void HTMLInputElement::didDispatchClickEvent(Event& event, const InputElementClickState& state)
 {
-    OwnPtr<ClickHandlingState> state = adoptPtr(static_cast<ClickHandlingState*>(dataFromPreDispatch));
-    if (!state)
-        return;
-    m_inputType->didDispatchClick(event, *state);
+    m_inputType->didDispatchClick(&event, state);
 }
 
 void HTMLInputElement::defaultEventHandler(Event* evt)

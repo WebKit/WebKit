@@ -45,8 +45,8 @@ private:
     virtual bool valueMissing(const String&) const OVERRIDE;
     virtual String valueMissingText() const OVERRIDE;
     virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
-    virtual OwnPtr<ClickHandlingState> willDispatchClick() OVERRIDE;
-    virtual void didDispatchClick(Event*, const ClickHandlingState&) OVERRIDE;
+    virtual void willDispatchClick(InputElementClickState&) OVERRIDE;
+    virtual void didDispatchClick(Event*, const InputElementClickState&) OVERRIDE;
     virtual bool isCheckbox() const OVERRIDE;
     virtual bool supportsIndeterminateAppearance() const OVERRIDE;
 };

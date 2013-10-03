@@ -68,25 +68,21 @@ void CheckboxInputType::handleKeyupEvent(KeyboardEvent* event)
     dispatchSimulatedClickIfActive(event);
 }
 
-OwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
+void CheckboxInputType::willDispatchClick(InputElementClickState& state)
 {
     // An event handler can use preventDefault or "return false" to reverse the checking we do here.
-    // The ClickHandlingState object contains what we need to undo what we did here in didDispatchClick.
+    // The InputElementClickState object contains what we need to undo what we did here in didDispatchClick.
 
-    OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
+    state.checked = element().checked();
+    state.indeterminate = element().indeterminate();
 
-    state->checked = element().checked();
-    state->indeterminate = element().indeterminate();
-
-    if (state->indeterminate)
+    if (state.indeterminate)
         element().setIndeterminate(false);
 
-    element().setChecked(!state->checked, DispatchChangeEvent);
-
-    return state.release();
+    element().setChecked(!state.checked, DispatchChangeEvent);
 }
 
-void CheckboxInputType::didDispatchClick(Event* event, const ClickHandlingState& state)
+void CheckboxInputType::didDispatchClick(Event* event, const InputElementClickState& state)
 {
     if (event->defaultPrevented() || event->defaultHandled()) {
         element().setIndeterminate(state.indeterminate);

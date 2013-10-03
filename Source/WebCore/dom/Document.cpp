@@ -85,6 +85,7 @@
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -5387,11 +5388,11 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
     Deque<RefPtr<Node> > errorQueue;
     m_fullScreenErrorEventTargetQueue.swap(errorQueue);
-    dispatchFullScreenChangeOrErrorEvent(changeQueue, eventNames().webkitfullscreenchangeEvent);
-    dispatchFullScreenChangeOrErrorEvent(errorQueue, eventNames().webkitfullscreenerrorEvent);
+    dispatchFullScreenChangeOrErrorEvent(changeQueue, eventNames().webkitfullscreenchangeEvent, /* shouldNotifyMediaElement */ true);
+    dispatchFullScreenChangeOrErrorEvent(errorQueue, eventNames().webkitfullscreenerrorEvent, /* shouldNotifyMediaElement */ false);
 }
 
-void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomicString& eventName)
+void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, const AtomicString& eventName, bool shouldNotifyMediaElement)
 {
     while (!queue.isEmpty()) {
         RefPtr<Node> node = queue.takeFirst();
@@ -5406,6 +5407,8 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
         if (!node->inDocument())
             queue.append(documentElement());
 
+        if (shouldNotifyMediaElement && isMediaElement(node.get()))
+            toHTMLMediaElement(node.get())->enteredOrExitedFullscreen();
         node->dispatchEvent(Event::create(eventName, true, false));
     }
 }

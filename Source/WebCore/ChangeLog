@@ -1,5 +1,52 @@
 2013-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Get rid of Node::preDispatchEventHandler and Node::postDispatchEventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=122144
+
+        Reviewed by Darin Adler.
+
+        Get rid of pre/post event dispatch callbacks preDispatchEventHandler and postDispatchEventHandler since
+        the former was only called by HTMLMediaElement and HTMLInputElement and the latter was only called by
+        HTMLInputElement.
+
+        Explicitly call HTMLMediaElement's willDispatchFullScreenChangeEvent in fullScreenChangeDelayTimerFired
+        of Document since this is the only place that fires the fullscreenchange event.
+
+        Also add an explicit call to willDispatchEvent and didDispatchClickEvent in EventDispatcher::dispatch.
+        This also allows us to stack-allocate InputElementClickHandlingState instead of having willDispatchEvent
+        heap-allocate it and pass it around as void*.
+
+        * WebCore.order:
+        * dom/Document.cpp:
+        (WebCore::Document::fullScreenChangeDelayTimerFired):
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent):
+        * dom/Document.h:
+        * dom/EventContext.cpp:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatch):
+        (WebCore::EventDispatcher::callWillDispatchEventOnInputElement):
+        (WebCore::EventDispatcher::dispatchEventPostProcess):
+        * dom/EventDispatcher.h:
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::willDispatchClick):
+        * html/CheckboxInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::willDispatchEvent):
+        (WebCore::HTMLInputElement::didDispatchClickEvent):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::willDispatchFullScreenChangeEvent): Renamed from preDispatchEventHandler.
+        * html/HTMLTextFormControlElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::willDispatchClick):
+        * html/InputType.h:
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::willDispatchClick):
+        * html/RadioInputType.h:
+
+2013-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update binding test results after r156808 for r156769.
 
         * bindings/scripts/test/JS/JSattribute.cpp:

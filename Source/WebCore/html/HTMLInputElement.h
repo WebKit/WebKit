@@ -43,6 +43,18 @@ class URL;
 class ListAttributeTargetObserver;
 struct DateTimeChooserParameters;
 
+struct InputElementClickState {
+    InputElementClickState()
+        : stateful(false)
+        , checked(false)
+        , indeterminate(false)
+    { }
+    bool stateful;
+    bool checked;
+    bool indeterminate;
+    RefPtr<HTMLInputElement> checkedRadioButton;
+};
+
 class HTMLInputElement : public HTMLTextFormControlElement {
 public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -201,6 +213,9 @@ public:
 
     String altText() const;
 
+    void willDispatchEvent(Event&, InputElementClickState&);
+    void didDispatchClickEvent(Event&, const InputElementClickState&);
+
     int maxResults() const { return m_maxResults; }
 
     String defaultValue() const;
@@ -355,9 +370,6 @@ private:
     virtual bool isSuccessfulSubmitButton() const;
 
     virtual void reset();
-
-    virtual void* preDispatchEventHandler(Event*);
-    virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual bool isInRange() const;

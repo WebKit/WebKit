@@ -383,6 +383,8 @@ public:
 
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
+    void enteredOrExitedFullscreen() { configureMediaControls(); }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
@@ -606,8 +608,6 @@ private:
 
     void prepareMediaFragmentURI();
     void applyMediaFragmentURI();
-
-    virtual void* preDispatchEventHandler(Event*);
 
     void changeNetworkStateFromLoadingToIdle();
 

@@ -49,8 +49,8 @@ private:
     virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool shouldSendChangeEventAfterCheckedChanged() OVERRIDE;
-    virtual OwnPtr<ClickHandlingState> willDispatchClick() OVERRIDE;
-    virtual void didDispatchClick(Event*, const ClickHandlingState&) OVERRIDE;
+    virtual void willDispatchClick(InputElementClickState&) OVERRIDE;
+    virtual void didDispatchClick(Event*, const InputElementClickState&) OVERRIDE;
     virtual bool isRadioButton() const OVERRIDE;
     virtual bool supportsIndeterminateAppearance() const OVERRIDE;
 };

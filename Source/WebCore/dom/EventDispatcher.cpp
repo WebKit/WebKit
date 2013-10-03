@@ -31,6 +31,7 @@
 #include "EventDispatchMediator.h"
 #include "EventRetargeter.h"
 #include "FrameView.h"
+#include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
@@ -111,12 +112,18 @@ bool EventDispatcher::dispatch()
     WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&m_node->document(), *m_event, windowEventContext.window(), m_node.get(), m_eventPath);
 
-    void* preDispatchEventHandlerResult;
-    if (dispatchEventPreProcess(preDispatchEventHandlerResult) == ContinueDispatching)
-        if (dispatchEventAtCapturing(windowEventContext) == ContinueDispatching)
+    InputElementClickState clickHandlingState;
+    if (isHTMLInputElement(m_node.get()))
+        toHTMLInputElement(m_node.get())->willDispatchEvent(*m_event.get(), clickHandlingState);
+
+    if (!m_event->propagationStopped() && !m_eventPath.isEmpty()) {
+        if (dispatchEventAtCapturing(windowEventContext) == ContinueDispatching) {
             if (dispatchEventAtTarget() == ContinueDispatching)
                 dispatchEventAtBubbling(windowEventContext);
-    dispatchEventPostProcess(preDispatchEventHandlerResult);
+        }
+    }
+
+    dispatchEventPostProcess(clickHandlingState);
 
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
@@ -125,13 +132,6 @@ bool EventDispatcher::dispatch()
     InspectorInstrumentation::didDispatchEvent(cookie);
 
     return !m_event->defaultPrevented();
-}
-
-inline EventDispatchContinuation EventDispatcher::dispatchEventPreProcess(void*& preDispatchEventHandlerResult)
-{
-    // Give the target node a chance to do some work before DOM event handlers get a crack.
-    preDispatchEventHandlerResult = m_node->preDispatchEventHandler(m_event.get());
-    return (m_eventPath.isEmpty() || m_event->propagationStopped()) ? DoneDispatching : ContinueDispatching;
 }
 
 inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(WindowEventContext& windowEventContext)
@@ -183,14 +183,14 @@ inline void EventDispatcher::dispatchEventAtBubbling(WindowEventContext& windowC
     }
 }
 
-inline void EventDispatcher::dispatchEventPostProcess(void* preDispatchEventHandlerResult)
+inline void EventDispatcher::dispatchEventPostProcess(const InputElementClickState& InputElementClickState)
 {
     m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
     m_event->setCurrentTarget(0);
     m_event->setEventPhase(0);
 
-    // Pass the data from the preDispatchEventHandler to the postDispatchEventHandler.
-    m_node->postDispatchEventHandler(m_event.get(), preDispatchEventHandlerResult);
+    if (InputElementClickState.stateful)
+        toHTMLInputElement(m_node.get())->didDispatchClickEvent(*m_event.get(), InputElementClickState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal

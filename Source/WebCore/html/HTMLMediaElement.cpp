@@ -4824,14 +4824,6 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
 
 #endif
 
-void* HTMLMediaElement::preDispatchEventHandler(Event* event)
-{
-    if (event && event->type() == eventNames().webkitfullscreenchangeEvent)
-        configureMediaControls();
-
-    return 0;
-}
-
 void HTMLMediaElement::createMediaPlayer()
 {
 #if ENABLE(WEB_AUDIO)

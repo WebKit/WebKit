@@ -682,12 +682,11 @@ bool InputType::canSetValue(const String&)
     return true;
 }
 
-OwnPtr<ClickHandlingState> InputType::willDispatchClick()
+void InputType::willDispatchClick(InputElementClickState&)
 {
-    return nullptr;
 }
 
-void InputType::didDispatchClick(Event*, const ClickHandlingState&)
+void InputType::didDispatchClick(Event*, const InputElementClickState&)
 {
 }
 

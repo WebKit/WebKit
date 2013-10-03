@@ -45,6 +45,7 @@ class PlatformMouseEvent;
 class ShadowRoot;
 class TreeScope;
 class WindowEventContext;
+struct InputElementClickState;
 
 enum EventDispatchContinuation {
     ContinueDispatching,
@@ -67,11 +68,10 @@ private:
     EventDispatcher(Node*, PassRefPtr<Event>);
     const EventContext* topEventContext();
 
-    EventDispatchContinuation dispatchEventPreProcess(void*& preDispatchEventHandlerResult);
     EventDispatchContinuation dispatchEventAtCapturing(WindowEventContext&);
     EventDispatchContinuation dispatchEventAtTarget();
     void dispatchEventAtBubbling(WindowEventContext&);
-    void dispatchEventPostProcess(void* preDispatchEventHandlerResult);
+    void dispatchEventPostProcess(const InputElementClickState&);
 
     EventPath m_eventPath;
     RefPtr<Node> m_node;
