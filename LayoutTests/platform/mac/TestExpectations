@@ -1369,3 +1369,5 @@ webkit.org/b/115048 media/media-element-play-after-eos.html [ Pass Failure ]
 webkit.org/b/121803 media/video-object-fit.html [ Pass Failure ]
 webkit.org/b/121803 media/video-object-fit-change.html [ Pass Failure ]
 webkit.org/b/121803 compositing/video/video-object-fit.html [ Pass Failure ]
+
+webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Failure Timeout ]
