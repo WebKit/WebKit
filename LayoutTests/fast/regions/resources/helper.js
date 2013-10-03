@@ -240,3 +240,10 @@ function mouseClick(positionX, positionY) {
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
+
+function onMouseUpLogSelection(elementId) {
+    document.onmouseup = function() {
+        var selectedContent = document.getElementById(elementId);
+        selectedContent.innerHTML = window.getSelection().getRangeAt(0);
+    }
+}
