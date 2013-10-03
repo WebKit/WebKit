@@ -1,3 +1,16 @@
+2013-10-02  Andreas Kling  <akling@apple.com>
+
+        Keep SVGElementRareData in an SVGElement member instead of a hashmap.
+        <https://webkit.org/b/122253>
+
+        Reviewed by Antti Koivisto.
+
+        Free up another Node flag by moving SVGElement's SVG-specific rare data
+        to a member variable instead of tracking them in a hashmap on the side.
+
+        This grows SVGElement by one pointer, but I will make up for this in
+        subsequent patches.
+
 2013-10-02  Antti Koivisto  <antti@apple.com>
 
         Move setting of some layout bits to RenderElement

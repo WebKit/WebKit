@@ -151,7 +151,6 @@ protected:
     
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
-    SVGElementRareData* svgRareData() const;
     SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
@@ -185,7 +184,9 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
-    
+
+    std::unique_ptr<SVGElementRareData> m_svgRareData;
+
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGElement)

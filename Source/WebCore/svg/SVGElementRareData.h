@@ -46,19 +46,6 @@ public:
     {
     }
 
-    typedef HashMap<const SVGElement*, SVGElementRareData*> SVGElementRareDataMap;
-
-    static SVGElementRareDataMap& rareDataMap()
-    {
-        DEFINE_STATIC_LOCAL(SVGElementRareDataMap, rareDataMap, ());
-        return rareDataMap;
-    }
-
-    static SVGElementRareData* rareDataFromMap(const SVGElement* element)
-    {
-        return rareDataMap().get(element);
-    }
-
     HashSet<SVGElementInstance*>& elementInstances() { return m_elementInstances; }
     const HashSet<SVGElementInstance*>& elementInstances() const { return m_elementInstances; }
 
