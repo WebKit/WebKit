@@ -139,8 +139,7 @@ public:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    // All regions create stacking contexts, as specified in the CSS standard. Do that by allocating a separate RenderLayer for each.
-    virtual bool requiresLayer() const OVERRIDE { return true; }
+    virtual bool requiresLayer() const OVERRIDE;
 
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);

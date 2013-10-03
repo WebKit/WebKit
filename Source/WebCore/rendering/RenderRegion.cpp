@@ -374,6 +374,12 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
     repaintRectangle(clippedRect, immediate);
 }
 
+bool RenderRegion::requiresLayer() const
+{
+    // All regions create stacking contexts, as specified in the CSS standard. Do that by allocating a separate RenderLayer for each.
+    return true;
+}
+
 void RenderRegion::installFlowThread()
 {
     m_flowThread = &view().flowThreadController().ensureRenderFlowThreadWithName(style()->regionThread());

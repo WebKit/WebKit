@@ -411,6 +411,13 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
     }
 }
 
+bool RenderMultiColumnSet::requiresLayer() const
+{
+    // RenderMultiColumnSet derives from RenderRegion, but unlike the CSS Regions specification, the Multi-Columns CSS
+    // specification states that the column boxes do not establish new Stacking Contexts.
+    return RenderBlockFlow::requiresLayer();
+}
+
 void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
     // Let's start by introducing the different coordinate systems involved here. They are different
