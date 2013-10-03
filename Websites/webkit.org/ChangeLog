@@ -1,3 +1,10 @@
+2013-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Sync'd sunspider-1.0.2 to PerformanceTests/SunSpider/hosted/sunspider-1.0.2.
+
+        * perf/sunspider-1.0.2/sunspider-1.0.2/driver.html:
+        * perf/sunspider-1.0.2/sunspider-1.0.2/sunspider-test-contents.js:
+
 2013-09-26  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a version number string in SunSpider 1.0.2
