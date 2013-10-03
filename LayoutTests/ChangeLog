@@ -1,3 +1,10 @@
+2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add back .htaccess files erroneously removed in r156827.
+
+        * http/tests/appcache/resources/intercept: Copied from LayoutTests/http/tests/appcache/resources/intercept.
+        * http/tests/uri/intercept: Copied from LayoutTests/http/tests/uri/intercept.
+
 2013-10-02  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Implement the shape-image-threshold property
