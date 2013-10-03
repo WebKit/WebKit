@@ -1,3 +1,15 @@
+2013-10-03  Samuel White  <samuel_white@apple.com>
+
+        Regression: AX: <table><caption> no longer exposed as AXTitle.
+        https://bugs.webkit.org/show_bug.cgi?id=121977
+
+        Reviewed by Darin Adler.
+
+        Added test to verify that table elements correctly derive their AXTitle from their associated caption element.
+
+        * accessibility/table-title-expected.txt: Added.
+        * accessibility/table-title.html: Added.
+
 2013-10-03  Nadav Rotem  <nrotem@apple.com>
 
         Add a testcase for a bug that I had during the development. This code uses the asm.js style.

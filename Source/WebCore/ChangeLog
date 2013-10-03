@@ -1,3 +1,26 @@
+2013-10-03  Samuel White  <samuel_white@apple.com>
+
+        Regression: AX: <table><caption> no longer exposed as AXTitle.
+        https://bugs.webkit.org/show_bug.cgi?id=121977
+
+        Reviewed by Darin Adler.
+
+        Some cleanup of accessibilityText. Notably, subclasses were unnecessarily redeclaring this method as both private and
+        protected. Added OVERRIDE keyword to these subclasses as needed. Moved titleElementText to virtual so we can do subclass
+        overrides in cases like this bug. That is, AccessibilityTable can leverage the existing machinery for alternativeText,
+        visibleText, and helpText, but we do some custom work ONLY in titleElementText.
+
+        Test: accessibility/table-title.html
+
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityMediaControls.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::titleElementText):
+        * accessibility/AccessibilityTable.h:
+
 2013-10-03  Anders Carlsson  <andersca@apple.com>
 
         Ignore deprecation warnings

@@ -53,8 +53,10 @@ protected:
     explicit AccessibilityMediaControl(RenderObject*);
     MediaControlElementType controlType() const;
     String controlTypeName() const;
-    virtual void accessibilityText(Vector<AccessibilityText>&);
     virtual bool computeAccessibilityIsIgnored() const;
+
+private:
+    virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
 };
 
 

@@ -92,6 +92,9 @@ protected:
 
     virtual bool isTableExposableThroughAccessibility() const;
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+
+private:
+    virtual void titleElementText(Vector<AccessibilityText>&) const OVERRIDE;
 };
     
 inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)

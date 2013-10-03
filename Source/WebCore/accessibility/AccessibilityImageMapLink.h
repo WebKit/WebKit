@@ -76,7 +76,7 @@ private:
 
     virtual Path elementPath() const;
     RenderElement* imageMapLinkRenderer() const;
-    virtual void accessibilityText(Vector<AccessibilityText>&);
+    virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
     virtual bool isImageMapLink() const { return true; }
     virtual bool supportsPath() const { return true; }
 };

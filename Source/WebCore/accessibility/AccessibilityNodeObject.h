@@ -192,8 +192,8 @@ protected:
 private:
     Node* m_node;
 
-    virtual void accessibilityText(Vector<AccessibilityText>&);
-    void titleElementText(Vector<AccessibilityText>&);
+    virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
+    virtual void titleElementText(Vector<AccessibilityText>&) const;
     void alternativeText(Vector<AccessibilityText>&) const;
     void visibleText(Vector<AccessibilityText>&) const;
     void helpText(Vector<AccessibilityText>&) const;
