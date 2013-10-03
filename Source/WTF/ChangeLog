@@ -1,3 +1,15 @@
+2013-10-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update solutions and projects to support 64-bit build.
+        https://bugs.webkit.org/show_bug.cgi?id=122225
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.vcxproj/WTF.submit.sln: Add x64 architecture targets.
+        * WTF.vcxproj/WTF.vcxproj: Correct path to config.h file.
+        * WTF.vcxproj/WTF.vcxproj.filters: Correct path to config.h file.
+
+
 2013-10-02  Nadav Rotem  <nrotem@apple.com>
 
         Eliminate a branch in FastBitVector setAndCheck, make it vectorizable.

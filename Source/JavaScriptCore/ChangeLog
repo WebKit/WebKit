@@ -1,3 +1,16 @@
+2013-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update solutions and projects to support 64-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=122225
+
+        Reviewed by Anders Carlsson.
+
+        Revise ordering of CPU(X86) and CPU(X86_64) tests, because MSVC always defines
+        both when targeting a 64-bit build.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Add an x64 target
+        for 64-bit builds.
+
 2013-10-03  Michael Saboff  <msaboff@apple.com>
 
         Eliminate unused JITStub function declarations
