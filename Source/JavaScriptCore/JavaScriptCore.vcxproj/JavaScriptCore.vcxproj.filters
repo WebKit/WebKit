@@ -891,7 +891,33 @@
     <ClCompile Include="..\llint\LLIntEntrypoint.cpp">
       <Filter>llint</Filter>
     </ClCompile>
-
+    <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\ArrayIteratorPrototype.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\AssemblyHelpers.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSArrayIterator.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\Repatch.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\InlineCallFrameSet.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\JITOperations.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\TestRunnerUtils.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\ValueRecovery.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -2288,6 +2314,60 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SetConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ArrayIteratorPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ArrayIteratorConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\AssemblyHelpers.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\CCallHelpers.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\WeakMapPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\WeakMapData.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\WeakMapConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSWeakMap.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSArrayIterator.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\Repatch.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\RegisterSet.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\InlineCallFrameSet.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITOperationWrappers.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITOperations.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\GPRInfo.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\FPRInfo.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\ScratchRegisterAllocator.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\TestRunnerUtils.h">
       <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>

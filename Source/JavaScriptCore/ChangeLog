@@ -1,5 +1,13 @@
 2013-10-03  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Clean up the
+        paths for various files added outside of Visual Studio. They are all
+        displayed in the root of the project, rather than the proper sub-folder.
+
+2013-10-03  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Update solutions and projects to support 64-bit builds.
         https://bugs.webkit.org/show_bug.cgi?id=122225
 
