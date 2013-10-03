@@ -1,6 +1,0 @@
-Start
-End
-PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
-FAIL false should be true. Was false.
-FAIL gFocusedDocument.activeElement.getAttribute("id") should be end. Was start.
-

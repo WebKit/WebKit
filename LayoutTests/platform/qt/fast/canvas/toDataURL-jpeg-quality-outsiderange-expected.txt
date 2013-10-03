@@ -1,3 +1,0 @@
-If the quality parameter is out of range, it should be treated as 1.0
-
-Test result: passed

@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 406x406
-  RenderSVGRoot {svg} at (96,32) size 214x224
-    RenderSVGEllipse {circle} at (150,150) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=197.00] [cy=197.00] [r=50.00]
-    RenderSVGText {text} at (99,35) size 202x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 201x19
-        chunk 1 (middle anchor) text run 1 at (99.50,50.00) startOffset 0 endOffset 34 width 201.00: "The circle should be in the middle"
-caret: position 0 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
