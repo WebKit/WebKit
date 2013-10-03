@@ -1,3 +1,31 @@
+2013-10-02  Mark Lam  <mark.lam@apple.com>
+
+        Make LLINT exception stack unwinding consistent with the JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=122255.
+
+        Reviewed by Filip Pizlo.
+
+        Previously, the CommonSlowPaths code is expected to behave in an
+        inconsistent way in terms of whether to unwind the stack when handling
+        exceptions or not. For the LLINT, the slow path should unwind the stack
+        before returning. For the JIT, the slow path should not unwind the stack.
+        This can result in the stack being unwound twice when the exception
+        being handled is a TerminationException.
+
+        This patch fixes the LLINT's expectation so that it expects the same
+        slow path behavior as the JIT does.
+
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+
 2013-10-02  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG should use always DFG::Graph methods for determining where special registers are

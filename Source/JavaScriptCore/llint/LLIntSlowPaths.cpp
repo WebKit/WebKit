@@ -37,6 +37,7 @@
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JIT.h"
+#include "JITExceptions.h"
 #include "JSActivation.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
@@ -1265,6 +1266,14 @@ LLINT_SLOW_PATH_DECL(throw_from_native_call)
     LLINT_BEGIN();
     ASSERT(vm.exception());
     LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
+{
+    LLINT_BEGIN_NO_SET_PC();
+    ASSERT(vm.exception());
+    genericUnwind(&vm, exec, vm.exception());
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
