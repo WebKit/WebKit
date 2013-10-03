@@ -1,3 +1,13 @@
+2013-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Use numeric strings in the OS version dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=122300
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_mac_version):
+
 2013-10-03  Alexey Proskuryakov  <ap@apple.com>
 
         Fix LeaksViewer to load leaks results from MountainLion, not Lion.

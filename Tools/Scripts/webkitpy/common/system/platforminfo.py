@@ -124,12 +124,12 @@ class PlatformInfo(object):
         raise AssertionError('unrecognized platform string "%s"' % sys_platform)
 
     def _determine_mac_version(self, mac_version_string):
-        release_version = mac_version_string.split('.')[1]
+        release_version = int(mac_version_string.split('.')[1])
         version_strings = {
-            '5': 'leopard',
-            '6': 'snowleopard',
-            '7': 'lion',
-            '8': 'mountainlion',
+            5: 'leopard',
+            6: 'snowleopard',
+            7: 'lion',
+            8: 'mountainlion',
         }
         assert release_version >= min(version_strings.keys())
         return version_strings.get(release_version, 'future')
