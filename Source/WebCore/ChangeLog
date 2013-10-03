@@ -1,3 +1,13 @@
+2013-10-02  Andreas Kling  <akling@apple.com>
+
+        CTTE: Drag events are only dispatched on Elements.
+        <https://webkit.org/b/122250>
+
+        Reviewed by Antti Koivisto.
+
+        We never dispatch drag events on non-Element nodes so tighten up the
+        code to operate on Elements instead.
+
 2013-10-02  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Implement the shape-image-threshold property

@@ -328,7 +328,7 @@ private:
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);
 #if ENABLE(DRAG_SUPPORT)
-    bool dispatchDragEvent(const AtomicString& eventType, Node* target, const PlatformMouseEvent&, Clipboard*);
+    bool dispatchDragEvent(const AtomicString& eventType, Element& target, const PlatformMouseEvent&, Clipboard*);
 
     void freeClipboard();
 
@@ -461,7 +461,7 @@ private:
     RefPtr<Node> m_clickNode;
 
 #if ENABLE(DRAG_SUPPORT)
-    RefPtr<Node> m_dragTarget;
+    RefPtr<Element> m_dragTarget;
     bool m_shouldOnlyFireDragOverEvent;
 #endif
     
