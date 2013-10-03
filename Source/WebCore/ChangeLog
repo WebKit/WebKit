@@ -1,3 +1,12 @@
+2013-10-02  Andreas Kling  <akling@apple.com>
+
+        Remove Qt-specific code in WebCore/plugins.
+        <https://webkit.org/b/122247>
+
+        Reviewed by Anders Carlsson.
+
+        Purge PLATFORM(QT) blocks and Qt-specific files.
+
 2013-10-02  Eric Carlson  <eric.carlson@apple.com>
 
         IDL parser should remove a leading "_" from identifier names

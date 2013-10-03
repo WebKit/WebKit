@@ -202,13 +202,7 @@ NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char
 
 NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
 {
-#if PLATFORM(QT) && defined(XP_MACOSX)
-    PluginView* plugin = pluginViewForInstance(instance);
-    plugin->popUpContextMenu(menu);
-    return NPERR_NO_ERROR;
-#else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(menu);
     return NPERR_NO_ERROR;
-#endif // PLATFORM(QT) && defined(XP_MACOSX)
 }

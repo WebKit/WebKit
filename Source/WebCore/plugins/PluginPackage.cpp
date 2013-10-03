@@ -196,18 +196,10 @@ void PluginPackage::determineQuirks(const String& mimeType)
         if (compareFileVersion(flashTenVersion) >= 0) {
             // Flash 10.0 b218 doesn't like having a NULL window handle
             m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
-#if PLATFORM(QT)
-            m_quirks.add(PluginQuirkRequiresGtkToolKit);
-#endif
         } else {
             // Flash 9 and older requests windowless plugins if we return a mozilla user agent
             m_quirks.add(PluginQuirkWantsMozillaUserAgent);
         }
-
-#if PLATFORM(QT)
-        // Flash will crash on repeated calls to SetWindow in windowed mode
-        m_quirks.add(PluginQuirkDontCallSetWindowMoreThanOnce);
-#endif
 
 #if CPU(X86_64)
         // 64-bit Flash freezes if right-click is sent in windowless mode
