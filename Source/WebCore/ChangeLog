@@ -1,3 +1,22 @@
+2013-10-03  Alejandro G. Castro  <alex@igalia.com>
+
+        [cairo] Initialize the m_compositorTexture in GraphicsContext3DCairo.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122285
+
+        Reviewed by Noam Rosenthal.
+
+        Initialize to the default texture to avoid the random texture name
+        and generate the texture name.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Initialize
+        m_compositorTexture.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Delete the
+        generated textures names.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs): Generate the texture
+        names for m_compositorTexture and m_texture.
+
 2013-10-03  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Support block content with inline content around floats in shape-inside
