@@ -285,12 +285,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ValueToInt32: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()) {
-            if (child.isInt32())
-                setConstant(node, child);
-            else
-                setConstant(node, JSValue(JSC::toInt32(child.asDouble())));
-            break;
+        if (child) {
+            if (child.isNumber()) {
+                if (child.isInt32())
+                    setConstant(node, child);
+                else
+                    setConstant(node, JSValue(JSC::toInt32(child.asDouble())));
+                break;
+            }
+            if (child.isBoolean()) {
+                setConstant(node, JSValue(child.asBoolean()));
+                break;
+            }
         }
         
         forNode(node).setType(SpecInt32);
