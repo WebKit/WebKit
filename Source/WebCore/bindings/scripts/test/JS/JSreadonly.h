@@ -76,15 +76,15 @@ public:
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld*, readonly*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, readonly*)
 {
     DEFINE_STATIC_LOCAL(JSreadonlyOwner, jsreadonlyOwner, ());
     return &jsreadonlyOwner;
 }
 
-inline void* wrapperContext(DOMWrapperWorld* world, readonly*)
+inline void* wrapperContext(DOMWrapperWorld& world, readonly*)
 {
-    return world;
+    return &world;
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, readonly*);

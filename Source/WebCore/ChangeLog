@@ -1,3 +1,18 @@
+2013-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update binding test results after r156808 for r156769.
+
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        (WebCore::JSattributeOwner::finalize):
+        * bindings/scripts/test/JS/JSattribute.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        (WebCore::JSreadonlyOwner::finalize):
+        * bindings/scripts/test/JS/JSreadonly.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+
 2013-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156816.
