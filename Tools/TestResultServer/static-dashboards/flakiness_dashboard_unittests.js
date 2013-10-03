@@ -46,7 +46,7 @@ function resetGlobals()
     LOAD_BUILDBOT_DATA([{
         name: 'webkit.org',
         url: 'dummyurl',
-        tests: {'layout-tests': {'builders': ['Apple Lion Release WK2 (Tests)', 'Apple Lion Debug WK2 (Tests)', 'GTK Linux 64-bit Release', 'Qt Linux Tests']}}
+        tests: {'layout-tests': {'builders': ['Apple Lion Release WK2 (Tests)', 'Apple Lion Debug WK2 (Tests)', 'GTK Linux 64-bit Release']}}
     }]);
  
     for (var group in LAYOUT_TESTS_BUILDER_GROUPS)
@@ -160,7 +160,6 @@ test('platformAndBuildType', 30, function() {
     runPlatformAndBuildTypeTest('GTK Linux 32-bit Debug', 'GTK_LINUX_WK1', 'DEBUG');
     runPlatformAndBuildTypeTest('GTK Linux 64-bit Debug', 'GTK_LINUX_WK1', 'DEBUG');
     runPlatformAndBuildTypeTest('GTK Linux 64-bit Debug WK2', 'GTK_LINUX_WK2', 'DEBUG');
-    runPlatformAndBuildTypeTest('Qt Linux Release', 'QT_LINUX', 'RELEASE');
     runPlatformAndBuildTypeTest('Windows 7 Release (Tests)', 'APPLE_WIN_WIN7', 'RELEASE');
     runPlatformAndBuildTypeTest('Windows XP Debug (Tests)', 'APPLE_WIN_XP', 'DEBUG');
     
@@ -381,7 +380,7 @@ test('htmlForIndividualTestOnAllBuildersWithResultsLinks', 1, function() {
         '</table>' +
         '<div>The following builders either don\'t run this test (e.g. it\'s skipped) or all runs passed:</div>' +
         '<div class=skipped-builder-list>' +
-            '<div class=skipped-builder>Apple Lion Debug WK2 (Tests)</div><div class=skipped-builder>GTK Linux 64-bit Release</div><div class=skipped-builder>Qt Linux Tests</div>' +
+            '<div class=skipped-builder>Apple Lion Debug WK2 (Tests)</div><div class=skipped-builder>GTK Linux 64-bit Release</div>' +
         '</div>' +
         '<div class=expectations test=dummytest.html>' +
             '<div><span class=link onclick="g_history.setQueryParameter(\'showExpectations\', true)">Show results</span> | ' +

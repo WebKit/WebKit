@@ -80,12 +80,6 @@ var PLATFORMS = {
             }
         }
     },
-    'QT': {
-        expectationsDirectory: 'qt',
-        subPlatforms: {
-            'LINUX': { fallbackPlatforms: ['QT'] }
-        }
-    },
     'EFL': {
         expectationsDirectory: 'efl',
         subPlatforms: {
@@ -363,8 +357,6 @@ function determineBuilderPlatform(builderNameUpperCase)
         return 'APPLE_WIN_WIN7';
     if (string.contains(builderNameUpperCase, 'WINDOWS XP'))
         return 'APPLE_WIN_XP';
-    if (string.contains(builderNameUpperCase, 'QT LINUX'))
-        return 'QT_LINUX';
 
     if (string.contains(builderNameUpperCase, 'MOUNTAINLION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOUNTAINLION');

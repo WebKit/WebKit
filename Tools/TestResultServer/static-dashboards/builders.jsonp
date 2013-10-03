@@ -24,8 +24,6 @@ LOAD_BUILDBOT_DATA([
                     "GTK Linux 64-bit Debug WK1", 
                     "GTK Linux 64-bit Release", 
                     "GTK Linux 64-bit Release WK2 (Tests)", 
-                    "Qt Linux Release", 
-                    "Qt Mountain Lion Release", 
                     "WinCairo Release"
                 ]
             }

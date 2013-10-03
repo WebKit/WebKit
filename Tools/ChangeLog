@@ -1,3 +1,12 @@
+2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Qt builders from the flakiness dashboard.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-10-03  Tim Horton  <timothy_horton@apple.com>
 
         [mac][wk2] ScrollPinningBehaviors, SpacebarScrolling, and ScrollByLineCommands fail after r156793
