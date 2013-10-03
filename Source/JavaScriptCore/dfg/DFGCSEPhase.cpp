@@ -902,7 +902,9 @@ private:
                 
             case GetMyScope:
             case SkipTopScope:
-                if (m_graph.uncheckedActivationRegisterFor(node->codeOrigin) == local)
+                if (node->codeOrigin.inlineCallFrame)
+                    break;
+                if (m_graph.uncheckedActivationRegister() == local)
                     result.mayBeAccessed = true;
                 break;
                 

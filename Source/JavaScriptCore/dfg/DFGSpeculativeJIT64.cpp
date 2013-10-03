@@ -4012,7 +4012,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.branchTest64(
                 JITCompiler::Zero,
                 JITCompiler::addressFor(
-                    static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
+                    static_cast<VirtualRegister>(m_jit.graph().activationRegister())));
         m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
         activationNotCreated.link(&m_jit);
         cellResult(resultGPR, node);
@@ -4731,7 +4731,7 @@ void SpeculativeJIT::compile(Node* node)
                 m_jit.branchTest64(
                     JITCompiler::NonZero,
                     JITCompiler::addressFor(
-                        m_jit.argumentsRegisterFor(node->codeOrigin))));
+                        m_jit.graph().argumentsRegisterFor(node->codeOrigin))));
         }
         
         RELEASE_ASSERT(!node->codeOrigin.inlineCallFrame);
@@ -4748,7 +4748,7 @@ void SpeculativeJIT::compile(Node* node)
         JITCompiler::Jump created = m_jit.branchTest64(
             JITCompiler::NonZero,
             JITCompiler::addressFor(
-                m_jit.argumentsRegisterFor(node->codeOrigin)));
+                m_jit.graph().argumentsRegisterFor(node->codeOrigin)));
         
         if (node->codeOrigin.inlineCallFrame) {
             m_jit.move(
@@ -4767,7 +4767,7 @@ void SpeculativeJIT::compile(Node* node)
         addSlowPathGenerator(
             slowPathCall(
                 created, this, operationGetArgumentsLength, resultGPR,
-                m_jit.argumentsRegisterFor(node->codeOrigin).offset()));
+                m_jit.graph().argumentsRegisterFor(node->codeOrigin).offset()));
         
         jsValueResult(resultGPR, node);
         break;
@@ -4787,7 +4787,7 @@ void SpeculativeJIT::compile(Node* node)
                 m_jit.branchTest64(
                     JITCompiler::NonZero,
                     JITCompiler::addressFor(
-                        m_jit.argumentsRegisterFor(node->codeOrigin))));
+                        m_jit.graph().argumentsRegisterFor(node->codeOrigin))));
         }
 
         m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
@@ -4854,7 +4854,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.branchTest64(
                 JITCompiler::NonZero,
                 JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node->codeOrigin))));
+                    m_jit.graph().argumentsRegisterFor(node->codeOrigin))));
         
         m_jit.add32(TrustedImm32(1), indexGPR, resultGPR);
         if (node->codeOrigin.inlineCallFrame) {
@@ -4906,14 +4906,14 @@ void SpeculativeJIT::compile(Node* node)
             addSlowPathGenerator(
                 slowPathCall(
                     slowPath, this, operationGetInlinedArgumentByVal, resultGPR, 
-                    m_jit.argumentsRegisterFor(node->codeOrigin).offset(),
+                    m_jit.graph().argumentsRegisterFor(node->codeOrigin).offset(),
                     node->codeOrigin.inlineCallFrame,
                     indexGPR));
         } else {
             addSlowPathGenerator(
                 slowPathCall(
                     slowPath, this, operationGetArgumentByVal, resultGPR, 
-                    m_jit.argumentsRegisterFor(node->codeOrigin).offset(),
+                    m_jit.graph().argumentsRegisterFor(node->codeOrigin).offset(),
                     indexGPR));
         }
         
@@ -4931,7 +4931,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.branchTest64(
                 JITCompiler::NonZero,
                 JITCompiler::addressFor(
-                    m_jit.argumentsRegisterFor(node->codeOrigin))));
+                    m_jit.graph().argumentsRegisterFor(node->codeOrigin))));
         noResult(node);
         break;
     }

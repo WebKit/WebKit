@@ -380,18 +380,18 @@ public:
         return m_baselineCodeBlock;
     }
     
-    VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
+    VirtualRegister baselineArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
-            return codeBlock()->argumentsRegister();
+            return baselineCodeBlock()->argumentsRegister();
         
         return VirtualRegister(baselineCodeBlockForInlineCallFrame(
             inlineCallFrame)->argumentsRegister().offset() + inlineCallFrame->stackOffset);
     }
     
-    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    VirtualRegister baselineArgumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
-        return argumentsRegisterFor(codeOrigin.inlineCallFrame);
+        return baselineArgumentsRegisterFor(codeOrigin.inlineCallFrame);
     }
     
     SharedSymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)

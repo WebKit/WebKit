@@ -497,7 +497,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case SkipTopScope:
-        read(AbstractHeap(Variables, graph.m_codeBlock->activationRegister()));
+        read(AbstractHeap(Variables, graph.activationRegister()));
         return;
         
     case GetClosureRegisters:

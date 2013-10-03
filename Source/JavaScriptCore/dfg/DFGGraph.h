@@ -453,14 +453,13 @@ public:
             codeOrigin.inlineCallFrame->stackOffset);
     }
     
-    VirtualRegister uncheckedActivationRegisterFor(const CodeOrigin&)
+    VirtualRegister activationRegister()
     {
-        // This will ignore CodeOrigin because we don't inline code that uses activations.
-        // Hence for inlined call frames it will return the outermost code block's
-        // activation register. This method is only used to compare the result to a local
-        // to see if we're mucking with the activation register. Hence if we return the
-        // "wrong" activation register for the frame then it will compare false, which is
-        // what we wanted.
+        return m_codeBlock->activationRegister();
+    }
+    
+    VirtualRegister uncheckedActivationRegister()
+    {
         return m_codeBlock->uncheckedActivationRegister();
     }
     

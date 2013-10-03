@@ -1,3 +1,31 @@
+2013-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG should use always DFG::Graph methods for determining where special registers are
+        https://bugs.webkit.org/show_bug.cgi?id=122248
+
+        Reviewed by Michael Saboff.
+        
+        This makes it possible to have the DFG use different registers than the other engines
+        for things like activation and arguments.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::activationRegister):
+        (JSC::DFG::Graph::uncheckedActivationRegister):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::baselineArgumentsRegisterFor):
+
 2013-10-02  Dan Bernstein  <mitz@apple.com>
 
         The Objective-C API should be available in 10.8 builds
