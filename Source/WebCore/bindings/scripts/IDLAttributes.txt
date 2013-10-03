@@ -86,10 +86,12 @@ MasqueradesAsUndefined
 NamedConstructor=*
 NoInterfaceObject
 NotEnumerable
+NotDeletable
 ObjCCustomImplementation
 ObjCLegacyUnnamedParameters
 ObjCPolymorphic
 ObjCProtocol
+OperationsNotDeletable
 PassContext
 RaisesException
 Reflect=*

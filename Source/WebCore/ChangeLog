@@ -1,3 +1,24 @@
+2013-10-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add the NotDeletable, OperationsNotDeletable IDL attributes
+        https://bugs.webkit.org/show_bug.cgi?id=122217
+
+        Reviewed by Darin Adler.
+
+        Before adjusting the JSC bindings generator to enforce configurable operations and thus conform to the
+        WebIDL specification in this regard, two no-op attributes are introduced that will preserve the current
+        behavior of operations being non-configurable.
+
+        All the relevant interfaces will be annotated with the OperationsNotDeletable attribute first. After the
+        generator is properly modified, this attribute will be removed from the interfaces after checking that
+        the operations' configurability also matches the configurability of operations in other browser engines
+        and that the change introduces no regressions in tests.
+
+        The NotDeletable attribute will be used as required to annotate operations that should stay
+        non-configurable for backwards compatibility or cross-browser compatibility.
+
+        * bindings/scripts/IDLAttributes.txt:
+
 2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove preDispatchEventHandler and postDispatchEventHandler,
