@@ -1,3 +1,64 @@
+2013-10-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose aria-invalid as a text attribute (not object attribute)
+        https://bugs.webkit.org/show_bug.cgi?id=122015
+
+        Reviewed by Chris Fleizach.
+
+        Adapted DRT and WKTR to check the exposure of the aria-invalid
+        attribute as a text attribute, instead of an object attribute.
+
+        Also, done some refactoring of the code to try to keep things
+        simpler and more coherent, by defining new helper functions,
+        simplifying code, moving static variables and functions into
+        unnammed namespaces and so on, without altering the logic other
+        than for checking the text attribute for aria-invalid.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (coreAttributeToAtkAttribute): Consider 'invalid' as the name of
+        the attribute exposed by the ATK wrapper, not 'aria-invalid'.
+        Also, never return an empty string if not falling through any of
+        the cases checked here, and return the original attribute instead.
+        (atkAttributeValueToCoreAttributeValue): New helper function to
+        match the attributes values returned by the ATK wrapper with the
+        values expected by the layout tests. Moved the mappings for the
+        values of AXSortDirection here as well.
+        (getAttributeSet): New helper function to retrieve a list of
+        attributes (an AtkAttributeSet) from an AtkObject using the right
+        API depending on whether we want the object attributes or the text
+        attributes (in case the object implements AtkText).
+        (getAttributeSetValueForId): Simplified by using getAttributeSet
+        and atkAttributeValueToCoreAttributeValue. Also, added a new
+        parameter to indicater whether we are interested in object
+        attributes or text attributes.
+        (getAtkAttributeSetAsString): Ditto.
+        (attributesOfElement): Updated to pass the new required parameter
+        to getAtkAttributeSetAsString, indicating that we want the object
+        attributes in this case, for backwards compatibility.
+        (indexRangeInTable): Moved up in the file into the unnammed namespace.
+        (alterCurrentValue): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): After moving most
+        of the code here to the new helper functions, simplified it by
+        just checking whether the required attribute is provided as an
+        object attribute or, if that's not the case, as a text attribute.
+        (AccessibilityUIElement::isAttributeSupported): Ditto.
+        (AccessibilityUIElement::intValue): Updated to pass the new
+        required parameter to getAttributeSetValueForId, indicating that
+        we want the object attributes in this case.
+        (AccessibilityUIElement::hasPopup): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::coreAttributeToAtkAttribute): Same changes than for DRT.
+        (WTR::atkAttributeValueToCoreAttributeValue): Ditto.
+        (WTR::getAttributeSet): Ditto.
+        (WTR::getAttributeSetValueForId): Ditto.
+        (WTR::getAtkAttributeSetAsString): Ditto.
+        (WTR::attributesOfElement): Ditto.
+        (WTR::AccessibilityUIElement::stringAttributeValue): Ditto.
+        (WTR::AccessibilityUIElement::isAttributeSupported): Ditto.
+        (WTR::AccessibilityUIElement::intValue): Ditto.
+        (WTR::AccessibilityUIElement::hasPopup): Ditto.
+
 2013-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         EWS build fix after the Qt EWS removal.

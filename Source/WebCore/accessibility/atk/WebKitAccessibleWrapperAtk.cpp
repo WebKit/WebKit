@@ -505,10 +505,6 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->ariaHasPopup())
         attributeSet = addToAtkAttributeSet(attributeSet, "haspopup", "true");
 
-    String invalidStatus = coreObject->invalidStatus().string();
-    if (!invalidStatus.isEmpty() && invalidStatus != "false")
-        attributeSet = addToAtkAttributeSet(attributeSet, "aria-invalid", coreObject->invalidStatus().string().utf8().data());
-
     AccessibilitySortDirection sortDirection = coreObject->sortDirection();
     if (sortDirection != SortDirectionNone) {
         // WAI-ARIA spec says to translate the value as is from the attribute.

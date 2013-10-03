@@ -1343,15 +1343,20 @@ bool AccessibilityObject::ariaIsMultiline() const
 const AtomicString& AccessibilityObject::invalidStatus() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusTrue, ("true", AtomicString::ConstructFromLiteral));
     
     // aria-invalid can return false (default), grammer, spelling, or true.
     const AtomicString& ariaInvalid = getAttribute(aria_invalidAttr);
     
-    // If empty or not present, it should return false.
-    if (ariaInvalid.isEmpty())
+    // If 'false', empty or not present, it should return false.
+    if (ariaInvalid.isEmpty() || equalIgnoringCase(ariaInvalid, invalidStatusFalse))
         return invalidStatusFalse;
     
-    return ariaInvalid;
+    // Only 'true', 'grammar' and 'spelling' are values recognised by the WAI-ARIA
+    // specification. Any other non empty string should be treated as 'true'.
+    if (equalIgnoringCase(ariaInvalid, "spelling") || equalIgnoringCase(ariaInvalid, "grammar"))
+        return ariaInvalid;
+    return invalidStatusTrue;
 }
  
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const

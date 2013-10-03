@@ -1,3 +1,17 @@
+2013-10-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose aria-invalid as a text attribute (not object attribute)
+        https://bugs.webkit.org/show_bug.cgi?id=122015
+
+        Reviewed by Chris Fleizach.
+
+        Updated the aria-invalid.html layout test to make sure that it
+        behaves as defined by the WAI-ARIA specification for values other
+        than 'false', 'true', 'grammar' and 'spelling'.
+
+        * accessibility/aria-invalid.html: Updated test.
+        * accessibility/aria-invalid-expected.txt: Updated expectations.
+
 2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add back .htaccess files erroneously removed in r156827.

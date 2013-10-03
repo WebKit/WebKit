@@ -8,8 +8,11 @@
 
 <input type="text" id="text1" aria-invalid="true">
 <input type="text" id="text2" aria-invalid="grammar">
-<input type="text" id="text3" aria-invalid="">
-<input type="text" id="text4">
+<input type="text" id="text3" aria-invalid="spelling">
+<input type="text" id="text4" aria-invalid="notallowed">
+<input type="text" id="text5" aria-invalid="false">
+<input type="text" id="text6" aria-invalid="">
+<input type="text" id="text7">
 
 <p id="description"></p>
 <div id="console"></div>
@@ -38,16 +41,25 @@
         shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'grammar'");
 
         document.getElementById("text3").focus();
-        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'spelling'");
 
         document.getElementById("text4").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'true'");
+
+        document.getElementById("text5").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("text6").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("text7").focus();
         shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
 
         notificationElement = accessibilityController.focusedElement;
         var addedNotification = notificationElement.addNotificationListener(notificationCallback);
         shouldBeTrue("addedNotification");
 
-        document.getElementById("text4").setAttribute("aria-invalid", "spelling");
+        document.getElementById("text7").setAttribute("aria-invalid", "spelling");
     }
 
 </script>

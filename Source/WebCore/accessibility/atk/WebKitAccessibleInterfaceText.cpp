@@ -56,6 +56,11 @@
 
 using namespace WebCore;
 
+// Text attribute to expose the ARIA 'aria-invalid' attribute. Initially initialized
+// to ATK_TEXT_ATTR_INVALID (which means 'invalid' text attribute'), will later on
+// hold a reference to the custom registered AtkTextAttribute that we will use.
+static AtkTextAttribute atkTextAttributeInvalid = ATK_TEXT_ATTR_INVALID;
+
 static AccessibilityObject* core(AtkText* text)
 {
     if (!WEBKIT_IS_ACCESSIBLE(text))
@@ -293,6 +298,15 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     String language = object->language();
     if (!language.isEmpty())
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE), language.utf8().data());
+
+    String invalidStatus = object->invalidStatus().string();
+    if (invalidStatus != "false") {
+        // Register the custom attribute for 'aria-invalid' if not done yet.
+        if (atkTextAttributeInvalid == ATK_TEXT_ATTR_INVALID)
+            atkTextAttributeInvalid = atk_text_attribute_register("invalid");
+
+        result = addToAtkAttributeSet(result, atk_text_attribute_get_name(atkTextAttributeInvalid), invalidStatus.utf8().data());
+    }
 
     return result;
 }
