@@ -1,3 +1,17 @@
+2013-10-03  Tim Horton  <timothy_horton@apple.com>
+
+        [mac][wk2] ScrollPinningBehaviors, SpacebarScrolling, and ScrollByLineCommands fail after r156793
+        https://bugs.webkit.org/show_bug.cgi?id=122299
+
+        Reviewed by Beth Dakin.
+
+        * TestWebKitAPI/Tests/WebKit2/ScrollPinningBehaviors.cpp:
+        Disable threaded scrolling.
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        * TestWebKitAPI/Tests/WebKit2/mac/EditorCommands.mm:
+        Synchronously wait for the scrolling thread to inform the main thread of the new scroll position.
+
 2013-10-03  Anders Carlsson  <andersca@apple.com>
 
         Use numeric strings in the OS version dictionary

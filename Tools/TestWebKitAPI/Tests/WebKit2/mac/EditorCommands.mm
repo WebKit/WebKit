@@ -28,14 +28,30 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKPage.h>
 
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
+static bool didFinishForceRepaint;
 
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
+}
+
+static void forceRepaintDoneCallback(WKErrorRef, void*)
+{
+    didFinishForceRepaint = true;
+}
+
+static void waitForScrollPositionUpdate(WKPageRef page)
+{
+    // Forcing a repaint also ensures that the main thread's notion of the scroll position
+    // is up to date, when using threaded scrolling.
+    didFinishForceRepaint = false;
+    WKPageForceRepaint(page, nullptr, forceRepaintDoneCallback);
+    Util::run(&didFinishForceRepaint);
 }
 
 TEST(WebKit2, ScrollByLineCommands)
@@ -58,10 +74,14 @@ TEST(WebKit2, ScrollByLineCommands)
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineDown:)]);
     [webView.platformView() scrollLineDown:nil];
 
+    waitForScrollPositionUpdate(webView.page());
+
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineUp:)]);
     [webView.platformView() scrollLineUp:nil];
+
+    waitForScrollPositionUpdate(webView.page());
 
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "0");
 }

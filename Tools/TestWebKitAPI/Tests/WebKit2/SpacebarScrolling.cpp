@@ -33,6 +33,7 @@ namespace TestWebKitAPI {
 
 static bool didFinishLoad;
 static bool didNotHandleKeyDownEvent;
+static bool didFinishForceRepaint;
 
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
@@ -43,6 +44,20 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 {
     if (Util::isKeyDown(event))
         didNotHandleKeyDownEvent = true;
+}
+
+static void forceRepaintDoneCallback(WKErrorRef, void*)
+{
+    didFinishForceRepaint = true;
+}
+
+static void waitForScrollPositionUpdate(WKPageRef page)
+{
+    // Forcing a repaint also ensures that the main thread's notion of the scroll position
+    // is up to date, when using threaded scrolling.
+    didFinishForceRepaint = false;
+    WKPageForceRepaint(page, nullptr, forceRepaintDoneCallback);
+    Util::run(&didFinishForceRepaint);
 }
 
 TEST(WebKit2, SpacebarScrolling)
@@ -71,6 +86,7 @@ TEST(WebKit2, SpacebarScrolling)
     EXPECT_JS_FALSE(webView.page(), "textFieldContainsSpace()");
 
     webView.simulateSpacebarKeyPress();
+    waitForScrollPositionUpdate(webView.page());
 
     EXPECT_JS_FALSE(webView.page(), "isDocumentScrolled()");
     EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
@@ -88,6 +104,7 @@ TEST(WebKit2, SpacebarScrolling)
 
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
+    waitForScrollPositionUpdate(webView.page());
 
     // This EXPECT_JS_TRUE test fails on Windows port
     // https://bugs.webkit.org/show_bug.cgi?id=84961

@@ -31,6 +31,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKPagePrivate.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKSerializedScriptValue.h>
 
 namespace TestWebKitAPI {
@@ -68,7 +69,15 @@ static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTy
 TEST(WebKit2, ScrollPinningBehaviors)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    PlatformWebView webView(context.get());
+
+    // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
+    // update using WKPageForceRepaint would be better, but for some reason doesn't block until
+    // it's updated after the initial WKPageSetScrollPinningBehavior above.
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
