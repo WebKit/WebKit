@@ -1,3 +1,13 @@
+2013-10-03  Alexey Proskuryakov  <ap@apple.com>
+
+        video-object-fit tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=121803
+
+        I'm not quite sure what's going on, but [ Pass Failure ] expectations didn't cut it.
+        Trying [ Pass ImageOnlyFailure ], as the failures are always image only anyway.
+
+        * platform/mac/TestExpectations:
+
 2013-10-03  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Support block content with inline content around floats in shape-inside
