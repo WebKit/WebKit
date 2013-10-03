@@ -291,14 +291,14 @@ void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, const LayoutPo
 RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildren)
 {
     HTMLElement* placeholder = textFormControlElement().placeholderElement();
-    RenderObject* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
+    RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return 0;
     if (relayoutChildren) {
         // The markParents arguments should be false because this function is
         // called from layout() of the parent and the placeholder layout doesn't
         // affect the parent layout.
-        placeholderRenderer->setChildNeedsLayout(true, MarkOnlyThis);
+        placeholderRenderer->setChildNeedsLayout(MarkOnlyThis);
     }
     return placeholderRenderer;
 }

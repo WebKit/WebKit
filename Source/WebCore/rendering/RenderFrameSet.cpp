@@ -488,7 +488,7 @@ void RenderFrameSet::layout()
             repaintUsingContainer(repaintContainer, pixelSnappedIntRect(newBounds));
     }
 
-    setNeedsLayout(false);
+    clearNeedsLayout();
 }
 
 void RenderFrameSet::positionFrames()
@@ -513,7 +513,7 @@ void RenderFrameSet::positionFrames()
             if (width != child->width() || height != child->height()) {
                 child->setWidth(width);
                 child->setHeight(height);
-                child->setNeedsLayout(true);
+                child->setNeedsLayout();
                 child->layout();
             }
 
@@ -530,7 +530,7 @@ void RenderFrameSet::positionFrames()
     for (; child; child = child->nextSiblingBox()) {
         child->setWidth(0);
         child->setHeight(0);
-        child->setNeedsLayout(false);
+        child->clearNeedsLayout();
     }
 }
 
@@ -567,7 +567,7 @@ void RenderFrameSet::positionFramesWithFlattening()
                 child->setWidth(width);
             child->setHeight(height);
 
-            child->setNeedsLayout(true);
+            child->setNeedsLayout();
 
             if (child->isFrameSet())
                 toRenderFrameSet(child)->layout();
@@ -611,7 +611,7 @@ void RenderFrameSet::positionFramesWithFlattening()
                 repaintNeeded = true;
 
                 // update to final size
-                child->setNeedsLayout(true);
+                child->setNeedsLayout();
                 if (child->isFrameSet())
                     toRenderFrameSet(child)->layout();
                 else
@@ -638,7 +638,7 @@ void RenderFrameSet::positionFramesWithFlattening()
     for (; child; child = child->nextSiblingBox()) {
         child->setWidth(0);
         child->setHeight(0);
-        child->setNeedsLayout(false);
+        child->clearNeedsLayout();
     }
 }
 
@@ -670,7 +670,7 @@ void RenderFrameSet::continueResizing(GridAxis& axis, int position)
         return;
     axis.m_deltas[axis.m_splitBeingResized - 1] += delta;
     axis.m_deltas[axis.m_splitBeingResized] -= delta;
-    setNeedsLayout(true);
+    setNeedsLayout();
 }
 
 bool RenderFrameSet::userResize(MouseEvent* evt)

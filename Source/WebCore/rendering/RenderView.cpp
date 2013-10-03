@@ -302,20 +302,24 @@ void RenderView::layout()
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !shouldUsePrintingLayout() && (width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
-        setChildNeedsLayout(true, MarkOnlyThis);
+        setChildNeedsLayout(MarkOnlyThis);
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if ((child->isBox() && (toRenderBox(child)->hasRelativeLogicalHeight() || toRenderBox(child)->hasViewportPercentageLogicalHeight()))
-                    || child->style()->logicalHeight().isPercent()
-                    || child->style()->logicalMinHeight().isPercent()
-                    || child->style()->logicalMaxHeight().isPercent()
-                    || child->style()->logicalHeight().isViewportPercentage()
-                    || child->style()->logicalMinHeight().isViewportPercentage()
-                    || child->style()->logicalMaxHeight().isViewportPercentage()
+            if (!child->isBox())
+                continue;
+            RenderBox& box = toRenderBox(*child);
+            if (box.hasRelativeLogicalHeight()
+                || box.hasViewportPercentageLogicalHeight()
+                || box.style()->logicalHeight().isPercent()
+                || box.style()->logicalMinHeight().isPercent()
+                || box.style()->logicalMaxHeight().isPercent()
+                || box.style()->logicalHeight().isViewportPercentage()
+                || box.style()->logicalMinHeight().isViewportPercentage()
+                || box.style()->logicalMaxHeight().isViewportPercentage()
 #if ENABLE(SVG)
-                    || child->isSVGRoot()
+                || box.isSVGRoot()
 #endif
                 )
-                child->setChildNeedsLayout(true, MarkOnlyThis);
+                box.setChildNeedsLayout(MarkOnlyThis);
         }
     }
 
@@ -340,7 +344,7 @@ void RenderView::layout()
     checkLayoutState(state);
 #endif
     m_layoutState = 0;
-    setNeedsLayout(false);
+    clearNeedsLayout();
     
     if (isSeamlessAncestorInFlowThread)
         flowThreadController().setCurrentRenderFlowThread(0);

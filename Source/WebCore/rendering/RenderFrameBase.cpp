@@ -61,7 +61,7 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
         updateWidgetPosition();
         if (childFrameView)
             childFrameView->layout();
-        setNeedsLayout(false);
+        clearNeedsLayout();
         return;
     }
 
@@ -98,7 +98,7 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
     ASSERT(!childRoot->needsLayout());
     ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChildSlow() || !childRoot->firstChild()->firstChildSlow()->needsLayout());
 
-    setNeedsLayout(false);
+    clearNeedsLayout();
 }
 
 }

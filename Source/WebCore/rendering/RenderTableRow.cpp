@@ -82,7 +82,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
             // This only happens when borders are collapsed, since they end up affecting the border sides of the cell
             // itself.
             for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell())
-                cell->setChildNeedsLayout(true, MarkOnlyThis);
+                cell->setChildNeedsLayout(MarkOnlyThis);
         }
     }
 }
@@ -163,7 +163,7 @@ void RenderTableRow::layout()
                 
     for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
         if (!cell->needsLayout() && paginated && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
-            cell->setChildNeedsLayout(true, MarkOnlyThis);
+            cell->setChildNeedsLayout(MarkOnlyThis);
 
         if (cell->needsLayout()) {
             cell->computeAndSetBlockDirectionMargins(table());
@@ -183,7 +183,7 @@ void RenderTableRow::layout()
 
     statePusher.pop();
     // RenderTableSection::layoutRows will set our logical height and width later, so it calls updateLayerTransform().
-    setNeedsLayout(false);
+    clearNeedsLayout();
 }
 
 LayoutRect RenderTableRow::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const

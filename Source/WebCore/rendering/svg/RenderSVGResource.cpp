@@ -195,7 +195,7 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject*
     ASSERT(object->node());
 
     if (needsLayout && !object->documentBeingDestroyed())
-        object->setNeedsLayout(true);
+        object->setNeedsLayout();
 
     removeFromCacheAndInvalidateDependencies(object, needsLayout);
 

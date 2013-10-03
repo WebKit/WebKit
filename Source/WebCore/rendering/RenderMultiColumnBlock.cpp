@@ -116,7 +116,7 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
             if (childBox != m_flowThread && childBox->isRenderMultiColumnSet()) {
                 RenderMultiColumnSet* multicolSet = toRenderMultiColumnSet(childBox);
                 if (multicolSet->calculateBalancedHeight(firstPass)) {
-                    multicolSet->setChildNeedsLayout(true, MarkOnlyThis);
+                    multicolSet->setChildNeedsLayout(MarkOnlyThis);
                     needsRelayout = true;
                 }
             }
@@ -124,8 +124,8 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
         if (needsRelayout) {
             // Layout again. Column balancing resulted in a new height.
             neededRelayout = true;
-            m_flowThread->setChildNeedsLayout(true, MarkOnlyThis);
-            setChildNeedsLayout(true, MarkOnlyThis);
+            m_flowThread->setChildNeedsLayout(MarkOnlyThis);
+            setChildNeedsLayout(MarkOnlyThis);
             if (firstPass)
                 statePusher.pop();
             layoutBlock(false);
@@ -170,7 +170,7 @@ RenderObject* RenderMultiColumnBlock::layoutSpecialExcludedChild(bool relayoutCh
         m_flowThread->invalidateRegions();
 
     if (relayoutChildren)
-        m_flowThread->setChildNeedsLayout(true, MarkOnlyThis);
+        m_flowThread->setChildNeedsLayout(MarkOnlyThis);
     
     setLogicalTopForChild(m_flowThread, borderAndPaddingBefore());
     m_flowThread->layoutIfNeeded();
