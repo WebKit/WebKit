@@ -1,3 +1,18 @@
+2013-10-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove Qt related files from the root directories
+        https://bugs.webkit.org/show_bug.cgi?id=122249
+
+        Reviewed by Andreas Kling.
+
+        * Source/QtWebKit.pro: Removed.
+        * Source/api.pri: Removed.
+        * Source/qtwebkit.qdocconf: Removed.
+        * Source/sync.profile: Removed.
+        * Source/tests.pri: Removed.
+        * Source/widgetsapi.pri: Removed.
+        * WebKit.pro: Removed.
+
 2013-09-30  Sam Weinig  <sam@webkit.org>
 
         Remove support for DOMFileSystem
