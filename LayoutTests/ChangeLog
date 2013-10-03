@@ -1,3 +1,37 @@
+2013-10-03  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Revise the CSS property parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=122251
+
+        Reviewed by Andreas Kling.
+
+        Flattened the shapes CSS property parsing tests by inserting the code from
+        the fast/shapes/parsing/script-tests subdirectory into the test HTML source
+        files. The subdirectory is now empty and the tests are easier to read.
+
+        * fast/shapes/parsing/parsing-shape-image-threshold.html: Inserted parsing-shape-image-threshold.js instead of referring to it with script src.
+        * fast/shapes/parsing/parsing-shape-inside.html: Likewise
+        * fast/shapes/parsing/parsing-shape-lengths.html: Likewise
+        * fast/shapes/parsing/parsing-shape-margin.html: Likewise
+        * fast/shapes/parsing/parsing-shape-outside.html: Likewise
+        * fast/shapes/parsing/parsing-shape-padding.html: Likewise
+        * fast/shapes/parsing/parsing-test-utils.js: Renamed from LayoutTests/fast/shapes/parsing/script-tests/parsing-test-utils.js.
+        (getCSSText):
+        (getComputedStyleValue):
+        (getParentAndChildComputedStyles):
+        (getParentAndChildComputedStylesString):
+        (getChildComputedStyle):
+        (testShapeSpecifiedProperty):
+        (testShapeComputedProperty):
+        (testNotInheritedShapeChildProperty):
+        (property):
+        * fast/shapes/parsing/script-tests/parsing-shape-image-threshold.js: Removed.
+        * fast/shapes/parsing/script-tests/parsing-shape-inside.js: Removed.
+        * fast/shapes/parsing/script-tests/parsing-shape-lengths.js: Removed.
+        * fast/shapes/parsing/script-tests/parsing-shape-margin.js: Removed.
+        * fast/shapes/parsing/script-tests/parsing-shape-outside.js: Removed.
+        * fast/shapes/parsing/script-tests/parsing-shape-padding.js: Removed.
+
 2013-10-03  Alexey Proskuryakov  <ap@apple.com>
 
         video-object-fit tests are flaky
