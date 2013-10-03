@@ -1,3 +1,13 @@
+2013-10-03  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error with VIDEO disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=122266
+
+        Reviewed by Brent Fulgham.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent): Protect with ENABLE(VIDEO) guard.
+
 2013-10-03  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] add shape-margin support for image valued shapes

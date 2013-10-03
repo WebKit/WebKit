@@ -5407,8 +5407,10 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
         if (!node->inDocument())
             queue.append(documentElement());
 
+#if ENABLE(VIDEO)
         if (shouldNotifyMediaElement && isMediaElement(node.get()))
             toHTMLMediaElement(node.get())->enteredOrExitedFullscreen();
+#endif
         node->dispatchEvent(Event::create(eventName, true, false));
     }
 }
