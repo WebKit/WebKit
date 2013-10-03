@@ -1371,3 +1371,5 @@ webkit.org/b/121803 media/video-object-fit-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/121803 compositing/video/video-object-fit.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/122126 media/click-volume-bar-not-pausing.html [ Pass Failure Timeout ]
+
+webkit.org/b/121628 fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure ]
