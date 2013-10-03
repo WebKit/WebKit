@@ -41,16 +41,12 @@ class IntRect;
 OBJC_CLASS WKView;
 #elif PLATFORM(GTK)
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
-#elif PLATFORM(QT)
-class QQuickWebView;
 #endif
 
 namespace WebKit {
     
 #if PLATFORM(MAC)
 typedef WKView PlatformWebView;
-#elif PLATFORM(QT)
-typedef QQuickWebView PlatformWebView;
 #elif PLATFORM(GTK)
 typedef WebKitWebViewBase PlatformWebView;
 #elif PLATFORM(EFL)

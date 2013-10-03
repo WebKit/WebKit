@@ -31,9 +31,6 @@
 namespace WebKit {
 
 PlatformPopupMenuData::PlatformPopupMenuData()
-#if PLATFORM(QT)
-    : multipleSelections(false)
-#endif
 {
 }
 
@@ -42,8 +39,6 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 #if PLATFORM(MAC)
     encoder << fontInfo;
     encoder << shouldPopOver;
-#elif PLATFORM(QT)
-    encoder << multipleSelections;
 #else
     UNUSED_PARAM(encoder);
 #endif
@@ -55,9 +50,6 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder& decoder, PlatformPo
     if (!decoder.decode(data.fontInfo))
         return false;
     if (!decoder.decode(data.shouldPopOver))
-        return false;
-#elif PLATFORM(QT)
-    if (!decoder.decode(data.multipleSelections))
         return false;
 #else
     UNUSED_PARAM(decoder);

@@ -46,8 +46,6 @@ struct PlatformPopupMenuData {
 #if PLATFORM(MAC)
     FontInfo fontInfo;
     bool shouldPopOver;
-#elif PLATFORM(QT)
-    bool multipleSelections;
 #endif
 };
 

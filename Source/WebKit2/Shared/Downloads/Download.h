@@ -65,10 +65,6 @@ class DownloadManager;
 class SandboxExtension;
 class WebPage;
 
-#if PLATFORM(QT)
-class QtFileDownloader;
-#endif
-
 class Download : public CoreIPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download);
 public:
@@ -93,10 +89,6 @@ public:
     void didFail(const WebCore::ResourceError&, const CoreIPC::DataReference& resumeData);
     void didCancel(const CoreIPC::DataReference& resumeData);
     void didDecideDestination(const String&, bool allowOverwrite);
-
-#if PLATFORM(QT)
-    void startTransfer(const String& destination);
-#endif
 
 #if USE(CFNETWORK)
     const String& destination() const { return m_destination; }
@@ -137,9 +129,6 @@ private:
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
     RefPtr<DownloadAuthenticationClient> m_authenticationClient;
-#endif
-#if PLATFORM(QT)
-    QtFileDownloader* m_qtDownloader;
 #endif
 #if PLATFORM(GTK) || PLATFORM(EFL)
     OwnPtr<WebCore::ResourceHandleClient> m_downloadClient;

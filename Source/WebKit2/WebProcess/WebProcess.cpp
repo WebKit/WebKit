@@ -156,9 +156,6 @@ WebProcess::WebProcess()
     , m_clearResourceCachesDispatchGroup(0)
 #endif
     , m_fullKeyboardAccessEnabled(false)
-#if PLATFORM(QT)
-    , m_networkAccessManager(0)
-#endif
     , m_textCheckerState()
     , m_iconDatabaseProxy(new WebIconDatabaseProxy(this))
 #if ENABLE(NETWORK_PROCESS)
@@ -1036,13 +1033,6 @@ void WebProcess::cancelDownload(uint64_t downloadID)
 {
     downloadManager().cancelDownload(downloadID);
 }
-
-#if PLATFORM(QT)
-void WebProcess::startTransfer(uint64_t downloadID, const String& destination)
-{
-    downloadManager().startTransfer(downloadID, destination);
-}
-#endif
 
 void WebProcess::setEnhancedAccessibility(bool flag)
 {

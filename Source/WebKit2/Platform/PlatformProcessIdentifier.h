@@ -27,11 +27,7 @@
 #ifndef PlatformProcessIdentifier_h
 #define PlatformProcessIdentifier_h
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QProcess;
-QT_END_NAMESPACE
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
 #include <unistd.h>
 #endif
 

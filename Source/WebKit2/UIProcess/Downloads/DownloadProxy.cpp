@@ -206,16 +206,5 @@ void DownloadProxy::didCancel(const CoreIPC::DataReference& resumeData)
     m_downloadProxyMap.downloadFinished(this);
 }
 
-#if PLATFORM(QT)
-void DownloadProxy::startTransfer(const String& filename)
-{
-    if (!m_webContext)
-        return;
-
-    // FIXME (Multi-WebProcess): <rdar://problem/12239483> Downloads shouldn't be handled in the web process.
-    m_webContext->sendToAllProcesses(Messages::WebProcess::StartTransfer(m_downloadID, filename));
-}
-#endif
-
 } // namespace WebKit
 

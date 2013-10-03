@@ -42,11 +42,6 @@ struct EditorState {
         , isInPasswordField(false)
         , isInPlugin(false)
         , hasComposition(false)
-#if PLATFORM(QT)
-        , cursorPosition(0)
-        , anchorPosition(0)
-        , inputMethodHints(0)
-#endif
     {
     }
 
@@ -59,22 +54,8 @@ struct EditorState {
     bool isInPasswordField;
     bool isInPlugin;
     bool hasComposition;
-#if PLATFORM(QT)
-    // The anchor, cursor represent either the selection or composition, depending
-    // whether a composition exists or not.
-    unsigned cursorPosition;
-    unsigned anchorPosition;
 
-    WebCore::IntRect editorRect;
-    WebCore::IntRect compositionRect;
-
-    uint64_t inputMethodHints;
-
-    WTF::String selectedText;
-    WTF::String surroundingText;
-#endif
-
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     WebCore::IntRect cursorRect;
 #endif
 

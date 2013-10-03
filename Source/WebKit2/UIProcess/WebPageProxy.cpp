@@ -97,10 +97,6 @@
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #endif
 
-#if PLATFORM(QT)
-#include "ArgumentCodersQt.h"
-#endif
-
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
 #endif
@@ -1227,7 +1223,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, Drag
 {
     if (!isValid())
         return;
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, *dragData), m_pageID);
 #else
     m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);
@@ -1239,7 +1235,7 @@ void WebPageProxy::didPerformDragControllerAction(WebCore::DragSession dragSessi
     m_currentDragSession = dragSession;
 }
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
 void WebPageProxy::startDrag(const DragData& dragData, const ShareableBitmap::Handle& dragImageHandle)
 {
     RefPtr<ShareableBitmap> dragImage = 0;
@@ -1479,13 +1475,6 @@ void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-#if PLATFORM(QT)
-void WebPageProxy::handlePotentialActivation(const IntPoint& touchPoint, const IntSize& touchArea)
-{
-    m_process->send(Messages::WebPage::HighlightPotentialActivation(touchPoint, touchArea), m_pageID);
-}
-#endif
-
 void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 {
     if (!isValid())
@@ -1546,7 +1535,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         // Create a download proxy.
         DownloadProxy* download = m_process->context()->createDownloadProxy();
         downloadID = download->downloadID();
-#if PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
+#if PLATFORM(EFL) || PLATFORM(GTK)
         // Our design does not suppport downloads without a WebPage.
         handleDownloadRequest(download);
 #endif
@@ -2899,14 +2888,14 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     process()->send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), m_pageID);
 }
 
-#if PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
+#if PLATFORM(EFL) || PLATFORM(GTK)
 void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
 {
     m_pageClient->handleDownloadRequest(download);
 }
-#endif // PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
+#endif // PLATFORM(EFL) || PLATFORM(GTK)
 
-#if PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(EFL)
 void WebPageProxy::didChangeContentsSize(const IntSize& size)
 {
     m_pageClient->didChangeContentsSize(size);
@@ -3055,7 +3044,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         cancelComposition();
         m_pageClient->notifyInputContextAboutDiscardedComposition();
     }
-#elif PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(GTK)
+#elif PLATFORM(EFL) || PLATFORM(GTK)
     m_pageClient->updateTextInputState();
 #endif
 }
@@ -3182,10 +3171,9 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
 
-    // Since Qt and Efl doesn't use a nested mainloop to show the popup and get the answer, we need to keep the client pointer valid.
-#if !PLATFORM(QT)
+    // Since Efl doesn't use a nested mainloop to show the popup and get the answer, we need to keep the client pointer valid.
+    // FIXME: The above comment doesn't make any sense since this code is compiled out for EFL.
     protectedActivePopupMenu->invalidate();
-#endif
     protectedActivePopupMenu = 0;
 #endif
 }
@@ -4411,7 +4399,7 @@ void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
 }
 #endif
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
 void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
 {
     // FIXME: We need to find out how to proper handle the crashes case.
@@ -4436,7 +4424,7 @@ void WebPageProxy::cancelComposition()
 
     process()->send(Messages::WebPage::CancelComposition(), m_pageID);
 }
-#endif // PLATFORM(QT) || PLATFORM(GTK)
+#endif // PLATFORM(GTK)
 
 void WebPageProxy::setMainFrameInViewSourceMode(bool mainFrameInViewSourceMode)
 {

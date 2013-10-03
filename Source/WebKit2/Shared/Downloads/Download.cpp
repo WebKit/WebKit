@@ -46,9 +46,6 @@ Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const 
 #if USE(CFNETWORK)
     , m_allowOverwrite(false)
 #endif
-#if PLATFORM(QT)
-    , m_qtDownloader(0)
-#endif
 {
     ASSERT(m_downloadID);
 

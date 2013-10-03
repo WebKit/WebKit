@@ -67,16 +67,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(QT)
-#include "ArgumentCodersQt.h"
-#include "QtNetworkAccessManager.h"
-#include "QtNetworkReply.h"
-#include "QtNetworkReplyData.h"
-#include "QtNetworkRequestData.h"
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#endif
-
 #if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
 #include "WebPageAccessibilityObject.h"
 #include <wtf/gobject/GRefPtr.h>
@@ -391,9 +381,6 @@ public:
     static const WebEvent* currentEvent();
 
     FindController& findController() { return m_findController; }
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
-    TapHighlightController& tapHighlightController() { return m_tapHighlightController; }
-#endif
 
 #if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
@@ -450,7 +437,7 @@ public:
     void commitPageTransitionViewport();
 #endif
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);
     void confirmComposition(const String& text, int64_t selectionStart, int64_t selectionLength);
     void cancelComposition();
@@ -524,7 +511,7 @@ public:
     void clearSelection();
 
 #if ENABLE(DRAG_SUPPORT)
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     void performDragControllerAction(uint64_t action, WebCore::DragData);
 #else
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
@@ -582,12 +569,6 @@ public:
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 #endif
 
-#if PLATFORM(QT)
-    void registerApplicationScheme(const String& scheme);
-    void applicationSchemeReply(const QtNetworkReplyData&);
-    void receivedApplicationSchemeRequest(const QNetworkRequest&, QtNetworkReply*);
-    void setUserScripts(const Vector<String>&);
-#endif
     void wheelEvent(const WebWheelEvent&);
 #if ENABLE(GESTURE_EVENTS)
     void gestureEvent(const WebGestureEvent&);
@@ -721,9 +702,6 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
     void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
-#if PLATFORM(QT)
-    void highlightPotentialActivation(const WebCore::IntPoint&, const WebCore::IntSize& area);
-#endif
 #endif
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }
@@ -805,10 +783,6 @@ private:
 
 #if PLATFORM(GTK)
     void failedToShowPopupMenu();
-#endif
-#if PLATFORM(QT)
-    void hidePopupMenu();
-    void selectedIndex(int32_t newIndex);
 #endif
 
     void didChooseFilesForOpenPanel(const Vector<String>&);
@@ -956,9 +930,6 @@ private:
     InjectedBundlePageDiagnosticLoggingClient m_logDiagnosticMessageClient;
 
     FindController m_findController;
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
-    TapHighlightController m_tapHighlightController;
-#endif
     PageOverlayList m_pageOverlays;
 
 #if ENABLE(INSPECTOR)
@@ -1015,9 +986,6 @@ private:
     
     bool m_willGoToBackForwardItemCallbackEnabled;
     
-#if PLATFORM(QT)
-    HashMap<String, QtNetworkReply*> m_applicationSchemeReplies;
-#endif
 #if ENABLE(PAGE_VISIBILITY_API)
     WebCore::PageVisibilityState m_visibilityState;
 #endif

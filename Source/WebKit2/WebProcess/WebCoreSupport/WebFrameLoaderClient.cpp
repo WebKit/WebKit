@@ -1057,13 +1057,6 @@ bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
     if (error.errorCode() == pluginWillHandleLoadError.errorCode() && error.domain() == pluginWillHandleLoadError.domain())
         return false;
 
-#if PLATFORM(QT)
-    DEFINE_STATIC_LOCAL(const ResourceError, errorInterruptedForPolicyChange, (this->interruptedForPolicyChangeError(ResourceRequest())));
-
-    if (error.errorCode() == errorInterruptedForPolicyChange.errorCode() && error.domain() == errorInterruptedForPolicyChange.domain())
-        return false;
-#endif
-
     return true;
 }
 

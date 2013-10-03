@@ -63,10 +63,6 @@ public:
     void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
 
-#if PLATFORM(QT)
-    void startTransfer(const String& filename);
-#endif
-
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebContext*);
 

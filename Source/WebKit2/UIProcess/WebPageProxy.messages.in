@@ -80,13 +80,8 @@ messages -> WebPageProxy {
 #if USE(COORDINATED_GRAPHICS)
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
 #endif
-#if PLATFORM(QT)
-    AuthenticationRequiredRequest(WTF::String hostname, WTF::String realm, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
-    CertificateVerificationRequest(WTF::String hostname) -> (bool ignoreErrors)
-    ProxyAuthenticationRequiredRequest(WTF::String hostname, uint16_t port, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
-#endif
 
-#if PLATFORM(QT) || PLATFORM(EFL)
+#if PLATFORM(EFL)
     DidChangeContentsSize(WebCore::IntSize newSize)
 #endif
 
@@ -135,10 +130,6 @@ messages -> WebPageProxy {
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
 
-#if PLATFORM(QT)
-    ResolveApplicationSchemeRequest(WebKit::QtNetworkRequestData request)
-#endif
-
     # Forms messages
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WTF::Vector<std::pair<WTF::String, WTF::String>> textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
@@ -185,9 +176,7 @@ messages -> WebPageProxy {
 
     # Editor notifications
     EditorStateChanged(WebKit::EditorState editorState)
-#if PLATFORM(QT)
-    WillSetInputMethodState()
-#endif
+
     # Find messages
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut, bool animate)
@@ -244,7 +233,7 @@ messages -> WebPageProxy {
     SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
     SetPromisedData(WTF::String pasteboardName, WebKit::SharedMemory::Handle imageHandle, uint64_t imageSize, WTF::String filename, WTF::String extension, WTF::String title, WTF::String url, WTF::String visibleURL, WebKit::SharedMemory::Handle archiveHandle, uint64_t archiveSize)
 #endif
-#if (PLATFORM(QT) || PLATFORM(GTK)) && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     StartDrag(WebCore::DragData dragData, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 

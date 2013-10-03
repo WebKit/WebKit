@@ -42,17 +42,7 @@ void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << isInPlugin;
     encoder << hasComposition;
 
-#if PLATFORM(QT)
-    encoder << cursorPosition;
-    encoder << anchorPosition;
-    encoder << editorRect;
-    encoder << compositionRect;
-    encoder << inputMethodHints;
-    encoder << selectedText;
-    encoder << surroundingText;
-#endif
-
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     encoder << cursorRect;
 #endif
 }
@@ -83,30 +73,7 @@ bool EditorState::decode(CoreIPC::ArgumentDecoder& decoder, EditorState& result)
     if (!decoder.decode(result.hasComposition))
         return false;
 
-#if PLATFORM(QT)
-    if (!decoder.decode(result.cursorPosition))
-        return false;
-
-    if (!decoder.decode(result.anchorPosition))
-        return false;
-
-    if (!decoder.decode(result.editorRect))
-        return false;
-
-    if (!decoder.decode(result.compositionRect))
-        return false;
-
-    if (!decoder.decode(result.inputMethodHints))
-        return false;
-
-    if (!decoder.decode(result.selectedText))
-        return false;
-
-    if (!decoder.decode(result.surroundingText))
-        return false;
-#endif
-
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(GTK)
     if (!decoder.decode(result.cursorRect))
         return false;
 #endif

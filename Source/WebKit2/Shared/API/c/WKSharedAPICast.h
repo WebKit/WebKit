@@ -339,7 +339,7 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagDownloadImageToDisk;
     case WebCore::ContextMenuItemTagCopyImageToClipboard:
         return kWKContextMenuItemTagCopyImageToClipboard;
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK)
     case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
         return kWKContextMenuItemTagCopyImageUrlToClipboard;
 #endif
@@ -359,7 +359,7 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagCut;
     case WebCore::ContextMenuItemTagPaste:
         return kWKContextMenuItemTagPaste;
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK)
     case WebCore::ContextMenuItemTagSelectAll:
         return kWKContextMenuItemTagSelectAll;
 #endif
@@ -534,7 +534,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
     case kWKContextMenuItemTagCopyImageToClipboard:
         return WebCore::ContextMenuItemTagCopyImageToClipboard;
     case kWKContextMenuItemTagOpenFrameInNewWindow:
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK)
     case kWKContextMenuItemTagCopyImageUrlToClipboard:
         return WebCore::ContextMenuItemTagCopyImageUrlToClipboard;
 #endif
@@ -553,7 +553,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagCut;
     case kWKContextMenuItemTagPaste:
         return WebCore::ContextMenuItemTagPaste;
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK)
     case kWKContextMenuItemTagSelectAll:
         return WebCore::ContextMenuItemTagSelectAll;
 #endif

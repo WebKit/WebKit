@@ -51,12 +51,6 @@
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 
-#if PLATFORM(QT)
-#include <QClipboard>
-#include <QGuiApplication>
-#include <WebCore/Pasteboard.h>
-#endif
-
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -197,21 +191,10 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 
     m_page->didChangeSelection();
 
-#if PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(GTK)
     updateGlobalSelection(frame);
 #endif
 }
-
-#if PLATFORM(QT)
-
-// FIXME: Use this function for other X11-based platforms that need to manually update the global selection.
-void WebEditorClient::updateGlobalSelection(Frame* frame)
-{
-    if (supportsGlobalSelection() && frame->selection().isRange())
-        Pasteboard::createForGlobalSelection()->writeSelection(frame->selection().toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
-}
-
-#endif
 
 void WebEditorClient::didEndEditing()
 {
@@ -504,11 +487,6 @@ void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<TextCheckingReques
 
 void WebEditorClient::willSetInputMethodState()
 {
-#if PLATFORM(QT)
-    m_page->send(Messages::WebPageProxy::WillSetInputMethodState());
-#else
-    notImplemented();
-#endif
 }
 
 void WebEditorClient::setInputMethodState(bool)
@@ -518,9 +496,7 @@ void WebEditorClient::setInputMethodState(bool)
 
 bool WebEditorClient::supportsGlobalSelection()
 {
-#if PLATFORM(QT) && !defined(QT_NO_CLIPBOARD)
-    return qApp->clipboard()->supportsSelection();
-#elif PLATFORM(GTK) && PLATFORM(X11)
+#if PLATFORM(GTK) && PLATFORM(X11)
     return true;
 #else
     // FIXME: Return true on other X11 platforms when they support global selection.
