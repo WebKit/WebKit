@@ -246,7 +246,7 @@ void RenderMarquee::updateMarqueeStyle()
     // Check the loop count to see if we should now stop.
     bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
     if (activate && !m_timer.isActive())
-        m_layer->renderer().setNeedsLayout();
+        m_layer->renderer().setNeedsLayout(true);
     else if (!activate && m_timer.isActive())
         m_timer.stop();
 }

@@ -269,7 +269,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
         }
 
         if (needsLayout)
-            child->setNeedsLayout(MarkOnlyThis);
+            child->setNeedsLayout(true, MarkOnlyThis);
 
         if (child->needsLayout()) {
             child->layout();

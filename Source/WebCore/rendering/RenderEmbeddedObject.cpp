@@ -475,7 +475,7 @@ void RenderEmbeddedObject::layout()
         view().frameView().addEmbeddedObjectToUpdate(*this);
     }
 
-    clearNeedsLayout();
+    setNeedsLayout(false);
 
     LayoutSize newSize = contentBoxRect().size();
 
@@ -515,9 +515,9 @@ void RenderEmbeddedObject::layout()
     childBox->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
     childBox->style()->setHeight(Length(newSize.height(), Fixed));
     childBox->style()->setWidth(Length(newSize.width(), Fixed));
-    childBox->setNeedsLayout(MarkOnlyThis);
+    childBox->setNeedsLayout(true, MarkOnlyThis);
     childBox->layout();
-    clearChildNeedsLayout();
+    setChildNeedsLayout(false);
     
     statePusher.pop();
 }

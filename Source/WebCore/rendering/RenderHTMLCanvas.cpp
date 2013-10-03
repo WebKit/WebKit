@@ -111,7 +111,7 @@ void RenderHTMLCanvas::canvasSizeChanged()
         return;
 
     if (!selfNeedsLayout())
-        setNeedsLayout();
+        setNeedsLayout(true);
 }
 
 } // namespace WebCore

@@ -919,7 +919,7 @@ void FrameView::setHeaderHeight(int headerHeight)
     m_headerHeight = headerHeight;
 
     if (RenderView* renderView = this->renderView())
-        renderView->setNeedsLayout();
+        renderView->setNeedsLayout(true);
 }
 
 void FrameView::setFooterHeight(int footerHeight)
@@ -929,7 +929,7 @@ void FrameView::setFooterHeight(int footerHeight)
     m_footerHeight = footerHeight;
 
     if (RenderView* renderView = this->renderView())
-        renderView->setNeedsLayout();
+        renderView->setNeedsLayout(true);
 }
 
 bool FrameView::hasCompositedContent() const
@@ -1187,10 +1187,10 @@ void FrameView::layout(bool allowSubtree)
             HTMLElement* body = document.body();
             if (body && body->renderer()) {
                 if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
-                    body->renderer()->setChildNeedsLayout();
+                    body->renderer()->setChildNeedsLayout(true);
                 } else if (body->hasTagName(bodyTag)) {
                     if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
-                        body->renderer()->setChildNeedsLayout();
+                        body->renderer()->setChildNeedsLayout(true);
                 }
             }
 
@@ -1244,9 +1244,9 @@ void FrameView::layout(bool allowSubtree)
                     RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : 0;
                     RenderBox* bodyRenderer = rootRenderer && document.body() ? document.body()->renderBox() : 0;
                     if (bodyRenderer && bodyRenderer->stretchesToViewport())
-                        bodyRenderer->setChildNeedsLayout();
+                        bodyRenderer->setChildNeedsLayout(true);
                     else if (rootRenderer && rootRenderer->stretchesToViewport())
-                        rootRenderer->setChildNeedsLayout();
+                        rootRenderer->setChildNeedsLayout(true);
                 }
             }
         }
@@ -1942,7 +1942,7 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
         return;
 
     for (auto it = m_viewportConstrainedObjects->begin(), end = m_viewportConstrainedObjects->end(); it != end; ++it)
-        (*it)->setNeedsLayout();
+        (*it)->setNeedsLayout(true);
 }
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
@@ -2382,7 +2382,7 @@ void FrameView::scheduleRelayout()
     // When frame flattening is enabled, the contents of the frame could affect the layout of the parent frames.
     // Also invalidate parent frame starting from the owner element of this frame.
     if (frame().ownerRenderer() && isInChildFrameWithFrameFlattening())
-        frame().ownerRenderer()->setNeedsLayout(MarkContainingBlockChain);
+        frame().ownerRenderer()->setNeedsLayout(true, MarkContainingBlockChain);
 
     int delay = frame().document()->minimumLayoutDelay();
     if (m_layoutTimer.isActive() && m_delayedLayout && !delay)
@@ -2491,7 +2491,7 @@ void FrameView::setNeedsLayout()
     }
 
     if (RenderView* renderView = this->renderView())
-        renderView->setNeedsLayout();
+        renderView->setNeedsLayout(true);
 }
 
 void FrameView::unscheduleRelayout()

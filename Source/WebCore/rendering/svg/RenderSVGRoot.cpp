@@ -236,7 +236,7 @@ void RenderSVGRoot::layout()
 
     repainter.repaintAfterLayout();
 
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

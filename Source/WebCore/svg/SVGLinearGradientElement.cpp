@@ -115,7 +115,7 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
     updateRelativeLengthsInformation();
 
     if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+        object->setNeedsLayout(true);
 }
 
 RenderElement* SVGLinearGradientElement::createRenderer(RenderArena& arena, RenderStyle&)

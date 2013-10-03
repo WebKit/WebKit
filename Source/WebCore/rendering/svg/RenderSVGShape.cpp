@@ -172,7 +172,7 @@ void RenderSVGShape::layout()
         RenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const

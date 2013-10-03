@@ -82,11 +82,6 @@ public:
     bool ancestorLineBoxDirty() const { return m_ancestorLineBoxDirty; }
     void setAncestorLineBoxDirty(bool f = true);
 
-    void setChildNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
-    void clearChildNeedsLayout();
-    void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
-    void setNeedsSimplifiedNormalFlowLayout();
-
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
     RenderElement* rendererForRootBackground();
 
@@ -174,17 +169,7 @@ inline void RenderElement::setAncestorLineBoxDirty(bool f)
 {
     m_ancestorLineBoxDirty = f;
     if (m_ancestorLineBoxDirty)
-        setNeedsLayout();
-}
-
-inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
-{
-    ASSERT(!isSetNeedsLayoutForbidden());
-    if (normalChildNeedsLayout())
-        return;
-    setNormalChildNeedsLayoutBit(true);
-    if (markParents == MarkContainingBlockChain)
-        markContainingBlocksForLayout();
+        setNeedsLayout(true);
 }
 
 inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
@@ -297,6 +282,32 @@ inline RenderStyle* RenderObject::firstLineStyle() const
     if (isText())
         return m_parent->firstLineStyle();
     return toRenderElement(this)->firstLineStyle();
+}
+
+inline void RenderObject::setNeedsLayout(bool needsLayout, MarkingBehavior markParents)
+{
+    bool alreadyNeededLayout = m_bitfields.needsLayout();
+    m_bitfields.setNeedsLayout(needsLayout);
+    if (needsLayout) {
+        ASSERT(!isSetNeedsLayoutForbidden());
+        if (!alreadyNeededLayout) {
+            if (markParents == MarkContainingBlockChain)
+                markContainingBlocksForLayout();
+            if (hasLayer())
+                setLayerNeedsFullRepaint();
+        }
+    } else {
+        setEverHadLayout(true);
+        setPosChildNeedsLayout(false);
+        setNeedsSimplifiedNormalFlowLayout(false);
+        setNormalChildNeedsLayout(false);
+        setNeedsPositionedMovementLayout(false);
+        if (isRenderElement())
+            toRenderElement(this)->setAncestorLineBoxDirty(false);
+#ifndef NDEBUG
+        checkBlockPositionedObjectsNeedLayout();
+#endif
+    }
 }
 
 inline RenderElement* ContainerNode::renderer() const

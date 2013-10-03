@@ -221,7 +221,7 @@ void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
 void SVGSVGElement::updateCurrentTranslate()
 {
     if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+        object->setNeedsLayout(true);
 
     if (parentNode() == &document() && document().renderView())
         document().renderView()->repaint();

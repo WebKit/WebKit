@@ -218,7 +218,7 @@ void RenderTableCell::computeIntrinsicPadding(int rowHeight)
     // FIXME: Changing an intrinsic padding shouldn't trigger a relayout as it only shifts the cell inside the row but
     // doesn't change the logical height.
     if (intrinsicPaddingBefore != oldIntrinsicPaddingBefore || intrinsicPaddingAfter != oldIntrinsicPaddingAfter)
-        setNeedsLayout(MarkOnlyThis);
+        setNeedsLayout(true, MarkOnlyThis);
 }
 
 void RenderTableCell::updateLogicalWidth()
@@ -230,8 +230,8 @@ void RenderTableCell::setCellLogicalWidth(int tableLayoutLogicalWidth)
     if (tableLayoutLogicalWidth == logicalWidth())
         return;
 
-    setNeedsLayout(MarkOnlyThis);
-    row()->setChildNeedsLayout(MarkOnlyThis);
+    setNeedsLayout(true, MarkOnlyThis);
+    row()->setChildNeedsLayout(true, MarkOnlyThis);
 
     if (!table()->selfNeedsLayout() && checkForRepaintDuringLayout())
         repaint();
@@ -255,7 +255,7 @@ void RenderTableCell::layout()
     if (isBaselineAligned() && section()->rowBaseline(rowIndex()) && cellBaselinePosition() > section()->rowBaseline(rowIndex())) {
         int newIntrinsicPaddingBefore = max<LayoutUnit>(0, intrinsicPaddingBefore() - max<LayoutUnit>(0, cellBaselinePosition() - oldCellBaseline));
         setIntrinsicPaddingBefore(newIntrinsicPaddingBefore);
-        setNeedsLayout(MarkOnlyThis);
+        setNeedsLayout(true, MarkOnlyThis);
         layoutBlock(cellWidthChanged());
     }
 

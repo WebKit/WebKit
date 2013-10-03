@@ -115,7 +115,7 @@ void RenderSVGImage::layout()
         RenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)

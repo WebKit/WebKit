@@ -63,7 +63,7 @@ void RenderScrollbarPart::layout()
     else
         layoutVerticalPart();
 
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderScrollbarPart::layoutHorizontalPart()

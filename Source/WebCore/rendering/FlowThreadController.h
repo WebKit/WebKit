@@ -56,7 +56,7 @@ public:
     {
         m_isRenderNamedFlowThreadOrderDirty = dirty;
         if (dirty)
-            m_view->setNeedsLayout();
+            m_view->setNeedsLayout(true);
     }
 
     RenderNamedFlowThread& ensureRenderFlowThreadWithName(const AtomicString&);

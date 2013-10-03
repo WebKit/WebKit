@@ -102,7 +102,7 @@ static void setNeedsLayoutOnAncestors(RenderObject* start, RenderObject* ancesto
     ASSERT(start != ancestor);
     for (RenderObject* renderer = start; renderer != ancestor; renderer = renderer->parent()) {
         ASSERT(renderer);
-        renderer->setNeedsLayout(MarkOnlyThis);
+        renderer->setNeedsLayout(true, MarkOnlyThis);
     }
 }
 
@@ -144,15 +144,15 @@ void RenderTextControlSingleLine::layout()
     LayoutUnit logicalHeightLimit = computeLogicalHeightLimit();
     if (innerTextRenderer && innerTextRenderer->logicalHeight() > logicalHeightLimit) {
         if (desiredLogicalHeight != innerTextRenderer->logicalHeight())
-            setNeedsLayout(MarkOnlyThis);
+            setNeedsLayout(true, MarkOnlyThis);
 
         m_desiredInnerTextLogicalHeight = desiredLogicalHeight;
 
         innerTextRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
-        innerTextRenderer->setNeedsLayout(MarkOnlyThis);
+        innerTextRenderer->setNeedsLayout(true, MarkOnlyThis);
         if (innerBlockRenderer) {
             innerBlockRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
-            innerBlockRenderer->setNeedsLayout(MarkOnlyThis);
+            innerBlockRenderer->setNeedsLayout(true, MarkOnlyThis);
         }
     }
     // The container might be taller because of decoration elements.
@@ -161,10 +161,10 @@ void RenderTextControlSingleLine::layout()
         LayoutUnit containerLogicalHeight = containerRenderer->logicalHeight();
         if (containerLogicalHeight > logicalHeightLimit) {
             containerRenderer->style()->setLogicalHeight(Length(logicalHeightLimit, Fixed));
-            setNeedsLayout(MarkOnlyThis);
+            setNeedsLayout(true, MarkOnlyThis);
         } else if (containerRenderer->logicalHeight() < contentLogicalHeight()) {
             containerRenderer->style()->setLogicalHeight(Length(contentLogicalHeight(), Fixed));
-            setNeedsLayout(MarkOnlyThis);
+            setNeedsLayout(true, MarkOnlyThis);
         } else
             containerRenderer->style()->setLogicalHeight(Length(containerLogicalHeight, Fixed));
     }
@@ -263,7 +263,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
     }
     RenderObject* innerTextRenderer = innerTextElement()->renderer();
     if (innerTextRenderer && diff == StyleDifferenceLayout)
-        innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
+        innerTextRenderer->setNeedsLayout(true, MarkContainingBlockChain);
     if (HTMLElement* placeholder = inputElement().placeholderElement())
         placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
     setHasOverflowClip(false);

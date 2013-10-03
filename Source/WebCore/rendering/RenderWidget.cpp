@@ -217,7 +217,7 @@ void RenderWidget::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

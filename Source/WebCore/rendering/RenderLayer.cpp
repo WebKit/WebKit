@@ -3159,7 +3159,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
             if (!m_inOverflowRelayout) {
                 // Our proprietary overflow: overlay value doesn't trigger a layout.
                 m_inOverflowRelayout = true;
-                renderer().setNeedsLayout(MarkOnlyThis);
+                renderer().setNeedsLayout(true, MarkOnlyThis);
                 if (renderer().isRenderBlock()) {
                     RenderBlock& block = toRenderBlock(renderer());
                     block.scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);

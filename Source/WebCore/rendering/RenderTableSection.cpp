@@ -326,7 +326,7 @@ int RenderTableSection::calcRowLogicalHeight()
                     }
                     cell->clearIntrinsicPadding();
                     cell->clearOverrideSize();
-                    cell->setChildNeedsLayout(MarkOnlyThis);
+                    cell->setChildNeedsLayout(true, MarkOnlyThis);
                     cell->layoutIfNeeded();
                 }
 
@@ -406,7 +406,7 @@ void RenderTableSection::layout()
     }
 
     statePusher.pop();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderTableSection::distributeExtraLogicalHeightToPercentRows(int& extraLogicalHeight, int totalPercent)
@@ -566,7 +566,7 @@ void RenderTableSection::layoutRows()
                 if (!o->isText() && o->style()->logicalHeight().isPercent() && (flexAllChildren || ((o->isReplaced() || (o->isBox() && toRenderBox(o)->scrollsOverflow())) && !o->isTextControl()))) {
                     // Tables with no sections do not flex.
                     if (!o->isTable() || toRenderTable(o)->hasSections()) {
-                        o->setNeedsLayout(MarkOnlyThis);
+                        o->setNeedsLayout(true, MarkOnlyThis);
                         cellChildrenFlex = true;
                     }
                 }
@@ -582,7 +582,7 @@ void RenderTableSection::layoutRows()
                     while (box != cell) {
                         if (box->normalChildNeedsLayout())
                             break;
-                        box->setChildNeedsLayout(MarkOnlyThis);
+                        box->setChildNeedsLayout(true, MarkOnlyThis);
                         box = box->containingBlock();
                         ASSERT(box);
                         if (!box)
@@ -593,7 +593,7 @@ void RenderTableSection::layoutRows()
             }
 
             if (cellChildrenFlex) {
-                cell->setChildNeedsLayout(MarkOnlyThis);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage.
@@ -615,7 +615,7 @@ void RenderTableSection::layoutRows()
             setLogicalPositionForCell(cell, c);
 
             if (!cell->needsLayout() && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
-                cell->setChildNeedsLayout(MarkOnlyThis);
+                cell->setChildNeedsLayout(true, MarkOnlyThis);
 
             cell->layoutIfNeeded();
 
@@ -1238,7 +1238,7 @@ void RenderTableSection::recalcCells()
     }
 
     m_grid.shrinkToFit();
-    setNeedsLayout();
+    setNeedsLayout(true);
 }
 
 // FIXME: This function could be made O(1) in certain cases (like for the non-most-constrainive cells' case).

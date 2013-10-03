@@ -1,3 +1,218 @@
+2013-10-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156816.
+        http://trac.webkit.org/changeset/156816
+        https://bugs.webkit.org/show_bug.cgi?id=122259
+
+        broke 8 tests (Requested by kling on #webkit).
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::willRecalcStyle):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::listAttributeTargetChanged):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout):
+        (WebCore::SliderThumbElement::setPositionFromValue):
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        (WebCore::SliderThumbElement::stopDragging):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setHeaderHeight):
+        (WebCore::FrameView::setFooterHeight):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::setViewportConstrainedObjectsNeedLayout):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::setNeedsLayout):
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * rendering/FlowThreadController.h:
+        (WebCore::FlowThreadController::setIsRenderNamedFlowThreadOrderDirty):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::relayoutShapeDescendantIfMoved):
+        (WebCore::RenderBlock::markShapeInsideDescendantsForLayout):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::updateBlockChildDirtyBitsBeforeLayout):
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::markPositionedObjectsForLayout):
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded):
+        (WebCore::RenderBlock::removePositionedObjects):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::adjustPositionedBlock):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::layout):
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setAncestorLineBoxDirty):
+        (WebCore::RenderObject::setNeedsLayout):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutSpecialExcludedChild):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::styleDidChange):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        (WebCore::RenderFlexibleBox::prepareChildForPositionedLayout):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::invalidateRegions):
+        (WebCore::RenderFlowThread::markAutoLogicalHeightRegionsForLayout):
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        (WebCore::RenderFrameSet::positionFrames):
+        (WebCore::RenderFrameSet::positionFramesWithFlattening):
+        (WebCore::RenderFrameSet::continueResizing):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::logicalContentHeightForChild):
+        (WebCore::RenderGrid::layoutGridItems):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::layout):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::relayoutForPagination):
+        (WebCore::RenderMultiColumnBlock::layoutSpecialExcludedChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        (WebCore::RenderObject::layout):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsLayoutAndPrefWidthsRecalc):
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        (WebCore::RenderObject::setNormalChildNeedsLayout):
+        (WebCore::RenderObject::setPosChildNeedsLayout):
+        (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::layout):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layoutSpecialExcludedChild):
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::updateScrollbarParts):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::setNeedsSectionRecalc):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+        (WebCore::RenderTableCell::setCellLogicalWidth):
+        (WebCore::RenderTableCell::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layout):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::recalcCells):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::layoutSpecialExcludedChild):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::setNeedsLayoutOnAncestors):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::layout):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::computeChildrenPreferredLogicalHeights):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layout):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::layout):
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::layout):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::setFilterRes):
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::childrenChanged):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::childrenChanged):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::updateCurrentTranslate):
+
 2013-10-02  Andreas Kling  <akling@apple.com>
 
         Keep SVGElementRareData in an SVGElement member instead of a hashmap.

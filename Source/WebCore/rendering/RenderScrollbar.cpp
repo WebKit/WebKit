@@ -190,7 +190,7 @@ void RenderScrollbar::updateScrollbarParts(bool destroy)
     if (newThickness != oldThickness) {
         setFrameRect(IntRect(location(), IntSize(isHorizontal ? width() : newThickness, isHorizontal ? newThickness : height())));
         if (RenderBox* box = owningRenderer())
-            box->setChildNeedsLayout();
+            box->setChildNeedsLayout(true);
     }
 }
 

@@ -127,7 +127,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
     updateRelativeLengthsInformation();
         
     if (RenderObject* object = renderer())
-        object->setNeedsLayout();
+        object->setNeedsLayout(true);
 }
 
 RenderElement* SVGRadialGradientElement::createRenderer(RenderArena& arena, RenderStyle&)

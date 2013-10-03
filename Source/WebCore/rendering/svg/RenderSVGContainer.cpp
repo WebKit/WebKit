@@ -86,7 +86,7 @@ void RenderSVGContainer::layout()
     }
 
     repainter.repaintAfterLayout();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderSVGContainer::addChild(RenderObject* child, RenderObject* beforeChild)

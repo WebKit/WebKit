@@ -558,7 +558,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
     setPreferredLogicalWidthsDirty(true);
     if (!normalChildNeedsLayout())
-        setChildNeedsLayout(); // We may supply the static position for an absolute positioned child.
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
 
     if (AXObjectCache* cache = document().axObjectCache())
         cache->childrenChanged(this);
@@ -993,41 +993,6 @@ void RenderElement::willBeDestroyed()
     destroyLeftoverChildren();
 
     RenderObject::willBeDestroyed();
-}
-
-void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)
-{
-    ASSERT(!isSetNeedsLayoutForbidden());
-    if (needsPositionedMovementLayout())
-        return;
-    setNeedsPositionedMovementLayoutBit(true);
-    markContainingBlocksForLayout();
-    if (!hasLayer()) {
-        if (oldStyle && style()->diffRequiresRepaint(oldStyle))
-            setLayerNeedsFullRepaint();
-        else
-            setLayerNeedsFullRepaintForPositionedMovementLayout();
-    }
-}
-
-void RenderElement::clearChildNeedsLayout()
-{
-    setNormalChildNeedsLayoutBit(false);
-    setPosChildNeedsLayoutBit(false);
-    setNeedsSimplifiedNormalFlowLayoutBit(false);
-    setNormalChildNeedsLayoutBit(false);
-    setNeedsPositionedMovementLayoutBit(false);
-}
-
-void RenderElement::setNeedsSimplifiedNormalFlowLayout()
-{
-    ASSERT(!isSetNeedsLayoutForbidden());
-    if (needsSimplifiedNormalFlowLayout())
-        return;
-    setNeedsSimplifiedNormalFlowLayoutBit(true);
-    markContainingBlocksForLayout();
-    if (hasLayer())
-        setLayerNeedsFullRepaint();
 }
 
 RenderElement* RenderElement::rendererForRootBackground()

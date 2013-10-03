@@ -438,7 +438,7 @@ void RenderSVGText::layout()
         RenderSVGBlock::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 RootInlineBox* RenderSVGText::createRootInlineBox() 

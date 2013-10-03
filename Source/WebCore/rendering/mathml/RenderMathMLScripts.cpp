@@ -349,8 +349,8 @@ void RenderMathMLScripts::layout()
     if (!needsSecondLayout)
         return;
 
-    setNeedsLayout(MarkOnlyThis);
-    m_baseWrapper->setChildNeedsLayout(MarkOnlyThis);
+    setNeedsLayout(true, MarkOnlyThis);
+    m_baseWrapper->setChildNeedsLayout(true, MarkOnlyThis);
 
     RenderMathMLBlock::layout();
 }

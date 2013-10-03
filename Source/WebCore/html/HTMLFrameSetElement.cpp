@@ -203,7 +203,7 @@ void HTMLFrameSetElement::defaultEventHandler(Event* evt)
 bool HTMLFrameSetElement::willRecalcStyle(Style::Change)
 {
     if (needsStyleRecalc() && renderer()) {
-        renderer()->setNeedsLayout();
+        renderer()->setNeedsLayout(true);
         clearNeedsStyleRecalc();
     }
     return true;

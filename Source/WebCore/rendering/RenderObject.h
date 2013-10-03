@@ -617,14 +617,16 @@ public:
     RenderBoxModelObject* offsetParent() const;
 
     void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
-    void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
-    void clearNeedsLayout();
+    void setNeedsLayout(bool needsLayout, MarkingBehavior = MarkContainingBlockChain);
+    void setChildNeedsLayout(bool childNeedsLayout, MarkingBehavior = MarkContainingBlockChain);
+    void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
+    void setNeedsSimplifiedNormalFlowLayout();
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
     void invalidateContainerPreferredLogicalWidths();
     
     void setNeedsLayoutAndPrefWidthsRecalc()
     {
-        setNeedsLayout();
+        setNeedsLayout(true);
         setPreferredLogicalWidthsDirty(true);
     }
 
@@ -939,11 +941,6 @@ protected:
 
     void setDocumentForAnonymous(Document& document) { ASSERT(isAnonymous()); m_node = &document; }
 
-    void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
-    void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
-    void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
-    void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
-
 private:
     RenderFlowThread* locateFlowThreadContainingBlock() const;
     void removeFromRenderFlowThread();
@@ -1080,6 +1077,10 @@ private:
 
     RenderObjectBitfields m_bitfields;
 
+    void setNeedsPositionedMovementLayout(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
+    void setNormalChildNeedsLayout(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
+    void setPosChildNeedsLayout(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
+    void setNeedsSimplifiedNormalFlowLayout(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
     void setIsDragging(bool b) { m_bitfields.setIsDragging(b); }
     void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
 };
@@ -1114,16 +1115,48 @@ inline bool RenderObject::isBeforeOrAfterContent() const
     return isBeforeContent() || isAfterContent();
 }
 
-inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
+inline void RenderObject::setChildNeedsLayout(bool childNeedsLayout, MarkingBehavior markParents)
 {
+    bool alreadyNeededLayout = normalChildNeedsLayout();
+    setNormalChildNeedsLayout(childNeedsLayout);
+    if (childNeedsLayout) {
+        ASSERT(!isSetNeedsLayoutForbidden());
+        if (!alreadyNeededLayout && markParents == MarkContainingBlockChain)
+            markContainingBlocksForLayout();
+    } else {
+        setPosChildNeedsLayout(false);
+        setNeedsSimplifiedNormalFlowLayout(false);
+        setNormalChildNeedsLayout(false);
+        setNeedsPositionedMovementLayout(false);
+    }
+}
+
+inline void RenderObject::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)
+{
+    bool alreadyNeededLayout = needsPositionedMovementLayout();
+    setNeedsPositionedMovementLayout(true);
     ASSERT(!isSetNeedsLayoutForbidden());
-    if (m_bitfields.needsLayout())
-        return;
-    m_bitfields.setNeedsLayout(true);
-    if (markParents == MarkContainingBlockChain)
+    if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
-    if (hasLayer())
-        setLayerNeedsFullRepaint();
+        if (hasLayer()) {
+            if (oldStyle && style()->diffRequiresRepaint(oldStyle))
+                setLayerNeedsFullRepaint();
+            else
+                setLayerNeedsFullRepaintForPositionedMovementLayout();
+        }
+    }
+}
+
+inline void RenderObject::setNeedsSimplifiedNormalFlowLayout()
+{
+    bool alreadyNeededLayout = needsSimplifiedNormalFlowLayout();
+    setNeedsSimplifiedNormalFlowLayout(true);
+    ASSERT(!isSetNeedsLayoutForbidden());
+    if (!alreadyNeededLayout) {
+        markContainingBlocksForLayout();
+        if (hasLayer())
+            setLayerNeedsFullRepaint();
+    }
 }
 
 inline bool RenderObject::preservesNewline() const

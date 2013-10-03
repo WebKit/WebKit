@@ -762,7 +762,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
     if (!m_settings->applyPageScaleFactorInCompositor()) {
         if (document->renderView())
-            document->renderView()->setNeedsLayout();
+            document->renderView()->setNeedsLayout(true);
 
         document->recalcStyle(Style::Force);
 

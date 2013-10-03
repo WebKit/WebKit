@@ -126,7 +126,7 @@ void RenderFlowThread::invalidateRegions()
     m_regionRangeMap.clear();
     m_breakBeforeToRegionMap.clear();
     m_breakAfterToRegionMap.clear();
-    setNeedsLayout();
+    setNeedsLayout(true);
 
     m_regionsInvalidated = true;
 }
@@ -965,7 +965,7 @@ void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
 
         // FIXME: We need to find a way to avoid marking all the regions ancestors for layout
         // as we are already inside layout.
-        region->setNeedsLayout();
+        region->setNeedsLayout(true);
     }
 }
 

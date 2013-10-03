@@ -92,7 +92,7 @@ void RenderVideo::updateIntrinsicSize()
 
     setIntrinsicSize(size);
     setPreferredLogicalWidthsDirty(true);
-    setNeedsLayout();
+    setNeedsLayout(true);
 }
     
 LayoutSize RenderVideo::calculateIntrinsicSize()

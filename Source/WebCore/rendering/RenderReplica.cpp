@@ -60,7 +60,7 @@ void RenderReplica::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     setFrameRect(parentBox()->borderBoxRect());
     updateLayerTransform();
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 void RenderReplica::computePreferredLogicalWidths()

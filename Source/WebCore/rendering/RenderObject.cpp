@@ -619,21 +619,6 @@ static inline bool objectIsRelayoutBoundary(const RenderObject* object)
     return true;
 }
 
-void RenderObject::clearNeedsLayout()
-{
-    m_bitfields.setNeedsLayout(false);
-    setEverHadLayout(true);
-    setPosChildNeedsLayoutBit(false);
-    setNeedsSimplifiedNormalFlowLayoutBit(false);
-    setNormalChildNeedsLayoutBit(false);
-    setNeedsPositionedMovementLayoutBit(false);
-    if (isRenderElement())
-        toRenderElement(this)->setAncestorLineBoxDirty(false);
-#ifndef NDEBUG
-    checkBlockPositionedObjectsNeedLayout();
-#endif
-}
-
 void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
 {
     ASSERT(!scheduleRelayout || !newRoot);
@@ -655,7 +640,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         RenderElement* container = object->container();
         if (!container && !object->isRenderView())
             return;
-        if (last->style()->hasOutOfFlowPosition()) {
+        if (!last->isText() && last->style()->hasOutOfFlowPosition()) {
             bool willSkipRelativelyPositionedInlines = !object->isRenderBlock() || object->isAnonymousBlock();
             // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
             while (object && (!object->isRenderBlock() || object->isAnonymousBlock()))
@@ -664,18 +649,18 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
                 return;
             if (willSkipRelativelyPositionedInlines)
                 container = object->container();
-            object->setPosChildNeedsLayoutBit(true);
+            object->setPosChildNeedsLayout(true);
             simplifiedNormalFlowLayout = true;
             ASSERT(!object->isSetNeedsLayoutForbidden());
         } else if (simplifiedNormalFlowLayout) {
             if (object->needsSimplifiedNormalFlowLayout())
                 return;
-            object->setNeedsSimplifiedNormalFlowLayoutBit(true);
+            object->setNeedsSimplifiedNormalFlowLayout(true);
             ASSERT(!object->isSetNeedsLayoutForbidden());
         } else {
             if (object->normalChildNeedsLayout())
                 return;
-            object->setNormalChildNeedsLayoutBit(true);
+            object->setNormalChildNeedsLayout(true);
             ASSERT(!object->isSetNeedsLayoutForbidden());
         }
 
@@ -2224,7 +2209,7 @@ void RenderObject::layout()
         ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }
-    clearNeedsLayout();
+    setNeedsLayout(false);
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
