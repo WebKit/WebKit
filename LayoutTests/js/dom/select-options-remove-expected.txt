@@ -78,6 +78,11 @@ PASS select1.options.remove(1) is undefined
 PASS select1.options.length is 0
 PASS select1.selectedIndex is -1
 
+1.16 Detach select element
+PASS select1.parentNode is not null
+PASS select1.remove() is undefined
+PASS select1.parentNode is null
+
 2.1 Remove (object) from non-empty Options
 PASS select2.options.remove(value) is undefined
 PASS select2.options.length is 15
@@ -174,7 +179,12 @@ PASS select2.options.length is 2
 PASS select2.selectedIndex is 0
 PASS select2.options[1].value is 'P'
 
+2.17 Detach select element
+PASS select2.parentNode is not null
+PASS select2.remove() is undefined
+PASS select2.parentNode is null
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
- 
+

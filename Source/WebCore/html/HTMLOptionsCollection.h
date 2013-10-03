@@ -40,6 +40,7 @@ public:
     void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
     void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);
     void remove(int index);
+    void remove(HTMLOptionElement*);
 
     int selectedIndex() const;
     void setSelectedIndex(int);

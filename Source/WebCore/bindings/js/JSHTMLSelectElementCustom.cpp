@@ -36,11 +36,18 @@ JSValue JSHTMLSelectElement::remove(ExecState* exec)
 {
     HTMLSelectElement& select = *impl();
 
-    // The remove function can take either an option object or the index of an option.
-    if (HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0)))
-        select.remove(option);
-    else
-        select.remove(exec->argument(0).toInt32(exec));
+    if (!exec->argumentCount()) {
+        // When called with no argument, we should call Element::remove() to detach.
+        ExceptionCode ec = 0;
+        select.remove(ec);
+        setDOMException(exec, ec);
+    } else {
+        // The HTMLSelectElement::remove() function can take either an option object or the index of an option.
+        if (HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0)))
+            select.remove(option);
+        else
+            select.removeByIndex(exec->argument(0).toInt32(exec));
+    }
 
     return jsUndefined();
 }
@@ -48,7 +55,7 @@ JSValue JSHTMLSelectElement::remove(ExecState* exec)
 void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
     if (value.isUndefinedOrNull())
-        select->remove(index);
+        select->removeByIndex(index);
     else {
         ExceptionCode ec = 0;
         HTMLOptionElement* option = toHTMLOptionElement(value);

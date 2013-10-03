@@ -70,7 +70,12 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
 
 void HTMLOptionsCollection::remove(int index)
 {
-    toHTMLSelectElement(ownerNode())->remove(index);
+    toHTMLSelectElement(ownerNode())->removeByIndex(index);
+}
+
+void HTMLOptionsCollection::remove(HTMLOptionElement* option)
+{
+    toHTMLSelectElement(ownerNode())->remove(option);
 }
 
 int HTMLOptionsCollection::selectedIndex() const

@@ -226,7 +226,7 @@ void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, Exception
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::remove(int optionIndex)
+void HTMLSelectElement::removeByIndex(int optionIndex)
 {
     int listIndex = optionToListIndex(optionIndex);
     if (listIndex < 0)
@@ -442,7 +442,7 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
         // Replace an existing entry?
     } else if (diff < 0) {
         before = toHTMLElement(options()->item(index+1));
-        remove(index);
+        removeByIndex(index);
     }
     // Finally add the new element.
     if (!ec) {

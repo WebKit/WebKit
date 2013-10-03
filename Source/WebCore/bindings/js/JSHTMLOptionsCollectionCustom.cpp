@@ -82,9 +82,13 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec)
 
 JSValue JSHTMLOptionsCollection::remove(ExecState* exec)
 {
-    HTMLOptionsCollection* imp = impl();
-    JSHTMLSelectElement* base = jsCast<JSHTMLSelectElement*>(asObject(toJS(exec, globalObject(), imp->ownerNode())));
-    return base->remove(exec);
+    // The argument can be an HTMLOptionElement or an index.
+    JSValue argument = exec->argument(0);
+    if (HTMLOptionElement* option = toHTMLOptionElement(argument))
+        impl()->remove(option);
+    else
+        impl()->remove(argument.toInt32(exec));
+    return jsUndefined();
 }
 
 }

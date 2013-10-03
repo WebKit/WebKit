@@ -102,6 +102,12 @@ shouldBe("select1.options.length", "0");
 shouldBe("select1.selectedIndex", "-1");
 debug("");
 
+debug("1.16 Detach select element");
+shouldNotBe("select1.parentNode", "null");
+shouldBe("select1.remove()", "undefined");
+shouldBeNull("select1.parentNode");
+debug("");
+
 // ------------------------------------------------
 
 i = 0;
@@ -227,4 +233,10 @@ shouldBe("select2.options.remove(1)", "undefined");
 shouldBe("select2.options.length", "2");
 shouldBe("select2.selectedIndex", "0");
 shouldBe("select2.options[1].value", "'P'");
+debug("");
+
+debug("2.17 Detach select element");
+shouldNotBe("select2.parentNode", "null");
+shouldBe("select2.remove()", "undefined");
+shouldBeNull("select2.parentNode");
 debug("");

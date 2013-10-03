@@ -48,7 +48,7 @@
     // As of this writing this cannot be auto-generated.
     [Custom] void remove(/* indexOrOption */);
 #else
-    void remove(long index);
+    [ImplementedAs=removeByIndex] void remove(long index);
 #endif
     readonly attribute HTMLCollection selectedOptions;
     attribute long selectedIndex;

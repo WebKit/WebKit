@@ -1,3 +1,38 @@
+2013-10-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Fix the HTMLSelectElement.prototype.remove() method
+        https://bugs.webkit.org/show_bug.cgi?id=121586
+
+        Reviewed by Darin Adler.
+
+        Fix the HTMLSelectElement.prototype.remove() method so that it behaves like
+        Element.remove() if no argument is passed (from ChildNode). This behavior
+        is consistent with Firefox and Blink.
+
+        See https://www.w3.org/Bugs/Public/show_bug.cgi?id=20720 for more
+        information.
+
+        Tests: js/dom/select-options-remove.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::remove):
+        Stop calling JSHTMLSelectElement::remove() blindly as it is dangerous, especially
+        now that calling it without argument now detaches the element. Instead, have the
+        bindings call the corresponding methods on the HTMLOptionsCollection implementation
+        object, as it should.
+
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove):
+        Call Element::remove() if no argument is given.
+
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::remove):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        Rename remove(int) to removeByIndex(int) to avoid conflict with
+        Node::remove(ExceptionCode&).
+
 2013-10-03  Samuel White  <samuel_white@apple.com>
 
         Regression: AX: <table><caption> no longer exposed as AXTitle.
