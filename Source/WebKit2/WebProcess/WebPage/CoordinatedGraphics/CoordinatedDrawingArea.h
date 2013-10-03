@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +24,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaImpl_h
-#define DrawingAreaImpl_h
+#ifndef CoordinatedDrawingArea_h
+#define CoordinatedDrawingArea_h
+
+#if USE(COORDINATED_GRAPHICS)
 
 #include "DrawingArea.h"
 #include "LayerTreeHost.h"
 #include <WebCore/Region.h>
 #include <WebCore/RunLoop.h>
 
-namespace WebCore {
-    class GraphicsContext;
-}
-
 namespace WebKit {
 
-class ShareableBitmap;
-class UpdateInfo;
-
-class DrawingAreaImpl : public DrawingArea {
+class CoordinatedDrawingArea : public DrawingArea {
 public:
-    DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
-    virtual ~DrawingAreaImpl();
+    CoordinatedDrawingArea(WebPage*, const WebPageCreationParameters&);
+    virtual ~CoordinatedDrawingArea();
 
     void layerHostDidFlushLayers();
 
@@ -73,18 +69,20 @@ private:
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 #endif
 
+    virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+
     // CoreIPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();
     virtual void suspendPainting();
     virtual void resumePainting();
-    
+
     void sendDidUpdateBackingStoreState();
 
     void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
     void exitAcceleratedCompositingModeSoon();
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
-    void exitAcceleratedCompositingMode();
+    void exitAcceleratedCompositingMode() { }
 
     void scheduleDisplay();
     void displayTimerFired();
@@ -107,10 +105,10 @@ private:
     // we normally send to the UI process.
     bool m_shouldSendDidUpdateBackingStoreState;
 
-    // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
+    // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate;
-    
+
     // True between sending the 'enter compositing' messages, and the 'exit compositing' message.
     bool m_compositingAccordingToProxyMessages;
 
@@ -122,13 +120,12 @@ private:
     // state was frozen.
     bool m_wantsToExitAcceleratedCompositingMode;
 
-    // Whether painting is suspended. We'll still keep track of the dirty region but we 
+    // Whether painting is suspended. We'll still keep track of the dirty region but we
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
-    bool m_alwaysUseCompositing;
 
-    WebCore::RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
-    WebCore::RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
+    WebCore::RunLoop::Timer<CoordinatedDrawingArea> m_displayTimer;
+    WebCore::RunLoop::Timer<CoordinatedDrawingArea> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;
@@ -136,4 +133,6 @@ private:
 
 } // namespace WebKit
 
-#endif // DrawingAreaImpl_h
+#endif // USE(COORDINATED_GRAPHICS)
+
+#endif // CoordinatedDrawingArea_h

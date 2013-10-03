@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,8 +25,11 @@
  */
 
 #include "config.h"
-#include "DrawingAreaProxyImpl.h"
 
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedDrawingAreaProxy.h"
+
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
@@ -40,18 +44,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
-    : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
+CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy(WebPageProxy* webPageProxy)
+    : DrawingAreaProxy(DrawingAreaTypeCoordinated, webPageProxy)
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
     , m_hasReceivedFirstUpdate(false)
     , m_isBackingStoreDiscardable(true)
-    , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
+    , m_discardBackingStoreTimer(RunLoop::current(), this, &CoordinatedDrawingAreaProxy::discardBackingStore)
 {
+    // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
+    if (webPageProxy->pageGroup()->preferences()->forceCompositingMode())
+        m_coordinatedLayerTreeHostProxy = adoptPtr(new CoordinatedLayerTreeHostProxy(this));
 }
 
-DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
+CoordinatedDrawingAreaProxy::~CoordinatedDrawingAreaProxy()
 {
 #if USE(ACCELERATED_COMPOSITING)
     // Make sure to exit accelerated compositing mode.
@@ -60,7 +67,7 @@ DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
 #endif
 }
 
-void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
+void CoordinatedDrawingAreaProxy::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
 
@@ -75,8 +82,8 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 
         // If we haven't yet received our first bits from the WebProcess then don't paint anything.
         if (!m_hasReceivedFirstUpdate)
-            return;        
-        
+            return;
+
         if (m_isWaitingForDidUpdateBackingStoreState) {
             // Wait for a DidUpdateBackingStoreState message that contains the new bits before we paint
             // what's currently in the backing store.
@@ -103,22 +110,22 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
     discardBackingStoreSoon();
 }
 
-void DrawingAreaProxyImpl::sizeDidChange()
+void CoordinatedDrawingAreaProxy::sizeDidChange()
 {
     backingStoreStateDidChange(RespondImmediately);
 }
 
-void DrawingAreaProxyImpl::deviceScaleFactorDidChange()
+void CoordinatedDrawingAreaProxy::deviceScaleFactorDidChange()
 {
     backingStoreStateDidChange(RespondImmediately);
 }
 
-void DrawingAreaProxyImpl::layerHostingModeDidChange()
+void CoordinatedDrawingAreaProxy::layerHostingModeDidChange()
 {
     m_webPageProxy->process()->send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::visibilityDidChange()
+void CoordinatedDrawingAreaProxy::visibilityDidChange()
 {
     if (!m_webPageProxy->suppressVisibilityUpdates()) {
         if (!m_webPageProxy->isViewVisible()) {
@@ -139,7 +146,7 @@ void DrawingAreaProxyImpl::visibilityDidChange()
 #endif
 }
 
-void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
+void CoordinatedDrawingAreaProxy::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
 {
     if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)
         return;
@@ -151,12 +158,12 @@ void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDisca
         m_discardBackingStoreTimer.stop();
 }
 
-void DrawingAreaProxyImpl::waitForBackingStoreUpdateOnNextPaint()
+void CoordinatedDrawingAreaProxy::waitForBackingStoreUpdateOnNextPaint()
 {
     m_hasReceivedFirstUpdate = true;
 }
 
-void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
+void CoordinatedDrawingAreaProxy::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
     if (backingStoreStateID < m_currentBackingStoreStateID)
@@ -168,7 +175,7 @@ void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
+void CoordinatedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_nextBackingStoreStateID);
     ASSERT_ARG(backingStoreStateID, backingStoreStateID > m_currentBackingStoreStateID);
@@ -189,7 +196,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
         if (!layerTreeContext.isEmpty()) {
             enterAcceleratedCompositingMode(layerTreeContext);
             ASSERT(layerTreeContext == m_layerTreeContext);
-        }            
+        }
     }
 #endif
 
@@ -213,7 +220,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
+void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
     if (backingStoreStateID < m_currentBackingStoreStateID)
@@ -226,7 +233,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(uint64_t backingStore
 #endif
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
+void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
     if (backingStoreStateID < m_currentBackingStoreStateID)
@@ -239,7 +246,7 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode(uint64_t backingStoreS
     incorporateUpdate(updateInfo);
 }
 
-void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
+void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
 {
     ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
     if (backingStoreStateID < m_currentBackingStoreStateID)
@@ -252,7 +259,7 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStor
 #endif
 }
 
-void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
+void CoordinatedDrawingAreaProxy::incorporateUpdate(const UpdateInfo& updateInfo)
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
@@ -268,14 +275,14 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 
     if (shouldScroll)
         m_webPageProxy->scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
-    
+
     if (shouldScroll && !m_webPageProxy->canScrollView())
         m_webPageProxy->setViewNeedsDisplay(IntRect(IntPoint(), m_webPageProxy->viewSize()));
     else {
         for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
             m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
     }
-    
+
     if (WebPageProxy::debugPaintFlags() & kWKDebugFlashBackingStoreUpdates)
         m_webPageProxy->flashBackingStoreUpdates(updateInfo.updateRects);
 
@@ -283,13 +290,13 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_webPageProxy->displayView();
 }
 
-void DrawingAreaProxyImpl::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)
+void CoordinatedDrawingAreaProxy::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)
 {
     ++m_nextBackingStoreStateID;
     sendUpdateBackingStoreState(respondImmediatelyOrNot);
 }
 
-void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot respondImmediatelyOrNot)
+void CoordinatedDrawingAreaProxy::sendUpdateBackingStoreState(RespondImmediatelyOrNot respondImmediatelyOrNot)
 {
     ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
 
@@ -315,14 +322,14 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
-        // Wait for the DidUpdateBackingStoreState message. Normally we do this in DrawingAreaProxyImpl::paint, but that
+        // Wait for the DidUpdateBackingStoreState message. Normally we do this in CoordinatedDrawingAreaProxy::paint, but that
         // function is never called when in accelerated compositing mode.
         waitForAndDispatchDidUpdateBackingStoreState();
     }
 #endif
 }
 
-void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
+void CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
 {
     ASSERT(m_isWaitingForDidUpdateBackingStoreState);
 
@@ -344,24 +351,32 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+void CoordinatedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
+    if (!m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy = adoptPtr(new CoordinatedLayerTreeHostProxy(this));
 }
 
-void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
+void CoordinatedDrawingAreaProxy::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
+{
+    if (m_coordinatedLayerTreeHostProxy)
+        m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
+}
+
+void CoordinatedDrawingAreaProxy::exitAcceleratedCompositingMode()
 {
     ASSERT(isInAcceleratedCompositingMode());
 
-    m_layerTreeContext = LayerTreeContext();    
+    m_layerTreeContext = LayerTreeContext();
     m_webPageProxy->exitAcceleratedCompositingMode();
 }
 
-void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+void CoordinatedDrawingAreaProxy::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     ASSERT(isInAcceleratedCompositingMode());
 
@@ -370,7 +385,7 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(const LayerTreeConte
 }
 #endif
 
-void DrawingAreaProxyImpl::discardBackingStoreSoon()
+void CoordinatedDrawingAreaProxy::discardBackingStoreSoon()
 {
     if (!m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())
         return;
@@ -382,10 +397,11 @@ void DrawingAreaProxyImpl::discardBackingStoreSoon()
     m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
 }
 
-void DrawingAreaProxyImpl::discardBackingStore()
+void CoordinatedDrawingAreaProxy::discardBackingStore()
 {
     m_backingStore = nullptr;
     backingStoreStateDidChange(DoNotRespondImmediately);
 }
 
 } // namespace WebKit
+#endif // USE(COORDINATED_GRAPHICS)

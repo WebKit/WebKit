@@ -1,3 +1,40 @@
+2013-10-03  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Create CoordinatedDrawingArea / CoordinatedDrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=122207
+
+        Reviewed by Anders Carlsson.
+
+        Since Apple are moving away from DrawingAreaImpl, Coordinated Graphics
+        should have its own drawing area.
+
+        * CMakeLists.txt: Use CoordinatedDrawingArea and
+        CoordinatedDrawingAreaProxy instead of the DrawingAreaImpl /
+        DrawingAreaProxyImpl.
+        * Shared/DrawingAreaInfo.h: Add DrawingAreaTypeCoordinated.
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        Added, copied from DrawingAreaProxyImpl.cpp.
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h: Added,
+        copied from DrawingAreaProxyImpl.h.
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createDrawingAreaProxy): Use CoordinatedDrawingAreaProxy.
+        * UIProcess/DrawingAreaProxyImpl.cpp: Remove Coordinated Graphics
+        bits.
+        * UIProcess/DrawingAreaProxyImpl.h: Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        Added, copied from DrawingAreaImpl.cpp.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        Added, copied from DrawingAreaImpl.h.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::performScheduledLayerFlush): Use
+        CoordinatedDrawingArea.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create): Handle the DrawingAreaTypeCoordinated
+        in the DrawingArea creation code.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: Remove Coordinated Graphics
+        bits.
+        * WebProcess/WebPage/DrawingAreaImpl.h: Ditto.
+
 2013-10-03  Anders Carlsson  <andersca@apple.com>
 
         Ignore deprecation warnings

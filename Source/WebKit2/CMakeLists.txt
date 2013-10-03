@@ -259,7 +259,6 @@ set(WebKit2_SOURCES
 
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
-    UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
@@ -370,6 +369,7 @@ set(WebKit2_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
+    UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp
     UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
 
@@ -501,7 +501,6 @@ set(WebKit2_SOURCES
 
     WebProcess/WebPage/DecoderAdapter.cpp
     WebProcess/WebPage/DrawingArea.cpp
-    WebProcess/WebPage/DrawingAreaImpl.cpp
     WebProcess/WebPage/EncoderAdapter.cpp
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
@@ -518,6 +517,7 @@ set(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
     WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp
 )

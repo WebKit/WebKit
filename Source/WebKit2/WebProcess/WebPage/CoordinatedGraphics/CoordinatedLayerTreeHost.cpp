@@ -30,9 +30,9 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHost.h"
 
+#include "CoordinatedDrawingArea.h"
 #include "CoordinatedGraphicsArgumentCoders.h"
 #include "CoordinatedLayerTreeHostProxyMessages.h"
-#include "DrawingAreaImpl.h"
 #include "GraphicsContext.h"
 #include "WebCoordinatedSurface.h"
 #include "WebCoreArgumentCoders.h"
@@ -318,7 +318,7 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
     }
 
     if (m_notifyAfterScheduledLayerFlush && didSync) {
-        static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        static_cast<CoordinatedDrawingArea*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
     }
 }

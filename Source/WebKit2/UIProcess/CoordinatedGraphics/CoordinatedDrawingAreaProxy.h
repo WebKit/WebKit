@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxyImpl_h
-#define DrawingAreaProxyImpl_h
+#ifndef CoordinatedDrawingAreaProxy_h
+#define CoordinatedDrawingAreaProxy_h
+
+#if USE(COORDINATED_GRAPHICS)
 
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
@@ -40,10 +43,10 @@ namespace WebKit {
 
 class CoordinatedLayerTreeHostProxy;
 
-class DrawingAreaProxyImpl : public DrawingAreaProxy {
+class CoordinatedDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    explicit DrawingAreaProxyImpl(WebPageProxy*);
-    virtual ~DrawingAreaProxyImpl();
+    explicit CoordinatedDrawingAreaProxy(WebPageProxy*);
+    virtual ~CoordinatedDrawingAreaProxy();
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 
@@ -81,6 +84,7 @@ private:
     void enterAcceleratedCompositingMode(const LayerTreeContext&);
     void exitAcceleratedCompositingMode();
     void updateAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectory) OVERRIDE;
 #else
     bool isInAcceleratedCompositingMode() const { return false; }
 #endif
@@ -105,16 +109,17 @@ private:
     // Whether we've sent a UpdateBackingStoreState message and are now waiting for a DidUpdateBackingStoreState message.
     // Used to throttle UpdateBackingStoreState messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidUpdateBackingStoreState;
-    
+
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
     bool m_hasReceivedFirstUpdate;
 
     bool m_isBackingStoreDiscardable;
     std::unique_ptr<BackingStore> m_backingStore;
 
-    WebCore::RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+    WebCore::RunLoop::Timer<CoordinatedDrawingAreaProxy> m_discardBackingStoreTimer;
 };
 
 } // namespace WebKit
 
-#endif // DrawingAreaProxyImpl_h
+#endif // USE(COORDINATED_GRAPHICS)
+#endif // CoordinatedDrawingAreaProxy_h
