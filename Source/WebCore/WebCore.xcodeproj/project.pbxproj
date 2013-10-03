@@ -3081,7 +3081,7 @@
 		9712A5CD15004EDA0048AF10 /* IDBEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57415004EDA0048AF10 /* IDBEventDispatcher.h */; };
 		9712A5CF15004EDA0048AF10 /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57615004EDA0048AF10 /* IDBFactory.h */; };
 		9712A5D315004EDA0048AF10 /* IDBFactoryBackendInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A57A15004EDA0048AF10 /* IDBFactoryBackendInterface.cpp */; };
-		9712A5D415004EDA0048AF10 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57B15004EDA0048AF10 /* IDBFactoryBackendInterface.h */; };
+		9712A5D415004EDA0048AF10 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57B15004EDA0048AF10 /* IDBFactoryBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9712A5D615004EDA0048AF10 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57D15004EDA0048AF10 /* IDBIndex.h */; };
 		9712A5DC15004EDA0048AF10 /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58315004EDA0048AF10 /* IDBKey.h */; };
 		9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58615004EDA0048AF10 /* IDBKeyPath.h */; };

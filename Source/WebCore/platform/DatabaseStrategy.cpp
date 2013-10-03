@@ -26,17 +26,32 @@
 #include "config.h"
 #include "DatabaseStrategy.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseServer.h"
+#include "IDBFactoryBackendInterface.h"
+
+#if USE(LEVELDB)
+#include "IDBFactoryBackendLevelDB.h"
+#endif
 
 namespace WebCore {
 
+#if ENABLE(SQL_DATABASE)
 AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 {
     return new DatabaseServer;
 }
+#endif // ENABLE(SQL_DATABASE)
+
+#if ENABLE(INDEXED_DATABASE)
+PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend()
+{
+    // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
+#if USE(LEVELDB)
+    return IDBFactoryBackendLevelDB::create();
+#else
+    return 0;
+#endif
+}
+#endif // ENABLE(INDEXED_DATABASE)
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

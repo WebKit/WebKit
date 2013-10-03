@@ -57,6 +57,9 @@ public:
     }
     ~IDBFactory();
 
+    // FIXME: getDatabaseNames is no longer a web-facing API, and should be removed from IDBFactory.
+    // The Web Inspector currently uses this to enumerate the list of databases, but is more complicated as a result.
+    // We should provide a simpler API to the Web Inspector then remove getDatabaseNames.
     PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);

@@ -67,6 +67,9 @@ private:
 #if ENABLE(SQL_DATABASE)
     virtual WebCore::AbstractDatabaseServer* getDatabaseServer() OVERRIDE;
 #endif
+#if ENABLE(INDEXED_DATABASE)
+    virtual PassRefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend() OVERRIDE;
+#endif
 
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)

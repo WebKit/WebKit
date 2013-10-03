@@ -42,6 +42,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
+#include <WebCore/IDBFactoryBackendInterface.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -210,9 +211,16 @@ void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, c
 #if ENABLE(SQL_DATABASE)
 AbstractDatabaseServer* WebPlatformStrategies::getDatabaseServer()
 {
-    return DatabaseStrategy::getDatabaseServer(); // Use the default for now.
+    return DatabaseStrategy::getDatabaseServer();
 }
-#endif
+#endif // ENABLE(SQL_DATABASE)
+
+#if ENABLE(INDEXED_DATABASE)
+PassRefPtr<IDBFactoryBackendInterface> WebPlatformStrategies::createIDBFactoryBackend()
+{
+    return DatabaseStrategy::createIDBFactoryBackend();
+}
+#endif // ENABLE(INDEXED_DATABASE)
 
 // LoaderStrategy
 
