@@ -1,3 +1,31 @@
+2013-10-03  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] add shape-margin support for image valued shapes
+        https://bugs.webkit.org/show_bug.cgi?id=121619
+
+        Reviewed by Alexandru Chiculita.
+
+        Add support for computing the shape-margin boundary for a shape-outside whose
+        value is an image.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-003.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::MarginIntervalGenerator::MarginIntervalGenerator): Internal utility that generates the margin intervals for the image interval specified with set().
+        (WebCore::MarginIntervalGenerator::set):
+        (WebCore::MarginIntervalGenerator::intervalAt):
+        (WebCore::findInsertionPoint): Find the insertion point index for the the specified X value, within a vector of intervals sorted by X1.
+        (WebCore::RasterShapeIntervals::uniteMarginInterval): Destructively unite one interval with an existing one, or append it.
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals):
+        (WebCore::RasterShape::marginIntervals): Return the lazily computed value, or create it with computeShapeMarginIntervals().
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::getIntervals):
+        (WebCore::RasterShape::RasterShape):
+        (WebCore::RasterShapeIntervals::uniteMarginInterval):
+        * WTF/wtf/MathExtras.h: Added clampToUnsigned() inline.
+
 2013-10-03  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Remove unused RenderLayerModelObject::updateLayerIfNeeded

@@ -1,3 +1,19 @@
+2013-10-03  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] add shape-margin support for image valued shapes
+        https://bugs.webkit.org/show_bug.cgi?id=121619
+
+        Reviewed by Alexandru Chiculita.
+
+        Verify that the shape-outside margin-boundary is computed correctly for image valued shapes.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-001-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-002-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-002.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-003-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-003.html: Added.
+
 2013-10-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose aria-invalid as a text attribute (not object attribute)

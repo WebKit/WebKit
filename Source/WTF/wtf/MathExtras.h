@@ -296,6 +296,11 @@ inline int clampToInteger(double value)
     return clampTo<int>(value);
 }
 
+inline int clampToUnsigned(double value)
+{
+    return clampTo<unsigned>(value);
+}
+
 inline float clampToFloat(double value)
 {
     return clampTo<float>(value);

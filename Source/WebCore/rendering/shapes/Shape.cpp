@@ -239,7 +239,7 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
         }
     }
 
-    OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release()));
+    OwnPtr<RasterShape> rasterShape = adoptPtr(new RasterShape(intervals.release(), imageSize));
     rasterShape->m_writingMode = writingMode;
     rasterShape->m_margin = floatValueForLength(margin, 0);
     rasterShape->m_padding = floatValueForLength(padding, 0);

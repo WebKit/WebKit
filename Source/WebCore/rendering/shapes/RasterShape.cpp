@@ -34,12 +34,65 @@
 
 namespace WebCore {
 
+class MarginIntervalGenerator {
+public:
+    MarginIntervalGenerator(unsigned radius);
+    void set(int y, int x1, int x2);
+    IntShapeInterval intervalAt(int y) const;
+
+private:
+    Vector<int> m_xIntercepts;
+    int m_y;
+    int m_x1;
+    int m_x2;
+};
+
+MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
+    : m_y(0)
+    , m_x1(0)
+    , m_x2(0)
+{
+    m_xIntercepts.resize(radius + 1);
+    unsigned radiusSquared = radius * radius;
+    for (unsigned y = 0; y <= radius; y++)
+        m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));
+}
+
+void MarginIntervalGenerator::set(int y, int x1, int x2)
+{
+    ASSERT(y >= 0 && x1 >= 0 && x2 > x1);
+    m_y = y;
+    m_x1 = x1;
+    m_x2 = x2;
+}
+
+IntShapeInterval MarginIntervalGenerator::intervalAt(int y) const
+{
+    unsigned xInterceptsIndex = abs(y - m_y);
+    int dx = (xInterceptsIndex >= m_xIntercepts.size()) ? 0 : m_xIntercepts[xInterceptsIndex];
+    return IntShapeInterval(std::max(0, m_x1 - dx), m_x2 + dx);
+}
+
 void RasterShapeIntervals::appendInterval(int y, int x1, int x2)
 {
     ASSERT(y >= 0 && y < size() && x1 >= 0 && x2 > x1 && (m_intervalLists[y].isEmpty() || x1 > m_intervalLists[y].last().x2()));
 
     m_bounds.unite(IntRect(x1, y, x2 - x1, 1));
     m_intervalLists[y].append(IntShapeInterval(x1, x2));
+}
+
+void RasterShapeIntervals::uniteMarginInterval(int y, const IntShapeInterval& interval)
+{
+    ASSERT(m_intervalLists[y].size() <= 1); // Each m_intervalLists entry has 0 or one interval.
+
+    if (m_intervalLists[y].isEmpty())
+        m_intervalLists[y].append(interval);
+    else {
+        IntShapeInterval& resultInterval = m_intervalLists[y][0];
+        resultInterval.set(std::min(resultInterval.x1(), interval.x1()), std::max(resultInterval.x2(), interval.x2()));
+    }
+
+    m_bounds.unite(IntRect(interval.x1(), y, interval.width(), 1));
 }
 
 static inline bool shapeIntervalsContain(const IntShapeIntervals& intervals, const IntShapeInterval& interval)
@@ -165,14 +218,37 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
     }
 }
 
+// Currently limited to computing the margin boundary for shape-outside for floats, see https://bugs.webkit.org/show_bug.cgi?id=116348.
+PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(unsigned margin) const
+{
+    OwnPtr<RasterShapeIntervals> result = adoptPtr(new RasterShapeIntervals(size() + margin));
+    MarginIntervalGenerator intervalGenerator(margin);
+
+    for (int y = bounds().y(); y < bounds().maxY(); ++y) {
+        const IntShapeIntervals& intervalsAtY = getIntervals(y);
+        if (intervalsAtY.isEmpty())
+            continue;
+        int marginY0 = std::max(0, clampToPositiveInteger(y - margin));
+        int marginY1 = std::min(result->size() - 1, clampToPositiveInteger(y + margin));
+        intervalGenerator.set(y, intervalsAtY[0].x1(), intervalsAtY.last().x2());
+        for (int marginY = marginY0; marginY <= marginY1; ++marginY)
+            result->uniteMarginInterval(marginY, intervalGenerator.intervalAt(marginY));
+    }
+
+    return result.release();
+}
+
 const RasterShapeIntervals& RasterShape::marginIntervals() const
 {
     ASSERT(shapeMargin() >= 0);
     if (!shapeMargin())
         return *m_intervals;
 
-    // FIXME: Add support for non-zero margin, see https://bugs.webkit.org/show_bug.cgi?id=116348.
-    return *m_intervals;
+    unsigned marginBoundaryRadius = std::min(clampToUnsigned(ceil(shapeMargin())), std::max(m_imageSize.width(), m_imageSize.height()));
+    if (!m_marginIntervals)
+        m_marginIntervals = m_intervals->computeShapeMarginIntervals(marginBoundaryRadius);
+
+    return *m_marginIntervals;
 }
 
 const RasterShapeIntervals& RasterShape::paddingIntervals() const
