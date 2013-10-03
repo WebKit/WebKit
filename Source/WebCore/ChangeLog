@@ -1,3 +1,34 @@
+2013-10-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Support block content with inline content around floats in shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=121616
+
+        Reviewed by David Hyatt.
+
+        In r156022 and r156364, I added support for floats inside shape-inside with inline content. This change extends
+        the existing implementation to support block content with inline content (paragraphs). I added an extra text for
+        positioning a float inside shape-inside without text content around it.
+
+        Tests: fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-block-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-block-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-block-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-block-content.html
+
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::logicalSize): Add new function to return the FloatingObject logical size.
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::fitBelowFloats): When the lineBreaker code pushes down the content below the floating object,
+        we need to update the segments if we are in a shape-inside.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Do the positioning based on the float actual size, and use the
+        recent shapeInsideInfo. (Calling layoutShapeInsideInfo which deals with the layoutStates also instead of shapeInsideInfo.)
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded): If we don't have inline content we still need to positionize
+        our float content in a shape-inside.
+        (WebCore::updateSegmentsForShapes): Use the right coordinates for block content with inline content.
+
 2013-10-03  Brady Eidson  <beidson@apple.com>
 
         Move IDBFactoryBackend creation to DatabaseStrategy.

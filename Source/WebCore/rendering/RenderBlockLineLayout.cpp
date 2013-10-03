@@ -1478,6 +1478,14 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideIn
 bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* shapeInsideInfo, LayoutUnit absoluteLogicalTop, LineLayoutState& layoutState, InlineBidiResolver& resolver, FloatingObject* lastFloatFromPreviousLine, InlineIterator& end, WordMeasurements& wordMeasurements)
 {
     LayoutUnit adjustedLogicalLineTop = adjustLogicalLineTop(shapeInsideInfo, resolver.position(), end, wordMeasurements);
+
+    if (shapeInsideInfo && !wordMeasurements.size() && containsFloats()) {
+        lastFloatFromPreviousLine = m_floatingObjects->set().last().get();
+        LayoutUnit floatLogicalTopOffset = shapeInsideInfo->computeFirstFitPositionForFloat(lastFloatFromPreviousLine->logicalSize(isHorizontalWritingMode()));
+        if (logicalHeight() < floatLogicalTopOffset)
+            adjustedLogicalLineTop = floatLogicalTopOffset;
+    }
+
     if (!adjustedLogicalLineTop)
         return false;
 
@@ -2649,12 +2657,13 @@ static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* la
     ASSERT(lastFloatFromPreviousLine);
 
     ShapeInsideInfo* shapeInsideInfo = block->layoutShapeInsideInfo();
-    if (!shapeInsideInfo)
+    if (!lastFloatFromPreviousLine->isPlaced() || !shapeInsideInfo)
         return;
 
     bool isHorizontalWritingMode = block->isHorizontalWritingMode();
+    LayoutUnit logicalOffsetFromShapeContainer = block->logicalOffsetFromShapeAncestorContainer(shapeInsideInfo->owner()).height();
 
-    LayoutUnit lineLogicalTop = block->logicalHeight();
+    LayoutUnit lineLogicalTop = block->logicalHeight() + logicalOffsetFromShapeContainer;
     LayoutUnit lineLogicalHeight = block->lineHeight(isFirstLine, isHorizontalWritingMode ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     LayoutUnit lineLogicalBottom = lineLogicalTop + lineLogicalHeight;
 
@@ -2674,10 +2683,12 @@ static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* la
 
     if (block->logicalHeight() < floatLogicalTop) {
         shapeInsideInfo->adjustLogicalLineTop(minSegmentWidth + floatLogicalWidth);
-        block->setLogicalHeight(shapeInsideInfo->logicalLineTop());
+        block->setLogicalHeight(shapeInsideInfo->logicalLineTop() - logicalOffsetFromShapeContainer);
     }
 
-    shapeInsideInfo->updateSegmentsForLine(block->logicalHeight(), lineLogicalHeight);
+    lineLogicalTop = block->logicalHeight() + logicalOffsetFromShapeContainer;
+
+    shapeInsideInfo->updateSegmentsForLine(lineLogicalTop, lineLogicalHeight);
     width.updateCurrentShapeSegment();
     width.updateAvailableWidth();
 }

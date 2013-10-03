@@ -206,6 +206,18 @@ void LineWidth::fitBelowFloats()
         newLineRight = m_block.logicalRightOffsetForLine(floatLogicalBottom, shouldIndentText());
         newLineWidth = max(0.0f, newLineRight - newLineLeft);
         lastFloatLogicalBottom = floatLogicalBottom;
+
+#if ENABLE(CSS_SHAPES)
+        // FIXME: This code should be refactored to incorporate with the code above.
+        ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
+        if (shapeInsideInfo) {
+            LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(shapeInsideInfo->owner()).height();
+            LayoutUnit lineHeight = m_block.lineHeight(false, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+            shapeInsideInfo->updateSegmentsForLine(lastFloatLogicalBottom + logicalOffsetFromShapeContainer, lineHeight);
+            updateCurrentShapeSegment();
+            updateAvailableWidth();
+        }
+#endif
         if (newLineWidth >= m_uncommittedWidth)
             break;
     }

@@ -1,3 +1,25 @@
+2013-10-03  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Support block content with inline content around floats in shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=121616
+
+        Reviewed by David Hyatt.
+
+        In r156022 and r156364, I added support for floats inside shape-inside with inline content. This change extends
+        the existing implementation to support block content with inline content (paragraphs). I added an extra text for
+        positioning a float inside shape-inside without text content around it.
+
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-block-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-block-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-block-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-block-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-block-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-block-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-block-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-block-content.html: Added.
+
 2013-10-03  Tim Horton  <timothy_horton@apple.com>
 
         Add test expectation for one more test having color space issues after r156793.

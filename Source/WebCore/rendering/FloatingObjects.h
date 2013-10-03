@@ -92,6 +92,7 @@ public:
     LayoutUnit logicalRight(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? maxX() : maxY(); }
     LayoutUnit logicalWidth(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? width() : height(); }
     LayoutUnit logicalHeight(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? height() : width(); }
+    LayoutSize logicalSize(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? LayoutSize(width(), height()) : LayoutSize(height(), width()); }
 
     int pixelSnappedLogicalTop(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedY() : frameRect().pixelSnappedX(); }
     int pixelSnappedLogicalBottom(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedMaxY() : frameRect().pixelSnappedMaxX(); }

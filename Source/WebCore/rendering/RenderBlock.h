@@ -443,6 +443,7 @@ public:
     void markShapeInsideDescendantsForLayout();
     ShapeInsideInfo* layoutShapeInsideInfo() const;
     bool allowsShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
+    LayoutSize logicalOffsetFromShapeAncestorContainer(const RenderBlock* container) const;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
 #endif
 
@@ -545,7 +546,6 @@ private:
     void computeShapeSize();
     void updateShapeInsideInfoAfterStyleChange(const ShapeValue*, const ShapeValue* oldShape);
     void relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset);
-    LayoutSize logicalOffsetFromShapeAncestorContainer(const RenderBlock* container) const;
 #endif
 
     virtual const char* renderName() const OVERRIDE;

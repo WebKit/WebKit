@@ -3365,10 +3365,10 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
     LayoutUnit logicalRightOffset; // Constant part of right offset.
 #if ENABLE(CSS_SHAPES)
     // FIXME Bug 102948: This only works for shape outside directly set on this block.
-    ShapeInsideInfo* shapeInsideInfo = this->shapeInsideInfo();
+    ShapeInsideInfo* shapeInsideInfo = this->layoutShapeInsideInfo();
     // FIXME: Implement behavior for right floats.
     if (shapeInsideInfo) {
-        LayoutSize floatLogicalSize = LayoutSize(floatingObject->logicalWidth(isHorizontalWritingMode()), floatingObject->logicalHeight(isHorizontalWritingMode()));
+        LayoutSize floatLogicalSize = LayoutSize(childBox->logicalWidth(), childBox->logicalHeight());
         // FIXME: If the float doesn't fit in the shape we should push it under the content box
         logicalTopOffset = shapeInsideInfo->computeFirstFitPositionForFloat(floatLogicalSize);
         if (logicalHeight() > logicalTopOffset)
