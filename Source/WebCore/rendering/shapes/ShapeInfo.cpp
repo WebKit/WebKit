@@ -48,6 +48,7 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
     WritingMode writingMode = m_renderer->style()->writingMode();
     Length margin = m_renderer->style()->shapeMargin();
     Length padding = m_renderer->style()->shapePadding();
+    float shapeImageThreshold = m_renderer->style()->shapeImageThreshold();
     const ShapeValue* shapeValue = this->shapeValue();
     ASSERT(shapeValue);
 
@@ -58,7 +59,7 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
         break;
     case ShapeValue::Image:
         ASSERT(shapeValue->image());
-        m_shape = Shape::createShape(shapeValue->image(), 0, m_shapeLogicalSize, writingMode, margin, padding);
+        m_shape = Shape::createShape(shapeValue->image(), shapeImageThreshold, m_shapeLogicalSize, writingMode, margin, padding);
         break;
     default:
         ASSERT_NOT_REACHED();

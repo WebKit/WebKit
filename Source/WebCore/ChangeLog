@@ -1,3 +1,19 @@
+2013-10-03  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Support the shape-image-threshold property
+        https://bugs.webkit.org/show_bug.cgi?id=122254
+
+        Reviewed by Andreas Kling.
+
+        Replace the hardwired 0 Shape::createShape() threshold parameter with the style's
+        shapeImageThreshold() value (which has been clamped to [0,1]).
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-image-threshold-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-image-threshold-002.html
+
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape):
+
 2013-10-03  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Follow-up code style change after bug #121828 All regions have layers
