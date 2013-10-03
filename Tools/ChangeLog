@@ -1,3 +1,12 @@
+2013-10-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix LeaksViewer to load leaks results from MountainLion, not Lion.
+
+        Rubber-stamped by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer._displayURLPrompt):
+
 2013-10-03  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r156811): Objective-C JavaScriptCore API test failing on Mountain Lion bots
