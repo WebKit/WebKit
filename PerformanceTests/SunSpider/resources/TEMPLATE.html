@@ -30,18 +30,27 @@
 
 <title>SunSpider @NAME@</title>
 <link rel="stylesheet" href="../sunspider.css">
+<style>
+#countdown {
+    font-size: 128px; 
+    text-align: center;
+}
+</style>
 </head>
 
 <body>
-<h3>@NAME@</h3>
-<div id="console">
-</div>
+<h3 id="countdown"></h3>
 <script>
+if (window.parent) {
+    document.getElementById("countdown").innerHTML =
+        window.parent.currentRepeat < 0
+            ? "warmup"
+            : (window.parent.repeatCount - window.parent.currentRepeat);
+}
+
 function record(time) {
-    document.getElementById("console").innerHTML = time + "ms";
-    if (window.parent) {
+    if (window.parent)
         parent.recordResult(time);
-    }
 }
 
 window.onerror = function(e) {

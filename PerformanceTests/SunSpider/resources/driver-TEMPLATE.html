@@ -53,28 +53,25 @@ for (var i = 0; i < output.length; i++) {
 
 function start() 
 {
-    window.setTimeout(next, 500);
+    window.setTimeout(next, 128);
 }
 
 function next()
 {
-    var timeout = window.setTimeout(next, 0);
-
     document.getElementById("frameparent").innerHTML = "";
     document.getElementById("frameparent").innerHTML = "<iframe id='testframe'>";
     var testFrame = document.getElementById("testframe");
-    testIndex++;
-    if (testIndex < tests.length) {
+    if (++testIndex < tests.length) {
+        window.setTimeout(next, 0);
+
         testFrame.contentDocument.open();
         testFrame.contentDocument.write(testContents[testIndex]);
         testFrame.contentDocument.close();
     } else if (++currentRepeat < repeatCount) { 
-        testIndex = 0;
-        testFrame.contentDocument.open();
-        testFrame.contentDocument.write(testContents[testIndex]);
-        testFrame.contentDocument.close();
+        window.setTimeout(next, 128);
+
+        testIndex = -1;
     } else {
-        window.clearTimeout(timeout);
         finish();
     }
 }

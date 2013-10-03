@@ -1,3 +1,26 @@
+2013-10-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Improved painting behavior in SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122257
+
+        Reviewed by Oliver Hunt.
+
+        Individual test names with times was a good painting strategy years
+        back, when each benchmark took hundreds of milliseconds to run. Now,
+        the whole suite can finish in a a few hundres milliseconds, and things
+        look pretty flashy.
+
+        Instead, display a countdown that indicates which iteration of the
+        test we're on.
+
+        * resources/TEMPLATE.html: Work around a bug in Firefox by specifying
+        our style inside the .html file instead of in an external stylesheet.
+        Under heavy JavaScript load, Firefox neglects to apply external
+        stylesheets -- probably due to a starved timer.
+        
+        * resources/driver-TEMPLATE.html: Delay a little between runs to ensure
+        that our countdown has enough time to paint.
+
 2013-09-26  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a version number string in SunSpider 1.0.2
