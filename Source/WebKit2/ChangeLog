@@ -1,3 +1,11 @@
+2013-10-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed fix of DrawingArea creation on non-Mac platforms after r156793.
+        std::make_unique<DrawingAreaImpl>() should be used, as before that revision.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+
 2013-10-02  Anders Carlsson  <andersca@apple.com>
 
         Remove Qt code from Platform/

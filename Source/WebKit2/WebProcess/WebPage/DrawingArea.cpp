@@ -48,7 +48,7 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPage
         return std::make_unique<RemoteLayerTreeDrawingArea>(webPage, parameters);
 #else
     case DrawingAreaTypeImpl:
-        return DrawingAreaImpl::create(webPage, parameters);
+        return std::make_unique<DrawingAreaImpl>(webPage, parameters);
 #endif
     }
 
