@@ -391,6 +391,7 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
     CSSPropertyWebkitShapePadding,
+    CSSPropertyWebkitShapeImageThreshold,
 #endif
 #if ENABLE(SVG)
     CSSPropertyBufferedRendering,
@@ -2845,6 +2846,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return cssValuePool().createValue(style->shapeMargin());
         case CSSPropertyWebkitShapePadding:
             return cssValuePool().createValue(style->shapePadding());
+        case CSSPropertyWebkitShapeImageThreshold:
+            return cssValuePool().createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);

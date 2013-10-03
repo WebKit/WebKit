@@ -51,6 +51,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_shapeOutside(RenderStyle::initialShapeOutside())
     , m_shapeMargin(RenderStyle::initialShapeMargin())
     , m_shapePadding(RenderStyle::initialShapePadding())
+    , m_shapeImageThreshold(RenderStyle::initialShapeImageThreshold())
 #endif
     , m_clipPath(RenderStyle::initialClipPath())
     , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
@@ -128,6 +129,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_shapeOutside(o.m_shapeOutside)
     , m_shapeMargin(o.m_shapeMargin)
     , m_shapePadding(o.m_shapePadding)
+    , m_shapeImageThreshold(o.m_shapeImageThreshold)
 #endif
     , m_clipPath(o.m_clipPath)
 #if ENABLE(CSS3_TEXT)
@@ -220,6 +222,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_shapeOutside == o.m_shapeOutside
         && m_shapeMargin == o.m_shapeMargin
         && m_shapePadding == o.m_shapePadding
+        && m_shapeImageThreshold == o.m_shapeImageThreshold
 #endif
         && m_clipPath == o.m_clipPath
 #if ENABLE(CSS3_TEXT)

@@ -1,3 +1,18 @@
+2013-10-02  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Implement the shape-image-threshold property
+        https://bugs.webkit.org/show_bug.cgi?id=122216
+
+        Reviewed by Andreas Kling.
+
+        Check parsing of the non-inherited CSS shape-image-threshold number property.
+        The property is defined here:
+        http://dev.w3.org/csswg/css-shapes-1/#shape-image-threshold-property
+
+        * fast/shapes/parsing/parsing-shape-image-threshold-expected.txt: Added.
+        * fast/shapes/parsing/parsing-shape-image-threshold.html: Added.
+        * fast/shapes/parsing/script-tests/parsing-shape-image-threshold.js: Added.
+
 2013-10-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Regions] Helper functions for selection layout tests

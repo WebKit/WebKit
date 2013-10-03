@@ -2427,6 +2427,7 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 #if ENABLE(CSS_SHAPES)
     setPropertyHandler(CSSPropertyWebkitShapeMargin, ApplyPropertyLength<&RenderStyle::shapeMargin, &RenderStyle::setShapeMargin, &RenderStyle::initialShapeMargin>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapePadding, ApplyPropertyLength<&RenderStyle::shapePadding, &RenderStyle::setShapePadding, &RenderStyle::initialShapePadding>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitShapeImageThreshold, ApplyPropertyDefault<float, &RenderStyle::shapeImageThreshold, float, &RenderStyle::setShapeImageThreshold, float, &RenderStyle::initialShapeImageThreshold>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapeInside, ApplyPropertyShape<&RenderStyle::shapeInside, &RenderStyle::setShapeInside, &RenderStyle::initialShapeInside>::createHandler());
     setPropertyHandler(CSSPropertyWebkitShapeOutside, ApplyPropertyShape<&RenderStyle::shapeOutside, &RenderStyle::setShapeOutside, &RenderStyle::initialShapeOutside>::createHandler());
 #endif

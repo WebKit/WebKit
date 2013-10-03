@@ -1,3 +1,35 @@
+2013-10-02  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Implement the shape-image-threshold property
+        https://bugs.webkit.org/show_bug.cgi?id=122216
+
+        Reviewed by Andreas Kling.
+
+        Added support for the CSS shape-image-threshold property. This change
+        just enables parsing the property, it's not connected to the
+        Shapes code yet.
+
+        The number valued shape-image-threshold property is defined here:
+        http://dev.w3.org/csswg/css-shapes-1/#shape-image-threshold-property
+        Its computed value is clamped to the range [0, 1].
+
+        Test: fast/shapes/parsing/parsing-shape-image-threshold.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-10-02  Andreas Kling  <akling@apple.com>
 
         Remove Qt-specific code in WebCore/plugins.

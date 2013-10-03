@@ -3040,6 +3040,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeMargin:
     case CSSPropertyWebkitShapePadding:
+    case CSSPropertyWebkitShapeImageThreshold:
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
 #endif

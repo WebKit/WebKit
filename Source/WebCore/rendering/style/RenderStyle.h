@@ -1529,6 +1529,14 @@ public:
     const Length& shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
     void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, std::move(shapeMargin)); }
     static Length initialShapeMargin() { return Length(0, Fixed); }
+
+    float shapeImageThreshold() const { return rareNonInheritedData->m_shapeImageThreshold; }
+    void setShapeImageThreshold(float shapeImageThreshold) 
+    { 
+        float clampedShapeImageThreshold = clampTo<float>(shapeImageThreshold, 0, 1);
+        SET_VAR(rareNonInheritedData, m_shapeImageThreshold, clampedShapeImageThreshold); 
+    }
+    static float initialShapeImageThreshold() { return 0; }
 #endif
 
     void setClipPath(PassRefPtr<ClipPathOperation> operation)

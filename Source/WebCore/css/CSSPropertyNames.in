@@ -432,6 +432,7 @@ z-index
 -webkit-shape-outside
 -webkit-shape-margin
 -webkit-shape-padding
+-webkit-shape-image-threshold
 #endif
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-wrap-flow

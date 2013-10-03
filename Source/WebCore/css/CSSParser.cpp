@@ -3029,6 +3029,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitShapePadding:
         validPrimitive = (RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled() && !id && validUnit(value, FLength | FNonNeg));
         break;
+    case CSSPropertyWebkitShapeImageThreshold:
+        validPrimitive = (RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled() && !id && validUnit(value, FNumber));
+        break;
 #endif
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:
