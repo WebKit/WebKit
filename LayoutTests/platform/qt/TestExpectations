@@ -1,2 +1,0 @@
-# This file is needed for flakiness dashboard to load <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html>.
-# It should be removed when the dashboard is fixed to not require Qt expectations.
