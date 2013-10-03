@@ -1,3 +1,15 @@
+2013-10-03  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r156811): Objective-C JavaScriptCore API test failing on Mountain Lion bots
+        https://bugs.webkit.org/show_bug.cgi?id=122260
+
+        Reviewed by Alexey Proskuryakov.
+
+        For the API to work, the tests need to be compiled with a newer version of the LLVM
+        compiler. Until the bots are updated to that version, disable the tests on 10.8.
+
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm:
+
 2013-10-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose aria-invalid as a text attribute (not object attribute)
