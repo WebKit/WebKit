@@ -1,3 +1,17 @@
+2013-10-03  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL] [DEBUG] JavaScriptCore fails to build
+        https://bugs.webkit.org/show_bug.cgi?id=122267
+
+        Reviewed by Michael Saboff.
+
+        Build fails due to an expression containing comparison between signed
+        and unsigned integer.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions): Add cast to avoid signed vs.
+        unsigned comparison warning.
+
 2013-10-03  Nadav Rotem  <nrotem@apple.com>
 
         DFG: ConstProp the pattern ValueToInt32(Bool(x)) -> Int32(x)

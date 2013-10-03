@@ -125,7 +125,7 @@ void Data::performAssertions(VM& vm)
     
     ASSERT(ResolveModeAndType::mask == 0xffff);
 
-    ASSERT(MarkedBlock::blockMask == ~0xffff);
+    ASSERT(MarkedBlock::blockMask == ~static_cast<decltype(MarkedBlock::blockMask)>(0xffff));
 
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED
