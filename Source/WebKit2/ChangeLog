@@ -1,5 +1,36 @@
 2013-10-03  Anders Carlsson  <andersca@apple.com>
 
+        Ignore deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=122302
+
+        Reviewed by Mark Rowe.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::globalPoint):
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::screenToWindow):
+        (WebKit::PageClientImpl::windowToScreen):
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        (-[WKTextInputPanel _hasMarkedText]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView characterIndexForPoint:]):
+        (-[WKView firstRectForCharacterRange:actualRange:]):
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]):
+        (-[WKView _setDragImage:at:linkDrag:]):
+        (-[WKView performDictionaryLookupAtCurrentMouseLocation]):
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+
+2013-10-03  Anders Carlsson  <andersca@apple.com>
+
         Remove the last remnants of Qt from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=122290
 

@@ -1524,12 +1524,13 @@ static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
     
     // WebKit1 code path... platformWidget() exists.
     if (frameView && frameView->platformWidget()) {
-        
         NSPoint nsPoint = (NSPoint)point;
         NSView* view = frameView->documentView();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         nsPoint = [[view window] convertBaseToScreen:[view convertPoint:nsPoint toView:nil]];
+#pragma clang diagnostic pop
         return CGPointMake(nsPoint.x, nsPoint.y);
-
     } else {
         
         // Find the appropriate scroll view to use to convert the contents to the window.

@@ -139,8 +139,10 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
 
     NSRect contentRect = m_findIndicator->frameRect();
     NSRect windowFrameRect = NSIntegralRect([m_wkView convertRect:contentRect toView:nil]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     windowFrameRect.origin = [[m_wkView window] convertBaseToScreen:windowFrameRect.origin];
-
+#pragma clang diagnostic pop
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:windowFrameRect styleMask:NSBorderlessWindowMask];
     
     m_findIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect 

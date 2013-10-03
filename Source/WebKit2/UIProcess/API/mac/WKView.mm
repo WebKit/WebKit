@@ -1698,9 +1698,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     NSWindow *window = [self window];
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (window)
         thePoint = [window convertScreenToBase:thePoint];
-    thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame 
+#pragma clang diagnostic pop
+    thePoint = [self convertPoint:thePoint fromView:nil];  // the point is relative to the main frame
     
     uint64_t result = _data->_page->characterIndexForPoint(IntPoint(thePoint));
     LOG(TextInput, "characterIndexForPoint:(%f, %f) -> %u", thePoint.x, thePoint.y, result);
@@ -1721,8 +1724,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     resultRect = [self convertRect:resultRect toView:nil];
     
     NSWindow *window = [self window];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (window)
         resultRect.origin = [window convertBaseToScreen:resultRect.origin];
+#pragma clang diagnostic pop
 
     if (actualRange) {
         // FIXME: Update actualRange to match the range of first rect.
@@ -2250,9 +2256,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
         modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber]
         context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
+#pragma clang diagnostic pop
     NativeWebMouseEvent webEvent(fakeEvent, self);
     _data->_page->handleMouseEvent(webEvent);
 }
@@ -2694,6 +2703,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // The call below could release this WKView.
     RetainPtr<WKView> protector(self);
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self dragImage:image
                  at:clientPoint
              offset:NSZeroSize
@@ -2701,6 +2712,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
          pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
              source:self
           slideBack:YES];
+#pragma clang diagnostic pop
 }
 
 static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
@@ -3123,7 +3135,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)performDictionaryLookupAtCurrentMouseLocation
 {
     NSPoint thePoint = [NSEvent mouseLocation];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     thePoint = [[self window] convertScreenToBase:thePoint];
+#pragma clang diagnostic pop
     thePoint = [self convertPoint:thePoint fromView:nil];
 
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(thePoint.x, thePoint.y));

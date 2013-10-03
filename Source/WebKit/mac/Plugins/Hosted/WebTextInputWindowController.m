@@ -106,8 +106,11 @@
 
 - (BOOL)_interpretKeyEvent:(NSEvent *)event string:(NSString **)string
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
- 
+#pragma clang diagnostic pop
+
     *string = nil;
 
     // Let TSM know that a bottom input window would be created for marked text.
@@ -121,7 +124,10 @@
     if (![[_inputTextView inputContext] handleEvent:event])
         return NO;
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if ([_inputTextView hasMarkedText]) {
+#pragma clang diagnostic pop
         // Don't show the input method window for dead keys
         if ([[event characters] length] > 0)
             [self orderFront:nil];

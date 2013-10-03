@@ -39,7 +39,10 @@ namespace WebCore {
 
 IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window)));
+#pragma clang diagnostic pop
 }
 
 static IntPoint globalPointForEvent(NSEvent *event)

@@ -51,7 +51,10 @@
     
     if(resizeDelta > 0.0){
         NSSize newSize = NSMakeSize((originalSize.width * resizeDelta), (originalSize.height * resizeDelta));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [self setScalesWhenResized:YES];
+#pragma clang diagnostic pop
         [self setSize:newSize];
     }
 }
@@ -60,17 +63,29 @@
 {
     NSImage *dissolvedImage = [[NSImage alloc] initWithSize:[self size]];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSPoint point = [self isFlipped] ? NSMakePoint(0, [self size].height) : NSZeroPoint;
+#pragma clang diagnostic pop
     
     // In this case the dragging image is always correct.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [dissolvedImage setFlipped:[self isFlipped]];
+#pragma clang diagnostic pop
 
     [dissolvedImage lockFocus];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self dissolveToPoint:point fraction: delta];
+#pragma clang diagnostic pop
     [dissolvedImage unlockFocus];
 
     [self lockFocus];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [dissolvedImage compositeToPoint:point operation:NSCompositeCopy];
+#pragma clang diagnostic pop
     [self unlockFocus];
 
     [dissolvedImage release];

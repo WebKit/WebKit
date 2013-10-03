@@ -99,7 +99,10 @@
 
     NSView* view = core(self)->document().view()->documentView();
     result = [view convertRect:result toView:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     result.origin = [[view window] convertBaseToScreen:result.origin];
+#pragma clang diagnostic pop
     return result;
 }
 

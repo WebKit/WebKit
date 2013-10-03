@@ -1,3 +1,28 @@
+2013-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Ignore deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=122302
+
+        Reviewed by Mark Rowe.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLInputElement _rectOnScreen]):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * page/mac/FrameSnapshottingMac.mm:
+        (WebCore::imageFromRect):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::Icon):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::scaleDragImage):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::globalPoint):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformContentsToScreen):
+        (WebCore::ScrollView::platformScreenToContents):
+
 2013-10-03  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Support the shape-image-threshold property

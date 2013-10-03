@@ -441,7 +441,10 @@ static WebIconDatabaseClient* defaultClient()
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [icon setScalesWhenResized:YES];
+#pragma clang diagnostic pop
     [icon setSize:size];
     
 #if !LOG_DISABLED
@@ -484,7 +487,10 @@ NSImage *webGetNSImage(Image* image, NSSize size)
     if (!nsImage)
         return nil;
     if (!NSEqualSizes([nsImage size], size)) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [nsImage setScalesWhenResized:YES];
+#pragma clang diagnostic pop
         [nsImage setSize:size];
     }
     return nsImage;

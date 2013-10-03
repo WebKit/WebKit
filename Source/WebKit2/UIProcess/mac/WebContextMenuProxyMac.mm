@@ -220,8 +220,11 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     NSPoint location = NSMakePoint(NSMinX(menuRect), NSMaxY(menuRect) - vertOffset);
 
     location = [m_webView convertPoint:location toView:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     location = [m_webView.window convertBaseToScreen:location];
- 
+#pragma clang diagnostic pop
+
     WKPopupContextMenu(menu, location);
 
     [m_popup.get() dismissPopUp];

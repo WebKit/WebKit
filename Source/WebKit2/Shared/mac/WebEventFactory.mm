@@ -145,7 +145,10 @@ static NSPoint flipScreenPoint(const NSPoint& screenPoint, NSScreen *screen)
 
 static NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window));
+#pragma clang diagnostic pop
 }
 
 static NSPoint globalPointForEvent(NSEvent *event)

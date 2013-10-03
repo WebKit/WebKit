@@ -49,7 +49,10 @@ NSImage* imageFromRect(Frame* frame, NSRect rect)
     NSImage* resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
     
     if (rect.size.width != 0 && rect.size.height != 0) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [resultImage setFlipped:YES];
+#pragma clang diagnostic pop
         [resultImage lockFocus];
 
         GraphicsContext graphicsContext((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]);        
@@ -59,7 +62,10 @@ NSImage* imageFromRect(Frame* frame, NSRect rect)
         graphicsContext.restore();
 
         [resultImage unlockFocus];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [resultImage setFlipped:NO];
+#pragma clang diagnostic pop
     }
     
     frame->view()->setPaintBehavior(oldBehavior);

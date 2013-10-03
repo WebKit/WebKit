@@ -168,7 +168,10 @@
         origin = rect.origin;
         
         dragImage = [[image copy] autorelease];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [dragImage setScalesWhenResized:YES];
+#pragma clang diagnostic pop
         [dragImage setSize:originalSize];
         
         [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
@@ -198,7 +201,10 @@
     }
     
     // Per kwebster, offset arg is ignored
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
+#pragma clang diagnostic pop
 }
 
 - (BOOL)_web_firstResponderIsSelfOrDescendantView
@@ -229,10 +235,13 @@
     NSRect convertedRect = [self convertRect:aRect toView:nil];
     
     // Convert to screen coordinates
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     convertedRect.origin = [thisWindow convertBaseToScreen:convertedRect.origin];
-    
+
     // Convert to other window's coordinates
     convertedRect.origin = [otherWindow convertScreenToBase:convertedRect.origin];
+#pragma clang diagnostic pop
     
     // Convert to other view's coordinates
     convertedRect = [aView convertRect:convertedRect fromView:nil];

@@ -163,6 +163,8 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
                                             pressure:[initiatingNSEvent pressure]];
     
     [NSApp postEvent:fakeEvent atStart:YES];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
                                    location:[[m_webView window] convertScreenToBase:[NSEvent mouseLocation]]
                               modifierFlags:[initiatingNSEvent modifierFlags]
@@ -172,6 +174,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
                                 eventNumber:0
                                  clickCount:0
                                    pressure:0];
+#pragma clang diagnostic pop
     [NSApp postEvent:fakeEvent atStart:YES];
 }
 

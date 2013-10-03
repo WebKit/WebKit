@@ -764,16 +764,25 @@ using namespace WebCore;
     switch (sourceSpace) {
         case NPCoordinateSpacePlugin:
             sourcePointInScreenSpace = [self convertPoint:sourcePoint toView:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePointInScreenSpace];
+#pragma clang diagnostic pop
             break;
             
         case NPCoordinateSpaceWindow:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
+#pragma clang diagnostic pop
             break;
             
         case NPCoordinateSpaceFlippedWindow:
             sourcePoint.y = [[self currentWindow] frame].size.height - sourcePoint.y;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             sourcePointInScreenSpace = [[self currentWindow] convertBaseToScreen:sourcePoint];
+#pragma clang diagnostic pop
             break;
             
         case NPCoordinateSpaceScreen:
@@ -793,16 +802,25 @@ using namespace WebCore;
     // Then convert back to the destination space
     switch (destSpace) {
         case NPCoordinateSpacePlugin:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+#pragma clang diagnostic pop
             destPoint = [self convertPoint:destPoint fromView:nil];
             break;
             
         case NPCoordinateSpaceWindow:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+#pragma clang diagnostic pop
             break;
             
         case NPCoordinateSpaceFlippedWindow:
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             destPoint = [[self currentWindow] convertScreenToBase:sourcePointInScreenSpace];
+#pragma clang diagnostic pop
             destPoint.y = [[self currentWindow] frame].size.height - destPoint.y;
             break;
             

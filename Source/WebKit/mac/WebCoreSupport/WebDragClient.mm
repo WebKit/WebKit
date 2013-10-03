@@ -117,7 +117,10 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
             ReportDiscardedDelegateException(selector, exception);
         }
     } else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [topHTMLView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
+#pragma clang diagnostic pop
 }
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMElement* element, NSURL* URL, NSString* title, WebCore::Frame* frame) 
