@@ -379,6 +379,7 @@ webkit.org/b/122234 css3/filters/custom/custom-filter-u-texture-size.html [ Imag
 webkit.org/b/122234 css3/filters/custom/custom-filter-u-tile-size.html [ ImageOnlyFailure ]
 webkit.org/b/122234 css3/filters/custom/custom-filter-unavailable-varying.html [ ImageOnlyFailure ]
 webkit.org/b/122234 css3/filters/custom/custom-filter-clamp-css-color-matrix.html [ ImageOnlyFailure ]
+webkit.org/b/122234 css3/filters/custom/custom-filter-composite-fractional-source-alpha.html [ ImageOnlyFailure ]
 
 # Tiled background images that intersect the tiles are getting weird fringing.
 webkit.org/b/122235 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]

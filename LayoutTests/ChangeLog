@@ -1,3 +1,10 @@
+2013-10-03  Tim Horton  <timothy_horton@apple.com>
+
+        Add test expectation for one more test having color space issues after r156793.
+        (css3/filters/custom/custom-filter-composite-fractional-source-alpha.html)
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-10-03  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test media/click-volume-bar-not-pausing.html is flaky
