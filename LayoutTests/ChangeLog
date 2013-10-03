@@ -1,3 +1,10 @@
+2013-10-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Re-add Qt TestExpectations. Without it, the flakiness dashboard page loads as blank.
+
+        * platform/qt: Added.
+        * platform/qt/TestExpectations: Added.
+
 2013-10-03  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] add shape-margin support for image valued shapes
