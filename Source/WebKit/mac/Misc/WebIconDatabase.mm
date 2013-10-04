@@ -33,7 +33,6 @@
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebNSFileManagerExtras.h"
-#import "WebNSNotificationCenterExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
@@ -269,19 +268,17 @@ static WebIconDatabaseClient* defaultClient()
 {
     ASSERT(URL);
     
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:URL
-                                                         forKey:WebIconNotificationUserInfoURLKey];
-                                                         
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadWithName:WebIconDatabaseDidAddIconNotification
-                                                        object:self
-                                                      userInfo:userInfo];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSDictionary *userInfo = @{ WebIconNotificationUserInfoURLKey : URL };
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidAddIconNotification object:self userInfo:userInfo];
+    });
 }
 
 - (void)_sendDidRemoveAllIconsNotification
 {
-    [[NSNotificationCenter defaultCenter] postNotificationOnMainThreadWithName:WebIconDatabaseDidRemoveAllIconsNotification
-                                                        object:self
-                                                      userInfo:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification object:self];
+    });
 }
 
 - (void)_startUpIconDatabase

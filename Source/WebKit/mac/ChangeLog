@@ -1,3 +1,18 @@
+2013-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove WebNSNotificationCenterExtras
+        https://bugs.webkit.org/show_bug.cgi?id=122316
+
+        Reviewed by Dan Bernstein.
+
+        Use dispatch_async to ensure that notifications are posted on the main thread.
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase _sendNotificationForURL:]):
+        (-[WebIconDatabase _sendDidRemoveAllIconsNotification]):
+        * Misc/WebNSNotificationCenterExtras.h: Removed.
+        * Misc/WebNSNotificationCenterExtras.m: Removed.
+
 2013-10-03  Sam Weinig  <sam@webkit.org>
 
         Remove shouldRubberBandInDirection from the WKBundlePageUIClient
