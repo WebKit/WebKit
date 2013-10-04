@@ -350,7 +350,7 @@
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],
         "webkitperl": [ "dbates@webkit.org" ],
-        "webkitpy": [ "dpranke@chromium.org", "glenn@skynav.com" ],
+        "webkitpy": [ "glenn@skynav.com" ],
     },
     "MESSAGE_RULES": {
         "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "

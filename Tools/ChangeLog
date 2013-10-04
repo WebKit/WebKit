@@ -1,3 +1,12 @@
+2013-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        remove dpranke from webkitpy watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=122331
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-10-04  Tim Horton  <timothy_horton@apple.com>
 
         [mac][wk2] ScrollPinningBehaviors, SpacebarScrolling, and ScrollByLineCommands fail after r156793
