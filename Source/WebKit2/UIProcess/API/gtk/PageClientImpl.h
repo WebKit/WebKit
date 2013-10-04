@@ -28,6 +28,7 @@
 #ifndef PageClientImpl_h
 #define PageClientImpl_h
 
+#include "DefaultUndoController.h"
 #include "KeyBindingTranslator.h"
 #include "PageClient.h"
 #include "WebPageProxy.h"
@@ -102,6 +103,7 @@ private:
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
+    DefaultUndoController m_undoController;
     WebCore::KeyBindingTranslator m_keyBindingTranslator;
 };
 

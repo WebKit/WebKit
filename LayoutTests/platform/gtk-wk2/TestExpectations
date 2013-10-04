@@ -72,7 +72,6 @@ webkit.org/b/63706 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/63706 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/63706 editing/selection/contains-boundaries.html [ Failure ]
 webkit.org/b/63706 editing/selection/drag-text-delay.html [ Failure ]
-webkit.org/b/63706 editing/undo/undo-smart-delete-word.html [ Failure ]
 webkit.org/b/63706 fast/block/float/float-in-float-hit-testing.html [ Failure ]
 webkit.org/b/63706 fast/events/bogus-dropEffect-effectAllowed.html [ Failure ]
 webkit.org/b/63706 fast/events/content-changed-during-drop.html [ Failure ]
@@ -113,39 +112,11 @@ webkit.org/b/39485 fast/speech/speech-input-result-list-not-enough-arguments.htm
 webkit.org/b/39485 fast/speech/speech-input-scripting.html [ Skip ]
 
 # WebKit2 needs layoutTestController.setEditingBehaviour
-Bug(GTK) editing/selection/directionality-after-undo-replace.html [ Failure ]
 Bug(GTK) editing/selection/5354455-1.html [ Failure ]
 Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 
 # WebKit2 needs textInputController.selectedRange
 Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
-
-# Implement PageClientImpl::registerEditCommand and handling commands functions
-Bug(GTK) editing/deleting/delete-by-word-002.html [ Failure ]
-Bug(GTK) editing/deleting/delete-and-undo.html [ Failure ]
-Bug(GTK) editing/undo/undo-delete.html [ Failure ]
-Bug(GTK) editing/undo/undo-forward-delete.html [ Failure ]
-Bug(GTK) editing/undo/undo-combined-delete-boundary.html [ Failure ]
-Bug(GTK) editing/undo/undo-forward-delete-boundary.html [ Failure ]
-Bug(GTK) editing/undo/undo-delete-boundary.html [ Failure ]
-Bug(GTK) editing/undo/undo-combined-delete.html [ Failure ]
-Bug(GTK) editing/undo/undo-typing-001.html [ Failure ]
-Bug(GTK) editing/undo/4063751.html [ Failure ]
-Bug(GTK) editing/undo/redo-typing-001.html [ Failure ]
-Bug(GTK) editing/execCommand/format-block-multiple-paragraphs-in-pre.html [ Failure ]
-Bug(GTK) editing/inserting/redo.html [ Failure ]
-Bug(GTK) editing/pasteboard/undoable-fragment-removes.html [ Failure ]
-Bug(GTK) editing/style/stylewithcss-without-selection.html [ Failure ]
-Bug(GTK) editing/undo/5378473.html [ Failure ]
-Bug(GTK) editing/undo/redo-split-text-node.html [ Failure ]
-Bug(GTK) editing/undo/redo-split-text-with-removal.html [ Failure ]
-Bug(GTK) editing/undo/redo-style.html [ Failure ]
-Bug(GTK) editing/undo/remove-css-property-and-remove-style.html [ Failure ]
-Bug(GTK) editing/undo/replace-by-span-then-remove.html [ Failure ]
-Bug(GTK) editing/undo/undo-after-setting-value.html [ Failure ]
-Bug(GTK) editing/undo/undo-indent.html [ Failure ]
-Bug(GTK) editing/undo/undo-misspellings.html [ Failure ]
-Bug(GTK) fast/forms/plaintext-mode-1.html [ Failure ]
 
 # Implement testRunner.setAsynchronousSpellCheckingEnabled
 # http://webkit.org/b/81042
@@ -169,7 +140,6 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Time
 
 # WebKitTestRunner needs a more-complete implementation of eventSender
 # https://bugs.webkit.org/show_bug.cgi?id=42194
-webkit.org/b/42194 editing/undo/undo-smart-delete-reversed-selection.html [ Failure ]
 webkit.org/b/42194 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
@@ -422,7 +392,6 @@ Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
 Bug(GTK) editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
 Bug(GTK) editing/spelling/spelling-insert-html.html [ Failure ]
-Bug(GTK) editing/undo/undo-deleteWord.html [ Failure ]
 Bug(GTK) fast/css/bidi-override-in-anonymous-block.html [ Failure ]
 Bug(GTK) fast/css/disabled-author-styles.html [ Failure ]
 Bug(GTK) fast/css/relative-positioned-block-crash.html [ Failure ]
@@ -435,7 +404,6 @@ Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 Bug(GTK) fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
-Bug(GTK) fast/forms/input-paste-undo.html [ Failure ]
 Bug(GTK) fast/forms/listbox-deselect-scroll.html [ Failure ]
 Bug(GTK) fast/forms/listbox-selection.html [ Failure ]
 Bug(GTK) fast/forms/listbox-typeahead-cyrillic.html [ Failure ]

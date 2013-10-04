@@ -816,6 +816,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.h \
 	Source/WebKit2/UIProcess/BackingStore.cpp \
 	Source/WebKit2/UIProcess/BackingStore.h \
+	Source/WebKit2/UIProcess/DefaultUndoController.cpp \
+	Source/WebKit2/UIProcess/DefaultUndoController.h \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.cpp \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.h \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxyMap.cpp \

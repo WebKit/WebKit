@@ -1,3 +1,22 @@
+2013-10-04  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Enable text edition UndoOperations support in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=122305
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replaced the notImplemented() function calls for
+        the corresponding implementation of the edit operations
+        provided by the DefaultUndoController class.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2013-10-04  Sergio Correia  <sergio.correia@openbossa.org>
 
         Remove Qt leftovers from WebKit2
