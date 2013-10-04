@@ -1,3 +1,32 @@
+2013-10-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Layout Tests for selecting text in 2 regions for other writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=122327
+
+        Reviewed by Alexandru Chiculita.
+
+        Add versions for other writing modes (horizontal-bt, vertical-lr and
+        vertical-rl) for test
+        fast/regions/selection/selecting-text-in-2-regions.html.
+
+        * fast/regions/resources/helper.js:
+        (selectContentByIdsVert): Add new method when selecting context in a
+        vertical writing mode.
+        * fast/regions/resources/region-style.css: Add some new CSS classes for
+        vertical writing mode.
+        * fast/regions/selection/selecting-text-in-2-regions-horiz-bt-expected.html:
+        Added.
+        * fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html:
+        Added.
+        * fast/regions/selection/selecting-text-in-2-regions-vert-lr-expected.html:
+        Added.
+        * fast/regions/selection/selecting-text-in-2-regions-vert-lr.html:
+        Added.
+        * fast/regions/selection/selecting-text-in-2-regions-vert-rl-expected.html:
+        Added.
+        * fast/regions/selection/selecting-text-in-2-regions-vert-rl.html:
+        Added.
+
 2013-10-04  Oliver Hunt  <oliver@apple.com>
 
         Support for-of syntax

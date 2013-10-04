@@ -224,6 +224,16 @@ function selectContentByIds(fromId, toId) {
     selectContentByRange(fromRect.left, fromRectVerticalCenter, toRect.right, toRectVerticalCenter);
 }
 
+function selectContentByIdsVert(fromId, toId) {
+    var fromRect = document.getElementById(fromId).getBoundingClientRect();
+    var toRect = document.getElementById(toId).getBoundingClientRect();
+
+    var fromRectHorizontalCenter = fromRect.left + fromRect.width / 2;
+    var toRectHorizontalCenter = toRect.left + toRect.width / 2;
+
+    selectContentByRange(fromRectHorizontalCenter, fromRect.top, toRectHorizontalCenter, toRect.bottom);
+}
+
 function selectBaseAndExtent(fromId, fromOffset, toId, toOffset) {
     var from = document.getElementById(fromId);
     var to = document.getElementById(toId);

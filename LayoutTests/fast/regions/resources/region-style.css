@@ -94,3 +94,18 @@
     width: 300px;
     background-color: lightgrey;
 }
+
+.descriptionVert {
+    height: 600px;
+}
+
+.bigBoxVert {
+    height: 300px;
+    width: 100px;
+}
+
+.greyBigBoxVert {
+    height: 300px;
+    width: 100px;
+    background-color: lightgrey;
+}
