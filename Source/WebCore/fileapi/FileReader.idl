@@ -36,7 +36,8 @@
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
-    JSNoStaticTables
+    JSNoStaticTables,
+    OperationsNotDeletable
 ] interface FileReader {
     // ready states
     const unsigned short EMPTY = 0;

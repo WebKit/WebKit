@@ -25,7 +25,8 @@
 
 [
     JSNoStaticTables,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface FileList {
     readonly attribute unsigned long length;
     getter File item(unsigned long index);
