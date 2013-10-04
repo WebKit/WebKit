@@ -1,3 +1,17 @@
+2013-10-03  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r156811): WebCore rebuilds from scratch when doing an incremental build
+
+        The change in r156811 resulted in several public headers in the JavaScriptCore framework having their modification
+        date touched on every build, even if their contents had not changed. This resulted in a large portion of WebCore
+        needing to rebuilt after an incremental build of JavaScriptCore.
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Have unifdef generate its output to a temporary file. If its exit status
+        indicates that the content did not change, remove the temporary file. If the content changed, moved the temporary file
+        over the destination.
+
 2013-10-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
