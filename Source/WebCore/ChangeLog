@@ -1,3 +1,13 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        CTTE: SubframeLoader backpointer to Frame should be a reference.
+        <https://webkit.org/b/122350>
+
+        Reviewed by Anders Carlsson.
+
+        SubframeLoader is tied to the lifetime of FrameLoader, which in turn
+        is tied to the lifetime of Frame.
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         Remove some unneeded code from WidgetMac

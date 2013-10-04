@@ -57,7 +57,7 @@ class Widget;
 class SubframeLoader {
     WTF_MAKE_NONCOPYABLE(SubframeLoader);
 public:
-    explicit SubframeLoader(Frame*);
+    explicit SubframeLoader(Frame&);
 
     void clear();
 
@@ -92,7 +92,7 @@ private:
     Document* document() const;
 
     bool m_containsPlugins;
-    Frame* m_frame;
+    Frame& m_frame;
 
     URL completeURL(const String&) const;
 };
