@@ -5961,7 +5961,6 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isRenderRegion()
         || (renderer().style()->specifiesColumns() && !isRootLayer()))
         && !renderer().isPositioned()
         && !renderer().hasTransform()
@@ -5988,8 +5987,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isCanvas()
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
-        || renderer().isRenderIFrame()
-        || renderer().isRenderRegion();
+        || renderer().isRenderIFrame();
 }
 
 void RenderLayer::updateSelfPaintingLayer()

@@ -5,12 +5,12 @@ layer at (0,0) size 800x116
     RenderBody {BODY} at (8,8) size 784x100
 layer at (8,8) size 50x50
   RenderRegion {DIV} at (0,0) size 50x50
-layer at (8,58) size 50x50
-  RenderRegion {DIV} at (0,50) size 50x50
 layer at (8,50) size 50x450
   RenderRegion {DIV} at (8,50) size 50x450
 layer at (50,8) size 650x50
   RenderRegion {DIV} at (50,8) size 650x50
+layer at (8,58) size 50x50
+  RenderRegion {DIV} at (0,50) size 50x50
 Flow Threads
   Thread with flow-name 'flow'
     layer at (0,0) size 50x50

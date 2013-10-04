@@ -1,3 +1,20 @@
+2013-10-04  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Regions as stacking contexts should paint over positioned sibling
+        https://bugs.webkit.org/show_bug.cgi?id=122321
+
+        Reviewed by Alexandru Chiculita.
+
+        Test: fast/regions/layers/region-normalflow-stacking-context.html
+
+        Since regions are stacking contexts, they should not be in normal flow list of layers.
+        More clean-up after https://bugs.webkit.org/show_bug.cgi?id=117365 and https://bugs.webkit.org/show_bug.cgi?id=121828
+        which enabled the layers.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+
 2013-10-04  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Enable correct behaviour for deleting regional indicator symbols
