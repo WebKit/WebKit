@@ -498,10 +498,7 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     if (!m_frame.page())
         return false;
 
-    const bool allowed = m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
-    if (!allowed && reason == AboutToExecuteScript)
-        m_frame.loader().client().didNotAllowScript();
-    return allowed;
+    return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
 ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)

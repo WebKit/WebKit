@@ -366,10 +366,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
             return false;
 
         if (frame()) {
-            if (!frame()->loader().client().allowScriptFromSource(frame()->settings().isScriptEnabled(), url)) {
-                frame()->loader().client().didNotAllowScript();
+            if (!frame()->loader().client().allowScriptFromSource(frame()->settings().isScriptEnabled(), url))
                 return false;
-            }
         }
         break;
 #if ENABLE(CSS_SHADERS)

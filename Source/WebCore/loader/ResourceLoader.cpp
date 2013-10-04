@@ -375,10 +375,8 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
 
 void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
 {
-    if (handle()) {
-        frameLoader()->client().dispatchDidChangeResourcePriority(identifier(), loadPriority);
+    if (handle())
         handle()->didChangePriority(loadPriority);
-    }
 }
 
 void ResourceLoader::cancel()

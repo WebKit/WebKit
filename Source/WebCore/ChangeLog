@@ -1,3 +1,20 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        Clean out some FrameLoaderClient hooks that no ports were using.
+        <https://webkit.org/b/122356>
+
+        Reviewed by Anders Carlsson.
+
+        Removed the following hooks that were leftovers from dead ports:
+
+            - didExhaustMemoryAvailableForScript
+            - didNotAllowScript
+            - didNotAllowPlugins
+            - willCheckAndDispatchMessageEvent
+            - didChangeName
+            - dispatchWillInsertBody
+            - dispatchDidChangeResourcePriority
+
 2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         FocusController::advanceFocus spends a lot of time in HTMLMapElement::imageElement

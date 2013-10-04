@@ -279,8 +279,6 @@ namespace WebCore {
         virtual void documentElementAvailable() = 0;
         virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
 
-        virtual void didExhaustMemoryAvailableForScript() { };
-
         virtual void registerForIconNotification(bool listen = true) = 0;
         
 #if PLATFORM(MAC)
@@ -305,26 +303,12 @@ namespace WebCore {
         virtual bool allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin*, const URL&) { return enabledPerSettings; }
         virtual bool allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin*, const URL&) { return enabledPerSettings; }
 
-        // This callback notifies the client that the frame was about to run
-        // JavaScript but did not because allowScript returned false. We
-        // have a separate callback here because there are a number of places
-        // that need to know if JavaScript is enabled but are not necessarily
-        // preparing to execute script.
-        virtual void didNotAllowScript() { }
-        // This callback is similar, but for plugins.
-        virtual void didNotAllowPlugins() { }
-
         // Clients that generally disallow universal access can make exceptions for particular URLs.
         virtual bool shouldForceUniversalAccessFromLocalURL(const URL&) { return false; }
 
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
 
         virtual bool shouldPaintBrokenImage(const URL&) const { return true; }
-
-        // Returns true if the embedder intercepted the postMessage call
-        virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
-
-        virtual void didChangeName(const String&) { }
 
         virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
 
@@ -343,11 +327,6 @@ namespace WebCore {
         // notification with the given GL_ARB_robustness guilt/innocence code (see Extensions3D.h).
         virtual void didLoseWebGLContext(int) { }
 #endif
-
-        // If an HTML document is being loaded, informs the embedder that the document will have its <body> attached soon.
-        virtual void dispatchWillInsertBody() { }
-
-        virtual void dispatchDidChangeResourcePriority(unsigned long /*identifier*/, ResourceLoadPriority) { }
 
         virtual void forcePageTransitionIfNeeded() { }
 
