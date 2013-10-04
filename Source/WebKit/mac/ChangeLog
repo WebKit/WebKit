@@ -1,3 +1,16 @@
+2013-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Remove some unneeded code from WidgetMac
+        https://bugs.webkit.org/show_bug.cgi?id=122355
+
+        Reviewed by Dan Bernstein.
+
+        Remove code to handle the visible rect changing, it's not needed anymore since we always put Netscape plug-ins into their own layers now.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+
 2013-10-04  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream disk image cache

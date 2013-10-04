@@ -304,11 +304,6 @@ using namespace WebCore;
     return NSIntersectionRect([self convertRect:[self _windowClipRect] fromView:nil], [super visibleRect]);
 }
 
-- (void)visibleRectDidChange
-{
-    [self renewGState];
-}
-
 - (BOOL)acceptsFirstResponder
 {
     return YES;

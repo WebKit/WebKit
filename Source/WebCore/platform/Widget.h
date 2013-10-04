@@ -84,7 +84,6 @@ class Font;
 class GraphicsContext;
 class PlatformMouseEvent;
 class ScrollView;
-class WidgetPrivate;
 
 enum WidgetNotification { WillPaintFlattened, DidPaintFlattened };
 
@@ -228,10 +227,6 @@ private:
     bool m_parentVisible;
 
     IntRect m_frame; // Not used when a native widget exists.
-
-#if PLATFORM(MAC)
-    WidgetPrivate* m_data;
-#endif
 
 #if PLATFORM(EFL)
     Evas_Object* m_evasObject;

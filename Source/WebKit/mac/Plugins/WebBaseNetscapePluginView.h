@@ -46,11 +46,6 @@ namespace WebCore {
     class HTMLPlugInElement;
 }
 
-// Also declared in WebCore/WidgetMac.mm
-@interface NSView (Widget)
-- (void)visibleRectDidChange;
-@end
-
 @interface WebBaseNetscapePluginView : NSView
 {
     RetainPtr<WebNetscapePluginPackage> _pluginPackage;
