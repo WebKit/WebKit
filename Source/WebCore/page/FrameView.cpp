@@ -2402,7 +2402,7 @@ static bool isObjectAncestorContainerOf(RenderObject* ancestor, RenderObject* de
     return false;
 }
 
-void FrameView::scheduleRelayoutOfSubtree(RenderObject& newRelayoutRoot)
+void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
 {
     ASSERT(renderView());
     RenderView& renderView = *this->renderView();
@@ -3385,7 +3385,7 @@ bool FrameView::doLayoutWithFrameFlattening(bool allowSubtree)
 
     parentView->layout(allowSubtree);
 
-    RenderObject* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
+    RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
     ASSERT_UNUSED(root, !root->needsLayout());
 
     return true;

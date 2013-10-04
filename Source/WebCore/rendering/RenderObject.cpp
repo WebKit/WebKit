@@ -595,9 +595,12 @@ RenderBlock* RenderObject::firstLineBlock() const
     return 0;
 }
 
-static inline bool objectIsRelayoutBoundary(const RenderObject* object)
+static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 {
     // FIXME: In future it may be possible to broaden these conditions in order to improve performance.
+    if (object->isRenderView())
+        return true;
+
     if (object->isTextControl())
         return true;
 
@@ -634,62 +637,72 @@ void RenderObject::clearNeedsLayout()
 #endif
 }
 
-void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
+static void scheduleRelayoutForSubtree(RenderElement& renderer)
+{
+    if (!renderer.isRenderView()) {
+        if (!renderer.isRooted())
+            return;
+        renderer.view().frameView().scheduleRelayoutOfSubtree(renderer);
+        return;
+    }
+    toRenderView(renderer).frameView().scheduleRelayout();
+}
+
+void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderElement* newRoot)
 {
     ASSERT(!scheduleRelayout || !newRoot);
     ASSERT(!isSetNeedsLayoutForbidden());
 
-    RenderElement* object = container();
-    RenderObject* last = this;
+    RenderElement* ancestor = container();
 
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
+    bool hasOutOfFlowPosition = !isText() && style()->hasOutOfFlowPosition();
 
-    while (object) {
+    while (ancestor) {
 #ifndef NDEBUG
         // FIXME: Remove this once we remove the special cases for counters, quotes and mathml
         // calling setNeedsLayout during preferred width computation.
-        SetLayoutNeededForbiddenScope layoutForbiddenScope(object, isSetNeedsLayoutForbidden());
+        SetLayoutNeededForbiddenScope layoutForbiddenScope(ancestor, isSetNeedsLayoutForbidden());
 #endif
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
-        RenderElement* container = object->container();
-        if (!container && !object->isRenderView())
+        RenderElement* container = ancestor->container();
+        if (!container && !ancestor->isRenderView())
             return;
-        if (!last->isText() && last->style()->hasOutOfFlowPosition()) {
-            bool willSkipRelativelyPositionedInlines = !object->isRenderBlock() || object->isAnonymousBlock();
+        if (hasOutOfFlowPosition) {
+            bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
             // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
-            while (object && (!object->isRenderBlock() || object->isAnonymousBlock()))
-                object = object->container();
-            if (!object || object->posChildNeedsLayout())
+            while (ancestor && (!ancestor->isRenderBlock() || ancestor->isAnonymousBlock()))
+                ancestor = ancestor->container();
+            if (!ancestor || ancestor->posChildNeedsLayout())
                 return;
             if (willSkipRelativelyPositionedInlines)
-                container = object->container();
-            object->setPosChildNeedsLayoutBit(true);
+                container = ancestor->container();
+            ancestor->setPosChildNeedsLayoutBit(true);
             simplifiedNormalFlowLayout = true;
-            ASSERT(!object->isSetNeedsLayoutForbidden());
         } else if (simplifiedNormalFlowLayout) {
-            if (object->needsSimplifiedNormalFlowLayout())
+            if (ancestor->needsSimplifiedNormalFlowLayout())
                 return;
-            object->setNeedsSimplifiedNormalFlowLayoutBit(true);
-            ASSERT(!object->isSetNeedsLayoutForbidden());
+            ancestor->setNeedsSimplifiedNormalFlowLayoutBit(true);
         } else {
-            if (object->normalChildNeedsLayout())
+            if (ancestor->normalChildNeedsLayout())
                 return;
-            object->setNormalChildNeedsLayoutBit(true);
-            ASSERT(!object->isSetNeedsLayoutForbidden());
+            ancestor->setNormalChildNeedsLayoutBit(true);
         }
+        ASSERT(!ancestor->isSetNeedsLayoutForbidden());
 
-        if (object == newRoot)
+        if (ancestor == newRoot)
             return;
 
-        last = object;
-        if (scheduleRelayout && objectIsRelayoutBoundary(last))
+        if (scheduleRelayout && objectIsRelayoutBoundary(ancestor))
             break;
-        object = container;
+
+        hasOutOfFlowPosition = ancestor->style()->hasOutOfFlowPosition();
+        ancestor = container;
     }
 
-    if (scheduleRelayout)
-        last->scheduleRelayout();
+    if (scheduleRelayout && ancestor)
+        scheduleRelayoutForSubtree(*ancestor);
 }
 
 #ifndef NDEBUG
@@ -2202,16 +2215,6 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
 bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& /*locationInContainer*/, const LayoutPoint& /*accumulatedOffset*/, HitTestAction)
 {
     return false;
-}
-
-void RenderObject::scheduleRelayout()
-{
-    if (isRenderView())
-        toRenderView(*this).frameView().scheduleRelayout();
-    else {
-        if (isRooted())
-            view().frameView().scheduleRelayoutOfSubtree(*this);
-    }
 }
 
 void RenderObject::layout()

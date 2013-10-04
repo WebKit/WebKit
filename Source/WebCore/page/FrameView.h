@@ -106,7 +106,7 @@ public:
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);
     void scheduleRelayout();
-    void scheduleRelayoutOfSubtree(RenderObject&);
+    void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
     bool layoutPending() const;
     bool isInLayout() const { return m_inLayout; }
@@ -567,7 +567,7 @@ private:
 
     Timer<FrameView> m_layoutTimer;
     bool m_delayedLayout;
-    RenderObject* m_layoutRoot;
+    RenderElement* m_layoutRoot;
     
     bool m_layoutSchedulingEnabled;
     bool m_inLayout;

@@ -616,7 +616,7 @@ public:
 
     RenderBoxModelObject* offsetParent() const;
 
-    void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
+    void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderElement* newRoot = 0);
     void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     void clearNeedsLayout();
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
@@ -652,8 +652,6 @@ public:
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
     void setHasTransform(bool b = true) { m_bitfields.setHasTransform(b); }
     void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
-
-    void scheduleRelayout();
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
