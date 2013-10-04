@@ -1,3 +1,18 @@
+2013-10-04  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape Outside should relayout when set dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=122197
+
+        Reviewed by Alexandru Chiculita.
+
+        Test that a shape can be dynamically added, modified, or removed and that
+        content does a proper relayout.
+
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-overhang-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-overhang.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape.html: Added.
+
 2013-10-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Tests added in r141354 erroneously assume correction suggestion to be in the context menu

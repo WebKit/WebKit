@@ -593,6 +593,12 @@ public:
     {
         return ShapeOutsideInfo::isEnabledFor(this) ? ShapeOutsideInfo::info(this) : 0;
     }
+
+    void markShapeOutsideDependentsForLayout()
+    {
+        if (isFloating())
+            removeFloatingOrPositionedChildFromBlockLists();
+    }
 #endif
 
 protected:

@@ -1,3 +1,26 @@
+2013-10-04  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape Outside should relayout when set dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=122197
+
+        Reviewed by Alexandru Chiculita.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-dynamic-shape.html
+               fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-overhang.html
+
+        When shape outside is modified, dependent content needs to relayout. This patch
+        removes the float from the float lists and marks dependents for layout using
+        RenderBox::removeFloatingOrPositionedChildFromBlockLists(). This is the same
+        method used when switching from float: left to float: right and vice versa
+        (see RenderElement::styleWillChange).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateShapeOutsideInfoAfterStyleChange): Mark shape-outside dependents
+        for layout.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::markShapeOutsideDependentsForLayout): Mark all the items that may be
+        affected by this shape-outside for relayout.
+
 2013-10-04  Antti Koivisto  <antti@apple.com>
 
         Tighten markContainingBlocksForLayout

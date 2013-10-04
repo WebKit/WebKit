@@ -397,6 +397,7 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const ShapeValue* shapeOu
         shapeOutsideInfo->dirtyShapeSize();
     } else
         ShapeOutsideInfo::removeInfo(this);
+    markShapeOutsideDependentsForLayout();
 }
 #endif
 
