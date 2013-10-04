@@ -493,10 +493,14 @@ public:
     bool isPinnedToTopSide() const { return m_mainFrameIsPinnedToTopSide; }
     bool isPinnedToBottomSide() const { return m_mainFrameIsPinnedToBottomSide; }
 
-    bool rubberBandsAtBottom() const { return m_rubberBandsAtBottom; }
-    void setRubberBandsAtBottom(bool);
-    bool rubberBandsAtTop() const { return m_rubberBandsAtTop; }
+    bool rubberBandsAtLeft() const;
+    void setRubberBandsAtLeft(bool);
+    bool rubberBandsAtRight() const;
+    void setRubberBandsAtRight(bool);
+    bool rubberBandsAtTop() const;
     void setRubberBandsAtTop(bool);
+    bool rubberBandsAtBottom() const;
+    void setRubberBandsAtBottom(bool);
 
     void setPaginationMode(WebCore::Pagination::Mode);
     WebCore::Pagination::Mode paginationMode() const { return m_paginationMode; }
@@ -761,6 +765,7 @@ public:
         
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    void platformInitialize();
 
     void resetStateAfterProcessExited();
 
@@ -1214,8 +1219,11 @@ private:
     bool m_mainFrameIsPinnedToTopSide;
     bool m_mainFrameIsPinnedToBottomSide;
 
-    bool m_rubberBandsAtBottom;
+    bool m_useLegacyImplicitRubberBandControl;
+    bool m_rubberBandsAtLeft;
+    bool m_rubberBandsAtRight;
     bool m_rubberBandsAtTop;
+    bool m_rubberBandsAtBottom;
 
     bool m_mainFrameInViewSourceMode;
         

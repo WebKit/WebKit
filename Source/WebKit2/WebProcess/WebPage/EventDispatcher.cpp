@@ -84,7 +84,7 @@ void EventDispatcher::initializeConnection(CoreIPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), m_queue.get(), this);
 }
 
-void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canGoBack, bool canGoForward)
+void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent, bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom)
 {
 #if ENABLE(THREADED_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
@@ -96,7 +96,7 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
-            ScrollingThread::dispatch(bind(&ScrollingTree::updateBackForwardState, scrollingTree, canGoBack, canGoForward));
+            ScrollingThread::dispatch(bind(&ScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandsAtLeft, canRubberBandsAtRight, canRubberBandsAtTop, canRubberBandsAtBottom));
 
         ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
         if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
@@ -104,9 +104,6 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
             return;
         }
     }
-#else
-    UNUSED_PARAM(canGoBack);
-    UNUSED_PARAM(canGoForward);
 #endif
 
     RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));

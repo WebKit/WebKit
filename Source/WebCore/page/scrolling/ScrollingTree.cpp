@@ -49,12 +49,12 @@ PassRefPtr<ScrollingTree> ScrollingTree::create(ScrollingCoordinator* scrollingC
 ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_hasWheelEventHandlers(false)
-    , m_canGoBack(false)
-    , m_canGoForward(false)
+    , m_rubberBandsAtLeft(true)
+    , m_rubberBandsAtRight(true)
+    , m_rubberBandsAtTop(true)
+    , m_rubberBandsAtBottom(true)
     , m_mainFramePinnedToTheLeft(false)
     , m_mainFramePinnedToTheRight(false)
-    , m_rubberBandsAtBottom(true)
-    , m_rubberBandsAtTop(true)
     , m_mainFramePinnedToTheTop(false)
     , m_mainFramePinnedToTheBottom(false)
     , m_mainFrameIsRubberBanding(false)
@@ -91,14 +91,6 @@ ScrollingTree::EventResult ScrollingTree::tryToHandleWheelEvent(const PlatformWh
 
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, this, wheelEvent));
     return DidHandleEvent;
-}
-
-void ScrollingTree::updateBackForwardState(bool canGoBack, bool canGoForward)
-{
-    MutexLocker locker(m_swipeStateMutex);
-
-    m_canGoBack = canGoBack;
-    m_canGoForward = canGoForward;
 }
 
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -272,20 +264,6 @@ void ScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 #endif
 
-bool ScrollingTree::canGoBack()
-{
-    MutexLocker lock(m_swipeStateMutex);
-
-    return m_canGoBack;
-}
-
-bool ScrollingTree::canGoForward()
-{
-    MutexLocker lock(m_swipeStateMutex);
-
-    return m_canGoForward;
-}
-
 bool ScrollingTree::isRubberBandInProgress()
 {
     MutexLocker lock(m_mutex);    
@@ -300,6 +278,30 @@ void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
     m_mainFrameIsRubberBanding = isRubberBanding;
 }
 
+void ScrollingTree::setCanRubberBandState(bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom)
+{
+    MutexLocker locker(m_swipeStateMutex);
+
+    m_rubberBandsAtLeft = canRubberBandsAtLeft;
+    m_rubberBandsAtRight = canRubberBandsAtRight;
+    m_rubberBandsAtTop = canRubberBandsAtTop;
+    m_rubberBandsAtBottom = canRubberBandsAtBottom;
+}
+
+bool ScrollingTree::rubberBandsAtLeft()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_rubberBandsAtLeft;
+}
+
+bool ScrollingTree::rubberBandsAtRight()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_rubberBandsAtRight;
+}
+
 bool ScrollingTree::rubberBandsAtBottom()
 {
     MutexLocker lock(m_swipeStateMutex);
@@ -307,25 +309,11 @@ bool ScrollingTree::rubberBandsAtBottom()
     return m_rubberBandsAtBottom;
 }
 
-void ScrollingTree::setRubberBandsAtBottom(bool rubberBandsAtBottom)
-{
-    MutexLocker locker(m_swipeStateMutex);
-
-    m_rubberBandsAtBottom = rubberBandsAtBottom;
-}
-
 bool ScrollingTree::rubberBandsAtTop()
 {
     MutexLocker lock(m_swipeStateMutex);
 
     return m_rubberBandsAtTop;
-}
-
-void ScrollingTree::setRubberBandsAtTop(bool rubberBandsAtTop)
-{
-    MutexLocker locker(m_swipeStateMutex);
-
-    m_rubberBandsAtTop = rubberBandsAtTop;
 }
     
 void ScrollingTree::setScrollPinningBehavior(ScrollPinningBehavior pinning)
@@ -349,9 +337,9 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
 
     MutexLocker lock(m_swipeStateMutex);
 
-    if (wheelEvent.deltaX() > 0 && m_mainFramePinnedToTheLeft && m_canGoBack)
+    if (wheelEvent.deltaX() > 0 && m_mainFramePinnedToTheLeft && !m_rubberBandsAtLeft)
         return true;
-    if (wheelEvent.deltaX() < 0 && m_mainFramePinnedToTheRight && m_canGoForward)
+    if (wheelEvent.deltaX() < 0 && m_mainFramePinnedToTheRight && !m_rubberBandsAtRight)
         return true;
     if (wheelEvent.deltaY() > 0 && m_mainFramePinnedToTheTop && !m_rubberBandsAtTop)
         return true;

@@ -1,3 +1,32 @@
+2013-10-04  Sam Weinig  <sam@webkit.org>
+
+        Unify rubberband control
+        https://bugs.webkit.org/show_bug.cgi?id=122341
+
+        Reviewed by Tim Horton.
+
+        - Consolidates the two ways we were passing state about whether
+          to rubber-band on a particular edge down to one.
+
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::isRubberBandInProgress):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::setCanRubberBandState):
+        (WebCore::ScrollingTree::rubberBandsAtLeft):
+        (WebCore::ScrollingTree::rubberBandsAtRight):
+        (WebCore::ScrollingTree::rubberBandsAtBottom):
+        (WebCore::ScrollingTree::rubberBandsAtTop):
+        (WebCore::ScrollingTree::willWheelEventStartSwipeGesture):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection):
+
 2013-10-04  Andreas Kling  <akling@apple.com>
 
         CTTE: SubframeLoader backpointer to Frame should be a reference.

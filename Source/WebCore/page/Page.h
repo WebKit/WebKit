@@ -284,11 +284,6 @@ public:
     void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
 
-    bool rubberBandsAtBottom();
-    void setRubberBandsAtBottom(bool);
-    bool rubberBandsAtTop();
-    void setRubberBandsAtTop(bool);
-
     // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
     // and FrameView::pagination() is set only by CSS. Page::pagination() will affect all
     // FrameViews in the page cache, but FrameView::pagination() only affects the current

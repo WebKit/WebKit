@@ -454,15 +454,24 @@ bool WKPageIsPinnedToBottomSide(WKPageRef pageRef)
     return toImpl(pageRef)->isPinnedToBottomSide();
 }
 
-
-bool WKPageRubberBandsAtBottom(WKPageRef pageRef)
+bool WKPageRubberBandsAtLeft(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->rubberBandsAtBottom();
+    return toImpl(pageRef)->rubberBandsAtLeft();
 }
 
-void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)
+void WKPageSetRubberBandsAtLeft(WKPageRef pageRef, bool rubberBandsAtLeft)
 {
-    toImpl(pageRef)->setRubberBandsAtBottom(rubberBandsAtBottom);
+    toImpl(pageRef)->setRubberBandsAtLeft(rubberBandsAtLeft);
+}
+
+bool WKPageRubberBandsAtRight(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->rubberBandsAtRight();
+}
+
+void WKPageSetRubberBandsAtRight(WKPageRef pageRef, bool rubberBandsAtRight)
+{
+    toImpl(pageRef)->setRubberBandsAtRight(rubberBandsAtRight);
 }
 
 bool WKPageRubberBandsAtTop(WKPageRef pageRef)
@@ -473,6 +482,16 @@ bool WKPageRubberBandsAtTop(WKPageRef pageRef)
 void WKPageSetRubberBandsAtTop(WKPageRef pageRef, bool rubberBandsAtTop)
 {
     toImpl(pageRef)->setRubberBandsAtTop(rubberBandsAtTop);
+}
+
+bool WKPageRubberBandsAtBottom(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->rubberBandsAtBottom();
+}
+
+void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)
+{
+    toImpl(pageRef)->setRubberBandsAtBottom(rubberBandsAtBottom);
 }
 
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)

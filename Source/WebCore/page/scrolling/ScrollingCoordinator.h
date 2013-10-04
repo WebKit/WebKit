@@ -124,10 +124,6 @@ public:
     virtual void syncChildPositions(const LayoutRect&) { }
     virtual String scrollingStateTreeAsText() const;
     virtual bool isRubberBandInProgress() const { return false; }
-    virtual bool rubberBandsAtBottom() const { return false; }
-    virtual void setRubberBandsAtBottom(bool) { }
-    virtual bool rubberBandsAtTop() const { return false; }
-    virtual void setRubberBandsAtTop(bool) { }
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) { }
 
     // Generated a unique id for scroll layers.

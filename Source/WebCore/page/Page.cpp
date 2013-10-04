@@ -837,34 +837,6 @@ void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
     }
 }
 
-bool Page::rubberBandsAtBottom()
-{
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->rubberBandsAtBottom();
-
-    return false;
-}
-
-void Page::setRubberBandsAtBottom(bool rubberBandsAtBottom)
-{
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->setRubberBandsAtBottom(rubberBandsAtBottom);
-}
-
-bool Page::rubberBandsAtTop()
-{
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->rubberBandsAtTop();
-
-    return false;
-}
-
-void Page::setRubberBandsAtTop(bool rubberBandsAtTop)
-{
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->setRubberBandsAtTop(rubberBandsAtTop);
-}
-
 void Page::setPagination(const Pagination& pagination)
 {
     if (m_pagination == pagination)

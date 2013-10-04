@@ -65,7 +65,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers
-    void wheelEvent(uint64_t pageID, const WebWheelEvent&, bool canGoBack, bool canGoForward);
+    void wheelEvent(uint64_t pageID, const WebWheelEvent&, bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom);
 #if ENABLE(GESTURE_EVENTS)
     void gestureEvent(uint64_t pageID, const WebGestureEvent&);
 #endif

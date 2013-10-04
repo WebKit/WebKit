@@ -295,8 +295,11 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameIsPinnedToRightSide(false)
     , m_mainFrameIsPinnedToTopSide(false)
     , m_mainFrameIsPinnedToBottomSide(false)
-    , m_rubberBandsAtBottom(false)
-    , m_rubberBandsAtTop(false)
+    , m_useLegacyImplicitRubberBandControl(false)
+    , m_rubberBandsAtLeft(true)
+    , m_rubberBandsAtRight(true)
+    , m_rubberBandsAtTop(true)
+    , m_rubberBandsAtBottom(true)
     , m_mainFrameInViewSourceMode(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
@@ -316,6 +319,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #endif
     , m_scrollPinningBehavior(DoNotPin)
 {
+    platformInitialize();
+
 #if ENABLE(PAGE_VISIBILITY_API)
     if (!m_isVisible)
         m_visibilityState = PageVisibilityStateHidden;
@@ -336,10 +341,6 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #endif
 #if ENABLE(VIBRATION)
     m_vibration = WebVibrationProxy::create(this);
-#endif
-#if ENABLE(THREADED_SCROLLING)
-    m_rubberBandsAtBottom = true;
-    m_rubberBandsAtTop = true;
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
@@ -1395,7 +1396,15 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
         return;
     }
 
-    m_process->send(Messages::EventDispatcher::WheelEvent(m_pageID, event, canGoBack(), canGoForward()), 0);
+    m_process->send(
+        Messages::EventDispatcher::WheelEvent(
+            m_pageID,
+            event,
+            m_useLegacyImplicitRubberBandControl ? !canGoBack() : rubberBandsAtLeft(),
+            m_useLegacyImplicitRubberBandControl ? !canGoForward() : rubberBandsAtRight(),
+            rubberBandsAtTop(),
+            rubberBandsAtBottom()
+        ), 0);
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -1828,30 +1837,44 @@ void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
     m_process->send(Messages::WebPage::SetSuppressScrollbarAnimations(suppressAnimations), m_pageID);
 }
 
-void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+bool WebPageProxy::rubberBandsAtLeft() const
 {
-    if (rubberBandsAtBottom == m_rubberBandsAtBottom)
-        return;
+    return m_rubberBandsAtLeft;
+}
 
-    m_rubberBandsAtBottom = rubberBandsAtBottom;
+void WebPageProxy::setRubberBandsAtLeft(bool rubberBandsAtLeft)
+{
+    m_rubberBandsAtLeft = rubberBandsAtLeft;
+}
 
-    if (!isValid())
-        return;
+bool WebPageProxy::rubberBandsAtRight() const
+{
+    return m_rubberBandsAtRight;
+}
 
-    m_process->send(Messages::WebPage::SetRubberBandsAtBottom(rubberBandsAtBottom), m_pageID);
+void WebPageProxy::setRubberBandsAtRight(bool rubberBandsAtRight)
+{
+    m_rubberBandsAtRight = rubberBandsAtRight;
+}
+
+bool WebPageProxy::rubberBandsAtTop() const
+{
+    return m_rubberBandsAtTop;
 }
 
 void WebPageProxy::setRubberBandsAtTop(bool rubberBandsAtTop)
 {
-    if (rubberBandsAtTop == m_rubberBandsAtTop)
-        return;
-
     m_rubberBandsAtTop = rubberBandsAtTop;
+}
 
-    if (!isValid())
-        return;
+bool WebPageProxy::rubberBandsAtBottom() const
+{
+    return m_rubberBandsAtBottom;
+}
 
-    m_process->send(Messages::WebPage::SetRubberBandsAtTop(rubberBandsAtTop), m_pageID);
+void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+{
+    m_rubberBandsAtBottom = rubberBandsAtBottom;
 }
 
 void WebPageProxy::setPaginationMode(WebCore::Pagination::Mode mode)

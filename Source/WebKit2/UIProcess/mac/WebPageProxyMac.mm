@@ -46,6 +46,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
+#import <mach-o/dyld.h>
 
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
@@ -56,6 +57,17 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+static bool shouldUseLegacyImplicitRubberBandControl()
+{
+    static bool linkedAgainstExecutableExpectingImplicitRubberBandControl = NSVersionOfLinkTimeLibrary("WebKit2") < 0x021A0200 /* 538.2.0 */;
+    return linkedAgainstExecutableExpectingImplicitRubberBandControl;
+}
+
+void WebPageProxy::platformInitialize()
+{
+    m_useLegacyImplicitRubberBandControl = shouldUseLegacyImplicitRubberBandControl();
+}
 
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"

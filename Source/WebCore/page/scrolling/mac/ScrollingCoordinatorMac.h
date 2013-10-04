@@ -73,10 +73,6 @@ public:
     virtual String scrollingStateTreeAsText() const OVERRIDE;
 
     virtual bool isRubberBandInProgress() const OVERRIDE;
-    virtual bool rubberBandsAtBottom() const OVERRIDE;
-    virtual void setRubberBandsAtBottom(bool) OVERRIDE;
-    virtual bool rubberBandsAtTop() const OVERRIDE;
-    virtual void setRubberBandsAtTop(bool) OVERRIDE;
     
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) OVERRIDE;
 

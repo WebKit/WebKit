@@ -1,3 +1,48 @@
+2013-10-04  Sam Weinig  <sam@webkit.org>
+
+        Unify rubber-band control
+        https://bugs.webkit.org/show_bug.cgi?id=122341
+
+        Reviewed by Tim Horton.
+
+        - Consolidates the two ways we were passing state about whether
+          to rubber-band on a particular edge down to one.
+        - Adds SPI to control whether you can rubber band on the left
+          or right edge.
+        - Add a linked-on-or-after check to control whether we use the
+          legacy implicit rubber band control based on back/forward.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRubberBandsAtLeft):
+        (WKPageSetRubberBandsAtLeft):
+        (WKPageRubberBandsAtRight):
+        (WKPageSetRubberBandsAtRight):
+        (WKPageRubberBandsAtBottom):
+        (WKPageSetRubberBandsAtBottom):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::rubberBandsAtLeft):
+        (WebKit::WebPageProxy::setRubberBandsAtLeft):
+        (WebKit::WebPageProxy::rubberBandsAtRight):
+        (WebKit::WebPageProxy::setRubberBandsAtRight):
+        (WebKit::WebPageProxy::rubberBandsAtTop):
+        (WebKit::WebPageProxy::setRubberBandsAtTop):
+        (WebKit::WebPageProxy::rubberBandsAtBottom):
+        (WebKit::WebPageProxy::setRubberBandsAtBottom):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::shouldUseLegacyImplicitRubberBandControl):
+        (WebKit::WebPageProxy::platformInitialize):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-10-04  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Enable text edition UndoOperations support in WebKit2

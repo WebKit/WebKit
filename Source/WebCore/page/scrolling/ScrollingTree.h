@@ -73,9 +73,6 @@ public:
     EventResult tryToHandleWheelEvent(const PlatformWheelEvent&);
     bool hasWheelEventHandlers() const { return m_hasWheelEventHandlers; }
 
-    // Can be called from any thread. Will update the back forward state of the page, used for rubber-banding.
-    void updateBackForwardState(bool canGoBack, bool canGoForward);
-
     // Must be called from the scrolling thread. Handles the wheel event.
     void handleWheelEvent(const PlatformWheelEvent&);
 
@@ -94,13 +91,13 @@ public:
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif
 
-    bool canGoBack();
-    bool canGoForward();
+    // Can be called from any thread. Will update what edges allow rubber-banding.
+    void setCanRubberBandState(bool canRubberBandsAtLeft, bool canRubberBandsAtRight, bool canRubberBandsAtTop, bool canRubberBandsAtBottom);
 
-    bool rubberBandsAtBottom();
-    void setRubberBandsAtBottom(bool);
+    bool rubberBandsAtLeft();
+    bool rubberBandsAtRight();
     bool rubberBandsAtTop();
-    void setRubberBandsAtTop(bool);
+    bool rubberBandsAtBottom();
     
     void setScrollPinningBehavior(ScrollPinningBehavior);
     ScrollPinningBehavior scrollPinningBehavior();
@@ -130,12 +127,12 @@ private:
     bool m_hasWheelEventHandlers;
 
     Mutex m_swipeStateMutex;
-    bool m_canGoBack;
-    bool m_canGoForward;
+    bool m_rubberBandsAtLeft;
+    bool m_rubberBandsAtRight;
+    bool m_rubberBandsAtTop;
+    bool m_rubberBandsAtBottom;
     bool m_mainFramePinnedToTheLeft;
     bool m_mainFramePinnedToTheRight;
-    bool m_rubberBandsAtBottom;
-    bool m_rubberBandsAtTop;
     bool m_mainFramePinnedToTheTop;
     bool m_mainFramePinnedToTheBottom;
     bool m_mainFrameIsRubberBanding;

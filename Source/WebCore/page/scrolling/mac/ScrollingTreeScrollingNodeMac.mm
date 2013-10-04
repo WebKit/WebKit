@@ -222,15 +222,9 @@ bool ScrollingTreeScrollingNodeMac::canScrollVertically()
     return hasEnabledVerticalScrollbar();
 }
 
-bool ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection(ScrollDirection direction)
+bool ScrollingTreeScrollingNodeMac::shouldRubberBandInDirection(ScrollDirection)
 {
-    if (direction == ScrollLeft)
-        return !scrollingTree()->canGoBack();
-    if (direction == ScrollRight)
-        return !scrollingTree()->canGoForward();
-
-    ASSERT_NOT_REACHED();
-    return false;
+    return true;
 }
 
 IntPoint ScrollingTreeScrollingNodeMac::absoluteScrollPosition()
