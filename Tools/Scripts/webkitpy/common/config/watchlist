@@ -239,7 +239,7 @@
                         r"|Source/WebKit/blackberry/WebKitSupport/FatFingers.*",
         },
         "SVG": {
-            "filename": r"Source/WebCore/svg"
+            "filename": r"Source/WebCore/svg, "gyuyoung.kim@webkit.org""
                         r"|Source/WebCore/rendering/svg",
         },
         "WebInspectorAPI": {
@@ -339,7 +339,7 @@
         "ConsoleUsage" : [ "mkwst@chromium.org" ],
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
-        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com" ],
+        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "esprehn+autocc@chromium.org", "glenn@skynav.com", "gyuyoung.kim@webkit.org" ],
         "cURLNetwork": [ "galpeter@inf.u-szeged.hu" ],
         "DOM": [ "esprehn+autocc@chromium.org", "kangil.han@samsung.com" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
@@ -357,7 +357,7 @@
         "GtkBuildSystem": [ "zandobersek@gmail.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
-        "HTML": [ "esprehn+autocc@chromium.org" ],
+        "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org" ],
         "IndexedDB": [ "alecflett@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com", "mrobinson@webkit.org", "fred.wang@free.fr" ],
@@ -373,7 +373,7 @@
         "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],
         "Rendering": [ "esprehn+autocc@chromium.org", "glenn@skynav.com", "kondapallykalyan@gmail.com" ],
         "RenderLayers" : [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com" ],
-        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
+        "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com", "gyuyoung.kim@webkit.org" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
         "Selectors": [ "allan.jensen@digia.com" ],
