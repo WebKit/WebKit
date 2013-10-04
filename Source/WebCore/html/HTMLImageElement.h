@@ -59,6 +59,8 @@ public:
 
     void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
 
+    bool matchesLowercasedUsemap(const AtomicStringImpl&) const;
+
     const AtomicString& alt() const;
 
     void setHeight(int);
@@ -117,6 +119,7 @@ private:
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
+    AtomicString m_lowercasedUsemap;
 };
 
 ELEMENT_TYPE_CASTS(HTMLImageElement)

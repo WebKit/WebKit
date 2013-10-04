@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class Element;
+class HTMLImageElement;
 class TreeScope;
 
 class DocumentOrderedMap {
@@ -56,6 +57,7 @@ public:
     Element* getElementByName(const AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByMapName(const AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByLowercasedMapName(const AtomicStringImpl*, const TreeScope*) const;
+    HTMLImageElement* getElementByLowercasedUsemap(const AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByLabelForAttribute(const AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByWindowNamedItem(const AtomicStringImpl*, const TreeScope*) const;
     Element* getElementByDocumentNamedItem(const AtomicStringImpl*, const TreeScope*) const;

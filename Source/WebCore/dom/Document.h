@@ -103,6 +103,7 @@ class HTMLElement;
 class HTMLFrameOwnerElement;
 class HTMLHeadElement;
 class HTMLIFrameElement;
+class HTMLImageElement;
 class HTMLMapElement;
 class HTMLNameCollection;
 class HTMLScriptElement;
@@ -256,6 +257,10 @@ public:
 
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
+
+    void addImageElementByLowercasedUsemap(const AtomicString&, HTMLImageElement&);
+    void removeImageElementByLowercasedUsemap(const AtomicString&, HTMLImageElement&);
+    HTMLImageElement* imageElementByLowercasedUsemap(const AtomicString&) const;
 
     SelectorQueryCache& selectorQueryCache();
 
@@ -1449,6 +1454,8 @@ private:
 
     HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;
     bool m_accessKeyMapValid;
+
+    DocumentOrderedMap m_imagesByUsemap;
 
     OwnPtr<SelectorQueryCache> m_selectorQueryCache;
 

@@ -33,6 +33,7 @@
 
 #include "Element.h"
 #include "ElementTraversal.h"
+#include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
@@ -61,6 +62,12 @@ inline bool keyMatchesMapName(const AtomicStringImpl* key, Element* element)
 inline bool keyMatchesLowercasedMapName(const AtomicStringImpl* key, Element* element)
 {
     return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().lower().impl() == key;
+}
+
+inline bool keyMatchesLowercasedUsemap(const AtomicStringImpl* key, Element* element)
+{
+    // FIXME: HTML5 specification says we should match both image and object elements.
+    return isHTMLImageElement(element) && toHTMLImageElement(element)->matchesLowercasedUsemap(*key);
 }
 
 inline bool keyMatchesLabelForAttribute(const AtomicStringImpl* key, Element* element)
@@ -167,6 +174,11 @@ Element* DocumentOrderedMap::getElementByMapName(const AtomicStringImpl* key, co
 Element* DocumentOrderedMap::getElementByLowercasedMapName(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesLowercasedMapName>(key, scope);
+}
+
+HTMLImageElement* DocumentOrderedMap::getElementByLowercasedUsemap(const AtomicStringImpl* key, const TreeScope* scope) const
+{
+    return toHTMLImageElement(get<keyMatchesLowercasedUsemap>(key, scope));
 }
 
 Element* DocumentOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl* key, const TreeScope* scope) const

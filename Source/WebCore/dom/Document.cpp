@@ -84,6 +84,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNameCollection.h"
@@ -704,6 +705,21 @@ void Document::invalidateAccessKeyMap()
 {
     m_accessKeyMapValid = false;
     m_elementsByAccessKey.clear();
+}
+
+void Document::addImageElementByLowercasedUsemap(const AtomicString& name, HTMLImageElement& element)
+{
+    return m_imagesByUsemap.add(name.impl(), &element);
+}
+
+void Document::removeImageElementByLowercasedUsemap(const AtomicString& name, HTMLImageElement& element)
+{
+    return m_imagesByUsemap.remove(name.impl(), &element);
+}
+
+HTMLImageElement* Document::imageElementByLowercasedUsemap(const AtomicString& name) const
+{
+    return m_imagesByUsemap.getElementByLowercasedUsemap(name.impl(), this);
 }
 
 SelectorQueryCache& Document::selectorQueryCache()

@@ -1,3 +1,43 @@
+2013-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        FocusController::advanceFocus spends a lot of time in HTMLMapElement::imageElement
+        https://bugs.webkit.org/show_bug.cgi?id=122313
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by HTMLMapElement::imageElement traversing the entire document to look for
+        the image element associated with a given map element. Because HTMLCollection used to find the
+        image element is not cached, it traversed the entire document on every area element we visit,
+        resulting in O(n^2) behavior.
+
+        Fixed the bug by adding the name-to-image-element map on document to avoid the traversal in
+        HTMLMapElement::imageElement.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByLowercasedUsemap): Added.
+        (WebCore::Document::removeImageElementByLowercasedUsemap): Added.
+        (WebCore::Document::imageElementByLowercasedUsemap): Added.
+
+        * dom/Document.h: Added m_imagesByUsemap.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesLowercasedUsemap): Added.
+        (WebCore::DocumentOrderedMap::getElementByLowercasedUsemap): Added.
+
+        * dom/DocumentOrderedMap.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Update the name-to-usemap map. The code to parse
+        the usemap attribute and strip # was moved from HTMLMapElement::imageElement.
+        (WebCore::HTMLImageElement::insertedInto): Ditto.
+        (WebCore::HTMLImageElement::removedFrom): Ditto.
+        (WebCore::HTMLImageElement::matchesLowercasedUsemap): Added; called by DocumentOrderedMap.
+
+        * html/HTMLImageElement.h:
+
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement): Call Document::imageElementByUsemap instead of
+        looking through all image elements in the document.
+
 2013-10-04  Sam Weinig  <sam@webkit.org>
 
         Unify rubberband control

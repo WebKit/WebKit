@@ -123,9 +123,27 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == srcAttr || name == srcsetAttr) {
         m_bestFitImageURL = bestFitSourceForImageAttributes(document().deviceScaleFactor(), fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
-    } else if (name == usemapAttr)
+    } else if (name == usemapAttr) {
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
-    else if (name == onbeforeloadAttr)
+
+        if (m_lowercasedUsemap == value)
+            return;
+
+        if (!m_lowercasedUsemap.isNull())
+            document().removeImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+
+        // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning, which has to be stripped off.
+        // FIXME: We should check that the first character is '#'.
+        // FIXME: HTML5 specification says we should strip any leading string before '#'.
+        // FIXME: HTML5 specification says we should ignore usemap attributes without #.
+        if (value.length() > 1)
+            m_lowercasedUsemap = value.string().substring(1).lower();
+        else
+            m_lowercasedUsemap = nullAtom;
+
+        if (!m_lowercasedUsemap.isNull())
+            document().addImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+    } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
@@ -206,6 +224,9 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
             m_form->registerImgElement(this);
     }
 
+    if (insertionPoint->inDocument() && !m_lowercasedUsemap.isNull())
+        document().addImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (insertionPoint.inDocument() && !m_imageLoader.image())
@@ -218,6 +239,10 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
 {
     if (m_form)
         m_form->removeImgElement(this);
+
+    if (insertionPoint->inDocument() && !m_lowercasedUsemap.isNull())
+        document().removeImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+
     m_form = 0;
     HTMLElement::removedFrom(insertionPoint);
 }
@@ -291,6 +316,12 @@ bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
         || attribute.name() == longdescAttr
         || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#')
         || HTMLElement::isURLAttribute(attribute);
+}
+
+bool HTMLImageElement::matchesLowercasedUsemap(const AtomicStringImpl& name) const
+{
+    ASSERT(const_cast<AtomicStringImpl&>(name).lower() == &name);
+    return m_lowercasedUsemap.impl() == &name;
 }
 
 const AtomicString& HTMLImageElement::alt() const

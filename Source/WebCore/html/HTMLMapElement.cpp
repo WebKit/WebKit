@@ -79,20 +79,7 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 
 HTMLImageElement* HTMLMapElement::imageElement()
 {
-    RefPtr<HTMLCollection> images = document().images();
-    for (unsigned i = 0; Node* curr = images->item(i); i++) {
-        if (!isHTMLImageElement(curr))
-            continue;
-        
-        // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning,
-        // which has to be stripped off.
-        HTMLImageElement* imageElement = toHTMLImageElement(curr);
-        String useMapName = imageElement->getAttribute(usemapAttr).string().substring(1);
-        if (equalIgnoringCase(useMapName, m_name))
-            return imageElement;
-    }
-    
-    return 0;    
+    return document().imageElementByLowercasedUsemap(m_name.lower());
 }
 
 void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
