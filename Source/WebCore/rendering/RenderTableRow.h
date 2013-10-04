@@ -119,6 +119,12 @@ private:
     unsigned m_rowIndex : 31;
 };
 
+inline RenderTableRow& toRenderTableRow(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isTableRow());
+    return static_cast<RenderTableRow&>(object);
+}
+
 inline RenderTableRow* toRenderTableRow(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableRow());

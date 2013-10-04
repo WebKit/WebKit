@@ -1,3 +1,13 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        Tighten typing in some RenderLayer code.
+        <https://webkit.org/b/122342>
+
+        Reviewed by Antti Koivisto.
+
+        Use tighter types instead of Node and RenderObject inside RenderLayer
+        where applicable.
+
 2013-10-04  Ralph Thomas  <ralpht@gmail.com>
 
         Inserting a JS generated keyframe animation shouldn't trigger a whole document style recalc
