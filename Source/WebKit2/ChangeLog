@@ -1,3 +1,13 @@
+2013-10-03  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r155787): WebKitTestRunner rebuilds from scratch when doing an incremental build
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj: Have unifdef generate its output to a temporary file. If its exit status
+        indicates that the content did not change, remove the temporary file. If the content changed, moved the temporary file
+        over the destination. This avoids updating the modification date of the file when it has not changed.
+
 2013-10-03  Sam Weinig  <sam@webkit.org>
 
         Remove shouldRubberBandInDirection from the WKBundlePageUIClient
