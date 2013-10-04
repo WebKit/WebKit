@@ -176,7 +176,6 @@ public:
     virtual void setToolTip(const String&, TextDirection) = 0;
 
     virtual void print(Frame*) = 0;
-    virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
     virtual Color underlayColor() const { return Color(); }
 

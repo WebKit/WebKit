@@ -2022,13 +2022,6 @@ void FrameView::updateFixedElementsAfterScrolling()
 #endif
 }
 
-bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const
-{
-    if (Page* page = frame().page())
-        return page->chrome().client().shouldRubberBandInDirection(direction);
-    return ScrollView::shouldRubberBandInDirection(direction);
-}
-
 bool FrameView::isRubberBandInProgress() const
 {
     if (scrollbarsSuppressed())

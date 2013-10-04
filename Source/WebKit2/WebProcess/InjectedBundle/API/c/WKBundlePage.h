@@ -253,7 +253,6 @@ typedef void (*WKBundlePageMouseDidMoveOverElementCallback)(WKBundlePageRef page
 typedef void (*WKBundlePageDidScrollCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundlePagePaintCustomOverhangAreaCallback)(WKBundlePageRef page, WKGraphicsContextRef graphicsContext, WKRect horizontalOverhang, WKRect verticalOverhang, WKRect dirtyRect, const void* clientInfo);
 typedef WKStringRef (*WKBundlePageGenerateFileForUploadCallback)(WKBundlePageRef page, WKStringRef originalFilePath, const void* clientInfo);
-typedef bool (*WKBundlePageShouldRubberBandInDirectionCallback)(WKBundlePageRef page, WKScrollDirection scrollDirection, const void* clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
@@ -277,7 +276,7 @@ struct WKBundlePageUIClient {
     WKBundlePagePaintCustomOverhangAreaCallback                         paintCustomOverhangArea;
     WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
     WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
-    WKBundlePageShouldRubberBandInDirectionCallback                     shouldRubberBandInDirection;
+    void*                                                               unused1;
     WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
     WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
     WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;

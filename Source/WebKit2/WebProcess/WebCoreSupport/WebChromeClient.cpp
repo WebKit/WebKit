@@ -831,19 +831,6 @@ void WebChromeClient::recommendedScrollbarStyleDidChange(int32_t newStyle)
     m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(newStyle));
 }
 
-bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direction) const
-{
-    ASSERT(direction != WebCore::ScrollUp && direction != WebCore::ScrollDown);
-    
-    if (direction == WebCore::ScrollLeft)
-        return m_page->injectedBundleUIClient().shouldRubberBandInDirection(m_page, WKScrollDirectionLeft);
-    if (direction == WebCore::ScrollRight)
-        return m_page->injectedBundleUIClient().shouldRubberBandInDirection(m_page, WKScrollDirectionRight);
-
-    ASSERT_NOT_REACHED();
-    return true;
-}
-
 Color WebChromeClient::underlayColor() const
 {
     return m_page->underlayColor();
