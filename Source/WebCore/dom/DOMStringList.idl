@@ -26,7 +26,8 @@
 [
     JSCustomToNativeObject,
     JSNoStaticTables,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface DOMStringList {
     readonly attribute unsigned long length;
     [TreatReturnedNullStringAs=Null] getter DOMString item([Default=Undefined] optional unsigned long index);

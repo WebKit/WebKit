@@ -20,7 +20,8 @@
 
 // Introduced in DOM Level 2:
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface Range {
 
     [GetterRaisesException] readonly attribute Node startContainer;

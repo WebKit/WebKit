@@ -25,6 +25,7 @@
 
 [
     Conditional=DEVICE_ORIENTATION,
+    OperationsNotDeletable
 ] interface DeviceMotionEvent : Event {
     [Custom] readonly attribute Acceleration acceleration;
     [Custom] readonly attribute Acceleration accelerationIncludingGravity;

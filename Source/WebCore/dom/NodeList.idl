@@ -20,7 +20,8 @@
 
 [
     CustomIsReachable,
-    SkipVTableValidation
+    SkipVTableValidation,
+    OperationsNotDeletable
 ] interface NodeList {
 
     getter Node item(unsigned long index);

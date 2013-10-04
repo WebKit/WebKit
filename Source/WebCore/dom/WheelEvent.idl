@@ -22,7 +22,8 @@
 // Introduced in DOM Level 3:
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    OperationsNotDeletable
 ] interface WheelEvent : MouseEvent {
     // DeltaModeCode
     const unsigned long              DOM_DELTA_PIXEL = 0x00;

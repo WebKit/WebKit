@@ -24,7 +24,9 @@
  */
 
 // Introduced in DOM Level 3:
-interface TextEvent : UIEvent {
+[
+    OperationsNotDeletable
+] interface TextEvent : UIEvent {
 
     readonly attribute DOMString data;
 

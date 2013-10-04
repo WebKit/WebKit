@@ -18,7 +18,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface MutationEvent : Event {
+[
+    OperationsNotDeletable
+] interface MutationEvent : Event {
 
     // attrChangeType
     const unsigned short MODIFICATION = 1;

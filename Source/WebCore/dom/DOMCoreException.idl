@@ -30,7 +30,8 @@
     JSNoStaticTables,
     DoNotCheckConstants,
     InterfaceName=DOMException,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] exception DOMCoreException {
 
     readonly attribute unsigned short   code;

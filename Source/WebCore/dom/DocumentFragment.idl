@@ -17,7 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface DocumentFragment : Node {
+[
+    OperationsNotDeletable
+] interface DocumentFragment : Node {
     // NodeSelector - Selector API
     [RaisesException] Element querySelector(DOMString selectors);
     [RaisesException] NodeList querySelectorAll(DOMString selectors);

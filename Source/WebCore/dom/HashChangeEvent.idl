@@ -19,7 +19,8 @@
 
 // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
 [
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    OperationsNotDeletable
 ] interface HashChangeEvent : Event {
     void initHashChangeEvent([Default=Undefined] optional DOMString type, 
                              [Default=Undefined] optional boolean canBubble, 
