@@ -1,3 +1,13 @@
+2013-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Update all the tests, and include new file.
+        
+        * js/script-tests/basic-for-of.js: Added.
+        * sputnik/Conformance/07_Lexical_Conventions/7.9_Automatic_Semicolon_Insertion/S7.9_A6.3_T4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.9_Automatic_Semicolon_Insertion/S7.9_A6.3_T5-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.9_Automatic_Semicolon_Insertion/S7.9_A6.3_T6-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.9_Automatic_Semicolon_Insertion/S7.9_A6.3_T7-expected.txt:
+
 2013-10-04  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Basic shapes should be animatable for shape-outside
