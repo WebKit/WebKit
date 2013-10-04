@@ -86,7 +86,7 @@ Bug(EFL) fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Im
 Bug(EFL) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/change-iframe-src.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
-Bug(EFL) js/create-lots-of-workers.html [ Crash Failure Pass ]
+Bug(EFL) js/dom/create-lots-of-workers.html [ Crash Failure Pass ]
 Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/98761 svg/text/selection-tripleclick.svg [ Failure Pass ]
@@ -374,9 +374,6 @@ webkit.org/b/107286 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 
-# Regression(r150015)
-webkit.org/b/116055 fast/animation/request-animation-frame-too-rapid.html [ Failure ]
-
 # failing after r149292
 compositing/absolute-inside-out-of-view-fixed.html [ Failure ]
 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
@@ -425,7 +422,6 @@ compositing/iframes/overlapped-iframe.html [ Failure ]
 compositing/iframes/overlapped-nested-iframes.html [ Failure ]
 compositing/iframes/page-cache-layer-tree.html [ Failure ]
 compositing/iframes/scrolling-iframe.html [ Failure ]
-compositing/iframes/iframe-position-absolute-with-padding-percentage-crash.html [ Failure ]
 compositing/images/clip-on-directly-composited-image.html [ Failure ]
 compositing/layer-creation/animation-overlap-with-children.html [ Failure ]
 compositing/layer-creation/fixed-position-and-transform.html [ Failure ]

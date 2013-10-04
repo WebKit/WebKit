@@ -1,3 +1,12 @@
+2013-10-04  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove failure expectations from tests that are passing.
+
+        * platform/efl-wk2/TestExpectations: update js/dom/create-lots-of-workers.html path.
+        * platform/efl/TestExpectations:
+
 2013-10-04  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Enable correct behaviour for deleting regional indicator symbols

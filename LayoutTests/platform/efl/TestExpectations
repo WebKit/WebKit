@@ -1044,7 +1044,6 @@ webkit.org/b/79766 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-to-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-src-change.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/resizer.html [ Missing ]
-webkit.org/b/79766 compositing/iframes/iframe-position-absolute-with-padding-percentage-crash.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Skip ]
@@ -1363,9 +1362,6 @@ webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
-# Entering into full screen playback mode fails when triggered by context menu
-Bug(EFL) media/context-menu-actions.html [ Failure ]
-
 # Tests that create an extra graphics layer
 webkit.org/b/102697 compositing/overflow/overflow-auto-with-touch-no-overflow.html [ Failure ]
 webkit.org/b/102697 compositing/overflow/overflow-hidden-with-touch.html [ Failure ]
@@ -1632,7 +1628,6 @@ webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 webkit.org/b/115419 http/tests/media/video-redirect.html [ Failure ]
 webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
-webkit.org/b/115419 media/video-poster-background.html [ ImageOnlyFailure ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
