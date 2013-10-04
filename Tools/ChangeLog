@@ -1,3 +1,25 @@
+2013-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Made WinLauncher have better error handling, crash reporting, and modifiability.
+        https://bugs.webkit.org/show_bug.cgi?id=122319
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncherWebHost::didFailProvisionalLoadWithError):
+        Don't display the numerous "Cancelled" messages that are obviously from the user.
+        (createCrashReport): Added.
+        (dllLauncherEntryPoint):
+        Made main loop back into while loop and write a crash report if it crashes.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters:
+        Added WinLauncherReplace.h.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props:
+        Added linking to DbgHelp.lib.
+        * WinLauncher/WinLauncherReplace.h:
+        Added to make modifying WinLauncher behaviour and appearance easy.
+        (processCrashDump): Added.
+
 2013-10-04  Dirk Pranke  <dpranke@chromium.org>
 
         remove dpranke from webkitpy watchlist

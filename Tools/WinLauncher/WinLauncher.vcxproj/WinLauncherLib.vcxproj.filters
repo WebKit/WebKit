@@ -57,6 +57,9 @@
     <ClInclude Include="..\AccessibilityDelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\WinLauncherReplace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinLauncherLib.rc">

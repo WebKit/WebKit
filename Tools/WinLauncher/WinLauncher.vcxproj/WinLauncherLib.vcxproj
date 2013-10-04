@@ -206,6 +206,7 @@
     <ClInclude Include="..\PrintWebUIDelegate.h" />
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="..\WinLauncher.h" />
+    <ClInclude Include="..\WinLauncherReplace.h" />
     <ClInclude Include="WinLauncherLibResource.h" />
   </ItemGroup>
   <ItemGroup>
