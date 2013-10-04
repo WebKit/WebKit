@@ -1,5 +1,11 @@
 2013-10-04  Oliver Hunt  <oliver@apple.com>
 
+        Build fix.
+
+        * runtime/JSArrayIterator.cpp:
+
+2013-10-04  Oliver Hunt  <oliver@apple.com>
+
         Support for-of syntax
         https://bugs.webkit.org/show_bug.cgi?id=122339
 
