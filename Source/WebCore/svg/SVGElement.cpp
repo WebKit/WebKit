@@ -328,9 +328,9 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
     setAttribute(XMLNames::baseAttr, value);
 }
 
-void SVGElement::removedFrom(ContainerNode* rootParent)
+void SVGElement::removedFrom(ContainerNode& rootParent)
 {
-    bool wasInDocument = rootParent->inDocument();
+    bool wasInDocument = rootParent.inDocument();
     if (wasInDocument)
         updateRelativeLengthsInformation(false, this);
 
@@ -1005,7 +1005,7 @@ void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-Node::InsertionNotificationRequest SVGElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGElement::insertedInto(ContainerNode& rootParent)
 {
     StyledElement::insertedInto(rootParent);
     updateRelativeLengthsInformation();

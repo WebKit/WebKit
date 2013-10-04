@@ -265,10 +265,10 @@ void SVGFontFaceElement::rebuildFontFace()
     document().styleResolverChanged(DeferRecalcStyle);
 }
 
-Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode& rootParent)
 {
     SVGElement::insertedInto(rootParent);
-    if (!rootParent->inDocument()) {
+    if (!rootParent.inDocument()) {
         ASSERT(!m_fontElement);
         return InsertionDone;
     }
@@ -278,11 +278,11 @@ Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNod
     return InsertionDone;
 }
 
-void SVGFontFaceElement::removedFrom(ContainerNode* rootParent)
+void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
 {
     SVGElement::removedFrom(rootParent);
 
-    if (rootParent->inDocument()) {
+    if (rootParent.inDocument()) {
         m_fontElement = 0;
         document().accessSVGExtensions()->unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties()->clear();

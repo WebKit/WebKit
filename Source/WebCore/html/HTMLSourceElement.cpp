@@ -53,7 +53,7 @@ PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tag
     return adoptRef(new HTMLSourceElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
     Element* parent = parentElement();
@@ -62,11 +62,11 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode
     return InsertionDone;
 }
 
-void HTMLSourceElement::removedFrom(ContainerNode* removalRoot)
+void HTMLSourceElement::removedFrom(ContainerNode& removalRoot)
 {
     Element* parent = parentElement();
-    if (!parent && removalRoot->isElementNode())
-        parent = toElement(removalRoot);
+    if (!parent && removalRoot.isElementNode())
+        parent = &toElement(removalRoot);
     if (parent && parent->isMediaElement())
         toHTMLMediaElement(parent)->sourceWasRemoved(this);
     HTMLElement::removedFrom(removalRoot);

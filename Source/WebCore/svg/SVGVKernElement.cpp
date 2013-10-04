@@ -40,9 +40,9 @@ PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName
     return adoptRef(new SVGVKernElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode& rootParent)
 {
-    if (rootParent->inDocument()) {
+    if (rootParent.inDocument()) {
         ContainerNode* fontNode = parentNode();
         if (fontNode && isSVGFontElement(fontNode))
             toSVGFontElement(fontNode)->invalidateGlyphCache();
@@ -51,7 +51,7 @@ Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode* 
     return SVGElement::insertedInto(rootParent);
 }
 
-void SVGVKernElement::removedFrom(ContainerNode* rootParent)
+void SVGVKernElement::removedFrom(ContainerNode& rootParent)
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && isSVGFontElement(fontNode))

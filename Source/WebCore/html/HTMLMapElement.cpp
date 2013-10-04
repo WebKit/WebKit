@@ -127,16 +127,16 @@ PassRefPtr<HTMLCollection> HTMLMapElement::areas()
     return ensureCachedHTMLCollection(MapAreas);
 }
 
-Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode& insertionPoint)
 {
-    if (insertionPoint->inDocument())
+    if (insertionPoint.inDocument())
         treeScope()->addImageMap(this);
     return HTMLElement::insertedInto(insertionPoint);
 }
 
-void HTMLMapElement::removedFrom(ContainerNode* insertionPoint)
+void HTMLMapElement::removedFrom(ContainerNode& insertionPoint)
 {
-    if (insertionPoint->inDocument())
+    if (insertionPoint.inDocument())
         treeScope()->removeImageMap(this);
     HTMLElement::removedFrom(insertionPoint);
 }

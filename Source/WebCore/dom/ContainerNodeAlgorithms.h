@@ -198,7 +198,7 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node& nod
 {
     ASSERT(m_insertionPoint.inDocument());
     Ref<Node> protect(node);
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(&m_insertionPoint))
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
         m_postInsertionNotificationTargets.append(node);
     if (node.isContainerNode())
         notifyDescendantInsertedIntoDocument(toContainerNode(node));
@@ -209,7 +209,7 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint.inDocument());
 
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(&m_insertionPoint))
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node.insertedInto(m_insertionPoint))
         m_postInsertionNotificationTargets.append(node);
     notifyDescendantInsertedIntoTree(node);
 }
@@ -238,7 +238,7 @@ inline void ChildNodeInsertionNotifier::notify(Node& node)
 inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromDocument(Node& node)
 {
     ASSERT(m_insertionPoint.inDocument());
-    node.removedFrom(&m_insertionPoint);
+    node.removedFrom(m_insertionPoint);
 
     if (node.isContainerNode())
         notifyDescendantRemovedFromDocument(toContainerNode(node));
@@ -249,7 +249,7 @@ inline void ChildNodeRemovalNotifier::notifyNodeRemovedFromTree(ContainerNode& n
     NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint.inDocument());
 
-    node.removedFrom(&m_insertionPoint);
+    node.removedFrom(m_insertionPoint);
     notifyDescendantRemovedFromTree(node);
 }
 

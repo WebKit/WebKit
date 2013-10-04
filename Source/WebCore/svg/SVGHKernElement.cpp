@@ -41,7 +41,7 @@ PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName
     return adoptRef(new SVGHKernElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode& rootParent)
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && isSVGFontElement(fontNode))
@@ -50,7 +50,7 @@ Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode* 
     return SVGElement::insertedInto(rootParent);
 }
 
-void SVGHKernElement::removedFrom(ContainerNode* rootParent)
+void SVGHKernElement::removedFrom(ContainerNode& rootParent)
 {
     ContainerNode* fontNode = parentNode();
     if (fontNode && isSVGFontElement(fontNode))

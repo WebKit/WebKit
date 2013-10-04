@@ -112,8 +112,8 @@ private:
     HTMLFormElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void removedFrom(ContainerNode&) OVERRIDE;
     virtual void finishParsingChildren() OVERRIDE;
 
     virtual void handleLocalEvents(Event*);

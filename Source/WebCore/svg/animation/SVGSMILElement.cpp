@@ -234,10 +234,10 @@ void SVGSMILElement::reset()
     resolveFirstInterval();
 }
 
-Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& rootParent)
 {
     SVGElement::insertedInto(rootParent);
-    if (!rootParent->inDocument())
+    if (!rootParent.inDocument())
         return InsertionDone;
 
     // Verify we are not in <use> instance tree.
@@ -267,9 +267,9 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode* r
     return InsertionDone;
 }
 
-void SVGSMILElement::removedFrom(ContainerNode* rootParent)
+void SVGSMILElement::removedFrom(ContainerNode& rootParent)
 {
-    if (rootParent->inDocument()) {
+    if (rootParent.inDocument()) {
         clearResourceReferences();
         disconnectConditions();
         setTargetElement(0);

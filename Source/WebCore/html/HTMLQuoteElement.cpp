@@ -42,7 +42,7 @@ PassRefPtr<HTMLQuoteElement> HTMLQuoteElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLQuoteElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLQuoteElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLQuoteElement::insertedInto(ContainerNode& insertionPoint)
 {
     if (hasTagName(qTag))
         document().styleSheetCollection().setUsesBeforeAfterRulesOverride(true);

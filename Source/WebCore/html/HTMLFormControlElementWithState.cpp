@@ -43,16 +43,16 @@ HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
 {
 }
 
-Node::InsertionNotificationRequest HTMLFormControlElementWithState::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLFormControlElementWithState::insertedInto(ContainerNode& insertionPoint)
 {
-    if (insertionPoint->inDocument() && !containingShadowRoot())
+    if (insertionPoint.inDocument() && !containingShadowRoot())
         document().formController().registerFormElementWithState(this);
     return HTMLFormControlElement::insertedInto(insertionPoint);
 }
 
-void HTMLFormControlElementWithState::removedFrom(ContainerNode* insertionPoint)
+void HTMLFormControlElementWithState::removedFrom(ContainerNode& insertionPoint)
 {
-    if (insertionPoint->inDocument() && !containingShadowRoot() && !insertionPoint->containingShadowRoot())
+    if (insertionPoint.inDocument() && !containingShadowRoot() && !insertionPoint.containingShadowRoot())
         document().formController().unregisterFormElementWithState(this);
     HTMLFormControlElement::removedFrom(insertionPoint);
 }

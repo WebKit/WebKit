@@ -70,24 +70,24 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLTrackElement(tagName, document));
 }
 
-Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode& insertionPoint)
 {
     // Since we've moved to a new parent, we may now be able to load.
     scheduleLoad();
 
     HTMLElement::insertedInto(insertionPoint);
     HTMLMediaElement* parent = mediaElement();
-    if (insertionPoint == parent) {
+    if (&insertionPoint == parent) {
         ensureTrack();
         parent->didAddTextTrack(this);
     }
     return InsertionDone;
 }
 
-void HTMLTrackElement::removedFrom(ContainerNode* insertionPoint)
+void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
 {
-    if (!parentNode() && WebCore::isMediaElement(insertionPoint))
-        toHTMLMediaElement(insertionPoint)->didRemoveTextTrack(this);
+    if (!parentNode() && WebCore::isMediaElement(&insertionPoint))
+        toHTMLMediaElement(insertionPoint).didRemoveTextTrack(this);
     HTMLElement::removedFrom(insertionPoint);
 }
 

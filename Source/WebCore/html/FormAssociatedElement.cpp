@@ -76,10 +76,10 @@ void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::insertedInto(ContainerNode* insertionPoint)
+void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
 {
     resetFormOwner();
-    if (!insertionPoint->inDocument())
+    if (!insertionPoint.inDocument())
         return;
 
     HTMLElement* element = toHTMLElement(this);
@@ -87,10 +87,10 @@ void FormAssociatedElement::insertedInto(ContainerNode* insertionPoint)
         resetFormAttributeTargetObserver();
 }
 
-void FormAssociatedElement::removedFrom(ContainerNode* insertionPoint)
+void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement* element = toHTMLElement(this);
-    if (insertionPoint->inDocument() && element->fastHasAttribute(formAttr))
+    if (insertionPoint.inDocument() && element->fastHasAttribute(formAttr))
         m_formAttributeTargetObserver = nullptr;
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.

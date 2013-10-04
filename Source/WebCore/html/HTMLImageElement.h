@@ -106,8 +106,8 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void removedFrom(ContainerNode&) OVERRIDE;
 
     virtual bool isFormAssociatedElement() OVERRIDE FINAL { return false; }
     virtual FormNamedItem* asFormNamedItem() OVERRIDE FINAL { return this; }

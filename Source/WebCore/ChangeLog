@@ -1,3 +1,12 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        Node: removedFrom() and insertedInto() should use references.
+        <https://webkit.org/b/122315>
+
+        Reviewed by Anders Carlsson.
+
+        ContainerNode* -> ContainerNode&
+
 2013-10-04  Romain Perier  <romain.perier@gmail.com>
 
         Optimize strings copies in srcset parser

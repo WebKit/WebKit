@@ -48,8 +48,8 @@ private:
     virtual bool childShouldCreateRenderer(const Node*) const;
     virtual bool rendererIsNeeded(const RenderStyle&);
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void removedFrom(ContainerNode&) OVERRIDE;
 
     void updateReferencedText(Element*);
 

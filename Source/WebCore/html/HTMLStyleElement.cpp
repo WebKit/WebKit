@@ -91,20 +91,20 @@ void HTMLStyleElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(ContainerNode& insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument())
+    if (insertionPoint.inDocument())
         m_styleSheetOwner.insertedIntoDocument(document(), *this);
 
     return InsertionDone;
 }
 
-void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
+void HTMLStyleElement::removedFrom(ContainerNode& insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
 
-    if (insertionPoint->inDocument())
+    if (insertionPoint.inDocument())
         m_styleSheetOwner.removedFromDocument(document(), *this);
 }
 

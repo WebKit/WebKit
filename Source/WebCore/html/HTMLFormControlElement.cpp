@@ -229,7 +229,7 @@ void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
-Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(ContainerNode& insertionPoint)
 {
     m_ancestorDisabledState = AncestorDisabledStateUnknown;
     m_dataListAncestorState = Unknown;
@@ -239,7 +239,7 @@ Node::InsertionNotificationRequest HTMLFormControlElement::insertedInto(Containe
     return InsertionDone;
 }
 
-void HTMLFormControlElement::removedFrom(ContainerNode* insertionPoint)
+void HTMLFormControlElement::removedFrom(ContainerNode& insertionPoint)
 {
     m_validationMessage = nullptr;
     m_ancestorDisabledState = AncestorDisabledStateUnknown;

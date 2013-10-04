@@ -88,19 +88,19 @@ void SVGMPathElement::clearResourceReferences()
     document().accessSVGExtensions()->removeAllTargetReferencesForElement(this);
 }
 
-Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode& rootParent)
 {
     SVGElement::insertedInto(rootParent);
-    if (rootParent->inDocument())
+    if (rootParent.inDocument())
         buildPendingResource();
     return InsertionDone;
 }
 
-void SVGMPathElement::removedFrom(ContainerNode* rootParent)
+void SVGMPathElement::removedFrom(ContainerNode& rootParent)
 {
     SVGElement::removedFrom(rootParent);
-    notifyParentOfPathChange(rootParent);
-    if (rootParent->inDocument())
+    notifyParentOfPathChange(&rootParent);
+    if (rootParent.inDocument())
         clearResourceReferences();
 }
 

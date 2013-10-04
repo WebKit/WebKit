@@ -597,12 +597,12 @@ bool HTMLMediaElement::childShouldCreateRenderer(const Node* child) const
 #endif
 }
 
-Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode& insertionPoint)
 {
     LOG(Media, "HTMLMediaElement::insertedInto");
 
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument()) {
+    if (insertionPoint.inDocument()) {
         m_inActiveDocument = true;
 
         if (m_networkState == NETWORK_EMPTY && !getAttribute(srcAttr).isEmpty())
@@ -613,12 +613,12 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode*
     return InsertionDone;
 }
 
-void HTMLMediaElement::removedFrom(ContainerNode* insertionPoint)
+void HTMLMediaElement::removedFrom(ContainerNode& insertionPoint)
 {
     LOG(Media, "HTMLMediaElement::removedFrom");
 
     m_inActiveDocument = false;
-    if (insertionPoint->inDocument()) {
+    if (insertionPoint.inDocument()) {
         configureMediaControls();
         if (m_networkState > NETWORK_EMPTY)
             pause();

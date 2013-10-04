@@ -144,8 +144,8 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
     virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void removedFrom(ContainerNode&) OVERRIDE;
 
     virtual void svgAttributeChanged(const QualifiedName&);
 

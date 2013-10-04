@@ -350,7 +350,7 @@ bool HTMLOptionElement::isDisabledFormControl() const
     return isHTMLOptGroupElement(parentElement) && parentElement->isDisabledFormControl();
 }
 
-Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode* insertionPoint)
+Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode& insertionPoint)
 {
     if (HTMLSelectElement* select = ownerSelectElement()) {
         select->setRecalcListItems();

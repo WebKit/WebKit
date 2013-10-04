@@ -92,8 +92,8 @@ public:
 protected:
     FormAssociatedElement();
 
-    void insertedInto(ContainerNode*);
-    void removedFrom(ContainerNode*);
+    void insertedInto(ContainerNode&);
+    void removedFrom(ContainerNode&);
     void didMoveToNewDocument(Document* oldDocument);
 
     void setForm(HTMLFormElement*);

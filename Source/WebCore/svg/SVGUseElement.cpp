@@ -177,11 +177,11 @@ static inline bool isWellFormedDocument(Document& document)
 }
 #endif
 
-Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* rootParent)
+Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode& rootParent)
 {
     // This functions exists to assure assumptions made in the code regarding SVGElementInstance creation/destruction are satisfied.
     SVGGraphicsElement::insertedInto(rootParent);
-    if (!rootParent->inDocument())
+    if (!rootParent.inDocument())
         return InsertionDone;
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
     ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
@@ -191,10 +191,10 @@ Node::InsertionNotificationRequest SVGUseElement::insertedInto(ContainerNode* ro
     return InsertionDone;
 }
 
-void SVGUseElement::removedFrom(ContainerNode* rootParent)
+void SVGUseElement::removedFrom(ContainerNode& rootParent)
 {
     SVGGraphicsElement::removedFrom(rootParent);
-    if (rootParent->inDocument())
+    if (rootParent.inDocument())
         clearResourceReferences();
 }
 

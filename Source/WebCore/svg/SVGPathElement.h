@@ -120,8 +120,8 @@ private:
 
     virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
 
-    virtual Node::InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual Node::InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
+    virtual void removedFrom(ContainerNode&) OVERRIDE;
 
     void invalidateMPathDependencies();
 

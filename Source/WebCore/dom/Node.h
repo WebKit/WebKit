@@ -477,7 +477,7 @@ public:
         InsertionShouldCallDidNotifySubtreeInsertions
     };
 
-    virtual InsertionNotificationRequest insertedInto(ContainerNode* insertionPoint);
+    virtual InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint);
     virtual void didNotifySubtreeInsertions(ContainerNode*) { }
 
     // Notifies the node that it is no longer part of the tree.
@@ -485,7 +485,7 @@ public:
     // This is a dual of insertedInto(), and is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
     // dispatching, and is called _after_ the node is removed from the tree.
     //
-    virtual void removedFrom(ContainerNode* insertionPoint);
+    virtual void removedFrom(ContainerNode& insertionPoint);
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
