@@ -32,6 +32,10 @@
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
+#if ENABLE(DISK_IMAGE_CACHE)
+#include "DiskImageCacheIOS.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -61,17 +65,35 @@ static inline void freeSegment(char* p)
 
 SharedBuffer::SharedBuffer()
     : m_size(0)
+#if ENABLE(DISK_IMAGE_CACHE)
+    , m_isMemoryMapped(false)
+    , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
+    , m_notifyMemoryMappedCallback(nullptr)
+    , m_notifyMemoryMappedCallbackData(nullptr)
+#endif
 {
 }
 
 SharedBuffer::SharedBuffer(size_t size)
     : m_size(size)
     , m_buffer(size)
+#if ENABLE(DISK_IMAGE_CACHE)
+    , m_isMemoryMapped(false)
+    , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
+    , m_notifyMemoryMappedCallback(nullptr)
+    , m_notifyMemoryMappedCallbackData(nullptr)
+#endif
 {
 }
 
 SharedBuffer::SharedBuffer(const char* data, int size)
     : m_size(0)
+#if ENABLE(DISK_IMAGE_CACHE)
+    , m_isMemoryMapped(false)
+    , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
+    , m_notifyMemoryMappedCallback(nullptr)
+    , m_notifyMemoryMappedCallbackData(nullptr)
+#endif
 {
     // FIXME: Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
     if (size < 0)
@@ -82,6 +104,12 @@ SharedBuffer::SharedBuffer(const char* data, int size)
 
 SharedBuffer::SharedBuffer(const unsigned char* data, int size)
     : m_size(0)
+#if ENABLE(DISK_IMAGE_CACHE)
+    , m_isMemoryMapped(false)
+    , m_diskImageCacheId(DiskImageCache::invalidDiskCacheId)
+    , m_notifyMemoryMappedCallback(nullptr)
+    , m_notifyMemoryMappedCallbackData(nullptr)
+#endif
 {
     // FIXME: Use unsigned consistently, and check for invalid casts when calling into SharedBuffer from other code.
     if (size < 0)
@@ -92,6 +120,13 @@ SharedBuffer::SharedBuffer(const unsigned char* data, int size)
     
 SharedBuffer::~SharedBuffer()
 {
+#if ENABLE(DISK_IMAGE_CACHE)
+    if (m_diskImageCacheId) {
+        diskImageCache().removeItem(m_diskImageCacheId);
+        m_isMemoryMapped = false;
+        m_diskImageCacheId = DiskImageCache::invalidDiskCacheId;
+    }
+#endif
     clear();
 }
 
@@ -122,6 +157,66 @@ unsigned SharedBuffer::size() const
     return m_size;
 }
 
+#if ENABLE(DISK_IMAGE_CACHE)
+bool SharedBuffer::isAllowedToBeMemoryMapped() const
+{
+    return m_diskImageCacheId != DiskImageCache::invalidDiskCacheId;
+}
+
+SharedBuffer::MemoryMappingState SharedBuffer::allowToBeMemoryMapped()
+{
+    if (isMemoryMapped())
+        return SharedBuffer::SuccessAlreadyMapped;
+
+    if (isAllowedToBeMemoryMapped())
+        return SharedBuffer::PreviouslyQueuedForMapping;
+
+    m_diskImageCacheId = diskImageCache().writeItem(this);
+    if (m_diskImageCacheId == DiskImageCache::invalidDiskCacheId)
+        return SharedBuffer::FailureCacheFull;
+
+    return SharedBuffer::QueuedForMapping;
+}
+
+void SharedBuffer::failedMemoryMap()
+{
+    if (m_notifyMemoryMappedCallback)
+        m_notifyMemoryMappedCallback(this, SharedBuffer::Failed, m_notifyMemoryMappedCallbackData);
+}
+
+void SharedBuffer::markAsMemoryMapped()
+{
+    ASSERT(!isMemoryMapped());
+
+    m_isMemoryMapped = true;
+    unsigned savedSize = size();
+    clear();
+    m_size = savedSize;
+
+    if (m_notifyMemoryMappedCallback)
+        m_notifyMemoryMappedCallback(this, SharedBuffer::Succeeded, m_notifyMemoryMappedCallbackData);
+}
+
+SharedBuffer::MemoryMappedNotifyCallbackData SharedBuffer::memoryMappedNotificationCallbackData() const
+{
+    return m_notifyMemoryMappedCallbackData;
+}
+
+SharedBuffer::MemoryMappedNotifyCallback SharedBuffer::memoryMappedNotificationCallback() const
+{
+    return m_notifyMemoryMappedCallback;
+}
+
+void SharedBuffer::setMemoryMappedNotificationCallback(MemoryMappedNotifyCallback callback, MemoryMappedNotifyCallbackData data)
+{
+    ASSERT(!m_notifyMemoryMappedCallback || !callback);
+    ASSERT(!m_notifyMemoryMappedCallbackData || !data);
+
+    m_notifyMemoryMappedCallback = callback;
+    m_notifyMemoryMappedCallbackData = data;
+}
+#endif
+
 void SharedBuffer::createPurgeableBuffer() const
 {
     if (m_purgeableBuffer)
@@ -140,6 +235,11 @@ void SharedBuffer::createPurgeableBuffer() const
 
 const char* SharedBuffer::data() const
 {
+#if ENABLE(DISK_IMAGE_CACHE)
+    if (isMemoryMapped())
+        return static_cast<const char*>(diskImageCache().dataForItem(m_diskImageCacheId));
+#endif
+
     if (hasPlatformData())
         return platformData();
 
@@ -167,6 +267,9 @@ void SharedBuffer::append(SharedBuffer* data)
 void SharedBuffer::append(const char* data, unsigned length)
 {
     ASSERT(!m_purgeableBuffer);
+#if ENABLE(DISK_IMAGE_CACHE)
+    ASSERT(!isMemoryMapped());
+#endif
     if (!length)
         return;
 
@@ -265,6 +368,9 @@ PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
 
 const Vector<char>& SharedBuffer::buffer() const
 {
+#if ENABLE(DISK_IMAGE_CACHE)
+    ASSERT(!isMemoryMapped());
+#endif
     unsigned bufferSize = m_buffer.size();
     if (m_size > bufferSize) {
         m_buffer.resize(m_size);
@@ -293,6 +399,15 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
         someData = 0;
         return 0;
     }
+
+#if ENABLE(DISK_IMAGE_CACHE)
+    ASSERT(position < size());
+    if (isMemoryMapped()) {
+        const char* data = static_cast<const char*>(diskImageCache().dataForItem(m_diskImageCacheId));
+        someData = data + position;
+        return size() - position;
+    }
+#endif
 
     if (hasPlatformData() || m_purgeableBuffer) {
         ASSERT_WITH_SECURITY_IMPLICATION(position < size());

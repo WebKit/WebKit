@@ -1,3 +1,55 @@
+2013-10-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream disk image cache
+        https://bugs.webkit.org/show_bug.cgi?id=121985
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::isUsingDiskImageCache):
+        * loader/ResourceBuffer.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::canUseDiskImageCache): Added.
+        (WebCore::CachedImage::useDiskImageCache): Added.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::isSafeToMakePurgeable):
+        (WebCore::CachedResource::isUsingDiskImageCache): Added.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::canUseDiskImageCache): Added.
+        (WebCore::CachedResource::useDiskImageCache): Added.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::flushCachedImagesToDisk): Added.
+        (WebCore::MemoryCache::TypeStatistic::addResource):
+        (WebCore::MemoryCache::dumpStats):
+        (WebCore::MemoryCache::dumpLRULists):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::TypeStatistic::TypeStatistic):
+        * loader/ios/DiskImageCacheClientIOS.h: Added.
+        * loader/ios/DiskImageCacheIOS.h: Added.
+        * loader/ios/DiskImageCacheIOS.mm: Added.
+        * platform/Logging.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::~SharedBuffer):
+        (WebCore::SharedBuffer::isAllowedToBeMemoryMapped): Added.
+        (WebCore::SharedBuffer::allowToBeMemoryMapped): Added.
+        (WebCore::SharedBuffer::failedMemoryMap): Added.
+        (WebCore::SharedBuffer::markAsMemoryMapped): Added.
+        (WebCore::SharedBuffer::memoryMappedNotificationCallbackData): Added.
+        (WebCore::SharedBuffer::memoryMappedNotificationCallback): Added.
+        (WebCore::SharedBuffer::setMemoryMappedNotificationCallback): Added.
+        (WebCore::SharedBuffer::data):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::buffer):
+        (WebCore::SharedBuffer::getSomeData):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::isMemoryMapped): Added.
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+
 2013-10-04  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Basic shapes should be animatable for shape-outside

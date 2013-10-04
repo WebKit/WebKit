@@ -100,7 +100,12 @@ public:
         int decodedSize;
         int purgeableSize;
         int purgedSize;
+#if ENABLE(DISK_IMAGE_CACHE)
+        int mappedSize;
+        TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0), purgeableSize(0), purgedSize(0), mappedSize(0) { }
+#else
         TypeStatistic() : count(0), size(0), liveSize(0), decodedSize(0), purgeableSize(0), purgedSize(0) { }
+#endif
         void addResource(CachedResource*);
     };
     
@@ -159,6 +164,10 @@ public:
     void removeFromLiveResourcesSize(CachedResource*);
 
     static bool shouldMakeResourcePurgeableOnEviction();
+
+#if ENABLE(DISK_IMAGE_CACHE)
+    void flushCachedImagesToDisk(); // Flush encoded data from resources still referenced by web pages.
+#endif
 
     static void removeUrlFromCache(ScriptExecutionContext*, const String& urlString);
     static void removeRequestFromCache(ScriptExecutionContext*, const ResourceRequest&);

@@ -161,3 +161,8 @@
 #define WebKitDebugFullPageZoomPreferenceKey @"WebKitDebugFullPageZoomPreferenceKey"
 
 #define WebKitMinimumZoomFontSizePreferenceKey @"WebKitMinimumZoomFontSizePreferenceKey"
+
+#define WebKitDiskImageCacheEnabledPreferenceKey @"WebKitDiskImageCacheEnabled"
+#define WebKitDiskImageCacheMinimumImageSizePreferenceKey @"WebKitDiskImageCacheMinimumImageSize"
+#define WebKitDiskImageCacheMaximumCacheSizePreferenceKey @"WebKitDiskImageCacheMaximumCacheSize"
+#define WebKitDiskImageCacheSavedCacheDirectoryKey @"WebKitDiskImageCacheSavedCacheDirectory"

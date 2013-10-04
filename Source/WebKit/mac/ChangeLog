@@ -1,3 +1,35 @@
+2013-10-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream disk image cache
+        https://bugs.webkit.org/show_bug.cgi?id=121985
+
+        Reviewed by Joseph Pecoraro.
+
+        * Misc/WebCache.mm:
+        (+[WebCache statistics]):
+        * WebView/WebDataSource.mm:
+        (BufferMemoryMapped): Added.
+        (-[WebDataSource _setAllowToBeMemoryMapped]): Added.
+        (-[WebDataSource setDataSourceDelegate:]): Added.
+        (-[WebDataSource dataSourceDelegate]): Added.
+        (-[WebDataSource dealloc]):
+        * WebView/WebDataSourcePrivate.h: Declared private delegate
+        protocol, WebDataSourcePrivateDelegate.
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences diskImageCacheEnabled]): Added.
+        (-[WebPreferences setDiskImageCacheEnabled:]): Added.
+        (-[WebPreferences diskImageCacheMinimumImageSize]): Added.
+        (-[WebPreferences setDiskImageCacheMinimumImageSize:]): Added.
+        (-[WebPreferences diskImageCacheMaximumCacheSize]): Added.
+        (-[WebPreferences setDiskImageCacheMaximumCacheSize:]): Added.
+        (-[WebPreferences _diskImageCacheSavedCacheDirectory]): Added.
+        (-[WebPreferences _setDiskImageCacheSavedCacheDirectory:]): Added.
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _preferencesChanged:]):
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         Remove WebAssertions.h

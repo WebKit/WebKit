@@ -28,6 +28,14 @@
 
 #import <WebKit/WebDataSource.h>
 
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+@protocol WebDataSourcePrivateDelegate
+@required
+- (void)dataSourceMemoryMapped;
+- (void)dataSourceMemoryMapFailed;
+@end
+#endif
+
 @interface WebDataSource (WebPrivate)
 
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
@@ -38,5 +46,11 @@
 - (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier;
 
 - (void)_setDeferMainResourceDataLoad:(BOOL)flag;
+
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+- (void)_setAllowToBeMemoryMapped;
+- (void)setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;
+- (NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate;
+#endif
 
 @end

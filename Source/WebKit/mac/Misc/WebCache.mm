@@ -112,6 +112,18 @@
 #endif
             [NSNumber numberWithInt:s.scripts.purgedSize], @"JavaScript",
             nil],
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:s.images.mappedSize], @"Images",
+            [NSNumber numberWithInt:s.cssStyleSheets.mappedSize] ,@"CSS",
+#if ENABLE(XSLT)
+            [NSNumber numberWithInt:s.xslStyleSheets.mappedSize], @"XSL",
+#else
+            [NSNumber numberWithInt:0], @"XSL",
+#endif
+            [NSNumber numberWithInt:s.scripts.mappedSize], @"JavaScript",
+            nil],
+#endif // ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
         nil];
 }
 

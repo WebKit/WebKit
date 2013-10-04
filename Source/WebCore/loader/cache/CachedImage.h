@@ -79,6 +79,11 @@ public:
 
     static void resumeAnimatingImagesForLoader(CachedResourceLoader*);
 
+#if ENABLE(DISK_IMAGE_CACHE)
+    virtual bool canUseDiskImageCache() const OVERRIDE;
+    virtual void useDiskImageCache() OVERRIDE;
+#endif
+
 private:
     virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) OVERRIDE;
 

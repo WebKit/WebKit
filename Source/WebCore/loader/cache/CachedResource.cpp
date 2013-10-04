@@ -826,6 +826,14 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) co
 
 bool CachedResource::isSafeToMakePurgeable() const
 { 
+#if ENABLE(DISK_IMAGE_CACHE)
+    // It does not make sense to have a resource in the disk image cache
+    // (memory mapped on disk) and purgeable (in memory). So do not allow
+    // disk image cached resources to be purgeable.
+    if (isUsingDiskImageCache())
+        return false;
+#endif
+
     return !hasClients() && !m_proxyResource && !m_resourceToRevalidate;
 }
 
@@ -913,6 +921,13 @@ void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCall
 {
     m_resource->didAddClient(m_client);
 }
+
+#if ENABLE(DISK_IMAGE_CACHE)
+bool CachedResource::isUsingDiskImageCache() const
+{
+    return m_data && m_data->isUsingDiskImageCache();
+}
+#endif
 
 #if PLATFORM(MAC)
 void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)

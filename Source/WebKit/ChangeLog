@@ -1,3 +1,14 @@
+2013-10-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream disk image cache
+        https://bugs.webkit.org/show_bug.cgi?id=121985
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * ios/WebCoreSupport/WebDiskImageCacheClientIOS.h: Added.
+        * ios/WebCoreSupport/WebDiskImageCacheClientIOS.mm: Added.
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         Remove WebAssertions.h

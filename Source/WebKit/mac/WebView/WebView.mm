@@ -206,6 +206,11 @@
 #import <WebKit/WebDashboardRegion.h>
 #endif
 
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+#import "WebDiskImageCacheClientIOS.h"
+#import <WebCore/DiskImageCacheIOS.h>
+#endif
+
 #if USE(GLIB)
 #import <glib.h>
 #endif
@@ -739,6 +744,9 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 
         WebKitInitializeStorageIfNecessary();
         WebKitInitializeApplicationCachePathIfNecessary();
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+        WebKitInitializeWebDiskImageCache();
+#endif
         
         Settings::setDefaultMinDOMTimerInterval(0.004);
         
@@ -1604,6 +1612,13 @@ static bool needsSelfRetainWhileLoadingQuirk()
     BOOL zoomsTextOnly = [preferences zoomsTextOnly];
     if (_private->zoomsTextOnly != zoomsTextOnly)
         [self _setZoomMultiplier:_private->zoomMultiplier isTextOnly:zoomsTextOnly];
+
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
+    DiskImageCache& diskImageCache = WebCore::diskImageCache();
+    diskImageCache.setEnabled([preferences diskImageCacheEnabled]);
+    diskImageCache.setMinimumImageSize([preferences diskImageCacheMinimumImageSize]);
+    diskImageCache.setMaximumCacheSize([preferences diskImageCacheMaximumCacheSize]);
+#endif
 }
 
 static inline IMP getMethod(id o, SEL s)

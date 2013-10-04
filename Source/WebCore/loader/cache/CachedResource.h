@@ -249,6 +249,12 @@ public:
     void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
     double loadFinishTime() const { return m_loadFinishTime; }
 
+#if ENABLE(DISK_IMAGE_CACHE)
+    bool isUsingDiskImageCache() const;
+    virtual bool canUseDiskImageCache() const { return false; }
+    virtual void useDiskImageCache() { ASSERT(canUseDiskImageCache()); }
+#endif
+
     virtual bool canReuse(const ResourceRequest&) const { return true; }
 
 #if PLATFORM(MAC)
