@@ -1,3 +1,10 @@
+2013-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Add svn:ignore to *.pyc files in inspector/Scripts directory, so that they don't
+        show up as unversioned all the time.
+
+        * inspector/Scripts: Added property svn:ignore.
+
 2013-10-04  peavo@outlook.com  <peavo@outlook.com>
 
         [Win][WebGL] Crash on exit
