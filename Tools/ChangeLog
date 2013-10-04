@@ -1,3 +1,12 @@
+2013-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Update svn-config for new Visual Studio extensions
+        https://bugs.webkit.org/show_bug.cgi?id=122344
+
+        Reviewed by Brent Fulgham.
+
+        * svn-config: Add new Visual Studio extensions.
+
 2013-10-04  Alex Christensen  <achristensen@webkit.org>
 
         Made WinLauncher have better error handling, crash reporting, and modifiability.

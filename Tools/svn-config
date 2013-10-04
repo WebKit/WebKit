@@ -8,4 +8,7 @@ enable-auto-props = yes
 *.png = svn:mime-type=image/png
 *.sln = svn:eol-style=native
 *.vcproj = svn:eol-style=native
+*.vcxproj = svn:eol-style=native
+*.vcxproj.filters = svn:eol-style=native
+*.props = svn:eol-style=native
 *.vsprops = svn:eol-style=native
