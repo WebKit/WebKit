@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2013 Apple Computer, Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -64,15 +64,7 @@ chdirWebKit();
 my @options = XcodeOptions();
 my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
-if (isQt()) {
-    checkForArgumentAndRemoveFromARGV("--qt");
-    my @projects = ("WTF", "JavaScriptCore");
-    # Pick up the --no-webkit2 option from BUILD_WEBKIT_ARGS if it is needed
-    push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
-    push @ARGV, "WEBKIT_CONFIG-=build_webkit2" if checkForArgumentAndRemoveFromARGV("--no-webkit2");
-    my $result = buildQMakeProjects(\@projects, 0, @ARGV);
-    exit exitStatus($result);
-} elsif (cmakeBasedPortName()) {
+if (cmakeBasedPortName()) {
     buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc", cmakeBasedPortArguments()); # This call only returns if nothing wrong happened
     exit exitStatus(0);
 }

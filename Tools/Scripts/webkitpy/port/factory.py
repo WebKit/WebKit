@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -45,9 +46,6 @@ def platform_options(use_globs=False):
         optparse.make_option('--gtk', action='store_const', dest='platform',
             const=('gtk*' if use_globs else 'gtk'),
             help=('Alias for --platform=gtk*' if use_globs else 'Alias for --platform=gtk')),
-        optparse.make_option('--qt', action='store_const', dest="platform",
-            const=('qt*' if use_globs else 'qt'),
-            help=('Alias for --platform=qt' if use_globs else 'Alias for --platform=qt')),
         ]
 
 
@@ -78,7 +76,6 @@ class PortFactory(object):
         'gtk.GtkPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
-        'qt.QtPort',
         'test.TestPort',
         'win.WinPort',
     )
@@ -89,7 +86,7 @@ class PortFactory(object):
     def _default_port(self, options):
         platform = self._host.platform
         if platform.is_linux() or platform.is_freebsd():
-            return 'qt-linux'
+            return 'gtk'
         elif platform.is_mac():
             return 'mac'
         elif platform.is_win():

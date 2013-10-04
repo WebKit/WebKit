@@ -79,10 +79,6 @@ class TestExpectationsTestCase(unittest.TestCase):
         self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl/TestExpectations')
         self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl-wk1/TestExpectations')
         self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl-wk2/TestExpectations')
-        self._expect_port_for_expectations_path('qt', 'LayoutTests/platform/qt-win/TestExpectations')
-        # FIXME: check-webkit-style doesn't know how to create port objects for all Qt version (4.8, 5.0) and
-        # will only check files based on the installed version of Qt.
-        #self._expect_port_for_expectations_path('qt', 'LayoutTests/platform/qt-5.0-wk2/TestExpectations')
 
     def assert_lines_lint(self, lines, should_pass, expected_output=None):
         self._error_collector.reset_errors()

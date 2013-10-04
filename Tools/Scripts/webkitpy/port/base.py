@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -95,7 +96,7 @@ class Port(object):
     def __init__(self, host, port_name, options=None, **kwargs):
 
         # This value may be different from cls.port_name by having version modifiers
-        # and other fields appended to it (for example, 'qt-arm' or 'mac-wk2').
+        # and other fields appended to it (for example, 'mac-wk2' or 'win').
         self._name = port_name
 
         # These are default values that should be overridden in a subclasses.
@@ -1410,7 +1411,6 @@ class Port(object):
     # to use for all port configurations (including architectures, graphics types, etc).
     def _port_flag_for_scripts(self):
         # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.
-        # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
         return None
 
     def tooling_flag(self):
@@ -1536,7 +1536,6 @@ class Port(object):
 
     def _wk2_port_name(self):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,
-        # except for Qt because WebKit2 is only supported by Qt 5.0 (therefore: qt-5.0-wk2).
         return "%s-wk2" % self.port_name
 
     # We might need to pass scm into this function for scm.checkout_root

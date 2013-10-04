@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -34,7 +35,6 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import factory
 from webkitpy.port import gtk
 from webkitpy.port import mac
-from webkitpy.port import qt
 from webkitpy.port import test
 from webkitpy.port import win
 
@@ -67,9 +67,6 @@ class FactoryTest(unittest.TestCase):
 
     def test_gtk(self):
         self.assert_port(port_name='gtk', cls=gtk.GtkPort)
-
-    def test_qt(self):
-        self.assert_port(port_name='qt', cls=qt.QtPort)
 
     def test_unknown_specified(self):
         self.assertRaises(NotImplementedError, factory.PortFactory(MockSystemHost()).get, port_name='unknown')

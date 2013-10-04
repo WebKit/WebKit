@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Intel Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -65,7 +66,6 @@ class CMakeChecker(object):
         #From FindPkgConfig.cmake
         'pkg_check_modules',
         'project',
-        'qt_wrap_cpp', 'qt_wrap_ui',
         'remove_definitions', 'return',
         'separate_arguments', 'set', 'set_directory_properties', 'set_property',
         'set_source_files_properties', 'set_target_properties',

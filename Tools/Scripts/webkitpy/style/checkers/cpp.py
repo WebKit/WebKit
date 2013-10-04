@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -2718,13 +2718,6 @@ def _classify_include(filename, include, is_system, include_state):
     if filename.endswith('.h') and filename != include:
         return _OTHER_HEADER;
 
-    # Qt's moc files do not follow the naming and ordering rules, so they should be skipped
-    if include.startswith('moc_') and include.endswith('.cpp'):
-        return _MOC_HEADER
-
-    if include.endswith('.moc'):
-        return _MOC_HEADER
-
     # If the target file basename starts with the include we're checking
     # then we consider it the primary header.
     target_base = FileInfo(filename).base_name()
@@ -2733,9 +2726,6 @@ def _classify_include(filename, include, is_system, include_state):
     # If we haven't encountered a primary header, then be lenient in checking.
     if not include_state.visited_primary_section():
         if target_base.find(include_base) != -1:
-            return _PRIMARY_HEADER
-        # Qt private APIs use _p.h suffix.
-        if include_base.find(target_base) != -1 and include_base.endswith('_p'):
             return _PRIMARY_HEADER
 
     # If we already encountered a primary header, perform a strict comparison.
@@ -2836,7 +2826,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
                   'You should add a blank line after implementation file\'s own header.')
 
     # Check to make sure all headers besides config.h and the primary header are
-    # alphabetically sorted. Skip Qt's moc files.
+    # alphabetically sorted.
     if not error_message and header_type == _OTHER_HEADER:
          previous_line_number = line_number - 1;
          previous_line = clean_lines.lines[previous_line_number]
@@ -3191,7 +3181,6 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier.startswith('NPN_')
                 and not modified_identifier.startswith('NPP_')
                 and not modified_identifier.startswith('NP_')
-                and not modified_identifier.startswith('qt_')
                 and not modified_identifier.startswith('_q_')
                 and not modified_identifier.startswith('cairo_')
                 and not modified_identifier.startswith('Ecore_')
@@ -3199,7 +3188,6 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier.startswith('Evas_')
                 and not modified_identifier.startswith('Ewk_')
                 and not modified_identifier.startswith('cti_')
-                and not modified_identifier.find('::qt_') >= 0
                 and not modified_identifier.find('::_q_') >= 0
                 and not modified_identifier == "const_iterator"
                 and not modified_identifier == "vm_throw"

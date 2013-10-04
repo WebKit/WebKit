@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -99,24 +100,15 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/mac-lion': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
-    def test_qt_unknown(self):
-        self._assertOptimization({
-            'LayoutTests/platform/qt': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-        }, {
-            'LayoutTests/platform/qt': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-        })
-
     def test_win_does_not_drop_to_win_7sp0(self):
         self._assertOptimization({
             'LayoutTests/platform/win': '1',
             'LayoutTests/platform/mac': '2',
             'LayoutTests/platform/gtk': '3',
-            'LayoutTests/platform/qt': '4',
         }, {
             'LayoutTests/platform/win': '1',
             'LayoutTests/platform/mac': '2',
             'LayoutTests/platform/gtk': '3',
-            'LayoutTests/platform/qt': '4',
         })
 
     def test_common_directory_includes_root(self):
@@ -124,7 +116,6 @@ class BaselineOptimizerTest(unittest.TestCase):
         # to optimize.
         self._assertOptimizationFailed({
             'LayoutTests/platform/gtk': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
-            'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
             'LayoutTests/platform/mac': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
         })
 
@@ -153,10 +144,8 @@ class BaselineOptimizerTest(unittest.TestCase):
         self._assertOptimization({
             'LayoutTests/platform/gtk': '3',
             'LayoutTests/platform/efl': '3',
-            'LayoutTests/platform/qt': '4',
-            'LayoutTests/platform/mac': '5',
+            'LayoutTests/platform/mac': '4',
         }, {
             'LayoutTests': '3',
-            'LayoutTests/platform/qt': '4',
-            'LayoutTests/platform/mac': '5',
+            'LayoutTests/platform/mac': '4',
         })

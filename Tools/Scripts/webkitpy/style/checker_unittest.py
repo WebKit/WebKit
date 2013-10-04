@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -224,30 +224,6 @@ class GlobalVariablesTest(unittest.TestCase):
                       "readability/naming")
         assertNoCheck("Source/WebCore/css/CSSParser.cpp",
                       "readability/naming")
-
-        # Test if Qt exceptions are indeed working
-        assertCheck("Source/WebKit/qt/WidgetApi/qwebpage.cpp",
-                    "readability/braces")
-        assertCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
-                    "readability/braces")
-        assertCheck("Source/WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
-                    "readability/braces")
-        assertCheck("Source/WebKit/qt/examples/platformplugin/WebPlugin.cpp",
-                    "readability/braces")
-        assertNoCheck("Source/WebKit/qt/WidgetApi/qwebpage.cpp",
-                      "readability/naming")
-        assertNoCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
-                      "readability/naming")
-        assertNoCheck("Source/WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
-                      "readability/naming")
-        assertNoCheck("Source/WebKit/qt/examples/platformplugin/WebPlugin.cpp",
-                      "readability/naming")
-
-        assertNoCheck("Tools/MiniBrowser/qt/UrlLoader.cpp",
-                    "build/include")
-
-        assertNoCheck("Source/WebKit2/UIProcess/API/qt",
-                    "readability/parameter_name")
 
         assertNoCheck("Source/WebCore/ForwardingHeaders/debugger/Debugger.h",
                       "build/header_guard")

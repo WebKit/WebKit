@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
 # Copyright (C) 2007 Matt Lilek (pewtermoose@gmail.com)
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -230,8 +230,6 @@ if (isAppleMacWebKit()) {
     } else {
         $platform = "mac";
     }
-} elsif (isQt()) {
-    $platform = "qt";
 } elsif (isGtk()) {
     $platform = "gtk";
 } elsif (isWinCairo()) {
@@ -248,12 +246,11 @@ if (isAppleMacWebKit()) {
     }
 }
 
-if (isQt() || isAppleWinWebKit()) {
+if (isAppleWinWebKit()) {
     my $testfontPath = $ENV{"WEBKIT_TESTFONTS"};
     if (!$testfontPath || !-d "$testfontPath") {
         print "The WEBKIT_TESTFONTS environment variable is not defined or not set properly\n";
         print "You must set it before running the tests.\n";
-        print "Use git to grab the actual fonts from http://gitorious.org/qtwebkit/testfonts\n";
         exit 1;
     }
 }
@@ -317,7 +314,7 @@ Usage: $programName [options] [testdir|testpath ...]
   --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
   -t|--threaded                   Run a concurrent JavaScript thead with each test
   --timeout t                     Sets the number of seconds before a test times out (default: $timeoutSeconds)
-  --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
+  --valgrind                      Run DumpRenderTree inside valgrind (Linux only)
   -v|--verbose                    More verbose output (overrides --quiet)
   -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
   --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
@@ -389,9 +386,6 @@ if ($useWebKitTestRunner) {
         $stripEditingCallbacks = 0 unless defined $stripEditingCallbacks;
         $realPlatform = $platform;
         $platform = "win-wk2";
-    } elsif (isQt()) {
-        $realPlatform = $platform;
-        $platform = "qt-5.0-wk2";
     } elsif (isGtk()) {
         $realPlatform = $platform;
         $platform = "gtk-wk2";
@@ -420,7 +414,6 @@ $useRemoteLinksToTests = 0 if isGtk();
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 my $productDir = productDir();
-$productDir .= "/bin" if isQt();
 $productDir .= "/Programs" if isGtk();
 
 # Save the current directory before chaging it via chdirWebKit
@@ -1207,17 +1200,6 @@ my @configurationArgs = argumentsForConfiguration();
 if (isGtk()) {
   push(@configurationArgs, '-2') if $useWebKitTestRunner;
   system "Tools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
-} elsif (isQt()) {
-  if (getQtVersion() lt "5.0") {
-    unshift @configurationArgs, qw(-style windows);
-    unshift @configurationArgs, qw(-graphicssystem raster);
-  }
-  if (isCygwin()) {
-    $testResults = "/" . toWindowsPath($testResults);
-    $testResults =~ s/\\/\//g;
-  }
-  push(@configurationArgs, '-2') if $useWebKitTestRunner;
-  system "Tools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
 } elsif (isWindows()) {
@@ -1514,19 +1496,10 @@ sub openDumpTool()
         }
     }
 
-    if (isQt()) {
-        $CLEAN_ENV{QTWEBKIT_PLUGIN_PATH} = productDir() . "/lib/plugins";
-        $CLEAN_ENV{QT_DRT_WEBVIEW_MODE} = $ENV{"QT_DRT_WEBVIEW_MODE"};
-    }
-    
     my @args = ($dumpTool, @toolArgs);
     if (isAppleMacWebKit()) { 
         unshift @args, "arch", "-" . architecture();             
     }
-
-    if ($useValgrind) {
-        unshift @args, "valgrind", "--suppressions=$platformBaseDirectory/qt/SuppressedValgrindErrors";
-    } 
 
     if ($useWebKitTestRunner) {
         # Make WebKitTestRunner use a similar timeout. We don't use the exact same timeout to avoid
@@ -2169,36 +2142,6 @@ sub buildPlatformResultHierarchy()
         if ($platform eq "wincairo") {
             @platforms = $platform;
         }
-    } elsif ($platform =~ /^qt/) {
-        if ($platform eq "qt-5.0-wk2" || getQtVersion() eq "5.0" && $useWebKitTestRunner) {
-            push @platforms, "qt-5.0-wk2";
-        }
-        elsif ($platform eq "qt-5.0-wk1" || getQtVersion() eq "5.0" && !$useWebKitTestRunner) {
-            push @platforms, "qt-5.0-wk1"
-        }
-
-        if (isARM() || $platform eq "qt-arm") {
-            push @platforms, "qt-arm";
-        }
-
-        if (isDarwin() || $platform eq "qt-mac") {
-            push @platforms, "qt-mac";
-        }
-        elsif (isWindows() || isCygwin() || $platform eq "qt-win") {
-            push @platforms, "qt-win";
-        }
-        elsif (isLinux() || $platform eq "qt-linux") {
-            push @platforms, "qt-linux";
-        }
-
-        if (getQtVersion() eq "4.8" || $platform eq "qt-4.8") {
-            push @platforms, "qt-4.8";
-        }
-        elsif (getQtVersion() eq "5.0" || $platform eq "qt-5.0") {
-            push @platforms, "qt-5.0";
-        }
-
-        push @platforms, "qt";
     } elsif ($platform =~ /^gtk-/) {
         push @platforms, $platform;
         push @platforms, "gtk";
@@ -2222,23 +2165,17 @@ sub buildPlatformTestHierarchy(@)
     my (@platformHierarchy) = @_;
 
     my @result;
-    if ($platform =~ /^qt/) {
-        for (my $i = 0; $i < @platformHierarchy; ++$i) {
-           push @result, $platformHierarchy[$i];
+    my $wk2Platform;
+    for (my $i = 0; $i < @platformHierarchy; ++$i) {
+        if ($platformHierarchy[$i] =~ /-wk2/) {
+            $wk2Platform = splice @platformHierarchy, $i, 1;
+            last;
         }
-    } else {
-        my $wk2Platform;
-        for (my $i = 0; $i < @platformHierarchy; ++$i) {
-            if ($platformHierarchy[$i] =~ /-wk2/) {
-                $wk2Platform = splice @platformHierarchy, $i, 1;
-                last;
-            }
-        }
-
-       push @result, $platformHierarchy[0];
-       push @result, $wk2Platform if defined $wk2Platform;
-       push @result, $platformHierarchy[$#platformHierarchy] if @platformHierarchy >= 2;
     }
+
+    push @result, $platformHierarchy[0];
+    push @result, $wk2Platform if defined $wk2Platform;
+    push @result, $platformHierarchy[$#platformHierarchy] if @platformHierarchy >= 2;
 
     if ($verbose) {
         my @searchPaths;
@@ -2503,9 +2440,9 @@ sub readSkippedFiles($)
     my @skippedFileDirectories = @platformTestHierarchy;
 
     # Because nearly all of the skipped tests for WebKit 2 on Mac are due to
-    # cross-platform issues, the Windows and Qt ports use the Mac skipped list
+    # cross-platform issues, the Windows ports use the Mac skipped list
     # additionally to their own to avoid maintaining separate lists.
-    push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "qt-5.0-wk2" || $platform eq "mac-wk2" || $platform eq "gtk-wk2");
+    push(@skippedFileDirectories, catdir($platformBaseDirectory, "wk2")) if ($platform eq "win-wk2" || $platform eq "mac-wk2" || $platform eq "gtk-wk2");
 
     if ($verbose) {
         foreach my $skippedPath (@skippedFileDirectories) {

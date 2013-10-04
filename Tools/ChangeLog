@@ -1,3 +1,79 @@
+2013-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove Qt features from build and test tools
+        https://bugs.webkit.org/show_bug.cgi?id=122312
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/build-dumprendertree:
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/build-webkittestrunner:
+        * Scripts/old-run-webkit-tests:
+        (openDumpTool):
+        (buildPlatformResultHierarchy):
+        (buildPlatformTestHierarchy):
+        (readSkippedFiles):
+        * Scripts/run-launcher:
+        * Scripts/run-qtwebkit-tests: Removed.
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+        * Scripts/update-webkit:
+        * Scripts/webkit-build-directory:
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (jscProductDir):
+        (builtDylibPathForName):
+        (isAppleWebKit):
+        (launcherPath):
+        (launcherName):
+        (checkRequiredSystemConfig):
+        (setupCygwinEnv):
+        (copyInspectorFrontendFiles):
+        (setPathForRunningWebKitApp):
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_mac_future):
+        (BaselineOptimizerTest.test_win_does_not_drop_to_win_7sp0):
+        (BaselineOptimizerTest.test_common_directory_includes_root):
+        (BaselineOptimizerTest.test_virtual_ports_filtered):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_reviewer_text):
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (PortTest.disabled_test_chromium_mac_lion_in_test_shell_mode):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port._port_flag_for_scripts):
+        (Port._wk2_port_name):
+        * Scripts/webkitpy/port/builders.py:
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+        (PortFactory):
+        (PortFactory._default_port):
+        * Scripts/webkitpy/port/factory_unittest.py:
+        (FactoryTest.test_gtk):
+        * Scripts/webkitpy/port/qt.py: Removed.
+        * Scripts/webkitpy/port/qt_unittest.py: Removed.
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier):
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_classify_include):
+        (check_include_line):
+        (check_identifier_name_in_declaration):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_classify_include):
+        (WebKitStyleTest.test_names):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch):
+
 2013-10-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Add myself to some watchlists.

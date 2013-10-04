@@ -1,5 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -57,9 +58,7 @@ sub runningOnBuildBot()
 
 sub useNewRunWebKitTests()
 {
-    # NRWT does not support qt-arm: https://bugs.webkit.org/show_bug.cgi?id=64086
-    return 0 if isQt() and isARM();
-    # All other platforms should use NRWT by default.
+    # All platforms should use NRWT by default.
     return 1;
 }
 
@@ -75,18 +74,9 @@ if (useNewRunWebKitTests()) {
     }
 }
 
-# webkitdirs.pm strips --qt and --gtk from @ARGV when we call isQt/isGtk.
+# webkitdirs.pm strips --gtk from @ARGV when we call isGtk.
 # We have to add back any --PORT arguments which may have been removed by isPort() checks above.
-if (isQt()) {
-    my $isPlatformSet = 0;
-    for (@ARGV){
-        # Pass --qt if platform isn't passed explicitly (eg. qt-5.0, qt-wk2, ...)
-        if(/^--platform.*/){
-            $isPlatformSet = 1;
-        }
-    }
-    push(@ARGV, "--qt") if(!$isPlatformSet);
-} elsif (isGtk()) {
+if (isGtk()) {
     push(@ARGV, "--gtk");
 } elsif (isEfl()) {
     push(@ARGV, "--efl");

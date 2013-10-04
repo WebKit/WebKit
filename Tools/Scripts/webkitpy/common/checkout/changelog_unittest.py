@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -376,7 +377,6 @@ class ChangeLogTest(unittest.TestCase):
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY.', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY - Build Fix.', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY, layout tests fix.', None)
-        self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Qt build fix pt 2).', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY(rollout)', None)
         self._assert_parse_reviewer_text_list('Reviewed by NOBODY (Build fix, forgot to svn add this file)', None)
         self._assert_parse_reviewer_text_list('Reviewed by nobody (trivial follow up fix), Joseph Pecoraro LGTM-ed.', None)

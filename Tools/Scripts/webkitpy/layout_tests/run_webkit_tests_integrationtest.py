@@ -1,6 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -924,9 +924,6 @@ class PortTest(unittest.TestCase):
 
     def disabled_test_chromium_mac_lion_in_test_shell_mode(self):
         self.assert_mock_port_works('chromium-mac-lion', args=['--additional-drt-flag=--test-shell'])
-
-    def disabled_test_qt_linux(self):
-        self.assert_mock_port_works('qt-linux')
 
     def disabled_test_mac_lion(self):
         self.assert_mock_port_works('mac-lion')
