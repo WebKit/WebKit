@@ -477,7 +477,7 @@ sub determineConfigurationProductDir
     determineBaseProductDir();
     determineConfiguration();
     if (isAppleWinWebKit()) {
-        my $binDir = "bin32";
+        my $binDir = isWin64() ? "bin64" : "bin32";
         $configurationProductDir = File::Spec->catdir($baseProductDir, configurationForVisualStudio(), $binDir);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
