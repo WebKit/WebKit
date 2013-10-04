@@ -1,5 +1,17 @@
 2013-10-04  Michael Saboff  <msaboff@apple.com>
 
+        FTL::OSRExit::convertToForward() shouldn't misuse Operands<>::operator[]
+        https://bugs.webkit.org/show_bug.cgi?id=122336
+
+        Reviewed by Geoffrey Garen.
+
+        Changed code in change set r156900 to use the operand() accessor instead of operator[].
+
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::convertToForward):
+
+2013-10-04  Michael Saboff  <msaboff@apple.com>
+
         FTL: Crash in OSRExit::convertToForward() using VirtualRegister.offset() as array index
         https://bugs.webkit.org/show_bug.cgi?id=122332
 

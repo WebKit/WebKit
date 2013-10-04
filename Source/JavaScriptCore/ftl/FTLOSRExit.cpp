@@ -84,17 +84,17 @@ void OSRExit::convertToForward(
     // Is the value for this operand being passed as an argument to the exit, or is
     // it something else? If it's an argument already, then replace that argument;
     // otherwise add another argument.
-    if (m_values[overriddenOperand.toLocal()].isArgument()) {
-        ExitArgument exitArgument = m_values[overriddenOperand.toLocal()].exitArgument();
+    if (m_values.operand(overriddenOperand).isArgument()) {
+        ExitArgument exitArgument = m_values.operand(overriddenOperand).exitArgument();
         arguments[exitArgument.argument()] = value.value();
-        m_values[overriddenOperand.toLocal()] = ExitValue::exitArgument(
+        m_values.operand(overriddenOperand) = ExitValue::exitArgument(
             exitArgument.withFormat(value.format()));
         return;
     }
     
     unsigned argument = arguments.size();
     arguments.append(value.value());
-    m_values[m_lastSetOperand.toLocal()] = ExitValue::exitArgument(
+    m_values.operand(m_lastSetOperand) = ExitValue::exitArgument(
         ExitArgument(value.format(), argument));
 }
 
