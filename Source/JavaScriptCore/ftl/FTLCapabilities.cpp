@@ -203,6 +203,10 @@ inline CapabilityLevel canCompile(Node* node)
             return CannotCompile;
         }
         break;
+    case ValueToInt32:
+        if (node->child1().useKind() != BooleanUse)
+            return CannotCompile;
+        break;
     default:
         // Don't know how to handle anything else.
         return CannotCompile;

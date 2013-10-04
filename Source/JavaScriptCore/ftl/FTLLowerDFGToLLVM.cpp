@@ -437,6 +437,9 @@ private:
         case ForceOSRExit:
             compileForceOSRExit();
             break;
+        case ValueToInt32:
+            compileValueToInt32();
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -452,6 +455,12 @@ private:
             m_interpreter.executeEffects(nodeIndex);
         
         return true;
+    }
+
+    void compileValueToInt32()
+    {
+        ASSERT(m_node->child1().useKind() == BooleanUse);
+        setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
     }
     
     void compileUpsilon()
