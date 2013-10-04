@@ -1,5 +1,23 @@
 2013-10-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WebIDL] Annotate IDL interfaces under Source/WebCore/loader/appcache/ with the OperationsNotDeletable attribute
+        https://bugs.webkit.org/show_bug.cgi?id=122274
+
+        Reviewed by Darin Adler.
+
+        Before changing the JSC bindings generator to enforce WebIDL operations to be configurable, all the
+        interfaces are being annotated with the OperationsNotDeletable attribute. The attribute currently
+        doesn't have any effect, but will keep the operations not configurable after the generator is modified
+        to preserve the original behavior. The attribute will be removed from each interface after checking
+        conformity with other browsers (in terms of configurability of operations of that interface) and the
+        WebKit's existing test suites.
+
+        This patch covers IDL interfaces under Source/WebCore/loader/appcache/.
+
+        * loader/appcache/DOMApplicationCache.idl:
+
+2013-10-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [WebIDL] Annotate IDL interfaces under Source/WebCore/plugins/ with the OperationsNotDeletable attribute
         https://bugs.webkit.org/show_bug.cgi?id=122273
 
