@@ -1,3 +1,21 @@
+2013-10-04  Ralph Thomas  <ralpht@gmail.com>
+
+        Inserting a JS generated keyframe animation shouldn't trigger a whole document style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=119479
+
+        Reviewed by Antti Koivisto.
+
+        Change CSSStyleSheet::didMutateRules to not invalidate all node's styles when inserting a
+        @-webkit-keyframes rule, and to instead insert the rule directly into the StyleResolver.
+
+        Test: animation/keyframes-dynamic.html: adds and removes keyframe rules using JavaScript and
+        validates that the correct elements are animated.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::insertRule):
+        * css/CSSStyleSheet.h:
+
 2013-10-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebIDL] Annotate IDL interfaces under Source/WebCore/fileapi/ with the OperationsNotDeletable attribute

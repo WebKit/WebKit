@@ -40,6 +40,7 @@ class CachedCSSStyleSheet;
 class Document;
 class MediaQuerySet;
 class SecurityOrigin;
+class StyleRuleKeyframes;
 class StyleSheetContents;
 
 typedef int ExceptionCode;
@@ -91,7 +92,7 @@ public:
     class RuleMutationScope {
         WTF_MAKE_NONCOPYABLE(RuleMutationScope);
     public:
-        RuleMutationScope(CSSStyleSheet*, RuleMutationType = OtherMutation);
+        RuleMutationScope(CSSStyleSheet*, RuleMutationType = OtherMutation, StyleRuleKeyframes* insertedKeyframesRule = nullptr);
         RuleMutationScope(CSSRule*);
         ~RuleMutationScope();
 
@@ -99,10 +100,11 @@ public:
         CSSStyleSheet* m_styleSheet;
         RuleMutationType m_mutationType;
         WhetherContentsWereClonedForMutation m_contentsWereClonedForMutation;
+        StyleRuleKeyframes* m_insertedKeyframesRule;
     };
 
     WhetherContentsWereClonedForMutation willMutateRules();
-    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation);
+    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation, StyleRuleKeyframes* insertedKeyframesRule);
     void didMutateRuleFromCSSStyleDeclaration();
     void didMutate();
     
