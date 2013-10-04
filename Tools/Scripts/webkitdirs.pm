@@ -114,6 +114,9 @@ my $willUseVCExpressWhenBuilding = 0;
 # Defined in VCSUtils.
 sub exitStatus($);
 
+sub findMatchingArguments($$);
+sub hasArgument($$);
+
 sub determineSourceDir
 {
     return if $sourceDir;
@@ -372,7 +375,7 @@ sub argumentsForConfiguration()
     my @args = ();
     push(@args, '--debug') if $configuration eq "Debug";
     push(@args, '--release') if $configuration eq "Release";
-    push(@args, '--32-bit') if $architecture ne "x86_64";
+    push(@args, '--32-bit') if ($architecture ne "x86_64" and !hasArgument('--64-bit', \@ARGV));
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
     push(@args, '--wincairo') if isWinCairo();
@@ -863,20 +866,35 @@ sub checkForArgumentAndRemoveFromARGV
     return checkForArgumentAndRemoveFromArrayRef($argToCheck, \@ARGV);
 }
 
-sub checkForArgumentAndRemoveFromArrayRef
+sub findMatchingArguments($$)
 {
     my ($argToCheck, $arrayRef) = @_;
-    my @indicesToRemove;
+    my @matchingIndices;
     foreach my $index (0 .. $#$arrayRef) {
         my $opt = $$arrayRef[$index];
         if ($opt =~ /^$argToCheck$/i ) {
-            push(@indicesToRemove, $index);
+            push(@matchingIndices, $index);
         }
     }
+    return @matchingIndices; 
+}
+
+sub hasArgument($$)
+{
+    my ($argToCheck, $arrayRef) = @_;
+    my @matchingIndices = findMatchingArguments($argToCheck, $arrayRef);
+    my $far = scalar @matchingIndices;
+    return scalar @matchingIndices > 0;
+}
+
+sub checkForArgumentAndRemoveFromArrayRef
+{
+    my ($argToCheck, $arrayRef) = @_;
+    my @indicesToRemove = findMatchingArguments($argToCheck, $arrayRef);
     foreach my $index (@indicesToRemove) {
         splice(@$arrayRef, $index, 1);
     }
-    return $#indicesToRemove > -1;
+    return scalar @indicesToRemove > 0;
 }
 
 sub isWK2()
