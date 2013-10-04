@@ -205,7 +205,7 @@
                         r"|Source/WebKit/blackberry/WebKitSupport/FatFingers.*",
         },
         "SVG": {
-            "filename": r"Source/WebCore/svg, "gyuyoung.kim@webkit.org""
+            "filename": r"Source/WebCore/svg"
                         r"|Source/WebCore/rendering/svg",
         },
         "WebInspectorAPI": {

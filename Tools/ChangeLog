@@ -1,3 +1,9 @@
+2013-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Watchlist is broken after <http://trac.webkit.org/r156880>
+
+        * Scripts/webkitpy/common/config/watchlist: Remove an incorrect change.
+
 2013-10-04  Brent Fulgham  <bfulgham@apple.com>
 
         Remove Qt features from build and test tools
