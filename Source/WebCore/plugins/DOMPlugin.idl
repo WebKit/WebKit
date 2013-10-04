@@ -19,7 +19,8 @@
 */
 
 [
-    InterfaceName=Plugin
+    InterfaceName=Plugin,
+    OperationsNotDeletable
 ] interface DOMPlugin {
     readonly attribute DOMString name;
     readonly attribute DOMString filename;
