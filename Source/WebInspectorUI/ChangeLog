@@ -1,3 +1,89 @@
+2013-10-04  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: pressing the Cmd key over a CSS property should underline it immediately (jump to definition mode)
+        https://bugs.webkit.org/show_bug.cgi?id=119012
+
+        Reviewed by Joseph Pecoraro.
+
+        We add an "enabled" state to the tokenTrackingController to indicate that we're interested
+        in tracking hovered tokens. The tokenTrackingController is now only enabled in the
+        CSSStyleDeclarationTextEditor when the Cmd key is pressed and in the SourceCodeTextEditor
+        when either the Cmd key is pressed (NonSymbolTokens mode) or when the debugger is paused
+        (JavaScriptExpression mode).
+        
+        The tokenTrackingController is now smarter about how it tracks mouse events when it's enabled,
+        tracking "mouseenter" and "mouseleave" events to enable tracking allowing immediate detection of
+        tokens being hovered or no longer being hovered even with quick mouse movements. Additioanlly,
+        using the new top-level mouse coordinates tracking, we can detect a hovered token as soon as
+        it's being enabled to provide instant feedback to the user.
+
+        This new top-level mouse coordinates tracking couple with tracking of modifier keys also fixes
+        http://webkit.org/b/119011.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateJumpToSymbolTrackingMode):
+        Highlight the last known hovered candidate's range as soon as the Cmd key is pressed and enable
+        the tokenTrackingController if we're dealing with a non-read-only editor. When the Cmd key is
+        released, disable the tokenTrackingController.
+
+        * UserInterface/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.get enabled):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.set enabled):
+        New enabled state for the tokenTrackingController which indicates whether it should be tracking
+        mouse events to track hovered tokens in the editor. Upon being enabled, the tokenTrackingController
+        looks up the mouse coordinates continuously tracked at the window level to check for a token
+        at the last known mouse coordinates in case we're already over a token that may be highlighted.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.highlightLastHoveredRange):
+        New public method allowing to highlight the last know candidate range, if any. This is used from
+        editor code when the Cmd key is pressed and we want to force the last know candidate to be
+        highlighted.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._startTracking):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._stopTracking):
+        Make these two methods private now that they're automatically called by the "mouseenter" and
+        "mouseleave" event handling when we're in the "enabled" state. Additionally, the public
+        "tracking" property has been removed since it is no longer useful to the developer.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.handleEvent):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseEntered):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseLeft):
+        New handlers for the "mouseenter" and "mouseleave" events enabling tracking of hovered tokens.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseMovedOverEditor):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._updateHoveredTokenInfo):
+        Refactor _mouseMovedOverEditor() into two methods with the new _updateHoveredTokenInfo()
+        allowing to customize the mouse coordinates to be used since we may call
+        _updateHoveredTokenInfo() outside of the context of a mouse event (ie. a keypress event).
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._windowLostFocus):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._resetTrackingStates):
+        New private method combining all the various states that need to be reset when tracking
+        is turned off, including the removal of the highlighted range if any. This is now called
+        when the window loses focus.
+
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        (WebInspector._mouseMoved):
+        Add a new window-level "mousemove" event handler to always track mouse coordinates and key modifier
+        states. This ensures that we may have the most accurate information possible for key modifiers and
+        allow code to query the last recorded mouse position in situations where it wouldn't be possible
+        to have dealt with a mouse event, as is the case when the tokenTrackingController just started tracking.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._updateTokenTrackingControllerEnabled):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidPause):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidResume):
+        (WebInspector.SourceCodeTextEditor.prototype._enableJumpToSymbolTrackingModeSettings):
+        (WebInspector.SourceCodeTextEditor.prototype._disableJumpToSymbolTrackingModeSettings):
+        Update the "enabled" state on the tokenTrackingController when it may have changed based
+        on those two conditions: we should have either an active debugger call frame or the
+        Cmd key should have been pressed. This ensures we only track hovered tokens as needed.
+
+        (WebInspector.SourceCodeTextEditor.prototype._updateJumpToSymbolTrackingMode):
+        Highlight the last known hovered candidate's range as soon as the Cmd key is pressed.
+
 2013-10-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: save and restore source positions in back/forward history

@@ -900,32 +900,19 @@ WebInspector.SourceCodeTextEditor.prototype = {
         }
     },
 
-    _shouldTrackTokenHovering: function()
+    _updateTokenTrackingControllerEnabled: function()
     {
-        return this._jumpToSymbolTrackingModeEnabled || WebInspector.debuggerManager.activeCallFrame;
-    },
-
-    _startTrackingTokenHoveringIfNeeded: function()
-    {
-        if (this._shouldTrackTokenHovering() && !this.tokenTrackingController.tracking)
-            this.tokenTrackingController.startTracking();
-    },
-
-    _stopTrackingTokenHoveringIfNeeded: function()
-    {
-        if (!this._shouldTrackTokenHovering() && this.tokenTrackingController.tracking)
-            this.tokenTrackingController.stopTracking();
+        this.tokenTrackingController.enabled = this._jumpToSymbolTrackingModeEnabled || WebInspector.debuggerManager.activeCallFrame;
     },
 
     _debuggerDidPause: function(event)
     {
-        this._startTrackingTokenHoveringIfNeeded();
+        this._updateTokenTrackingControllerEnabled();
     },
 
     _debuggerDidResume: function(event)
     {
-        this._stopTrackingTokenHoveringIfNeeded();
-
+        this._updateTokenTrackingControllerEnabled();
         this._dismissPopover();
     },
 
@@ -949,12 +936,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (oldJumpToSymbolTrackingModeEnabled !== this._jumpToSymbolTrackingModeEnabled) {
             if (this._jumpToSymbolTrackingModeEnabled) {
                 this._enableJumpToSymbolTrackingModeSettings();
-                this._startTrackingTokenHoveringIfNeeded();
+                this.tokenTrackingController.highlightLastHoveredRange();
             } else {
-                this._stopTrackingTokenHoveringIfNeeded();
                 this._disableJumpToSymbolTrackingModeSettings();
-                if (!this.tokenTrackingController.tracking)
-                    this.tokenTrackingController.removeHighlightedRange();
+                this.tokenTrackingController.removeHighlightedRange();
             }
         }
     },
@@ -966,6 +951,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this.tokenTrackingController.mouseOutReleaseDelayDuration = 0;
 
         this.tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.NonSymbolTokens;
+        this._updateTokenTrackingControllerEnabled();
+
+        this._dismissPopover();
     },
 
     _disableJumpToSymbolTrackingModeSettings: function()
@@ -975,6 +963,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this.tokenTrackingController.mouseOutReleaseDelayDuration = WebInspector.SourceCodeTextEditor.DurationToMouseOutOfHoveredTokenToRelease;
 
         this.tokenTrackingController.mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
+        this._updateTokenTrackingControllerEnabled();
     },
 
     // CodeMirrorTokenTrackingController Delegate

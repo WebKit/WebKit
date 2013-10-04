@@ -107,6 +107,7 @@ WebInspector.loaded = function()
     window.addEventListener("resize", this._windowResized.bind(this));
     window.addEventListener("keydown", this._windowKeyDown.bind(this));
     window.addEventListener("keyup", this._windowKeyUp.bind(this));
+    window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
 
     // Create settings.
     this._lastSelectedNavigationSidebarPanelSetting = new WebInspector.Setting("last-selected-navigation-sidebar-panel", "resource");
@@ -135,6 +136,11 @@ WebInspector.loaded = function()
     this._dockButtonToggledSetting = new WebInspector.Setting("dock-button-toggled", false);
 
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
+
+    this.mouseCoords = {
+        x: 0,
+        y: 0
+    };
 }
 
 WebInspector.contentLoaded = function()
@@ -803,6 +809,15 @@ WebInspector._windowKeyUp = function(event)
 
     var opposite = !this._dockButtonToggledSetting.value;
     this.undockButtonNavigationItem.toggled = (event.altKey && !event.metaKey && !event.shiftKey) ? opposite : !opposite;
+}
+
+WebInspector._mouseMoved = function(event)
+{
+    this._updateModifierKeys(event);
+    this.mouseCoords = {
+        x: event.pageX,
+        y: event.pageY
+    };
 }
 
 WebInspector._undock = function(event)

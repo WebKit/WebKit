@@ -1002,11 +1002,12 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             this._jumpToSymbolTrackingModeEnabled = WebInspector.modifierKeys.metaKey && !WebInspector.modifierKeys.altKey && !WebInspector.modifierKeys.shiftKey;
 
         if (oldJumpToSymbolTrackingModeEnabled !== this._jumpToSymbolTrackingModeEnabled) {
-            if (this._jumpToSymbolTrackingModeEnabled)
-                this._tokenTrackingController.startTracking();
-            else {
-                this._tokenTrackingController.stopTracking();
+            if (this._jumpToSymbolTrackingModeEnabled) {
+                this._tokenTrackingController.highlightLastHoveredRange();
+                this._tokenTrackingController.enabled = !this._codeMirror.getOption("readOnly");
+            } else {
                 this._tokenTrackingController.removeHighlightedRange();
+                this._tokenTrackingController.enabled = false;
             }
         }
     },
