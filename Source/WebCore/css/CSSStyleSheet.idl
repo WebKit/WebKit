@@ -19,7 +19,9 @@
  */
 
 // Introduced in DOM Level 2:
-interface CSSStyleSheet : StyleSheet {
+[
+    OperationsNotDeletable
+] interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule          ownerRule;
     readonly attribute CSSRuleList      cssRules;
 

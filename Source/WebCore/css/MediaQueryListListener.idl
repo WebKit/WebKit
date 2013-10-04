@@ -18,7 +18,8 @@
  */
 
 [
-    CallbackNeedsOperatorEqual
+    CallbackNeedsOperatorEqual,
+    OperationsNotDeletable
 ] callback interface MediaQueryListListener {
     boolean queryChanged([Default=Undefined] optional MediaQueryList list);
 };

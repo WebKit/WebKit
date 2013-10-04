@@ -34,6 +34,7 @@
     ActiveDOMObject,
     EventTarget,
     GenerateIsReachable=ImplDocument,
+    OperationsNotDeletable
 ] interface FontLoader {
 
     attribute EventListener onloading;

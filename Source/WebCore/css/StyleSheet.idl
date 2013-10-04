@@ -25,6 +25,7 @@
     GenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
+    OperationsNotDeletable
 ] interface StyleSheet {
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString        type;
              attribute boolean          disabled;

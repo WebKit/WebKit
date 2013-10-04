@@ -28,7 +28,8 @@
 
 [
     DoNotCheckConstants,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface WebKitCSSTransformValue : CSSValueList {
 
     // OperationTypes

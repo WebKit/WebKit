@@ -30,7 +30,8 @@
 [
     NoInterfaceObject,
     InterfaceName=CSS,
-    Conditional=CSS3_CONDITIONAL_RULES
+    Conditional=CSS3_CONDITIONAL_RULES,
+    OperationsNotDeletable
 ] interface DOMWindowCSS {
 
     boolean supports(DOMString property, DOMString value);

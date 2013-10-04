@@ -26,7 +26,8 @@
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     CustomEnumerateProperty,
-    SkipVTableValidation
+    SkipVTableValidation,
+    OperationsNotDeletable
 ] interface CSSStyleDeclaration {
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString cssText;
 
