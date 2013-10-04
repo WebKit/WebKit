@@ -18,7 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 [
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface XPathExpression {
     [ObjCLegacyUnnamedParameters, RaisesException] XPathResult evaluate([Default=Undefined] optional Node contextNode, 
                                         [Default=Undefined] optional unsigned short type, 
