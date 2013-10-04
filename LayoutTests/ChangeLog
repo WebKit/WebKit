@@ -1,3 +1,14 @@
+2013-10-04  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Enable correct behaviour for deleting regional indicator symbols
+        https://bugs.webkit.org/show_bug.cgi?id=122209
+
+        Reviewed by Gyuyoung Kim.
+
+        Now editing/deleting/regional-indicators.html is passing on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2013-10-04  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Infinite loop when computing widows

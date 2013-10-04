@@ -1414,8 +1414,6 @@ webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ Missin
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
-webkit.org/b/66268 editing/deleting/regional-indicators.html [ Failure ]
-
 # Wrong video colors.
 webkit.org/b/102091 media/video-colorspace-yuv420.html [ Skip ]
 webkit.org/b/102091 media/video-colorspace-yuv422.html [ Skip ]
