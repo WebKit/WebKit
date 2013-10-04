@@ -1,3 +1,19 @@
+2013-10-04  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Basic shapes should be animatable for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=122343
+
+        Reviewed by Dirk Schulze.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-animation.html
+
+        Add shape outside to the list of animatable properties. The infrastructure
+        is already in place for animating basic shapes on shape-inside and clipping
+        paths. See https://bugs.webkit.org/show_bug.cgi?id=101854.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2013-10-04  Andreas Kling  <akling@apple.com>
 
         Tighten typing in some RenderLayer code.

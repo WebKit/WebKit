@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        width: 200px;
+        height: 200px;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        float: left;
+    }
+
+    #rectangle-box {
+      -webkit-animation: rectangle-anim 2s linear
+    }
+
+    #circle-box {
+      -webkit-animation: circle-anim 2s linear
+    }
+
+    #ellipse-box {
+      -webkit-animation: ellipse-anim 2s linear
+    }
+
+    #polygon-box {
+      -webkit-animation: polygon-anim 2s linear
+    }
+
+
+    @-webkit-keyframes rectangle-anim {
+        from { -webkit-shape-outside: rectangle(0%, 0%, 100%, 100%); }
+        to   { -webkit-shape-outside: rectangle(20%, 20%, 60%, 60%); }
+    }
+
+    @-webkit-keyframes circle-anim {
+        from { -webkit-shape-outside: circle(50%, 50%, 50%); }
+        to   { -webkit-shape-outside: circle(20%, 20%, 20%); }
+    }
+
+    @-webkit-keyframes ellipse-anim {
+        from { -webkit-shape-outside: ellipse(50%, 50%, 50%, 40%); }
+        to   { -webkit-shape-outside: ellipse(20%, 20%, 20%, 20%); }
+    }
+
+    @-webkit-keyframes polygon-anim {
+        from { -webkit-shape-outside: polygon(nonzero, 0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { -webkit-shape-outside: polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%); }
+    }
+
+  </style>
+  <script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["rectangle-anim",  1, "rectangle-box", "webkitShapeOutside", "rectangle(10%, 10%, 80%, 80%, 0px, 0px)", 0.05],
+      ["circle-anim",  1, "circle-box", "webkitShapeOutside", "circle(35%, 35%, 35%)", 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitShapeOutside", "ellipse(35%, 35%, 35%, 30%)", 0.05],
+      ["polygon-anim",  1, "polygon-box", "webkitShapeOutside", "polygon(nonzero, 10% 10%, 90% 10%, 90% 90%, 10% 90%)", 0.05],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class='container'>
+  <div class="box" id="rectangle-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="circle-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="ellipse-box"></div>
+  Moving Text
+</div>
+<div class='container'>
+  <div class="box" id="polygon-box"></div>
+  Moving Text
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>

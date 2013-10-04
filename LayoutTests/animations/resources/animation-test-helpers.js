@@ -460,6 +460,7 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitFilter"
                || property == "webkitClipPath"
                || property == "webkitShapeInside"
+               || property == "webkitShapeOutside"
                || !property.indexOf("webkitTransform")) {
         computedValue = window.getComputedStyle(element)[property.split(".")[0]];
     } else {
@@ -492,7 +493,7 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
         var filterParameters = parseFilterFunctionList(computedValue);
         var filter2Parameters = parseFilterFunctionList(expectedValue);
         result = compareFilterFunctions(filterParameters, filter2Parameters, tolerance);
-    } else if (property == "webkitClipPath" || property == "webkitShapeInside") {
+    } else if (property == "webkitClipPath" || property == "webkitShapeInside" || property == "webkitShapeOutside") {
         var clipPathParameters = parseBasicShape(computedValue);
         var clipPathParameters2 = parseBasicShape(expectedValue);
         if (!clipPathParameters || !clipPathParameters2)
