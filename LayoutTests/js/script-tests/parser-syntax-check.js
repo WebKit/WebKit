@@ -369,6 +369,37 @@ valid("({a: 1 || 1}.a = 1)");
 invalid("var a.b = c");
 invalid("var a.b;");
 
+valid("for (of of of){}")
+valid("for (of; of; of){}")
+valid("for (var of of of){}")
+valid("for (var of; of; of){}")
+invalid("for (var of.of of of){}")
+invalid("for (var of[of] of of){}")
+valid("for (of.of of of){}")
+valid("for (of[of] of of){}")
+valid("for (var [of] of of){}")
+valid("for (var {of} of of){}")
+valid("for (of in of){}")
+valid("for (var of in of){}")
+invalid("for (var of.of in of){}")
+valid("for (of.of in of){}")
+valid("for (of[of] in of){}")
+invalid("for (var of[of] in of){}")
+valid("for (var [of] in of){}")
+valid("for (var {of} in of){}")
+
+
+invalid("for (of of of of){}")
+invalid("for (of of; of; of){}")
+invalid("for (of of []; of; of){}")
+invalid("for (of of){}")
+invalid("for (var of of){}")
+invalid("for (of of in of){}")
+invalid("for (of in){}")
+invalid("for (var of in){}")
+
+
+
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
 foo = 'FAIL';
 bar = 'PASS';

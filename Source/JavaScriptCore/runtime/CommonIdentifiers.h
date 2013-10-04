@@ -113,6 +113,7 @@
     macro(numInlinedCalls) \
     macro(numInlinedGetByIds) \
     macro(numInlinedPutByIds) \
+    macro(of) \
     macro(opcode) \
     macro(origin) \
     macro(osrExitSites) \
@@ -211,7 +212,8 @@ namespace JSC {
         const Identifier underscoreProto;
         const Identifier thisIdentifier;
         const Identifier useStrictIdentifier;
-        const PrivateName iteratorPrivateName;
+        const Identifier iteratorPrivateName;
+        const Identifier hasNextIdentifier;
 
         
 #define JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL(name) const Identifier name##Keyword;

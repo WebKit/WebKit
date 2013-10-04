@@ -36,6 +36,11 @@ public:
         : m_impl(StringImpl::createEmptyUnique())
     {
     }
+    explicit PrivateName(StringImpl* uid)
+        : m_impl(uid)
+    {
+        ASSERT(m_impl->isEmptyUnique());
+    }
 
     StringImpl* uid() const { return m_impl.get(); }
 

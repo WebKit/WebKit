@@ -811,7 +811,7 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
 
-    inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+    inline EnumerationNode::EnumerationNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(location)
         , m_lexpr(l)
         , m_expr(expr)
@@ -820,13 +820,33 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         ASSERT(l);
     }
     
-    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
+    inline EnumerationNode::EnumerationNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(location)
         , m_lexpr(new (vm) DeconstructingAssignmentNode(location, pattern, 0))
         , m_expr(expr)
         , m_statement(statement)
     {
         ASSERT(pattern);
+    }
+    
+    inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+        : EnumerationNode(location, l, expr, statement)
+    {
+    }
+    
+    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
+        : EnumerationNode(vm, location, pattern, expr, statement)
+    {
+    }
+    
+    inline ForOfNode::ForOfNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+        : EnumerationNode(location, l, expr, statement)
+    {
+    }
+    
+    inline ForOfNode::ForOfNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
+        : EnumerationNode(vm, location, pattern, expr, statement)
+    {
     }
     
     inline DeconstructionPatternNode::DeconstructionPatternNode(VM*)

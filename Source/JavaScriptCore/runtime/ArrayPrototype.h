@@ -33,7 +33,7 @@ private:
 public:
     typedef JSArray Base;
 
-    static ArrayPrototype* create(VM&, Structure*);
+    static ArrayPrototype* create(VM&, JSGlobalObject*, Structure*);
         
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
@@ -45,7 +45,7 @@ public:
     }
 
 protected:
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

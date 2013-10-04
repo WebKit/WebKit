@@ -37,6 +37,7 @@ namespace JSC {
 const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 
 static EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeNext(ExecState*);
+static EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(ExecState*);
 
 void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
@@ -45,6 +46,7 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, arrayIteratorPrototypeNext, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorPrototypeIterate, DontEnum, 0);
 }
 
 static EncodedJSValue createIteratorResult(CallFrame* callFrame, ArrayIterationKind kind, size_t index, JSValue result, bool done)
@@ -76,7 +78,7 @@ static EncodedJSValue createIteratorResult(CallFrame* callFrame, ArrayIterationK
     }
     return JSValue::encode(resultObject);
 }
-    
+
 EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeNext(CallFrame* callFrame)
 {
     JSArrayIterator* iterator = jsDynamicCast<JSArrayIterator*>(callFrame->thisValue());
@@ -127,6 +129,11 @@ EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeNext(CallFrame* callFrame)
     else
         iterator->setNextIndex(index + 1);
     return createIteratorResult(callFrame, kind, index, jsUndefined(), index == length);
+}
+
+EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(CallFrame* callFrame)
+{
+    return JSValue::encode(callFrame->thisValue());
 }
 
 }

@@ -379,13 +379,13 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     return generator.emitConstruct(returnValue.get(), func.get(), expectedFunction, callArguments, divot(), divotStart(), divotEnd());
 }
 
-inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
+inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode, unsigned additionalArguments)
     : m_argumentsNode(argumentsNode)
 {
     if (generator.shouldEmitProfileHooks())
         m_profileHookRegister = generator.newTemporary();
 
-    size_t argumentCountIncludingThis = 1; // 'this' register.
+    size_t argumentCountIncludingThis = 1 + additionalArguments; // 'this' register.
     if (argumentsNode) {
         for (ArgumentListNode* node = argumentsNode->m_listNode; node; node = node->m_next)
             ++argumentCountIncludingThis;
@@ -1755,6 +1755,81 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitLabel(scope->continueTarget());
     generator.emitNextPropertyName(propertyName, base.get(), i.get(), size.get(), iter.get(), loopStart.get());
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitLabel(scope->breakTarget());
+}
+
+// ------------------------------ ForOfNode ------------------------------------
+
+void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
+    
+    if (!m_lexpr->isLocation()) {
+        emitThrowReferenceError(generator, "Left side of for-of statement is not a reference.");
+        return;
+    }
+    
+    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    RefPtr<RegisterID> subject = generator.emitNode(m_expr);
+    RefPtr<RegisterID> iterator = generator.emitGetById(generator.newTemporary(), subject.get(), generator.propertyNames().iteratorPrivateName);
+    {
+        CallArguments args(generator, 0);
+        generator.emitMove(args.thisRegister(), subject.get());
+        generator.emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd());
+    }
+    RefPtr<RegisterID> iteratorNext = generator.emitGetById(generator.newTemporary(), iterator.get(), generator.propertyNames().next);
+    RefPtr<RegisterID> value = generator.newTemporary();
+    generator.emitLoad(value.get(), jsUndefined());
+    
+    generator.emitJump(scope->continueTarget());
+    
+    RefPtr<Label> loopStart = generator.newLabel();
+    generator.emitLabel(loopStart.get());
+    generator.emitLoopHint();
+    
+    if (m_lexpr->isResolveNode()) {
+        const Identifier& ident = static_cast<ResolveNode*>(m_lexpr)->identifier();
+        if (Local local = generator.local(ident))
+            generator.emitMove(local.get(), value.get());
+        else {
+            if (generator.isStrictMode())
+                generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+            RegisterID* scope = generator.emitResolveScope(generator.newTemporary(), ident);
+            generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+            generator.emitPutToScope(scope, ident, value.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
+        }
+    } else if (m_lexpr->isDotAccessorNode()) {
+        DotAccessorNode* assignNode = static_cast<DotAccessorNode*>(m_lexpr);
+        const Identifier& ident = assignNode->identifier();
+        RefPtr<RegisterID> base = generator.emitNode(assignNode->base());
+        
+        generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
+        generator.emitPutById(base.get(), ident, value.get());
+    } else if (m_lexpr->isBracketAccessorNode()) {
+        BracketAccessorNode* assignNode = static_cast<BracketAccessorNode*>(m_lexpr);
+        RefPtr<RegisterID> base = generator.emitNode(assignNode->base());
+        RegisterID* subscript = generator.emitNode(assignNode->subscript());
+        
+        generator.emitExpressionInfo(assignNode->divot(), assignNode->divotStart(), assignNode->divotEnd());
+        generator.emitPutByVal(base.get(), subscript, value.get());
+    } else {
+        ASSERT(m_lexpr->isDeconstructionNode());
+        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+        assignNode->bindings()->emitBytecode(generator, value.get());
+    }
+    
+    generator.emitNode(dst, m_statement);
+    
+    generator.emitLabel(scope->continueTarget());
+    RefPtr<RegisterID> result = generator.newTemporary();
+    CallArguments nextArguments(generator, 0, 1);
+    generator.emitMove(nextArguments.thisRegister(), iterator.get());
+    generator.emitMove(nextArguments.argumentRegister(0), value.get());
+    generator.emitCall(result.get(), iteratorNext.get(), NoExpectedFunction, nextArguments, divot(), divotStart(), divotEnd());
+    generator.emitGetById(value.get(), result.get(), generator.propertyNames().value);
+    RefPtr<RegisterID> done = generator.emitGetById(generator.newTemporary(), result.get(), generator.propertyNames().done);
+    generator.emitJumpIfFalse(done.get(), loopStart.get());
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     generator.emitLabel(scope->breakTarget());
 }

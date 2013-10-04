@@ -380,6 +380,22 @@ public:
         setExceptionLocation(result, eStart, eDivot, eEnd);
         return result;
     }
+    
+    StatementNode* createForOfLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
+    {
+        ForOfNode* result = new (m_vm) ForOfNode(location, lhs, iter, statements);
+        result->setLoc(start, end, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, eStart, eDivot, eEnd);
+        return result;
+    }
+    
+    StatementNode* createForOfLoop(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
+    {
+        ForOfNode* result = new (m_vm) ForOfNode(m_vm, location, pattern.get(), iter, statements);
+        result->setLoc(start, end, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, eStart, eDivot, eEnd);
+        return result;
+    }
 
     StatementNode* createEmptyStatement(const JSTokenLocation& location) { return new (m_vm) EmptyStatementNode(location); }
 

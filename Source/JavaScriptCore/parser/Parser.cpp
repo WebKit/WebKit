@@ -294,7 +294,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             next();
             hasInitializer = match(EQUAL);
             failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
-            context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
+            context.addVar(name, (hasInitializer || (!m_allowsIn && (match(INTOKEN) || isofToken()))) ? DeclarationStacks::HasInitializer : 0);
             if (hasInitializer) {
                 JSTextPosition varDivot = tokenStartPosition() + 1;
                 initStart = tokenStartPosition();
@@ -317,7 +317,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
                 TreeExpression rhs = parseExpression(context);
                 node = context.createDeconstructingAssignment(location, pattern, rhs);
             }
-            ASSERT(node);
         }
         
         if (hasInitializer) {
@@ -501,7 +500,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
-        consumeOrFail(INTOKEN);
+        bool isOfEnumeration = false;
+        if (!consume(INTOKEN)) {
+            failIfFalseWithMessage(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
+            isOfEnumeration = true;
+            next();
+        }
         
         TreeExpression expr = parseExpression(context);
         failIfFalse(expr);
@@ -515,6 +519,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
         failIfFalse(statement);
+        if (isOfEnumeration)
+            return context.createForOfLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
         return context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
     }
     
@@ -556,7 +562,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     
     // For-in loop
     failIfFalse(nonLHSCount == m_nonLHSCount);
-    consumeOrFail(INTOKEN);
+    bool isOfEnumeration = false;
+    if (!consume(INTOKEN)) {
+        failIfFalseWithMessage(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
+        isOfEnumeration = true;
+        next();
+    }
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr);
     JSTextPosition exprEnd = lastTokenEndPosition();
@@ -567,7 +578,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
     failIfFalse(statement);
-    
+    if (isOfEnumeration)
+        return context.createForOfLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
     return context.createForInLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
 }
 

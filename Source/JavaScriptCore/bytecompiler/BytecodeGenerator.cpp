@@ -957,7 +957,7 @@ unsigned BytecodeGenerator::addConstant(const Identifier& ident)
     StringImpl* rep = ident.impl();
     IdentifierMap::AddResult result = m_identifierMap.add(rep, m_codeBlock->numberOfIdentifiers());
     if (result.isNewEntry)
-        m_codeBlock->addIdentifier(Identifier(m_vm, rep));
+        m_codeBlock->addIdentifier(ident);
 
     return result.iterator->value;
 }
@@ -1693,9 +1693,11 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
 
     // Generate code for arguments.
     unsigned argument = 0;
-    for (ArgumentListNode* n = callArguments.argumentsNode()->m_listNode; n; n = n->m_next)
-        emitNode(callArguments.argumentRegister(argument++), n);
-
+    if (callArguments.argumentsNode()) {
+        for (ArgumentListNode* n = callArguments.argumentsNode()->m_listNode; n; n = n->m_next)
+            emitNode(callArguments.argumentRegister(argument++), n);
+    }
+    
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize, UnsafeVectorOverflow> callFrame;
     for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)

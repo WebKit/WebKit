@@ -1,3 +1,24 @@
+2013-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Support for-of syntax
+        https://bugs.webkit.org/show_bug.cgi?id=122339
+
+        Reviewed by Geoffrey Garen.
+
+        Add test cases for the one type that supports for-of so far
+
+        * js/basic-for-of-expected.txt: Added.
+        * js/basic-for-of.html: Added.
+        * js/regress/for-of-iterate-array-entries.html: Added.
+        * js/regress/for-of-iterate-array-keys.html: Added.
+        * js/regress/for-of-iterate-array-values.html: Added.
+        * js/regress/script-tests/for-of-iterate-array-entries.js: Added.
+        (foo):
+        * js/regress/script-tests/for-of-iterate-array-keys.js: Added.
+        (foo):
+        * js/regress/script-tests/for-of-iterate-array-values.js: Added.
+        (foo):
+
 2013-10-04  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape Outside should relayout when set dynamically

@@ -69,7 +69,7 @@ public:
 
 private:
 
-    static const unsigned StructureFlags = Base::StructureFlags;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesVisitChildren;
 
     JSArrayIterator(VM& vm, Structure* structure)
         : Base(vm, structure)
@@ -78,6 +78,7 @@ private:
     }
 
     void finishCreation(VM&, JSGlobalObject*, ArrayIterationKind, JSObject* iteratedObject);
+    static void visitChildren(JSCell*, SlotVisitor&);
     
     ArrayIterationKind m_iterationKind;
     WriteBarrier<JSObject> m_iteratedObject;

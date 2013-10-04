@@ -1242,18 +1242,34 @@ namespace JSC {
     };
     
     class DeconstructionPatternNode;
-
-    class ForInNode : public StatementNode, public ThrowableExpressionData {
+    
+    class EnumerationNode : public StatementNode, public ThrowableExpressionData {
+    public:
+        EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
+        EnumerationNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
+        
+    protected:
+        ExpressionNode* m_lexpr;
+        ExpressionNode* m_expr;
+        StatementNode* m_statement;
+    };
+    
+    class ForInNode : public EnumerationNode {
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
         ForInNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_lexpr;
-        ExpressionNode* m_expr;
-        StatementNode* m_statement;
+    };
+    
+    class ForOfNode : public EnumerationNode {
+    public:
+        ForOfNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
+        ForOfNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
+        
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
     class ContinueNode : public StatementNode, public ThrowableExpressionData {

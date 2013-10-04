@@ -122,10 +122,10 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
 @end
 */
 
-ArrayPrototype* ArrayPrototype::create(VM& vm, Structure* structure)
+ArrayPrototype* ArrayPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(vm.heap)) ArrayPrototype(vm, structure);
-    prototype->finishCreation(vm);
+    prototype->finishCreation(vm, globalObject);
     return prototype;
 }
 
@@ -135,11 +135,12 @@ ArrayPrototype::ArrayPrototype(VM& vm, Structure* structure)
 {
 }
 
-void ArrayPrototype::finishCreation(VM& vm)
+void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayProtoFuncValues, DontEnum, 0);
 }
 
 bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

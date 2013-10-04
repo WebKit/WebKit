@@ -21,6 +21,8 @@
 #include "config.h"
 #include "CommonIdentifiers.h"
 
+#include "PrivateName.h"
+
 namespace JSC {
 
 #define INITIALIZE_PROPERTY_NAME(name) , name(vm, #name)
@@ -32,6 +34,8 @@ CommonIdentifiers::CommonIdentifiers(VM* vm)
     , underscoreProto(vm, "__proto__")
     , thisIdentifier(vm, "this")
     , useStrictIdentifier(vm, "use strict")
+    , iteratorPrivateName(Identifier::from(PrivateName()))
+    , hasNextIdentifier(vm, "hasNext")
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
 {

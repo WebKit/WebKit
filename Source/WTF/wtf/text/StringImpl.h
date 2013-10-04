@@ -501,9 +501,11 @@ public:
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
     WTF_EXPORT_STRING_API void upconvertCharacters(unsigned, unsigned) const;
     bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
+    bool isIdentifierOrUnique() const { return isIdentifier() || isEmptyUnique(); }
     void setIsIdentifier(bool isIdentifier)
     {
         ASSERT(!isStatic());
+        ASSERT(!isEmptyUnique());
         if (isIdentifier)
             m_hashAndFlags |= s_hashFlagIsIdentifier;
         else
@@ -519,6 +521,7 @@ public:
     void setIsAtomic(bool isAtomic)
     {
         ASSERT(!isStatic());
+        ASSERT(!isEmptyUnique());
         if (isAtomic)
             m_hashAndFlags |= s_hashFlagIsAtomic;
         else

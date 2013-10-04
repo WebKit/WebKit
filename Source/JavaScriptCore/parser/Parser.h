@@ -555,6 +555,11 @@ private:
         return m_token.m_type == expected;
     }
     
+    ALWAYS_INLINE bool isofToken()
+    {
+        return m_token.m_type == IDENT && *m_token.m_data.ident == m_vm->propertyNames->of;
+    }
+    
     ALWAYS_INLINE unsigned tokenStart()
     {
         return m_token.m_location.startOffset;

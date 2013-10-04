@@ -216,6 +216,8 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
                     out.print(" (atomic)");
                 if (impl->isIdentifier())
                     out.print(" (identifier)");
+                if (impl->isEmptyUnique())
+                    out.print(" (unique)");
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);

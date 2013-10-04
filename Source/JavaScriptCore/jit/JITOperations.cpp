@@ -74,8 +74,7 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-
-    Identifier ident(vm, uid);
+    Identifier ident = uid->isEmptyUnique() ? Identifier::from(PrivateName(uid)) : Identifier(vm, uid);
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 

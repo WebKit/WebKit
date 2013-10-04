@@ -1,3 +1,62 @@
+2013-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Support for-of syntax
+        https://bugs.webkit.org/show_bug.cgi?id=122339
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for for-of syntax to JSC.  As part of doing this I had to make
+        us support unique empty strings as identifiers.  In a follow on patch i'm
+        going to remove the distinction entirely as it's purely a complicating
+        separation.
+
+        Otherwise the logic here is fairly self-explanatory.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstant):
+        (JSC::BytecodeGenerator::emitCall):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        (JSC::ForOfNode::emitBytecode):
+        * jit/JITOperations.cpp:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createForOfLoop):
+        * parser/NodeConstructors.h:
+        (JSC::EnumerationNode::EnumerationNode):
+        (JSC::ForInNode::ForInNode):
+        (JSC::ForOfNode::ForOfNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseForStatement):
+        * parser/Parser.h:
+        (JSC::Parser::isofToken):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createForOfLoop):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::arrayIteratorPrototypeIterate):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ArrayPrototype.h:
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Identifier.h:
+        (JSC::Identifier::from):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContext):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeFunction):
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+        * runtime/PropertyName.h:
+        (JSC::PropertyName::PropertyName):
+
 2013-10-04  Michael Saboff  <msaboff@apple.com>
 
         FTL::OSRExit::convertToForward() shouldn't misuse Operands<>::operator[]

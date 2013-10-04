@@ -62,7 +62,7 @@ namespace JSC {
 
     class CallArguments {
     public:
-        CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode);
+        CallArguments(BytecodeGenerator&, ArgumentsNode*, unsigned additionalArguments = 0);
 
         RegisterID* thisRegister() { return m_argv[0].get(); }
         RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }

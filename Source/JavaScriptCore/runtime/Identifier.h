@@ -61,9 +61,11 @@ namespace JSC {
         CString ascii() const { return m_string.ascii(); }
         CString utf8() const { return m_string.utf8(); }
         
-        static Identifier createEmptyUnique(VM* vm)
+        static Identifier from(const PrivateName& name)
         {
-            return Identifier(vm, String(StringImpl::createEmptyUnique()));
+            Identifier result;
+            result.m_string = name.uid();
+            return result;
         }
 
         static Identifier createLCharFromUChar(VM* vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }

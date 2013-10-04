@@ -81,7 +81,7 @@ public:
     PropertyName(const Identifier& propertyName)
         : m_impl(propertyName.impl())
     {
-        ASSERT(!m_impl || m_impl->isIdentifier());
+        ASSERT(!m_impl || m_impl->isIdentifier() || m_impl->isEmptyUnique());
     }
 
     PropertyName(const PrivateName& propertyName)

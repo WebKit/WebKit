@@ -1,3 +1,18 @@
+2013-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Support for-of syntax
+        https://bugs.webkit.org/show_bug.cgi?id=122339
+
+        Reviewed by Geoffrey Garen.
+
+        Update assertions and add a helper function to StringImpl
+        to save repeated unique or identifier calls.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isIdentifierOrUnique):
+        (WTF::StringImpl::setIsIdentifier):
+        (WTF::StringImpl::setIsAtomic):
+
 2013-10-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update solutions and projects to support 64-bit build.
