@@ -1,3 +1,15 @@
+2013-10-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Infinite loop when computing widows
+        https://bugs.webkit.org/show_bug.cgi?id=122215
+
+        Reviewed by David Hyatt.
+
+        Test there is no stack overflow when trying to break for widows that are caused by other widows.
+
+        * fast/regions/regions-widows-stack-overflow-expected.html: Added.
+        * fast/regions/regions-widows-stack-overflow.html: Added.
+
 2013-10-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Fix the HTMLSelectElement.prototype.remove() method

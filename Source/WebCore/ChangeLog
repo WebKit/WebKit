@@ -1,3 +1,34 @@
+2013-10-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Infinite loop when computing widows
+        https://bugs.webkit.org/show_bug.cgi?id=122215
+
+        Reviewed by David Hyatt.
+
+        The patch ensures it's not possible to relayout a block indefinitely because of widows contraints. You can't
+        break a block more than once to account for widows. This can happen if, for example, some lines are moved
+        to the next container and there the content breaks in another container again without respecting the widows property.
+        This is in line with the idea of not leaving empty fragmentation containers during layout.
+
+        Test: fast/regions/regions-widows-stack-overflow.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::setBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::setDidBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::clearDidBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow):
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData): Rename the m_shouldBreakAtLineToAvoidWidow
+        flag to m_didBreakAtLineToAvoidWidow.
+
+        (WebCore::RenderBlockFlow::shouldBreakAtLineToAvoidWidow): Use the line index to determine if it should break or not.
+        (WebCore::RenderBlockFlow::didBreakAtLineToAvoidWidow): Use to determine if a break already happened because of widows.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+
 2013-10-03  Anders Carlsson  <andersca@apple.com>
 
         Assert that we don't try to index past the end of the m_coreTextIndices array

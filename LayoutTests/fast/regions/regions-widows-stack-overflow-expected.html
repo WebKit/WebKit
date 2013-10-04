@@ -1,0 +1,43 @@
+<!doctype html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <style>
+            .region {
+                width: 100px;
+                height: 100px;
+            }
+
+            #region1 {
+                border: 5px solid green;
+            }
+
+            #region2 {
+                border: 5px solid blue;
+                height: 65px;
+            }
+
+            #region3 {
+                border: 5px solid purple;
+            }
+
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=122215">Bug 122215</a>. The test passes if the page doesn't crash or loads indefinitely.</p>
+        <div id="container">
+            <div class="region" id="region1">
+                Linetext1
+                Linetext2
+                Linetext3
+            </div>
+            <div class="region" id="region2">
+                Linetext4
+                Linetext5
+                Linetext6
+            </div>
+            <div class="region" id="region3">
+                Linetext7
+            </div>
+        </div>
+    </body>
+</html>

@@ -92,7 +92,7 @@ public:
             , m_lineGridBox(0)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
-            , m_shouldBreakAtLineToAvoidWidow(false)
+            , m_didBreakAtLineToAvoidWidow(false)
         { 
         }
 
@@ -119,7 +119,7 @@ public:
 
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
-        bool m_shouldBreakAtLineToAvoidWidow : 1;
+        bool m_didBreakAtLineToAvoidWidow : 1;
     };
 
     class MarginInfo {
@@ -212,10 +212,13 @@ public:
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
 
-    bool shouldBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_shouldBreakAtLineToAvoidWidow; }
+    bool shouldBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_lineBreakToAvoidWidow >= 0; }
     void clearShouldBreakAtLineToAvoidWidow() const;
     int lineBreakToAvoidWidow() const { return m_rareData ? m_rareData->m_lineBreakToAvoidWidow : -1; }
     void setBreakAtLineToAvoidWidow(int);
+    void clearDidBreakAtLineToAvoidWidow();
+    void setDidBreakAtLineToAvoidWidow();
+    bool didBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_didBreakAtLineToAvoidWidow; }
     bool relayoutToAvoidWidows(LayoutStateMaintainer&);
 
     RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }

@@ -1389,8 +1389,10 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
 
     int lineIndex = lineCount(lineBox);
     if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
-        if (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)
+        if (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex) {
             clearShouldBreakAtLineToAvoidWidow();
+            setDidBreakAtLineToAvoidWidow();
+        }
         // If we have a non-uniform page height, then we have to shift further possibly.
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
             return;
@@ -1415,18 +1417,37 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
 
 void RenderBlockFlow::setBreakAtLineToAvoidWidow(int lineToBreak)
 {
-    ASSERT(lineToBreak);
+    ASSERT(lineToBreak >= 0);
     if (!m_rareData)
         m_rareData = adoptPtr(new RenderBlockFlowRareData(this));
-    m_rareData->m_shouldBreakAtLineToAvoidWidow = true;
+
+    ASSERT(!m_rareData->m_didBreakAtLineToAvoidWidow);
     m_rareData->m_lineBreakToAvoidWidow = lineToBreak;
+}
+
+void RenderBlockFlow::setDidBreakAtLineToAvoidWidow()
+{
+    ASSERT(!shouldBreakAtLineToAvoidWidow());
+    if (!m_rareData)
+        return;
+
+    m_rareData->m_didBreakAtLineToAvoidWidow = true;
+}
+
+void RenderBlockFlow::clearDidBreakAtLineToAvoidWidow()
+{
+    if (!m_rareData)
+        return;
+
+    m_rareData->m_didBreakAtLineToAvoidWidow = false;
 }
 
 void RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow() const
 {
+    ASSERT(shouldBreakAtLineToAvoidWidow());
     if (!m_rareData)
         return;
-    m_rareData->m_shouldBreakAtLineToAvoidWidow = false;
+
     m_rareData->m_lineBreakToAvoidWidow = -1;
 }
 

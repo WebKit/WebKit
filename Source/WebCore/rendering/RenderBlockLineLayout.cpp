@@ -1674,7 +1674,11 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         resolver.setPosition(end, numberOfIsolateAncestors(end));
     }
 
-    if (paginated && !style()->hasAutoWidows()) {
+    // In case we already adjusted the line positions during this layout to avoid widows
+    // then we need to ignore the possibility of having a new widows situation.
+    // Otherwise, we risk leaving empty containers which is against the block fragmentation principles.
+    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+    if (paginated && !style()->hasAutoWidows() && !toRenderBlockFlow(this)->didBreakAtLineToAvoidWidow()) {
         // Check the line boxes to make sure we didn't create unacceptable widows.
         // However, we'll prioritize orphans - so nothing we do here should create
         // a new orphan.
@@ -1731,6 +1735,9 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             markLinesDirtyInBlockRange(lastRootBox()->lineBottomWithLeading(), lineBox->lineBottomWithLeading(), lineBox);
         }
     }
+
+    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+    toRenderBlockFlow(this)->clearDidBreakAtLineToAvoidWidow();
 }
 
 void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
