@@ -668,7 +668,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\n\n/bin/ln -sfh \"${SRCROOT}\" .\nexport ANGLE=\"ANGLE\"\n\nmake  --no-builtin-rules -f \"ANGLE/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\n\n/bin/ln -sfh \"${SRCROOT}\" ANGLE\nexport ANGLE=\"ANGLE\"\n\nmake  --no-builtin-rules -f \"ANGLE/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`";
 		};
 /* End PBXShellScriptBuildPhase section */
 

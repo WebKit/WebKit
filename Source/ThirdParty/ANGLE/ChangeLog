@@ -1,3 +1,13 @@
+2013-10-03  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/15116673> [mac] Build failure when the source directory is not named ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=122307
+
+        Reviewed by Mark Rowe.
+
+        * ANGLE.xcodeproj/project.pbxproj: Ensure that the symlink to SRCROOT in
+        DerivedSources/ANGLE is named ANGLE.
+
 2013-09-29  Darin Adler  <darin@apple.com>
 
         Take some Xcode advice about turning on additional warnings in ANGLE and gtest
