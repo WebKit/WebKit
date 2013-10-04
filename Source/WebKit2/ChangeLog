@@ -1,3 +1,35 @@
+2013-10-04  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Remove Qt leftovers from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=122317
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Shared/API/c/WKBase.h:
+        * Shared/NativeWebTouchEvent.h:
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/BackingStore.h:
+        * UIProcess/InspectorServer/WebInspectorServer.cpp:
+        (WebKit::WebInspectorServer::inspectorUrlForPageID):
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/InspectorServer/WebSocketServer.cpp:
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::getPluginDisplay):
+        (WebKit::x11Screen):
+        (WebKit::displayDepth):
+        (WebKit::rootWindowID):
+        (WebKit::NetscapePlugin::x11HostDisplay):
+        (WebKit::NetscapePlugin::platformPostInitializeWindowless):
+        (WebKit::NetscapePlugin::platformPaint):
+
 2013-10-03  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r155787): WebKitTestRunner rebuilds from scratch when doing an incremental build

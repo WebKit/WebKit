@@ -28,9 +28,7 @@
 
 #include "WebEvent.h"
 
-#if PLATFORM(QT)
-#include <QTouchEvent>
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
 #include "EwkTouchEvent.h"
 #include <WebCore/AffineTransform.h>
 #include <wtf/RefPtr.h>
@@ -40,22 +38,13 @@ namespace WebKit {
 
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
-#if PLATFORM(QT)
-    explicit NativeWebTouchEvent(const QTouchEvent*, const QTransform& fromItemTransform);
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
     NativeWebTouchEvent(EwkTouchEvent*, const WebCore::AffineTransform&);
-#endif
-
-#if PLATFORM(QT)
-    const QTouchEvent* nativeEvent() const { return &m_nativeEvent; }
-#elif PLATFORM(EFL)
     const EwkTouchEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
-#if PLATFORM(QT)
-    const QTouchEvent m_nativeEvent;
-#elif PLATFORM(EFL)
+#if PLATFORM(EFL)
     RefPtr<EwkTouchEvent> m_nativeEvent;
 #endif
 };

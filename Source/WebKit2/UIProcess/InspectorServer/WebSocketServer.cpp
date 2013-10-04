@@ -34,10 +34,6 @@
 #include <WebCore/SocketStreamHandle.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(QT)
-#include "WebSocketServerQt.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
