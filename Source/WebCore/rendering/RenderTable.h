@@ -221,7 +221,7 @@ public:
         if (documentBeingDestroyed())
             return;
         m_needsSectionRecalc = true;
-        setNeedsLayout(true);
+        setNeedsLayout();
     }
 
     RenderTableSection* sectionAbove(const RenderTableSection*, SkipEmptySectionsValue = DoNotSkipEmptySections) const;

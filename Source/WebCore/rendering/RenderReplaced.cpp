@@ -96,7 +96,7 @@ void RenderReplaced::layout()
     invalidateBackgroundObscurationStatus();
 
     repainter.repaintAfterLayout();
-    setNeedsLayout(false);
+    clearNeedsLayout();
 }
 
 void RenderReplaced::intrinsicSizeChanged()

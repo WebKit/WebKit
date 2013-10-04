@@ -142,7 +142,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     if (requiresLayer()) {
         if (!layer() && layerCreationAllowedForSubtree()) {
             if (s_wasFloating && isFloating())
-                setChildNeedsLayout(true);
+                setChildNeedsLayout();
             ensureLayer();
             if (parent() && !needsLayout() && containingBlock()) {
                 layer()->setRepaintStatus(NeedsFullRepaint);
@@ -156,7 +156,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         setHasReflection(false);
         layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
-            setChildNeedsLayout(true);
+            setChildNeedsLayout();
         if (s_hadTransform)
             setNeedsLayoutAndPrefWidthsRecalc();
     }
@@ -164,7 +164,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     if (layer()) {
         layer()->styleChanged(diff, oldStyle);
         if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
-            setChildNeedsLayout(true);
+            setChildNeedsLayout();
     }
 
     bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();

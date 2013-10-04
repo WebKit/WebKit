@@ -82,7 +82,7 @@ void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
     FragmentationDisabler fragmentationDisabler(this);
 
     // Ensure a full repaint will happen after layout finishes.
-    setNeedsLayout(true, MarkOnlyThis);
+    setNeedsLayout(MarkOnlyThis);
 
     bool hadLayoutState = view().layoutState();
     if (!hadLayoutState)
@@ -100,7 +100,7 @@ void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
             
             // Because our width changed, |child| may need layout.
             if (child->maxPreferredLogicalWidth() > oldAvailableLogicalWidth)
-                child->setNeedsLayout(true, MarkOnlyThis);
+                child->setNeedsLayout(MarkOnlyThis);
             
             RenderMathMLBlock* childMathMLBlock = child->isRenderMathMLBlock() ? toRenderMathMLBlock(child) : 0;
             if (childMathMLBlock && !childMathMLBlock->isPreferredLogicalHeightDirty())

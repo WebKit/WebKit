@@ -1,3 +1,23 @@
+2013-10-03  Antti Koivisto  <antti@apple.com>
+
+        Move setting of some layout bits to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=122256
+
+        Reviewed by Andreas Kling.
+        
+        These bits never apply to RenderText nodes:
+        
+        normalChildNeedsLayout
+        posChildNeedsLayout
+        needsSimplifiedNormalFlowLayout
+        normalChildNeedsLayout
+        positionedMovementLayout
+
+        The code for setting them can be moved to RenderElement.
+
+        Also separated the code paths for setting and clearing the bits and uninlined
+        everything that is not massively popular.
+
 2013-10-03  Sam Weinig  <sam@webkit.org>
 
         Remove shouldRubberBandInDirection from the WKBundlePageUIClient

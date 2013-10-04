@@ -619,6 +619,21 @@ static inline bool objectIsRelayoutBoundary(const RenderObject* object)
     return true;
 }
 
+void RenderObject::clearNeedsLayout()
+{
+    m_bitfields.setNeedsLayout(false);
+    setEverHadLayout(true);
+    setPosChildNeedsLayoutBit(false);
+    setNeedsSimplifiedNormalFlowLayoutBit(false);
+    setNormalChildNeedsLayoutBit(false);
+    setNeedsPositionedMovementLayoutBit(false);
+    if (isRenderElement())
+        toRenderElement(this)->setAncestorLineBoxDirty(false);
+#ifndef NDEBUG
+    checkBlockPositionedObjectsNeedLayout();
+#endif
+}
+
 void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderObject* newRoot)
 {
     ASSERT(!scheduleRelayout || !newRoot);
@@ -649,18 +664,18 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
                 return;
             if (willSkipRelativelyPositionedInlines)
                 container = object->container();
-            object->setPosChildNeedsLayout(true);
+            object->setPosChildNeedsLayoutBit(true);
             simplifiedNormalFlowLayout = true;
             ASSERT(!object->isSetNeedsLayoutForbidden());
         } else if (simplifiedNormalFlowLayout) {
             if (object->needsSimplifiedNormalFlowLayout())
                 return;
-            object->setNeedsSimplifiedNormalFlowLayout(true);
+            object->setNeedsSimplifiedNormalFlowLayoutBit(true);
             ASSERT(!object->isSetNeedsLayoutForbidden());
         } else {
             if (object->normalChildNeedsLayout())
                 return;
-            object->setNormalChildNeedsLayout(true);
+            object->setNormalChildNeedsLayoutBit(true);
             ASSERT(!object->isSetNeedsLayoutForbidden());
         }
 
@@ -2209,7 +2224,7 @@ void RenderObject::layout()
         ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }
-    setNeedsLayout(false);
+    clearNeedsLayout();
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const

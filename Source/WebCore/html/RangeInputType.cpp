@@ -344,7 +344,7 @@ void RangeInputType::listAttributeTargetChanged()
     m_tickMarkValuesDirty = true;
     HTMLElement* sliderTrackElement = sliderTrackElementOf(element());
     if (sliderTrackElement->renderer())
-        sliderTrackElement->renderer()->setNeedsLayout(true);
+        sliderTrackElement->renderer()->setNeedsLayout();
 }
 
 void RangeInputType::updateTickMarkValues()
