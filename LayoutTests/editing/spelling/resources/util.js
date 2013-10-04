@@ -33,7 +33,6 @@ function initSpellTest(testElementId, testText, testFunction)
     internals.settings.setSmartInsertDeleteEnabled(true);
     internals.settings.setSelectTrailingWhitespaceEnabled(false);
     internals.settings.setUnifiedTextCheckerEnabled(true);
-    internals.settings.setEditingBehavior("win");
 
     var destination = document.getElementById(testElementId);
     destination.focus();

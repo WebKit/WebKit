@@ -11,9 +11,9 @@
 
 <script>
 
-description("Spelling should work when the user selects the misspelled word exactly. " +
-            "To test manually, type 'wellcome home.', select 'wellcome', and context-click on the selection. " +
-            "The test succeeds when the context menu shows spelling suggestions.");
+description("Spelling marker should remain when the user selects the misspelled word exactly. "
+    + "To test manually, type 'wellcome home.', select 'wellcome'. "
+    + "The test succeeds when 'wellcome' has spelling marker.");
 
 initSpellTest("destination", "wellcome home.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
@@ -29,32 +29,8 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
 
     shouldBeEqualToString("window.getSelection().toString()", "wellcome");
 
-    // Context click on "wellcome" to show the context menu.
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
-
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
-    
-    // Select a correctly spelled word without surrounding whitespace or punctuation.
-    wordRange.setStart(textNode, 9);
-    wordRange.setEnd(textNode, 13);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(wordRange);
-    shouldBeEqualToString("window.getSelection().toString()", "home");
-
-    // Context click on "home" to show the context menu.
-    var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 80;
-    var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
-
-    shouldBeEqualToString("window.getSelection().toString()", "home");
 });
 
 </script>

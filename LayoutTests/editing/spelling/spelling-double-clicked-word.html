@@ -11,9 +11,9 @@
 
 <script>
 
-description("Spelling should work for double-clicked misspellings. " +
-            "To test manually, type 'wellcome home.', double-click on 'wellcome', and context-click on the selection. " +
-            "The test succeeds when the context menu shows spell check suggestions.");
+description("Spelling markers should remain for double-clicked misspellings. "
+    + "To test manually, type 'wellcome home.', double-click on 'wellcome'. "
+    + "The test succeeds when 'wellcome' remains spelling marker.");
 
 initSpellTest("destination", "wellcome home.", function(textNode) {
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
@@ -30,16 +30,6 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     eventSender.mouseUp();
     eventSender.mouseDown();
     eventSender.mouseUp();
-
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome");
-
-    // Context click on "wellcome" to show the context menu.
-    x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    contextMenuElements = eventSender.contextClick();
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
@@ -58,15 +48,6 @@ initSpellTest("destination", "wellcome home.", function(textNode) {
     eventSender.mouseUp();
     eventSender.mouseDown();
     eventSender.mouseUp();
-    shouldBeEqualToString("window.getSelection().toString()", "wellcome ");
-
-    // Context click on "wellcome " to show the context menu.
-    x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
-    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    contextMenuElements = eventSender.contextClick();
-    // Esc key to hide the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
 
     spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
     shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");

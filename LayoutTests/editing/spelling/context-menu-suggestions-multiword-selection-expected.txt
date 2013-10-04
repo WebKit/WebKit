@@ -1,4 +1,4 @@
-Spelling should be disabled when user selects multiple words that are not a single misspelling. To test manually, type 'wellcome home.', select 'wellcome home', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
+Spell check sugestions should not be pupulated when user selects multiple words that are not a single misspelling. To test manually, type 'wellcome home.', select 'wellcome home', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -8,7 +8,7 @@ PASS window.getSelection().toString() is ""
 PASS window.getSelection().toString() is "wellcome home"
 PASS spellingMarkerRange.toString() is "wellcome"
 PASS window.getSelection().toString() is "wellcome home"
-PASS contextMenuElements[contextMenuElements.length - 1] is "<separator>"
+PASS contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

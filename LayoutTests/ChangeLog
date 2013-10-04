@@ -1,3 +1,54 @@
+2013-10-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Tests added in r141354 erroneously assume correction suggestion to be in the context menu
+        https://bugs.webkit.org/show_bug.cgi?id=113742
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests from r141354 erroneously assume that all WebKit ports populate
+        spell checking suggestion in the context menu.
+
+        Remove verification of spell checking suggestion and all context menu stuff from tests
+        that do that unnecessarily. Instead of that check whether spelling markers behave correctly,
+        for example, after deleting a text, double click or selecting a misspellings.
+
+        However, two tests are adapted to verify spell checking suggestions (their availability
+        rather than correctness, similarly to context-menu-suggestions.html).
+        Those are useful for ports which populate spelling suggestion in the context menu.
+
+        * editing/spelling/resources/util.js:
+        (initSpellTest):
+        Do not assume that the tests are running with "Windows" editing behavior.
+        Unix ports do not make a selection for the misspelled word and they don't
+        require selection to get spell checking suggestions.
+
+        * editing/spelling/spelling-changed-text-expected.txt:
+        * editing/spelling/spelling-changed-text.html:
+        * editing/spelling/spelling-double-clicked-word-expected.txt:
+        * editing/spelling/spelling-double-clicked-word.html:
+        * editing/spelling/spelling-exactly-selected-word-expected.txt:
+        * editing/spelling/spelling-exactly-selected-word.html:
+        Remove verification of correction suggestion.
+        Instead of that check whether the spelling markers behave correctly.
+
+        * editing/spelling/context-menu-suggestions-multiword-selection-expected.txt: Renamed from LayoutTests/editing/spelling/spelling-multiword-selection-expected.txt.
+        * editing/spelling/context-menu-suggestions-multiword-selection.html: Renamed from LayoutTests/editing/spelling/spelling-multiword-selection.html.
+        * editing/spelling/context-menu-suggestions-subword-selection-expected.txt: Renamed from LayoutTests/editing/spelling/spelling-subword-selection-expected.txt.
+        * editing/spelling/context-menu-suggestions-subword-selection.html: Renamed from LayoutTests/editing/spelling/spelling-subword-selection.html.
+        Adapt those tests for platforms which populate spell check suggestion
+        in the context menu.
+
+        * platform/efl-wk2/TestExpectations:
+        Now context-menu-suggestions-multiword-selection.html and
+        context-menu-suggestions-subword-selection.html are passing for EFL.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Update tests path due to rename.
+
 2013-10-04  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Enable text edition UndoOperations support in WebKit2
