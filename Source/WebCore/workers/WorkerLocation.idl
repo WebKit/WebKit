@@ -31,7 +31,8 @@
     Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface WorkerLocation {
     readonly attribute DOMString href;
     readonly attribute DOMString protocol;
