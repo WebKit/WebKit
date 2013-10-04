@@ -28,7 +28,8 @@
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomNamedSetter,
-    SkipVTableValidation
+    SkipVTableValidation,
+    OperationsNotDeletable
 ] interface Storage {
     [NotEnumerable, GetterRaisesException] readonly attribute unsigned long length;
     [NotEnumerable, TreatReturnedNullStringAs=Null, RaisesException] DOMString key(unsigned long index);
