@@ -745,19 +745,6 @@ char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(
     return newTypedArrayWithOneArgument<JSFloat64Array>(exec, structure, encodedValue);
 }
 
-EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    RegExp* regexp = static_cast<RegExp*>(regexpPtr);
-    if (!regexp->isValid()) {
-        vm.throwException(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
-        return JSValue::encode(jsUndefined());
-    }
-    
-    return JSValue::encode(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp));
-}
-
 JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec)
 {
     VM& vm = exec->vm();

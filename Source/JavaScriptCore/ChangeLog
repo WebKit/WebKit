@@ -1,3 +1,29 @@
+2013-10-04  Michael Saboff  <msaboff@apple.com>
+
+        Add callOperation to Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=122306
+
+        Reviewed by Geoffrey Garen.
+
+        Created baseline JIT compatible versions for a few flavors of callOperation().
+        Migrated cti_op_new_regexp() and its caller to callOperation(operationNewRegexp()).
+
+        * dfg/DFGOperations.cpp: Moved operationNewRegexp() to JITOperations
+        * dfg/DFGOperations.h:
+        * jit/JIT.h:
+        (JSC::JIT::appendCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithExceptionCheck):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResult):
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_regexp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+
 2013-10-03  Mark Rowe  <mrowe@apple.com>
 
         REGRESSION (r156811): WebCore rebuilds from scratch when doing an incremental build

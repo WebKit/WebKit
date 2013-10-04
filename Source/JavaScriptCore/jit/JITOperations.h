@@ -101,6 +101,7 @@ typedef size_t JIT_OPERATION (*S_JITOperation_J)(EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_E)(ExecState*);
 typedef void JIT_OPERATION (*V_JITOperation_EOZD)(ExecState*, JSObject*, int32_t, double);
 typedef void JIT_OPERATION (*V_JITOperation_EOZJ)(ExecState*, JSObject*, int32_t, EncodedJSValue);
+typedef void JIT_OPERATION (*V_JITOperation_EP)(ExecState*, void*);
 typedef void JIT_OPERATION (*V_JITOperation_EC)(ExecState*, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_ECIcf)(ExecState*, JSCell*, InlineCallFrame*);
 typedef void JIT_OPERATION (*V_JITOperation_ECCIcf)(ExecState*, JSCell*, JSCell*, InlineCallFrame*);
@@ -198,6 +199,7 @@ char* JIT_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkClosureCall(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 
 }
 

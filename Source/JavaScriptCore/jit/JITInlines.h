@@ -204,6 +204,43 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
     // In the trampoline on x86-64, the first argument register is not overwritten.
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const FunctionPtr& function)
+{
+    updateTopCallFrame();
+    MacroAssembler::Call call = appendCall(function);
+    exceptionCheck();
+    return call;
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr& function, int dst)
+{
+    MacroAssembler::Call call = appendCallWithExceptionCheck(function);
+#if USE(JSVALUE64)
+    emitPutVirtualRegister(dst, returnValueRegister);
+#else
+    emitStore(dst, returnValue2Register, returnValueRegister);
+#endif
+    return call;
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_E operation, int dst)
+{
+    setupArgumentsExecState();
+    return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EP operation, int dst, void* pointer)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(pointer));
+    return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EP operation, void* pointer)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(pointer));
+    return appendCallWithExceptionCheck(operation);
+}
+    
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
     return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), TrustedImmPtr(structure));

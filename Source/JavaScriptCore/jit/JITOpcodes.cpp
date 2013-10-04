@@ -1211,9 +1211,7 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_regexp);
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->regexp(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    callOperation(operationNewRegexp, currentInstruction[1].u.operand, m_codeBlock->regexp(currentInstruction[2].u.operand));
 }
 
 void JIT::emit_op_new_func(Instruction* currentInstruction)

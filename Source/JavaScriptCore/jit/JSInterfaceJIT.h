@@ -29,6 +29,7 @@
 #include "BytecodeConventions.h"
 #include "CCallHelpers.h"
 #include "JITCode.h"
+#include "JITOperations.h"
 #include "JITStubs.h"
 #include "JSCJSValue.h"
 #include "JSStack.h"
@@ -61,6 +62,7 @@ namespace JSC {
         // however the code will still function correctly.
 #if CPU(X86_64)
         static const RegisterID returnValueRegister = X86Registers::eax;
+        static const RegisterID returnValue2Register = X86Registers::edx;
         static const RegisterID cachedResultRegister = X86Registers::eax;
 #if !OS(WINDOWS)
         static const RegisterID firstArgumentRegister = X86Registers::edi;
@@ -89,6 +91,7 @@ namespace JSC {
         static const RegisterID nonArgGPR1 = X86Registers::eax; // regT0
 #elif CPU(X86)
         static const RegisterID returnValueRegister = X86Registers::eax;
+        static const RegisterID returnValue2Register = X86Registers::edx;
         static const RegisterID cachedResultRegister = X86Registers::eax;
         // On x86 we always use fastcall conventions = but on
         // OS X if might make more sense to just use regparm.
@@ -109,6 +112,7 @@ namespace JSC {
         static const FPRegisterID fpRegT3 = X86Registers::xmm3;
 #elif CPU(ARM)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
+        static const RegisterID returnValue2Register = ARMRegisters::r1;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
         static const RegisterID secondArgumentRegister = ARMRegisters::r1;
@@ -131,6 +135,7 @@ namespace JSC {
         static const FPRegisterID fpRegT3 = ARMRegisters::d3;
 #elif CPU(MIPS)
         static const RegisterID returnValueRegister = MIPSRegisters::v0;
+        static const RegisterID returnValue2Register = MIPSRegisters::v1;
         static const RegisterID cachedResultRegister = MIPSRegisters::v0;
         static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
         static const RegisterID secondArgumentRegister = MIPSRegisters::a1;
@@ -169,6 +174,7 @@ namespace JSC {
         static const RegisterID secondArgumentRegister = regT5;
 
         static const RegisterID returnValueRegister = SH4Registers::r0;
+        static const RegisterID returnValue2Register = SH4Registers::r1;
         static const RegisterID cachedResultRegister = SH4Registers::r0;
 
         static const FPRegisterID fpRegT0 = SH4Registers::dr0;

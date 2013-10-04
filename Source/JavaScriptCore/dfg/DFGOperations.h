@@ -74,7 +74,6 @@ char* JIT_OPERATION operationNewFloat32ArrayWithSize(ExecState*, Structure*, int
 char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
 char* JIT_OPERATION operationNewFloat64ArrayWithSize(ExecState*, Structure*, int32_t) WTF_INTERNAL;
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(ExecState*, Structure*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValCellStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue) WTF_INTERNAL;

@@ -421,6 +421,14 @@ namespace JSC {
         CodeRef privateCompileCTINativeCall(VM*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
+        // Add a call out from JIT code, without an exception check.
+        Call appendCall(const FunctionPtr& function)
+        {
+            Call functionCall = call();
+            m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
+            return functionCall;
+        }
+
         void exceptionCheck(Jump jumpToHandler)
         {
             m_exceptionChecks.append(jumpToHandler);
@@ -849,6 +857,12 @@ namespace JSC {
             ++iter;
         }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
+
+        MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
+        MacroAssembler::Call callOperation(J_JITOperation_E, int);
+        MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
+        MacroAssembler::Call callOperation(V_JITOperation_EP, void*);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
