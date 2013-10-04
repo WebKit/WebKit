@@ -1,3 +1,21 @@
+2013-10-04  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win][WebGL] Crash on exit
+        https://bugs.webkit.org/show_bug.cgi?id=120764
+
+        Reviewed by Martin Robinson.
+
+        On exit, libGLESv2.dll is detached from the process and relevant memory is released
+        before the atexit GL context cleanup handler is called, causing a NULL pointer crash.
+        The GL context cleanup code was originally written to avoid a X server crash on exit,
+        so it's only needed for PLATFORM(X11).
+
+        * platform/graphics/GLContext.cpp: Only clean up active GL contexts on exit for PLATFORM(X11).
+        (WebCore::GLContext::cleanupSharedX11Display):
+        (WebCore::GLContext::cleanupActiveContextsAtExit):
+        (WebCore::GLContext::GLContext):
+        (WebCore::GLContext::~GLContext):
+
 2013-10-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Regions as stacking contexts should paint over positioned sibling

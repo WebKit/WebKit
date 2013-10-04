@@ -93,7 +93,6 @@ void GLContext::cleanupSharedX11Display()
     XCloseDisplay(gSharedX11Display);
     gSharedX11Display = 0;
 }
-#endif // PLATFORM(X11)
 
 // Because of driver bugs, exiting the program when there are active pbuffers
 // can crash the X server (this has been observed with the official Nvidia drivers).
@@ -140,11 +139,9 @@ void GLContext::cleanupActiveContextsAtExit()
     for (size_t i = 0; i < contextList.size(); ++i)
         delete contextList[i];
 
-#if PLATFORM(X11)
     cleanupSharedX11Display();
-#endif
 }
-
+#endif // PLATFORM(X11)
 
 
 PassOwnPtr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext)
@@ -174,7 +171,9 @@ PassOwnPtr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windo
 
 GLContext::GLContext()
 {
+#if PLATFORM(X11)
     addActiveContext(this);
+#endif
 }
 
 PassOwnPtr<GLContext> GLContext::createOffscreenContext(GLContext* sharingContext)
@@ -186,7 +185,9 @@ GLContext::~GLContext()
 {
     if (this == currentContext()->context())
         currentContext()->setContext(0);
+#if PLATFORM(X11)
     removeActiveContext(this);
+#endif
 }
 
 bool GLContext::makeContextCurrent()
