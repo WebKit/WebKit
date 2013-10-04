@@ -1,5 +1,18 @@
 2013-10-04  Michael Saboff  <msaboff@apple.com>
 
+        FTL: Crash in OSRExit::convertToForward() using VirtualRegister.offset() as array index
+        https://bugs.webkit.org/show_bug.cgi?id=122332
+
+        Reviewed by Oliver Hunt.
+
+        Changed the uses of .offset(), which returns a negative number for locals, to be
+        toLocal() which returns a local's ordinal number.
+
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::convertToForward):
+
+2013-10-04  Michael Saboff  <msaboff@apple.com>
+
         Add callOperation to Baseline JIT
         https://bugs.webkit.org/show_bug.cgi?id=122306
 
