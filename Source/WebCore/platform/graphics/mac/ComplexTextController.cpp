@@ -386,6 +386,8 @@ void ComplexTextController::collectComplexTextRuns()
 
 CFIndex ComplexTextController::ComplexTextRun::indexAt(size_t i) const
 {
+    ASSERT(i < m_glyphCount);
+
     return m_coreTextIndices[i];
 }
 

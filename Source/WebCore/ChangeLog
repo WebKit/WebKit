@@ -1,3 +1,15 @@
+2013-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Assert that we don't try to index past the end of the m_coreTextIndices array
+        https://bugs.webkit.org/show_bug.cgi?id=122308
+
+        Reviewed by Dan Bernstein.
+
+        Because an assertion failure is better than a random crash.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::indexAt):
+
 2013-10-03  Antti Koivisto  <antti@apple.com>
 
         Move setting of some layout bits to RenderElement
