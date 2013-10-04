@@ -29,35 +29,28 @@
 #include "PlatformWebView.h"
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKPage.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
-static bool didFinishForceRepaint;
 
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
     didFinishLoad = true;
 }
 
-static void forceRepaintDoneCallback(WKErrorRef, void*)
-{
-    didFinishForceRepaint = true;
-}
-
-static void waitForScrollPositionUpdate(WKPageRef page)
-{
-    // Forcing a repaint also ensures that the main thread's notion of the scroll position
-    // is up to date, when using threaded scrolling.
-    didFinishForceRepaint = false;
-    WKPageForceRepaint(page, nullptr, forceRepaintDoneCallback);
-    Util::run(&didFinishForceRepaint);
-}
-
 TEST(WebKit2, ScrollByLineCommands)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
-    PlatformWebView webView(context.get());
+
+    // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
+    // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
@@ -74,14 +67,10 @@ TEST(WebKit2, ScrollByLineCommands)
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineDown:)]);
     [webView.platformView() scrollLineDown:nil];
 
-    waitForScrollPositionUpdate(webView.page());
-
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "40");
 
     ASSERT_TRUE([webView.platformView() respondsToSelector:@selector(scrollLineUp:)]);
     [webView.platformView() scrollLineUp:nil];
-
-    waitForScrollPositionUpdate(webView.page());
 
     EXPECT_JS_EQ(webView.page(), "window.scrollY", "0");
 }

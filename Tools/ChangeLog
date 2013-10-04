@@ -1,3 +1,14 @@
+2013-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        [mac][wk2] ScrollPinningBehaviors, SpacebarScrolling, and ScrollByLineCommands fail after r156793
+        https://bugs.webkit.org/show_bug.cgi?id=122299
+
+        Reviewed by Beth Dakin.
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        * TestWebKitAPI/Tests/WebKit2/mac/EditorCommands.mm:
+        The last fix didn't work; instead of trying to block, turn off threaded scrolling for all three tests.
+
 2013-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Watchlist is broken after <http://trac.webkit.org/r156880>

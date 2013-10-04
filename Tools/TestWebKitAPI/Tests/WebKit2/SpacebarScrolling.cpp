@@ -28,12 +28,12 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKPreferencesPrivate.h>
 
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
 static bool didNotHandleKeyDownEvent;
-static bool didFinishForceRepaint;
 
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
 {
@@ -46,28 +46,21 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
         didNotHandleKeyDownEvent = true;
 }
 
-static void forceRepaintDoneCallback(WKErrorRef, void*)
-{
-    didFinishForceRepaint = true;
-}
-
-static void waitForScrollPositionUpdate(WKPageRef page)
-{
-    // Forcing a repaint also ensures that the main thread's notion of the scroll position
-    // is up to date, when using threaded scrolling.
-    didFinishForceRepaint = false;
-    WKPageForceRepaint(page, nullptr, forceRepaintDoneCallback);
-    Util::run(&didFinishForceRepaint);
-}
-
 TEST(WebKit2, SpacebarScrolling)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
-    PlatformWebView webView(context.get());
+
+    // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
+    // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+
+    PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageLoaderClient loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
-    
+
     loaderClient.version = 0;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     WKPageSetPageLoaderClient(webView.page(), &loaderClient);
@@ -86,7 +79,6 @@ TEST(WebKit2, SpacebarScrolling)
     EXPECT_JS_FALSE(webView.page(), "textFieldContainsSpace()");
 
     webView.simulateSpacebarKeyPress();
-    waitForScrollPositionUpdate(webView.page());
 
     EXPECT_JS_FALSE(webView.page(), "isDocumentScrolled()");
     EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");
@@ -104,7 +96,6 @@ TEST(WebKit2, SpacebarScrolling)
 
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
-    waitForScrollPositionUpdate(webView.page());
 
     // This EXPECT_JS_TRUE test fails on Windows port
     // https://bugs.webkit.org/show_bug.cgi?id=84961
