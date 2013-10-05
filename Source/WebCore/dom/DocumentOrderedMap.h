@@ -40,34 +40,36 @@ namespace WebCore {
 
 class Element;
 class HTMLImageElement;
+class HTMLLabelElement;
+class HTMLMapElement;
 class TreeScope;
 
 class DocumentOrderedMap {
 public:
-    void add(const AtomicStringImpl*, Element*);
-    void remove(const AtomicStringImpl*, Element*);
+    void add(const AtomicStringImpl&, Element&);
+    void remove(const AtomicStringImpl&, Element&);
     void clear();
 
-    bool contains(const AtomicStringImpl*) const;
-    bool containsSingle(const AtomicStringImpl*) const;
-    bool containsMultiple(const AtomicStringImpl*) const;
+    bool contains(const AtomicStringImpl&) const;
+    bool containsSingle(const AtomicStringImpl&) const;
+    bool containsMultiple(const AtomicStringImpl&) const;
 
     // concrete instantiations of the get<>() method template
-    Element* getElementById(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByName(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByMapName(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByLowercasedMapName(const AtomicStringImpl*, const TreeScope*) const;
-    HTMLImageElement* getElementByLowercasedUsemap(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByLabelForAttribute(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByWindowNamedItem(const AtomicStringImpl*, const TreeScope*) const;
-    Element* getElementByDocumentNamedItem(const AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementById(const AtomicStringImpl&, const TreeScope&) const;
+    Element* getElementByName(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLMapElement* getElementByMapName(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLMapElement* getElementByLowercasedMapName(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLImageElement* getElementByLowercasedUsemap(const AtomicStringImpl&, const TreeScope&) const;
+    HTMLLabelElement* getElementByLabelForAttribute(const AtomicStringImpl&, const TreeScope&) const;
+    Element* getElementByWindowNamedItem(const AtomicStringImpl&, const TreeScope&) const;
+    Element* getElementByDocumentNamedItem(const AtomicStringImpl&, const TreeScope&) const;
 
-    const Vector<Element*>* getAllElementsById(const AtomicStringImpl*, const TreeScope*) const;
+    const Vector<Element*>* getAllElementsById(const AtomicStringImpl&, const TreeScope&) const;
 
     void checkConsistency() const;
 
 private:
-    template<bool keyMatches(const AtomicStringImpl*, Element*)> Element* get(const AtomicStringImpl*, const TreeScope*) const;
+    template<bool keyMatches(const AtomicStringImpl&, Element*)> Element* get(const AtomicStringImpl&, const TreeScope&) const;
 
     struct MapEntry {
         MapEntry()
@@ -89,20 +91,20 @@ private:
     mutable Map m_map;
 };
 
-inline bool DocumentOrderedMap::containsSingle(const AtomicStringImpl* id) const
+inline bool DocumentOrderedMap::containsSingle(const AtomicStringImpl& id) const
 {
-    Map::const_iterator it = m_map.find(id);
+    auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count == 1;
 }
 
-inline bool DocumentOrderedMap::contains(const AtomicStringImpl* id) const
+inline bool DocumentOrderedMap::contains(const AtomicStringImpl& id) const
 {
-    return m_map.contains(id);
+    return m_map.contains(&id);
 }
 
-inline bool DocumentOrderedMap::containsMultiple(const AtomicStringImpl* id) const
+inline bool DocumentOrderedMap::containsMultiple(const AtomicStringImpl& id) const
 {
-    Map::const_iterator it = m_map.find(id);
+    auto it = m_map.find(&id);
     return it != m_map.end() && it->value.count > 1;
 }
 

@@ -1,3 +1,105 @@
+2013-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use more references instead of pointers in DocumentOrderedMap
+        https://bugs.webkit.org/show_bug.cgi?id=122368
+
+        Reviewed by Andreas Kling.
+
+        Use AtomicStringImpl& instead of AtomicString* or AtomicString& to eliminate
+        assertions and nullity checks.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName):
+        (WebCore::JSHTMLDocument::nameGetter):
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByLowercasedUsemap):
+        (WebCore::Document::removeImageElementByLowercasedUsemap):
+        (WebCore::Document::imageElementByLowercasedUsemap):
+        * dom/Document.h:
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesId):
+        (WebCore::keyMatchesName):
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::keyMatchesLowercasedUsemap):
+        (WebCore::keyMatchesLabelForAttribute):
+        (WebCore::keyMatchesWindowNamedItem):
+        (WebCore::keyMatchesDocumentNamedItem):
+        (WebCore::DocumentOrderedMap::add):
+        (WebCore::DocumentOrderedMap::remove):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getElementById):
+        (WebCore::DocumentOrderedMap::getElementByName):
+        (WebCore::DocumentOrderedMap::getElementByMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedUsemap):
+        (WebCore::DocumentOrderedMap::getElementByLabelForAttribute):
+        (WebCore::DocumentOrderedMap::getElementByWindowNamedItem):
+        (WebCore::DocumentOrderedMap::getElementByDocumentNamedItem):
+        (WebCore::DocumentOrderedMap::getAllElementsById):
+        * dom/DocumentOrderedMap.h:
+        (WebCore::DocumentOrderedMap::containsSingle):
+        (WebCore::DocumentOrderedMap::contains):
+        (WebCore::DocumentOrderedMap::containsMultiple):
+        * dom/Element.cpp:
+        (WebCore::Element::updateNameForTreeScope):
+        (WebCore::Element::updateNameForDocument):
+        (WebCore::Element::updateIdForTreeScope):
+        (WebCore::Element::updateIdForDocument):
+        (WebCore::Element::updateLabel):
+        * dom/IdTargetObserverRegistry.cpp:
+        (WebCore::IdTargetObserverRegistry::notifyObserversInternal):
+        * dom/IdTargetObserverRegistry.h:
+        (WebCore::IdTargetObserverRegistry::notifyObservers):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getElementById):
+        (WebCore::TreeScope::getAllElementsById):
+        (WebCore::TreeScope::addElementById):
+        (WebCore::TreeScope::removeElementById):
+        (WebCore::TreeScope::getElementByName):
+        (WebCore::TreeScope::addElementByName):
+        (WebCore::TreeScope::removeElementByName):
+        (WebCore::TreeScope::addImageMap):
+        (WebCore::TreeScope::removeImageMap):
+        (WebCore::TreeScope::getImageMap):
+        (WebCore::TreeScope::addLabel):
+        (WebCore::TreeScope::removeLabel):
+        (WebCore::TreeScope::labelElementForId):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::hasElementWithId):
+        (WebCore::TreeScope::containsMultipleElementsWithId):
+        (WebCore::TreeScope::hasElementWithName):
+        (WebCore::TreeScope::containsMultipleElementsWithName):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItem):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::addDocumentNamedItem):
+        (WebCore::HTMLDocument::removeDocumentNamedItem):
+        (WebCore::HTMLDocument::addWindowNamedItem):
+        (WebCore::HTMLDocument::removeWindowNamedItem):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::documentNamedItem):
+        (WebCore::HTMLDocument::hasDocumentNamedItem):
+        (WebCore::HTMLDocument::documentNamedItemContainsMultipleElements):
+        (WebCore::HTMLDocument::windowNamedItem):
+        (WebCore::HTMLDocument::hasWindowNamedItem):
+        (WebCore::HTMLDocument::windowNamedItemContainsMultipleElements):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        (WebCore::HTMLMapElement::parseAttribute):
+        (WebCore::HTMLMapElement::insertedInto):
+        (WebCore::HTMLMapElement::removedFrom):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+
 2013-10-04  Andreas Kling  <akling@apple.com>
 
         CTTE: PolicyChecker backpointer to Frame should be a reference.

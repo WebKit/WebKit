@@ -356,24 +356,24 @@ static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
     return attrSet;
 }
 
-void HTMLDocument::addDocumentNamedItem(const AtomicString& name, Element* item)
+void HTMLDocument::addDocumentNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_documentNamedItem.add(name.impl(), item);
+    m_documentNamedItem.add(name, item);
 }
 
-void HTMLDocument::removeDocumentNamedItem(const AtomicString& name, Element* item)
+void HTMLDocument::removeDocumentNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_documentNamedItem.remove(name.impl(), item);
+    m_documentNamedItem.remove(name, item);
 }
 
-void HTMLDocument::addWindowNamedItem(const AtomicString& name, Element* item)
+void HTMLDocument::addWindowNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_windowNamedItem.add(name.impl(), item);
+    m_windowNamedItem.add(name, item);
 }
 
-void HTMLDocument::removeWindowNamedItem(const AtomicString& name, Element* item)
+void HTMLDocument::removeWindowNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_windowNamedItem.remove(name.impl(), item);
+    m_windowNamedItem.remove(name, item);
 }
 
 bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)

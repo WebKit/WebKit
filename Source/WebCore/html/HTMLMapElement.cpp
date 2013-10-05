@@ -79,7 +79,11 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 
 HTMLImageElement* HTMLMapElement::imageElement()
 {
-    return document().imageElementByLowercasedUsemap(m_name.lower());
+    if (m_name.isEmpty())
+        return 0;
+    AtomicString lowercasedName = m_name.lower();
+    ASSERT(lowercasedName.impl());
+    return document().imageElementByLowercasedUsemap(*lowercasedName.impl());
 }
 
 void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -95,13 +99,13 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
                 return;
         }
         if (inDocument())
-            treeScope()->removeImageMap(this);
+            treeScope()->removeImageMap(*this);
         String mapName = value;
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
         m_name = document().isHTMLDocument() ? mapName.lower() : mapName;
         if (inDocument())
-            treeScope()->addImageMap(this);
+            treeScope()->addImageMap(*this);
 
         return;
     }
@@ -117,14 +121,14 @@ PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 Node::InsertionNotificationRequest HTMLMapElement::insertedInto(ContainerNode& insertionPoint)
 {
     if (insertionPoint.inDocument())
-        treeScope()->addImageMap(this);
+        treeScope()->addImageMap(*this);
     return HTMLElement::insertedInto(insertionPoint);
 }
 
 void HTMLMapElement::removedFrom(ContainerNode& insertionPoint)
 {
     if (insertionPoint.inDocument())
-        treeScope()->removeImageMap(this);
+        treeScope()->removeImageMap(*this);
     HTMLElement::removedFrom(insertionPoint);
 }
 

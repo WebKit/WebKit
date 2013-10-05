@@ -60,12 +60,11 @@ void IdTargetObserverRegistry::removeObserver(const AtomicString& id, IdTargetOb
         m_registry.remove(iter);
 }
 
-void IdTargetObserverRegistry::notifyObserversInternal(const AtomicString& id)
+void IdTargetObserverRegistry::notifyObserversInternal(const AtomicStringImpl& id)
 {
-    ASSERT(!id.isEmpty());
     ASSERT(!m_registry.isEmpty());
 
-    m_notifyingObserversInSet = m_registry.get(id.impl());
+    m_notifyingObserversInSet = m_registry.get(&id);
     if (!m_notifyingObserversInSet)
         return;
 
@@ -77,7 +76,7 @@ void IdTargetObserverRegistry::notifyObserversInternal(const AtomicString& id)
     }
 
     if (m_notifyingObserversInSet->isEmpty())
-        m_registry.remove(id.impl());
+        m_registry.remove(&id);
 
     m_notifyingObserversInSet = 0;
 }

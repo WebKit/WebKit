@@ -582,10 +582,10 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     if (!overridesItemAfter() && root->isInTreeScope()) {
         TreeScope* treeScope = root->treeScope();
         Element* candidate = 0;
-        if (treeScope->hasElementWithId(name.impl())) {
+        if (treeScope->hasElementWithId(*name.impl())) {
             if (!treeScope->containsMultipleElementsWithId(name))
                 candidate = treeScope->getElementById(name);
-        } else if (treeScope->hasElementWithName(name.impl())) {
+        } else if (treeScope->hasElementWithName(*name.impl())) {
             if (!treeScope->containsMultipleElementsWithName(name)) {
                 candidate = treeScope->getElementByName(name);
                 if (candidate && type() == DocAll && (!candidate->isHTMLElement() || !nameShouldBeVisibleInDocumentAll(toHTMLElement(candidate))))

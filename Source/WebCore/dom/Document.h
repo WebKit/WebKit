@@ -258,9 +258,9 @@ public:
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
 
-    void addImageElementByLowercasedUsemap(const AtomicString&, HTMLImageElement&);
-    void removeImageElementByLowercasedUsemap(const AtomicString&, HTMLImageElement&);
-    HTMLImageElement* imageElementByLowercasedUsemap(const AtomicString&) const;
+    void addImageElementByLowercasedUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    void removeImageElementByLowercasedUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    HTMLImageElement* imageElementByLowercasedUsemap(const AtomicStringImpl&) const;
 
     SelectorQueryCache& selectorQueryCache();
 

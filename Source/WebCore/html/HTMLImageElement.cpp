@@ -130,7 +130,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             return;
 
         if (!m_lowercasedUsemap.isNull())
-            document().removeImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+            document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
         // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning, which has to be stripped off.
         // FIXME: We should check that the first character is '#'.
@@ -142,7 +142,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             m_lowercasedUsemap = nullAtom;
 
         if (!m_lowercasedUsemap.isNull())
-            document().addImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+            document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
     } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else if (name == compositeAttr) {
@@ -158,9 +158,9 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)
-                        document->addDocumentNamedItem(id, this);
+                        document->addDocumentNamedItem(*id.impl(), *this);
                     else
-                        document->removeDocumentNamedItem(id, this);
+                        document->removeDocumentNamedItem(*id.impl(), *this);
                 }
             }
         }
@@ -225,7 +225,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     }
 
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
-        document().addImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+        document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
@@ -241,7 +241,7 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
         m_form->removeImgElement(this);
 
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
-        document().removeImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
+        document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
     m_form = 0;
     HTMLElement::removedFrom(insertionPoint);

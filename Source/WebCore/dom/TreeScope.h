@@ -57,31 +57,31 @@ public:
     Element* focusedElement();
     Element* getElementById(const AtomicString&) const;
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;
-    bool hasElementWithId(AtomicStringImpl* id) const;
+    bool hasElementWithId(const AtomicStringImpl&) const;
     bool containsMultipleElementsWithId(const AtomicString& id) const;
-    void addElementById(const AtomicString& elementId, Element*);
-    void removeElementById(const AtomicString& elementId, Element*);
+    void addElementById(const AtomicStringImpl& elementId, Element&);
+    void removeElementById(const AtomicStringImpl& elementId, Element&);
 
     Element* getElementByName(const AtomicString&) const;
-    bool hasElementWithName(AtomicStringImpl*) const;
+    bool hasElementWithName(const AtomicStringImpl&) const;
     bool containsMultipleElementsWithName(const AtomicString&) const;
-    void addElementByName(const AtomicString&, Element*);
-    void removeElementByName(const AtomicString&, Element*);
+    void addElementByName(const AtomicStringImpl&, Element&);
+    void removeElementByName(const AtomicStringImpl&, Element&);
 
     Document* documentScope() const { return m_documentScope; }
 
     Node* ancestorInThisScope(Node*) const;
 
-    void addImageMap(HTMLMapElement*);
-    void removeImageMap(HTMLMapElement*);
+    void addImageMap(HTMLMapElement&);
+    void removeImageMap(HTMLMapElement&);
     HTMLMapElement* getImageMap(const String& url) const;
 
     Element* elementFromPoint(int x, int y) const;
 
     // For accessibility.
     bool shouldCacheLabelsByForAttribute() const { return m_labelsByForAttribute; }
-    void addLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
-    void removeLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
+    void addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
+    void removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
 
     DOMSelection* getSelection() const;
@@ -174,26 +174,24 @@ private:
     mutable RefPtr<DOMSelection> m_selection;
 };
 
-inline bool TreeScope::hasElementWithId(AtomicStringImpl* id) const
+inline bool TreeScope::hasElementWithId(const AtomicStringImpl& id) const
 {
-    ASSERT(id);
     return m_elementsById && m_elementsById->contains(id);
 }
 
 inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) const
 {
-    return m_elementsById && m_elementsById->containsMultiple(id.impl());
+    return m_elementsById && id.impl() && m_elementsById->containsMultiple(*id.impl());
 }
 
-inline bool TreeScope::hasElementWithName(AtomicStringImpl* id) const
+inline bool TreeScope::hasElementWithName(const AtomicStringImpl& id) const
 {
-    ASSERT(id);
     return m_elementsByName && m_elementsByName->contains(id);
 }
 
 inline bool TreeScope::containsMultipleElementsWithName(const AtomicString& name) const
 {
-    return m_elementsByName && m_elementsByName->containsMultiple(name.impl());
+    return m_elementsByName && name.impl() && m_elementsByName->containsMultiple(*name.impl());
 }
 
 Node* nodeFromPoint(Document*, int x, int y, LayoutPoint* localPoint = 0);

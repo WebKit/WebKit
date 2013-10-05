@@ -707,19 +707,19 @@ void Document::invalidateAccessKeyMap()
     m_elementsByAccessKey.clear();
 }
 
-void Document::addImageElementByLowercasedUsemap(const AtomicString& name, HTMLImageElement& element)
+void Document::addImageElementByLowercasedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
-    return m_imagesByUsemap.add(name.impl(), &element);
+    return m_imagesByUsemap.add(name, element);
 }
 
-void Document::removeImageElementByLowercasedUsemap(const AtomicString& name, HTMLImageElement& element)
+void Document::removeImageElementByLowercasedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
-    return m_imagesByUsemap.remove(name.impl(), &element);
+    return m_imagesByUsemap.remove(name, element);
 }
 
-HTMLImageElement* Document::imageElementByLowercasedUsemap(const AtomicString& name) const
+HTMLImageElement* Document::imageElementByLowercasedUsemap(const AtomicStringImpl& name) const
 {
-    return m_imagesByUsemap.getElementByLowercasedUsemap(name.impl(), this);
+    return m_imagesByUsemap.getElementByLowercasedUsemap(name, *this);
 }
 
 SelectorQueryCache& Document::selectorQueryCache()
