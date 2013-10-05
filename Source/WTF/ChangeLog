@@ -1,3 +1,14 @@
+2013-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Test the waters and begin using lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=121809
+
+        Reviewed by Andreas Kling.
+
+        * wtf/ListDump.h:
+        (WTF::sortedListDump):
+        Use std::less instead of a custom lessThan function.
+
 2013-10-04  Darin Adler  <darin@apple.com>
 
         text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)

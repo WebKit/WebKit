@@ -48,13 +48,6 @@ namespace WebCore {
 
 static unsigned s_observerPriority = 0;
 
-struct MutationObserver::ObserverLessThan {
-    bool operator()(const RefPtr<MutationObserver>& lhs, const RefPtr<MutationObserver>& rhs)
-    {
-        return lhs->m_priority < rhs->m_priority;
-    }
-};
-
 PassRefPtr<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
 {
     ASSERT(isMainThread());
@@ -231,7 +224,10 @@ void MutationObserver::deliverAllMutations()
         Vector<RefPtr<MutationObserver> > observers;
         copyToVector(activeMutationObservers(), observers);
         activeMutationObservers().clear();
-        std::sort(observers.begin(), observers.end(), ObserverLessThan());
+        std::sort(observers.begin(), observers.end(), [](const RefPtr<MutationObserver>& lhs, const RefPtr<MutationObserver>& rhs) {
+            return lhs->m_priority < rhs->m_priority;
+        });
+
         for (size_t i = 0; i < observers.size(); ++i) {
             if (observers[i]->canDeliver())
                 observers[i]->deliver();

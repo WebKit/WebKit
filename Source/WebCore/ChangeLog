@@ -1,3 +1,19 @@
+2013-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Test the waters and begin using lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=121809
+
+        Reviewed by Andreas Kling.
+
+        Use lambdas instead of static functions and function objects.
+        
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::deliverAllMutations):
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::sortedTrackListForMenu):
+
 2013-10-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *CSS* prefix to FontValue to generate toCSSFontValue() 
