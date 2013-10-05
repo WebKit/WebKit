@@ -109,3 +109,11 @@
     width: 100px;
     background-color: lightgrey;
 }
+
+.float {
+    float: left;
+}
+
+.clear {
+    clear: both;
+}
