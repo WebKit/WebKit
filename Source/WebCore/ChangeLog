@@ -1,5 +1,15 @@
 2013-10-04  Andreas Kling  <akling@apple.com>
 
+        CTTE: PolicyChecker backpointer to Frame should be a reference.
+        <https://webkit.org/b/122354>
+
+        Reviewed by Anders Carlsson.
+
+        PolicyChecker is tied to the lifetime of FrameLoader, which in turn
+        is tied to the lifetime of Frame.
+
+2013-10-04  Andreas Kling  <akling@apple.com>
+
         Editor should use reference-getting document() internally.
         <https://webkit.org/b/122364>
 

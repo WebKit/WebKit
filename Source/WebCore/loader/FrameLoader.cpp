@@ -214,7 +214,7 @@ private:
 FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     : m_frame(frame)
     , m_client(client)
-    , m_policyChecker(adoptPtr(new PolicyChecker(&frame)))
+    , m_policyChecker(adoptPtr(new PolicyChecker(frame)))
     , m_history(adoptPtr(new HistoryController(frame)))
     , m_notifer(&frame)
     , m_subframeLoader(adoptPtr(new SubframeLoader(frame)))

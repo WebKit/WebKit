@@ -48,7 +48,7 @@ class ResourceResponse;
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
 public:
-    explicit PolicyChecker(Frame*);
+    explicit PolicyChecker(Frame&);
 
     void checkNavigationPolicy(const ResourceRequest&, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction, void* argument);
     void checkNavigationPolicy(const ResourceRequest&, NavigationPolicyDecisionFunction, void* argument);
@@ -81,7 +81,7 @@ private:
 
     void handleUnimplementablePolicy(const ResourceError&);
 
-    Frame* m_frame;
+    Frame& m_frame;
 
     bool m_delegateIsDecidingNavigationPolicy;
     bool m_delegateIsHandlingUnimplementablePolicy;
