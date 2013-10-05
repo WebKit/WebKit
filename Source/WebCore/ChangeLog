@@ -1,3 +1,41 @@
+2013-10-05  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Pass DocumentWriter around as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=122396
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes):
+        (WebCore::DecodedDataDocumentParser::flush):
+        * dom/DecodedDataDocumentParser.h:
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::flush):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocumentParser::appendBytes):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::writer):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::addData):
+        (WebCore::DocumentWriter::end):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::appendBytes):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2013-10-05  Andreas Kling  <akling@apple.com>
 
         FrameView: Remove code for disabling repaints.

@@ -94,7 +94,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, size_t);
+    virtual void appendBytes(DocumentWriter&, const char*, size_t);
     virtual void finish();
 };
 
@@ -128,7 +128,7 @@ static float pageZoomFactor(const Document* document)
     return frame ? frame->pageZoomFactor() : 1;
 }
 
-void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
+void ImageDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 {
     Frame* frame = document()->frame();
     if (!frame->loader().client().allowImage(frame->settings().areImagesEnabled(), document()->url()))

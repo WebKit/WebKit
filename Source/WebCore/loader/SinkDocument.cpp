@@ -44,7 +44,9 @@ private:
     }
 
     // Ignore all data.
-    virtual void appendBytes(DocumentWriter*, const char*, size_t) { }
+    virtual void appendBytes(DocumentWriter&, const char*, size_t)
+    {
+    }
 };
 
 SinkDocument::SinkDocument(Frame* frame, const URL& url)

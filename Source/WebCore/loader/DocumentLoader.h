@@ -96,7 +96,7 @@ namespace WebCore {
         ResourceLoader* mainResourceLoader() const;
         PassRefPtr<ResourceBuffer> mainResourceData() const;
         
-        DocumentWriter* writer() const { return &m_writer; }
+        DocumentWriter& writer() const { return m_writer; }
 
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& originalRequestCopy() const;

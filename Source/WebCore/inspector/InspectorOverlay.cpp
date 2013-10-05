@@ -546,10 +546,10 @@ Page* InspectorOverlay::overlayPage()
     frame.view()->setCanHaveScrollbars(false);
     frame.view()->setTransparent(true);
     ASSERT(loader.activeDocumentLoader());
-    loader.activeDocumentLoader()->writer()->setMIMEType("text/html");
-    loader.activeDocumentLoader()->writer()->begin();
-    loader.activeDocumentLoader()->writer()->addData(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html));
-    loader.activeDocumentLoader()->writer()->end();
+    loader.activeDocumentLoader()->writer().setMIMEType("text/html");
+    loader.activeDocumentLoader()->writer().begin();
+    loader.activeDocumentLoader()->writer().addData(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html));
+    loader.activeDocumentLoader()->writer().end();
 
 #if OS(WINDOWS)
     evaluateInOverlay("setPlatform", "windows");

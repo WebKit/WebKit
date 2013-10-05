@@ -556,7 +556,7 @@ bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocum
         // DocumentWriter::replaceDocument can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.
         if (RefPtr<DocumentLoader> loader = m_frame.document()->loader())
-            loader->writer()->replaceDocument(scriptResult, ownerDocument.get());
+            loader->writer().replaceDocument(scriptResult, ownerDocument.get());
     }
     return true;
 }

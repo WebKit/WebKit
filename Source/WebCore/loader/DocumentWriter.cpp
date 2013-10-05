@@ -219,7 +219,7 @@ void DocumentWriter::addData(const char* bytes, size_t length)
         CRASH();
 
     ASSERT(m_parser);
-    m_parser->appendBytes(this, bytes, length);
+    m_parser->appendBytes(*this, bytes, length);
 }
 
 void DocumentWriter::end()
@@ -239,7 +239,7 @@ void DocumentWriter::end()
     if (!m_parser)
         return;
     // FIXME: m_parser->finish() should imply m_parser->flush().
-    m_parser->flush(this);
+    m_parser->flush(*this);
     if (!m_parser)
         return;
     m_parser->finish();

@@ -64,7 +64,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, size_t);
+    virtual void appendBytes(DocumentWriter&, const char*, size_t);
 
     void createDocumentStructure();
 
@@ -109,7 +109,7 @@ void MediaDocumentParser::createDocumentStructure()
     frame->loader().activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
 }
 
-void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
+void MediaDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 {
     if (m_mediaElement)
         return;
@@ -230,7 +230,7 @@ void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
         DocumentLoader* documentLoader = loader();
         ASSERT(documentLoader);
         if (documentLoader)
-            embedElement->setAttribute(typeAttr, documentLoader->writer()->mimeType());
+            embedElement->setAttribute(typeAttr, documentLoader->writer().mimeType());
 
         videoElement->parentNode()->replaceChild(embedElement, videoElement, IGNORE_EXCEPTION);
     }

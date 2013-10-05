@@ -58,7 +58,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, size_t);
+    virtual void appendBytes(DocumentWriter&, const char*, size_t);
 
     void createDocumentStructure();
 
@@ -93,14 +93,14 @@ void PluginDocumentParser::createDocumentStructure()
     DocumentLoader* loader = document()->loader();
     ASSERT(loader);
     if (loader)
-        m_embedElement->setAttribute(typeAttr, loader->writer()->mimeType());
+        m_embedElement->setAttribute(typeAttr, loader->writer().mimeType());
 
     toPluginDocument(document())->setPluginElement(m_embedElement);
 
     body->appendChild(embedElement, IGNORE_EXCEPTION);
 }
 
-void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
+void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 {
     if (m_embedElement)
         return;

@@ -44,7 +44,7 @@ protected:
     }
 
 private:
-    virtual void flush(DocumentWriter* writer)
+    virtual void flush(DocumentWriter& writer)
     {
         // Make sure appendBytes is called at least once.
         appendBytes(writer, 0, 0);

@@ -1892,7 +1892,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
             ASSERT_NOT_REACHED();
     }
 
-    m_documentLoader->writer()->setMIMEType(dl->responseMIMEType());
+    m_documentLoader->writer().setMIMEType(dl->responseMIMEType());
 
     // Tell the client we've committed this URL.
     ASSERT(m_frame.view());
