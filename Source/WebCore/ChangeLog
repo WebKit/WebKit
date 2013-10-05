@@ -1,3 +1,12 @@
+2013-10-05  Andreas Kling  <akling@apple.com>
+
+        Remove IFrameShimSupport, it was only used by dead ports.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * plugins/IFrameShimSupport.cpp: Removed.
+        * plugins/IFrameShimSupport.h: Removed.
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Clean up MessageQueue.h
