@@ -177,6 +177,41 @@ BenchmarkRunner.suite({
     ]
 });
 
+BenchmarkRunner.suite({
+    name: 'React/TodoMVC',
+    url: 'todomvc/labs/architecture-examples/react/index.html',
+    prepare: function (contentWindow, contentDocument) {
+        contentWindow.Utils.store = function () {}
+        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            var todomvc = contentWindow.todomvc;
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                newTodo.value = 'Something to do ' + i;
+
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('keydown', true, true);
+                keydownEvent.which = 13; // VK_ENTER
+                newTodo.dispatchEvent(keydownEvent);
+            }
+        }],
+        ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }],
+        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        }],
+    ]
+});
+
 var actionCount = 50;
 BenchmarkRunner.suite({
     name: 'FlightJS/MailClient',
