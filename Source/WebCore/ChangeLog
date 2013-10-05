@@ -1,5 +1,17 @@
 2013-10-05  Andreas Kling  <akling@apple.com>
 
+        FrameView: Remove code for disabling repaints.
+        <https://webkit.org/b/122393>
+
+        Reviewed by Sam Weinig.
+
+        Nobody uses this mode for anything so let's just remove it.
+
+        It was added back in r110469 to fix an issue with SVGImageCache
+        and its only user disappeard in the cache overhaul in r142765.
+
+2013-10-05  Andreas Kling  <akling@apple.com>
+
         Remove IFrameShimSupport, it was only used by dead ports.
 
         Rubber-stamped by Anders Carlsson.
