@@ -150,13 +150,13 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader
     return loader.release();
 }
 
-void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunction, PassRefPtr<FormState>)
+void FrameLoaderClient::dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction policyFunction)
 {
     // FIXME: This is surely too simple
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
-    (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyUse);
+    policyFunction(PolicyUse);
 }
 
 void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
@@ -339,14 +339,14 @@ void FrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* load
     g_signal_emit_by_name(webView, "resource-response-received", m_frame, webResource, networkResponse.get());
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction policyFunction, const ResourceResponse& response, const ResourceRequest& resourceRequest)
+void FrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& resourceRequest, FramePolicyFunction policyFunction)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyIgnore);
+        policyFunction(PolicyIgnore);
         return;
     }
 
@@ -415,14 +415,14 @@ static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& ac
                                                      NULL));
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& frameName)
+void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& frameName, FramePolicyFunction policyFunction)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyIgnore);
+        policyFunction(PolicyIgnore);
         return;
     }
 
@@ -442,17 +442,17 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
     if (!isHandled)
-        (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyUse);
+        policyFunction(PolicyUse);
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
+void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, FramePolicyFunction policyFunction)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyIgnore);
+        policyFunction(PolicyIgnore);
         return;
     }
 
@@ -469,7 +469,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
     g_signal_emit_by_name(webView, "navigation-requested", m_frame, request.get(), &response);
 
     if (response == WEBKIT_NAVIGATION_RESPONSE_IGNORE) {
-        (core(m_frame)->loader().policyChecker().*policyFunction)(PolicyIgnore);
+        policyFunction(PolicyIgnore);
         return;
     }
 

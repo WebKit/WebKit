@@ -1,3 +1,20 @@
+2013-10-04  Anders Carlsson  <andersca@apple.com>
+
+        FramePolicyFunction should be an std::function
+        https://bugs.webkit.org/show_bug.cgi?id=122362
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        * webkit/webkitwebpolicydecision.cpp:
+        (webkit_web_policy_decision_use):
+        (webkit_web_policy_decision_ignore):
+        (webkit_web_policy_decision_download):
+
 2013-10-03  Sam Weinig  <sam@webkit.org>
 
         Remove shouldRubberBandInDirection from the WKBundlePageUIClient

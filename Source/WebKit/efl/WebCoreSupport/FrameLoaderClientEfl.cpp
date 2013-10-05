@@ -106,9 +106,7 @@ String FrameLoaderClientEfl::userAgent(const URL&)
 
 void FrameLoaderClientEfl::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
-    Frame* f = EWKPrivate::coreFrame(m_frame);
-    ASSERT(f);
-    (f->loader().policyChecker().*function)(action);
+    function(action);
 }
 
 WTF::PassRefPtr<DocumentLoader> FrameLoaderClientEfl::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -119,7 +117,7 @@ WTF::PassRefPtr<DocumentLoader> FrameLoaderClientEfl::createDocumentLoader(const
     return loader.release();
 }
 
-void FrameLoaderClientEfl::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState>)
+void FrameLoaderClientEfl::dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction function)
 {
     // FIXME: This is surely too simple
     ASSERT(function);
@@ -287,7 +285,7 @@ void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader* loader, un
     evas_object_smart_callback_call(m_view, "resource,response,received", &response);
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& resourceRequest)
+void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(const ResourceResponse& response, const ResourceRequest& resourceRequest, FramePolicyFunction function)
 {
     // we need to call directly here (currently callPolicyFunction does that!)
     ASSERT(function);
@@ -309,7 +307,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction f
         callPolicyFunction(function, PolicyDownload);
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String&)
+void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String&, FramePolicyFunction function)
 {
     ASSERT(function);
     ASSERT(m_frame);
@@ -326,7 +324,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     callPolicyFunction(function, PolicyUse);
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
+void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, FramePolicyFunction function)
 {
     ASSERT(function);
     ASSERT(m_frame);

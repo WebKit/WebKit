@@ -95,8 +95,9 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     m_callback.set(request, formState.get(), function, argument);
 
     m_delegateIsDecidingNavigationPolicy = true;
-    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(&PolicyChecker::continueAfterNavigationPolicy,
-        action, request, formState);
+    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, formState, [this](PolicyAction action) {
+        continueAfterNavigationPolicy(action);
+    });
     m_delegateIsDecidingNavigationPolicy = false;
 }
 
@@ -110,15 +111,17 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, NewWind
         return continueAfterNavigationPolicy(PolicyIgnore);
 
     m_callback.set(request, formState, frameName, action, function, argument);
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
-        action, request, formState, frameName);
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(action, request, formState, frameName, [this](PolicyAction action) {
+        continueAfterNewWindowPolicy(action);
+    });
 }
 
 void PolicyChecker::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction function, void* argument)
 {
     m_callback.set(function, argument);
-    m_frame.loader().client().dispatchDecidePolicyForResponse(&PolicyChecker::continueAfterContentPolicy,
-        response, m_frame.loader().activeDocumentLoader()->request());
+    m_frame.loader().client().dispatchDecidePolicyForResponse(response, m_frame.loader().activeDocumentLoader()->request(), [this](PolicyAction action) {
+        continueAfterContentPolicy(action);
+    });
 }
 
 void PolicyChecker::cancelCheck()

@@ -2869,10 +2869,14 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         return;
     }
 
-    if (formState)
-        m_client.dispatchWillSubmitForm(&PolicyChecker::continueLoadAfterWillSubmitForm, formState);
-    else
+    if (!formState) {
         continueLoadAfterWillSubmitForm();
+        return;
+    }
+
+    m_client.dispatchWillSubmitForm(formState, [this](PolicyAction action) {
+        policyChecker().continueLoadAfterWillSubmitForm(action);
+    });
 }
 
 void FrameLoader::callContinueLoadAfterNewWindowPolicy(void* argument,

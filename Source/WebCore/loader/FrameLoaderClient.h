@@ -34,6 +34,7 @@
 #include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "ResourceLoadPriority.h"
+#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -97,7 +98,7 @@ namespace WebCore {
     class SubstituteData;
     class Widget;
 
-    typedef void (PolicyChecker::*FramePolicyFunction)(PolicyAction);
+    typedef std::function<void (PolicyAction)> FramePolicyFunction;
 
     class FrameLoaderClient {
     public:
@@ -163,9 +164,9 @@ namespace WebCore {
         virtual Frame* dispatchCreatePage(const NavigationAction&) = 0;
         virtual void dispatchShow() = 0;
 
-        virtual void dispatchDecidePolicyForResponse(FramePolicyFunction, const ResourceResponse&, const ResourceRequest&) = 0;
-        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName) = 0;
-        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>) = 0;
+        virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) = 0;
+        virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, FramePolicyFunction) = 0;
+        virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction) = 0;
         virtual void cancelPolicyCheck() = 0;
 
         virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
@@ -173,7 +174,7 @@ namespace WebCore {
         virtual void dispatchWillRequestResource(CachedResourceRequest*) { }
 
         virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) = 0;
-        virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) = 0;
+        virtual void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) = 0;
 
         virtual void revertToProvisionalState(DocumentLoader*) = 0;
         virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;

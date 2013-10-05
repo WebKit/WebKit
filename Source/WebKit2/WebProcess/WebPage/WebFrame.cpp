@@ -216,13 +216,12 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     ASSERT(m_policyFunction);
 
-    FramePolicyFunction function = m_policyFunction;
+    FramePolicyFunction function = std::move(m_policyFunction);
 
     invalidatePolicyListener();
 
     m_policyDownloadID = downloadID;
-
-    (m_coreFrame->loader().policyChecker().*function)(action);
+    function(action);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request)

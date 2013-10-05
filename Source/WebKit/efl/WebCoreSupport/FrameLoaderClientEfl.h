@@ -111,15 +111,15 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual Frame* dispatchCreatePage(const WebCore::NavigationAction&);
     virtual void dispatchShow();
 
-    virtual void dispatchDecidePolicyForResponse(FramePolicyFunction, const ResourceResponse&, const ResourceRequest&);
-    virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, WTF::PassRefPtr<FormState>, const String& frameName);
-    virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const NavigationAction&, const ResourceRequest&, WTF::PassRefPtr<FormState>);
+    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction);
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, WTF::PassRefPtr<FormState>, const String& frameName, FramePolicyFunction);
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, WTF::PassRefPtr<FormState>, FramePolicyFunction);
     virtual void cancelPolicyCheck();
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&);
 
     virtual void dispatchWillSendSubmitEvent(WTF::PassRefPtr<FormState>) { }
-    virtual void dispatchWillSubmitForm(FramePolicyFunction, WTF::PassRefPtr<FormState>);
+    virtual void dispatchWillSubmitForm(WTF::PassRefPtr<FormState>, FramePolicyFunction);
 
     virtual void revertToProvisionalState(DocumentLoader*) { }
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&);
