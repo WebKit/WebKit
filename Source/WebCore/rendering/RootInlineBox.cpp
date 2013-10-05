@@ -169,7 +169,7 @@ float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
 
 void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom) const
 {
-    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(&renderer()) && renderer().style()->visibility() == VISIBLE
+    if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer().style()->visibility() == VISIBLE
             && paintInfo.phase == PaintPhaseForeground)
         ellipsisBox()->paint(paintInfo, paintOffset, lineTop, lineBottom);
 }
@@ -190,7 +190,7 @@ void RootInlineBox::addHighlightOverflow()
 
 void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const AtomicString& highlightType)
 {
-    if (!paintInfo.shouldPaintWithinRoot(&renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     Page* page = renderer().frame().page();

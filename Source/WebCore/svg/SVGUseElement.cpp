@@ -570,7 +570,7 @@ void SVGUseElement::toClipPath(Path& path)
     }
 }
 
-RenderObject* SVGUseElement::rendererClipChild() const
+RenderElement* SVGUseElement::rendererClipChild() const
 {
     Node* n = m_targetElementInstance ? m_targetElementInstance->shadowTreeElement() : 0;
     if (!n)

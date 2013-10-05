@@ -138,7 +138,7 @@ RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
 
 void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(this))
+    if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
     LayoutRect paintRect(paintOffset, size());

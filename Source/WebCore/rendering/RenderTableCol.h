@@ -88,6 +88,7 @@ private:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE { }
 
     RenderTable* table() const;
 

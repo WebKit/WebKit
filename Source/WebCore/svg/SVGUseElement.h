@@ -51,7 +51,7 @@ public:
     void invalidateShadowTree();
     void invalidateDependentShadowTrees();
 
-    RenderObject* rendererClipChild() const;
+    RenderElement* rendererClipChild() const;
 
 private:
     SVGUseElement(const QualifiedName&, Document&, bool wasInsertedByParser);

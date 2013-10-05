@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourcePattern.h"
 
+#include "ElementIterator.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PatternAttributes.h"
@@ -271,12 +272,15 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement() || !node->renderer())
+    auto children = childrenOfType<SVGElement>(attributes.patternContentElement());
+    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
+        const SVGElement& child = *it;
+        auto renderer = child.renderer();
+        if (!renderer)
             continue;
-        if (node->renderer()->needsLayout())
+        if (renderer->needsLayout())
             return nullptr;
-        SVGRenderingContext::renderSubtreeToImageBuffer(tileImage.get(), node->renderer(), contentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(tileImage.get(), *renderer, contentTransformation);
     }
 
     return tileImage.release();
