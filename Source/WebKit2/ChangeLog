@@ -1,5 +1,14 @@
 2013-10-05  Darin Adler  <darin@apple.com>
 
+        Remove COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES) since it's required now
+        https://bugs.webkit.org/show_bug.cgi?id=122387
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/cpp/WKRetainPtr.h: Take out conditionals.
+
+2013-10-05  Darin Adler  <darin@apple.com>
+
         Cut down on use of String::number
         https://bugs.webkit.org/show_bug.cgi?id=122382
 

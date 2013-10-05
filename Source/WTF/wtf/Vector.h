@@ -561,10 +561,8 @@ public:
     template<size_t otherCapacity, typename otherOverflowBehaviour>
     Vector& operator=(const Vector<T, otherCapacity, otherOverflowBehaviour>&);
 
-#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     Vector(Vector&&);
     Vector& operator=(Vector&&);
-#endif
 
     size_t size() const { return m_size; }
     size_t capacity() const { return Base::capacity(); }
@@ -773,7 +771,6 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
     return *this;
 }
 
-#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 Vector<T, inlineCapacity, OverflowHandler>::Vector(Vector<T, inlineCapacity, OverflowHandler>&& other)
 {
@@ -788,7 +785,6 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
     swap(other);
     return *this;
 }
-#endif
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 template<typename U>

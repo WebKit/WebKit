@@ -1,5 +1,19 @@
 2013-10-05  Darin Adler  <darin@apple.com>
 
+        Remove COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES) since it's required now
+        https://bugs.webkit.org/show_bug.cgi?id=122387
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+        * wtf/Vector.h:
+        * wtf/text/AtomicString.h:
+        * wtf/text/WTFString.h:
+        Take out conditionals.
+
+2013-10-05  Darin Adler  <darin@apple.com>
+
         Add AtomicString::number and use it
         https://bugs.webkit.org/show_bug.cgi?id=122384
 
