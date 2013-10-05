@@ -41,13 +41,13 @@ FilePrintStream::~FilePrintStream()
     fclose(m_file);
 }
 
-OwnPtr<FilePrintStream> FilePrintStream::open(const char* filename, const char* mode)
+std::unique_ptr<FilePrintStream> FilePrintStream::open(const char* filename, const char* mode)
 {
     FILE* file = fopen(filename, mode);
     if (!file)
         return nullptr;
 
-    return createOwned<FilePrintStream>(file);
+    return std::make_unique<FilePrintStream>(file);
 }
 
 void FilePrintStream::vprintf(const char* format, va_list argList)

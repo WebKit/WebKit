@@ -191,22 +191,22 @@ static pthread_t pthreadHandleForIdentifierWithLockAlreadyHeld(ThreadIdentifier 
 static void* wtfThreadEntryPoint(void* param)
 {
     // Balanced by .leakPtr() in createThreadInternal.
-    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
+    auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
     invocation->function(invocation->data);
-    return 0;
+    return nullptr;
 }
 
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
-    auto invocation = WTF::createOwned<ThreadFunctionInvocation>(entryPoint, data);
+    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, data);
     pthread_t threadHandle;
     if (pthread_create(&threadHandle, 0, wtfThreadEntryPoint, invocation.get())) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, invocation.get());
         return 0;
     }
 
-    // Balanced by adoptPtr() in wtfThreadEntryPoint.
-    ThreadFunctionInvocation* leakedInvocation = invocation.leakPtr();
+    // Balanced by std::unique_ptr constructor in wtfThreadEntryPoint.
+    ThreadFunctionInvocation* leakedInvocation = invocation.release();
     UNUSED_PARAM(leakedInvocation);
 
     return establishIdentifierForPthreadHandle(threadHandle);

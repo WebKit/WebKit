@@ -160,7 +160,7 @@ private:
     HashTable<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> m_impl;
     Node* m_head;
     Node* m_tail;
-    OwnPtr<NodeAllocator> m_allocator;
+    std::unique_ptr<NodeAllocator> m_allocator;
 };
 
 template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator {
@@ -405,7 +405,7 @@ template<typename T, size_t inlineCapacity, typename U>
 inline ListHashSet<T, inlineCapacity, U>::ListHashSet()
     : m_head(0)
     , m_tail(0)
-    , m_allocator(createOwned<NodeAllocator>())
+    , m_allocator(std::make_unique<NodeAllocator>())
 {
 }
 
@@ -413,7 +413,7 @@ template<typename T, size_t inlineCapacity, typename U>
 inline ListHashSet<T, inlineCapacity, U>::ListHashSet(const ListHashSet& other)
     : m_head(0)
     , m_tail(0)
-    , m_allocator(createOwned<NodeAllocator>())
+    , m_allocator(std::make_unique<NodeAllocator>())
 {
     for (auto it = other.begin(), end = other.end(); it != end; ++it)
         add(*it);

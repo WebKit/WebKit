@@ -117,7 +117,7 @@ String Database::toJSON() const
 
 bool Database::save(const char* filename) const
 {
-    OwnPtr<FilePrintStream> out = FilePrintStream::open(filename, "w");
+    auto out = FilePrintStream::open(filename, "w");
     if (!out)
         return false;
     

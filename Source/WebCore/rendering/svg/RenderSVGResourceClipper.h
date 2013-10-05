@@ -75,7 +75,7 @@ private:
     void calculateClipContentRepaintRect();
 
     FloatRect m_clipBoundaries;
-    HashMap<RenderObject*, OwnPtr<ClipperData>> m_clipper;
+    HashMap<RenderObject*, std::unique_ptr<ClipperData>> m_clipper;
 };
 
 }

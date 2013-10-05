@@ -172,7 +172,8 @@ struct WKViewInterpretKeyEventsParameters {
     // For asynchronous validation.
     ValidationMap _validationMap;
 
-    OwnPtr<FindIndicatorWindow> _findIndicatorWindow;
+    std::unique_ptr<FindIndicatorWindow> _findIndicatorWindow;
+
     // We keep here the event when resending it to
     // the application to distinguish the case of a new event from one 
     // that has been already sent to WebCore.
@@ -2605,7 +2606,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     }
 
     if (!_data->_findIndicatorWindow)
-        _data->_findIndicatorWindow = createOwned<FindIndicatorWindow>(self);
+        _data->_findIndicatorWindow = std::make_unique<FindIndicatorWindow>(self);
 
     _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }

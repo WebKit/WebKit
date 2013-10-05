@@ -144,10 +144,10 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* wkCl
     if (wkClient && wkClient->version)
         return 0;
 
-    auto clientImpl = createOwned<PageOverlayClientImpl>(wkClient);
+    auto clientImpl = std::make_unique<PageOverlayClientImpl>(wkClient);
 
     // FIXME: Looks like this leaks the clientImpl.
-    return toAPI(PageOverlay::create(clientImpl.leakPtr()).leakRef());
+    return toAPI(PageOverlay::create(clientImpl.release()).leakRef());
 }
 
 void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlayRef, WKBundlePageOverlayAccessibilityClient* client)

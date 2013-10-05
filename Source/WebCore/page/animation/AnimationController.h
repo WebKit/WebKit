@@ -83,7 +83,7 @@ public:
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
 
 private:
-    const OwnPtr<AnimationControllerPrivate> m_data;
+    const std::unique_ptr<AnimationControllerPrivate> m_data;
     int m_beginAnimationUpdateCount;
 };
 

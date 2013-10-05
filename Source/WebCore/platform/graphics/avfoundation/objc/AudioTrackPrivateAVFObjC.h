@@ -54,7 +54,7 @@ private:
     AudioTrackPrivateAVFObjC(AVPlayerItemTrack*);
 
     void resetPropertiesFromTrack();
-    OwnPtr<AVTrackPrivateAVFObjCImpl> m_impl;
+    std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
 };
 
 }

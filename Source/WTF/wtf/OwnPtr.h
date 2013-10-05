@@ -76,14 +76,6 @@ namespace WTF {
     private:
         explicit OwnPtr(PtrType ptr) : m_ptr(ptr) { }
 
-#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
-        template<typename U, typename... Args> friend OwnPtr<U> createOwned(Args&&... args);
-#else
-        template<typename U> friend OwnPtr<U> createOwned();
-        template<typename U, typename A1> friend OwnPtr<U> createOwned(A1&&);
-        template<typename U, typename A1, typename A2> friend OwnPtr<U> createOwned(A1&&, A2&&);
-#endif
-
         // We should never have two OwnPtrs for the same underlying object (otherwise we'll get
         // double-destruction), so these equality operators should never be needed.
         template<typename U> bool operator==(const OwnPtr<U>&) { COMPILE_ASSERT(!sizeof(U*), OwnPtrs_should_never_be_equal); return false; }
@@ -194,35 +186,8 @@ namespace WTF {
         return p.get();
     }
 
-#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
-template<typename T, typename... Args>
-inline OwnPtr<T> createOwned(Args&&... args)
-{
-    return OwnPtr<T>(new T(std::forward<Args>(args)...));
-}
-#else
-template<typename T>
-inline OwnPtr<T> createOwned()
-{
-    return OwnPtr<T>(new T);
-}
-
-template<typename T, typename A1>
-inline OwnPtr<T> createOwned(A1&& a1)
-{
-    return OwnPtr<T>(new T(std::forward<A1>(a1)));
-}
-
-template<typename T, typename A1, typename A2>
-inline OwnPtr<T> createOwned(A1&& a1, A2&& a2)
-{
-    return OwnPtr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2)));
-}
-#endif
-
 } // namespace WTF
 
 using WTF::OwnPtr;
-using WTF::createOwned;
 
 #endif // WTF_OwnPtr_h

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVPlayerItemTrack* track)
-: m_impl(AVTrackPrivateAVFObjCImpl::create(track))
+    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
 {
     resetPropertiesFromTrack();
 }
@@ -48,7 +48,7 @@ void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
 
 void VideoTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
 {
-    m_impl = AVTrackPrivateAVFObjCImpl::create(track);
+    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
     resetPropertiesFromTrack();
 }
 

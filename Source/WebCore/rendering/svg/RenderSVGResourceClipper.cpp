@@ -147,7 +147,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
 {
     bool missingClipperData = !m_clipper.contains(object);
     if (missingClipperData)
-        m_clipper.set(object, createOwned<ClipperData>().release());
+        m_clipper.set(object, std::make_unique<ClipperData>());
 
     bool shouldCreateClipData = false;
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();

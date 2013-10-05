@@ -40,11 +40,7 @@ namespace WebCore {
 
 class AVTrackPrivateAVFObjCImpl {
 public:
-    static OwnPtr<AVTrackPrivateAVFObjCImpl> create(AVPlayerItemTrack* track)
-    {
-        return createOwned<AVTrackPrivateAVFObjCImpl>(track);
-    }
-    AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
+    explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
 
     AVPlayerItemTrack* playerItemTrack() const { return m_playerItemTrack.get(); }
 

@@ -473,7 +473,7 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
 }
 
 AnimationController::AnimationController(Frame& frame)
-    : m_data(createOwned<AnimationControllerPrivate>(frame))
+    : m_data(std::make_unique<AnimationControllerPrivate>(frame))
     , m_beginAnimationUpdateCount(0)
 {
 }

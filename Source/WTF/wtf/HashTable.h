@@ -483,7 +483,7 @@ namespace WTF {
         // All access to m_iterators should be guarded with m_mutex.
         mutable const_iterator* m_iterators;
         // Use OwnPtr so HashTable can still be memmove'd or memcpy'ed.
-        mutable OwnPtr<Mutex> m_mutex;
+        mutable std::unique_ptr<Mutex> m_mutex;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
@@ -539,10 +539,10 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(createOwned<Mutex>())
+        , m_mutex(std::make_unique<Mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        , m_stats(createOwned<Stats>())
+        , m_stats(std::make_unique<Stats>())
 #endif
     {
     }
@@ -1147,10 +1147,10 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(createOwned<Mutex>())
+        , m_mutex(std::make_unique<Mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        , m_stats(createOwned<Stats>(*other.m_stats))
+        , m_stats(std::make_unique<Stats>(*other.m_stats))
 #endif
     {
         // Copy the hash table the dumb way, by adding each element to the new table.

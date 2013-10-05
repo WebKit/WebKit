@@ -220,11 +220,11 @@ namespace WebCore {
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 
-        const OwnPtr<ScriptController> m_script;
+        const std::unique_ptr<ScriptController> m_script;
         const OwnPtr<Editor> m_editor;
         const OwnPtr<FrameSelection> m_selection;
         const OwnPtr<EventHandler> m_eventHandler;
-        const OwnPtr<AnimationController> m_animationController;
+        const std::unique_ptr<AnimationController> m_animationController;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         float m_textAutosizingWidth;

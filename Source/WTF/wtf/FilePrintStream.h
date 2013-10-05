@@ -42,7 +42,7 @@ public:
     FilePrintStream(FILE*, AdoptionMode = Adopt);
     virtual ~FilePrintStream();
     
-    WTF_EXPORT_PRIVATE static OwnPtr<FilePrintStream> open(const char* filename, const char* mode);
+    WTF_EXPORT_PRIVATE static std::unique_ptr<FilePrintStream> open(const char* filename, const char* mode);
     
     FILE* file() { return m_file; }
     

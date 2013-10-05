@@ -447,7 +447,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses)
     , m_loadEventFinished(false)
     , m_startTime(monotonicallyIncreasingTimeMS())
     , m_overMinimumLayoutThreshold(false)
-    , m_scriptRunner(createOwned<ScriptRunner>(*this))
+    , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(0)
@@ -579,7 +579,7 @@ Document::~Document()
     if (m_domWindow)
         m_domWindow->resetUnlessSuspendedForPageCache();
 
-    m_scriptRunner.clear();
+    m_scriptRunner = nullptr;
 
     histogramMutationEventUsage(m_listenerTypes);
 
@@ -594,7 +594,7 @@ Document::~Document()
     ASSERT(!m_parser || m_parser->refCount() == 1);
     detachParser();
 
-    m_renderArena.clear();
+    m_renderArena = nullptr;
 
     if (this == topDocument())
         clearAXObjectCache();
@@ -2011,7 +2011,7 @@ void Document::createRenderTree()
     ASSERT(!m_axObjectCache || this != topDocument());
 
     if (!m_renderArena)
-        m_renderArena = createOwned<RenderArena>();
+        m_renderArena = std::make_unique<RenderArena>();
     
     setRenderView(new (*m_renderArena) RenderView(*this));
 #if USE(ACCELERATED_COMPOSITING)
@@ -2118,7 +2118,7 @@ void Document::destroyRenderTree()
     m_textAutoSizedNodes.clear();
 #endif
 
-    m_renderArena.clear();
+    m_renderArena = nullptr;
 }
 
 void Document::prepareForDestruction()

@@ -146,7 +146,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
     }
 
-    auto filterData = createOwned<FilterData>();
+    auto filterData = std::make_unique<FilterData>();
     FloatRect targetBoundingBox = object->objectBoundingBox();
 
     filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
@@ -214,7 +214,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     if (filterData->drawingRegion.isEmpty()) {
         ASSERT(!m_filter.contains(object));
         filterData->savedContext = context;
-        m_filter.set(object, filterData.release());
+        m_filter.set(object, std::move(filterData));
         return false;
     }
 
@@ -228,7 +228,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     if (!SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, sourceGraphic, ColorSpaceLinearRGB, renderingMode)) {
         ASSERT(!m_filter.contains(object));
         filterData->savedContext = context;
-        m_filter.set(object, filterData.release());
+        m_filter.set(object, std::move(filterData));
         return false;
     }
     
@@ -244,7 +244,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     context = sourceGraphicContext;
 
     ASSERT(!m_filter.contains(object));
-    m_filter.set(object, filterData.release());
+    m_filter.set(object, std::move(filterData));
 
     return true;
 }

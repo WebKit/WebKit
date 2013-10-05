@@ -74,7 +74,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
 
     bool missingMaskerData = !m_masker.contains(object);
     if (missingMaskerData)
-        m_masker.set(object, createOwned<MaskerData>().release());
+        m_masker.set(object, std::make_unique<MaskerData>());
 
     MaskerData* maskerData = m_masker.get(object);
 
