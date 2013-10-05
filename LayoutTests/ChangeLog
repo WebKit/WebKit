@@ -1,3 +1,13 @@
+2013-10-04  Darin Adler  <darin@apple.com>
+
+        text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)
+        https://bugs.webkit.org/show_bug.cgi?id=21312
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/text/text-transform-turkish-and-azeri-expected.html: Added.
+        * fast/text/text-transform-turkish-and-azeri.html: Added.
+
 2013-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out r156930 and r156937, they caused 34 assertion failures on bots.

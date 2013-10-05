@@ -358,8 +358,7 @@ void DumpRenderTreeSupportGtk::doCommand(WebKitWebView* webView, const char* com
     // Make the first char in upper case.
     String firstChar = commandString.left(1);
     commandString = commandString.right(commandString.length() - 1);
-    firstChar.makeUpper();
-    commandString.insert(firstChar, 0);
+    commandString.insert(firstChar.upper(), 0);
 
     editor.command(commandString).execute();
 }

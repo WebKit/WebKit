@@ -1,3 +1,49 @@
+2013-10-04  Darin Adler  <darin@apple.com>
+
+        text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)
+        https://bugs.webkit.org/show_bug.cgi?id=21312
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/text/text-transform-turkish-and-azeri.html
+
+        This patch covers text-transform: uppercase and text-transform: lowercase.
+        More changes will be needed to cover text-transform: capitalize.
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchNode): Use String::upper instead of String::makeUpper.
+        * page/EventHandler.cpp:
+        (WebCore::findDropZone): Use String::lower instead of String::makeLower.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns): Use String::upper instead of String::makeUpper.
+        * platform/network/blackberry/rss/RSS10Parser.cpp: [Seriously, how is an RSS parser
+        part of WebKit's networking layer? Where are the tests that cover this? Seems wrong
+        to have this code in the project.]
+        (WebCore::RSS10Parser::parseXmlDoc): Use lower instead of makeLower.
+        (WebCore::RSS10Parser::parseItem): Ditto.
+        (WebCore::RSS10Parser::parseFeed): Ditto.
+        * platform/network/blackberry/rss/RSS20Parser.cpp:
+        (WebCore::RSS20Parser::parseXmlDoc): Ditto.
+        (WebCore::RSS20Parser::parseItem): Ditto.
+        (WebCore::RSS20Parser::parseFeed): Ditto.
+        (WebCore::RSS20Parser::parseEnclosure): Ditto.
+        * platform/network/blackberry/rss/RSSAtomParser.cpp:
+        (WebCore::RSSAtomParser::parseXmlDoc): Ditto.
+        (WebCore::RSSAtomParser::parseItem): Ditto.
+        (WebCore::RSSAtomParser::parseFeed): Ditto.
+        (WebCore::RSSAtomParser::parseLink): Ditto.
+        (WebCore::RSSAtomParser::parseContent): Ditto.
+        (WebCore::RSSAtomParser::parseAuthor): Ditto.
+        (WebCore::RSSAtomParser::parseCategory): Ditto.
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::convertLocaleNameToLCID): Use String::lower instead of String::makeLower.
+        * rendering/RenderText.cpp:
+        (WebCore::applyTextTransform): Use String::upper and String::lower instead of
+        String::makeUpper and String::makeLower, and also pass in the locale to each.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::uppercaseKnownHTTPMethod): Changed this so it doesn't call
+        upper just to return an already known string constant.
+
 2013-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Roll out r156930 and r156937, they caused 34 assertion failures on bots.

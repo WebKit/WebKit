@@ -80,7 +80,7 @@ bool RSSAtomParser::parseXmlDoc(xmlDocPtr doc)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "feed") {
             m_root = parseFeed(node->children);
@@ -121,7 +121,7 @@ RSSItem* RSSAtomParser::parseItem(xmlNode* node)
     String base;
     for (xmlAttr* attr = node->properties; attr; attr = attr->next) {
         String name(reinterpret_cast<const char*>(attr->name));
-        name.makeLower();
+        name = name.lower();
         if (name == "base")
             base = textFromXMLAttr(attr);
     }
@@ -129,7 +129,7 @@ RSSItem* RSSAtomParser::parseItem(xmlNode* node)
     node = node->children;
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (parseItemBaseAttribute(item, name, node, base))
             continue;
@@ -167,7 +167,7 @@ RSSFeed* RSSAtomParser::parseFeed(xmlNode* node)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (parseItemBaseAttribute(feed, name, node, emptyString()))
             continue;
@@ -193,7 +193,7 @@ RSSAtomLink* RSSAtomParser::parseLink(xmlNode* node)
 
     for (xmlAttr* attr = node->properties; attr; attr = attr->next) {
         String name(reinterpret_cast<const char*>(attr->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "href")
             link->m_href = textFromXMLAttr(attr);
@@ -238,7 +238,7 @@ String RSSAtomParser::parseContent(const String& base, xmlNode* node)
     String src;
     for (xmlAttr* attr = node->properties; attr; attr = attr->next) {
         String name(reinterpret_cast<const char*>(attr->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "type")
             type = textFromXMLAttr(attr);
@@ -295,7 +295,7 @@ String RSSAtomParser::parseAuthor(xmlNode* node)
 
     for (node = node->children; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "name")
             username = textFromXMLNode(node);
@@ -320,7 +320,7 @@ String RSSAtomParser::parseCategory(xmlNode* node)
 
     for (xmlAttr* attr = node->properties; attr; attr = attr->next) {
         String name(reinterpret_cast<const char*>(attr->name));
-        name.makeLower();
+        name = name.lower();
 
         // If there's a label, we use it, if not, use term attribute, as label is
         // optional, but term is mandatory.

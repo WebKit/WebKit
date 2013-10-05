@@ -53,7 +53,7 @@ bool RSS10Parser::parseXmlDoc(xmlDocPtr doc)
             for (; childnode; childnode = childnode->next) {
                 if (childnode->type == XML_ELEMENT_NODE) {
                     name = String(reinterpret_cast<const char*>(childnode->name));
-                    name.makeLower();
+                    name = name.lower();
                     if (name == "channel") {
                         BLACKBERRY_ASSERT(!m_root);
                         if (!m_root)
@@ -98,7 +98,7 @@ RSSItem* RSS10Parser::parseItem(xmlNode* node)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         parseItemBaseAttribute(item, name, node);
     }
@@ -114,7 +114,7 @@ RSSFeed* RSS10Parser::parseFeed(xmlNode* node)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         parseItemBaseAttribute(feed, name, node);
     }

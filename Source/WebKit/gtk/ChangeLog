@@ -1,3 +1,14 @@
+2013-10-04  Darin Adler  <darin@apple.com>
+
+        text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)
+        https://bugs.webkit.org/show_bug.cgi?id=21312
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::doCommand): Use StringImpl::upper instead of
+        StringImpl::makeUpper.
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         FramePolicyFunction should be an std::function

@@ -690,6 +690,8 @@ public:
 
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> lower();
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> upper();
+    WTF_EXPORT_STRING_API RefPtr<StringImpl> lower(const AtomicString& localeIdentifier);
+    WTF_EXPORT_STRING_API RefPtr<StringImpl> upper(const AtomicString& localeIdentifier);
 
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> fill(UChar);
     // FIXME: Do we need fill(char) or can we just do the right thing if UChar is ASCII?

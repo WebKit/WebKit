@@ -552,7 +552,6 @@ upconvert:
 
     // Do a slower implementation for cases that include non-ASCII characters.
     bool error;
-    newImpl = createUninitialized(m_length, data16);
     int32_t realLength = Unicode::toUpper(data16, length, source16, m_length, &error);
     if (!error && realLength == length)
         return newImpl;
@@ -563,11 +562,93 @@ upconvert:
     return newImpl.release();
 }
 
+static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
+{
+    // Either "tr" or "az" locale, with case sensitive comparison and allowing for an ignored subtag.
+    UChar first = localeIdentifier[0];
+    UChar second = localeIdentifier[1];
+    return ((isASCIIAlphaCaselessEqual(first, 't') && isASCIIAlphaCaselessEqual(second, 'r'))
+        || (isASCIIAlphaCaselessEqual(first, 'a') && isASCIIAlphaCaselessEqual(second, 'z')))
+        && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
+}
+
+RefPtr<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
+{
+#if !USE(ICU_UNICODE)
+    UNUSED_PARAM(localeIdentifier);
+    return lower();
+#else
+    // Use the more-optimized code path most of the time.
+    // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
+    // FIXME: Could possibly optimize further by looking for the specific sequences
+    // that have locale-specific lowercasing. There are only three of them.
+    if (!needsTurkishCasingRules(localeIdentifier))
+        return lower();
+
+    // FIXME: Could share more code with the main StringImpl::lower by factoring out
+    // this last part into a shared function that takes a locale string, since this is
+    // just like the end of that function.
+
+    if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
+        CRASH();
+    int length = m_length;
+
+    // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
+    // allocating memory just to turn localeIdentifier into a C string, and we assume
+    // there is no difference between the uppercasing for "tr" and "az" locales.
+    const UChar* source16 = characters();
+    UChar* data16;
+    RefPtr<StringImpl> newString = createUninitialized(length, data16);
+    UErrorCode status = U_ZERO_ERROR;
+    int realLength = u_strToLower(data16, length, source16, length, "tr", &status);
+    if (U_SUCCESS(status) && realLength == length)
+        return newString;
+    status = U_ZERO_ERROR;
+    newString = createUninitialized(realLength, data16);
+    u_strToLower(data16, realLength, source16, length, "tr", &status);
+    if (U_FAILURE(status))
+        return this;
+    return newString.release();
+#endif
+}
+
+RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
+{
+#if !USE(ICU_UNICODE)
+    UNUSED_PARAM(localeIdentifier);
+    return upper();
+#else
+    // Use the more-optimized code path most of the time.
+    // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
+    // and that the only affected character is lowercase "i".
+    if (!needsTurkishCasingRules(localeIdentifier) || find('i') == notFound)
+        return upper();
+
+    if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
+        CRASH();
+    int length = m_length;
+
+    // Below, we pass in the hardcoded locale "tr". Passing that is more efficient than
+    // allocating memory just to turn localeIdentifier into a C string, and we assume
+    // there is no difference between the uppercasing for "tr" and "az" locales.
+    const UChar* source16 = characters();
+    UChar* data16;
+    RefPtr<StringImpl> newString = createUninitialized(length, data16);
+    UErrorCode status = U_ZERO_ERROR;
+    int realLength = u_strToUpper(data16, length, source16, length, "tr", &status);
+    if (U_SUCCESS(status) && realLength == length)
+        return newString;
+    newString = createUninitialized(realLength, data16);
+    status = U_ZERO_ERROR;
+    u_strToUpper(data16, realLength, source16, length, "tr", &status);
+    if (U_FAILURE(status))
+        return this;
+    return newString.release();
+#endif
+}
+
 PassRefPtr<StringImpl> StringImpl::fill(UChar character)
 {
-    if (!m_length)
-        return this;
-
     if (!(character & ~0x7F)) {
         LChar* data;
         RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);

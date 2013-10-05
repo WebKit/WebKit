@@ -333,6 +333,20 @@ String String::upper() const
     return m_impl->upper();
 }
 
+String String::lower(const AtomicString& localeIdentifier) const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->lower(localeIdentifier);
+}
+
+String String::upper(const AtomicString& localeIdentifier) const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->upper(localeIdentifier);
+}
+
 String String::stripWhiteSpace() const
 {
     if (!m_impl)

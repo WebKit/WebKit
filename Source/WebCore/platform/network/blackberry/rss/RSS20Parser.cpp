@@ -47,13 +47,13 @@ bool RSS20Parser::parseXmlDoc(xmlDocPtr doc)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "rss") {
             xmlNode* channel = node->children;
             if (channel->type == XML_ELEMENT_NODE) {
                 name = reinterpret_cast<const char*>(channel->name);
-                name.makeLower();
+                name = name.lower();
                 if (name == "channel")
                     m_root = parseFeed(channel->children);
             }
@@ -90,7 +90,7 @@ RSSItem* RSS20Parser::parseItem(xmlNode* node)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (parseItemBaseAttribute(item, name, node))
             continue;
@@ -124,7 +124,7 @@ RSSFeed* RSS20Parser::parseFeed(xmlNode* node)
 
     for (; node; node = node->next) {
         String name(reinterpret_cast<const char*>(node->name));
-        name.makeLower();
+        name = name.lower();
 
         if (parseItemBaseAttribute(feed, name, node))
             continue;
@@ -148,7 +148,7 @@ RSSEnclosure* RSS20Parser::parseEnclosure(xmlNode* node)
 
     for (xmlAttr* attr = node->properties; attr; attr = attr->next) {
         String name(reinterpret_cast<const char*>(attr->name));
-        name.makeLower();
+        name = name.lower();
 
         if (name == "url")
             enclosure->m_url = textFromXMLAttr(attr);

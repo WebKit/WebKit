@@ -1,3 +1,22 @@
+2013-10-04  Darin Adler  <darin@apple.com>
+
+        text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)
+        https://bugs.webkit.org/show_bug.cgi?id=21312
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::upper): Removed an extra call that would unnecessarily reallocate
+        a StringImpl in the general non-ASCII case. Added an overload that takes a locale identifier.
+        (WTF::StringImpl::lower): Ditto.
+        * wtf/text/StringImpl.h: Ditto.
+        * wtf/text/WTFString.cpp:
+        (WTF::String::lower): Ditto.
+        (WTF::String::upper): Ditto.
+        * wtf/text/WTFString.h: Ditto. Also deleted the makeLower and makeUpper functions since they
+        offer no advantages over the lower and upper functions. Also added a constructor that takes
+        a RefPtr<StringImpl> with move construction to help.
+
 2013-10-04  Brent Fulgham  <bfulgham@apple.com>
 
         Remove Qt definitions from Platform.h

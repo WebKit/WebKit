@@ -1331,10 +1331,10 @@ void applyTextTransform(const RenderStyle* style, String& text, UChar previousCh
         makeCapitalized(&text, previousCharacter);
         break;
     case UPPERCASE:
-        text.makeUpper();
+        text = text.upper(style->locale());
         break;
     case LOWERCASE:
-        text.makeLower();
+        text = text.lower(style->locale());
         break;
     }
 }

@@ -109,8 +109,7 @@ static LCID WINAPI convertLocaleNameToLCID(LPCWSTR name, DWORD)
         return LOCALE_USER_DEFAULT;
     DEFINE_STATIC_LOCAL(NameToLCIDMap, map, ());
     ensureNameToLCIDMap(map);
-    String localeName = String(name).replace('_', '-');
-    localeName.makeLower();
+    String localeName = String(name).replace('_', '-').lower();
     do {
         NameToLCIDMap::const_iterator iterator = map.find(localeName);
         if (iterator != map.end())
