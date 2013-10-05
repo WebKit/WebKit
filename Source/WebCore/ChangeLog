@@ -1,3 +1,11 @@
+2013-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r156925. It collided with r156903.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+
 2013-10-04  Andreas Kling  <akling@apple.com>
 
         Clean out some FrameLoaderClient hooks that no ports were using.

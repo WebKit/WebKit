@@ -224,7 +224,7 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
             m_form->registerImgElement(this);
     }
 
-    if (insertionPoint->inDocument() && !m_lowercasedUsemap.isNull())
+    if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().addImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
 
     // If we have been inserted from a renderer-less document,
@@ -240,7 +240,7 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
     if (m_form)
         m_form->removeImgElement(this);
 
-    if (insertionPoint->inDocument() && !m_lowercasedUsemap.isNull())
+    if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().removeImageElementByLowercasedUsemap(m_lowercasedUsemap, *this);
 
     m_form = 0;
