@@ -438,7 +438,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (frameView().pagination().mode != Pagination::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
+    if (frameView().pagination().mode != Pagination::Unpaginated && paintInfo.shouldPaintWithinRoot(this))
         paintInfo.context->fillRect(paintInfo.rect, frameView().baseBackgroundColor(), ColorSpaceDeviceRGB);
 
     paintObject(paintInfo, paintOffset);
@@ -472,7 +472,7 @@ static inline bool rendererObscuresBackground(RenderElement* rootObject)
 
 void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
     // Check to see if we are enclosed by a layer that requires complex painting rules.  If so, we cannot blit

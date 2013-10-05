@@ -24,7 +24,6 @@
 
 #include "AffineTransform.h"
 #include "Element.h"
-#include "ElementIterator.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -119,18 +118,16 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
     }
 
     // Draw the content into the ImageBuffer.
-    auto children = childrenOfType<SVGElement>(&maskElement());
-    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
-        SVGElement& child = *it;
-        auto renderer = child.renderer();
-        if (!renderer)
+    for (Node* node = maskElement().firstChild(); node; node = node->nextSibling()) {
+        RenderObject* renderer = node->renderer();
+        if (!node->isSVGElement() || !renderer)
             continue;
         if (renderer->needsLayout())
             return false;
         RenderStyle* style = renderer->style();
         if (!style || style->display() == NONE || style->visibility() != VISIBLE)
             continue;
-        SVGRenderingContext::renderSubtreeToImageBuffer(maskerData->maskImage.get(), *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(maskerData->maskImage.get(), renderer, maskContentTransformation);
     }
 
 #if !USE(CG)

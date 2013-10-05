@@ -26,7 +26,6 @@
 #include "RenderSVGResourceClipper.h"
 
 #include "AffineTransform.h"
-#include "ElementIterator.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -221,11 +220,9 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
     view().frameView().setPaintBehavior(oldBehavior | PaintBehaviorRenderingSVGMask);
 
     // Draw all clipPath children into a global mask.
-    auto children = childrenOfType<SVGElement>(&clipPathElement());
-    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
-        SVGElement& child = *it;
-        auto renderer = child.renderer();
-        if (!renderer)
+    for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+        RenderObject* renderer = childNode->renderer();
+        if (!childNode->isSVGElement() || !renderer)
             continue;
         if (renderer->needsLayout()) {
             view().frameView().setPaintBehavior(oldBehavior);
@@ -236,13 +233,13 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
             continue;
 
         WindRule newClipRule = style->svgStyle()->clipRule();
-        bool isUseElement = child.hasTagName(SVGNames::useTag);
+        bool isUseElement = childNode->hasTagName(SVGNames::useTag);
         if (isUseElement) {
-            SVGUseElement& useElement = toSVGUseElement(child);
-            renderer = useElement.rendererClipChild();
+            SVGUseElement* useElement = toSVGUseElement(childNode);
+            renderer = useElement->rendererClipChild();
             if (!renderer)
                 continue;
-            if (!useElement.hasAttribute(SVGNames::clip_ruleAttr))
+            if (!useElement->hasAttribute(SVGNames::clip_ruleAttr))
                 newClipRule = renderer->style()->svgStyle()->clipRule();
         }
 
@@ -255,7 +252,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
         // We have to pass the <use> renderer itself to renderSubtreeToImageBuffer() to apply it's x/y/transform/etc. values when rendering.
         // So if isUseElement is true, refetch the childNode->renderer(), as renderer got overriden above.
-        SVGRenderingContext::renderSubtreeToImageBuffer(clipperData->clipMaskImage.get(), isUseElement ? *child.renderer() : *renderer, maskContentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(clipperData->clipMaskImage.get(), isUseElement ? childNode->renderer() : renderer, maskContentTransformation);
     }
 
     view().frameView().setPaintBehavior(oldBehavior);

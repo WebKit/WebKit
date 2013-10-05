@@ -177,7 +177,7 @@ static inline bool textShouldBePainted(const RenderSVGInlineText& textRenderer)
 
 void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 {
-    ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
+    ASSERT(paintInfo.shouldPaintWithinRoot(&renderer()));
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(truncation() == cNoTruncation);
 
@@ -242,7 +242,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
 void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUnit, LayoutUnit)
 {
-    ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
+    ASSERT(paintInfo.shouldPaintWithinRoot(&renderer()));
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(truncation() == cNoTruncation);
 

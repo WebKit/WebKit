@@ -80,9 +80,9 @@ struct PaintInfo {
         }
     }
 
-    bool shouldPaintWithinRoot(const RenderObject& renderer) const
+    bool shouldPaintWithinRoot(const RenderObject* renderer) const
     {
-        return !subtreePaintRoot || subtreePaintRoot == &renderer;
+        return !subtreePaintRoot || subtreePaintRoot == renderer;
     }
 
     bool forceBlackText() const { return paintBehavior & PaintBehaviorForceBlackText; }

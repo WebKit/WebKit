@@ -87,8 +87,6 @@ public:
     void setNeedsPositionedMovementLayout(const RenderStyle* oldStyle);
     void setNeedsSimplifiedNormalFlowLayout();
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) = 0;
-
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
     RenderElement* rendererForRootBackground();
 

@@ -274,8 +274,9 @@ bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteT
     return true;
 }
 
-void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderElement& item, const AffineTransform& subtreeContentTransformation)
+void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderObject* item, const AffineTransform& subtreeContentTransformation)
 {
+    ASSERT(item);
     ASSERT(image);
     ASSERT(image->context());
 
@@ -285,8 +286,8 @@ void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderE
     AffineTransform savedContentTransformation = contentTransformation;
     contentTransformation = subtreeContentTransformation * contentTransformation;
 
-    ASSERT(!item.needsLayout());
-    item.paint(info, IntPoint());
+    ASSERT(!item->needsLayout());
+    item->paint(info, IntPoint());
 
     contentTransformation = savedContentTransformation;
 }

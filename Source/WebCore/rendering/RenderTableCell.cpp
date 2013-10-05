@@ -1156,7 +1156,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 {
     ASSERT(paintInfo.phase == PaintPhaseCollapsedTableBorders);
 
-    if (!paintInfo.shouldPaintWithinRoot(*this) || style()->visibility() != VISIBLE)
+    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE)
         return;
 
     LayoutRect localRepaintRect = paintInfo.rect;
@@ -1266,7 +1266,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 
 void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const LayoutPoint& paintOffset, RenderElement* backgroundObject)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
     if (!backgroundObject)
@@ -1302,7 +1302,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
 
 void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(*this))
+    if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
     RenderTable* tableElt = table();

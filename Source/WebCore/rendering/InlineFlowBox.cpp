@@ -1298,7 +1298,7 @@ static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NineP
 
 void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
+    if (!paintInfo.shouldPaintWithinRoot(&renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     // Pixel snap background/border painting.
@@ -1372,7 +1372,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
 
 void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(&renderer()) || renderer().style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
     // Pixel snap mask painting.

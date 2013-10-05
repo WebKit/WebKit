@@ -140,7 +140,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     for (size_t r = 0; r < rows; r++) {
         LayoutUnit xPos = 0;
         for (size_t c = 0; c < cols; c++) {
-            toRenderElement(child)->paint(paintInfo, adjustedPaintOffset);
+            child->paint(paintInfo, adjustedPaintOffset);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
                 paintColumnBorder(paintInfo, pixelSnappedIntRect(LayoutRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height())));

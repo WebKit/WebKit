@@ -1,3 +1,79 @@
+2013-10-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156952.
+        http://trac.webkit.org/changeset/156952
+        https://bugs.webkit.org/show_bug.cgi?id=122381
+
+        Made svg/custom/large-image-pattern-crash.html assert
+        (Requested by ap on #webkit).
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::shouldPaintWithinRoot):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paint):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMask):
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paint):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paint):
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::renderSubtreeToImageBuffer):
+        * rendering/svg/SVGRenderingContext.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::rendererClipChild):
+        * svg/SVGUseElement.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+
 2013-10-05  Darin Adler  <darin@apple.com>
 
         Need to check if some HTML child elements are HTMLUnknownElement
