@@ -57,14 +57,14 @@ public:
     };
     typedef unsigned Options;
 
-    static void deleteSelection(Document*, Options = 0);
-    static void deleteKeyPressed(Document*, Options = 0, TextGranularity = CharacterGranularity);
-    static void forwardDeleteKeyPressed(Document*, Options = 0, TextGranularity = CharacterGranularity);
-    static void insertText(Document*, const String&, Options, TextCompositionType = TextCompositionNone);
-    static void insertText(Document*, const String&, const VisibleSelection&, Options, TextCompositionType = TextCompositionNone);
-    static void insertLineBreak(Document*, Options);
-    static void insertParagraphSeparator(Document*, Options);
-    static void insertParagraphSeparatorInQuotedContent(Document*);
+    static void deleteSelection(Document&, Options = 0);
+    static void deleteKeyPressed(Document&, Options = 0, TextGranularity = CharacterGranularity);
+    static void forwardDeleteKeyPressed(Document&, Options = 0, TextGranularity = CharacterGranularity);
+    static void insertText(Document&, const String&, Options, TextCompositionType = TextCompositionNone);
+    static void insertText(Document&, const String&, const VisibleSelection&, Options, TextCompositionType = TextCompositionNone);
+    static void insertLineBreak(Document&, Options);
+    static void insertParagraphSeparator(Document&, Options);
+    static void insertParagraphSeparatorInQuotedContent(Document&);
     static void closeTyping(Frame*);
 
     void insertText(const String &text, bool selectInsertedText);

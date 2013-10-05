@@ -192,7 +192,8 @@ static void insertUnicodeCharacter(UChar character, Frame* frame)
     if (!frame->editor().shouldInsertText(text, frame->selection().toNormalizedRange().get(), EditorInsertActionTyped))
         return;
 
-    TypingCommand::insertText(frame->document(), text, 0, TypingCommand::TextCompositionNone);
+    ASSERT(frame->document());
+    TypingCommand::insertText(*frame->document(), text, 0, TypingCommand::TextCompositionNone);
 }
 #endif
 

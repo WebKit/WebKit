@@ -91,11 +91,9 @@ TypingCommand::TypingCommand(Document& document, ETypingCommand commandType, con
     updatePreservesTypingStyle(m_commandType);
 }
 
-void TypingCommand::deleteSelection(Document* document, Options options)
+void TypingCommand::deleteSelection(Document& document, Options options)
 {
-    ASSERT(document);
-    
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     ASSERT(frame);
 
     if (!frame->selection().isRange())
@@ -107,29 +105,27 @@ void TypingCommand::deleteSelection(Document* document, Options options)
         return;
     }
 
-    TypingCommand::create(*document, DeleteSelection, "", options)->apply();
+    TypingCommand::create(document, DeleteSelection, "", options)->apply();
 }
 
-void TypingCommand::deleteKeyPressed(Document *document, Options options, TextGranularity granularity)
+void TypingCommand::deleteKeyPressed(Document& document, Options options, TextGranularity granularity)
 {
-    ASSERT(document);
     if (granularity == CharacterGranularity) {
-        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document->frame())) {
-            updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document->frame());
+        if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
+            updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), document.frame());
             lastTypingCommand->setShouldPreventSpellChecking(options & PreventSpellChecking);
             lastTypingCommand->deleteKeyPressed(granularity, options & KillRing);
             return;
         }
     }
 
-    TypingCommand::create(*document, DeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(document, DeleteKey, "", options, granularity)->apply();
 }
 
-void TypingCommand::forwardDeleteKeyPressed(Document *document, Options options, TextGranularity granularity)
+void TypingCommand::forwardDeleteKeyPressed(Document& document, Options options, TextGranularity granularity)
 {
     // FIXME: Forward delete in TextEdit appears to open and close a new typing command.
-    ASSERT(document);
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     if (granularity == CharacterGranularity) {
         if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
             updateSelectionIfDifferentFromCurrentSelection(lastTypingCommand.get(), frame);
@@ -139,7 +135,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, Options options,
         }
     }
 
-    TypingCommand::create(*document, ForwardDeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(document, ForwardDeleteKey, "", options, granularity)->apply();
 }
 
 void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Frame* frame)
@@ -153,25 +149,21 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
     typingCommand->setEndingSelection(currentSelection);
 }
 
-void TypingCommand::insertText(Document* document, const String& text, Options options, TextCompositionType composition)
+void TypingCommand::insertText(Document& document, const String& text, Options options, TextCompositionType composition)
 {
-    ASSERT(document);
-
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     ASSERT(frame);
 
     if (!text.isEmpty())
-        document->frame()->editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text.characters()[0]));
+        frame->editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text.characters()[0]));
     
     insertText(document, text, frame->selection().selection(), options, composition);
 }
 
 // FIXME: We shouldn't need to take selectionForInsertion. It should be identical to FrameSelection's current selection.
-void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, Options options, TextCompositionType compositionType)
+void TypingCommand::insertText(Document& document, const String& text, const VisibleSelection& selectionForInsertion, Options options, TextCompositionType compositionType)
 {
-    ASSERT(document);
-
-    RefPtr<Frame> frame = document->frame();
+    RefPtr<Frame> frame = document.frame();
     ASSERT(frame);
 
     VisibleSelection currentSelection = frame->selection().selection();
@@ -194,43 +186,40 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
         return;
     }
 
-    RefPtr<TypingCommand> cmd = TypingCommand::create(*document, InsertText, newText, options, compositionType);
+    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
     applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
 }
 
-void TypingCommand::insertLineBreak(Document *document, Options options)
+void TypingCommand::insertLineBreak(Document& document, Options options)
 {
-    ASSERT(document);
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document->frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
         lastTypingCommand->insertLineBreak();
         return;
     }
 
-    applyCommand(TypingCommand::create(*document, InsertLineBreak, "", options));
+    applyCommand(TypingCommand::create(document, InsertLineBreak, "", options));
 }
 
-void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
+void TypingCommand::insertParagraphSeparatorInQuotedContent(Document& document)
 {
-    ASSERT(document);
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document->frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
         lastTypingCommand->insertParagraphSeparatorInQuotedContent();
         return;
     }
 
-    applyCommand(TypingCommand::create(*document, InsertParagraphSeparatorInQuotedContent));
+    applyCommand(TypingCommand::create(document, InsertParagraphSeparatorInQuotedContent));
 }
 
-void TypingCommand::insertParagraphSeparator(Document *document, Options options)
+void TypingCommand::insertParagraphSeparator(Document& document, Options options)
 {
-    ASSERT(document);
-    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document->frame())) {
+    if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(document.frame())) {
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options & RetainAutocorrectionIndicator);
         lastTypingCommand->insertParagraphSeparator();
         return;
     }
 
-    applyCommand(TypingCommand::create(*document, InsertParagraphSeparator, "", options));
+    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, "", options));
 }
 
 PassRefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame* frame)

@@ -329,7 +329,7 @@ static bool executeDelete(Frame& frame, Event*, EditorCommandSource source, cons
     case CommandFromDOMWithUserInterface:
         // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
         // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
-        TypingCommand::deleteKeyPressed(frame.document(), frame.selection().granularity() == WordGranularity ? TypingCommand::SmartDelete : 0);
+        TypingCommand::deleteKeyPressed(*frame.document(), frame.selection().granularity() == WordGranularity ? TypingCommand::SmartDelete : 0);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -466,7 +466,7 @@ static bool executeForwardDelete(Frame& frame, Event*, EditorCommandSource sourc
         // Doesn't scroll to make the selection visible, or modify the kill ring.
         // ForwardDelete is not implemented in IE or Firefox, so this behavior is only needed for
         // backward compatibility with ourselves, and for consistency with Delete.
-        TypingCommand::forwardDeleteKeyPressed(frame.document());
+        TypingCommand::forwardDeleteKeyPressed(*frame.document());
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -522,7 +522,7 @@ static bool executeInsertLineBreak(Frame& frame, Event* event, EditorCommandSour
         // Doesn't scroll to make the selection visible, or modify the kill ring.
         // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
         // backward compatibility with ourselves, and for consistency with other commands.
-        TypingCommand::insertLineBreak(frame.document(), 0);
+        TypingCommand::insertLineBreak(*frame.document(), 0);
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -537,7 +537,7 @@ static bool executeInsertNewline(Frame& frame, Event* event, EditorCommandSource
 
 static bool executeInsertNewlineInQuotedContent(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    TypingCommand::insertParagraphSeparatorInQuotedContent(frame.document());
+    TypingCommand::insertParagraphSeparatorInQuotedContent(*frame.document());
     return true;
 }
 
@@ -550,7 +550,7 @@ static bool executeInsertOrderedList(Frame& frame, Event*, EditorCommandSource, 
 
 static bool executeInsertParagraph(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    TypingCommand::insertParagraphSeparator(frame.document(), 0);
+    TypingCommand::insertParagraphSeparator(*frame.document(), 0);
     return true;
 }
 
@@ -561,7 +561,7 @@ static bool executeInsertTab(Frame& frame, Event* event, EditorCommandSource, co
 
 static bool executeInsertText(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    TypingCommand::insertText(frame.document(), value, 0);
+    TypingCommand::insertText(*frame.document(), value, 0);
     return true;
 }
 

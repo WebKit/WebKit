@@ -1,3 +1,13 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        TypingCommand helpers should take Document&.
+        <https://webkit.org/b/122370>
+
+        Reviewed by Anders Carlsson.
+
+        Instead of taking a Document* and immediately asserting that it's
+        non-null, just take Document&.
+
 2013-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use more references instead of pointers in DocumentOrderedMap
