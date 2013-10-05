@@ -5556,16 +5556,16 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag
 {
-    if (continuousSpellCheckingEnabled != flag) {
-        continuousSpellCheckingEnabled = flag;
-        [[NSUserDefaults standardUserDefaults] setBool:continuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
-    }
-    
-    if ([self isContinuousSpellCheckingEnabled]) {
+    if (continuousSpellCheckingEnabled == flag)
+        return;
+
+    continuousSpellCheckingEnabled = flag;
+    [[NSUserDefaults standardUserDefaults] setBool:continuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
+
+    if ([self isContinuousSpellCheckingEnabled])
         [[self class] _preflightSpellChecker];
-    } else {
+    else
         [[self mainFrame] _unmarkAllMisspellings];
-    }
 }
 
 - (BOOL)isContinuousSpellCheckingEnabled
