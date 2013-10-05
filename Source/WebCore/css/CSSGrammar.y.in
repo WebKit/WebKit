@@ -1309,7 +1309,7 @@ pseudo:
         $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
-        selector->setArgument(String::number($4 * $5));
+        selector->setArgument(AtomicString::number($4 * $5));
         selector->setValue($2);
         if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();

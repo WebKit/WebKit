@@ -101,7 +101,12 @@ public:
     unsigned length() const { return m_string.length(); }
     
     UChar operator[](unsigned int i) const { return m_string[i]; }
-    
+
+    WTF_EXPORT_STRING_API static AtomicString number(int);
+    WTF_EXPORT_STRING_API static AtomicString number(unsigned);
+    WTF_EXPORT_STRING_API static AtomicString number(double);
+    // If we need more overloads of the number function, we can add all the others that String has, but these seem to do for now.
+
     bool contains(UChar c) const { return m_string.contains(c); }
     bool contains(const LChar* s, bool caseSensitive = true) const
         { return m_string.contains(s, caseSensitive); }

@@ -92,7 +92,7 @@ const StylePropertySet* HTMLTableColElement::additionalPresentationAttributeStyl
 
 void HTMLTableColElement::setSpan(int n)
 {
-    setAttribute(spanAttr, String::number(n));
+    setIntegralAttribute(spanAttr, n);
 }
 
 String HTMLTableColElement::width() const

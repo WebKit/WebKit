@@ -5113,8 +5113,8 @@ LayoutRect HTMLMediaElement::mediaPlayerContentBoxRect() const
 
 void HTMLMediaElement::mediaPlayerSetSize(const IntSize& size)
 {
-    setAttribute(widthAttr, String::number(size.width()));
-    setAttribute(heightAttr, String::number(size.height()));
+    setIntegralAttribute(widthAttr, size.width());
+    setIntegralAttribute(heightAttr, size.height());
 }
 
 void HTMLMediaElement::mediaPlayerPause()

@@ -729,7 +729,7 @@ short HTMLElement::tabIndex() const
 
 void HTMLElement::setTabIndex(int value)
 {
-    setAttribute(tabindexAttr, String::number(value));
+    setIntegralAttribute(tabindexAttr, value);
 }
 
 TranslateAttributeMode HTMLElement::translateAttributeMode() const

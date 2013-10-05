@@ -169,10 +169,10 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& 
         HTMLFrameElementBase* ownerFrameElement = toHTMLFrameElementBase(ownerElement);
         int marginWidth = ownerFrameElement->marginWidth();
         if (marginWidth != -1)
-            setAttribute(marginwidthAttr, String::number(marginWidth));
+            setIntegralAttribute(marginwidthAttr, marginWidth);
         int marginHeight = ownerFrameElement->marginHeight();
         if (marginHeight != -1)
-            setAttribute(marginheightAttr, String::number(marginHeight));
+            setIntegralAttribute(marginheightAttr, marginHeight);
     }
 
     return InsertionDone;

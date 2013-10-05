@@ -141,7 +141,7 @@ String HTMLTableCellElement::axis() const
 
 void HTMLTableCellElement::setColSpan(int n)
 {
-    setAttribute(colspanAttr, String::number(n));
+    setIntegralAttribute(colspanAttr, n);
 }
 
 String HTMLTableCellElement::headers() const
@@ -151,7 +151,7 @@ String HTMLTableCellElement::headers() const
 
 void HTMLTableCellElement::setRowSpan(int n)
 {
-    setAttribute(rowspanAttr, String::number(n));
+    setIntegralAttribute(rowspanAttr, n);
 }
 
 String HTMLTableCellElement::scope() const

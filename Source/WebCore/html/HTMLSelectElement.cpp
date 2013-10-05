@@ -298,7 +298,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         // Set the attribute value to a number.
         // This is important since the style rules for this attribute can determine the appearance property.
         int size = value.toInt();
-        String attrSize = String::number(size);
+        AtomicString attrSize = AtomicString::number(size);
         if (attrSize != value) {
             // FIXME: This is horribly factored.
             if (Attribute* sizeAttribute = ensureUniqueElementData().findAttributeByName(sizeAttr))
@@ -416,7 +416,7 @@ void HTMLSelectElement::setMultiple(bool multiple)
 
 void HTMLSelectElement::setSize(int size)
 {
-    setAttribute(sizeAttr, String::number(size));
+    setIntegralAttribute(sizeAttr, size);
 }
 
 Node* HTMLSelectElement::namedItem(const AtomicString& name)

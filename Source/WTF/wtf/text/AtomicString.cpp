@@ -21,19 +21,19 @@
  */
 
 #include "config.h"
-
 #include "AtomicString.h"
 
 #include "AtomicStringTable.h"
+#include "HashSet.h"
+#include "IntegerToStringConversion.h"
 #include "StringHash.h"
-#include <wtf/HashSet.h>
-#include <wtf/Threading.h>
-#include <wtf/WTFThreadData.h>
+#include "Threading.h"
+#include "WTFThreadData.h"
+#include "dtoa.h"
 #include <wtf/unicode/UTF8.h>
 
 #if USE(WEB_THREAD)
-#include <wtf/MainThread.h>
-#include <wtf/TCSpinLock.h>
+#include "TCSpinLock.h"
 #endif
 
 namespace WTF {
@@ -43,6 +43,7 @@ using namespace Unicode;
 static_assert(sizeof(AtomicString) == sizeof(String), "AtomicString and String must be same size!");
 
 #if USE(WEB_THREAD)
+
 class AtomicStringTableLocker : public SpinLockHolder {
     WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
 
@@ -55,14 +56,15 @@ public:
 };
 
 SpinLock AtomicStringTableLocker::s_stringTableLock = SPINLOCK_INITIALIZER;
+
 #else
 
 class AtomicStringTableLocker {
     WTF_MAKE_NONCOPYABLE(AtomicStringTableLocker);
 public:
     AtomicStringTableLocker() { }
-    ~AtomicStringTableLocker() { }
 };
+
 #endif // USE(WEB_THREAD)
 
 static ALWAYS_INLINE HashSet<StringImpl*>& stringTable()
@@ -459,6 +461,22 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
     AtomicString atomicString;
     atomicString.m_string = addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
     return atomicString;
+}
+
+AtomicString AtomicString::number(int number)
+{
+    return numberToStringSigned<AtomicString>(number);
+}
+
+AtomicString AtomicString::number(unsigned number)
+{
+    return numberToStringUnsigned<AtomicString>(number);
+}
+
+AtomicString AtomicString::number(double number)
+{
+    NumberToStringBuffer buffer;
+    return String(numberToFixedPrecisionString(number, 6, buffer, true));
 }
 
 #if !ASSERT_DISABLED

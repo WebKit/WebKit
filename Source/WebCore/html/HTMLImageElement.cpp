@@ -334,7 +334,7 @@ bool HTMLImageElement::draggable() const
 
 void HTMLImageElement::setHeight(int value)
 {
-    setAttribute(heightAttr, String::number(value));
+    setIntegralAttribute(heightAttr, value);
 }
 
 URL HTMLImageElement::src() const
@@ -349,7 +349,7 @@ void HTMLImageElement::setSrc(const String& value)
 
 void HTMLImageElement::setWidth(int value)
 {
-    setAttribute(widthAttr, String::number(value));
+    setIntegralAttribute(widthAttr, value);
 }
 
 int HTMLImageElement::x() const

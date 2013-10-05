@@ -89,7 +89,7 @@ void HTMLMeterElement::setMin(double min, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(minAttr, String::number(min));
+    setAttribute(minAttr, AtomicString::number(min));
 }
 
 double HTMLMeterElement::max() const
@@ -103,7 +103,7 @@ void HTMLMeterElement::setMax(double max, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(maxAttr, String::number(max));
+    setAttribute(maxAttr, AtomicString::number(max));
 }
 
 double HTMLMeterElement::value() const
@@ -118,7 +118,7 @@ void HTMLMeterElement::setValue(double value, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(valueAttr, String::number(value));
+    setAttribute(valueAttr, AtomicString::number(value));
 }
 
 double HTMLMeterElement::low() const
@@ -133,7 +133,7 @@ void HTMLMeterElement::setLow(double low, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(lowAttr, String::number(low));
+    setAttribute(lowAttr, AtomicString::number(low));
 }
 
 double HTMLMeterElement::high() const
@@ -148,7 +148,7 @@ void HTMLMeterElement::setHigh(double high, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(highAttr, String::number(high));
+    setAttribute(highAttr, AtomicString::number(high));
 }
 
 double HTMLMeterElement::optimum() const
@@ -163,7 +163,7 @@ void HTMLMeterElement::setOptimum(double optimum, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(optimumAttr, String::number(optimum));
+    setAttribute(optimumAttr, AtomicString::number(optimum));
 }
 
 HTMLMeterElement::GaugeRegion HTMLMeterElement::gaugeRegion() const

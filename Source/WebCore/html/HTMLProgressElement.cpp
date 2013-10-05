@@ -107,7 +107,7 @@ void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(valueAttr, String::number(value >= 0 ? value : 0));
+    setAttribute(valueAttr, AtomicString::number(value >= 0 ? value : 0));
 }
 
 double HTMLProgressElement::max() const
@@ -122,7 +122,7 @@ void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    setAttribute(maxAttr, String::number(max > 0 ? max : 1));
+    setAttribute(maxAttr, AtomicString::number(max > 0 ? max : 1));
 }
 
 double HTMLProgressElement::position() const

@@ -22,8 +22,7 @@
 #ifndef IntegerToStringConversion_h
 #define IntegerToStringConversion_h
 
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringImpl.h>
+#include "StringBuilder.h"
 
 namespace WTF {
 
@@ -32,33 +31,26 @@ enum PositiveOrNegativeNumber {
     NegativeNumber
 };
 
-template<typename T> struct ConversionTrait;
+template<typename T> struct IntegerToStringConversionTrait;
 
-template<> struct ConversionTrait<String> {
-    typedef PassRefPtr<StringImpl> ReturnType;
+template<> struct IntegerToStringConversionTrait<AtomicString> {
+    typedef AtomicString ReturnType;
     typedef void AdditionalArgumentType;
-    static inline ReturnType flush(LChar* characters, unsigned length, void*) { return StringImpl::create(characters, length); }
+    static ReturnType flush(LChar* characters, unsigned length, void*) { return AtomicString(characters, length); }
 };
-template<> struct ConversionTrait<StringBuilder> {
+template<> struct IntegerToStringConversionTrait<String> {
+    typedef String ReturnType;
+    typedef void AdditionalArgumentType;
+    static ReturnType flush(LChar* characters, unsigned length, void*) { return String(characters, length); }
+};
+template<> struct IntegerToStringConversionTrait<StringBuilder> {
     typedef void ReturnType;
     typedef StringBuilder AdditionalArgumentType;
-    static inline ReturnType flush(LChar* characters, unsigned length, StringBuilder* stringBuilder) { stringBuilder->append(characters, length); }
+    static ReturnType flush(LChar* characters, unsigned length, StringBuilder* stringBuilder) { stringBuilder->append(characters, length); }
 };
 
-template<typename T> struct UnsignedIntegerTrait;
-
-template<> struct UnsignedIntegerTrait<int> {
-    typedef unsigned int Type;
-};
-template<> struct UnsignedIntegerTrait<long> {
-    typedef unsigned long Type;
-};
-template<> struct UnsignedIntegerTrait<long long> {
-    typedef unsigned long long Type;
-};
-
-template<typename T, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static typename ConversionTrait<T>::ReturnType numberToStringImpl(UnsignedIntegerType number, typename ConversionTrait<T>::AdditionalArgumentType* additionalArgument)
+template<typename T, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType, typename AdditionalArgumentType>
+static typename IntegerToStringConversionTrait<T>::ReturnType numberToStringImpl(UnsignedIntegerType number, AdditionalArgumentType additionalArgument)
 {
     LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
     LChar* end = buf + WTF_ARRAY_LENGTH(buf);
@@ -72,19 +64,19 @@ static typename ConversionTrait<T>::ReturnType numberToStringImpl(UnsignedIntege
     if (NumberType == NegativeNumber)
         *--p = '-';
 
-    return ConversionTrait<T>::flush(p, static_cast<unsigned>(end - p), additionalArgument);
+    return IntegerToStringConversionTrait<T>::flush(p, static_cast<unsigned>(end - p), additionalArgument);
 }
 
 template<typename T, typename SignedIntegerType>
-inline typename ConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename ConversionTrait<T>::AdditionalArgumentType* additionalArgument = 0)
+inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     if (number < 0)
-        return numberToStringImpl<T, typename UnsignedIntegerTrait<SignedIntegerType>::Type, NegativeNumber>(-number, additionalArgument);
-    return numberToStringImpl<T, typename UnsignedIntegerTrait<SignedIntegerType>::Type, PositiveNumber>(number, additionalArgument);
+        return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, additionalArgument);
+    return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, additionalArgument);
 }
 
 template<typename T, typename UnsignedIntegerType>
-inline typename ConversionTrait<T>::ReturnType numberToStringUnsigned(UnsignedIntegerType number, typename ConversionTrait<T>::AdditionalArgumentType* additionalArgument = 0)
+inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsigned(UnsignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     return numberToStringImpl<T, UnsignedIntegerType, PositiveNumber>(number, additionalArgument);
 }

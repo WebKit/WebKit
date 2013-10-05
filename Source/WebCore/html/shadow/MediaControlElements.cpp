@@ -977,7 +977,7 @@ void MediaControlTimelineElement::setPosition(double currentTime)
 
 void MediaControlTimelineElement::setDuration(double duration)
 {
-    setAttribute(maxAttr, String::number(std::isfinite(duration) ? duration : 0));
+    setAttribute(maxAttr, AtomicString::number(std::isfinite(duration) ? duration : 0));
 }
 
 

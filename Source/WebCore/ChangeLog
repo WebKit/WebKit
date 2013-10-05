@@ -1,5 +1,65 @@
 2013-10-05  Darin Adler  <darin@apple.com>
 
+        Add AtomicString::number and use it
+        https://bugs.webkit.org/show_bug.cgi?id=122384
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSGrammar.y.in: Use AtomicString::number instead of String::number since
+        we are creating an AtomicString. This can save a memory allocation if the string
+        happens to already be in the atomic string table.
+        * dom/Element.cpp:
+        (WebCore::Element::setIntegralAttribute): Ditto.
+        (WebCore::Element::setUnsignedIntegralAttribute): Ditto.
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply): Ditto.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto): Use setIntegralAttribute instead of
+        a local homegrown equivalent.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::setHeight): Ditto.
+        (WebCore::HTMLCanvasElement::setWidth): Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setTabIndex): Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setHeight): Ditto.
+        (WebCore::HTMLImageElement::setWidth): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setMaxLength): Ditto.
+        (WebCore::HTMLInputElement::setSize): Same, but setUnsignedIntegralAttribute.
+        (WebCore::HTMLInputElement::setHeight): Ditto.
+        (WebCore::HTMLInputElement::setWidth): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerSetSize): Ditto.
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::setMin): More of the same.
+        (WebCore::HTMLMeterElement::setMax): Ditto.
+        (WebCore::HTMLMeterElement::setValue): Ditto.
+        (WebCore::HTMLMeterElement::setLow): Ditto.
+        (WebCore::HTMLMeterElement::setHigh): Ditto.
+        (WebCore::HTMLMeterElement::setOptimum): Ditto.
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::setStart): Ditto.
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::setValue): Ditto.
+        (WebCore::HTMLProgressElement::setMax): Ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute): Ditto.
+        (WebCore::HTMLSelectElement::setSize): Ditto.
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::setColSpan): Ditto.
+        (WebCore::HTMLTableCellElement::setRowSpan): Ditto.
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::setSpan): Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setMaxLength): Ditto.
+        (WebCore::HTMLTextAreaElement::setCols): Ditto.
+        (WebCore::HTMLTextAreaElement::setRows): Ditto.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::setDuration): Ditto.
+
+2013-10-05  Darin Adler  <darin@apple.com>
+
         Cut down on use of String::number
         https://bugs.webkit.org/show_bug.cgi?id=122382
 
