@@ -34,6 +34,8 @@ raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
 HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
 
+IMPORTANT_ENVS = ["JSC_timeout", "DYLD_FRAMEWORK_PATH"]
+
 $haveShellwords = false
 
 begin
@@ -149,13 +151,17 @@ class Plan
     end
     
     def shellCommand
-        "(cd #{Shellwords.shellescape(@directory.to_s)} && " +
+        "(cd #{Shellwords.shellescape(@directory.to_s)} && \"$@\" " +
             @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') + ")"
     end
     
     def writeReproScript(filename)
         File.open(filename, "w") {
             | outp |
+            IMPORTANT_ENVS.each {
+                | key |
+                outp.puts "export #{key}=#{Shellwords.shellescape(ENV[key])}"
+            }
             outp.puts "#{shellCommand} || exit 1"
         }
     end
