@@ -1,3 +1,7 @@
+// This test isn't very effective in jsc-stress-tests; it appears that we get a large enough
+// heap on a lot of machines that this just passes. Better to skip for now.
+//@ skip
+
 description(
 "This test checks behavior with expressions that create deep parse trees."
 );

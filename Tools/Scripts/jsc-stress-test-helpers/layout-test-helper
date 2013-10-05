@@ -23,18 +23,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-jscShell=$1
-preScript=$2
-testScript=$3
-postScript=$4
-baseOutputFilename=$5
-expectedFilename=$6
+baseOutputFilename=$1;shift;
+expectedFilename=$1;shift;
 
 actualErr=$baseOutputFilename.stderr
 actualOut=$baseOutputFilename.actual
 diffOut=$baseOutputFilename.diff
 
-$jscShell $preScript $testScript $postScript 2>$actualErr >$actualOut
+"$@" 2>$actualErr >$actualOut
 JSC_RES=$?
 
 if [ $JSC_RES -eq 0 ]

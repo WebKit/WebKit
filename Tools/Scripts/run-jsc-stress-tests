@@ -211,6 +211,30 @@ def addRunCommand(kind, command)
     $runlist << Plan.new($benchmarkDirectory, command, baseOutputName(kind))
 end
 
+# Returns true if there were run commands found in the file ($benchmarkDirectory +
+# $benchmark), in which case those run commands have already been executed. Otherwise
+# returns false, in which case you're supposed to add your own run commands.
+def parseRunCommands
+    didRun = false
+    File.open($benchmarkDirectory + $benchmark) {
+        | inp |
+        inp.each_line {
+            | line |
+            begin
+                doesMatch = line =~ /^\/\/@/
+            rescue Exception => e
+                # Apparently this happens in the case of some UTF8 stuff in some files, where
+                # Ruby tries to be strict and throw exceptions.
+                next
+            end
+            next unless doesMatch
+            eval $~.post_match
+            didRun = true
+        }
+    }
+    didRun
+end
+
 def run(kind, *options)
     addRunCommand(kind, [$jscPath.to_s] + options + [$benchmark.to_s])
 end
@@ -247,22 +271,6 @@ def runFTLEagerNoCJIT
     run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
 end
 
-def runProfiler
-    profilerOutput = uniqueFilename(".json")
-    if $haveShellwords and $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s])
-    else
-        puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
-        run("profiler-simple", "-p", profilerOutput.to_s)
-    end
-end
-
-def runLayoutTest
-    raise unless $benchmark.to_s =~ /\.js$/
-    testName = $~.pre_match
-    addRunCommand("layout", ["sh", (HELPERS_PATH + "layout-test-helper").to_s, $jscPath.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s, $benchmark.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s, ($outputDir + baseOutputName("layout")).to_s, ($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s])
-end
-
 def runAlwaysTriggerCopyPhase
     run("always-trigger-copy-phase", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
 end
@@ -279,6 +287,49 @@ def defaultRun
         runFTLEager
         runFTLEagerNoCJIT
     end
+end
+
+def runProfiler
+    profilerOutput = uniqueFilename(".json")
+    if $haveShellwords and $canRunDisplayProfilerOutput
+        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s])
+    else
+        puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
+        run("profiler-simple", "-p", profilerOutput.to_s)
+    end
+end
+
+def runLayoutTest(kind, *options)
+    raise unless $benchmark.to_s =~ /\.js$/
+    if kind
+        kind = "layout-" + kind
+    else
+        kind = "layout"
+    end
+    testName = $~.pre_match
+    args =
+        ["sh",
+         (HELPERS_PATH + "layout-test-helper").to_s,
+         ($outputDir + baseOutputName(kind)).to_s,
+         ($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s,
+         $jscPath.to_s] + options +
+        [(LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s,
+         $benchmark.to_s,
+         (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s]
+    addRunCommand(kind, args)
+end
+
+def runLayoutTestDefault
+    runLayoutTest(nil)
+end
+
+def runLayoutTestNoCJIT
+    runLayoutTest("no-cjit", "--enableConcurrentJIT=false")
+end
+
+def defaultRunLayoutTest
+    runLayoutTestDefault
+    runLayoutTestNoCJIT
 end
 
 def skip
@@ -380,18 +431,7 @@ ARGV.each {
             
             $benchmark = path.basename
             
-            didRun = false
-            File.open($collection + $benchmark) {
-                | inp |
-                inp.each_line {
-                    | line |
-                    next unless line =~ /^\/\/@/
-                    eval $~.post_match
-                    didRun = true
-                }
-            }
-            
-            defaultRun unless didRun
+            defaultRun unless parseRunCommands
         }
     end
 }

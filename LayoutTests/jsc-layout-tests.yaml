@@ -22,8 +22,8 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: js/script-tests
-  cmd: runLayoutTest
+  cmd: defaultRunLayoutTest unless parseRunCommands
 
 - path: fast/regex/script-tests
-  cmd: runLayoutTest
+  cmd: defaultRunLayoutTest unless parseRunCommands
 

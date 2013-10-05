@@ -1,5 +1,18 @@
 2013-10-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Allow skipping of run-jsc-stress-tests that are configured using yaml files
+        https://bugs.webkit.org/show_bug.cgi?id=122385
+
+        Reviewed by Sam Wieinig.
+        
+        Make tests run via YAML be able to do the parse-for-commands trick that allows
+        us to skip tests and do other custom per-test stuff.
+
+        * Scripts/jsc-stress-test-helpers/layout-test-helper:
+        * Scripts/run-jsc-stress-tests:
+
+2013-10-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix tests on older Rubies.
 
         * Scripts/run-jsc-stress-tests:
