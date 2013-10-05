@@ -58,6 +58,7 @@
 /* Disable final on versions of Apple clang earlier than 4.2 to avoid bugs like http://webkit.org/b/119165 */
 #if defined(__APPLE__) && (__clang_major__ < 4 || (__clang_major__ == 4 && __clang_minor__ < 2))
 #define WTF_COMPILER_QUIRK_FINAL_IS_BUGGY 1
+#error "Please use a newer version of Xcode, this version has code generation bugs when using 'final' in C++ code"
 #endif
 
 #endif
@@ -292,6 +293,7 @@
 #if COMPILER_SUPPORTS(CXX_OVERRIDE_CONTROL) && !COMPILER_QUIRK(FINAL_IS_BUGGY)
 #if COMPILER_QUIRK(FINAL_IS_CALLED_SEALED)
 #define FINAL sealed
+#define final sealed
 #else
 #define FINAL final
 #endif
