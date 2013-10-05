@@ -38,6 +38,10 @@
 
 namespace WebKit {
 
+void WebPageProxy::platformInitialize()
+{
+}
+
 String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAgent*/)
 {
     WTF::String platform;
