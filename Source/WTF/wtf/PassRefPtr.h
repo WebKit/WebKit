@@ -157,11 +157,6 @@ namespace WTF {
         return adoptRef(static_cast<T*>(p.leakRef())); 
     }
 
-    template<typename T, typename U> inline PassRefPtr<T> const_pointer_cast(const PassRefPtr<U>& p) 
-    { 
-        return adoptRef(const_cast<T*>(p.leakRef())); 
-    }
-
     template<typename T> inline T* getPtr(const PassRefPtr<T>& p)
     {
         return p.get();
@@ -172,6 +167,5 @@ namespace WTF {
 using WTF::PassRefPtr;
 using WTF::adoptRef;
 using WTF::static_pointer_cast;
-using WTF::const_pointer_cast;
 
 #endif // WTF_PassRefPtr_h
