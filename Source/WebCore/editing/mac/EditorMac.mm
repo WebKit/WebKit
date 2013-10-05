@@ -100,7 +100,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 bool Editor::insertParagraphSeparatorInQuotedContent()
 {
     // FIXME: Why is this missing calls to canEdit, canEditRichly, etc.?
-    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame.document());
+    TypingCommand::insertParagraphSeparatorInQuotedContent(&document());
     revealSelectionAfterEditingOperation();
     return true;
 }
@@ -583,10 +583,10 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
     if (!resource)
         return nullptr;
 
-    RefPtr<Element> imageElement = m_frame.document()->createElement(HTMLNames::imgTag, false);
+    RefPtr<Element> imageElement = document().createElement(HTMLNames::imgTag, false);
     imageElement->setAttribute(HTMLNames::srcAttr, resource->url().string());
 
-    RefPtr<DocumentFragment> fragment = m_frame.document()->createDocumentFragment();
+    RefPtr<DocumentFragment> fragment = document().createDocumentFragment();
     fragment->appendChild(imageElement.release());
 
     // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
@@ -598,7 +598,7 @@ PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResourc
 
 PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
 {
-    if (!m_frame.page() || !m_frame.document() || !m_frame.document()->isHTMLDocument())
+    if (!m_frame.page() || !document().isHTMLDocument())
         return nullptr;
 
     if (!string)

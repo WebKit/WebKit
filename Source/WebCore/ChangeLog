@@ -1,3 +1,19 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        Editor should use reference-getting document() internally.
+        <https://webkit.org/b/122364>
+
+        Reviewed by Darin Adler.
+
+        Instead of grabbing at Editor::m_frame.document(), use the nice
+        Editor::document() helper that always returns a Document&.
+
+        Calling Editor methods on a Frame's editor() while there is no
+        Document in the Frame is a programming error and this is covered
+        by an assertion in document().
+
+        This removes a bunch of null checks and enables further cleanup.
+
 2013-10-04  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the Windows build after r156930.
