@@ -1,3 +1,11 @@
+2013-10-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the Windows build after r156930.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::paintCharacter): Use ceilf and floorf to avoid issues
+        with overload collisions and implicit casts of LayoutUnits.
+
 2013-10-04  Mark Lam  <mark.lam@apple.com>
 
         Change ScriptDebugServer to use DebuggerCallFrame instead of JavaScriptCallFrame.
