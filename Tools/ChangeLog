@@ -1,3 +1,9 @@
+2013-10-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix tests on older Rubies.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Don't filter the weak symbols.

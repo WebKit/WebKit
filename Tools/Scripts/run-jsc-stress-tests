@@ -153,8 +153,11 @@ class Plan
     end
     
     def shellCommand
-        "(cd #{Shellwords.shellescape(@directory.to_s)} && \"$@\" " +
-            @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') + ")"
+        "(cd #{Shellwords.shellescape(@directory.to_s)} && \"$@\" " + @arguments.map{
+            | v |
+            raise "Detected a non-string in #{inspect}" unless v.is_a? String
+            Shellwords.shellescape(v)
+        }.join(' ') + ")"
     end
     
     def writeReproScript(filename)
@@ -257,7 +260,7 @@ end
 def runLayoutTest
     raise unless $benchmark.to_s =~ /\.js$/
     testName = $~.pre_match
-    addRunCommand("layout", ["sh", (HELPERS_PATH + "layout-test-helper").to_s, $jscPath.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s, $benchmark.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s, ($outputDir + baseOutputName("layout")).to_s, $benchmarkDirectory.dirname + "#{testName}-expected.txt"])
+    addRunCommand("layout", ["sh", (HELPERS_PATH + "layout-test-helper").to_s, $jscPath.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s, $benchmark.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s, ($outputDir + baseOutputName("layout")).to_s, ($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s])
 end
 
 def runAlwaysTriggerCopyPhase
