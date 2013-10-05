@@ -56,8 +56,8 @@ bool DatabaseBackend::openAndVerifyVersion(bool setVersionInNewDatabase, Databas
         return false;
 
     bool success = false;
-    OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
-    databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
+    auto task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
+    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
     synchronizer.waitForTaskCompletion();
 
     return success;
@@ -144,10 +144,10 @@ void DatabaseBackend::scheduleTransaction()
         transaction = m_transactionQueue.takeFirst();
 
     if (transaction && databaseContext()->databaseThread()) {
-        OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+        auto task = DatabaseTransactionTask::create(transaction);
         LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
         m_transactionInProgress = true;
-        databaseContext()->databaseThread()->scheduleTask(task.release());
+        databaseContext()->databaseThread()->scheduleTask(std::move(task));
     } else
         m_transactionInProgress = false;
 }
@@ -157,9 +157,9 @@ void DatabaseBackend::scheduleTransactionStep(SQLTransactionBackend* transaction
     if (!databaseContext()->databaseThread())
         return;
 
-    OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+    auto task = DatabaseTransactionTask::create(transaction);
     LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    databaseContext()->databaseThread()->scheduleTask(task.release());
+    databaseContext()->databaseThread()->scheduleTask(std::move(task));
 }
 
 SQLTransactionClient* DatabaseBackend::transactionClient() const

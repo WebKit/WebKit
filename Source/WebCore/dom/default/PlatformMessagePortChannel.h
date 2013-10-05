@@ -49,7 +49,7 @@ namespace WebCore {
         class EventData {
             WTF_MAKE_NONCOPYABLE(EventData); WTF_MAKE_FAST_ALLOCATED;
         public:
-            static PassOwnPtr<EventData> create(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
+            static std::unique_ptr<EventData> create(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
 
             PassRefPtr<SerializedScriptValue> message() { return m_message; }
             PassOwnPtr<MessagePortChannelArray> channels() { return m_channels.release(); }
@@ -65,14 +65,14 @@ namespace WebCore {
         public:
             static PassRefPtr<MessagePortQueue> create() { return adoptRef(new MessagePortQueue()); }
 
-            OwnPtr<PlatformMessagePortChannel::EventData> tryGetMessage()
+            std::unique_ptr<PlatformMessagePortChannel::EventData> tryGetMessage()
             {
                 return m_queue.tryGetMessage();
             }
 
-            bool appendAndCheckEmpty(PassOwnPtr<PlatformMessagePortChannel::EventData> message)
+            bool appendAndCheckEmpty(std::unique_ptr<PlatformMessagePortChannel::EventData> message)
             {
-                return m_queue.appendAndCheckEmpty(message);
+                return m_queue.appendAndCheckEmpty(std::move(message));
             }
 
             bool isEmpty()

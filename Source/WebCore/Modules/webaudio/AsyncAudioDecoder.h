@@ -57,7 +57,7 @@ private:
     class DecodingTask {
         WTF_MAKE_NONCOPYABLE(DecodingTask);
     public:
-        static PassOwnPtr<DecodingTask> create(JSC::ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
+        static std::unique_ptr<DecodingTask> create(JSC::ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback);
 
         void decode();
         

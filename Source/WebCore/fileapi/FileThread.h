@@ -65,7 +65,7 @@ public:
         void* m_instance;
     };
 
-    void postTask(PassOwnPtr<Task> task);
+    void postTask(std::unique_ptr<Task>);
 
     void unscheduleTasks(const void* instance);
 

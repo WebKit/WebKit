@@ -37,9 +37,9 @@
 
 namespace WebCore {
 
-PassOwnPtr<PlatformMessagePortChannel::EventData> PlatformMessagePortChannel::EventData::create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+std::unique_ptr<PlatformMessagePortChannel::EventData> PlatformMessagePortChannel::EventData::create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
-    return adoptPtr(new EventData(message, channels));
+    return std::unique_ptr<EventData>(new EventData(message, channels));
 }
 
 PlatformMessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
@@ -104,7 +104,7 @@ void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> m
 bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, OwnPtr<MessagePortChannelArray>& channels)
 {
     MutexLocker lock(m_channel->m_mutex);
-    OwnPtr<PlatformMessagePortChannel::EventData> result = m_channel->m_incomingQueue->tryGetMessage();
+    auto result = m_channel->m_incomingQueue->tryGetMessage();
     if (!result)
         return false;
 

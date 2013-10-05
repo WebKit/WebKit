@@ -106,7 +106,7 @@ void DatabaseThread::databaseThread()
         LOG(StorageAPI, "Started DatabaseThread %p", this);
     }
 
-    while (OwnPtr<DatabaseTask> task = m_queue.waitForMessage()) {
+    while (auto task = m_queue.waitForMessage()) {
         AutodrainedPool pool;
 
         task->performTask();
@@ -156,22 +156,22 @@ void DatabaseThread::recordDatabaseClosed(DatabaseBackend* database)
     m_openDatabaseSet.remove(database);
 }
 
-void DatabaseThread::scheduleTask(PassOwnPtr<DatabaseTask> task)
+void DatabaseThread::scheduleTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.append(task);
+    m_queue.append(std::move(task));
 }
 
-void DatabaseThread::scheduleImmediateTask(PassOwnPtr<DatabaseTask> task)
+void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
 {
     ASSERT(!task->hasSynchronizer() || task->hasCheckedForTermination());
-    m_queue.prepend(task);
+    m_queue.prepend(std::move(task));
 }
 
 class SameDatabasePredicate {
 public:
     SameDatabasePredicate(const DatabaseBackend* database) : m_database(database) { }
-    bool operator()(const OwnPtr<DatabaseTask>& task) const { return task->database() == m_database; }
+    bool operator()(const DatabaseTask& task) const { return task.database() == m_database; }
 private:
     const DatabaseBackend* m_database;
 };

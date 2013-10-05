@@ -151,8 +151,8 @@ void Database::markAsDeletedAndClose()
         return;
     }
 
-    OwnPtr<DatabaseCloseTask> task = DatabaseCloseTask::create(this, &synchronizer);
-    databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
+    auto task = DatabaseCloseTask::create(this, &synchronizer);
+    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
     synchronizer.waitForTaskCompletion();
 }
 
@@ -267,8 +267,8 @@ Vector<String> Database::tableNames()
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
         return result;
 
-    OwnPtr<DatabaseTableNamesTask> task = DatabaseTableNamesTask::create(this, &synchronizer, result);
-    databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
+    auto task = DatabaseTableNamesTask::create(this, &synchronizer, result);
+    databaseContext()->databaseThread()->scheduleImmediateTask(std::move(task));
     synchronizer.waitForTaskCompletion();
 
     return result;

@@ -45,18 +45,13 @@ public:
     typedef void (T::*Method)();
     typedef FileThreadTask0<T> FileThreadTaskImpl;
 
-    static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method)
-    {
-        return adoptPtr(new FileThreadTaskImpl(instance, method));
-    }
-
-private:
     FileThreadTask0(T* instance, Method method)
         : FileThread::Task(instance)
         , m_method(method)
     {
     }
 
+private:
     virtual void performTask()
     {
         (*static_cast<T*>(instance()).*m_method)();
@@ -73,12 +68,6 @@ public:
     typedef FileThreadTask1<T, P1, MP1> FileThreadTaskImpl;
     typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
 
-    static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1)
-    {
-        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1));
-    }
-
-private:
     FileThreadTask1(T* instance, Method method, Param1 parameter1)
         : FileThread::Task(instance)
         , m_method(method)
@@ -86,6 +75,7 @@ private:
     {
     }
 
+private:
     virtual void performTask()
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1);
@@ -104,12 +94,6 @@ public:
     typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
     typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
 
-    static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2)
-    {
-        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1, parameter2));
-    }
-
-private:
     FileThreadTask2(T* instance, Method method, Param1 parameter1, Param2 parameter2)
         : FileThread::Task(instance)
         , m_method(method)
@@ -118,6 +102,7 @@ private:
     {
     }
 
+private:
     virtual void performTask()
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2);
@@ -138,12 +123,6 @@ public:
     typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
     typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
 
-    static PassOwnPtr<FileThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
-    {
-        return adoptPtr(new FileThreadTaskImpl(instance, method, parameter1, parameter2, parameter3));
-    }
-
-private:
     FileThreadTask3(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
         : FileThread::Task(instance)
         , m_method(method)
@@ -153,6 +132,7 @@ private:
     {
     }
 
+private:
     virtual void performTask()
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2, m_parameter3);
@@ -166,40 +146,40 @@ private:
 };
 
 template<typename T>
-PassOwnPtr<FileThread::Task> createFileThreadTask(
+std::unique_ptr<FileThread::Task> createFileThreadTask(
     T* const callee,
     void (T::*method)());
 
 template<typename T>
-PassOwnPtr<FileThread::Task> createFileThreadTask(
+std::unique_ptr<FileThread::Task> createFileThreadTask(
     T* const callee,
     void (T::*method)())
 {
-    return FileThreadTask0<T>::create(
+    return std::make_unique<FileThreadTask0<T>>(
         callee,
         method);
 }
 
 template<typename T, typename P1, typename MP1>
-PassOwnPtr<FileThread::Task> createFileThreadTask(
+std::unique_ptr<FileThread::Task> createFileThreadTask(
     T* const callee,
     void (T::*method)(MP1),
     const P1& parameter1)
 {
-    return FileThreadTask1<T, typename CrossThreadCopier<P1>::Type, MP1>::create(
+    return std::make_unique<FileThreadTask1<T, typename CrossThreadCopier<P1>::Type, MP1>>(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2>
-PassOwnPtr<FileThread::Task> createFileThreadTask(
+std::unique_ptr<FileThread::Task> createFileThreadTask(
     T* const callee,
     void (T::*method)(MP1, MP2),
     const P1& parameter1,
     const P2& parameter2)
 {
-    return FileThreadTask2<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2>::create(
+    return std::make_unique<FileThreadTask2<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2>>(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1),
@@ -207,14 +187,14 @@ PassOwnPtr<FileThread::Task> createFileThreadTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
-PassOwnPtr<FileThread::Task> createFileThreadTask(
+std::unique_ptr<FileThread::Task> createFileThreadTask(
     T* const callee,
     void (T::*method)(MP1, MP2, MP3),
     const P1& parameter1,
     const P2& parameter2,
     const P3& parameter3)
 {
-    return FileThreadTask3<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3>::create(
+    return std::make_unique<FileThreadTask3<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3>>(
         callee,
         method,
         CrossThreadCopier<P1>::copy(parameter1),

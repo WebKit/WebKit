@@ -71,7 +71,7 @@ namespace WebCore {
         class Task {
             WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
         public:
-            static PassOwnPtr<Task> create(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode);
+            static std::unique_ptr<Task> create(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
             ~Task() { }
             const String& mode() const { return m_mode; }
             void performTask(const WorkerRunLoop&, ScriptExecutionContext*);

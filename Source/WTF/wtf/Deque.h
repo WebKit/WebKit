@@ -88,7 +88,7 @@ namespace WTF {
         void clear();
 
         template<typename Predicate>
-        iterator findIf(Predicate&);
+        iterator findIf(Predicate&&);
 
     private:
         friend class DequeIteratorBase<T, inlineCapacity>;
@@ -353,7 +353,7 @@ namespace WTF {
 
     template<typename T, size_t inlineCapacity>
     template<typename Predicate>
-    inline auto Deque<T, inlineCapacity>::findIf(Predicate& predicate) -> iterator
+    inline auto Deque<T, inlineCapacity>::findIf(Predicate&& predicate) -> iterator
     {
         iterator end_iterator = end();
         for (iterator it = begin(); it != end_iterator; ++it) {

@@ -1,3 +1,61 @@
+2013-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Clean up MessageQueue.h
+        https://bugs.webkit.org/show_bug.cgi?id=122392
+
+        Reviewed by Andreas Kling.
+
+        Update for changes to MessageQueue, mostly changing create functions to return std::unique_ptr.
+        I intentionally avoided using std::make_unique in a couple of places because I didn't want to make nested classes
+        public, and I believe that we can change some of this code to use std::function.
+
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::decodeAsync):
+        (WebCore::AsyncAudioDecoder::runLoop):
+        (WebCore::AsyncAudioDecoder::DecodingTask::create):
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::markAsDeletedAndClose):
+        (WebCore::Database::tableNames):
+        * Modules/webdatabase/DatabaseBackend.cpp:
+        (WebCore::DatabaseBackend::openAndVerifyVersion):
+        (WebCore::DatabaseBackend::scheduleTransaction):
+        (WebCore::DatabaseBackend::scheduleTransactionStep):
+        * Modules/webdatabase/DatabaseTask.h:
+        (WebCore::DatabaseBackend::DatabaseOpenTask::create):
+        (WebCore::DatabaseBackend::DatabaseCloseTask::create):
+        (WebCore::DatabaseBackend::DatabaseTransactionTask::create):
+        (WebCore::DatabaseBackend::DatabaseTableNamesTask::create):
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread):
+        (WebCore::DatabaseThread::scheduleTask):
+        (WebCore::DatabaseThread::scheduleImmediateTask):
+        (WebCore::SameDatabasePredicate::operator()):
+        * Modules/webdatabase/DatabaseThread.h:
+        * dom/default/PlatformMessagePortChannel.cpp:
+        (WebCore::PlatformMessagePortChannel::EventData::create):
+        (WebCore::MessagePortChannel::tryGetMessageFromRemote):
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::tryGetMessage):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::appendAndCheckEmpty):
+        * fileapi/FileThread.cpp:
+        (WebCore::FileThread::postTask):
+        (WebCore::SameInstancePredicate::operator()):
+        (WebCore::FileThread::runLoop):
+        * fileapi/FileThread.h:
+        * fileapi/FileThreadTask.h:
+        (WebCore::createFileThreadTask):
+        * storage/StorageThread.cpp:
+        (WebCore::StorageThread::threadEntryPoint):
+        (WebCore::StorageThread::dispatch):
+        (WebCore::StorageThread::terminate):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::operator()):
+        (WebCore::WorkerRunLoop::runInMode):
+        (WebCore::WorkerRunLoop::runCleanupTasks):
+        (WebCore::WorkerRunLoop::Task::create):
+        * workers/WorkerRunLoop.h:
+
 2013-10-04  Dean Jackson  <dino@apple.com>
 
         [WebGL] program should not be able to link if a bad shader is attached

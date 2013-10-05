@@ -60,8 +60,8 @@ void AsyncAudioDecoder::decodeAsync(ArrayBuffer* audioData, float sampleRate, Pa
     if (!audioData)
         return;
 
-    OwnPtr<DecodingTask> decodingTask = DecodingTask::create(audioData, sampleRate, successCallback, errorCallback);
-    m_queue.append(decodingTask.release()); // note that ownership of the task is effectively taken by the queue.
+    auto decodingTask = DecodingTask::create(audioData, sampleRate, successCallback, errorCallback);
+    m_queue.append(std::move(decodingTask)); // note that ownership of the task is effectively taken by the queue.
 }
 
 // Asynchronously decode in this thread.
@@ -82,16 +82,16 @@ void AsyncAudioDecoder::runLoop()
     }
 
     // Keep running decoding tasks until we're killed.
-    while (OwnPtr<DecodingTask> decodingTask = m_queue.waitForMessage()) {
+    while (auto decodingTask = m_queue.waitForMessage()) {
         // Let the task take care of its own ownership.
         // See DecodingTask::notifyComplete() for cleanup.
-        decodingTask.leakPtr()->decode();
+        decodingTask.release()->decode();
     }
 }
 
-PassOwnPtr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
+std::unique_ptr<AsyncAudioDecoder::DecodingTask> AsyncAudioDecoder::DecodingTask::create(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
 {
-    return adoptPtr(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
+    return std::unique_ptr<DecodingTask>(new DecodingTask(audioData, sampleRate, successCallback, errorCallback));
 }
 
 AsyncAudioDecoder::DecodingTask::DecodingTask(ArrayBuffer* audioData, float sampleRate, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback)
