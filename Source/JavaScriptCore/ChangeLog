@@ -1,3 +1,11 @@
+2013-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Silence compiler warning when building 64-bit (on Windows)
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JSInterfaceJIT.h: Add a static cast for assignment.
+
 2013-10-04  Nadav Rotem  <nrotem@apple.com>
 
         FTL: Add support for ValueToInt32(bool(x))
