@@ -44,7 +44,7 @@ class IconController {
     WTF_MAKE_NONCOPYABLE(IconController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit IconController(Frame*);
+    explicit IconController(Frame&);
     ~IconController();
 
     URL url();
@@ -63,9 +63,9 @@ private:
     bool appendToIconURLs(IconType, IconURLs*);
     IconURL defaultURL(IconType);
 
-    Frame* m_frame;
+    Frame& m_frame;
 
-    OwnPtr<IconLoader> m_iconLoader;
+    std::unique_ptr<IconLoader> m_iconLoader;
     bool m_waitingForLoadDecision;
 };
 

@@ -1,5 +1,14 @@
 2013-10-04  Andreas Kling  <akling@apple.com>
 
+        CTTE: IconController and IconLoader should have Frame& backpointer.
+        <https://webkit.org/b/122372>
+
+        Reviewed by Anders Carlsson.
+
+        Also slap IconLoader with FINAL glove.
+
+2013-10-04  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderScrollbar DOM owner is always an Element.
         <https://webkit.org/b/122348>
 
