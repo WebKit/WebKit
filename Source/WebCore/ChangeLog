@@ -1,3 +1,12 @@
+2013-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix an assertion failure introduced in r156925.
+
+        Add HTMLImageElement to the document-wide map only if it's in the document.
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+
 2013-10-04  Darin Adler  <darin@apple.com>
 
         text-transform: lowercase is not lang-dependent (Turkish languages : tr,az)

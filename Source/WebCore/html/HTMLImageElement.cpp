@@ -126,10 +126,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == usemapAttr) {
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
 
-        if (m_lowercasedUsemap == value)
-            return;
-
-        if (!m_lowercasedUsemap.isNull())
+        if (inDocument() && !m_lowercasedUsemap.isNull())
             document().removeImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
         // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning, which has to be stripped off.
@@ -141,7 +138,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         else
             m_lowercasedUsemap = nullAtom;
 
-        if (!m_lowercasedUsemap.isNull())
+        if (inDocument() && !m_lowercasedUsemap.isNull())
             document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
     } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, name, value);
