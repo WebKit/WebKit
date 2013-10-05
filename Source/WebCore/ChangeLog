@@ -1,3 +1,21 @@
+2013-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out r156930 and r156937, they caused 34 assertion failures on bots.
+
+        * css/mathml.css:
+        * mathml/MathMLTextElement.cpp:
+        * mathml/MathMLTextElement.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        * rendering/mathml/RenderMathMLRow.h:
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         FramePolicyFunction should be an std::function

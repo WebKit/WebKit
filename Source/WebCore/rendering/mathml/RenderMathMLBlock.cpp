@@ -46,12 +46,20 @@ using namespace MathMLNames;
 RenderMathMLBlock::RenderMathMLBlock(Element* container)
     : RenderFlexibleBox(container)
     , m_ignoreInAccessibilityTree(false)
+    , m_preferredLogicalHeight(preferredLogicalHeightUnset)
 {
 }
 
 bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
 {
     return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
+}
+
+void RenderMathMLBlock::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+    m_preferredLogicalHeight = preferredLogicalHeightUnset;
+    RenderFlexibleBox::computePreferredLogicalWidths();
 }
 
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
@@ -61,6 +69,62 @@ RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay displa
     newBlock->setDocumentForAnonymous(document());
     newBlock->setStyle(newStyle.release());
     return newBlock;
+}
+
+// An arbitrary large value, like RenderBlock.cpp BLOCK_MAX_WIDTH or FixedTableLayout.cpp TABLE_MAX_WIDTH.
+static const int cLargeLogicalWidth = 15000;
+
+void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
+{
+    ASSERT(needsLayout());
+
+    // This is ugly, but disable fragmentation when computing the preferred heights.
+    FragmentationDisabler fragmentationDisabler(this);
+
+    // Ensure a full repaint will happen after layout finishes.
+    setNeedsLayout(MarkOnlyThis);
+
+    bool hadLayoutState = view().layoutState();
+    if (!hadLayoutState)
+        view().pushLayoutState(this);
+
+    {
+        LayoutStateDisabler layoutStateDisabler(&view());
+        
+        LayoutUnit oldAvailableLogicalWidth = availableLogicalWidth();
+        setLogicalWidth(cLargeLogicalWidth);
+        
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (!child->isBox())
+                continue;
+            
+            // Because our width changed, |child| may need layout.
+            if (child->maxPreferredLogicalWidth() > oldAvailableLogicalWidth)
+                child->setNeedsLayout(MarkOnlyThis);
+            
+            RenderMathMLBlock* childMathMLBlock = child->isRenderMathMLBlock() ? toRenderMathMLBlock(child) : 0;
+            if (childMathMLBlock && !childMathMLBlock->isPreferredLogicalHeightDirty())
+                continue;
+            // Layout our child to compute its preferred logical height.
+            child->layoutIfNeeded();
+            if (childMathMLBlock)
+                childMathMLBlock->setPreferredLogicalHeight(childMathMLBlock->logicalHeight());
+        }
+    }
+    if (!hadLayoutState)
+        view().popLayoutState(this);
+}
+
+LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* child)
+{
+    if (child->isRenderMathMLBlock())
+        return toRenderMathMLBlock(child)->preferredLogicalHeight();
+    if (child->isBox()) {
+        ASSERT(!child->needsLayout());
+        return toRenderBox(child)->logicalHeight();
+    }
+    // This currently ignores -webkit-line-box-contain:
+    return child->style()->fontSize();
 }
 
 int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

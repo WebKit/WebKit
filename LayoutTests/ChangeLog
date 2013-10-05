@@ -1,3 +1,20 @@
+2013-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Roll out r156930 and r156937, they caused 34 assertion failures on bots.
+
+        * TestExpectations:
+        * mathml/presentation/mo-minus-expected.html: Removed.
+        * mathml/presentation/mo-minus.html: Removed.
+        * mathml/presentation/mo-stacked-glyphs-expected.html: Removed.
+        * mathml/presentation/mo-stacked-glyphs.html: Removed.
+        * mathml/presentation/mo-stretchy-vertical-bar-expected-mismatch.html: Removed.
+        * mathml/presentation/mo-stretchy-vertical-bar.html: Removed.
+        * mathml/very-large-stretchy-operators-expected.txt: Removed.
+        * mathml/very-large-stretchy-operators.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2013-10-04  Mark Lam  <mark.lam@apple.com>
 
         Change ScriptDebugServer to use DebuggerCallFrame instead of JavaScriptCallFrame.
