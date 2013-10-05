@@ -2372,6 +2372,13 @@ double HTMLMediaElement::duration() const
 
 bool HTMLMediaElement::paused() const
 {
+    // As of this writing, JavaScript garbage collection calls this function directly. In the past
+    // we had problems where this was called on an object after a bad cast. The assertion below
+    // made our regression test detect the problem, so we should keep it because of that. But note
+    // that the value of the assertion relies on the compiler not being smart enough to know that
+    // isHTMLUnknownElement is guaranteed to return false for an HTMLMediaElement.
+    ASSERT(!isHTMLUnknownElement());
+
     return m_paused;
 }
 

@@ -1,3 +1,30 @@
+2013-10-05  Darin Adler  <darin@apple.com>
+
+        Need to check if some HTML child elements are HTMLUnknownElement
+        https://bugs.webkit.org/show_bug.cgi?id=120297
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/media/media-disable-crash.html
+
+        * dom/make_names.pl:
+        (printConstructorInterior): Added additional comments about the
+        wrapperOnlyIfMediaIsAvailable feature.
+        (printTypeHelpers): Added an isHTMLUnknownElement check to the check helper
+        functions for tags with the wrapperOnlyIfMediaIsAvailable feature.
+        (printWrapperFunctions): Instead of redoing the media player check and the
+        settings check, and possibly making a wrapper of the wrong type, call
+        isHTMUnknownElement, guaranteeing that the wrapper will match the element
+        it is wrapping.
+
+        * html/HTMLElement.h: Move HTMLElementTypeHelpers.h to the bottom of the
+        file so that functions from that file can be use the HTMLElement class and
+        other things defined in this file.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::paused): Added an assertion that made the regression
+        test reliably assert, rather than intermittently (for me, non-reproducibly) crash.
+
 2013-10-04  Antti Koivisto  <antti@apple.com>
 
         Move paint() to RenderElement

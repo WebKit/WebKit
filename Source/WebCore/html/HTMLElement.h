@@ -25,8 +25,6 @@
 
 #include "StyledElement.h"
 
-#include "HTMLElementTypeHelpers.h"
-
 namespace WebCore {
 
 class DocumentFragment;
@@ -145,5 +143,7 @@ template <> inline bool isElementOfType<HTMLElement>(const Element* element) { r
 ELEMENT_TYPE_CASTS(HTMLElement)
 
 } // namespace WebCore
+
+#include "HTMLElementTypeHelpers.h"
 
 #endif // HTMLElement_h

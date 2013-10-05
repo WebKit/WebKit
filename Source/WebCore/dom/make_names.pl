@@ -397,6 +397,10 @@ sub printConstructorInterior
     my ($F, $tagName, $interfaceName, $constructorTagName) = @_;
 
     # Handle media elements.
+    # Note that wrapperOnlyIfMediaIsAvailable is a misnomer, because media availability
+    # does not just control the wrapper; it controls the element object that is created.
+    # FIXME: Could we instead do this entirely in the wrapper, and use custom wrappers
+    # instead of having all the support for this here in this script?
     if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
         print F <<END
     Settings* settings = document.settings();
@@ -623,7 +627,17 @@ sub printTypeHelpers
         my $checkHelper = "is$class";
 
         print F "class $class;\n";
-        print F "inline bool $checkHelper(const Element& element) { return element.hasTagName(".$parameters{namespace}."Names::".$name."Tag); }\n";
+        if ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
+            # We need to check for HTMLUnknownElement if it might have been created by the factory.
+            print F <<END
+inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasLocalName($parameters{namespace}Names::${name}Tag); }
+inline bool $checkHelper(const HTMLElement* element) { return $checkHelper(*element); }
+inline bool $checkHelper(const Element& element) { return isHTMLElement(element) && $checkHelper(toHTMLElement(element)); }
+END
+            ;
+        } else {
+            print F "inline bool $checkHelper(const Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }\n";
+        }
         print F "inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }\n";
         print F "inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }\n";
         print F "inline bool $checkHelper(const Node& node) { return node.isElementNode() && $checkHelper(toElement(node)); }\n";
@@ -1077,20 +1091,17 @@ sub printWrapperFunctions
             print F "#if ${conditionalString}\n\n";
         }
 
-        # Hack for the media tags
-        # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
         if ($enabledTags{$tagName}{wrapperOnlyIfMediaIsAvailable}) {
             print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    Settings* settings = element->document().settings();
-    if (!MediaPlayer::isAvailable() || (settings && !settings->mediaEnabled()))
+    if (element->isHTMLUnknownElement())
         return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
     return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
-    ;
+            ;
         } elsif ($enabledTags{$tagName}{runtimeConditional}) {
             my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
             print F <<END
