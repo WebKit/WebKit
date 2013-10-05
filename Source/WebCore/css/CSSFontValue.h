@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FontValue_h
-#define FontValue_h
+#ifndef CSSFontValue_h
+#define CSSFontValue_h
 
 #include "CSSValue.h"
 #include <wtf/PassRefPtr.h>
@@ -30,16 +30,16 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSValueList;
 
-class FontValue : public CSSValue {
+class CSSFontValue : public CSSValue {
 public:
-    static PassRefPtr<FontValue> create()
+    static PassRefPtr<CSSFontValue> create()
     {
-        return adoptRef(new FontValue);
+        return adoptRef(new CSSFontValue);
     }
 
     String customCSSText() const;
 
-    bool equals(const FontValue&) const;
+    bool equals(const CSSFontValue&) const;
 
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> variant;
@@ -49,11 +49,13 @@ public:
     RefPtr<CSSValueList> family;
 
 private:
-    FontValue()
+    CSSFontValue()
         : CSSValue(FontClass)
     {
     }
 };
+
+CSS_VALUE_TYPE_CASTS(FontValue)
 
 } // namespace
 

@@ -36,6 +36,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageGeneratorValue.h"
@@ -49,10 +50,6 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
-#include "FontValue.h"
 #include "FontFeatureValue.h"
 #include "ShadowValue.h"
 #include "SVGColor.h"
@@ -63,6 +60,10 @@
 #include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
+
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
 
 #if ENABLE(SVG)
 #include "WebKitCSSSVGDocumentValue.h"
@@ -178,7 +179,7 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFilterImageValue>(*this, other);
 #endif
         case FontClass:
-            return compareCSSValues<FontValue>(*this, other);
+            return compareCSSValues<CSSFontValue>(*this, other);
         case FontFaceSrcClass:
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
         case FontFeatureClass:
@@ -280,7 +281,7 @@ String CSSValue::cssText() const
         return static_cast<const CSSFilterImageValue*>(this)->customCSSText();
 #endif
     case FontClass:
-        return static_cast<const FontValue*>(this)->customCSSText();
+        return static_cast<const CSSFontValue*>(this)->customCSSText();
     case FontFaceSrcClass:
         return static_cast<const CSSFontFaceSrcValue*>(this)->customCSSText();
     case FontFeatureClass:
@@ -395,7 +396,7 @@ void CSSValue::destroy()
         delete static_cast<CSSCursorImageValue*>(this);
         return;
     case FontClass:
-        delete static_cast<FontValue*>(this);
+        delete toCSSFontValue(this);
         return;
     case FontFaceSrcClass:
         delete toCSSFontFaceSrcValue(this);

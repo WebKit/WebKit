@@ -37,6 +37,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
+#include "CSSFontValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
@@ -59,7 +60,6 @@
 #include "DocumentStyleSheetCollection.h"
 #include "ElementRuleCollector.h"
 #include "FontFeatureValue.h"
-#include "FontValue.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -2287,7 +2287,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 setFontDescription(fontDescription);
             }
         } else if (value->isFontValue()) {
-            FontValue* font = static_cast<FontValue*>(value);
+            CSSFontValue* font = toCSSFontValue(value);
             if (!font->style || !font->variant || !font->weight
                 || !font->size || !font->lineHeight || !font->family)
                 return;

@@ -232,6 +232,7 @@ SOURCES += \
     css/CSSFontFaceSrcValue.cpp \
     css/CSSFontSelector.cpp \
     css/CSSFontFaceSource.cpp \
+    css/CSSFontValue.cpp \
     css/CSSFunctionValue.cpp \
     css/CSSGradientValue.cpp \
     css/CSSGroupingRule.cpp \
@@ -272,7 +273,6 @@ SOURCES += \
     css/ElementRuleCollector.cpp \
     css/FontFeatureValue.cpp \
     css/FontLoader.cpp \
-    css/FontValue.cpp \
     css/InspectorCSSOMWrappers.cpp \
     css/LengthFunctions.cpp \
     css/MediaFeatureNames.cpp \
@@ -1444,6 +1444,7 @@ HEADERS += \
     css/CSSFontFaceSource.h \
     css/CSSFontFaceSrcValue.h \
     css/CSSFontSelector.h \
+    css/CSSFontValue.h \
     css/CSSFunctionValue.h \
     css/CSSGradientValue.h \
     css/CSSGroupingRule.h \
@@ -1483,7 +1484,6 @@ HEADERS += \
     css/DOMWindowCSS.h \
     css/FontFeatureValue.h \
     css/FontLoader.h \
-    css/FontValue.h \
     css/LengthFunctions.h \
     css/MediaFeatureNames.h \
     css/MediaList.h \

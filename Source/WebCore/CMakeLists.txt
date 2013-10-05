@@ -971,6 +971,7 @@ set(WebCore_SOURCES
     css/CSSFontFaceSource.cpp
     css/CSSFontFaceSrcValue.cpp
     css/CSSFontSelector.cpp
+    css/CSSFontValue.cpp
     css/CSSFunctionValue.cpp
     css/CSSGradientValue.cpp
     css/CSSGroupingRule.cpp
@@ -1011,7 +1012,6 @@ set(WebCore_SOURCES
     css/ElementRuleCollector.cpp
     css/FontFeatureValue.cpp
     css/FontLoader.cpp
-    css/FontValue.cpp
     css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp
     css/MediaFeatureNames.cpp

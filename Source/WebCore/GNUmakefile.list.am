@@ -2477,6 +2477,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSFontFaceSrcValue.h \
 	Source/WebCore/css/CSSFontSelector.cpp \
 	Source/WebCore/css/CSSFontSelector.h \
+	Source/WebCore/css/CSSFontValue.cpp \
+	Source/WebCore/css/CSSFontValue.h \
 	Source/WebCore/css/CSSFunctionValue.cpp \
 	Source/WebCore/css/CSSFunctionValue.h \
 	Source/WebCore/css/CSSGradientValue.cpp \
@@ -2565,8 +2567,6 @@ webcore_sources += \
 	Source/WebCore/css/FontFeatureValue.h \
 	Source/WebCore/css/FontLoader.cpp \
 	Source/WebCore/css/FontLoader.h \
-	Source/WebCore/css/FontValue.cpp \
-	Source/WebCore/css/FontValue.h \
 	Source/WebCore/css/InspectorCSSOMWrappers.cpp \
 	Source/WebCore/css/InspectorCSSOMWrappers.h \
 	Source/WebCore/css/LengthFunctions.cpp \
