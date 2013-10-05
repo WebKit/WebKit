@@ -433,15 +433,12 @@
 /* Operating environments */
 
 /* FIXME: these are all mixes of OS, operating environment and policy choices. */
-/* PLATFORM(QT) */
 /* PLATFORM(EFL) */
 /* PLATFORM(GTK) */
 /* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
-#if defined(BUILDING_QT__)
-#define WTF_PLATFORM_QT 1
-#elif defined(BUILDING_EFL__)
+#if defined(BUILDING_EFL__)
 #define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
@@ -528,11 +525,7 @@
 #define DONT_FINALIZE_ON_MAIN_THREAD 1
 #endif
 
-#if PLATFORM(QT) && OS(DARWIN)
-#define WTF_USE_CF 1
-#endif
-
-#if OS(DARWIN) && !PLATFORM(GTK) && !PLATFORM(QT)
+#if OS(DARWIN) && !PLATFORM(GTK)
 #define ENABLE_PURGEABLE_MEMORY 1
 #endif
 
@@ -621,9 +614,7 @@
 #define HAVE_ALIGNED_MALLOC 1
 #define HAVE_ISDEBUGGERPRESENT 1
 
-#if !PLATFORM(QT)
 #include <WTF/WTFHeaderDetection.h>
-#endif
 
 #endif
 
@@ -642,14 +633,6 @@
 
 /* Include feature macros */
 #include <wtf/FeatureDefines.h>
-
-#if PLATFORM(QT)
-/* We must not customize the global operator new and delete for the Qt port. */
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#if !OS(UNIX)
-#define USE_SYSTEM_MALLOC 1
-#endif
-#endif
 
 #if PLATFORM(EFL)
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
@@ -695,16 +678,12 @@
 #define ENABLE_JIT 0
 #endif
 
-#if !defined(ENABLE_JIT) && CPU(SH4) && PLATFORM(QT)
-#define ENABLE_JIT 1
-#endif
-
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms. */
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
     && !OS(WINCE) \
-    && !(OS(QNX) && !PLATFORM(QT)) /* We use JIT in QNX Qt */
+    && !OS(QNX)
 #define ENABLE_JIT 1
 #endif
 
@@ -726,7 +705,7 @@
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */
-#if !defined(WTF_USE_UDIS86) && ENABLE(JIT) && (PLATFORM(MAC) || (PLATFORM(QT) && OS(LINUX))) \
+#if !defined(WTF_USE_UDIS86) && ENABLE(JIT) && PLATFORM(MAC) \
     && (CPU(X86) || CPU(X86_64))
 #define WTF_USE_UDIS86 1
 #endif
@@ -744,7 +723,7 @@
 #if !defined(ENABLE_LLINT) \
     && ENABLE(JIT) \
     && (OS(DARWIN) || OS(LINUX)) \
-    && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(QT)) \
+    && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK)) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL) || CPU(MIPS) || CPU(SH4))
 #define ENABLE_LLINT 1
 #endif
@@ -755,7 +734,7 @@
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt/GTK+ Linux. */
-#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(QT) || PLATFORM(GTK))
+#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARM, MIPS and SH4. */
@@ -853,7 +832,7 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT) && (ENABLE(JIT) || ENABLE(LLINT_C_LOOP)) && !(OS(QNX) && PLATFORM(QT))
+#if !defined(ENABLE_YARR_JIT) && (ENABLE(JIT) || ENABLE(LLINT_C_LOOP))
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */
@@ -882,7 +861,7 @@
 #endif
 
 /* Accelerated compositing */
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(QT) || (PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO))
+#if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO))
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
@@ -897,20 +876,11 @@
 #define WTF_USE_GRAPHICS_SURFACE 1
 #endif
 
-/* Qt always uses Texture Mapper */
-#if PLATFORM(QT)
-#define WTF_USE_TEXTURE_MAPPER 1
-#endif
-
 #if USE(TEXTURE_MAPPER) && USE(3D_GRAPHICS) && !defined(WTF_USE_TEXTURE_MAPPER_GL)
 #define WTF_USE_TEXTURE_MAPPER_GL 1
 #endif
 
 /* Compositing on the UI-process in WebKit2 */
-#if USE(3D_GRAPHICS) && PLATFORM(QT)
-#define WTF_USE_COORDINATED_GRAPHICS 1
-#endif
-
 #if PLATFORM(MAC) || PLATFORM(IOS)
 #define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
@@ -946,7 +916,7 @@
    since most ports try to support sub-project independence, adding new headers
    to WTF causes many ports to break, and so this way we can address the build
    breakages one port at a time. */
-#if !defined(WTF_USE_EXPORT_MACROS) && (PLATFORM(MAC) || PLATFORM(QT) || (PLATFORM(WIN) && (defined(_MSC_VER) && _MSC_VER >= 1600)))
+#if !defined(WTF_USE_EXPORT_MACROS) && (PLATFORM(MAC) || (PLATFORM(WIN) && (defined(_MSC_VER) && _MSC_VER >= 1600)))
 #define WTF_USE_EXPORT_MACROS 1
 #endif
 
@@ -954,7 +924,7 @@
 #define WTF_USE_EXPORT_MACROS_FOR_TESTING 1
 #endif
 
-#if (PLATFORM(QT) && !OS(DARWIN) && !OS(WINDOWS)) || PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
@@ -968,7 +938,7 @@
 
 #define ENABLE_OBJECT_MARK_LOGGING 0
 
-#if !defined(ENABLE_PARALLEL_GC) && !ENABLE(OBJECT_MARK_LOGGING) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(BLACKBERRY) || PLATFORM(GTK)) && ENABLE(COMPARE_AND_SWAP)
+#if !defined(ENABLE_PARALLEL_GC) && !ENABLE(OBJECT_MARK_LOGGING) && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK)) && ENABLE(COMPARE_AND_SWAP)
 #define ENABLE_PARALLEL_GC 1
 #endif
 
@@ -1016,15 +986,8 @@
 #define WTF_USE_COREAUDIO 1
 #endif
 
-#if !defined(WTF_USE_ZLIB) && !PLATFORM(QT)
+#if !defined(WTF_USE_ZLIB)
 #define WTF_USE_ZLIB 1
-#endif
-
-#if PLATFORM(QT)
-#include <qglobal.h>
-#if defined(QT_OPENGL_ES_2) && !defined(WTF_USE_OPENGL_ES_2)
-#define WTF_USE_OPENGL_ES_2 1
-#endif
 #endif
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
