@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1298,6 +1298,9 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
     if (isContextLost() || !validateWebGLObject("compileShader", shader))
         return;
     m_context->compileShader(objectOrZero(shader));
+    GC3Dint value;
+    m_context->getShaderiv(objectOrZero(shader), GraphicsContext3D::COMPILE_STATUS, &value);
+    shader->setValid(value);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3322,7 +3325,9 @@ void WebGLRenderingContext::linkProgram(WebGLProgram* program, ExceptionCode& ec
     if (isContextLost() || !validateWebGLObject("linkProgram", program))
         return;
     if (!isGLES2Compliant()) {
-        if (!program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER) || !program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER)) {
+        WebGLShader* vertexShader = program->getAttachedShader(GraphicsContext3D::VERTEX_SHADER);
+        WebGLShader* fragmentShader = program->getAttachedShader(GraphicsContext3D::FRAGMENT_SHADER);
+        if (!vertexShader || !vertexShader->isValid() || !fragmentShader || !fragmentShader->isValid()) {
             program->setLinkStatus(false);
             return;
         }

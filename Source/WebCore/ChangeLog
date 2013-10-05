@@ -1,3 +1,32 @@
+2013-10-04  Dean Jackson  <dino@apple.com>
+
+        [WebGL] program should not be able to link if a bad shader is attached
+        https://bugs.webkit.org/show_bug.cgi?id=94036
+
+        Reviewed by Darin Adler.
+
+        If you attempt to link a program when bad shaders are attached, the
+        link should fail. WebGL also requires that the previously linked
+        program should remain intact. We were doing the former, but not
+        the latter.
+
+        Fix this by not calling glLinkProgram if we know we have bad
+        shaders, and synthesize a bad link status instead.
+
+        Test: WebGL conformance test conformance/programs/program-test.html
+        (found in LayoutTests/webgl)
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::compileShader): Mark a shader as valid
+        if it compiled ok.
+        (WebCore::WebGLRenderingContext::linkProgram): Don't call into GraphicsContext3D::linkProgram
+        if we know that we don't have valid shaders.
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::WebGLShader): Initialize m_isValid.
+        * html/canvas/WebGLShader.h:
+        (WebCore::WebGLShader::isValid): New member variable getter and setter.
+        (WebCore::WebGLShader::setValid):
+
 2013-10-05  Dean Jackson  <dino@apple.com>
 
         Undo texture unit code refactoring - it is ok to bind a texture to multiple locations
