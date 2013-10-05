@@ -1,5 +1,17 @@
 2013-10-04  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderScrollbar DOM owner is always an Element.
+        <https://webkit.org/b/122348>
+
+        Reviewed by Antti Koivisto.
+
+        When RenderScrollbar is owned by a DOM node, it's always Element.
+        Tighten the code a bit with this knowledge.
+
+        Also marked the class FINAL and beat it with the OVERRIDE stick.
+
+2013-10-04  Andreas Kling  <akling@apple.com>
+
         TypingCommand helpers should take Document&.
         <https://webkit.org/b/122370>
 

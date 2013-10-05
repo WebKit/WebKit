@@ -50,6 +50,7 @@
 #include "Chrome.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
+#include "Element.h"
 #include "EventHandler.h"
 #include "FeatureObserver.h"
 #include "FloatConversion.h"

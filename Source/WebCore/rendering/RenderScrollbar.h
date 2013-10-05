@@ -33,18 +33,15 @@
 namespace WebCore {
 
 class Frame;
-class Node;
+class Element;
 class RenderBox;
 class RenderScrollbarPart;
 class RenderStyle;
 
-class RenderScrollbar : public Scrollbar {
-protected:
-    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Node*, Frame*);
-
+class RenderScrollbar FINAL : public Scrollbar {
 public:
     friend class Scrollbar;
-    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Node*, Frame* owningFrame = 0);
+    static RefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
     virtual ~RenderScrollbar();
 
     RenderBox* owningRenderer() const;
@@ -62,17 +59,19 @@ public:
     float opacity();
 
 private:
-    virtual void setParent(ScrollView*);
-    virtual void setEnabled(bool);
+    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, Element*, Frame*);
 
-    virtual void paint(GraphicsContext*, const IntRect& damageRect);
+    virtual void setParent(ScrollView*) OVERRIDE;
+    virtual void setEnabled(bool) OVERRIDE;
 
-    virtual void setHoveredPart(ScrollbarPart);
-    virtual void setPressedPart(ScrollbarPart);
+    virtual void paint(GraphicsContext*, const IntRect& damageRect) OVERRIDE;
 
-    virtual void styleChanged();
+    virtual void setHoveredPart(ScrollbarPart) OVERRIDE;
+    virtual void setPressedPart(ScrollbarPart) OVERRIDE;
 
-    virtual bool isCustomScrollbar() const { return true; }
+    virtual void styleChanged() OVERRIDE;
+
+    virtual bool isCustomScrollbar() const OVERRIDE { return true; }
 
     void updateScrollbarParts(bool destroy = false);
 
@@ -80,10 +79,10 @@ private:
     void updateScrollbarPart(ScrollbarPart, bool destroy = false);
 
     // This Scrollbar(Widget) may outlive the DOM which created it (during tear down),
-    // so we keep a reference to the Node which caused this custom scrollbar creation.
+    // so we keep a reference to the Element which caused this custom scrollbar creation.
     // This will not create a reference cycle as the Widget tree is owned by our containing
-    // FrameView which this Node pointer can in no way keep alive. See webkit bug 80610.
-    RefPtr<Node> m_owner;
+    // FrameView which this Element pointer can in no way keep alive. See webkit bug 80610.
+    RefPtr<Element> m_ownerElement;
 
     Frame* m_owningFrame;
     HashMap<unsigned, RenderScrollbarPart*> m_parts;

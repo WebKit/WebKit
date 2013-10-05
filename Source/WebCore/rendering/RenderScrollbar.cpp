@@ -36,17 +36,17 @@
 
 namespace WebCore {
 
-PassRefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Node* ownerNode, Frame* owningFrame)
+RefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
 {
-    return adoptRef(new RenderScrollbar(scrollableArea, orientation, ownerNode, owningFrame));
+    return adoptRef(new RenderScrollbar(scrollableArea, orientation, ownerElement, owningFrame));
 }
 
-RenderScrollbar::RenderScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Node* ownerNode, Frame* owningFrame)
+RenderScrollbar::RenderScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, Element* ownerElement, Frame* owningFrame)
     : Scrollbar(scrollableArea, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme())
-    , m_owner(ownerNode)
+    , m_ownerElement(ownerElement)
     , m_owningFrame(owningFrame)
 {
-    ASSERT(ownerNode || owningFrame);
+    ASSERT(ownerElement || owningFrame);
 
     // FIXME: We need to do this because RenderScrollbar::styleChanged is called as soon as the scrollbar is created.
     
@@ -85,7 +85,8 @@ RenderBox* RenderScrollbar::owningRenderer() const
         RenderWidget* currentRenderer = m_owningFrame->ownerRenderer();
         return currentRenderer;
     }
-    return m_owner && m_owner->renderer() ? m_owner->renderer()->enclosingBox() : 0;
+    ASSERT(m_ownerElement);
+    return m_ownerElement->renderer() ? m_ownerElement->renderer()->enclosingBox() : nullptr;
 }
 
 void RenderScrollbar::setParent(ScrollView* parent)
