@@ -38,6 +38,10 @@
 
 namespace WebKit {
 
+void WebPageProxy::platformInitialize()
+{
+}
+
 GtkWidget* WebPageProxy::viewWidget()
 {
     return static_cast<PageClientImpl*>(m_pageClient)->viewWidget();
