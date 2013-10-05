@@ -1,3 +1,15 @@
+2013-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Have run-javascriptcore-tests run JS LayoutTests using run-jsc-stress-tests so that it runs in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=122376
+
+        Reviewed by Mark Hahnenberg.
+        
+        Add a yaml file describing which directories contain JS LayoutTests. run-jsc-stress-tests
+        will use this file.
+
+        * jsc-layout-tests.yaml: Added.
+
 2013-10-05  Darin Adler  <darin@apple.com>
 
         Need to check if some HTML child elements are HTMLUnknownElement

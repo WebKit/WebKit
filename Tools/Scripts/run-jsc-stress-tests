@@ -29,6 +29,8 @@ require 'yaml'
 
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
+WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
+LAYOUTTESTS_PATH = WEBKIT_PATH + "LayoutTests"
 raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
@@ -170,19 +172,19 @@ class Plan
         File.open(filename, "w") {
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            cmd  = "(" + shellCommand + " || (touch test_fail_#{index})) 2>&1"
-            cmd += " | tee " + Shellwords.shellescape(($outputDir + (name + ".out")).to_s)
-            cmd += " | awk " + Shellwords.shellescape("{ printf #{(name + ': ').inspect}; print }")
+            cmd  = "(" + shellCommand + " || (touch test_fail_#{@index})) 2>&1"
+            cmd += " | tee " + Shellwords.shellescape(($outputDir + (@name + ".out")).to_s)
+            cmd += " | awk " + Shellwords.shellescape("{ printf #{(@name + ': ').inspect}; print }")
             if $verbosity >= 2
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
             outp.puts cmd
-            outp.puts "if test -e test_fail_#{index}"
+            outp.puts "if test -e test_fail_#{@index}"
             outp.puts "then"
-            outp.puts "    echo FAIL: #{Shellwords.shellescape(name)}"
+            outp.puts "    echo FAIL: #{Shellwords.shellescape(@name)}"
             if $verbosity >= 1
                 outp.puts "else"
-                outp.puts "    echo PASS: #{Shellwords.shellescape(name)}"
+                outp.puts "    echo PASS: #{Shellwords.shellescape(@name)}"
             end
             outp.puts "fi"
         }
@@ -198,8 +200,12 @@ def uniqueFilename(extension)
     result
 end
 
+def baseOutputName(kind)
+    "#{$collectionName}/#{$benchmark}.#{kind}"
+end
+
 def addRunCommand(kind, command)
-    $runlist << Plan.new($benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}.#{kind}")
+    $runlist << Plan.new($benchmarkDirectory, command, baseOutputName(kind))
 end
 
 def run(kind, *options)
@@ -246,6 +252,12 @@ def runProfiler
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "-p", profilerOutput.to_s)
     end
+end
+
+def runLayoutTest
+    raise unless $benchmark.to_s =~ /\.js$/
+    testName = $~.pre_match
+    addRunCommand("layout", ["sh", (HELPERS_PATH + "layout-test-helper").to_s, $jscPath.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s, $benchmark.to_s, (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s, ($outputDir + baseOutputName("layout")).to_s, $benchmarkDirectory.dirname + "#{testName}-expected.txt"])
 end
 
 def runAlwaysTriggerCopyPhase
