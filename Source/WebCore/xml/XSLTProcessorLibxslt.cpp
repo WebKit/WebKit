@@ -267,8 +267,8 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStyl
 
 static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
 {
-    RefPtr<Document> ownerDocument = &sourceNode->document();
-    bool sourceIsDocument = (sourceNode == ownerDocument.get());
+    Ref<Document> ownerDocument(sourceNode->document());
+    bool sourceIsDocument = (sourceNode == &ownerDocument.get());
 
     xmlDocPtr sourceDoc = 0;
     if (sourceIsDocument && ownerDocument->transformSource())
@@ -302,7 +302,7 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
 
 bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String& resultString, String& resultEncoding)
 {
-    RefPtr<Document> ownerDocument = &sourceNode->document();
+    Ref<Document> ownerDocument(sourceNode->document());
 
     setXSLTLoadCallBack(docLoaderFunc, this, ownerDocument->cachedResourceLoader());
     xsltStylesheetPtr sheet = xsltStylesheetPointer(m_stylesheet, m_stylesheetRootNode.get());

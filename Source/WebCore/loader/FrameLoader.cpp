@@ -2888,7 +2888,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     if (!shouldContinue)
         return;
 
-    RefPtr<Frame> frame = &m_frame;
+    Ref<Frame> frame(m_frame);
     RefPtr<Frame> mainFrame = m_client.dispatchCreatePage(action);
     if (!mainFrame)
         return;
@@ -2899,7 +2899,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->page()->setOpenedByDOM();
     mainFrame->loader().m_client.dispatchShow();
     if (!m_suppressOpenerInNewFrame) {
-        mainFrame->loader().setOpener(frame.get());
+        mainFrame->loader().setOpener(&frame.get());
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
     mainFrame->loader().loadWithNavigationAction(request, NavigationAction(request), false, FrameLoadTypeStandard, formState);

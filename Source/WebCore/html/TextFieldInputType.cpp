@@ -97,7 +97,7 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
 {
     // Grab this input element to keep reference even if JS event handler
     // changes input type.
-    RefPtr<HTMLInputElement> input = &element();
+    Ref<HTMLInputElement> input(element());
 
     // We don't ask InputType::setValue to dispatch events because
     // TextFieldInputType dispatches events different way from InputType.
@@ -492,7 +492,7 @@ void TextFieldInputType::updateInnerTextValue()
 
 void TextFieldInputType::focusAndSelectSpinButtonOwner()
 {
-    RefPtr<HTMLInputElement> input = &element();
+    Ref<HTMLInputElement> input(element());
     input->focus();
     input->select();
 }

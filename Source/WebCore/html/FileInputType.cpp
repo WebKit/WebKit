@@ -362,7 +362,7 @@ void FileInputType::setFiles(PassRefPtr<FileList> files)
     if (!files)
         return;
 
-    RefPtr<HTMLInputElement> input = &element();
+    Ref<HTMLInputElement> input(element());
 
     bool pathsChanged = false;
     if (files->length() != m_fileList->length())

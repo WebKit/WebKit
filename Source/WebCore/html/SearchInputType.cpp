@@ -133,7 +133,7 @@ void SearchInputType::handleKeydownEvent(KeyboardEvent* event)
 
     const String& key = event->keyIdentifier();
     if (key == "U+001B") {
-        RefPtr<HTMLInputElement> input = &element();
+        Ref<HTMLInputElement> input(this->element());
         input->setValueForUser("");
         input->onSearch();
         event->setDefaultHandled();

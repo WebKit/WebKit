@@ -610,14 +610,14 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
         return true;
     }
 
-    RefPtr<Document> newDocument = &element->document();
+    Ref<Document> newDocument(element->document());
 
     if (newDocument->focusedElement() == element) {
         m_page.editorClient()->setInputMethodState(element->shouldUseInputMethod());
         return true;
     }
     
-    if (oldDocument && oldDocument != newDocument)
+    if (oldDocument && oldDocument != &newDocument.get())
         oldDocument->setFocusedElement(0);
 
     if (newFocusedFrame && !newFocusedFrame->page()) {
@@ -627,11 +627,10 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
     setFocusedFrame(newFocusedFrame);
 
     Ref<Element> protect(*element);
-    if (newDocument) {
-        bool successfullyFocused = newDocument->setFocusedElement(element, direction);
-        if (!successfullyFocused)
-            return false;
-    }
+
+    bool successfullyFocused = newDocument->setFocusedElement(element, direction);
+    if (!successfullyFocused)
+        return false;
 
     if (newDocument->focusedElement() == element)
         m_page.editorClient()->setInputMethodState(element->shouldUseInputMethod());

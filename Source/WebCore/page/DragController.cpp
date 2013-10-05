@@ -209,7 +209,7 @@ bool DragController::performDrag(DragData* dragData)
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData->clientPosition());
     if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentIsHandlingDrag) {
         m_client.willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
-        RefPtr<Frame> mainFrame = &m_page.mainFrame();
+        Ref<MainFrame> mainFrame(m_page.mainFrame());
         bool preventedDefault = false;
         if (mainFrame->view()) {
             // Sending an event can result in the destruction of the view and part.
@@ -598,7 +598,7 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
 {
     ASSERT(dragData);
     ASSERT(m_documentUnderMouse);
-    RefPtr<Frame> mainFrame = &m_page.mainFrame();
+    Ref<MainFrame> mainFrame(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = mainFrame->view();
     if (!viewProtector)
         return false;
@@ -908,10 +908,10 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
     m_didInitiateDrag = true;
     m_dragInitiator = frame->document();
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    RefPtr<Frame> frameProtector = &m_page.mainFrame();
+    Ref<MainFrame> frameProtector(m_page.mainFrame());
     RefPtr<FrameView> viewProtector = frameProtector->view();
     m_client.startDrag(image, viewProtector->rootViewToContents(frame->view()->contentsToRootView(dragLoc)),
-        viewProtector->rootViewToContents(frame->view()->contentsToRootView(eventPos)), clipboard, frameProtector.get(), forLink);
+        viewProtector->rootViewToContents(frame->view()->contentsToRootView(eventPos)), clipboard, &frameProtector.get(), forLink);
     // DragClient::startDrag can cause our Page to dispear, deallocating |this|.
     if (!frameProtector->page())
         return;

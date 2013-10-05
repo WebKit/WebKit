@@ -1,3 +1,12 @@
+2013-10-04  Andreas Kling  <akling@apple.com>
+
+        Ref-ify more stack guards.
+        <https://webkit.org/b/122360>
+
+        Reviewed by Anders Carlsson.
+
+        Make another pass turning RefPtr<T> into Ref<T> where possible.
+
 2013-10-04  Ojan Vafai  <ojan@chromium.org> and Martin Robinson  <mrobinson@igalia.com>
 
         [MathML] Remove RenderTree modification during layout and refactor the StretchyOp code

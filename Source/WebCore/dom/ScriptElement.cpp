@@ -251,10 +251,10 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
 
 bool ScriptElement::requestScript(const String& sourceUrl)
 {
-    RefPtr<Document> originalDocument = &m_element->document();
+    Ref<Document> originalDocument(m_element->document());
     if (!m_element->dispatchBeforeLoadEvent(sourceUrl))
         return false;
-    if (!m_element->inDocument() || &m_element->document() != originalDocument)
+    if (!m_element->inDocument() || &m_element->document() != &originalDocument.get())
         return false;
     if (!m_element->document().contentSecurityPolicy()->allowScriptNonce(m_element->fastGetAttribute(HTMLNames::nonceAttr), m_element->document().url(), m_startLineNumber, m_element->document().completeURL(sourceUrl)))
         return false;
@@ -304,10 +304,10 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     }
 #endif
 
-    RefPtr<Document> document = &m_element->document();
+    Ref<Document> document(m_element->document());
     if (Frame* frame = document->frame()) {
-        IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? document.get() : 0);
-        CurrentScriptIncrementer currentScriptIncrementer(document.get(), m_element);
+        IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_isExternalScript ? &document.get() : 0);
+        CurrentScriptIncrementer currentScriptIncrementer(&document.get(), m_element);
 
         // Create a script from the script element node, using the script
         // block's source and the script block's type.

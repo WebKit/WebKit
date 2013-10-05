@@ -982,18 +982,18 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     selection = selectionForCommand(triggeringEvent);
     if (selection.isContentEditable()) {
         if (Node* selectionStart = selection.start().deprecatedNode()) {
-            RefPtr<Document> document = &selectionStart->document();
+            Ref<Document> document(selectionStart->document());
 
             // Insert the text
             if (triggeringEvent && triggeringEvent->isDictation())
-                DictationCommand::insertText(document.get(), text, triggeringEvent->dictationAlternatives(), selection);
+                DictationCommand::insertText(&document.get(), text, triggeringEvent->dictationAlternatives(), selection);
             else {
                 TypingCommand::Options options = 0;
                 if (selectInsertedText)
                     options |= TypingCommand::SelectInsertedText;
                 if (autocorrectionWasApplied)
                     options |= TypingCommand::RetainAutocorrectionIndicator;
-                TypingCommand::insertText(document.get(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
+                TypingCommand::insertText(&document.get(), text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
             }
 
             // Reveal the current selection

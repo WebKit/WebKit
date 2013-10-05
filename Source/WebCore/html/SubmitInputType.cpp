@@ -67,7 +67,7 @@ bool SubmitInputType::supportsRequired() const
 
 void SubmitInputType::handleDOMActivateEvent(Event* event)
 {
-    RefPtr<HTMLInputElement> element = &this->element();
+    Ref<HTMLInputElement> element(this->element());
     if (element->isDisabledFormControl() || !element->form())
         return;
     element->setActivatedSubmit(true);
