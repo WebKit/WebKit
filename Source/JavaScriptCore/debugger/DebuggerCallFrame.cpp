@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,78 +57,106 @@ private:
 DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame)
     : m_callFrame(callFrame)
 {
-    LineAndColumnFunctor functor;
-    m_callFrame->iterate(functor);
-    m_line = functor.line();
-    m_column = functor.column();
+    m_position = positionForCallFrame(m_callFrame);
+}
+
+PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
+{
+    ASSERT(isValid());
+    if (!isValid())
+        return 0;
+
+    if (m_caller)
+        return m_caller;
+
+    CallFrame* callerFrame = m_callFrame->callerFrameNoFlags();
+    if (!callerFrame)
+        return 0;
+
+    m_caller = DebuggerCallFrame::create(callerFrame);
+    return m_caller;
+}
+
+JSC::JSGlobalObject* DebuggerCallFrame::dynamicGlobalObject() const
+{
+    ASSERT(isValid());
+    if (!isValid())
+        return 0;
+    return m_callFrame->dynamicGlobalObject();
 }
 
 intptr_t DebuggerCallFrame::sourceId() const
 {
-    return m_callFrame->codeBlock()->ownerExecutable()->sourceID();
+    ASSERT(isValid());
+    if (!isValid())
+        return 0;
+    return sourceIdForCallFrame(m_callFrame);
 }
 
 String DebuggerCallFrame::functionName() const
 {
-    if (!m_callFrame->codeBlock())
+    ASSERT(isValid());
+    if (!isValid())
         return String();
-
-    if (!m_callFrame->callee())
-        return String();
-
     JSObject* function = m_callFrame->callee();
-    if (!function || !function->inherits(JSFunction::info()))
-        return String();
-    return jsCast<JSFunction*>(function)->name(m_callFrame);
-}
-    
-String DebuggerCallFrame::calculatedFunctionName() const
-{
-    if (!m_callFrame->codeBlock())
-        return String();
-
-    JSObject* function = m_callFrame->callee();
-
     if (!function)
         return String();
 
     return getCalculatedDisplayName(m_callFrame, function);
 }
 
+JSScope* DebuggerCallFrame::scope() const
+{
+    ASSERT(isValid());
+    if (!isValid())
+        return 0;
+    return m_callFrame->scope();
+}
+
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
 {
+    ASSERT(isValid());
+    if (!isValid())
+        return ProgramType;
+
     if (m_callFrame->callee())
         return FunctionType;
 
     return ProgramType;
 }
 
-JSObject* DebuggerCallFrame::thisObject() const
+JSValue DebuggerCallFrame::thisValue() const
 {
-    CodeBlock* codeBlock = m_callFrame->codeBlock();
-    if (!codeBlock)
-        return 0;
-
-    JSValue thisValue = m_callFrame->uncheckedR(codeBlock->thisRegister().offset()).jsValue();
-    if (!thisValue.isObject())
-        return 0;
-
-    return asObject(thisValue);
+    ASSERT(isValid());
+    return thisValueForCallFrame(m_callFrame);
 }
 
+// Evaluate some JavaScript code in the scope of this frame.
 JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception) const
 {
-    if (!m_callFrame->codeBlock())
+    ASSERT(isValid());
+    return evaluateWithCallFrame(m_callFrame, script, exception);
+}
+
+JSValue DebuggerCallFrame::evaluateWithCallFrame(CallFrame* callFrame, const String& script, JSValue& exception)
+{
+    if (!callFrame)
+        return jsNull();
+
+    JSLockHolder lock(callFrame);
+
+    if (!callFrame->codeBlock())
         return JSValue();
     
-    VM& vm = m_callFrame->vm();
-    EvalExecutable* eval = EvalExecutable::create(m_callFrame, makeSource(script), m_callFrame->codeBlock()->isStrictMode());
+    VM& vm = callFrame->vm();
+    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), callFrame->codeBlock()->isStrictMode());
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();
     }
 
-    JSValue result = vm.interpreter->execute(eval, m_callFrame, thisObject(), m_callFrame->scope());
+    JSValue thisValue = thisValueForCallFrame(callFrame);
+    JSValue result = vm.interpreter->execute(eval, callFrame, thisValue, callFrame->scope());
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();
@@ -137,9 +165,48 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception) co
     return result;
 }
 
-void DebuggerCallFrame::clear()
+void DebuggerCallFrame::invalidate()
 {
-    m_callFrame = 0;
+    m_callFrame = nullptr;
+    RefPtr<DebuggerCallFrame> frame = m_caller.release();
+    while (frame) {
+        frame->m_callFrame = nullptr;
+        frame = frame->m_caller.release();
+    }
+}
+
+TextPosition DebuggerCallFrame::positionForCallFrame(CallFrame* callFrame)
+{
+    if (!callFrame)
+        return TextPosition();
+
+    LineAndColumnFunctor functor;
+    callFrame->iterate(functor);
+    ASSERT(!callFrame->codeBlock() || functor.line() >= 0);
+    ASSERT(!callFrame->codeBlock() || functor.column() >= 0);
+    return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
+}
+
+intptr_t DebuggerCallFrame::sourceIdForCallFrame(CallFrame* callFrame)
+{
+    ASSERT(callFrame);
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock)
+        return 0;
+    return codeBlock->ownerExecutable()->sourceID();
+}
+
+JSValue DebuggerCallFrame::thisValueForCallFrame(CallFrame* callFrame)
+{
+    if (!callFrame)
+        return jsNull();
+
+    ECMAMode ecmaMode = NotStrictMode;
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (codeBlock && codeBlock->isStrictMode())
+        ecmaMode = StrictMode;
+    JSValue thisValue = callFrame->thisValue().toThis(callFrame, ecmaMode);
+    return thisValue;
 }
 
 } // namespace JSC

@@ -105,7 +105,7 @@ InspectorTest.resumeExecution = function(callback)
     InspectorTest.waitUntilResumed(callback);
 };
 
-InspectorTest.captureStackTrace = function(callFrames, dropLineNumbers)
+InspectorTest.captureStackTrace = function(callFrames, dropLineNumbers, verbose)
 {
     InspectorTest.addResult("Call stack:");
     for (var i = 0; i < callFrames.length; i++) {
@@ -113,14 +113,15 @@ InspectorTest.captureStackTrace = function(callFrames, dropLineNumbers)
         var script = WebInspector.debuggerModel.scriptForId(frame.location.scriptId);
         var url;
         var lineNumber;
+        var dropFrameLineNumber = dropLineNumbers;
         if (script) {
             url = WebInspector.displayNameForURL(script.sourceURL);
             lineNumber = frame.location.lineNumber + 1;
         } else {
             url = "(internal script)";
-            lineNumber = "(line number)";
+            dropFrameLineNumber =  true;
         }
-        var s = "    " + i + ") " + frame.functionName + " (" + url + (dropLineNumbers ? "" : ":" + lineNumber) + ")";
+        var s = "    " + i + ") " + frame.functionName + " (" + url + (dropFrameLineNumber ? "" : ":" + lineNumber) + ")";
         InspectorTest.addResult(s);
     }
 };

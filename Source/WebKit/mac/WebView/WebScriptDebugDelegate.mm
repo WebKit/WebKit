@@ -38,7 +38,6 @@
 #import <WebCore/runtime_root.h>
 #import <debugger/Debugger.h>
 #import <debugger/DebuggerActivation.h>
-#import <debugger/DebuggerCallFrame.h>
 #import <interpreter/CallFrame.h>
 #import <runtime/Completion.h>
 #import <runtime/JSFunction.h>
@@ -62,7 +61,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @interface WebScriptCallFramePrivate : NSObject {
 @public
     WebScriptObject        *globalObject;   // the global object's proxy (not retained)
-    DebuggerCallFrame* debuggerCallFrame;
+    String functionName;
     JSC::JSValue exceptionValue;
 }
 @end
@@ -70,7 +69,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @implementation WebScriptCallFramePrivate
 - (void)dealloc
 {
-    delete debuggerCallFrame;
     [super dealloc];
 }
 @end
@@ -86,12 +84,12 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame exceptionValue:(JSC::JSValue)exceptionValue
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(String)functionName exceptionValue:(JSC::JSValue)exceptionValue
 {
     if ((self = [super init])) {
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
-        _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
+        _private->functionName = functionName;
         _private->exceptionValue = exceptionValue;
     }
     return self;
@@ -148,10 +146,10 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (NSString *)functionName
 {
-    if (!_private->debuggerCallFrame)
+    if (_private->functionName.isEmpty())
         return nil;
 
-    String functionName = _private->debuggerCallFrame->functionName();
+    String functionName = _private->functionName;
     return nsStringNilIfEmpty(functionName);
 }
 
@@ -159,7 +157,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 - (id)exception
 {
-    if (!_private->debuggerCallFrame)
+    if (!_private->exceptionValue)
         return nil;
 
     JSC::JSValue exception = _private->exceptionValue;

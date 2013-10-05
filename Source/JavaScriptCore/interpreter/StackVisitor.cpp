@@ -425,8 +425,8 @@ void StackVisitor::Frame::print(int indentLevel)
 using JSC::StackVisitor;
 
 // For debugging use
-void debugPrintCallFrame(JSC::CallFrame*);
-void debugPrintStack(JSC::CallFrame* topCallFrame);
+JS_EXPORT_PRIVATE void debugPrintCallFrame(JSC::CallFrame*);
+JS_EXPORT_PRIVATE void debugPrintStack(JSC::CallFrame* topCallFrame);
 
 class DebugPrintFrameFunctor {
 public:

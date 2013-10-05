@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,92 +29,28 @@
 
 #include "JavaScriptCallFrame.h"
 
-#include "JSDOMBinding.h"
-#include "JSDOMWindowBase.h"
 #include <debugger/DebuggerCallFrame.h>
-#include <runtime/Completion.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
-#include <runtime/JSObject.h>
-#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
 namespace WebCore {
-    
-JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller)
+
+JavaScriptCallFrame::JavaScriptCallFrame(PassRefPtr<DebuggerCallFrame> debuggerCallFrame)
     : m_debuggerCallFrame(debuggerCallFrame)
-    , m_caller(caller)
-    , m_isValid(true)
 {
 }
 
 JavaScriptCallFrame* JavaScriptCallFrame::caller()
 {
+    if (m_caller)
+        return m_caller.get();
+
+    RefPtr<DebuggerCallFrame> debuggerCallerFrame = m_debuggerCallFrame->callerFrame();
+    if (!debuggerCallerFrame)
+        return 0;
+
+    m_caller = create(debuggerCallerFrame);
     return m_caller.get();
-}
-
-JSC::JSScope* JavaScriptCallFrame::scopeChain() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return 0;
-    return m_debuggerCallFrame.scope();
-}
-
-JSC::JSGlobalObject* JavaScriptCallFrame::dynamicGlobalObject() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return 0;
-    return m_debuggerCallFrame.dynamicGlobalObject();
-}
-
-String JavaScriptCallFrame::functionName() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return String();
-    String functionName = m_debuggerCallFrame.calculatedFunctionName();
-    if (functionName.isEmpty())
-        return String();
-    return functionName;
-}
-
-DebuggerCallFrame::Type JavaScriptCallFrame::type() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return DebuggerCallFrame::ProgramType;
-    return m_debuggerCallFrame.type();
-}
-
-JSObject* JavaScriptCallFrame::thisObject() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return 0;
-    return m_debuggerCallFrame.thisObject();
-}
-
-ExecState* JavaScriptCallFrame::exec() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return 0;
-    return m_debuggerCallFrame.callFrame();
-}
-
-// Evaluate some JavaScript code in the scope of this frame.
-JSValue JavaScriptCallFrame::evaluate(const String& script, JSValue& exception) const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return jsNull();
-
-    JSLockHolder lock(m_debuggerCallFrame.callFrame());
-    return m_debuggerCallFrame.evaluate(script, exception);
 }
 
 } // namespace WebCore

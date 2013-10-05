@@ -127,25 +127,4 @@ void Debugger::recompileAllJSFunctions(VM* vm)
     vm->heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
 }
 
-JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGlobalObject* globalObject)
-{
-    CallFrame* globalCallFrame = globalObject->globalExec();
-    VM& vm = globalObject->vm();
-
-    EvalExecutable* eval = EvalExecutable::create(globalCallFrame, makeSource(script), false);
-    if (!eval) {
-        exception = vm.exception();
-        vm.clearException();
-        return exception;
-    }
-
-    JSValue result = vm.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scope());
-    if (vm.exception()) {
-        exception = vm.exception();
-        vm.clearException();
-    }
-    ASSERT(result);
-    return result;
-}
-
 } // namespace JSC

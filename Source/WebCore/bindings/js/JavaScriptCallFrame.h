@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,58 +39,30 @@ namespace WebCore {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
-    static PassRefPtr<JavaScriptCallFrame> create(const JSC::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller)
+    static PassRefPtr<JavaScriptCallFrame> create(PassRefPtr<JSC::DebuggerCallFrame> debuggerCallFrame)
     {
-        return adoptRef(new JavaScriptCallFrame(debuggerCallFrame, caller));
+        return adoptRef(new JavaScriptCallFrame(debuggerCallFrame));
     }
-
-    void invalidate()
-    {
-        m_isValid = false;
-        m_debuggerCallFrame.clear();
-    }
-
-    bool isValid() const { return m_isValid; }
 
     JavaScriptCallFrame* caller();
+    intptr_t sourceID() const { return m_debuggerCallFrame->sourceId(); }
+    const TextPosition position() const { return m_debuggerCallFrame->position(); }
+    int line() const { return m_debuggerCallFrame->line(); }
+    int column() const { return m_debuggerCallFrame->column(); }
 
-    intptr_t sourceID() const { return m_debuggerCallFrame.sourceId(); }
-    const TextPosition position() const
-    {
-        OrdinalNumber line = WTF::OrdinalNumber::fromOneBasedInt(m_debuggerCallFrame.line());
-        OrdinalNumber column = WTF::OrdinalNumber::fromOneBasedInt(m_debuggerCallFrame.column());
-        return TextPosition(line, column);
-    }
-    int line() const
-    {
-        return WTF::OrdinalNumber::fromOneBasedInt(m_debuggerCallFrame.line()).zeroBasedInt();
-    }
-    int column() const
-    {
-        return WTF::OrdinalNumber::fromOneBasedInt(m_debuggerCallFrame.column()).zeroBasedInt();
-    }
+    String functionName() const { return m_debuggerCallFrame->functionName(); }
+    JSC::DebuggerCallFrame::Type type() const { return m_debuggerCallFrame->type(); }
+    JSC::JSScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
+    JSC::JSGlobalObject* dynamicGlobalObject() const { return m_debuggerCallFrame->dynamicGlobalObject(); }
 
-    void update(const JSC::DebuggerCallFrame& debuggerCallFrame)
-    {
-        m_debuggerCallFrame = debuggerCallFrame;
-        m_isValid = true;
-    }
-
-    String functionName() const;
-    JSC::DebuggerCallFrame::Type type() const;
-    JSC::JSScope* scopeChain() const;
-    JSC::JSGlobalObject* dynamicGlobalObject() const;
-    JSC::ExecState* exec() const;
-
-    JSC::JSObject* thisObject() const;
-    JSC::JSValue evaluate(const String& script, JSC::JSValue& exception) const;
+    JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }
+    JSC::JSValue evaluate(const String& script, JSC::JSValue& exception) const  { return m_debuggerCallFrame->evaluate(script, exception); }
     
 private:
-    JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller);
+    JavaScriptCallFrame(PassRefPtr<JSC::DebuggerCallFrame>);
 
-    JSC::DebuggerCallFrame m_debuggerCallFrame;
+    RefPtr<JSC::DebuggerCallFrame> m_debuggerCallFrame;
     RefPtr<JavaScriptCallFrame> m_caller;
-    bool m_isValid;
 };
 
 } // namespace WebCore

@@ -50,7 +50,6 @@ class ExecState;
 }
 namespace WebCore {
 
-class JavaScriptCallFrame;
 class ScriptDebugListener;
 class ScriptObject;
 class ScriptValue;
@@ -135,9 +134,16 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    void createCallFrame(JSC::CallFrame*);
+    // These update functions are only needed because our current breakpoints are
+    // key'ed off the source position instead of the bytecode PC. This ensures
+    // that we don't break on the same line more than once. Once we switch to a
+    // bytecode PC key'ed breakpoint, we will not need these anymore and should
+    // be able to remove them.
+    void updateCallFrame(JSC::CallFrame*);
     void updateCallFrameAndPauseIfNeeded(JSC::CallFrame*);
-    void pauseIfNeeded(JSC::JSGlobalObject* dynamicGlobalObject);
+    void pauseIfNeeded(JSC::CallFrame*);
+
+    JSC::DebuggerCallFrame* currentDebuggerCallFrame() const;
 
     virtual void detach(JSC::JSGlobalObject*) OVERRIDE;
 
@@ -151,8 +157,8 @@ protected:
     virtual void didReachBreakpoint(JSC::CallFrame*) OVERRIDE;
 
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
-    typedef HashMap<long, BreakpointsInLine> LineToBreakpointMap;
-    typedef HashMap<intptr_t, LineToBreakpointMap> SourceIdToBreakpointsMap;
+    typedef HashMap<int, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int> > LineToBreakpointsMap;
+    typedef HashMap<intptr_t, LineToBreakpointsMap> SourceIdToBreakpointsMap;
 
     bool m_callingListeners;
     PauseOnExceptionsState m_pauseOnExceptionsState;
@@ -161,13 +167,16 @@ protected:
     bool m_runningNestedMessageLoop;
     bool m_doneProcessingDebuggerEvents;
     bool m_breakpointsActivated;
-    JavaScriptCallFrame* m_pauseOnCallFrame;
-    RefPtr<JavaScriptCallFrame> m_currentCallFrame;
+    JSC::CallFrame* m_pauseOnCallFrame;
+    JSC::CallFrame* m_currentCallFrame;
+    RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
     SourceIdToBreakpointsMap m_sourceIdToBreakpoints;
     Timer<ScriptDebugServer> m_recompileTimer;
 
     int m_lastExecutedLine;
     intptr_t m_lastExecutedSourceId;
+
+    friend class DebuggerCallFrameScope;
 };
 
 } // namespace WebCore

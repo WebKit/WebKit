@@ -1,3 +1,74 @@
+2013-10-04  Mark Lam  <mark.lam@apple.com>
+
+        Change ScriptDebugServer to use DebuggerCallFrame instead of JavaScriptCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=121969.
+
+        Reviewed by Geoffrey Garen.
+
+        Tests: inspector-protocol/debugger/call-frame-function-name.html
+               inspector-protocol/debugger/call-frame-this-host.html
+               inspector-protocol/debugger/call-frame-this-nonstrict.html
+               inspector-protocol/debugger/call-frame-this-strict.html
+
+        1. Make JavaScriptCallFrame a thin shell around the DebuggerCallFrame.
+           DebuggerCallFrame now tracks whether it is valid instead of needing
+           JavaScriptCallFrame do it.
+        2. ScriptDebugServer now only instantiates an DebuggerCallFrame when needed
+           just before it pauses and calls back to its client, and then invalidates
+           it immediately when the callback returns. Every subsequent callback to
+           the client will use a new instance of the DebuggerCallFrame.
+        3. Similarly, ScriptDebugServer now only creates a JavaScriptCallFrame when
+           it "pauses".
+        4. DebuggerCallFrame only creates its caller DebuggerCallFrame when
+           it is needed i.e. when the client calls callerFrame(). Similarly,
+           JavaScriptCallFrame only creates its caller when it's requested.
+        5. DebuggerCallFrame's line() and column() now returns a base-zero int.
+        6. WebScriptDebugDelegate now only caches the functionName of the frame
+           instead of the entire DebuggerCallFrame because that is all that is
+           needed.
+        7. Also removed evaluateInGlobalCallFrame() which is not used anywhere.
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::thisObject):
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::JavaScriptCallFrame):
+        (WebCore::JavaScriptCallFrame::caller):
+        * bindings/js/JavaScriptCallFrame.h:
+        (WebCore::JavaScriptCallFrame::create):
+        (WebCore::JavaScriptCallFrame::sourceID):
+        (WebCore::JavaScriptCallFrame::position):
+        (WebCore::JavaScriptCallFrame::line):
+        (WebCore::JavaScriptCallFrame::column):
+        (WebCore::JavaScriptCallFrame::functionName):
+        (WebCore::JavaScriptCallFrame::type):
+        (WebCore::JavaScriptCallFrame::scopeChain):
+        (WebCore::JavaScriptCallFrame::dynamicGlobalObject):
+        (WebCore::JavaScriptCallFrame::thisValue):
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::DebuggerCallFrameScope::DebuggerCallFrameScope):
+        (WebCore::DebuggerCallFrameScope::~DebuggerCallFrameScope):
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::evaluateBreakpointAction):
+        (WebCore::ScriptDebugServer::breakProgram):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::currentDebuggerCallFrame):
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        (WebCore::ScriptDebugServer::updateCallFrame):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        (WebCore::ScriptDebugServer::callEvent):
+        (WebCore::ScriptDebugServer::returnEvent):
+        (WebCore::ScriptDebugServer::willExecuteProgram):
+        (WebCore::ScriptDebugServer::didExecuteProgram):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::willExecuteProgram):
+
 2013-10-04  Andreas Kling  <akling@apple.com>
 
         Ref-ify more stack guards.

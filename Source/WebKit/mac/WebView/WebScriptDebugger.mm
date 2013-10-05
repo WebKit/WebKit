@@ -46,7 +46,7 @@ using namespace JSC;
 using namespace WebCore;
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame exceptionValue:(JSC::JSValue)exceptionValue;
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj functionName:(String)functionName exceptionValue:(JSC::JSValue)exceptionValue;
 @end
 
 static NSString *toNSString(SourceProvider* sourceProvider)
@@ -125,15 +125,16 @@ void WebScriptDebugger::exception(JSC::CallFrame* callFrame, JSC::JSValue except
 
     WebFrame *webFrame = toWebFrame(callFrame->dynamicGlobalObject());
     WebView *webView = [webFrame webView];
-    DebuggerCallFrame debuggerCallFrame(callFrame);
-    RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debuggerCallFrame:debuggerCallFrame exceptionValue:exceptionValue]);
+    RefPtr<DebuggerCallFrame> debuggerCallFrame = DebuggerCallFrame::create(callFrame);
+    String functionName = debuggerCallFrame->functionName();
+    RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() functionName:functionName exceptionValue:exceptionValue]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
     if (cache->exceptionWasRaisedFunc) {
         if (cache->exceptionWasRaisedExpectsHasHandlerFlag)
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), webCallFrame.get(), hasHandler, debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), webCallFrame.get(), hasHandler, debuggerCallFrame->sourceId(), debuggerCallFrame->line(), webFrame);
         else
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), webCallFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), webCallFrame.get(), debuggerCallFrame->sourceId(), debuggerCallFrame->line(), webFrame);
     }
 
     m_callingDelegate = false;

@@ -1,3 +1,22 @@
+2013-10-04  Mark Lam  <mark.lam@apple.com>
+
+        Change ScriptDebugServer to use DebuggerCallFrame instead of JavaScriptCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=121969.
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector-protocol/debugger/call-frame-function-name-expected.txt: Added.
+        * inspector-protocol/debugger/call-frame-function-name.html: Added.
+        * inspector-protocol/debugger/call-frame-this-host-expected.txt: Added.
+        * inspector-protocol/debugger/call-frame-this-host.html: Added.
+        * inspector-protocol/debugger/call-frame-this-nonstrict-expected.txt: Added.
+        * inspector-protocol/debugger/call-frame-this-nonstrict.html: Added.
+        * inspector-protocol/debugger/call-frame-this-strict-expected.txt: Added.
+        * inspector-protocol/debugger/call-frame-this-strict.html: Added.
+        * inspector/debugger/pause-in-internal-script-expected.txt:
+
 2013-10-04  Frédéric Wang  <fred.wang@free.fr>
 
         [MathML] Remove RenderTree modification during layout and refactor the StretchyOp code
