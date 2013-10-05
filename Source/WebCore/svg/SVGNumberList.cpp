@@ -53,7 +53,7 @@ String SVGNumberList::valueAsString() const
         if (i > 0)
             builder.append(' ');
 
-        builder.append(String::number(at(i)));
+        builder.appendNumber(at(i));
     }
 
     return builder.toString();

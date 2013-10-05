@@ -1,3 +1,13 @@
+2013-10-05  Darin Adler  <darin@apple.com>
+
+        Cut down on use of String::number
+        https://bugs.webkit.org/show_bug.cgi?id=122382
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpChangedLayers): Use StringBuilder::appendNumber.
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Fix cut and paste errors.

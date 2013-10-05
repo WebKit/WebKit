@@ -11883,7 +11883,7 @@ PassRefPtr<StyleKeyframe> CSSParser::createKeyframe(CSSParserValueList& keys)
         }
         if (i != 0)
             keyString.append(',');
-        keyString.append(String::number(key));
+        keyString.appendNumber(key);
         keyString.append('%');
     }
 

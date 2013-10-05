@@ -1,3 +1,23 @@
+2013-10-05  Darin Adler  <darin@apple.com>
+
+        Cut down on use of String::number
+        https://bugs.webkit.org/show_bug.cgi?id=122382
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::putByIndex): Use Identifier::from instead of calling
+        String::number and creating an identifier from that. Can save creating and then
+        destroying a string if an identifier already exists.
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlotByIndex): Ditto.
+        (JSC::Arguments::getOwnPropertyNames): Ditto.
+        (JSC::Arguments::putByIndex): Ditto.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::getOwnPropertyNames): Ditto.
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames): Ditto.
+
 2013-10-04  Mark Lam  <mark.lam@apple.com>
 
         Change ScriptDebugServer to use DebuggerCallFrame instead of JavaScriptCallFrame.

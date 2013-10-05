@@ -429,7 +429,7 @@ void JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
     
     for (unsigned i = 0; i < thisObject->m_length; ++i)
-        array.add(Identifier(exec, String::number(i)));
+        array.add(Identifier::from(exec, i));
     
     return Base::getOwnPropertyNames(object, exec, array, mode);
 }

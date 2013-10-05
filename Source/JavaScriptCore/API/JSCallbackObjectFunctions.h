@@ -279,7 +279,7 @@ void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigne
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(exec, value);
-    Identifier propertyName = Identifier(exec, String::number(propertyIndex));
+    Identifier propertyName = Identifier::from(exec, propertyIndex);
 
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {

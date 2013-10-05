@@ -219,9 +219,9 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, Re
             builder.append('\n');
             writeIndent(builder, 3);
             builder.append("(position ");
-            builder.append(String::number(layerProperties.position.x()));
-            builder.append(" ");
-            builder.append(String::number(layerProperties.position.y()));
+            builder.appendNumber(layerProperties.position.x());
+            builder.append(' ');
+            builder.appendNumber(layerProperties.position.y());
             builder.append(')');
         }
 
@@ -229,9 +229,9 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, Re
             builder.append('\n');
             writeIndent(builder, 3);
             builder.append("(size ");
-            builder.append(String::number(layerProperties.size.width()));
-            builder.append(" ");
-            builder.append(String::number(layerProperties.size.height()));
+            builder.appendNumber(layerProperties.size.width());
+            builder.append(' ');
+            builder.appendNumber(layerProperties.size.height());
             builder.append(')');
         }
 

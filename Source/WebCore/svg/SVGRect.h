@@ -33,13 +33,13 @@ struct SVGPropertyTraits<FloatRect> {
     static String toString(const FloatRect& type)
     {
         StringBuilder builder;
-        builder.append(String::number(type.x()));
+        builder.appendNumber(type.x());
         builder.append(' ');
-        builder.append(String::number(type.y()));
+        builder.appendNumber(type.y());
         builder.append(' ');
-        builder.append(String::number(type.width()));
+        builder.appendNumber(type.width());
         builder.append(' ');
-        builder.append(String::number(type.height()));
+        builder.appendNumber(type.height());
         return builder.toString();
     }
 };

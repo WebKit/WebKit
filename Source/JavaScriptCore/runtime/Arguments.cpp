@@ -98,7 +98,7 @@ bool Arguments::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, uns
         return true;
     }
 
-    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier(exec, String::number(i)), slot);
+    return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);
 }
     
 void Arguments::createStrictModeCallerIfNecessary(ExecState* exec)
@@ -160,7 +160,7 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     for (unsigned i = 0; i < thisObject->m_numArguments; ++i) {
         if (!thisObject->isArgument(i))
             continue;
-        propertyNames.add(Identifier(exec, String::number(i)));
+        propertyNames.add(Identifier::from(exec, i));
     }
     if (mode == IncludeDontEnumProperties) {
         propertyNames.add(exec->propertyNames().callee);
@@ -176,7 +176,7 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
         return;
 
     PutPropertySlot slot(shouldThrow);
-    JSObject::put(thisObject, exec, Identifier(exec, String::number(i)), value, slot);
+    JSObject::put(thisObject, exec, Identifier::from(exec, i), value, slot);
 }
 
 void Arguments::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

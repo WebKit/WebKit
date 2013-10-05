@@ -1,3 +1,15 @@
+2013-10-05  Darin Adler  <darin@apple.com>
+
+        Cut down on use of String::number
+        https://bugs.webkit.org/show_bug.cgi?id=122382
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/DateMath.cpp:
+        (WTF::appendTwoDigitNumber): Added. Replaces twoDigitStringFromNumber, which returned a
+        String and also allocated a temporary string for any number 10 or higher.
+        (WTF::makeRFC2822DateString): Updated to use the new function.
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Test the waters and begin using lambdas
