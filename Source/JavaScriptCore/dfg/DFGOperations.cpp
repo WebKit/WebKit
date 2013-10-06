@@ -997,7 +997,7 @@ JSCell* JIT_OPERATION operationNewStringObject(ExecState* exec, JSString* string
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
-    return StringObject::create(exec, structure, string);
+    return StringObject::create(vm, structure, string);
 }
 
 JSCell* JIT_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)

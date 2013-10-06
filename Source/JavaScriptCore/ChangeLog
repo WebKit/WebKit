@@ -1,3 +1,12 @@
+2013-10-05  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to StringObject constructor.
+        <https://webkit.org/b/122395>
+
+        Reviewed by Sam Weinig.
+
+        StringObject() only uses the ExecState to find the VM.
+
 2013-10-05  Filip Pizlo  <fpizlo@apple.com>
 
         Compress DFG stack layout

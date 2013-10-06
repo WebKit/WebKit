@@ -92,10 +92,12 @@ JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+    VM& vm = exec->vm();
+
     if (!exec->argumentCount())
-        return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
+        return JSValue::encode(StringObject::create(vm, globalObject->stringObjectStructure()));
     
-    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->uncheckedArgument(0).toString(exec)));
+    return JSValue::encode(StringObject::create(vm, globalObject->stringObjectStructure(), exec->uncheckedArgument(0).toString(exec)));
 }
 
 ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constructData)

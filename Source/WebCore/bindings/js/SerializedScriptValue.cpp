@@ -1591,12 +1591,13 @@ private:
             CachedStringRef cachedString;
             if (!readStringData(cachedString))
                 return JSValue();
-            StringObject* obj = constructString(m_exec, m_globalObject, cachedString->jsString(m_exec));
+            StringObject* obj = constructString(m_exec->vm(), m_globalObject, cachedString->jsString(m_exec));
             m_gcBuffer.append(obj);
             return obj;
         }
         case EmptyStringObjectTag: {
-            StringObject* obj = constructString(m_exec, m_globalObject, jsEmptyString(&m_exec->vm()));
+            VM& vm = m_exec->vm();
+            StringObject* obj = constructString(vm, m_globalObject, jsEmptyString(&vm));
             m_gcBuffer.append(obj);
             return obj;
         }

@@ -262,23 +262,23 @@ double JSString::toNumber(ExecState* exec) const
     return jsToNumber(value(exec));
 }
 
-inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
+inline StringObject* StringObject::create(VM& vm, JSGlobalObject* globalObject, JSString* string)
 {
-    StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->vm(), globalObject->stringObjectStructure());
-    object->finishCreation(exec->vm(), string);
+    StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, globalObject->stringObjectStructure());
+    object->finishCreation(vm, string);
     return object;
 }
 
 JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
-    return StringObject::create(exec, globalObject, const_cast<JSString*>(this));
+    return StringObject::create(exec->vm(), globalObject, const_cast<JSString*>(this));
 }
 
 JSValue JSString::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)
         return cell;
-    return StringObject::create(exec, exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
+    return StringObject::create(exec->vm(), exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
 }
 
 bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

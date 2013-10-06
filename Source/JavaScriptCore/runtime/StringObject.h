@@ -30,20 +30,20 @@ namespace JSC {
     public:
         typedef JSWrapperObject Base;
 
-        static StringObject* create(ExecState* exec, Structure* structure)
+        static StringObject* create(VM& vm, Structure* structure)
         {
-            JSString* string = jsEmptyString(exec);
-            StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->vm(), structure);  
-            object->finishCreation(exec->vm(), string);
+            JSString* string = jsEmptyString(&vm);
+            StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+            object->finishCreation(vm, string);
             return object;
         }
-        static StringObject* create(ExecState* exec, Structure* structure, JSString* string)
+        static StringObject* create(VM& vm, Structure* structure, JSString* string)
         {
-            StringObject* object = new (NotNull, allocateCell<StringObject>(*exec->heap())) StringObject(exec->vm(), structure);
-            object->finishCreation(exec->vm(), string);
+            StringObject* object = new (NotNull, allocateCell<StringObject>(vm.heap)) StringObject(vm, structure);
+            object->finishCreation(vm, string);
             return object;
         }
-        static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
+        static StringObject* create(VM&, JSGlobalObject*, JSString*);
 
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
@@ -79,7 +79,7 @@ namespace JSC {
         return static_cast<StringObject*>(asObject(value));
     }
 
-    JS_EXPORT_PRIVATE StringObject* constructString(ExecState*, JSGlobalObject*, JSValue);
+    JS_EXPORT_PRIVATE StringObject* constructString(VM&, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

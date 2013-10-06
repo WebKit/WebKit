@@ -155,10 +155,10 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-StringObject* constructString(ExecState* exec, JSGlobalObject* globalObject, JSValue string)
+StringObject* constructString(VM& vm, JSGlobalObject* globalObject, JSValue string)
 {
-    StringObject* object = StringObject::create(exec, globalObject->stringObjectStructure());
-    object->setInternalValue(exec->vm(), string);
+    StringObject* object = StringObject::create(vm, globalObject->stringObjectStructure());
+    object->setInternalValue(vm, string);
     return object;
 }
 
