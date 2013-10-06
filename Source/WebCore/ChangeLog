@@ -1,3 +1,14 @@
+2013-10-06  Sam Weinig  <sam@webkit.org>
+
+        Fix windows build.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::fragmentFromCFHTML):
+        (WebCore::fragmentFromHTML):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeRangeToDataObject):
+        (WebCore::Pasteboard::writeSelection):
+
 2013-10-05  Sam Weinig  <sam@webkit.org>
 
         CTTE: Thread references through markup.h
