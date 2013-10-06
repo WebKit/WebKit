@@ -125,19 +125,42 @@ BenchmarkRunner.suite({
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 newTodo.value = 'Something to do ' + i;
                 app.create.call(newTodo, fakeEvent);
-                }
+            }
         }],
         ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var app = contentWindow.app;
             var checkboxes = contentDocument.querySelectorAll('.toggle');
+            var $ = contentWindow.$;
+
+            itemIndexToId = new Array(checkboxes.length);
             for (var i = 0; i < checkboxes.length; i++)
-            app.toggle.call(checkboxes[i]);
+                itemIndexToId[i] = $(checkboxes[i]).closest('li').data('id');
+
+            app.getTodo = function (element, callback) {
+                var self = this;
+                var id = itemIndexToId[this.currentItemIndex];
+                $.each(this.todos, function (j, val) {
+                    if (val.id === id) {
+                        callback.apply(self, arguments);
+                        return false;
+                    }
+                });
+            }
+
+            for (var i = 0; i < checkboxes.length; i++) {
+                app.currentItemIndex = i;
+                app.toggle.call(checkboxes[i]);
+            }
         }],
         ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            contentDocument.querySelector('#clear-completed').click();
             var app = contentWindow.app;
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
-            app.destroy.call(deleteButtons[i]);
+
+            for (var i = 0; i < deleteButtons.length; i++) {
+                app.currentItemIndex = i;
+                app.destroy.call(deleteButtons[i]);
+            }
         }],
     ]
 });
@@ -252,14 +275,15 @@ BenchmarkRunner.suite({
         ['Sending' + actionCount + 'NewEmails', function (newTodo, contentWindow, contentDocument) {
             for (var i = 0; i < actionCount; i++) {
                 contentDocument.getElementById('new_mail').click();
+                contentDocument.getElementById('recipient_select').selectedIndex = 1;
                 var subject = contentDocument.getElementById('compose_subject');
                 var message = contentDocument.getElementById('compose_message');
                 subject.focus();
                 contentWindow.$(subject).trigger('keydown');
-                contentDocument.execCommand('InsertText', false, 'Hello');
+                contentWindow.$(subject).text('Hello');
                 message.focus();
                 contentWindow.$(message).trigger('keydown');
-                contentDocument.execCommand('InsertText', false, 'Hello,\n\nThis is a test message.\n\n- WebKitten');
+                contentWindow.$(message).text('Hello,\n\nThis is a test message.\n\n- WebKitten');
                 contentDocument.getElementById('send_composed').click();
             }
         }],

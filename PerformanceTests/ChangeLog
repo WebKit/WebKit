@@ -1,3 +1,19 @@
+2013-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DoYouEvenBench: Make it work on Internet Explorer 11 Release Preview
+        https://bugs.webkit.org/show_bug.cgi?id=122406
+
+        Reviewed by Darin Adler.
+
+        On Internet Explorer 11, $(elem).closest('li').data('id') fails to find the containig li of elem once
+        the first item is marked complete or deleted until we get back to the event loop in the jQuery/TodoMVC.
+        Worked around this limitation by overriding app.getTodo to use each item's id computed in advance.
+
+        Also use $.text instead of execCommand('InsertText') in FlightJS/MailClient since Internet Explorer
+        doesn't support execCommand('InsertText'). Also select the recipient to avoid exceptions.
+
+        * DoYouEvenBench/benchmark.html:
+
 2013-10-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         DoYouEvenBench: Add Facebook's React TodoMVC test case
