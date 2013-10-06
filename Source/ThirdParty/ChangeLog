@@ -1,3 +1,13 @@
+2013-10-06  Darin Adler  <darin@apple.com>
+
+        Remove unneeded ScriptGCEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=122390
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/gtest.xcodeproj/project.pbxproj: Let Xcode update this file.
+        Not really part of this bug fix, but good to land anyway.
+
 2013-09-29  Darin Adler  <darin@apple.com>
 
         Take some Xcode advice about turning on additional warnings in ANGLE and gtest

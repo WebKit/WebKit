@@ -126,7 +126,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/ScriptController.cpp
     bindings/js/ScriptDebugServer.cpp
     bindings/js/ScriptFunctionCall.cpp
-    bindings/js/ScriptGCEvent.cpp
     bindings/js/ScriptObject.cpp
     bindings/js/ScriptProfile.cpp
     bindings/js/ScriptProfiler.cpp

@@ -31,7 +31,7 @@
 #ifndef MemoryInfo_h
 #define MemoryInfo_h
 
-#include "ScriptGCEvent.h"
+#include "JSDOMWindow.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -41,16 +41,18 @@ class MemoryInfo : public RefCounted<MemoryInfo> {
 public:
     static PassRefPtr<MemoryInfo> create() { return adoptRef(new MemoryInfo); }
 
-    size_t usedJSHeapSize() const { return m_info.usedJSHeapSize; }
-    size_t totalJSHeapSize() const { return m_info.totalJSHeapSize; }
+    size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
+    size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
 
 private:
-    explicit MemoryInfo()
+    MemoryInfo()
+        : m_usedJSHeapSize(JSDOMWindow::commonVM()->heap.size())
+        , m_totalJSHeapSize(JSDOMWindow::commonVM()->heap.capacity())
     {
-        ScriptGCEvent::getHeapSize(m_info);
     }
 
-    HeapInfo m_info;
+    size_t m_usedJSHeapSize;
+    size_t m_totalJSHeapSize;
 };
 
 } // namespace WebCore

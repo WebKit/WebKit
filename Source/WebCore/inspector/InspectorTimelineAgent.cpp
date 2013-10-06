@@ -47,12 +47,12 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "JSDOMWindow.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TimelineRecordFactory.h"
-
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -67,26 +67,6 @@ static const char includeNativeMemoryStatistics[] = "includeNativeMemoryStatisti
 void TimelineTimeConverter::reset()
 {
     m_startOffset = monotonicallyIncreasingTime() - currentTime();
-}
-
-void InspectorTimelineAgent::pushGCEventRecords()
-{
-    if (!m_gcEvents.size())
-        return;
-
-    GCEvents events = m_gcEvents;
-    m_gcEvents.clear();
-    for (GCEvents::iterator i = events.begin(); i != events.end(); ++i) {
-        RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(m_timeConverter.fromMonotonicallyIncreasingTime(i->startTime), m_maxCallStackDepth);
-        record->setObject("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
-        record->setNumber("endTime", m_timeConverter.fromMonotonicallyIncreasingTime(i->endTime));
-        addRecordToTimeline(record.release(), TimelineRecordType::GCEvent);
-    }
-}
-
-void InspectorTimelineAgent::didGC(double startTime, double endTime, size_t collectedBytesCount)
-{
-    m_gcEvents.append(GCEvent(startTime, endTime, collectedBytesCount));
 }
 
 InspectorTimelineAgent::~InspectorTimelineAgent()
@@ -132,7 +112,6 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, c
     m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
-    ScriptGCEvent::addEventListener(this);
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
 }
 
@@ -143,10 +122,8 @@ void InspectorTimelineAgent::stop(ErrorString*)
 
     m_weakFactory.revokeAll();
     m_instrumentingAgents->setInspectorTimelineAgent(0);
-    ScriptGCEvent::removeEventListener(this);
 
     clearRecordStack();
-    m_gcEvents.clear();
 
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
 }
@@ -528,8 +505,6 @@ static TypeBuilder::Timeline::EventType::Enum toProtocol(TimelineRecordType type
 
     case TimelineRecordType::FunctionCall:
         return TypeBuilder::Timeline::EventType::FunctionCall;
-    case TimelineRecordType::GCEvent:
-        return TypeBuilder::Timeline::EventType::GCEvent;
 
     case TimelineRecordType::RequestAnimationFrame:
         return TypeBuilder::Timeline::EventType::RequestAnimationFrame;
@@ -567,16 +542,14 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     }
 }
 
-static size_t getUsedHeapSize()
+static size_t usedHeapSize()
 {
-    HeapInfo info;
-    ScriptGCEvent::getHeapSize(info);
-    return info.usedJSHeapSize;
+    return JSDOMWindow::commonVM()->heap.size();
 }
 
 void InspectorTimelineAgent::setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record)
 {
-    record->setUsedHeapSize(getUsedHeapSize());
+    record->setUsedHeapSize(usedHeapSize());
 
     if (m_state->getBoolean(TimelineAgentState::includeDomCounters)) {
         int documentCount = 0;
@@ -609,14 +582,13 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
     // an event.  Don't treat as an error.
     if (!m_recordStack.isEmpty()) {
-        pushGCEventRecords();
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
         ASSERT(entry.type == type);
         entry.record->setObject("data", entry.data);
         entry.record->setArray("children", entry.children);
         entry.record->setNumber("endTime", timestamp());
-        size_t usedHeapSizeDelta = getUsedHeapSize() - entry.usedHeapSizeAtStart;
+        size_t usedHeapSizeDelta = usedHeapSize() - entry.usedHeapSizeAtStart;
         if (usedHeapSizeDelta)
             entry.record->setNumber("usedHeapSizeDelta", usedHeapSizeDelta);
         addRecordToTimeline(entry.record, type);
@@ -638,7 +610,6 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
 
 void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
-    pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     setFrameIdentifier(record.get(), frame);
@@ -654,11 +625,10 @@ void InspectorTimelineAgent::sendEvent(PassRefPtr<InspectorObject> event)
 
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, TimelineRecordType type, bool captureCallStack, Frame* frame)
 {
-    pushGCEventRecords();
     commitFrameRecord();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     setFrameIdentifier(record.get(), frame);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, getUsedHeapSize()));
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, usedHeapSize()));
 }
 
 void InspectorTimelineAgent::commitFrameRecord()

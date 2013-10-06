@@ -438,7 +438,7 @@ EXPORTS
         symbolWithPointer(?toInt64@WebCore@@YA_JPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toInt64@WebCore@@YA_JPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z, ?toUInt32EnforceRange@WebCore@@YAIPEAVExecState@JSC@@VJSValue@3@@Z)
         symbolWithPointer(?toUInt64@WebCore@@YA_KPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toUInt64@WebCore@@YA_KPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
-        symbolWithPointer(?getHeapSize@ScriptGCEvent@WebCore@@SAXAAUHeapInfo@2@@Z, ?getHeapSize@ScriptGCEvent@WebCore@@SAXAEAUHeapInfo@2@@Z)
+        ?commonVM@JSDOMWindowBase@WebCore@@SAPAVVM@JSC@@XZ
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ

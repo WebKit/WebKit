@@ -150,7 +150,6 @@
 #include "ScriptController.cpp"
 #include "ScriptDebugServer.cpp"
 #include "ScriptFunctionCall.cpp"
-#include "ScriptGCEvent.cpp"
 #include "ScriptProfiler.cpp"
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"

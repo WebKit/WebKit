@@ -37,8 +37,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "LayoutRect.h"
-#include "ScriptGCEvent.h"
-#include "ScriptGCEventListener.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -100,7 +98,6 @@ ENUM_CLASS(TimelineRecordType) {
     XHRLoad,
 
     FunctionCall,
-    GCEvent,
 
     RequestAnimationFrame,
     CancelAnimationFrame,
@@ -127,7 +124,6 @@ private:
 
 class InspectorTimelineAgent
     : public InspectorBaseAgent<InspectorTimelineAgent>
-    , public ScriptGCEventListener
     , public InspectorBackendDispatcher::TimelineCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
@@ -223,9 +219,6 @@ public:
     void didDestroyWebSocket(unsigned long identifier, Frame*);
 #endif
 
-    // ScriptGCEventListener methods.
-    virtual void didGC(double, double, size_t);
-
 private:
     friend class TimelineRecordStack;
 
@@ -249,7 +242,6 @@ private:
 
     void setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record);
     void setFrameIdentifier(InspectorObject* record, Frame*);
-    void pushGCEventRecords();
 
     void didCompleteCurrentRecord(TimelineRecordType);
 
@@ -275,17 +267,6 @@ private:
     Vector<TimelineRecordEntry> m_recordStack;
 
     int m_id;
-    struct GCEvent {
-        GCEvent(double startTime, double endTime, size_t collectedBytes)
-            : startTime(startTime), endTime(endTime), collectedBytes(collectedBytes)
-        {
-        }
-        double startTime;
-        double endTime;
-        size_t collectedBytes;
-    };
-    typedef Vector<GCEvent> GCEvents;
-    GCEvents m_gcEvents;
     int m_maxCallStackDepth;
     RefPtr<InspectorObject> m_pendingFrameRecord;
     InspectorType m_inspectorType;

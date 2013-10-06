@@ -47,7 +47,6 @@
 #include "MemoryCache.h"
 #include "Node.h"
 #include "NodeTraversal.h"
-#include "ScriptGCEvent.h"
 #include "ScriptProfiler.h"
 #include "StyledElement.h"
 #include <runtime/ArrayBufferView.h>

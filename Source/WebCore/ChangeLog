@@ -1,3 +1,40 @@
+2013-10-06  Darin Adler  <darin@apple.com>
+
+        Remove unneeded ScriptGCEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=122390
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am: Removed ScriptGCEvent files.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.exp.in: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+        * bindings/js/ScriptGCEvent.cpp: Removed.
+        * bindings/js/ScriptGCEvent.h: Removed.
+
+        * inspector/InspectorMemoryAgent.cpp: Removed include.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start): Removed GC event listening.
+        Some day we might add it back, but for now it is dead code.
+        (WebCore::InspectorTimelineAgent::stop): Ditto.
+        (WebCore::usedHeapSize): Renamed from getUsedHeapSize and put the
+        implementation here instead of indirecting through ScriptGCEvent.
+        (WebCore::InspectorTimelineAgent::setDOMCounters): Updated for above changes.
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord): Ditto.
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord): Ditto.
+
+        * inspector/InspectorTimelineAgent.h: Removed include.
+
+        * inspector/ScriptGCEventListener.h: Removed.
+
+        * testing/MemoryInfo.h: Updated to get heap capacity and size directly
+        instead of going through ScriptGCEvent.
+
 2013-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue() for CSSCursorImageValue, CSSCubicBezierTimingFunctionValue, CSSStepsTimingFunctionValue and CSSUnicodeRangeValue
