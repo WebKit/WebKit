@@ -970,6 +970,7 @@ set(WebCore_SOURCES
     css/CSSFontFaceRule.cpp
     css/CSSFontFaceSource.cpp
     css/CSSFontFaceSrcValue.cpp
+    css/CSSFontFeatureValue.cpp
     css/CSSFontSelector.cpp
     css/CSSFontValue.cpp
     css/CSSFunctionValue.cpp
@@ -1010,7 +1011,6 @@ set(WebCore_SOURCES
     css/DeprecatedStyleBuilder.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
-    css/FontFeatureValue.cpp
     css/FontLoader.cpp
     css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp

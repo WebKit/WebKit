@@ -36,6 +36,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
@@ -50,7 +51,6 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
-#include "FontFeatureValue.h"
 #include "ShadowValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
@@ -183,7 +183,7 @@ bool CSSValue::equals(const CSSValue& other) const
         case FontFaceSrcClass:
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
         case FontFeatureClass:
-            return compareCSSValues<FontFeatureValue>(*this, other);
+            return compareCSSValues<CSSFontFeatureValue>(*this, other);
         case FunctionClass:
             return compareCSSValues<CSSFunctionValue>(*this, other);
         case LinearGradientClass:
@@ -285,7 +285,7 @@ String CSSValue::cssText() const
     case FontFaceSrcClass:
         return static_cast<const CSSFontFaceSrcValue*>(this)->customCSSText();
     case FontFeatureClass:
-        return static_cast<const FontFeatureValue*>(this)->customCSSText();
+        return static_cast<const CSSFontFeatureValue*>(this)->customCSSText();
     case FunctionClass:
         return static_cast<const CSSFunctionValue*>(this)->customCSSText();
     case LinearGradientClass:
@@ -402,7 +402,7 @@ void CSSValue::destroy()
         delete toCSSFontFaceSrcValue(this);
         return;
     case FontFeatureClass:
-        delete static_cast<FontFeatureValue*>(this);
+        delete toCSSFontFeatureValue(this);
         return;
     case FunctionClass:
         delete toCSSFunctionValue(this);

@@ -1,3 +1,40 @@
+2013-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *CSS* prefix to FontFeatureValue to generate toCSSFontFeatureValue(), and use it
+        https://bugs.webkit.org/show_bug.cgi?id=122204
+
+        Reviewed by Darin Adler.
+
+        *CSS* prefix needs to be added to FontFeatureValue class in order to generate toCSSFontFeatureValue().
+        static_cast<FontFeatureValue*> is changed with toCSSFontFeatureValue() by using this change.
+
+        No new tests, no behavior changes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontFeatureValue.cpp: Renamed from Source/WebCore/css/FontFeatureValue.cpp.
+        (WebCore::CSSFontFeatureValue::CSSFontFeatureValue):
+        (WebCore::CSSFontFeatureValue::customCSSText):
+        (WebCore::CSSFontFeatureValue::equals):
+        * css/CSSFontFeatureValue.h: Renamed from Source/WebCore/css/FontFeatureValue.h.
+        (WebCore::CSSFontFeatureValue::create):
+        (WebCore::CSSFontFeatureValue::tag):
+        (WebCore::CSSFontFeatureValue::value):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFeatureTag):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2013-10-05  Andreas Kling  <akling@apple.com>
 
         FrameSelection: Remove two unused member functions.

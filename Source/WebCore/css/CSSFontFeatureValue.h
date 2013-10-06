@@ -23,35 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FontFeatureValue.h"
+#ifndef CSSFontFeatureValue_h
+#define CSSFontFeatureValue_h
 
-#include "CSSParser.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
+#include "CSSValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-FontFeatureValue::FontFeatureValue(const String& tag, int value)
-    : CSSValue(FontFeatureClass)
-    , m_tag(tag)
-    , m_value(value)
-{
-}
+class CSSFontFeatureValue : public CSSValue {
+public:
+    static PassRefPtr<CSSFontFeatureValue> create(const String& tag, int value)
+    {
+        return adoptRef(new CSSFontFeatureValue(tag, value));
+    }
 
-String FontFeatureValue::customCSSText() const
-{
-    StringBuilder builder;
-    builder.append('\'');
-    builder.append(m_tag);
-    builder.appendLiteral("' ");
-    builder.appendNumber(m_value);
-    return builder.toString();
-}
+    const String& tag() const { return m_tag; }
+    int value() const { return m_value; }
+    String customCSSText() const;
 
-bool FontFeatureValue::equals(const FontFeatureValue& other) const
-{
-    return m_tag == other.m_tag && m_value == other.m_value;
-}
+    bool equals(const CSSFontFeatureValue&) const;
 
-}
+private:
+    CSSFontFeatureValue(const String&, int);
+
+    String m_tag;
+    const int m_value;
+};
+
+CSS_VALUE_TYPE_CASTS(FontFeatureValue)
+
+} // namespace
+
+#endif

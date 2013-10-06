@@ -36,6 +36,7 @@
 #include "CSSDefaultStyleSheets.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -59,7 +60,6 @@
 #include "DeprecatedStyleBuilder.h"
 #include "DocumentStyleSheetCollection.h"
 #include "ElementRuleCollector.h"
-#include "FontFeatureValue.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -2706,7 +2706,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             CSSValue* item = list->itemWithoutBoundsCheck(i);
             if (!item->isFontFeatureValue())
                 continue;
-            FontFeatureValue* feature = static_cast<FontFeatureValue*>(item);
+            CSSFontFeatureValue* feature = toCSSFontFeatureValue(item);
             settings->append(FontFeature(feature->tag(), feature->value()));
         }
         fontDescription.setFeatureSettings(settings.release());

@@ -1507,8 +1507,8 @@
 		4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A5A2ADA161E7E00005889DD /* WebSocketExtensionParser.h */; };
 		4A5CB1C516C3A5FD00AB2886 /* EventRetargeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A5CB1C316C3A5FD00AB2886 /* EventRetargeter.cpp */; };
 		4A5CB1C616C3A5FD00AB2886 /* EventRetargeter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A5CB1C416C3A5FD00AB2886 /* EventRetargeter.h */; };
-		4A6E9FC313C17D1D0046A7F8 /* FontFeatureValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */; };
-		4A6E9FC413C17D1D0046A7F8 /* FontFeatureValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4A6E9FC313C17D1D0046A7F8 /* CSSFontFeatureValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E9FC113C17D1D0046A7F8 /* CSSFontFeatureValue.cpp */; };
+		4A6E9FC413C17D1D0046A7F8 /* CSSFontFeatureValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC213C17D1D0046A7F8 /* CSSFontFeatureValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E9FC513C17D570046A7F8 /* FontFeatureSettings.cpp */; };
 		4A6E9FC813C17D570046A7F8 /* FontFeatureSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6E9FC613C17D570046A7F8 /* FontFeatureSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A8C96EB0BE69032004EEFF0 /* FrameSelectionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4A8C96EA0BE69032004EEFF0 /* FrameSelectionMac.mm */; };
@@ -8022,8 +8022,8 @@
 		4A5A2ADA161E7E00005889DD /* WebSocketExtensionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketExtensionParser.h; path = Modules/websockets/WebSocketExtensionParser.h; sourceTree = "<group>"; };
 		4A5CB1C316C3A5FD00AB2886 /* EventRetargeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventRetargeter.cpp; sourceTree = "<group>"; };
 		4A5CB1C416C3A5FD00AB2886 /* EventRetargeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventRetargeter.h; sourceTree = "<group>"; };
-		4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFeatureValue.cpp; sourceTree = "<group>"; };
-		4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFeatureValue.h; sourceTree = "<group>"; };
+		4A6E9FC113C17D1D0046A7F8 /* CSSFontFeatureValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFeatureValue.cpp; sourceTree = "<group>"; };
+		4A6E9FC213C17D1D0046A7F8 /* CSSFontFeatureValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFeatureValue.h; sourceTree = "<group>"; };
 		4A6E9FC513C17D570046A7F8 /* FontFeatureSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFeatureSettings.cpp; sourceTree = "<group>"; };
 		4A6E9FC613C17D570046A7F8 /* FontFeatureSettings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = FontFeatureSettings.h; sourceTree = "<group>"; };
 		4A8C96EA0BE69032004EEFF0 /* FrameSelectionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = FrameSelectionMac.mm; path = mac/FrameSelectionMac.mm; sourceTree = "<group>"; };
@@ -20088,6 +20088,8 @@
 				BC64B4D00CB4298A005F2B62 /* CSSFontFaceSource.h */,
 				BC64B4D10CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp */,
 				BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */,
+				4A6E9FC113C17D1D0046A7F8 /* CSSFontFeatureValue.cpp */,
+				4A6E9FC213C17D1D0046A7F8 /* CSSFontFeatureValue.h */,
 				BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */,
 				BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */,
 				A80E6CC70A1989CA007FB8C5 /* CSSFontValue.cpp */,
@@ -20192,8 +20194,6 @@
 				FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */,
 				FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */,
 				FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */,
-				4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */,
-				4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */,
 				409EBDB516B7EEA300CBA3FC /* FontLoader.h */,
 				409EBDB716B7EEBA00CBA3FC /* FontLoader.idl */,
 				CD4E0AFA11F7BC27009D3811 /* fullscreen.css */,
@@ -21635,6 +21635,7 @@
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
 				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
+				4A6E9FC413C17D1D0046A7F8 /* CSSFontFeatureValue.h in Headers */,
 				BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */,
 				A80E6CED0A1989CA007FB8C5 /* CSSFontValue.h in Headers */,
 				BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */,
@@ -22283,7 +22284,6 @@
 				371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */,
 				B2C3DA660D006CD600EF6F26 /* FontDescription.h in Headers */,
 				4A6E9FC813C17D570046A7F8 /* FontFeatureSettings.h in Headers */,
-				4A6E9FC413C17D1D0046A7F8 /* FontFeatureValue.h in Headers */,
 				B2C3DA680D006CD600EF6F26 /* FontGlyphs.h in Headers */,
 				409EBDB616B7EEA300CBA3FC /* FontLoader.h in Headers */,
 				0845680812B90DA600960A9F /* FontMetrics.h in Headers */,
@@ -25093,6 +25093,7 @@
 				A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */,
 				BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */,
 				BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */,
+				4A6E9FC313C17D1D0046A7F8 /* CSSFontFeatureValue.cpp in Sources */,
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
 				A80E6CF10A1989CA007FB8C5 /* CSSFontValue.cpp in Sources */,
 				BC02A6460E09AAE9004B6D2B /* CSSFunctionValue.cpp in Sources */,
@@ -25539,7 +25540,6 @@
 				37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */,
 				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */,
-				4A6E9FC313C17D1D0046A7F8 /* FontFeatureValue.cpp in Sources */,
 				E44EE3A817577EBD00EEE8CF /* FontGenericFamilies.cpp in Sources */,
 				B2C3DA670D006CD600EF6F26 /* FontGlyphs.cpp in Sources */,
 				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,

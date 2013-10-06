@@ -8648,6 +8648,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\css\CSSFontFeatureValue.cpp" />
     <ClCompile Include="..\css\CSSFontSelector.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -9086,7 +9087,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\css\FontFeatureValue.cpp" />
     <ClCompile Include="..\css\FontLoader.cpp" />
     <ClCompile Include="..\css\LengthFunctions.cpp" />
     <ClCompile Include="..\css\MediaAllInOne.cpp">
@@ -19357,6 +19357,7 @@
     <ClInclude Include="..\css\CSSFontFaceRule.h" />
     <ClInclude Include="..\css\CSSFontFaceSource.h" />
     <ClInclude Include="..\css\CSSFontFaceSrcValue.h" />
+    <ClInclude Include="..\css\CSSFontFeatureValue.h" />
     <ClInclude Include="..\css\CSSFontSelector.h" />
     <ClInclude Include="..\css\CSSFontValue.h" />
     <ClInclude Include="..\css\CSSFunctionValue.h" />
@@ -19399,7 +19400,6 @@
     <ClInclude Include="..\css\CSSValuePool.h" />
     <ClInclude Include="..\css\CSSVariableValue.h" />
     <ClInclude Include="..\css\DashboardRegion.h" />
-    <ClInclude Include="..\css\FontFeatureValue.h" />
     <ClInclude Include="..\css\FontLoader.h" />
     <ClInclude Include="..\css\LengthFunctions.h" />
     <ClInclude Include="..\css\MediaFeatureNames.h" />

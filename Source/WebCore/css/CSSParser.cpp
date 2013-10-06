@@ -36,6 +36,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
@@ -55,13 +56,9 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"
-#include "FontFeatureValue.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "HistogramSupport.h"
@@ -97,6 +94,10 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
+#endif
+
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
 #endif
 
 #if ENABLE(CSS_FILTERS)
@@ -9830,7 +9831,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
             m_valueList->next();
         }
     }
-    settings->append(FontFeatureValue::create(tag, tagValue));
+    settings->append(CSSFontFeatureValue::create(tag, tagValue));
     return true;
 }
 

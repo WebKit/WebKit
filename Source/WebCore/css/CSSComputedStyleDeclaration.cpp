@@ -30,6 +30,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -48,7 +49,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "FontFeatureSettings.h"
-#include "FontFeatureValue.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Pair.h"
 #include "PseudoElement.h"
@@ -2114,7 +2114,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (unsigned i = 0; i < featureSettings->size(); ++i) {
                 const FontFeature& feature = featureSettings->at(i);
-                RefPtr<FontFeatureValue> featureValue = FontFeatureValue::create(feature.tag(), feature.value());
+                RefPtr<CSSFontFeatureValue> featureValue = CSSFontFeatureValue::create(feature.tag(), feature.value());
                 list->append(featureValue.release());
             }
             return list.release();

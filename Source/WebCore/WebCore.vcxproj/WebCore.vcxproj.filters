@@ -2121,6 +2121,9 @@
     <ClCompile Include="..\css\CSSFontFaceSrcValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSFontFeatureValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSFontSelector.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2224,9 +2227,6 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSValuePool.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\FontFeatureValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\FontLoader.cpp">
@@ -8868,6 +8868,9 @@
     <ClInclude Include="..\css\CSSFontFaceSrcValue.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\CSSFontFeatureValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\CSSFontSelector.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -8992,9 +8995,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\DashboardRegion.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\FontFeatureValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\FontLoader.h">
