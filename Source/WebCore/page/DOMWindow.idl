@@ -37,7 +37,8 @@
     JSGenerateToNativeObject,
     ReplaceableConstructor,
     JSLegacyParent=JSDOMWindowBase,
-    InterfaceName=Window
+    InterfaceName=Window,
+    OperationsNotDeletable
 ] interface DOMWindow {
     // DOM Level 0
     [Replaceable] readonly attribute Screen screen;

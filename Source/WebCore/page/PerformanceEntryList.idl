@@ -33,7 +33,8 @@
     NoInterfaceObject,
     Conditional=WEB_TIMING,
     Conditional=PERFORMANCE_TIMELINE,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface PerformanceEntryList {
     readonly attribute unsigned long length;
     getter PerformanceEntry item(unsigned long index);

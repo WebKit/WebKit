@@ -36,7 +36,8 @@
     ConstructorCallWith=ScriptExecutionContext,
     ConstructorRaisesException,
     EventTarget,
-    JSNoStaticTables
+    JSNoStaticTables,
+    OperationsNotDeletable
 ] interface EventSource {
 
     readonly attribute DOMString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.

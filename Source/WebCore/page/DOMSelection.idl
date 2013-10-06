@@ -31,7 +31,8 @@
 // https://developer.mozilla.org/En/DOM/Selection
 [
     GenerateIsReachable=ImplFrame,
-    InterfaceName=Selection
+    InterfaceName=Selection,
+    OperationsNotDeletable
 ] interface DOMSelection {
     readonly attribute Node anchorNode;
     readonly attribute long anchorOffset;

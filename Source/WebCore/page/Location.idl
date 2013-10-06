@@ -35,6 +35,7 @@
     JSCustomDefineOwnProperty,
     JSCustomNamedGetterOnPrototype,
     JSCustomDefineOwnPropertyOnPrototype,
+    OperationsNotDeletable
 ] interface Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
              [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;

@@ -26,7 +26,8 @@
 [
     NoInterfaceObject,
     Conditional=INPUT_SPEECH,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface SpeechInputResultList {
     readonly attribute unsigned long length;
     getter SpeechInputResult item([IsIndex] unsigned long index);

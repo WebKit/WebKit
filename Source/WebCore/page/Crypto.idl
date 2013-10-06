@@ -28,7 +28,8 @@
 
 [
     NoInterfaceObject,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface Crypto {
     [Custom, RaisesException] ArrayBufferView getRandomValues(ArrayBufferView array);
 };

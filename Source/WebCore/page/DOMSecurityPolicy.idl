@@ -24,7 +24,8 @@
 
 [
     Conditional=CSP_NEXT,
-    InterfaceName=SecurityPolicy
+    InterfaceName=SecurityPolicy,
+    OperationsNotDeletable
 ] interface DOMSecurityPolicy {
     readonly attribute boolean allowsEval;
     readonly attribute boolean allowsInlineScript;
