@@ -33,7 +33,8 @@
     NoInterfaceObject,
     ActiveDOMObject,
     EventTarget,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    OperationsNotDeletable
 ] interface SourceBuffer : EventTarget {
 
     readonly attribute boolean updating;

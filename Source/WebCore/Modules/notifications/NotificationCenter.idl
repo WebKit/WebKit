@@ -33,6 +33,7 @@
     NoInterfaceObject,
     Conditional=LEGACY_NOTIFICATIONS,
     ActiveDOMObject,
+    OperationsNotDeletable
 ] interface NotificationCenter {
    [RaisesException] Notification createNotification(DOMString iconUrl, DOMString title, DOMString body);
 

@@ -25,7 +25,8 @@
 [
     NoInterfaceObject,
     Conditional=MEDIA_STREAM,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface RTCStatsReport {
     readonly attribute Date timestamp;
     readonly attribute DOMString id;

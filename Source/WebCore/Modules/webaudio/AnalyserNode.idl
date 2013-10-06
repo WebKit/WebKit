@@ -24,7 +24,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    OperationsNotDeletable
 ] interface AnalyserNode : AudioNode {
     [SetterRaisesException] attribute unsigned long fftSize;
     readonly attribute unsigned long frequencyBinCount;

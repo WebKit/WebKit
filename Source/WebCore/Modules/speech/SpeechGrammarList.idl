@@ -27,7 +27,8 @@
     Conditional=SCRIPTED_SPEECH,
     Constructor,
     ImplementationLacksVTable,
-    InterfaceName=webkitSpeechGrammarList
+    InterfaceName=webkitSpeechGrammarList,
+    OperationsNotDeletable
 ] interface SpeechGrammarList {
     readonly attribute unsigned long length;
     getter SpeechGrammar item([IsIndex] unsigned long index);

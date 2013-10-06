@@ -33,7 +33,8 @@
     NoInterfaceObject,
     EventTarget,
     JSGenerateToNativeObject,
-    CallWith=ScriptExecutionContext
+    CallWith=ScriptExecutionContext,
+    OperationsNotDeletable
 ] interface SourceBufferList : EventTarget {
     readonly attribute unsigned long length;
     getter SourceBuffer item(unsigned long index);

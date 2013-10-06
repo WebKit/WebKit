@@ -34,7 +34,8 @@
     EventTarget,
     JSGenerateToNativeObject,
     Constructor,
-    ConstructorCallWith=ScriptExecutionContext
+    ConstructorCallWith=ScriptExecutionContext,
+    OperationsNotDeletable
 ] interface WebKitMediaSource : EventTarget {
     // All the source buffers created by this object.
     readonly attribute WebKitSourceBufferList sourceBuffers;

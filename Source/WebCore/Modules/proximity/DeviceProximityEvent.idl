@@ -19,7 +19,8 @@
 
 [
     Conditional=PROXIMITY_EVENTS,
-    ConstructorTemplate=Event
+    ConstructorTemplate=Event,
+    OperationsNotDeletable
 ] interface DeviceProximityEvent : Event {
     [InitializedByEventConstructor] readonly attribute double value;
     [InitializedByEventConstructor] readonly attribute double min;

@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
+    OperationsNotDeletable
 ] interface AudioParam {
     attribute float value;
     readonly attribute float minValue;

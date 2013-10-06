@@ -30,7 +30,8 @@
     NoInterfaceObject,
     Conditional=SQL_DATABASE,
     JSNoStaticTables,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
     [Custom] any item(unsigned long index);

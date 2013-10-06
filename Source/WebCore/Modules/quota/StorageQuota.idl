@@ -26,7 +26,8 @@
 [
     NoInterfaceObject,
     Conditional=QUOTA,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface StorageQuota {
     [CallWith=ScriptExecutionContext] void queryUsageAndQuota(StorageUsageCallback usageCallback, optional StorageErrorCallback errorCallback);
     [CallWith=ScriptExecutionContext] void requestQuota(unsigned long long newQuotaInBytes, optional StorageQuotaCallback quotaCallback, optional StorageErrorCallback errorCallback);

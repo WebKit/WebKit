@@ -25,7 +25,8 @@
 
 [
     Conditional=INDEXED_DATABASE,
-    JSNoStaticTables
+    JSNoStaticTables,
+    OperationsNotDeletable
 ] interface IDBCursor {
     readonly attribute IDBAny source;
     readonly attribute DOMString direction;

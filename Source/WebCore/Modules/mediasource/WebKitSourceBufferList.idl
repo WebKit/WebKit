@@ -31,7 +31,8 @@
 [
     Conditional=MEDIA_SOURCE,
     EventTarget,
-    JSGenerateToNativeObject
+    JSGenerateToNativeObject,
+    OperationsNotDeletable
 ] interface WebKitSourceBufferList : EventTarget {
     readonly attribute unsigned long length;
     getter WebKitSourceBuffer item(unsigned long index);

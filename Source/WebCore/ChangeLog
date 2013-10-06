@@ -1,3 +1,72 @@
+2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebIDL] Annotate IDL interfaces under Source/WebCore/Modules/ with the OperationsNotDeletable attribute
+        https://bugs.webkit.org/show_bug.cgi?id=122281
+
+        Before changing the JSC bindings generator to enforce WebIDL operations to be configurable, all the
+        interfaces are being annotated with the OperationsNotDeletable attribute. The attribute currently
+        doesn't have any effect, but will keep the operations not configurable after the generator is modified
+        to preserve the original behavior. The attribute will be removed from each interface after checking
+        conformity with other browsers (in terms of configurability of operations of that interface) and the
+        WebKit's existing test suites.
+
+        This patch covers IDL interfaces under Source/WebCore/Modules/.
+
+        * Modules/battery/BatteryManager.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/gamepad/GamepadList.idl:
+        * Modules/geolocation/Geolocation.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediasource/WebKitMediaSource.idl:
+        * Modules/mediasource/WebKitSourceBuffer.idl:
+        * Modules/mediasource/WebKitSourceBufferList.idl:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCStatsResponse.idl:
+        * Modules/networkinfo/NetworkInfoConnection.idl:
+        * Modules/notifications/Notification.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/proximity/DeviceProximityEvent.idl:
+        * Modules/quota/StorageInfo.idl:
+        * Modules/quota/StorageQuota.idl:
+        * Modules/speech/SpeechGrammarList.idl:
+        * Modules/speech/SpeechRecognition.idl:
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * Modules/speech/SpeechRecognitionResultList.idl:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioListener.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseSync.idl:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionSync.idl:
+        * Modules/websockets/WebSocket.idl:
+
 2013-10-06  Andreas Kling  <akling@apple.com>
 
         Tighten AbstractWorker and subclasses a bit.

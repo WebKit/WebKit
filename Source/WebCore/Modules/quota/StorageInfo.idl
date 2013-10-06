@@ -26,7 +26,8 @@
 [
     NoInterfaceObject,
     Conditional=QUOTA,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface StorageInfo {
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;

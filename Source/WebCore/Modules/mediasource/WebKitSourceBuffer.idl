@@ -29,7 +29,8 @@
  */
  
 [
-    Conditional=MEDIA_SOURCE
+    Conditional=MEDIA_SOURCE,
+    OperationsNotDeletable
 ] interface WebKitSourceBuffer {
 
     // Returns the time ranges buffered.

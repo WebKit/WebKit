@@ -26,7 +26,8 @@
 [
     Conditional=ENCRYPTED_MEDIA_V2,
     EventTarget,
-    InterfaceName=WebKitMediaKeySession
+    InterfaceName=WebKitMediaKeySession,
+    OperationsNotDeletable
 ] interface MediaKeySession {
     // error state
     readonly attribute MediaKeyError error;

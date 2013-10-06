@@ -26,7 +26,8 @@
     Conditional=MEDIA_STREAM,
     EventTarget,
     ActiveDOMObject,
-    SkipVTableValidation
+    SkipVTableValidation,
+    OperationsNotDeletable
 ] interface MediaStreamTrack {
     readonly attribute DOMString kind;
     readonly attribute DOMString id;
