@@ -178,14 +178,14 @@ class Plan
             cmd  = "(" + shellCommand + " || (touch test_fail_#{@index})) 2>&1"
             cmd += " | tee " + Shellwords.shellescape(($outputDir + (@name + ".out")).to_s)
             cmd += " | awk " + Shellwords.shellescape("{ printf #{(@name + ': ').inspect}; print }")
-            if $verbosity >= 2
+            if $verbosity >= 3
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
             outp.puts cmd
             outp.puts "if test -e test_fail_#{@index}"
             outp.puts "then"
             outp.puts "    echo FAIL: #{Shellwords.shellescape(@name)}"
-            if $verbosity >= 1
+            if $verbosity == 0 || $verbosity >= 2
                 outp.puts "else"
                 outp.puts "    echo PASS: #{Shellwords.shellescape(@name)}"
             end
@@ -538,7 +538,65 @@ if $parallel
     }
     
     Dir.chdir(parallelDir) {
-        mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
+        if $verbosity >= 1
+            mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
+        else
+            cmd = "make -j #{numProcessors} -s -f Makefile"
+            running = {}
+            didRun = {}
+            didFail = {}
+            blankLine = true
+            prevStringLength = 0
+            IO.popen(cmd, "r") {
+                | inp |
+                inp.each_line {
+                    | line |
+                    line.chomp!
+                    if line =~ /^Running /
+                        running[$~.post_match] = true
+                    elsif line =~ /^PASS: /
+                        didRun[$~.post_match] = true
+                    elsif line =~ /^FAIL: /
+                        didRun[$~.post_match] = true
+                        didFail[$~.post_match] = true
+                    else
+                        unless blankLine
+                            print("\r" + " " * prevStringLength + "\r")
+                        end
+                        puts line
+                        blankLine = true
+                    end
+                    
+                    def lpad(str, chars)
+                        str = str.to_s
+                        if str.length > chars
+                            str
+                        else
+                            "%#{chars}s"%(str)
+                        end
+                    end
+
+                    string  = ""
+                    string += "\r#{lpad(didRun.size, $runlist.size.to_s.size)}/#{$runlist.size}"
+                    unless didFail.empty?
+                        string += " (failed #{didFail.size})"
+                    end
+                    string += " "
+                    (running.size - didRun.size).times {
+                        string += "."
+                    }
+                    if string.length < prevStringLength
+                        print string
+                        print(" " * (prevStringLength - string.length))
+                    end
+                    print string
+                    prevStringLength = string.length
+                    blankLine = false
+                }
+            }
+            puts
+            raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
+        end
     }
     
     # Delete empty .out files to make life less confusing.
