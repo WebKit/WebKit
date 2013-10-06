@@ -393,7 +393,7 @@ void CSSValue::destroy()
         delete toCSSCanvasValue(this);
         return;
     case CursorImageClass:
-        delete toCSSCursorImageValue(this);
+        delete static_cast<CSSCursorImageValue*>(this);
         return;
     case FontClass:
         delete toCSSFontValue(this);
@@ -435,13 +435,13 @@ void CSSValue::destroy()
         delete toCSSShadowValue(this);
         return;
     case CubicBezierTimingFunctionClass:
-        delete toCSSCubicBezierTimingFunctionValue(this);
+        delete static_cast<CSSCubicBezierTimingFunctionValue*>(this);
         return;
     case StepsTimingFunctionClass:
-        delete toCSSStepsTimingFunctionValue(this);
+        delete static_cast<CSSStepsTimingFunctionValue*>(this);
         return;
     case UnicodeRangeClass:
-        delete toCSSUnicodeRangeValue(this);
+        delete static_cast<CSSUnicodeRangeValue*>(this);
         return;
     case ValueListClass:
         delete toCSSValueList(this);
@@ -478,7 +478,7 @@ void CSSValue::destroy()
         delete toWebKitCSSMixFunctionValue(this);
         return;
     case WebKitCSSShaderClass:
-        delete toWebKitCSSShaderValue(this);
+        delete static_cast<WebKitCSSShaderValue*>(this);
         return;
 #endif
 #endif

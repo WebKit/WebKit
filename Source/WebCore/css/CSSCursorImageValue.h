@@ -82,8 +82,6 @@ private:
 #endif
 };
 
-CSS_VALUE_TYPE_CASTS(CursorImageValue)
-
 } // namespace WebCore
 
 #endif // CSSCursorImageValue_h

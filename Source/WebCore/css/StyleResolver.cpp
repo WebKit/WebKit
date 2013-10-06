@@ -3094,7 +3094,7 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
 #endif
 
     if (value->isCursorImageValue())
-        return cursorOrPendingFromValue(property, toCSSCursorImageValue(value));
+        return cursorOrPendingFromValue(property, static_cast<CSSCursorImageValue*>(value));
 
     return 0;
 }
@@ -3391,7 +3391,7 @@ void StyleResolver::loadPendingSVGDocuments()
 StyleShader* StyleResolver::styleShader(CSSValue* value)
 {
     if (value->isWebKitCSSShaderValue())
-        return cachedOrPendingStyleShaderFromValue(toWebKitCSSShaderValue(value));
+        return cachedOrPendingStyleShaderFromValue(static_cast<WebKitCSSShaderValue*>(value));
     return 0;
 }
 
