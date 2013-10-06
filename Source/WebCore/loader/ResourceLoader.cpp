@@ -238,9 +238,9 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
     if (m_options.sendLoadCallbacks == SendCallbacks) {
         if (createdResourceIdentifier)
-            frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
+            frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifier, documentLoader(), request);
 
-        frameLoader()->notifier()->willSendRequest(this, request, redirectResponse);
+        frameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
 #if ENABLE(INSPECTOR)
     else
@@ -274,7 +274,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
         data->removeGeneratedFilesIfNeeded();
         
     if (m_options.sendLoadCallbacks == SendCallbacks)
-        frameLoader()->notifier()->didReceiveResponse(this, m_response);
+        frameLoader()->notifier().didReceiveResponse(this, m_response);
 }
 
 void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
@@ -309,7 +309,7 @@ void ResourceLoader::didReceiveDataOrBuffer(const char* data, int length, PassRe
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
-        frameLoader()->notifier()->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
+        frameLoader()->notifier().didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
@@ -344,7 +344,7 @@ void ResourceLoader::didFinishLoadingOnePart(double finishTime)
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbacks)
-        frameLoader()->notifier()->didFinishLoad(this, finishTime);
+        frameLoader()->notifier().didFinishLoad(this, finishTime);
 }
 
 void ResourceLoader::didFail(const ResourceError& error)
@@ -370,7 +370,7 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
         return;
     m_notifiedLoadComplete = true;
     if (m_options.sendLoadCallbacks == SendCallbacks && m_identifier)
-        frameLoader()->notifier()->didFailToLoad(this, error);
+        frameLoader()->notifier().didFailToLoad(this, error);
 }
 
 void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
@@ -523,7 +523,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
 
     if (m_options.allowCredentials == AllowStoredCredentials) {
         if (m_options.clientCredentialPolicy == AskClientForAllCredentials || (m_options.clientCredentialPolicy == DoNotAskClientForCrossOriginCredentials && m_frame->document()->securityOrigin()->canRequest(originalRequest().url()))) {
-            frameLoader()->notifier()->didReceiveAuthenticationChallenge(this, challenge);
+            frameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
             return;
         }
     }
@@ -542,7 +542,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protect(*this);
-    frameLoader()->notifier()->didCancelAuthenticationChallenge(this, challenge);
+    frameLoader()->notifier().didCancelAuthenticationChallenge(this, challenge);
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

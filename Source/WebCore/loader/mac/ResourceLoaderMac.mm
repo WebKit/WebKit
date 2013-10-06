@@ -91,7 +91,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
         // However, with today's computers and networking speeds, this won't happen in practice.
         // Could be an issue with a giant local file.
         if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
-            frameLoader()->notifier()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), dataLen, dataLen);
+            frameLoader()->notifier().didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), dataLen, dataLen);
     }
 }
 

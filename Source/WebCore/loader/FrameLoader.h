@@ -94,7 +94,7 @@ public:
 
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
     HistoryController& history() const { return *m_history; }
-    ResourceLoadNotifier* notifier() const { return &m_notifer; }
+    ResourceLoadNotifier& notifier() const { return m_notifier; }
     SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
     IconController& icon() const { return *m_icon; }
     MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
@@ -387,7 +387,7 @@ private:
     // Some of these could be lazily created for memory savings on devices.
     const OwnPtr<PolicyChecker> m_policyChecker;
     const OwnPtr<HistoryController> m_history;
-    mutable ResourceLoadNotifier m_notifer;
+    mutable ResourceLoadNotifier m_notifier;
     const OwnPtr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
     const OwnPtr<IconController> m_icon;
