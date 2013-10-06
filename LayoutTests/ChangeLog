@@ -1,3 +1,10 @@
+2013-10-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test editing/spelling/context-menu-suggestions-multiword-selection.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=122414
+
+        * platform/mac/TestExpectations: Marked as such.
+
 2013-10-05  Filip Pizlo  <fpizlo@apple.com>
 
         Allow skipping of run-jsc-stress-tests that are configured using yaml files
