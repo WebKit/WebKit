@@ -28,7 +28,6 @@
 #include "CounterContent.h"
 #include "StyleImage.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -39,11 +38,6 @@ class RenderStyle;
 class ContentData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ContentData> create(PassRefPtr<StyleImage>);
-    static PassOwnPtr<ContentData> create(const String&);
-    static PassOwnPtr<ContentData> create(PassOwnPtr<CounterContent>);
-    static PassOwnPtr<ContentData> create(QuoteType);
-    
     virtual ~ContentData() { }
 
     virtual bool isCounter() const { return false; }
@@ -53,22 +47,26 @@ public:
 
     virtual RenderObject* createRenderer(Document&, RenderStyle&) const = 0;
 
-    virtual PassOwnPtr<ContentData> clone() const;
+    std::unique_ptr<ContentData> clone() const;
 
     ContentData* next() const { return m_next.get(); }
-    void setNext(PassOwnPtr<ContentData> next) { m_next = next; }
+    void setNext(std::unique_ptr<ContentData> next) { m_next = std::move(next); }
 
     virtual bool equals(const ContentData&) const = 0;
 
 private:
-    virtual PassOwnPtr<ContentData> cloneInternal() const = 0;
+    virtual std::unique_ptr<ContentData> cloneInternal() const = 0;
 
-    OwnPtr<ContentData> m_next;
+    std::unique_ptr<ContentData> m_next;
 };
 
 class ImageContentData FINAL : public ContentData {
-    friend class ContentData;
 public:
+    explicit ImageContentData(PassRefPtr<StyleImage> image)
+        : m_image(image)
+    {
+    }
+
     const StyleImage* image() const { return m_image.get(); }
     StyleImage* image() { return m_image.get(); }
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
@@ -84,23 +82,23 @@ public:
     }
 
 private:
-    ImageContentData(PassRefPtr<StyleImage> image)
-        : m_image(image)
-    {
-    }
-
-    virtual PassOwnPtr<ContentData> cloneInternal() const
+    virtual std::unique_ptr<ContentData> cloneInternal() const OVERRIDE
     {
         RefPtr<StyleImage> image = const_cast<StyleImage*>(this->image());
-        return create(image.release());
+
+        return std::make_unique<ImageContentData>(image.release());
     }
 
     RefPtr<StyleImage> m_image;
 };
 
 class TextContentData FINAL : public ContentData {
-    friend class ContentData;
 public:
+    explicit TextContentData(const String& text)
+        : m_text(text)
+    {
+    }
+
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
@@ -115,35 +113,29 @@ public:
     }
 
 private:
-    TextContentData(const String& text)
-        : m_text(text)
-    {
-    }
-
-    virtual PassOwnPtr<ContentData> cloneInternal() const { return create(text()); }
+    virtual std::unique_ptr<ContentData> cloneInternal() const OVERRIDE { return std::make_unique<TextContentData>(text()); }
 
     String m_text;
 };
 
 class CounterContentData FINAL : public ContentData {
-    friend class ContentData;
 public:
+    explicit CounterContentData(std::unique_ptr<CounterContent> counter)
+        : m_counter(std::move(counter))
+    {
+    }
+
     const CounterContent* counter() const { return m_counter.get(); }
-    void setCounter(PassOwnPtr<CounterContent> counter) { m_counter = counter; }
+    void setCounter(std::unique_ptr<CounterContent> counter) { m_counter = std::move(counter); }
 
     virtual bool isCounter() const OVERRIDE { return true; }
     virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
 
 private:
-    CounterContentData(PassOwnPtr<CounterContent> counter)
-        : m_counter(counter)
+    virtual std::unique_ptr<ContentData> cloneInternal() const OVERRIDE
     {
-    }
-
-    virtual PassOwnPtr<ContentData> cloneInternal() const
-    {
-        OwnPtr<CounterContent> counterData = adoptPtr(new CounterContent(*counter()));
-        return create(counterData.release());
+        auto counterData = std::make_unique<CounterContent>(*counter());
+        return std::make_unique<CounterContentData>(std::move(counterData));
     }
 
     virtual bool equals(const ContentData& data) const OVERRIDE
@@ -153,12 +145,16 @@ private:
         return *static_cast<const CounterContentData&>(data).counter() == *counter();
     }
 
-    OwnPtr<CounterContent> m_counter;
+    std::unique_ptr<CounterContent> m_counter;
 };
 
 class QuoteContentData FINAL : public ContentData {
-    friend class ContentData;
 public:
+    explicit QuoteContentData(QuoteType quote)
+        : m_quote(quote)
+    {
+    }
+
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
 
@@ -173,12 +169,7 @@ public:
     }
 
 private:
-    QuoteContentData(QuoteType quote)
-        : m_quote(quote)
-    {
-    }
-
-    virtual PassOwnPtr<ContentData> cloneInternal() const { return create(quote()); }
+    virtual std::unique_ptr<ContentData> cloneInternal() const OVERRIDE { return std::make_unique<QuoteContentData>(quote()); }
 
     QuoteType m_quote;
 };

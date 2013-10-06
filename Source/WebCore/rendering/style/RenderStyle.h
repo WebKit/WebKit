@@ -1554,7 +1554,7 @@ public:
     void clearContent();
     void setContent(const String&, bool add = false);
     void setContent(PassRefPtr<StyleImage>, bool add = false);
-    void setContent(PassOwnPtr<CounterContent>, bool add = false);
+    void setContent(std::unique_ptr<CounterContent>, bool add = false);
     void setContent(QuoteType, bool add = false);
 
     const CounterDirectiveMap* counterDirectives() const;
@@ -1900,7 +1900,7 @@ private:
     Color lightingColor() const { return svgStyle()->lightingColor(); }
 #endif
 
-    void appendContent(PassOwnPtr<ContentData>);
+    void appendContent(std::unique_ptr<ContentData>);
 };
 
 inline int adjustForAbsoluteZoom(int value, const RenderStyle* style)

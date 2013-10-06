@@ -2189,8 +2189,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                     CSSValueID listStyleIdent = counterValue->listStyleIdent();
                     if (listStyleIdent != CSSValueNone)
                         listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
-                    OwnPtr<CounterContent> counter = adoptPtr(new CounterContent(counterValue->identifier(), listStyleType, counterValue->separator()));
-                    state.style()->setContent(counter.release(), didSet);
+                    auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
+                    state.style()->setContent(std::move(counter), didSet);
                     didSet = true;
                 } else {
                     switch (contentValue->getValueID()) {

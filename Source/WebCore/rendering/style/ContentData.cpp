@@ -33,38 +33,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<ContentData> ContentData::create(PassRefPtr<StyleImage> image)
+std::unique_ptr<ContentData> ContentData::clone() const
 {
-    return adoptPtr(new ImageContentData(image));
-}
-
-PassOwnPtr<ContentData> ContentData::create(const String& text)
-{
-    return adoptPtr(new TextContentData(text));
-}
-
-PassOwnPtr<ContentData> ContentData::create(PassOwnPtr<CounterContent> counter)
-{
-    return adoptPtr(new CounterContentData(counter));
-}
-
-PassOwnPtr<ContentData> ContentData::create(QuoteType quote)
-{
-    return adoptPtr(new QuoteContentData(quote));
-}
-
-PassOwnPtr<ContentData> ContentData::clone() const
-{
-    OwnPtr<ContentData> result = cloneInternal();
+    auto result = cloneInternal();
     
     ContentData* lastNewData = result.get();
     for (const ContentData* contentData = next(); contentData; contentData = contentData->next()) {
-        OwnPtr<ContentData> newData = contentData->cloneInternal();
-        lastNewData->setNext(newData.release());
+        auto newData = contentData->cloneInternal();
+        lastNewData->setNext(std::move(newData));
         lastNewData = lastNewData->next();
     }
         
-    return result.release();
+    return result;
 }
 
 RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
