@@ -165,9 +165,7 @@ RenderElement* HTMLFrameSetElement::createRenderer(RenderArena& arena, RenderSty
 
 HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)
 {
-    auto ancestorFrameSets = ancestorsOfType<HTMLFrameSetElement>(descendant);
-    auto enclosingFrameSet = ancestorFrameSets.begin();
-    return enclosingFrameSet != ancestorFrameSets.end() ? &*enclosingFrameSet : nullptr;
+    return ancestorsOfType<HTMLFrameSetElement>(descendant).first();
 }
 
 void HTMLFrameSetElement::willAttachRenderers()

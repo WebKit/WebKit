@@ -52,6 +52,7 @@ public:
     explicit ElementAncestorIteratorAdapter(ElementType* descendant);
     ElementAncestorIterator<ElementType> begin();
     ElementAncestorIterator<ElementType> end();
+    ElementType* first() { return m_first; }
 
 private:
     ElementType* m_first;
@@ -63,6 +64,7 @@ public:
     explicit ElementAncestorConstIteratorAdapter(const ElementType* descendant);
     ElementAncestorConstIterator<ElementType> begin() const;
     ElementAncestorConstIterator<ElementType> end() const;
+    const ElementType* first() const { return m_first; }
 
 private:
     const ElementType* m_first;

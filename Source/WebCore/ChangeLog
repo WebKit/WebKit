@@ -1,5 +1,15 @@
 2013-10-06  Andreas Kling  <akling@apple.com>
 
+        Element ancestor iterator should have a first() for convenience.
+        <https://webkit.org/b/122425>
+
+        Reviewed by Antti Koivisto.
+
+        Added an easy way to get the first element ancestor of a certain type
+        and put it to use in a few places.
+
+2013-10-06  Andreas Kling  <akling@apple.com>
+
         CTTE: FrameLoader::notifier() should return a reference.
         <https://webkit.org/b/122424>
 

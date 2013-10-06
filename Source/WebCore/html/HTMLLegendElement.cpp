@@ -49,14 +49,13 @@ PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tag
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
-    auto fieldsetAncestors = ancestorsOfType<HTMLFieldSetElement>(this);
-    auto enclosingFieldset = fieldsetAncestors.begin();
-    if (enclosingFieldset == fieldsetAncestors.end())
-        return 0;
+    auto enclosingFieldset = ancestorsOfType<HTMLFieldSetElement>(this).first();
+    if (!enclosingFieldset)
+        return nullptr;
 
     // Find first form element inside the fieldset that is not a legend element.
     // FIXME: Should we consider tabindex?
-    return descendantsOfType<HTMLFormControlElement>(&*enclosingFieldset).first();
+    return descendantsOfType<HTMLFormControlElement>(enclosingFieldset).first();
 }
 
 void HTMLLegendElement::focus(bool, FocusDirection direction)

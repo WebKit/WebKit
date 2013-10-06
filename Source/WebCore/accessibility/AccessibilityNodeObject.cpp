@@ -1115,9 +1115,7 @@ HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) con
             return label;
     }
 
-    auto labelAncestors = ancestorsOfType<HTMLLabelElement>(element);
-    auto enclosingLabel = labelAncestors.begin();
-    return enclosingLabel != labelAncestors.end() ? &*enclosingLabel : nullptr;
+    return ancestorsOfType<HTMLLabelElement>(element).first();
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const
