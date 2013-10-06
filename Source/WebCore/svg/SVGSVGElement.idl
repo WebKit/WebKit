@@ -24,7 +24,8 @@
 // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
 // TODO: no events::DocumentEvent available!
 [
-    Conditional=SVG
+    Conditional=SVG,
+    OperationsNotDeletable
 ] interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

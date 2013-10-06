@@ -21,7 +21,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    OperationsNotDeletable
 ] interface SVGAngle { 
     // Angle Unit Types
     const unsigned short SVG_ANGLETYPE_UNKNOWN = 0;

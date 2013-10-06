@@ -1,5 +1,53 @@
 2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WebIIDL] Annotate IDL interfaces under Source/WebCore/svg/ with the OperationsNotDeletable attribute
+        https://bugs.webkit.org/show_bug.cgi?id=122279
+
+        Reviewed by Darin Adler.
+
+        Before changing the JSC bindings generator to enforce WebIDL operations to be configurable, all the
+        interfaces are being annotated with the OperationsNotDeletable attribute. The attribute currently
+        doesn't have any effect, but will keep the operations not configurable after the generator is modified
+        to preserve the original behavior. The attribute will be removed from each interface after checking
+        conformity with other browsers (in terms of configurability of operations of that interface) and the
+        WebKit's existing test suites.
+
+        This patch covers IDL interfaces under Source/WebCore/svg/.
+
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGColor.idl:
+        * svg/SVGCursorElement.idl:
+        * svg/SVGDocument.idl:
+        * svg/SVGElement.idl:
+        * svg/SVGElementInstanceList.idl:
+        * svg/SVGException.idl:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGMaskElement.idl:
+        * svg/SVGMatrix.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPaint.idl:
+        * svg/SVGPathElement.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPatternElement.idl:
+        * svg/SVGPoint.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTransform.idl:
+        * svg/SVGTransformList.idl:
+
+2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [WebIDL] Annotate IDL interfaces under Source/WebCore/page/ with the OperationsNotDeletable attribute
         https://bugs.webkit.org/show_bug.cgi?id=122278
 

@@ -25,7 +25,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    OperationsNotDeletable
 ] interface SVGNumberList {
     readonly attribute unsigned long numberOfItems;
 

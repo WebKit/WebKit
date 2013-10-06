@@ -21,7 +21,8 @@
  */
 
 [
-    Conditional=SVG
+    Conditional=SVG,
+    OperationsNotDeletable
 ] interface SVGPoint {
     [StrictTypeChecking] attribute float x;
     [StrictTypeChecking] attribute float y;
