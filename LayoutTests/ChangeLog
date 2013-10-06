@@ -1,3 +1,19 @@
+2013-10-06  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Rename parsing tests to match current css properties
+        https://bugs.webkit.org/show_bug.cgi?id=122413
+
+        Reviewed by Sam Weinig.
+
+        Simple renaming of files, inline with the current stable version of properties.
+
+        * fast/regions/script-tests/webkit-flow-from-parsing.js: Renamed from LayoutTests/fast/regions/script-tests/content-webkit-from-flow-parsing.js.
+        * fast/regions/script-tests/webkit-flow-into-parsing.js: Renamed from LayoutTests/fast/regions/script-tests/webkit-flow-parsing.js.
+        * fast/regions/webkit-flow-from-parsing-expected.txt: Renamed from LayoutTests/fast/regions/content-webkit-from-flow-parsing-expected.txt.
+        * fast/regions/webkit-flow-from-parsing.html: Renamed from LayoutTests/fast/regions/content-webkit-from-flow-parsing.html.
+        * fast/regions/webkit-flow-into-parsing-expected.txt: Renamed from LayoutTests/fast/regions/webkit-flow-parsing-expected.txt.
+        * fast/regions/webkit-flow-into-parsing.html: Renamed from LayoutTests/fast/regions/webkit-flow-parsing.html.
+
 2013-10-06  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test editing/spelling/context-menu-suggestions-multiword-selection.html is flaky
