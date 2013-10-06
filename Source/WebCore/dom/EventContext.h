@@ -117,9 +117,9 @@ inline bool EventContext::isUnreachableNode(EventTarget* target)
 inline bool EventContext::isReachable(Node* target) const
 {
     ASSERT(target);
-    TreeScope* targetScope = target->treeScope();
-    for (TreeScope* scope = m_node->treeScope(); scope; scope = scope->parentTreeScope()) {
-        if (scope == targetScope)
+    TreeScope& targetScope = target->treeScope();
+    for (TreeScope* scope = &m_node->treeScope(); scope; scope = scope->parentTreeScope()) {
+        if (scope == &targetScope)
             return true;
     }
     return false;

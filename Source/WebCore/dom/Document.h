@@ -1632,7 +1632,7 @@ inline bool Node::isDocumentNode() const
 inline Node::Node(Document* document, ConstructionType type)
     : m_nodeFlags(type)
     , m_parentNode(0)
-    , m_treeScope(document ? document : TreeScope::noDocumentInstance())
+    , m_treeScope(document ? document : &TreeScope::noDocumentInstance())
     , m_previous(0)
     , m_next(0)
 {

@@ -591,7 +591,7 @@ bool HTMLMediaElement::childShouldCreateRenderer(const Node* child) const
     // be rendered. So this should return false for most of the children.
     // One exception is a shadow tree built for rendering controls which should be visible.
     // So we let them go here by comparing its subtree root with one of the controls.
-    return mediaControls()->treeScope() == child->treeScope()
+    return &mediaControls()->treeScope() == &child->treeScope()
         && hasShadowRootParent(child)
         && HTMLElement::childShouldCreateRenderer(child);
 #endif

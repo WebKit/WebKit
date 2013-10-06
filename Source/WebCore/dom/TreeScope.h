@@ -102,10 +102,10 @@ public:
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
-    static TreeScope* noDocumentInstance()
+    static TreeScope& noDocumentInstance()
     {
         DEFINE_STATIC_LOCAL(TreeScope, instance, ());
-        return &instance;
+        return instance;
     }
 
     // Nodes belonging to this scope hold self-only references -
@@ -123,7 +123,7 @@ public:
     {
         ASSERT(!deletionHasBegun());
         --m_selfOnlyRefCount;
-        if (!m_selfOnlyRefCount && !refCount() && this != noDocumentInstance()) {
+        if (!m_selfOnlyRefCount && !refCount() && this != &noDocumentInstance()) {
             beginDeletion();
             delete this;
         }
@@ -141,7 +141,7 @@ protected:
     void setDocumentScope(Document* document)
     {
         ASSERT(document);
-        ASSERT(this != noDocumentInstance());
+        ASSERT(this != &noDocumentInstance());
         m_documentScope = document;
     }
 

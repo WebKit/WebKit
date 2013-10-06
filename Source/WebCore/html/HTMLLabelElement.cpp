@@ -79,7 +79,7 @@ LabelableElement* HTMLLabelElement::control()
     
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,
     // return it, otherwise return 0.
-    return nodeAsSupportedLabelableElement(treeScope()->getElementById(controlId));
+    return nodeAsSupportedLabelableElement(treeScope().getElementById(controlId));
 }
 
 HTMLFormElement* HTMLLabelElement::form() const

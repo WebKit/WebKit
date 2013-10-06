@@ -230,7 +230,7 @@ bool ValidationMessage::shadowTreeContains(const Node* node) const
 {
     if (validationMessageClient() || !m_bubble)
         return false;
-    return m_bubble->treeScope() == node->treeScope();
+    return &m_bubble->treeScope() == &node->treeScope();
 }
 
 void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)

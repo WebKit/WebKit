@@ -37,7 +37,7 @@ namespace WebCore {
 
 static inline bool inTheSameScope(ShadowRoot* shadowRoot, EventTarget* target)
 {
-    return target->toNode() && target->toNode()->treeScope()->rootNode() == shadowRoot;
+    return target->toNode() && target->toNode()->treeScope().rootNode() == shadowRoot;
 }
 
 static inline EventDispatchBehavior determineDispatchBehavior(Event* event, ShadowRoot* shadowRoot, EventTarget* target)
@@ -192,7 +192,7 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
     TreeScope* lastTreeScope = 0;
     Node* adjustedNode = 0;
     for (EventPath::const_iterator iter = eventPath.begin(); iter < eventPath.end(); ++iter) {
-        TreeScope* scope = (*iter)->node()->treeScope();
+        TreeScope* scope = &(*iter)->node()->treeScope();
         if (scope == lastTreeScope) {
             // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
             adjustedNodes.append(adjustedNode);
@@ -204,7 +204,7 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
         if (eventWithRelatedTargetDispatchBehavior == DoesNotStopAtBoundary)
             continue;
         if (targetIsIdenticalToToRelatedTarget) {
-            if (node->treeScope()->rootNode() == (*iter)->node()) {
+            if (node->treeScope().rootNode() == (*iter)->node()) {
                 eventPath.shrink(iter + 1 - eventPath.begin());
                 break;
             }
@@ -224,7 +224,7 @@ void EventRetargeter::buildRelatedNodeMap(const Node* relatedNode, RelatedNodeMa
     for (Node* node = nodeOrHostIfPseudoElement(const_cast<Node*>(relatedNode)); node; node = node->parentOrShadowHostNode()) {
         if (relatedNodeStack.isEmpty())
             relatedNodeStack.append(node);
-        TreeScope* scope = node->treeScope();
+        TreeScope* scope = &node->treeScope();
         // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
         if (scope != lastTreeScope)
             relatedNodeMap.add(scope, relatedNodeStack.last());

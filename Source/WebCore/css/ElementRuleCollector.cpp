@@ -163,9 +163,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     // a) it's a UA rule
     // b) the tree scope allows author rules
     // c) the rules comes from a scoped style sheet within the same tree scope
-    TreeScope* treeScope = element->treeScope();
     if (!MatchingUARulesScope::isMatchingUARules()
-        && !treeScope->applyAuthorStyles())
+        && !element->treeScope().applyAuthorStyles())
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and

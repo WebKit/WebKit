@@ -141,8 +141,8 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Node* ro
     ASSERT(idSelector);
 
     const AtomicString& idToMatch = idSelector->value();
-    if (UNLIKELY(rootNode->treeScope()->containsMultipleElementsWithId(idToMatch))) {
-        const Vector<Element*>* elements = rootNode->treeScope()->getAllElementsById(idToMatch);
+    if (UNLIKELY(rootNode->treeScope().containsMultipleElementsWithId(idToMatch))) {
+        const Vector<Element*>* elements = rootNode->treeScope().getAllElementsById(idToMatch);
         ASSERT(elements);
         size_t count = elements->size();
         bool rootNodeIsTreeScopeRoot = isTreeScopeRoot(rootNode);
@@ -157,7 +157,7 @@ ALWAYS_INLINE void SelectorDataList::executeFastPathForIdSelector(const Node* ro
         return;
     }
 
-    Element* element = rootNode->treeScope()->getElementById(idToMatch);
+    Element* element = rootNode->treeScope().getElementById(idToMatch);
     if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
         return;
     if (selectorMatches(selectorData, element, rootNode))

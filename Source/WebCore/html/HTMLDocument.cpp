@@ -140,7 +140,7 @@ void HTMLDocument::setDesignMode(const String& value)
 
 Element* HTMLDocument::activeElement()
 {
-    if (Element* element = treeScope()->focusedElement())
+    if (Element* element = treeScope().focusedElement())
         return element;
     return body();
 }

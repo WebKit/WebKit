@@ -1,3 +1,14 @@
+2013-10-05  Andreas Kling  <akling@apple.com>
+
+        CTTE: Node::treeScope() should return a reference.
+        <https://webkit.org/b/122399>
+
+        Reviewed by Superlative Sam.
+
+        Every Node belongs to a TreeScope. To enforce this, I've made
+        treeScope() return a TreeScope&, and setTreeScope() now takes a
+        TreeScope& so there is no way to clear it.
+
 2013-10-05  Sam Weinig  <sam@webkit.org>
 
         CTTE: Use references more for the Document parser

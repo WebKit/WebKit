@@ -75,7 +75,7 @@ TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
     ASSERT(document);
     ASSERT(rootNode != document);
     m_parentTreeScope->selfOnlyRef();
-    m_rootNode->setTreeScope(this);
+    m_rootNode->setTreeScope(*this);
 }
 
 TreeScope::TreeScope(Document* document)
@@ -86,7 +86,7 @@ TreeScope::TreeScope(Document* document)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(document);
-    m_rootNode->setTreeScope(this);
+    m_rootNode->setTreeScope(*this);
 }
 
 TreeScope::TreeScope()
@@ -198,7 +198,7 @@ void TreeScope::removeElementByName(const AtomicStringImpl& name, Element& eleme
 Node* TreeScope::ancestorInThisScope(Node* node) const
 {
     while (node) {
-        if (node->treeScope() == this)
+        if (&node->treeScope() == this)
             return node;
         if (!node->isInShadowTree())
             return 0;
@@ -371,7 +371,7 @@ void TreeScope::adoptIfNeeded(Node* node)
     ASSERT(node);
     ASSERT(!node->isDocumentNode());
     ASSERT(!node->m_deletionHasBegun);
-    TreeScopeAdopter adopter(node, this);
+    TreeScopeAdopter adopter(node, *this);
     if (adopter.needsScopeChange())
         adopter.execute();
 }
@@ -394,10 +394,10 @@ Element* TreeScope::focusedElement()
         element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
     if (!element)
         return 0;
-    TreeScope* treeScope = element->treeScope();
+    TreeScope* treeScope = &element->treeScope();
     while (treeScope != this && treeScope != &document) {
         element = toShadowRoot(treeScope->rootNode())->hostElement();
-        treeScope = element->treeScope();
+        treeScope = &element->treeScope();
     }
     if (this != treeScope)
         return 0;
@@ -407,7 +407,7 @@ Element* TreeScope::focusedElement()
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 {
     while (true) {
-        treeScopes.append(node->treeScope());
+        treeScopes.append(&node->treeScope());
         Element* ancestor = node->shadowHost();
         if (!ancestor)
             break;
@@ -420,8 +420,8 @@ TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
     if (!nodeA || !nodeB)
         return 0;
 
-    if (nodeA->treeScope() == nodeB->treeScope())
-        return nodeA->treeScope();
+    if (&nodeA->treeScope() == &nodeB->treeScope())
+        return &nodeA->treeScope();
 
     Vector<TreeScope*, 5> treeScopesA;
     listTreeScopes(nodeA, treeScopesA);
@@ -445,7 +445,7 @@ bool TreeScope::deletionHasBegun()
 
 void TreeScope::beginDeletion()
 {
-    ASSERT(this != noDocumentInstance());
+    ASSERT(this != &noDocumentInstance());
     rootNode()->m_deletionHasBegun = true;
 }
 #endif

@@ -74,7 +74,7 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
     Node* rootNode = this->rootNode();
 
     if (rootNode->inDocument()) {
-        Element* element = rootNode->treeScope()->getElementById(elementId);
+        Element* element = rootNode->treeScope().getElementById(elementId);
         if (element && nodeMatches(element) && element->isDescendantOf(rootNode))
             return element;
         if (!element)

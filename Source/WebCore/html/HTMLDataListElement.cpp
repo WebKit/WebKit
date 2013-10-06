@@ -57,7 +57,7 @@ PassRefPtr<HTMLCollection> HTMLDataListElement::options()
 
 void HTMLDataListElement::optionElementChildrenChanged()
 {
-    treeScope()->idTargetObserverRegistry().notifyObservers(getIdAttribute());
+    treeScope().idTargetObserverRegistry().notifyObservers(getIdAttribute());
 }
 
 } // namespace WebCore

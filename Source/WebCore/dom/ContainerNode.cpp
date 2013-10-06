@@ -156,7 +156,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
-        treeScope()->adoptIfNeeded(adoptedChild.get());
+        treeScope().adoptIfNeeded(adoptedChild.get());
         if (attached() && !adoptedChild->attached())
             attachChild(*adoptedChild.get());
     }
@@ -320,7 +320,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         if (child.parentNode())
             break;
 
-        treeScope()->adoptIfNeeded(&child);
+        treeScope().adoptIfNeeded(&child);
 
         insertBeforeCommon(next.get(), child);
 
@@ -474,7 +474,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         if (child.parentNode())
             break;
 
-        treeScope()->adoptIfNeeded(&child);
+        treeScope().adoptIfNeeded(&child);
 
         // Add child before "next".
         {
@@ -721,7 +721,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, At
         if (child.parentNode())
             break;
 
-        treeScope()->adoptIfNeeded(&child);
+        treeScope().adoptIfNeeded(&child);
 
         // Append child to the end of the list
         {
@@ -752,7 +752,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
         NoEventDispatchAssertion assertNoEventDispatch;
         // FIXME: This method should take a PassRefPtr.
         appendChildToContainer(newChild.get(), *this);
-        treeScope()->adoptIfNeeded(newChild.get());
+        treeScope().adoptIfNeeded(newChild.get());
     }
 
     newChild->updateAncestorConnectedSubframeCountForInsertion();

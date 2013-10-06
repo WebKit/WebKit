@@ -397,7 +397,11 @@ public:
         return *documentInternal();
     }
 
-    TreeScope* treeScope() const { return m_treeScope; }
+    TreeScope& treeScope() const
+    {
+        ASSERT(m_treeScope);
+        return *m_treeScope;
+    }
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
@@ -650,8 +654,8 @@ protected:
 
     void setNeedsNodeRenderingTraversalSlowPath(bool flag) { setFlag(flag, NeedsNodeRenderingTraversalSlowPathFlag); }
 
-    Document* documentInternal() const { return treeScope()->documentScope(); }
-    void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
+    Document* documentInternal() const { return treeScope().documentScope(); }
+    void setTreeScope(TreeScope& scope) { m_treeScope = &scope; }
 
     void setStyleChange(StyleChangeType changeType) { m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType; }
 
