@@ -2202,6 +2202,9 @@
     <ClCompile Include="..\css\CSSSelectorList.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSShadowValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSStyleRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2266,9 +2269,6 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\SelectorChecker.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\ShadowValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp">
@@ -8955,6 +8955,9 @@
     <ClInclude Include="..\css\CSSSelectorList.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\CSSShadowValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\CSSStyleDeclaration.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -9037,9 +9040,6 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\SelectorChecker.h">
-      <Filter>css</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\ShadowValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h">

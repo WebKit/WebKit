@@ -48,10 +48,10 @@
 #include "CSSLineBoxContainValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
+#include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
-#include "ShadowValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSArrayFunctionValue.h"
@@ -203,7 +203,7 @@ bool CSSValue::equals(const CSSValue& other) const
         case ReflectClass:
             return compareCSSValues<CSSReflectValue>(*this, other);
         case ShadowClass:
-            return compareCSSValues<ShadowValue>(*this, other);
+            return compareCSSValues<CSSShadowValue>(*this, other);
         case CubicBezierTimingFunctionClass:
             return compareCSSValues<CSSCubicBezierTimingFunctionValue>(*this, other);
         case StepsTimingFunctionClass:
@@ -305,7 +305,7 @@ String CSSValue::cssText() const
     case ReflectClass:
         return static_cast<const CSSReflectValue*>(this)->customCSSText();
     case ShadowClass:
-        return static_cast<const ShadowValue*>(this)->customCSSText();
+        return static_cast<const CSSShadowValue*>(this)->customCSSText();
     case CubicBezierTimingFunctionClass:
         return static_cast<const CSSCubicBezierTimingFunctionValue*>(this)->customCSSText();
     case StepsTimingFunctionClass:
@@ -432,7 +432,7 @@ void CSSValue::destroy()
         delete toCSSReflectValue(this);
         return;
     case ShadowClass:
-        delete static_cast<ShadowValue*>(this);
+        delete toCSSShadowValue(this);
         return;
     case CubicBezierTimingFunctionClass:
         delete toCSSCubicBezierTimingFunctionValue(this);

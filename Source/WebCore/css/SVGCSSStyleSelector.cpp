@@ -33,9 +33,9 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSShadowValue.h"
 #include "CSSValueList.h"
 #include "Document.h"
-#include "ShadowValue.h"
 #include "SVGColor.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
@@ -564,7 +564,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             CSSValue* firstValue = list->itemWithoutBoundsCheck(0);
             if (!firstValue->isShadowValue())
                 return;
-            ShadowValue* item = static_cast<ShadowValue*>(firstValue);
+            CSSShadowValue* item = toCSSShadowValue(firstValue);
             IntPoint location(item->x->computeLength<int>(state.style(), state.rootElementStyle()),
                 item->y->computeLength<int>(state.style(), state.rootElementStyle()));
             int blur = item->blur ? item->blur->computeLength<int>(state.style(), state.rootElementStyle()) : 0;

@@ -998,6 +998,7 @@ set(WebCore_SOURCES
     css/CSSSegmentedFontFace.cpp
     css/CSSSelector.cpp
     css/CSSSelectorList.cpp
+    css/CSSShadowValue.cpp
     css/CSSStyleRule.cpp
     css/CSSStyleSheet.cpp
     css/CSSSupportsRule.cpp
@@ -1032,7 +1033,6 @@ set(WebCore_SOURCES
     css/SelectorChecker.cpp
     css/SelectorCheckerFastPath.cpp
     css/SelectorFilter.cpp
-    css/ShadowValue.cpp
     css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp

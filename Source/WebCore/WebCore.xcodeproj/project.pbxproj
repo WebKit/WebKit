@@ -3537,7 +3537,7 @@
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
 		A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */; };
-		A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */; };
+		A80E6CE80A1989CA007FB8C5 /* CSSShadowValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBE0A1989CA007FB8C5 /* CSSShadowValue.h */; };
 		A80E6CE90A1989CA007FB8C5 /* CSSValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CEB0A1989CA007FB8C5 /* CSSImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC10A1989CA007FB8C5 /* CSSImportRule.cpp */; };
 		A80E6CED0A1989CA007FB8C5 /* CSSFontValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC30A1989CA007FB8C5 /* CSSFontValue.h */; };
@@ -3546,7 +3546,7 @@
 		A80E6CF00A1989CA007FB8C5 /* CSSInheritedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC60A1989CA007FB8C5 /* CSSInheritedValue.cpp */; };
 		A80E6CF10A1989CA007FB8C5 /* CSSFontValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CC70A1989CA007FB8C5 /* CSSFontValue.cpp */; };
 		A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CC80A1989CA007FB8C5 /* CSSRuleList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */; };
+		A80E6CF40A1989CA007FB8C5 /* CSSShadowValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCA0A1989CA007FB8C5 /* CSSShadowValue.cpp */; };
 		A80E6CF50A1989CA007FB8C5 /* CSSPageRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */; };
 		A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCC0A1989CA007FB8C5 /* CSSImportRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */; };
@@ -10159,7 +10159,7 @@
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
 		A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValue.h; sourceTree = "<group>"; };
 		A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceRule.cpp; sourceTree = "<group>"; };
-		A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShadowValue.h; sourceTree = "<group>"; };
+		A80E6CBE0A1989CA007FB8C5 /* CSSShadowValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSShadowValue.h; sourceTree = "<group>"; };
 		A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSValueList.h; sourceTree = "<group>"; };
 		A80E6CC10A1989CA007FB8C5 /* CSSImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImportRule.cpp; sourceTree = "<group>"; };
 		A80E6CC30A1989CA007FB8C5 /* CSSFontValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSFontValue.h; sourceTree = "<group>"; };
@@ -10168,7 +10168,7 @@
 		A80E6CC60A1989CA007FB8C5 /* CSSInheritedValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSInheritedValue.cpp; sourceTree = "<group>"; };
 		A80E6CC70A1989CA007FB8C5 /* CSSFontValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontValue.cpp; sourceTree = "<group>"; };
 		A80E6CC80A1989CA007FB8C5 /* CSSRuleList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSRuleList.h; sourceTree = "<group>"; };
-		A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowValue.cpp; sourceTree = "<group>"; };
+		A80E6CCA0A1989CA007FB8C5 /* CSSShadowValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSShadowValue.cpp; sourceTree = "<group>"; };
 		A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPageRule.cpp; sourceTree = "<group>"; };
 		A80E6CCC0A1989CA007FB8C5 /* CSSImportRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSImportRule.h; sourceTree = "<group>"; };
 		A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSProperty.cpp; sourceTree = "<group>"; };
@@ -20151,6 +20151,8 @@
 				A80E734B0A199C77007FB8C5 /* CSSSelector.h */,
 				E4C178950EE6903800824D69 /* CSSSelectorList.cpp */,
 				E4C178960EE6903800824D69 /* CSSSelectorList.h */,
+				A80E6CCA0A1989CA007FB8C5 /* CSSShadowValue.cpp */,
+				A80E6CBE0A1989CA007FB8C5 /* CSSShadowValue.h */,
 				A80E6E0D0A19911C007FB8C5 /* CSSStyleDeclaration.h */,
 				142011AE0A003117008303F9 /* CSSStyleDeclaration.idl */,
 				A80E6CC50A1989CA007FB8C5 /* CSSStyleRule.cpp */,
@@ -20242,8 +20244,6 @@
 				41B8CD4416D04591000E8CC0 /* SelectorCheckerFastPath.h */,
 				415071551685067300C3C7B3 /* SelectorFilter.cpp */,
 				415071561685067300C3C7B3 /* SelectorFilter.h */,
-				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
-				A80E6CBE0A1989CA007FB8C5 /* ShadowValue.h */,
 				E47A97CE163059FC005DCD99 /* StyleInvalidationAnalysis.cpp */,
 				E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */,
 				0FF5026E102BA9660066F39A /* StyleMedia.cpp */,
@@ -21668,6 +21668,7 @@
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
+				A80E6CE80A1989CA007FB8C5 /* CSSShadowValue.h in Headers */,
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
@@ -23759,7 +23760,6 @@
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
-				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				FD45A94F175D3F3E00C21EC8 /* Shape.h in Headers */,
 				FD45A950175D3F3E00C21EC8 /* ShapeInfo.h in Headers */,
 				FD45A951175D3F3E00C21EC8 /* ShapeInsideInfo.h in Headers */,
@@ -25118,6 +25118,7 @@
 				371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */,
 				A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */,
 				E4C1789A0EE6903800824D69 /* CSSSelectorList.cpp in Sources */,
+				A80E6CF40A1989CA007FB8C5 /* CSSShadowValue.cpp in Sources */,
 				A80E6CEF0A1989CA007FB8C5 /* CSSStyleRule.cpp in Sources */,
 				A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */,
 				BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */,
@@ -26943,7 +26944,6 @@
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
-				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,
 				FD45A953175D3FB800C21EC8 /* Shape.cpp in Sources */,
 				FD45A954175D3FB800C21EC8 /* ShapeInfo.cpp in Sources */,
 				FD45A955175D3FB800C21EC8 /* ShapeInsideInfo.cpp in Sources */,

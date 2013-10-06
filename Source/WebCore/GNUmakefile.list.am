@@ -2533,6 +2533,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSSelector.h \
 	Source/WebCore/css/CSSSelectorList.cpp \
 	Source/WebCore/css/CSSSelectorList.h \
+	Source/WebCore/css/CSSShadowValue.cpp \
+	Source/WebCore/css/CSSShadowValue.h \
 	Source/WebCore/css/CSSStyleDeclaration.h \
 	Source/WebCore/css/CSSStyleRule.cpp \
 	Source/WebCore/css/CSSStyleRule.h \
@@ -2602,8 +2604,6 @@ webcore_sources += \
 	Source/WebCore/css/SelectorCheckerFastPath.h \
 	Source/WebCore/css/SelectorFilter.cpp \
 	Source/WebCore/css/SelectorFilter.h \
-	Source/WebCore/css/ShadowValue.cpp \
-	Source/WebCore/css/ShadowValue.h \
 	Source/WebCore/css/StyleInvalidationAnalysis.cpp \
 	Source/WebCore/css/StyleInvalidationAnalysis.h \
 	Source/WebCore/css/StyleMedia.cpp \

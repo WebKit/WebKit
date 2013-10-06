@@ -8974,6 +8974,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\css\CSSShadowValue.cpp" />
     <ClCompile Include="..\css\CSSStyleRule.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -9156,7 +9157,6 @@
     <ClCompile Include="..\css\PropertySetCSSStyleDeclaration.cpp" />
     <ClCompile Include="..\css\RGBColor.cpp" />
     <ClCompile Include="..\css\SelectorChecker.cpp" />
-    <ClCompile Include="..\css\ShadowValue.cpp" />
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp" />
     <ClCompile Include="..\css\StyleMedia.cpp" />
     <ClCompile Include="..\css\StylePropertySet.cpp">
@@ -19373,6 +19373,7 @@
     <ClInclude Include="..\css\CSSSegmentedFontFace.h" />
     <ClInclude Include="..\css\CSSSelector.h" />
     <ClInclude Include="..\css\CSSSelectorList.h" />
+    <ClInclude Include="..\css\CSSShadowValue.h" />
     <ClInclude Include="..\css\CSSStyleDeclaration.h" />
     <ClInclude Include="..\css\CSSStyleRule.h" />
     <ClInclude Include="..\css\CSSStyleSheet.h" />
@@ -19401,7 +19402,6 @@
     <ClInclude Include="..\css\Rect.h" />
     <ClInclude Include="..\css\RGBColor.h" />
     <ClInclude Include="..\css\SelectorChecker.h" />
-    <ClInclude Include="..\css\ShadowValue.h" />
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h" />
     <ClInclude Include="..\css\StyleMedia.h" />
     <ClInclude Include="..\css\StylePropertySet.h" />

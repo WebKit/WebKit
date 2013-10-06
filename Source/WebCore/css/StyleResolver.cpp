@@ -47,6 +47,7 @@
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSShadowValue.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "CSSTimingFunctionValue.h"
@@ -102,7 +103,6 @@
 #include "Settings.h"
 #include "ShadowData.h"
 #include "ShadowRoot.h"
-#include "ShadowValue.h"
 #include "StyleCachedImage.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
@@ -2372,7 +2372,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             CSSValue* currValue = i.value();
             if (!currValue->isShadowValue())
                 continue;
-            ShadowValue* item = static_cast<ShadowValue*>(currValue);
+            CSSShadowValue* item = toCSSShadowValue(currValue);
             int x = item->x->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor);
             if (item->x->isViewportPercentageLength())
                 x = viewportPercentageValue(*item->x, x);
@@ -3790,7 +3790,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
         }
 
         // Check that all parameters are primitive values, with the
-        // exception of drop shadow which has a ShadowValue parameter.
+        // exception of drop shadow which has a CSSShadowValue parameter.
         CSSPrimitiveValue* firstValue = nullptr;
         if (operationType != FilterOperation::DROP_SHADOW) {
             bool haveNonPrimitiveValue = false;
@@ -3860,7 +3860,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             if (!cssValue->isShadowValue())
                 continue;
 
-            ShadowValue* item = static_cast<ShadowValue*>(cssValue);
+            CSSShadowValue* item = toCSSShadowValue(cssValue);
             int x = item->x->computeLength<int>(style, rootStyle, zoomFactor);
             if (item->x->isViewportPercentageLength())
                 x = viewportPercentageValue(*item->x, x);
