@@ -721,24 +721,42 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
-    if (!_private->coreFrame || !_private->coreFrame->document())
+    Frame* frame = _private->coreFrame;
+    if (!frame)
         return nil;
 
-    return kit(createFragmentFromMarkup(_private->coreFrame->document(), markupString, baseURLString, DisallowScriptingContent).get());
+    Document* document = frame->document();
+    if (!document)
+        return nil;
+
+    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, DisallowScriptingContent).get());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
 {
-    if (!_private->coreFrame || !_private->coreFrame->document())
+    Frame* frame = _private->coreFrame;
+    if (!frame)
         return nil;
-    
+
+    Document* document = frame->document();
+    if (!document)
+        return nil;
+
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     Vector<Node*> nodesVector;
     DOMNode *node;
     while ((node = [nodeEnum nextObject]))
         nodesVector.append(core(node));
-    
-    return kit(createFragmentFromNodes(_private->coreFrame->document(), nodesVector).get());
+
+    RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
+
+    for (auto node : nodesVector) {
+        RefPtr<Element> element = createDefaultParagraphElement(*document);
+        element->appendChild(node, ASSERT_NO_EXCEPTION);
+        fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
+    }
+
+    return kit(fragment.release().get());
 }
 
 - (void)_replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle

@@ -4267,7 +4267,7 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     String resultMIMEType;
     String newSource;
     String resultEncoding;
-    if (!processor->transformToString(this, resultMIMEType, newSource, resultEncoding))
+    if (!processor->transformToString(*this, resultMIMEType, newSource, resultEncoding))
         return;
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).
     Frame* ownerFrame = frame();

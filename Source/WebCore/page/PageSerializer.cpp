@@ -64,18 +64,18 @@
 
 namespace WebCore {
 
-static bool isCharsetSpecifyingNode(Node* node)
+static bool isCharsetSpecifyingNode(const Node& node)
 {
-    if (!node->isHTMLElement())
+    if (!node.isHTMLElement())
         return false;
 
-    HTMLElement* element = toHTMLElement(node);
-    if (!element->hasTagName(HTMLNames::metaTag))
+    const HTMLElement& element = toHTMLElement(node);
+    if (!element.hasTagName(HTMLNames::metaTag))
         return false;
     HTMLMetaCharsetParser::AttributeList attributes;
-    if (element->hasAttributes()) {
-        for (unsigned i = 0; i < element->attributeCount(); ++i) {
-            const Attribute& attribute = element->attributeAt(i);
+    if (element.hasAttributes()) {
+        for (unsigned i = 0; i < element.attributeCount(); ++i) {
+            const Attribute& attribute = element.attributeAt(i);
             // FIXME: We should deal appropriately with the attribute if they have a namespace.
             attributes.append(std::make_pair(attribute.name().toString(), attribute.value().string()));
         }
@@ -84,9 +84,9 @@ static bool isCharsetSpecifyingNode(Node* node)
     return textEncoding.isValid();
 }
 
-static bool shouldIgnoreElement(Element* element)
+static bool shouldIgnoreElement(const Element& element)
 {
-    return element->hasTagName(HTMLNames::scriptTag) || element->hasTagName(HTMLNames::noscriptTag) || isCharsetSpecifyingNode(element);
+    return element.hasTagName(HTMLNames::scriptTag) || element.hasTagName(HTMLNames::noscriptTag) || isCharsetSpecifyingNode(element);
 }
 
 static const QualifiedName& frameOwnerURLAttributeName(const HTMLFrameOwnerElement& frameOwner)
@@ -95,64 +95,63 @@ static const QualifiedName& frameOwnerURLAttributeName(const HTMLFrameOwnerEleme
     return isHTMLObjectElement(frameOwner) ? HTMLNames::dataAttr : HTMLNames::srcAttr;
 }
 
-class SerializerMarkupAccumulator : public WebCore::MarkupAccumulator {
+class SerializerMarkupAccumulator final : public WebCore::MarkupAccumulator {
 public:
-    SerializerMarkupAccumulator(PageSerializer*, Document*, Vector<Node*>*);
+    SerializerMarkupAccumulator(PageSerializer&, Document&, Vector<Node*>*);
     virtual ~SerializerMarkupAccumulator();
 
-protected:
-    virtual void appendText(StringBuilder& out, Text*);
-    virtual void appendElement(StringBuilder& out, Element*, Namespaces*);
-    virtual void appendCustomAttributes(StringBuilder& out, Element*, Namespaces*);
-    virtual void appendEndTag(Node*);
-
 private:
-    PageSerializer* m_serializer;
-    Document* m_document;
+    PageSerializer& m_serializer;
+    Document& m_document;
+
+    virtual void appendText(StringBuilder&, const Text&) override;
+    virtual void appendElement(StringBuilder&, const Element&, Namespaces*) override;
+    virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*) override;
+    virtual void appendEndTag(const Node&) override;
 };
 
-SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer* serializer, Document* document, Vector<Node*>* nodes)
+SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer& serializer, Document& document, Vector<Node*>* nodes)
     : MarkupAccumulator(nodes, ResolveAllURLs)
     , m_serializer(serializer)
     , m_document(document)
 {
     // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitely to ensure the right encoding is specified.
-    if (m_document->isXHTMLDocument() || m_document->xmlStandalone() || m_document->isSVGDocument())
-        appendString("<?xml version=\"" + m_document->xmlVersion() + "\" encoding=\"" + m_document->charset() + "\"?>");
+    if (m_document.isXHTMLDocument() || m_document.xmlStandalone() || m_document.isSVGDocument())
+        appendString("<?xml version=\"" + m_document.xmlVersion() + "\" encoding=\"" + m_document.charset() + "\"?>");
 }
 
 SerializerMarkupAccumulator::~SerializerMarkupAccumulator()
 {
 }
 
-void SerializerMarkupAccumulator::appendText(StringBuilder& out, Text* text)
+void SerializerMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
 {
-    Element* parent = text->parentElement();
-    if (parent && !shouldIgnoreElement(parent))
+    Element* parent = text.parentElement();
+    if (parent && !shouldIgnoreElement(*parent))
         MarkupAccumulator::appendText(out, text);
 }
 
-void SerializerMarkupAccumulator::appendElement(StringBuilder& out, Element* element, Namespaces* namespaces)
+void SerializerMarkupAccumulator::appendElement(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
     if (!shouldIgnoreElement(element))
         MarkupAccumulator::appendElement(out, element, namespaces);
 
-    if (element->hasTagName(HTMLNames::headTag)) {
+    if (element.hasTagName(HTMLNames::headTag)) {
         out.append("<meta charset=\"");
-        out.append(m_document->charset());
+        out.append(m_document.charset());
         out.append("\">");
     }
 
     // FIXME: For object (plugins) tags and video tag we could replace them by an image of their current contents.
 }
 
-void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, Element* element, Namespaces* namespaces)
+void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
-    if (!element->isFrameOwnerElement())
+    if (!element.isFrameOwnerElement())
         return;
 
-    HTMLFrameOwnerElement* frameOwner = toFrameOwnerElement(element);
-    Frame* frame = frameOwner->contentFrame();
+    const HTMLFrameOwnerElement& frameOwner = toFrameOwnerElement(element);
+    Frame* frame = frameOwner.contentFrame();
     if (!frame)
         return;
 
@@ -161,13 +160,13 @@ void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, Ele
         return;
 
     // We need to give a fake location to blank frames so they can be referenced by the serialized frame.
-    url = m_serializer->urlForBlankFrame(frame);
-    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(*frameOwner), url.string()), namespaces);
+    url = m_serializer.urlForBlankFrame(frame);
+    appendAttribute(out, element, Attribute(frameOwnerURLAttributeName(frameOwner), url.string()), namespaces);
 }
 
-void SerializerMarkupAccumulator::appendEndTag(Node* node)
+void SerializerMarkupAccumulator::appendEndTag(const Node& node)
 {
-    if (node->isElementNode() && !shouldIgnoreElement(toElement(node)))
+    if (node.isElementNode() && !shouldIgnoreElement(toElement(node)))
         MarkupAccumulator::appendEndTag(node);
 }
 
@@ -210,14 +209,14 @@ void PageSerializer::serializeFrame(Frame* frame)
     }
 
     Vector<Node*> nodes;
-    SerializerMarkupAccumulator accumulator(this, document, &nodes);
+    SerializerMarkupAccumulator accumulator(*this, *document, &nodes);
     TextEncoding textEncoding(document->charset());
     CString data;
     if (!textEncoding.isValid()) {
         // FIXME: iframes used as images trigger this. We should deal with them correctly.
         return;
     }
-    String text = accumulator.serializeNodes(document->documentElement(), 0, IncludeNode);
+    String text = accumulator.serializeNodes(*document->documentElement(), 0, IncludeNode);
     CString frameHTML = textEncoding.encode(text.characters(), text.length(), EntitiesForUnencodables);
     m_resources->append(Resource(url, document->suggestedMIMEType(), SharedBuffer::create(frameHTML.data(), frameHTML.length())));
     m_resourceURLs.add(url);

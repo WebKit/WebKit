@@ -462,7 +462,7 @@ bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
             loader->addAllArchiveResources(archive.get());
 
         String markupString = String::fromUTF8(mainResource->data()->data(), mainResource->data()->size());
-        fragment = createFragmentFromMarkup(frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
+        fragment = createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
         return true;
     }
 
@@ -514,7 +514,11 @@ bool Editor::WebContentReader::readHTML(const String& string)
     if (stringOmittingMicrosoftPrefix.isEmpty())
         return false;
 
-    fragment = createFragmentFromMarkup(frame.document(), stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent);
+    if (!frame.document())
+        return false;
+    Document& document = *frame.document();
+
+    fragment = createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent);
     return fragment;
 }
 

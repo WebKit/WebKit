@@ -41,6 +41,13 @@ private:
     virtual PassRefPtr<Text> virtualCreate(const String&);
 };
 
+inline bool isCDATASection(const Node& node)
+{
+    return node.nodeType() == Node::CDATA_SECTION_NODE;
+}
+
+NODE_TYPE_CASTS(CDATASection)
+
 } // namespace WebCore
 
 #endif // CDATASection_h

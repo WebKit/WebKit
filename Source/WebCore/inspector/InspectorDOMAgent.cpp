@@ -768,7 +768,7 @@ void InspectorDOMAgent::getOuterHTML(ErrorString* errorString, int nodeId, WTF::
     if (!node)
         return;
 
-    *outerHTML = createMarkup(node);
+    *outerHTML = createMarkup(*node);
 }
 
 void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const String& outerHTML)
@@ -794,7 +794,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     }
 
     Node* newNode = 0;
-    if (!m_domEditor->setOuterHTML(node, outerHTML, &newNode, errorString))
+    if (!m_domEditor->setOuterHTML(*node, outerHTML, &newNode, errorString))
         return;
 
     if (!newNode) {

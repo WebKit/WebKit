@@ -116,7 +116,7 @@ PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
     String resultMIMEType;
     String resultString;
     String resultEncoding;
-    if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
+    if (!transformToString(*sourceNode, resultMIMEType, resultString, resultEncoding))
         return 0;
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, sourceNode, 0);
 }
@@ -134,7 +134,7 @@ PassRefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode
     if (outputDoc->isHTMLDocument())
         resultMIMEType = "text/html";
 
-    if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
+    if (!transformToString(*sourceNode, resultMIMEType, resultString, resultEncoding))
         return 0;
     return createFragmentForTransformToFragment(resultString, resultMIMEType, outputDoc);
 }

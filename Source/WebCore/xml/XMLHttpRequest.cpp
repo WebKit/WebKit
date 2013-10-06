@@ -613,7 +613,7 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
 
         // FIXME: According to XMLHttpRequest Level 2, this should use the Document.innerHTML algorithm
         // from the HTML5 specification to serialize the document.
-        String body = createMarkup(document);
+        String body = createMarkup(*document);
 
         // FIXME: this should use value of document.inputEncoding to determine the encoding to use.
         TextEncoding encoding = UTF8Encoding();

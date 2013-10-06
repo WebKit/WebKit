@@ -95,9 +95,12 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
 PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {
     if (!m_platformDragData->hasMarkup())
-        return 0;
+        return nullptr;
 
-    return createFragmentFromMarkup(frame->document(), m_platformDragData->markup(), "");
+    if (!frame->document())
+        return nullptr;
+
+    return createFragmentFromMarkup(*frame->document(), m_platformDragData->markup(), "");
 }
 
 }

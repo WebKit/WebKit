@@ -32,7 +32,7 @@ namespace WebCore {
 class StyleSheet;
 class CSSStyleSheet;
 
-class ProcessingInstruction FINAL : public CharacterData, private CachedStyleSheetClient {
+class ProcessingInstruction final : public CharacterData, private CachedStyleSheetClient {
 public:
     static PassRefPtr<ProcessingInstruction> create(Document&, const String& target, const String& data);
     virtual ~ProcessingInstruction();
@@ -91,11 +91,12 @@ private:
 #endif
 };
 
-inline ProcessingInstruction* toProcessingInstruction(Node* node)
+inline bool isProcessingInstruction(const Node& node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE);
-    return static_cast<ProcessingInstruction*>(node);
+    return node.nodeType() == Node::PROCESSING_INSTRUCTION_NODE;
 }
+
+NODE_TYPE_CASTS(ProcessingInstruction)
 
 } //namespace
 

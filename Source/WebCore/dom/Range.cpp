@@ -1083,7 +1083,7 @@ String Range::toString(ExceptionCode& ec) const
 
 String Range::toHTML() const
 {
-    return createMarkup(this);
+    return createMarkup(*this);
 }
 
 String Range::text() const

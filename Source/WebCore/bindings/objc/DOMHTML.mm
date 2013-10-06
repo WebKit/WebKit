@@ -56,7 +56,7 @@
 
 - (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    return kit(createFragmentFromMarkup(core(self), markupString, [baseURL absoluteString]).get());
+    return kit(createFragmentFromMarkup(*core(self), markupString, [baseURL absoluteString]).get());
 }
 
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text

@@ -77,11 +77,26 @@ inline HTMLFrameOwnerElement& toFrameOwnerElement(Node& node)
     return static_cast<HTMLFrameOwnerElement&>(node);
 }
 
+inline const HTMLFrameOwnerElement& toFrameOwnerElement(const Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(node.isFrameOwnerElement());
+    return static_cast<const HTMLFrameOwnerElement&>(node);
+}
+
 inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());
     return static_cast<HTMLFrameOwnerElement*>(node);
 }
+
+inline const HTMLFrameOwnerElement* toFrameOwnerElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());
+    return static_cast<const HTMLFrameOwnerElement*>(node);
+}
+
+void toFrameOwnerElement(const HTMLFrameOwnerElement&);
+void toFrameOwnerElement(const HTMLFrameOwnerElement*);
 
 class SubframeLoadingDisabler {
 public:

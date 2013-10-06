@@ -1595,33 +1595,6 @@ inline const Document* Document::templateDocument() const
 }
 #endif
 
-inline Document* toDocument(ScriptExecutionContext* scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
-    return static_cast<Document*>(scriptExecutionContext);
-}
-
-inline const Document* toDocument(const ScriptExecutionContext* scriptExecutionContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
-    return static_cast<const Document*>(scriptExecutionContext);
-}
-
-inline Document* toDocument(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isDocumentNode());
-    return static_cast<Document*>(node);
-}
-
-inline const Document* toDocument(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isDocumentNode());
-    return static_cast<const Document*>(node);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toDocument(const Document*);
-
 // Put these methods here, because they require the Document definition, but we really want to inline them.
 
 inline bool Node::isDocumentNode() const
@@ -1651,6 +1624,25 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 }
 
 Element* eventTargetElementForDocument(Document*);
+
+inline Document* toDocument(ScriptExecutionContext* scriptExecutionContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
+    return static_cast<Document*>(scriptExecutionContext);
+}
+
+inline const Document* toDocument(const ScriptExecutionContext* scriptExecutionContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());
+    return static_cast<const Document*>(scriptExecutionContext);
+}
+
+inline bool isDocument(const Node& node)
+{
+    return node.isDocumentNode();
+}
+
+NODE_TYPE_CASTS(Document)
 
 } // namespace WebCore
 

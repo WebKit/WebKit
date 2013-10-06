@@ -50,6 +50,7 @@
 #include "markup.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -441,7 +442,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     }
         
     Vector<Node*> nodeList;
-    String markupString = createMarkup(node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
+    String markupString = createMarkup(*node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node->document()) + markupString;
@@ -476,22 +477,21 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
 {
     if (!range)
-        return 0;
+        return nullptr;
     
     Node* startContainer = range->startContainer();
     if (!startContainer)
-        return 0;
+        return nullptr;
         
     Document& document = startContainer->document();
 
     Frame* frame = document.frame();
     if (!frame)
-        return 0;
-    
-    Vector<Node*> nodeList;
+        return nullptr;
     
     // FIXME: This is always "for interchange". Is that right? See the previous method.
-    String markupString = documentTypeString(document) + createMarkup(range, &nodeList, AnnotateForInterchange);
+    Vector<Node*> nodeList;
+    String markupString = documentTypeString(document) + createMarkup(*range, &nodeList, AnnotateForInterchange);
 
     return create(markupString, frame, nodeList, 0);
 }
@@ -585,16 +585,21 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
 {
     if (!frame)
-        return 0;
+        return nullptr;
 
     Document* document = frame->document();
     if (!document)
-        return 0;
+        return nullptr;
 
-    RefPtr<Range> selectionRange = frame->selection().toNormalizedRange();
+    StringBuilder builder;
+    builder.append(documentTypeString(*document));
+
     Vector<Node*> nodeList;
-    String markupString = documentTypeString(*document) + createMarkup(selectionRange.get(), &nodeList, AnnotateForInterchange);
+    RefPtr<Range> selectionRange = frame->selection().toNormalizedRange();
+    if (selectionRange)
+        builder.append(createMarkup(*selectionRange, &nodeList, AnnotateForInterchange));
 
+    String markupString = builder.toString();
     RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList, 0);
     
     if (!document->isFrameSet())

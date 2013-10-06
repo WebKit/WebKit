@@ -119,32 +119,32 @@ void DOMPatchSupport::patchDocument(const String& markup)
     }
 }
 
-Node* DOMPatchSupport::patchNode(Node* node, const String& markup, ExceptionCode& ec)
+Node* DOMPatchSupport::patchNode(Node& node, const String& markup, ExceptionCode& ec)
 {
     // Don't parse <html> as a fragment.
-    if (node->isDocumentNode() || (node->parentNode() && node->parentNode()->isDocumentNode())) {
+    if (node.isDocumentNode() || (node.parentNode() && node.parentNode()->isDocumentNode())) {
         patchDocument(markup);
         return 0;
     }
 
-    Node* previousSibling = node->previousSibling();
+    Node* previousSibling = node.previousSibling();
     // FIXME: This code should use one of createFragment* in markup.h
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(*m_document);
     if (m_document->isHTMLDocument())
-        fragment->parseHTML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
+        fragment->parseHTML(markup, node.parentElement() ? node.parentElement() : m_document->documentElement());
     else
-        fragment->parseXML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
+        fragment->parseXML(markup, node.parentElement() ? node.parentElement() : m_document->documentElement());
 
     // Compose the old list.
-    ContainerNode* parentNode = node->parentNode();
-    Vector<OwnPtr<Digest> > oldList;
+    ContainerNode* parentNode = node.parentNode();
+    Vector<OwnPtr<Digest>> oldList;
     for (Node* child = parentNode->firstChild(); child; child = child->nextSibling())
         oldList.append(createDigest(child, 0));
 
     // Compose the new list.
     String markupCopy = markup.lower();
     Vector<OwnPtr<Digest> > newList;
-    for (Node* child = parentNode->firstChild(); child != node; child = child->nextSibling())
+    for (Node* child = parentNode->firstChild(); child != &node; child = child->nextSibling())
         newList.append(createDigest(child, 0));
     for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(headTag) && !child->firstChild() && markupCopy.find("</head>") == notFound)
@@ -153,13 +153,13 @@ Node* DOMPatchSupport::patchNode(Node* node, const String& markup, ExceptionCode
             continue; // HTML5 parser inserts empty <body> tag whenever it parses </head>
         newList.append(createDigest(child, &m_unusedNodesMap));
     }
-    for (Node* child = node->nextSibling(); child; child = child->nextSibling())
+    for (Node* child = node.nextSibling(); child; child = child->nextSibling())
         newList.append(createDigest(child, 0));
 
     if (!innerPatchChildren(parentNode, oldList, newList, ec)) {
         // Fall back to total replace.
         ec = 0;
-        if (!m_domEditor->replaceChild(parentNode, fragment.release(), node, ec))
+        if (!m_domEditor->replaceChild(parentNode, fragment.release(), &node, ec))
             return 0;
     }
     return previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();

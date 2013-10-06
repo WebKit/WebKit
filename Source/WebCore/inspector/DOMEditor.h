@@ -56,7 +56,7 @@ public:
     bool removeChild(Node* parentNode, Node*, ExceptionCode&);
     bool setAttribute(Element*, const String& name, const String& value, ExceptionCode&);
     bool removeAttribute(Element*, const String& name, ExceptionCode&);
-    bool setOuterHTML(Node*, const String& html, Node** newNode, ExceptionCode&);
+    bool setOuterHTML(Node&, const String& html, Node** newNode, ExceptionCode&);
     bool replaceWholeText(Text*, const String& text, ExceptionCode&);
     bool replaceChild(Node* parentNode, PassRefPtr<Node> newNode, Node* oldNode, ExceptionCode&);
     bool setNodeValue(Node* parentNode, const String& value, ExceptionCode&);
@@ -65,7 +65,7 @@ public:
     bool removeChild(Node* parentNode, Node*, ErrorString*);
     bool setAttribute(Element*, const String& name, const String& value, ErrorString*);
     bool removeAttribute(Element*, const String& name, ErrorString*);
-    bool setOuterHTML(Node*, const String& html, Node** newNode, ErrorString*);
+    bool setOuterHTML(Node&, const String& html, Node** newNode, ErrorString*);
     bool replaceWholeText(Text*, const String& text, ErrorString*);
 
 private:

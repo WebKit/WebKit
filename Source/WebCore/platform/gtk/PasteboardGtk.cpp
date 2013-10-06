@@ -161,7 +161,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 {
     m_dataObject->clearAll();
     m_dataObject->setText(shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText());
-    m_dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
+    m_dataObject->setMarkup(createMarkup(*selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
 
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
@@ -224,7 +224,7 @@ void Pasteboard::writeImage(Node* node, const URL&, const String& title)
     if (!url.isEmpty()) {
         m_dataObject->setURL(url, title);
 
-        m_dataObject->setMarkup(createMarkup(toElement(node), IncludeNode, 0, ResolveAllURLs));
+        m_dataObject->setMarkup(createMarkup(*toElement(node), IncludeNode, 0, ResolveAllURLs));
     }
 
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
@@ -311,9 +311,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
 
     if (m_dataObject->hasMarkup()) {
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), m_dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
-        if (fragment)
-            return fragment.release();
+        if (frame->document()) {
+            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(*frame->document(), m_dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
+            if (fragment)
+                return fragment.release();
+        }
     }
 
     if (!allowPlainText)

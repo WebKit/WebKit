@@ -501,7 +501,7 @@ static bool executeInsertHorizontalRule(Frame& frame, Event*, EditorCommandSourc
 
 static bool executeInsertHTML(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    return executeInsertFragment(frame, createFragmentFromMarkup(frame.document(), value, ""));
+    return executeInsertFragment(frame, createFragmentFromMarkup(*frame.document(), value, ""));
 }
 
 static bool executeInsertImage(Frame& frame, Event*, EditorCommandSource, const String& value)

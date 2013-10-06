@@ -731,7 +731,31 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-} //namespace
+#define NODE_TYPE_CASTS(NodeClassName) \
+inline const NodeClassName* to##NodeClassName(const Node* node) \
+{ \
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##NodeClassName(*node)); \
+    return static_cast<const NodeClassName*>(node); \
+} \
+inline NodeClassName* to##NodeClassName(Node* node) \
+{ \
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##NodeClassName(*node)); \
+    return static_cast<NodeClassName*>(node); \
+} \
+inline const NodeClassName& to##NodeClassName(const Node& node) \
+{ \
+    ASSERT_WITH_SECURITY_IMPLICATION(is##NodeClassName(node)); \
+    return static_cast<const NodeClassName&>(node); \
+} \
+inline NodeClassName& to##NodeClassName(Node& node) \
+{ \
+    ASSERT_WITH_SECURITY_IMPLICATION(is##NodeClassName(node)); \
+    return static_cast<NodeClassName&>(node); \
+} \
+void to##NodeClassName(const NodeClassName*); \
+void to##NodeClassName(const NodeClassName&);
+
+} // namespace WebCore
 
 #ifndef NDEBUG
 // Outside the WebCore namespace for ease of invocation from gdb.

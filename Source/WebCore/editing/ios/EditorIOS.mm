@@ -439,7 +439,7 @@ bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
             loader->addAllArchiveResources(archive.get());
 
         String markupString = String::fromUTF8(mainResource->data()->data(), mainResource->data()->size());
-        addFragment(createFragmentFromMarkup(frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+        addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
         return true;
     }
 

@@ -94,7 +94,7 @@ PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)
 
 String ShadowRoot::innerHTML() const
 {
-    return createMarkup(this, ChildrenOnly);
+    return createMarkup(*this, ChildrenOnly);
 }
 
 void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)

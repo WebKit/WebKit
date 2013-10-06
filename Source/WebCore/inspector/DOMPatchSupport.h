@@ -57,7 +57,7 @@ public:
     virtual ~DOMPatchSupport();
 
     void patchDocument(const String& markup);
-    Node* patchNode(Node*, const String& markup, ExceptionCode&);
+    Node* patchNode(Node&, const String& markup, ExceptionCode&);
 
 private:
     struct Digest;

@@ -1,3 +1,15 @@
+2013-10-05  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Thread references through markup.h
+        https://bugs.webkit.org/show_bug.cgi?id=122403
+
+        Reviewed by Darin Adler and Andreas Kling.
+
+        Highlights:
+        - Removed createFragmentFromMarkupWithContext(), it was unused.
+        - Moved createFragmentFromNodes() into its one caller (in WebKit/mac)
+        - Add a bunch more toFoo() overloads.
+
 2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebIDL] Annotate IDL interfaces under Source/WebCore/Modules/ with the OperationsNotDeletable attribute

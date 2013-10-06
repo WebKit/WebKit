@@ -85,14 +85,6 @@ void HTMLTemplateElement::didMoveToNewDocument(Document* oldDocument)
     document().ensureTemplateDocument()->adoptIfNeeded(m_content.get());
 }
 
-#ifndef NDEBUG
-const HTMLTemplateElement* toHTMLTemplateElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->isHTMLElement() && node->hasTagName(templateTag)));
-    return static_cast<const HTMLTemplateElement*>(node);
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(TEMPLATE_ELEMENT)

@@ -345,12 +345,12 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
 
 String HTMLElement::innerHTML() const
 {
-    return createMarkup(this, ChildrenOnly);
+    return createMarkup(*this, ChildrenOnly);
 }
 
 String HTMLElement::outerHTML() const
 {
-    return createMarkup(this);
+    return createMarkup(*this);
 }
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)

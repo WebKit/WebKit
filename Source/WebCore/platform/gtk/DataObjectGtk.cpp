@@ -46,7 +46,7 @@ String DataObjectGtk::text() const
 String DataObjectGtk::markup() const
 {
     if (m_range)
-        return createMarkup(m_range.get(), 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
+        return createMarkup(*m_range, 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
     return m_markup;
 }
 

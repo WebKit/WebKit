@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class Comment FINAL : public CharacterData {
+class Comment final : public CharacterData {
 public:
     static PassRefPtr<Comment> create(Document&, const String&);
 
@@ -39,6 +39,13 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
 };
+
+inline bool isComment(const Node& node)
+{
+    return node.nodeType() == Node::COMMENT_NODE;
+}
+
+NODE_TYPE_CASTS(Comment)
 
 } // namespace WebCore
 

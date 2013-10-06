@@ -122,7 +122,7 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 - (NSString *)markupString
 {
-    return createFullMarkup(core(self));
+    return createFullMarkup(*core(self));
 }
 
 - (NSRect)_renderRect:(bool *)isReplaced
@@ -172,7 +172,7 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
 
 - (NSString *)markupString
 {
-    return createFullMarkup(core(self));
+    return createFullMarkup(*core(self));
 }
 
 @end

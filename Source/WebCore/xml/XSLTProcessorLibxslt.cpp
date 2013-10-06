@@ -256,7 +256,7 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStyl
 
         // According to Mozilla documentation, the node must be a Document node, an xsl:stylesheet or xsl:transform element.
         // But we just use text content regardless of node type.
-        cachedStylesheet->parseString(createMarkup(stylesheetRootNode));
+        cachedStylesheet->parseString(createMarkup(*stylesheetRootNode));
     }
 
     if (!cachedStylesheet || !cachedStylesheet->document())
@@ -265,10 +265,10 @@ static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStyl
     return cachedStylesheet->compileStyleSheet();
 }
 
-static inline xmlDocPtr xmlDocPtrFromNode(Node* sourceNode, bool& shouldDelete)
+static inline xmlDocPtr xmlDocPtrFromNode(Node& sourceNode, bool& shouldDelete)
 {
-    Ref<Document> ownerDocument(sourceNode->document());
-    bool sourceIsDocument = (sourceNode == &ownerDocument.get());
+    Ref<Document> ownerDocument(sourceNode.document());
+    bool sourceIsDocument = (&sourceNode == &ownerDocument.get());
 
     xmlDocPtr sourceDoc = 0;
     if (sourceIsDocument && ownerDocument->transformSource())
@@ -300,9 +300,9 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
     return "application/xml";
 }
 
-bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String& resultString, String& resultEncoding)
+bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String& resultString, String& resultEncoding)
 {
-    Ref<Document> ownerDocument(sourceNode->document());
+    Ref<Document> ownerDocument(sourceNode.document());
 
     setXSLTLoadCallBack(docLoaderFunc, this, ownerDocument->cachedResourceLoader());
     xsltStylesheetPtr sheet = xsltStylesheetPointer(m_stylesheet, m_stylesheetRootNode.get());

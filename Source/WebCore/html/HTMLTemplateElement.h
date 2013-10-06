@@ -54,21 +54,7 @@ private:
     mutable RefPtr<DocumentFragment> m_content;
 };
 
-const HTMLTemplateElement* toHTMLTemplateElement(const Node*);
-
-inline HTMLTemplateElement* toHTMLTemplateElement(Node* node)
-{
-    return const_cast<HTMLTemplateElement*>(toHTMLTemplateElement(static_cast<const Node*>(node)));
-}
-
-#ifdef NDEBUG
-
-// The debug version of this, with assertions, is not inlined.
-inline const HTMLTemplateElement* toHTMLTemplateElement(const Node* node)
-{
-    return static_cast<const HTMLTemplateElement*>(node);
-}
-#endif // NDEBUG
+ELEMENT_TYPE_CASTS(HTMLTemplateElement)
 
 } // namespace WebCore
 

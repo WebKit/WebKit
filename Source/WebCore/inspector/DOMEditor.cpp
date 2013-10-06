@@ -206,10 +206,10 @@ private:
 class DOMEditor::SetOuterHTMLAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(SetOuterHTMLAction);
 public:
-    SetOuterHTMLAction(Node* node, const String& html)
+    SetOuterHTMLAction(Node& node, const String& html)
         : InspectorHistory::Action("SetOuterHTML")
         , m_node(node)
-        , m_nextSibling(node->nextSibling())
+        , m_nextSibling(node.nextSibling())
         , m_html(html)
         , m_newNode(0)
         , m_history(adoptPtr(new InspectorHistory()))
@@ -241,7 +241,7 @@ public:
     }
 
 private:
-    RefPtr<Node> m_node;
+    Ref<Node> m_node;
     RefPtr<Node> m_nextSibling;
     String m_html;
     String m_oldHTML;
@@ -374,7 +374,7 @@ bool DOMEditor::removeAttribute(Element* element, const String& name, ExceptionC
     return m_history->perform(adoptPtr(new RemoveAttributeAction(element, name)), ec);
 }
 
-bool DOMEditor::setOuterHTML(Node* node, const String& html, Node** newNode, ExceptionCode& ec)
+bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, ExceptionCode& ec)
 {
     OwnPtr<SetOuterHTMLAction> action = adoptPtr(new SetOuterHTMLAction(node, html));
     SetOuterHTMLAction* rawAction = action.get();
@@ -439,7 +439,7 @@ bool DOMEditor::removeAttribute(Element* element, const String& name, ErrorStrin
     return result;
 }
 
-bool DOMEditor::setOuterHTML(Node* node, const String& html, Node** newNode, ErrorString* errorString)
+bool DOMEditor::setOuterHTML(Node& node, const String& html, Node** newNode, ErrorString* errorString)
 {
     ExceptionCode ec = 0;
     bool result = setOuterHTML(node, html, newNode, ec);

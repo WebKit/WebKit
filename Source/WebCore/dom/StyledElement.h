@@ -105,6 +105,10 @@ inline const StylePropertySet* StyledElement::presentationAttributeStyle()
     return elementData()->presentationAttributeStyle();
 }
 
+inline bool isStyledElement(const Node& node) { return node.isStyledElement(); }
+
+ELEMENT_TYPE_CASTS(StyledElement)
+
 } //namespace
 
 #endif

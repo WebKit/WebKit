@@ -33,7 +33,7 @@ String XMLSerializer::serializeToString(Node* node, ExceptionCode& ec)
         ec = TypeError;
         return String();
     }
-    return createMarkup(node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
+    return createMarkup(*node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
 }
 
 } // namespace WebCore
