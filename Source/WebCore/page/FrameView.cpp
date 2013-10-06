@@ -2769,6 +2769,8 @@ void FrameView::sendResizeEventIfNeeded()
     RenderView* renderView = this->renderView();
     if (!renderView || renderView->printing())
         return;
+    if (frame().page() && frame().page()->chrome().client().isSVGImageChromeClient())
+        return;
 
     IntSize currentSize;
     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
