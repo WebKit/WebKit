@@ -4450,7 +4450,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     // Now determine if the result is inside an anchor - if the urlElement isn't already set.
     Node* node = result.innerNode();
     if (node && !result.URLElement())
-        result.setURLElement(toElement(node->enclosingLinkEventParentOrSelf()));
+        result.setURLElement(node->enclosingLinkEventParentOrSelf());
 
     // Now return whether we were inside this layer (this will always be true for the root
     // layer).

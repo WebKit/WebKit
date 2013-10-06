@@ -1804,14 +1804,14 @@ void Node::getSubresourceURLs(ListHashSet<URL>& urls) const
     addSubresourceAttributeURLs(urls);
 }
 
-Node* Node::enclosingLinkEventParentOrSelf()
+Element* Node::enclosingLinkEventParentOrSelf()
 {
     for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
-        // For imagemaps, the enclosing link node is the associated area element not the image itself.
-        // So we don't let images be the enclosingLinkNode, even though isLink sometimes returns true
-        // for them.
+        // For imagemaps, the enclosing link element is the associated area element not the image itself.
+        // So we don't let images be the enclosing link element, even though isLink sometimes returns
+        // true for them.
         if (node->isLink() && !isHTMLImageElement(node))
-            return node;
+            return toElement(node);
     }
 
     return 0;

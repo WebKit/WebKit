@@ -289,8 +289,8 @@ public:
     bool selfOrAncestorHasDirAutoAttribute() const { return getFlag(SelfOrAncestorHasDirAutoFlag); }
     void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setFlag(flag, SelfOrAncestorHasDirAutoFlag); }
 
-    // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
-    Node* enclosingLinkEventParentOrSelf();
+    // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
+    Element* enclosingLinkEventParentOrSelf();
 
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
     void setPreviousSibling(Node* previous) { m_previous = previous; }

@@ -1,3 +1,15 @@
+2013-10-06  Andreas Kling  <akling@apple.com>
+
+        CTTE: Node::enclosingLinkEventParentOrSelf() should return an Element.
+        <https://webkit.org/b/122401>
+
+        Reviewed by Sam Weinig.
+
+        Only Elements are ever linked, so make enclosingLinkEventParentOrSelf()
+        return an Element* instead of a Node*. The only call site was already
+        doing toElement() on the return value without checking, so this makes
+        things look a bit nicer.
+
 2013-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *CSS* prefix to FontFeatureValue to generate toCSSFontFeatureValue(), and use it
