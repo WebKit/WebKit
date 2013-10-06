@@ -1192,6 +1192,9 @@ int DOMWindow::scrollX() const
     if (!view)
         return 0;
 
+    if (!view->scrollX())
+        return 0;
+
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
     return view->mapFromLayoutToCSSUnits(view->scrollX());
@@ -1204,6 +1207,9 @@ int DOMWindow::scrollY() const
 
     FrameView* view = m_frame->view();
     if (!view)
+        return 0;
+
+    if (!view->scrollY())
         return 0;
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();

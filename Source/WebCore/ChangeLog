@@ -1,3 +1,17 @@
+2013-10-06  Andreas Kling  <akling@apple.com>
+
+        Avoid layout in window.scroll{Y,X} when at topmost/leftmost position.
+        <https://webkit.org/b/122423>
+
+        Reviewed by Antti Koivisto.
+
+        Add a fast path for these properties to skip synchronous layout when
+        we are just going to return 0 anyway.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+
 2013-10-06  Anders Carlsson  <andersca@apple.com>
 
         Clean up ContentData
