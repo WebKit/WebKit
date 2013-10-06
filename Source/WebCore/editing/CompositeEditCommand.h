@@ -152,7 +152,7 @@ protected:
 
     PassRefPtr<Node> moveParagraphContentsToNewBlockIfNecessary(const Position&);
     
-    void pushAnchorElementDown(Node*);
+    void pushAnchorElementDown(Element&);
     
     void moveParagraph(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);
     void moveParagraphs(const VisiblePosition&, const VisiblePosition&, const VisiblePosition&, bool preserveSelection = false, bool preserveStyle = true);

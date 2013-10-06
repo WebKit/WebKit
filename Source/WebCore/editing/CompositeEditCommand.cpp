@@ -971,18 +971,15 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     return newBlock.release();
 }
 
-void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
+void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)
 {
-    if (!anchorNode)
-        return;
+    ASSERT(anchorElement.isLink());
     
-    ASSERT(anchorNode->isLink());
-    
-    setEndingSelection(VisibleSelection::selectionFromContentsOfNode(anchorNode));
-    applyStyledElement(toElement(anchorNode));
-    // Clones of anchorNode have been pushed down, now remove it.
-    if (anchorNode->inDocument())
-        removeNodePreservingChildren(anchorNode);
+    setEndingSelection(VisibleSelection::selectionFromContentsOfNode(&anchorElement));
+    applyStyledElement(&anchorElement);
+    // Clones of anchorElement have been pushed down, now remove it.
+    if (anchorElement.inDocument())
+        removeNodePreservingChildren(&anchorElement);
 }
 
 // Clone the paragraph between start and end under blockElement,
@@ -1397,7 +1394,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
         return original;
         
     VisiblePosition visiblePos(original);
-    Node* enclosingAnchor = enclosingAnchorElement(original);
+    Element* enclosingAnchor = enclosingAnchorElement(original);
     Position result = original;
 
     if (!enclosingAnchor)
@@ -1413,7 +1410,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             // Make sure anchors are pushed down before avoiding them so that we don't
             // also avoid structural elements like lists and blocks (5142012).
             if (original.deprecatedNode() != enclosingAnchor && original.deprecatedNode()->parentNode() != enclosingAnchor) {
-                pushAnchorElementDown(enclosingAnchor);
+                pushAnchorElementDown(*enclosingAnchor);
                 enclosingAnchor = enclosingAnchorElement(original);
                 if (!enclosingAnchor)
                     return original;
@@ -1432,7 +1429,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
             // Make sure anchors are pushed down before avoiding them so that we don't
             // also avoid structural elements like lists and blocks (5142012).
             if (original.deprecatedNode() != enclosingAnchor && original.deprecatedNode()->parentNode() != enclosingAnchor) {
-                pushAnchorElementDown(enclosingAnchor);
+                pushAnchorElementDown(*enclosingAnchor);
                 enclosingAnchor = enclosingAnchorElement(original);
             }
             if (!enclosingAnchor)

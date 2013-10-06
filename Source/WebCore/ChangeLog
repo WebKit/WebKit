@@ -1,5 +1,15 @@
 2013-10-06  Andreas Kling  <akling@apple.com>
 
+        CTTE: Teach CompositeEditCommand that link Nodes are always Elements.
+        <https://webkit.org/b/122400>
+
+        Reviewed by Sam Weinig.
+
+        Make pushAnchorElementDown() take an Element& instead of a Node* and
+        tweak the surrounding code a tiny bit.
+
+2013-10-06  Andreas Kling  <akling@apple.com>
+
         CTTE: Node::enclosingLinkEventParentOrSelf() should return an Element.
         <https://webkit.org/b/122401>
 
