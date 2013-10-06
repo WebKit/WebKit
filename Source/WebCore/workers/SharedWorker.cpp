@@ -47,19 +47,24 @@
 
 namespace WebCore {
 
-inline SharedWorker::SharedWorker(ScriptExecutionContext* context)
+inline SharedWorker::SharedWorker(ScriptExecutionContext& context)
     : AbstractWorker(context)
 {
 }
 
-PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, const String& url, const String& name, ExceptionCode& ec)
+PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, const String& url, const String& name, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    FeatureObserver::observe(static_cast<Document*>(context)->domWindow(), FeatureObserver::SharedWorkerStart);
+
+    // We don't currently support nested workers, so workers can only be created from documents.
+    ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
+    Document& document = static_cast<Document&>(context);
+
+    FeatureObserver::observe(document.domWindow(), FeatureObserver::SharedWorkerStart);
 
     RefPtr<SharedWorker> worker = adoptRef(new SharedWorker(context));
 
-    RefPtr<MessageChannel> channel = MessageChannel::create(context);
+    RefPtr<MessageChannel> channel = MessageChannel::create(&context);
     worker->m_port = channel->port1();
     OwnPtr<MessagePortChannel> remotePort = channel->port2()->disentangle();
     ASSERT(remotePort);
@@ -70,10 +75,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
     if (scriptURL.isEmpty())
         return 0;
 
-    // We don't currently support nested workers, so workers can only be created from documents.
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    Document* document = static_cast<Document*>(context);
-    if (!document->securityOrigin()->canAccessSharedWorkers(document->topOrigin())) {
+    if (!document.securityOrigin()->canAccessSharedWorkers(document.topOrigin())) {
         ec = SECURITY_ERR;
         return 0;
     }
@@ -85,11 +87,6 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
 
 SharedWorker::~SharedWorker()
 {
-}
-
-EventTargetInterface SharedWorker::eventTargetInterface() const
-{
-    return SharedWorkerEventTargetInterfaceType;
 }
 
 } // namespace WebCore

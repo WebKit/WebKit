@@ -49,12 +49,12 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class Worker : public AbstractWorker, private WorkerScriptLoaderClient {
+    class Worker final : public AbstractWorker, private WorkerScriptLoaderClient {
     public:
-        static PassRefPtr<Worker> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
+        static PassRefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
         virtual ~Worker();
 
-        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).
@@ -62,20 +62,20 @@ namespace WebCore {
 
         void terminate();
 
-        virtual bool canSuspend() const OVERRIDE;
-        virtual void stop() OVERRIDE;
-        virtual bool hasPendingActivity() const OVERRIDE;
+        virtual bool canSuspend() const override;
+        virtual void stop() override;
+        virtual bool hasPendingActivity() const override;
     
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
     private:
-        explicit Worker(ScriptExecutionContext*);
+        explicit Worker(ScriptExecutionContext&);
 
         void notifyNetworkStateChange(bool isOnline);
 
         // WorkerScriptLoaderClient callbacks
-        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
-        virtual void notifyFinished() OVERRIDE;
+        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
+        virtual void notifyFinished() override;
 
         friend void networkStateChanged(bool isOnLine);
 

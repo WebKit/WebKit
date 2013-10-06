@@ -61,7 +61,8 @@ EncodedJSValue JSC_HOST_CALL JSWorkerConstructor::constructJSWorker(ExecState* e
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
 
     ExceptionCode ec = 0;
-    RefPtr<Worker> worker = Worker::create(window->document(), scriptURL, ec);
+    ASSERT(window->document());
+    RefPtr<Worker> worker = Worker::create(*window->document(), scriptURL, ec);
     if (ec) {
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());

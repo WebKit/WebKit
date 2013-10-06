@@ -62,7 +62,7 @@ void networkStateChanged(bool isOnLine)
         (*it)->notifyNetworkStateChange(isOnLine);
 }
 
-inline Worker::Worker(ScriptExecutionContext* context)
+inline Worker::Worker(ScriptExecutionContext& context)
     : AbstractWorker(context)
     , m_contextProxy(WorkerGlobalScopeProxy::create(this))
 {
@@ -75,10 +75,15 @@ inline Worker::Worker(ScriptExecutionContext* context)
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
+PassRefPtr<Worker> Worker::create(ScriptExecutionContext& context, const String& url, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
-    FeatureObserver::observe(static_cast<Document*>(context)->domWindow(), FeatureObserver::WorkerStart);
+
+    // We don't currently support nested workers, so workers can only be created from documents.
+    ASSERT_WITH_SECURITY_IMPLICATION(context.isDocument());
+    Document& document = static_cast<Document&>(context);
+
+    FeatureObserver::observe(document.domWindow(), FeatureObserver::WorkerStart);
 
     RefPtr<Worker> worker = adoptRef(new Worker(context));
 
@@ -95,7 +100,7 @@ PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String&
 #if PLATFORM(BLACKBERRY)
     worker->m_scriptLoader->setTargetType(ResourceRequest::TargetIsWorker);
 #endif
-    worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
+    worker->m_scriptLoader->loadAsynchronously(&context, scriptURL, DenyCrossOriginRequests, worker.get());
 
     return worker.release();
 }
@@ -106,11 +111,6 @@ Worker::~Worker()
     ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
     allWorkers->remove(this);
     m_contextProxy->workerObjectDestroyed();
-}
-
-EventTargetInterface Worker::eventTargetInterface() const
-{
-    return WorkerEventTargetInterfaceType;
 }
 
 void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)

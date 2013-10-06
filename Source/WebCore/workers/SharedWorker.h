@@ -38,17 +38,17 @@
 
 namespace WebCore {
 
-    class SharedWorker : public AbstractWorker {
+    class SharedWorker final : public AbstractWorker {
     public:
-        static PassRefPtr<SharedWorker> create(ScriptExecutionContext*, const String& url, const String& name, ExceptionCode&);
+        static PassRefPtr<SharedWorker> create(ScriptExecutionContext&, const String& url, const String& name, ExceptionCode&);
         virtual ~SharedWorker();
 
         MessagePort* port() const { return m_port.get(); }
 
-        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const override { return SharedWorkerEventTargetInterfaceType; }
 
     private:
-        explicit SharedWorker(ScriptExecutionContext*);
+        explicit SharedWorker(ScriptExecutionContext&);
 
         RefPtr<MessagePort> m_port;
     };

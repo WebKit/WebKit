@@ -1,3 +1,19 @@
+2013-10-06  Andreas Kling  <akling@apple.com>
+
+        Tighten AbstractWorker and subclasses a bit.
+        <https://webkit.org/b/122402>
+
+        Reviewed by Darin Adler.
+
+        - Make the Worker and SharedWorker classes final.
+        - Have constructors take ScriptExecutionContext by reference.
+        - Remove unnecessary AbstractWorker::contextDestroyed() override.
+        - Make eventTargetInterface() inline.
+
+        Inlining eventTargetInterface() is quite neat - since we only ever
+        call this on tightly typed pointers from generated code, combining
+        final and inline turns the virtual call into a compile-time constant.
+
 2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebIDL] Annotate IDL interfaces under Source/WebCore/html/ with the OperationsNotDeletable attribute
@@ -271,7 +287,7 @@
         * rendering/style/StylePendingImage.h:
         (WebCore::StylePendingImage::cssCursorImageValue):
 
-2013-10-06  Andreas Kling  <akling@apple.com>
+2013-10-05  Andreas Kling  <akling@apple.com>
 
         CTTE: Teach CompositeEditCommand that link Nodes are always Elements.
         <https://webkit.org/b/122400>

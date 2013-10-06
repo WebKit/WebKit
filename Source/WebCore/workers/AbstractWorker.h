@@ -45,31 +45,29 @@
 namespace WebCore {
 
     class URL;
-    class ScriptExecutionContext;
 
     class AbstractWorker : public RefCounted<AbstractWorker>, public ActiveDOMObject, public EventTargetWithInlineData {
     public:
         // EventTarget APIs
-        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
+        virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
         using RefCounted<AbstractWorker>::ref;
         using RefCounted<AbstractWorker>::deref;
 
-        AbstractWorker(ScriptExecutionContext*);
         virtual ~AbstractWorker();
 
     protected:
+        explicit AbstractWorker(ScriptExecutionContext&);
+
         // Helper function that converts a URL to an absolute URL and checks the result for validity.
         URL resolveURL(const String& url, ExceptionCode& ec);
         intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
     private:
-        virtual void refEventTarget() OVERRIDE FINAL { ref(); }
-        virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
-
-        virtual void contextDestroyed() OVERRIDE;
+        virtual void refEventTarget() override final { ref(); }
+        virtual void derefEventTarget() override final { deref(); }
     };
 
 } // namespace WebCore

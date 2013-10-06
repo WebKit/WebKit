@@ -46,18 +46,13 @@
 
 namespace WebCore {
 
-AbstractWorker::AbstractWorker(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+AbstractWorker::AbstractWorker(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
 {
 }
 
 AbstractWorker::~AbstractWorker()
 {
-}
-
-void AbstractWorker::contextDestroyed()
-{
-    ActiveDOMObject::contextDestroyed(); 
 }
 
 URL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
