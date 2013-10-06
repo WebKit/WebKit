@@ -1,3 +1,10 @@
+2013-10-06  Andreas Kling  <akling@apple.com>
+
+        Windows build fix attempt.
+
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+
 2013-10-06  Antti Koivisto  <antti@apple.com>
 
         Move paint() to RenderElement

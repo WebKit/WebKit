@@ -81,7 +81,7 @@ void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* ele
     // Order is important here for Explorer's sake
     pasteboard.writeURLToWritableDataObject(url, label);
     pasteboard.writeImageToDataObject(element, url);
-    pasteboard.writeMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
+    pasteboard.writeMarkup(createMarkup(*element, IncludeNode, 0, ResolveAllURLs));
 }
 
 }
