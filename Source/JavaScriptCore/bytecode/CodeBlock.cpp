@@ -1887,6 +1887,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (Options::showDisassembly()
         || Options::showDFGDisassembly()
         || Options::dumpBytecodeAtDFGTime()
+        || Options::dumpGraphAtEachPhase()
         || Options::verboseCompilation()
         || Options::logCompilationChanges()
         || Options::validateGraph()
@@ -2483,6 +2484,66 @@ bool CodeBlock::hasOptimizedReplacement()
 }
 #endif
 
+bool CodeBlock::isCaptured(VirtualRegister operand, InlineCallFrame* inlineCallFrame) const
+{
+    if (operand.isArgument())
+        return operand.toArgument() && usesArguments();
+
+    if (inlineCallFrame)
+        return inlineCallFrame->capturedVars.get(operand.toLocal());
+
+    // The activation object isn't in the captured region, but it's "captured"
+    // in the sense that stores to its location can be observed indirectly.
+    if (needsActivation() && operand == activationRegister())
+        return true;
+
+    // Ditto for the arguments object.
+    if (usesArguments() && operand == argumentsRegister())
+        return true;
+
+    // Ditto for the arguments object.
+    if (usesArguments() && operand == unmodifiedArgumentsRegister(argumentsRegister()))
+        return true;
+
+    // We're in global code so there are no locals to capture
+    if (!symbolTable())
+        return false;
+
+    return operand.offset() <= symbolTable()->captureStart()
+        && operand.offset() > symbolTable()->captureEnd();
+}
+
+int CodeBlock::framePointerOffsetToGetActivationRegisters(int machineCaptureStart)
+{
+    // We'll be adding this to the stack pointer to get a registers pointer that looks
+    // like it would have looked in the baseline engine. For example, if bytecode would
+    // have put the first captured variable at offset -5 but we put it at offset -1, then
+    // we'll have an offset of 4.
+    int32_t offset = 0;
+    
+    // Compute where we put the captured variables. This offset will point the registers
+    // pointer directly at the first captured var.
+    offset += machineCaptureStart;
+    
+    // Now compute the offset needed to make the runtime see the captured variables at the
+    // same offset that the bytecode would have used.
+    offset -= symbolTable()->captureStart();
+    
+    return offset;
+}
+
+int CodeBlock::framePointerOffsetToGetActivationRegisters()
+{
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return 0;
+#if ENABLE(DFG_JIT)
+    return framePointerOffsetToGetActivationRegisters(jitCode()->dfgCommon()->machineCaptureStart);
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+#endif
+}
+
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
@@ -2681,6 +2742,18 @@ void CodeBlock::install()
 PassRefPtr<CodeBlock> CodeBlock::newReplacement()
 {
     return ownerExecutable()->newReplacementCodeBlockFor(specializationKind());
+}
+
+const SlowArgument* CodeBlock::machineSlowArguments()
+{
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return symbolTable()->slowArguments();
+    
+#if ENABLE(DFG_JIT)
+    return jitCode()->dfgCommon()->slowArguments.get();
+#else // ENABLE(DFG_JIT)
+    return 0;
+#endif // ENABLE(DFG_JIT)
 }
 
 #if ENABLE(JIT)

@@ -198,7 +198,7 @@ public:
         if (callee != m_targetCallee)
             return StackVisitor::Continue;
 
-        m_result = JSValue(visitor->arguments());
+        m_result = JSValue(visitor->createArguments());
         return StackVisitor::Done;
     }
 

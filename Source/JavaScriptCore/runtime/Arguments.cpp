@@ -319,12 +319,12 @@ void Arguments::tearOff(CallFrame* callFrame)
     // If we have a captured argument that logically aliases activation storage,
     // but we optimize away the activation, the argument needs to tear off into
     // our storage. The simplest way to do this is to revert it to Normal status.
-    if (m_slowArguments && !m_activation) {
+    if (m_slowArgumentData && !m_activation) {
         for (size_t i = 0; i < m_numArguments; ++i) {
-            if (m_slowArguments[i].status != SlowArgument::Captured)
+            if (m_slowArgumentData->slowArguments[i].status != SlowArgument::Captured)
                 continue;
-            m_slowArguments[i].status = SlowArgument::Normal;
-            m_slowArguments[i].index = CallFrame::argumentOffset(i);
+            m_slowArgumentData->slowArguments[i].status = SlowArgument::Normal;
+            m_slowArgumentData->slowArguments[i].index = CallFrame::argumentOffset(i);
         }
     }
 

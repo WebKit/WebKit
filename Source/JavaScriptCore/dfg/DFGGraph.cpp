@@ -56,6 +56,8 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_allocator(longLivedState.m_allocator)
     , m_inlineCallFrames(adoptPtr(new InlineCallFrameSet()))
     , m_hasArguments(false)
+    , m_nextMachineLocal(0)
+    , m_machineCaptureStart(std::numeric_limits<int>::max())
     , m_fixpointState(BeforeFixpoint)
     , m_form(LoadStore)
     , m_unificationState(LocallyUnified)
@@ -239,6 +241,14 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
             out.print(comma, "arg", operand.toArgument(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
         else
             out.print(comma, "loc", operand.toLocal(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
+        
+        operand = variableAccessData->machineLocal();
+        if (operand.isValid()) {
+            if (operand.isArgument())
+                out.print(comma, "machine:arg", operand.toArgument());
+            else
+                out.print(comma, "machine:loc", operand.toLocal());
+        }
     }
     if (node->hasUnlinkedLocal()) {
         VirtualRegister operand = node->unlinkedLocal();
@@ -246,6 +256,15 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
             out.print(comma, "arg", operand.toArgument());
         else
             out.print(comma, "loc", operand.toLocal());
+    }
+    if (node->hasUnlinkedMachineLocal()) {
+        VirtualRegister operand = node->unlinkedMachineLocal();
+        if (operand.isValid()) {
+            if (operand.isArgument())
+                out.print(comma, "machine:arg", operand.toArgument());
+            else
+                out.print(comma, "machine:loc", operand.toLocal());
+        }
     }
     if (node->hasConstantBuffer()) {
         out.print(comma);
@@ -399,7 +418,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Flush format: ", block->ssa->flushFormatAtHead, "\n");
+            out.print("  Flush format: ", block->ssa->flushAtHead, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtHead, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtHead), "\n");
             out.print("  Values: ", nodeMapDump(block->ssa->valuesAtHead, context), "\n");
@@ -425,7 +444,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             
         case SSA: {
             RELEASE_ASSERT(block->ssa);
-            out.print("  Flush format: ", block->ssa->flushFormatAtTail, "\n");
+            out.print("  Flush format: ", block->ssa->flushAtTail, "\n");
             out.print("  Availability: ", block->ssa->availabilityAtTail, "\n");
             out.print("  Live: ", nodeListDump(block->ssa->liveAtTail), "\n");
             out.print("  Values: ", nodeMapDump(block->ssa->valuesAtTail, context), "\n");

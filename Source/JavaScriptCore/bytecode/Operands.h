@@ -209,6 +209,16 @@ public:
             return virtualRegisterForArgument(index).offset();
         return virtualRegisterForLocal(index - numberOfArguments()).offset();
     }
+    size_t indexForOperand(int operand) const
+    {
+        if (operandIsArgument(operand))
+            return static_cast<size_t>(VirtualRegister(operand).toArgument());
+        return static_cast<size_t>(VirtualRegister(operand).toLocal()) + numberOfArguments();
+    }
+    size_t indexForOperand(VirtualRegister reg) const
+    {
+        return indexForOperand(reg.offset());
+    }
     
     void setOperandFirstTime(int operand, const T& value)
     {

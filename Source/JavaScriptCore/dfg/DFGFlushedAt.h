@@ -23,48 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLValueSource.h"
+#ifndef DFGFlushedAt_h
+#define DFGFlushedAt_h
 
-#if ENABLE(FTL_JIT)
+#include <wtf/Platform.h>
 
-namespace JSC { namespace FTL {
+#if ENABLE(DFG_JIT)
 
-void ValueSource::dump(PrintStream& out) const
-{
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack:", virtualRegister());
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack:", virtualRegister());
-        return;
-    case Int52InJSStack:
-        out.print("Int52InJSStack:", virtualRegister());
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack:", virtualRegister());
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
+#include "DFGFlushFormat.h"
+#include "VirtualRegister.h"
+
+namespace JSC { namespace DFG {
+
+class FlushedAt {
+public:
+    FlushedAt()
+        : m_format(DeadFlush)
+    {
     }
     
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    FlushedAt(FlushFormat format, VirtualRegister virtualRegister)
+        : m_format(format)
+        , m_virtualRegister(virtualRegister)
+    {
+        if (format == DeadFlush)
+            ASSERT(!virtualRegister.isValid());
+        else
+            ASSERT(virtualRegister.isValid());
+    }
+    
+    bool operator!() const { return m_format == DeadFlush; }
+    
+    FlushFormat format() const { return m_format; }
+    VirtualRegister virtualRegister() const { return m_virtualRegister; }
+    
+    bool operator==(const FlushedAt& other) const
+    {
+        return m_format == other.m_format
+            && m_virtualRegister == other.m_virtualRegister;
+    }
+    
+    bool operator!=(const FlushedAt& other) const { return !(*this == other); }
+    
+    void dump(PrintStream&) const;
+    void dumpInContext(PrintStream&, DumpContext*) const;
+    
+private:
+    FlushFormat m_format;
+    VirtualRegister m_virtualRegister;
+};
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
-{
-    dump(out);
-}
+} } // namespace JSC::DFG
 
-} } // namespace JSC::FTL
+#endif // ENABLE(DFG_JIT)
 
-#endif // ENABLE(FTL_JIT)
+#endif // DFGFlushedAt_h
 

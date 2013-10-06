@@ -64,14 +64,6 @@ void DesiredWriteBarrier::trigger(VM& vm)
         WriteBarrier<ScriptExecutable>& executable = inlineCallFrame->executable;
         executable.set(vm, m_owner, executable.get());
         return;
-    }
-
-    case InlineCallFrameCalleeType: {
-        InlineCallFrame* inlineCallFrame = m_which.inlineCallFrame;
-        ASSERT(!!inlineCallFrame->callee);
-        WriteBarrier<JSFunction>& callee = inlineCallFrame->callee;
-        callee.set(vm, m_owner, callee.get());
-        return;
     } }
     RELEASE_ASSERT_NOT_REACHED();
 }

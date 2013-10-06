@@ -30,6 +30,7 @@
 
 #include "DFGAbstractValue.h"
 #include "DFGBranchDirection.h"
+#include "DFGFlushedAt.h"
 #include "DFGNode.h"
 #include "DFGVariadicFunction.h"
 #include "Operands.h"
@@ -137,8 +138,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
     unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
 
     struct SSAData {
-        Operands<FlushFormat> flushFormatAtHead;
-        Operands<FlushFormat> flushFormatAtTail;
+        Operands<FlushedAt> flushAtHead;
+        Operands<FlushedAt> flushAtTail;
         Operands<Node*> availabilityAtHead;
         Operands<Node*> availabilityAtTail;
         HashSet<Node*> liveAtHead;

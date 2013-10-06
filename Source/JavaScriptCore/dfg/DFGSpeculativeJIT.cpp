@@ -1533,14 +1533,32 @@ void SpeculativeJIT::compileMovHintAndCheck(Node* node)
 void SpeculativeJIT::compileInlineStart(Node* node)
 {
     InlineCallFrame* inlineCallFrame = node->codeOrigin.inlineCallFrame;
+    InlineStartData* data = node->inlineStartData();
     int argumentCountIncludingThis = inlineCallFrame->arguments.size();
-    unsigned argumentPositionStart = node->argumentPositionStart();
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
-        ValueSource source = ValueSource::forFlushFormat(
-            VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()),
-            m_jit.graph().m_argumentPositions[argumentPositionStart + i].flushFormat());
+        ArgumentPosition& position = m_jit.graph().m_argumentPositions[
+            data->argumentPositionStart + i];
+        VariableAccessData* variable = position.someVariable();
+        ValueSource source;
+        if (!variable)
+            source = ValueSource(SourceIsDead);
+        else {
+            source = ValueSource::forFlushFormat(
+                variable->machineLocal(),
+                m_jit.graph().m_argumentPositions[data->argumentPositionStart + i].flushFormat());
+        }
         inlineCallFrame->arguments[i] = source.valueRecovery();
     }
+    
+    RELEASE_ASSERT(inlineCallFrame->isClosureCall == !!data->calleeVariable);
+    
+    if (inlineCallFrame->isClosureCall) {
+        ValueSource source = ValueSource::forFlushFormat(
+            data->calleeVariable->machineLocal(),
+            data->calleeVariable->flushFormat());
+        inlineCallFrame->calleeRecovery = source.valueRecovery();
+    } else
+        RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());
 }
 
 void SpeculativeJIT::bail()
@@ -1603,7 +1621,7 @@ void SpeculativeJIT::compileCurrentBlock()
         else
             format = dataFormatFor(variable->flushFormat());
         m_stream->appendAndLog(
-            VariableEvent::setLocal(virtualRegisterForLocal(i), variable->local(), format));
+            VariableEvent::setLocal(virtualRegisterForLocal(i), variable->machineLocal(), format));
     }
     
     m_lastSetOperand = VirtualRegister();
@@ -1832,7 +1850,7 @@ void SpeculativeJIT::createOSREntries()
             continue;
         if (!block->isOSRTarget)
             continue;
-
+        
         // Currently we don't have OSR entry trampolines. We could add them
         // here if need be.
         m_osrEntryHeads.append(m_jit.blockHeads()[blockIndex]);
@@ -4239,7 +4257,7 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
         m_jit.branchTestPtr(
             MacroAssembler::NonZero,
             MacroAssembler::Address(
-                baseReg, OBJECT_OFFSETOF(Arguments, m_slowArguments))));
+                baseReg, OBJECT_OFFSETOF(Arguments, m_slowArgumentData))));
     
     m_jit.move(propertyReg, resultReg);
     m_jit.signExtend32ToPtr(resultReg, resultReg);

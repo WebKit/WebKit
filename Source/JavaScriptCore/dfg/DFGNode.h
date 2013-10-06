@@ -139,6 +139,11 @@ struct SwitchData {
     bool didUseJumpTable;
 };
 
+struct InlineStartData {
+    unsigned argumentPositionStart;
+    VariableAccessData* calleeVariable;
+};
+
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
@@ -411,6 +416,7 @@ struct Node {
         m_op = GetLocalUnlinked;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = local.offset();
+        m_opInfo2 = VirtualRegister().offset();
         children.reset();
     }
     
@@ -463,6 +469,7 @@ struct Node {
         ASSERT(m_op == GetLocalUnlinked);
         m_op = GetLocal;
         m_opInfo = bitwise_cast<uintptr_t>(variable);
+        m_opInfo2 = 0;
         children.setChild1(Edge(phi));
     }
     
@@ -547,6 +554,11 @@ struct Node {
         return variableAccessData()->local();
     }
     
+    VirtualRegister machineLocal()
+    {
+        return variableAccessData()->machineLocal();
+    }
+    
     bool hasUnlinkedLocal()
     {
         switch (op()) {
@@ -562,6 +574,23 @@ struct Node {
     {
         ASSERT(hasUnlinkedLocal());
         return static_cast<VirtualRegister>(m_opInfo);
+    }
+    
+    bool hasUnlinkedMachineLocal()
+    {
+        return op() == GetLocalUnlinked;
+    }
+    
+    void setUnlinkedMachineLocal(VirtualRegister reg)
+    {
+        ASSERT(hasUnlinkedMachineLocal());
+        m_opInfo2 = reg.offset();
+    }
+    
+    VirtualRegister unlinkedMachineLocal()
+    {
+        ASSERT(hasUnlinkedMachineLocal());
+        return VirtualRegister(m_opInfo2);
     }
     
     bool hasPhi()
@@ -1094,15 +1123,15 @@ struct Node {
         m_virtualRegister = virtualRegister;
     }
     
-    bool hasArgumentPositionStart()
+    bool hasInlineStartData()
     {
         return op() == InlineStart;
     }
     
-    unsigned argumentPositionStart()
+    InlineStartData* inlineStartData()
     {
-        ASSERT(hasArgumentPositionStart());
-        return m_opInfo;
+        ASSERT(hasInlineStartData());
+        return bitwise_cast<InlineStartData*>(m_opInfo);
     }
     
     bool hasExecutionCounter()

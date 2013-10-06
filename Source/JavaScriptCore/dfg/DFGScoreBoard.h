@@ -43,18 +43,11 @@ namespace JSC { namespace DFG {
 // another node.
 class ScoreBoard {
 public:
-    ScoreBoard(const BitVector& usedVars)
-        : m_highWatermark(0)
+    ScoreBoard(unsigned nextMachineLocal)
+        : m_highWatermark(nextMachineLocal + 1)
     {
-        m_used.fill(0, usedVars.size());
-        m_free.reserveCapacity(usedVars.size());
-        for (size_t i = usedVars.size(); i-- > 0;) {
-            if (usedVars.get(i)) {
-                m_used[i] = max(); // This is mostly for debugging and sanity.
-                m_highWatermark = std::max(m_highWatermark, static_cast<unsigned>(i) + 1);
-            } else
-                m_free.append(i);
-        }
+        m_used.fill(max(), nextMachineLocal);
+        m_free.reserveCapacity(nextMachineLocal);
     }
 
     ~ScoreBoard()

@@ -272,6 +272,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGFlushFormat.h \
 	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.h \
+	Source/JavaScriptCore/dfg/DFGFlushedAt.cpp \
+	Source/JavaScriptCore/dfg/DFGFlushedAt.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
@@ -351,6 +353,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGSSAConversionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGSSAConversionPhase.h \
+	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGStackLayoutPhase.h \
 	Source/JavaScriptCore/dfg/DFGStructureAbstractValue.h \
 	Source/JavaScriptCore/dfg/DFGTierUpCheckInjectionPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGTierUpCheckInjectionPhase.h \

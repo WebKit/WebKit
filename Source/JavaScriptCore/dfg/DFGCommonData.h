@@ -33,6 +33,7 @@
 #include "InlineCallFrameSet.h"
 #include "JSCell.h"
 #include "ProfilerCompilation.h"
+#include "SymbolTable.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -67,7 +68,9 @@ struct WeakReferenceTransition {
 class CommonData {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
-    CommonData() { }
+    CommonData()
+        : machineCaptureStart(std::numeric_limits<int>::max())
+    { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     unsigned addCodeOrigin(CodeOrigin codeOrigin);
@@ -84,6 +87,9 @@ public:
     RefPtr<Profiler::Compilation> compilation;
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
+    
+    int machineCaptureStart;
+    std::unique_ptr<SlowArgument[]> slowArguments;
 };
 
 } } // namespace JSC::DFG

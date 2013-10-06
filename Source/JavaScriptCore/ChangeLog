@@ -1,3 +1,239 @@
+2013-10-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Compress DFG stack layout
+        https://bugs.webkit.org/show_bug.cgi?id=122024
+
+        Reviewed by Oliver Hunt.
+        
+        The DFG needs to be able to store things at a known offset from frame pointer so that
+        the runtime can read those things. Prior to this patch, the DFG would use the exact
+        offsets that the bytecode asked for, even in the case of inlining, where it would use
+        the callsite stack offset to shift all of the inlined function's variables over just as
+        they would have been if a bytecode interpreter had really made the call.
+        
+        But this won't work once WebKit-LLVM integration is complete. LLVM has no notion of
+        storing things at a fixed offset from the frame pointer. We could try to hack LLVM to do
+        that, but it would seriously complicate LLVM's stack layout. But what we might be able
+        to do is have LLVM tell us (via an addressof intrinsic and a side-channel) where some
+        alloca landed relative to the frame pointer. Hence if the DFG can put all of its flushed
+        variables in a contiguous range that can be expressed to LLVM as a struct that we
+        alloca, then all of this can still work just fine.
+        
+        Previously the flushed variables didn't fit in a contiguous range, but this patch makes
+        them contiguous by allowing the stack layout to be compressed.
+        
+        What this really means is that there is now a distinction between where the DFG saw a
+        variable stored in bytecode and where it will actually store it in the resulting machine
+        code. Henceforth when the DFG says "local" or "virtual register" it means the variable
+        according to bytecode (with the stack offsetting for inlined code as before), but when
+        it says "machine local" or "machine virtual register" it means the actual place where it
+        will store things in the resulting machine code. All of the OSR exit, inlined arguments,
+        captured variables, and various stack unwinding machine now knows about all of this.
+        
+        Note that the DFG's abstract interpretation still uses bytecode variables rather than
+        machine variables. Same for CSE and abstract heaps. This makes sense since it means that
+        we don't have to decide on machine variable allocation just to do those optimizations.
+        
+        The decision of what a local's machine location becomes is deferred to very late in
+        compilation. We only need to assign machine locations to variables that must be stored
+        to the stack. It's now mandatory to run some kind of "stack layout phase" that makes the
+        decision and updates all data structures.
+        
+        So far the way that this is being used is just to compress the DFG stack layout, which
+        is something that we should have done anyway, a long time ago. And the compression isn't
+        even that good - the current StackLayoutPhase just identifies local indices that are
+        unused in machine code and slides all other variables towards zero. This doesn't achieve
+        particularly good compression but it is better than nothing. Note that this phase makes
+        it seem like the bytecode-machine mapping is based on bytecode local indices; for
+        example if bytecode local 4 is mapped to machine local 3 then it always will be. That's
+        true for the current StackLayoutPhase but it _will not_ be true for all possible stack
+        layout phases and it would be incorrect to assume that it should be true. This is why
+        the current data structures have each VariableAccessData hold its own copy of the
+        machine virtual register, and also have each InlineCallFrame report their own machine
+        virtual registers for the various things. The DFG backend is likely to always use the
+        dumb StackLayoutPhase since it is very cheap to run, but the FTL backend is likely to
+        eventually get a better one, where we do some kind of constraint-based coloring: we
+        institute constraints where some VariableAccessData's must have the same indices as some
+        other ones, and also must be right next to some other ones; then we process all
+        VariableAccessData's and attempt to assign them machine locals while preserving those
+        constraints. This could lead to two VariableAccessDatas for the same bytecode local
+        ending up with different machine locals.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::isCaptured):
+        (JSC::CodeBlock::framePointerOffsetToGetActivationRegisters):
+        (JSC::CodeBlock::machineSlowArguments):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasSlowArguments):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::dump):
+        (JSC::InlineCallFrame::calleeForCallFrame):
+        (JSC::InlineCallFrame::dumpInContext):
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::InlineCallFrame):
+        (JSC::InlineCallFrame::calleeConstant):
+        * bytecode/Operands.h:
+        (JSC::Operands::indexForOperand):
+        * dfg/DFGBasicBlock.cpp:
+        (JSC::DFG::BasicBlock::SSAData::SSAData):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCommon.h:
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        (JSC::DFG::DesiredWriteBarrier::trigger):
+        * dfg/DFGDesiredWriteBarriers.h:
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        (JSC::DFG::FlushLivenessAnalysisPhase::run):
+        (JSC::DFG::FlushLivenessAnalysisPhase::process):
+        (JSC::DFG::FlushLivenessAnalysisPhase::reportError):
+        * dfg/DFGFlushedAt.cpp: Added.
+        (JSC::DFG::FlushedAt::dump):
+        (JSC::DFG::FlushedAt::dumpInContext):
+        * dfg/DFGFlushedAt.h: Added.
+        (JSC::DFG::FlushedAt::FlushedAt):
+        (JSC::DFG::FlushedAt::operator!):
+        (JSC::DFG::FlushedAt::format):
+        (JSC::DFG::FlushedAt::virtualRegister):
+        (JSC::DFG::FlushedAt::operator==):
+        (JSC::DFG::FlushedAt::operator!=):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::bytecodeRegisterForArgument):
+        (JSC::DFG::Graph::argumentsRegisterFor):
+        (JSC::DFG::Graph::machineArgumentsRegisterFor):
+        (JSC::DFG::Graph::uncheckedArgumentsRegisterFor):
+        (JSC::DFG::Graph::activationRegister):
+        (JSC::DFG::Graph::uncheckedActivationRegister):
+        (JSC::DFG::Graph::machineActivationRegister):
+        (JSC::DFG::Graph::uncheckedMachineActivationRegister):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetLocalUnlinked):
+        (JSC::DFG::Node::convertToGetLocal):
+        (JSC::DFG::Node::machineLocal):
+        (JSC::DFG::Node::hasUnlinkedMachineLocal):
+        (JSC::DFG::Node::setUnlinkedMachineLocal):
+        (JSC::DFG::Node::unlinkedMachineLocal):
+        (JSC::DFG::Node::hasInlineStartData):
+        (JSC::DFG::Node::inlineStartData):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::OSREntryReshuffling::OSREntryReshuffling):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::ScoreBoard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInlineStart):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::calleeFrameOffset):
+        (JSC::DFG::SpeculativeJIT::callFrameSlot):
+        (JSC::DFG::SpeculativeJIT::argumentSlot):
+        (JSC::DFG::SpeculativeJIT::callFrameTagSlot):
+        (JSC::DFG::SpeculativeJIT::callFramePayloadSlot):
+        (JSC::DFG::SpeculativeJIT::argumentTagSlot):
+        (JSC::DFG::SpeculativeJIT::argumentPayloadSlot):
+        (JSC::DFG::SpeculativeJIT::framePointerOffsetToGetActivationRegisters):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::recordSetLocal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp: Added.
+        (JSC::DFG::StackLayoutPhase::StackLayoutPhase):
+        (JSC::DFG::StackLayoutPhase::run):
+        (JSC::DFG::performStackLayout):
+        * dfg/DFGStackLayoutPhase.h: Added.
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::machineLocal):
+        (JSC::DFG::VariableAccessData::flushedAt):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::inJSStack):
+        (JSC::FTL::ExitValue::inJSStackAsInt32):
+        (JSC::FTL::ExitValue::inJSStackAsInt52):
+        (JSC::FTL::ExitValue::inJSStackAsDouble):
+        (JSC::FTL::ExitValue::virtualRegister):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetArgument):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLValueSource.cpp:
+        (JSC::FTL::ValueSource::dump):
+        * ftl/FTLValueSource.h:
+        (JSC::FTL::ValueSource::ValueSource):
+        (JSC::FTL::ValueSource::kind):
+        (JSC::FTL::ValueSource::operator!):
+        (JSC::FTL::ValueSource::node):
+        (JSC::FTL::ValueSource::virtualRegister):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::createArguments):
+        (JSC::StackVisitor::Frame::existingArguments):
+        * interpreter/StackVisitor.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::addressFor):
+        (JSC::AssemblyHelpers::tagFor):
+        (JSC::AssemblyHelpers::payloadFor):
+        (JSC::AssemblyHelpers::offsetOfArgumentsIncludingThis):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/Arguments.h:
+        (JSC::Arguments::allocateSlowArguments):
+        (JSC::Arguments::tryDeleteArgument):
+        (JSC::Arguments::isDeletedArgument):
+        (JSC::Arguments::isArgument):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        (JSC::JSActivation::JSActivation):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::operator()):
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Remove createOwned

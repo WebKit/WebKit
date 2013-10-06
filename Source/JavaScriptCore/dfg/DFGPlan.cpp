@@ -50,6 +50,7 @@
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGSSAConversionPhase.h"
+#include "DFGStackLayoutPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
@@ -247,6 +248,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.
+        performStackLayout(dfg);
         performLivenessAnalysis(dfg);
         performFlushLivenessAnalysis(dfg);
         performOSRAvailabilityAnalysis(dfg);
@@ -283,6 +285,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     
     performCPSRethreading(dfg);
     performDCE(dfg);
+    performStackLayout(dfg);
     performVirtualRegisterAllocation(dfg);
     dumpAndVerifyGraph(dfg, "Graph after optimization:");
 

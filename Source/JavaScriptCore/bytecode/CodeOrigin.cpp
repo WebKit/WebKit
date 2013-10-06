@@ -66,7 +66,7 @@ void CodeOrigin::dump(PrintStream& out) const
         
         if (InlineCallFrame* frame = stack[i].inlineCallFrame) {
             out.print(frame->briefFunctionInformation(), ":<", RawPointer(frame->executable.get()), "> ");
-            if (frame->isClosureCall())
+            if (frame->isClosureCall)
                 out.print("(closure) ");
         }
         
@@ -81,10 +81,7 @@ void CodeOrigin::dumpInContext(PrintStream& out, DumpContext*) const
 
 JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
 {
-    if (!isClosureCall())
-        return callee.get();
-    
-    return jsCast<JSFunction*>((exec + stackOffset)->callee());
+    return jsCast<JSFunction*>(calleeRecovery.recover(exec));
 }
 
 CodeBlockHash InlineCallFrame::hash() const
@@ -114,10 +111,10 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
     if (executable->isStrictMode())
         out.print(" (StrictMode)");
     out.print(", bc#", caller.bytecodeIndex, ", ", specializationKind());
-    if (callee)
-        out.print(", known callee: ", inContext(JSValue(callee.get()), context));
-    else
+    if (isClosureCall)
         out.print(", closure call");
+    else
+        out.print(", known callee: ", inContext(calleeRecovery.constant(), context));
     out.print(", numArgs+this = ", arguments.size());
     out.print(", stack >= r", stackOffset);
     out.print(">");

@@ -416,15 +416,15 @@ static bool unwindCallFrame(StackVisitor& visitor)
     }
 
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->usesArguments()) {
-        if (JSValue arguments = visitor->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister()).offset()).jsValue()) {
+        if (Arguments* arguments = visitor->existingArguments()) {
             if (activation)
-                jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
+                arguments->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
 #if ENABLE(DFG_JIT)
             else if (visitor->isInlinedFrame())
-                jsCast<Arguments*>(arguments)->tearOff(callFrame, visitor->inlineCallFrame());
+                arguments->tearOff(callFrame, visitor->inlineCallFrame());
 #endif
             else
-                jsCast<Arguments*>(arguments)->tearOff(callFrame);
+                arguments->tearOff(callFrame);
         }
     }
 

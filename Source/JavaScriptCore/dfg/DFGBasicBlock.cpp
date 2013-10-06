@@ -109,8 +109,8 @@ void BasicBlock::dump(PrintStream& out) const
 }
 
 BasicBlock::SSAData::SSAData(BasicBlock* block)
-    : flushFormatAtHead(OperandsLike, block->variablesAtHead)
-    , flushFormatAtTail(OperandsLike, block->variablesAtHead)
+    : flushAtHead(OperandsLike, block->variablesAtHead)
+    , flushAtTail(OperandsLike, block->variablesAtHead)
     , availabilityAtHead(OperandsLike, block->variablesAtHead)
     , availabilityAtTail(OperandsLike, block->variablesAtHead)
 {

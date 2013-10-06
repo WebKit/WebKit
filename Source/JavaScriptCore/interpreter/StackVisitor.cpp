@@ -140,15 +140,9 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
         m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock();
         m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
 
-        JSFunction* callee = inlineCallFrame->callee.get();
-        if (callee) {
-            m_frame.m_scope = callee->scope();
-            m_frame.m_callee = callee;
-        } else {
-            CallFrame* inlinedFrame = callFrame + frameOffset;
-            m_frame.m_scope = inlinedFrame->scope();
-            m_frame.m_callee = inlinedFrame->callee();
-        }
+        JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
+        m_frame.m_scope = callee->scope();
+        m_frame.m_callee = callee;
         ASSERT(m_frame.scope());
         ASSERT(m_frame.callee());
 
@@ -247,7 +241,7 @@ String StackVisitor::Frame::toString()
     return traceBuild.toString().impl();
 }
 
-Arguments* StackVisitor::Frame::arguments()
+Arguments* StackVisitor::Frame::createArguments()
 {
     ASSERT(m_callFrame);
     CallFrame* physicalFrame = m_callFrame;
@@ -265,6 +259,28 @@ Arguments* StackVisitor::Frame::arguments()
         arguments->tearOff(physicalFrame);
     }
     return arguments;
+}
+
+Arguments* StackVisitor::Frame::existingArguments()
+{
+    if (codeBlock()->codeType() != FunctionCode)
+        return 0;
+    if (!codeBlock()->usesArguments())
+        return 0;
+    
+    VirtualRegister reg;
+        
+#if ENABLE(DFG_JIT)
+    if (isInlinedFrame())
+        reg = inlineCallFrame()->argumentsRegister;
+    else
+#endif // ENABLE(DFG_JIT)
+        reg = codeBlock()->argumentsRegister();
+    
+    JSValue result = callFrame()->r(unmodifiedArgumentsRegister(reg).offset()).jsValue();
+    if (!result)
+        return 0;
+    return jsCast<Arguments*>(result);
 }
 
 void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
@@ -285,17 +301,6 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
 
     line = divotLine + codeBlock->ownerExecutable()->lineNo();
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
-}
-
-Register& StackVisitor::Frame::r(int index)
-{
-    int offset = 0;
-
-#if ENABLE(DFG_JIT)
-    if (isInlinedFrame())
-        offset = inlineCallFrame()->stackOffset;
-#endif
-    return callFrame()->r(offset + index);
 }
 
 void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)

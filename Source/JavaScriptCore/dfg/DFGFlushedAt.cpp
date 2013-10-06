@@ -24,47 +24,23 @@
  */
 
 #include "config.h"
-#include "FTLValueSource.h"
+#include "DFGFlushedAt.h"
 
-#if ENABLE(FTL_JIT)
+namespace JSC { namespace DFG {
 
-namespace JSC { namespace FTL {
-
-void ValueSource::dump(PrintStream& out) const
+void FlushedAt::dump(PrintStream& out) const
 {
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack:", virtualRegister());
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack:", virtualRegister());
-        return;
-    case Int52InJSStack:
-        out.print("Int52InJSStack:", virtualRegister());
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack:", virtualRegister());
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
+    if (m_format == DeadFlush)
+        out.print(m_format);
+    else
+        out.print("r", m_virtualRegister, ":", m_format);
 }
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
+void FlushedAt::dumpInContext(PrintStream& out, DumpContext*) const
 {
     dump(out);
 }
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
 

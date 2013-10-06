@@ -58,8 +58,8 @@ public:
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
-            block->ssa->flushFormatAtHead.fill(DeadFlush);
-            block->ssa->flushFormatAtTail.fill(DeadFlush);
+            block->ssa->flushAtHead.fill(FlushedAt());
+            block->ssa->flushAtTail.fill(FlushedAt());
         }
         
         do {
@@ -68,13 +68,14 @@ public:
                 process(blockIndex);
         } while (m_changed);
         
-        Operands<FlushFormat>& root = m_graph.block(0)->ssa->flushFormatAtHead;
+        Operands<FlushedAt>& root = m_graph.block(0)->ssa->flushAtHead;
         for (unsigned i = root.size(); i--;) {
             if (root.isArgument(i)) {
-                if (root[i] == DeadFlush || root[i] == FlushedJSValue)
+                if (!root[i]
+                    || root[i] == FlushedAt(FlushedJSValue, VirtualRegister(root.operandForIndex(i))))
                     continue;
             } else {
-                if (root[i] == DeadFlush)
+                if (!root[i])
                     continue;
             }
             dataLog(
@@ -95,7 +96,7 @@ private:
         if (!block)
             return;
         
-        m_live = block->ssa->flushFormatAtTail;
+        m_live = block->ssa->flushAtTail;
         
         for (unsigned nodeIndex = block->size(); nodeIndex--;) {
             Node* node = block->at(nodeIndex);
@@ -103,21 +104,31 @@ private:
             switch (node->op()) {
             case SetLocal: {
                 VariableAccessData* variable = node->variableAccessData();
-                setForNode(node, variable->local(), variable->flushFormat(), DeadFlush);
+                FlushedAt& current = m_live.operand(variable->local());
+                if (!!current && current != variable->flushedAt())
+                    reportError(node);
+                current = FlushedAt();
                 break;
             }
                 
             case GetArgument: {
                 VariableAccessData* variable = node->variableAccessData();
-                setForNode(node, variable->local(), variable->flushFormat(), FlushedJSValue);
+                ASSERT(variable->local() == variable->machineLocal());
+                ASSERT(variable->local().isArgument());
+                FlushedAt& current = m_live.operand(variable->local());
+                if (!!current && current != variable->flushedAt())
+                    reportError(node);
+                current = FlushedAt(FlushedJSValue, node->local());
                 break;
             }
                 
             case Flush:
             case GetLocal: {
                 VariableAccessData* variable = node->variableAccessData();
-                FlushFormat format = variable->flushFormat();
-                setForNode(node, variable->local(), format, format);
+                FlushedAt& current = m_live.operand(variable->local());
+                if (!!current && current != variable->flushedAt())
+                    reportError(node);
+                current = variable->flushedAt();
                 break;
             }
                 
@@ -126,16 +137,16 @@ private:
             }
         }
         
-        if (m_live == block->ssa->flushFormatAtHead)
+        if (m_live == block->ssa->flushAtHead)
             return;
         
         m_changed = true;
-        block->ssa->flushFormatAtHead = m_live;
+        block->ssa->flushAtHead = m_live;
         for (unsigned i = block->predecessors.size(); i--;) {
             BasicBlock* predecessor = block->predecessors[i];
             for (unsigned j = m_live.size(); j--;) {
-                FlushFormat& predecessorFormat = predecessor->ssa->flushFormatAtTail[j];
-                FlushFormat myFormat = m_live[j];
+                FlushedAt& predecessorFlush = predecessor->ssa->flushAtTail[j];
+                FlushedAt myFlush = m_live[j];
                 
                 // Three possibilities:
                 // 1) Predecessor format is Dead, in which case it acquires our format.
@@ -148,18 +159,18 @@ private:
                 // and says "not Dead" and the current block says "Dead"? We may want to
                 // revisit this, and say that this is is acceptable.
                 
-                if (predecessorFormat == DeadFlush) {
-                    predecessorFormat = myFormat;
+                if (!predecessorFlush) {
+                    predecessorFlush = myFlush;
                     continue;
                 }
                 
-                if (predecessorFormat == myFormat)
+                if (predecessorFlush == myFlush)
                     continue;
                 
                 dataLog(
                     "Bad Flush merge at edge ", *predecessor, " -> ", *block,
                     ", local variable r", m_live.operandForIndex(j), ": ", *predecessor,
-                    " has ", predecessorFormat, " and ", *block, " has ", myFormat, ".\n");
+                    " has ", predecessorFlush, " and ", *block, " has ", myFlush, ".\n");
                 dataLog("IR at time of error:\n");
                 m_graph.dump();
                 CRASH();
@@ -167,35 +178,19 @@ private:
         }
     }
     
-    void setForNode(Node* node, VirtualRegister operand, FlushFormat nodeFormat, FlushFormat newFormat)
+    NO_RETURN_DUE_TO_CRASH void reportError(Node* node)
     {
-        FlushFormat& currentFormat = m_live.operand(operand);
-        
-        // Do some useful verification here. It's OK if we think that the
-        // flush format is dead at the time that we see the node. But it's
-        // not OK if both the node and m_live see a FlushFormat and they do
-        // not agree on it.
-        
-        if (currentFormat == DeadFlush || currentFormat == nodeFormat) {
-            currentFormat = newFormat;
-            return;
-        }
-        
         dataLog(
-            "Bad Flush merge at node ", node, ", r", operand, ": node claims ", nodeFormat,
-            " but backwards flow claims ", currentFormat, ".\n");
+            "Bad flush merge at node ", node, ", r", node->local(), ": node claims ",
+            node->variableAccessData()->flushedAt(), " but backwards flow claims ",
+            m_live.operand(node->local()), ".\n");
         dataLog("IR at time of error:\n");
         m_graph.dump();
         CRASH();
     }
     
-    FlushFormat flushFormat(Node* node)
-    {
-        return node->variableAccessData()->flushFormat();
-    }
-    
     bool m_changed;
-    Operands<FlushFormat> m_live;
+    Operands<FlushedAt> m_live;
 };
 
 bool performFlushLivenessAnalysis(Graph& graph)

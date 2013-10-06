@@ -78,7 +78,7 @@ public:
         // Validate that all local variables at the head of the root block are dead.
         BasicBlock* root = m_graph.block(0);
         for (unsigned i = 0; i < root->variablesAtHead.numberOfLocals(); ++i)
-            V_EQUAL((virtualRegisterForLocal(i), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
+            V_EQUAL((virtualRegisterForLocal(i), root), static_cast<Node*>(0), root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

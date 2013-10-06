@@ -288,6 +288,13 @@ public:
             && negate->canSpeculateInt52();
     }
     
+    VirtualRegister bytecodeRegisterForArgument(CodeOrigin codeOrigin, int argument)
+    {
+        return VirtualRegister(
+            codeOrigin.inlineCallFrame->stackOffset +
+            baselineCodeBlockFor(codeOrigin)->argumentIndexAfterCapture(argument));
+    }
+    
     // Helper methods to check nodes for constants.
     bool isConstant(Node* node)
     {
@@ -429,38 +436,70 @@ public:
         return hasExitSite(node->codeOrigin, exitKind);
     }
     
-    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
     {
-        if (!codeOrigin.inlineCallFrame)
-            return m_codeBlock->argumentsRegister();
+        if (!inlineCallFrame)
+            return m_profiledBlock->argumentsRegister();
         
         return VirtualRegister(baselineCodeBlockForInlineCallFrame(
-            codeOrigin.inlineCallFrame)->argumentsRegister().offset() +
-            codeOrigin.inlineCallFrame->stackOffset);
+            inlineCallFrame)->argumentsRegister().offset() +
+            inlineCallFrame->stackOffset);
     }
     
-    VirtualRegister uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
+    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
-        if (!codeOrigin.inlineCallFrame)
-            return m_codeBlock->uncheckedArgumentsRegister();
+        return argumentsRegisterFor(codeOrigin.inlineCallFrame);
+    }
+    
+    VirtualRegister machineArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_codeBlock->argumentsRegister();
         
-        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(
-            codeOrigin.inlineCallFrame);
+        return inlineCallFrame->argumentsRegister;
+    }
+    
+    VirtualRegister machineArgumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        return machineArgumentsRegisterFor(codeOrigin.inlineCallFrame);
+    }
+    
+    VirtualRegister uncheckedArgumentsRegisterFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_profiledBlock->uncheckedArgumentsRegister();
+        
+        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
         if (!codeBlock->usesArguments())
             return VirtualRegister();
         
         return VirtualRegister(codeBlock->argumentsRegister().offset() +
-            codeOrigin.inlineCallFrame->stackOffset);
+            inlineCallFrame->stackOffset);
+    }
+    
+    VirtualRegister uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
+    {
+        return uncheckedArgumentsRegisterFor(codeOrigin.inlineCallFrame);
     }
     
     VirtualRegister activationRegister()
     {
-        return m_codeBlock->activationRegister();
+        return m_profiledBlock->activationRegister();
     }
     
     VirtualRegister uncheckedActivationRegister()
     {
-        return m_codeBlock->uncheckedActivationRegister();
+        return m_profiledBlock->uncheckedActivationRegister();
+    }
+    
+    VirtualRegister machineActivationRegister()
+    {
+        return m_profiledBlock->activationRegister();
+    }
+    
+    VirtualRegister uncheckedMachineActivationRegister()
+    {
+        return m_profiledBlock->uncheckedActivationRegister();
     }
     
     ValueProfile* valueProfileFor(Node* node)
@@ -747,15 +786,18 @@ public:
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
     SegmentedVector<SwitchData, 4> m_switchData;
+    SegmentedVector<InlineStartData, 4> m_inlineStartData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
-    BitVector m_preservedVars;
     BitVector m_lazyVars;
     Dominators m_dominators;
     NaturalLoops m_naturalLoops;
     unsigned m_localVars;
+    unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;
+    int m_machineCaptureStart;
+    std::unique_ptr<SlowArgument[]> m_slowArguments;
     
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;

@@ -38,6 +38,19 @@ class CodeBlock;
 namespace DFG {
 
 #if ENABLE(DFG_JIT)
+struct OSREntryReshuffling {
+    OSREntryReshuffling() { }
+    
+    OSREntryReshuffling(int fromOffset, int toOffset)
+        : fromOffset(fromOffset)
+        , toOffset(toOffset)
+    {
+    }
+    
+    int fromOffset;
+    int toOffset;
+};
+
 struct OSREntryData {
     unsigned m_bytecodeIndex;
     unsigned m_machineCodeOffset;
@@ -45,6 +58,7 @@ struct OSREntryData {
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedMachineInt;
+    Vector<OSREntryReshuffling> m_reshufflings;
 };
 
 inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)

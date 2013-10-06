@@ -28,6 +28,7 @@
 
 #include "DFGDoubleFormatState.h"
 #include "DFGFlushFormat.h"
+#include "DFGFlushedAt.h"
 #include "DFGNodeFlags.h"
 #include "Operands.h"
 #include "SpeculatedType.h"
@@ -79,6 +80,12 @@ public:
     {
         ASSERT(m_local == find()->m_local);
         return m_local;
+    }
+    
+    VirtualRegister& machineLocal()
+    {
+        ASSERT(find() == this);
+        return m_machineLocal;
     }
 
     bool mergeIsCaptured(bool isCaptured)
@@ -340,6 +347,11 @@ public:
         return FlushedJSValue;
     }
     
+    FlushedAt flushedAt()
+    {
+        return FlushedAt(flushFormat(), machineLocal());
+    }
+    
 private:
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But
@@ -347,6 +359,7 @@ private:
     // usage for variable access nodes do be significant.
 
     VirtualRegister m_local;
+    VirtualRegister m_machineLocal;
     SpeculatedType m_prediction;
     SpeculatedType m_argumentAwarePrediction;
     NodeFlags m_flags;

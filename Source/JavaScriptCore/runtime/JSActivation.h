@@ -41,12 +41,12 @@ namespace JSC {
     
     class JSActivation : public JSVariableObject {
     private:
-        JSActivation(VM& vm, CallFrame*, SharedSymbolTable*);
+        JSActivation(VM&, CallFrame*, Register*, SharedSymbolTable*);
     
     public:
         typedef JSVariableObject Base;
 
-        static JSActivation* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
+        static JSActivation* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
         {
             SharedSymbolTable* symbolTable = codeBlock->symbolTable();
             JSActivation* activation = new (
@@ -55,9 +55,14 @@ namespace JSC {
                     vm.heap,
                     allocationSize(symbolTable)
                 )
-            ) JSActivation(vm, callFrame, symbolTable);
+            ) JSActivation(vm, callFrame, registers, symbolTable);
             activation->finishCreation(vm);
             return activation;
+        }
+        
+        static JSActivation* create(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock)
+        {
+            return create(vm, callFrame, callFrame->registers(), codeBlock);
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
@@ -105,11 +110,11 @@ namespace JSC {
     extern int activationCount;
     extern int allTheThingsCount;
 
-    inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, SharedSymbolTable* symbolTable)
+    inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, Register* registers, SharedSymbolTable* symbolTable)
         : Base(
             vm,
             callFrame->lexicalGlobalObject()->activationStructure(),
-            callFrame->registers(),
+            registers,
             callFrame->scope(),
             symbolTable
         )

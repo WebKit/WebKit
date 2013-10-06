@@ -49,40 +49,57 @@ enum ValueSourceKind {
 class ValueSource {
 public:
     ValueSource()
-        : m_value(SourceNotSet)
+        : m_kind(SourceNotSet)
     {
     }
     
     explicit ValueSource(ValueSourceKind kind)
-        : m_value(kind)
+        : m_kind(kind)
     {
+        ASSERT(m_kind == SourceIsDead);
     }
     
     explicit ValueSource(DFG::Node* node)
-        : m_value(bitwise_cast<uintptr_t>(node))
+        : m_kind(HaveNode)
     {
+        m_value.node = node;
+    }
+    
+    ValueSource(ValueSourceKind kind, VirtualRegister reg)
+        : m_kind(kind)
+    {
+        ASSERT(m_kind == ValueInJSStack || m_kind == Int32InJSStack || m_kind == Int52InJSStack || m_kind == DoubleInJSStack);
+        m_value.virtualRegister = reg.offset();
     }
     
     ValueSourceKind kind() const
     {
-        if (m_value < static_cast<uintptr_t>(HaveNode))
-            return static_cast<ValueSourceKind>(m_value);
-        return HaveNode;
+        return m_kind;
     }
     
-    bool operator!() const { return kind() != SourceNotSet; }
+    bool operator!() const { return kind() == SourceNotSet; }
     
     DFG::Node* node() const
     {
         ASSERT(kind() == HaveNode);
-        return bitwise_cast<DFG::Node*>(m_value);
+        return m_value.node;
+    }
+    
+    VirtualRegister virtualRegister() const
+    {
+        ASSERT(kind() == ValueInJSStack || kind() == Int32InJSStack || kind() == Int52InJSStack || kind() == DoubleInJSStack);
+        return VirtualRegister(m_value.virtualRegister);
     }
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
 private:
-    uintptr_t m_value;
+    ValueSourceKind m_kind;
+    union {
+        DFG::Node* node;
+        int virtualRegister;
+    } m_value;
 };
 
 } } // namespace JSC::FTL

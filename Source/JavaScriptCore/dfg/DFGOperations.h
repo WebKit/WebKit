@@ -101,7 +101,7 @@ size_t JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* 
 #endif
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateActivation(ExecState*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationCreateActivation(ExecState*, int32_t offset) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateArguments(ExecState*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateInlinedArguments(ExecState*, InlineCallFrame*) WTF_INTERNAL;
 void JIT_OPERATION operationTearOffArguments(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;

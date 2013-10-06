@@ -535,7 +535,8 @@ private:
     void compileGetArgument()
     {
         VariableAccessData* variable = m_node->variableAccessData();
-        VirtualRegister operand = variable->local();
+        VirtualRegister operand = variable->machineLocal();
+        RELEASE_ASSERT(operand.isArgument());
 
         LValue jsValue = m_out.load64(addressFor(operand));
 
@@ -578,9 +579,9 @@ private:
         RELEASE_ASSERT(variable->isCaptured());
         
         if (isInt32Speculation(value.m_type))
-            setInt32(m_out.load32(payloadFor(variable->local())));
+            setInt32(m_out.load32(payloadFor(variable->machineLocal())));
         else
-            setJSValue(m_out.load64(addressFor(variable->local())));
+            setJSValue(m_out.load64(addressFor(variable->machineLocal())));
     }
     
     void compileSetLocal()
@@ -591,36 +592,36 @@ private:
         switch (variable->flushFormat()) {
         case FlushedJSValue: {
             LValue value = lowJSValue(m_node->child1());
-            m_out.store64(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
             return;
         }
             
         case FlushedDouble: {
             LValue value = lowDouble(m_node->child1());
-            m_out.storeDouble(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
+            m_out.storeDouble(value, addressFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack, variable->machineLocal());
             return;
         }
             
         case FlushedInt32: {
             LValue value = lowInt32(m_node->child1());
-            m_out.store32(value, payloadFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
+            m_out.store32(value, payloadFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack, variable->machineLocal());
             return;
         }
             
         case FlushedInt52: {
             LValue value = lowInt52(m_node->child1());
-            m_out.store64(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(Int52InJSStack);
+            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(Int52InJSStack, variable->machineLocal());
             return;
         }
             
         case FlushedCell: {
             LValue value = lowCell(m_node->child1());
-            m_out.store64(value, addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+            m_out.store64(value, addressFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
             return;
         }
             
@@ -628,8 +629,8 @@ private:
             speculateBoolean(m_node->child1());
             m_out.store64(
                 lowJSValue(m_node->child1(), ManualOperandSpeculation),
-                addressFor(variable->local()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+                addressFor(variable->machineLocal()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
             return;
         }
             
@@ -3178,8 +3179,8 @@ private:
     void initializeOSRExitStateForBlock()
     {
         for (unsigned i = m_valueSources.size(); i--;) {
-            FlushFormat format = m_highBlock->ssa->flushFormatAtHead[i];
-            switch (format) {
+            FlushedAt flush = m_highBlock->ssa->flushAtHead[i];
+            switch (flush.format()) {
             case DeadFlush: {
                 // Must consider available nodes instead.
                 Node* node = m_highBlock->ssa->availabilityAtHead[i];
@@ -3193,21 +3194,21 @@ private:
             }
                 
             case FlushedInt32:
-                m_valueSources[i] = ValueSource(Int32InJSStack);
+                m_valueSources[i] = ValueSource(Int32InJSStack, flush.virtualRegister());
                 break;
                 
             case FlushedInt52:
-                m_valueSources[i] = ValueSource(Int52InJSStack);
+                m_valueSources[i] = ValueSource(Int52InJSStack, flush.virtualRegister());
                 break;
                 
             case FlushedDouble:
-                m_valueSources[i] = ValueSource(DoubleInJSStack);
+                m_valueSources[i] = ValueSource(DoubleInJSStack, flush.virtualRegister());
                 break;
                 
             case FlushedCell:
             case FlushedBoolean:
             case FlushedJSValue:
-                m_valueSources[i] = ValueSource(ValueInJSStack);
+                m_valueSources[i] = ValueSource(ValueInJSStack, flush.virtualRegister());
                 break;
             }
         }
@@ -3298,16 +3299,16 @@ private:
             
             switch (source.kind()) {
             case ValueInJSStack:
-                exit.m_values[i] = ExitValue::inJSStack();
+                exit.m_values[i] = ExitValue::inJSStack(source.virtualRegister());
                 break;
             case Int32InJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsInt32();
+                exit.m_values[i] = ExitValue::inJSStackAsInt32(source.virtualRegister());
                 break;
             case Int52InJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsInt52();
+                exit.m_values[i] = ExitValue::inJSStackAsInt52(source.virtualRegister());
                 break;
             case DoubleInJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsDouble();
+                exit.m_values[i] = ExitValue::inJSStackAsDouble(source.virtualRegister());
                 break;
             case SourceIsDead:
                 exit.m_values[i] = ExitValue::dead();

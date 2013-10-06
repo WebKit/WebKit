@@ -237,6 +237,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         
         switch (recovery.technique()) {
         case DisplacedInJSStack:
+        case CellDisplacedInJSStack:
+        case BooleanDisplacedInJSStack:
         case Int32DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
         case Int52DisplacedInJSStack:
@@ -262,6 +264,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case InGPR:
         case UnboxedCellInGPR:
         case DisplacedInJSStack:
+        case CellDisplacedInJSStack:
+        case BooleanDisplacedInJSStack:
             m_jit.load64(scratch + index, GPRInfo::regT0);
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;

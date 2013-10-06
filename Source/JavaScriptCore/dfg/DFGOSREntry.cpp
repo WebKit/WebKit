@@ -39,7 +39,6 @@ namespace JSC { namespace DFG {
 
 void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {
-#if DFG_ENABLE(OSR_ENTRY)
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
@@ -197,11 +196,20 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
             *bitwise_cast<int64_t*>(exec->registers() + virtualRegisterForLocal(local).offset()) = exec->registers()[virtualRegisterForLocal(local).offset()].jsValue().asMachineInt() << JSValue::int52ShiftAmount;
     }
     
-    // 4) Fix the call frame.
+    // 4) Reshuffle those registers that need reshuffling.
+    
+    Vector<EncodedJSValue> temporaryLocals(entry->m_reshufflings.size());
+    EncodedJSValue* registers = bitwise_cast<EncodedJSValue*>(exec->registers());
+    for (unsigned i = entry->m_reshufflings.size(); i--;)
+        temporaryLocals[i] = registers[entry->m_reshufflings[i].fromOffset];
+    for (unsigned i = entry->m_reshufflings.size(); i--;)
+        registers[entry->m_reshufflings[i].toOffset] = temporaryLocals[i];
+    
+    // 5) Fix the call frame.
     
     exec->setCodeBlock(codeBlock);
     
-    // 5) Find and return the destination machine code address.
+    // 6) Find and return the destination machine code address.
     
     void* result = codeBlock->jitCode()->executableAddressAtOffset(entry->m_machineCodeOffset);
     
@@ -209,12 +217,6 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         dataLogF("    OSR returning machine code address %p.\n", result);
     
     return result;
-#else // DFG_ENABLE(OSR_ENTRY)
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(codeBlock);
-    UNUSED_PARAM(bytecodeIndex);
-    return 0;
-#endif
 }
 
 } } // namespace JSC::DFG

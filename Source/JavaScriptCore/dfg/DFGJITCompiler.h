@@ -324,7 +324,6 @@ public:
     
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
     {
-#if DFG_ENABLE(OSR_ENTRY)
         // OSR entry is not allowed into blocks deemed unreachable by control flow analysis.
         if (!basicBlock.cfaHasVisited)
             return;
@@ -346,7 +345,8 @@ public:
             if (!node || !node->shouldGenerate())
                 entry->m_expectedValues.local(local).makeHeapTop();
             else {
-                switch (node->variableAccessData()->flushFormat()) {
+                VariableAccessData* variable = node->variableAccessData();
+                switch (variable->flushFormat()) {
                 case FlushedDouble:
                     entry->m_localsForcedDouble.set(local);
                     break;
@@ -356,13 +356,16 @@ public:
                 default:
                     break;
                 }
+                
+                if (variable->local() != variable->machineLocal()) {
+                    entry->m_reshufflings.append(
+                        OSREntryReshuffling(
+                            variable->local().offset(), variable->machineLocal().offset()));
+                }
             }
         }
-#else
-        UNUSED_PARAM(basicBlock);
-        UNUSED_PARAM(blockHead);
-        UNUSED_PARAM(linkBuffer);
-#endif
+        
+        entry->m_reshufflings.shrinkToFit();
     }
     
     PassRefPtr<JITCode> jitCode() { return m_jitCode; }

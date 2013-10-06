@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,12 +43,7 @@ public:
     
     bool run()
     {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Preserved vars: ");
-        m_graph.m_preservedVars.dump(WTF::dataFile());
-        dataLogF("\n");
-#endif
-        ScoreBoard scoreBoard(m_graph.m_preservedVars);
+        ScoreBoard scoreBoard(m_graph.m_nextMachineLocal);
         scoreBoard.assertClear();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         bool needsNewLine = false;
@@ -117,10 +112,18 @@ public:
         if (needsNewLine)
             dataLogF("\n");
 #endif
+        
+        // Record the number of virtual registers we're using. This is used by calls
+        // to figure out where to put the parameters.
+        m_graph.m_nextMachineLocal = scoreBoard.highWatermark();
 
         // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
         // for the function (and checked for on entry). Since we perform a new and
         // different allocation of temporaries, more registers may now be required.
+        // This also accounts for the number of temporaries that may be needed if we
+        // OSR exit, due to inlining. Hence this computes the number of temporaries
+        // that could be used by this code block even if it exits; it may be more
+        // than what this code block needs if it never exits.
         unsigned calleeRegisters = scoreBoard.highWatermark() + m_graph.m_parameterSlots;
         size_t inlineCallFrameCount = m_graph.m_inlineCallFrames->size();
         for (size_t i = 0; i < inlineCallFrameCount; i++) {

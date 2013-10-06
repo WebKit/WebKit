@@ -23,48 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLValueSource.h"
+#ifndef DFGStackLayoutPhase_h
+#define DFGStackLayoutPhase_h
 
-#if ENABLE(FTL_JIT)
+#include <wtf/Platform.h>
 
-namespace JSC { namespace FTL {
+#if ENABLE(DFG_JIT)
 
-void ValueSource::dump(PrintStream& out) const
-{
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack:", virtualRegister());
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack:", virtualRegister());
-        return;
-    case Int52InJSStack:
-        out.print("Int52InJSStack:", virtualRegister());
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack:", virtualRegister());
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
-}
+namespace JSC { namespace DFG {
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
-{
-    dump(out);
-}
+class Graph;
 
-} } // namespace JSC::FTL
+// Figures out the stack layout of VariableAccessData's. Aims to ensure that there aren't any
+// holes in the stack.
 
-#endif // ENABLE(FTL_JIT)
+bool performStackLayout(Graph&);
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGStackLayoutPhase_h
 

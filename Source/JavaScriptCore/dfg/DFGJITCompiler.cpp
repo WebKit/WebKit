@@ -147,6 +147,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_graph.m_inlineCallFrames->shrinkToFit();
         m_jitCode->common.inlineCallFrames = m_graph.m_inlineCallFrames.release();
     }
+    
+    m_jitCode->common.machineCaptureStart = m_graph.m_machineCaptureStart;
+    m_jitCode->common.slowArguments = std::move(m_graph.m_slowArguments);
 
     BitVector usedJumpTables;
     for (unsigned i = m_graph.m_switchData.size(); i--;) {

@@ -156,6 +156,7 @@ public:
     
     static Address addressFor(VirtualRegister virtualRegister)
     {
+        ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register));
     }
     static Address addressFor(int operand)
@@ -165,6 +166,7 @@ public:
 
     static Address tagFor(VirtualRegister virtualRegister)
     {
+        ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
     static Address tagFor(int operand)
@@ -174,6 +176,7 @@ public:
 
     static Address payloadFor(VirtualRegister virtualRegister)
     {
+        ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
     static Address payloadFor(int operand)
@@ -406,11 +409,20 @@ public:
         return codeOrigin.inlineCallFrame->stackOffset * sizeof(Register);
     }
 
+    int offsetOfArgumentsIncludingThis(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register);
+        if (inlineCallFrame->arguments.size() <= 1)
+            return 0;
+        ValueRecovery recovery = inlineCallFrame->arguments[1];
+        RELEASE_ASSERT(recovery.technique() == DisplacedInJSStack);
+        return (recovery.virtualRegister().offset() - 1) * sizeof(Register);
+    }
+    
     int offsetOfArgumentsIncludingThis(const CodeOrigin& codeOrigin)
     {
-        if (!codeOrigin.inlineCallFrame)
-            return CallFrame::argumentOffsetIncludingThis(0) * sizeof(Register);
-        return (codeOrigin.inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
+        return offsetOfArgumentsIncludingThis(codeOrigin.inlineCallFrame);
     }
 
     void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)

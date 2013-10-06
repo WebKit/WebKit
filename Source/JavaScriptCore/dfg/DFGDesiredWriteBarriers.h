@@ -42,7 +42,10 @@ namespace DFG {
 
 class DesiredWriteBarrier {
 public:
-    enum Type { ConstantType, InlineCallFrameExecutableType, InlineCallFrameCalleeType };
+    enum Type {
+        ConstantType,
+        InlineCallFrameExecutableType,
+    };
     DesiredWriteBarrier(Type, CodeBlock*, unsigned index, JSCell* owner);
     DesiredWriteBarrier(Type, CodeBlock*, InlineCallFrame*, JSCell* owner);
 
@@ -84,12 +87,6 @@ inline void initializeLazyWriteBarrierForInlineCallFrameExecutable(DesiredWriteB
 {
     DesiredWriteBarrier& desiredBarrier = barriers.add(DesiredWriteBarrier::InlineCallFrameExecutableType, codeBlock, inlineCallFrame, owner);
     barrier = WriteBarrier<ScriptExecutable>(desiredBarrier, value);
-}
-
-inline void initializeLazyWriteBarrierForInlineCallFrameCallee(DesiredWriteBarriers& barriers, WriteBarrier<JSFunction>& barrier, CodeBlock* codeBlock, InlineCallFrame* inlineCallFrame, JSCell* owner, JSFunction* value)
-{
-    DesiredWriteBarrier& desiredBarrier = barriers.add(DesiredWriteBarrier::InlineCallFrameCalleeType, codeBlock, inlineCallFrame, owner);
-    barrier = WriteBarrier<JSFunction>(desiredBarrier, value);
 }
 
 inline void initializeLazyWriteBarrierForConstant(DesiredWriteBarriers& barriers, WriteBarrier<Unknown>& barrier, CodeBlock* codeBlock, unsigned index, JSCell* owner, JSValue value)
