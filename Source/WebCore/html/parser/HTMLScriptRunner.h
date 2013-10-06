@@ -44,7 +44,7 @@ class ScriptSourceCode;
 class HTMLScriptRunner {
     WTF_MAKE_NONCOPYABLE(HTMLScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLScriptRunner> create(Document* document, HTMLScriptRunnerHost* host)
+    static OwnPtr<HTMLScriptRunner> create(Document& document, HTMLScriptRunnerHost& host)
     {
         return adoptPtr(new HTMLScriptRunner(document, host));
     }
@@ -64,7 +64,7 @@ public:
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:
-    HTMLScriptRunner(Document*, HTMLScriptRunnerHost*);
+    HTMLScriptRunner(Document&, HTMLScriptRunnerHost&);
 
     Frame* frame() const;
 
@@ -85,7 +85,7 @@ private:
     ScriptSourceCode sourceFromPendingScript(const PendingScript&, bool& errorOccurred) const;
 
     Document* m_document;
-    HTMLScriptRunnerHost* m_host;
+    HTMLScriptRunnerHost& m_host;
     PendingScript m_parserBlockingScript;
     Deque<PendingScript> m_scriptsToExecuteAfterParsing; // http://www.whatwg.org/specs/web-apps/current-work/#list-of-scripts-that-will-execute-when-the-document-has-finished-parsing
     unsigned m_scriptNestingLevel;

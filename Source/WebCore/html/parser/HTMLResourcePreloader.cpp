@@ -44,12 +44,12 @@ bool PreloadRequest::isSafeToSendToAnotherThread() const
         && m_baseURL.isSafeToSendToAnotherThread();
 }
 
-URL PreloadRequest::completeURL(Document* document)
+URL PreloadRequest::completeURL(Document& document)
 {
-    return document->completeURL(m_resourceURL, m_baseURL.isEmpty() ? document->url() : m_baseURL);
+    return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.url() : m_baseURL);
 }
 
-CachedResourceRequest PreloadRequest::resourceRequest(Document* document)
+CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 {
     ASSERT(isMainThread());
     CachedResourceRequest request(ResourceRequest(completeURL(document)));
@@ -79,14 +79,14 @@ static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const 
 
 void HTMLResourcePreloader::preload(OwnPtr<PreloadRequest> preload)
 {
-    ASSERT(m_document->frame());
-    ASSERT(m_document->renderView());
-    ASSERT(m_document->renderView()->style());
-    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document->frame(), m_document->renderView()->style(), preload->media()))
+    ASSERT(m_document.frame());
+    ASSERT(m_document.renderView());
+    ASSERT(m_document.renderView()->style());
+    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document.frame(), m_document.renderView()->style(), preload->media()))
         return;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);
-    m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
+    m_document.cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
 }
 
 

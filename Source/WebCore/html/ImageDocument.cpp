@@ -76,9 +76,9 @@ private:
     ImageDocument* m_doc;
 };
     
-class ImageDocumentParser : public RawDataDocumentParser {
+class ImageDocumentParser FINAL : public RawDataDocumentParser {
 public:
-    static PassRefPtr<ImageDocumentParser> create(ImageDocument* document)
+    static PassRefPtr<ImageDocumentParser> create(ImageDocument& document)
     {
         return adoptRef(new ImageDocumentParser(document));
     }
@@ -89,7 +89,7 @@ public:
     }
     
 private:
-    ImageDocumentParser(ImageDocument* document)
+    ImageDocumentParser(ImageDocument& document)
         : RawDataDocumentParser(document)
     {
     }
@@ -190,7 +190,7 @@ ImageDocument::ImageDocument(Frame* frame, const URL& url)
     
 PassRefPtr<DocumentParser> ImageDocument::createParser()
 {
-    return ImageDocumentParser::create(this);
+    return ImageDocumentParser::create(*this);
 }
 
 void ImageDocument::createDocumentStructure()

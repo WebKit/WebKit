@@ -30,12 +30,11 @@
 
 namespace WebCore {
 
-DocumentParser::DocumentParser(Document* document)
+DocumentParser::DocumentParser(Document& document)
     : m_state(ParsingState)
     , m_documentWasLoadedAsPartOfNavigation(false)
-    , m_document(document)
+    , m_document(&document)
 {
-    ASSERT(document);
 }
 
 DocumentParser::~DocumentParser()
@@ -76,5 +75,4 @@ void DocumentParser::resumeScheduledTasks()
 {
 }
 
-};
-
+} // namespace WebCore

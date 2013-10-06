@@ -71,8 +71,8 @@ class HTMLFormElement;
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
-    HTMLConstructionSite(Document*, ParserContentPolicy, unsigned maximumDOMTreeDepth);
-    HTMLConstructionSite(DocumentFragment*, ParserContentPolicy, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(Document&, ParserContentPolicy, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(DocumentFragment&, ParserContentPolicy, unsigned maximumDOMTreeDepth);
     ~HTMLConstructionSite();
 
     void detach();

@@ -38,7 +38,7 @@ TextDocument::TextDocument(Frame* frame, const URL& url)
 
 PassRefPtr<DocumentParser> TextDocument::createParser()
 {
-    return TextDocumentParser::create(this);
+    return TextDocumentParser::create(*this);
 }
 
 }

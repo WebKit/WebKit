@@ -50,15 +50,15 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // FIXME: Share more code with PluginDocumentParser.
-class MediaDocumentParser : public RawDataDocumentParser {
+class MediaDocumentParser FINAL : public RawDataDocumentParser {
 public:
-    static PassRefPtr<MediaDocumentParser> create(MediaDocument* document)
+    static PassRefPtr<MediaDocumentParser> create(MediaDocument& document)
     {
         return adoptRef(new MediaDocumentParser(document));
     }
     
 private:
-    MediaDocumentParser(Document* document)
+    MediaDocumentParser(Document& document)
         : RawDataDocumentParser(document)
         , m_mediaElement(0)
     {
@@ -133,7 +133,7 @@ MediaDocument::~MediaDocument()
 
 PassRefPtr<DocumentParser> MediaDocument::createParser()
 {
-    return MediaDocumentParser::create(this);
+    return MediaDocumentParser::create(*this);
 }
 
 static inline HTMLVideoElement* descendentVideoElement(Node* node)

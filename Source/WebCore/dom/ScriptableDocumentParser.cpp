@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-ScriptableDocumentParser::ScriptableDocumentParser(Document* document, ParserContentPolicy parserContentPolicy)
+ScriptableDocumentParser::ScriptableDocumentParser(Document& document, ParserContentPolicy parserContentPolicy)
     : DecodedDataDocumentParser(document)
     , m_wasCreatedByScript(false)
     , m_parserContentPolicy(parserContentPolicy)
 {
-    if (!pluginContentIsAllowed(m_parserContentPolicy) && (!document->settings() || document->settings()->unsafePluginPastingEnabled()))
+    if (!pluginContentIsAllowed(m_parserContentPolicy) && (!document.settings() || document.settings()->unsafePluginPastingEnabled()))
         m_parserContentPolicy = allowPluginContent(m_parserContentPolicy);
 
-    if (scriptingContentIsAllowed(m_parserContentPolicy) && (document->settings() && !document->settings()->scriptMarkupEnabled()))
+    if (scriptingContentIsAllowed(m_parserContentPolicy) && (document.settings() && !document.settings()->scriptMarkupEnabled()))
         m_parserContentPolicy = disallowScriptingContent(m_parserContentPolicy);
 }
 

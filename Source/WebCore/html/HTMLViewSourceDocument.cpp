@@ -63,9 +63,9 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const URL& url, con
 PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()
 {
     if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_type))
-        return HTMLViewSourceParser::create(this);
+        return HTMLViewSourceParser::create(*this);
 
-    return TextViewSourceParser::create(this);
+    return TextViewSourceParser::create(*this);
 }
 
 void HTMLViewSourceDocument::createContainingTable()

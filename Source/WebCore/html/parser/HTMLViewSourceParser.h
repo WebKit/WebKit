@@ -43,16 +43,16 @@ class HTMLPreloadScanner;
 class ScriptController;
 class ScriptSourceCode;
 
-class HTMLViewSourceParser :  public DecodedDataDocumentParser {
+class HTMLViewSourceParser : public DecodedDataDocumentParser {
 public:
-    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument* document)
+    static PassRefPtr<HTMLViewSourceParser> create(HTMLViewSourceDocument& document)
     {
         return adoptRef(new HTMLViewSourceParser(document));
     }
     virtual ~HTMLViewSourceParser();
 
 protected:
-    explicit HTMLViewSourceParser(HTMLViewSourceDocument*);
+    explicit HTMLViewSourceParser(HTMLViewSourceDocument&);
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
 

@@ -54,13 +54,14 @@ private:
         : m_didBlockEntirePage(didBlockEntirePage)
         , m_didSendXSSProtectionHeader(didSendXSSProtectionHeader)
         , m_didSendCSPHeader(didSendCSPHeader)
-    { }
+    {
+    }
 };
 
 class XSSAuditorDelegate {
     WTF_MAKE_NONCOPYABLE(XSSAuditorDelegate);
 public:
-    explicit XSSAuditorDelegate(Document*);
+    explicit XSSAuditorDelegate(Document&);
 
     void didBlockScript(const XSSInfo&);
     void setReportURL(const URL& url) { m_reportURL = url; }
@@ -68,12 +69,12 @@ public:
 private:
     PassRefPtr<FormData> generateViolationReport();
 
-    Document* m_document;
+    Document& m_document;
     bool m_didSendNotifications;
     URL m_reportURL;
 };
 
-typedef Vector<OwnPtr<XSSInfo> > XSSInfoStream;
+typedef Vector<OwnPtr<XSSInfo>> XSSInfoStream;
 
 }
 

@@ -57,11 +57,11 @@ class HTMLDocumentParser;
 class HTMLTreeBuilder {
     WTF_MAKE_NONCOPYABLE(HTMLTreeBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, ParserContentPolicy parserContentPolicy, bool reportErrors, const HTMLParserOptions& options)
+    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser& parser, HTMLDocument& document, ParserContentPolicy parserContentPolicy, bool reportErrors, const HTMLParserOptions& options)
     {
         return adoptPtr(new HTMLTreeBuilder(parser, document, parserContentPolicy, reportErrors, options));
     }
-    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
+    static OwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser& parser, DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
     {
         return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, parserContentPolicy, options));
     }
@@ -120,8 +120,8 @@ private:
         AfterAfterFramesetMode,
     };
 
-    HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, ParserContentPolicy, bool reportErrors, const HTMLParserOptions&);
-    HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, bool reportErrors, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
 
     void processToken(AtomicHTMLToken*);
 
@@ -203,7 +203,7 @@ private:
         WTF_MAKE_NONCOPYABLE(FragmentParsingContext);
     public:
         FragmentParsingContext();
-        FragmentParsingContext(DocumentFragment*, Element* contextElement);
+        FragmentParsingContext(DocumentFragment&, Element* contextElement);
         ~FragmentParsingContext();
 
         DocumentFragment* fragment() const { return m_fragment; }
@@ -238,7 +238,7 @@ private:
 
     // We access parser because HTML5 spec requires that we be able to change the state of the tokenizer
     // from within parser actions. We also need it to track the current position.
-    HTMLDocumentParser* m_parser;
+    HTMLDocumentParser& m_parser;
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     TextPosition m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.

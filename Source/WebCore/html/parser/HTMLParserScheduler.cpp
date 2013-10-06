@@ -94,10 +94,10 @@ PumpSession::~PumpSession()
 {
 }
 
-HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser* parser)
+HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser& parser)
     : m_parser(parser)
-    , m_parserTimeLimit(parserTimeLimit(m_parser->document()->page()))
-    , m_parserChunkSize(parserChunkSize(m_parser->document()->page()))
+    , m_parserTimeLimit(parserTimeLimit(m_parser.document()->page()))
+    , m_parserChunkSize(parserChunkSize(m_parser.document()->page()))
     , m_continueNextChunkTimer(this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
 #if !ASSERT_DISABLED
@@ -117,18 +117,18 @@ void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>
     ASSERT_UNUSED(timer, timer == &m_continueNextChunkTimer);
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
-    if (m_parser->document()->isLayoutTimerActive()) {
+    if (m_parser.document()->isLayoutTimerActive()) {
         m_continueNextChunkTimer.startOneShot(0);
         return;
     }
-    m_parser->resumeParsingAfterYield();
+    m_parser.resumeParsingAfterYield();
 }
 
 void HTMLParserScheduler::checkForYieldBeforeScript(PumpSession& session)
 {
     // If we've never painted before and a layout is pending, yield prior to running
     // scripts to give the page a chance to paint earlier.
-    Document* document = m_parser->document();
+    Document* document = m_parser.document();
     bool needsFirstPaint = document->view() && !document->view()->hasEverPainted();
     if (needsFirstPaint && document->isLayoutTimerActive())
         session.needsYield = true;

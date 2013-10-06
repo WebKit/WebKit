@@ -50,17 +50,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-class FTPDirectoryDocumentParser : public HTMLDocumentParser {
+class FTPDirectoryDocumentParser FINAL : public HTMLDocumentParser {
 public:
-    static PassRefPtr<FTPDirectoryDocumentParser> create(HTMLDocument* document)
+    static PassRefPtr<FTPDirectoryDocumentParser> create(HTMLDocument& document)
     {
         return adoptRef(new FTPDirectoryDocumentParser(document));
     }
 
-    virtual void append(PassRefPtr<StringImpl>);
-    virtual void finish();
+    virtual void append(PassRefPtr<StringImpl>) OVERRIDE;
+    virtual void finish() OVERRIDE;
 
-    virtual bool isWaitingForScripts() const { return false; }
+    virtual bool isWaitingForScripts() const OVERRIDE { return false; }
 
     inline void checkBuffer(int len = 10)
     {
@@ -75,7 +75,7 @@ public:
     }
         
 private:
-    FTPDirectoryDocumentParser(HTMLDocument*);
+    FTPDirectoryDocumentParser(HTMLDocument&);
 
     // The parser will attempt to load the document template specified via the preference
     // Failing that, it will fall back and create the basic document which will have a minimal
@@ -99,7 +99,7 @@ private:
     ListState m_listState;
 };
 
-FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
+FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
     : HTMLDocumentParser(document, false)
     , m_skipLF(false)
     , m_size(254)
@@ -435,7 +435,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
 
 PassRefPtr<DocumentParser> FTPDirectoryDocument::createParser()
 {
-    return FTPDirectoryDocumentParser::create(this);
+    return FTPDirectoryDocumentParser::create(*this);
 }
 
 }

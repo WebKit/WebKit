@@ -277,7 +277,7 @@ void XMLDocumentParser::pauseParsing()
     m_parserPaused = true;
 }
 
-bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
+bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
 {
     if (!chunk.length())
         return true;
@@ -286,7 +286,7 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
     if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag) || contextElement->hasLocalName(HTMLNames::styleTag))) {
-        fragment->parserAppendChild(fragment->document().createTextNode(chunk));
+        fragment.parserAppendChild(fragment.document().createTextNode(chunk));
         return true;
     }
 

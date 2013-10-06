@@ -54,7 +54,7 @@ public:
     ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
 
 protected:
-    explicit ScriptableDocumentParser(Document*, ParserContentPolicy = AllowScriptingContent);
+    explicit ScriptableDocumentParser(Document&, ParserContentPolicy = AllowScriptingContent);
 
 private:
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return this; }

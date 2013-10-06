@@ -45,7 +45,7 @@ public:
 
     bool isSafeToSendToAnotherThread() const;
 
-    CachedResourceRequest resourceRequest(Document*);
+    CachedResourceRequest resourceRequest(Document&);
 
     const String& charset() const { return m_charset; }
     const String& media() const { return m_mediaAttribute; }
@@ -64,7 +64,7 @@ private:
     {
     }
 
-    URL completeURL(Document*);
+    URL completeURL(Document&);
 
     String m_initiator;
     String m_resourceURL;
@@ -80,7 +80,7 @@ typedef Vector<OwnPtr<PreloadRequest> > PreloadRequestStream;
 class HTMLResourcePreloader {
     WTF_MAKE_NONCOPYABLE(HTMLResourcePreloader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit HTMLResourcePreloader(Document* document)
+    explicit HTMLResourcePreloader(Document& document)
         : m_document(document)
         , m_weakFactory(this)
     {
@@ -92,7 +92,7 @@ public:
     WeakPtr<HTMLResourcePreloader> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
 private:
-    Document* m_document;
+    Document& m_document;
     WeakPtrFactory<HTMLResourcePreloader> m_weakFactory;
 };
 

@@ -2233,7 +2233,7 @@ void Document::setVisuallyOrdered()
 PassRefPtr<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return XMLDocumentParser::create(this, view());
+    return XMLDocumentParser::create(*this, view());
 }
 
 ScriptableDocumentParser* Document::scriptableDocumentParser() const

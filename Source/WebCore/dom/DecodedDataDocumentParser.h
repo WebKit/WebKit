@@ -37,7 +37,7 @@ public:
     virtual bool wellFormed() const { return true; }
 
 protected:
-    explicit DecodedDataDocumentParser(Document*);
+    explicit DecodedDataDocumentParser(Document&);
 
 private:
     // append is used by DocumentWriter::replaceDocument.

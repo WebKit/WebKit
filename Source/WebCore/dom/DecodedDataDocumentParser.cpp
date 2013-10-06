@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document)
+DecodedDataDocumentParser::DecodedDataDocumentParser(Document& document)
     : DocumentParser(document)
 {
 }

@@ -44,15 +44,15 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // FIXME: Share more code with MediaDocumentParser.
-class PluginDocumentParser : public RawDataDocumentParser {
+class PluginDocumentParser FINAL : public RawDataDocumentParser {
 public:
-    static PassRefPtr<PluginDocumentParser> create(PluginDocument* document)
+    static PassRefPtr<PluginDocumentParser> create(PluginDocument& document)
     {
         return adoptRef(new PluginDocumentParser(document));
     }
 
 private:
-    PluginDocumentParser(Document* document)
+    PluginDocumentParser(Document& document)
         : RawDataDocumentParser(document)
         , m_embedElement(0)
     {
@@ -141,7 +141,7 @@ PluginDocument::PluginDocument(Frame* frame, const URL& url)
 
 PassRefPtr<DocumentParser> PluginDocument::createParser()
 {
-    return PluginDocumentParser::create(this);
+    return PluginDocumentParser::create(*this);
 }
 
 Widget* PluginDocument::pluginWidget()

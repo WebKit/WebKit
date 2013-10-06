@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-class SinkDocumentParser : public RawDataDocumentParser {
+class SinkDocumentParser FINAL : public RawDataDocumentParser {
 public:
-    static PassRefPtr<SinkDocumentParser> create(SinkDocument* document)
+    static PassRefPtr<SinkDocumentParser> create(SinkDocument& document)
     {
         return adoptRef(new SinkDocumentParser(document));
     }
     
 private:
-    SinkDocumentParser(SinkDocument* document)
+    SinkDocumentParser(SinkDocument& document)
         : RawDataDocumentParser(document)
     {
     }
@@ -58,7 +58,7 @@ SinkDocument::SinkDocument(Frame* frame, const URL& url)
 
 PassRefPtr<DocumentParser> SinkDocument::createParser()
 {
-    return SinkDocumentParser::create(this);
+    return SinkDocumentParser::create(*this);
 }
 
 } // namespace WebCore

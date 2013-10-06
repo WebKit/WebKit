@@ -152,26 +152,26 @@ void HTMLConstructionSite::executeQueuedTasks()
     // We might be detached now.
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document* document, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
-    : m_document(document)
-    , m_attachmentRoot(document)
+HTMLConstructionSite::HTMLConstructionSite(Document& document, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
+    : m_document(&document)
+    , m_attachmentRoot(&document)
     , m_parserContentPolicy(parserContentPolicy)
     , m_isParsingFragment(false)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
-    , m_inQuirksMode(document->inQuirksMode())
+    , m_inQuirksMode(document.inQuirksMode())
 {
     ASSERT(m_document->isHTMLDocument() || m_document->isXHTMLDocument());
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment* fragment, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
-    : m_document(&fragment->document())
-    , m_attachmentRoot(fragment)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
+    : m_document(&fragment.document())
+    , m_attachmentRoot(&fragment)
     , m_parserContentPolicy(parserContentPolicy)
     , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
-    , m_inQuirksMode(fragment->document().inQuirksMode())
+    , m_inQuirksMode(fragment.document().inQuirksMode())
 {
     ASSERT(m_document->isHTMLDocument() || m_document->isXHTMLDocument());
 }
