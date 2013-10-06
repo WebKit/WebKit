@@ -132,8 +132,6 @@ public:
 
     Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     Element* rootEditableElementOrDocumentElement() const;
-    Node* rootEditableElementOrTreeScopeRootNode() const;
-    Element* rootEditableElementRespectingShadowTree() const;
 
     bool rendererIsEditable() const { return m_selection.rendererIsEditable(); }
     bool isContentEditable() const { return m_selection.isContentEditable(); }

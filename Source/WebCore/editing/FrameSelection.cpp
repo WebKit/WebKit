@@ -120,24 +120,6 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
     return selectionRoot ? selectionRoot : m_frame->document()->documentElement();
 }
 
-Node* FrameSelection::rootEditableElementOrTreeScopeRootNode() const
-{
-    Element* selectionRoot = m_selection.rootEditableElement();
-    if (selectionRoot)
-        return selectionRoot;
-
-    Node* node = m_selection.base().containerNode();
-    return node ? node->treeScope().rootNode() : 0;
-}
-
-Element* FrameSelection::rootEditableElementRespectingShadowTree() const
-{
-    Element* selectionRoot = m_selection.rootEditableElement();
-    if (selectionRoot && selectionRoot->isInShadowTree())
-        selectionRoot = selectionRoot->shadowHost();
-    return selectionRoot;
-}
-
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;

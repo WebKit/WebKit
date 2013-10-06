@@ -1,5 +1,14 @@
 2013-10-05  Andreas Kling  <akling@apple.com>
 
+        FrameSelection: Remove two unused member functions.
+
+        Rubber-stamped by Anders Carlsson.
+
+        - rootEditableElementOrTreeScopeRootNode()
+        - rootEditableElementRespectingShadowTree()
+
+2013-10-05  Andreas Kling  <akling@apple.com>
+
         CTTE: Node::treeScope() should return a reference.
         <https://webkit.org/b/122399>
 
