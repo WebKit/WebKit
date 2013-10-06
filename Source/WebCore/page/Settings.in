@@ -155,7 +155,7 @@ deviceSupportsMouse initial=true
 # support for touch adjustment.
 touchAdjustmentEnabled initial=true
 
-fixedPositionCreatesStackingContext initial=false
+fixedPositionCreatesStackingContext initial=defaultFixedPositionCreatesStackingContext
 syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true
 mediaEnabled initial=true

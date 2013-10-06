@@ -1,3 +1,19 @@
+2013-10-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Default initialize Settings::setFixedPositionCreatesStackingContext() to true
+        https://bugs.webkit.org/show_bug.cgi?id=122338
+        <rdar://problem/14908151>
+
+        Reviewed by Darin Adler.
+
+        On iOS we always want an element with a fixed position to create a stacking context.
+        See <rdar://problem/9813262> for more details.
+
+        * page/Settings.cpp: Define constant defaultFixedPositionCreatesStackingContext to
+        be true when building for iOS and false otherwise.
+        * page/Settings.in: Initialize the setting fixedPositionCreatesStackingContext with
+        the value of the constant defaultFixedPositionCreatesStackingContext.
+
 2013-10-05  Sam Weinig  <sam@webkit.org>
 
         CTTE: Pass DocumentWriter around as a reference
