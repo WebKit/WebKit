@@ -1,5 +1,16 @@
 2013-10-06  Sam Weinig  <sam@webkit.org>
 
+        Be a bit shouty about final classes while we look into why the bots don't like it.
+
+        * dom/Comment.h:
+        * dom/ProcessingInstruction.h:
+        * editing/markup.cpp:
+        * page/PageSerializer.cpp:
+        * workers/SharedWorker.h:
+        * workers/Worker.h:
+
+2013-10-06  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * platform/win/ClipboardUtilitiesWin.cpp:
