@@ -1,5 +1,70 @@
 2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WebIDL] Annotate IDL interfaces under Source/WebCore/html/ with the OperationsNotDeletable attribute
+        https://bugs.webkit.org/show_bug.cgi?id=122280
+
+        Reviewed by Darin Adler.
+
+        Before changing the JSC bindings generator to enforce WebIDL operations to be configurable, all the
+        interfaces are being annotated with the OperationsNotDeletable attribute. The attribute currently
+        doesn't have any effect, but will keep the operations not configurable after the generator is modified
+        to preserve the original behavior. The attribute will be removed from each interface after checking
+        conformity with other browsers (in terms of configurability of operations of that interface) and the
+        WebKit's existing test suites.
+
+        This patch covers IDL interfaces under Source/WebCore/html/.
+
+        * html/DOMFormData.idl:
+        * html/DOMSettableTokenList.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLCollection.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormControlsCollection.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/MediaController.idl:
+        * html/RadioNodeList.idl:
+        * html/TimeRanges.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/DOMPath.idl:
+        * html/canvas/EXTDrawBuffers.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLLoseContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/TextTrackCueList.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/TextTrackRegionList.idl:
+        * html/track/VideoTrackList.idl:
+
+2013-10-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [WebIIDL] Annotate IDL interfaces under Source/WebCore/svg/ with the OperationsNotDeletable attribute
         https://bugs.webkit.org/show_bug.cgi?id=122279
 

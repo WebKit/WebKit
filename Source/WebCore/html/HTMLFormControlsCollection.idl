@@ -20,6 +20,7 @@
 
 [
     GenerateIsReachable=ImplOwnerNodeRoot,
+    OperationsNotDeletable
 ] interface HTMLFormControlsCollection : HTMLCollection {
     getter Node ([Default=Undefined] optional unsigned long index);
     [Custom] getter Node namedItem([Default=Undefined] optional DOMString name);

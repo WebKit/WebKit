@@ -33,7 +33,8 @@
     Constructor(DOMString text),
 #endif
     Conditional=CANVAS_PATH,
-    InterfaceName=Path
+    InterfaceName=Path,
+    OperationsNotDeletable
 ] interface DOMPath {
 
     // FIXME: These methods should be shared with CanvasRenderingContext2D in the CanvasPathMethods interface.

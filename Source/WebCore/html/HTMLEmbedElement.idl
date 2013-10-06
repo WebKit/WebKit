@@ -22,6 +22,7 @@
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall,
+    OperationsNotDeletable
 ] interface HTMLEmbedElement : HTMLElement {
 [Reflect] attribute DOMString align;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

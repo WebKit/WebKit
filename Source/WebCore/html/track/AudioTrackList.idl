@@ -28,7 +28,8 @@
     Conditional=VIDEO_TRACK,
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
-    JSCustomMarkFunction
+    JSCustomMarkFunction,
+    OperationsNotDeletable
 ] interface AudioTrackList {
     readonly attribute unsigned long length;
     getter AudioTrack item(unsigned long index);

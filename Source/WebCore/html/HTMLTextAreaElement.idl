@@ -19,7 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLTextAreaElement : HTMLElement {
+[
+    OperationsNotDeletable
+] interface HTMLTextAreaElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     attribute long cols;
     [Reflect] attribute DOMString dirName;

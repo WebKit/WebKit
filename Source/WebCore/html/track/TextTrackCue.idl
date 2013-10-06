@@ -31,7 +31,8 @@
     EventTarget,
     JSCustomMarkFunction,
     CustomIsReachable,
-    SkipVTableValidation
+    SkipVTableValidation,
+    OperationsNotDeletable
 ] interface TextTrackCue {
     readonly attribute TextTrack track;
 

@@ -25,6 +25,7 @@
 [
     JSGenerateToJSObject,
     SkipVTableValidation,
+    OperationsNotDeletable
 ] interface DOMSettableTokenList : DOMTokenList {
     attribute DOMString value;
 

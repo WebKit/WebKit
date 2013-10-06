@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLTableElement : HTMLElement {
+[
+    OperationsNotDeletable
+] interface HTMLTableElement : HTMLElement {
     [SetterRaisesException] attribute HTMLTableCaptionElement caption;
     [SetterRaisesException] attribute HTMLTableSectionElement tHead;
     [SetterRaisesException] attribute HTMLTableSectionElement tFoot;

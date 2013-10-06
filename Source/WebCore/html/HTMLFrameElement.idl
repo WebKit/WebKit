@@ -18,7 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface HTMLFrameElement : HTMLElement {
+[
+    OperationsNotDeletable
+] interface HTMLFrameElement : HTMLElement {
 
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString longDesc;

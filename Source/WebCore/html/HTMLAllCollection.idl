@@ -27,6 +27,7 @@
     CustomCall,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplOwnerNodeRoot,
+    OperationsNotDeletable
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
     [Custom] getter Node item([Default=Undefined] optional unsigned long index);

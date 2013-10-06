@@ -26,6 +26,7 @@
 [
     NoInterfaceObject,
     JSGenerateToJSObject,
+    OperationsNotDeletable
 ] interface RadioNodeList : NodeList {
     attribute DOMString value;
 

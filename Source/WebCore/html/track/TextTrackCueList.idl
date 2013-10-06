@@ -25,7 +25,8 @@
 
 [
     Conditional=VIDEO_TRACK,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    OperationsNotDeletable
 ] interface TextTrackCueList {
     readonly attribute unsigned long length;
     getter TextTrackCue item(unsigned long index);
