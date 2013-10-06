@@ -297,7 +297,6 @@ public:
     LayoutRect reflectedRect(const LayoutRect&) const;
 
     virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual LayoutUnit minPreferredLogicalWidth() const;

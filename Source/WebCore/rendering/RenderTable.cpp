@@ -651,9 +651,12 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.updateSubtreePaintRootForChildren(this);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
-            LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), paintOffset);
-            child->paint(info, childPoint);
+        if (!child->isBox())
+            continue;
+        RenderBox& box = toRenderBox(*child);
+        if (!box.hasSelfPaintingLayer() && (box.isTableSection() || box.isTableCaption())) {
+            LayoutPoint childPoint = flipForWritingModeForChild(&box, paintOffset);
+            box.paint(info, childPoint);
         }
     }
     
@@ -697,7 +700,7 @@ void RenderTable::subtractCaptionRect(LayoutRect& rect) const
 
 void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(this))
+    if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
     LayoutRect rect(paintOffset, size());

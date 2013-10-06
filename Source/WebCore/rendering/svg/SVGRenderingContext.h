@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class AffineTransform;
+class RenderElement;
 class RenderObject;
 class FloatRect;
 class RenderSVGResourceFilter;
@@ -79,7 +80,7 @@ public:
     // Patterns need a different float-to-integer coordinate mapping.
     static bool createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
 
-    static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);
+    static void renderSubtreeToImageBuffer(ImageBuffer*, RenderElement&, const AffineTransform&);
     static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>&, bool safeToClear);
 
     static float calculateScreenFontSizeScalingFactor(const RenderObject*);

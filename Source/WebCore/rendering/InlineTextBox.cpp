@@ -518,8 +518,8 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
-    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(&renderer()) || renderer().style()->visibility() != VISIBLE ||
-        m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
+    if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style()->visibility() != VISIBLE
+        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
         return;
 
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);

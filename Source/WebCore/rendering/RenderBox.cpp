@@ -1094,16 +1094,6 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
 // --------------------- painting stuff -------------------------------
 
-void RenderBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-    // default implementation. Just pass paint through to the children
-    PaintInfo childInfo(paintInfo);
-    childInfo.updateSubtreePaintRootForChildren(this);
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->paint(childInfo, adjustedPaintOffset);
-}
-
 void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
 {
     if (paintInfo.skipRootBackground())
@@ -1154,7 +1144,7 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
 
 void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(this))
+    if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
     LayoutRect paintRect = borderBoxRectInRegion(paintInfo.renderRegion);
@@ -1375,7 +1365,7 @@ bool RenderBox::backgroundHasOpaqueTopLayer() const
 
 void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());

@@ -96,7 +96,7 @@ RenderElement* FEImage::referencedRenderer() const
 
 void FEImage::platformApplySoftware()
 {
-    RenderObject* renderer = referencedRenderer();
+    RenderElement* renderer = referencedRenderer();
     if (!m_image && !renderer)
         return;
 
@@ -125,7 +125,7 @@ void FEImage::platformApplySoftware()
         const AffineTransform& absoluteTransform = svgFilter->absoluteTransform();
         resultImage->context()->concatCTM(absoluteTransform);
 
-        SVGElement* contextNode = toSVGElement(renderer->node());
+        SVGElement* contextNode = toSVGElement(renderer->element());
         if (contextNode->hasRelativeLengths()) {
             SVGLengthContext lengthContext(contextNode);
             float width = 0;
@@ -138,7 +138,7 @@ void FEImage::platformApplySoftware()
         }
 
         AffineTransform contentTransformation;
-        SVGRenderingContext::renderSubtreeToImageBuffer(resultImage, renderer, contentTransformation);
+        SVGRenderingContext::renderSubtreeToImageBuffer(resultImage, *renderer, contentTransformation);
         return;
     }
 

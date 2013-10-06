@@ -1,5 +1,17 @@
 2013-10-06  Antti Koivisto  <antti@apple.com>
 
+        Move paint() to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=122371
+
+        Reviewed by Darin Adler.
+
+        RenderText does not paint itself (text is painted by line boxes). We can move paint() down
+        to RenderElement.
+        
+        This also requires some type tightening elsewhere in the code.
+
+2013-10-06  Antti Koivisto  <antti@apple.com>
+
         Don't try to dispatch resize events for SVG images
         https://bugs.webkit.org/show_bug.cgi?id=122410
 

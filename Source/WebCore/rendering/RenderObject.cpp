@@ -1238,10 +1238,6 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
     return result;
 }
 
-void RenderObject::paint(PaintInfo&, const LayoutPoint&)
-{
-}
-
 RenderLayerModelObject* RenderObject::containerForRepaint() const
 {
     RenderLayerModelObject* repaintContainer = 0;

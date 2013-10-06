@@ -54,6 +54,7 @@ protected:
 
 private:
     virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL { }
 
     SVGGradientElement* gradientElement() const;
 };

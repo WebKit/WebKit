@@ -181,6 +181,7 @@ public:
     InlineBox* nextLeafChildIgnoringLineBreak() const;
     InlineBox* prevLeafChildIgnoringLineBreak() const;
 
+    // FIXME: There should be a subclass that returns RenderElement. Plain InlineBox shouldn't be instantiated.
     RenderObject& renderer() const { return m_renderer; }
 
     InlineFlowBox* parent() const

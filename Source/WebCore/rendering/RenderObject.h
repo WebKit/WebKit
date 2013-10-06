@@ -653,8 +653,6 @@ public:
     void setHasTransform(bool b = true) { m_bitfields.setHasTransform(b); }
     void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-
     // Recursive function that computes the size and position of this object and all its descendants.
     virtual void layout();
 
