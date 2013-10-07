@@ -2818,20 +2818,26 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod
     return JSValue::encode(jsUndefined());
 }
 
+#endif
+
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecState* exec)
 {
     size_t argsCount = exec->argumentCount();
+#if ENABLE(Condition1)
     if (argsCount == 1)
         return jsTestObjConstructorFunctionOverloadedMethod11(exec);
+#endif
+
     JSValue arg0(exec->argument(0));
+#if ENABLE(Condition1)
     if ((argsCount == 1 && (arg0.isUndefinedOrNull() || arg0.isString() || arg0.isObject())))
         return jsTestObjConstructorFunctionOverloadedMethod12(exec);
+#endif
+
     if (argsCount < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     return throwVMTypeError(exec);
 }
-
-#endif
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* exec)
 {

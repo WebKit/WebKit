@@ -1286,8 +1286,13 @@ END
             $fetchedArguments{$parameterIndex} = 1;
         }
 
+        my $conditionalString = $codeGenerator->GenerateConditionalString($overload->signature);
+        push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
+
         push(@implContent, "    if ($parametersCheck)\n");
         push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
+        push(@implContent, "#endif\n\n") if $conditionalString;
+
     }
     if ($leastNumMandatoryParams >= 1) {
         push(@implContent, "    if (argsCount < $leastNumMandatoryParams)\n");
@@ -2432,13 +2437,13 @@ sub GenerateImplementation
             }
 
             push(@implContent, "}\n\n");
+            push(@implContent, "#endif\n\n") if $conditional;
 
             if (!$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
                 GenerateOverloadedFunction($function, $interface, $interfaceName);
             }
 
-            push(@implContent, "#endif\n\n") if $conditional;
         }
     }
 

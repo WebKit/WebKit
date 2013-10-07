@@ -1,3 +1,19 @@
+2013-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        Conditional support in bindings code generator for overloaded functions
+        https://bugs.webkit.org/show_bug.cgi?id=122443
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm: 
+        (GenerateOverloadedFunction): Generate conditional for overloaded
+        function, if it's present in the idl.
+        (GenerateImplementation): Close the last overloaded function
+        conditional before generating the distpatch function.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1):
+        Rebaseline overloaded function tests.
+
 2013-10-07  Tim Horton  <timothy_horton@apple.com>
 
         -webkit-cross-fade paints SVGs at full opacity during cross-fade
