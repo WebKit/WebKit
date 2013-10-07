@@ -54,7 +54,7 @@ namespace WebCore {
         static PassRefPtr<Worker> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
         virtual ~Worker();
 
-        virtual EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return WorkerEventTargetInterfaceType; }
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).
@@ -62,9 +62,9 @@ namespace WebCore {
 
         void terminate();
 
-        virtual bool canSuspend() const override;
-        virtual void stop() override;
-        virtual bool hasPendingActivity() const override;
+        virtual bool canSuspend() const OVERRIDE;
+        virtual void stop() OVERRIDE;
+        virtual bool hasPendingActivity() const OVERRIDE;
     
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
@@ -74,8 +74,8 @@ namespace WebCore {
         void notifyNetworkStateChange(bool isOnline);
 
         // WorkerScriptLoaderClient callbacks
-        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-        virtual void notifyFinished() override;
+        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
+        virtual void notifyFinished() OVERRIDE;
 
         friend void networkStateChanged(bool isOnLine);
 

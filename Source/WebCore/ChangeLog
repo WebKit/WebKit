@@ -1,3 +1,14 @@
+2013-10-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix for GCC 4.6.
+
+        Changed override to OVERRIDE and final to FINAL.
+
+        * page/PageSerializer.cpp:
+        * workers/AbstractWorker.h:
+        * workers/SharedWorker.h:
+        * workers/Worker.h:
+
 2013-10-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Facebook wrapped a file upload button in an unfocusable ARIA button, which doesn't work with AXPress.
