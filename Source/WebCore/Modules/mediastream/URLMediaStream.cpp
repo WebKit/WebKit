@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(MEDIA_STREAM)
+
 #include "URLMediaStream.h"
 
 #include "DOMURL.h"
@@ -49,3 +52,5 @@ String URLMediaStream::createObjectURL(ScriptExecutionContext* scriptExecutionCo
 
 
 } // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

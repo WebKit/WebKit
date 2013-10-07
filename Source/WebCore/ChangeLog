@@ -1,5 +1,16 @@
 2013-10-07  Philippe Normand  <pnormand@igalia.com>
 
+        URLMediaStream is unguarded by ENABLE(MEDIA_STREAM)
+        https://bugs.webkit.org/show_bug.cgi?id=122444
+
+        Reviewed by Martin Robinson.
+
+        * Modules/mediastream/URLMediaStream.cpp: Added missing
+        conditional guards.
+        * Modules/mediastream/URLMediaStream.h: Ditto.
+
+2013-10-07  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] webkit_dom_html_style_element_{s,g}et_scoped was removed
         https://bugs.webkit.org/show_bug.cgi?id=122446
 

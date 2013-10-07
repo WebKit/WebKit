@@ -31,6 +31,8 @@
 #ifndef URLMediaStream_h
 #define URLMediaStream_h
 
+#if ENABLE(MEDIA_STREAM)
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -45,4 +47,6 @@ public:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // URLMediaStream_h
