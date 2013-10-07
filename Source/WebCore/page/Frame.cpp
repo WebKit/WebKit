@@ -937,9 +937,6 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
         animation().resumeAnimationsForDocument(document());
         document()->resumeScriptedAnimationControllerCallbacks();
     }
-
-    if (m_view)
-        m_view->resumeAnimatingImages();
 }
 
 #if USE(ACCELERATED_COMPOSITING)

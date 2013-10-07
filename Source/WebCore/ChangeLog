@@ -1,3 +1,44 @@
+2013-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        Animated images are not restarted when page visibility changes
+        https://bugs.webkit.org/show_bug.cgi?id=122464
+        <rdar://problem/14293474>
+
+        Reviewed by Simon Fraser.
+
+        Always kickstart animated images when the page visibility changes,
+        which can occur via window occlusion, and which is independent of in-window
+        state, which we were previously using to advance animation.
+
+        No new tests; attempts to make a test have resulted only in a flaky, timing-dependent test.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::resumeActiveDOMObjectsAndAnimations):
+        Move this call to resumeAnimatingImages() up to Page.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setIsInWindow):
+        Move this call to resumeAnimatingImages() up to Page.
+
+        * WebCore.exp.in
+        * page/FrameView.h:
+        * page/Page.h:
+        Move resumeAnimatingImages() itself up to Page.
+
+        * page/Page.cpp:
+        (WebCore::Page::setIsInWindow):
+        Resume animated images when we move in-window.
+
+        (WebCore::Page::setVisibilityState):
+        Resume animated images when we become visible.
+        This is the one we were previously missing.
+
+        (WebCore::Page::resumeActiveDOMObjectsAndAnimations):
+        Resume animated images when we're told to.
+
+        (WebCore::Page::resumeAnimatingImages):
+        Kickstart any animated images in all frames.
+
 2013-10-07  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Drawing video into canvas doesn't work on the first attempt
