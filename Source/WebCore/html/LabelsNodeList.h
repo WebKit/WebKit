@@ -32,7 +32,7 @@ namespace WebCore {
 
 class LabelsNodeList : public LiveNodeList {
 public:
-    static PassRefPtr<LabelsNodeList> create(Node* forNode, CollectionType type, const AtomicString&)
+    static PassRefPtr<LabelsNodeList> create(Node& forNode, CollectionType type, const AtomicString&)
     {
         ASSERT_UNUSED(type, type == LabelsNodeListType);
         return adoptRef(new LabelsNodeList(forNode));
@@ -40,7 +40,7 @@ public:
     ~LabelsNodeList();
 
 protected:
-    LabelsNodeList(Node* forNode);
+    explicit LabelsNodeList(Node& forNode);
 
     virtual bool nodeMatches(Element*) const;
 };

@@ -31,10 +31,10 @@ namespace WebCore {
 
 Node* LiveNodeListBase::rootNode() const
 {
-    if (isRootedAtDocument() && m_ownerNode->inDocument())
-        return &m_ownerNode->document();
+    if (isRootedAtDocument() && ownerNode().inDocument())
+        return &ownerNode().document();
 
-    return m_ownerNode.get();
+    return &ownerNode();
 }
 
 ContainerNode* LiveNodeListBase::rootContainerNode() const

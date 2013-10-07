@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollection::HTMLNameCollection(Node* document, CollectionType type, const AtomicString& name)
+HTMLNameCollection::HTMLNameCollection(Node& document, CollectionType type, const AtomicString& name)
     : HTMLCollection(document, type, DoesNotOverrideItemAfter)
     , m_name(name)
 {
@@ -44,11 +44,10 @@ HTMLNameCollection::HTMLNameCollection(Node* document, CollectionType type, cons
 
 HTMLNameCollection::~HTMLNameCollection()
 {
-    ASSERT(ownerNode());
-    ASSERT(ownerNode()->isDocumentNode());
+    ASSERT(ownerNode().isDocumentNode());
     ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
 
-    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, type(), m_name);
+    ownerNode().nodeLists()->removeCacheWithAtomicName(this, type(), m_name);
 }
 
 bool WindowNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)

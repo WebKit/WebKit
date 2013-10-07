@@ -73,6 +73,11 @@ inline void* root(Node* node)
     return node;
 }
 
+inline void* root(Node& node)
+{
+    return root(&node);
+}
+
 } // namespace WebCore
 
 #endif // JSDOMNodeCustom_h

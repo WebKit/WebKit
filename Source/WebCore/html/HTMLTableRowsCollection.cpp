@@ -147,12 +147,12 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
     return 0;
 }
 
-HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement* table)
+HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement& table)
     : HTMLCollection(table, TableRows, OverridesItemAfter)
 {
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table, CollectionType type)
+PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node& table, CollectionType type)
 {
     ASSERT_UNUSED(type, type == TableRows);
     return adoptRef(new HTMLTableRowsCollection(toHTMLTableElement(table)));
@@ -161,7 +161,7 @@ PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table,
 Element* HTMLTableRowsCollection::virtualItemAfter(unsigned& offsetInArray, Element* previous) const
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    return rowAfter(toHTMLTableElement(ownerNode()), toHTMLTableRowElement(previous));
+    return rowAfter(&toHTMLTableElement(ownerNode()), toHTMLTableRowElement(previous));
 }
 
 }

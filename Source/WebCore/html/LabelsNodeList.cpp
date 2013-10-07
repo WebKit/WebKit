@@ -33,19 +33,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-LabelsNodeList::LabelsNodeList(Node* forNode)
+LabelsNodeList::LabelsNodeList(Node& forNode)
     : LiveNodeList(forNode, LabelsNodeListType, InvalidateOnForAttrChange, NodeListIsRootedAtDocument)
 {
 }
 
 LabelsNodeList::~LabelsNodeList()
 {
-    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, LabelsNodeListType, starAtom);
+    ownerNode().nodeLists()->removeCacheWithAtomicName(this, LabelsNodeListType, starAtom);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const
 {
-    return isHTMLLabelElement(testNode) && toHTMLLabelElement(testNode)->control() == ownerNode();
+    return isHTMLLabelElement(testNode) && toHTMLLabelElement(testNode)->control() == &ownerNode();
 }
 
 } // namespace WebCore

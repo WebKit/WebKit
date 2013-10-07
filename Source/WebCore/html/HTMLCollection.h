@@ -34,7 +34,7 @@ namespace WebCore {
 
 class HTMLCollection : public LiveNodeListBase {
 public:
-    static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
+    static PassRefPtr<HTMLCollection> create(Node& base, CollectionType);
     virtual ~HTMLCollection();
 
     // DOM API
@@ -67,7 +67,7 @@ public:
     Element* traverseForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, unsigned& offsetInArray, ContainerNode* root) const;
 
 protected:
-    HTMLCollection(Node* base, CollectionType, ItemAfterOverrideType);
+    HTMLCollection(Node& base, CollectionType, ItemAfterOverrideType);
 
     virtual void updateNameCache() const;
 

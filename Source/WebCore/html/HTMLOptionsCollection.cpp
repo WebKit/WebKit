@@ -27,13 +27,13 @@
 
 namespace WebCore {
 
-HTMLOptionsCollection::HTMLOptionsCollection(Node* select)
+HTMLOptionsCollection::HTMLOptionsCollection(Node& select)
     : HTMLCollection(select, SelectOptions, DoesNotOverrideItemAfter)
 {
     ASSERT(isHTMLSelectElement(select));
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(Node* select, CollectionType)
+PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(Node& select, CollectionType)
 {
     return adoptRef(new HTMLOptionsCollection(select));
 }
@@ -58,39 +58,39 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     }
 
     ec = 0;
-    HTMLSelectElement* select = toHTMLSelectElement(ownerNode());
+    HTMLSelectElement& select = toHTMLSelectElement(ownerNode());
 
     if (index == -1 || unsigned(index) >= length())
-        select->add(newOption, 0, ec);
+        select.add(newOption, 0, ec);
     else
-        select->add(newOption, toHTMLOptionElement(item(index)), ec);
+        select.add(newOption, toHTMLOptionElement(item(index)), ec);
 
     ASSERT(!ec);
 }
 
 void HTMLOptionsCollection::remove(int index)
 {
-    toHTMLSelectElement(ownerNode())->removeByIndex(index);
+    toHTMLSelectElement(ownerNode()).removeByIndex(index);
 }
 
 void HTMLOptionsCollection::remove(HTMLOptionElement* option)
 {
-    toHTMLSelectElement(ownerNode())->remove(option);
+    toHTMLSelectElement(ownerNode()).remove(option);
 }
 
 int HTMLOptionsCollection::selectedIndex() const
 {
-    return toHTMLSelectElement(ownerNode())->selectedIndex();
+    return toHTMLSelectElement(ownerNode()).selectedIndex();
 }
 
 void HTMLOptionsCollection::setSelectedIndex(int index)
 {
-    toHTMLSelectElement(ownerNode())->setSelectedIndex(index);
+    toHTMLSelectElement(ownerNode()).setSelectedIndex(index);
 }
 
 void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
 {
-    toHTMLSelectElement(ownerNode())->setLength(length, ec);
+    toHTMLSelectElement(ownerNode()).setLength(length, ec);
 }
 
 } //namespace

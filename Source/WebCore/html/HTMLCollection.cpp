@@ -158,13 +158,13 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     return DoNotInvalidateOnAttributeChanges;
 }
 
-HTMLCollection::HTMLCollection(Node* ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
+HTMLCollection::HTMLCollection(Node& ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
     : LiveNodeListBase(ownerNode, rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type),
         WebCore::shouldOnlyIncludeDirectChildren(type), type, itemAfterOverrideType)
 {
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
+PassRefPtr<HTMLCollection> HTMLCollection::create(Node& base, CollectionType type)
 {
     return adoptRef(new HTMLCollection(base, type, DoesNotOverrideItemAfter));
 }
@@ -173,7 +173,7 @@ HTMLCollection::~HTMLCollection()
 {
     // HTMLNameCollection removes cache by itself.
     if (type() != WindowNamedItems && type() != DocumentNamedItems)
-        ownerNode()->nodeLists()->removeCacheWithAtomicName(this, type());
+        ownerNode().nodeLists()->removeCacheWithAtomicName(this, type());
 }
 
 template <class NodeListType>
@@ -666,7 +666,7 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<Ref<Element>>& 
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
-    return ownerNode()->getElementsByTagName(name);
+    return ownerNode().getElementsByTagName(name);
 }
 
 void HTMLCollection::append(NodeCacheMap& map, const AtomicString& key, Element* element)

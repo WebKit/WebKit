@@ -39,7 +39,7 @@ namespace WebCore {
 
 class ClassNodeList : public LiveNodeList {
 public:
-    static PassRefPtr<ClassNodeList> create(PassRefPtr<Node> rootNode, const String& classNames)
+    static PassRefPtr<ClassNodeList> create(Node& rootNode, const String& classNames)
     {
         return adoptRef(new ClassNodeList(rootNode, classNames));
     }
@@ -49,7 +49,7 @@ public:
     bool nodeMatchesInlined(Element*) const;
 
 private:
-    ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames);
+    ClassNodeList(Node& rootNode, const String& classNames);
 
     virtual bool nodeMatches(Element*) const;
 

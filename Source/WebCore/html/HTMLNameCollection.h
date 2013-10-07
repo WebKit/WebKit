@@ -36,14 +36,14 @@ public:
     ~HTMLNameCollection();
 
 protected:
-    HTMLNameCollection(Node*, CollectionType, const AtomicString& name);
+    HTMLNameCollection(Node&, CollectionType, const AtomicString& name);
 
     AtomicString m_name;
 };
 
 class WindowNameCollection : public HTMLNameCollection {
 public:
-    static PassRefPtr<WindowNameCollection> create(Node* document, CollectionType type, const AtomicString& name)
+    static PassRefPtr<WindowNameCollection> create(Node& document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(new WindowNameCollection(document, type, name));
     }
@@ -55,7 +55,7 @@ public:
     static bool nodeMatches(Element*, const AtomicStringImpl*);
 
 private:
-    WindowNameCollection(Node* document, CollectionType type, const AtomicString& name)
+    WindowNameCollection(Node& document, CollectionType type, const AtomicString& name)
         : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == WindowNamedItems);
@@ -64,7 +64,7 @@ private:
 
 class DocumentNameCollection : public HTMLNameCollection {
 public:
-    static PassRefPtr<DocumentNameCollection> create(Node* document, CollectionType type, const AtomicString& name)
+    static PassRefPtr<DocumentNameCollection> create(Node& document, CollectionType type, const AtomicString& name)
     {
         return adoptRef(new DocumentNameCollection(document, type, name));
     }
@@ -76,7 +76,7 @@ public:
     static bool nodeMatches(Element*, const AtomicStringImpl*);
 
 private:
-    DocumentNameCollection(Node* document, CollectionType type, const AtomicString& name)
+    DocumentNameCollection(Node& document, CollectionType type, const AtomicString& name)
         : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == DocumentNamedItems);

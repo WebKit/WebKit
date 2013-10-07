@@ -36,13 +36,13 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-HTMLFormControlsCollection::HTMLFormControlsCollection(Node* ownerNode)
+HTMLFormControlsCollection::HTMLFormControlsCollection(Node& ownerNode)
     : HTMLCollection(ownerNode, FormControls, OverridesItemAfter)
 {
-    ASSERT(isHTMLFormElement(ownerNode) || ownerNode->hasTagName(fieldsetTag));
+    ASSERT(isHTMLFormElement(ownerNode) || isHTMLFieldSetElement(ownerNode));
 }
 
-PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Node* ownerNode, CollectionType)
+PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Node& ownerNode, CollectionType)
 {
     return adoptRef(new HTMLFormControlsCollection(ownerNode));
 }
@@ -53,18 +53,16 @@ HTMLFormControlsCollection::~HTMLFormControlsCollection()
 
 const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
 {
-    ASSERT(ownerNode());
-    ASSERT(isHTMLFormElement(ownerNode()) || ownerNode()->hasTagName(fieldsetTag));
+    ASSERT(isHTMLFormElement(ownerNode()) || ownerNode().hasTagName(fieldsetTag));
     if (isHTMLFormElement(ownerNode()))
-        return toHTMLFormElement(ownerNode())->associatedElements();
-    return static_cast<HTMLFieldSetElement*>(ownerNode())->associatedElements();
+        return toHTMLFormElement(ownerNode()).associatedElements();
+    return toHTMLFieldSetElement(ownerNode()).associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
-    ASSERT(ownerNode());
     ASSERT(isHTMLFormElement(ownerNode()));
-    return toHTMLFormElement(ownerNode())->imageElements();
+    return toHTMLFormElement(ownerNode()).imageElements();
 }
 
 Element* HTMLFormControlsCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
@@ -111,7 +109,7 @@ Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    const Vector<HTMLImageElement*>* imagesElements = ownerNode()->hasTagName(fieldsetTag) ? 0 : &formImageElements();
+    const Vector<HTMLImageElement*>* imagesElements = ownerNode().hasTagName(fieldsetTag) ? 0 : &formImageElements();
     if (HTMLElement* item = firstNamedItem(formControlElements(), imagesElements, idAttr, name))
         return item;
 

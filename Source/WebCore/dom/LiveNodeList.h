@@ -48,7 +48,7 @@ public:
         DoesNotOverrideItemAfter,
     };
 
-    LiveNodeListBase(Node* ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType,
+    LiveNodeListBase(Node& ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType,
         bool shouldOnlyIncludeDirectChildren, CollectionType collectionType, ItemAfterOverrideType itemAfterOverrideType)
         : m_ownerNode(ownerNode)
         , m_cachedItem(0)
@@ -85,7 +85,7 @@ public:
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument || m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
-    Node* ownerNode() const { return m_ownerNode.get(); }
+    Node& ownerNode() const { return const_cast<Node&>(m_ownerNode.get()); }
     ALWAYS_INLINE void invalidateCache(const QualifiedName* attrName) const
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
@@ -144,7 +144,7 @@ private:
     Node* iterateForPreviousNode(Node* current) const;
     Node* itemBefore(Node* previousItem) const;
 
-    RefPtr<Node> m_ownerNode;
+    Ref<Node> m_ownerNode;
     mutable Node* m_cachedItem;
     mutable unsigned m_cachedLength;
     mutable unsigned m_cachedItemOffset;
@@ -187,8 +187,8 @@ ALWAYS_INLINE bool LiveNodeListBase::shouldInvalidateTypeOnAttributeChange(NodeL
 
 class LiveNodeList : public LiveNodeListBase {
 public:
-    LiveNodeList(PassRefPtr<Node> ownerNode, CollectionType collectionType, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
-        : LiveNodeListBase(ownerNode.get(), rootType, invalidationType, collectionType == ChildNodeListType,
+    LiveNodeList(Node& ownerNode, CollectionType collectionType, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
+        : LiveNodeListBase(ownerNode, rootType, invalidationType, collectionType == ChildNodeListType,
         collectionType, DoesNotOverrideItemAfter)
     { }
 

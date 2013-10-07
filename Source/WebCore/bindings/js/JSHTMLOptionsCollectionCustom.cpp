@@ -59,8 +59,8 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
 {
     HTMLOptionsCollection* imp = impl();
-    HTMLSelectElement* base = toHTMLSelectElement(imp->ownerNode());
-    selectIndexSetter(base, exec, index, value);
+    HTMLSelectElement& base = toHTMLSelectElement(imp->ownerNode());
+    selectIndexSetter(&base, exec, index, value);
 }
 
 JSValue JSHTMLOptionsCollection::add(ExecState* exec)

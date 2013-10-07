@@ -442,7 +442,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    return ensureRareData().ensureNodeLists().ensureChildNodeList(this);
+    return ensureRareData().ensureNodeLists().ensureChildNodeList(*this);
 }
 
 Node *Node::lastDescendant() const
@@ -1075,8 +1075,8 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
         return 0;
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(this, HTMLTagNodeListType, localName);
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(this, TagNodeListType, localName);
+        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, HTMLTagNodeListType, localName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, TagNodeListType, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1087,23 +1087,23 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     if (namespaceURI == starAtom)
         return getElementsByTagName(localName);
 
-    return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
+    return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(this, NameNodeListType, elementName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, NameNodeListType, elementName);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(this, ClassNodeListType, classNames);
+    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, ClassNodeListType, classNames);
 }
 
 PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(this, RadioNodeListType, name);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, RadioNodeListType, name);
 }
 
 PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, ExceptionCode& ec)

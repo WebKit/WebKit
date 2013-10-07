@@ -28,14 +28,14 @@
 
 namespace WebCore {
 
-ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
+ChildNodeList::ChildNodeList(Node& node)
     : LiveNodeList(node, ChildNodeListType, DoNotInvalidateOnAttributeChanges)
 {
 }
 
 ChildNodeList::~ChildNodeList()
 {
-    ownerNode()->nodeLists()->removeChildNodeList(this);
+    ownerNode().nodeLists()->removeChildNodeList(this);
 }
 
 bool ChildNodeList::nodeMatches(Element* testNode) const

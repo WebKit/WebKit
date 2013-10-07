@@ -1,3 +1,13 @@
+2013-10-07  Andreas Kling  <akling@apple.com>
+
+        CTTE: Live node lists always have an owner Node.
+        <https://webkit.org/b/122470>
+
+        Reviewed by Anders Carlsson.
+
+        Make LiveNodeListBase::m_ownerNode a Ref<Node> instead of a RefPtr
+        and have all constructors take Node&.
+
 2013-10-07  Anders Carlsson  <andersca@apple.com>
 
         Clean up ScriptExecutionContext::Task and subclasses
