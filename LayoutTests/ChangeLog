@@ -1,3 +1,11 @@
+2013-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        css3/images/cross-fade-svg-with-opacity.html fails with colorspace mismatch on Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=122456
+
+        * platform/mac-wk2/TestExpectations:
+        Mark the test as failing for now.
+
 2013-10-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Move region styling tests into fast/regions/region-styling
