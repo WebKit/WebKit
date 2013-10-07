@@ -54,6 +54,7 @@ function installDependenciesWithApt {
         libgl1-mesa-dev \
         libgl1-mesa-glx \
         libgnutls-dev \
+        libgtk2.0-dev \
         libgudev-1.0-dev \
         libicu-dev \
         libjpeg8-dev \
@@ -69,6 +70,7 @@ function installDependenciesWithApt {
         libtool \
         libvorbis-dev \
         libwebp-dev \
+        libxcomposite-dev \
         libxslt1-dev \
         libxt-dev \
         libxtst-dev \
@@ -102,6 +104,7 @@ function installDependenciesWithApt {
         libxfont-dev \
         libpciaccess-dev \
         x11proto-bigreqs-dev \
+        x11proto-composite-dev \
         x11proto-gl-dev \
         x11proto-input-dev \
         x11proto-video-dev \
@@ -109,6 +112,7 @@ function installDependenciesWithApt {
         x11proto-resource-dev \
         x11proto-xcmisc-dev \
         x11proto-xf86dri-dev \
+        x11proto-randr-dev \
         libxkbfile-dev
 }
 
