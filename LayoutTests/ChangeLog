@@ -1,3 +1,15 @@
+2013-10-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] update MediaStreamTrack object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121940
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/MediaStreamTrack-expected.txt:
+        * fast/mediastream/MediaStreamTrack.html:
+        * fast/mediastream/MediaStreamTrack-getSources-expected.txt:
+        * fast/mediastream/MediaStreamTrack-getSources.html:
+
 2013-10-07  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Drawing video into canvas doesn't work on the first attempt

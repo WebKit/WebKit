@@ -35,6 +35,7 @@
 
 #include "MediaStreamDescriptor.h"
 
+#include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
 #include "UUID.h"
 #include <wtf/RefCounted.h>
@@ -45,6 +46,15 @@ namespace WebCore {
 PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
     return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources));
+}
+
+MediaStreamDescriptor::~MediaStreamDescriptor()
+{
+    for (size_t i = 0; i < m_audioStreamSources.size(); i++)
+        m_audioStreamSources[i]->setStream(0);
+    
+    for (size_t i = 0; i < m_videoStreamSources.size(); i++)
+        m_videoStreamSources[i]->setStream(0);
 }
 
 void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> source)
@@ -67,15 +77,19 @@ void MediaStreamDescriptor::removeSource(PassRefPtr<MediaStreamSource> source)
     switch (source->type()) {
     case MediaStreamSource::Audio:
         pos = m_audioStreamSources.find(source);
-        if (pos != notFound)
-            m_audioStreamSources.remove(pos);
+        if (pos == notFound)
+            return;
+        m_audioStreamSources.remove(pos);
         break;
     case MediaStreamSource::Video:
         pos = m_videoStreamSources.find(source);
-        if (pos != notFound)
-            m_videoStreamSources.remove(pos);
+        if (pos == notFound)
+            return;
+        m_videoStreamSources.remove(pos);
         break;
     }
+
+    source->setStream(0);
 }
 
 void MediaStreamDescriptor::addRemoteSource(MediaStreamSource* source)

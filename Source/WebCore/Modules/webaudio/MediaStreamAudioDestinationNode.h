@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AudioContext;
+class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode : public AudioBasicInspectorNode {
 public:
@@ -61,7 +62,7 @@ private:
     virtual bool propagatesSilence() const OVERRIDE { return false; }
 
     RefPtr<MediaStream> m_stream;
-    RefPtr<MediaStreamSource> m_source;
+    RefPtr<MediaStreamAudioSource> m_source;
     RefPtr<AudioBus> m_mixBus;
 };
 

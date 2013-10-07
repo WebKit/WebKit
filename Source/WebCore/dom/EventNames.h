@@ -238,6 +238,7 @@ namespace WebCore {
     macro(removestream) \
     macro(signalingstatechange) \
     macro(removetrack) \
+    macro(overconstrained) \
     macro(mute) \
     macro(unmute) \
     macro(started) \

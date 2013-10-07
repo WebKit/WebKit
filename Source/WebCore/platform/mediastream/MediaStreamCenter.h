@@ -34,6 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,8 +44,10 @@ class MediaConstraints;
 class MediaStreamCreationClient;
 class MediaStreamCreationClient;
 class MediaStreamDescriptor;
-class MediaStreamSource;
+class MediaStreamSourceCapabilities;
 class MediaStreamTrackSourcesRequestClient;
+
+struct MediaStreamSourceStates;
 
 class MediaStreamCenter {
 public:
@@ -58,14 +61,6 @@ public:
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
 
     virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) = 0;
-
-    virtual void didSetMediaStreamTrackEnabled(MediaStreamSource*) = 0;
-
-    virtual bool didAddMediaStreamTrack(MediaStreamSource*) = 0;
-    virtual bool didRemoveMediaStreamTrack(MediaStreamSource*) = 0;
-
-    virtual void didStopLocalMediaStream(MediaStreamDescriptor*) = 0;
-    virtual void didCreateMediaStream(MediaStreamDescriptor*) = 0;
 
 protected:
     MediaStreamCenter();

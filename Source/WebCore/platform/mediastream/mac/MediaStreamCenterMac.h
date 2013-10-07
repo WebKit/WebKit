@@ -35,29 +35,20 @@
 
 #include "MediaStreamCenter.h"
 
+#include "MediaStreamSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class MediaStreamDescriptor;
-class MediaStreamSource;
-class MediaStreamSourcesQueryClient;
 
 class MediaStreamCenterMac FINAL : public MediaStreamCenter {
 public:
     MediaStreamCenterMac();
     ~MediaStreamCenterMac();
 
-    // MediaStreamCenter
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints);
     virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) OVERRIDE;
-    virtual void didSetMediaStreamTrackEnabled(MediaStreamSource*) OVERRIDE;
-    virtual bool didAddMediaStreamTrack(MediaStreamSource*) OVERRIDE;
-    virtual bool didRemoveMediaStreamTrack(MediaStreamSource*) OVERRIDE;
-    virtual void didStopLocalMediaStream(MediaStreamDescriptor*) OVERRIDE;
-    virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
 };
 
 } // namespace WebCore

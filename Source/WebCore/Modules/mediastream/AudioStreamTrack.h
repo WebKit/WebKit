@@ -29,8 +29,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamTrack.h"
-#include <wtf/Vector.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -39,8 +39,9 @@ class ScriptExecutionContext;
 
 class AudioStreamTrack FINAL : public MediaStreamTrack {
 public:
-    static PassRefPtr<AudioStreamTrack> create(ScriptExecutionContext*, const Dictionary&);
-    static PassRefPtr<AudioStreamTrack> create(ScriptExecutionContext*, MediaStreamSource*);
+    static RefPtr<AudioStreamTrack> create(ScriptExecutionContext*, const Dictionary&);
+    static RefPtr<AudioStreamTrack> create(ScriptExecutionContext*, MediaStreamSource*);
+    static RefPtr<AudioStreamTrack> create(MediaStreamTrack*);
 
     virtual ~AudioStreamTrack() { }
 
@@ -48,6 +49,7 @@ public:
 
 private:
     AudioStreamTrack(ScriptExecutionContext*, MediaStreamSource*, const Dictionary*);
+    explicit AudioStreamTrack(MediaStreamTrack*);
 };
 
 } // namespace WebCore

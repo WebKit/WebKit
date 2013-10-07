@@ -85,20 +85,18 @@ protected:
     MediaStream(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
 
     // ContextDestructionObserver
-    virtual void contextDestroyed() OVERRIDE;
+    virtual void contextDestroyed() OVERRIDE FINAL;
 
 private:
-    // MediaStreamDescriptorClient
-    virtual void trackDidEnd() OVERRIDE;
-    virtual void streamDidEnd() OVERRIDE;
-    
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     // MediaStreamDescriptorClient
-    virtual void addRemoteSource(MediaStreamSource*) OVERRIDE;
-    virtual void removeRemoteSource(MediaStreamSource*) OVERRIDE;
+    virtual void trackDidEnd() OVERRIDE FINAL;
+    virtual void streamDidEnd() OVERRIDE FINAL;
+    virtual void addRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
+    virtual void removeRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<MediaStream>*);

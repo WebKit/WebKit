@@ -4,13 +4,103 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS getUserMedia succeeded.
+
+videoTrack = mediaStream.getVideoTracks()[0]
 PASS track.readyState is "live"
-PASS Track onmute callback succeeded.
-PASS track.readyState is "muted"
-PASS Track onunmute callback succeeded.
+checking track.capabilities()
+  sourceId
+    0 : 239c24b0-2b15-11e3-8224-0800200c9a66
+  sourceType
+    0 : camera
+    1 : microphone
+  width
+   min : 320
+   max : 1920
+   supported : true
+  height
+   min : 240
+   max : 1080
+   supported : true
+  frameRate
+   min : 15
+   max : 60
+   supported : true
+  aspectRatio
+   min : 1.3333333730697632
+   max : 1.7777777910232544
+   supported : true
+  facingMode
+    0 : user
+    1 : environment
+checking track.states()
+PASS states.sourceId is capabilities.sourceId[0]
+PASS states.sourceType is "camera"
+  width : 1920
+  height : 1080
+  frameRate : 30
+  aspectRatio : 1.7777777910232544
+  facingMode : user
+
+audioTrack = mediaStream.getAudioTracks()[0]
 PASS track.readyState is "live"
+checking track.capabilities()
+  sourceId
+    0 : 239c24b1-2b15-11e3-8224-0800200c9a66
+  volume
+   min : 0
+   max : 100
+   supported : true
+checking track.states()
+PASS states.sourceId is capabilities.sourceId[0]
+PASS states.sourceType is "microphone"
+  volume : 50
+
+videoTrack2 = videoTrack.clone()
+PASS track.readyState is "live"
+checking track.capabilities()
+  sourceId
+    0 : 239c24b0-2b15-11e3-8224-0800200c9a66
+  sourceType
+    0 : camera
+    1 : microphone
+  width
+   min : 320
+   max : 1920
+   supported : true
+  height
+   min : 240
+   max : 1080
+   supported : true
+  frameRate
+   min : 15
+   max : 60
+   supported : true
+  aspectRatio
+   min : 1.3333333730697632
+   max : 1.7777777910232544
+   supported : true
+  facingMode
+    0 : user
+    1 : environment
+checking track.states()
+PASS states.sourceId is capabilities.sourceId[0]
+PASS states.sourceType is "camera"
+  width : 1920
+  height : 1080
+  frameRate : 30
+  aspectRatio : 1.7777777910232544
+  facingMode : user
+PASS videoTrack.id is not videoTrack2.id
+PASS videoTrack.kind is videoTrack2.kind
+PASS videoTrack.label is videoTrack2.label
+PASS videoTrack.muted is videoTrack2.muted
+PASS videoTrack.enabled is videoTrack2.enabled
+PASS videoTrack.readyState is videoTrack2.readyState
+
+videoTrack.stop()
 PASS Track onended callback succeeded.
-PASS track.readyState is "ended"
+PASS videoTrack.readyState is "ended"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,178 @@
+2013-10-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] update MediaStreamTrack object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121940
+
+        Reviewed by Jer Noble.
+
+        No new tests, existing test updated.
+
+        Add new source files to the project:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        New capability dictionary objects:
+        * Modules/mediastream/AllAudioCapabilities.h: Added.
+        * Modules/mediastream/AllAudioCapabilities.idl: Added.
+        * Modules/mediastream/AllVideoCapabilities.h: Added.
+        * Modules/mediastream/AllVideoCapabilities.idl: Added.
+
+        * Modules/mediastream/AudioStreamTrack.cpp:
+        (WebCore::AudioStreamTrack::create): New version that takes a MediaStreamTrack*.
+        * Modules/mediastream/AudioStreamTrack.h:
+
+        New object for a capability range:
+        * Modules/mediastream/CapabilityRange.cpp: Added.
+        * Modules/mediastream/CapabilityRange.h: Added.
+        * Modules/mediastream/CapabilityRange.idl: Added.
+
+        * Modules/mediastream/MediaConstraintsImpl.h: Make initialize() public.
+
+        New object for the current states for a media source.
+        * Modules/mediastream/MediaSourceStates.cpp: Added.
+        * Modules/mediastream/MediaSourceStates.h: Added.
+        * Modules/mediastream/MediaSourceStates.idl: Added.
+
+        Don't call the media stream center to notify it when the state of other
+        objects change.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::processTrack): Remove the stream source duplication hack.
+        (WebCore::createFromSourceVectors): 
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        * Modules/mediastream/MediaStream.h:
+
+        New object for the capabilities of a source.
+        * Modules/mediastream/MediaStreamCapabilities.cpp: Added.
+        * Modules/mediastream/MediaStreamCapabilities.h: Added.
+        * Modules/mediastream/MediaStreamCapabilities.idl: Added.
+
+        Update interface to match spec.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack): Define a copy constructor to use in clone().
+        (WebCore::MediaStreamTrack::setSource): Call removeObserver if the track already has a source.
+            Initialize m_muted from new source's muted state.
+        (WebCore::MediaStreamTrack::id): Allow source to provide ID as the spec suggests.
+        (WebCore::MediaStreamTrack::setEnabled): Add some spec text to clarify logic. Always call
+            source->setEnabled, it can figure out if nothing needs to be done.
+        (WebCore::MediaStreamTrack::muted): Don't call the stream center when muted changes, the
+            source can take care of notifying interested parties.
+        (WebCore::MediaStreamTrack::readonly): New.
+        (WebCore::MediaStreamTrack::remote): New.
+        (WebCore::MediaStreamTrack::constraints): New. 
+        (WebCore::MediaStreamTrack::states): New.
+        (WebCore::MediaStreamTrack::capabilities): New.
+        (WebCore::MediaStreamTrack::applyConstraints): New.
+        (WebCore::MediaStreamTrack::clone): New.
+        (WebCore::MediaStreamTrack::stopProducingData): New.
+        (WebCore::MediaStreamTrack::sourceStateChanged): Renamed from sourceChangedState.
+        (WebCore::MediaStreamTrack::sourceMutedChanged): New.
+        (WebCore::MediaStreamTrack::sourceEnabledChanged): New.
+        (WebCore::MediaStreamTrack::configureTrackRendering): New.
+        (WebCore::MediaStreamTrack::stopped): New. 
+        (WebCore::MediaStreamTrack::stop): Call stopProducingData.
+        (WebCore::MediaStreamTrack::scheduleEventDispatch): New.
+        (WebCore::MediaStreamTrack::dispatchQueuedEvents): New.
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+
+        * Modules/mediastream/MediaTrackConstraint.cpp: Added.
+        * Modules/mediastream/MediaTrackConstraint.h: Added.
+        * Modules/mediastream/MediaTrackConstraint.idl: Added.
+
+        // Add empty classes/IDL for track constraint objects.
+        * Modules/mediastream/MediaTrackConstraintSet.cpp: Added.
+        * Modules/mediastream/MediaTrackConstraintSet.h: Added.
+        * Modules/mediastream/MediaTrackConstraintSet.idl: Added.
+        * Modules/mediastream/MediaTrackConstraints.cpp: Added.
+        * Modules/mediastream/MediaTrackConstraints.h: Added.
+        * Modules/mediastream/MediaTrackConstraints.idl: Added.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::callSuccessHandler): Don't call the stream center, the
+            stream can take care of notifying interested parties.
+
+        // Add a constructor and create() that take a MediaStreamTrack*.
+        * Modules/mediastream/VideoStreamTrack.cpp:
+        (WebCore::VideoStreamTrack::create): 
+        (WebCore::VideoStreamTrack::VideoStreamTrack):
+        * Modules/mediastream/VideoStreamTrack.h:
+
+        // Create a MediaStreamSource subclass for WebAudio
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource): Call isAudioStreamSource instead
+            of checking deviceID.
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode): Create a
+            MediaStreamAudioSource instead of a MediaStreamSource.
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp: Added.
+        * Modules/webaudio/MediaStreamAudioSource.h: Added.
+        (WebCore::MediaStreamAudioSource::~MediaStreamAudioSource):
+
+        // Add new generated files.
+        * bindings/js/JSMediaSourceStatesCustom.cpp: Added.
+        * bindings/js/JSMediaStreamCapabilitiesCustom.cpp: Added.
+
+        * dom/EventNames.h: Defined 'overconstrained' event.
+
+        * platform/mediastream/MediaStreamCenter.h: Get rid of all of the methods nobody uses.
+            It isn't clear that they are necessary, and we can add them back if/when we need them.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::~MediaStreamDescriptor): Clear the all source streams.
+        (WebCore::MediaStreamDescriptor::removeSource): Clear the source stream.
+        * platform/mediastream/MediaStreamDescriptor.h:
+
+        // Make MediaStreamSource an abstract base class, and remove everyting WebAudio-specific
+        //  to MediaStreamAudioSource. 
+        * platform/mediastream/MediaStreamSource.cpp:
+        (WebCore::MediaStreamSource::MediaStreamSource): Remove readyState and requiresConsumer
+            parameters. Create new UUID for id if non was passed.
+        (WebCore::MediaStreamSource::reset): Reset internal state to just-constructed. Used for testing.
+        (WebCore::MediaStreamSource::setReadyState): sourceChangedState -> sourceStateChanged.
+        (WebCore::MediaStreamSource::setStream): Remove the ASSERT that check for a source being
+            added to a new stream. This is still a problem, but it is required for testing and will
+            be fixed as a part of bug 121954.
+        (WebCore::MediaStreamSource::setConstraints): Added.
+        (WebCore::MediaStreamSource::setMuted): Notify observers when muted changes.
+        (WebCore::MediaStreamSource::setEnabled): Notify observers when enabled changes.
+        (WebCore::MediaStreamSource::readonly): New.
+        (WebCore::MediaStreamSource::stop): New. Set state to Ended when all of the observers has
+            stopped.
+        * platform/mediastream/MediaStreamSource.h:
+
+        // Define platform versions of the Capabilities classes.
+        * platform/mediastream/MediaStreamSourceCapabilities.h: Added.
+
+        // Update the non-functional platform stream centers for the API changes.
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp:
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.h:
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp:
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h:
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp:
+        * platform/mediastream/mac/MediaStreamCenterMac.h:
+
+        // Update the Mock stream center for the API changes. Add a concrete mock MediaStreamSource
+        //  subclass.
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockSource::MockSource): New, the mock media stream source.
+        (WebCore::MockSource::~MockSource):
+        (WebCore::MockSource::capabilities):
+        (WebCore::MockSource::states):
+        (WebCore::mockSourceMap):
+        (WebCore::mockAudioSourceID):
+        (WebCore::mockVideoSourceID):
+        (WebCore::initializeMockSources): Create one audio and one video mock source.
+        (WebCore::MockMediaStreamCenter::registerMockMediaStreamCenter): Call initializeMockSources.
+        (WebCore::MockMediaStreamCenter::createMediaStream): Use the already allocated mock media
+            sources.
+        (WebCore::MockMediaStreamCenter::getMediaStreamTrackSources): Ditto.
+        * platform/mock/MockMediaStreamCenter.h:
+
 2013-10-07  Andreas Kling  <akling@apple.com>
 
         CTTE: Live node lists always have an owner Node.

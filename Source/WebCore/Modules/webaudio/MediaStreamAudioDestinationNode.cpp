@@ -31,9 +31,8 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "MediaStream.h"
-#include "MediaStreamCenter.h"
+#include "MediaStreamAudioSource.h"
 #include "RTCPeerConnectionHandler.h"
-#include "UUID.h"
 #include <wtf/Locker.h>
 
 namespace WebCore {
@@ -49,12 +48,10 @@ MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContext* c
 {
     setNodeType(NodeTypeMediaStreamAudioDestination);
 
-    m_source = MediaStreamSource::create(ASCIILiteral("WebAudio-") + createCanonicalUUIDString(), MediaStreamSource::Audio, "MediaStreamAudioDestinationNode", MediaStreamSource::Live, true);
+    m_source = MediaStreamAudioSource::create();
     MediaStreamSourceVector audioSources;
     audioSources.append(m_source);
-    MediaStreamSourceVector videoSources;
-    m_stream = MediaStream::create(context->scriptExecutionContext(), MediaStreamDescriptor::create(audioSources, videoSources));
-    MediaStreamCenter::shared().didCreateMediaStream(m_stream->descriptor());
+    m_stream = MediaStream::create(context->scriptExecutionContext(), MediaStreamDescriptor::create(audioSources, MediaStreamSourceVector()));
 
     m_source->setAudioFormat(numberOfChannels, context->sampleRate());
 

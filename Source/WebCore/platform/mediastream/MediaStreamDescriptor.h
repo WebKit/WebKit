@@ -52,8 +52,9 @@ public:
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
-
     static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+
+    virtual ~MediaStreamDescriptor();
 
     MediaStreamDescriptorClient* client() const { return m_client; }
     void setClient(MediaStreamDescriptorClient* client) { m_client = client; }

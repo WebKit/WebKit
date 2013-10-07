@@ -67,11 +67,6 @@ MediaStreamCenter::~MediaStreamCenter()
 {
 }
 
-void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescriptor)
-{
-    streamDescriptor->setEnded();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

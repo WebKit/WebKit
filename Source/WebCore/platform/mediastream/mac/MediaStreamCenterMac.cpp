@@ -73,33 +73,6 @@ bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrac
     return false;
 }
 
-void MediaStreamCenterMac::didSetMediaStreamTrackEnabled(MediaStreamSource*)
-{
-    notImplemented();
-}
-
-bool MediaStreamCenterMac::didAddMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaStreamCenterMac::didRemoveMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-void MediaStreamCenterMac::didStopLocalMediaStream(MediaStreamDescriptor* stream)
-{
-    endLocalMediaStream(stream);
-}
-
-void MediaStreamCenterMac::didCreateMediaStream(MediaStreamDescriptor*)
-{
-    notImplemented();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

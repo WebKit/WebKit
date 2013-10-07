@@ -45,7 +45,9 @@ class MediaConstraintsImpl : public MediaConstraints {
 public:
     static PassRefPtr<MediaConstraintsImpl> create();
     static PassRefPtr<MediaConstraintsImpl> create(const Dictionary&, ExceptionCode&);
+
     virtual ~MediaConstraintsImpl();
+    bool initialize(const Dictionary&);
 
     virtual void getMandatoryConstraints(Vector<MediaConstraint>&) const OVERRIDE;
     virtual void getOptionalConstraints(Vector<MediaConstraint>&) const OVERRIDE;
@@ -55,7 +57,6 @@ public:
 
 private:
     MediaConstraintsImpl() { }
-    bool initialize(const Dictionary&);
 
     HashMap<String, String> m_mandatoryConstraints;
     Vector<MediaConstraint> m_optionalConstraints;

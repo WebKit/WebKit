@@ -35,7 +35,11 @@
 
 #include "MediaStreamCenterGStreamer.h"
 
+#include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
+#include "MediaStreamSourceCapabilities.h"
+#include "MediaStreamSourceStates.h"
+#include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
@@ -70,33 +74,6 @@ bool MediaStreamCenterGStreamer::getMediaStreamTrackSources(PassRefPtr<MediaStre
 {
     notImplemented();
     return false;
-}
-
-void MediaStreamCenterGStreamer::didSetMediaStreamTrackEnabled(MediaStreamSource*)
-{
-    notImplemented();
-}
-
-bool MediaStreamCenterGStreamer::didAddMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaStreamCenterGStreamer::didRemoveMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-void MediaStreamCenterGStreamer::didStopLocalMediaStream(MediaStreamDescriptor* stream)
-{
-    endLocalMediaStream(stream);
-}
-
-void MediaStreamCenterGStreamer::didCreateMediaStream(MediaStreamDescriptor*)
-{
-    notImplemented();
 }
 
 } // namespace WebCore

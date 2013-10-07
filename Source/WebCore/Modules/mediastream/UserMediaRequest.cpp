@@ -173,7 +173,6 @@ void UserMediaRequest::callSuccessHandler(PassRefPtr<MediaStreamDescriptor> stre
     for (MediaStreamTrackVector::iterator iter = tracks.begin(); iter != tracks.end(); ++iter)
         (*iter)->source()->setConstraints(m_videoConstraints);
 
-    MediaStreamCenter::shared().didCreateMediaStream(streamDescriptor.get());
     m_successCallback->handleEvent(stream.get());
 }
 

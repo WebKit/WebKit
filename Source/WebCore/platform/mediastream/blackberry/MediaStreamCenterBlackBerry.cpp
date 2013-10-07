@@ -35,8 +35,10 @@
 
 #include "MediaStreamCenterBlackBerry.h"
 
+#include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
-#include "MediaStreamSourcesQueryClient.h"
+#include "MediaStreamTrackSourcesRequestClient.h"
+#include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -70,33 +72,6 @@ bool MediaStreamCenterBlackBerry::getMediaStreamTrackSources(PassRefPtr<MediaStr
 {
     notImplemented();
     return false;
-}
-
-void MediaStreamCenterBlackBerry::didSetMediaStreamTrackEnabled(MediaStreamSource*)
-{
-    notImplemented();
-}
-
-bool MediaStreamCenterBlackBerry::didAddMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-bool MediaStreamCenterBlackBerry::didRemoveMediaStreamTrack(MediaStreamSource*)
-{
-    notImplemented();
-    return false;
-}
-
-void MediaStreamCenterBlackBerry::didStopLocalMediaStream(MediaStreamDescriptor* stream)
-{
-    endLocalMediaStream(stream);
-}
-
-void MediaStreamCenterBlackBerry::didCreateMediaStream(MediaStreamDescriptor*)
-{
-    notImplemented();
 }
 
 } // namespace WebCore

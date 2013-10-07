@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,26 +35,39 @@
 
 #include "MediaStreamSource.h"
 
-#include "AudioDestinationConsumer.h"
+#include "MediaStreamCenter.h"
+#include "MediaStreamSourceCapabilities.h"
+#include "UUID.h"
+
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamSource> MediaStreamSource::create(const String& id, Type type, const String& name, ReadyState readyState, bool requiresConsumer)
-{
-    return adoptRef(new MediaStreamSource(id, type, name, readyState, requiresConsumer));
-}
-
-MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name, ReadyState readyState, bool requiresConsumer)
+MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name)
     : m_id(id)
     , m_type(type)
     , m_name(name)
-    , m_readyState(readyState)
+    , m_readyState(New)
     , m_stream(0)
-    , m_requiresConsumer(requiresConsumer)
     , m_enabled(true)
     , m_muted(false)
+    , m_readonly(false)
+    , m_remote(false)
 {
+    if (!m_id.isEmpty())
+        return;
+    
+    m_id = createCanonicalUUIDString();
+}
+
+void MediaStreamSource::reset()
+{
+    m_readyState = New;
+    m_stream = 0;
+    m_enabled = true;
+    m_muted = false;
+    m_readonly = false;
+    m_remote = false;
 }
 
 void MediaStreamSource::setReadyState(ReadyState readyState)
@@ -63,7 +77,7 @@ void MediaStreamSource::setReadyState(ReadyState readyState)
 
     m_readyState = readyState;
     for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
-        (*i)->sourceChangedState();
+        (*i)->sourceStateChanged();
 }
 
 void MediaStreamSource::addObserver(MediaStreamSource::Observer* observer)
@@ -80,8 +94,21 @@ void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
 
 void MediaStreamSource::setStream(MediaStreamDescriptor* stream)
 {
-    ASSERT(!m_stream && stream);
+    // FIXME: A source should not need to know about its stream(s). This will be fixed as a part of
+    // https://bugs.webkit.org/show_bug.cgi?id=121954
     m_stream = stream;
+}
+
+MediaConstraints* MediaStreamSource::constraints() const
+{
+    // FIXME: While this returns 
+    // https://bugs.webkit.org/show_bug.cgi?id=122428
+    return m_constraints.get();
+}
+    
+void MediaStreamSource::setConstraints(PassRefPtr<MediaConstraints> constraints)
+{
+    m_constraints = constraints;
 }
 
 void MediaStreamSource::setMuted(bool muted)
@@ -90,43 +117,51 @@ void MediaStreamSource::setMuted(bool muted)
         return;
 
     m_muted = muted;
+
+    if (m_readyState == Ended)
+        return;
+
     for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
-        (*i)->sourceChangedState();
+        (*i)->sourceMutedChanged();
 }
 
-void MediaStreamSource::addAudioConsumer(PassRefPtr<AudioDestinationConsumer> consumer)
+void MediaStreamSource::setEnabled(bool enabled)
 {
-    ASSERT(m_requiresConsumer);
-    MutexLocker locker(m_audioConsumersLock);
-    m_audioConsumers.append(consumer);
+    if (m_enabled == enabled)
+        return;
+    
+    m_enabled = enabled;
+
+    if (m_readyState == Ended)
+        return;
+    
+    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
+        (*i)->sourceEnabledChanged();
 }
 
-bool MediaStreamSource::removeAudioConsumer(AudioDestinationConsumer* consumer)
+bool MediaStreamSource::readonly() const
 {
-    ASSERT(m_requiresConsumer);
-    MutexLocker locker(m_audioConsumersLock);
-    size_t pos = m_audioConsumers.find(consumer);
-    if (pos != notFound) {
-        m_audioConsumers.remove(pos);
-        return true;
+    // http://www.w3.org/TR/mediacapture-streams/#widl-MediaStreamTrack-_readonly
+    // If the track (audio or video) is backed by a read-only source such as a file, or the track source 
+    // is a local microphone or camera, but is shared so that this track cannot modify any of the source's
+    // settings, the readonly attribute must return the value true. Otherwise, it must return the value false.
+    return m_readonly;
+}
+
+void MediaStreamSource::stop()
+{
+    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
+        if (!(*i)->stopped())
+            return;
     }
-    return false;
-}
 
-void MediaStreamSource::setAudioFormat(size_t numberOfChannels, float sampleRate)
-{
-    ASSERT(m_requiresConsumer);
-    MutexLocker locker(m_audioConsumersLock);
-    for (Vector<RefPtr<AudioDestinationConsumer> >::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
-        (*it)->setFormat(numberOfChannels, sampleRate);
-}
+    // There are no more consumers of this source's data, shut it down as appropriate.
+    setReadyState(Ended);
 
-void MediaStreamSource::consumeAudio(AudioBus* bus, size_t numberOfFrames)
-{
-    ASSERT(m_requiresConsumer);
-    MutexLocker locker(m_audioConsumersLock);
-    for (Vector<RefPtr<AudioDestinationConsumer> >::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
-        (*it)->consumeAudio(bus, numberOfFrames);
+    // http://www.w3.org/TR/mediacapture-streams/#widl-MediaStreamTrack-stop-void
+    // If the data is being generated from a live source (e.g., a microphone or camera), then the user 
+    // agent should remove any active "on-air" indicator for that source. If the data is being 
+    // generated from a prerecorded source (e.g. a video file), any remaining content in the file is ignored.
 }
 
 } // namespace WebCore

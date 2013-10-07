@@ -31,6 +31,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/InspectorProtocolVersion.h \
 	DerivedSources/WebCore/JSAbstractWorker.cpp \
 	DerivedSources/WebCore/JSAbstractWorker.h \
+	DerivedSources/WebCore/JSAllAudioCapabilities.cpp \
+	DerivedSources/WebCore/JSAllAudioCapabilities.h \
+	DerivedSources/WebCore/JSAllVideoCapabilities.cpp \
+	DerivedSources/WebCore/JSAllVideoCapabilities.h \
 	DerivedSources/WebCore/JSAttr.cpp \
 	DerivedSources/WebCore/JSAttr.h \
 	DerivedSources/WebCore/JSAudioBuffer.cpp \
@@ -87,6 +91,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCanvasRenderingContext2D.h \
 	DerivedSources/WebCore/JSCanvasRenderingContext.cpp \
 	DerivedSources/WebCore/JSCanvasRenderingContext.h \
+	DerivedSources/WebCore/JSCapabilityRange.cpp \
+	DerivedSources/WebCore/JSCapabilityRange.h \
 	DerivedSources/WebCore/JSCDATASection.cpp \
 	DerivedSources/WebCore/JSCDATASection.h \
 	DerivedSources/WebCore/JSCharacterData.cpp \
@@ -462,12 +468,16 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaSource.h \
 	DerivedSources/WebCore/JSWebKitMediaSource.cpp \
 	DerivedSources/WebCore/JSWebKitMediaSource.h \
+	DerivedSources/WebCore/JSMediaSourceStates.cpp \
+	DerivedSources/WebCore/JSMediaSourceStates.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
 	DerivedSources/WebCore/JSMediaStream.h \
 	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp \
 	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.h \
 	DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.cpp \
 	DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.h \
+	DerivedSources/WebCore/JSMediaStreamCapabilities.cpp \
+	DerivedSources/WebCore/JSMediaStreamCapabilities.h \
 	DerivedSources/WebCore/JSMediaStreamEvent.cpp \
 	DerivedSources/WebCore/JSMediaStreamEvent.h \
 	DerivedSources/WebCore/JSMediaStreamTrack.cpp \
@@ -480,6 +490,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaQueryList.h \
 	DerivedSources/WebCore/JSMediaQueryListListener.cpp \
 	DerivedSources/WebCore/JSMediaQueryListListener.h \
+	DerivedSources/WebCore/JSMediaTrackConstraint.cpp \
+	DerivedSources/WebCore/JSMediaTrackConstraint.h \
+	DerivedSources/WebCore/JSMediaTrackConstraints.cpp \
+	DerivedSources/WebCore/JSMediaTrackConstraints.h \
+	DerivedSources/WebCore/JSMediaTrackConstraintSet.cpp \
+	DerivedSources/WebCore/JSMediaTrackConstraintSet.h \
 	DerivedSources/WebCore/JSMessageChannel.cpp \
 	DerivedSources/WebCore/JSMessageChannel.h \
 	DerivedSources/WebCore/JSMessageEvent.cpp \
@@ -1186,12 +1202,20 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/WebKitMediaSource.idl \
 	$(WebCore)/Modules/mediasource/WebKitSourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/WebKitSourceBufferList.idl \
+	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
+	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AudioStreamTrack.idl \
+	$(WebCore)/Modules/mediastream/CapabilityRange.idl \
+	$(WebCore)/Modules/mediastream/MediaSourceStates.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
+	$(WebCore)/Modules/mediastream/MediaStreamCapabilities.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrackSourcesCallback.idl \
+	$(WebCore)/Modules/mediastream/MediaTrackConstraint.idl \
+	$(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
+	$(WebCore)/Modules/mediastream/MediaTrackConstraintSet.idl \
 	$(WebCore)/Modules/mediastream/NavigatorMediaStream.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
@@ -1845,12 +1869,20 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.h \
 	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.cpp \
 	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.h \
+	Source/WebCore/Modules/mediastream/AllAudioCapabilities.h \
+	Source/WebCore/Modules/mediastream/AllVideoCapabilities.h \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.cpp \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.h \
+	Source/WebCore/Modules/mediastream/CapabilityRange.cpp \
+	Source/WebCore/Modules/mediastream/CapabilityRange.h \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.cpp \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.h \
+	Source/WebCore/Modules/mediastream/MediaSourceStates.cpp \
+	Source/WebCore/Modules/mediastream/MediaSourceStates.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
 	Source/WebCore/Modules/mediastream/MediaStream.h \
+	Source/WebCore/Modules/mediastream/MediaStreamCapabilities.cpp \
+	Source/WebCore/Modules/mediastream/MediaStreamCapabilities.h \
 	Source/WebCore/Modules/mediastream/MediaStreamEvent.cpp \
 	Source/WebCore/Modules/mediastream/MediaStreamEvent.h \
 	Source/WebCore/Modules/mediastream/MediaStreamRegistry.cpp \
@@ -1862,6 +1894,12 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesCallback.h \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesRequest.cpp \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesRequest.h \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraint.cpp \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraint.h \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraintSet.cpp \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraintSet.h \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraints.cpp \
+	Source/WebCore/Modules/mediastream/MediaTrackConstraints.h \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.cpp \
@@ -2007,6 +2045,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.h \
 	Source/WebCore/Modules/webaudio/MediaStreamAudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/MediaStreamAudioDestinationNode.h \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSource.cpp \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSource.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioContext.cpp \
 	Source/WebCore/Modules/webaudio/OfflineAudioContext.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.h \
@@ -2312,6 +2352,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMainThreadExecState.cpp \
 	Source/WebCore/bindings/js/JSMainThreadExecState.h \
 	Source/WebCore/bindings/js/JSMediaListCustom.h \
+	Source/WebCore/bindings/js/JSMediaSourceStatesCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageChannelCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageEventCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \
@@ -5336,6 +5377,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamDescriptor.h \
 	Source/WebCore/platform/mediastream/MediaStreamSource.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
+	Source/WebCore/platform/mediastream/MediaStreamSourceCapabilities.h \
 	Source/WebCore/platform/mediastream/MediaStreamTrackSourcesRequestClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
 	Source/WebCore/platform/mediastream/RTCDTMFSenderHandler.h \

@@ -7,10 +7,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 *** calling MediaStreamTrack.getSources() ***
 PASS MediaStreamTrack.getSources(gotSources1); did not throw exception.
 PASS callback called.
-sources1[0].sourceId = "Mock_audio_device_ID"
+sources1[0].sourceId = "239c24b1-2b15-11e3-8224-0800200c9a66"
 sources1[0].label = "Mock audio device"
 sources1[0].kind = "audio"
-sources1[1].sourceId = "Mock_video_device_ID"
+sources1[1].sourceId = "239c24b0-2b15-11e3-8224-0800200c9a66"
 sources1[1].label = "Mock video device"
 sources1[1].kind = "video"
 

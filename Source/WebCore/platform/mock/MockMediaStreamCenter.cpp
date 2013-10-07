@@ -32,11 +32,96 @@
 #include "MediaStream.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
+#include "MediaStreamSource.h"
+#include "MediaStreamSourceCapabilities.h"
 #include "MediaStreamTrack.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
-#include "NotImplemented.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+class MockSource : public MediaStreamSource {
+public:
+    MockSource(const AtomicString& id, const AtomicString& name, MediaStreamSource::Type type)
+        : MediaStreamSource(id, type, name)
+    {
+    }
+
+    virtual ~MockSource() { }
+
+    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const { return m_capabilities; }
+    virtual const MediaStreamSourceStates& states() { return m_currentStates; }
+
+    RefPtr<MediaStreamSourceCapabilities> m_capabilities;
+    MediaStreamSourceStates m_currentStates;
+};
+    
+typedef HashMap<String, RefPtr<MockSource>> MockSourceMap;
+
+static MockSourceMap& mockSourceMap()
+{
+    DEFINE_STATIC_LOCAL(MockSourceMap, mockSourceMap, ());
+    return mockSourceMap;
+}
+
+static const AtomicString& mockAudioSourceID()
+{
+    static NeverDestroyed<AtomicString> id("239c24b1-2b15-11e3-8224-0800200c9a66", AtomicString::ConstructFromLiteral);
+    return id;
+}
+
+static const AtomicString& mockVideoSourceID()
+{
+    static NeverDestroyed<AtomicString> id("239c24b0-2b15-11e3-8224-0800200c9a66", AtomicString::ConstructFromLiteral);
+    return id;
+}
+
+static void initializeMockSources()
+{
+    RefPtr<MockSource> mockSource1 = adoptRef(new MockSource(mockVideoSourceID(), "Mock video device", MediaStreamSource::Video));
+    mockSource1->m_capabilities = MediaStreamSourceCapabilities::create();
+    mockSource1->m_capabilities->setSourceId(mockSource1->id());
+    mockSource1->m_capabilities->addSourceType(MediaStreamSourceStates::Camera);
+    mockSource1->m_capabilities->addSourceType(MediaStreamSourceStates::Microphone);
+    mockSource1->m_capabilities->addFacingMode(MediaStreamSourceStates::User);
+    mockSource1->m_capabilities->addFacingMode(MediaStreamSourceStates::Environment);
+    mockSource1->m_capabilities->setWidthRange(MediaStreamSourceCapabilityRange(320UL, 1920UL, true));
+    mockSource1->m_capabilities->setHeightRange(MediaStreamSourceCapabilityRange(240UL, 1080UL, true));
+    mockSource1->m_capabilities->setFrameRateRange(MediaStreamSourceCapabilityRange(15.0f, 60.0f, true));
+    mockSource1->m_capabilities->setAspectRatioRange(MediaStreamSourceCapabilityRange(4 / 3.0f, 16 / 9.0f, true));
+    mockSource1->m_capabilities->setVolumeRange(MediaStreamSourceCapabilityRange(10UL, 90UL, true));
+
+    mockSource1->m_currentStates.sourceType = MediaStreamSourceStates::Camera;
+    mockSource1->m_currentStates.sourceId = mockSource1->id();
+    mockSource1->m_currentStates.facingMode = MediaStreamSourceStates::User;
+    mockSource1->m_currentStates.width = 1920;
+    mockSource1->m_currentStates.height = 1080;
+    mockSource1->m_currentStates.frameRate = 30;
+    mockSource1->m_currentStates.aspectRatio = 16 / 9.0f;
+    mockSource1->m_currentStates.volume = 70;
+    mockSourceMap().add(mockSource1->id(), mockSource1.release());
+
+    RefPtr<MockSource> mockSource2 = adoptRef(new MockSource(mockAudioSourceID(), "Mock audio device", MediaStreamSource::Audio));
+    mockSource2->m_capabilities = MediaStreamSourceCapabilities::create();
+    mockSource2->m_capabilities->setSourceId(mockSource2->id());
+    mockSource2->m_capabilities->setVolumeRange(MediaStreamSourceCapabilityRange(0UL, 100UL, true));
+
+    mockSource2->m_currentStates.sourceType = MediaStreamSourceStates::Microphone;
+    mockSource2->m_currentStates.sourceId = mockSource2->id();
+    mockSource2->m_currentStates.volume = 50;
+    mockSourceMap().add(mockSource2->id(), mockSource2.release());
+}
+
+void MockMediaStreamCenter::registerMockMediaStreamCenter()
+{
+    DEFINE_STATIC_LOCAL(MockMediaStreamCenter, center, ());
+    static bool registered = false;
+    if (!registered) {
+        registered = true;
+        MediaStreamCenter::setSharedStreamCenter(&center);
+        initializeMockSources();
+    }
+}
 
 static bool isSupportedMockConstraint(const String& constraintName)
 {
@@ -75,16 +160,6 @@ static String verifyConstraints(MediaConstraints* constraints)
     return emptyString();
 }
 
-void MockMediaStreamCenter::registerMockMediaStreamCenter()
-{
-    DEFINE_STATIC_LOCAL(MockMediaStreamCenter, center, ());
-    static bool registered = false;
-    if (!registered) {
-        registered = true;
-        MediaStreamCenter::setSharedStreamCenter(&center);
-    }
-}
-
 void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
@@ -118,6 +193,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
     
     Vector<RefPtr<MediaStreamSource>> audioSources;
     Vector<RefPtr<MediaStreamSource>> videoSources;
+    MockSourceMap& map = mockSourceMap();
 
     if (audioConstraints) {
         String invalidQuery = verifyConstraints(audioConstraints.get());
@@ -127,7 +203,11 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         }
 
         if (audioConstraints) {
-            RefPtr<MediaStreamSource> audioSource = MediaStreamSource::create(emptyString(), MediaStreamSource::Audio, "Mock audio device");
+            MockSourceMap::iterator it = map.find(mockAudioSourceID());
+            ASSERT(it != map.end());
+
+            RefPtr<MediaStreamSource> audioSource = it->value;
+            audioSource->reset();
             audioSource->setReadyState(MediaStreamSource::Live);
             audioSources.append(audioSource.release());
         }
@@ -141,7 +221,11 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         }
 
         if (videoConstraints) {
-            RefPtr<MediaStreamSource> videoSource = MediaStreamSource::create(emptyString(), MediaStreamSource::Video, "Mock video device");
+            MockSourceMap::iterator it = map.find(mockVideoSourceID());
+            ASSERT(it != map.end());
+
+            RefPtr<MediaStreamSource> videoSource = it->value;
+            videoSource->reset();
             videoSource->setReadyState(MediaStreamSource::Live);
             videoSources.append(videoSource.release());
         }
@@ -153,37 +237,18 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
 bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
-    Vector<RefPtr<TrackSourceInfo>> sources(2);
+    Vector<RefPtr<TrackSourceInfo>> sources;
 
-    sources[0] = TrackSourceInfo::create("Mock_audio_device_ID", TrackSourceInfo::Audio, "Mock audio device");
-    sources[1] = TrackSourceInfo::create("Mock_video_device_ID", TrackSourceInfo::Video, "Mock video device");
+    MockSourceMap& map = mockSourceMap();
+    MockSourceMap::iterator end = map.end();
+    for (MockSourceMap::iterator it = map.begin(); it != end; ++it) {
+        MockSource* source = it->value.get();
+
+        sources.append(TrackSourceInfo::create(source->id(), source->type() == MediaStreamSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio, source->name()));
+    }
 
     requestClient->didCompleteRequest(sources);
     return true;
-}
-
-void MockMediaStreamCenter::didSetMediaStreamTrackEnabled(MediaStreamSource* source)
-{
-    source->setReadyState(MediaStreamSource::Live);
-}
-
-bool MockMediaStreamCenter::didAddMediaStreamTrack(MediaStreamSource*)
-{
-    return true;
-}
-
-bool MockMediaStreamCenter::didRemoveMediaStreamTrack(MediaStreamSource*)
-{
-    return true;
-}
-
-void MockMediaStreamCenter::didStopLocalMediaStream(MediaStreamDescriptor* stream)
-{
-    endLocalMediaStream(stream);
-}
-
-void MockMediaStreamCenter::didCreateMediaStream(MediaStreamDescriptor*)
-{
 }
 
 } // namespace WebCore

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,7 @@
 
 #include "AudioDestinationConsumer.h"
 #include "MediaConstraints.h"
+#include "MediaStreamSourceCapabilities.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -43,72 +45,81 @@
 namespace WebCore {
 
 class AudioBus;
+class MediaConstraints;
 class MediaStreamDescriptor;
+struct MediaStreamSourceStates;
 
 class MediaStreamSource : public RefCounted<MediaStreamSource> {
 public:
     class Observer {
     public:
         virtual ~Observer() { }
-        virtual void sourceChangedState() = 0;
+        virtual void sourceStateChanged() = 0;
+        virtual void sourceMutedChanged() = 0;
+        virtual void sourceEnabledChanged() = 0;
+        virtual bool stopped() = 0;
     };
 
     enum Type { Audio, Video };
     enum ReadyState { New = 0, Live = 1, Ended = 2 };
 
-    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = New, bool requiresConsumer = false);
+    virtual ~MediaStreamSource() { }
+
+    virtual bool isAudioStreamSource() const { return false; }
+    virtual bool useIDForTrackID() const { return false; }
+
+    void reset();
 
     const String& id() const { return m_id; }
-
     Type type() const { return m_type; }
     const String& name() const { return m_name; }
 
+    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const = 0;
+    virtual const MediaStreamSourceStates& states() = 0;
+    
     void setReadyState(ReadyState);
     ReadyState readyState() const { return m_readyState; }
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
 
-    void setConstraints(PassRefPtr<MediaConstraints> constraints) { m_constraints = constraints; }
-    MediaConstraints* constraints() const { return m_constraints.get(); }
-
-    const String& deviceId() const { return m_deviceId; }
-    void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
+    void setConstraints(PassRefPtr<MediaConstraints>);
+    MediaConstraints* constraints() const;
 
     bool enabled() const { return m_enabled; }
-    void setEnabled(bool enabled) { m_enabled = enabled; }
+    void setEnabled(bool);
 
     bool muted() const { return m_muted; }
     void setMuted(bool);
-    
-    void setAudioFormat(size_t numberOfChannels, float sampleRate);
-    void consumeAudio(AudioBus*, size_t numberOfFrames);
+
+    bool readonly() const;
+    void setReadonly(bool readonly) { m_readonly = readonly; }
+
+    bool remote() const { return m_remote; }
+    void setRemote(bool remote) { m_remote = remote; }
+
+    void stop();
 
     MediaStreamDescriptor* stream() const { return m_stream; }
     void setStream(MediaStreamDescriptor*);
-
-    bool requiresAudioConsumer() const { return m_requiresConsumer; }
-    void addAudioConsumer(PassRefPtr<AudioDestinationConsumer>);
-    bool removeAudioConsumer(AudioDestinationConsumer*);
-    const Vector<RefPtr<AudioDestinationConsumer> >& audioConsumers() const { return m_audioConsumers; }
+    
+protected:
+    MediaStreamSource(const String& id, Type, const String& name);
 
 private:
-    MediaStreamSource(const String& id, Type, const String& name, ReadyState, bool requiresConsumer);
-
     String m_id;
     Type m_type;
     String m_name;
     ReadyState m_readyState;
-    String m_deviceId;
     Vector<Observer*> m_observers;
-    Mutex m_audioConsumersLock;
-    Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
     RefPtr<MediaConstraints> m_constraints;
     MediaStreamDescriptor* m_stream;
+    MediaStreamSourceStates m_states;
 
-    bool m_requiresConsumer;
     bool m_enabled;
     bool m_muted;
+    bool m_readonly;
+    bool m_remote;
 };
 
 typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;

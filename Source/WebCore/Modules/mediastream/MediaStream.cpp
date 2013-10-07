@@ -56,22 +56,13 @@ static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourc
         return;
 
     MediaStreamSource* source = track->source();
-    if (!containsSource(sourceVector, source)) {
-        if (source->stream()) {
-            // FIXME: this should not be necessary because tracks and streams must be able to share sources, but our code
-            // currenlty assumes each source is attached to just one track.
-            // https://bugs.webkit.org/show_bug.cgi?id=121954
-            sourceVector.append(MediaStreamSource::create(source->id(), source->type(), source->name(), source->readyState(), source->requiresAudioConsumer()).get());
-        } else
-            sourceVector.append(source);
-    }
+    if (!containsSource(sourceVector, source))
+        sourceVector.append(source);
 }
 
 static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
     RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(audioSources, videoSources);
-    MediaStreamCenter::shared().didCreateMediaStream(descriptor.get());
-
     return MediaStream::create(context, descriptor.release());
 }
 
@@ -121,6 +112,7 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     , m_descriptor(streamDescriptor)
     , m_scheduledEventTimer(this, &MediaStream::scheduledEventTimerFired)
 {
+    ASSERT(m_descriptor);
     m_descriptor->setClient(this);
 
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioStreams();
@@ -156,7 +148,6 @@ void MediaStream::stop()
     if (ended())
         return;
 
-    MediaStreamCenter::shared().didStopLocalMediaStream(descriptor());
     setEnded();
 }
 
@@ -184,8 +175,6 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
         m_videoTracks.append(track);
         break;
     }
-
-    MediaStreamCenter::shared().didAddMediaStreamTrack(track->source());
 }
 
 void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
@@ -223,8 +212,6 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCo
 
     if (!m_audioTracks.size() && !m_videoTracks.size())
         setEnded();
-
-    MediaStreamCenter::shared().didRemoveMediaStreamTrack(track->source());
 }
 
 MediaStreamTrack* MediaStream::getTrackById(String id)
