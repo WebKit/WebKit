@@ -1572,8 +1572,8 @@ _llint_op_catch:
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
     rshiftp 3, PC
-    loadq VM::exception[t3], t0
-    storeq 0, VM::exception[t3]
+    loadq VM::m_exception[t3], t0
+    storeq 0, VM::m_exception[t3]
     loadisFromInstruction(1, t2)
     storeq t0, [cfr, t2, 8]
     traceExecution()
@@ -1649,7 +1649,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         error
     end
 
-    btqnz VM::exception[t3], .exception
+    btqnz VM::m_exception[t3], .exception
     ret
 .exception:
     preserveReturnAddressAfterCall(t1)

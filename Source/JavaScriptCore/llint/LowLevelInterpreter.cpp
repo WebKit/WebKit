@@ -436,7 +436,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
 
         OFFLINE_ASM_GLUE_LABEL(ctiOpThrowNotCaught)
         {
-            return vm->exception;
+            return vm->exception();
         }
 
 #if !ENABLE(COMPUTED_GOTO_OPCODES)

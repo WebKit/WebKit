@@ -48,14 +48,14 @@ static void doThrow(ExecState* exec, Instruction* pc)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    genericThrow(vm, exec, vm->exception, pc - exec->codeBlock()->instructions().begin());
+    genericThrow(vm, exec, vm->exception(), pc - exec->codeBlock()->instructions().begin());
 }
 
 Instruction* returnToThrow(ExecState* exec, Instruction* pc)
 {
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception, " (returnToThrow).\n");
+    dataLog("Throwing exception ", vm->exception(), " (returnToThrow).\n");
 #endif
     doThrow(exec, pc);
     return LLInt::exceptionInstructions();
@@ -65,7 +65,7 @@ void* callToThrow(ExecState* exec, Instruction* pc)
 {
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception, " (callToThrow).\n");
+    dataLog("Throwing exception ", vm->exception(), " (callToThrow).\n");
 #endif
     doThrow(exec, pc);
     return LLInt::getCodePtr(llint_throw_during_call_trampoline);

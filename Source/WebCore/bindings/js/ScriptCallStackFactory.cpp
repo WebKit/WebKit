@@ -120,9 +120,11 @@ PassRefPtr<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* e
         if (exception.isObject() && firstCallFrame.sourceURL().isEmpty()) {
             JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
             int lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
+            JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "column"));
+            int columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
             JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
             String exceptionSourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
-            frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, lineNumber, 0);
+            frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, lineNumber, columnNumber);
         }
     }
 

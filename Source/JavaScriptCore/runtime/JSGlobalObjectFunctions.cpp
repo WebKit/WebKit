@@ -57,7 +57,7 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
     CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(StrictConversion);
     if (!cstr.data())
-        return throwError(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
+        return exec->vm().throwException(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
 
     JSStringBuilder builder;
     const char* p = cstr.data();
@@ -118,7 +118,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
             }
             if (charLen == 0) {
                 if (strict)
-                    return throwError(exec, createURIError(exec, ASCIILiteral("URI error")));
+                    return exec->vm().throwException(exec, createURIError(exec, ASCIILiteral("URI error")));
                 // The only case where we don't use "strict" mode is the "unescape" function.
                 // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
                 if (k <= length - 6 && p[1] == 'u'
@@ -744,7 +744,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
 
     if (!thisObject->setPrototypeWithCycleCheck(exec, value))
-        throwError(exec, createError(exec, "cyclic __proto__ value"));
+        exec->vm().throwException(exec, createError(exec, "cyclic __proto__ value"));
     return JSValue::encode(jsUndefined());
 }
 

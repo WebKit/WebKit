@@ -38,6 +38,7 @@
 #include "JSStack.h"
 #include "LLIntData.h"
 #include "Opcode.h"
+#include "SourceProvider.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
@@ -133,6 +134,23 @@ namespace JSC {
         void expressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
     };
 
+    class ClearExceptionScope {
+    public:
+        ClearExceptionScope(VM* vm): m_vm(vm)
+        {
+            vm->getExceptionInfo(oldException, oldExceptionStack);
+            vm->clearException();
+        }
+        ~ClearExceptionScope()
+        {
+            m_vm->setExceptionInfo(oldException, oldExceptionStack);
+        }
+    private:
+        JSC::JSValue oldException;
+        RefCountedArray<JSC::StackFrame> oldExceptionStack;
+        VM* m_vm;
+    };
+    
     class TopCallFrameSetter {
     public:
         TopCallFrameSetter(VM& currentVM, CallFrame* callFrame)
@@ -169,6 +187,7 @@ namespace JSC {
         friend class CachedCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;
+        friend class VM;
 
     public:
         class ErrorHandlingMode {
@@ -220,9 +239,8 @@ namespace JSC {
 
         bool isInErrorHandlingMode() { return m_errorHandlingModeReentry; }
 
-        NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
+        NEVER_INLINE HandlerInfo* unwind(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
-        static void addStackTraceIfNecessary(CallFrame*, JSValue error);
         JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 
         static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState*);

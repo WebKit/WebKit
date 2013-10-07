@@ -382,7 +382,7 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
 
     // Don't put to an object if toString throws an exception.
     Identifier ident(exec, property.toString(exec)->value(exec));
-    if (!vm->exception) {
+    if (!vm->exception()) {
         PutPropertySlot slot(strict);
         baseValue.put(exec, ident, value, slot);
     }
@@ -394,7 +394,7 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     if (size < 0) {
-        throwError(exec, createRangeError(exec, "Requested length is negative"));
+        vm.throwException(exec, createRangeError(exec, "Requested length is negative"));
         return 0;
     }
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
@@ -413,7 +413,7 @@ char* newTypedArrayWithOneArgument(
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
         
         if (buffer->byteLength() % ViewClass::elementSize) {
-            throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
+            vm.throwException(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
             return 0;
         }
         return bitwise_cast<char*>(
@@ -440,18 +440,18 @@ char* newTypedArrayWithOneArgument(
     if (value.isInt32())
         length = value.asInt32();
     else if (!value.isNumber()) {
-        throwError(exec, createTypeError(exec, "Invalid array length argument"));
+        vm.throwException(exec, createTypeError(exec, "Invalid array length argument"));
         return 0;
     } else {
         length = static_cast<int>(value.asNumber());
         if (length != value.asNumber()) {
-            throwError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
+            vm.throwException(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
             return 0;
         }
     }
     
     if (length < 0) {
-        throwError(exec, createRangeError(exec, "Requested length is negative"));
+        vm.throwException(exec, createRangeError(exec, "Requested length is negative"));
         return 0;
     }
     
@@ -676,7 +676,7 @@ EncodedJSValue DFG_OPERATION operationInOptimizeWithReturnAddress(ExecState* exe
     NativeCallFrameTracer tracer(vm, exec);
     
     if (!base->isObject()) {
-        vm->exception = createInvalidParameterError(exec, "in", base);
+        vm->throwException(exec, createInvalidParameterError(exec, "in", base));
         return jsUndefined();
     }
     
@@ -703,7 +703,7 @@ EncodedJSValue DFG_OPERATION operationIn(ExecState* exec, JSCell* base, StringIm
     NativeCallFrameTracer tracer(vm, exec);
 
     if (!base->isObject()) {
-        vm->exception = createInvalidParameterError(exec, "in", base);
+        vm->throwException(exec, createInvalidParameterError(exec, "in", base));
         return jsUndefined();
     }
 
@@ -1227,14 +1227,14 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
             NativeCallFrameTracer tracer(vm, execCallee);
             execCallee->setCallee(asObject(callee));
             vm->hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
-            if (vm->exception)
+            if (vm->exception())
                 return vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
 
             return reinterpret_cast<void*>(getHostCallReturnValue);
         }
     
         ASSERT(callType == CallTypeNone);
-        exec->vm().exception = createNotAFunctionError(exec, callee);
+        exec->vm().throwException(exec, createNotAFunctionError(exec, callee));
         return vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
     }
 
@@ -1249,14 +1249,14 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         NativeCallFrameTracer tracer(vm, execCallee);
         execCallee->setCallee(asObject(callee));
         vm->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
-        if (vm->exception)
+        if (vm->exception())
             return vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
 
         return reinterpret_cast<void*>(getHostCallReturnValue);
     }
     
     ASSERT(constructType == ConstructTypeNone);
-    exec->vm().exception = createNotAConstructorError(exec, callee);
+    exec->vm().throwException(exec, createNotAConstructorError(exec, callee));
     return vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
 }
 
@@ -1283,7 +1283,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error) {
-            vm->exception = createStackOverflowError(exec);
+            vm->throwException(exec, createStackOverflowError(exec));
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
@@ -1328,7 +1328,7 @@ inline char* virtualForWithFunction(ExecState* execCallee, CodeSpecializationKin
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->compileFor(execCallee, function->scope(), kind);
         if (error) {
-            exec->vm().exception = error;
+            exec->vm().throwException(execCallee, error);
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
     }
@@ -1425,7 +1425,7 @@ char* DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
     NativeCallFrameTracer tracer(vm, exec);
 
     if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
+        return bitwise_cast<char*>(exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
 
     return bitwise_cast<char*>(JSArray::create(*vm, arrayStructure, size));
 }
@@ -1551,7 +1551,7 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     NativeCallFrameTracer tracer(&vm, exec);
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
     if (!regexp->isValid()) {
-        throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
+        exec->vm().throwException(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
         return JSValue::encode(jsUndefined());
     }
     
@@ -1574,7 +1574,7 @@ JSCell* DFG_OPERATION operationCreateArguments(ExecState* exec)
     // NB: This needs to be exceedingly careful with top call frame tracking, since it
     // may be called from OSR exit, while the state of the call stack is bizarre.
     Arguments* result = Arguments::create(vm, exec);
-    ASSERT(!vm.exception);
+    ASSERT(!vm.exception());
     return result;
 }
 
@@ -1586,7 +1586,7 @@ JSCell* DFG_OPERATION operationCreateInlinedArguments(
     // NB: This needs to be exceedingly careful with top call frame tracking, since it
     // may be called from OSR exit, while the state of the call stack is bizarre.
     Arguments* result = Arguments::create(vm, exec, inlineCallFrame);
-    ASSERT(!vm.exception);
+    ASSERT(!vm.exception());
     return result;
 }
 

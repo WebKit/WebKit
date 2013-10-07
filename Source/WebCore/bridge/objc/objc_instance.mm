@@ -224,7 +224,7 @@ JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(ObjCRuntimeMethod::info()))
-        return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
+        return exec->vm().throwException(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());
     ASSERT(method);

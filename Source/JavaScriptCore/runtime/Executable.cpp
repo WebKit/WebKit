@@ -120,7 +120,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
-        throwError(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        exec->vm().throwException(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
         return 0;
     }
 
@@ -503,7 +503,7 @@ PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     recordParse(m_unlinkedExecutable->features(), m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn());
 
     if (!unlinkedCodeBlock) {
-        exception = error.toErrorObject(globalObject, m_source);
+        exception = vm->throwException(globalObject->globalExec(), error.toErrorObject(globalObject, m_source));
         return 0;
     }
 

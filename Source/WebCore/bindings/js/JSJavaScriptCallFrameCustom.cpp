@@ -43,7 +43,7 @@ JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
     JSValue result = impl()->evaluate(exec->argument(0).toString(exec)->value(exec), exception);
 
     if (exception)
-        throwError(exec, exception);
+        exec->vm().throwException(exec, exception);
 
     return result;
 }
@@ -133,7 +133,7 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
 JSValue JSJavaScriptCallFrame::setVariableValue(JSC::ExecState* exec)
 {
     // FIXME: implement this. https://bugs.webkit.org/show_bug.cgi?id=107830
-    throwError(exec, createTypeError(exec, "Variable value mutation is not supported"));
+    exec->vm().throwException(exec, createTypeError(exec, "Variable value mutation is not supported"));
     return jsUndefined();
 }
 

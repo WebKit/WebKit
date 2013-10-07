@@ -91,13 +91,13 @@ namespace JSC {
 #define END_IMPL() RETURN_TWO(pc, exec)
 
 #define THROW(exceptionToThrow) do {                        \
-        vm.exception = (exceptionToThrow);                \
-        RETURN_TO_THROW(exec, pc);                             \
+        vm.throwException(exec, exceptionToThrow);          \
+        RETURN_TO_THROW(exec, pc);                          \
         END_IMPL();                                         \
     } while (false)
 
 #define CHECK_EXCEPTION() do {                    \
-        if (UNLIKELY(vm.exception)) {           \
+        if (UNLIKELY(vm.exception())) {           \
             RETURN_TO_THROW(exec, pc);               \
             END_IMPL();                           \
         }                                               \
@@ -151,14 +151,14 @@ namespace JSC {
 #define CALL_THROW(exec, pc, exceptionToThrow) do {               \
         ExecState* ctExec = (exec);                                  \
         Instruction* ctPC = (pc);                                    \
-        vm.exception = (exceptionToThrow);                      \
+        vm.throwException(exec, exceptionToThrow);                      \
         CALL_END_IMPL(ctExec, LLInt::callToThrow(ctExec, ctPC)); \
     } while (false)
 
 #define CALL_CHECK_EXCEPTION(exec, pc) do {                       \
         ExecState* cceExec = (exec);                                 \
         Instruction* ccePC = (pc);                                   \
-        if (UNLIKELY(vm.exception))                              \
+        if (UNLIKELY(vm.exception()))                              \
             CALL_END_IMPL(cceExec, LLInt::callToThrow(cceExec, ccePC)); \
     } while (false)
 
@@ -177,7 +177,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
     if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.exception = createStackOverflowError(exec);
+        vm.throwException(exec, createStackOverflowError(exec));
         CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
@@ -191,7 +191,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.exception = createStackOverflowError(exec);
+        vm.throwException(exec, createStackOverflowError(exec));
         CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }

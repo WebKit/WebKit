@@ -59,7 +59,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
         result = jsCast<T*>(toJS(functionRef))->m_callback(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
     }
     if (exception)
-        throwError(exec, toJS(exec, exception));
+        exec->vm().throwException(exec, toJS(exec, exception));
 
     // result must be a valid JSValue.
     if (!result)

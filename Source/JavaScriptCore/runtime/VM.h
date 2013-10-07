@@ -330,10 +330,22 @@ namespace JSC {
 #endif
         NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 
-        JSValue exception;
+        static ptrdiff_t exceptionOffset()
+        {
+            return OBJECT_OFFSETOF(VM, m_exception);
+        }
+        
+        JS_EXPORT_PRIVATE void clearException();
         JS_EXPORT_PRIVATE void clearExceptionStack();
-        RefCountedArray<StackFrame>& exceptionStack() { return m_exceptionStack; }
+        void getExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack);
+        void setExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack);
+        JSValue exception() const { return m_exception; }
+        JSValue* addressOfException() { return &m_exception; }
+        const RefCountedArray<StackFrame>& exceptionStack() const { return m_exceptionStack; }
 
+        JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
+        JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
+        
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
 
@@ -435,6 +447,7 @@ namespace JSC {
 
     private:
         friend class LLIntOffsetsExtractor;
+        friend class ClearExceptionScope;
         
         VM(VMType, HeapType);
         static VM*& sharedInstanceInternal();
@@ -451,6 +464,7 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;
 #endif
+        JSValue m_exception;
         bool m_inDefineOwnProperty;
         OwnPtr<CodeCache> m_codeCache;
         RefCountedArray<StackFrame> m_exceptionStack;

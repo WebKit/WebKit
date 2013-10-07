@@ -256,7 +256,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
 
     if (arg0.inherits(RegExpObject::info())) {
         if (!arg1.isUndefined())
-            return throwError(exec, createTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another.")));
+            return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another.")));
         // If called as a function, this just returns the first argument (see 15.10.3.1).
         if (callAsConstructor) {
             RegExp* regExp = static_cast<RegExpObject*>(asObject(arg0))->regExp();
@@ -275,12 +275,12 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         if (exec->hadException())
             return 0;
         if (flags == InvalidFlags)
-            return throwError(exec, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
+            return exec->vm().throwException(exec, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
     }
 
     RegExp* regExp = RegExp::create(exec->vm(), pattern, flags);
     if (!regExp->isValid())
-        return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
+        return exec->vm().throwException(exec, createSyntaxError(exec, regExp->errorMessage()));
     return RegExpObject::create(exec, exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp);
 }
 

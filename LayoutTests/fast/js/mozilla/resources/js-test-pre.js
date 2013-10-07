@@ -272,7 +272,7 @@ function shouldThrowType(_a, _e)
     if (exception instanceof _e)
       testPassed(_a + " threw exception of type " + _e.name + ".");
     else
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + exception + ".");
+      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _e) + ". Threw exception " + exception + ".");
   } else
     testFailed(_a + " should throw an instance of " + _e.name);
 }

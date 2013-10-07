@@ -43,12 +43,12 @@ void JSAudioBufferSourceNode::setBuffer(ExecState* exec, JSValue value)
     AudioBufferSourceNode* imp = static_cast<AudioBufferSourceNode*>(impl());
     AudioBuffer* buffer = toAudioBuffer(value);
     if (!buffer) {
-        throwError(exec, createTypeError(exec, "Value is not of type AudioBuffer"));
+        exec->vm().throwException(exec, createTypeError(exec, "Value is not of type AudioBuffer"));
         return;
     }
     
     if (!imp->setBuffer(buffer))
-        throwError(exec, createTypeError(exec, "AudioBuffer unsupported number of channels"));
+        exec->vm().throwException(exec, createTypeError(exec, "AudioBuffer unsupported number of channels"));
 }
 
 } // namespace WebCore

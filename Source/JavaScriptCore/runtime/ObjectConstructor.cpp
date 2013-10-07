@@ -206,7 +206,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 {
     if (!in.isObject()) {
-        throwError(exec, createTypeError(exec, ASCIILiteral("Property description must be an object.")));
+        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Property description must be an object.")));
         return false;
     }
     JSObject* description = asObject(in);
@@ -248,7 +248,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         if (!get.isUndefined()) {
             CallData callData;
             if (getCallData(get, callData) == CallTypeNone) {
-                throwError(exec, createTypeError(exec, ASCIILiteral("Getter must be a function.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Getter must be a function.")));
                 return false;
             }
         }
@@ -263,7 +263,7 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         if (!set.isUndefined()) {
             CallData callData;
             if (getCallData(set, callData) == CallTypeNone) {
-                throwError(exec, createTypeError(exec, ASCIILiteral("Setter must be a function.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Setter must be a function.")));
                 return false;
             }
         }
@@ -274,12 +274,12 @@ static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor
         return true;
 
     if (desc.value()) {
-        throwError(exec, createTypeError(exec, ASCIILiteral("Invalid property.  'value' present on property with getter or setter.")));
+        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Invalid property.  'value' present on property with getter or setter.")));
         return false;
     }
 
     if (desc.writablePresent()) {
-        throwError(exec, createTypeError(exec, ASCIILiteral("Invalid property.  'writable' present on property with getter or setter.")));
+        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Invalid property.  'writable' present on property with getter or setter.")));
         return false;
     }
     return true;

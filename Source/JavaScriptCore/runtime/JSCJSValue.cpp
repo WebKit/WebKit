@@ -76,7 +76,7 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObjec
         return constructBooleanFromImmediateBoolean(exec, globalObject, asValue());
 
     ASSERT(isUndefinedOrNull());
-    throwError(exec, createNotAnObjectError(exec, *this));
+    exec->vm().throwException(exec, createNotAnObjectError(exec, *this));
     return JSNotAnObject::create(exec);
 }
 
@@ -108,7 +108,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
         return exec->lexicalGlobalObject()->booleanPrototype();
 
     ASSERT(isUndefinedOrNull());
-    throwError(exec, createNotAnObjectError(exec, *this));
+    exec->vm().throwException(exec, createNotAnObjectError(exec, *this));
     return JSNotAnObject::create(exec);
 }
 
@@ -144,7 +144,7 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
-                    throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+                    exec->vm().throwException(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
                 return;
             }
 

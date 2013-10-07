@@ -155,19 +155,19 @@ JSObject* createOutOfMemoryError(JSGlobalObject* globalObject)
 
 JSObject* throwOutOfMemoryError(ExecState* exec)
 {
-    return throwError(exec, createOutOfMemoryError(exec->lexicalGlobalObject()));
+    return exec->vm().throwException(exec, createOutOfMemoryError(exec->lexicalGlobalObject()));
 }
 
 JSObject* throwStackOverflowError(ExecState* exec)
 {
     Interpreter::ErrorHandlingMode mode(exec);
-    return throwError(exec, createStackOverflowError(exec));
+    return exec->vm().throwException(exec, createStackOverflowError(exec));
 }
 
 JSObject* throwTerminatedExecutionException(ExecState* exec)
 {
     Interpreter::ErrorHandlingMode mode(exec);
-    return throwError(exec, createTerminatedExecutionException(&exec->vm()));
+    return exec->vm().throwException(exec, createTerminatedExecutionException(&exec->vm()));
 }
 
 } // namespace JSC

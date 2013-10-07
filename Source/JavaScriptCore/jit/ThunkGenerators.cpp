@@ -379,12 +379,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     // Check for an exception
 #if USE(JSVALUE64)
-    jit.load64(&(vm->exception), JSInterfaceJIT::regT2);
+    jit.load64(vm->addressOfException(), JSInterfaceJIT::regT2);
     JSInterfaceJIT::Jump exceptionHandler = jit.branchTest64(JSInterfaceJIT::NonZero, JSInterfaceJIT::regT2);
 #else
     JSInterfaceJIT::Jump exceptionHandler = jit.branch32(
         JSInterfaceJIT::NotEqual,
-        JSInterfaceJIT::AbsoluteAddress(reinterpret_cast<char*>(&vm->exception) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
+        JSInterfaceJIT::AbsoluteAddress(reinterpret_cast<char*>(vm->addressOfException()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
         JSInterfaceJIT::TrustedImm32(JSValue::EmptyValueTag));
 #endif
 

@@ -1720,10 +1720,10 @@ _llint_op_catch:
     move t0, cfr
     loadp JITStackFrame::vm[sp], t3
     loadi VM::targetInterpreterPCForThrow[t3], PC
-    loadi VM::exception + PayloadOffset[t3], t0
-    loadi VM::exception + TagOffset[t3], t1
-    storei 0, VM::exception + PayloadOffset[t3]
-    storei EmptyValueTag, VM::exception + TagOffset[t3]       
+    loadi VM::m_exception + PayloadOffset[t3], t0
+    loadi VM::m_exception + TagOffset[t3], t1
+    storei 0, VM::m_exception + PayloadOffset[t3]
+    storei EmptyValueTag, VM::m_exception + TagOffset[t3]
     loadi 4[PC], t2
     storei t0, PayloadOffset[cfr, t2, 8]
     storei t1, TagOffset[cfr, t2, 8]
@@ -1855,7 +1855,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     else  
         error
     end
-    bineq VM::exception + TagOffset[t3], EmptyValueTag, .exception
+    bineq VM::m_exception + TagOffset[t3], EmptyValueTag, .exception
     ret
 .exception:
     preserveReturnAddressAfterCall(t1) # This is really only needed on X86

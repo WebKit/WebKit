@@ -44,7 +44,7 @@ void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
     if (value.isNumber()) {
         uint32_t model = value.toUInt32(exec);
         if (!imp->setPanningModel(model))
-            throwError(exec, createTypeError(exec, "Illegal panningModel"));
+            exec->vm().throwException(exec, createTypeError(exec, "Illegal panningModel"));
         return;
     }
 #endif
@@ -57,7 +57,7 @@ void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
         }
     }
     
-    throwError(exec, createTypeError(exec, "Illegal panningModel"));
+    exec->vm().throwException(exec, createTypeError(exec, "Illegal panningModel"));
 }
 
 void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
@@ -68,7 +68,7 @@ void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
     if (value.isNumber()) {
         uint32_t model = value.toUInt32(exec);
         if (!imp->setDistanceModel(model))
-            throwError(exec, createTypeError(exec, "Illegal distanceModel"));
+            exec->vm().throwException(exec, createTypeError(exec, "Illegal distanceModel"));
         return;
     }
 #endif
@@ -81,7 +81,7 @@ void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
         }
     }
     
-    throwError(exec, createTypeError(exec, "Illegal distanceModel"));
+    exec->vm().throwException(exec, createTypeError(exec, "Illegal distanceModel"));
 }
 
 } // namespace WebCore

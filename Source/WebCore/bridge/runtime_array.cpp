@@ -118,7 +118,7 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
-        throwError(exec, createRangeError(exec, "Range error"));
+        exec->vm().throwException(exec, createRangeError(exec, "Range error"));
         return;
     }
     
@@ -135,7 +135,7 @@ void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSV
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {
-        throwError(exec, createRangeError(exec, "Range error"));
+        exec->vm().throwException(exec, createRangeError(exec, "Range error"));
         return;
     }
     

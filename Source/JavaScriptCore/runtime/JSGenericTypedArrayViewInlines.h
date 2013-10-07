@@ -49,7 +49,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 {
     ConstructionContext context(exec->vm(), structure, length, sizeof(typename Adaptor::Type));
     if (!context) {
-        throwError(exec, createOutOfMemoryError(structure->globalObject()));
+        exec->vm().throwException(exec, createOutOfMemoryError(structure->globalObject()));
         return 0;
     }
     JSGenericTypedArrayView* result =
@@ -67,7 +67,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::createUninit
         exec->vm(), structure, length, sizeof(typename Adaptor::Type),
         ConstructionContext::DontInitialize);
     if (!context) {
-        throwError(exec, createOutOfMemoryError(structure->globalObject()));
+        exec->vm().throwException(exec, createOutOfMemoryError(structure->globalObject()));
         return 0;
     }
     JSGenericTypedArrayView* result =
@@ -84,7 +84,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
 {
     RefPtr<ArrayBuffer> buffer = passedBuffer;
     if (!ArrayBufferView::verifySubRange<typename Adaptor::Type>(buffer, byteOffset, length)) {
-        throwError(
+        exec->vm().throwException(
             exec, createRangeError(exec, "Byte offset and length out of range of buffer"));
         return 0;
     }
@@ -126,7 +126,7 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
     if (canAccessRangeQuickly(offset, length))
         return true;
     
-    throwError(exec, createRangeError(exec, "Range consisting of offset and length are out of bounds"));
+    exec->vm().throwException(exec, createRangeError(exec, "Range consisting of offset and length are out of bounds"));
     return false;
 }
 
@@ -148,7 +148,7 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
         return false;
     
     if (other->length() != length) {
-        throwError(exec, createRangeError(exec, "Length of incoming array changed unexpectedly."));
+        exec->vm().throwException(exec, createRangeError(exec, "Length of incoming array changed unexpectedly."));
         return false;
     }
     

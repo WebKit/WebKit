@@ -149,12 +149,12 @@ ObjcArray::ObjcArray(ObjectStructPtr a, PassRefPtr<RootObject> rootObject)
 void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue aValue) const
 {
     if (![_array.get() respondsToSelector:@selector(insertObject:atIndex:)]) {
-        throwError(exec, createTypeError(exec, "Array is not mutable."));
+        exec->vm().throwException(exec, createTypeError(exec, "Array is not mutable."));
         return;
     }
 
     if (index > [_array.get() count]) {
-        throwError(exec, createRangeError(exec, "Index exceeds array size."));
+        exec->vm().throwException(exec, createRangeError(exec, "Index exceeds array size."));
         return;
     }
     
@@ -165,20 +165,20 @@ void ObjcArray::setValueAt(ExecState* exec, unsigned int index, JSValue aValue) 
     @try {
         [_array.get() insertObject:oValue.objectValue atIndex:index];
     } @catch(NSException* localException) {
-        throwError(exec, createError(exec, "Objective-C exception."));
+        exec->vm().throwException(exec, createError(exec, "Objective-C exception."));
     }
 }
 
 JSValue ObjcArray::valueAt(ExecState* exec, unsigned int index) const
 {
     if (index > [_array.get() count])
-        return throwError(exec, createRangeError(exec, "Index exceeds array size."));
+        return exec->vm().throwException(exec, createRangeError(exec, "Index exceeds array size."));
     @try {
         id obj = [_array.get() objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (exec, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
-        return throwError(exec, createError(exec, "Objective-C exception."));
+        return exec->vm().throwException(exec, createError(exec, "Objective-C exception."));
     }
     return jsUndefined();
 }

@@ -68,14 +68,14 @@ namespace JSC  {
         // pointer, so these are inefficient, and should be used sparingly in new code.
         // But they're used in many places in legacy code, so they're not going away any time soon.
 
-        void clearException() { vm().exception = JSValue(); }
+        void clearException() { vm().clearException(); }
         void clearSupplementaryExceptionInfo()
         {
             vm().clearExceptionStack();
         }
 
-        JSValue exception() const { return vm().exception; }
-        bool hadException() const { return vm().exception; }
+        JSValue exception() const { return vm().exception(); }
+        bool hadException() const { return vm().exception(); }
 
         const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
         const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }

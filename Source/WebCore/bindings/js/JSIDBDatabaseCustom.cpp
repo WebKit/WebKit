@@ -46,7 +46,7 @@ namespace WebCore {
 JSValue JSIDBDatabase::createObjectStore(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     String name = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
