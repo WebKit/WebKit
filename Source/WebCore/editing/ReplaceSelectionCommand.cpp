@@ -187,7 +187,11 @@ ReplacementFragment::ReplacementFragment(Document& document, DocumentFragment* f
     if (text != evt->text() || !editableRoot->rendererIsRichlyEditable()) {
         restoreAndRemoveTestRenderingNodesToFragment(holder.get());
 
-        m_fragment = createFragmentFromText(selection.toNormalizedRange().get(), evt->text());
+        RefPtr<Range> range = selection.toNormalizedRange();
+        if (!range)
+            return;
+
+        m_fragment = createFragmentFromText(*range, evt->text());
         if (!m_fragment->firstChild())
             return;
 

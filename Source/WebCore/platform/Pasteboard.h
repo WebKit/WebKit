@@ -164,21 +164,15 @@ public:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
-    PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(WIN)
-    void writeImage(Node*, const URL&, const String& title); // FIXME: Layering violation.
-    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
+    PassRefPtr<DocumentFragment> documentFragment(Frame&, Range&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+    void writeImage(Element&, const URL&, const String& title); // FIXME: Layering violation.
+    void writeSelection(Range&, bool canSmartCopyOrDelete, Frame&, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK)
     static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
     static PassOwnPtr<Pasteboard> create(GtkClipboard*);
     PassRefPtr<DataObjectGtk> dataObject() const;
-#endif
-
-#if PLATFORM(GTK)
     static PassOwnPtr<Pasteboard> createForGlobalSelection();
 #endif
 
@@ -199,7 +193,7 @@ public:
     void setExternalDataObject(IDataObject*);
     void writeURLToWritableDataObject(const URL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
-    void writeImageToDataObject(Element*, const URL&); // FIXME: Layering violation.
+    void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.
 #endif
 
 private:
@@ -216,7 +210,7 @@ private:
     explicit Pasteboard(const DragDataMap&);
 
     void finishCreatingPasteboard();
-    void writeRangeToDataObject(Range*, Frame*); // FIXME: Layering violation.
+    void writeRangeToDataObject(Range&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
 #endif

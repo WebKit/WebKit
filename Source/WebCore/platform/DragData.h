@@ -104,8 +104,7 @@ public:
     String asPlainText(Frame*) const;
     void asFilenames(Vector<String>&) const;
     Color asColor() const;
-    PassRefPtr<DocumentFragment> asFragment(Frame*, PassRefPtr<Range> context,
-                                            bool allowPlainText, bool& chosePlainText) const;
+    PassRefPtr<DocumentFragment> asFragment(Frame*, Range& context, bool allowPlainText, bool& chosePlainText) const;
     bool canSmartReplace() const;
     bool containsColor() const;
     bool containsFiles() const;

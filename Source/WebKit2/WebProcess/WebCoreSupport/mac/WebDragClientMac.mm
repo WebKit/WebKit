@@ -76,22 +76,22 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const In
     return bitmap.release();
 }
 
-void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, const IntPoint&, Clipboard*, Frame* frame, bool linkDrag)
+void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, const IntPoint&, Clipboard&, Frame& frame, bool linkDrag)
 {
     IntSize bitmapSize([image.get() size]);
-    bitmapSize.scale(frame->page()->deviceScaleFactor());
+    bitmapSize.scale(frame.page()->deviceScaleFactor());
     RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get(), bitmapSize);
     ShareableBitmap::Handle handle;
     if (!bitmap || !bitmap->createHandle(handle))
         return;
 
     // FIXME: Seems this message should be named StartDrag, not SetDragImage.
-    m_page->send(Messages::WebPageProxy::SetDragImage(frame->view()->contentsToWindow(point), handle, linkDrag));
+    m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, linkDrag));
 }
 
-static WebCore::CachedImage* cachedImage(Element* element)
+static WebCore::CachedImage* cachedImage(Element& element)
 {
-    RenderObject* renderer = element->renderer();
+    RenderObject* renderer = element.renderer();
     if (!renderer)
         return 0;
     if (!renderer->isRenderImage())
@@ -102,29 +102,27 @@ static WebCore::CachedImage* cachedImage(Element* element)
     return image;
 }
 
-void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMElement *element, NSURL *URL, NSString *title, WebCore::Frame*)
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
-    ASSERT(element);
     ASSERT(pasteboardName == String(NSDragPboard));
 
-    Element* coreElement = core(element);
+    WebCore::CachedImage* image = cachedImage(element);
 
-    WebCore::CachedImage* image = cachedImage(coreElement);
-
-    NSString *extension = @"";
+    String extension;
     if (image) {
         extension = image->image()->filenameExtension();
-        if (![extension length])
+        if (extension.isEmpty())
             return;
     }
 
-    if (![title length]) {
-        title = [[URL path] lastPathComponent];
-        if (![title length])
-            title = [URL _web_userVisibleString];
+    String title = label;
+    if (title.isEmpty()) {
+        title = url.lastPathComponent();
+        if (title.isEmpty())
+            title = [(NSURL *)url _web_userVisibleString];
     }
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreElement);
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(&element);
 
     NSURLResponse *response = image->response().nsURLResponse();
     
@@ -146,7 +144,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMEl
         memcpy(sharedMemoryBuffer->data(), buffer->data(), archiveSize);
         sharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::ReadOnly);            
     }
-    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), String(extension), String(title), String([[response URL] absoluteString]), String([URL _web_userVisibleString]), archiveHandle, archiveSize));
+    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), extension, title, String([[response URL] absoluteString]), String([(NSURL *)url _web_userVisibleString]), archiveHandle, archiveSize));
 }
 
 } // namespace WebKit

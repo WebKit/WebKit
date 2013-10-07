@@ -95,7 +95,7 @@ void GtkDragAndDropHelper::handleDragLeaveLater(DroppingContext* context)
     DragData dragData(context->dataObject.get(), position,
                       convertWidgetPointToScreenPoint(m_widget, position),
                       DragOperationNone);
-    context->exitedCallback(m_widget, &dragData, context->dropHappened);
+    context->exitedCallback(m_widget, dragData, context->dropHappened);
 
     m_droppingContexts.remove(iterator);
 }

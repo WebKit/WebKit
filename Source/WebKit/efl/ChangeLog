@@ -1,3 +1,17 @@
+2013-10-07  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Use references in and around DragController
+        https://bugs.webkit.org/show_bug.cgi?id=122427
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DragClientEfl.cpp:
+        (WebCore::DragClientEfl::willPerformDragDestinationAction):
+        (WebCore::DragClientEfl::willPerformDragSourceAction):
+        (WebCore::DragClientEfl::actionMaskForDrag):
+        (WebCore::DragClientEfl::startDrag):
+        * WebCoreSupport/DragClientEfl.h:
+
 2013-10-04  Anders Carlsson  <andersca@apple.com>
 
         FramePolicyFunction should be an std::function

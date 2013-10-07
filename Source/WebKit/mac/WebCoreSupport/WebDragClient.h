@@ -32,13 +32,13 @@
 class WebDragClient : public WebCore::DragClient {
 public:
     WebDragClient(WebView*);
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*) OVERRIDE;
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*) OVERRIDE;
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*) OVERRIDE;
+    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&) OVERRIDE;
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&) OVERRIDE;
+    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&) OVERRIDE;
     virtual void dragControllerDestroyed() OVERRIDE;
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) OVERRIDE;
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag) OVERRIDE;
-    virtual void declareAndWriteDragImage(const String& pasteboardName, DOMElement*, NSURL*, NSString*, WebCore::Frame*) OVERRIDE;
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag) OVERRIDE;
+    virtual void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) OVERRIDE;
 private:
     WebView* m_webView;
 };

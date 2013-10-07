@@ -422,9 +422,8 @@ void Pasteboard::setDragImage(DragImageRef, const IntPoint&)
 }
 #endif
 
-void Pasteboard::writeRangeToDataObject(Range* selectedRange, Frame* frame)
+void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
 {
-    ASSERT(selectedRange);
     if (!m_writableDataObject)
         return;
 
@@ -432,13 +431,13 @@ void Pasteboard::writeRangeToDataObject(Range* selectedRange, Frame* frame)
     medium.tymed = TYMED_HGLOBAL;
 
     Vector<char> data;
-    markupToCFHTML(createMarkup(*selectedRange, 0, AnnotateForInterchange),
-        selectedRange->startContainer()->document().url().string(), data);
+    markupToCFHTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
+        selectedRange.startContainer()->document().url().string(), data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
 
-    String str = frame->editor().selectedTextForClipboard();
+    String str = frame.editor().selectedTextForClipboard();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     medium.hGlobal = createGlobalData(str);
@@ -446,19 +445,19 @@ void Pasteboard::writeRangeToDataObject(Range* selectedRange, Frame* frame)
         ::GlobalFree(medium.hGlobal);
 
     medium.hGlobal = 0;
-    if (frame->editor().canSmartCopyOrDelete())
+    if (frame.editor().canSmartCopyOrDelete())
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
+void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     clear();
 
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
-        markupToCFHTML(createMarkup(*selectedRange, 0, AnnotateForInterchange),
-            selectedRange->startContainer()->document().url().string(), data);
+        markupToCFHTML(createMarkup(selectedRange, 0, AnnotateForInterchange),
+            selectedRange.startContainer()->document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
@@ -466,7 +465,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
     
     // Put plain string on the pasteboard. CF_UNICODETEXT covers CF_TEXT as well
-    String str = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor().selectedTextForClipboard() : frame->editor().selectedText();
+    String str = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame.editor().selectedTextForClipboard() : frame.editor().selectedText();
     replaceNewlinesWithWindowsStyleNewlines(str);
     replaceNBSPWithSpace(str);
     if (::OpenClipboard(m_owner)) {
@@ -725,14 +724,12 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     writeURLToDataObject(pasteboardURL.url, pasteboardURL.title);
 }
 
-void Pasteboard::writeImage(Node* node, const URL&, const String&)
+void Pasteboard::writeImage(Element& element, const URL&, const String&)
 {
-    ASSERT(node);
-
-    if (!(node->renderer() && node->renderer()->isImage()))
+    if (!(element.renderer() && element.renderer()->isImage()))
         return;
 
-    RenderImage* renderer = toRenderImage(node->renderer());
+    RenderImage* renderer = toRenderImage(element.renderer());
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return;
@@ -798,7 +795,7 @@ void Pasteboard::read(PasteboardPlainText& text)
     }
 }
 
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
+PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
     
@@ -811,9 +808,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             GlobalUnlock(cbData);
             ::CloseClipboard();
 
-            PassRefPtr<DocumentFragment> fragment = fragmentFromCFHTML(frame->document(), cfhtml);
+            RefPtr<DocumentFragment> fragment = fragmentFromCFHTML(frame.document(), cfhtml);
             if (fragment)
-                return fragment;
+                return fragment.release();
         } else 
             ::CloseClipboard();
     }
@@ -827,7 +824,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                 String str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
-                RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), str);
+                RefPtr<DocumentFragment> fragment = createFragmentFromText(context, str);
                 if (fragment)
                     return fragment.release();
             } else 
@@ -844,7 +841,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                 String str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
-                RefPtr<DocumentFragment> fragment = createFragmentFromText(context.get(), str);
+                RefPtr<DocumentFragment> fragment = createFragmentFromText(context, str);
                 if (fragment)
                     return fragment.release();
             } else
@@ -861,11 +858,10 @@ void Pasteboard::setExternalDataObject(IDataObject *dataObject)
     m_dataObject = dataObject;
 }
 
-static CachedImage* getCachedImage(Element* element)
+static CachedImage* getCachedImage(Element& element)
 {
     // Attempt to pull CachedImage from element
-    ASSERT(element);
-    RenderObject* renderer = element->renderer();
+    RenderObject* renderer = element.renderer();
     if (!renderer || !renderer->isImage()) 
         return 0;
 
@@ -1001,18 +997,18 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
     return memObj;
 }
 
-void Pasteboard::writeImageToDataObject(Element* element, const URL& url)
+void Pasteboard::writeImageToDataObject(Element& element, const URL& url)
 {
     // Shove image data into a DataObject for use as a file
     CachedImage* cachedImage = getCachedImage(element);
-    if (!cachedImage || !cachedImage->imageForRenderer(element->renderer()) || !cachedImage->isLoaded())
+    if (!cachedImage || !cachedImage->imageForRenderer(element.renderer()) || !cachedImage->isLoaded())
         return;
 
-    SharedBuffer* imageBuffer = cachedImage->imageForRenderer(element->renderer())->data();
+    SharedBuffer* imageBuffer = cachedImage->imageForRenderer(element.renderer())->data();
     if (!imageBuffer || !imageBuffer->size())
         return;
 
-    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element->getAttribute(HTMLNames::altAttr), cachedImage);
+    HGLOBAL imageFileDescriptor = createGlobalImageFileDescriptor(url.string(), element.getAttribute(HTMLNames::altAttr), cachedImage);
     if (!imageFileDescriptor)
         return;
 

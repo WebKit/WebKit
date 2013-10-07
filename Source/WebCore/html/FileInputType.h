@@ -67,7 +67,7 @@ private:
     virtual bool canSetValue(const String&) OVERRIDE;
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
-    virtual bool receiveDroppedFiles(const DragData*) OVERRIDE;
+    virtual bool receiveDroppedFiles(const DragData&) OVERRIDE;
     virtual Icon* icon() const OVERRIDE;
     virtual bool isFileUpload() const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;

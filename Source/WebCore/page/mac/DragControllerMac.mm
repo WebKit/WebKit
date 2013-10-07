@@ -29,7 +29,6 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #import "Clipboard.h"
-#import "DOMElementInternal.h"
 #import "DragClient.h"
 #import "DragData.h"
 #import "Element.h"
@@ -48,19 +47,17 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-bool DragController::isCopyKeyDown(DragData* dragData)
+bool DragController::isCopyKeyDown(DragData& dragData)
 {
-    return dragData->flags() & DragApplicationIsCopyKeyDown;
+    return dragData.flags() & DragApplicationIsCopyKeyDown;
 }
     
-DragOperation DragController::dragOperation(DragData* dragData)
+DragOperation DragController::dragOperation(DragData& dragData)
 {
-    ASSERT(dragData);
-
-    if ((dragData->flags() & DragApplicationIsModal) || !dragData->containsURL(&m_page.mainFrame()))
+    if ((dragData.flags() & DragApplicationIsModal) || !dragData.containsURL(&m_page.mainFrame()))
         return DragOperationNone;
 
-    if (!m_documentUnderMouse || (!(dragData->flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
+    if (!m_documentUnderMouse || (!(dragData.flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
         return DragOperationCopy;
 
     return DragOperationNone;
@@ -85,9 +82,9 @@ void DragController::cleanupAfterSystemDrag()
         dragEnded();
 }
 
-void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const URL& url, const String& label)
+void DragController::declareAndWriteDragImage(Clipboard& clipboard, Element& element, const URL& url, const String& label)
 {
-    m_client.declareAndWriteDragImage(clipboard->pasteboard().name(), kit(element), url, label, element->document().frame());
+    m_client.declareAndWriteDragImage(clipboard.pasteboard().name(), element, url, label, element.document().frame());
 }
 
 } // namespace WebCore

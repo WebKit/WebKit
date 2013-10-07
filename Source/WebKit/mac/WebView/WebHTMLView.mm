@@ -2065,8 +2065,11 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         [fragment appendChild:anchor];
         return fragment;
     }
-    if (pboardType == NSStringPboardType)
-        return kit(createFragmentFromText(core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).get());
+    if (pboardType == NSStringPboardType) {
+        if (!context)
+            return nil;
+        return kit(createFragmentFromText(*core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).get());
+    }
     return nil;
 }
 

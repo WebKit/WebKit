@@ -239,7 +239,7 @@ public:
     virtual FileList* files();
     virtual void setFiles(PassRefPtr<FileList>);
     // Should return true if the given DragData has more than one dropped files.
-    virtual bool receiveDroppedFiles(const DragData*);
+    virtual bool receiveDroppedFiles(const DragData&);
     virtual Icon* icon() const;
     // Should return true if the corresponding renderer for a type can display a suggested value.
     virtual bool canSetSuggestedValue();

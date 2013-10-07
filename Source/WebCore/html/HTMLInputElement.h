@@ -243,7 +243,7 @@ public:
     void setFiles(PassRefPtr<FileList>);
 
     // Returns true if the given DragData has more than one dropped files.
-    bool receiveDroppedFiles(const DragData*);
+    bool receiveDroppedFiles(const DragData&);
 
     Icon* icon() const;
     // These functions are used for rendering the input active during a

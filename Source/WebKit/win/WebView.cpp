@@ -5255,7 +5255,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragEnter(
     ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), 
         IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-    *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragEntered(&data).operation);
+    *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragEntered(data).operation);
 
     m_lastDropEffect = *pdwEffect;
     m_dragData = pDataObject;
@@ -5274,7 +5274,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragOver(
         ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
         DragData data(m_dragData.get(), IntPoint(localpt.x, localpt.y), 
             IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-        *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragUpdated(&data).operation);
+        *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragUpdated(data).operation);
     } else
         *pdwEffect = DROPEFFECT_NONE;
 
@@ -5290,7 +5290,7 @@ HRESULT STDMETHODCALLTYPE WebView::DragLeave()
     if (m_dragData) {
         DragData data(m_dragData.get(), IntPoint(), IntPoint(), 
             DragOperationNone);
-        m_page->dragController().dragExited(&data);
+        m_page->dragController().dragExited(data);
         m_dragData = 0;
     }
     return S_OK;
@@ -5308,7 +5308,7 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(
     ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), 
         IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-    m_page->dragController().performDrag(&data);
+    m_page->dragController().performDrag(data);
     return S_OK;
 }
 

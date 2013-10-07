@@ -31,44 +31,36 @@
 #include "DragImage.h"
 #include "IntPoint.h"
 
-#if PLATFORM(MAC)
-OBJC_CLASS DOMElement;
-OBJC_CLASS NSURL;
-OBJC_CLASS NSString;
-#endif
-
 namespace WebCore {
     
-    class Clipboard;
-    class DragData;
-    class Frame;
-    class Image;
-    class HTMLImageElement;
-    
-    class DragClient {
-    public:
-        virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) = 0;
-        virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) = 0;
-        virtual DragDestinationAction actionMaskForDrag(DragData*) = 0;
+class Clipboard;
+class DragData;
+class Element;
+class Frame;
+class Image;
 
-        virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
-        
-        virtual void startDrag(DragImageRef dragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false) = 0;
-        
-        virtual void dragControllerDestroyed() = 0;
+class DragClient {
+public:
+    virtual void dragControllerDestroyed() = 0;
+
+    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData&) = 0;
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&) = 0;
+    virtual DragDestinationAction actionMaskForDrag(DragData&) = 0;
+    virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
+    
+    virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard&, Frame&, bool linkDrag = false) = 0;
+    virtual void dragEnded() { }
 
 #if PLATFORM(MAC)
-        // Mac-specific helper function to allow access to web archives and NSPasteboard extras in WebKit.
-        // This is not abstract as that would require another #if PLATFORM(MAC) for the SVGImage client empty implentation.
-        virtual void declareAndWriteDragImage(const String&, DOMElement*, NSURL *, NSString *, Frame*) { }
+    // Mac-specific helper function to allow access to web archives and NSPasteboard extras in WebKit.
+    // This is not abstract as that would require another #if PLATFORM(MAC) for the SVGImage client empty implentation.
+    virtual void declareAndWriteDragImage(const String&, Element&, const URL&, const String&, Frame*) { }
 #endif
-        
-        virtual void dragEnded() { }
 
-        virtual ~DragClient() { }
-    };
+    virtual ~DragClient() { }
+};
     
-}
+} // namespace WebCore
 
-#endif // !DragClient_h
+#endif // DragClient_h
 

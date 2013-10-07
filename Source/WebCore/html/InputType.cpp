@@ -705,7 +705,7 @@ String InputType::sanitizeValue(const String& proposedValue) const
     return proposedValue;
 }
 
-bool InputType::receiveDroppedFiles(const DragData*)
+bool InputType::receiveDroppedFiles(const DragData&)
 {
     ASSERT_NOT_REACHED();
     return false;

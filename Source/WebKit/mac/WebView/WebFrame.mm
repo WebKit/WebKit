@@ -998,8 +998,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
-{   
-    DOMDocumentFragment* fragment = kit(createFragmentFromText(_private->coreFrame->selection().toNormalizedRange().get(), text).get());
+{
+    RefPtr<Range> range = _private->coreFrame->selection().toNormalizedRange();
+    
+    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).get()) : nil;
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 

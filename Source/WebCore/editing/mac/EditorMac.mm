@@ -564,7 +564,7 @@ bool Editor::WebContentReader::readPlainText(const String& text)
     if (!allowPlainText)
         return false;
 
-    fragment = createFragmentFromText(&context, [text precomposedStringWithCanonicalMapping]);
+    fragment = createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]);
     if (!fragment)
         return false;
 

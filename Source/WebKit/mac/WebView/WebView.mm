@@ -4332,7 +4332,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    return core(self)->dragController().dragEntered(&dragData).operation;
+    return core(self)->dragController().dragEntered(dragData).operation;
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
@@ -4344,7 +4344,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    return page->dragController().dragUpdated(&dragData).operation;
+    return page->dragController().dragUpdated(dragData).operation;
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
@@ -4356,7 +4356,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    page->dragController().dragExited(&dragData);
+    page->dragController().dragExited(dragData);
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
@@ -4369,7 +4369,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    return core(self)->dragController().performDrag(&dragData);
+    return core(self)->dragController().performDrag(dragData);
 }
 
 - (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types

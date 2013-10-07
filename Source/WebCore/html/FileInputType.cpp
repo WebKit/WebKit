@@ -433,10 +433,10 @@ void FileInputType::updateRendering(PassRefPtr<Icon> icon)
         element().renderer()->repaint();
 }
 
-bool FileInputType::receiveDroppedFiles(const DragData* dragData)
+bool FileInputType::receiveDroppedFiles(const DragData& dragData)
 {
     Vector<String> paths;
-    dragData->asFilenames(paths);
+    dragData.asFilenames(paths);
     if (paths.isEmpty())
         return false;
 

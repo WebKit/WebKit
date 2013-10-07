@@ -752,12 +752,9 @@ static bool contextPreservesNewline(const Range& context)
     return container->renderer()->style()->preserveNewline();
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text)
+PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String& text)
 {
-    if (!context)
-        return 0;
-
-    Document& document = context->ownerDocument();
+    Document& document = context.ownerDocument();
     RefPtr<DocumentFragment> fragment = document.createDocumentFragment();
     
     if (text.isEmpty())
@@ -767,7 +764,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     string.replace("\r\n", "\n");
     string.replace('\r', '\n');
 
-    if (contextPreservesNewline(*context)) {
+    if (contextPreservesNewline(context)) {
         fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
             RefPtr<Element> element = createBreakElement(document);
@@ -784,14 +781,14 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-    Node* blockNode = enclosingBlock(context->firstNode());
+    Node* blockNode = enclosingBlock(context.firstNode());
     Element* block = toElement(blockNode);
     bool useClonesOfEnclosingBlock = blockNode
         && blockNode->isElementNode()
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
-        && block != editableRootForPosition(context->startPosition());
-    bool useLineBreak = enclosingTextFormControl(context->startPosition());
+        && block != editableRootForPosition(context.startPosition());
+    bool useLineBreak = enclosingTextFormControl(context.startPosition());
 
     Vector<String> list;
     string.split('\n', true, list); // true gets us empty strings in the list

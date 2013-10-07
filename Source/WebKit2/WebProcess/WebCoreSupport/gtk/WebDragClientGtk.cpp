@@ -56,7 +56,7 @@ static PassRefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_su
     return bitmap.release();
 }
 
-void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, Clipboard* clipboard, Frame*, bool)
+void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosition, const IntPoint& globalPosition, Clipboard& clipboard, Frame&, bool)
 {
     RefPtr<ShareableBitmap> bitmap = convertCairoSurfaceToShareableBitmap(dragImage);
     ShareableBitmap::Handle handle;
@@ -65,8 +65,8 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
     if (bitmap && !bitmap->createHandle(handle))
         return;
 
-    RefPtr<DataObjectGtk> dataObject = clipboard->pasteboard().dataObject();
-    DragData dragData(dataObject.get(), clientPosition, globalPosition, clipboard->sourceOperation());
+    RefPtr<DataObjectGtk> dataObject = clipboard.pasteboard().dataObject();
+    DragData dragData(dataObject.get(), clientPosition, globalPosition, clipboard.sourceOperation());
     m_page->send(Messages::WebPageProxy::StartDrag(dragData, handle));
 }
 

@@ -533,11 +533,11 @@ class EmptyDragClient : public DragClient {
 public:
     EmptyDragClient() { }
     virtual ~EmptyDragClient() {}
-    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) OVERRIDE { }
-    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) OVERRIDE { }
-    virtual DragDestinationAction actionMaskForDrag(DragData*) OVERRIDE { return DragDestinationActionNone; }
+    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData&) OVERRIDE { }
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&) OVERRIDE { }
+    virtual DragDestinationAction actionMaskForDrag(DragData&) OVERRIDE { return DragDestinationActionNone; }
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) OVERRIDE { return DragSourceActionNone; }
-    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) OVERRIDE { }
+    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool) OVERRIDE { }
     virtual void dragControllerDestroyed() OVERRIDE { }
 };
 #endif // ENABLE(DRAG_SUPPORT)

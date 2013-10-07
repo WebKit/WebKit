@@ -723,7 +723,7 @@ static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext*
 
     DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     webViewBase->priv->pageProxy->resetDragOperation();
-    webViewBase->priv->pageProxy->dragEntered(&dragData);
+    webViewBase->priv->pageProxy->dragEntered(dragData);
     DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
@@ -767,13 +767,13 @@ static gboolean webkitWebViewBaseDragMotion(GtkWidget* widget, GdkDragContext* c
         return TRUE;
 
     DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
-    webViewBase->priv->pageProxy->dragUpdated(&dragData);
+    webViewBase->priv->pageProxy->dragUpdated(dragData);
     DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
     return TRUE;
 }
 
-static void dragExitedCallback(GtkWidget* widget, DragData* dragData, bool dropHappened)
+static void dragExitedCallback(GtkWidget* widget, DragData& dragData, bool dropHappened)
 {
     // Don't call dragExited if we have just received a drag-drop signal. This
     // happens in the case of a successful drop onto the view.
@@ -801,7 +801,7 @@ static gboolean webkitWebViewBaseDragDrop(GtkWidget* widget, GdkDragContext* con
     DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     SandboxExtension::Handle handle;
     SandboxExtension::HandleArray sandboxExtensionForUpload;
-    webViewBase->priv->pageProxy->performDrag(&dragData, String(), handle, sandboxExtensionForUpload);
+    webViewBase->priv->pageProxy->performDrag(dragData, String(), handle, sandboxExtensionForUpload);
     gtk_drag_finish(context, TRUE, FALSE, time);
     return TRUE;
 }

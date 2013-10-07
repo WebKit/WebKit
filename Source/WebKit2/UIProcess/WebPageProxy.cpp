@@ -1194,40 +1194,40 @@ void WebPageProxy::commitPageTransitionViewport()
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-void WebPageProxy::dragEntered(DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
     performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
-void WebPageProxy::dragUpdated(DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
     performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
-void WebPageProxy::dragExited(DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragExited(DragData& dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
     performDragControllerAction(DragControllerActionExited, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
-void WebPageProxy::performDrag(DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)
+void WebPageProxy::performDrag(DragData& dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)
 {
     performDragControllerAction(DragControllerActionPerformDrag, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionsForUpload);
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)
 {
     if (!isValid())
         return;
 #if PLATFORM(GTK)
-    m_process->send(Messages::WebPage::PerformDragControllerAction(action, *dragData), m_pageID);
+    m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData), m_pageID);
 #else
-    m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);
+    m_process->send(Messages::WebPage::PerformDragControllerAction(action, dragData.clientPosition(), dragData.globalPosition(), dragData.draggingSourceOperationMask(), dragStorageName, dragData.flags(), sandboxExtensionHandle, sandboxExtensionsForUpload), m_pageID);
 #endif
 }
 

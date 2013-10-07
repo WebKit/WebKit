@@ -28,7 +28,7 @@ namespace WebCore {
 struct DroppingContext;
 class DragData;
 
-typedef void (*DragExitedCallback)(GtkWidget*, DragData*, bool dropHappened);
+typedef void (*DragExitedCallback)(GtkWidget*, DragData&, bool dropHappened);
 
 class GtkDragAndDropHelper {
     WTF_MAKE_NONCOPYABLE(GtkDragAndDropHelper);

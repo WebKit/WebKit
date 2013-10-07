@@ -1,3 +1,22 @@
+2013-10-07  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Use references in and around DragController
+        https://bugs.webkit.org/show_bug.cgi?id=122427
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::willPerformDragDestinationAction):
+        (WebKit::DragClient::willPerformDragSourceAction):
+        (WebKit::DragClient::actionMaskForDrag):
+        (WebKit::DragClient::startDrag):
+        * WebCoreSupport/DragClientGtk.h:
+        * webkit/webkitwebview.cpp:
+        (dragExitedCallback):
+        (webkit_web_view_drag_motion):
+        (webkit_web_view_drag_data_received):
+        (webkit_web_view_drag_drop):
+
 2013-10-04  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] UserMediaClientGtk needs API update

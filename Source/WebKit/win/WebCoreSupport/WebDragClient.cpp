@@ -65,25 +65,25 @@ WebDragClient::WebDragClient(WebView* webView)
     ASSERT(webView);
 }
 
-DragDestinationAction WebDragClient::actionMaskForDrag(DragData* dragData)
+DragDestinationAction WebDragClient::actionMaskForDrag(DragData& dragData)
 {
     COMPtr<IWebUIDelegate> delegateRef = 0;
     //Default behaviour (eg. no delegate, or callback not implemented) is to allow
     //any action
     WebDragDestinationAction mask = WebDragDestinationActionAny;
     if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
-        delegateRef->dragDestinationActionMaskForDraggingInfo(m_webView, dragData->platformData(), &mask);
+        delegateRef->dragDestinationActionMaskForDraggingInfo(m_webView, dragData.platformData(), &mask);
 
     return (DragDestinationAction)mask;
 }
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData* dragData)
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData& dragData)
 {
     //Default delegate for willPerformDragDestinationAction has no side effects
     //so we just call the delegate, and don't worry about whether it's implemented
     COMPtr<IWebUIDelegate> delegateRef = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
-        delegateRef->willPerformDragDestinationAction(m_webView, (WebDragDestinationAction)action, dragData->platformData());
+        delegateRef->willPerformDragDestinationAction(m_webView, (WebDragDestinationAction)action, dragData.platformData());
 }
 
 DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
@@ -96,27 +96,27 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& win
     return (DragSourceAction)action;
 }
 
-void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, Clipboard* clipboard)
+void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, Clipboard& clipboard)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (!SUCCEEDED(m_webView->uiDelegate(&uiDelegate)))
         return;
 
     POINT point = intPoint;
-    COMPtr<IDataObject> dataObject = clipboard->pasteboard().dataObject();
+    COMPtr<IDataObject> dataObject = clipboard.pasteboard().dataObject();
 
     COMPtr<IDataObject> newDataObject;
     HRESULT result = uiDelegate->willPerformDragSourceAction(m_webView, static_cast<WebDragSourceAction>(action), &point, dataObject.get(), &newDataObject);
     if (result == S_OK && newDataObject != dataObject)
-        const_cast<Pasteboard&>(clipboard->pasteboard()).setExternalDataObject(newDataObject.get());
+        const_cast<Pasteboard&>(clipboard.pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
-void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, Clipboard* clipboard, Frame* frame, bool isLink)
+void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, Clipboard& clipboard, Frame& frame, bool isLink)
 {
     //FIXME: Allow UIDelegate to override behaviour <rdar://problem/5015953>
 
     //We liberally protect everything, to protect against a load occurring mid-drag
-    RefPtr<Frame> frameProtector = frame;
+    RefPtr<Frame> frameProtector = &frame;
     COMPtr<IDragSourceHelper> helper;
     COMPtr<IDataObject> dataObject;
     COMPtr<WebView> viewProtector = m_webView;
@@ -124,7 +124,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
     if (FAILED(WebDropSource::createInstance(m_webView, &source)))
         return;
 
-    dataObject = clipboard->pasteboard().dataObject();
+    dataObject = clipboard.pasteboard().dataObject();
     if (source && (image || dataObject)) {
         if (image) {
             if(SUCCEEDED(CoCreateInstance(CLSID_DragDropHelper, 0, CLSCTX_INPROC_SERVER,
@@ -166,7 +166,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
             else if (effect & DROPEFFECT_MOVE)
                 operation = DragOperationMove;
         }
-        frame->eventHandler().dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
+        frame.eventHandler().dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
     }
 }
 

@@ -49,7 +49,7 @@ enum EChildrenOnly { IncludeNode, ChildrenOnly };
 enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
 enum EFragmentSerialization { HTMLFragmentSerialization, XMLFragmentSerialization };
 
-PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
+PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String& text);
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
 PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String&, Element*, ParserContentPolicy, ExceptionCode&);
 PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String&, const String& sourceMIMEType, Document* outputDoc);

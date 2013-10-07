@@ -1357,7 +1357,7 @@ void HTMLInputElement::setFiles(PassRefPtr<FileList> files)
     m_inputType->setFiles(files);
 }
 
-bool HTMLInputElement::receiveDroppedFiles(const DragData* dragData)
+bool HTMLInputElement::receiveDroppedFiles(const DragData& dragData)
 {
     return m_inputType->receiveDroppedFiles(dragData);
 }

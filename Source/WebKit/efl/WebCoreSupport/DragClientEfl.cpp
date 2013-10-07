@@ -35,17 +35,17 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void DragClientEfl::willPerformDragDestinationAction(DragDestinationAction, DragData*)
+void DragClientEfl::willPerformDragDestinationAction(DragDestinationAction, DragData&)
 {
     notImplemented();
 }
 
-void DragClientEfl::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)
+void DragClientEfl::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&)
 {
     notImplemented();
 }
 
-DragDestinationAction DragClientEfl::actionMaskForDrag(DragData*)
+DragDestinationAction DragClientEfl::actionMaskForDrag(DragData&)
 {
     return DragDestinationActionAny;
 }
@@ -55,7 +55,7 @@ DragSourceAction DragClientEfl::dragSourceActionMaskForPoint(const IntPoint&)
     return DragSourceActionAny;
 }
 
-void DragClientEfl::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
+void DragClientEfl::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool)
 {
     notImplemented();
 }

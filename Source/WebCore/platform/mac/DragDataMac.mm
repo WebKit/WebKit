@@ -189,10 +189,10 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) co
     return String();        
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range> range, bool allowPlainText, bool& chosePlainText) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, Range& range, bool allowPlainText, bool& chosePlainText) const
 {
     Pasteboard pasteboard(m_pasteboardName);
-    return frame->editor().webContentFromPasteboard(pasteboard, *range, allowPlainText, chosePlainText);
+    return frame->editor().webContentFromPasteboard(pasteboard, range, allowPlainText, chosePlainText);
 }
     
 } // namespace WebCore

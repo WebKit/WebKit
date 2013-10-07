@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData*)
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData&)
 {
     if (action == DragDestinationActionLoad)
         m_page->willPerformLoadDragDestinationAction();
@@ -42,22 +42,22 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
         m_page->mayPerformUploadDragDestinationAction(); // Upload can happen from a drop event handler, so we should prepare early.
 }
 
-void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)
+void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&)
 {
 }
 
-DragDestinationAction WebDragClient::actionMaskForDrag(DragData*)
+DragDestinationAction WebDragClient::actionMaskForDrag(DragData&)
 {
     return DragDestinationActionAny;
 }
 
-DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& /*windowPoint*/)
+DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 {
     return DragSourceActionAny;
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK)
-void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
+void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool)
 {
 }
 #endif

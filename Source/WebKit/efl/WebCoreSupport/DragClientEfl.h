@@ -36,18 +36,18 @@
 #include "DragClient.h"
 
 namespace WebCore {
+
 class DragClientEfl : public WebCore::DragClient {
 public:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-
-    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag = false);
-
     virtual void dragControllerDestroyed();
+
+    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData&);
+    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard&);
+    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData&);
+    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
+    virtual void startDrag(WebCore::DragImageRef, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard&, WebCore::Frame&, bool linkDrag = false);
 };
+
 }
 
 #endif // DragClientEfl_h
