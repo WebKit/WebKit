@@ -1545,17 +1545,11 @@ public:
             insn[0] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, SH4Registers::r13, insn[0] & 0x00ff);
             insn[1] = (insn[1] & 0xf00f) | (rd << 8) | (SH4Registers::r13 << 4);
             cacheFlush(insn, 2 * sizeof(SH4Word));
-            changePCrelativeAddress(insn[0] & 0x00ff, insn, imm);
-            return;
-        }
-
-        if ((insn[0] & 0x00ff) == 1)
+        } else {
             insn[1] = getOpcodeGroup6(BRA_OPCODE, 3);
-        else
-            insn[1] = NOP_OPCODE;
-
-        insn[2] = NOP_OPCODE;
-        cacheFlush(&insn[1], 2 * sizeof(SH4Word));
+            insn[2] = NOP_OPCODE;
+            cacheFlush(&insn[1], 2 * sizeof(SH4Word));
+        }
 
         changePCrelativeAddress(insn[0] & 0x00ff, insn, imm);
     }

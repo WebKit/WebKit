@@ -1,3 +1,16 @@
+2013-10-07  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Jump over maxJumpReplacementSize in revertJumpToMove.
+        https://bugs.webkit.org/show_bug.cgi?id=120007
+
+        Reviewed by Oliver Hunt.
+
+        Jump over maxJumpReplacementSize in revertJumpToMove, even if there is no constant
+        value within the area. This patch fixes debug ASSERTs failures for sh4 architecture.
+
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::revertJumpToMove):
+
 2013-10-06  Anders Carlsson  <andersca@apple.com>
 
         Add OVERRIDE and virtual where appropriate
