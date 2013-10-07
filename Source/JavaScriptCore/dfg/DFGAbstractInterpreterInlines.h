@@ -256,7 +256,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
             ASSERT(child.isInt32());
-            setConstant(node, JSValue(child.asUInt32()));
+            uint32_t value = child.asInt32();
+            setConstant(node, jsNumber(value));
             break;
         }
         if (!node->canSpeculateInt32())

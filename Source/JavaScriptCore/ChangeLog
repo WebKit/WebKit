@@ -1,3 +1,18 @@
+2013-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILED: isUInt32() in jsc-layout-tests.yaml/js/script-tests/dfg-uint32-to-number-in-middle-of-copy-propagation.js.layout-dfg-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=122419
+
+        Reviewed by Oliver Hunt.
+        
+        AI was using JSValue::asUInt32() incorrectly. That method presumes that the input is
+        both a int32 and a uint32 (it's in the range [0, 2^31)). The UInt32ToNumber node is
+        instead dealing with an input that is always represented as a int32 but that has the
+        meaning of a uint32 - so AI should use JSValue::asInt32() and then do the cast.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
 2013-10-07  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Jump over maxJumpReplacementSize in revertJumpToMove.
