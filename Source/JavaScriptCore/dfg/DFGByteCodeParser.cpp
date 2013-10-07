@@ -3105,6 +3105,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 }
                 Node* base = cellConstantWithStructureCheck(globalObject, status.oldStructure());
                 handlePutByOffset(base, identifierNumber, static_cast<PropertyOffset>(operand), get(value));
+                // Keep scope alive until after put.
+                addToGraph(Phantom, get(scope));
                 break;
             }
             case GlobalVar:
@@ -3112,6 +3114,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
                 ASSERT(!entry.couldBeWatched() || !m_graph.watchpoints().isStillValid(entry.watchpointSet()));
                 addToGraph(PutGlobalVar, OpInfo(operand), get(value));
+                // Keep scope alive until after put.
+                addToGraph(Phantom, get(scope));
                 break;
             }
             case ClosureVar:
