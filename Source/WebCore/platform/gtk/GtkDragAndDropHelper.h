@@ -22,7 +22,6 @@
 #include "DataObjectGtk.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -36,10 +35,7 @@ class GtkDragAndDropHelper {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    GtkDragAndDropHelper()
-        : m_widget(0)
-    {
-    }
+    GtkDragAndDropHelper();
     ~GtkDragAndDropHelper();
 
     void setWidget(GtkWidget* widget) { m_widget = widget; }
@@ -54,8 +50,8 @@ public:
 
 private:
     GtkWidget* m_widget;
-    HashMap<GdkDragContext*, DroppingContext*> m_droppingContexts;
-    HashMap<GdkDragContext*, RefPtr<DataObjectGtk> > m_draggingDataObjects;
+    HashMap<GdkDragContext*, std::unique_ptr<DroppingContext>> m_droppingContexts;
+    HashMap<GdkDragContext*, RefPtr<DataObjectGtk>> m_draggingDataObjects;
 };
 
 }
