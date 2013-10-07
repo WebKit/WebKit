@@ -1,3 +1,17 @@
+2013-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Trap 5 (most likely int $3) in jsc-layout-tests.yaml/js/script-tests/integer-division-neg2tothe32-by-neg1.js.layout-dfg-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=122420
+
+        Reviewed by Michael Saboff.
+        
+        For the (-2^31/-1)|0 case, we were returning the left operand (i.e. -2^31) but we were
+        failing to account for the possibility that this operand has high-bit garbage and
+        int32Result() requires that the high bits are zero.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers in jsc-layout-tests.yaml/js/script-tests/dfg-inline-arguments-capture-throw-exception.js.layout-dfg-eager-no-cjit

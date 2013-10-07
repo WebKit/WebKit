@@ -1,6 +1,3 @@
-// https://bugs.webkit.org/show_bug.cgi?id=122420
-//@ runLayoutTestDefault
-
 description(
 "Tests that -2^31/-1 (and a bunch of other corner cases) does the right thing."
 );

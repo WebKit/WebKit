@@ -1,3 +1,12 @@
+2013-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Trap 5 (most likely int $3) in jsc-layout-tests.yaml/js/script-tests/integer-division-neg2tothe32-by-neg1.js.layout-dfg-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=122420
+
+        Reviewed by Michael Saboff.
+
+        * js/script-tests/integer-division-neg2tothe32-by-neg1.js:
+
 2013-10-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Facebook wrapped a file upload button in an unfocusable ARIA button, which doesn't work with AXPress.

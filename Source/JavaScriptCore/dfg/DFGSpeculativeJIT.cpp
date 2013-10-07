@@ -3446,7 +3446,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
             notZero.link(&m_jit);
             JITCompiler::Jump notNeg2ToThe31 =
                 m_jit.branch32(JITCompiler::NotEqual, op1GPR, TrustedImm32(-2147483647-1));
-            m_jit.move(op1GPR, eax.gpr());
+            m_jit.zeroExtend32ToPtr(op1GPR, eax.gpr());
             done.append(m_jit.jump());
         
             notNeg2ToThe31.link(&m_jit);
