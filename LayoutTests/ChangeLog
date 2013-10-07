@@ -1,3 +1,27 @@
+2013-10-06  Tim Horton  <timothy_horton@apple.com>
+
+        results.html doesn't support non-HTML reference tests or references with external resources
+        https://bugs.webkit.org/show_bug.cgi?id=122426
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/harness/results.html:
+        Factor splitExtension() out of stripExtension(), so we can retrieve
+        the extension as well as strip it.
+
+        Factor layoutTestsBasePath() out of testLink(), so we can use it for
+        ref test expectation files as well.
+
+        Use layoutTestsBasePath() to link to ref test expectation files, and
+        use the extension of the test for the expectation, instead of hardcoding
+        HTML reference files.
+
+        This will work on the bots because we already use the same mechanism for
+        the link to the test itself.
+
+        * fast/harness/resources/results-test.js:
+        Update the harness result viewer test results.
+
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         jsc-layout-tests.yaml/js/script-tests/dfg-arguments-osr-exit.js.layout-dfg-eager-no-cjit fails in release mode on the bots

@@ -247,10 +247,15 @@ function ADD_RESULTS(input)
 <script src="full_results.json"></script>
 
 <script>
-function stripExtension(test)
+function splitExtension(test)
 {
     var index = test.lastIndexOf('.');
-    return test.substring(0, index);
+    return [test.substring(0, index), test.substring(index + 1)];
+}
+
+function stripExtension(test)
+{
+    return splitExtension(test)[0];
 }
 
 function matchesSelector(node, selector)
@@ -440,7 +445,7 @@ function shouldUseTracLinks()
     return !globalState().results.layout_tests_dir || !location.toString().indexOf('file://') == 0;
 }
 
-function testLink(test)
+function layoutTestsBasePath()
 {
     var basePath;
     if (shouldUseTracLinks()) {
@@ -450,7 +455,12 @@ function testLink(test)
         basePath += '/trunk/LayoutTests/';
     } else
         basePath = globalState().results.layout_tests_dir + '/';
-    return '<a class=test-link href="' + basePath + test + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
+    return basePath;
+}
+
+function testLink(test)
+{
+    return '<a class=test-link href="' + layoutTestsBasePath() + test + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
 }
 
 function unflag(flag)
@@ -569,14 +579,15 @@ function imageResultsCell(testObject, testPrefix, actual) {
     var row = '';
 
     if (actual.indexOf('IMAGE') != -1) {
+        var testExtension = splitExtension(testObject.name)[1];
         globalState().hasImageFailures = true;
 
         if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1) {
-            row += resultLink(testPrefix, '-expected-mismatch.html', 'ref mismatch html');
+            row += resultLink(layoutTestsBasePath() + testPrefix, '-expected-mismatch.' + testExtension, 'ref mismatch');
             row += resultLink(testPrefix, '-actual.png', 'actual');
         } else {
             if (testObject.reftest_type && testObject.reftest_type.indexOf('==') != -1) {
-                row += resultLink(testPrefix, '-expected.html', 'ref html');
+                row += resultLink(layoutTestsBasePath() + testPrefix, '-expected.' + testExtension, 'reference');
             }
             if (globalState().shouldToggleImages) {
                 row += resultLink(testPrefix, '-diffs.html', 'images');

@@ -273,12 +273,12 @@ function runTests()
     results = mockResults();
     results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE', 1);
     results.tests['bar-reftest.html'].reftest_type = ['=='];
-    runSingleRowTest(results, false, '', 'ref html images diff (1%) ');
+    runSingleRowTest(results, false, '', 'reference images diff (1%) ');
 
     results = mockResults();
     results.tests['bar-reftest-mismatch.html'] = mockExpectation('PASS', 'IMAGE');
     results.tests['bar-reftest-mismatch.html'].reftest_type = ['!='];
-    runSingleRowTest(results, false, '', 'ref mismatch html actual ');
+    runSingleRowTest(results, false, '', 'ref mismatch actual ');
 
     results = mockResults();
     results.tests['bar-reftest.html'] = mockExpectation('IMAGE', 'PASS');
