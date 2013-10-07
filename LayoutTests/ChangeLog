@@ -1,3 +1,16 @@
+2013-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        -webkit-cross-fade paints SVGs at full opacity during cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=122441
+        <rdar://problem/13973162>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that ensures that -cross-fade with SVG images draws correctly.
+
+        * css3/images/cross-fade-svg-with-opacity-expected.html: Added.
+        * css3/images/cross-fade-svg-with-opacity.html: Added.
+
 2013-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         Trap 5 (most likely int $3) in jsc-layout-tests.yaml/js/script-tests/integer-division-neg2tothe32-by-neg1.js.layout-dfg-eager-no-cjit

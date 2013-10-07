@@ -43,13 +43,33 @@ CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image* fromImage, Image* toImag
     setContainerSize(size);
 }
 
+static void drawCrossfadeSubimage(GraphicsContext* context, Image* image, CompositeOperator operation, float opacity, IntSize targetSize)
+{
+    IntSize imageSize = image->size();
+
+    // SVGImage resets the opacity when painting, so we have to use transparency layers to accurately paint one at a given opacity.
+    bool useTransparencyLayer = image->isSVGImage();
+
+    GraphicsContextStateSaver stateSaver(*context);
+
+    context->setCompositeOperation(operation);
+
+    if (useTransparencyLayer)
+        context->beginTransparencyLayer(opacity);
+    else
+        context->setAlpha(opacity);
+
+    if (targetSize != imageSize)
+        context->scale(FloatSize(static_cast<float>(targetSize.width()) / imageSize.width(),
+            static_cast<float>(targetSize.height()) / imageSize.height()));
+    context->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
+
+    if (useTransparencyLayer)
+        context->endTransparencyLayer();
+}
+
 void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
 {
-    float inversePercentage = 1 - m_percentage;
-
-    IntSize fromImageSize = m_fromImage->size();
-    IntSize toImageSize = m_toImage->size();
-
     // Draw nothing if either of the images hasn't loaded yet.
     if (m_fromImage == Image::nullImage() || m_toImage == Image::nullImage())
         return;
@@ -58,24 +78,9 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
 
     context->clip(IntRect(IntPoint(), m_crossfadeSize));
     context->beginTransparencyLayer(1);
-    
-    // Draw the image we're fading away from.
-    context->save();
-    if (m_crossfadeSize != fromImageSize)
-        context->scale(FloatSize(static_cast<float>(m_crossfadeSize.width()) / fromImageSize.width(),
-                                 static_cast<float>(m_crossfadeSize.height()) / fromImageSize.height()));
-    context->setAlpha(inversePercentage);
-    context->drawImage(m_fromImage, ColorSpaceDeviceRGB, IntPoint());
-    context->restore();
 
-    // Draw the image we're fading towards.
-    context->save();
-    if (m_crossfadeSize != toImageSize)
-        context->scale(FloatSize(static_cast<float>(m_crossfadeSize.width()) / toImageSize.width(),
-                                 static_cast<float>(m_crossfadeSize.height()) / toImageSize.height()));
-    context->setAlpha(m_percentage);
-    context->drawImage(m_toImage, ColorSpaceDeviceRGB, IntPoint(), CompositePlusLighter);
-    context->restore();
+    drawCrossfadeSubimage(context, m_fromImage, CompositeSourceOver, 1 - m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_toImage, CompositePlusLighter, m_percentage, m_crossfadeSize);
 
     context->endTransparencyLayer();
 }

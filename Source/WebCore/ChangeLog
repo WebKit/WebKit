@@ -1,3 +1,21 @@
+2013-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        -webkit-cross-fade paints SVGs at full opacity during cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=122441
+        <rdar://problem/13973162>
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/images/cross-fade-svg-with-opacity.html
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::drawCrossfadeSubimage):
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        Factor the image painting out into a function.
+        Conditionally use a transparency layer around painting if the image
+        we're drawing is an SVG (SVGImage is the only Image subclass that will
+        not respect the context's opacity).
+
 2013-10-06  Anders Carlsson  <andersca@apple.com>
 
         Add OVERRIDE and virtual where appropriate
