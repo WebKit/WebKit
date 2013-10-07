@@ -1,3 +1,30 @@
+2013-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Unified test infrastructure via the jsc shell
+        https://bugs.webkit.org/show_bug.cgi?id=120696
+
+        Reviewed by Oliver Hunt.
+        
+        Make run-jsc-stress-tests smart enough to be able to handle different styles of test
+        output (silent or noisy) and different styles of test failure (just bad exit code,
+        text diff, filtering for some magical text, etc.). This allows me to get rid of the
+        layout-test-helper. It also allows me to switch all of the old Mozilla tests to
+        running in run-jsc-stress-tests.
+        
+        Also removes all of the code paths that defended against not having shellwords. Just
+        install the shellwords gem if you want to run tests.
+        
+        Also removes the non-parallel test running code. No reason for it to exist anymore.
+        
+        This is a massive increase in test coverage. It uncovered bugs. I fixed two of them
+        as part of this patch, and left three more as new bugzillas.
+
+        * Scripts/create-mozilla-js-test-list: Added.
+        * Scripts/jsc-stress-test-helpers/check-mozilla-failure: Added.
+        * Scripts/jsc-stress-test-helpers/layout-test-helper: Removed.
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-05  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should be less verbose

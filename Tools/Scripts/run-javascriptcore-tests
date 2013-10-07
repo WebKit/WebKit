@@ -70,11 +70,7 @@ my $buildJSC = 1;
 
 my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit();
 
-my $runMozilla = 1;
-
-# FIXME: run-layout-jsc tests doesn't work properly on Windows
-# https://bugs.webkit.org/show_bug.cgi?id=120765
-my $runLayout = !isAppleWinWebKit();
+my $runMozilla = 0;
 
 # FIXME: run-jsc-stress-tests should be ported to other platforms.
 # https://bugs.webkit.org/show_bug.cgi?id=120809
@@ -95,7 +91,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]ftl-jit                Turn the FTL JIT on or off
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
-  --[no-]mozilla                Run (or don't run) the Mozilla tests (default: $mozillaDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
 EOF
 
@@ -105,7 +100,6 @@ GetOptions(
     'build!' => \$buildJSC,
     'ftl-jit!' => \$enableFTL,
     'testapi!' => \$runTestAPI,
-    'mozilla!' => \$runMozilla,
     'jsc-stress!' => \$runJSCStress,
     'help' => \$showHelp
 );
@@ -171,6 +165,8 @@ if ($runTestAPI) {
 # Find JavaScriptCore directory
 chdirWebKit();
 
+$runMozilla = !$runJSCStress;
+
 my %mozillaFailures;
 my %newMozillaFailures;
 
@@ -232,6 +228,7 @@ if ($runJSCStress) {
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
         "PerformanceTests/SunSpider/tests/v8-v6",
+        "Source/JavaScriptCore/tests/mozilla/mozilla-tests.yaml",
         "LayoutTests/js/regress/script-tests",
         "PerformanceTests/SunSpider/profiler-test.yaml",
         "LayoutTests/jsc-layout-tests.yaml"

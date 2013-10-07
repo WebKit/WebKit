@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env ruby
 
 # Copyright (C) 2013 Apple Inc. All rights reserved.
 #
@@ -23,32 +23,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-baseOutputFilename=$1;shift;
-expectedFilename=$1;shift;
+File.open(ARGV[0], "r") {
+    | inp |
+    inp.each_line {
+        | line |
+        exit 0 if line =~ /failed!/i
+    }
+}
 
-actualErr=$baseOutputFilename.stderr
-actualOut=$baseOutputFilename.actual
-diffOut=$baseOutputFilename.diff
-
-"$@" 2>$actualErr >$actualOut
-JSC_RES=$?
-
-if [ $JSC_RES -eq 0 ]
-then
-    diff -u $expectedFilename $actualOut > $diffOut
-    if [ $? -eq 0 ]
-    then
-        exit 0
-    else
-        echo "FAILED: text diff:"
-        cat $diffOut
-    fi
-else
-    if [ $JSC_RES -gt 128 ]
-    then
-        echo "CRASHED"
-    else
-        echo "ERROR: $JSC_RES"
-    fi
-fi
 exit 1

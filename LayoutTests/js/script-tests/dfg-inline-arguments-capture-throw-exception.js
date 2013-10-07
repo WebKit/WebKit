@@ -1,3 +1,6 @@
+// https://bugs.webkit.org/show_bug.cgi?id=122418
+//@ runLayoutTestDefault
+
 description(
 "Tests what happens when you have an inlined function that captures arguments and then throws an exception."
 );

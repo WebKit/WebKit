@@ -38,14 +38,11 @@ HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
 
 IMPORTANT_ENVS = ["JSC_timeout", "DYLD_FRAMEWORK_PATH"]
 
-$haveShellwords = false
-
 begin
     require 'shellwords'
-    $haveShellwords = true
 rescue Exception => e
-    $stderr.puts "Warning: did not find shellwords; some features will be disabled."
-    $stderr.puts "Error: #{e.inspect}"
+    $stderr.puts "Warning: did not find shellwords, not running any tests."
+    exit 0
 end
 
 $canRunDisplayProfilerOutput = false
@@ -77,12 +74,14 @@ numProcessors = `sysctl -n hw.availcpu`.to_i
 if numProcessors == 0
     numProcessors = `nproc --all 2>/dev/null`.to_i
 end
+if numProcessors == 0
+    numProcessors = 1
+end
 
 $jscPath = nil
 $enableFTL = false
 $collections = []
 $outputDir = Pathname.new("results")
-$parallel = ($haveShellwords and numProcessors > 1)
 $verbosity = 0
 $errorOnFailure = false
 
@@ -91,7 +90,6 @@ def usage
     puts
     puts "--jsc                (-j)   Path to JavaScriptCore. This option is required."
     puts "--ftl-jit                   Indicate that we have the FTL JIT."
-    puts "--[no-]parallel             Run in parallel, or not. Default is #{$parallel}."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--[no-]error-on-failure     Exit with exit code 1 if any tests fail. Default is #{$errorOnFailure}."
     puts "--verbose            (-v)   Print more things while running."
@@ -102,8 +100,6 @@ end
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
-               ['--parallel', GetoptLong::NO_ARGUMENT],
-               ['--no-parallel', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--error-on-failure', GetoptLong::NO_ARGUMENT],
@@ -118,10 +114,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $outputDir = Pathname.new(arg)
     when '--ftl-jit'
         $enableFTL = true
-    when '--parallel'
-        $parallel = true
-    when '--no-parallel'
-        $parallel = false
     when '--error-on-failure'
         $errorOnFailure = true
     when '--no-error-on-failure'
@@ -142,14 +134,148 @@ EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", 
 
 $runlist = []
 
+def prefixCommand(prefix)
+    "awk " + Shellwords.shellescape("{ printf #{(prefix + ': ').inspect}; print }")
+end
+
+def pipeAndPrefixCommand(outputFilename, prefix)
+    "tee " + Shellwords.shellescape(outputFilename.to_s) + " | " + prefixCommand(prefix)
+end
+
+# Output handler for tests that are expected to be silent.
+def silentOutputHandler
+    Proc.new {
+        | name |
+        " | " + pipeAndPrefixCommand(($outputDir + (name + ".out")).to_s, name)
+    }
+end
+
+# Output handler for tests that are expected to produce meaningful output.
+def noisyOutputHandler
+    Proc.new {
+        | name |
+        " | cat > " + Shellwords.shellescape(($outputDir + (name + ".out")).to_s)
+    }
+end
+
+# Error handler for tests that fail exactly when they return non-zero exit status.
+def simpleErrorHandler
+    Proc.new {
+        | outp, plan |
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    (echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "else"
+        outp.puts "    " + plan.successCommand
+        outp.puts "fi"
+    }
+end
+
+# Error handler for tests that diff their output with some expectation.
+def diffErrorHandler(expectedFilename)
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape(($outputDir + (plan.name + ".out")).to_s)
+        diffFilename = Shellwords.shellescape(($outputDir + (plan.name + ".diff")).to_s)
+        
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "else"
+        outp.puts "    diff -u #{Shellwords.shellescape(expectedFilename)} #{outputFilename} > #{diffFilename}"
+        outp.puts "    if [ $? -eq 0 ]"
+        outp.puts "    then"
+        outp.puts "    " + plan.successCommand
+        outp.puts "    else"
+        outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + prefixCommand(plan.name)
+        outp.puts "        " + plan.failCommand
+        outp.puts "    fi"
+        outp.puts "fi"
+    }
+end
+
+# Error handler for tests that report error by saying "failed!". This is used by Mozilla
+# tests.
+def mozillaErrorHandler
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape(($outputDir + (plan.name + ".out")).to_s)
+
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "elif ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
+        outp.puts "then"
+        outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "else"
+        outp.puts "    " + plan.successCommand
+        outp.puts "fi"
+    }
+end
+
+# Error handler for tests that report error by saying "failed!", and are expected to
+# fail. This is used by Mozilla tests.
+def mozillaFailErrorHandler
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape(($outputDir + (plan.name + ".out")).to_s)
+
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    " + plan.successCommand
+        outp.puts "elif ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
+        outp.puts "then"
+        outp.puts "    " + plan.successCommand
+        outp.puts "else"
+        outp.puts "    (echo NOTICE: You made this test pass, but it was expected to fail) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "fi"
+    }
+end
+
+# Error handler for tests that report error by saying "failed!", and are expected to have
+# an exit code of 3.
+def mozillaExit3ErrorHandler
+    Proc.new {
+        | outp, plan |
+        outputFilename = Shellwords.shellescape(($outputDir + (plan.name + ".out")).to_s)
+
+        outp.puts "if test -e #{plan.failFile}"
+        outp.puts "then"
+        outp.puts "    if [ `cat #{plan.failFile}` -eq 3 ]"
+        outp.puts "    then"
+        outp.puts "        if ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
+        outp.puts "        then"
+        outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "            " + plan.failCommand
+        outp.puts "        else"
+        outp.puts "            " + plan.successCommand
+        outp.puts "        fi"
+        outp.puts "    else"
+        outp.puts "        (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
+        outp.puts "        " + plan.failCommand
+        outp.puts "    fi"
+        outp.puts "else"
+        outp.puts "    (cat #{outputFilename} && echo ERROR: Test expected to fail, but returned successfully) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
+        outp.puts "fi"
+    }
+end
+
 class Plan
-    attr_reader :directory, :arguments, :name
+    attr_reader :directory, :arguments, :name, :outputHandler, :errorHandler
     attr_accessor :index
     
-    def initialize(directory, arguments, name)
+    def initialize(directory, arguments, name, outputHandler, errorHandler)
         @directory = directory.realpath
         @arguments = arguments
         @name = name
+        @outputHandler = outputHandler
+        @errorHandler = errorHandler
     end
     
     def shellCommand
@@ -160,36 +286,45 @@ class Plan
         }.join(' ') + ")"
     end
     
-    def writeReproScript(filename)
-        File.open(filename, "w") {
-            | outp |
-            IMPORTANT_ENVS.each {
-                | key |
-                outp.puts "export #{key}=#{Shellwords.shellescape(ENV[key])}"
-            }
-            outp.puts "#{shellCommand} || exit 1"
+    def reproScriptCommand
+        script = ""
+        IMPORTANT_ENVS.each {
+            | key |
+            if ENV[key]
+                script += "export #{key}=#{Shellwords.shellescape(ENV[key])}\n"
+            end
         }
+        script += "#{shellCommand} || exit 1"
+        "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape($outputDir + @name)}"
+    end
+    
+    def failCommand
+        "echo FAIL: #{Shellwords.shellescape(@name)} ; touch #{failFile} ; " + reproScriptCommand
+    end
+    
+    def successCommand
+        if $verbosity == 0 or $verbosity >= 2
+            "rm -f #{failFile} ; echo PASS: #{Shellwords.shellescape(@name)}"
+        else
+            "rm -f #{failFile}"
+        end
+    end
+    
+    def failFile
+        "test_fail_#{@index}"
     end
     
     def writeRunScript(filename)
         File.open(filename, "w") {
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            cmd  = "(" + shellCommand + " || (touch test_fail_#{@index})) 2>&1"
-            cmd += " | tee " + Shellwords.shellescape(($outputDir + (@name + ".out")).to_s)
-            cmd += " | awk " + Shellwords.shellescape("{ printf #{(@name + ': ').inspect}; print }")
+            cmd  = "(" + shellCommand + " || (echo $? > #{failFile})) 2>&1 "
+            cmd += @outputHandler.call(@name)
             if $verbosity >= 3
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
             outp.puts cmd
-            outp.puts "if test -e test_fail_#{@index}"
-            outp.puts "then"
-            outp.puts "    echo FAIL: #{Shellwords.shellescape(@name)}"
-            if $verbosity == 0 || $verbosity >= 2
-                outp.puts "else"
-                outp.puts "    echo PASS: #{Shellwords.shellescape(@name)}"
-            end
-            outp.puts "fi"
+            @errorHandler.call(outp, self)
         }
     end
 end
@@ -207,8 +342,8 @@ def baseOutputName(kind)
     "#{$collectionName}/#{$benchmark}.#{kind}"
 end
 
-def addRunCommand(kind, command)
-    $runlist << Plan.new($benchmarkDirectory, command, baseOutputName(kind))
+def addRunCommand(kind, command, outputHandler, errorHandler)
+    $runlist << Plan.new($benchmarkDirectory, command, baseOutputName(kind), outputHandler, errorHandler)
 end
 
 # Returns true if there were run commands found in the file ($benchmarkDirectory +
@@ -236,7 +371,7 @@ def parseRunCommands
 end
 
 def run(kind, *options)
-    addRunCommand(kind, [$jscPath.to_s] + options + [$benchmark.to_s])
+    addRunCommand(kind, [$jscPath.to_s] + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
 end
 
 def runDefault
@@ -291,8 +426,8 @@ end
 
 def runProfiler
     profilerOutput = uniqueFilename(".json")
-    if $haveShellwords and $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s])
+    if $canRunDisplayProfilerOutput
+        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
     else
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "-p", profilerOutput.to_s)
@@ -301,22 +436,18 @@ end
 
 def runLayoutTest(kind, *options)
     raise unless $benchmark.to_s =~ /\.js$/
+    testName = $~.pre_match
     if kind
         kind = "layout-" + kind
     else
         kind = "layout"
     end
-    testName = $~.pre_match
     args =
-        ["sh",
-         (HELPERS_PATH + "layout-test-helper").to_s,
-         ($outputDir + baseOutputName(kind)).to_s,
-         ($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s,
-         $jscPath.to_s] + options +
+        [$jscPath.to_s] + options +
         [(LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s]
-    addRunCommand(kind, args)
+    addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s))
 end
 
 def runLayoutTestDefault
@@ -327,9 +458,54 @@ def runLayoutTestNoCJIT
     runLayoutTest("no-cjit", "--enableConcurrentJIT=false")
 end
 
+def runLayoutTestDFGEagerNoCJIT
+    runLayoutTest("dfg-eager-no-cjit", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+end
+
 def defaultRunLayoutTest
     runLayoutTestDefault
     runLayoutTestNoCJIT
+    runLayoutTestDFGEagerNoCJIT
+end
+
+def runMozillaTest(kind, mode, extraFiles, *options)
+    if kind
+        kind = "mozilla-" + kind
+    else
+        kind = "mozilla"
+    end
+    args = [$jscPath.to_s] + options + extraFiles.map{|v| ($benchmarkDirectory + v).to_s} + [$benchmark.to_s]
+    case mode
+    when :normal
+        errorHandler = mozillaErrorHandler
+    when :negative
+        errorHandler = mozillaExit3ErrorHandler
+    when :fail
+        errorHandler = mozillaFailErrorHandler
+    when :skip
+        return
+    else
+        raise "Invalid mode: #{mode}"
+    end
+    addRunCommand(kind, args, noisyOutputHandler, errorHandler)
+end
+
+def runMozillaTestDefault(mode, *extraFiles)
+    runMozillaTest(nil, mode, extraFiles)
+end
+
+def runMozillaTestLLInt(mode, *extraFiles)
+    runMozillaTest("llint", mode, extraFiles, "--useJIT=false")
+end
+
+def runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
+    runMozillaTest("dfg-eager-no-cjit", mode, extraFiles, "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+end
+
+def defaultRunMozillaTest(mode, *extraFiles)
+    runMozillaTestDefault(mode, *extraFiles)
+    runMozillaTestLLInt(mode, *extraFiles)
+    runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
 end
 
 def skip
@@ -359,7 +535,17 @@ def allJSFiles(path)
     end
 end
 
-# Returns [collectionPath, collectionName]
+def uniqueifyName(names, name)
+    result = name.to_s
+    toAdd = 1
+    while names[result]
+        result = "#{name}-#{toAdd}"
+        toAdd += 1
+    end
+    names[result] = true
+    result
+end
+
 def simplifyCollectionName(collectionNames, collectionPath)
     outerDir = collectionPath.dirname
     name = collectionPath.basename
@@ -371,14 +557,7 @@ def simplifyCollectionName(collectionNames, collectionPath)
             outerDir = outerDir.dirname
         end
     end
-    collectionName = name.to_s
-    toAdd = 1
-    while collectionNames[collectionName]
-        collectionName = File.basename(name.to_s) + "-#{toAdd}"
-        toAdd += 1
-    end
-    collectionNames[collectionName] = true
-    [collectionPath, collectionName]
+    uniqueifyName(collectionNames, name)
 end
 
 def prepareCollection(name)
@@ -394,22 +573,31 @@ collectionNames = {}
 
 ARGV.each {
     | collection |
-    collection, collectionName = simplifyCollectionName(collectionNames, Pathname.new(collection))
+    collection = Pathname.new(collection)
+    collectionName = simplifyCollectionName(collectionNames, collection)
     
     if collection.file?
-        subCollectionNames = {}
+        paths = {}
         YAML::load(IO::read(collection)).each {
             | entry |
-            path = collection.dirname + entry["path"]
+            if paths[entry["path"]]
+                raise "Duplicate path: " + entry["path"] + " in #{collection}"
+            end
             
-            subCollection, subCollectionName = simplifyCollectionName(subCollectionNames, path)
+            subCollection = collection.dirname + entry["path"]
+            
+            if subCollection.file?
+                subCollectionName = Pathname.new(entry["path"]).dirname
+            else
+                subCollectionName = entry["path"]
+            end
             
             $collection = subCollection
             $collectionName = (Pathname.new(collectionName) + subCollectionName).to_s
             
             prepareCollection($collectionName)
             
-            allJSFiles(path).each {
+            allJSFiles(subCollection).each {
                 | path |
                 
                 path = path.realpath
@@ -441,12 +629,6 @@ def appendFailure(plan)
         | outp |
         outp.puts plan.name
     }
-    filename = $outputDir + plan.name
-    begin
-        plan.writeReproScript(filename)
-    rescue => e
-        $stderr.puts "Warning: failed to create repro file at #{filename}: #{e.inspect}"
-    end
     $numFailures += 1
 end
 
@@ -456,182 +638,157 @@ if $enableFTL and ENV["JSC_timeout"]
     ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i * 2).to_s
 end
 
-if $parallel
-    if ENV["JSC_timeout"]
-        # In the worst case, the processors just interfere with each other.
-        # Increase the timeout proportionally to the number of processors.
-        ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i.to_f * Math.sqrt(numProcessors)).to_i.to_s
+if ENV["JSC_timeout"]
+    # In the worst case, the processors just interfere with each other.
+    # Increase the timeout proportionally to the number of processors.
+    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i.to_f * Math.sqrt(numProcessors)).to_i.to_s
+end
+
+# The goals of our parallel test runner are scalability and simplicity. The
+# simplicity part is particularly important. We don't want to have to have
+# a full-time contributor just philosophising about parallel testing.
+#
+# As such, we just pass off all of the hard work to 'make'. This creates a
+# dummy directory ("$outputDir/.parallel") in which we create a dummy
+# Makefile. The Makefile has an 'all' rule that depends on all of the tests.
+# That is, for each test we know we will run, there is a rule in the
+# Makefile and 'all' depends on it. Running 'make -j <whatever>' on this
+# Makefile results in 'make' doing all of the hard work:
+#
+# - Load balancing just works. Most systems have a great load balancer in
+#   'make'. If your system doesn't then just install a real 'make'.
+#
+# - Interruptions just work. For example Ctrl-C handling in 'make' is
+#   exactly right. You don't have to worry about zombie processes.
+#
+# We then do some tricks to make failure detection work and to make this
+# totally sound. If a test fails, we don't want the whole 'make' job to
+# stop. We also don't have any facility for makefile-escaping of path names.
+# We do have such a thing for shell-escaping, though. We fix both problems
+# by having the actual work for each of the test rules be done in a shell
+# script on the side. There is one such script per test. The script responds
+# to failure by printing something on the console and then touching a
+# failure file for that test, but then still returns 0. This makes 'make'
+# continue past that failure and complete all the tests anyway.
+#
+# In the end, this script collects all of the failures by searching for
+# files in the .parallel directory whose name matches /^test_fail_/, where
+# the thing after the 'fail_' is the test index. Those are the files that
+# would be created by the test scripts if they detect failure. We're
+# basically using the filesystem as a concurrent database of test failures.
+# Even if two tests fail at the same time, since they're touching different
+# files we won't miss any failures.
+
+runIndices = []
+$runlist.each_with_index {
+    | plan, index |
+    runIndices << index
+    plan.index = index
+}
+
+parallelDir = $outputDir + ".parallel"
+Dir.mkdir(parallelDir) unless parallelDir.directory?
+toDelete = []
+Dir.foreach(parallelDir) {
+    | filename |
+    if filename =~ /^test_/
+        toDelete << filename
     end
-    
-    # The goals of our parallel test runner are scalability and simplicity. The
-    # simplicity part is particularly important. We don't want to have to have
-    # a full-time contributor just philosophising about parallel testing.
-    #
-    # As such, we just pass off all of the hard work to 'make'. This creates a
-    # dummy directory ("$outputDir/.parallel") in which we create a dummy
-    # Makefile. The Makefile has an 'all' rule that depends on all of the tests.
-    # That is, for each test we know we will run, there is a rule in the
-    # Makefile and 'all' depends on it. Running 'make -j <whatever>' on this
-    # Makefile results in 'make' doing all of the hard work:
-    #
-    # - Load balancing just works. Most systems have a great load balancer in
-    #   'make'. If your system doesn't then just install a real 'make'.
-    #
-    # - Interruptions just work. For example Ctrl-C handling in 'make' is
-    #   exactly right. You don't have to worry about zombie processes.
-    #
-    # We then do some tricks to make failure detection work and to make this
-    # totally sound. If a test fails, we don't want the whole 'make' job to
-    # stop. We also don't have any facility for makefile-escaping of path names.
-    # We do have such a thing for shell-escaping, though. We fix both problems
-    # by having the actual work for each of the test rules be done in a shell
-    # script on the side. There is one such script per test. The script responds
-    # to failure by printing something on the console and then touching a
-    # failure file for that test, but then still returns 0. This makes 'make'
-    # continue past that failure and complete all the tests anyway.
-    #
-    # In the end, this script collects all of the failures by searching for
-    # files in the .parallel directory whose name matches /^test_fail_/, where
-    # the thing after the 'fail_' is the test index. Those are the files that
-    # would be created by the test scripts if they detect failure. We're
-    # basically using the filesystem as a concurrent database of test failures.
-    # Even if two tests fail at the same time, since they're touching different
-    # files we won't miss any failures.
-    
-    runIndices = []
-    $runlist.each_with_index {
-        | plan, index |
-        runIndices << index
-        plan.index = index
+}
+
+toDelete.each {
+    | filename |
+    File.unlink(parallelDir + filename)
+}
+
+$runlist.each {
+    | plan |
+    plan.writeRunScript(parallelDir + "test_script_#{plan.index}")
+}
+
+File.open(parallelDir + "Makefile", "w") {
+    | outp |
+    outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
+    runIndices.each {
+        | index |
+        plan = $runlist[index]
+        outp.puts "test_done_#{index}:"
+        outp.puts "\tsh test_script_#{plan.index}"
+        outp.puts "\ttouch test_done_#{index}"
     }
-    
-    parallelDir = $outputDir + ".parallel"
-    Dir.mkdir(parallelDir) unless parallelDir.directory?
-    toDelete = []
-    Dir.foreach(parallelDir) {
-        | filename |
-        if filename =~ /^test_/
-            toDelete << filename
-        end
-    }
-    
-    toDelete.each {
-        | filename |
-        File.unlink(parallelDir + filename)
-    }
-    
-    $runlist.each {
-        | plan |
-        plan.writeRunScript(parallelDir + "test_script_#{plan.index}")
-    }
-    
-    File.open(parallelDir + "Makefile", "w") {
-        | outp |
-        outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
-        runIndices.each {
-            | index |
-            plan = $runlist[index]
-            outp.puts "test_done_#{index}:"
-            outp.puts "\tsh test_script_#{plan.index}"
-            outp.puts "\ttouch test_done_#{index}"
-        }
-    }
-    
-    Dir.chdir(parallelDir) {
-        if $verbosity >= 1
-            mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
-        else
-            cmd = "make -j #{numProcessors} -s -f Makefile"
-            running = {}
-            didRun = {}
-            didFail = {}
-            blankLine = true
-            prevStringLength = 0
-            IO.popen(cmd, "r") {
-                | inp |
-                inp.each_line {
-                    | line |
-                    line.chomp!
-                    if line =~ /^Running /
-                        running[$~.post_match] = true
-                    elsif line =~ /^PASS: /
-                        didRun[$~.post_match] = true
-                    elsif line =~ /^FAIL: /
-                        didRun[$~.post_match] = true
-                        didFail[$~.post_match] = true
+}
+
+Dir.chdir(parallelDir) {
+    if $verbosity >= 1
+        mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
+    else
+        cmd = "make -j #{numProcessors} -s -f Makefile"
+        running = {}
+        didRun = {}
+        didFail = {}
+        blankLine = true
+        prevStringLength = 0
+        IO.popen(cmd, "r") {
+            | inp |
+            inp.each_line {
+                | line |
+                line.chomp!
+                if line =~ /^Running /
+                    running[$~.post_match] = true
+                elsif line =~ /^PASS: /
+                    didRun[$~.post_match] = true
+                elsif line =~ /^FAIL: /
+                    didRun[$~.post_match] = true
+                    didFail[$~.post_match] = true
+                else
+                    unless blankLine
+                        print("\r" + " " * prevStringLength + "\r")
+                    end
+                    puts line
+                    blankLine = true
+                end
+                
+                def lpad(str, chars)
+                    str = str.to_s
+                    if str.length > chars
+                        str
                     else
-                        unless blankLine
-                            print("\r" + " " * prevStringLength + "\r")
-                        end
-                        puts line
-                        blankLine = true
+                        "%#{chars}s"%(str)
                     end
-                    
-                    def lpad(str, chars)
-                        str = str.to_s
-                        if str.length > chars
-                            str
-                        else
-                            "%#{chars}s"%(str)
-                        end
-                    end
+                end
 
-                    string  = ""
-                    string += "\r#{lpad(didRun.size, $runlist.size.to_s.size)}/#{$runlist.size}"
-                    unless didFail.empty?
-                        string += " (failed #{didFail.size})"
-                    end
-                    string += " "
-                    (running.size - didRun.size).times {
-                        string += "."
-                    }
-                    if string.length < prevStringLength
-                        print string
-                        print(" " * (prevStringLength - string.length))
-                    end
-                    print string
-                    prevStringLength = string.length
-                    blankLine = false
+                string  = ""
+                string += "\r#{lpad(didRun.size, $runlist.size.to_s.size)}/#{$runlist.size}"
+                unless didFail.empty?
+                    string += " (failed #{didFail.size})"
+                end
+                string += " "
+                (running.size - didRun.size).times {
+                    string += "."
                 }
+                if string.length < prevStringLength
+                    print string
+                    print(" " * (prevStringLength - string.length))
+                end
+                print string
+                prevStringLength = string.length
+                blankLine = false
             }
-            puts
-            raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
-        end
-    }
-    
-    # Delete empty .out files to make life less confusing.
-    $runlist.each {
-        | plan |
-        outputFilename = $outputDir + (plan.name + ".out")
-        File.unlink outputFilename if FileTest.size(outputFilename) == 0
-    }
-    
-    Dir.foreach(parallelDir) {
-        | filename |
-        next unless filename =~ /test_fail_/
-        appendFailure($runlist[$~.post_match.to_i])
-    }
-else
-    $runlist.each {
-        | plan |
-        print "#{plan.name}: "
-        
-        Dir.chdir(plan.directory) {
-            if $verbosity >= 2
-                printCommandArray(*plan.arguments)
-            end
-            if system(*plan.arguments)
-                puts "OK."
-            else
-                puts "FAIL: #{$?.inspect}"
-                appendFailure(plan)
-            end
         }
-    }
-end
+        puts
+        raise "Failed to run #{cmd}: #{$?.inspect}" unless $?.success?
+    end
+}
 
-puts "Failed #{$numFailures} tests."
+# Delete empty .out files to make life less confusing.
+$runlist.each {
+    | plan |
+    outputFilename = $outputDir + (plan.name + ".out")
+    File.unlink outputFilename if FileTest.size(outputFilename) == 0
+}
 
-if $errorOnFailure and $numFailures > 0
-    exit 1
-end
+Dir.foreach(parallelDir) {
+    | filename |
+    next unless filename =~ /test_fail_/
+    appendFailure($runlist[$~.post_match.to_i])
+}

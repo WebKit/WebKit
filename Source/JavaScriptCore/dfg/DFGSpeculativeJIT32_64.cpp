@@ -4794,10 +4794,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-    m_jit.clearRegisterAllocationOffsets();
-#endif
-
     if (!m_compileOkay)
         return;
     

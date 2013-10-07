@@ -1577,6 +1577,8 @@ void SpeculativeJIT::compileCurrentBlock()
     
     ASSERT(m_block->isReachable);
     
+    m_jit.blockHeads()[m_block->index] = m_jit.label();
+
     if (!m_block->cfaHasVisited) {
         // Don't generate code for basic blocks that are unreachable according to CFA.
         // But to be sure that nobody has generated a jump to this block, drop in a
@@ -1585,7 +1587,6 @@ void SpeculativeJIT::compileCurrentBlock()
         return;
     }
 
-    m_jit.blockHeads()[m_block->index] = m_jit.label();
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
@@ -1705,6 +1706,11 @@ void SpeculativeJIT::compileCurrentBlock()
             m_speculationDirection = (m_currentNode->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
             
             compile(m_currentNode);
+
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+            m_jit.clearRegisterAllocationOffsets();
+#endif
+
             if (!m_compileOkay) {
                 bail();
                 return;

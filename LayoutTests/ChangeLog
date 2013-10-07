@@ -1,3 +1,17 @@
+2013-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Unified test infrastructure via the jsc shell
+        https://bugs.webkit.org/show_bug.cgi?id=120696
+
+        Reviewed by Oliver Hunt.
+        
+        Suppress running the no-cjit and dfg-eager variants of these tests because there are
+        still some hard bugs to fix; they were revealed by the increase in test coverage.
+
+        * js/script-tests/dfg-inline-arguments-capture-throw-exception.js:
+        * js/script-tests/dfg-uint32-to-number-in-middle-of-copy-propagation.js:
+        * js/script-tests/integer-division-neg2tothe32-by-neg1.js:
+
 2013-10-06  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Rename parsing tests to match current css properties

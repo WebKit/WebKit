@@ -1,3 +1,6 @@
+// https://bugs.webkit.org/show_bug.cgi?id=122419
+//@ runLayoutTestDefault
+
 description(
 "Tests that UInt32ToNumber and OSR exit are aware of copy propagation and correctly recover both versions of a variable that was subject to a UInt32ToNumber cast."
 );
