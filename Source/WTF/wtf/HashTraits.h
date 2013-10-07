@@ -64,20 +64,7 @@ template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_in
 
     static T emptyValue() { return T(); }
 
-    // Type for functions that take ownership, such as add.
-    // The store function either not be called or called once to store something passed in.
-    // The value passed to the store function will be either PassInType or PassInType&.
-    typedef const T& PassInType;
-    static void store(const T& value, T& storage) { storage = value; }
-
-    // Type for return value of functions that transfer ownership, such as take. 
-    typedef T PassOutType;
-    static PassOutType passOut(const T& value) { return value; }
-    static T& passOut(T& value) { return value; } // Overloaded to avoid copying of non-temporary values.
-
     // Type for return value of functions that do not transfer ownership, such as get.
-    // FIXME: We could change this type to const T& for better performance if we figured out
-    // a way to handle the return value from emptyValue, which is a temporary.
     typedef T PeekType;
     static PeekType peek(const T& value) { return value; }
     static T& peek(T& value) { return value; } // Overloaded to avoid copying of non-temporary values.
@@ -134,13 +121,6 @@ template<typename T> struct HashTraits<OwnPtr<T>> : SimpleClassHashTraits<OwnPtr
 
 template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr<P>> {
     static P* emptyValue() { return 0; }
-
-    typedef PassRefPtr<P> PassInType;
-    static void store(PassRefPtr<P> value, RefPtr<P>& storage) { storage = value; }
-
-    typedef PassRefPtr<P> PassOutType;
-    static PassRefPtr<P> passOut(RefPtr<P>& value) { return value.release(); }
-    static PassRefPtr<P> passOut(P* value) { return value; }
 
     typedef P* PeekType;
     static PeekType peek(const RefPtr<P>& value) { return value.get(); }
