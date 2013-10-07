@@ -1119,11 +1119,15 @@ void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
 
 class CallCacheListenerTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<CallCacheListenerTask> create(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
+    CallCacheListenerTask(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
+        : m_documentLoader(loader)
+        , m_eventID(eventID)
+        , m_progressTotal(progressTotal)
+        , m_progressDone(progressDone)
     {
-        return adoptPtr(new CallCacheListenerTask(loader, eventID, progressTotal, progressDone));
     }
 
+private:
     virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
         
@@ -1135,15 +1139,6 @@ public:
         ASSERT(frame->loader().documentLoader() == m_documentLoader.get());
 
         m_documentLoader->applicationCacheHost()->notifyDOMApplicationCache(m_eventID, m_progressTotal, m_progressDone);
-    }
-
-private:
-    CallCacheListenerTask(PassRefPtr<DocumentLoader> loader, ApplicationCacheHost::EventID eventID, int progressTotal, int progressDone)
-        : m_documentLoader(loader)
-        , m_eventID(eventID)
-        , m_progressTotal(progressTotal)
-        , m_progressDone(progressDone)
-    {
     }
 
     RefPtr<DocumentLoader> m_documentLoader;
@@ -1167,7 +1162,7 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     
     ASSERT(frame->loader().documentLoader() == loader);
 
-    frame->document()->postTask(CallCacheListenerTask::create(loader, eventID, progressTotal, progressDone));
+    frame->document()->postTask(std::make_unique<CallCacheListenerTask>(loader, eventID, progressTotal, progressDone));
 }
 
 void ApplicationCacheGroup::setUpdateStatus(UpdateStatus status)

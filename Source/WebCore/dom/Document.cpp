@@ -4831,7 +4831,7 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(std::make_unique<AddConsoleMessageTask>(source, level, message));
         return;
     }
 
@@ -4842,7 +4842,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
 void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(std::make_unique<AddConsoleMessageTask>(source, level, message));
         return;
     }
 
@@ -4858,14 +4858,14 @@ SecurityOrigin* Document::topOrigin() const
 struct PerformTaskContext {
     WTF_MAKE_NONCOPYABLE(PerformTaskContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    PerformTaskContext(WeakPtr<Document> document, PassOwnPtr<ScriptExecutionContext::Task> task)
+    PerformTaskContext(WeakPtr<Document> document, std::unique_ptr<ScriptExecutionContext::Task> task)
         : documentReference(document)
-        , task(task)
+        , task(std::move(task))
     {
     }
 
     WeakPtr<Document> documentReference;
-    OwnPtr<ScriptExecutionContext::Task> task;
+    std::unique_ptr<ScriptExecutionContext::Task> task;
 };
 
 void Document::didReceiveTask(void* untypedContext)
@@ -4888,15 +4888,15 @@ void Document::didReceiveTask(void* untypedContext)
     context->task->performTask(document);
 }
 
-void Document::postTask(PassOwnPtr<Task> task)
+void Document::postTask(std::unique_ptr<Task> task)
 {
-    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakFactory.createWeakPtr(), task));
+    callOnMainThread(didReceiveTask, new PerformTaskContext(m_weakFactory.createWeakPtr(), std::move(task)));
 }
 
 void Document::pendingTasksTimerFired(Timer<Document>*)
 {
     while (!m_pendingTasks.isEmpty()) {
-        OwnPtr<Task> task = m_pendingTasks[0].release();
+        auto task = std::move(m_pendingTasks[0]);
         m_pendingTasks.remove(0);
         task->performTask(this);
     }

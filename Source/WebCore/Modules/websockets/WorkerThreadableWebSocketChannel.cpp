@@ -361,14 +361,15 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
 
 class WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<ScriptExecutionContext::Task> create(WorkerThreadableWebSocketChannel::Peer* peer,
-                                                           WorkerLoaderProxy* loaderProxy,
-                                                           PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+    WorkerGlobalScopeDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer, WorkerLoaderProxy* loaderProxy, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+        : m_peer(peer)
+        , m_loaderProxy(loaderProxy)
+        , m_workerClientWrapper(workerClientWrapper)
     {
-        return adoptPtr(new WorkerGlobalScopeDidInitializeTask(peer, loaderProxy, workerClientWrapper));
     }
-
     virtual ~WorkerGlobalScopeDidInitializeTask() { }
+
+private:
     virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
         ASSERT_UNUSED(context, context->isWorkerGlobalScope());
@@ -381,16 +382,6 @@ public:
             m_workerClientWrapper->didCreateWebSocketChannel(m_peer);
     }
     virtual bool isCleanupTask() const OVERRIDE { return true; }
-
-private:
-    WorkerGlobalScopeDidInitializeTask(WorkerThreadableWebSocketChannel::Peer* peer,
-                                   WorkerLoaderProxy* loaderProxy,
-                                   PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
-        : m_peer(peer)
-        , m_loaderProxy(loaderProxy)
-        , m_workerClientWrapper(workerClientWrapper)
-    {
-    }
 
     WorkerThreadableWebSocketChannel::Peer* m_peer;
     WorkerLoaderProxy* m_loaderProxy;
@@ -405,8 +396,7 @@ void WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize(ScriptExecut
     RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper = prpClientWrapper;
 
     Peer* peer = Peer::create(clientWrapper, *loaderProxy, context, taskMode);
-    bool sent = loaderProxy->postTaskForModeToWorkerGlobalScope(
-        WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::create(peer, loaderProxy, clientWrapper), taskMode);
+    bool sent = loaderProxy->postTaskForModeToWorkerGlobalScope(std::make_unique<WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask>(peer, loaderProxy, clientWrapper), taskMode);
     if (!sent) {
         clientWrapper->clearPeer();
         delete peer;

@@ -86,11 +86,12 @@ Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
 
 class DerefContextTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<DerefContextTask> create(PassRefPtr<ScriptExecutionContext> context)
+    explicit DerefContextTask(PassRefPtr<ScriptExecutionContext> context)
+        : m_context(context)
     {
-        return adoptPtr(new DerefContextTask(context));
     }
 
+private:
     virtual void performTask(ScriptExecutionContext* context)
     {
         ASSERT_UNUSED(context, context == m_context);
@@ -99,12 +100,6 @@ public:
 
     virtual bool isCleanupTask() const { return true; }
 
-private:
-    DerefContextTask(PassRefPtr<ScriptExecutionContext> context)
-        : m_context(context)
-    {
-    }
-    
     RefPtr<ScriptExecutionContext> m_context;
 };
 
@@ -116,7 +111,7 @@ Database::~Database()
         // DerefContextTask::create.
         ScriptExecutionContext* scriptExecutionContext = m_scriptExecutionContext.get();
         
-        scriptExecutionContext->postTask(DerefContextTask::create(m_scriptExecutionContext.release()));
+        scriptExecutionContext->postTask(std::make_unique<DerefContextTask>(m_scriptExecutionContext.release()));
     }
 }
 
@@ -205,28 +200,24 @@ void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassR
 
 class DeliverPendingCallbackTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<DeliverPendingCallbackTask> create(PassRefPtr<SQLTransaction> transaction)
+    explicit DeliverPendingCallbackTask(PassRefPtr<SQLTransaction> transaction)
+        : m_transaction(transaction)
     {
-        return adoptPtr(new DeliverPendingCallbackTask(transaction));
     }
 
-    virtual void performTask(ScriptExecutionContext*)
+private:
+    virtual void performTask(ScriptExecutionContext*) OVERRIDE
     {
         m_transaction->performPendingCallback();
     }
 
 private:
-    DeliverPendingCallbackTask(PassRefPtr<SQLTransaction> transaction)
-        : m_transaction(transaction)
-    {
-    }
-
     RefPtr<SQLTransaction> m_transaction;
 };
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)
 {
-    m_scriptExecutionContext->postTask(DeliverPendingCallbackTask::create(transaction));
+    m_scriptExecutionContext->postTask(std::make_unique<DeliverPendingCallbackTask>(transaction));
 }
 
 Vector<String> Database::performGetTableNames()

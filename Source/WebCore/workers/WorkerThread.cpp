@@ -190,12 +190,12 @@ void WorkerThread::runEventLoop()
 
 class WorkerThreadShutdownFinishTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<WorkerThreadShutdownFinishTask> create()
+    WorkerThreadShutdownFinishTask()
     {
-        return adoptPtr(new WorkerThreadShutdownFinishTask());
     }
 
-    virtual void performTask(ScriptExecutionContext *context)
+private:
+    virtual void performTask(ScriptExecutionContext *context) OVERRIDE
     {
         ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
@@ -206,7 +206,7 @@ public:
         workerGlobalScope->clearScript();
     }
 
-    virtual bool isCleanupTask() const { return true; }
+    virtual bool isCleanupTask() const OVERRIDE { return true; }
 };
 
 class WorkerThreadShutdownStartTask : public ScriptExecutionContext::Task {
@@ -243,7 +243,7 @@ public:
 
         // Stick a shutdown command at the end of the queue, so that we deal
         // with all the cleanup tasks the databases post first.
-        workerGlobalScope->postTask(WorkerThreadShutdownFinishTask::create());
+        workerGlobalScope->postTask(std::make_unique<WorkerThreadShutdownFinishTask>());
     }
 
     virtual bool isCleanupTask() const { return true; }
@@ -261,7 +261,7 @@ void WorkerThread::stop()
 #if ENABLE(SQL_DATABASE)
         DatabaseManager::manager().interruptAllDatabasesForContext(m_workerGlobalScope.get());
 #endif
-        m_runLoop.postTaskAndTerminate(WorkerThreadShutdownStartTask::create());
+        m_runLoop.postTaskAndTerminate(std::make_unique<WorkerThreadShutdownFinishTask>());
         return;
     }
     m_runLoop.terminate();
@@ -275,9 +275,9 @@ void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
     MutexLocker lock(threadSetMutex());
     HashSet<WorkerThread*>& threads = workerThreads();
-    HashSet<WorkerThread*>::iterator end = threads.end();
-    for (HashSet<WorkerThread*>::iterator it = threads.begin(); it != end; ++it)
-        (*it)->runLoop().postTask(adoptPtr(new ReleaseFastMallocFreeMemoryTask));
+
+    for (auto it = threads.begin(), end = threads.end(); it != end; ++it)
+        (*it)->runLoop().postTask(std::make_unique<ReleaseFastMallocFreeMemoryTask>());
 }
 
 } // namespace WebCore

@@ -60,9 +60,9 @@ namespace WebCore {
         void terminate();
         bool terminated() const { return m_messageQueue.killed(); }
 
-        void postTask(PassOwnPtr<ScriptExecutionContext::Task>);
-        void postTaskAndTerminate(PassOwnPtr<ScriptExecutionContext::Task>);
-        void postTaskForMode(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
+        void postTask(std::unique_ptr<ScriptExecutionContext::Task>);
+        void postTaskAndTerminate(std::unique_ptr<ScriptExecutionContext::Task>);
+        void postTaskForMode(std::unique_ptr<ScriptExecutionContext::Task>, const String& mode);
 
         unsigned long createUniqueId() { return ++m_uniqueId; }
 
@@ -71,15 +71,15 @@ namespace WebCore {
         class Task {
             WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
         public:
-            static std::unique_ptr<Task> create(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
+            Task(std::unique_ptr<ScriptExecutionContext::Task>, const String& mode);
             ~Task() { }
+
             const String& mode() const { return m_mode; }
             void performTask(const WorkerRunLoop&, ScriptExecutionContext*);
 
         private:
-            Task(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode);
-        
-            OwnPtr<ScriptExecutionContext::Task> m_task;
+
+            std::unique_ptr<ScriptExecutionContext::Task> m_task;
             String m_mode;
         };
 

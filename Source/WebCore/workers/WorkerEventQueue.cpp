@@ -48,29 +48,17 @@ WorkerEventQueue::~WorkerEventQueue()
 
 class WorkerEventQueue::EventDispatcherTask FINAL : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
+    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
+        : m_event(event)
+        , m_eventQueue(eventQueue)
+        , m_isCancelled(false)
     {
-        return adoptPtr(new EventDispatcherTask(event, eventQueue));
     }
 
     virtual ~EventDispatcherTask()
     {
         if (m_event)
             m_eventQueue.m_eventTaskMap.remove(m_event.get());
-    }
-
-    void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
-    {
-        event->target()->dispatchEvent(event);
-    }
-
-    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
-    {
-        if (m_isCancelled)
-            return;
-        m_eventQueue.m_eventTaskMap.remove(m_event.get());
-        dispatchEvent(context, m_event);
-        m_event.clear();
     }
 
     void cancel()
@@ -80,11 +68,18 @@ public:
     }
 
 private:
-    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
-        : m_event(event)
-        , m_eventQueue(eventQueue)
-        , m_isCancelled(false)
+    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
+        if (m_isCancelled)
+            return;
+        m_eventQueue.m_eventTaskMap.remove(m_event.get());
+        dispatchEvent(context, m_event);
+        m_event.clear();
+    }
+
+    void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
+    {
+        event->target()->dispatchEvent(event);
     }
 
     RefPtr<Event> m_event;
@@ -97,9 +92,9 @@ bool WorkerEventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
     if (m_isClosed)
         return false;
     RefPtr<Event> event = prpEvent;
-    OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, *this);
+    auto task = std::make_unique<EventDispatcherTask>(event, *this);
     m_eventTaskMap.add(event.release(), task.get());
-    m_scriptExecutionContext.postTask(task.release());
+    m_scriptExecutionContext.postTask(std::move(task));
     return true;
 }
 

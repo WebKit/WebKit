@@ -1,3 +1,94 @@
+2013-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Clean up ScriptExecutionContext::Task and subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=122469
+
+        Reviewed by Andreas Kling.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::DerefContextTask::DerefContextTask):
+        (WebCore::Database::~Database):
+        (WebCore::DeliverPendingCallbackTask::DeliverPendingCallbackTask):
+        (WebCore::Database::scheduleTransactionCallback):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseCreationCallbackTask::DatabaseCreationCallbackTask):
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::clear):
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::SafeReleaseTask):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerGlobalScopeDidInitializeTask::WorkerGlobalScopeDidInitializeTask):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::DeleteCallbackDataTask::DeleteCallbackDataTask):
+        * bindings/js/JSDOMGlobalObjectTask.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementation):
+        * dom/CrossThreadTask.h:
+        (WebCore::createCallbackTask):
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        (WebCore::Document::addMessage):
+        (WebCore::PerformTaskContext::PerformTaskContext):
+        (WebCore::Document::postTask):
+        (WebCore::Document::pendingTasksTimerFired):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ProcessMessagesSoonTask::ProcessMessagesSoonTask):
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon):
+        * dom/ScriptExecutionContext.h:
+        * dom/StringCallback.cpp:
+        (WebCore::StringCallback::scheduleCallback):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerProxy::postTaskToLoader):
+        (WebCore::SharedWorkerProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        (WebCore::DefaultSharedWorkerRepository::connectToWorker):
+        * workers/WorkerEventQueue.cpp:
+        (WebCore::WorkerEventQueue::enqueueEvent):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::close):
+        (WebCore::WorkerGlobalScope::postTask):
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLoaderProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postTaskForModeToWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postTaskToLoader):
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        (WebCore::WorkerMessagingProxy::workerThreadCreated):
+        (WebCore::WorkerMessagingProxy::notifyNetworkStateChange):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyed):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeClosed):
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        (WebCore::WorkerMessagingProxy::confirmMessageFromWorkerObject):
+        (WebCore::WorkerMessagingProxy::reportPendingActivity):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::postTask):
+        (WebCore::WorkerRunLoop::postTaskAndTerminate):
+        (WebCore::WorkerRunLoop::postTaskForMode):
+        (WebCore::WorkerRunLoop::Task::Task):
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadShutdownFinishTask::WorkerThreadShutdownFinishTask):
+        (WebCore::WorkerThreadShutdownStartTask::performTask):
+        (WebCore::WorkerThread::stop):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+
 2013-10-07  Sam Weinig  <sam@webkit.org>
 
         CTTE: Use references in and around DragController

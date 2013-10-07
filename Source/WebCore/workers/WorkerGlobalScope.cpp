@@ -153,7 +153,7 @@ void WorkerGlobalScope::close()
     // After m_closing is set, all the tasks in the queue continue to be fetched but only
     // tasks with isCleanupTask()==true will be executed.
     m_closing = true;
-    postTask(CloseWorkerGlobalScopeTask::create());
+    postTask(std::make_unique<CloseWorkerGlobalScopeTask>());
 }
 
 WorkerNavigator* WorkerGlobalScope::navigator() const
@@ -180,9 +180,9 @@ bool WorkerGlobalScope::hasPendingActivity() const
     return false;
 }
 
-void WorkerGlobalScope::postTask(PassOwnPtr<Task> task)
+void WorkerGlobalScope::postTask(std::unique_ptr<Task> task)
 {
-    thread()->runLoop().postTask(task);
+    thread()->runLoop().postTask(std::move(task));
 }
 
 int WorkerGlobalScope::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout)
@@ -265,7 +265,7 @@ void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(std::make_unique<AddConsoleMessageTask>(source, level, message));
         return;
     }
 
@@ -276,7 +276,7 @@ void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel lev
 void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask::create(source, level, message));
+        postTask(std::make_unique<AddConsoleMessageTask>(source, level, message));
         return;
     }
 

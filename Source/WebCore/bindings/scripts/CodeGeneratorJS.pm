@@ -3085,7 +3085,7 @@ sub GenerateCallbackImplementation
     push(@implContent, "    if (!context || context->isContextThread())\n");
     push(@implContent, "        delete m_data;\n");
     push(@implContent, "    else\n");
-    push(@implContent, "        context->postTask(DeleteCallbackDataTask::create(m_data));\n");
+    push(@implContent, "        context->postTask(std::make_unique<DeleteCallbackDataTask>(m_data));\n");
     push(@implContent, "#ifndef NDEBUG\n");
     push(@implContent, "    m_data = 0;\n");
     push(@implContent, "#endif\n");

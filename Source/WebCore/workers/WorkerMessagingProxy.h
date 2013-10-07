@@ -82,8 +82,8 @@ namespace WebCore {
         // Implementation of WorkerLoaderProxy.
         // These methods are called on different threads to schedule loading
         // requests and to send callbacks back to WorkerGlobalScope.
-        virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>) OVERRIDE;
-        virtual bool postTaskForModeToWorkerGlobalScope(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
+        virtual void postTaskToLoader(std::unique_ptr<ScriptExecutionContext::Task>) OVERRIDE;
+        virtual bool postTaskForModeToWorkerGlobalScope(std::unique_ptr<ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
 
         void workerThreadCreated(PassRefPtr<DedicatedWorkerThread>);
 
@@ -115,7 +115,7 @@ namespace WebCore {
 
         bool m_askedToTerminate;
 
-        Vector<OwnPtr<ScriptExecutionContext::Task> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
+        Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
 #if ENABLE(INSPECTOR)
         WorkerGlobalScopeProxy::PageInspector* m_pageInspector;
 #endif
