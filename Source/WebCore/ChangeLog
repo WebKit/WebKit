@@ -1,3 +1,10 @@
+2013-10-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed debug build fix for ports enabling the <template> element support.
+
+        * html/HTMLTagNames.in: Generate type helpers for the <template> element as they're required
+        by the assertions in the Element type casts for HTMLTemplateElement.
+
 2013-10-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build fix after r157002

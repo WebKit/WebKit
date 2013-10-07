@@ -120,7 +120,7 @@ sup interfaceName=HTMLElement
 table generateTypeHelpers
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
-template conditional=TEMPLATE_ELEMENT
+template conditional=TEMPLATE_ELEMENT, generateTypeHelpers
 textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement, generateTypeHelpers
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement
