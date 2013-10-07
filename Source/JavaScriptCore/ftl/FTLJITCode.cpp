@@ -49,6 +49,11 @@ void JITCode::addHandle(PassRefPtr<ExecutableMemoryHandle> handle)
     m_handles.append(handle);
 }
 
+void JITCode::addDataSection(RefCountedArray<LSectionWord> dataSection)
+{
+    m_dataSections.append(dataSection);
+}
+
 void JITCode::initializeCode(CodeRef entrypoint)
 {
     m_entrypoint = entrypoint;

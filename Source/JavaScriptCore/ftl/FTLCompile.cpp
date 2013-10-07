@@ -65,11 +65,20 @@ static uint8_t* mmAllocateDataSection(
     void* opaqueState, uintptr_t size, unsigned alignment, unsigned sectionID,
     const char* sectionName, LLVMBool isReadOnly)
 {
-    // FIXME: fourthTier: FTL memory allocator should be able to allocate data
-    // sections in non-executable memory.
-    // https://bugs.webkit.org/show_bug.cgi?id=116189
+    UNUSED_PARAM(sectionID);
+    UNUSED_PARAM(sectionName);
     UNUSED_PARAM(isReadOnly);
-    return mmAllocateCodeSection(opaqueState, size, alignment, sectionID, sectionName);
+
+    State& state = *static_cast<State*>(opaqueState);
+    
+    RELEASE_ASSERT(alignment <= sizeof(LSectionWord));
+    
+    RefCountedArray<LSectionWord> section(
+        (size + sizeof(LSectionWord) - 1) / sizeof(LSectionWord));
+    
+    state.jitCode->addDataSection(section);
+    
+    return bitwise_cast<uint8_t*>(section.data());
 }
 
 static LLVMBool mmApplyPermissions(void*, char**)
@@ -146,6 +155,19 @@ void compile(State& state)
             disassemble(
                 MacroAssemblerCodePtr(handle->start()), handle->sizeInBytes(),
                 "    ", WTF::dataFile(), LLVMSubset);
+        }
+        
+        for (unsigned i = 0; i < state.jitCode->dataSections().size(); ++i) {
+            const RefCountedArray<LSectionWord>& section = state.jitCode->dataSections()[i];
+            dataLog(
+                "Generated LLVM data section for ",
+                CodeBlockWithJITType(state.graph.m_codeBlock, JITCode::DFGJIT),
+                " #", i, ":\n");
+            for (unsigned j = 0; j < section.size(); ++j) {
+                char buf[32];
+                snprintf(buf, sizeof(buf), "0x%lx", static_cast<unsigned long>(bitwise_cast<uintptr_t>(section.data() + j)));
+                dataLogF("    %16s: 0x%016llx\n", buf, static_cast<long long>(section[j]));
+            }
         }
     }
 }

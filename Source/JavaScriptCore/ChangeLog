@@ -1,3 +1,22 @@
+2013-10-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL memory allocator should be able to allocate data sections in non-executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=116189
+
+        Reviewed by Sam Weinig.
+        
+        Use a RefCountedArray<int64_t> for data sections. This works out great because
+        RefCountedArray<> knows its own size and because the reference counting makes passing
+        it around very easy (you don't have to stress out about ownership).
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::addDataSection):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::dataSections):
+
 2013-10-07  Roger Fong  <roger_fong@apple.com>
 
         Modify JavascriptCore makefile for x64 build.

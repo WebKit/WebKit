@@ -34,8 +34,11 @@
 #include "FTLOSRExit.h"
 #include "JITCode.h"
 #include <wtf/LLVMHeaders.h>
+#include <wtf/RefCountedArray.h>
 
 namespace JSC { namespace FTL {
+
+typedef int64_t LSectionWord; // We refer to LLVM data sections using LSectionWord*, just to be clear about our intended alignment restrictions.
 
 class JITCode : public JSC::JITCode {
 public:
@@ -51,9 +54,11 @@ public:
     
     void initializeExitThunks(CodeRef);
     void addHandle(PassRefPtr<ExecutableMemoryHandle>);
+    void addDataSection(RefCountedArray<LSectionWord>);
     void initializeCode(CodeRef entrypoint);
     
-    const Vector<RefPtr<ExecutableMemoryHandle> >& handles() const { return m_handles; }
+    const Vector<RefPtr<ExecutableMemoryHandle>>& handles() const { return m_handles; }
+    const Vector<RefCountedArray<LSectionWord>>& dataSections() const { return m_dataSections; }
     
     CodePtr exitThunks();
     
@@ -64,7 +69,8 @@ public:
     SegmentedVector<OSRExit, 8> osrExit;
     
 private:
-    Vector<RefPtr<ExecutableMemoryHandle> > m_handles;
+    Vector<RefCountedArray<LSectionWord>> m_dataSections;
+    Vector<RefPtr<ExecutableMemoryHandle>> m_handles;
     CodeRef m_entrypoint;
     CodeRef m_exitThunks;
 };
