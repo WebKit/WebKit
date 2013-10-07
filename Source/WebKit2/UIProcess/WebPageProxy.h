@@ -767,6 +767,7 @@ private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
     void platformInitialize();
 
+    void resetState();
     void resetStateAfterProcessExited();
 
     // CoreIPC::MessageReceiver

@@ -546,77 +546,8 @@ void WebPageProxy::close()
     m_pageClient->pageClosed();
 
     m_process->disconnectFramesFromPage(this);
-    m_mainFrame = 0;
 
-#if ENABLE(INSPECTOR)
-    if (m_inspector) {
-        m_inspector->invalidate();
-        m_inspector = 0;
-    }
-#endif
-
-#if ENABLE(FULLSCREEN_API)
-    if (m_fullScreenManager) {
-        m_fullScreenManager->invalidate();
-        m_fullScreenManager = 0;
-    }
-#endif
-
-#if ENABLE(VIBRATION)
-    m_vibration->invalidate();
-#endif
-
-    if (m_openPanelResultListener) {
-        m_openPanelResultListener->invalidate();
-        m_openPanelResultListener = 0;
-    }
-
-#if ENABLE(INPUT_TYPE_COLOR)
-    if (m_colorPicker) {
-        m_colorPicker->invalidate();
-        m_colorPicker = nullptr;
-    }
-#endif
-
-#if ENABLE(GEOLOCATION)
-    m_geolocationPermissionRequestManager.invalidateRequests();
-#endif
-
-    m_notificationPermissionRequestManager.invalidateRequests();
-    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this);
-
-    m_toolTip = String();
-
-    m_mainFrameHasHorizontalScrollbar = false;
-    m_mainFrameHasVerticalScrollbar = false;
-
-    m_mainFrameIsPinnedToLeftSide = false;
-    m_mainFrameIsPinnedToRightSide = false;
-    m_mainFrameIsPinnedToTopSide = false;
-    m_mainFrameIsPinnedToBottomSide = false;
-
-    m_visibleScrollerThumbRect = IntRect();
-
-    invalidateCallbackMap(m_voidCallbacks);
-    invalidateCallbackMap(m_dataCallbacks);
-    invalidateCallbackMap(m_imageCallbacks);
-    invalidateCallbackMap(m_stringCallbacks);
-    m_loadDependentStringCallbackIDs.clear();
-    invalidateCallbackMap(m_scriptValueCallbacks);
-    invalidateCallbackMap(m_computedPagesCallbacks);
-#if PLATFORM(GTK)
-    invalidateCallbackMap(m_printFinishedCallbacks);
-#endif
-
-    Vector<WebEditCommandProxy*> editCommandVector;
-    copyToVector(m_editCommandSet, editCommandVector);
-    m_editCommandSet.clear();
-    for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
-        editCommandVector[i]->invalidate();
-
-    m_activePopupMenu = 0;
-
-    m_estimatedProgress = 0.0;
+    resetState();
 
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
@@ -631,8 +562,6 @@ void WebPageProxy::close()
     m_contextMenuClient.initialize(0);
 #endif
 
-    m_drawingArea = nullptr;
-
 #if PLATFORM(MAC)
     m_exposedRectChangedTimer.stop();
 #endif
@@ -641,6 +570,7 @@ void WebPageProxy::close()
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->context()->storageManager().destroySessionStorageNamespace(m_pageID);
+    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 }
 
 bool WebPageProxy::tryClose()
@@ -3797,34 +3727,23 @@ void WebPageProxy::processDidCrash()
     m_loaderClient.processDidCrash(this);
 }
 
-void WebPageProxy::resetStateAfterProcessExited()
+void WebPageProxy::resetState()
 {
-    if (!isValid())
-        return;
-
-    ASSERT(m_pageClient);
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-
-    m_isValid = false;
-    m_isPageSuspended = false;
-    m_waitingForDidUpdateInWindowState = false;
-
-    if (m_mainFrame) {
-        m_urlAtProcessExit = m_mainFrame->url();
-        m_loadStateAtProcessExit = m_mainFrame->loadState();
-    }
-
     m_mainFrame = nullptr;
     m_drawingArea = nullptr;
 
 #if ENABLE(INSPECTOR)
-    m_inspector->invalidate();
-    m_inspector = nullptr;
+    if (m_inspector) {
+        m_inspector->invalidate();
+        m_inspector = nullptr;
+    }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    m_fullScreenManager->invalidate();
-    m_fullScreenManager = nullptr;
+    if (m_fullScreenManager) {
+        m_fullScreenManager->invalidate();
+        m_fullScreenManager = nullptr;
+    }
 #endif
 
 #if ENABLE(VIBRATION)
@@ -3863,6 +3782,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
+    invalidateCallbackMap(m_imageCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
     m_loadDependentStringCallbackIDs.clear();
     invalidateCallbackMap(m_scriptValueCallbacks);
@@ -3877,12 +3797,32 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_editCommandSet.clear();
     for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
         editCommandVector[i]->invalidate();
-    m_pageClient->clearAllEditCommands();
 
     m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
+}
 
+void WebPageProxy::resetStateAfterProcessExited()
+{
+    if (!isValid())
+        return;
+
+    ASSERT(m_pageClient);
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
+    m_isValid = false;
+    m_isPageSuspended = false;
+    m_waitingForDidUpdateInWindowState = false;
+
+    if (m_mainFrame) {
+        m_urlAtProcessExit = m_mainFrame->url();
+        m_loadStateAtProcessExit = m_mainFrame->loadState();
+    }
+
+    resetState();
+
+    m_pageClient->clearAllEditCommands();
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
     // If the call out to the loader client didn't cause the web process to be relaunched,
