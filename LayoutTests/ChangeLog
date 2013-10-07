@@ -1,3 +1,13 @@
+2013-10-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        context-menu-suggestions-multiword-selection.html and context-menu-suggestions-subword-selection.html are flaky after r156901.
+        https://bugs.webkit.org/show_bug.cgi?id=122414
+
+        Unreviewed gardening.
+
+        * platform/mac/TestExpectations:
+        Similarly to r156990, mark context-menu-suggestions-subword-selection.html as flaky.
+
 2013-10-06  Tim Horton  <timothy_horton@apple.com>
 
         Remove an unnecessary test expectation, as the test was removed

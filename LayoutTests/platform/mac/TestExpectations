@@ -541,6 +541,7 @@ webkit.org/b/61630 fast/events/dropzone-005.html
 # Spelling tests that are flakey.
 webkit.org/b/82555 editing/spelling/spellcheck-async-mutation.html [ Pass Failure ]
 webkit.org/b/122414 editing/spelling/context-menu-suggestions-multiword-selection.html [ Pass Failure ]
+webkit.org/b/122414 editing/spelling/context-menu-suggestions-subword-selection.html [ Pass Failure ]
 
 webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-shift-jis.html [ Failure ]
 webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding-utf-8.html [ Failure ]
