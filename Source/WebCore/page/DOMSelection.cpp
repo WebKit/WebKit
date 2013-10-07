@@ -368,7 +368,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame)) {
         ContainerNode* container = shadowAncestor->parentNodeGuaranteedHostFree();
         int offset = shadowAncestor->nodeIndex();
-        return Range::create(&shadowAncestor->document(), container, offset, container, offset);
+        return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
 
     const VisibleSelection& selection = m_frame->selection().selection();

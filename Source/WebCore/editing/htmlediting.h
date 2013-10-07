@@ -194,15 +194,6 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node*, int index); // FIXME: Why do we need this version?
 
 // -------------------------------------------------------------------------
-// Range
-// -------------------------------------------------------------------------
-
-// Functions returning Range
-
-PassRefPtr<Range> createRange(PassRefPtr<Document>, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode&);
-PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> rangeToExtend, const Range* maximumRange, const Node* rootNode);
-
-// -------------------------------------------------------------------------
 // HTMLElement
 // -------------------------------------------------------------------------
     

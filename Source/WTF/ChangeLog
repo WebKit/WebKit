@@ -1,3 +1,12 @@
+2013-10-06  Andreas Kling  <akling@apple.com>
+
+        Range constructors should take a Document&.
+        <https://webkit.org/b/122435>
+
+        Reviewed by Sam Weinig.
+
+        Give Ref an assignment operator.
+
 2013-10-05  Anders Carlsson  <andersca@apple.com>
 
         Clean up MessageQueue.h

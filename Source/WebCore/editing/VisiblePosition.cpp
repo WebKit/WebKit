@@ -678,7 +678,7 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     if (s.isNull() || e.isNull())
         return 0;
 
-    return Range::create(&s.containerNode()->document(), s.containerNode(), s.offsetInContainerNode(), e.containerNode(), e.offsetInContainerNode());
+    return Range::create(s.containerNode()->document(), s.containerNode(), s.offsetInContainerNode(), e.containerNode(), e.offsetInContainerNode());
 }
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)

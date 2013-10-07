@@ -62,10 +62,10 @@ using namespace HTMLNames;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, rangeCounter, ("Range"));
 
-inline Range::Range(PassRefPtr<Document> ownerDocument)
+inline Range::Range(Document& ownerDocument)
     : m_ownerDocument(ownerDocument)
-    , m_start(m_ownerDocument)
-    , m_end(m_ownerDocument)
+    , m_start(&ownerDocument)
+    , m_end(&ownerDocument)
 {
 #ifndef NDEBUG
     rangeCounter.increment();
@@ -74,15 +74,15 @@ inline Range::Range(PassRefPtr<Document> ownerDocument)
     m_ownerDocument->attachRange(this);
 }
 
-PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument)
+PassRefPtr<Range> Range::create(Document& ownerDocument)
 {
     return adoptRef(new Range(ownerDocument));
 }
 
-inline Range::Range(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
+inline Range::Range(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
     : m_ownerDocument(ownerDocument)
-    , m_start(m_ownerDocument)
-    , m_end(m_ownerDocument)
+    , m_start(&ownerDocument)
+    , m_end(&ownerDocument)
 {
 #ifndef NDEBUG
     rangeCounter.increment();
@@ -96,12 +96,12 @@ inline Range::Range(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startCo
     setEnd(endContainer, endOffset);
 }
 
-PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
+PassRefPtr<Range> Range::create(Document& ownerDocument, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset)
 {
     return adoptRef(new Range(ownerDocument, startContainer, startOffset, endContainer, endOffset));
 }
 
-PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, const Position& start, const Position& end)
+PassRefPtr<Range> Range::create(Document& ownerDocument, const Position& start, const Position& end)
 {
     return adoptRef(new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
 }
@@ -118,10 +118,9 @@ Range::~Range()
 
 void Range::setDocument(Document& document)
 {
-    ASSERT(m_ownerDocument != &document);
-    if (m_ownerDocument)
-        m_ownerDocument->detachRange(this);
-    m_ownerDocument = &document;
+    ASSERT(&m_ownerDocument.get() != &document);
+    m_ownerDocument->detachRange(this);
+    m_ownerDocument = document;
     m_start.setToStartOfNode(&document);
     m_end.setToStartOfNode(&document);
     m_ownerDocument->attachRange(this);
@@ -223,7 +222,7 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     }
 
     bool didMoveDocument = false;
-    if (&refNode->document() != m_ownerDocument) {
+    if (&refNode->document() != &ownerDocument()) {
         setDocument(refNode->document());
         didMoveDocument = true;
     }
@@ -252,7 +251,7 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     }
 
     bool didMoveDocument = false;
-    if (&refNode->document() != m_ownerDocument) {
+    if (&refNode->document() != &ownerDocument()) {
         setDocument(refNode->document());
         didMoveDocument = true;
     }
@@ -305,7 +304,7 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
         return false;
     }
 
-    if (!refNode->attached() || &refNode->document() != m_ownerDocument) {
+    if (!refNode->attached() || &refNode->document() != &ownerDocument()) {
         return false;
     }
 
@@ -334,7 +333,7 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
         return 0;
     }
 
-    if (!refNode->attached() || &refNode->document() != m_ownerDocument) {
+    if (!refNode->attached() || &refNode->document() != &ownerDocument()) {
         ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -380,7 +379,7 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
         return NODE_BEFORE;
     }
 
-    if (&refNode->document() != m_ownerDocument) {
+    if (&refNode->document() != &ownerDocument()) {
         // Firefox doesn't throw an exception for this case; it returns 0.
         return NODE_BEFORE;
     }
@@ -585,7 +584,7 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
         return false;
     }
 
-    if (!refNode->attached() || &refNode->document() != m_ownerDocument) {
+    if (!refNode->attached() || &refNode->document() != &ownerDocument()) {
         // Firefox doesn't throw an exception for these cases; it returns false.
         return false;
     }
@@ -1225,7 +1224,7 @@ PassRefPtr<Range> Range::cloneRange(ExceptionCode& ec) const
         return 0;
     }
 
-    return Range::create(m_ownerDocument, m_start.container(), m_start.offset(), m_end.container(), m_end.offset());
+    return Range::create(ownerDocument(), m_start.container(), m_start.offset(), m_end.container(), m_end.offset());
 }
 
 void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
@@ -1343,7 +1342,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
             return;
     }
 
-    if (m_ownerDocument != &refNode->document())
+    if (&ownerDocument() != &refNode->document())
         setDocument(refNode->document());
 
     ec = 0;
@@ -1388,7 +1387,7 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
         }
     }
 
-    if (m_ownerDocument != &refNode->document())
+    if (&ownerDocument() != &refNode->document())
         setDocument(refNode->document());
 
     m_start.setToStartOfNode(refNode);
@@ -1701,7 +1700,7 @@ bool areRangesEqual(const Range* a, const Range* b)
 PassRefPtr<Range> rangeOfContents(Node* node)
 {
     ASSERT(node);
-    RefPtr<Range> range = Range::create(&node->document());
+    RefPtr<Range> range = Range::create(node->document());
     int exception = 0;
     range->selectNodeContents(node, exception);
     return range.release();
@@ -1736,7 +1735,7 @@ static inline void boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, Con
 
 void Range::nodeChildrenChanged(ContainerNode& container)
 {
-    ASSERT(&container.document() == m_ownerDocument);
+    ASSERT(&container.document() == &ownerDocument());
     boundaryNodeChildrenChanged(m_start, container);
     boundaryNodeChildrenChanged(m_end, container);
 }
@@ -1760,7 +1759,7 @@ static inline void boundaryNodeChildrenWillBeRemoved(RangeBoundaryPoint& boundar
 
 void Range::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
-    ASSERT(&container.document() == m_ownerDocument);
+    ASSERT(&container.document() == &ownerDocument());
     boundaryNodeChildrenWillBeRemoved(m_start, container);
     boundaryNodeChildrenWillBeRemoved(m_end, container);
 }
@@ -1783,8 +1782,8 @@ static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node*
 void Range::nodeWillBeRemoved(Node* node)
 {
     ASSERT(node);
-    ASSERT(&node->document() == m_ownerDocument);
-    ASSERT(node != m_ownerDocument);
+    ASSERT(&node->document() == &ownerDocument());
+    ASSERT(node != &ownerDocument());
     ASSERT(node->parentNode());
     boundaryNodeWillBeRemoved(m_start, node);
     boundaryNodeWillBeRemoved(m_end, node);
@@ -1803,7 +1802,7 @@ static inline void boundaryTextInserted(RangeBoundaryPoint& boundary, Node* text
 void Range::textInserted(Node* text, unsigned offset, unsigned length)
 {
     ASSERT(text);
-    ASSERT(&text->document() == m_ownerDocument);
+    ASSERT(&text->document() == &ownerDocument());
     boundaryTextInserted(m_start, text, offset, length);
     boundaryTextInserted(m_end, text, offset, length);
 }
@@ -1824,7 +1823,7 @@ static inline void boundaryTextRemoved(RangeBoundaryPoint& boundary, Node* text,
 void Range::textRemoved(Node* text, unsigned offset, unsigned length)
 {
     ASSERT(text);
-    ASSERT(&text->document() == m_ownerDocument);
+    ASSERT(&text->document() == &ownerDocument());
     boundaryTextRemoved(m_start, text, offset, length);
     boundaryTextRemoved(m_end, text, offset, length);
 }
@@ -1840,7 +1839,7 @@ static inline void boundaryTextNodesMerged(RangeBoundaryPoint& boundary, NodeWit
 void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
 {
     ASSERT(oldNode.node());
-    ASSERT(&oldNode.node()->document() == m_ownerDocument);
+    ASSERT(&oldNode.node()->document() == &ownerDocument());
     ASSERT(oldNode.node()->parentNode());
     ASSERT(oldNode.node()->isTextNode());
     ASSERT(oldNode.node()->previousSibling());
@@ -1862,7 +1861,7 @@ static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text* ol
 void Range::textNodeSplit(Text* oldNode)
 {
     ASSERT(oldNode);
-    ASSERT(&oldNode->document() == m_ownerDocument);
+    ASSERT(&oldNode->document() == &ownerDocument());
     ASSERT(oldNode->parentNode());
     ASSERT(oldNode->isTextNode());
     ASSERT(oldNode->nextSibling());
@@ -1898,7 +1897,7 @@ PassRefPtr<ClientRectList> Range::getClientRects() const
     if (!m_start.container())
         return ClientRectList::create();
 
-    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+    ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
     getBorderAndTextQuads(quads);
@@ -1933,7 +1932,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
             if (RenderBoxModelObject* renderBoxModelObject = toElement(node)->renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderBoxModelObject->absoluteQuads(elementQuads);
-                m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
+                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
 
                 quads.appendVector(elementQuads);
             }
@@ -1945,7 +1944,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 
                 Vector<FloatQuad> textQuads;
                 renderText->absoluteQuadsForRange(textQuads, startOffset, endOffset);
-                m_ownerDocument->adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText);
+                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText);
 
                 quads.appendVector(textQuads);
             }
@@ -1958,7 +1957,7 @@ FloatRect Range::boundingRect() const
     if (!m_start.container())
         return FloatRect();
 
-    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+    ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Vector<FloatQuad> quads;
     getBorderAndTextQuads(quads);

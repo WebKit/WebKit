@@ -615,7 +615,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
         if (!contentElement->renderer())
             continue;
 
-        RefPtr<Range> range = Range::create(&contentElement->document());
+        RefPtr<Range> range = Range::create(contentElement->document());
         bool foundStartPosition = false;
         bool startsAboveRegion = true;
         bool endsBelowRegion = true;
@@ -656,7 +656,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
                         if (range->intersectsNode(node, IGNORE_EXCEPTION))
                             range->setEndBefore(node, IGNORE_EXCEPTION);
                         rangeObjects.append(range->cloneRange(IGNORE_EXCEPTION));
-                        range = Range::create(&contentElement->document());
+                        range = Range::create(contentElement->document());
                         startsAboveRegion = true;
                     } else
                         skipOverOutsideNodes = true;

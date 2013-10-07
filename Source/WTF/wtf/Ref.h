@@ -33,6 +33,13 @@ namespace WTF {
 template<typename T> class Ref {
 public:
     Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
+    Ref& operator=(T& object)
+    {
+        object.ref();
+        m_ptr->deref();
+        m_ptr = &object;
+        return *this;
+    }
 
     ~Ref() { m_ptr->deref(); }
 

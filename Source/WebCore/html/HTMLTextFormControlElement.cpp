@@ -433,7 +433,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
         return 0;
 
     if (!innerText->firstChild())
-        return Range::create(&document(), innerText, 0, innerText, 0);
+        return Range::create(document(), innerText, 0, innerText, 0);
 
     int offset = 0;
     Node* startNode = 0;
@@ -457,7 +457,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     if (!startNode || !endNode)
         return 0;
 
-    return Range::create(&document(), startNode, start, endNode, end);
+    return Range::create(document(), startNode, start, endNode, end);
 }
 
 void HTMLTextFormControlElement::restoreCachedSelection()

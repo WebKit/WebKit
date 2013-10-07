@@ -130,7 +130,7 @@ PassRefPtr<Range> VisibleSelection::firstRange() const
         return 0;
     Position start = m_start.parentAnchoredEquivalent();
     Position end = m_end.parentAnchoredEquivalent();
-    return Range::create(&start.anchorNode()->document(), start, end);
+    return Range::create(start.anchorNode()->document(), start, end);
 }
 
 PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
@@ -186,7 +186,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
     // if a valid range could not be created, which is fine for this callsite.
-    return Range::create(&s.anchorNode()->document(), s, e);
+    return Range::create(s.anchorNode()->document(), s, e);
 }
 
 bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
@@ -210,7 +210,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     if (!boundary)
         return 0;
 
-    RefPtr<Range> searchRange(Range::create(&n->document()));
+    RefPtr<Range> searchRange(Range::create(n->document()));
     ExceptionCode ec = 0;
 
     Position start(pos.parentAnchoredEquivalent());

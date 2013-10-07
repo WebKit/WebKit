@@ -262,7 +262,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     // relative to the start position of the containing paragraph. We use correctionStartOffsetInParagraph
     // to store this value. In order to obtain this offset, we need to first create a range
     // which spans from the start of paragraph to the start position of rangeWithAlternative.
-    RefPtr<Range> correctionStartOffsetInParagraphAsRange = Range::create(&paragraphRangeContainingCorrection->startContainer(ec)->document(), paragraphRangeContainingCorrection->startPosition(), paragraphRangeContainingCorrection->startPosition());
+    RefPtr<Range> correctionStartOffsetInParagraphAsRange = Range::create(paragraphRangeContainingCorrection->startContainer(ec)->document(), paragraphRangeContainingCorrection->startPosition(), paragraphRangeContainingCorrection->startPosition());
     if (ec)
         return;
 
@@ -277,7 +277,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     // Clone the range, since the caller of this method may want to keep the original range around.
     RefPtr<Range> rangeWithAlternative = range->cloneRange(ec);
     
-    int paragraphStartIndex = TextIterator::rangeLength(Range::create(m_frame.document(), m_frame.document(), 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
+    int paragraphStartIndex = TextIterator::rangeLength(Range::create(*m_frame.document(), m_frame.document(), 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
     applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative, alternative));
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
     paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(m_frame.document(), paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
@@ -323,7 +323,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
         client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
     m_frame.document()->updateLayout();
     m_frame.selection().setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
-    RefPtr<Range> range = Range::create(m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());
+    RefPtr<Range> range = Range::create(*m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());
 
     DocumentMarkerController& markers = m_frame.document()->markers();
     markers.removeMarkers(range.get(), DocumentMarker::Spelling | DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
@@ -499,7 +499,7 @@ void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition
 {
     if (!command->wasCreateLinkCommand())
         return;
-    RefPtr<Range> range = Range::create(m_frame.document(), command->startingSelection().start(), command->startingSelection().end());
+    RefPtr<Range> range = Range::create(*m_frame.document(), command->startingSelection().start(), command->startingSelection().end());
     if (!range)
         return;
     DocumentMarkerController& markers = m_frame.document()->markers();
@@ -591,7 +591,7 @@ void AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionA
     if (endOfSelection == precedingCharacterPosition)
         return;
 
-    RefPtr<Range> precedingCharacterRange = Range::create(m_frame.document(), precedingCharacterPosition, endOfSelection);
+    RefPtr<Range> precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, endOfSelection);
     String string = plainText(precedingCharacterRange.get());
     if (string.isEmpty() || !isWhitespace(string[string.length() - 1]))
         return;
@@ -616,7 +616,7 @@ bool AlternativeTextController::processMarkersOnTextToBeReplacedByResult(const T
 
     Position beginningOfRange = rangeWithAlternative->startPosition();
     Position precedingCharacterPosition = beginningOfRange.previous();
-    RefPtr<Range> precedingCharacterRange = Range::create(m_frame.document(), precedingCharacterPosition, beginningOfRange);
+    RefPtr<Range> precedingCharacterRange = Range::create(*m_frame.document(), precedingCharacterPosition, beginningOfRange);
 
     Vector<DocumentMarker*> markers = markerController.markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
 
@@ -640,7 +640,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     if (!shouldStartTimerFor(marker, endOfWordPosition.offsetInContainerNode()))
         return false;
     Node* node = endOfWordPosition.containerNode();
-    RefPtr<Range> wordRange = Range::create(m_frame.document(), node, marker.startOffset(), node, marker.endOffset());
+    RefPtr<Range> wordRange = Range::create(*m_frame.document(), node, marker.startOffset(), node, marker.endOffset());
     if (!wordRange)
         return false;
     String currentWord = plainText(wordRange.get());
