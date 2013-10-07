@@ -46,8 +46,8 @@ public:
 
     static PassRefPtr<JITToDFGDeferredCompilationCallback> create();
     
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*);
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) OVERRIDE;
+    virtual void compilationDidComplete(CodeBlock*, CompilationResult) OVERRIDE;
 };
 
 } // namespace JSC

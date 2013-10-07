@@ -93,7 +93,7 @@ public:
     HRTFDatabaseLoader* hrtfDatabaseLoader() const { return m_hrtfDatabaseLoader.get(); }
 
     // Document notification
-    virtual void stop();
+    virtual void stop() OVERRIDE;
 
     Document* document() const; // ASSERTs if document no longer exists.
     bool hasDocument();
@@ -350,8 +350,8 @@ private:
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
     // EventTarget
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
 
     RefPtr<AudioBuffer> m_renderTarget;
     

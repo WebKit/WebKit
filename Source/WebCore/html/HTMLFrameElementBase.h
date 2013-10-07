@@ -34,7 +34,7 @@ public:
     URL location() const;
     void setLocation(const String&);
 
-    virtual ScrollbarMode scrollingMode() const { return m_scrolling; }
+    virtual ScrollbarMode scrollingMode() const OVERRIDE { return m_scrolling; }
     
     int marginWidth() const { return m_marginWidth; }
     int marginHeight() const { return m_marginHeight; }
@@ -42,7 +42,7 @@ public:
     int width();
     int height();
 
-    virtual bool canContainRangeEndPoint() const { return false; }
+    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
 
 protected:
     HTMLFrameElementBase(const QualifiedName&, Document&);
@@ -61,7 +61,7 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual bool isHTMLContentAttribute(const Attribute&) const OVERRIDE;
 
-    virtual bool isFrameElementBase() const { return true; }
+    virtual bool isFrameElementBase() const OVERRIDE { return true; }
 
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 

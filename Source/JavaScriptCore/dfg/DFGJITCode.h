@@ -48,10 +48,10 @@ class JITCompiler;
 class JITCode : public DirectJITCode {
 public:
     JITCode();
-    ~JITCode();
+    virtual ~JITCode();
     
-    CommonData* dfgCommon();
-    JITCode* dfg();
+    virtual CommonData* dfgCommon() OVERRIDE;
+    virtual JITCode* dfg() OVERRIDE;
     
     OSREntryData* appendOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
     {

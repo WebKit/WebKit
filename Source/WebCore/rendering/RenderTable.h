@@ -52,33 +52,33 @@ public:
     
     bool collapseBorders() const { return style()->borderCollapse(); }
 
-    int borderStart() const { return m_borderStart; }
-    int borderEnd() const { return m_borderEnd; }
-    int borderBefore() const;
-    int borderAfter() const;
+    virtual int borderStart() const OVERRIDE { return m_borderStart; }
+    virtual int borderEnd() const OVERRIDE { return m_borderEnd; }
+    virtual int borderBefore() const OVERRIDE;
+    virtual int borderAfter() const OVERRIDE;
 
-    int borderLeft() const
+    virtual int borderLeft() const OVERRIDE
     {
         if (style()->isHorizontalWritingMode())
             return style()->isLeftToRightDirection() ? borderStart() : borderEnd();
         return style()->isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
     }
 
-    int borderRight() const
+    virtual int borderRight() const OVERRIDE
     {
         if (style()->isHorizontalWritingMode())
             return style()->isLeftToRightDirection() ? borderEnd() : borderStart();
         return style()->isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
     }
 
-    int borderTop() const
+    virtual int borderTop() const OVERRIDE
     {
         if (style()->isHorizontalWritingMode())
             return style()->isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
         return style()->isLeftToRightDirection() ? borderStart() : borderEnd();
     }
 
-    int borderBottom() const
+    virtual int borderBottom() const OVERRIDE
     {
         if (style()->isHorizontalWritingMode())
             return style()->isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
@@ -300,7 +300,7 @@ private:
     LayoutUnit convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight);
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhaseBlockBackground) OVERRIDE FINAL;
-    virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy) { return RenderBox::overflowClipRect(location, region, relevancy); }
+    virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy) OVERRIDE { return RenderBox::overflowClipRect(location, region, relevancy); }
 
     virtual void addOverflowFromChildren() OVERRIDE FINAL;
 

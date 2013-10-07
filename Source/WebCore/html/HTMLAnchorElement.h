@@ -111,14 +111,14 @@ private:
     virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual void setActive(bool active = true, bool pause = false) OVERRIDE FINAL;
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual bool canStartSelection() const;
-    virtual String target() const;
+    virtual bool canStartSelection() const OVERRIDE;
+    virtual String target() const OVERRIDE;
     virtual short tabIndex() const OVERRIDE FINAL;
-    virtual bool draggable() const;
+    virtual bool draggable() const OVERRIDE;
 
     void sendPings(const URL& destinationURL);
 

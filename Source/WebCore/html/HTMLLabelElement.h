@@ -43,14 +43,14 @@ private:
 
     virtual bool isFocusable() const OVERRIDE;
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 
     // Overridden to update the hover/active state of the corresponding control.
     virtual void setActive(bool = true, bool pause = false) OVERRIDE;
     virtual void setHovered(bool = true) OVERRIDE;
 
     // Overridden to either click() or focus() the corresponding control.
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
 
     virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
 };

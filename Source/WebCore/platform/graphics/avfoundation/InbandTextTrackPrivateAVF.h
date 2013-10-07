@@ -43,8 +43,7 @@ public:
 
 class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
-
-    ~InbandTextTrackPrivateAVF();
+    virtual ~InbandTextTrackPrivateAVF();
 
     virtual void setMode(InbandTextTrackPrivate::Mode) OVERRIDE;
 

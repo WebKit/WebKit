@@ -39,15 +39,15 @@ public:
     bool inDragMode() const;
 
 private:
-    virtual const char* renderName() const { return "RenderSlider"; }
-    virtual bool isSlider() const { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderSlider"; }
+    virtual bool isSlider() const OVERRIDE { return true; }
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-    virtual void layout();
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
+    virtual void layout() OVERRIDE;
 };
 
 inline RenderSlider* toRenderSlider(RenderObject* object)

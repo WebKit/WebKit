@@ -131,7 +131,7 @@ public:
         return IntervalType(low, high, data);
     }
 
-    virtual bool checkInvariants() const
+    virtual bool checkInvariants() const OVERRIDE
     {
         if (!PODRedBlackTree<IntervalType>::checkInvariants())
             return false;
@@ -181,7 +181,7 @@ private:
             searchForOverlapsFrom<AdapterType>(node->right(), adapter);
     }
 
-    virtual bool updateNode(IntervalNode* node)
+    virtual bool updateNode(IntervalNode* node) OVERRIDE
     {
         // Would use const T&, but need to reassign this reference in this
         // function.

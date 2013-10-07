@@ -63,7 +63,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual void willBeDestroyed() OVERRIDE;
 
-    virtual UChar previousCharacter() const;
+    virtual UChar previousCharacter() const OVERRIDE;
     RenderBlock* blockForAccompanyingFirstLetter() const;
 
     unsigned m_start;

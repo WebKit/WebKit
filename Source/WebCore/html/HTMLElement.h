@@ -77,12 +77,12 @@ public:
 
     void click();
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 
     bool ieForbidsInsertHTML() const;
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
 
     HTMLFormElement* form() const { return virtualForm(); }
 

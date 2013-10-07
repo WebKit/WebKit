@@ -901,8 +901,8 @@ public:
     bool m_didFailFTLCompilation;
     
 protected:
-    virtual void visitWeakReferences(SlotVisitor&);
-    virtual void finalizeUnconditionally();
+    virtual void visitWeakReferences(SlotVisitor&) OVERRIDE;
+    virtual void finalizeUnconditionally() OVERRIDE;
 
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();
@@ -1127,8 +1127,8 @@ public:
 
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel capabilityLevelInternal();
+    virtual CodeBlock* replacement() OVERRIDE;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
 #endif
 };
 
@@ -1149,8 +1149,8 @@ public:
     
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel capabilityLevelInternal();
+    virtual CodeBlock* replacement() OVERRIDE;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
 #endif
     
 private:
@@ -1171,8 +1171,8 @@ public:
     
 #if ENABLE(JIT)
 protected:
-    virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel capabilityLevelInternal();
+    virtual CodeBlock* replacement() OVERRIDE;
+    virtual DFG::CapabilityLevel capabilityLevelInternal() OVERRIDE;
 #endif
 };
 

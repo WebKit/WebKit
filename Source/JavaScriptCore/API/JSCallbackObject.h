@@ -42,7 +42,7 @@ struct JSCallbackObjectData : WeakHandleOwner {
         JSClassRetain(jsClass);
     }
     
-    ~JSCallbackObjectData()
+    virtual ~JSCallbackObjectData()
     {
         JSClassRelease(jsClass);
     }
@@ -110,7 +110,7 @@ struct JSCallbackObjectData : WeakHandleOwner {
         PrivatePropertyMap m_propertyMap;
     };
     OwnPtr<JSPrivatePropertyMap> m_privateProperties;
-    virtual void finalize(Handle<Unknown>, void*);
+    virtual void finalize(Handle<Unknown>, void*) OVERRIDE;
 };
 
     

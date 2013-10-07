@@ -46,15 +46,15 @@ public:
 
     Page* page() { return m_page; }
     
-    virtual void addItem(PassRefPtr<HistoryItem>);
+    virtual void addItem(PassRefPtr<HistoryItem>) OVERRIDE;
     void goBack();
     void goForward();
-    virtual void goToItem(HistoryItem*);
+    virtual void goToItem(HistoryItem*) OVERRIDE;
         
     HistoryItem* backItem();
     HistoryItem* currentItem();
     HistoryItem* forwardItem();
-    virtual HistoryItem* itemAtIndex(int);
+    virtual HistoryItem* itemAtIndex(int) OVERRIDE;
 
     void backListWithLimit(int, HistoryItemVector&);
     void forwardListWithLimit(int, HistoryItemVector&);
@@ -63,11 +63,11 @@ public:
     void setCapacity(int);
     bool enabled();
     void setEnabled(bool);
-    virtual int backListCount();
-    virtual int forwardListCount();
+    virtual int backListCount() OVERRIDE;
+    virtual int forwardListCount() OVERRIDE;
     bool containsItem(HistoryItem*);
 
-    virtual void close();
+    virtual void close() OVERRIDE;
     bool closed();
 
     void removeItem(HistoryItem*);
@@ -76,7 +76,7 @@ public:
 private:
     explicit BackForwardList(Page*);
 
-    virtual bool isActive() { return enabled() && capacity(); }
+    virtual bool isActive() OVERRIDE { return enabled() && capacity(); }
 
     Page* m_page;
     HistoryItemVector m_entries;

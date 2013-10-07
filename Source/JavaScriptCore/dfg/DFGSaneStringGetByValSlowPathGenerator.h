@@ -52,7 +52,7 @@ public:
     }
     
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         linkFrom(jit);
         

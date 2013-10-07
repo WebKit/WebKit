@@ -36,27 +36,27 @@ class SVGGraphicsElement : public SVGElement, public SVGTransformable, public SV
 public:
     virtual ~SVGGraphicsElement();
 
-    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate);
-    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate);
-    virtual SVGElement* nearestViewportElement() const;
-    virtual SVGElement* farthestViewportElement() const;
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) OVERRIDE;
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) OVERRIDE;
+    virtual SVGElement* nearestViewportElement() const OVERRIDE;
+    virtual SVGElement* farthestViewportElement() const OVERRIDE;
 
-    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGTransformable::localCoordinateSpaceTransform(mode); }
-    virtual AffineTransform animatedLocalTransform() const;
-    virtual AffineTransform* supplementalTransform();
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const OVERRIDE { return SVGTransformable::localCoordinateSpaceTransform(mode); }
+    virtual AffineTransform animatedLocalTransform() const OVERRIDE;
+    virtual AffineTransform* supplementalTransform() OVERRIDE;
 
-    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate);
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) OVERRIDE;
 
     // "base class" methods for all the elements which render as paths
     virtual void toClipPath(Path&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
 
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void svgAttributeChanged(const QualifiedName&) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGraphicsElement)
         DECLARE_ANIMATED_TRANSFORM_LIST(Transform, transform)
@@ -66,9 +66,9 @@ private:
     virtual bool isSVGGraphicsElement() const OVERRIDE { return true; }
 
     // SVGTests
-    virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
-    virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
-    virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
+    virtual void synchronizeRequiredFeatures() OVERRIDE { SVGTests::synchronizeRequiredFeatures(this); }
+    virtual void synchronizeRequiredExtensions() OVERRIDE { SVGTests::synchronizeRequiredExtensions(this); }
+    virtual void synchronizeSystemLanguage() OVERRIDE { SVGTests::synchronizeSystemLanguage(this); }
 
     // Used by <animateMotion>
     OwnPtr<AffineTransform> m_supplementalTransform;

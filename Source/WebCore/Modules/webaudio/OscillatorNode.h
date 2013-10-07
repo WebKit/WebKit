@@ -56,8 +56,8 @@ public:
     virtual ~OscillatorNode();
     
     // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
+    virtual void process(size_t framesToProcess) OVERRIDE;
+    virtual void reset() OVERRIDE;
 
     String type() const;
 

@@ -36,15 +36,15 @@ public:
     virtual ~RenderMeter();
 
     HTMLMeterElement* meterElement() const;
-    virtual void updateFromElement();
+    virtual void updateFromElement() OVERRIDE;
 
 private:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
-    virtual const char* renderName() const { return "RenderMeter"; }
-    virtual bool isMeter() const { return true; }
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderMeter"; }
+    virtual bool isMeter() const OVERRIDE { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
 };
 
 inline RenderMeter* toRenderMeter(RenderObject* object)

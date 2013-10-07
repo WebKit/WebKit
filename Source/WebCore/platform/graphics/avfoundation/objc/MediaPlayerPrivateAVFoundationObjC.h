@@ -64,12 +64,12 @@ class VideoTrackPrivateAVFObjC;
 
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
-    ~MediaPlayerPrivateAVFoundationObjC();
+    virtual ~MediaPlayerPrivateAVFoundationObjC();
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void setAsset(id);
-    virtual void tracksChanged();
+    virtual void tracksChanged() OVERRIDE;
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }

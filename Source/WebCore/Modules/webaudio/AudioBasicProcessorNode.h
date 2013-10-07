@@ -42,14 +42,14 @@ public:
     AudioBasicProcessorNode(AudioContext*, float sampleRate);
 
     // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void pullInputs(size_t framesToProcess);
-    virtual void reset();
-    virtual void initialize();
-    virtual void uninitialize();
+    virtual void process(size_t framesToProcess) OVERRIDE;
+    virtual void pullInputs(size_t framesToProcess) OVERRIDE;
+    virtual void reset() OVERRIDE;
+    virtual void initialize() OVERRIDE;
+    virtual void uninitialize() OVERRIDE;
 
     // Called in the main thread when the number of channels for the input may have changed.
-    virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
+    virtual void checkNumberOfChannelsForInput(AudioNodeInput*) OVERRIDE;
 
     // Returns the number of channels for both the input and the output.
     unsigned numberOfChannels();

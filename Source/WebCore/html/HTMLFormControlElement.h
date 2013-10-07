@@ -68,7 +68,7 @@ public:
     virtual bool isDisabledFormControl() const OVERRIDE;
 
     virtual bool isFocusable() const OVERRIDE;
-    virtual bool isEnumeratable() const { return false; }
+    virtual bool isEnumeratable() const OVERRIDE { return false; }
 
     bool isRequired() const;
 
@@ -80,13 +80,13 @@ public:
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
-    virtual bool appendFormData(FormDataList&, bool) { return false; }
+    virtual bool appendFormData(FormDataList&, bool) OVERRIDE { return false; }
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool) { }
 
-    virtual bool willValidate() const;
+    virtual bool willValidate() const OVERRIDE;
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();
     bool checkValidity(Vector<RefPtr<FormAssociatedElement> >* unhandledInvalidControls = 0);
@@ -131,17 +131,17 @@ protected:
     bool validationMessageShadowTreeContains(const Node*) const;
 
 private:
-    virtual void refFormAssociatedElement() { ref(); }
-    virtual void derefFormAssociatedElement() { deref(); }
+    virtual void refFormAssociatedElement() OVERRIDE { ref(); }
+    virtual void derefFormAssociatedElement() OVERRIDE { deref(); }
 
-    virtual bool isFormControlElement() const { return true; }
+    virtual bool isFormControlElement() const OVERRIDE { return true; }
     virtual bool alwaysCreateUserAgentShadowRoot() const OVERRIDE { return true; }
 
     virtual short tabIndex() const OVERRIDE FINAL;
 
-    virtual HTMLFormElement* virtualForm() const;
-    virtual bool isDefaultButtonForForm() const;
-    virtual bool isValidFormControlElement();
+    virtual HTMLFormElement* virtualForm() const OVERRIDE;
+    virtual bool isDefaultButtonForForm() const OVERRIDE;
+    virtual bool isValidFormControlElement() OVERRIDE;
     void updateAncestorDisabledState() const;
 
     virtual HTMLElement* asHTMLElement() OVERRIDE FINAL { return this; }

@@ -76,7 +76,7 @@ public:
     ContentDistributor& distributor() { return m_distributor; }
     void invalidateDistribution() { m_distributor.invalidateDistribution(hostElement()); }
 
-    void removeAllEventListeners();
+    virtual void removeAllEventListeners() OVERRIDE;
 
 private:
     ShadowRoot(Document&, ShadowRootType);

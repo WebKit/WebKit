@@ -45,13 +45,13 @@ public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
-    virtual void init();
+    virtual void init() OVERRIDE;
 
-    virtual AccessibilityRole roleValue() const;
+    virtual AccessibilityRole roleValue() const OVERRIDE;
     virtual bool isAriaTable() const { return false; }
     
-    virtual void addChildren();
-    virtual void clearChildren();
+    virtual void addChildren() OVERRIDE;
+    virtual void clearChildren() OVERRIDE;
     
     AccessibilityChildrenVector& columns();
     AccessibilityChildrenVector& rows();
@@ -59,9 +59,9 @@ public:
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();
     unsigned rowCount();
-    virtual int tableLevel() const;
+    virtual int tableLevel() const OVERRIDE;
     
-    virtual String title() const;
+    virtual String title() const OVERRIDE;
     
     // all the cells in the table
     void cells(AccessibilityChildrenVector&);

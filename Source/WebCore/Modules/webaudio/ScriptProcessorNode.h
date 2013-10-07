@@ -58,10 +58,10 @@ public:
     virtual ~ScriptProcessorNode();
 
     // AudioNode
-    virtual void process(size_t framesToProcess);
-    virtual void reset();
-    virtual void initialize();
-    virtual void uninitialize();
+    virtual void process(size_t framesToProcess) OVERRIDE;
+    virtual void reset() OVERRIDE;
+    virtual void initialize() OVERRIDE;
+    virtual void uninitialize() OVERRIDE;
 
     size_t bufferSize() const { return m_bufferSize; }
 

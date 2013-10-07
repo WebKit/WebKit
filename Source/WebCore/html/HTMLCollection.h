@@ -38,7 +38,7 @@ public:
     virtual ~HTMLCollection();
 
     // DOM API
-    virtual Node* namedItem(const AtomicString& name) const;
+    virtual Node* namedItem(const AtomicString& name) const OVERRIDE;
     PassRefPtr<NodeList> tags(const String&);
 
     // Non-DOM API

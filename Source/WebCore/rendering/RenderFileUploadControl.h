@@ -46,19 +46,19 @@ private:
 
     virtual bool isFileUploadControl() const OVERRIDE { return true; }
 
-    virtual const char* renderName() const { return "RenderFileUploadControl"; }
+    virtual const char* renderName() const OVERRIDE { return "RenderFileUploadControl"; }
 
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
-    virtual void updateFromElement();
+    virtual void updateFromElement() OVERRIDE;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-    virtual void computePreferredLogicalWidths();
-    virtual void paintObject(PaintInfo&, const LayoutPoint&);
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
 
     int maxFilenameWidth() const;
     
-    virtual VisiblePosition positionForPoint(const LayoutPoint&);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
 
     HTMLInputElement* uploadButton() const;
 

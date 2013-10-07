@@ -41,7 +41,7 @@ class IncrementalSweeper : public HeapTimer {
 public:
     static PassOwnPtr<IncrementalSweeper> create(Heap*);
     void startSweeping(Vector<MarkedBlock*>&);
-    virtual void doWork();
+    virtual void doWork() OVERRIDE;
     void sweepNextBlock();
     void willFinishSweeping();
 

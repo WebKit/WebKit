@@ -47,23 +47,23 @@ public:
     
     AccessibilityObject* headerObject();
         
-    virtual AccessibilityRole roleValue() const { return ColumnRole; }
-    virtual bool isTableColumn() const { return true; }
+    virtual AccessibilityRole roleValue() const OVERRIDE { return ColumnRole; }
+    virtual bool isTableColumn() const OVERRIDE { return true; }
     
     void setColumnIndex(int columnIndex) { m_columnIndex = columnIndex; }
     int columnIndex() const { return m_columnIndex; }    
     
-    virtual void addChildren();
-    virtual void setParent(AccessibilityObject*);
+    virtual void addChildren() OVERRIDE;
+    virtual void setParent(AccessibilityObject*) OVERRIDE;
     
-    virtual LayoutRect elementRect() const;
+    virtual LayoutRect elementRect() const OVERRIDE;
     
 private:    
     unsigned m_columnIndex;
     LayoutRect m_columnRect;
     
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);
-    virtual bool computeAccessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
    
 } // namespace WebCore 

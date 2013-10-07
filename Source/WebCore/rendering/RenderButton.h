@@ -42,17 +42,17 @@ public:
 
     virtual bool canBeSelectionLeaf() const OVERRIDE;
 
-    virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
-    virtual void removeChild(RenderObject*);
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
-    virtual bool createsAnonymousWrapper() const { return true; }
+    virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0) OVERRIDE;
+    virtual void removeChild(RenderObject*) OVERRIDE;
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { }
+    virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
 
     void setupInnerStyle(RenderStyle*);
-    virtual void updateFromElement();
+    virtual void updateFromElement() OVERRIDE;
 
     virtual bool canHaveGeneratedChildren() const OVERRIDE;
-    virtual bool hasControlClip() const { return true; }
-    virtual LayoutRect controlClipRect(const LayoutPoint&) const;
+    virtual bool hasControlClip() const OVERRIDE { return true; }
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const OVERRIDE;
 
     void setText(const String&);
     String text() const;
@@ -63,12 +63,12 @@ private:
     virtual const char* renderName() const OVERRIDE { return "RenderButton"; }
     virtual bool isRenderButton() const OVERRIDE { return true; }
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     virtual bool hasLineIfEmpty() const OVERRIDE;
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
 
     void timerFired(Timer<RenderButton>*);
 

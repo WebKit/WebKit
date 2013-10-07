@@ -55,7 +55,7 @@ class RootObject : public RefCounted<RootObject>, private JSC::WeakHandleOwner {
     friend class JavaJSObject;
 
 public:
-    ~RootObject();
+    virtual ~RootObject();
     
     static PassRefPtr<RootObject> create(const void* nativeHandle, JSGlobalObject*);
 
@@ -83,7 +83,7 @@ private:
     RootObject(const void* nativeHandle, JSGlobalObject*);
 
     // WeakHandleOwner
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) OVERRIDE;
 
     bool m_isValid;
     

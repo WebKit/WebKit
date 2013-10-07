@@ -62,9 +62,9 @@ public:
         return adoptRef(new LinearTimingFunction);
     }
     
-    ~LinearTimingFunction() { }
+    virtual ~LinearTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other)
+    virtual bool operator==(const TimingFunction& other) OVERRIDE
     {
         return other.isLinearTimingFunction();
     }
@@ -113,9 +113,9 @@ public:
         }
     }
 
-    ~CubicBezierTimingFunction() { }
+    virtual ~CubicBezierTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other)
+    virtual bool operator==(const TimingFunction& other) OVERRIDE
     {
         if (other.isCubicBezierTimingFunction()) {
             const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(&other);
@@ -165,9 +165,9 @@ public:
         return adoptRef(new StepsTimingFunction(steps, stepAtStart));
     }
     
-    ~StepsTimingFunction() { }
+    virtual ~StepsTimingFunction() { }
     
-    virtual bool operator==(const TimingFunction& other)
+    virtual bool operator==(const TimingFunction& other) OVERRIDE
     {
         if (other.isStepsTimingFunction()) {
             const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(&other);

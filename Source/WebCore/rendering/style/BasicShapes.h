@@ -93,7 +93,7 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const { return BasicShapeRectangleType; }
+    virtual Type type() const OVERRIDE { return BasicShapeRectangleType; }
 private:
     BasicShapeRectangle() { }
 
@@ -120,7 +120,7 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const { return BasicShapeCircleType; }
+    virtual Type type() const OVERRIDE { return BasicShapeCircleType; }
 private:
     BasicShapeCircle() { }
 
@@ -146,7 +146,7 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const { return BasicShapeEllipseType; } 
+    virtual Type type() const OVERRIDE { return BasicShapeEllipseType; }
 private:
     BasicShapeEllipse() { }
 
@@ -170,9 +170,9 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual WindRule windRule() const { return m_windRule; }
+    virtual WindRule windRule() const OVERRIDE { return m_windRule; }
 
-    virtual Type type() const { return BasicShapePolygonType; }
+    virtual Type type() const OVERRIDE { return BasicShapePolygonType; }
 private:
     BasicShapePolygon()
         : m_windRule(RULE_NONZERO)
@@ -211,7 +211,7 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const { return BasicShapeInsetRectangleType; }
+    virtual Type type() const OVERRIDE { return BasicShapeInsetRectangleType; }
 private:
     BasicShapeInsetRectangle() { }
 

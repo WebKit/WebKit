@@ -35,7 +35,7 @@ public:
     explicit RenderTextControlSingleLine(HTMLInputElement&);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
-    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
+    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const OVERRIDE;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
 
     void capsLockStateMayHaveChanged();
@@ -114,7 +114,7 @@ public:
     RenderTextControlInnerBlock(Element* element) : RenderBlockFlow(element) { }
 
 private:
-    virtual bool hasLineIfEmpty() const { return true; }
+    virtual bool hasLineIfEmpty() const OVERRIDE { return true; }
 };
 
 }

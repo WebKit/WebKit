@@ -106,17 +106,17 @@ public:
     MediaPlayer* player() const { return m_player.get(); }
 
     virtual bool isVideo() const { return false; }
-    virtual bool hasVideo() const { return false; }
-    virtual bool hasAudio() const;
+    virtual bool hasVideo() const OVERRIDE { return false; }
+    virtual bool hasAudio() const OVERRIDE;
 
     void rewind(double timeDelta);
-    void returnToRealtime();
+    virtual void returnToRealtime() OVERRIDE;
 
     // Eventually overloaded in HTMLVideoElement
-    virtual bool supportsFullscreen() const { return false; };
+    virtual bool supportsFullscreen() const OVERRIDE { return false; };
 
     virtual bool supportsSave() const;
-    virtual bool supportsScanning() const;
+    virtual bool supportsScanning() const OVERRIDE;
     
     PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)
@@ -149,37 +149,37 @@ public:
     String preload() const;    
     void setPreload(const String&);
 
-    PassRefPtr<TimeRanges> buffered() const;
+    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
     void load();
     String canPlayType(const String& mimeType, const String& keySystem = String(), const URL& = URL()) const;
 
 // ready state
-    ReadyState readyState() const;
+    virtual ReadyState readyState() const OVERRIDE;
     bool seeking() const;
 
 // playback state
-    double currentTime() const;
-    void setCurrentTime(double, ExceptionCode&);
+    virtual double currentTime() const OVERRIDE;
+    virtual void setCurrentTime(double, ExceptionCode&) OVERRIDE;
     double initialTime() const;
     double startTime() const;
-    double duration() const;
-    bool paused() const;
-    double defaultPlaybackRate() const;
-    void setDefaultPlaybackRate(double);
-    double playbackRate() const;
-    void setPlaybackRate(double);
+    virtual double duration() const OVERRIDE;
+    virtual bool paused() const OVERRIDE;
+    virtual double defaultPlaybackRate() const OVERRIDE;
+    virtual void setDefaultPlaybackRate(double) OVERRIDE;
+    virtual double playbackRate() const OVERRIDE;
+    virtual void setPlaybackRate(double) OVERRIDE;
     void updatePlaybackRate();
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
-    PassRefPtr<TimeRanges> played();
-    PassRefPtr<TimeRanges> seekable() const;
+    virtual PassRefPtr<TimeRanges> played() OVERRIDE;
+    virtual PassRefPtr<TimeRanges> seekable() const OVERRIDE;
     bool ended() const;
     bool autoplay() const;    
     void setAutoplay(bool b);
     bool loop() const;    
     void setLoop(bool b);
-    void play();
-    void pause();
+    virtual void play() OVERRIDE;
+    virtual void pause() OVERRIDE;
 
 // captions
     bool webkitHasClosedCaptions() const;
@@ -220,16 +220,16 @@ public:
 // controls
     bool controls() const;
     void setControls(bool);
-    double volume() const;
-    void setVolume(double, ExceptionCode&);
-    bool muted() const;
-    void setMuted(bool);
+    virtual double volume() const OVERRIDE;
+    virtual void setVolume(double, ExceptionCode&) OVERRIDE;
+    virtual bool muted() const OVERRIDE;
+    virtual void setMuted(bool) OVERRIDE;
 
     void togglePlayState();
-    void beginScrubbing();
-    void endScrubbing();
+    virtual void beginScrubbing() OVERRIDE;
+    virtual void endScrubbing() OVERRIDE;
     
-    bool canPlay() const;
+    virtual bool canPlay() const OVERRIDE;
 
     double percentLoaded() const;
 
@@ -300,19 +300,19 @@ public:
     void updateTextTrackDisplay();
 
     // AudioTrackClient
-    virtual void audioTrackEnabledChanged(AudioTrack*);
+    virtual void audioTrackEnabledChanged(AudioTrack*) OVERRIDE;
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
-    virtual void textTrackKindChanged(TextTrack*);
-    virtual void textTrackModeChanged(TextTrack*);
-    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*);
-    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*);
-    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>);
-    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
+    virtual void textTrackKindChanged(TextTrack*) OVERRIDE;
+    virtual void textTrackModeChanged(TextTrack*) OVERRIDE;
+    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) OVERRIDE;
+    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) OVERRIDE;
+    virtual void textTrackAddCue(TextTrack*, PassRefPtr<TextTrackCue>) OVERRIDE;
+    virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) OVERRIDE;
 
     // VideoTrackClient
-    virtual void videoTrackSelectedChanged(VideoTrack*);
+    virtual void videoTrackSelectedChanged(VideoTrack*) OVERRIDE;
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
@@ -337,21 +337,21 @@ public:
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     
-    bool isFullscreen() const;
+    virtual bool isFullscreen() const OVERRIDE;
     void toggleFullscreenState();
-    void enterFullscreen();
+    virtual void enterFullscreen() OVERRIDE;
     void exitFullscreen();
 
-    bool hasClosedCaptions() const;
-    bool closedCaptionsVisible() const;
-    void setClosedCaptionsVisible(bool);
+    virtual bool hasClosedCaptions() const OVERRIDE;
+    virtual bool closedCaptionsVisible() const OVERRIDE;
+    virtual void setClosedCaptionsVisible(bool) OVERRIDE;
 
     MediaControls* mediaControls() const;
 
     void sourceWasRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
 
-    void privateBrowsingStateDidChange();
+    virtual void privateBrowsingStateDidChange() OVERRIDE;
 
     // Media cache management.
     static void getSitesInMediaCache(Vector<String>&);
@@ -361,7 +361,7 @@ public:
 
     bool isPlaying() const { return m_playing; }
 
-    virtual bool hasPendingActivity() const;
+    virtual bool hasPendingActivity() const OVERRIDE;
 
 #if ENABLE(WEB_AUDIO)
     MediaElementAudioSourceNode* audioSourceNode() { return m_audioSourceNode; }
@@ -390,7 +390,7 @@ protected:
     virtual ~HTMLMediaElement();
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual void willAttachRenderers() OVERRIDE;
     virtual void didAttachRenderers() OVERRIDE;
@@ -401,7 +401,7 @@ protected:
     DisplayMode displayMode() const { return m_displayMode; }
     virtual void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
     
-    virtual bool isMediaElement() const { return true; }
+    virtual bool isMediaElement() const OVERRIDE { return true; }
 
     // Restrictions to change default behaviors.
     enum BehaviorRestrictionFlags {
@@ -438,17 +438,17 @@ private:
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
     virtual void removedFrom(ContainerNode&) OVERRIDE;
-    virtual void didRecalcStyle(Style::Change);
+    virtual void didRecalcStyle(Style::Change) OVERRIDE;
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
 
-    virtual void didBecomeFullscreenElement();
-    virtual void willStopBeingFullscreenElement();
+    virtual void didBecomeFullscreenElement() OVERRIDE;
+    virtual void willStopBeingFullscreenElement() OVERRIDE;
 
     // ActiveDOMObject functions.
     virtual bool canSuspend() const OVERRIDE;
@@ -456,34 +456,34 @@ private:
     virtual void resume() OVERRIDE;
     virtual void stop() OVERRIDE;
     
-    virtual void mediaVolumeDidChange();
+    virtual void mediaVolumeDidChange() OVERRIDE;
 
     virtual void updateDisplayState() { }
     
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
-    virtual Document* mediaPlayerOwningDocument();
-    virtual void mediaPlayerNetworkStateChanged(MediaPlayer*);
-    virtual void mediaPlayerReadyStateChanged(MediaPlayer*);
-    virtual void mediaPlayerTimeChanged(MediaPlayer*);
-    virtual void mediaPlayerVolumeChanged(MediaPlayer*);
-    virtual void mediaPlayerMuteChanged(MediaPlayer*);
-    virtual void mediaPlayerDurationChanged(MediaPlayer*);
-    virtual void mediaPlayerRateChanged(MediaPlayer*);
-    virtual void mediaPlayerPlaybackStateChanged(MediaPlayer*);
-    virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*);
-    virtual void mediaPlayerResourceNotSupported(MediaPlayer*);
-    virtual void mediaPlayerRepaint(MediaPlayer*);
-    virtual void mediaPlayerSizeChanged(MediaPlayer*);
+    virtual Document* mediaPlayerOwningDocument() OVERRIDE;
+    virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerReadyStateChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerTimeChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerVolumeChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerMuteChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerDurationChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerRateChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerPlaybackStateChanged(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerResourceNotSupported(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerRepaint(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerSizeChanged(MediaPlayer*) OVERRIDE;
 #if USE(ACCELERATED_COMPOSITING)
-    virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*);
-    virtual void mediaPlayerRenderingModeChanged(MediaPlayer*);
+    virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerRenderingModeChanged(MediaPlayer*) OVERRIDE;
 #endif
-    virtual void mediaPlayerEngineUpdated(MediaPlayer*);
+    virtual void mediaPlayerEngineUpdated(MediaPlayer*) OVERRIDE;
     
-    virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*);
-    virtual void mediaPlayerCharacteristicChanged(MediaPlayer*);
+    virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) OVERRIDE;
+    virtual void mediaPlayerCharacteristicChanged(MediaPlayer*) OVERRIDE;
 
 #if ENABLE(ENCRYPTED_MEDIA)
     virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId) OVERRIDE;
@@ -493,7 +493,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*);
+    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) OVERRIDE;
 #endif
 
     virtual String mediaPlayerReferrer() const OVERRIDE;
@@ -596,7 +596,7 @@ private:
 
     void setPlaybackRateInternal(double);
 
-    virtual void mediaCanStart();
+    virtual void mediaCanStart() OVERRIDE;
 
     void setShouldDelayLoadEvent(bool);
     void invalidateCachedTime();
@@ -616,8 +616,8 @@ private:
     void updateMediaController();
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;
-    bool hasCurrentSrc() const { return !m_currentSrc.isEmpty(); }
-    bool isLiveStream() const { return movieLoadType() == MediaPlayer::LiveStream; }
+    virtual bool hasCurrentSrc() const OVERRIDE { return !m_currentSrc.isEmpty(); }
+    virtual bool isLiveStream() const OVERRIDE { return movieLoadType() == MediaPlayer::LiveStream; }
     bool isAutoplaying() const { return m_autoplaying; }
 
 #if PLATFORM(MAC)

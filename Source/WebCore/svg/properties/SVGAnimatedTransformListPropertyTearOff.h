@@ -29,14 +29,14 @@ namespace WebCore {
 
 class SVGAnimatedTransformListPropertyTearOff : public SVGAnimatedListPropertyTearOff<SVGTransformList> {
 public:
-    virtual SVGListPropertyTearOff<SVGTransformList>* baseVal()
+    virtual SVGListPropertyTearOff<SVGTransformList>* baseVal() OVERRIDE
     {
         if (!m_baseVal)
             m_baseVal = SVGTransformListPropertyTearOff::create(this, BaseValRole, m_values, m_wrappers);
         return static_cast<SVGListPropertyTearOff<SVGTransformList>*>(m_baseVal.get());
     }
 
-    virtual SVGListPropertyTearOff<SVGTransformList>* animVal()
+    virtual SVGListPropertyTearOff<SVGTransformList>* animVal() OVERRIDE
     {
         if (!m_animVal)
             m_animVal = SVGTransformListPropertyTearOff::create(this, AnimValRole, m_values, m_wrappers);

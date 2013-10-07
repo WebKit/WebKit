@@ -111,7 +111,7 @@ public:
         : m_object(o), m_function(f) { }
 
 private:
-    virtual void fired() { (m_object->*m_function)(this); }
+    virtual void fired() OVERRIDE { (m_object->*m_function)(this); }
 
     TimerFiredClass* m_object;
     TimerFiredFunction m_function;
@@ -157,7 +157,7 @@ public:
     using TimerBase::isActive;
 
 private:
-    virtual void fired()
+    virtual void fired() OVERRIDE
     {
         if (m_shouldRestartWhenTimerFires) {
             m_shouldRestartWhenTimerFires = false;

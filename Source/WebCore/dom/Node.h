@@ -520,14 +520,14 @@ public:
 
     unsigned short compareDocumentPosition(Node*);
 
-    virtual Node* toNode();
+    virtual Node* toNode() OVERRIDE;
     virtual HTMLInputElement* toInputElement();
 
     virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL; // Implemented in Document.h
 
-    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
 
     using EventTarget::dispatchEvent;
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
@@ -675,8 +675,8 @@ private:
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
     bool isEditableToAccessibility(EditableLevel) const;
 
-    virtual void refEventTarget();
-    virtual void derefEventTarget();
+    virtual void refEventTarget() OVERRIDE;
+    virtual void derefEventTarget() OVERRIDE;
 
     virtual RenderStyle* nonRendererStyle() const { return 0; }
     virtual RenderStyle* virtualComputedStyle(PseudoId = NOPSEUDO);

@@ -38,9 +38,9 @@ public:
     RenderMathMLOperator(Element*);
     RenderMathMLOperator(Element*, UChar operatorChar);
 
-    virtual bool isRenderMathMLOperator() const { return true; }
+    virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
     
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
     virtual void updateFromElement() OVERRIDE;
     
     virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
@@ -58,7 +58,7 @@ protected:
     RenderBlock* createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative);
     
 private:
-    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
 
     int glyphHeightForCharacter(UChar);
 

@@ -52,7 +52,7 @@ public:
     }
 
 private:
-    virtual void performTask()
+    virtual void performTask() OVERRIDE
     {
         (*static_cast<T*>(instance()).*m_method)();
     }
@@ -76,7 +76,7 @@ public:
     }
 
 private:
-    virtual void performTask()
+    virtual void performTask() OVERRIDE
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1);
     }
@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    virtual void performTask()
+    virtual void performTask() OVERRIDE
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2);
     }
@@ -133,7 +133,7 @@ public:
     }
 
 private:
-    virtual void performTask()
+    virtual void performTask() OVERRIDE
     {
         (*static_cast<T*>(instance()).*m_method)(m_parameter1, m_parameter2, m_parameter3);
     }

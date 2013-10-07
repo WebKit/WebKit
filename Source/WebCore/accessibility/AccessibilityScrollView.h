@@ -37,15 +37,15 @@ class ScrollView;
 class AccessibilityScrollView : public AccessibilityObject {
 public:
     static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
-    virtual AccessibilityRole roleValue() const { return ScrollAreaRole; }
+    virtual AccessibilityRole roleValue() const OVERRIDE { return ScrollAreaRole; }
     ScrollView* scrollView() const { return m_scrollView; }
 
     virtual ~AccessibilityScrollView();
-    virtual void detach();
+    virtual void detach() OVERRIDE;
 
 protected:
-    virtual ScrollableArea* getScrollableAreaIfScrollable() const;
-    virtual void scrollTo(const IntPoint&) const;
+    virtual ScrollableArea* getScrollableAreaIfScrollable() const OVERRIDE;
+    virtual void scrollTo(const IntPoint&) const OVERRIDE;
     
 private:
     explicit AccessibilityScrollView(ScrollView*);

@@ -40,7 +40,7 @@ public:
     {
         return adoptRef(new TextTrackList(element, context));
     }
-    ~TextTrackList();
+    virtual ~TextTrackList();
 
     virtual unsigned length() const OVERRIDE;
     int getTrackIndex(TextTrack*);

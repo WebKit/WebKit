@@ -41,7 +41,7 @@ public:
     static PassRefPtr<AccessibilityTableCell> create(RenderObject*);
     virtual ~AccessibilityTableCell();
     
-    virtual bool isTableCell() const;
+    virtual bool isTableCell() const OVERRIDE;
     
     // fills in the start location and row span of cell
     virtual void rowIndexRange(pair<unsigned, unsigned>& rowRange);
@@ -51,13 +51,13 @@ public:
 protected:
     virtual AccessibilityObject* parentTable() const;
     int m_rowIndex;
-    virtual AccessibilityRole determineAccessibilityRole();
+    virtual AccessibilityRole determineAccessibilityRole() OVERRIDE;
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
-    virtual AccessibilityObject* titleUIElement() const;
-    virtual bool exposesTitleUIElement() const { return true; }
-    virtual bool computeAccessibilityIsIgnored() const;
+    virtual AccessibilityObject* titleUIElement() const OVERRIDE;
+    virtual bool exposesTitleUIElement() const OVERRIDE { return true; }
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 }; 
     
 } // namespace WebCore 

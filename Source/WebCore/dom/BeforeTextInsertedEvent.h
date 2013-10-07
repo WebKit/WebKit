@@ -39,8 +39,8 @@ public:
         return adoptRef(new BeforeTextInsertedEvent(text));
     }
 
-    virtual EventInterface eventInterface() const;
-    virtual bool isBeforeTextInsertedEvent() const { return true; }
+    virtual EventInterface eventInterface() const OVERRIDE;
+    virtual bool isBeforeTextInsertedEvent() const OVERRIDE { return true; }
 
     const String& text() const { return m_text; }
     void setText(const String& s) { m_text = s; }

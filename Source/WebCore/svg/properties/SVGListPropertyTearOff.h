@@ -121,7 +121,7 @@ protected:
     {
     }
 
-    virtual bool isReadOnly() const
+    virtual bool isReadOnly() const OVERRIDE
     {
         if (m_role == AnimValRole)
             return true;
@@ -130,7 +130,7 @@ protected:
         return false;
     }
 
-    virtual void commitChange()
+    virtual void commitChange() OVERRIDE
     {
         ASSERT(m_values);
         ASSERT(m_wrappers);
@@ -149,13 +149,13 @@ protected:
         m_animatedProperty->commitChange();
     }
 
-    virtual bool processIncomingListItemValue(const ListItemType&, unsigned*)
+    virtual bool processIncomingListItemValue(const ListItemType&, unsigned*) OVERRIDE
     {
         ASSERT_NOT_REACHED();
         return true;
     }
 
-    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify)
+    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify) OVERRIDE
     {
         SVGAnimatedProperty* animatedPropertyOfItem = newItem->animatedProperty();
 

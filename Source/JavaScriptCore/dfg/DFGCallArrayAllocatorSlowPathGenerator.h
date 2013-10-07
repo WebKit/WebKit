@@ -54,7 +54,7 @@ public:
     }
 
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         linkFrom(jit);
         for (unsigned i = 0; i < m_plans.size(); ++i)
@@ -92,7 +92,7 @@ public:
     }
 
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         linkFrom(jit);
         for (unsigned i = 0; i < m_plans.size(); ++i)

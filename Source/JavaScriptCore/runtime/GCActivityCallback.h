@@ -80,11 +80,11 @@ public:
 
     DefaultGCActivityCallback(Heap*);
 
-    virtual void didAllocate(size_t);
-    virtual void willCollect();
-    virtual void cancel();
+    virtual void didAllocate(size_t) OVERRIDE;
+    virtual void willCollect() OVERRIDE;
+    virtual void cancel() OVERRIDE;
     
-    virtual void doWork();
+    virtual void doWork() OVERRIDE;
 
 #if USE(CF)
 protected:

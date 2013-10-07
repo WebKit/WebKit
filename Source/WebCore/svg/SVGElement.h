@@ -142,10 +142,10 @@ protected:
     SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() OVERRIDE;
     virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
 
@@ -171,8 +171,8 @@ private:
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
-    virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
-    virtual bool willRecalcStyle(Style::Change);
+    virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) OVERRIDE { return computedStyle(pseudoElementSpecifier); }
+    virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

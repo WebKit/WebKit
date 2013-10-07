@@ -43,9 +43,9 @@ class RenderMathMLBlock : public RenderFlexibleBox {
 public:
     RenderMathMLBlock(Element* container);
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
     
-    virtual bool isRenderMathMLBlock() const { return true; }
+    virtual bool isRenderMathMLBlock() const OVERRIDE { return true; }
     virtual bool isRenderMathMLOperator() const { return false; }
     virtual bool isRenderMathMLRow() const { return false; }
     virtual bool isRenderMathMLMath() const { return false; }

@@ -45,13 +45,13 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool isFocusable() const OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
     virtual void didAttachRenderers() OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 
     // <optgroup> never has a renderer so we manually manage a cached style.
     void updateNonRenderStyle();

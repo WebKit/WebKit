@@ -60,9 +60,9 @@ protected:
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
     virtual RenderStyle* textBaseStyle() const = 0;
 
-    virtual void updateFromElement();
+    virtual void updateFromElement() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
-    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) OVERRIDE;
 
 private:
     void element() const WTF_DELETED_FUNCTION;
@@ -71,16 +71,16 @@ private:
     virtual bool isTextControl() const OVERRIDE FINAL { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
+    virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { }
     virtual bool avoidsFloats() const OVERRIDE { return true; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
     
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
 
-    virtual bool canBeProgramaticallyScrolled() const { return true; }
+    virtual bool canBeProgramaticallyScrolled() const OVERRIDE { return true; }
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
 };
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)

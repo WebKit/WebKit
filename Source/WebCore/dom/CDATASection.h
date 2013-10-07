@@ -34,11 +34,11 @@ public:
 private:
     CDATASection(Document&, const String&);
 
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
-    virtual PassRefPtr<Text> virtualCreate(const String&);
+    virtual String nodeName() const OVERRIDE;
+    virtual NodeType nodeType() const OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
+    virtual PassRefPtr<Text> virtualCreate(const String&) OVERRIDE;
 };
 
 inline bool isCDATASection(const Node& node)

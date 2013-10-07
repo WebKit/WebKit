@@ -41,14 +41,14 @@ public:
     static PassRefPtr<AccessibilityList> create(RenderObject*);
     virtual ~AccessibilityList();
     
-    virtual bool isList() const { return true; }
+    virtual bool isList() const OVERRIDE { return true; }
     bool isUnorderedList() const;
     bool isOrderedList() const;
     bool isDescriptionList() const;
 
-    virtual AccessibilityRole roleValue() const { return ListRole; }
+    virtual AccessibilityRole roleValue() const OVERRIDE { return ListRole; }
 private:
-    virtual bool computeAccessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
     
 inline AccessibilityList* toAccessibilityList(AccessibilityObject* object)

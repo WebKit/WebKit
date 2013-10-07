@@ -74,7 +74,7 @@ public:
     const String& fragment() const { return m_fragment; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& o) const
+    virtual bool operator==(const ClipPathOperation& o) const OVERRIDE
     {
         if (!isSameType(o))
             return false;
@@ -112,7 +112,7 @@ public:
     }
 
 private:
-    virtual bool operator==(const ClipPathOperation& o) const
+    virtual bool operator==(const ClipPathOperation& o) const OVERRIDE
     {
         if (!isSameType(o))
             return false;

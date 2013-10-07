@@ -39,17 +39,17 @@ protected:
 public:
     JS_EXPORT_PRIVATE static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     
-    virtual unsigned byteLength() const
+    virtual unsigned byteLength() const OVERRIDE
     {
         return m_byteLength;
     }
     
-    virtual TypedArrayType getType() const
+    virtual TypedArrayType getType() const OVERRIDE
     {
         return TypeDataView;
     }
 
-    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*);
+    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) OVERRIDE;
     
     template<typename T>
     T get(unsigned offset, bool littleEndian, bool* status = 0)

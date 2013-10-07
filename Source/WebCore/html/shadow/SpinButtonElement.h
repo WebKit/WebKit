@@ -69,13 +69,13 @@ public:
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);
 
-    virtual const AtomicString& shadowPseudoId() const;
+    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;
-    virtual bool isSpinButtonElement() const { return true; }
+    virtual bool isSpinButtonElement() const OVERRIDE { return true; }
     virtual bool isDisabledFormControl() const OVERRIDE { return shadowHost() && shadowHost()->isDisabledFormControl(); }
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
     virtual void willOpenPopup() OVERRIDE;
     void doStepAction(int);
     void startRepeatingTimer();
@@ -83,7 +83,7 @@ private:
     void repeatingTimerFired(Timer<SpinButtonElement>*);
     virtual void setHovered(bool = true) OVERRIDE;
     bool shouldRespondToMouseEvents();
-    virtual bool isMouseFocusable() const { return false; }
+    virtual bool isMouseFocusable() const OVERRIDE { return false; }
 
     SpinButtonOwner* m_spinButtonOwner;
     bool m_capturing;

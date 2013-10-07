@@ -70,7 +70,7 @@ public:
     static void dispatchPendingErrorEvents();
 
 protected:
-    virtual void notifyFinished(CachedResource*);
+    virtual void notifyFinished(CachedResource*) OVERRIDE;
 
 private:
     virtual void dispatchLoadEvent() = 0;

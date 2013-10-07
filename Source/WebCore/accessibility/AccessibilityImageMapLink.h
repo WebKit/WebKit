@@ -49,24 +49,24 @@ public:
     void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }    
     HTMLMapElement* mapElement() const { return m_mapElement.get(); }
     
-    virtual Node* node() const { return m_areaElement.get(); }
+    virtual Node* node() const OVERRIDE { return m_areaElement.get(); }
         
-    virtual AccessibilityRole roleValue() const;
-    virtual bool isEnabled() const { return true; }
+    virtual AccessibilityRole roleValue() const OVERRIDE;
+    virtual bool isEnabled() const OVERRIDE { return true; }
     
-    virtual Element* anchorElement() const;
-    virtual Element* actionElement() const;
-    virtual URL url() const;
-    virtual bool isLink() const { return true; } 
-    virtual bool isLinked() const { return true; }
-    virtual String title() const;
-    virtual String accessibilityDescription() const;
-    virtual AccessibilityObject* parentObject() const;
+    virtual Element* anchorElement() const OVERRIDE;
+    virtual Element* actionElement() const OVERRIDE;
+    virtual URL url() const OVERRIDE;
+    virtual bool isLink() const OVERRIDE { return true; }
+    virtual bool isLinked() const OVERRIDE { return true; }
+    virtual String title() const OVERRIDE;
+    virtual String accessibilityDescription() const OVERRIDE;
+    virtual AccessibilityObject* parentObject() const OVERRIDE;
     
-    virtual String stringValueForMSAA() const;
-    virtual String nameForMSAA() const;
+    virtual String stringValueForMSAA() const OVERRIDE;
+    virtual String nameForMSAA() const OVERRIDE;
 
-    virtual LayoutRect elementRect() const;
+    virtual LayoutRect elementRect() const OVERRIDE;
 
 private:    
     RefPtr<HTMLAreaElement> m_areaElement;
@@ -74,11 +74,11 @@ private:
 
     virtual void detachFromParent() OVERRIDE;
 
-    virtual Path elementPath() const;
+    virtual Path elementPath() const OVERRIDE;
     RenderElement* imageMapLinkRenderer() const;
     virtual void accessibilityText(Vector<AccessibilityText>&) OVERRIDE;
-    virtual bool isImageMapLink() const { return true; }
-    virtual bool supportsPath() const { return true; }
+    virtual bool isImageMapLink() const OVERRIDE { return true; }
+    virtual bool supportsPath() const OVERRIDE { return true; }
 };
     
 } // namespace WebCore

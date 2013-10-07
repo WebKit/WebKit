@@ -69,7 +69,7 @@ namespace WebCore {
         virtual URL completeURL(const String&) const OVERRIDE FINAL;
 
         const GroupSettings* groupSettings() { return m_groupSettings.get(); }
-        virtual String userAgent(const URL&) const;
+        virtual String userAgent(const URL&) const OVERRIDE;
 
         virtual void disableEval(const String& errorMessage) OVERRIDE;
 

@@ -62,15 +62,15 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
 
-    virtual HTMLInputElement* toInputElement() { return this; }
+    virtual HTMLInputElement* toInputElement() OVERRIDE { return this; }
 
-    virtual bool shouldAutocomplete() const;
+    virtual bool shouldAutocomplete() const OVERRIDE;
 
     // For ValidityState
     virtual bool hasBadInput() const OVERRIDE;
     virtual bool patternMismatch() const OVERRIDE;
     virtual bool rangeUnderflow() const OVERRIDE;
-    virtual bool rangeOverflow() const;
+    virtual bool rangeOverflow() const OVERRIDE;
     virtual bool stepMismatch() const OVERRIDE;
     virtual bool tooLong() const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
@@ -138,7 +138,7 @@ public:
 #endif
 
     HTMLElement* containerElement() const;
-    virtual HTMLElement* innerTextElement() const;
+    virtual HTMLElement* innerTextElement() const OVERRIDE;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
@@ -148,7 +148,7 @@ public:
 #endif
     HTMLElement* sliderThumbElement() const;
     HTMLElement* sliderTrackElement() const;
-    virtual HTMLElement* placeholderElement() const;
+    virtual HTMLElement* placeholderElement() const OVERRIDE;
 
     bool checked() const { return m_isChecked; }
     void setChecked(bool, TextFieldEventBehavior = DispatchNoEvent);
@@ -166,7 +166,7 @@ public:
 
     void setType(const String&);
 
-    String value() const;
+    virtual String value() const OVERRIDE;
     void setValue(const String&, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
     void setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
     void setValueForUser(const String&);
@@ -199,8 +199,8 @@ public:
 
     bool canHaveSelection() const;
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
     virtual void willAttachRenderers() OVERRIDE;
     virtual void didAttachRenderers() OVERRIDE;
     virtual void didDetachRenderers() OVERRIDE;
@@ -208,8 +208,8 @@ public:
     // FIXME: For isActivatedSubmit and setActivatedSubmit, we should use the NVI-idiom here by making
     // it private virtual in all classes and expose a public method in HTMLFormControlElement to call
     // the private virtual method.
-    virtual bool isActivatedSubmit() const;
-    virtual void setActivatedSubmit(bool flag);
+    virtual bool isActivatedSubmit() const OVERRIDE;
+    virtual void setActivatedSubmit(bool flag) OVERRIDE;
 
     String altText() const;
 
@@ -231,7 +231,7 @@ public:
 
     URL src() const;
 
-    virtual int maxLength() const;
+    virtual int maxLength() const OVERRIDE;
     void setMaxLength(int, ExceptionCode&);
 
     bool multiple() const;
@@ -319,7 +319,7 @@ public:
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
 
 private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
@@ -339,48 +339,48 @@ private:
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
-    virtual bool isEnumeratable() const;
+    virtual bool isEnumeratable() const OVERRIDE;
     virtual bool supportLabels() const OVERRIDE;
-    virtual void updateFocusAppearance(bool restorePreviousSelection);
+    virtual void updateFocusAppearance(bool restorePreviousSelection) OVERRIDE;
     virtual bool shouldUseInputMethod() OVERRIDE FINAL;
 
-    virtual bool isTextFormControl() const { return isTextField(); }
+    virtual bool isTextFormControl() const OVERRIDE { return isTextField(); }
 
-    virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
+    virtual bool canTriggerImplicitSubmission() const OVERRIDE { return isTextField(); }
 
-    virtual const AtomicString& formControlType() const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
 
     virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
 
-    virtual bool canStartSelection() const;
+    virtual bool canStartSelection() const OVERRIDE;
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
-    virtual void finishParsingChildren();
+    virtual void finishParsingChildren() OVERRIDE;
 
-    virtual void copyNonAttributePropertiesFromElement(const Element&);
+    virtual void copyNonAttributePropertiesFromElement(const Element&) OVERRIDE;
 
-    virtual bool appendFormData(FormDataList&, bool);
+    virtual bool appendFormData(FormDataList&, bool) OVERRIDE;
 
-    virtual bool isSuccessfulSubmitButton() const;
+    virtual bool isSuccessfulSubmitButton() const OVERRIDE;
 
-    virtual void reset();
+    virtual void reset() OVERRIDE;
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual bool isInRange() const;
-    virtual bool isOutOfRange() const;
+    virtual bool isInRange() const OVERRIDE;
+    virtual bool isOutOfRange() const OVERRIDE;
 
-    virtual void documentDidResumeFromPageCache();
+    virtual void documentDidResumeFromPageCache() OVERRIDE;
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual void documentWillSuspendForPageCache() OVERRIDE;
 #endif
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
 
     bool needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();
@@ -390,21 +390,21 @@ private:
     bool isTextType() const;
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;
 
-    virtual bool supportsPlaceholder() const;
-    virtual void updatePlaceholderText();
+    virtual bool supportsPlaceholder() const OVERRIDE;
+    virtual void updatePlaceholderText() OVERRIDE;
     virtual bool isEmptyValue() const OVERRIDE { return innerTextValue().isEmpty(); }
-    virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
+    virtual bool isEmptySuggestedValue() const OVERRIDE { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) OVERRIDE;
-    virtual void handleBlurEvent();
+    virtual void handleBlurEvent() OVERRIDE;
 
-    virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const;
-    virtual bool recalcWillValidate() const;
+    virtual bool isOptionalFormControl() const OVERRIDE { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const OVERRIDE;
+    virtual bool recalcWillValidate() const OVERRIDE;
     virtual void requiredAttributeChanged() OVERRIDE;
 
     void updateType();
     
-    virtual void subtreeHasChanged();
+    virtual void subtreeHasChanged() OVERRIDE;
 
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();

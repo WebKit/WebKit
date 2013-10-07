@@ -42,7 +42,7 @@ namespace WebCore {
         const String& sheet() const { return m_sheet; }
 
     protected:
-        virtual void checkNotify();
+        virtual void checkNotify() OVERRIDE;
 
         String m_sheet;
         RefPtr<TextResourceDecoder> m_decoder;

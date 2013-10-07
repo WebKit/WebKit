@@ -42,12 +42,12 @@ public:
     virtual ~AccessibilityARIAGridCell();
     
     // fills in the start location and row span of cell
-    virtual void rowIndexRange(pair<unsigned, unsigned>& rowRange);
+    virtual void rowIndexRange(pair<unsigned, unsigned>& rowRange) OVERRIDE;
     // fills in the start location and column span of cell
-    virtual void columnIndexRange(pair<unsigned, unsigned>& columnRange);
+    virtual void columnIndexRange(pair<unsigned, unsigned>& columnRange) OVERRIDE;
     
 protected:
-    virtual AccessibilityObject* parentTable() const;
+    virtual AccessibilityObject* parentTable() const OVERRIDE;
 }; 
     
 } // namespace WebCore 

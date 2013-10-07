@@ -110,7 +110,7 @@ public:
             jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(result));
     }
     
-    virtual MacroAssembler::Call call() const
+    virtual MacroAssembler::Call call() const OVERRIDE
     {
         return m_call;
     }
@@ -160,7 +160,7 @@ public:
     }
     
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         this->setUp(jit);
         this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result)));
@@ -184,7 +184,7 @@ public:
     }
     
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         this->setUp(jit);
         this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), m_argument1));
@@ -212,7 +212,7 @@ public:
     }
     
 protected:
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         this->setUp(jit);
         this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), m_argument1, m_argument2));
@@ -242,7 +242,7 @@ public:
     }
 
 protected:    
-    void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         this->setUp(jit);
         this->recordCall(
@@ -441,7 +441,7 @@ public:
     }
 
 protected:
-    virtual void generateInternal(SpeculativeJIT* jit)
+    virtual void generateInternal(SpeculativeJIT* jit) OVERRIDE
     {
         this->linkFrom(jit);
         for (unsigned i = numberOfAssignments; i--;)

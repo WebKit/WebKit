@@ -59,7 +59,7 @@ namespace WebCore {
         virtual void destroyDecodedData() OVERRIDE;
 
     protected:
-        virtual void checkNotify();
+        virtual void checkNotify() OVERRIDE;
 
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;

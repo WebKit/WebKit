@@ -40,16 +40,16 @@ public:
         return adoptPtr(new DatasetDOMStringMap(element));
     }
 
-    virtual void ref();
-    virtual void deref();
+    virtual void ref() OVERRIDE;
+    virtual void deref() OVERRIDE;
 
-    virtual void getNames(Vector<String>&);
-    virtual String item(const String& name);
-    virtual bool contains(const String& name);
-    virtual void setItem(const String& name, const String& value, ExceptionCode&);
-    virtual void deleteItem(const String& name, ExceptionCode&);
+    virtual void getNames(Vector<String>&) OVERRIDE;
+    virtual String item(const String& name) OVERRIDE;
+    virtual bool contains(const String& name) OVERRIDE;
+    virtual void setItem(const String& name, const String& value, ExceptionCode&) OVERRIDE;
+    virtual void deleteItem(const String& name, ExceptionCode&) OVERRIDE;
 
-    virtual Element* element() { return m_element; }
+    virtual Element* element() OVERRIDE { return m_element; }
 
 private:
     explicit DatasetDOMStringMap(Element* element)

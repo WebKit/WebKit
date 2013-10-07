@@ -42,8 +42,8 @@ public:
     JITFinalizer(Plan&, PassRefPtr<JITCode>, PassOwnPtr<LinkBuffer>, MacroAssembler::Label arityCheck = MacroAssembler::Label());
     virtual ~JITFinalizer();
     
-    bool finalize();
-    bool finalizeFunction();
+    virtual bool finalize() OVERRIDE;
+    virtual bool finalizeFunction() OVERRIDE;
 
 private:
     void finalizeCommon();

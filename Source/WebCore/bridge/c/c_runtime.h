@@ -38,8 +38,8 @@ class CField : public Field {
 public:
     CField(NPIdentifier ident) : _fieldIdentifier(ident) { }
 
-    virtual JSValue valueFromInstance(ExecState*, const Instance*) const;
-    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
+    virtual JSValue valueFromInstance(ExecState*, const Instance*) const OVERRIDE;
+    virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const OVERRIDE;
 
     NPIdentifier identifier() const { return _fieldIdentifier; }
 
@@ -54,7 +54,7 @@ public:
     CMethod(NPIdentifier ident) : _methodIdentifier(ident) { }
 
     NPIdentifier identifier() const { return _methodIdentifier; }
-    virtual int numParameters() const { return 0; }
+    virtual int numParameters() const OVERRIDE { return 0; }
 
 private:
     NPIdentifier _methodIdentifier;

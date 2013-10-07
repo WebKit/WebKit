@@ -50,29 +50,29 @@ public:
     
     void setHTMLElement(HTMLElement* element) { m_optionElement = element; }
     
-    virtual AccessibilityRole roleValue() const { return ListBoxOptionRole; }
-    virtual bool isSelected() const;
-    virtual bool isEnabled() const;
-    virtual bool isSelectedOptionActive() const;
-    virtual String stringValue() const;
-    virtual Element* actionElement() const;
-    virtual Node* node() const { return m_optionElement; }
-    virtual void setSelected(bool);
-    virtual bool canSetSelectedAttribute() const;
+    virtual AccessibilityRole roleValue() const OVERRIDE { return ListBoxOptionRole; }
+    virtual bool isSelected() const OVERRIDE;
+    virtual bool isEnabled() const OVERRIDE;
+    virtual bool isSelectedOptionActive() const OVERRIDE;
+    virtual String stringValue() const OVERRIDE;
+    virtual Element* actionElement() const OVERRIDE;
+    virtual Node* node() const OVERRIDE { return m_optionElement; }
+    virtual void setSelected(bool) OVERRIDE;
+    virtual bool canSetSelectedAttribute() const OVERRIDE;
 
-    virtual LayoutRect elementRect() const;
-    virtual AccessibilityObject* parentObject() const;
+    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual AccessibilityObject* parentObject() const OVERRIDE;
     bool isListBoxOption() const { return true; }
     
 private:
     HTMLElement* m_optionElement;
     
-    virtual bool canHaveChildren() const { return false; }
+    virtual bool canHaveChildren() const OVERRIDE { return false; }
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    virtual bool computeAccessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
     
 } // namespace WebCore 

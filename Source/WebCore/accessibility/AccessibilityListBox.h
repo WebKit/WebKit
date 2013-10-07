@@ -41,20 +41,20 @@ public:
     static PassRefPtr<AccessibilityListBox> create(RenderObject*);
     virtual ~AccessibilityListBox();
     
-    virtual bool isListBox() const { return true; }
+    virtual bool isListBox() const OVERRIDE { return true; }
     
-    virtual bool canSetSelectedChildrenAttribute() const;
+    virtual bool canSetSelectedChildrenAttribute() const OVERRIDE;
     void setSelectedChildren(AccessibilityChildrenVector&);
-    virtual AccessibilityRole roleValue() const { return ListBoxRole; }
+    virtual AccessibilityRole roleValue() const OVERRIDE { return ListBoxRole; }
         
-    virtual void selectedChildren(AccessibilityChildrenVector&);
-    virtual void visibleChildren(AccessibilityChildrenVector&);
+    virtual void selectedChildren(AccessibilityChildrenVector&) OVERRIDE;
+    virtual void visibleChildren(AccessibilityChildrenVector&) OVERRIDE;
     
-    virtual void addChildren();
+    virtual void addChildren() OVERRIDE;
 
 private:    
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const OVERRIDE;
 };
     
 } // namespace WebCore

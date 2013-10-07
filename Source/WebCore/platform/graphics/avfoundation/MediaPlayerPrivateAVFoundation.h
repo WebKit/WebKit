@@ -128,45 +128,45 @@ protected:
     virtual ~MediaPlayerPrivateAVFoundation();
 
     // MediaPlayerPrivatePrivateInterface overrides.
-    virtual void load(const String& url);
+    virtual void load(const String& url) OVERRIDE;
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { };
 #endif
     virtual void cancelLoad() = 0;
 
-    virtual void prepareToPlay();
+    virtual void prepareToPlay() OVERRIDE;
     virtual PlatformMedia platformMedia() const = 0;
 
-    virtual void play();
-    virtual void pause();
+    virtual void play() OVERRIDE;
+    virtual void pause() OVERRIDE;
 
-    virtual IntSize naturalSize() const;
-    virtual bool hasVideo() const { return m_cachedHasVideo; }
-    virtual bool hasAudio() const { return m_cachedHasAudio; }
-    virtual void setVisible(bool);
-    virtual float duration() const;
+    virtual IntSize naturalSize() const OVERRIDE;
+    virtual bool hasVideo() const OVERRIDE { return m_cachedHasVideo; }
+    virtual bool hasAudio() const OVERRIDE { return m_cachedHasAudio; }
+    virtual void setVisible(bool) OVERRIDE;
+    virtual float duration() const OVERRIDE;
     virtual float currentTime() const = 0;
-    virtual void seek(float);
-    virtual bool seeking() const;
-    virtual void setRate(float);
-    virtual bool paused() const;
+    virtual void seek(float) OVERRIDE;
+    virtual bool seeking() const OVERRIDE;
+    virtual void setRate(float) OVERRIDE;
+    virtual bool paused() const OVERRIDE;
     virtual void setVolume(float) = 0;
-    virtual bool hasClosedCaptions() const { return m_cachedHasCaptions; }
+    virtual bool hasClosedCaptions() const OVERRIDE { return m_cachedHasCaptions; }
     virtual void setClosedCaptionsVisible(bool) = 0;
-    virtual MediaPlayer::NetworkState networkState() const { return m_networkState; }
-    virtual MediaPlayer::ReadyState readyState() const { return m_readyState; }
-    virtual double maxTimeSeekableDouble() const;
-    virtual double minTimeSeekable() const;
-    virtual PassRefPtr<TimeRanges> buffered() const;
-    virtual bool didLoadingProgress() const;
-    virtual void setSize(const IntSize&);
+    virtual MediaPlayer::NetworkState networkState() const OVERRIDE { return m_networkState; }
+    virtual MediaPlayer::ReadyState readyState() const OVERRIDE { return m_readyState; }
+    virtual double maxTimeSeekableDouble() const OVERRIDE;
+    virtual double minTimeSeekable() const OVERRIDE;
+    virtual PassRefPtr<TimeRanges> buffered() const OVERRIDE;
+    virtual bool didLoadingProgress() const OVERRIDE;
+    virtual void setSize(const IntSize&) OVERRIDE;
     virtual void paint(GraphicsContext*, const IntRect&) = 0;
     virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&) = 0;
-    virtual void setPreload(MediaPlayer::Preload);
+    virtual void setPreload(MediaPlayer::Preload) OVERRIDE;
 #if USE(ACCELERATED_COMPOSITING)
     virtual PlatformLayer* platformLayer() const { return 0; }
     virtual bool supportsAcceleratedRendering() const = 0;
-    virtual void acceleratedRenderingStateChanged();
+    virtual void acceleratedRenderingStateChanged() OVERRIDE;
 #endif
     virtual bool shouldMaintainAspectRatio() const OVERRIDE { return m_shouldMaintainAspectRatio; }
     virtual void setShouldMaintainAspectRatio(bool) OVERRIDE;

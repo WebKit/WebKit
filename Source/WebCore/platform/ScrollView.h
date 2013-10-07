@@ -46,7 +46,7 @@ class Scrollbar;
 
 class ScrollView : public Widget, public ScrollableArea {
 public:
-    ~ScrollView();
+    virtual ~ScrollView();
 
     // ScrollableArea functions.
     virtual int scrollSize(ScrollbarOrientation) const OVERRIDE;
@@ -240,13 +240,13 @@ public:
     void adjustScrollbarsAvoidingResizerCount(int overlapDelta);
     void windowResizerRectChanged();
 
-    virtual void setParent(ScrollView*); // Overridden to update the overlapping scrollbar count.
+    virtual void setParent(ScrollView*) OVERRIDE; // Overridden to update the overlapping scrollbar count.
 
     // Called when our frame rect changes (or the rect/scroll position of an ancestor changes).
-    virtual void frameRectsChanged();
+    virtual void frameRectsChanged() OVERRIDE;
     
     // Widget override to update our scrollbars and notify our contents of the resize.
-    virtual void setFrameRect(const IntRect&);
+    virtual void setFrameRect(const IntRect&) OVERRIDE;
 
     // Widget override to notify our contents of a cliprect change.
     virtual void clipRectChanged() OVERRIDE;
@@ -273,13 +273,13 @@ public:
     }
 
     // Widget override. Handles painting of the contents of the view as well as the scrollbars.
-    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paint(GraphicsContext*, const IntRect&) OVERRIDE;
     void paintScrollbars(GraphicsContext*, const IntRect&);
 
     // Widget overrides to ensure that our children's visibility status is kept up to date when we get shown and hidden.
-    virtual void show();
-    virtual void hide();
-    virtual void setParentVisible(bool);
+    virtual void show() OVERRIDE;
+    virtual void hide() OVERRIDE;
+    virtual void setParentVisible(bool) OVERRIDE;
     
     // Pan scrolling.
     static const int noPanScrollRadius = 15;
@@ -289,7 +289,7 @@ public:
 
     virtual bool isPointInScrollbarCorner(const IntPoint&);
     virtual bool scrollbarCornerPresent() const;
-    virtual IntRect scrollCornerRect() const;
+    virtual IntRect scrollCornerRect() const OVERRIDE;
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
     virtual void paintScrollbar(GraphicsContext*, Scrollbar*, const IntRect&);
 

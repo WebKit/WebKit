@@ -81,7 +81,7 @@ public:
 
     bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
 
-    virtual bool canContainRangeEndPoint() const { return false; }
+    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
 
     virtual const AtomicString& imageSourceURL() const OVERRIDE;
 
@@ -98,15 +98,15 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
 
     virtual void didAttachRenderers() OVERRIDE;
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
 
-    virtual bool canStartSelection() const;
+    virtual bool canStartSelection() const OVERRIDE;
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
-    virtual bool draggable() const;
+    virtual bool draggable() const OVERRIDE;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
     virtual void removedFrom(ContainerNode&) OVERRIDE;

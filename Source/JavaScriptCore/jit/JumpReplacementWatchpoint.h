@@ -65,7 +65,7 @@ public:
     void correctLabels(LinkBuffer&);
 
 protected:
-    void fireInternal();
+    virtual void fireInternal() OVERRIDE;
 
 private:
     uintptr_t m_source;

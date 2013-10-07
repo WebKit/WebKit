@@ -107,7 +107,7 @@ namespace WebCore {
         virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return DOMWindowEventTargetInterfaceType; }
         virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
-        virtual DOMWindow* toDOMWindow();
+        virtual DOMWindow* toDOMWindow() OVERRIDE;
 
         void registerProperty(DOMWindowProperty*);
         void unregisterProperty(DOMWindowProperty*);
@@ -275,9 +275,9 @@ namespace WebCore {
 
         // Events
         // EventTarget API
-        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-        virtual void removeAllEventListeners();
+        virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
+        virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
+        virtual void removeAllEventListeners() OVERRIDE;
 
         using EventTarget::dispatchEvent;
         bool dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget);

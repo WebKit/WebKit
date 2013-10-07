@@ -253,7 +253,7 @@ public:
 
     Element* getElementById(const AtomicString& id) const;
 
-    virtual bool canContainRangeEndPoint() const { return true; }
+    virtual bool canContainRangeEndPoint() const OVERRIDE { return true; }
 
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
@@ -418,7 +418,7 @@ public:
     String documentURI() const { return m_documentURI; }
     void setDocumentURI(const String&);
 
-    virtual URL baseURI() const;
+    virtual URL baseURI() const OVERRIDE;
 
 #if ENABLE(PAGE_VISIBILITY_API)
     String visibilityState() const;
@@ -603,9 +603,9 @@ public:
     virtual URL completeURL(const String&) const OVERRIDE FINAL;
     URL completeURL(const String&, const URL& baseURLOverride) const;
 
-    virtual String userAgent(const URL&) const;
+    virtual String userAgent(const URL&) const OVERRIDE;
 
-    virtual void disableEval(const String& errorMessage);
+    virtual void disableEval(const String& errorMessage) OVERRIDE;
 
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
@@ -934,7 +934,7 @@ public:
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }
     void parseDNSPrefetchControlHeader(const String&);
 
-    virtual void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) OVERRIDE; // Executes the task on context's thread asynchronously.
 
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
@@ -1001,7 +1001,7 @@ public:
     void setAnnotatedRegions(const Vector<AnnotatedRegionValue>&);
 #endif
 
-    virtual void removeAllEventListeners();
+    virtual void removeAllEventListeners() OVERRIDE;
 
 #if ENABLE(SVG)
     const SVGDocumentExtensions* svgExtensions();
@@ -1017,8 +1017,8 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-    virtual bool isContextThread() const;
-    virtual bool isJSExecutionForbidden() const { return false; }
+    virtual bool isContextThread() const OVERRIDE;
+    virtual bool isJSExecutionForbidden() const OVERRIDE { return false; }
 
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
@@ -1028,7 +1028,7 @@ public:
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
-    DocumentEventQueue& eventQueue() const { return m_eventQueue; }
+    virtual DocumentEventQueue& eventQueue() const OVERRIDE { return m_eventQueue; }
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1095,8 +1095,8 @@ public:
     void serviceScriptedAnimations(double monotonicAnimationStartTime);
 #endif
 
-    virtual EventTarget* errorEventTarget();
-    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>);
+    virtual EventTarget* errorEventTarget() OVERRIDE;
+    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>) OVERRIDE;
 
     void initDNSPrefetch();
 
@@ -1178,7 +1178,7 @@ public:
 
     void didAssociateFormControl(Element*);
 
-    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
+    virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) OVERRIDE;
 
     virtual SecurityOrigin* topOrigin() const OVERRIDE;
 
@@ -1215,19 +1215,19 @@ private:
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
-    virtual String nodeName() const;
-    virtual NodeType nodeType() const;
-    virtual bool childTypeAllowed(NodeType) const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual String nodeName() const OVERRIDE;
+    virtual NodeType nodeType() const OVERRIDE;
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
 
-    virtual void refScriptExecutionContext() { ref(); }
-    virtual void derefScriptExecutionContext() { deref(); }
+    virtual void refScriptExecutionContext() OVERRIDE { ref(); }
+    virtual void derefScriptExecutionContext() OVERRIDE { deref(); }
 
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) OVERRIDE;
 
-    virtual double minimumTimerInterval() const;
+    virtual double minimumTimerInterval() const OVERRIDE;
 
-    virtual double timerAlignmentInterval() const;
+    virtual double timerAlignmentInterval() const OVERRIDE;
 
     void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired(Timer<Document>*);

@@ -122,7 +122,7 @@ public:
     void paintCustomHighlight(PaintInfo&, const LayoutPoint&, const AtomicString& highlightType);
 #endif
 
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE FINAL;
 
     using InlineBox::hasSelectedChildren;
@@ -199,7 +199,7 @@ public:
     Node* getLogicalEndBoxWithNode(InlineBox*&) const;
 
 #ifndef NDEBUG
-    virtual const char* boxName() const;
+    virtual const char* boxName() const OVERRIDE;
 #endif
 private:
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;

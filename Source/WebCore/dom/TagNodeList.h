@@ -50,7 +50,7 @@ public:
 protected:
     TagNodeList(PassRefPtr<Node> rootNode, CollectionType, const AtomicString& namespaceURI, const AtomicString& localName);
 
-    virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const OVERRIDE;
 
     AtomicString m_namespaceURI;
     AtomicString m_localName;
@@ -69,7 +69,7 @@ public:
 private:
     HTMLTagNodeList(PassRefPtr<Node> rootNode, const AtomicString& localName);
 
-    virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const OVERRIDE;
 
     AtomicString m_loweredLocalName;
 };

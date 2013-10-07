@@ -68,8 +68,8 @@ public:
 #ifndef NDEBUG
     virtual ~InlineFlowBox();
     
-    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const;
-    virtual const char* boxName() const;
+    virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const OVERRIDE;
+    virtual const char* boxName() const OVERRIDE;
 #endif
 
     RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
@@ -102,7 +102,7 @@ public:
     virtual void deleteLine(RenderArena&) OVERRIDE FINAL;
     virtual void extractLine() OVERRIDE FINAL;
     virtual void attachLine() OVERRIDE FINAL;
-    virtual void adjustPosition(float dx, float dy);
+    virtual void adjustPosition(float dx, float dy) OVERRIDE;
 
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
@@ -117,7 +117,7 @@ public:
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(const PaintInfo&, const RenderStyle&, ShadowStyle, const LayoutRect&);
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
 
     bool boxShadowCanBeAppliedToBackground(const FillLayer&) const;
@@ -202,7 +202,7 @@ public:
     
     void removeChild(InlineBox* child);
 
-    virtual RenderObject::SelectionState selectionState();
+    virtual RenderObject::SelectionState selectionState() OVERRIDE;
 
     virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const OVERRIDE FINAL;
     virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool&) OVERRIDE;

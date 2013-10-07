@@ -39,8 +39,8 @@ public:
     FailedFinalizer(Plan&);
     virtual ~FailedFinalizer();
     
-    bool finalize();
-    bool finalizeFunction();
+    virtual bool finalize() OVERRIDE;
+    virtual bool finalizeFunction() OVERRIDE;
 };
 
 } } // namespace JSC::DFG

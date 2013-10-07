@@ -195,16 +195,16 @@ class DirectJITCode : public JITCode {
 public:
     DirectJITCode(JITType);
     DirectJITCode(const CodeRef, JITType);
-    ~DirectJITCode();
+    virtual ~DirectJITCode();
     
     void initializeCodeRef(CodeRef ref);
 
-    CodePtr addressForCall();
-    void* executableAddressAtOffset(size_t offset);
-    void* dataAddressAtOffset(size_t offset);
-    unsigned offsetOf(void* pointerIntoCode);
-    size_t size();
-    bool contains(void*);
+    virtual CodePtr addressForCall() OVERRIDE;
+    virtual void* executableAddressAtOffset(size_t offset) OVERRIDE;
+    virtual void* dataAddressAtOffset(size_t offset) OVERRIDE;
+    virtual unsigned offsetOf(void* pointerIntoCode) OVERRIDE;
+    virtual size_t size() OVERRIDE;
+    virtual bool contains(void*) OVERRIDE;
 
 private:
     CodeRef m_ref;

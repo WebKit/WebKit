@@ -36,17 +36,17 @@ public:
     void parseHTML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     bool parseXML(const String&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
     
-    virtual bool canContainRangeEndPoint() const { return true; }
+    virtual bool canContainRangeEndPoint() const OVERRIDE { return true; }
     virtual bool isTemplateContent() const { return false; }
 
 protected:
     DocumentFragment(Document*, ConstructionType = CreateContainer);
-    virtual String nodeName() const;
+    virtual String nodeName() const OVERRIDE;
 
 private:
-    virtual NodeType nodeType() const;
-    virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool childTypeAllowed(NodeType) const;
+    virtual NodeType nodeType() const OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
 };
 
 } //namespace

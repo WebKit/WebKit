@@ -375,7 +375,8 @@ public:
         : m_factory(factory)
     {
     }
-    JSValue operator()(ExecState* exec)
+
+    virtual JSValue operator()(ExecState* exec) OVERRIDE
     {
         return m_factory(exec);
     }
@@ -392,7 +393,8 @@ public:
         : m_factory(factory), m_callee(callee)
     {
     }
-    JSValue operator()(ExecState* exec)
+
+    virtual JSValue operator()(ExecState* exec) OVERRIDE
     {
         return m_factory(exec, m_callee);
     }

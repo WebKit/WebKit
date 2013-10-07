@@ -54,7 +54,7 @@ class ApplicationCacheGroup : ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup); WTF_MAKE_FAST_ALLOCATED;
 public:
     ApplicationCacheGroup(const URL& manifestURL, bool isCopy = false);    
-    ~ApplicationCacheGroup();
+    virtual ~ApplicationCacheGroup();
     
     enum UpdateStatus { Idle, Checking, Downloading };
 
@@ -107,12 +107,12 @@ private:
 
     // For normal resource loading, WebKit client is asked about each resource individually. Since application cache does not belong to any particular document,
     // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
-    virtual bool shouldUseCredentialStorage(ResourceHandle*) { return true; }
+    virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE { return true; }
 
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int length, int encodedDataLength);
-    virtual void didFinishLoading(ResourceHandle*, double finishTime);
-    virtual void didFail(ResourceHandle*, const ResourceError&);
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(ResourceHandle*, const char*, int length, int encodedDataLength) OVERRIDE;
+    virtual void didFinishLoading(ResourceHandle*, double finishTime) OVERRIDE;
+    virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
 
     void didReceiveManifestResponse(const ResourceResponse&);
     void didReceiveManifestData(const char*, int);

@@ -47,7 +47,7 @@ public:
     SimpleTypedArrayController();
     virtual ~SimpleTypedArrayController();
     
-    virtual JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*);
+    virtual JSArrayBuffer* toJS(ExecState*, JSGlobalObject*, ArrayBuffer*) OVERRIDE;
 };
 
 } // namespace JSC

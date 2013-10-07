@@ -46,7 +46,7 @@ public:
         return WTF::adoptRef(new OpaqueJSScript(vm, url, startingLineNumber, source));
     }
 
-    const String& source() const OVERRIDE
+    virtual const String& source() const OVERRIDE
     {
         return m_source;
     }
@@ -61,7 +61,7 @@ private:
     {
     }
 
-    ~OpaqueJSScript() { }
+    virtual ~OpaqueJSScript() { }
 
     VM* m_vm;
     String m_source;

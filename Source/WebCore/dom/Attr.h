@@ -77,14 +77,14 @@ private:
     virtual const AtomicString& namespaceURI() const OVERRIDE { return m_name.namespaceURI(); }
     virtual const AtomicString& prefix() const OVERRIDE { return m_name.prefix(); }
 
-    virtual void setPrefix(const AtomicString&, ExceptionCode&);
+    virtual void setPrefix(const AtomicString&, ExceptionCode&) OVERRIDE;
 
     virtual String nodeValue() const OVERRIDE { return value(); }
-    virtual void setNodeValue(const String&, ExceptionCode&);
-    virtual PassRefPtr<Node> cloneNode(bool deep);
+    virtual void setNodeValue(const String&, ExceptionCode&) OVERRIDE;
+    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
 
-    virtual bool isAttributeNode() const { return true; }
-    virtual bool childTypeAllowed(NodeType) const;
+    virtual bool isAttributeNode() const OVERRIDE { return true; }
+    virtual bool childTypeAllowed(NodeType) const OVERRIDE;
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 

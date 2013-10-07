@@ -64,7 +64,7 @@ struct WindowFeatures;
 class Chrome : public HostWindow {
 public:
     Chrome(Page&, ChromeClient&);
-    ~Chrome();
+    virtual ~Chrome();
 
     ChromeClient& client() { return m_client; }
 

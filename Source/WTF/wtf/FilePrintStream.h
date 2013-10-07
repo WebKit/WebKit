@@ -46,8 +46,8 @@ public:
     
     FILE* file() { return m_file; }
     
-    void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
-    void flush();
+    virtual void vprintf(const char* format, va_list) OVERRIDE WTF_ATTRIBUTE_PRINTF(2, 0);
+    virtual void flush() OVERRIDE;
 
 private:
     FILE* m_file;

@@ -46,7 +46,7 @@ class URL;
 class DOMApplicationCache FINAL : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
-    ~DOMApplicationCache() { ASSERT(!m_frame); }
+    virtual ~DOMApplicationCache() { ASSERT(!m_frame); }
 
     virtual void disconnectFrameForPageCache() OVERRIDE;
     virtual void reconnectFrameFromPageCache(Frame*) OVERRIDE;

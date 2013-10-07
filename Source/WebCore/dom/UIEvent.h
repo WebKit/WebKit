@@ -61,8 +61,8 @@ public:
     AbstractView* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
-    virtual EventInterface eventInterface() const;
-    virtual bool isUIEvent() const;
+    virtual EventInterface eventInterface() const OVERRIDE;
+    virtual bool isUIEvent() const OVERRIDE;
 
     virtual int keyCode() const;
     virtual int charCode() const;

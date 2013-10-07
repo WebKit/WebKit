@@ -43,7 +43,7 @@ class TrackBase;
 
 class TrackListBase : public RefCounted<TrackListBase>, public EventTargetWithInlineData {
 public:
-    ~TrackListBase();
+    virtual ~TrackListBase();
 
     virtual unsigned length() const;
     virtual bool contains(TrackBase*) const;

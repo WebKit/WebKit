@@ -70,14 +70,14 @@ private:
     HTMLOptionElement(const QualifiedName&, Document&);
 
     virtual bool isFocusable() const OVERRIDE;
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
     virtual void didAttachRenderers() OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
-    virtual void accessKeyAction(bool);
+    virtual void accessKeyAction(bool) OVERRIDE;
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
@@ -86,7 +86,7 @@ private:
     virtual RenderStyle* nonRendererStyle() const OVERRIDE;
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
-    void didRecalcStyle(Style::Change) OVERRIDE;
+    virtual void didRecalcStyle(Style::Change) OVERRIDE;
 
     String collectOptionInnerText() const;
 

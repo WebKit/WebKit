@@ -158,8 +158,8 @@ public:
     Glyph zeroGlyph() const { return m_zeroGlyph; }
     void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
-    virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
-    virtual bool containsCharacters(const UChar*, int length) const;
+    virtual const SimpleFontData* fontDataForCharacter(UChar32) const OVERRIDE;
+    virtual bool containsCharacters(const UChar*, int length) const OVERRIDE;
 
     Glyph glyphForCharacter(UChar32) const;
 
@@ -169,15 +169,15 @@ public:
     AdditionalFontData* fontData() const { return m_fontData.get(); }
     bool isSVGFont() const { return m_fontData; }
 
-    virtual bool isCustomFont() const { return m_isCustomFont; }
-    virtual bool isLoading() const { return m_isLoading; }
-    virtual bool isSegmented() const;
+    virtual bool isCustomFont() const OVERRIDE { return m_isCustomFont; }
+    virtual bool isLoading() const OVERRIDE { return m_isLoading; }
+    virtual bool isSegmented() const OVERRIDE;
 
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
     void setMissingGlyphData(const GlyphData& glyphData) { m_missingGlyphData = glyphData; }
 
 #ifndef NDEBUG
-    virtual String description() const;
+    virtual String description() const OVERRIDE;
 #endif
 
 #if PLATFORM(MAC)

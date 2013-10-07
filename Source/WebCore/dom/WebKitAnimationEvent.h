@@ -57,7 +57,7 @@ public:
     const String& animationName() const;
     double elapsedTime() const;
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     WebKitAnimationEvent();

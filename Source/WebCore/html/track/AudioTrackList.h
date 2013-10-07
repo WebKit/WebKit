@@ -40,7 +40,7 @@ public:
     {
         return adoptRef(new AudioTrackList(owner, context));
     }
-    ~AudioTrackList();
+    virtual ~AudioTrackList();
 
     AudioTrack* getTrackById(const AtomicString&) const;
 

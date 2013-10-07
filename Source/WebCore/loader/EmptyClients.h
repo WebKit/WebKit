@@ -64,70 +64,70 @@ class EmptyChromeClient : public ChromeClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~EmptyChromeClient() { }
-    virtual void chromeDestroyed() { }
+    virtual void chromeDestroyed() OVERRIDE { }
 
-    virtual void setWindowRect(const FloatRect&) { }
-    virtual FloatRect windowRect() { return FloatRect(); }
+    virtual void setWindowRect(const FloatRect&) OVERRIDE { }
+    virtual FloatRect windowRect() OVERRIDE { return FloatRect(); }
 
-    virtual FloatRect pageRect() { return FloatRect(); }
+    virtual FloatRect pageRect() OVERRIDE { return FloatRect(); }
 
-    virtual void focus() { }
-    virtual void unfocus() { }
+    virtual void focus() OVERRIDE { }
+    virtual void unfocus() OVERRIDE { }
 
-    virtual bool canTakeFocus(FocusDirection) { return false; }
-    virtual void takeFocus(FocusDirection) { }
+    virtual bool canTakeFocus(FocusDirection) OVERRIDE { return false; }
+    virtual void takeFocus(FocusDirection) OVERRIDE { }
 
-    virtual void focusedElementChanged(Element*) { }
-    virtual void focusedFrameChanged(Frame*) { }
+    virtual void focusedElementChanged(Element*) OVERRIDE { }
+    virtual void focusedFrameChanged(Frame*) OVERRIDE { }
 
-    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) { return 0; }
-    virtual void show() { }
+    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) OVERRIDE { return 0; }
+    virtual void show() OVERRIDE { }
 
-    virtual bool canRunModal() { return false; }
-    virtual void runModal() { }
+    virtual bool canRunModal() OVERRIDE { return false; }
+    virtual void runModal() OVERRIDE { }
 
-    virtual void setToolbarsVisible(bool) { }
-    virtual bool toolbarsVisible() { return false; }
+    virtual void setToolbarsVisible(bool) OVERRIDE { }
+    virtual bool toolbarsVisible() OVERRIDE { return false; }
 
-    virtual void setStatusbarVisible(bool) { }
-    virtual bool statusbarVisible() { return false; }
+    virtual void setStatusbarVisible(bool) OVERRIDE { }
+    virtual bool statusbarVisible() OVERRIDE { return false; }
 
-    virtual void setScrollbarsVisible(bool) { }
-    virtual bool scrollbarsVisible() { return false; }
+    virtual void setScrollbarsVisible(bool) OVERRIDE { }
+    virtual bool scrollbarsVisible() OVERRIDE { return false; }
 
-    virtual void setMenubarVisible(bool) { }
-    virtual bool menubarVisible() { return false; }
+    virtual void setMenubarVisible(bool) OVERRIDE { }
+    virtual bool menubarVisible() OVERRIDE { return false; }
 
-    virtual void setResizable(bool) { }
+    virtual void setResizable(bool) OVERRIDE { }
 
-    virtual void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, unsigned, const String&) { }
+    virtual void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, unsigned, const String&) OVERRIDE { }
 
-    virtual bool canRunBeforeUnloadConfirmPanel() { return false; }
-    virtual bool runBeforeUnloadConfirmPanel(const String&, Frame*) { return true; }
+    virtual bool canRunBeforeUnloadConfirmPanel() OVERRIDE { return false; }
+    virtual bool runBeforeUnloadConfirmPanel(const String&, Frame*) OVERRIDE { return true; }
 
-    virtual void closeWindowSoon() { }
+    virtual void closeWindowSoon() OVERRIDE { }
 
-    virtual void runJavaScriptAlert(Frame*, const String&) { }
-    virtual bool runJavaScriptConfirm(Frame*, const String&) { return false; }
-    virtual bool runJavaScriptPrompt(Frame*, const String&, const String&, String&) { return false; }
-    virtual bool shouldInterruptJavaScript() { return false; }
+    virtual void runJavaScriptAlert(Frame*, const String&) OVERRIDE { }
+    virtual bool runJavaScriptConfirm(Frame*, const String&) OVERRIDE { return false; }
+    virtual bool runJavaScriptPrompt(Frame*, const String&, const String&, String&) OVERRIDE { return false; }
+    virtual bool shouldInterruptJavaScript() OVERRIDE { return false; }
 
-    virtual bool selectItemWritingDirectionIsNatural() { return false; }
-    virtual bool selectItemAlignmentFollowsMenuWritingDirection() { return false; }
+    virtual bool selectItemWritingDirectionIsNatural() OVERRIDE { return false; }
+    virtual bool selectItemAlignmentFollowsMenuWritingDirection() OVERRIDE { return false; }
     virtual bool hasOpenedPopup() const OVERRIDE { return false; }
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const OVERRIDE;
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const OVERRIDE;
 
-    virtual void setStatusbarText(const String&) { }
+    virtual void setStatusbarText(const String&) OVERRIDE { }
 
-    virtual KeyboardUIMode keyboardUIMode() { return KeyboardAccessDefault; }
+    virtual KeyboardUIMode keyboardUIMode() OVERRIDE { return KeyboardAccessDefault; }
 
-    virtual IntRect windowResizerRect() const { return IntRect(); }
+    virtual IntRect windowResizerRect() const OVERRIDE { return IntRect(); }
 
     virtual void invalidateRootView(const IntRect&, bool) OVERRIDE { }
     virtual void invalidateContentsAndRootView(const IntRect&, bool) OVERRIDE { }
     virtual void invalidateContentsForSlowScroll(const IntRect&, bool) OVERRIDE { }
-    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) { }
+    virtual void scroll(const IntSize&, const IntRect&, const IntRect&) OVERRIDE { }
 #if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint&) { }
 #endif
@@ -137,22 +137,22 @@ public:
 
     virtual IntPoint screenToRootView(const IntPoint& p) const OVERRIDE { return p; }
     virtual IntRect rootViewToScreen(const IntRect& r) const OVERRIDE { return r; }
-    virtual PlatformPageClient platformPageClient() const { return 0; }
-    virtual void contentsSizeChanged(Frame*, const IntSize&) const { }
+    virtual PlatformPageClient platformPageClient() const OVERRIDE { return 0; }
+    virtual void contentsSizeChanged(Frame*, const IntSize&) const OVERRIDE { }
 
-    virtual void scrollbarsModeDidChange() const { }
-    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned) { }
+    virtual void scrollbarsModeDidChange() const OVERRIDE { }
+    virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned) OVERRIDE { }
 
-    virtual void setToolTip(const String&, TextDirection) { }
+    virtual void setToolTip(const String&, TextDirection) OVERRIDE { }
 
-    virtual void print(Frame*) { }
+    virtual void print(Frame*) OVERRIDE { }
 
 #if ENABLE(SQL_DATABASE)
-    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails) { }
+    virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails) OVERRIDE { }
 #endif
 
-    virtual void reachedMaxAppCacheSize(int64_t) { }
-    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) { }
+    virtual void reachedMaxAppCacheSize(int64_t) OVERRIDE { }
+    virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) OVERRIDE { }
 
 #if ENABLE(DIRECTORY_UPLOAD)
     virtual void enumerateChosenDirectory(FileChooser*) { }
@@ -167,39 +167,39 @@ public:
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) OVERRIDE;
-    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) { }
+    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) OVERRIDE { }
 
-    virtual void formStateDidChange(const Node*) { }
+    virtual void formStateDidChange(const Node*) OVERRIDE { }
 
-    virtual void elementDidFocus(const Node*) { }
-    virtual void elementDidBlur(const Node*) { }
+    virtual void elementDidFocus(const Node*) OVERRIDE { }
+    virtual void elementDidBlur(const Node*) OVERRIDE { }
 
-    virtual void setCursor(const Cursor&) { }
-    virtual void setCursorHiddenUntilMouseMoves(bool) { }
+    virtual void setCursor(const Cursor&) OVERRIDE { }
+    virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE { }
 
-    virtual void scrollRectIntoView(const IntRect&) const { }
+    virtual void scrollRectIntoView(const IntRect&) const OVERRIDE { }
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) { }
-    virtual void setNeedsOneShotDrawingSynchronization() { }
-    virtual void scheduleCompositingLayerFlush() { }
+    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) OVERRIDE { }
+    virtual void setNeedsOneShotDrawingSynchronization() OVERRIDE { }
+    virtual void scheduleCompositingLayerFlush() OVERRIDE { }
 #endif
 
 #if PLATFORM(WIN)
-    virtual void setLastSetCursorToCurrentCursor() { }
-    virtual void AXStartFrameLoad() { }
-    virtual void AXFinishFrameLoad() { }
+    virtual void setLastSetCursorToCurrentCursor() OVERRIDE { }
+    virtual void AXStartFrameLoad() OVERRIDE { }
+    virtual void AXFinishFrameLoad() OVERRIDE { }
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    virtual void needTouchEvents(bool) { }
+    virtual void needTouchEvents(bool) OVERRIDE { }
 #endif
     
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE { }
     
-    virtual bool isEmptyChromeClient() const { return true; }
+    virtual bool isEmptyChromeClient() const OVERRIDE { return true; }
 
-    virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { }
-    virtual bool shouldNotifyOnFormChanges() { return false; }
+    virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&) OVERRIDE { }
+    virtual bool shouldNotifyOnFormChanges() OVERRIDE { return false; }
 };
 
 // FIXME (bug 116233): Get rid of EmptyFrameLoaderClient. It is a travesty.
@@ -209,162 +209,161 @@ class EmptyFrameLoaderClient : public FrameLoaderClient {
 public:
     EmptyFrameLoaderClient() { }
     virtual ~EmptyFrameLoaderClient() {  }
-    virtual void frameLoaderDestroyed() { }
+    virtual void frameLoaderDestroyed() OVERRIDE { }
 
-    virtual bool hasWebView() const { return true; } // mainly for assertions
+    virtual bool hasWebView() const OVERRIDE { return true; } // mainly for assertions
 
-    virtual void makeRepresentation(DocumentLoader*) { }
-    virtual void forceLayout() { }
-    virtual void forceLayoutForNonHTML() { }
+    virtual void makeRepresentation(DocumentLoader*) OVERRIDE { }
+    virtual void forceLayout() OVERRIDE { }
+    virtual void forceLayoutForNonHTML() OVERRIDE { }
 
-    virtual void setCopiesOnScroll() { }
+    virtual void setCopiesOnScroll() OVERRIDE { }
 
-    virtual void detachedFromParent2() { }
-    virtual void detachedFromParent3() { }
+    virtual void detachedFromParent2() OVERRIDE { }
+    virtual void detachedFromParent3() OVERRIDE { }
 
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) OVERRIDE { }
 
-    virtual void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) { }
-    virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) { return false; }
-    virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) { }
-    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) { }
-    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) { }
+    virtual void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) OVERRIDE { }
+    virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) OVERRIDE { return false; }
+    virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) OVERRIDE { }
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) OVERRIDE { }
+    virtual void dispatchDidCancelAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) OVERRIDE { }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) { return false; }
+    virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) OVERRIDE { return false; }
 #endif
-    virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) { }
-    virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) { }
-    virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long) { }
-    virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) { }
-    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) { return false; }
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) OVERRIDE { }
+    virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) OVERRIDE { }
+    virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long) OVERRIDE { }
+    virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) OVERRIDE { }
+    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) OVERRIDE { return false; }
 
-    virtual void dispatchDidHandleOnloadEvents() { }
-    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() { }
-    virtual void dispatchDidCancelClientRedirect() { }
-    virtual void dispatchWillPerformClientRedirect(const URL&, double, double) { }
-    virtual void dispatchDidChangeLocationWithinPage() { }
-    virtual void dispatchDidPushStateWithinPage() { }
-    virtual void dispatchDidReplaceStateWithinPage() { }
-    virtual void dispatchDidPopStateWithinPage() { }
-    virtual void dispatchWillClose() { }
-    virtual void dispatchDidReceiveIcon() { }
-    virtual void dispatchDidStartProvisionalLoad() { }
-    virtual void dispatchDidReceiveTitle(const StringWithDirection&) { }
-    virtual void dispatchDidChangeIcons(IconType) { }
-    virtual void dispatchDidCommitLoad() { }
-    virtual void dispatchDidFailProvisionalLoad(const ResourceError&) { }
-    virtual void dispatchDidFailLoad(const ResourceError&) { }
-    virtual void dispatchDidFinishDocumentLoad() { }
-    virtual void dispatchDidFinishLoad() { }
-    virtual void dispatchDidLayout(LayoutMilestones) { }
+    virtual void dispatchDidHandleOnloadEvents() OVERRIDE { }
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() OVERRIDE { }
+    virtual void dispatchDidCancelClientRedirect() OVERRIDE { }
+    virtual void dispatchWillPerformClientRedirect(const URL&, double, double) OVERRIDE { }
+    virtual void dispatchDidChangeLocationWithinPage() OVERRIDE { }
+    virtual void dispatchDidPushStateWithinPage() OVERRIDE { }
+    virtual void dispatchDidReplaceStateWithinPage() OVERRIDE { }
+    virtual void dispatchDidPopStateWithinPage() OVERRIDE { }
+    virtual void dispatchWillClose() OVERRIDE { }
+    virtual void dispatchDidReceiveIcon() OVERRIDE { }
+    virtual void dispatchDidStartProvisionalLoad() OVERRIDE { }
+    virtual void dispatchDidReceiveTitle(const StringWithDirection&) OVERRIDE { }
+    virtual void dispatchDidChangeIcons(IconType) OVERRIDE { }
+    virtual void dispatchDidCommitLoad() OVERRIDE { }
+    virtual void dispatchDidFailProvisionalLoad(const ResourceError&) OVERRIDE { }
+    virtual void dispatchDidFailLoad(const ResourceError&) OVERRIDE { }
+    virtual void dispatchDidFinishDocumentLoad() OVERRIDE { }
+    virtual void dispatchDidFinishLoad() OVERRIDE { }
+    virtual void dispatchDidLayout(LayoutMilestones) OVERRIDE { }
 
-    virtual Frame* dispatchCreatePage(const NavigationAction&) { return 0; }
-    virtual void dispatchShow() { }
+    virtual Frame* dispatchCreatePage(const NavigationAction&) OVERRIDE { return 0; }
+    virtual void dispatchShow() OVERRIDE { }
 
     virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) OVERRIDE { }
     virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&, FramePolicyFunction) OVERRIDE;
     virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction) OVERRIDE;
-    virtual void cancelPolicyCheck() { }
+    virtual void cancelPolicyCheck() OVERRIDE { }
 
-    virtual void dispatchUnableToImplementPolicy(const ResourceError&) { }
+    virtual void dispatchUnableToImplementPolicy(const ResourceError&) OVERRIDE { }
 
     virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) OVERRIDE;
     virtual void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) OVERRIDE;
 
-    virtual void revertToProvisionalState(DocumentLoader*) { }
-    virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) { }
+    virtual void revertToProvisionalState(DocumentLoader*) OVERRIDE { }
+    virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) OVERRIDE { }
 
-    virtual void willChangeEstimatedProgress() { }
-    virtual void didChangeEstimatedProgress() { }
-    virtual void postProgressStartedNotification() { }
-    virtual void postProgressEstimateChangedNotification() { }
-    virtual void postProgressFinishedNotification() { }
+    virtual void willChangeEstimatedProgress() OVERRIDE { }
+    virtual void didChangeEstimatedProgress() OVERRIDE { }
+    virtual void postProgressStartedNotification() OVERRIDE { }
+    virtual void postProgressEstimateChangedNotification() OVERRIDE { }
+    virtual void postProgressFinishedNotification() OVERRIDE { }
 
-    virtual void setMainFrameDocumentReady(bool) { }
+    virtual void setMainFrameDocumentReady(bool) OVERRIDE { }
 
-    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) { UNUSED_PARAM(suggestedName); }
+    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) OVERRIDE { UNUSED_PARAM(suggestedName); }
 
-    virtual void willChangeTitle(DocumentLoader*) { }
-    virtual void didChangeTitle(DocumentLoader*) { }
+    virtual void willChangeTitle(DocumentLoader*) OVERRIDE { }
+    virtual void didChangeTitle(DocumentLoader*) OVERRIDE { }
 
-    virtual void committedLoad(DocumentLoader*, const char*, int) { }
-    virtual void finishedLoading(DocumentLoader*) { }
+    virtual void committedLoad(DocumentLoader*, const char*, int) OVERRIDE { }
+    virtual void finishedLoading(DocumentLoader*) OVERRIDE { }
 
-    virtual ResourceError cancelledError(const ResourceRequest&) { ResourceError error("", 0, "", ""); error.setIsCancellation(true); return error; }
-    virtual ResourceError blockedError(const ResourceRequest&) { return ResourceError("", 0, "", ""); }
-    virtual ResourceError cannotShowURLError(const ResourceRequest&) { return ResourceError("", 0, "", ""); }
-    virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) { return ResourceError("", 0, "", ""); }
+    virtual ResourceError cancelledError(const ResourceRequest&) OVERRIDE { ResourceError error("", 0, "", ""); error.setIsCancellation(true); return error; }
+    virtual ResourceError blockedError(const ResourceRequest&) OVERRIDE { return ResourceError("", 0, "", ""); }
+    virtual ResourceError cannotShowURLError(const ResourceRequest&) OVERRIDE { return ResourceError("", 0, "", ""); }
+    virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) OVERRIDE { return ResourceError("", 0, "", ""); }
 
-    virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) { return ResourceError("", 0, "", ""); }
-    virtual ResourceError fileDoesNotExistError(const ResourceResponse&) { return ResourceError("", 0, "", ""); }
-    virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) { return ResourceError("", 0, "", ""); }
+    virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) OVERRIDE { return ResourceError("", 0, "", ""); }
+    virtual ResourceError fileDoesNotExistError(const ResourceResponse&) OVERRIDE { return ResourceError("", 0, "", ""); }
+    virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) OVERRIDE { return ResourceError("", 0, "", ""); }
 
-    virtual bool shouldFallBack(const ResourceError&) { return false; }
+    virtual bool shouldFallBack(const ResourceError&) OVERRIDE { return false; }
 
-    virtual bool canHandleRequest(const ResourceRequest&) const { return false; }
-    virtual bool canShowMIMEType(const String&) const { return false; }
-    virtual bool canShowMIMETypeAsHTML(const String&) const { return false; }
-    virtual bool representationExistsForURLScheme(const String&) const { return false; }
-    virtual String generatedMIMETypeForURLScheme(const String&) const { return ""; }
+    virtual bool canHandleRequest(const ResourceRequest&) const OVERRIDE { return false; }
+    virtual bool canShowMIMEType(const String&) const OVERRIDE { return false; }
+    virtual bool canShowMIMETypeAsHTML(const String&) const OVERRIDE { return false; }
+    virtual bool representationExistsForURLScheme(const String&) const OVERRIDE { return false; }
+    virtual String generatedMIMETypeForURLScheme(const String&) const OVERRIDE { return ""; }
 
-    virtual void frameLoadCompleted() { }
-    virtual void restoreViewState() { }
-    virtual void provisionalLoadStarted() { }
-    virtual bool shouldTreatURLAsSameAsCurrent(const URL&) const { return false; }
-    virtual void didFinishLoad() { }
-    virtual void prepareForDataSourceReplacement() { }
+    virtual void frameLoadCompleted() OVERRIDE { }
+    virtual void restoreViewState() OVERRIDE { }
+    virtual void provisionalLoadStarted() OVERRIDE { }
+    virtual void didFinishLoad() OVERRIDE { }
+    virtual void prepareForDataSourceReplacement() OVERRIDE { }
 
     virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) OVERRIDE;
-    virtual void setTitle(const StringWithDirection&, const URL&) { }
+    virtual void setTitle(const StringWithDirection&, const URL&) OVERRIDE { }
 
-    virtual String userAgent(const URL&) { return ""; }
+    virtual String userAgent(const URL&) OVERRIDE { return ""; }
 
-    virtual void savePlatformDataToCachedFrame(CachedFrame*) { }
-    virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { }
-    virtual void transitionToCommittedForNewPage() { }    
+    virtual void savePlatformDataToCachedFrame(CachedFrame*) OVERRIDE { }
+    virtual void transitionToCommittedFromCachedFrame(CachedFrame*) OVERRIDE { }
+    virtual void transitionToCommittedForNewPage() OVERRIDE { }
 
-    virtual void didSaveToPageCache() { }
-    virtual void didRestoreFromPageCache() { }
+    virtual void didSaveToPageCache() OVERRIDE { }
+    virtual void didRestoreFromPageCache() OVERRIDE { }
 
-    virtual void dispatchDidBecomeFrameset(bool) { }
+    virtual void dispatchDidBecomeFrameset(bool) OVERRIDE { }
 
-    virtual void updateGlobalHistory() { }
-    virtual void updateGlobalHistoryRedirectLinks() { }
-    virtual bool shouldGoToHistoryItem(HistoryItem*) const { return false; }
-    virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const { return false; }
-    virtual void updateGlobalHistoryItemForPage() { }
-    virtual void saveViewStateToItem(HistoryItem*) { }
-    virtual bool canCachePage() const { return false; }
-    virtual void didDisplayInsecureContent() { }
-    virtual void didRunInsecureContent(SecurityOrigin*, const URL&) { }
-    virtual void didDetectXSS(const URL&, bool) { }
+    virtual void updateGlobalHistory() OVERRIDE { }
+    virtual void updateGlobalHistoryRedirectLinks() OVERRIDE { }
+    virtual bool shouldGoToHistoryItem(HistoryItem*) const OVERRIDE { return false; }
+    virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const OVERRIDE { return false; }
+    virtual void updateGlobalHistoryItemForPage() OVERRIDE { }
+    virtual void saveViewStateToItem(HistoryItem*) OVERRIDE { }
+    virtual bool canCachePage() const OVERRIDE { return false; }
+    virtual void didDisplayInsecureContent() OVERRIDE { }
+    virtual void didRunInsecureContent(SecurityOrigin*, const URL&) OVERRIDE { }
+    virtual void didDetectXSS(const URL&, bool) OVERRIDE { }
     virtual PassRefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) OVERRIDE;
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) OVERRIDE;
     virtual void recreatePlugin(Widget*) OVERRIDE;
     virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) OVERRIDE;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual PassRefPtr<Widget> createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&) OVERRIDE;
-    virtual void hideMediaPlayerProxyPlugin(Widget*) { }
-    virtual void showMediaPlayerProxyPlugin(Widget*) { }
+    virtual void hideMediaPlayerProxyPlugin(Widget*) OVERRIDE { }
+    virtual void showMediaPlayerProxyPlugin(Widget*) OVERRIDE { }
 #endif
 
-    virtual ObjectContentType objectContentType(const URL&, const String&, bool) { return ObjectContentType(); }
-    virtual String overrideMediaType() const { return String(); }
+    virtual ObjectContentType objectContentType(const URL&, const String&, bool) OVERRIDE { return ObjectContentType(); }
+    virtual String overrideMediaType() const OVERRIDE { return String(); }
 
-    virtual void redirectDataToPlugin(Widget*) { }
-    virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) { }
-    virtual void documentElementAvailable() { }
-    virtual void didPerformFirstNavigation() const { }
+    virtual void redirectDataToPlugin(Widget*) OVERRIDE { }
+    virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) OVERRIDE { }
+    virtual void documentElementAvailable() OVERRIDE { }
+    virtual void didPerformFirstNavigation() const OVERRIDE { }
 
-    virtual void registerForIconNotification(bool) { }
+    virtual void registerForIconNotification(bool) OVERRIDE { }
 
 #if PLATFORM(MAC)
-    virtual RemoteAXObjectRef accessibilityRemoteObject() { return 0; }
-    virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const { return response; }
+    virtual RemoteAXObjectRef accessibilityRemoteObject() OVERRIDE { return 0; }
+    virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const OVERRIDE { return response; }
 #endif
 #if PLATFORM(WIN) && USE(CFNETWORK)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
-    virtual bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) { return true; }
+    virtual bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) OVERRIDE { return true; }
 #endif
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() OVERRIDE;
@@ -374,18 +373,18 @@ public:
 
 class EmptyTextCheckerClient : public TextCheckerClient {
 public:
-    virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const { return true; }
-    virtual void ignoreWordInSpellDocument(const String&) { }
-    virtual void learnWord(const String&) { }
-    virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }
-    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) { return String(); }
-    virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
+    virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const OVERRIDE { return true; }
+    virtual void ignoreWordInSpellDocument(const String&) OVERRIDE { }
+    virtual void learnWord(const String&) OVERRIDE { }
+    virtual void checkSpellingOfString(const UChar*, int, int*, int*) OVERRIDE { }
+    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) OVERRIDE { return String(); }
+    virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) OVERRIDE { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&) { };
+    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&) OVERRIDE { };
 #endif
 
-    virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
+    virtual void getGuessesForWord(const String&, const String&, Vector<String>&) OVERRIDE { }
     virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>) OVERRIDE;
 };
 
@@ -394,107 +393,103 @@ class EmptyEditorClient : public EditorClient {
 public:
     EmptyEditorClient() { }
     virtual ~EmptyEditorClient() { }
-    virtual void pageDestroyed() { }
+    virtual void pageDestroyed() OVERRIDE { }
 
-    virtual bool shouldDeleteRange(Range*) { return false; }
-    virtual bool smartInsertDeleteEnabled() { return false; }
-    virtual bool isSelectTrailingWhitespaceEnabled() { return false; }
-    virtual bool isContinuousSpellCheckingEnabled() { return false; }
-    virtual void toggleContinuousSpellChecking() { }
-    virtual bool isGrammarCheckingEnabled() { return false; }
-    virtual void toggleGrammarChecking() { }
-    virtual int spellCheckerDocumentTag() { return -1; }
+    virtual bool shouldDeleteRange(Range*) OVERRIDE { return false; }
+    virtual bool smartInsertDeleteEnabled() OVERRIDE { return false; }
+    virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE { return false; }
+    virtual bool isContinuousSpellCheckingEnabled() OVERRIDE { return false; }
+    virtual void toggleContinuousSpellChecking() OVERRIDE { }
+    virtual bool isGrammarCheckingEnabled() OVERRIDE { return false; }
+    virtual void toggleGrammarChecking() OVERRIDE { }
+    virtual int spellCheckerDocumentTag() OVERRIDE { return -1; }
 
-    virtual bool selectWordBeforeMenuEvent() { return false; }
-    virtual bool isEditable() { return false; }
 
-    virtual bool shouldBeginEditing(Range*) { return false; }
-    virtual bool shouldEndEditing(Range*) { return false; }
-    virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) { return false; }
-    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) { return false; }
-    virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) { return false; }
+    virtual bool shouldBeginEditing(Range*) OVERRIDE { return false; }
+    virtual bool shouldEndEditing(Range*) OVERRIDE { return false; }
+    virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) OVERRIDE { return false; }
+    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) OVERRIDE { return false; }
+    virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) OVERRIDE { return false; }
 
-    virtual bool shouldApplyStyle(StylePropertySet*, Range*) { return false; }
-    virtual bool shouldMoveRangeAfterDelete(Range*, Range*) { return false; }
+    virtual bool shouldApplyStyle(StylePropertySet*, Range*) OVERRIDE { return false; }
+    virtual bool shouldMoveRangeAfterDelete(Range*, Range*) OVERRIDE { return false; }
 
-    virtual void didBeginEditing() { }
-    virtual void respondToChangedContents() { }
-    virtual void respondToChangedSelection(Frame*) { }
-    virtual void didEndEditing() { }
-    virtual void willWriteSelectionToPasteboard(Range*) { }
-    virtual void didWriteSelectionToPasteboard() { }
-    virtual void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer> >&) { }
+    virtual void didBeginEditing() OVERRIDE { }
+    virtual void respondToChangedContents() OVERRIDE { }
+    virtual void respondToChangedSelection(Frame*) OVERRIDE { }
+    virtual void didEndEditing() OVERRIDE { }
+    virtual void willWriteSelectionToPasteboard(Range*) OVERRIDE { }
+    virtual void didWriteSelectionToPasteboard() OVERRIDE { }
+    virtual void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) OVERRIDE { }
 
     virtual void registerUndoStep(PassRefPtr<UndoStep>) OVERRIDE;
     virtual void registerRedoStep(PassRefPtr<UndoStep>) OVERRIDE;
-    virtual void clearUndoRedoOperations() { }
+    virtual void clearUndoRedoOperations() OVERRIDE { }
 
-    virtual bool canCopyCut(Frame*, bool defaultValue) const { return defaultValue; }
-    virtual bool canPaste(Frame*, bool defaultValue) const { return defaultValue; }
-    virtual bool canUndo() const { return false; }
-    virtual bool canRedo() const { return false; }
+    virtual bool canCopyCut(Frame*, bool defaultValue) const OVERRIDE { return defaultValue; }
+    virtual bool canPaste(Frame*, bool defaultValue) const OVERRIDE { return defaultValue; }
+    virtual bool canUndo() const OVERRIDE { return false; }
+    virtual bool canRedo() const OVERRIDE { return false; }
 
-    virtual void undo() { }
-    virtual void redo() { }
+    virtual void undo() OVERRIDE { }
+    virtual void redo() OVERRIDE { }
 
-    virtual void handleKeyboardEvent(KeyboardEvent*) { }
-    virtual void handleInputMethodKeydown(KeyboardEvent*) { }
+    virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE { }
+    virtual void handleInputMethodKeydown(KeyboardEvent*) OVERRIDE { }
 
-    virtual void textFieldDidBeginEditing(Element*) { }
-    virtual void textFieldDidEndEditing(Element*) { }
-    virtual void textDidChangeInTextField(Element*) { }
-    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) { return false; }
-    virtual void textWillBeDeletedInTextField(Element*) { }
-    virtual void textDidChangeInTextArea(Element*) { }
+    virtual void textFieldDidBeginEditing(Element*) OVERRIDE { }
+    virtual void textFieldDidEndEditing(Element*) OVERRIDE { }
+    virtual void textDidChangeInTextField(Element*) OVERRIDE { }
+    virtual bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) OVERRIDE { return false; }
+    virtual void textWillBeDeletedInTextField(Element*) OVERRIDE { }
+    virtual void textDidChangeInTextArea(Element*) OVERRIDE { }
 
 #if PLATFORM(MAC)
-    virtual void markedTextAbandoned(Frame*) { }
-
-    virtual NSString* userVisibleString(NSURL*) { return 0; }
-    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource> >&) { return 0; };
-    virtual void setInsertionPasteboard(const String&) { };
-    virtual NSURL* canonicalizeURL(NSURL*) { return 0; }
-    virtual NSURL* canonicalizeURLString(NSString*) { return 0; }
+    virtual NSString* userVisibleString(NSURL*) OVERRIDE { return 0; }
+    virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource>>&) OVERRIDE { return 0; };
+    virtual void setInsertionPasteboard(const String&) OVERRIDE { };
+    virtual NSURL *canonicalizeURL(NSURL*) OVERRIDE { return 0; }
+    virtual NSURL *canonicalizeURLString(NSString*) OVERRIDE { return 0; }
 #endif
 
 #if USE(APPKIT)
-    virtual void uppercaseWord() { }
-    virtual void lowercaseWord() { }
-    virtual void capitalizeWord() { }
+    virtual void uppercaseWord() OVERRIDE { }
+    virtual void lowercaseWord() OVERRIDE { }
+    virtual void capitalizeWord() OVERRIDE { }
 #endif
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    virtual void showSubstitutionsPanel(bool) { }
-    virtual bool substitutionsPanelIsShowing() { return false; }
-    virtual void toggleSmartInsertDelete() { }
-    virtual bool isAutomaticQuoteSubstitutionEnabled() { return false; }
-    virtual void toggleAutomaticQuoteSubstitution() { }
-    virtual bool isAutomaticLinkDetectionEnabled() { return false; }
-    virtual void toggleAutomaticLinkDetection() { }
-    virtual bool isAutomaticDashSubstitutionEnabled() { return false; }
-    virtual void toggleAutomaticDashSubstitution() { }
-    virtual bool isAutomaticTextReplacementEnabled() { return false; }
-    virtual void toggleAutomaticTextReplacement() { }
-    virtual bool isAutomaticSpellingCorrectionEnabled() { return false; }
-    virtual void toggleAutomaticSpellingCorrection() { }
+    virtual void showSubstitutionsPanel(bool) OVERRIDE { }
+    virtual bool substitutionsPanelIsShowing() OVERRIDE { return false; }
+    virtual void toggleSmartInsertDelete() OVERRIDE { }
+    virtual bool isAutomaticQuoteSubstitutionEnabled() OVERRIDE { return false; }
+    virtual void toggleAutomaticQuoteSubstitution() OVERRIDE { }
+    virtual bool isAutomaticLinkDetectionEnabled() OVERRIDE { return false; }
+    virtual void toggleAutomaticLinkDetection() OVERRIDE { }
+    virtual bool isAutomaticDashSubstitutionEnabled() OVERRIDE { return false; }
+    virtual void toggleAutomaticDashSubstitution() OVERRIDE { }
+    virtual bool isAutomaticTextReplacementEnabled() OVERRIDE { return false; }
+    virtual void toggleAutomaticTextReplacement() OVERRIDE { }
+    virtual bool isAutomaticSpellingCorrectionEnabled() OVERRIDE { return false; }
+    virtual void toggleAutomaticSpellingCorrection() OVERRIDE { }
 #endif
 
 #if ENABLE(DELETION_UI)
-    virtual bool shouldShowDeleteInterface(HTMLElement*) { return false; }
+    virtual bool shouldShowDeleteInterface(HTMLElement*) OVERRIDE { return false; }
 #endif
 
 #if PLATFORM(GTK)
-    virtual bool shouldShowUnicodeMenu() { return false; }
+    virtual bool shouldShowUnicodeMenu() OVERRIDE { return false; }
 #endif
-    TextCheckerClient* textChecker() { return &m_textCheckerClient; }
+    virtual TextCheckerClient* textChecker() OVERRIDE { return &m_textCheckerClient; }
 
-    virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }
-    virtual void updateSpellingUIWithMisspelledWord(const String&) { }
-    virtual void showSpellingUI(bool) { }
-    virtual bool spellingUIIsShowing() { return false; }
+    virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) OVERRIDE { }
+    virtual void updateSpellingUIWithMisspelledWord(const String&) OVERRIDE { }
+    virtual void showSpellingUI(bool) OVERRIDE { }
+    virtual bool spellingUIIsShowing() OVERRIDE { return false; }
 
-    virtual void willSetInputMethodState() { }
-    virtual void setInputMethodState(bool) { }
+    virtual void willSetInputMethodState() OVERRIDE { }
+    virtual void setInputMethodState(bool) OVERRIDE { }
 
 private:
     EmptyTextCheckerClient m_textCheckerClient;
@@ -506,29 +501,28 @@ class EmptyContextMenuClient : public ContextMenuClient {
 public:
     EmptyContextMenuClient() { }
     virtual ~EmptyContextMenuClient() {  }
-    virtual void contextMenuDestroyed() { }
+    virtual void contextMenuDestroyed() OVERRIDE { }
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
     virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>) OVERRIDE;
 #else
-    virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) { return 0; }
+    virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) OVERRIDE { return 0; }
 #endif
-    virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) { }
+    virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) OVERRIDE { }
 
-    virtual void downloadURL(const URL&) { }
-    virtual void copyImageToClipboard(const HitTestResult&) { }
-    virtual void searchWithGoogle(const Frame*) { }
-    virtual void lookUpInDictionary(Frame*) { }
-    virtual bool isSpeaking() { return false; }
-    virtual void speak(const String&) { }
-    virtual void stopSpeaking() { }
+    virtual void downloadURL(const URL&) OVERRIDE { }
+    virtual void searchWithGoogle(const Frame*) OVERRIDE { }
+    virtual void lookUpInDictionary(Frame*) OVERRIDE { }
+    virtual bool isSpeaking() OVERRIDE { return false; }
+    virtual void speak(const String&) OVERRIDE { }
+    virtual void stopSpeaking() OVERRIDE { }
 
 #if PLATFORM(MAC)
-    virtual void searchWithSpotlight() { }
+    virtual void searchWithSpotlight() OVERRIDE { }
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-    virtual void showContextMenu() { }
+    virtual void showContextMenu() OVERRIDE { }
 #endif
 };
 #endif // ENABLE(CONTEXT_MENUS)
@@ -539,12 +533,12 @@ class EmptyDragClient : public DragClient {
 public:
     EmptyDragClient() { }
     virtual ~EmptyDragClient() {}
-    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) { }
-    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) { }
-    virtual DragDestinationAction actionMaskForDrag(DragData*) { return DragDestinationActionNone; }
-    virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) { return DragSourceActionNone; }
-    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) { }
-    virtual void dragControllerDestroyed() { }
+    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) OVERRIDE { }
+    virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) OVERRIDE { }
+    virtual DragDestinationAction actionMaskForDrag(DragData*) OVERRIDE { return DragDestinationActionNone; }
+    virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) OVERRIDE { return DragSourceActionNone; }
+    virtual void startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool) OVERRIDE { }
+    virtual void dragControllerDestroyed() OVERRIDE { }
 };
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -554,14 +548,14 @@ public:
     EmptyInspectorClient() { }
     virtual ~EmptyInspectorClient() { }
 
-    virtual void inspectorDestroyed() { }
+    virtual void inspectorDestroyed() OVERRIDE { }
     
-    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) { return 0; }
-    virtual void closeInspectorFrontend() { }
-    virtual void bringFrontendToFront() { }
+    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) OVERRIDE { return 0; }
+    virtual void closeInspectorFrontend() OVERRIDE { }
+    virtual void bringFrontendToFront() OVERRIDE { }
 
-    virtual void highlight() { }
-    virtual void hideHighlight() { }
+    virtual void highlight() OVERRIDE { }
+    virtual void hideHighlight() OVERRIDE { }
 };
 
 class EmptyDeviceClient : public DeviceClient {
@@ -572,16 +566,16 @@ public:
 
 class EmptyDeviceMotionClient : public DeviceMotionClient {
 public:
-    virtual void setController(DeviceMotionController*) { }
-    virtual DeviceMotionData* lastMotion() const { return 0; }
-    virtual void deviceMotionControllerDestroyed() { }
+    virtual void setController(DeviceMotionController*) OVERRIDE { }
+    virtual DeviceMotionData* lastMotion() const OVERRIDE { return 0; }
+    virtual void deviceMotionControllerDestroyed() OVERRIDE { }
 };
 
 class EmptyDeviceOrientationClient : public DeviceOrientationClient {
 public:
-    virtual void setController(DeviceOrientationController*) { }
-    virtual DeviceOrientationData* lastOrientation() const { return 0; }
-    virtual void deviceOrientationControllerDestroyed() { }
+    virtual void setController(DeviceOrientationController*) OVERRIDE { }
+    virtual DeviceOrientationData* lastOrientation() const OVERRIDE { return 0; }
+    virtual void deviceOrientationControllerDestroyed() OVERRIDE { }
 };
 
 void fillWithEmptyClients(Page::PageClients&);

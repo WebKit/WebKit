@@ -106,10 +106,10 @@ public:
 
     virtual void transformText();
 
-    virtual bool canBeSelectionLeaf() const { return true; }
+    virtual bool canBeSelectionLeaf() const OVERRIDE { return true; }
     virtual void setSelectionState(SelectionState s) OVERRIDE FINAL;
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
 
     LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0); }
@@ -119,8 +119,8 @@ public:
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
 
-    virtual int caretMinOffset() const;
-    virtual int caretMaxOffset() const;
+    virtual int caretMinOffset() const OVERRIDE;
+    virtual int caretMaxOffset() const OVERRIDE;
     unsigned renderedTextLength() const;
 
     virtual int previousOffset(int current) const OVERRIDE FINAL;

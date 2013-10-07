@@ -44,7 +44,7 @@ public:
 
     double position() const;
 
-    virtual bool canContainRangeEndPoint() const { return false; }
+    virtual bool canContainRangeEndPoint() const OVERRIDE { return false; }
 
 private:
     HTMLProgressElement(const QualifiedName&, Document&);
@@ -54,7 +54,7 @@ private:
     virtual bool shouldAppearIndeterminate() const OVERRIDE;
     virtual bool supportLabels() const OVERRIDE { return true; }
 
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
     RenderProgress* renderProgress() const;
 

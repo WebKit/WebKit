@@ -52,11 +52,11 @@ private:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool supportsFocus() const OVERRIDE;
-    virtual String target() const;
+    virtual String target() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isFocusable() const OVERRIDE;
-    virtual void updateFocusAppearance(bool /*restorePreviousSelection*/);
+    virtual void updateFocusAppearance(bool /*restorePreviousSelection*/) OVERRIDE;
     virtual void setFocus(bool) OVERRIDE;
 
     enum Shape { Default, Poly, Rect, Circle, Unknown };

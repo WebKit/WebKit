@@ -49,7 +49,7 @@ public:
     virtual ~SubresourceLoader();
 
     void cancelIfNotFinishing();
-    virtual bool isSubresourceLoader();
+    virtual bool isSubresourceLoader() OVERRIDE;
     CachedResource* cachedResource();
 
 private:

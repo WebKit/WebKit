@@ -55,7 +55,7 @@ public:
         ASSERT(object);
     }
 
-    void strokeStyle(GraphicsContext* context)
+    virtual void strokeStyle(GraphicsContext* context) OVERRIDE
     {
         SVGRenderSupport::applyStrokeStyleToContext(context, m_style, m_object);
     }
@@ -91,7 +91,7 @@ protected:
     void element() const WTF_DELETED_FUNCTION;
 
     virtual void updateShapeFromElement();
-    virtual bool isEmpty() const;
+    virtual bool isEmpty() const OVERRIDE;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
@@ -116,7 +116,7 @@ private:
 
     virtual bool isSVGShape() const OVERRIDE FINAL { return true; }
     virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
-    virtual const char* renderName() const { return "RenderSVGShape"; }
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGShape"; }
 
     virtual void layout() OVERRIDE FINAL;
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;

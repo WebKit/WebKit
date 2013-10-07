@@ -66,7 +66,7 @@ public:
     unsigned lineno() const { return m_lineNumber; }
     unsigned colno() const { return m_columnNumber; }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     ErrorEvent();

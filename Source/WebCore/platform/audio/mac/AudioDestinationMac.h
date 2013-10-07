@@ -46,11 +46,11 @@ public:
     AudioDestinationMac(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationMac();
 
-    virtual void start();
-    virtual void stop();
-    bool isPlaying() { return m_isPlaying; }
+    virtual void start() OVERRIDE;
+    virtual void stop() OVERRIDE;
+    virtual bool isPlaying() OVERRIDE { return m_isPlaying; }
 
-    float sampleRate() const { return m_sampleRate; }
+    virtual float sampleRate() const OVERRIDE { return m_sampleRate; }
 
 private:
     void configure();

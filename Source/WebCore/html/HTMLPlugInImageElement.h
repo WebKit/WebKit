@@ -128,7 +128,7 @@ private:
     virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
     virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
-    void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 
     virtual void finishParsingChildren() OVERRIDE;
 

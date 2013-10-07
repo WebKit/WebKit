@@ -44,7 +44,7 @@ public:
     AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     AudioProcessingEvent();

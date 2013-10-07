@@ -51,22 +51,22 @@ public:
     static void setGlobalException(String);
     static void moveGlobalExceptionToExecState(ExecState*);
 
-    ~CInstance ();
+    virtual ~CInstance();
 
-    virtual Class *getClass() const;
+    virtual Class *getClass() const OVERRIDE;
 
-    virtual JSValue valueOf(ExecState*) const;
-    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const;
+    virtual JSValue valueOf(ExecState*) const OVERRIDE;
+    virtual JSValue defaultValue(ExecState*, PreferredPrimitiveType) const OVERRIDE;
 
-    virtual JSValue getMethod(ExecState*, PropertyName);
-    virtual JSValue invokeMethod(ExecState*, RuntimeMethod* method);
-    virtual bool supportsInvokeDefaultMethod() const;
-    virtual JSValue invokeDefaultMethod(ExecState*);
+    virtual JSValue getMethod(ExecState*, PropertyName) OVERRIDE;
+    virtual JSValue invokeMethod(ExecState*, RuntimeMethod*) OVERRIDE;
+    virtual bool supportsInvokeDefaultMethod() const OVERRIDE;
+    virtual JSValue invokeDefaultMethod(ExecState*) OVERRIDE;
 
-    virtual bool supportsConstruct() const;
-    virtual JSValue invokeConstruct(ExecState*, const ArgList&);
+    virtual bool supportsConstruct() const OVERRIDE;
+    virtual JSValue invokeConstruct(ExecState*, const ArgList&) OVERRIDE;
 
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&) OVERRIDE;
 
     JSValue stringValue(ExecState*) const;
     JSValue numberValue(ExecState*) const;
@@ -77,7 +77,7 @@ public:
 private:
     CInstance(NPObject*, PassRefPtr<RootObject>);
 
-    virtual RuntimeObject* newRuntimeObject(ExecState*);
+    virtual RuntimeObject* newRuntimeObject(ExecState*) OVERRIDE;
     bool toJSPrimitive(ExecState*, const char*, JSValue&) const;
 
 

@@ -46,8 +46,8 @@ public:
 private:
     AccessibilityObject* m_parent;
     
-    virtual AccessibilityObject* parentObject() const;
-    virtual bool isAccessibilitySVGRoot() const { return true; }
+    virtual AccessibilityObject* parentObject() const OVERRIDE;
+    virtual bool isAccessibilitySVGRoot() const OVERRIDE { return true; }
 };
 
 inline AccessibilitySVGRoot* toAccessibilitySVGRoot(AccessibilityObject* object)

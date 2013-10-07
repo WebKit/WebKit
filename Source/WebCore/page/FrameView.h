@@ -509,7 +509,7 @@ private:
 
     void updateScrollableAreaSet();
 
-    virtual void notifyPageThatContentAreaWillPaint() const;
+    virtual void notifyPageThatContentAreaWillPaint() const OVERRIDE;
 
     bool shouldUseLoadTimeDeferredRepaintDelay() const;
     void deferredRepaintTimerFired(Timer<FrameView>*);

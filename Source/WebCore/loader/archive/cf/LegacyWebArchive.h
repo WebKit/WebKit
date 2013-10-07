@@ -54,7 +54,7 @@ public:
     static PassRefPtr<LegacyWebArchive> createFromSelection(Frame*);
     static PassRefPtr<LegacyWebArchive> create(Range*);
 
-    virtual Type type() const;
+    virtual Type type() const OVERRIDE;
 
     RetainPtr<CFDataRef> rawDataRepresentation();
 

@@ -47,12 +47,12 @@ public:
 
     void setParentNode(SVGElementInstance* instance) { m_parentInstance = instance; }
 
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    virtual void removeAllEventListeners();
+    virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture) OVERRIDE;
+    virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
+    virtual void removeAllEventListeners() OVERRIDE;
 
     using EventTarget::dispatchEvent;
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
@@ -153,7 +153,7 @@ private:
     void removedLastRef();
     bool hasTreeSharedParent() const { return !!m_parentInstance; }
 
-    virtual Node* toNode();
+    virtual Node* toNode() OVERRIDE;
 
     void appendChild(PassRefPtr<SVGElementInstance> child);
     void setShadowTreeElement(SVGElement*);

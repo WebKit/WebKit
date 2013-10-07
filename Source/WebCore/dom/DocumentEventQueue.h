@@ -42,7 +42,7 @@ class Node;
 class DocumentEventQueue FINAL : public EventQueue {
 public:
     explicit DocumentEventQueue(Document&);
-    ~DocumentEventQueue();
+    virtual ~DocumentEventQueue();
 
     virtual bool enqueueEvent(PassRefPtr<Event>) OVERRIDE;
     virtual bool cancelEvent(Event&) OVERRIDE;

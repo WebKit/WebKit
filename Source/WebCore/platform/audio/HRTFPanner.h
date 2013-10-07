@@ -38,8 +38,8 @@ public:
     virtual ~HRTFPanner();
 
     // Panner
-    virtual void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess);
-    virtual void reset();
+    virtual void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess) OVERRIDE;
+    virtual void reset() OVERRIDE;
 
     size_t fftSize() const { return fftSizeForSampleRate(m_sampleRate); }
     static size_t fftSizeForSampleRate(float sampleRate);

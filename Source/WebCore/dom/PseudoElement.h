@@ -40,7 +40,7 @@ public:
     {
         return adoptRef(new PseudoElement(host, pseudoId));
     }
-    ~PseudoElement();
+    virtual ~PseudoElement();
 
     Element* hostElement() const { return m_hostElement; }
     void clearHostElement() { m_hostElement = 0; }

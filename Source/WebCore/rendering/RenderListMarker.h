@@ -51,35 +51,35 @@ private:
 
     explicit RenderListMarker(RenderListItem&);
 
-    virtual const char* renderName() const { return "RenderListMarker"; }
+    virtual const char* renderName() const OVERRIDE { return "RenderListMarker"; }
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
-    virtual bool isListMarker() const { return true; }
+    virtual bool isListMarker() const OVERRIDE { return true; }
     virtual bool canHaveChildren() const OVERRIDE { return false; }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
-    virtual void layout();
+    virtual void layout() OVERRIDE;
 
-    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
+    virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
 
-    virtual InlineBox* createInlineBox();
+    virtual InlineBox* createInlineBox() OVERRIDE;
 
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
 
-    bool isImage() const;
+    virtual bool isImage() const OVERRIDE;
     bool isText() const { return !isImage(); }
 
-    virtual void setSelectionState(SelectionState);
+    virtual void setSelectionState(SelectionState) OVERRIDE;
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
-    virtual bool canBeSelectionLeaf() const { return true; }
+    virtual bool canBeSelectionLeaf() const OVERRIDE { return true; }
 
     void updateMargins();
     void updateContent();
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     IntRect getRelativeMarkerRect();
     LayoutRect localSelectionRect();

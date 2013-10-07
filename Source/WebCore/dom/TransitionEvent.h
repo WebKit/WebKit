@@ -60,7 +60,7 @@ public:
     double elapsedTime() const;
     const String& pseudoElement() const;
 
-    virtual EventInterface eventInterface() const;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     TransitionEvent();

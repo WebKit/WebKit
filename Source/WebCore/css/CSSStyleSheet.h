@@ -119,8 +119,8 @@ private:
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule);
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
 
-    virtual bool isCSSStyleSheet() const { return true; }
-    virtual String type() const { return ASCIILiteral("text/css"); }
+    virtual bool isCSSStyleSheet() const OVERRIDE { return true; }
+    virtual String type() const OVERRIDE { return ASCIILiteral("text/css"); }
 
     bool canAccessRules() const;
     

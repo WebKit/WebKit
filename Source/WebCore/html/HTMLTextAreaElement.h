@@ -40,12 +40,12 @@ public:
 
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
-    virtual String value() const;
+    virtual String value() const OVERRIDE;
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
-    virtual int maxLength() const;
+    virtual int maxLength() const OVERRIDE;
     void setMaxLength(int, ExceptionCode&);
     // For ValidityState
     virtual String validationMessage() const OVERRIDE;
@@ -53,7 +53,7 @@ public:
     virtual bool tooLong() const OVERRIDE;
     bool isValidValue(const String&) const;
     
-    virtual HTMLElement* innerTextElement() const;
+    virtual HTMLElement* innerTextElement() const OVERRIDE;
 
     void rendererWillBeDestroyed();
 
@@ -74,41 +74,41 @@ private:
     void setNonDirtyValue(const String&);
     void setValueCommon(const String&);
 
-    virtual bool supportsPlaceholder() const { return true; }
-    virtual HTMLElement* placeholderElement() const;
-    virtual void updatePlaceholderText();
-    virtual bool isEmptyValue() const { return value().isEmpty(); }
+    virtual bool supportsPlaceholder() const OVERRIDE { return true; }
+    virtual HTMLElement* placeholderElement() const OVERRIDE;
+    virtual void updatePlaceholderText() OVERRIDE;
+    virtual bool isEmptyValue() const OVERRIDE { return value().isEmpty(); }
 
-    virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const { return isRequired(); }
+    virtual bool isOptionalFormControl() const OVERRIDE { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const OVERRIDE { return isRequired(); }
 
-    virtual void defaultEventHandler(Event*);
+    virtual void defaultEventHandler(Event*) OVERRIDE;
     
-    virtual void subtreeHasChanged();
+    virtual void subtreeHasChanged() OVERRIDE;
 
-    virtual bool isEnumeratable() const { return true; }
+    virtual bool isEnumeratable() const OVERRIDE { return true; }
     virtual bool supportLabels() const OVERRIDE { return true; }
 
-    virtual const AtomicString& formControlType() const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
 
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
 
-    virtual bool isTextFormControl() const { return true; }
+    virtual bool isTextFormControl() const OVERRIDE { return true; }
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
-    virtual bool appendFormData(FormDataList&, bool);
-    virtual void reset();
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
+    virtual bool appendFormData(FormDataList&, bool) OVERRIDE;
+    virtual void reset() OVERRIDE;
     virtual bool hasCustomFocusLogic() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual void updateFocusAppearance(bool restorePreviousSelection);
+    virtual void updateFocusAppearance(bool restorePreviousSelection) OVERRIDE;
 
-    virtual void accessKeyAction(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 
     virtual bool shouldUseInputMethod() OVERRIDE;
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
