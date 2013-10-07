@@ -31,6 +31,7 @@
 
 #import <AppKit/AppKit.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <getopt.h>
 #import <signal.h>
 #import <stdio.h>
 #import <stdlib.h>
@@ -40,10 +41,15 @@
 // test script, so it can do the job for multiple DumpRenderTree while they are
 // running layout tests.
 
+static int installColorProfile = false;
+
 static CFURLRef sUserColorProfileURL;
 
 static void installLayoutTestColorProfile()
 {
+    if (!installColorProfile)
+        return;
+
     // To make sure we get consistent colors (not dependent on the chosen color
     // space of the main display), we force the generic RGB color profile.
     // This causes a change the user can see.
@@ -108,6 +114,9 @@ static void installLayoutTestColorProfile()
 
 static void restoreUserColorProfile(void)
 {
+    if (!installColorProfile)
+        return;
+
     // This is used as a signal handler, and thus the calls into ColorSync are unsafe.
     // But we might as well try to restore the user's color profile, we're going down anyway...
     
@@ -129,14 +138,55 @@ static void simpleSignalHandler(int sig)
     exit(128 + sig);
 }
 
+void lockDownDiscreteGraphics()
+{
+    mach_port_t masterPort;
+    kern_return_t kernResult = IOMasterPort(bootstrap_port, &masterPort);
+    if (kernResult != KERN_SUCCESS)
+        return;
+    CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
+    if (!classToMatch)
+        return;
+
+    io_service_t serviceObject = IOServiceGetMatchingService(masterPort, classToMatch);
+    if (!serviceObject) {
+        // The machine does not allow control over the choice of graphics device.
+        return;
+    }
+
+    // We're intentionally leaking this io_connect in order for the process to stay locked to discrete graphics
+    // for the lifetime of the service connection.
+    static io_connect_t permanentLockDownService = 0;
+
+    // This call stalls until the graphics device lock is granted.
+    kernResult = IOServiceOpen(serviceObject, mach_task_self(), 1, &permanentLockDownService);
+    IOObjectRelease(serviceObject);
+}
+
 int main(int argc, char* argv[])
 {
+    struct option options[] = {
+        { "install-color-profile", no_argument, &installColorProfile, true },
+    };
+
+    int option;
+    while ((option = getopt_long(argc, (char* const*)argv, "", options, NULL)) != -1) {
+        switch (option) {
+        case '?':   // unknown or ambiguous option
+        case ':':   // missing argument
+            exit(1);
+            break;
+        }
+    }
+
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     // Hooks the ways we might get told to clean up...
     signal(SIGINT, simpleSignalHandler);
     signal(SIGHUP, simpleSignalHandler);
     signal(SIGTERM, simpleSignalHandler);
+
+    lockDownDiscreteGraphics();
 
     // Save off the current profile, and then install the layout test profile.
     installLayoutTestColorProfile();

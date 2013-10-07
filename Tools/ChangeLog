@@ -1,3 +1,36 @@
+2013-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Always force discrete mode when running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=122465
+
+        Reviewed by Tim Horton.
+
+        This should speed up WebGL tests and hopefully prevent race conditions that may cause window server crashes from happening.
+        
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Link with IOKit.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile):
+        Check installColorProfile.
+
+        (restoreUserColorProfile):
+        Check installColorProfile.
+
+        (lockDownDiscreteGraphics):
+        New function to force discrete graphics.
+
+        (main):
+        Add '--install-color-profile' option.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        Always start the helper, but pass self._options.pixel_tests to it.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.start_helper):
+        Pass --install-color-profile' to the helper if pixel_tests is true.
+
 2013-10-07  Timothy Hatcher  <timothy@apple.com>
 
         Properly count binding test failures as failures.
