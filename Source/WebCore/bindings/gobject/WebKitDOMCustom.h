@@ -292,6 +292,29 @@ WEBKIT_API gboolean webkit_dom_html_element_get_item_scope(WebKitDOMHTMLElement*
 **/
 WEBKIT_API void* webkit_dom_html_element_get_item_type(WebKitDOMHTMLElement* self);
 
+
+/**
+ * webkit_dom_html_style_element_set_scoped:
+ * @self: A #WebKitDOMHTMLStyleElement
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+**/
+WEBKIT_API void webkit_dom_html_style_element_set_scoped(WebKitDOMHTMLStyleElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_style_element_get_scoped:
+ * @self: A #WebKitDOMHTMLStyleElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean webkit_dom_html_style_element_get_scoped(WebKitDOMHTMLStyleElement* self);
+
+
 WEBKIT_API GType webkit_dom_html_properties_collection_get_type(void);
 
 /**

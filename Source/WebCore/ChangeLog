@@ -1,3 +1,17 @@
+2013-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] webkit_dom_html_style_element_{s,g}et_scoped was removed
+        https://bugs.webkit.org/show_bug.cgi?id=122446
+
+        Reviewed by Martin Robinson.
+
+        Added skeleton functions warning of removed functionality for
+        the <style scoped> GObject DOM binding.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        * bindings/gobject/WebKitDOMCustom.h:
+        * bindings/gobject/WebKitDOMCustom.symbols:
+
 2013-10-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix for GCC 4.6.
