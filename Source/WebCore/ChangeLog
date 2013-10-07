@@ -1,5 +1,32 @@
 2013-10-07  Jer Noble  <jer.noble@apple.com>
 
+        [Mac] Drawing video into canvas doesn't work on the first attempt
+        https://bugs.webkit.org/show_bug.cgi?id=122404
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-canvas-drawing.html
+
+        If creating and painting from an AVPlayerItemVideoOutput fails, fall back
+        to the (much slower) AVAssetImageGenerator path. Make sure to revert to the
+        AVPlayerItemVideoOutput path when that object begins to have available
+        images, however.
+
+        To do so, remove the "__MAC_OS_X_VERSION_MIN_REQUIRED < 1080" check around
+        the AVAssetImageGenerator code, and allow both the image generator and video
+        output to exist simultaneously.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
+2013-10-07  Jer Noble  <jer.noble@apple.com>
+
         URLMediaSource.idl and URLMediaStream.idl are wrong
         https://bugs.webkit.org/show_bug.cgi?id=122301
 

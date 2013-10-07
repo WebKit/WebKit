@@ -1,3 +1,14 @@
+2013-10-07  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Drawing video into canvas doesn't work on the first attempt
+        https://bugs.webkit.org/show_bug.cgi?id=122404
+
+        Reviewed by Eric Carlson.
+
+        * media/video-canvas-drawing-expected.png: Added.
+        * media/video-canvas-drawing-expected.txt: Added.
+        * media/video-canvas-drawing.html: Added.
+
 2013-10-07  Tim Horton  <timothy_horton@apple.com>
 
         css3/images/cross-fade-svg-with-opacity.html fails with colorspace mismatch on Mountain Lion

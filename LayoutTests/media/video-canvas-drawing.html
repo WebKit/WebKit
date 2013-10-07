@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>Drawing to canvas using video</title>
+        <script src=media-file.js></script>
+        <script>
+            var video;
+            var numberOfSeeks = 4;
+            var requirePixelDump = true;
+
+            if (window.testRunner) {
+                testRunner.dumpAsText(true);
+                testRunner.waitUntilDone();
+            }
+
+            function drawAndInsertFrame()
+            {
+                var canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth / 2;
+                canvas.height = video.videoHeight / 2;
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                document.getElementById('canvases').appendChild(canvas);
+
+                if (--numberOfSeeks) {
+                    video.currentTime += 1;
+                    return;
+                }
+
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                video.currentTime = 3;
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('seeked', drawAndInsertFrame);
+                video.src = findMediaFile('video', 'content/counting');
+            }
+        </script>
+        <script src=video-test.js></script>
+    </head>
+    <body onload="start()">
+        <video id="video"></video>
+        <div id="canvases"></div>
+    </body>
+</html>

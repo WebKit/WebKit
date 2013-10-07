@@ -312,10 +312,10 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    return m_videoOutput;
-#else
-    return m_imageGenerator;
+    if (m_videoOutput)
+        return true;
 #endif
+    return m_imageGenerator;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
@@ -327,7 +327,6 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 #endif
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
 void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createImageGenerator(%p)", this);
@@ -344,18 +343,15 @@ void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createImageGenerator(%p) - returning %p", this, m_imageGenerator.get());
 }
-#endif
 
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     destroyVideoOutput();
-#else
-    destroyImageGenerator();
 #endif
+    destroyImageGenerator();
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
 void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
 {
     if (!m_imageGenerator)
@@ -365,7 +361,6 @@ void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
 
     m_imageGenerator = 0;
 }
-#endif
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 {
@@ -802,10 +797,11 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    paintWithVideoOutput(context, rect);
-#else
-    paintWithImageGenerator(context, rect);
+    if (videoOutputHasAvailableFrame())
+        paintWithVideoOutput(context, rect);
+    else
 #endif
+        paintWithImageGenerator(context, rect);
 
     END_BLOCK_OBJC_EXCEPTIONS;
     setDelayCallbacks(false);
@@ -825,7 +821,6 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     paintCurrentFrameInContext(context, rect);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
 void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const IntRect& rect)
 {
     RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
@@ -839,7 +834,6 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext
         image = 0;
     }
 }
-#endif
 
 static HashSet<String> mimeTypeCache()
 {
@@ -857,7 +851,6 @@ static HashSet<String> mimeTypeCache()
     return cache;
 } 
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
 RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const IntRect& rect)
 {
     if (!m_imageGenerator)
@@ -878,7 +871,6 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 
     return image;
 }
-#endif
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
@@ -1259,6 +1251,20 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
     return buffer;
 }
 
+bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
+{
+    if (!m_avPlayerItem)
+        return false;
+
+    if (m_lastImage)
+        return true;
+
+    if (!m_videoOutput)
+        createVideoOutput();
+
+    return [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& rect)
 {
     RetainPtr<CVPixelBufferRef> pixelBuffer = createPixelBuffer();
@@ -1281,6 +1287,11 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
         CGRect outputRect = { CGPointZero, rect.size() };
         CGRect imageRect = CGRectMake(0, 0, CVPixelBufferGetWidth(m_lastImage.get()), CVPixelBufferGetHeight(m_lastImage.get()));
         [ciContext drawImage:image.get() inRect:outputRect fromRect:imageRect];
+
+        // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
+        // video frame, destroy it now that it is no longer needed.
+        if (m_imageGenerator)
+            destroyImageGenerator();
     }
 }
 #endif
