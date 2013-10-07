@@ -100,7 +100,7 @@ class MockDRTPort(object):
 
         return new_cmd_line
 
-    def start_helper(self):
+    def start_helper(self, pixel_tests=False):
         pass
 
     def start_http_server(self, number_of_servers):

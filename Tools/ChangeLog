@@ -1,5 +1,14 @@
 2013-10-07  Anders Carlsson  <andersca@apple.com>
 
+        Fix test failures.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.start_helper):
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockDRTPort.start_helper):
+
+2013-10-07  Anders Carlsson  <andersca@apple.com>
+
         Always force discrete mode when running layout tests
         https://bugs.webkit.org/show_bug.cgi?id=122465
 
