@@ -1,3 +1,17 @@
+2013-10-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Fails to build with jhbuild with newer system glib
+        https://bugs.webkit.org/show_bug.cgi?id=122132
+
+        Reviewed by Martin Robinson.
+
+        Newer glib includes new symbols that some system libraries which we depend on, such as pango, have
+        started relying on. glib is not a dependency that should change test results, and is provided in
+        jhbuild with the intention of supporting the other bits that do, so using a newer stable release
+        should not be an issue.
+
+        * gtk/jhbuild.modules:
+
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests shouldn't print its goofy progress meter when running on the bots
