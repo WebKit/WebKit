@@ -114,7 +114,8 @@ public:
     bool isSVGPaint() const { return m_classType == SVGPaintClass; }
     bool isWebKitCSSSVGDocumentValue() const { return m_classType == WebKitCSSSVGDocumentClass; }
 #endif
-    
+    bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
+
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
     { 
