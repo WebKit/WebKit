@@ -22,7 +22,6 @@
 #include "UserMediaClientGtk.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaStreamSource.h"
 #include "NotImplemented.h"
 #include "UserMediaRequest.h"
 
@@ -43,12 +42,12 @@ void UserMediaClientGtk::pageDestroyed()
     notImplemented();
 }
 
-void UserMediaClientGtk::requestUserMedia(WTF::PassRefPtr<UserMediaRequest> prpRequest, const MediaStreamSourceVector& audioSource, const MediaStreamSourceVector& videoSource)
+void UserMediaClientGtk::requestPermission(PassRefPtr<UserMediaRequest>)
 {
     notImplemented();
 }
 
-void UserMediaClientGtk::cancelUserMediaRequest(UserMediaRequest* request)
+void UserMediaClientGtk::cancelRequest(UserMediaRequest*)
 {
     notImplemented();
 }

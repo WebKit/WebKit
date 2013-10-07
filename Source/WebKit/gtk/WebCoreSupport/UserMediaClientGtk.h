@@ -32,8 +32,8 @@ public:
     virtual ~UserMediaClientGtk();
 
     virtual void pageDestroyed();
-    virtual void requestUserMedia(WTF::PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector&, const WebCore::MediaStreamSourceVector&);
-    virtual void cancelUserMediaRequest(WebCore::UserMediaRequest*);
+    virtual void requestPermission(WTF::PassRefPtr<WebCore::UserMediaRequest>);
+    virtual void cancelRequest(WebCore::UserMediaRequest*);
 };
 
 } // namespace WebKit

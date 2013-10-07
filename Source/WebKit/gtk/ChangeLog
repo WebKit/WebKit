@@ -1,3 +1,18 @@
+2013-10-04  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] UserMediaClientGtk needs API update
+        https://bugs.webkit.org/show_bug.cgi?id=122324
+
+        Reviewed by Martin Robinson.
+
+        Update UserMediaClientGtk API after changes made in the parent
+        class in r156473.
+
+        * WebCoreSupport/UserMediaClientGtk.cpp:
+        (WebKit::UserMediaClientGtk::requestPermission):
+        (WebKit::UserMediaClientGtk::cancelRequest):
+        * WebCoreSupport/UserMediaClientGtk.h:
+
 2013-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r156946. The framePolicyFunction is an attribute
