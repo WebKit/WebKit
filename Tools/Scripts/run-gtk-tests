@@ -22,7 +22,7 @@ import os
 import sys
 import optparse
 import re
-from signal import alarm, signal, SIGALRM, SIGKILL
+from signal import alarm, signal, SIGALRM, SIGKILL, SIGSEGV
 from gi.repository import Gio, GLib
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -309,7 +309,7 @@ class TestRunner:
             # process.  This child is dead, we can't get the status.
             status = 0
 
-        return not return_code_from_exit_status(status)
+        return return_code_from_exit_status(status)
 
     def _run_test_glib(self, test_program):
         tester_command = ['gtester']
@@ -336,7 +336,7 @@ class TestRunner:
         if "TestWebKitAPI" in test_program:
             return self._run_test_google(test_program)
 
-        return False
+        return 1
 
     def run_tests(self):
         if not self._tests:
@@ -351,19 +351,24 @@ class TestRunner:
         # some tests might be skipped while setting up the test environment.
         self._tests = [test for test in self._tests if self._should_run_test_program(test)]
 
+        crashed_tests = []
         failed_tests = []
         timed_out_tests = []
         try:
             for test in self._tests:
-                success = True
+                exit_status_code = 0
                 try:
-                    success = self._run_test(test)
+                    exit_status_code = self._run_test(test)
                 except TestTimeout:
                     sys.stdout.write("TEST: %s: TIMEOUT\n" % test)
                     sys.stdout.flush()
                     timed_out_tests.append(test)
 
-                if not success:
+                if exit_status_code == -SIGSEGV:
+                    sys.stdout.write("TEST: %s: CRASHED\n" % test)
+                    sys.stdout.flush()
+                    crashed_tests.append(test)
+                elif exit_status_code != 0:
                     failed_tests.append(test)
         finally:
             self._tear_down_testing_environment()
@@ -371,6 +376,11 @@ class TestRunner:
         if failed_tests:
             names = [test.replace(self._programs_path, '', 1) for test in failed_tests]
             sys.stdout.write("Tests failed (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.flush()
+
+        if crashed_tests:
+            names = [test.replace(self._programs_path, '', 1) for test in crashed_tests]
+            sys.stdout.write("Tests that crashed (%d): %s\n" % (len(names), ", ".join(names)))
             sys.stdout.flush()
 
         if timed_out_tests:

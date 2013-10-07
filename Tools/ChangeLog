@@ -1,3 +1,20 @@
+2013-10-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] run-gtk-tests does not distinguish between failure and crashes
+        https://bugs.webkit.org/show_bug.cgi?id=122135
+
+        Reviewed by Martin Robinson.
+
+        The GTK+ API test runner does not distinguish between failures and crashes. This change
+        makes it do that, so it's easier for us to spot the more important/higher priority crash
+        case.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_test_command): return the exit code instead of a boolean true/false,
+        so we have more information on how the process ended.
+        (TestRunner._run_test): check the exit code to distinguish between crashes and failures.
+        (TestRunner.run_tests): report crashes.
+
 2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Missing packages for APT on install-dependencies
