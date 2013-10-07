@@ -36,6 +36,7 @@
 #include "DFGDesiredWeakReferences.h"
 #include "DFGDesiredWriteBarriers.h"
 #include "DFGFinalizer.h"
+#include "DeferredCompilationCallback.h"
 #include "Operands.h"
 #include "ProfilerCompilation.h"
 #include <wtf/ThreadSafeRefCounted.h>
@@ -48,23 +49,22 @@ namespace DFG {
 
 class LongLivedState;
 
-enum CompileMode { CompileFunction, CompileOther };
-
 #if ENABLE(DFG_JIT)
 
 struct Plan : public ThreadSafeRefCounted<Plan> {
     Plan(
-        CompileMode compileMode, PassRefPtr<CodeBlock> codeBlock,
-        unsigned osrEntryBytecodeIndex, unsigned numVarsWithValues);
+        PassRefPtr<CodeBlock>, unsigned osrEntryBytecodeIndex, unsigned numVarsWithValues);
     ~Plan();
     
     void compileInThread(LongLivedState&);
     
-    CompilationResult finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck);
+    CompilationResult finalizeWithoutNotifyingCallback();
+    void finalizeAndNotifyCallback();
+    
+    void notifyReady();
     
     CodeBlock* key();
     
-    const CompileMode compileMode;
     VM& vm;
     RefPtr<CodeBlock> codeBlock;
     const unsigned osrEntryBytecodeIndex;
@@ -85,6 +85,8 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     double beforeFTL;
     
     bool isCompiled;
+
+    RefPtr<DeferredCompilationCallback> callback;
 
 private:
     enum CompilationPath { FailPath, DFGPath, FTLPath };

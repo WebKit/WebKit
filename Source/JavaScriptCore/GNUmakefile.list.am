@@ -110,9 +110,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlockWithJITType.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.cpp \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
-	Source/JavaScriptCore/bytecode/DataFormat.h \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
+	Source/JavaScriptCore/bytecode/DataFormat.h \
+	Source/JavaScriptCore/bytecode/DeferredCompilationCallback.cpp \
+	Source/JavaScriptCore/bytecode/DeferredCompilationCallback.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/ExecutionCounter.cpp \
 	Source/JavaScriptCore/bytecode/ExecutionCounter.h \
@@ -542,7 +544,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITCompilationEffort.h \
 	Source/JavaScriptCore/jit/JITDisassembler.cpp \
 	Source/JavaScriptCore/jit/JITDisassembler.h \
-	Source/JavaScriptCore/jit/JITDriver.h \
 	Source/JavaScriptCore/jit/JIT.cpp \
 	Source/JavaScriptCore/jit/JIT.h \
 	Source/JavaScriptCore/jit/JITExceptions.cpp \
@@ -566,6 +567,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubsX86Common.h \
 	Source/JavaScriptCore/jit/JITThunks.cpp \
 	Source/JavaScriptCore/jit/JITThunks.h \
+	Source/JavaScriptCore/jit/JITToDFGDeferredCompilationCallback.cpp \
+	Source/JavaScriptCore/jit/JITToDFGDeferredCompilationCallback.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
 	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.cpp \
@@ -721,7 +724,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ExceptionHelpers.h \
 	Source/JavaScriptCore/runtime/Executable.cpp \
 	Source/JavaScriptCore/runtime/Executable.h \
-	Source/JavaScriptCore/runtime/ExecutionHarness.h \
 	Source/JavaScriptCore/runtime/Float32Array.h \
 	Source/JavaScriptCore/runtime/Float64Array.h \
 	Source/JavaScriptCore/runtime/FunctionConstructor.cpp \

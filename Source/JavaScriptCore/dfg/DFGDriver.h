@@ -42,17 +42,9 @@ namespace DFG {
 JS_EXPORT_PRIVATE unsigned getNumCompilations();
 
 #if ENABLE(DFG_JIT)
-CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned bytecodeIndex);
-CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
-CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr* jitCodeWithArityCheck);
+CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>);
 #else
-inline CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return CompilationFailed; }
-inline CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return CompilationFailed; }
-inline CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr*)
-{
-    UNREACHABLE_FOR_PLATFORM();
-    return CompilationFailed;
-}
+inline CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned, PassRefPtr<DeferredCompilationCallback>) { return CompilationFailed; }
 #endif
 
 } } // namespace JSC::DFG

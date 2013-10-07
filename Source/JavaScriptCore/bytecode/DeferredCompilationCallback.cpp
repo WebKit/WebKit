@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntEntrypoints_h
-#define LLIntEntrypoints_h
-
-#include <wtf/Platform.h>
-
-#if ENABLE(LLINT)
-
-#include "CodeSpecializationKind.h"
-#include "JITCode.h"
-#include <wtf/RefPtr.h>
+#include "config.h"
+#include "DeferredCompilationCallback.h"
 
 namespace JSC {
 
-class EvalCodeBlock;
-class FunctionCodeBlock;
-class VM;
-class MacroAssemblerCodePtr;
-class MacroAssemblerCodeRef;
-class ProgramCodeBlock;
+DeferredCompilationCallback::DeferredCompilationCallback() { }
+DeferredCompilationCallback::~DeferredCompilationCallback() { }
 
-namespace LLInt {
+} // JSC
 
-void setFunctionEntrypoint(VM&, FunctionCodeBlock*);
-void setEvalEntrypoint(VM&, EvalCodeBlock*);
-void setProgramEntrypoint(VM&, ProgramCodeBlock*);
-
-} } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
-
-#endif // LLIntEntrypoints_h
