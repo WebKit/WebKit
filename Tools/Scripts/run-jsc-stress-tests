@@ -295,7 +295,7 @@ class Plan
             end
         }
         script += "#{shellCommand} || exit 1"
-        "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape($outputDir + @name)}"
+        "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape(($outputDir + @name).to_s)}"
     end
     
     def failCommand
