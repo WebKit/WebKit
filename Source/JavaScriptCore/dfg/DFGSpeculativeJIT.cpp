@@ -4257,18 +4257,18 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
         Uncountable, JSValueSource(), 0,
         m_jit.branch32(
             MacroAssembler::AboveOrEqual, propertyReg,
-            MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments))));
+            MacroAssembler::Address(baseReg, Arguments::offsetOfNumArguments())));
     speculationCheck(
         Uncountable, JSValueSource(), 0,
         m_jit.branchTestPtr(
             MacroAssembler::NonZero,
             MacroAssembler::Address(
-                baseReg, OBJECT_OFFSETOF(Arguments, m_slowArgumentData))));
+                baseReg, Arguments::offsetOfSlowArgumentData())));
     
     m_jit.move(propertyReg, resultReg);
     m_jit.signExtend32ToPtr(resultReg, resultReg);
     m_jit.loadPtr(
-        MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
+        MacroAssembler::Address(baseReg, Arguments::offsetOfRegisters()),
         scratchReg);
     
 #if USE(JSVALUE32_64)
@@ -4312,10 +4312,10 @@ void SpeculativeJIT::compileGetArgumentsLength(Node* node)
         Uncountable, JSValueSource(), 0,
         m_jit.branchTest8(
             MacroAssembler::NonZero,
-            MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_overrodeLength))));
+            MacroAssembler::Address(baseReg, Arguments::offsetOfOverrodeLength())));
     
     m_jit.load32(
-        MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments)),
+        MacroAssembler::Address(baseReg, Arguments::offsetOfNumArguments()),
         resultReg);
     int32Result(resultReg, node);
 }

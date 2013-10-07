@@ -353,6 +353,12 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             
         case ArgumentsThatWereNotCreated:
             haveArguments = true;
+            m_jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue().tag()),
+                AssemblyHelpers::tagFor(operand));
+            m_jit.store32(
+                AssemblyHelpers::TrustedImm32(JSValue().payload()),
+                AssemblyHelpers::payloadFor(operand));
             break;
             
         default:
@@ -419,7 +425,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             for (InlineCallFrame* current = exit.m_codeOrigin.inlineCallFrame;
                  current;
                  current = current->caller.inlineCallFrame) {
-                if (current->stackOffset <= operand) {
+                if (current->stackOffset >= operand) {
                     inlineCallFrame = current;
                     break;
                 }

@@ -3145,18 +3145,18 @@ void SpeculativeJIT::compile(Node* node)
                 Uncountable, JSValueSource(), 0,
                 m_jit.branch32(
                     MacroAssembler::AboveOrEqual, propertyReg,
-                    MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments))));
+                    MacroAssembler::Address(baseReg, Arguments::offsetOfNumArguments())));
             speculationCheck(
                 Uncountable, JSValueSource(), 0,
                 m_jit.branchTestPtr(
                     MacroAssembler::NonZero,
                     MacroAssembler::Address(
-                        baseReg, OBJECT_OFFSETOF(Arguments, m_slowArgumentData))));
+                        baseReg, Arguments::offsetOfSlowArgumentData())));
     
             m_jit.move(propertyReg, scratch2Reg);
             m_jit.signExtend32ToPtr(scratch2Reg, scratch2Reg);
             m_jit.loadPtr(
-                MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
+                MacroAssembler::Address(baseReg, Arguments::offsetOfRegisters()),
                 scratchReg);
             
             m_jit.store64(

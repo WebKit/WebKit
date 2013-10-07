@@ -1,5 +1,39 @@
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
+        ASSERTION FAILED: bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers in jsc-layout-tests.yaml/js/script-tests/dfg-inline-arguments-capture-throw-exception.js.layout-dfg-eager-no-cjit
+        https://bugs.webkit.org/show_bug.cgi?id=122418
+
+        Reviewed by Oliver Hunt.
+
+        This is pretty awesome. With stack compression, Arguments created in the DFG will point
+        their m_registers pointers into a different slab of stack than they would have in byte
+        code.
+
+        Hence OSR exit must repoint any Arguments objects' m_registers pointers. It previously
+        neglected to do so. This patch fixes that.
+        
+        Fixing this unveiled another bug: the stack reversal broke the reification of inlined
+        phantom arguments.
+        
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Arguments.h:
+        (JSC::Arguments::offsetOfNumArguments):
+        (JSC::Arguments::offsetOfRegisters):
+        (JSC::Arguments::offsetOfSlowArgumentData):
+        (JSC::Arguments::offsetOfOverrodeLength):
+
+2013-10-06  Filip Pizlo  <fpizlo@apple.com>
+
         Unified test infrastructure via the jsc shell
         https://bugs.webkit.org/show_bug.cgi?id=120696
 
