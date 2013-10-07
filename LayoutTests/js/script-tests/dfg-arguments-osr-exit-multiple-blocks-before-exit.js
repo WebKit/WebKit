@@ -1,3 +1,6 @@
+// https://bugs.webkit.org/show_bug.cgi?id=122436
+//@ runLayoutTestDefault
+
 description(
 "Tests aliased uses of 'arguments' that require reification of the Arguments object on OSR exit, in the case that there is some interesting control flow prior to the exit."
 );

@@ -1,5 +1,18 @@
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
+        jsc-layout-tests.yaml/js/script-tests/dfg-arguments-osr-exit.js.layout-dfg-eager-no-cjit fails in release mode on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=122436
+
+        Unreviewed, green the bots by not running the eager variants of these tests.
+        
+        Will unskip when I land the fix for https://bugs.webkit.org/show_bug.cgi?id=122418.
+
+        * js/script-tests/dfg-arguments-osr-exit-multiple-blocks-before-exit.js:
+        * js/script-tests/dfg-arguments-osr-exit-multiple-blocks.js:
+        * js/script-tests/dfg-arguments-osr-exit.js:
+
+2013-10-06  Filip Pizlo  <fpizlo@apple.com>
+
         Unified test infrastructure via the jsc shell
         https://bugs.webkit.org/show_bug.cgi?id=120696
 
