@@ -27,18 +27,18 @@ BuildbotTestResults = function(buildbotIteration, info)
 {
     BaseObject.call(this);
 
-    this.finished = info.finished;
+    this.finished = info.finished || false;
 
-    this.allPassed = info.allPassed;
-    this.errorOccurred = info.errorOccurred;
-    this.tooManyFailures = info.tooManyFailures;
+    this.allPassed = info.allPassed || false;
+    this.errorOccurred = info.errorOccurred || false;
+    this.tooManyFailures = info.tooManyFailures || false;
 
-    this.failureCount = info.failureCount;
-    this.flakeyCount = info.flakeyCount;
-    this.totalLeakCount = info.totalLeakCount;
-    this.uniqueLeakCount = info.uniqueLeakCount;
-    this.newPassesCount = info.newPassesCount;
-    this.missingCount = info.missingCount;
+    this.failureCount = info.failureCount || 0;
+    this.flakeyCount = info.flakeyCount || 0;
+    this.totalLeakCount = info.totalLeakCount || 0;
+    this.uniqueLeakCount = info.uniqueLeakCount || 0;
+    this.newPassesCount = info.newPassesCount || 0;
+    this.missingCount = info.missingCount || 0;
 };
 
 BaseObject.addConstructorFunctions(BuildbotTestResults);
