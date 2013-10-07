@@ -1,3 +1,49 @@
+2013-10-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move region styling tests into fast/regions/region-styling
+        https://bugs.webkit.org/show_bug.cgi?id=122451
+
+        Reviewed by Sam Weinig.
+
+        Create region-styling folder under fast/regions and move related region styling tests.
+
+        * fast/regions/region-styling/parse-incomplete-region-rule-expected.txt: Renamed from LayoutTests/fast/regions/parse-incomplete-region-rule-expected.txt.
+        * fast/regions/region-styling/parse-incomplete-region-rule.html: Renamed from LayoutTests/fast/regions/parse-incomplete-region-rule.html.
+        * fast/regions/region-styling/parsing-region-style-rule-expected.txt: Renamed from LayoutTests/fast/regions/parsing-region-style-rule-expected.txt.
+        * fast/regions/region-styling/parsing-region-style-rule.html: Renamed from LayoutTests/fast/regions/parsing-region-style-rule.html.
+        * fast/regions/region-styling/region-rule-nested-region-rule-expected.html: Renamed from LayoutTests/fast/regions/region-rule-nested-region-rule-expected.html.
+        * fast/regions/region-styling/region-rule-nested-region-rule.html: Renamed from LayoutTests/fast/regions/region-rule-nested-region-rule.html.
+        * fast/regions/region-styling/region-style-block-background-color-expected.html: Renamed from LayoutTests/fast/regions/region-style-block-background-color-expected.html.
+        * fast/regions/region-styling/region-style-block-background-color.html: Renamed from LayoutTests/fast/regions/region-style-block-background-color.html.
+        * fast/regions/region-styling/region-style-block-background-color2-expected.html: Renamed from LayoutTests/fast/regions/region-style-block-background-color2-expected.html.
+        * fast/regions/region-styling/region-style-block-background-color2.html: Renamed from LayoutTests/fast/regions/region-style-block-background-color2.html.
+        * fast/regions/region-styling/region-style-color-expected.html: Renamed from LayoutTests/fast/regions/region-style-color-expected.html.
+        * fast/regions/region-styling/region-style-color.html: Renamed from LayoutTests/fast/regions/region-style-color.html.
+        * fast/regions/region-styling/region-style-image-background-color-expected.html: Renamed from LayoutTests/fast/regions/region-style-image-background-color-expected.html.
+        * fast/regions/region-styling/region-style-image-background-color.html: Renamed from LayoutTests/fast/regions/region-style-image-background-color.html.
+        * fast/regions/region-styling/region-style-in-columns-expected.html: Renamed from LayoutTests/fast/regions/region-style-in-columns-expected.html.
+        * fast/regions/region-styling/region-style-in-columns.html: Renamed from LayoutTests/fast/regions/region-style-in-columns.html.
+        * fast/regions/region-styling/region-style-inline-background-color-expected.html: Renamed from LayoutTests/fast/regions/region-style-inline-background-color-expected.html.
+        * fast/regions/region-styling/region-style-inline-background-color.html: Renamed from LayoutTests/fast/regions/region-style-inline-background-color.html.
+        * fast/regions/region-styling/region-style-not-supported-properties-expected.html: Renamed from LayoutTests/fast/regions/region-style-not-supported-properties-expected.html.
+        * fast/regions/region-styling/region-style-not-supported-properties.html: Renamed from LayoutTests/fast/regions/region-style-not-supported-properties.html.
+        * fast/regions/region-styling/region-style-rule-position-expected.html: Renamed from LayoutTests/fast/regions/region-style-rule-position-expected.html.
+        * fast/regions/region-styling/region-style-rule-position.html: Renamed from LayoutTests/fast/regions/region-style-rule-position.html.
+        * fast/regions/region-styling/region-style-rule-specificity-expected.html: Renamed from LayoutTests/fast/regions/region-style-rule-specificity-expected.html.
+        * fast/regions/region-styling/region-style-rule-specificity.html: Renamed from LayoutTests/fast/regions/region-style-rule-specificity.html.
+        * fast/regions/region-styling/region-styling-mediaquery-expected.html: Renamed from LayoutTests/fast/regions/region-styling-mediaquery-expected.html.
+        * fast/regions/region-styling/region-styling-mediaquery.html: Renamed from LayoutTests/fast/regions/region-styling-mediaquery.html.
+        * fast/regions/region-styling/remove-leftover-anon-block-crash-expected.txt: Renamed from LayoutTests/fast/regions/remove-leftover-anon-block-crash-expected.txt.
+        * fast/regions/region-styling/remove-leftover-anon-block-crash.html: Renamed from LayoutTests/fast/regions/remove-leftover-anon-block-crash.html.
+        * fast/regions/region-styling/removed-element-style-in-region-crash-expected.txt: Renamed from LayoutTests/fast/regions/removed-element-style-in-region-crash-expected.txt.
+        * fast/regions/region-styling/removed-element-style-in-region-crash.html: Renamed from LayoutTests/fast/regions/removed-element-style-in-region-crash.html.
+        * fast/regions/region-styling/render-region-custom-style-mark-expected.html: Renamed from LayoutTests/fast/regions/render-region-custom-style-mark-expected.html.
+        * fast/regions/region-styling/render-region-custom-style-mark.html: Renamed from LayoutTests/fast/regions/render-region-custom-style-mark.html.
+        * fast/regions/region-styling/set-box-style-in-region-crash-expected.txt: Renamed from LayoutTests/fast/regions/set-box-style-in-region-crash-expected.txt.
+        * fast/regions/region-styling/set-box-style-in-region-crash.html: Renamed from LayoutTests/fast/regions/set-box-style-in-region-crash.html.
+        * fast/regions/region-styling/webkit-region-rule-expected.txt: Renamed from LayoutTests/fast/regions/webkit-region-rule-expected.txt.
+        * fast/regions/region-styling/webkit-region-rule.html: Renamed from LayoutTests/fast/regions/webkit-region-rule.html.
+
 2013-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: isUInt32() in jsc-layout-tests.yaml/js/script-tests/dfg-uint32-to-number-in-middle-of-copy-propagation.js.layout-dfg-eager-no-cjit
