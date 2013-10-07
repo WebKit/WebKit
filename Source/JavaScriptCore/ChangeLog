@@ -1,3 +1,54 @@
+2013-10-04  Michael Saboff  <msaboff@apple.com>
+
+        Transition stack check JITStubs to CCallHelper functions
+        https://bugs.webkit.org/show_bug.cgi?id=122289
+
+        Reviewed by Filip Pizlo.
+
+        Replaced jit stubs cti_stack_check, cti_op_call_arityCheck and cti_op_construct_arityCheck with
+        jit operations operationStackCheck, operationCallArityCheck & operationConstructArityCheck.
+        Added new callOperationWithCallFrameRollbackOnException() in baseline and DFG JITs to call
+        these new functions.  Added code to unwind one frame in JIT::privateCompileExceptionHandlers() 
+        and JITCompiler::compileExceptionHandlers() for these cases that need to throw exceptions in
+        their caller frame when the stack is exhausted.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::andPtr): Added to handle masking a pointer with a literal.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::and64): Added to handle masking a pointer with a literal.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::linkFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::exceptionCheckWithCallFrameRollback):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperationWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallWithCallFrameRollbackOnExceptionSetResult):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::hostCallFrameFlag):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertIsNull):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jitAssertIsNull):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        (JSC::JIT::exceptionCheckWithCallFrameRollback):
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithCallFrameRollbackOnException):
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2013-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: isUInt32() in jsc-layout-tests.yaml/js/script-tests/dfg-uint32-to-number-in-middle-of-copy-propagation.js.layout-dfg-eager-no-cjit

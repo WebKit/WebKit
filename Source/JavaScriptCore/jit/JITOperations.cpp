@@ -38,6 +38,49 @@ namespace JSC {
 
 extern "C" {
 
+void JIT_OPERATION operationStackCheck(ExecState* exec, CodeBlock* codeBlock)
+{
+    // We pass in our own code block, because the callframe hasn't been populated.
+    VM* vm = codeBlock->vm();
+    CallFrame* callerFrame = exec->callerFrame();
+    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+
+    JSStack& stack = vm->interpreter->stack();
+
+    if (UNLIKELY(!stack.grow(&exec->registers()[-codeBlock->m_numCalleeRegisters])))
+        vm->throwException(callerFrame, createStackOverflowError(callerFrame));
+}
+
+int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    CallFrame* callerFrame = exec->callerFrame();
+    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+
+    JSStack& stack = vm->interpreter->stack();
+
+    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForCall);
+    if (missingArgCount < 0)
+        vm->throwException(callerFrame, createStackOverflowError(callerFrame));
+
+    return missingArgCount;
+}
+
+int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    CallFrame* callerFrame = exec->callerFrame();
+    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+
+    JSStack& stack = vm->interpreter->stack();
+
+    int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, &stack, CodeForConstruct);
+    if (missingArgCount < 0)
+        vm->throwException(callerFrame, createStackOverflowError(callerFrame));
+
+    return missingArgCount;
+}
+
 EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, EncodedJSValue base, StringImpl* uid)
 {
     VM* vm = &exec->vm();

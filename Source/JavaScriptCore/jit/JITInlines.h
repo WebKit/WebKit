@@ -212,6 +212,14 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const Funct
     return call;
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr& function)
+{
+    updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
+    MacroAssembler::Call call = appendCall(function);
+    exceptionCheckWithCallFrameRollback();
+    return call;
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr& function, int dst)
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
@@ -235,12 +243,18 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EP operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EP operation, void* pointer)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, CodeBlock* pointer)
 {
     setupArgumentsWithExecState(TrustedImmPtr(pointer));
-    return appendCallWithExceptionCheck(operation);
+    return appendCallWithCallFrameRollbackOnException(operation);
 }
-    
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(Z_JITOperation_E operation)
+{
+    setupArgumentsExecState();
+    return appendCallWithCallFrameRollbackOnException(operation);
+}
+
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
     return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), TrustedImmPtr(structure));

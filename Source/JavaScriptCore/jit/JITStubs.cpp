@@ -436,19 +436,6 @@ DEFINE_STUB_FUNCTION(void, handle_watchdog_timer)
     }
 }
 
-DEFINE_STUB_FUNCTION(void*, stack_check)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    if (UNLIKELY(!stackFrame.stack->grow(&callFrame->registers()[-callFrame->codeBlock()->m_numCalleeRegisters]))) {
-        ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
-        return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, &functor);
-    }
-
-    return callFrame;
-}
-
 DEFINE_STUB_FUNCTION(JSObject*, op_new_object)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1222,34 +1209,6 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS);
 
     return result;
-}
-
-DEFINE_STUB_FUNCTION(int, op_call_arityCheck)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    int missingArgCount = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForCall);
-    if (missingArgCount < 0) {
-        ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
-        return throwExceptionFromOpCall<int>(stackFrame, callFrame, STUB_RETURN_ADDRESS, &functor);
-    }
-    return missingArgCount;
-}
-
-DEFINE_STUB_FUNCTION(int, op_construct_arityCheck)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    int missingArgCount = CommonSlowPaths::arityCheckFor(callFrame, stackFrame.stack, CodeForConstruct);
-    if (missingArgCount < 0) {
-        ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
-        return throwExceptionFromOpCall<int>(stackFrame, callFrame, STUB_RETURN_ADDRESS, &functor);
-    }
-    return missingArgCount;
 }
 
 inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)

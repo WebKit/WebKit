@@ -270,6 +270,7 @@ public:
     void jitAssertIsJSDouble(GPRReg);
     void jitAssertIsCell(GPRReg);
     void jitAssertHasValidCallFrame();
+    void jitAssertIsNull(GPRReg);
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }
@@ -277,6 +278,7 @@ public:
     void jitAssertIsJSDouble(GPRReg) { }
     void jitAssertIsCell(GPRReg) { }
     void jitAssertHasValidCallFrame() { }
+    void jitAssertIsNull(GPRReg) { }
 #endif
 
     // These methods convert between doubles, and doubles boxed and JSValues.

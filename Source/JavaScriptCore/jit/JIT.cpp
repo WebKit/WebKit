@@ -634,7 +634,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
     if (m_codeBlock->codeType() == FunctionCode) {
         stackCheck.link(this);
         m_bytecodeOffset = 0;
-        JITStubCall(this, cti_stack_check).call();
+        callOperationWithCallFrameRollbackOnException(operationStackCheck, m_codeBlock);
 #ifndef NDEBUG
         m_bytecodeOffset = (unsigned)-1; // Reset this, in order to guard its use with ASSERTs.
 #endif
@@ -651,7 +651,9 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
         m_bytecodeOffset = 0;
 
-        JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(regT0);
+        callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
+        if (returnValueRegister != regT0)
+            move(returnValueRegister, regT0);
         branchTest32(Zero, regT0).linkTo(beginLabel, this);
         emitNakedCall(m_vm->getCTIStub(arityFixup).code());
 
@@ -821,13 +823,28 @@ void JIT::linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo* callLinkInfo)
 
 void JIT::privateCompileExceptionHandlers()
 {
-    if (m_exceptionChecks.empty())
+    if (m_exceptionChecks.empty() && m_exceptionChecksWithCallFrameRollback.empty())
         return;
-    
-    m_exceptionChecks.link(this);
+
+    Jump doLookup;
+
+    if (!m_exceptionChecksWithCallFrameRollback.empty()) {
+        // Remove hostCallFlag from caller
+        m_exceptionChecksWithCallFrameRollback.link(this);
+        emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::argumentGPR0);
+        andPtr(TrustedImmPtr(reinterpret_cast<void *>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
+        doLookup = jump();
+    }
+
+    if (!m_exceptionChecks.empty())
+        m_exceptionChecks.link(this);
     
     // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+    if (doLookup.isSet())
+        doLookup.link(this);
+
 #if CPU(X86)
     // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
     poke(GPRInfo::argumentGPR0);

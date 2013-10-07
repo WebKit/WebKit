@@ -50,6 +50,7 @@ namespace JSC {
     J: JSValue
     P: pointer (void*)
     C: JSCell*
+    Cb: CodeBlock*
     A: JSArray*
     S: size_t
     Z: int32_t
@@ -94,6 +95,7 @@ typedef double JIT_OPERATION (*D_JITOperation_DD)(double, double);
 typedef double JIT_OPERATION (*D_JITOperation_ZZ)(int32_t, int32_t);
 typedef double JIT_OPERATION (*D_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef int32_t JIT_OPERATION (*Z_JITOperation_D)(double);
+typedef int32_t JIT_OPERATION (*Z_JITOperation_E)(ExecState*);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
@@ -101,7 +103,7 @@ typedef size_t JIT_OPERATION (*S_JITOperation_J)(EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_E)(ExecState*);
 typedef void JIT_OPERATION (*V_JITOperation_EOZD)(ExecState*, JSObject*, int32_t, double);
 typedef void JIT_OPERATION (*V_JITOperation_EOZJ)(ExecState*, JSObject*, int32_t, EncodedJSValue);
-typedef void JIT_OPERATION (*V_JITOperation_EP)(ExecState*, void*);
+typedef void JIT_OPERATION (*V_JITOperation_ECb)(ExecState*, CodeBlock*);
 typedef void JIT_OPERATION (*V_JITOperation_EC)(ExecState*, JSCell*);
 typedef void JIT_OPERATION (*V_JITOperation_ECIcf)(ExecState*, JSCell*, InlineCallFrame*);
 typedef void JIT_OPERATION (*V_JITOperation_ECCIcf)(ExecState*, JSCell*, JSCell*, InlineCallFrame*);
@@ -173,6 +175,9 @@ inline JITHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
 #endif
 JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState*) WTF_INTERNAL;
 
+void JIT_OPERATION operationStackCheck(ExecState*, CodeBlock*) WTF_INTERNAL;
+int32_t JIT_OPERATION operationCallArityCheck(ExecState*) WTF_INTERNAL;
+int32_t JIT_OPERATION operationConstructArityCheck(ExecState*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetById(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;

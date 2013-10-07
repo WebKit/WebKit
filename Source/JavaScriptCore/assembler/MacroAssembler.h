@@ -374,7 +374,12 @@ public:
     {
         and32(imm, srcDest);
     }
-    
+
+    void andPtr(TrustedImmPtr imm, RegisterID srcDest)
+    {
+        and32(TrustedImm32(imm), srcDest);
+    }
+
     void negPtr(RegisterID dest)
     {
         neg32(dest);
@@ -629,6 +634,11 @@ public:
     }
 
     void andPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        and64(imm, srcDest);
+    }
+    
+    void andPtr(TrustedImmPtr imm, RegisterID srcDest)
     {
         and64(imm, srcDest);
     }

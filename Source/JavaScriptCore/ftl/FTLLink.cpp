@@ -33,6 +33,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGCommon.h"
 #include "FTLJITCode.h"
+#include "JITOperations.h"
 #include "JITStubs.h"
 #include "LinkBuffer.h"
 #include "VirtualRegister.h"
@@ -95,18 +96,21 @@ void link(State& state)
         jit.ret();
         
         stackCheck.link(&jit);
-        jit.move(CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
-        jit.poke(
-            GPRInfo::callFrameRegister,
-            OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-        
+        jit.move(CCallHelpers::TrustedImmPtr(codeBlock), GPRInfo::argumentGPR1);
+        jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         jit.store32(
             CCallHelpers::TrustedImm32(CallFrame::Location::encodeAsBytecodeOffset(0)),
             CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        jit.storePtr(GPRInfo::callFrameRegister, &state.graph.m_vm.topCallFrame);
         CCallHelpers::Call callStackCheck = jit.call();
+#if !ASSERT_DISABLED
         // FIXME: need to make this call register with exception handling somehow. This is
         // part of a bigger problem: FTL should be able to handle exceptions.
         // https://bugs.webkit.org/show_bug.cgi?id=113622
+        // Until then, use a JIT ASSERT.
+        jit.load64(state.graph.m_vm.addressOfException(), GPRInfo::regT0);
+        jit.jitAssertIsNull(GPRInfo::regT0);
+#endif
         jit.jump(fromStackCheck);
         
         arityCheck = jit.label();
@@ -118,24 +122,29 @@ void link(State& state)
             CCallHelpers::AboveOrEqual, GPRInfo::regT1,
             CCallHelpers::TrustedImm32(codeBlock->numParameters()))
             .linkTo(fromArityCheck, &jit);
-        jit.move(CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
-        jit.poke(
-            GPRInfo::callFrameRegister,
-            OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+        jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         jit.store32(
             CCallHelpers::TrustedImm32(CallFrame::Location::encodeAsBytecodeOffset(0)),
             CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+        jit.storePtr(GPRInfo::callFrameRegister, &state.graph.m_vm.topCallFrame);
         CCallHelpers::Call callArityCheck = jit.call();
+#if !ASSERT_DISABLED
         // FIXME: need to make this call register with exception handling somehow. This is
         // part of a bigger problem: FTL should be able to handle exceptions.
         // https://bugs.webkit.org/show_bug.cgi?id=113622
+        // Until then, use a JIT ASSERT.
+        jit.load64(state.graph.m_vm.addressOfException(), GPRInfo::regT1);
+        jit.jitAssertIsNull(GPRInfo::regT1);
+#endif
+        if (GPRInfo::returnValueGPR != GPRInfo::regT0)
+            jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
         jit.branchTest32(CCallHelpers::Zero, GPRInfo::regT0).linkTo(fromArityCheck, &jit);
         CCallHelpers::Call callArityFixup = jit.call();
         jit.jump(fromArityCheck);
         
         linkBuffer = adoptPtr(new LinkBuffer(state.graph.m_vm, &jit, codeBlock, JITCompilationMustSucceed));
-        linkBuffer->link(callStackCheck, cti_stack_check);
-        linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+        linkBuffer->link(callStackCheck, operationStackCheck);
+        linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
         linkBuffer->link(callArityFixup, FunctionPtr((state.graph.m_vm.getCTIStub(arityFixup)).code().executableAddress()));
         break;
     }

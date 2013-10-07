@@ -153,6 +153,13 @@ void AssemblyHelpers::jitAssertHasValidCallFrame()
     breakpoint();
     checkCFR.link(this);
 }
+
+void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
+{
+    Jump checkNull = branchTestPtr(Zero, gpr);
+    breakpoint();
+    checkNull.link(this);
+}
 #endif // !ASSERT_DISABLED
 
 } // namespace JSC

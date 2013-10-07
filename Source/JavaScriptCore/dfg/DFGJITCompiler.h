@@ -265,7 +265,12 @@ public:
     {
         m_exceptionChecks.append(emitExceptionCheck());
     }
-    
+
+    void exceptionCheckWithCallFrameRollback()
+    {
+        m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck());
+    }
+
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
     void fastExceptionCheck()
     {
@@ -396,6 +401,7 @@ private:
     // Count of the number of CallRecords with exception handlers.
     Vector<CallLinkRecord> m_calls;
     JumpList m_exceptionChecks;
+    JumpList m_exceptionChecksWithCallFrameRollback;
     
     Vector<Label> m_blockHeads;
 
@@ -424,8 +430,6 @@ private:
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Vector<Label> > m_exitSiteLabels;
     
-    Call m_callStackCheck;
-    Call m_callArityCheck;
     Call m_callArityFixup;
     Label m_arityCheck;
     OwnPtr<SpeculativeJIT> m_speculative;

@@ -119,13 +119,28 @@ void JITCompiler::compileBody()
 
 void JITCompiler::compileExceptionHandlers()
 {
-    if (m_exceptionChecks.empty())
+    if (m_exceptionChecks.empty() && m_exceptionChecksWithCallFrameRollback.empty())
         return;
-    
-    m_exceptionChecks.link(this);
+
+    Jump doLookup;
+
+    if (!m_exceptionChecksWithCallFrameRollback.empty()) {
+        // Remove hostCallFrameFlag from caller.
+        m_exceptionChecksWithCallFrameRollback.link(this);
+        emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::argumentGPR0);
+        andPtr(TrustedImmPtr(reinterpret_cast<void*>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
+        doLookup = jump();
+    }
+
+    if (!m_exceptionChecks.empty())
+        m_exceptionChecks.link(this);
 
     // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
     move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+    if (doLookup.isSet())
+        doLookup.link(this);
+
 #if CPU(X86)
     // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
     poke(GPRInfo::argumentGPR0);
@@ -371,7 +386,7 @@ void JITCompiler::compileFunction()
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
     emitStoreCodeOrigin(CodeOrigin(0));
-    m_callStackCheck = call();
+    m_speculative->callOperationWithCallFrameRollbackOnException(operationStackCheck, m_codeBlock);
     jump(fromStackCheck);
     
     // The fast entry point into a function does not check the correct number of arguments
@@ -387,7 +402,7 @@ void JITCompiler::compileFunction()
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     emitStoreCodeOrigin(CodeOrigin(0));
-    m_callArityCheck = call();
+    m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
     branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
     m_callArityFixup = call();
@@ -418,9 +433,6 @@ void JITCompiler::linkFunction()
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
     
-    // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
-    linkBuffer->link(m_callStackCheck, cti_stack_check);
-    linkBuffer->link(m_callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     linkBuffer->link(m_callArityFixup, FunctionPtr((m_vm->getCTIStub(arityFixup)).code().executableAddress()));
     
     disassemble(*linkBuffer);

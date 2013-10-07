@@ -1110,6 +1110,18 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, void* pointer)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(pointer));
+        return appendCallWithCallFrameRollbackOnException(operation);
+    }
+
+    JITCompiler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E operation, GPRReg result)
+    {
+        m_jit.setupArgumentsExecState();
+        return appendCallWithCallFrameRollbackOnExceptionSetResult(operation, result);
+    }
+
     template<typename FunctionType, typename ArgumentType1>
     JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1)
     {
@@ -1721,10 +1733,25 @@ public:
         m_jit.exceptionCheck();
         return call;
     }
+    JITCompiler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr& function)
+    {
+        prepareForExternalCall();
+        m_jit.emitStoreCodeOrigin(m_currentNode->codeOrigin);
+        JITCompiler::Call call = m_jit.appendCall(function);
+        m_jit.exceptionCheckWithCallFrameRollback();
+        return call;
+    }
     JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, GPRReg result)
     {
         JITCompiler::Call call = appendCallWithExceptionCheck(function);
-        if (result != InvalidGPRReg)
+        if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
+            m_jit.move(GPRInfo::returnValueGPR, result);
+        return call;
+    }
+    JITCompiler::Call appendCallWithCallFrameRollbackOnExceptionSetResult(const FunctionPtr& function, GPRReg result)
+    {
+        JITCompiler::Call call = appendCallWithCallFrameRollbackOnException(function);
+        if ((result != InvalidGPRReg) && (result != GPRInfo::returnValueGPR))
             m_jit.move(GPRInfo::returnValueGPR, result);
         return call;
     }

@@ -439,6 +439,11 @@ namespace JSC {
             m_exceptionChecks.append(emitExceptionCheck());
         }
 
+        void exceptionCheckWithCallFrameRollback()
+        {
+            m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck());
+        }
+
         void privateCompileExceptionHandlers();
 
         static bool isDirectPutById(StructureStubInfo*);
@@ -859,10 +864,12 @@ namespace JSC {
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
+        MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr&);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
         MacroAssembler::Call callOperation(J_JITOperation_E, int);
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
-        MacroAssembler::Call callOperation(V_JITOperation_EP, void*);
+        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
+        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
@@ -929,6 +936,7 @@ namespace JSC {
         Vector<SwitchRecord> m_switches;
 
         JumpList m_exceptionChecks;
+        JumpList m_exceptionChecksWithCallFrameRollback;
 
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_byValInstructionIndex;
