@@ -41,10 +41,6 @@ public:
     BufferForAppendingHyphen() { reserveCapacity(256); }
 };
 
-// Helper functions shared by InlineTextBox / SVGRootInlineBox
-void updateGraphicsContext(GraphicsContext*, const Color& fillColor, const Color& strokeColor, float strokeThickness, ColorSpace);
-Color correctedTextColor(Color textColor, Color backgroundColor);
-
 class InlineTextBox : public InlineBox {
 public:
     explicit InlineTextBox(RenderText& renderer)

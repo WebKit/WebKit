@@ -2156,6 +2156,7 @@ set(WebCore_SOURCES
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
     rendering/TextAutosizer.cpp
+    rendering/TextPaintStyle.cpp
     rendering/break_lines.cpp
 
     rendering/mathml/RenderMathMLBlock.cpp

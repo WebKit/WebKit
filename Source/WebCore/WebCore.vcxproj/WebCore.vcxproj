@@ -10801,6 +10801,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
@@ -19575,6 +19576,7 @@
     <ClInclude Include="..\rendering\svg\SVGResourcesCache.h" />
     <ClInclude Include="..\rendering\svg\SVGResourcesCycleSolver.h" />
     <ClInclude Include="..\rendering\TableLayout.h" />
+    <ClInclude Include="..\rendering\TextPaintStyle.h" />
     <ClInclude Include="..\rendering\TrailingFloatsRootInlineBox.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLBlock.h" />
     <ClInclude Include="..\rendering\mathml\RenderMathMLFenced.h" />

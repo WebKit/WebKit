@@ -1,3 +1,12 @@
+2013-10-06  Antti Koivisto  <antti@apple.com>
+
+        Factor text paint style computation out from InlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=122433
+
+        Reviewed by Andreas Kling.
+
+        Move it to TextPaintStyle.h/cpp. Other parts of the code may use it in the future.
+
 2013-10-06  Darin Adler  <darin@apple.com>
 
         [GTK] Get rid of use of deleteAllValues in GtkDragAndDropHelper
