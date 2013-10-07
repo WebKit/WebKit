@@ -1,5 +1,11 @@
 2013-10-06  Andreas Kling  <akling@apple.com>
 
+        No? Okay, let's try that again..
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2013-10-06  Andreas Kling  <akling@apple.com>
+
         Attempt to fix the Windows build.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
