@@ -37,7 +37,7 @@ namespace WebCore {
 class MediaStreamSource;
 class ScriptExecutionContext;
 
-class VideoStreamTrack : public MediaStreamTrack {
+class VideoStreamTrack FINAL : public MediaStreamTrack {
 public:
     static PassRefPtr<VideoStreamTrack> create(ScriptExecutionContext*, const Dictionary&);
     static PassRefPtr<VideoStreamTrack> create(ScriptExecutionContext*, MediaStreamSource*);

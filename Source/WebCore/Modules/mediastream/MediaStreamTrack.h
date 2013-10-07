@@ -44,7 +44,7 @@ class Dictionary;
 class MediaConstraints;
 class MediaStreamTrackSourcesCallback;
 
-class MediaStreamTrack FINAL : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamSource::Observer {
+class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamSource::Observer {
 public:
     virtual ~MediaStreamTrack();
 
@@ -69,11 +69,11 @@ public:
     bool ended() const;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return MediaStreamTrackEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return MediaStreamTrackEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject
-    virtual void stop() OVERRIDE;
+    virtual void stop() OVERRIDE FINAL;
 
     using RefCounted<MediaStreamTrack>::ref;
     using RefCounted<MediaStreamTrack>::deref;
@@ -85,11 +85,11 @@ private:
     void trackDidEnd();
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     // MediaStreamSourceObserver
-    virtual void sourceChangedState() OVERRIDE;
+    virtual void sourceChangedState() OVERRIDE FINAL;
 
     RefPtr<MediaStreamSource> m_source;
     RefPtr<MediaConstraints> m_constraints;

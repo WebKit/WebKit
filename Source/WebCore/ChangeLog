@@ -1,3 +1,16 @@
+2013-10-04  Philippe Normand  <pnormand@igalia.com>
+
+        MediaStreamTrack can't be FINAL
+        https://bugs.webkit.org/show_bug.cgi?id=122322
+
+        Reviewed by Darin Adler.
+
+        Marked the MediaStreamTrack subclasses as final.
+
+        * Modules/mediastream/AudioStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/VideoStreamTrack.h:
+
 2013-10-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toCSSFooValue() for CSSCursorImageValue, CSSCubicBezierTimingFunctionValue, CSSStepsTimingFunctionValue and CSSUnicodeRangeValue
