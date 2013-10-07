@@ -5289,8 +5289,8 @@
 		CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17717AAC75B00EA386D /* JSSourceBuffer.h */; };
 		CD9DE17C17AAC75B00EA386D /* JSSourceBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17817AAC75B00EA386D /* JSSourceBufferList.cpp */; };
 		CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17917AAC75B00EA386D /* JSSourceBufferList.h */; };
-		CD9DE18117AAD6A400EA386D /* URLMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17E17AAD64E00EA386D /* URLMediaSource.cpp */; };
-		CD9DE18217AAD6A400EA386D /* URLMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17F17AAD64E00EA386D /* URLMediaSource.h */; };
+		CD9DE18117AAD6A400EA386D /* DOMURLMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */; };
+		CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */; };
 		CD9DE18517AB0CF300EA386D /* HTMLMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD9DE18317AB0CF300EA386D /* HTMLMediaSource.cpp */; };
 		CD9DE18617AB0CF300EA386D /* HTMLMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9DE18417AB0CF300EA386D /* HTMLMediaSource.h */; };
 		CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA79823170A258300D45C55 /* AudioSession.cpp */; };
@@ -12161,9 +12161,9 @@
 		CD9DE17717AAC75B00EA386D /* JSSourceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceBuffer.h; sourceTree = "<group>"; };
 		CD9DE17817AAC75B00EA386D /* JSSourceBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSourceBufferList.cpp; sourceTree = "<group>"; };
 		CD9DE17917AAC75B00EA386D /* JSSourceBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceBufferList.h; sourceTree = "<group>"; };
-		CD9DE17E17AAD64E00EA386D /* URLMediaSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLMediaSource.cpp; sourceTree = "<group>"; };
-		CD9DE17F17AAD64E00EA386D /* URLMediaSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLMediaSource.h; sourceTree = "<group>"; };
-		CD9DE18017AAD64E00EA386D /* URLMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = URLMediaSource.idl; sourceTree = "<group>"; };
+		CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMURLMediaSource.cpp; sourceTree = "<group>"; };
+		CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMURLMediaSource.h; sourceTree = "<group>"; };
+		CD9DE18017AAD64E00EA386D /* DOMURLMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMURLMediaSource.idl; sourceTree = "<group>"; };
 		CD9DE18317AB0CF300EA386D /* HTMLMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMediaSource.cpp; sourceTree = "<group>"; };
 		CD9DE18417AB0CF300EA386D /* HTMLMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaSource.h; sourceTree = "<group>"; };
 		CDA79821170A22DC00D45C55 /* AudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSession.h; sourceTree = "<group>"; };
@@ -17999,6 +17999,9 @@
 		B1A942DD15B5CE2200D525D1 /* mediasource */ = {
 			isa = PBXGroup;
 			children = (
+				CD9DE17E17AAD64E00EA386D /* DOMURLMediaSource.cpp */,
+				CD9DE17F17AAD64E00EA386D /* DOMURLMediaSource.h */,
+				CD9DE18017AAD64E00EA386D /* DOMURLMediaSource.idl */,
 				CD3A495517A9D01B00274E42 /* MediaSource.cpp */,
 				CD3A495617A9D01B00274E42 /* MediaSource.h */,
 				CD3A495717A9D01B00274E42 /* MediaSource.idl */,
@@ -18012,9 +18015,6 @@
 				CD3A495B17A9D01B00274E42 /* SourceBufferList.cpp */,
 				CD3A495C17A9D01B00274E42 /* SourceBufferList.h */,
 				CD3A495D17A9D01B00274E42 /* SourceBufferList.idl */,
-				CD9DE17E17AAD64E00EA386D /* URLMediaSource.cpp */,
-				CD9DE17F17AAD64E00EA386D /* URLMediaSource.h */,
-				CD9DE18017AAD64E00EA386D /* URLMediaSource.idl */,
 				B1A942DE15B5CE2200D525D1 /* WebKitMediaSource.cpp */,
 				B1A942DF15B5CE2200D525D1 /* WebKitMediaSource.h */,
 				B1A942E015B5CE2200D525D1 /* WebKitMediaSource.idl */,
@@ -21982,7 +21982,7 @@
 				85BA4D150AA688680088052D /* DOMHTMLOListElement.h in Headers */,
 				85E711BE0AC5D5350053270F /* DOMHTMLOListElementInternal.h in Headers */,
 				85F32AEE0AA63B8700FF3184 /* DOMHTMLOptGroupElement.h in Headers */,
-				CD9DE18217AAD6A400EA386D /* URLMediaSource.h in Headers */,
+				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
 				85E711BF0AC5D5350053270F /* DOMHTMLOptGroupElementInternal.h in Headers */,
 				8540756B0AD6CBF900620C57 /* DOMHTMLOptionElement.h in Headers */,
 				8540756D0AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h in Headers */,
@@ -27303,7 +27303,7 @@
 				93F19A9D08245E59001E9ABC /* TextResourceDecoder.cpp in Sources */,
 				376DCCE113B4F966002EBEFC /* TextRun.cpp in Sources */,
 				B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */,
-				CD9DE18117AAD6A400EA386D /* URLMediaSource.cpp in Sources */,
+				CD9DE18117AAD6A400EA386D /* DOMURLMediaSource.cpp in Sources */,
 				9759E93F14EF1CF80026A2DD /* TextTrack.cpp in Sources */,
 				9759E94214EF1CF80026A2DD /* TextTrackCue.cpp in Sources */,
 				071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */,

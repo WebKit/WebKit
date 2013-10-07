@@ -28,9 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 [
-    Conditional=MEDIA_SOURCE
+    Conditional=MEDIA_STREAM
 ]
-partial interface URL {
-    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(MediaSource? source);
-    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(WebKitMediaSource? source);
+partial interface DOMURL {
+    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(MediaStream? stream);
 };

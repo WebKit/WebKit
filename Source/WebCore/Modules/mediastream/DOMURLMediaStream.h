@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLMediaStream_h
-#define URLMediaStream_h
+#ifndef DOMURLMediaStream_h
+#define DOMURLMediaStream_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -40,7 +40,7 @@ namespace WebCore {
 class MediaStream;
 class ScriptExecutionContext;
 
-class URLMediaStream {
+class DOMURLMediaStream {
 public:
     static String createObjectURL(ScriptExecutionContext*, MediaStream*);
 };

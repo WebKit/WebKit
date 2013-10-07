@@ -1179,10 +1179,10 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
 	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
 	$(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
+	$(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
-	$(WebCore)/Modules/mediasource/URLMediaSource.idl \
 	$(WebCore)/Modules/mediasource/WebKitMediaSource.idl \
 	$(WebCore)/Modules/mediasource/WebKitSourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/WebKitSourceBufferList.idl \
@@ -1837,8 +1837,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/SourceBuffer.h \
 	Source/WebCore/Modules/mediasource/SourceBufferList.cpp \
 	Source/WebCore/Modules/mediasource/SourceBufferList.h \
-	Source/WebCore/Modules/mediasource/URLMediaSource.cpp \
-	Source/WebCore/Modules/mediasource/URLMediaSource.h \
+	Source/WebCore/Modules/mediasource/DOMURLMediaSource.cpp \
+	Source/WebCore/Modules/mediasource/DOMURLMediaSource.h \
 	Source/WebCore/Modules/mediasource/WebKitMediaSource.cpp \
 	Source/WebCore/Modules/mediasource/WebKitMediaSource.h \
 	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.cpp \

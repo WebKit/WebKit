@@ -1,3 +1,29 @@
+2013-10-07  Jer Noble  <jer.noble@apple.com>
+
+        URLMediaSource.idl and URLMediaStream.idl are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=122301
+
+        Reviewed by Philippe Normand.
+
+        Rename URLMediaSource and URLMediaStream to DOMURLMediaSource and DOMURLMediaStream,
+        respectively.
+
+        Update the build files:
+        * CMakeLists.txt: Rename URL -> DOMURL.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        Rename the .idl and implementation files:
+        * Modules/mediasource/DOMURLMediaSource.cpp: Renamed from Source/WebCore/Modules/mediasource/URLMediaSource.cpp.
+        (WebCore::DOMURLMediaSource::createObjectURL):
+        * Modules/mediasource/DOMURLMediaSource.h: Renamed from Source/WebCore/Modules/mediasource/URLMediaSource.h.
+        * Modules/mediasource/DOMURLMediaSource.idl: Renamed from Source/WebCore/Modules/mediasource/URLMediaSource.idl.
+        * Modules/mediastream/DOMURLMediaStream.cpp: Renamed from Source/WebCore/Modules/mediastream/URLMediaStream.cpp.
+        (WebCore::DOMURLMediaStream::createObjectURL):
+        * Modules/mediastream/DOMURLMediaStream.h: Renamed from Source/WebCore/Modules/mediastream/URLMediaStream.h.
+        * Modules/mediastream/DOMURLMediaStream.idl: Renamed from Source/WebCore/Modules/mediastream/URLMediaStream.idl.
+
 2013-10-07  Philippe Normand  <pnormand@igalia.com>
 
         Conditional support in bindings code generator for overloaded functions

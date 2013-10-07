@@ -178,10 +178,10 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
 
+    Modules/mediasource/DOMURLMediaSource.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
-    Modules/mediasource/URLMediaSource.idl
     Modules/mediasource/WebKitMediaSource.idl
     Modules/mediasource/WebKitSourceBuffer.idl
     Modules/mediasource/WebKitSourceBufferList.idl

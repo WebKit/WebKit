@@ -28,25 +28,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLMediaSource_h
-#define URLMediaSource_h
+#include "config.h"
+#include "DOMURLMediaSource.h"
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include <wtf/Forward.h>
+#include "DOMURL.h"
+#include "MediaSourceBase.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-class MediaSourceBase;
-class ScriptExecutionContext;
+String DOMURLMediaSource::createObjectURL(ScriptExecutionContext* scriptExecutionContext, MediaSourceBase* source)
+{
+    // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
+    ASSERT(isMainThread());
 
-class URLMediaSource {
-public:
-    static String createObjectURL(ScriptExecutionContext*, MediaSourceBase*);
-};
+    if (!scriptExecutionContext || !source)
+        return String();
+    return DOMURL::createPublicURL(scriptExecutionContext, source);
+}
 
 } // namespace WebCore
-
-#endif
 
 #endif

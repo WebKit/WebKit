@@ -27,6 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-partial interface URL {
-    [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(MediaStream? stream);
-};
+
+#include "config.h"
+
+#if ENABLE(MEDIA_STREAM)
+
+#include "DOMURLMediaStream.h"
+
+#include "DOMURL.h"
+#include "MediaStream.h"
+#include <wtf/MainThread.h>
+
+namespace WebCore {
+
+String DOMURLMediaStream::createObjectURL(ScriptExecutionContext* scriptExecutionContext, MediaStream* stream)
+{
+    // Since WebWorkers cannot obtain Stream objects, we should be on the main thread.
+    ASSERT(isMainThread());
+
+    if (!scriptExecutionContext || !stream)
+        return String();
+    return DOMURL::createPublicURL(scriptExecutionContext, stream);
+}
+
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
