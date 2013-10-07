@@ -123,6 +123,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     end
 }
 
+$progressMeter = ($verbosity == 0 and $stdin.tty?)
+
 unless $jscPath
     $stderr.puts "Error: must specify -j <path>."
     exit 1
@@ -303,7 +305,7 @@ class Plan
     end
     
     def successCommand
-        if $verbosity == 0 or $verbosity >= 2
+        if $progressMeter or $verbosity >= 2
             "rm -f #{failFile} ; echo PASS: #{Shellwords.shellescape(@name)}"
         else
             "rm -f #{failFile}"
@@ -719,7 +721,7 @@ File.open(parallelDir + "Makefile", "w") {
 }
 
 Dir.chdir(parallelDir) {
-    if $verbosity >= 1
+    unless $progressMeter
         mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
     else
         cmd = "make -j #{numProcessors} -s -f Makefile"

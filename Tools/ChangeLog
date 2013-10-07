@@ -1,5 +1,14 @@
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
+        run-jsc-stress-tests shouldn't print its goofy progress meter when running on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=122437
+
+        Reviewed by Antoine Quint.
+
+        * Scripts/run-jsc-stress-tests:
+
+2013-10-06  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix build on old Rubies.
 
         * Scripts/run-jsc-stress-tests:
