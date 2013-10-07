@@ -1,3 +1,13 @@
+2013-10-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Facebook wrapped a file upload button in an unfocusable ARIA button, which doesn't work with AXPress.
+        https://bugs.webkit.org/show_bug.cgi?id=122252
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/axpress-on-aria-button-expected.txt: Added.
+        * accessibility/axpress-on-aria-button.html: Added.
+
 2013-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers in jsc-layout-tests.yaml/js/script-tests/dfg-inline-arguments-capture-throw-exception.js.layout-dfg-eager-no-cjit

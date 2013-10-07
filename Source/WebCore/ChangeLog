@@ -1,3 +1,20 @@
+2013-10-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Facebook wrapped a file upload button in an unfocusable ARIA button, which doesn't work with AXPress.
+        https://bugs.webkit.org/show_bug.cgi?id=122252
+
+        Reviewed by Mario Sanchez Prada.
+
+        When an author uses a control-type ARIA role (like button), but then hides a native control-type inside,
+        AXPress needs to operate on the inside node if possible.
+
+        Test: accessibility/axpress-on-aria-button.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::isNodeActionElement):
+        (WebCore::nativeActionElement):
+        (WebCore::AccessibilityNodeObject::actionElement):
+
 2013-10-07  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed debug build fix for ports enabling the <template> element support.

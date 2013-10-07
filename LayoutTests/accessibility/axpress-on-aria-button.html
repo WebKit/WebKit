@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<a id="button1" role="button">
+   <div>Upload</div>
+   <div><input type="file" onclick="pressPerformed(this);" title="Choose a file to upload" multiple="1" id="fileupload"></div>
+</a>
+
+<a id="button2" role="button">
+   <div>Upload</div>
+   <div><button onclick="pressPerformed(this);" id="button"></div>
+</a>
+
+<a id="button3" role="button">
+   <div>Upload</div>
+   <div><input type="checkbox" onclick="pressPerformed(this); finishJSTest();" id="checkbox"></div>
+</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that if a non-native action type is exposed as a control, then we will look for descendants to call press() on.");
+    
+    function pressPerformed(element) {
+        debug("Press performed on " + element.getAttribute("id"));
+    }
+
+    window.jsTestIsAsync = true;
+    if (window.accessibilityController) {
+        for (var k = 1; k <= 3; k++) {
+            var button = accessibilityController.accessibleElementById("button" + k);
+            button.press();
+        }
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
