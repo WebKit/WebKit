@@ -1,3 +1,13 @@
+2013-10-07  Nadav Rotem  <nrotem@apple.com>
+
+        FTL: Optimize IsString(@2<String>) -> JSConst(true) + Phantom()
+        https://bugs.webkit.org/show_bug.cgi?id=122363
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2013-10-04  Michael Saboff  <msaboff@apple.com>
 
         Transition stack check JITStubs to CCallHelper functions
