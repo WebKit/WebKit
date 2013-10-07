@@ -297,6 +297,13 @@ void NetscapePlugin::platformDestroy()
         XFreePixmap(hostDisplay, m_drawable);
         m_drawable = 0;
     }
+
+#if PLATFORM(GTK)
+    if (m_platformPluginWidget) {
+        gtk_widget_destroy(m_platformPluginWidget);
+        m_platformPluginWidget = 0;
+    }
+#endif
 }
 
 bool NetscapePlugin::platformInvalidate(const IntRect&)
