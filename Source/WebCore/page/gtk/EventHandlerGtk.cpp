@@ -42,7 +42,9 @@
 
 namespace WebCore {
 
+#if ENABLE(DRAG_SUPPORT)
 const double EventHandler::TextDragDelay = 0.0;
+#endif
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 {
@@ -94,10 +96,12 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
     return toFrameView(widget)->frame().eventHandler().handleWheelEvent(event);
 }
 
+#if ENABLE(DRAG_SUPPORT)
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
     return Clipboard::createForDragAndDrop();
 }
+#endif
 
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
