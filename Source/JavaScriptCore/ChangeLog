@@ -1,3 +1,13 @@
+2013-10-07  Roger Fong  <roger_fong@apple.com>
+
+        Modify JavascriptCore makefile for x64 build.
+        https://bugs.webkit.org/show_bug.cgi?id=122467.
+        <rdar://problem/15169174>.
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.make:
+
 2013-10-07  Nadav Rotem  <nrotem@apple.com>
 
         FTL: Optimize IsString(@2<String>) -> JSConst(true) + Phantom()
