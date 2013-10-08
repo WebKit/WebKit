@@ -1,5 +1,12 @@
 2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Gardening: skip audio/video track tests, since those are not yet supported by our
+        media player.
+
+        * platform/gtk/TestExpectations:
+
+2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed. Marking svg/animations/svglengthlist-animation-3.html as flaky.
 
         * platform/gtk/TestExpectations:

@@ -233,6 +233,10 @@ webkit.org/b/98942 fast/workers/shared-worker-storagequota-query-usage.html [ Fa
 # GTK doesn't support smart replace.
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
+# GStreamer support for audio and video tracks does not exist yet
+webkit.org/b/117039 media/track/audio-track.html [ Skip ]
+webkit.org/b/117039 media/track/video-track.html [ Skip ]
+
 # Tests for MediaSource API. Feature is not yet functional.
 webkit.org/b/99065 http/tests/media/media-source [ Skip ]
 
