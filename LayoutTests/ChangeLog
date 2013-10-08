@@ -1,3 +1,45 @@
+2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Move autosize and autowidth tests into fast/regions/auto-size
+        https://bugs.webkit.org/show_bug.cgi?id=122493
+
+        Reviewed by Andreas Kling.
+
+        Simple move, changed paths in 2 tests.
+
+        * fast/regions/auto-size/autosize-abspos-anchoredregion-expected.txt: Renamed from LayoutTests/fast/regions/autosize-abspos-anchoredregion-expected.txt.
+        * fast/regions/auto-size/autosize-abspos-anchoredregion-vertlr-expected.txt: Renamed from LayoutTests/fast/regions/autosize-abspos-anchoredregion-vertlr-expected.txt.
+        * fast/regions/auto-size/autosize-abspos-anchoredregion-vertlr.html: Renamed from LayoutTests/fast/regions/autosize-abspos-anchoredregion-vertlr.html.
+        * fast/regions/auto-size/autosize-abspos-anchoredregion.html: Renamed from LayoutTests/fast/regions/autosize-abspos-anchoredregion.html.
+        * fast/regions/auto-size/autosize-region-container-resize-expected.html: Renamed from LayoutTests/fast/regions/autosize-region-container-resize-expected.html.
+        * fast/regions/auto-size/autosize-region-container-resize.html: Renamed from LayoutTests/fast/regions/autosize-region-container-resize.html.
+        * fast/regions/auto-size/autosize-region-window-resize-expected.html: Renamed from LayoutTests/fast/regions/autosize-region-window-resize-expected.html.
+        * fast/regions/auto-size/autosize-region-window-resize.html: Renamed from LayoutTests/fast/regions/autosize-region-window-resize.html.
+        * fast/regions/auto-size/autowidth-abspos-expected.html: Renamed from LayoutTests/fast/regions/autowidth-abspos-expected.html.
+        * fast/regions/auto-size/autowidth-abspos-regionchain-expected.html: Renamed from LayoutTests/fast/regions/autowidth-abspos-regionchain-expected.html.
+        * fast/regions/auto-size/autowidth-abspos-regionchain.html: Renamed from LayoutTests/fast/regions/autowidth-abspos-regionchain.html.
+        * fast/regions/auto-size/autowidth-abspos.html: Renamed from LayoutTests/fast/regions/autowidth-abspos.html.
+        * fast/regions/auto-size/autowidth-attachedinvalidregion-expected.txt: Renamed from LayoutTests/fast/regions/autowidth-attachedinvalidregion-expected.txt.
+        * fast/regions/auto-size/autowidth-attachedinvalidregion.html: Renamed from LayoutTests/fast/regions/autowidth-attachedinvalidregion.html.
+        * fast/regions/auto-size/autowidth-float-expected.html: Renamed from LayoutTests/fast/regions/autowidth-float-expected.html.
+        * fast/regions/auto-size/autowidth-float.html: Renamed from LayoutTests/fast/regions/autowidth-float.html.
+        * fast/regions/auto-size/autowidth-inlineblock-expected.html: Renamed from LayoutTests/fast/regions/autowidth-inlineblock-expected.html.
+        * fast/regions/auto-size/autowidth-inlineblock.html: Renamed from LayoutTests/fast/regions/autowidth-inlineblock.html.
+        * fast/regions/auto-size/autowidth-nonreplaced-abspos-expected.html: Renamed from LayoutTests/fast/regions/autowidth-nonreplaced-abspos-expected.html.
+        * fast/regions/auto-size/autowidth-nonreplaced-abspos.html: Renamed from LayoutTests/fast/regions/autowidth-nonreplaced-abspos.html.
+        * fast/regions/auto-size/autowidth-nonreplacedblock-normalflow-expected.html: Renamed from LayoutTests/fast/regions/autowidth-nonreplacedblock-normalflow-expected.html.
+        * fast/regions/auto-size/autowidth-nonreplacedblock-normalflow.html: Renamed from LayoutTests/fast/regions/autowidth-nonreplacedblock-normalflow.html.
+        * fast/regions/auto-size/autowidth-normalflow-expected.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-expected.html.
+        * fast/regions/auto-size/autowidth-normalflow-maxwidth-expected.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-maxwidth-expected.html.
+        * fast/regions/auto-size/autowidth-normalflow-maxwidth.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-maxwidth.html.
+        * fast/regions/auto-size/autowidth-normalflow-minmaxwidth-expected.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-minmaxwidth-expected.html.
+        * fast/regions/auto-size/autowidth-normalflow-minmaxwidth.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-minmaxwidth.html.
+        * fast/regions/auto-size/autowidth-normalflow-minwidth-expected.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-minwidth-expected.html.
+        * fast/regions/auto-size/autowidth-normalflow-minwidth.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-minwidth.html.
+        * fast/regions/auto-size/autowidth-normalflow-vertrl-expected.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-vertrl-expected.html.
+        * fast/regions/auto-size/autowidth-normalflow-vertrl.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow-vertrl.html.
+        * fast/regions/auto-size/autowidth-normalflow.html: Renamed from LayoutTests/fast/regions/autowidth-normalflow.html.
+
 2013-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] media/video-src-blob.html
