@@ -1,3 +1,12 @@
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening, these tests had a couple pixels shift at some point,
+        needing a new baseline.
+
+        * platform/gtk/fast/hidpi/clip-text-in-hidpi-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-background-dynamic-expected.txt:
+        * platform/gtk/fast/hidpi/image-set-border-image-dynamic-expected.txt:
+
 2013-10-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [Mac] Unskip editing/spelling/spelling-changed-text.html
