@@ -1,3 +1,10 @@
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: fast/backgrounds/background-opaque-images-over-color.html
+        failing.
+
 2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Regions with overflow: hidden should paint over positioned sibling
