@@ -1638,7 +1638,7 @@ webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 webkit.org/b/15602 fast/css/first-letter-block-change.html [ Missing ]
 
 # Tests need new generated expected results
-webkit.org/b/121828 fast/regions/autoheight-regions-mark.html [ Missing ]
+webkit.org/b/121828 fast/regions/auto-size/autoheight-regions-mark.html [ Missing ]
 webkit.org/b/121828 fast/regions/flows-dependency-dynamic-remove.html [ Missing ]
 webkit.org/b/121828 fast/regions/multiple-directionality-changes-in-variable-width-regions.html [ Missing ]
 webkit.org/b/121828 fast/regions/text-region-split-small-pagination.html [ Missing ]

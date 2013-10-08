@@ -42,7 +42,7 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Tests need new generated expected results
-webkit.org/b/121828 fast/regions/autoheight-regions-mark.html [ Missing ]
+webkit.org/b/121828 fast/regions/auto-size/autoheight-regions-mark.html [ Missing ]
 webkit.org/b/121828 fast/regions/flows-dependency-dynamic-remove.html [ Missing ]
 webkit.org/b/121828 fast/regions/multiple-directionality-changes-in-variable-width-regions.html [ Missing ]
 webkit.org/b/121828 fast/regions/text-region-split-small-pagination.html [ Missing ]
@@ -1354,7 +1354,7 @@ webkit.org/b/118419 fast/css/style-scoped/registering.html [ Failure ]
 
 webkit.org/b/118420 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
-webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
+webkit.org/b/118595 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
 
 # MathML tests failing after MathML pixel tests were replaced with ref tests
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
