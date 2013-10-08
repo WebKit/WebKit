@@ -493,6 +493,12 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
+
+void PluginProcess::stopRunLoop()
+{
+    ChildProcess::stopNSAppRunLoop();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

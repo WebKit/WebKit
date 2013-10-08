@@ -208,6 +208,11 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 #endif
 }
 
+void WebProcess::stopRunLoop()
+{
+    ChildProcess::stopNSAppRunLoop();
+}
+
 void WebProcess::platformTerminate()
 {
     if (m_clearResourceCachesDispatchGroup) {

@@ -44,8 +44,6 @@ void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t init
     // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
     XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
 

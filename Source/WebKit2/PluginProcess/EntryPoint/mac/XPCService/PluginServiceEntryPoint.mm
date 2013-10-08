@@ -73,7 +73,6 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
     // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes
     // spawned by the PluginProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
-    RunLoop::setUseApplicationRunLoopOnMainRunLoop();
 
     XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(connection, initializerMessage);
 }

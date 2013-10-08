@@ -58,8 +58,6 @@ public:
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
 #if USE(APPKIT)
-        RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
         // Initialize AppKit.
         [NSApplication sharedApplication];
 
@@ -92,6 +90,12 @@ public:
             extraInitializationData.add("disable-sandbox", disableSandbox);
 
         return true;
+    }
+
+    virtual void startRunLoop() OVERRIDE
+    {
+        ASSERT(NSApp);
+        [NSApp run];
     }
 
     virtual void doPostRunWork()

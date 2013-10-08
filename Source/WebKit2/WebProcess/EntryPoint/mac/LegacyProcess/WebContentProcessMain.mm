@@ -66,8 +66,6 @@ public:
         EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
     
 #if USE(APPKIT)
-        RunLoop::setUseApplicationRunLoopOnMainRunLoop();
-
         // Initialize AppKit.
         [NSApplication sharedApplication];
 
@@ -165,6 +163,12 @@ public:
         if (clientProcessName.isEmpty())
             return false;
         return true;
+    }
+
+    virtual void startRunLoop() OVERRIDE
+    {
+        ASSERT(NSApp);
+        [NSApp run];
     }
 };
 

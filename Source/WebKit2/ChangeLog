@@ -1,3 +1,69 @@
+2013-10-08  Anders Carlsson  <andersca@apple.com>
+
+        WebProcess crash on SAP WebCycle web app
+        https://bugs.webkit.org/show_bug.cgi?id=122520
+        <rdar://problem/15030605>
+
+        Reviewed by Darin Adler.
+
+        Stop trying to use RunLoop to manage the top-level run loop and just have the child process and their
+        delegate subclasses start and stop the run loops. This fixes a bug with showModalDialog where we would
+        unintentionally call -[NSApp stop] when closing a modal dialog.
+        
+        This also lets us move all knowledge of NSApplication from RunLoop. (Both the web process and plug-in process
+        need to use -[NSApp run] and -[NSApp stop:]).
+
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        (WebKit::PluginProcessMainDelegate::doPreInitializationWork):
+        Remove call to RunLoop::setUseApplicationRunLoopOnMainRunLoop. Add a startRunLoop override that calls
+        -[NSApp run].
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        Remove call to RunLoop::setUseApplicationRunLoopOnMainRunLoop.
+
+        * PluginProcess/PluginProcess.h:
+        Add stopRunLoop() override on Mac.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::stopRunLoop):
+        Call -[NSApp stop:] and tickle the event system.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::stopRunLoop):
+        Add default implementation that just calls RunLoop::main()->stop().
+
+        (WebKit::ChildProcess::terminate):
+        Call stopRunLoop().
+
+        * Shared/ChildProcess.h:
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.h:
+        Add startRunLoop member function and call it instead of RunLoop::run().
+
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.mm:
+        (WebKit::ChildProcessMainDelegate::startRunLoop):
+        Call RunLoop::run().
+
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        (WebKit::WebContentProcessMainDelegate::doPreInitializationWork):
+        Remove call to RunLoop::setUseApplicationRunLoopOnMainRunLoop.
+        Add startRunLoop override that calls -[NSApp run].
+        
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+        Remove call to RunLoop::setUseApplicationRunLoopOnMainRunLoop.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+        Call stopRunLoop().
+
+        * WebProcess/WebProcess.h:
+        Add stopRunLoop override.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::stopRunLoop):
+        Call -[NSApp stop:] and tickle the event system.
+
 2013-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157090.
