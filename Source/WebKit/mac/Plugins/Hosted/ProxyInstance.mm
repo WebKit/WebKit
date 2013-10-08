@@ -120,9 +120,6 @@ ProxyInstance::ProxyInstance(PassRefPtr<RootObject> rootObject, NetscapePluginIn
 
 ProxyInstance::~ProxyInstance()
 {
-    deleteAllValues(m_fields);
-    deleteAllValues(m_methods);
-
     if (!m_instanceProxy)
         return;
     
@@ -237,9 +234,7 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
     
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
-    if (_WKPHNPObjectHasInvokeDefaultMethod(m_instanceProxy->hostProxy()->port(),
-                                            m_instanceProxy->pluginID(), requestID,
-                                            m_objectID) != KERN_SUCCESS)
+    if (_WKPHNPObjectHasInvokeDefaultMethod(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID) != KERN_SUCCESS)
         return false;
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -258,9 +253,7 @@ bool ProxyInstance::supportsConstruct() const
     
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
-    if (_WKPHNPObjectHasConstructMethod(m_instanceProxy->hostProxy()->port(),
-                                        m_instanceProxy->pluginID(), requestID,
-                                        m_objectID) != KERN_SUCCESS)
+    if (_WKPHNPObjectHasConstructMethod(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID) != KERN_SUCCESS)
         return false;
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -348,17 +341,13 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     
     // If we already have an entry in the map, use it.
     auto existingMapEntry = m_methods.find(name.impl());
-    if (existingMapEntry != m_methods.end()) {
-        if (existingMapEntry->value)
-            return existingMapEntry->value;
-    }
+    if (existingMapEntry != m_methods.end())
+        return existingMapEntry->value.get();
     
     uint64_t methodName = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
-    if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
-                               m_instanceProxy->pluginID(), requestID,
-                               m_objectID, methodName) != KERN_SUCCESS)
+    if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID, methodName) != KERN_SUCCESS)
         return nullptr;
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -371,9 +360,9 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_methods.add(name.impl(), nullptr);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->value = new ProxyMethod(methodName);
+        mapAddResult.iterator->value = std::make_unique<ProxyMethod>(methodName);
 
-    return mapAddResult.iterator->value;
+    return mapAddResult.iterator->value.get();
 }
 
 Field* ProxyInstance::fieldNamed(PropertyName propertyName)
@@ -388,14 +377,12 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     // If we already have an entry in the map, use it.
     auto existingMapEntry = m_fields.find(name.impl());
     if (existingMapEntry != m_fields.end())
-        return existingMapEntry->value;
+        return existingMapEntry->value.get();
     
     uint64_t identifier = reinterpret_cast<uint64_t>(_NPN_GetStringIdentifier(name.ascii().data()));
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
-    if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
-                                 m_instanceProxy->pluginID(), requestID,
-                                 m_objectID, identifier) != KERN_SUCCESS)
+    if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID, identifier) != KERN_SUCCESS)
         return nullptr;
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -408,8 +395,8 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_fields.add(name.impl(), nullptr);
     if (mapAddResult.isNewEntry && reply->m_result)
-        mapAddResult.iterator->value = new ProxyField(identifier);
-    return mapAddResult.iterator->value;
+        mapAddResult.iterator->value = std::make_unique<ProxyField>(identifier);
+    return mapAddResult.iterator->value.get();
 }
 
 JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) const
@@ -420,9 +407,7 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
     uint64_t serverIdentifier = static_cast<const ProxyField*>(field)->serverIdentifier();
     uint32_t requestID = m_instanceProxy->nextRequestID();
     
-    if (_WKPHNPObjectGetProperty(m_instanceProxy->hostProxy()->port(),
-                                 m_instanceProxy->pluginID(), requestID,
-                                 m_objectID, serverIdentifier) != KERN_SUCCESS)
+    if (_WKPHNPObjectGetProperty(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID, serverIdentifier) != KERN_SUCCESS)
         return jsUndefined();
     
     auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
@@ -446,9 +431,7 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
 
     m_instanceProxy->marshalValue(exec, value, valueData, valueLength);
     m_instanceProxy->retainLocalObject(value);
-    kern_return_t kr = _WKPHNPObjectSetProperty(m_instanceProxy->hostProxy()->port(),
-                                                m_instanceProxy->pluginID(), requestID,
-                                                m_objectID, serverIdentifier, valueData, valueLength);
+    kern_return_t kr = _WKPHNPObjectSetProperty(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID, serverIdentifier, valueData, valueLength);
     mig_deallocate(reinterpret_cast<vm_address_t>(valueData), valueLength);
     if (m_instanceProxy)
         m_instanceProxy->releaseLocalObject(value);
@@ -464,12 +447,10 @@ void ProxyInstance::invalidate()
     ASSERT(m_instanceProxy);
     
     if (NetscapePluginHostProxy* hostProxy = m_instanceProxy->hostProxy())
-        _WKPHNPObjectRelease(hostProxy->port(),
-                             m_instanceProxy->pluginID(), m_objectID);
+        _WKPHNPObjectRelease(hostProxy->port(), m_instanceProxy->pluginID(), m_objectID);
     m_instanceProxy = nullptr;
 }
 
 } // namespace WebKit
 
 #endif // USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
-

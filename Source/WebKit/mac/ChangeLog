@@ -1,5 +1,23 @@
 2013-10-08  Darin Adler  <darin@apple.com>
 
+        Eliminate use of deleteAllValues in ProxyInstance
+        https://bugs.webkit.org/show_bug.cgi?id=122499
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/ProxyInstance.h: Use unique_ptr for map values in m_fields and m_methods.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::~ProxyInstance): Removed calls to deleteAllValues.
+        (WebKit::ProxyInstance::methodNamed): Use make_unique and get to deal with map entries
+        that are unique_ptr. Also fixed a bug where this would do an expensive no-op if the map
+        already had an entry with a null in it. We would call the plug-in, but eventually
+        isNewEntry would be false so we would return null.
+        (WebKit::ProxyInstance::fieldNamed): Use make_unique and get to deal with map entries
+        that are unique_ptr.
+
+2013-10-08  Darin Adler  <darin@apple.com>
+
         Change NetscapePluginInstanceProxy::m_replies to use unique_ptr instead of deleteAllValues
         https://bugs.webkit.org/show_bug.cgi?id=122492
 
