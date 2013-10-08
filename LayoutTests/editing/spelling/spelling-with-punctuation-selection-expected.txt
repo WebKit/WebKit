@@ -3,6 +3,7 @@ Punctuation marks should be treated as whitespace: spelling should ignore them. 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became different from 0
 PASS spellingMarkerRange.toString() is "wellcome"
 PASS window.getSelection().toString() is ""
 PASS window.getSelection().toString() is "wellcome!"
