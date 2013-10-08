@@ -48,6 +48,7 @@ end
 $canRunDisplayProfilerOutput = false
 
 begin
+    require 'rubygems'
     require 'json'
     require 'highline'
     $canRunDisplayProfilerOutput = true
