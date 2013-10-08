@@ -775,6 +775,7 @@ Dir.chdir(parallelDir) {
                 print string
                 prevStringLength = string.length
                 blankLine = false
+                $stdout.flush
             }
         }
         puts
