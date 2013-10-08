@@ -1,5 +1,12 @@
 2013-10-08  Dean Jackson  <dino@apple.com>
 
+        Unreviewed followup to https://bugs.webkit.org/show_bug.cgi?id=122523
+        This test now passes, so updating expected file.
+
+        * fast/canvas/webgl/webgl-unprefixed-context-id-expected.txt:
+
+2013-10-08  Dean Jackson  <dino@apple.com>
+
         Support unprefixed WebGL context creation
         https://bugs.webkit.org/show_bug.cgi?id=122523
         <rdar://problem/15179463>
