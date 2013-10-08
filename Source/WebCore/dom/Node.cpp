@@ -2074,7 +2074,7 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 
 void Node::dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator> eventDispatchMediator)
 {
-    EventDispatcher::dispatchScopedEvent(this, eventDispatchMediator);
+    EventDispatcher::dispatchScopedEvent(*this, eventDispatchMediator);
 }
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)

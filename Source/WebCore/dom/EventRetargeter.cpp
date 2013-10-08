@@ -73,39 +73,37 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
     return node->isPseudoElement() ? toPseudoElement(node)->hostElement() : node;
 }
 
-void EventRetargeter::calculateEventPath(Node* targetNode, Event* event, EventPath& eventPath)
+void EventRetargeter::calculateEventPath(Node& targetNode, Event& event, EventPath& eventPath)
 {
-    ASSERT(event);
-    bool inDocument = targetNode->inDocument();
-    bool isSVGElement = targetNode->isSVGElement();
-    bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
+    bool inDocument = targetNode.inDocument();
+    bool isSVGElement = targetNode.isSVGElement();
+    bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
 #if ENABLE(TOUCH_EVENTS)
-    bool isTouchEvent = event->isTouchEvent();
+    bool isTouchEvent = event.isTouchEvent();
 #endif
-    Vector<EventTarget*, 32> targetStack;
+    EventTarget* target = 0;
 
-    for (Node* node = nodeOrHostIfPseudoElement(targetNode); node; node = node->parentOrShadowHostNode()) {
-        if (targetStack.isEmpty())
-            targetStack.append(eventTargetRespectingTargetRules(node));
+    for (Node* node = nodeOrHostIfPseudoElement(&targetNode); node; node = node->parentOrShadowHostNode()) {
+        if (!target)
+            target = &eventTargetRespectingTargetRules(*node);
+
+        EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
         if (isMouseOrFocusEvent)
-            eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
+            eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, &currentTarget, target)));
 #if ENABLE(TOUCH_EVENTS)
         else if (isTouchEvent)
-            eventPath.append(adoptPtr(new TouchEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
+            eventPath.append(adoptPtr(new TouchEventContext(node, &currentTarget, target)));
 #endif
         else
-            eventPath.append(adoptPtr(new EventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
+            eventPath.append(adoptPtr(new EventContext(node, &currentTarget, target)));
         if (!inDocument)
             return;
         if (!node->isShadowRoot())
             continue;
-        ASSERT(!targetStack.isEmpty());
-        if (!shouldEventCrossShadowBoundary(*event, *toShadowRoot(node), *targetStack.last()))
+        if (!shouldEventCrossShadowBoundary(event, *toShadowRoot(node), *target))
             return;
-        if (!isSVGElement) {
-            ASSERT(!targetStack.isEmpty());
-            targetStack.removeLast();
-        }
+        if (!isSVGElement)
+            target = 0;
     }
 }
 

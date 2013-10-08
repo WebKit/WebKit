@@ -55,7 +55,7 @@ enum EventDispatchContinuation {
 class EventDispatcher {
 public:
     static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
-    static void dispatchScopedEvent(Node*, PassRefPtr<EventDispatchMediator>);
+    static void dispatchScopedEvent(Node&, PassRefPtr<EventDispatchMediator>);
 
     static void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 

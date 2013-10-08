@@ -1,3 +1,27 @@
+2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use references in EventRetargeter::calculateEventPath and EventRetargeter::eventTargetRespectingTargetRules
+        https://bugs.webkit.org/show_bug.cgi?id=122494
+
+        Reviewed by Antti Koivisto.
+
+        Use referenecs instead of pointers in ventRetargeter's calculateEventPath and eventTargetRespectingTargetRules.
+        Also replace Vector<EventTarget*, 32> targetStack by a single pointer since we only append an item to
+        the vector when it's empty and we always use the last item.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::EventDispatcher):
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        (WebCore::EventDispatcher::dispatch):
+        (WebCore::EventDispatcher::dispatchEventPostProcess):
+        * dom/EventDispatcher.h:
+        * dom/EventRetargeter.cpp:
+        (WebCore::EventRetargeter::calculateEventPath):
+        * dom/EventRetargeter.h:
+        (WebCore::EventRetargeter::eventTargetRespectingTargetRules):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEventDispatchMediator):
+
 2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Computed z-Index should return 0 instead of auto for a region

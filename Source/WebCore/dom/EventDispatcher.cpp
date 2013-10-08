@@ -59,17 +59,17 @@ EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
     , m_eventDispatched(false)
 #endif
 {
-    ASSERT(node);
-    ASSERT(m_event.get());
+    ASSERT(m_node);
+    ASSERT(m_event);
     ASSERT(!m_event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
     m_view = node->document().view();
-    EventRetargeter::calculateEventPath(m_node.get(), m_event.get(), m_eventPath);
+    EventRetargeter::calculateEventPath(*m_node, *m_event, m_eventPath);
 }
 
-void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
+void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<EventDispatchMediator> mediator)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    mediator->event()->setTarget(EventRetargeter::eventTargetRespectingTargetRules(node));
+    mediator->event()->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(node));
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
@@ -106,7 +106,8 @@ bool EventDispatcher::dispatch()
 #endif
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
+    ASSERT(m_node);
+    m_event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(*m_node));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(m_event->target());
     WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
@@ -185,7 +186,8 @@ inline void EventDispatcher::dispatchEventAtBubbling(WindowEventContext& windowC
 
 inline void EventDispatcher::dispatchEventPostProcess(const InputElementClickState& InputElementClickState)
 {
-    m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
+    ASSERT(m_node);
+    m_event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(*m_node));
     m_event->setCurrentTarget(0);
     m_event->setEventPhase(0);
 
