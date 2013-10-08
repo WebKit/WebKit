@@ -99,7 +99,8 @@ static void initializeMockSources()
     mockSource1->m_currentStates.frameRate = 30;
     mockSource1->m_currentStates.aspectRatio = 16 / 9.0f;
     mockSource1->m_currentStates.volume = 70;
-    mockSourceMap().add(mockSource1->id(), mockSource1.release());
+    String mockSource1id = mockSource1->id();
+    mockSourceMap().add(mockSource1id, mockSource1.release());
 
     RefPtr<MockSource> mockSource2 = adoptRef(new MockSource(mockAudioSourceID(), "Mock audio device", MediaStreamSource::Audio));
     mockSource2->m_capabilities = MediaStreamSourceCapabilities::create();
@@ -109,7 +110,8 @@ static void initializeMockSources()
     mockSource2->m_currentStates.sourceType = MediaStreamSourceStates::Microphone;
     mockSource2->m_currentStates.sourceId = mockSource2->id();
     mockSource2->m_currentStates.volume = 50;
-    mockSourceMap().add(mockSource2->id(), mockSource2.release());
+    String mockSource2id = mockSource2->id();
+    mockSourceMap().add(mockSource2id, mockSource2.release());
 }
 
 void MockMediaStreamCenter::registerMockMediaStreamCenter()

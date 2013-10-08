@@ -1,3 +1,17 @@
+2013-10-08  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [MediaStream] Fix segfault in initializeMockSources()
+        https://bugs.webkit.org/show_bug.cgi?id=122517
+
+        Reviewed by Darin Adler.
+
+        Calling release() and a member function on the same RefPtr
+        as arguments to a function can lead to segfaults if the release
+        call is evaluated first.
+
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::initializeMockSources):
+
 2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Regions with overflow: hidden should paint over positioned sibling
