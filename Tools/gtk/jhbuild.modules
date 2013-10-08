@@ -286,7 +286,7 @@
             md5sum="c8b36678186e7d4fb1e6395ffcd1abb1"/>
   </autotools>
 
-  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gst_v4l2 --without-libv4l2">
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>

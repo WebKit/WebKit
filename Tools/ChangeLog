@@ -1,3 +1,13 @@
+2013-10-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] enable v4l2 plugin
+        https://bugs.webkit.org/show_bug.cgi?id=122503
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: Enable the plugin, it now builds fine since
+        we updated our GStreamer version to 1.0.8.
+
 2013-10-08  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose state of aria-invalid as ATK_STATE_INVALID_ENTRY
