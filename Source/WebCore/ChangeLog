@@ -1,3 +1,16 @@
+2013-10-07  Andreas Kling  <akling@apple.com>
+
+        CTTE: EditCommand always has a Document.
+        <https://webkit.org/b/122473>
+
+        Reviewed by Anders Carlsson.
+
+        Store a Ref<Document> in EditComment since it's never null.
+
+        Since Ref enforces more const consistency than RefPtr, I had to make
+        document() and frame() non-const here. Only a single method depended
+        on the old half-const behavior.
+
 2013-10-07  Anders Carlsson  <andersca@apple.com>
 
         Update test again.

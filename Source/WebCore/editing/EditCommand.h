@@ -62,14 +62,14 @@ protected:
     explicit EditCommand(Document&);
     EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);
 
-    Frame& frame() const;
-    Document& document() const { return *m_document; }
+    Frame& frame();
+    Document& document() { return m_document.get(); }
     CompositeEditCommand* parent() const { return m_parent; }
     void setStartingSelection(const VisibleSelection&);
     void setEndingSelection(const VisibleSelection&);
 
 private:
-    RefPtr<Document> m_document;
+    Ref<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
     CompositeEditCommand* m_parent;
