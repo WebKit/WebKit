@@ -45,11 +45,6 @@ class TouchEvent;
 #endif
 class TreeScope;
 
-enum EventDispatchBehavior {
-    RetargetEvent,
-    StayInsideShadowDOM
-};
-
 class EventRetargeter {
 public:
     static void calculateEventPath(Node*, Event*, EventPath&);

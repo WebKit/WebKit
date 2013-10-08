@@ -35,32 +35,29 @@
 
 namespace WebCore {
 
-static inline bool inTheSameScope(ShadowRoot* shadowRoot, EventTarget* target)
+static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shadowRoot, EventTarget& target)
 {
-    return target->toNode() && target->toNode()->treeScope().rootNode() == shadowRoot;
-}
-
-static inline EventDispatchBehavior determineDispatchBehavior(Event* event, ShadowRoot* shadowRoot, EventTarget* target)
-{
+    Node* targetNode = target.toNode();
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
     // detail that should not be detectable by the web content.
-    if (Element* element = target->toNode()->document().webkitCurrentFullScreenElement()) {
-        // FIXME: We assume that if the full screen element is a media element that it's
-        // the video-only full screen. Both here and elsewhere. But that is probably wrong.
-        if (element->isMediaElement() && shadowRoot && shadowRoot->hostElement() == element)
-            return StayInsideShadowDOM;
+    if (targetNode) {
+        if (Element* element = targetNode->document().webkitCurrentFullScreenElement()) {
+            // FIXME: We assume that if the full screen element is a media element that it's
+            // the video-only full screen. Both here and elsewhere. But that is probably wrong.
+            if (element->isMediaElement() && shadowRoot.hostElement() == element)
+                return false;
+        }
     }
-#else
-    UNUSED_PARAM(shadowRoot);
 #endif
 
     // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
     // Changing this breaks existing sites.
     // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
-    const AtomicString eventType = event->type();
-    if (inTheSameScope(shadowRoot, target)
-        && (eventType == eventNames().abortEvent
+    const AtomicString& eventType = event.type();
+    bool targetIsInShadowRoot = targetNode && targetNode->treeScope().rootNode() == &shadowRoot;
+    return !targetIsInShadowRoot
+        || !(eventType == eventNames().abortEvent
             || eventType == eventNames().changeEvent
             || eventType == eventNames().errorEvent
             || eventType == eventNames().loadEvent
@@ -68,10 +65,7 @@ static inline EventDispatchBehavior determineDispatchBehavior(Event* event, Shad
             || eventType == eventNames().resizeEvent
             || eventType == eventNames().scrollEvent
             || eventType == eventNames().selectEvent
-            || eventType == eventNames().selectstartEvent))
-        return StayInsideShadowDOM;
-
-    return RetargetEvent;
+            || eventType == eventNames().selectstartEvent);
 }
 
 static Node* nodeOrHostIfPseudoElement(Node* node)
@@ -81,6 +75,7 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 
 void EventRetargeter::calculateEventPath(Node* targetNode, Event* event, EventPath& eventPath)
 {
+    ASSERT(event);
     bool inDocument = targetNode->inDocument();
     bool isSVGElement = targetNode->isSVGElement();
     bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
@@ -104,7 +99,8 @@ void EventRetargeter::calculateEventPath(Node* targetNode, Event* event, EventPa
             return;
         if (!node->isShadowRoot())
             continue;
-        if (determineDispatchBehavior(event, toShadowRoot(node), targetStack.last()) == StayInsideShadowDOM)
+        ASSERT(!targetStack.isEmpty());
+        if (!shouldEventCrossShadowBoundary(*event, *toShadowRoot(node), *targetStack.last()))
             return;
         if (!isSVGElement) {
             ASSERT(!targetStack.isEmpty());
