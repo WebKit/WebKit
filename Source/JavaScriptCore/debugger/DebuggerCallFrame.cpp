@@ -182,8 +182,6 @@ TextPosition DebuggerCallFrame::positionForCallFrame(CallFrame* callFrame)
 
     LineAndColumnFunctor functor;
     callFrame->iterate(functor);
-    ASSERT(!callFrame->codeBlock() || functor.line() >= 0);
-    ASSERT(!callFrame->codeBlock() || functor.column() >= 0);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }
 
