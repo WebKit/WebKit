@@ -5970,6 +5970,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 #endif
         && !isTransparent()
         && !needsCompositedScrolling()
+        && !renderer().isRenderRegion()
         ;
 }
 

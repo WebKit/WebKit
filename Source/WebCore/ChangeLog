@@ -1,3 +1,17 @@
+2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Regions with overflow: hidden should paint over positioned sibling
+        https://bugs.webkit.org/show_bug.cgi?id=122389
+
+        Reviewed by Alexandru Chiculita.
+
+        As a follow-up from https://bugs.webkit.org/show_bug.cgi?id=122321, a region should not
+        be a normal flow layer when it has overflow clip. Change existing test by adding overflow:hidden
+        to the region element.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+
 2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify the loop in EventRetargeter::calculateEventPath

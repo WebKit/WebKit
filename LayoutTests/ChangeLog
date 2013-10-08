@@ -1,3 +1,14 @@
+2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Regions with overflow: hidden should paint over positioned sibling
+        https://bugs.webkit.org/show_bug.cgi?id=122389
+
+        Reviewed by Alexandru Chiculita.
+
+        Add overflow: hidden to the region to test that it does not move to the normal flow layers.
+
+        * fast/regions/layers/region-normalflow-stacking-context.html:
+
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening, these tests had a couple pixels shift at some point,
