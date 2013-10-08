@@ -38,7 +38,6 @@
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSourceCapabilities.h"
-#include "MediaStreamSourceStates.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include <wtf/MainThread.h>
