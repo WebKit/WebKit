@@ -1,3 +1,17 @@
+2013-10-08  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Leak: GdkEvent retured by gtk_get_current_event is not freed.
+        https://bugs.webkit.org/show_bug.cgi?id=122506
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Gdk event returned by gtk_get_current_event should be freed after using it.
+
+        No functionality changed.
+
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::show):
+
 2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use references in EventRetargeter::calculateEventPath and EventRetargeter::eventTargetRespectingTargetRules

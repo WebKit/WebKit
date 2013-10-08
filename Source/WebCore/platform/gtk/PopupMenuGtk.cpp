@@ -28,10 +28,11 @@
 #include "PopupMenuGtk.h"
 
 #include "FrameView.h"
-#include <wtf/gobject/GOwnPtr.h>
+#include "GOwnPtrGtk.h"
 #include "GtkUtilities.h"
 #include "HostWindow.h"
 #include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -87,7 +88,8 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
     IntPoint menuPosition = convertWidgetPointToScreenPoint(GTK_WIDGET(view->hostWindow()->platformPageClient()), view->contentsToWindow(rect.location()));
     menuPosition.move(0, rect.height());
 
-    m_popup->popUp(rect.size(), menuPosition, size, index, gtk_get_current_event());
+    GOwnPtr<GdkEvent> currentEvent(gtk_get_current_event());
+    m_popup->popUp(rect.size(), menuPosition, size, index, currentEvent.get());
 
     // GTK can refuse to actually open the menu when mouse grabs fails.
     // Ensure WebCore does not go into some pesky state.
