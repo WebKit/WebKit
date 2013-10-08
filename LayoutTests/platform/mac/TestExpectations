@@ -1106,6 +1106,8 @@ webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 # The logic in this test is no longer correct for Apple ports
 webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
 
+webkit.org/b/122507 media/track/track-cue-rendering.html [ Pass Failure ]
+
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
