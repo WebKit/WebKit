@@ -1,3 +1,9 @@
+2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Marking svg/animations/svglengthlist-animation-3.html as flaky.
+
+        * platform/gtk/TestExpectations:
+
 2013-10-04  Frédéric Wang  <fred.wang@free.fr>
 
         [MathML] Remove RenderTree modification during layout and refactor the StretchyOp code
