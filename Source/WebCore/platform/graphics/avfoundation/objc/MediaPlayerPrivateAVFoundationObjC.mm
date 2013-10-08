@@ -37,6 +37,7 @@
 #import "FloatConversion.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "InbandTextTrackPrivateLegacyAVFObjC.h"
 #import "URL.h"
@@ -862,7 +863,8 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 #endif
 
     [m_imageGenerator.get() setMaximumSize:CGSize(rect.size())];
-    RetainPtr<CGImageRef> image = adoptCF([m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
+    RetainPtr<CGImageRef> rawImage = adoptCF([m_imageGenerator.get() copyCGImageAtTime:CMTimeMakeWithSeconds(time, 600) actualTime:nil error:nil]);
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawImage.get(), deviceRGBColorSpaceRef()));
 
 #if !LOG_DISABLED
     double duration = monotonicallyIncreasingTime() - start;
@@ -1279,7 +1281,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
         GraphicsContextStateSaver stateSaver(*context);
         context->translate(rect.x(), rect.y() + rect.height());
         context->scale(FloatSize(1.0f, -1.0f));
-        RetainPtr<CIImage> image = adoptNS([[CIImage alloc] initWithCVImageBuffer:m_lastImage.get()]);
+        RetainPtr<CIImage> image = adoptNS([[CIImage alloc] initWithCVImageBuffer:m_lastImage.get() options:@{ kCIImageColorSpace: (id)deviceRGBColorSpaceRef() }]);
 
         // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
         // is autoreleased, and there is no non-autoreleased version of that function.

@@ -1,3 +1,23 @@
+2013-10-07  Dean Jackson  <dino@apple.com>
+
+        Video -> pixel buffer output should not manage color spaces
+        https://bugs.webkit.org/show_bug.cgi?id=122486
+
+        Reviewed by Tim Horton.
+
+        On Mac, when we draw a video into a canvas or WebGL, the
+        output of the video should not be color managed. Instead, leave it
+        as DeviceRGB so that it matches other colors in those elements.
+        We'll hopefully solve this properly soon - making everything sRGB.
+
+        Test: media/video-canvas-drawing-output.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect): Pass on
+        a CGImageRef via CGImageCreateCopyWithColorSpace rather than the raw data.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput): Tell CoreImage
+        to allocate a pixel buffer that is unmanaged.
+
 2013-10-08  Lauro Neto  <lauro.neto@openbossa.org>
 
         [MediaStream] Fix segfault in initializeMockSources()
