@@ -83,27 +83,28 @@ void EventRetargeter::calculateEventPath(Node& targetNode, Event& event, EventPa
 #endif
     EventTarget* target = 0;
 
-    for (Node* node = nodeOrHostIfPseudoElement(&targetNode); node; node = node->parentOrShadowHostNode()) {
-        if (!target)
+    Node* node = nodeOrHostIfPseudoElement(&targetNode);
+    while (node) {
+        if (!target || !isSVGElement) // FIXME: This code doesn't make sense once we've climbed out of the SVG subtree in a HTML document.
             target = &eventTargetRespectingTargetRules(*node);
-
-        EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
-        if (isMouseOrFocusEvent)
-            eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, &currentTarget, target)));
+        for (; node; node = node->parentNode()) {
+            EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
+            if (isMouseOrFocusEvent)
+                eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, &currentTarget, target)));
 #if ENABLE(TOUCH_EVENTS)
-        else if (isTouchEvent)
-            eventPath.append(adoptPtr(new TouchEventContext(node, &currentTarget, target)));
+            else if (isTouchEvent)
+                eventPath.append(adoptPtr(new TouchEventContext(node, &currentTarget, target)));
 #endif
-        else
-            eventPath.append(adoptPtr(new EventContext(node, &currentTarget, target)));
-        if (!inDocument)
+            else
+                eventPath.append(adoptPtr(new EventContext(node, &currentTarget, target)));
+            if (!inDocument)
+                return;
+            if (node->isShadowRoot())
+                break;
+        }
+        if (!node || !shouldEventCrossShadowBoundary(event, *toShadowRoot(node), *target))
             return;
-        if (!node->isShadowRoot())
-            continue;
-        if (!shouldEventCrossShadowBoundary(event, *toShadowRoot(node), *target))
-            return;
-        if (!isSVGElement)
-            target = 0;
+        node = toShadowRoot(node)->hostElement();
     }
 }
 
