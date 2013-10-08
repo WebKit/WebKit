@@ -1,3 +1,10 @@
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Upgrade accessibility/title-ui-element-correctness.html from crash (wk2-specific)
+        to fail (gtk-wide) expectation.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-10-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Move autoheight* tests into fast/regions/auto-size
