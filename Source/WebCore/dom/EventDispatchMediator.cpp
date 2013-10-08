@@ -48,7 +48,7 @@ EventDispatchMediator::EventDispatchMediator(PassRefPtr<Event> event)
 {
 }
 
-bool EventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool EventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     ASSERT(m_event.get() == dispatcher->event());
     return dispatcher->dispatch();

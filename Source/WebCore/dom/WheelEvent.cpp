@@ -150,10 +150,10 @@ WheelEvent* WheelEventDispatchMediator::event() const
     return static_cast<WheelEvent*>(EventDispatchMediator::event());
 }
 
-bool WheelEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool WheelEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     ASSERT(event());
-    return EventDispatchMediator::dispatchEvent(dispatcher) && !event()->defaultHandled();
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher) && !event()->defaultHandled();
 }
 
 } // namespace WebCore

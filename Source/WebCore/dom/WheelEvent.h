@@ -117,7 +117,7 @@ public:
 private:
     WheelEventDispatchMediator(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
     WheelEvent* event() const;
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 } // namespace WebCore

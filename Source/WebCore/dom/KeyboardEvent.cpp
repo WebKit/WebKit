@@ -223,10 +223,10 @@ KeyboardEventDispatchMediator::KeyboardEventDispatchMediator(PassRefPtr<Keyboard
 {
 }
 
-bool KeyboardEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool KeyboardEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     // Make sure not to return true if we already took default action while handling the event.
-    return EventDispatchMediator::dispatchEvent(dispatcher) && !event()->defaultHandled();
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher) && !event()->defaultHandled();
 }
 
 } // namespace WebCore

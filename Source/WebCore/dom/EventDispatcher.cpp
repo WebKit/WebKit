@@ -49,7 +49,7 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator
     if (!mediator->event())
         return true;
     EventDispatcher dispatcher(node, mediator->event());
-    return mediator->dispatchEvent(&dispatcher);
+    return mediator->mediateAndDispatchEvent(&dispatcher);
 }
 
 EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)

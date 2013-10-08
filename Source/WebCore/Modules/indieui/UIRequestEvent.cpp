@@ -89,7 +89,7 @@ UIRequestEvent* UIRequestEventDispatchMediator::event() const
     return static_cast<UIRequestEvent*>(EventDispatchMediator::event());
 }
 
-bool UIRequestEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool UIRequestEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     dispatcher->dispatch();
     return event()->defaultHandled() || event()->defaultPrevented();

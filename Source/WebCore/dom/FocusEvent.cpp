@@ -75,10 +75,10 @@ FocusEventDispatchMediator::FocusEventDispatchMediator(PassRefPtr<FocusEvent> fo
 {
 }
 
-bool FocusEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool FocusEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
-    return EventDispatchMediator::dispatchEvent(dispatcher);
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher);
 }
 
 PassRefPtr<BlurEventDispatchMediator> BlurEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
@@ -91,10 +91,10 @@ BlurEventDispatchMediator::BlurEventDispatchMediator(PassRefPtr<FocusEvent> focu
 {
 }
 
-bool BlurEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool BlurEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
-    return EventDispatchMediator::dispatchEvent(dispatcher);
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher);
 }
 
 PassRefPtr<FocusInEventDispatchMediator> FocusInEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
@@ -107,10 +107,10 @@ FocusInEventDispatchMediator::FocusInEventDispatchMediator(PassRefPtr<FocusEvent
 {
 }
 
-bool FocusInEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool FocusInEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
-    return EventDispatchMediator::dispatchEvent(dispatcher);
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher);
 }
 
 PassRefPtr<FocusOutEventDispatchMediator> FocusOutEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
@@ -123,10 +123,10 @@ FocusOutEventDispatchMediator::FocusOutEventDispatchMediator(PassRefPtr<FocusEve
 {
 }
 
-bool FocusOutEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool FocusOutEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
-    return EventDispatchMediator::dispatchEvent(dispatcher);
+    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher);
 }
 
 } // namespace WebCore

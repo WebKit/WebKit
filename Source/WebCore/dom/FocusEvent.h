@@ -82,7 +82,7 @@ public:
 private:
     explicit FocusEventDispatchMediator(PassRefPtr<FocusEvent>);
     FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 class BlurEventDispatchMediator : public EventDispatchMediator {
@@ -91,7 +91,7 @@ public:
 private:
     explicit BlurEventDispatchMediator(PassRefPtr<FocusEvent>);
     FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 class FocusInEventDispatchMediator : public EventDispatchMediator {
@@ -100,7 +100,7 @@ public:
 private:
     explicit FocusInEventDispatchMediator(PassRefPtr<FocusEvent>);
     FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 class FocusOutEventDispatchMediator : public EventDispatchMediator {
@@ -109,7 +109,7 @@ public:
 private:
     explicit FocusOutEventDispatchMediator(PassRefPtr<FocusEvent>);
     FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 } // namespace WebCore

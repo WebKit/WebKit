@@ -1,3 +1,43 @@
+2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename EventDispatchMediator::dispatchEvent to mediateAndDispatchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=122522
+
+        Reviewed by Darin Adler.
+
+        Renamed EventDispatchMediator::dispatchEvent to EventDispatchMediator::mediateAndDispatchEvent
+        to make the future refactoring easier.
+
+        * Modules/indieui/UIRequestEvent.cpp:
+        (WebCore::UIRequestEventDispatchMediator::mediateAndDispatchEvent):
+        * Modules/indieui/UIRequestEvent.h:
+        * dom/EventDispatchMediator.cpp:
+        (WebCore::EventDispatchMediator::mediateAndDispatchEvent):
+        * dom/EventDispatchMediator.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEventDispatchMediator::mediateAndDispatchEvent):
+        (WebCore::BlurEventDispatchMediator::mediateAndDispatchEvent):
+        (WebCore::FocusInEventDispatchMediator::mediateAndDispatchEvent):
+        (WebCore::FocusOutEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/FocusEvent.h:
+        * dom/GestureEvent.cpp:
+        (WebCore::GestureEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/GestureEvent.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/MouseEvent.h:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/TouchEvent.h:
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEventDispatchMediator::mediateAndDispatchEvent):
+        * dom/WheelEvent.h:
+
 2013-10-08  Brent Fulgham  <bfulgham@apple.com>
 
         [MathML] Use of floating point floor/ceil on LayoutUnits seems wrong

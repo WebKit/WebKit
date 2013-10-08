@@ -102,7 +102,7 @@ public:
 private:
     explicit TouchEventDispatchMediator(PassRefPtr<TouchEvent>);
     TouchEvent* event() const;
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 inline TouchEvent* toTouchEvent(Event* event)

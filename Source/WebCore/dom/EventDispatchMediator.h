@@ -45,7 +45,7 @@ class EventDispatchMediator : public RefCounted<EventDispatchMediator> {
 public:
     static PassRefPtr<EventDispatchMediator> create(PassRefPtr<Event>);
     virtual ~EventDispatchMediator() { };
-    virtual bool dispatchEvent(EventDispatcher*) const;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const;
     Event* event() const { return m_event.get(); };
 
 protected:

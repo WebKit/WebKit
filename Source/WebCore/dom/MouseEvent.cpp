@@ -296,7 +296,7 @@ MouseEvent* MouseEventDispatchMediator::event() const
     return static_cast<MouseEvent*>(EventDispatchMediator::event());
 }
 
-bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool MouseEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     if (isSyntheticMouseEvent()) {
         EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->eventPath());

@@ -115,7 +115,7 @@ GestureEvent* GestureEventDispatchMediator::event() const
     return static_cast<GestureEvent*>(EventDispatchMediator::event());
 }
 
-bool GestureEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+bool GestureEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
     if (isDisabledFormControl(dispatcher->node()))
         return true;

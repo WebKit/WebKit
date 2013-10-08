@@ -133,7 +133,7 @@ public:
     static PassRefPtr<KeyboardEventDispatchMediator> create(PassRefPtr<KeyboardEvent>);
 private:
     explicit KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent>);
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 } // namespace WebCore
