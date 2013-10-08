@@ -1,3 +1,46 @@
+2013-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSManagedValue should be able to store non-object JSValues
+        https://bugs.webkit.org/show_bug.cgi?id=122351
+
+        Reviewed by Oliver Hunt.
+
+        We decided not to support this because we thought it didn't make sense to have a 
+        "weak" JSValue that wasn't an object.
+
+        Our general thought process was if you have a JSObject-ObjC object pair (i.e. an 
+        Obj-C object that you exported to JavaScript-land), it makes more sense to store 
+        a non-object JSValue on the JavaScript-land version of the object rather than as 
+        an ivar in the Objective-C object.
+
+        In retrospect, this may not have been a good decision at least w.r.t. consistency 
+        in client code. If you're storing a bag of JSValues off an Obj-C object, you'd 
+        like to store all of them either in ObjC-land or JavaScript-land, but doing some 
+        in one and some in the other doesn't sound too good. Also, what if the object you 
+        want to hang these values off of doesn't have a corresponding object in JavaScript-
+        land in which to store them?
+
+        The solution is to fix JSManagedValue to be able to reference non-object JSValues. 
+        Right now, all JSManagedValues contain a Weak<JSObject>. We'll change this so that
+        they can contain either a non-cell JSValue or a JSObject*, along with a weak 
+        reference to the JSGlobalObject for reconstructing a JSValue later on.
+
+        * API/JSManagedValue.mm:
+        (PrimitiveOrObject::PrimitiveOrObject):
+        (PrimitiveOrObject::~PrimitiveOrObject):
+        (PrimitiveOrObject::clear):
+        (PrimitiveOrObject::isClear):
+        (PrimitiveOrObject::isSet):
+        (PrimitiveOrObject::isPrimitive):
+        (PrimitiveOrObject::isObject):
+        (PrimitiveOrObject::setPrimitive):
+        (PrimitiveOrObject::setObject):
+        (PrimitiveOrObject::object):
+        (PrimitiveOrObject::primitive):
+        (-[JSManagedValue initWithValue:]):
+        (-[JSManagedValue value]):
+        (-[JSManagedValue disconnectValue]):
+
 2013-10-08  Robert Plociennik  <r.plociennik@samsung.com>
 
         JavaScriptCore fails to build

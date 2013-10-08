@@ -50,8 +50,125 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     return &jsManagedValueHandleOwner;
 }
 
+class WeakValueRef {
+public:
+    WeakValueRef()
+        : m_tag(NotSet)
+    {
+    }
+
+    ~WeakValueRef()
+    {
+        clear();
+    }
+
+    void clear()
+    {
+        switch (m_tag) {
+        case NotSet:
+            return;
+        case Primitive:
+            u.m_primitive = JSC::JSValue();
+            return;
+        case Object:
+            u.m_object.clear();
+            return;
+        case String:
+            u.m_string.clear();
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    bool isClear() const
+    {
+        switch (m_tag) {
+        case NotSet:
+            return true;
+        case Primitive:
+            return !u.m_primitive;
+        case Object:
+            return !u.m_object;
+        case String:
+            return !u.m_string;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    bool isSet() const { return m_tag != NotSet; }
+    bool isPrimitive() const { return m_tag == Primitive; }
+    bool isObject() const { return m_tag == Object; }
+    bool isString() const { return m_tag == String; }
+
+    void setPrimitive(JSC::JSValue primitive)
+    {
+        ASSERT(!isSet());
+        ASSERT(!u.m_primitive);
+        ASSERT(primitive.isPrimitive());
+        m_tag = Primitive;
+        u.m_primitive = primitive;
+    }
+
+    void setObject(JSC::JSObject* object, void* context)
+    {
+        ASSERT(!isSet());
+        ASSERT(!u.m_object);
+        m_tag = Object;
+        JSC::Weak<JSC::JSObject> weak(object, managedValueHandleOwner(), context);
+        u.m_object.swap(weak);
+    }
+
+    void setString(JSC::JSString* string, void* context)
+    {
+        ASSERT(!isSet());
+        ASSERT(!u.m_object);
+        m_tag = String;
+        JSC::Weak<JSC::JSString> weak(string, managedValueHandleOwner(), context);
+        u.m_string.swap(weak);
+    }
+
+    JSC::JSObject* object()
+    {
+        ASSERT(isObject());
+        return u.m_object.get();
+    }
+
+    JSC::JSValue primitive()
+    {
+        ASSERT(isPrimitive());
+        return u.m_primitive;
+    }
+
+    JSC::JSString* string()
+    {
+        ASSERT(isString());
+        return u.m_string.get();
+    }
+
+private:
+    enum WeakTypeTag { NotSet, Primitive, Object, String };
+    WeakTypeTag m_tag;
+    union WeakValueUnion {
+    public:
+        WeakValueUnion ()
+            : m_primitive(JSC::JSValue())
+        {
+        }
+
+        ~WeakValueUnion()
+        {
+            ASSERT(!m_primitive);
+        }
+
+        JSC::JSValue m_primitive;
+        JSC::Weak<JSC::JSObject> m_object;
+        JSC::Weak<JSC::JSString> m_string;
+    } u;
+};
+
 @implementation JSManagedValue {
-    JSC::Weak<JSC::JSObject> m_value;
+    JSC::Weak<JSC::JSGlobalObject> m_globalObject;
+    WeakValueRef m_weakValue;
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value
@@ -70,30 +187,46 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     if (!self)
         return nil;
     
-    if (!value || !JSValueIsObject([value.context JSGlobalContextRef], [value JSValueRef])) {
-        JSC::Weak<JSC::JSObject> weak;
-        m_value.swap(weak);
-    } else {
-        JSC::JSObject* object = toJS(const_cast<OpaqueJSValue*>([value JSValueRef]));
-        JSC::Weak<JSC::JSObject> weak(object, managedValueHandleOwner(), self);
-        m_value.swap(weak);
-    }
+    if (!value)
+        return self;
 
+    JSC::ExecState* exec = toJS([value.context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSC::Weak<JSC::JSGlobalObject> weak(globalObject, managedValueHandleOwner(), self);
+    m_globalObject.swap(weak);
+
+    JSC::JSValue jsValue = toJS(exec, [value JSValueRef]);
+    if (jsValue.isObject())
+        m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), self);
+    else if (jsValue.isString())
+        m_weakValue.setString(JSC::jsCast<JSC::JSString*>(jsValue.asCell()), self);
+    else
+        m_weakValue.setPrimitive(jsValue);
     return self;
 }
 
 - (JSValue *)value
 {
-    if (!m_value)
+    if (!m_globalObject)
         return nil;
-    JSC::JSObject* object = m_value.get();
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(object->structure()->globalObject()->globalExec())];
-    return [JSValue valueWithJSValueRef:toRef(object) inContext:context];
+    if (m_weakValue.isClear())
+        return nil;
+    JSC::ExecState* exec = m_globalObject->globalExec();
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(exec)];
+    JSC::JSValue value;
+    if (m_weakValue.isPrimitive())
+        value = m_weakValue.primitive();
+    else if (m_weakValue.isString())
+        value = m_weakValue.string();
+    else
+        value = m_weakValue.object();
+    return [JSValue valueWithJSValueRef:toRef(exec, value) inContext:context];
 }
 
 - (void)disconnectValue
 {
-    m_value.clear();
+    m_globalObject.clear();
+    m_weakValue.clear();
 }
 
 @end

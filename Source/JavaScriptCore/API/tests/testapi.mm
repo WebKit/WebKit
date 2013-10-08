@@ -241,6 +241,47 @@ static JSVirtualMachine *sharedInstance = nil;
 
 @end
 
+@interface JSCollection : NSObject
+- (void)setValue:(JSValue *)value forKey:(NSString *)key;
+- (JSValue *)valueForKey:(NSString *)key;
+@end
+
+@implementation JSCollection {
+    NSMutableDictionary *_dict;
+}
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _dict = [[NSMutableDictionary alloc] init];
+
+    return self;
+}
+
+- (void)setValue:(JSValue *)value forKey:(NSString *)key
+{
+    JSManagedValue *oldManagedValue = [_dict objectForKey:key];
+    if (oldManagedValue) {
+        JSValue* oldValue = [oldManagedValue value];
+        if (oldValue)
+            [oldValue.context.virtualMachine removeManagedReference:oldManagedValue withOwner:self];
+    }
+    JSManagedValue *managedValue = [JSManagedValue managedValueWithValue:value];
+    [value.context.virtualMachine addManagedReference:managedValue withOwner:self];
+    [_dict setObject:managedValue forKey:key];
+}
+
+- (JSValue *)valueForKey:(NSString *)key
+{
+    JSManagedValue *managedValue = [_dict objectForKey:key];
+    if (!managedValue)
+        return nil;
+    return [managedValue value];
+}
+@end
+
 static void checkResult(NSString *description, bool passed)
 {
     NSLog(@"TEST: \"%@\": %@", description, passed ? @"PASSED" : @"FAILED");
@@ -288,6 +329,41 @@ void testObjectiveCAPI()
         checkResult(@"Check dictionary literal", [obj isKindOfClass:[NSDictionary class]]);
         id num = (NSDictionary *)obj[@"x"];
         checkResult(@"Check numeric literal", [num isKindOfClass:[NSNumber class]]);
+    }
+
+    @autoreleasepool {
+        JSCollection* myPrivateProperties = [[JSCollection alloc] init];
+
+        @autoreleasepool {
+            JSContext* context = [[JSContext alloc] init];
+            TestObject* rootObject = [TestObject testObject];
+            context[@"root"] = rootObject;
+            [context.virtualMachine addManagedReference:myPrivateProperties withOwner:rootObject];
+            [myPrivateProperties setValue:[JSValue valueWithBool:true inContext:context] forKey:@"is_ham"];
+            [myPrivateProperties setValue:[JSValue valueWithObject:@"hello!" inContext:context] forKey:@"message"];
+            [myPrivateProperties setValue:[JSValue valueWithInt32:42 inContext:context] forKey:@"my_number"];
+            [myPrivateProperties setValue:[JSValue valueWithNullInContext:context] forKey:@"definitely_null"];
+            [myPrivateProperties setValue:[JSValue valueWithUndefinedInContext:context] forKey:@"not_sure_if_undefined"];
+
+            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+
+            JSValue *isHam = [myPrivateProperties valueForKey:@"is_ham"];
+            JSValue *message = [myPrivateProperties valueForKey:@"message"];
+            JSValue *myNumber = [myPrivateProperties valueForKey:@"my_number"];
+            JSValue *definitelyNull = [myPrivateProperties valueForKey:@"definitely_null"];
+            JSValue *notSureIfUndefined = [myPrivateProperties valueForKey:@"not_sure_if_undefined"];
+            checkResult(@"is_ham is true", [isHam isBoolean] && [isHam toBool]);
+            checkResult(@"message is hello!", [message isString] && [@"hello!" isEqualToString:[message toString]]);
+            checkResult(@"my_number is 42", [myNumber isNumber] && [myNumber toInt32] == 42);
+            checkResult(@"definitely_null is null", [definitelyNull isNull]);
+            checkResult(@"not_sure_if_undefined is undefined", [notSureIfUndefined isUndefined]);
+        }
+
+        checkResult(@"is_ham is nil", ![myPrivateProperties valueForKey:@"is_ham"]);
+        checkResult(@"message is nil", ![myPrivateProperties valueForKey:@"message"]);
+        checkResult(@"my_number is 42", ![myPrivateProperties valueForKey:@"my_number"]);
+        checkResult(@"definitely_null is null", ![myPrivateProperties valueForKey:@"definitely_null"]);
+        checkResult(@"not_sure_if_undefined is undefined", ![myPrivateProperties valueForKey:@"not_sure_if_undefined"]);
     }
 
     @autoreleasepool {
