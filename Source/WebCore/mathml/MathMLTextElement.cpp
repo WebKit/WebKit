@@ -41,11 +41,26 @@ using namespace MathMLNames;
 inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document& document)
     : MathMLElement(tagName, document)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new MathMLTextElement(tagName, document));
+}
+
+void MathMLTextElement::didAttachRenderers()
+{
+    MathMLElement::didAttachRenderers();
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
+void MathMLTextElement::childrenChanged(const ChildChange& change)
+{
+    MathMLElement::childrenChanged(change);
+    if (renderer())
+        renderer()->updateFromElement();
 }
 
 RenderElement* MathMLTextElement::createRenderer(RenderArena& arena, RenderStyle& style)

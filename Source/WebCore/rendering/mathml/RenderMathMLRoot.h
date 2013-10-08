@@ -57,10 +57,8 @@ private:
     virtual bool isRenderMathMLRoot() const { return true; }
     virtual const char* renderName() const { return "RenderMathMLRoot"; }
     
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    
     // This may return 0 for a non-MathML index (which won't occur in valid MathML).
-    RenderBoxModelObject* index() const;
+    RenderBox* index() const;
 
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;

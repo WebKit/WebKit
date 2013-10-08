@@ -1,3 +1,82 @@
+2013-10-04  Ojan Vafai  <ojan@chromium.org> and Martin Robinson  <mrobinson@igalia.com>
+
+        [MathML] Remove RenderTree modification during layout and refactor the StretchyOp code
+        https://bugs.webkit.org/show_bug.cgi?id=121416
+
+        Reviewed by David Hyatt.
+
+        Tests: mathml/presentation/mo-minus.html
+               mathml/presentation/mo-stacked-glyphs.html
+               mathml/presentation/mo-stretchy-vertical-bar.html
+               mathml/very-large-stretchy-operators.html
+
+        MathML stretched operators by both modifying the width of the operator
+        and adding children to the operator node in the render tree.
+
+        Instead we make the operator width equal to the widest glyph possible that we use
+        to represent the operator.  Additionally instead of rendering stretchy glyphs via
+        stacked operator pieces in separate render tree nodes, keep only one node for the
+        glyph, and use a custom paint method to paint the stacked representation.
+
+        With this patch, rendering seems roughly equivalent on Mac and markedly better
+        on Linux.
+
+        * css/mathml.css:
+        Not sure what this line-height:0 was here for, but it caused bugs with the new code
+
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::attach):
+        (WebCore):
+        (WebCore::MathMLTextElement::childrenChanged):
+        Need to update the anonymous render tree below <mo> elements when their
+        children change or when the renderer is first attached.
+
+        * mathml/MathMLTextElement.h:
+        (MathMLTextElement):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLBlock.h:
+        Now that the preferred width doesn't depend on the height, we don't
+        need to override computePreferredLogicalWidths at all.
+
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::styleDidChange):
+        Need to update the anonymous renderers for the anonymous RenderMathMLOperators.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::expandedStretchHeight):
+        Store the non-expanded stretch height so that we can detect when the height
+        actually changed.
+
+        (WebCore::RenderMathMLOperator::stretchToHeight):
+        Only update the style on the anonymous render tree since this is called
+        from RenderMathMLRow::layout
+
+        (WebCore::RenderMathMLOperator::styleDidChange):
+        (WebCore::RenderMathMLOperator::glyphBoundsForCharacter): A helper to get glyph boundaries.
+        (WebCore::RenderMathMLOperator::glyphHeightForCharacter): Ditto for glyph width.
+        (WebCore::RenderMathMLOperator::advanceForCharacter): The advance is different from the width,
+        and we want the width of the operator to be the advance instead of the tight bounding width.
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths): Use the max of all possible glyphs
+        we can use to render this operator.
+        (WebCore::RenderMathMLOperator::computeLogicalHeight): Return the stretched operator height, if appropriate.
+        (WebCore::RenderMathMLOperator::updateFromElement): We add a child for rendering the non-scaled
+        version of the glyph.
+        (WebCore::RenderMathMLOperator::firstCharacterForStretching): Helper to figure out what character
+        is the character used for stretching operations.
+        (WebCore::RenderMathMLOperator::findAcceptableStretchyCharacter): Helper to find an acceptable set
+        of glyph pieces for stretching characters.
+        (WebCore::RenderMathMLOperator::updateStyle): Resize the operator to the appropriate height and hide
+        the child if we are using the stretchy style.
+        (WebCore::RenderMathMLOperator::firstLineBoxBaseline):
+        (WebCore::RenderMathMLOperator::paintCharacter): Helper to paint a single character component of the
+        stretchy glyph.
+        (WebCore::RenderMathMLOperator::fillWithExtensionGlyph): Helper to paint the extender glue between
+        features of the stretchy glyph.
+        (WebCore::RenderMathMLOperator::paint): Properly paint stretchy glyphs.
+        * rendering/mathml/RenderMathMLOperator.h: Update method declarations.
+
 2013-10-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream API] update MediaStreamTrack object to match spec

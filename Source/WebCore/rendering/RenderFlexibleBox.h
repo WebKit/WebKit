@@ -53,7 +53,7 @@ public:
     virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE FINAL;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
 
     bool isHorizontalFlow() const;
 

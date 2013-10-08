@@ -41,9 +41,6 @@ public:
     virtual bool isRenderMathMLRow() const { return true; }
     
 protected:
-    // This also sets our stretchy embellished operator children to their correct sizes.
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    
     virtual void layout();
 
 private:

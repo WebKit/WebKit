@@ -1,3 +1,24 @@
+2013-10-04  Frédéric Wang  <fred.wang@free.fr>
+
+        [MathML] Remove RenderTree modification during layout and refactor the StretchyOp code
+        https://bugs.webkit.org/show_bug.cgi?id=121416
+
+        Reviewed by David Hyatt.
+
+        Add some reftests for stretchy operators.
+
+        * TestExpectations: The remaining MathML pixel tests are broken by this patch.
+        * LayoutTests/platform/gtk/TestExpectations:
+        * LayoutTests/platform/mac/TestExpectations:
+        * LayoutTests/platform/win/TestExpectations:
+        * mathml/presentation/mo-minus.html: Added.
+        * mathml/presentation/mo-stacked-glyphs-expected.html: Added.
+        * mathml/presentation/mo-stacked-glyphs.html: Added.
+        * mathml/presentation/mo-stretchy-vertical-bar-expected-mismatch.html: Added.
+        * mathml/presentation/mo-stretchy-vertical-bar.html: Added.
+        * mathml/very-large-stretchy-operators-expected.txt: Added.
+        * mathml/very-large-stretchy-operators.html: Added.
+
 2013-10-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream API] update MediaStreamTrack object to match spec
