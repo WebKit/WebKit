@@ -294,16 +294,17 @@ LayoutRect RenderMathMLOperator::paintCharacter(PaintInfo& info, UChar character
     FloatRect clipBounds = info.rect;
     switch (trim) {
     case TrimTop:
-        glyphPaintRect.shiftYEdgeTo(ceilf(glyphPaintRect.y()) + 1);
+        glyphPaintRect.shiftYEdgeTo(glyphPaintRect.y().ceil() + 1);
         clipBounds.shiftYEdgeTo(glyphPaintRect.y());
         break;
     case TrimBottom:
-        glyphPaintRect.shiftMaxYEdgeTo(floorf(glyphPaintRect.maxY()) - 1);
+        glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
         break;
     case TrimTopAndBottom:
-        glyphPaintRect.shiftYEdgeTo(ceilf(glyphPaintRect.y() + 1));
-        glyphPaintRect.shiftMaxYEdgeTo(floorf(glyphPaintRect.maxY()) - 1);
+        LayoutUnit temp = glyphPaintRect.y() + 1;
+        glyphPaintRect.shiftYEdgeTo(temp.ceil());
+        glyphPaintRect.shiftMaxYEdgeTo(glyphPaintRect.maxY().floor() - 1);
         clipBounds.shiftYEdgeTo(glyphPaintRect.y());
         clipBounds.shiftMaxYEdgeTo(glyphPaintRect.maxY());
         break;

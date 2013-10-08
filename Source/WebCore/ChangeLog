@@ -1,3 +1,14 @@
+2013-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [MathML] Use of floating point floor/ceil on LayoutUnits seems wrong
+        https://bugs.webkit.org/show_bug.cgi?id=122367
+
+        Reviewed by Darin Adler.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::paintCharacter): Use member methods to compute
+        correct floor/ceil values for LayoutUnits.
+
 2013-10-07  Dean Jackson  <dino@apple.com>
 
         Video -> pixel buffer output should not manage color spaces
