@@ -1,5 +1,14 @@
 2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Gardening: add baselines for new tests.
+
+        * platform/gtk/fast/regions/selection/selecting-text-ignoring-region-horiz-bt-expected.png: Added.
+        * platform/gtk/fast/regions/selection/selecting-text-ignoring-region-vert-lr-expected.png: Added.
+        * platform/gtk/fast/regions/selection/selecting-text-in-2-regions-horiz-bt-expected.png: Added.
+        * platform/gtk/fast/regions/selection/selecting-text-in-2-regions-vert-lr-expected.png: Added.
+
+2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
+
         Gardening: skip audio/video track tests, since those are not yet supported by our
         media player.
 
