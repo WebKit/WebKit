@@ -1,3 +1,20 @@
+2013-10-07  Sam Weinig  <sam@webkit.org>
+
+        Consolidate findString functions
+        https://bugs.webkit.org/show_bug.cgi?id=122480
+
+        Reviewed by Darin Adler.
+
+        * editing/Editor.cpp:
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeFindString):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::find):
+        * page/Page.cpp:
+        * page/Page.h:
+        Fix a long standing FIXME.
+
 2013-10-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Move m_floatingObjects to RenderBlockFlow from RenderBlock

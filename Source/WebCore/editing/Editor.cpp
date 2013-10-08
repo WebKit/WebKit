@@ -2825,13 +2825,6 @@ void Editor::applyEditingStyleToElement(Element* element) const
     style->setPropertyInternal(CSSPropertyWebkitLineBreak, "after-white-space", false, IGNORE_EXCEPTION);
 }
 
-// Searches from the beginning of the document if nothing is selected.
-bool Editor::findString(const String& target, bool forward, bool caseFlag, bool wrapFlag, bool startInSelection)
-{
-    FindOptions options = (forward ? 0 : Backwards) | (caseFlag ? 0 : CaseInsensitive) | (wrapFlag ? WrapAround : 0) | (startInSelection ? StartInSelection : 0);
-    return findString(target, options);
-}
-
 bool Editor::findString(const String& target, FindOptions options)
 {
     VisibleSelection selection = m_frame.selection().selection();

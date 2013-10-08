@@ -498,7 +498,8 @@ Eina_Bool ewk_frame_text_search(const Evas_Object* ewkFrame, const char* text, E
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
 
-    return smartData->frame->editor().findString(WTF::String::fromUTF8(text), forward, caseSensitive, wrap, true);
+    WebCore::FindOptions options = (caseSensitive ? 0 : WebCore::CaseInsensitive) | (forward ? 0 : WebCore::Backwards) | (wrap ? WebCore::WrapAround : 0) | WebCore::StartInSelection;
+    return smartData->frame->editor().findString(WTF::String::fromUTF8(text), options);
 }
 
 unsigned int ewk_frame_text_matches_mark(Evas_Object* ewkFrame, const char* string, Eina_Bool caseSensitive, Eina_Bool highlight, unsigned int limit)

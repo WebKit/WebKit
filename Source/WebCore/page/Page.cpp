@@ -547,11 +547,6 @@ static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
         : curr->tree().traversePreviousWithWrap(wrapFlag);
 }
 
-bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity, FindDirection direction, bool shouldWrap)
-{
-    return findString(target, (caseSensitivity == TextCaseInsensitive ? CaseInsensitive : 0) | (direction == FindDirectionBackward ? Backwards : 0) | (shouldWrap ? WrapAround : 0));
-}
-
 bool Page::findString(const String& target, FindOptions options)
 {
     if (target.isEmpty())
