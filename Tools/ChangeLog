@@ -1,3 +1,19 @@
+2013-10-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose state of aria-invalid as ATK_STATE_INVALID_ENTRY
+        https://bugs.webkit.org/show_bug.cgi?id=122104
+
+        Reviewed by Chris Fleizach.
+
+        Updated stringAttributeValue to double check that the exposure of
+        aria-invalid as a state is consistent with its exposure as a text
+        attribute as well, when it applies (implementations of AtkText).
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::stringAttributeValue): Add double check.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::stringAttributeValue): Ditto.
+
 2013-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests progress meter should update more quickly on older Rubies

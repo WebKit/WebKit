@@ -1038,6 +1038,20 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     if (attributeValue.isEmpty() && ATK_IS_TEXT(m_element))
         attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element), TextAttributeType, atkAttributeName);
 
+    // Additional check to make sure that the exposure of the state ATK_STATE_INVALID_ENTRY
+    // is consistent with the exposure of aria-invalid as a text attribute, if present.
+    if (atkAttributeName == attributesMap[InvalidNameIndex][AtkDomain]) {
+        bool isInvalidState = checkElementState(m_element, ATK_STATE_INVALID_ENTRY);
+        if (attributeValue.isEmpty())
+            return JSStringCreateWithUTF8CString(isInvalidState ? "true" : "false");
+
+        // If the text attribute was there, check that it's consistent with
+        // what the state says or force the test to fail otherwise.
+        bool isAriaInvalid = attributeValue != "false";
+        if (isInvalidState != isAriaInvalid)
+            return JSStringCreateWithCharacters(0, 0);
+    }
+
     return JSStringCreateWithUTF8CString(attributeValue.utf8().data());
 }
 

@@ -1,3 +1,15 @@
+2013-10-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose state of aria-invalid as ATK_STATE_INVALID_ENTRY
+        https://bugs.webkit.org/show_bug.cgi?id=122104
+
+        Reviewed by Chris Fleizach.
+
+        Map invalid state of an AccessibilityObject to the proper AtkState.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkStateSetFromCoreObject): Add the mapping.
+
 2013-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
 

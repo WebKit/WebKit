@@ -725,6 +725,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->isIndeterminate())
         atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
 
+    if (coreObject->invalidStatus() != "false")
+        atk_state_set_add_state(stateSet, ATK_STATE_INVALID_ENTRY);
+
     if (coreObject->isMultiSelectable())
         atk_state_set_add_state(stateSet, ATK_STATE_MULTISELECTABLE);
 
