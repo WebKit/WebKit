@@ -1,3 +1,10 @@
+2013-10-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Name for tables are now properly showing
+        up when exposing information for the parent of a table's cell.
+
+        * platform/gtk/accessibility/table-cells-expected.txt: Updated.
+
 2013-10-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         context-menu-suggestions-multiword-selection.html and context-menu-suggestions-subword-selection.html are flaky after r156901
