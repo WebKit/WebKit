@@ -1,3 +1,12 @@
+2013-10-07  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSNotAnObject constructor.
+        <https://webkit.org/b/122474>
+
+        Reviewed by Sam Weinig.
+
+        JSNotAnObject was only using the ExecState to find the VM.
+
 2013-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL memory allocator should be able to allocate data sections in non-executable memory

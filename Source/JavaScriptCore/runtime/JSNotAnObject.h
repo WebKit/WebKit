@@ -38,18 +38,18 @@ namespace JSC {
     // any operations performed on the result of a failed toObject call.
     class JSNotAnObject : public JSNonFinalObject {
     private:
-        JSNotAnObject(ExecState* exec)
-            : JSNonFinalObject(exec->vm(), exec->vm().notAnObjectStructure.get())
+        explicit JSNotAnObject(VM& vm)
+            : JSNonFinalObject(vm, vm.notAnObjectStructure.get())
         {
         }
         
     public:
         typedef JSNonFinalObject Base;
 
-        static JSNotAnObject* create(ExecState* exec)
+        static JSNotAnObject* create(VM& vm)
         {
-            JSNotAnObject* object = new (NotNull, allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
-            object->finishCreation(exec->vm());
+            JSNotAnObject* object = new (NotNull, allocateCell<JSNotAnObject>(vm.heap)) JSNotAnObject(vm);
+            object->finishCreation(vm);
             return object;
         }
 
