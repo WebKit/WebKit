@@ -1,3 +1,11 @@
+2013-10-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test mathml/very-large-stretchy-operators.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=122490
+
+        * platform/mac/TestExpectations: Skipped the test. It's faiing with a timeout and
+        taking up to 80 seconds.
+
 2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
 
         Gardening: add baselines for new tests.
