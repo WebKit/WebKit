@@ -83,6 +83,7 @@ class TestRunner:
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ResizeReversePaginatedWebView", "Test fails", 120305),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ScrollPinningBehaviors", "Test fails", 120306),
+        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
     ]
 
     def __init__(self, options, tests=[]):
