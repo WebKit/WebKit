@@ -1,3 +1,15 @@
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed, rolling out r157080.
+        http://trac.webkit.org/changeset/157080
+
+        Not a proper baseline
+
+        * platform/gtk/fast/regions/selection/selecting-text-ignoring-region-horiz-bt-expected.png: Removed.
+        * platform/gtk/fast/regions/selection/selecting-text-ignoring-region-vert-lr-expected.png: Removed.
+        * platform/gtk/fast/regions/selection/selecting-text-in-2-regions-horiz-bt-expected.png: Removed.
+        * platform/gtk/fast/regions/selection/selecting-text-in-2-regions-vert-lr-expected.png: Removed.
+
 2013-10-08  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: media/video-layer-crash.html
