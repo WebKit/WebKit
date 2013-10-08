@@ -646,6 +646,11 @@ static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
 }
 #endif
 
+static bool urlHasSupportedProtocol(const URL& url)
+{
+    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIs("blob"));
+}
+
 // uri handler interface
 
 #ifdef GST_API_VERSION_1
@@ -656,7 +661,7 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"http", "https", 0 };
+    static const char* protocols[] = {"http", "https", "blob", 0 };
     return protocols;
 }
 
@@ -689,8 +694,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
         return TRUE;
 
     URL url(URL(), uri);
-
-    if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
+    if (!urlHasSupportedProtocol(url)) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;
     }
@@ -707,7 +711,7 @@ static GstURIType webKitWebSrcUriGetType(void)
 
 static gchar** webKitWebSrcGetProtocols(void)
 {
-    static gchar* protocols[] = {(gchar*) "http", (gchar*) "https", 0 };
+    static gchar* protocols[] = {(gchar*) "http", (gchar*) "https", (gchar*) "blob", 0 };
     return protocols;
 }
 
@@ -740,8 +744,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
         return TRUE;
 
     URL url(URL(), uri);
-
-    if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
+    if (!urlHasSupportedProtocol(url)) {
         GST_ERROR_OBJECT(src, "Invalid URI '%s'", uri);
         return FALSE;
     }
@@ -1080,7 +1083,8 @@ void StreamingClient::handleNotifyFinished()
 CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, CachedResourceLoader* resourceLoader, const ResourceRequest& request)
     : StreamingClient(src)
 {
-    CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, DoNotBufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+    DataBufferingPolicy bufferingPolicy = request.url().protocolIs("blob") ? BufferData : DoNotBufferData;
+    CachedResourceRequest cacheRequest(request, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
     m_resource = resourceLoader->requestRawResource(cacheRequest);
     if (m_resource)
         m_resource->addClient(this);
