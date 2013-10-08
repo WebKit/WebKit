@@ -88,7 +88,7 @@ typedef union PluginPort {
     BOOL shouldStopSoon;
 
     uint32_t currentTimerID;
-    HashMap<uint32_t, PluginTimer*>* timers;
+    std::unique_ptr<HashMap<uint32_t, std::unique_ptr<PluginTimer>>> timers;
 
     unsigned pluginFunctionCallDepth;
     

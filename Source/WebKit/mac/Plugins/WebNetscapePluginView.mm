@@ -707,11 +707,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
 
-    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
-        PluginTimer* timer = it->value;
-        timer->stop();
-    }    
+    for (auto& it: timers->values())
+        it->stop();
 }
 
 - (void)startTimers
@@ -725,11 +722,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
     
-    HashMap<uint32_t, PluginTimer*>::const_iterator end = timers->end();
-    for (HashMap<uint32_t, PluginTimer*>::const_iterator it = timers->begin(); it != end; ++it) {
-        PluginTimer* timer = it->value;
-        ASSERT(!timer->isActive());
-        timer->start(_isCompletelyObscured);
+    for (auto& it: timers->values()) {
+        ASSERT(!it->isActive());
+        it->start(_isCompletelyObscured);
     }    
 }
 
@@ -1185,8 +1180,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // of removing a stream from this hash set.
     Vector<RefPtr<WebNetscapePluginStream> > streamsCopy;
     copyToVector(streams, streamsCopy);
-    for (size_t i = 0; i < streamsCopy.size(); i++)
-        streamsCopy[i]->stop();
+    for (auto& stream: streamsCopy)
+        stream->stop();
 
     for (WebFrame *frame in [_pendingFrameLoads keyEnumerator])
         [frame _setInternalLoadDelegate:nil];
@@ -1368,11 +1363,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     free(cValues);
     
     ASSERT(!_eventHandler);
-    
-    if (timers) {
-        deleteAllValues(*timers);
-        delete timers;
-    }  
     
     [_containerChecksInProgress release];
 }
@@ -2165,20 +2155,21 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return 0;
     
     if (!timers)
-        timers = new HashMap<uint32_t, PluginTimer*>;
-    
+        timers = std::make_unique<HashMap<uint32_t, std::unique_ptr<PluginTimer>>>();
+
+    std::unique_ptr<PluginTimer>* slot;
     uint32_t timerID;
-    
-    do {
+    do
         timerID = ++currentTimerID;
-    } while (timers->contains(timerID) || timerID == 0);
-    
-    PluginTimer* timer = new PluginTimer(plugin, timerID, interval, repeat, timerFunc);
-    timers->set(timerID, timer);
+    while (!timers->isValidKey(timerID) || *(slot = &timers->add(timerID, nullptr).iterator->value));
+
+    auto timer = std::make_unique<PluginTimer>(plugin, timerID, interval, repeat, timerFunc);
 
     if (_shouldFireTimers)
         timer->start(_isCompletelyObscured);
     
+    *slot = std::move(timer);
+
     return timerID;
 }
 
@@ -2187,8 +2178,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!timers)
         return;
     
-    if (PluginTimer* timer = timers->take(timerID))
-        delete timer;
+    timers->remove(timerID);
 }
 
 - (NPError)popUpContextMenu:(NPMenu *)menu

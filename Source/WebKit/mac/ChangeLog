@@ -1,5 +1,28 @@
 2013-10-08  Darin Adler  <darin@apple.com>
 
+        WebNetscapePluginView should no longer use deleteAllValues
+        https://bugs.webkit.org/show_bug.cgi?id=122495
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebNetscapePluginView.h: Use unique_ptr for both the pointer to
+        the timers hash table, and for the values in the hash table.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView stopTimers]): Rewrote loop so it works with unique_ptr.
+        (-[WebNetscapePluginView startTimers]): Ditto.
+        (-[WebNetscapePluginView fini]): Removed unneeded code to delete timers.
+        (-[WebNetscapePluginView scheduleTimerWithInterval:repeat:timerFunc:]): Make
+        the timers hash table with make-unique. Fixed the loop that chooses the timer
+        ID so it won't ever try to use a deleted value, although that never happens
+        in practice. Use HashMap::add instead of using both contains and set.
+        Rearranged code so we don't need to make a raw pointer for the timer.
+        (-[WebNetscapePluginView unscheduleTimer:]): Use remove instead of take/delete,
+        since remove takes care of the deletion automatically since we are using the
+        unique_ptr class.
+
+2013-10-08  Darin Adler  <darin@apple.com>
+
         Eliminate use of deleteAllValues in ProxyInstance
         https://bugs.webkit.org/show_bug.cgi?id=122499
 
