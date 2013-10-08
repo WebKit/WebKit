@@ -1,0 +1,11 @@
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitWebGLEnabled", "1");
+    testRunner.dumpAsText();
+}
+
+var canvas = document.createElement("canvas");
+var context = canvas.getContext("webgl");
+
+document.write(context ? "PASS" : "FAIL");
+</script>

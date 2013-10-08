@@ -1,3 +1,19 @@
+2013-10-08  Dean Jackson  <dino@apple.com>
+
+        Support unprefixed WebGL context creation
+        https://bugs.webkit.org/show_bug.cgi?id=122523
+        <rdar://problem/15179463>
+
+        Reviewed by Simon Fraser.
+
+        Add support for the unprefixed "webgl" canvas context type.
+
+        Test: fast/canvas/webgl/unprefixed-context.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::is3dType):
+        * inspector/InjectedScriptCanvasModuleSource.js:
+
 2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename EventDispatchMediator::dispatchEvent to mediateAndDispatchEvent

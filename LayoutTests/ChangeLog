@@ -1,3 +1,20 @@
+2013-10-08  Dean Jackson  <dino@apple.com>
+
+        Support unprefixed WebGL context creation
+        https://bugs.webkit.org/show_bug.cgi?id=122523
+        <rdar://problem/15179463>
+
+        Reviewed by Simon Fraser.
+
+        Tests that we can create a context without the
+        "experimental-" prefix. Meanwhile, most of the other
+        WebGL tests should start to use the unprefixed
+        form automatically (the helper script attempts
+        "webgl" first).
+
+        * fast/canvas/webgl/unprefixed-context-expected.txt: Added.
+        * fast/canvas/webgl/unprefixed-context.html: Added.
+
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Skip a new WebGL test along with the others.

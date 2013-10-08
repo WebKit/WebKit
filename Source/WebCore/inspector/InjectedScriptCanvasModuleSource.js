@@ -1863,7 +1863,7 @@ WebGLRenderingContextResource.prototype = {
 
         var canvas = data.originalCanvas.cloneNode(true);
         var replayContext = null;
-        var contextIds = ["experimental-webgl", "webkit-3d", "3d"];
+        var contextIds = ["webgl", "experimental-webgl", "webkit-3d", "3d"];
         for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
             replayContext = canvas.getContext(contextId, data.originalContextAttributes);
             if (replayContext)
