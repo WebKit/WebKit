@@ -1,5 +1,16 @@
 2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
 
+        [buildbot] parse tests that are reported as crashed correctly for GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=122476
+
+        Reviewed by Martin Robinson.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.commandComplete): parse the crashed tests output so that is reported
+        as a failure of the API tests.
+
+2013-10-07  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed. Skipping API test that is causing the next one to crash,
         see https://bugs.webkit.org/show_bug.cgi?id=121970.
 
