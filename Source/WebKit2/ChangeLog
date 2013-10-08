@@ -1,3 +1,20 @@
+2013-10-08  Darin Adler  <darin@apple.com>
+
+        Remove use of deleteAllValues in NPRemoteObjectMap::pluginDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=122496
+
+        Reviewed by Andreas Kling.
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::registerNPObject): Don't call release when putting objects
+        into the map.
+        (WebKit::NPRemoteObjectMap::pluginDestroyed): Instead of making an array of receivers
+        and deleting them all, remove all of the receivers from the map, which will take care
+        of deleting them. Also change the other loop to use a similar coding style.
+
+        * Shared/Plugins/NPRemoteObjectMap.h: Change the value type of m_registeredNPObjects
+        to be unique_ptr instead of a raw pointer.
+
 2013-10-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reduce duplicated code in WebPageProxy

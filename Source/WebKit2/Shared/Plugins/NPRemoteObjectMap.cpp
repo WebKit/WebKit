@@ -78,8 +78,7 @@ void NPRemoteObjectMap::npObjectProxyDestroyed(NPObject* npObject)
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject, Plugin* plugin)
 {
     uint64_t npObjectID = generateNPObjectID();
-    m_registeredNPObjects.set(npObjectID, std::make_unique<NPObjectMessageReceiver>(this, plugin, npObjectID, npObject).release());
-
+    m_registeredNPObjects.add(npObjectID, std::make_unique<NPObjectMessageReceiver>(this, plugin, npObjectID, npObject));
     return npObjectID;
 }
 
@@ -196,34 +195,24 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
 
 void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
 {
-    Vector<NPObjectMessageReceiver*> messageReceivers;
-
-    // Gather the receivers associated with this plug-in.
-    for (HashMap<uint64_t, NPObjectMessageReceiver*>::const_iterator it = m_registeredNPObjects.begin(), end = m_registeredNPObjects.end(); it != end; ++it) {
-        NPObjectMessageReceiver* npObjectMessageReceiver = it->value;
-        if (npObjectMessageReceiver->plugin() == plugin)
-            messageReceivers.append(npObjectMessageReceiver);
+    // Remove all receivers associated with this plug-in.
+    Vector<uint64_t> keys;
+    for (auto& it: m_registeredNPObjects) {
+        if (it.value->plugin() == plugin)
+            keys.append(it.key);
     }
-
-    // Now delete all the receivers.
-    deleteAllValues(messageReceivers);
-
-    Vector<NPObjectProxy*> objectProxies;
-    for (HashSet<NPObjectProxy*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {
-        NPObjectProxy* npObjectProxy = *it;
-
-        if (npObjectProxy->plugin() == plugin)
-            objectProxies.append(npObjectProxy);
-    }
+    for (auto key: keys)
+        m_registeredNPObjects.remove(key);
 
     // Invalidate and remove all proxies associated with this plug-in.
-    for (size_t i = 0; i < objectProxies.size(); ++i) {
-        NPObjectProxy* npObjectProxy = objectProxies[i];
-
-        npObjectProxy->invalidate();
-
-        ASSERT(m_npObjectProxies.contains(npObjectProxy));
-        m_npObjectProxies.remove(npObjectProxy);
+    Vector<NPObjectProxy*> proxies;
+    for (auto& it: m_npObjectProxies) {
+        if (it->plugin() == plugin)
+            proxies.append(it);
+    }
+    for (auto proxy: proxies) {
+        proxy->invalidate();
+        m_npObjectProxies.remove(proxy);
     }
 }
 

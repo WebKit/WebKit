@@ -72,7 +72,7 @@ private:
 
     // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
     // other end of the connection.
-    HashMap<uint64_t, NPObjectMessageReceiver*> m_registeredNPObjects;
+    HashMap<uint64_t, std::unique_ptr<NPObjectMessageReceiver>> m_registeredNPObjects;
 
     // A set of NPObjectProxy objects associated with this map.
     HashSet<NPObjectProxy*> m_npObjectProxies;
