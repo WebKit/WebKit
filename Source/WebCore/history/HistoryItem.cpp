@@ -331,11 +331,11 @@ void HistoryItem::padDailyCountsForNewVisit(double time)
     int daysElapsed = timeToDay(time) - timeToDay(m_lastVisitedTime);
 
     if (daysElapsed < 0)
-      daysElapsed = 0;
+        daysElapsed = 0;
 
-    Vector<int> padding;
+    Vector<int, 32> padding;
     padding.fill(0, daysElapsed);
-    m_dailyVisitCounts.insert(0, padding);
+    m_dailyVisitCounts.insertVector(0, padding);
 }
 
 static const size_t daysPerWeek = 7;

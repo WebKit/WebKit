@@ -644,8 +644,8 @@ public:
     template<typename U> bool tryAppend(const U*, size_t);
 
     template<typename U> void insert(size_t position, const U*, size_t);
-    template<typename U> void insert(size_t position, const U&);
-    template<typename U, size_t c> void insert(size_t position, const Vector<U, c>&);
+    template<typename U> void insert(size_t position, U&&);
+    template<typename U, size_t c> void insertVector(size_t position, const Vector<U, c>&);
 
     void remove(size_t position);
     void remove(size_t position, size_t length);
@@ -1091,22 +1091,24 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
 }
  
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U& val)
+inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, U&& value)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(position <= size());
-    const U* data = &val;
+
+    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
     if (size() == capacity()) {
-        data = expandCapacity(size() + 1, data);
+        ptr = expandCapacity(size() + 1, ptr);
         ASSERT(begin());
     }
+
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + 1);
-    new (NotNull, spot) T(*data);
+    new (NotNull, spot) T(std::forward<U>(*ptr));
     ++m_size;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U, size_t c>
-inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const Vector<U, c>& val)
+inline void Vector<T, inlineCapacity, OverflowHandler>::insertVector(size_t position, const Vector<U, c>& val)
 {
     insert(position, val.begin(), val.size());
 }
