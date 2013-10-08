@@ -3,6 +3,15 @@
         webaudio/javascriptaudionode-upmix2-8channel-input.html is flaky on Mac WK2
         https://bugs.webkit.org/show_bug.cgi?id=120148
 
+        * platform/mac-wk2/TestExpectations: Removed a duplicate expectation that I overlooked
+        at first. Note that having separate expectations for Debug and Release doesn't
+        appear to work.
+
+2013-10-07  Alexey Proskuryakov  <ap@apple.com>
+
+        webaudio/javascriptaudionode-upmix2-8channel-input.html is flaky on Mac WK2
+        https://bugs.webkit.org/show_bug.cgi?id=120148
+
         * platform/mac-wk2/TestExpectations: Updated expectations to cover debug assertions,
         and that this is not limited to Lion.
 
