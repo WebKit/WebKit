@@ -60,6 +60,12 @@ inline WebKitCSSSVGDocumentValue* toWebKitCSSSVGDocumentValue(CSSValue* value)
     return static_cast<WebKitCSSSVGDocumentValue*>(value);
 }
 
+inline const WebKitCSSSVGDocumentValue* toWebKitCSSSVGDocumentValue(const CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSSVGDocumentValue());
+    return static_cast<const WebKitCSSSVGDocumentValue*>(value);
+}
+
 } // namespace WebCore
 
 #endif // WebKitCSSSVGDocumentValue_h

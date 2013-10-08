@@ -129,17 +129,17 @@ bool CSSImageGeneratorValue::isFixedSize() const
 {
     switch (classType()) {
     case CanvasClass:
-        return static_cast<const CSSCanvasValue*>(this)->isFixedSize();
+        return toCSSCanvasValue(this)->isFixedSize();
     case CrossfadeClass:
-        return static_cast<const CSSCrossfadeValue*>(this)->isFixedSize();
+        return toCSSCrossfadeValue(this)->isFixedSize();
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<const CSSFilterImageValue*>(this)->isFixedSize();
+        return toCSSFilterImageValue(this)->isFixedSize();
 #endif
     case LinearGradientClass:
-        return static_cast<const CSSLinearGradientValue*>(this)->isFixedSize();
+        return toCSSLinearGradientValue(this)->isFixedSize();
     case RadialGradientClass:
-        return static_cast<const CSSRadialGradientValue*>(this)->isFixedSize();
+        return toCSSRadialGradientValue(this)->isFixedSize();
     default:
         ASSERT_NOT_REACHED();
     }
@@ -171,17 +171,17 @@ bool CSSImageGeneratorValue::isPending() const
 {
     switch (classType()) {
     case CrossfadeClass:
-        return static_cast<const CSSCrossfadeValue*>(this)->isPending();
+        return toCSSCrossfadeValue(this)->isPending();
     case CanvasClass:
-        return static_cast<const CSSCanvasValue*>(this)->isPending();
+        return toCSSCanvasValue(this)->isPending();
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<const CSSFilterImageValue*>(this)->isPending();
+        return toCSSFilterImageValue(this)->isPending();
 #endif
     case LinearGradientClass:
-        return static_cast<const CSSLinearGradientValue*>(this)->isPending();
+        return toCSSLinearGradientValue(this)->isPending();
     case RadialGradientClass:
-        return static_cast<const CSSRadialGradientValue*>(this)->isPending();
+        return toCSSRadialGradientValue(this)->isPending();
     default:
         ASSERT_NOT_REACHED();
     }
@@ -192,17 +192,17 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) cons
 {
     switch (classType()) {
     case CrossfadeClass:
-        return static_cast<const CSSCrossfadeValue*>(this)->knownToBeOpaque(renderer);
+        return toCSSCrossfadeValue(this)->knownToBeOpaque(renderer);
     case CanvasClass:
         return false;
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<const CSSFilterImageValue*>(this)->knownToBeOpaque(renderer);
+        return toCSSFilterImageValue(this)->knownToBeOpaque(renderer);
 #endif
     case LinearGradientClass:
-        return static_cast<const CSSLinearGradientValue*>(this)->knownToBeOpaque(renderer);
+        return toCSSLinearGradientValue(this)->knownToBeOpaque(renderer);
     case RadialGradientClass:
-        return static_cast<const CSSRadialGradientValue*>(this)->knownToBeOpaque(renderer);
+        return toCSSRadialGradientValue(this)->knownToBeOpaque(renderer);
     default:
         ASSERT_NOT_REACHED();
     }

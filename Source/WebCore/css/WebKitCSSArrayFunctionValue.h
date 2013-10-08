@@ -61,6 +61,12 @@ inline WebKitCSSArrayFunctionValue* toWebKitCSSArrayFunctionValue(CSSValue* valu
     return static_cast<WebKitCSSArrayFunctionValue*>(value);
 }
 
+inline const WebKitCSSArrayFunctionValue* toWebKitCSSArrayFunctionValue(const CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSArrayFunctionValue());
+    return static_cast<const WebKitCSSArrayFunctionValue*>(value);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS)

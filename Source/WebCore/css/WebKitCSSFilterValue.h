@@ -83,6 +83,12 @@ inline WebKitCSSFilterValue* toWebKitCSSFilterValue(CSSValue* value)
     return static_cast<WebKitCSSFilterValue*>(value);
 }
 
+inline const WebKitCSSFilterValue* toWebKitCSSFilterValue(const CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSFilterValue());
+    return static_cast<const WebKitCSSFilterValue*>(value);
+}
+
 }
 
 #endif // ENABLE(CSS_FILTERS)

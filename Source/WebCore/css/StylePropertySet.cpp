@@ -1272,7 +1272,7 @@ String StylePropertySet::PropertyReference::cssName() const
         ASSERT(propertyValue()->isVariableValue());
         if (!propertyValue()->isVariableValue())
             return emptyString(); // Should not happen, but if it does, avoid a bad cast.
-        return "-webkit-var-" + static_cast<const CSSVariableValue*>(propertyValue())->name();
+        return "-webkit-var-" + toCSSVariableValue(propertyValue())->name();
     }
 #endif
     return getPropertyNameString(id());

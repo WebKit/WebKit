@@ -1,3 +1,38 @@
+2013-10-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use toCSSFooValue() instead of using static_cast<const CSSFooValue*>
+        https://bugs.webkit.org/show_bug.cgi?id=122491
+
+        Reviewed by Andreas Kling.
+
+        static_cast<const CSSFooValue*> wasn't cleanup. So, we need to use toCSSFooValue() for it.
+        To use toCSSValue() will help to detect bad type-cast.
+
+        Besides static_cast<const WebKitCSSFooValue*> helper functions need to be added to support this use.
+
+        No new tests, no behavior change.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyMatches):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::isFixedSize):
+        (WebCore::CSSImageGeneratorValue::isPending):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::isImplicitInitialValue):
+        (WebCore::CSSValue::addSubresourceStyleURLs):
+        (WebCore::CSSValue::hasFailedOrCanceledSubresources):
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::serializeResolvingVariables):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::PropertyReference::cssName):
+        * css/WebKitCSSSVGDocumentValue.h:
+        (WebCore::toWebKitCSSSVGDocumentValue):
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::toWebKitCSSTransformValue):
+
 2013-10-08  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Get MediaStreamCenterGStreamer compiling again

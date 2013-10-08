@@ -75,6 +75,12 @@ inline WebKitCSSShaderValue* toWebKitCSSShaderValue(CSSValue* value)
     return static_cast<WebKitCSSShaderValue*>(value);
 }
 
+inline const WebKitCSSShaderValue* toWebKitCSSShaderValue(const CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSShaderValue());
+    return static_cast<const WebKitCSSShaderValue*>(value);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS)
