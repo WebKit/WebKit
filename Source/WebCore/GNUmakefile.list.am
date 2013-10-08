@@ -2353,6 +2353,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMainThreadExecState.h \
 	Source/WebCore/bindings/js/JSMediaListCustom.h \
 	Source/WebCore/bindings/js/JSMediaSourceStatesCustom.cpp \
+	Source/WebCore/bindings/js/JSMediaStreamCapabilitiesCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageChannelCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageEventCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \

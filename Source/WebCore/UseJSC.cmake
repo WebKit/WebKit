@@ -242,6 +242,8 @@ endif ()
 
 if (ENABLE_MEDIA_STREAM)
     list(APPEND WebCore_SOURCES
+        bindings/js/JSMediaSourceStatesCustom.cpp
+        bindings/js/JSMediaStreamCapabilitiesCustom.cpp
         bindings/js/JSRTCStatsResponseCustom.cpp
     )
 endif ()
