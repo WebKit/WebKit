@@ -163,7 +163,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
         return jsUndefined();
     }
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 
     if (m_instanceProxy) {
@@ -171,7 +171,7 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
             m_instanceProxy->releaseLocalObject(args.at(i));
     }
 
-    if (!reply.get() || !reply->m_returnValue)
+    if (!reply || !reply->m_returnValue)
         return jsUndefined();
     
     return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
@@ -242,11 +242,8 @@ bool ProxyInstance::supportsInvokeDefaultMethod() const
                                             m_objectID) != KERN_SUCCESS)
         return false;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (reply.get() && reply->m_result)
-        return true;
-        
-    return false;
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    return reply && reply->m_result;
 }
 
 JSValue ProxyInstance::invokeDefaultMethod(ExecState* exec)
@@ -266,11 +263,8 @@ bool ProxyInstance::supportsConstruct() const
                                         m_objectID) != KERN_SUCCESS)
         return false;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (reply.get() && reply->m_result)
-        return true;
-        
-    return false;
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    return reply && reply->m_result;
 }
     
 JSValue ProxyInstance::invokeConstruct(ExecState* exec, const ArgList& args)
@@ -320,9 +314,9 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     if (_WKPHNPObjectEnumerate(m_instanceProxy->hostProxy()->port(), m_instanceProxy->pluginID(), requestID, m_objectID) != KERN_SUCCESS)
         return;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
-    if (!reply.get() || !reply->m_returnValue)
+    if (!reply || !reply->m_returnValue)
         return;
     
     RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:(NSData *)reply->m_result.get()
@@ -347,10 +341,10 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
 {
     String name(propertyName.publicName());
     if (name.isNull())
-        return 0;
+        return nullptr;
 
     if (!m_instanceProxy)
-        return 0;
+        return nullptr;
     
     // If we already have an entry in the map, use it.
     auto existingMapEntry = m_methods.find(name.impl());
@@ -365,14 +359,14 @@ Method* ProxyInstance::methodNamed(PropertyName propertyName)
     if (_WKPHNPObjectHasMethod(m_instanceProxy->hostProxy()->port(),
                                m_instanceProxy->pluginID(), requestID,
                                m_objectID, methodName) != KERN_SUCCESS)
-        return 0;
+        return nullptr;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (!reply.get())
-        return 0;
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    if (!reply)
+        return nullptr;
 
     if (!reply->m_result && !m_instanceProxy->hostProxy()->shouldCacheMissingPropertiesAndMethods())
-        return 0;
+        return nullptr;
 
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_methods.add(name.impl(), nullptr);
@@ -386,10 +380,10 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
 {
     String name(propertyName.publicName());
     if (name.isNull())
-        return 0;
+        return nullptr;
 
     if (!m_instanceProxy)
-        return 0;
+        return nullptr;
     
     // If we already have an entry in the map, use it.
     auto existingMapEntry = m_fields.find(name.impl());
@@ -402,14 +396,14 @@ Field* ProxyInstance::fieldNamed(PropertyName propertyName)
     if (_WKPHNPObjectHasProperty(m_instanceProxy->hostProxy()->port(),
                                  m_instanceProxy->pluginID(), requestID,
                                  m_objectID, identifier) != KERN_SUCCESS)
-        return 0;
+        return nullptr;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (!reply.get())
-        return 0;
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    if (!reply)
+        return nullptr;
     
     if (!reply->m_result && !m_instanceProxy->hostProxy()->shouldCacheMissingPropertiesAndMethods())
-        return 0;
+        return nullptr;
     
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     auto mapAddResult = m_fields.add(name.impl(), nullptr);
@@ -431,9 +425,9 @@ JSC::JSValue ProxyInstance::fieldValue(ExecState* exec, const Field* field) cons
                                  m_objectID, serverIdentifier) != KERN_SUCCESS)
         return jsUndefined();
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
-    if (!reply.get() || !reply->m_returnValue)
+    if (!reply || !reply->m_returnValue)
         return jsUndefined();
     
     return m_instanceProxy->demarshalValue(exec, (char*)CFDataGetBytePtr(reply->m_result.get()), CFDataGetLength(reply->m_result.get()));
@@ -461,7 +455,7 @@ void ProxyInstance::setFieldValue(ExecState* exec, const Field* field, JSValue v
     if (kr != KERN_SUCCESS)
         return;
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(exec);
 }
 
@@ -472,7 +466,7 @@ void ProxyInstance::invalidate()
     if (NetscapePluginHostProxy* hostProxy = m_instanceProxy->hostProxy())
         _WKPHNPObjectRelease(hostProxy->port(),
                              m_instanceProxy->pluginID(), m_objectID);
-    m_instanceProxy = 0;
+    m_instanceProxy = nullptr;
 }
 
 } // namespace WebKit

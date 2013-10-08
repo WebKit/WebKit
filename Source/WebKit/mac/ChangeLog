@@ -1,3 +1,51 @@
+2013-10-08  Darin Adler  <darin@apple.com>
+
+        Change NetscapePluginInstanceProxy::m_replies to use unique_ptr instead of deleteAllValues
+        https://bugs.webkit.org/show_bug.cgi?id=122492
+
+        Reviewed by Andreas Kling.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin): Use auto so this works with
+        unique_ptr instead of auto_ptr.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCGetScriptableNPObjectReply): Use make_unique instead of using new directly.
+        (WKPCBooleanReply): Ditto.
+        (WKPCBooleanAndDataReply): Ditto.
+        (WKPCInstantiatePluginReply): Ditto.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h: Changed m_replies to map to unique_ptr
+        instead of to a raw pointer.
+        (WebKit::NetscapePluginInstanceProxy::setCurrentReply): Changed to take a unique_ptr
+        instead of a raw pointer since this takes ownership of the pointer.
+        (WebKit::NetscapePluginInstanceProxy::waitForReply): Changed to return a unique_ptr
+        instead of a auto_ptr because that's better. Use unique_ptr inside the function
+        too to avoid the need for an explicit delete.
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy): Removed the call to
+        deleteAllValues.
+        (WebKit::NetscapePluginInstanceProxy::cancelStreamLoad): Removed unneeded initialization
+        of a local variable that was already set in all code paths.
+        (WebKit::NetscapePluginInstanceProxy::wheelEvent): Use auto so this works with unique_ptr
+        instead of auto_ptr.
+        (WebKit::NetscapePluginInstanceProxy::print): Ditto.
+        (WebKit::NetscapePluginInstanceProxy::snapshot): Ditto. Ditto.
+        (WebKit::NetscapePluginInstanceProxy::processRequestsAndWaitForReply): Changed to return
+        a unique_ptr. Also removed an unneeded assertion.
+        (WebKit::NetscapePluginInstanceProxy::createBindingsInstance): Use auto so this works
+        with unique_ptr instead of auto_ptr.
+
+        * Plugins/Hosted/ProxyInstance.h: Changed return type of waitForReply to unique_ptr.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke): Use auto so this works with unique_ptr instead of auto_ptr.
+        (WebKit::ProxyInstance::supportsInvokeDefaultMethod): Ditto.
+        (WebKit::ProxyInstance::supportsConstruct): Ditto.
+        (WebKit::ProxyInstance::getPropertyNames): Ditto.
+        (WebKit::ProxyInstance::methodNamed): Ditto.
+        (WebKit::ProxyInstance::fieldNamed): Ditto.
+        (WebKit::ProxyInstance::fieldValue): Ditto.
+        (WebKit::ProxyInstance::setFieldValue): Ditto.
+
 2013-10-07  Sam Weinig  <sam@webkit.org>
 
         CTTE: Use references in and around DragController

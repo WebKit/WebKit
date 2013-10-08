@@ -268,10 +268,10 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
     }
 
-    std::auto_ptr<NetscapePluginInstanceProxy::InstantiatePluginReply> reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
-    if (!reply.get() || reply->m_resultCode != KERN_SUCCESS) {
+    auto reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);
+    if (!reply || reply->m_resultCode != KERN_SUCCESS) {
         instance->cleanup();
-        return 0;
+        return nullptr;
     }
     
     instance->setRenderContextID(reply->m_renderContextID);

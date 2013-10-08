@@ -122,7 +122,7 @@ inline bool NetscapePluginInstanceProxy::LocalObjectMap::contains(uint32_t objec
 inline JSC::JSObject* NetscapePluginInstanceProxy::LocalObjectMap::get(uint32_t objectID) const
 {
     if (objectID == HashTraits<uint32_t>::emptyValue() || HashTraits<uint32_t>::isDeletedValue(objectID))
-        return 0;
+        return nullptr;
 
     return m_idToJSObjectMap.get(objectID).get();
 }
@@ -258,7 +258,6 @@ NetscapePluginInstanceProxy::~NetscapePluginInstanceProxy()
     ASSERT(!m_pluginHostProxy);
     
     m_pluginID = 0;
-    deleteAllValues(m_replies);
 
 #ifndef NDEBUG
     netscapePluginInstanceProxyCounter.decrement();
@@ -321,7 +320,7 @@ void NetscapePluginInstanceProxy::cleanup()
         (*it)->invalidate();
     
     m_pluginView = nil;
-    m_manualStream = 0;
+    m_manualStream = nullptr;
 }
 
 void NetscapePluginInstanceProxy::invalidate()
@@ -331,7 +330,7 @@ void NetscapePluginInstanceProxy::invalidate()
         return;
     
     m_pluginHostProxy->removePluginInstance(this);
-    m_pluginHostProxy = 0;
+    m_pluginHostProxy = nullptr;
 }
 
 void NetscapePluginInstanceProxy::destroy()
@@ -369,7 +368,7 @@ void NetscapePluginInstanceProxy::setManualStream(PassRefPtr<HostedNetscapePlugi
 
 bool NetscapePluginInstanceProxy::cancelStreamLoad(uint32_t streamID, NPReason reason) 
 {
-    HostedNetscapePluginStream* stream = 0;
+    HostedNetscapePluginStream* stream;
     
     if (m_manualStream && streamID == 1)
         stream = m_manualStream.get();
@@ -386,7 +385,7 @@ bool NetscapePluginInstanceProxy::cancelStreamLoad(uint32_t streamID, NPReason r
 void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* stream)
 {
     if (stream == m_manualStream) {
-        m_manualStream = 0;
+        m_manualStream = nullptr;
         return;
     }
 
@@ -396,7 +395,7 @@ void NetscapePluginInstanceProxy::disconnectStream(HostedNetscapePluginStream* s
     
 void NetscapePluginInstanceProxy::pluginHostDied()
 {
-    m_pluginHostProxy = 0;
+    m_pluginHostProxy = nullptr;
 
     [m_pluginView pluginHostDied];
 
@@ -499,11 +498,8 @@ bool NetscapePluginInstanceProxy::wheelEvent(NSView *pluginView, NSEvent *event)
                                   pluginPoint.x, pluginPoint.y, [event buttonNumber], 
                                   [event deltaX], [event deltaY], [event deltaZ]);
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
-    if (!reply.get() || !reply->m_result)
-        return false;
-    
-    return true;
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
+    return reply && reply->m_result;
 }
 
 void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, unsigned height)
@@ -511,8 +507,8 @@ void NetscapePluginInstanceProxy::print(CGContextRef context, unsigned width, un
     uint32_t requestID = nextRequestID();
     _WKPHPluginInstancePrint(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-    if (!reply.get() || !reply->m_returnValue)
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    if (!reply || !reply->m_returnValue)
         return;
 
     RetainPtr<CGDataProvider> dataProvider = adoptCF(CGDataProviderCreateWithCFData(reply->m_result.get()));
@@ -534,8 +530,8 @@ void NetscapePluginInstanceProxy::snapshot(CGContextRef context, unsigned width,
     uint32_t requestID = nextRequestID();
     _WKPHPluginInstanceSnapshot(m_pluginHostProxy->port(), m_pluginID, requestID, width, height);
     
-    std::auto_ptr<NetscapePluginInstanceProxy::BooleanAndDataReply> reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
-    if (!reply.get() || !reply->m_returnValue)
+    auto reply = waitForReply<NetscapePluginInstanceProxy::BooleanAndDataReply>(requestID);
+    if (!reply || !reply->m_returnValue)
         return;
 
     RetainPtr<CGDataProvider> dataProvider = adoptCF(CGDataProviderCreateWithCFData(reply->m_result.get()));
@@ -816,25 +812,25 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
     return NPERR_NO_ERROR;
 }
 
-NetscapePluginInstanceProxy::Reply* NetscapePluginInstanceProxy::processRequestsAndWaitForReply(uint32_t requestID)
+std::unique_ptr<NetscapePluginInstanceProxy::Reply> NetscapePluginInstanceProxy::processRequestsAndWaitForReply(uint32_t requestID)
 {
-    Reply* reply = 0;
-
     ASSERT(m_pluginHostProxy);
+
+    std::unique_ptr<Reply> reply;
+
     while (!(reply = m_replies.take(requestID))) {
         if (!m_pluginHostProxy->processRequests())
-            return 0;
+            return nullptr;
 
         // The host proxy can be destroyed while executing a nested processRequests() call, in which case it's normal
         // to get a success result, but be unable to keep looping.
         if (!m_pluginHostProxy)
-            return 0;
+            return nullptr;
     }
-    
-    ASSERT(reply);
+
     return reply;
 }
-    
+
 // NPRuntime support
 bool NetscapePluginInstanceProxy::getWindowNPObject(uint32_t& objectID)
 {
@@ -871,7 +867,7 @@ bool NetscapePluginInstanceProxy::forgetBrowserObjectID(uint32_t objectID)
  
 bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script, data_t& resultData, mach_msg_type_number_t& resultLength, bool allowPopups)
 {
-    resultData = 0;
+    resultData = nullptr;
     resultLength = 0;
 
     if (m_inDestroy)
@@ -901,7 +897,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
 bool NetscapePluginInstanceProxy::invoke(uint32_t objectID, const Identifier& methodName, data_t argumentsData, mach_msg_type_number_t argumentsLength, data_t& resultData, mach_msg_type_number_t& resultLength)
 {
-    resultData = 0;
+    resultData = nullptr;
     resultLength = 0;
     
     if (m_inDestroy)
@@ -1437,14 +1433,14 @@ PassRefPtr<Instance> NetscapePluginInstanceProxy::createBindingsInstance(PassRef
     uint32_t requestID = nextRequestID();
     
     if (_WKPHGetScriptableNPObject(m_pluginHostProxy->port(), m_pluginID, requestID) != KERN_SUCCESS)
-        return 0;
+        return nullptr;
 
-    std::auto_ptr<GetScriptableNPObjectReply> reply = waitForReply<GetScriptableNPObjectReply>(requestID);
-    if (!reply.get())
-        return 0;
+    auto reply = waitForReply<GetScriptableNPObjectReply>(requestID);
+    if (!reply)
+        return nullptr;
 
     if (!reply->m_objectID)
-        return 0;
+        return nullptr;
 
     // Since the reply was non-null, "this" is still a valid pointer.
     return ProxyInstance::create(rootObject, this, reply->m_objectID);

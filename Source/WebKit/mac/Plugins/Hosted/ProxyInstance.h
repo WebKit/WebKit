@@ -87,12 +87,13 @@ private:
     JSC::JSValue invoke(JSC::ExecState*, InvokeType, uint64_t identifier, const JSC::ArgList&);
     
     template <typename T>
-    std::auto_ptr<T> waitForReply(uint32_t requestID) const {
-        std::auto_ptr<T> reply = m_instanceProxy->waitForReply<T>(requestID);
+    std::unique_ptr<T> waitForReply(uint32_t requestID) const
+    {
+        auto reply = m_instanceProxy->waitForReply<T>(requestID);
         
         // If the instance proxy was invalidated, just return a null reply.
         if (!m_instanceProxy)
-            return std::auto_ptr<T>();
+            return nullptr;
         
         return reply;
     }

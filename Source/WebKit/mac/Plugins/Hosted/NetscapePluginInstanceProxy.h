@@ -248,21 +248,21 @@ public:
         RetainPtr<CFDataRef> m_result;
     };
     
-    void setCurrentReply(uint32_t requestID, Reply* reply)
+    void setCurrentReply(uint32_t requestID, std::unique_ptr<Reply> reply)
     {
         ASSERT(!m_replies.contains(requestID));
-        m_replies.set(requestID, reply);
+        m_replies.add(requestID, std::move(reply));
     }
     
     template <typename T>
-    std::auto_ptr<T> waitForReply(uint32_t requestID)
+    std::unique_ptr<T> waitForReply(uint32_t requestID)
     {
         Ref<NetscapePluginInstanceProxy> protect(*this); // Plug-in host may crash while we are waiting for reply, releasing all instances to the instance proxy.
 
         willCallPluginFunction();
         m_waitingForReply = true;
 
-        Reply* reply = processRequestsAndWaitForReply(requestID);
+        auto reply = processRequestsAndWaitForReply(requestID);
         if (reply)
             ASSERT(reply->m_type == T::ReplyType);
         
@@ -272,11 +272,10 @@ public:
         didCallPluginFunction(stopped);
         if (stopped) {
             // The instance proxy may have been deleted from didCallPluginFunction(), so a null reply needs to be returned.
-            delete static_cast<T*>(reply);
-            return std::auto_ptr<T>();
+            return nullptr;
         }
 
-        return std::auto_ptr<T>(static_cast<T*>(reply));
+        return std::unique_ptr<T>(static_cast<T*>(reply.release()));
     }
     
     void webFrameDidFinishLoadWithReason(WebFrame*, NPReason);
@@ -291,7 +290,7 @@ private:
     void evaluateJavaScript(PluginRequest*);
     
     void stopAllStreams();
-    Reply* processRequestsAndWaitForReply(uint32_t requestID);
+    std::unique_ptr<Reply> processRequestsAndWaitForReply(uint32_t requestID);
     
     NetscapePluginHostProxy* m_pluginHostProxy;
     WebHostedNetscapePluginView *m_pluginView;
@@ -309,7 +308,7 @@ private:
     RendererType m_rendererType;
     
     bool m_waitingForReply;
-    HashMap<uint32_t, Reply*> m_replies;
+    HashMap<uint32_t, std::unique_ptr<Reply>> m_replies;
     
     // NPRuntime
 
