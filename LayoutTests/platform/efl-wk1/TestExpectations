@@ -489,3 +489,14 @@ webkit.org/b/87226 printing/width-overflow.html [ Failure ]
 
 # Failing tests after r155014
 webkit.org/b/120671 editing/selection/doubleclick-japanese-text.html [ Failure ]
+
+# eventSender related test fails (TEST-42)
+Bug(EFL) fast/harness/results.html [ Failure ]
+
+# EFL has not fully implemented about some SVG attributes
+Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
+
+# Text selection does not work correctly in DumpRenderTree
+Bug(EFL) fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
+Bug(EFL) fast/events/selectstart-by-drag.html [ Failure ]
+Bug(EFL) fast/text/offsetForPosition-complex-fallback.html [ Failure ]

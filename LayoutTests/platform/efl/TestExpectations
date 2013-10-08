@@ -117,7 +117,6 @@ fast/forms/listbox-onchange.html
 fast/forms/onselect-textfield.html
 fast/forms/option-mouseevents.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
-fast/harness/results.html
 fast/repaint/selection-clear.html
 fast/repaint/table-cell-overflow.html
 fast/repaint/text-emphasis-h.html
@@ -224,9 +223,6 @@ fast/inline/continuation-outlines-with-layers.html
 
 # The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html
-
-# Fails, the div does not scroll
-scrollbars/scroll-rtl-or-bt-layer.html
 
 # Failing, the 2 bars are not identical
 svg/hixie/data-types/002.xhtml
@@ -372,7 +368,6 @@ webkit.org/b/86623 editing/pasteboard/simplfiying-markup-should-not-strip-conten
 webkit.org/b/86623 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/86623 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/86623 editing/selection/drag-text-delay.html [ Failure ]
-webkit.org/b/86623 fast/block/positioning/hittest-on-relative-positioned-children.html
 webkit.org/b/86623 fast/events/5056619.html
 webkit.org/b/86623 fast/events/bogus-dropEffect-effectAllowed.html
 webkit.org/b/86623 fast/events/click-count.html
@@ -399,19 +394,14 @@ webkit.org/b/86623 fast/events/ondragenter.html
 webkit.org/b/86623 fast/events/ondrop-text-html.html
 webkit.org/b/86623 fast/events/only-valid-drop-targets-receive-file-drop.html [ Failure ]
 webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
-webkit.org/b/86623 fast/events/selectstart-by-double-triple-clicks.html
-webkit.org/b/86623 fast/events/selectstart-by-drag.html
 webkit.org/b/86623 fast/events/standalone-image-drag-to-editable.html
 webkit.org/b/86623 fast/forms/drag-into-textarea.html
 webkit.org/b/86623 fast/forms/drag-out-of-textarea.html
 webkit.org/b/86623 fast/forms/file/input-file-value.html [ Failure ]
-webkit.org/b/86623 fast/forms/focus-change-on-keypress.html
 webkit.org/b/86623 fast/forms/search-cancel-button-mouseup.html
-webkit.org/b/86623 fast/forms/search-disabled-readonly.html
 webkit.org/b/86623 fast/forms/textfield-drag-into-disabled.html
 webkit.org/b/86623 fast/lists/drag-into-marker.html
 webkit.org/b/86623 fast/table/click-near-anonymous-table.html
-webkit.org/b/86623 fast/text/offsetForPosition-complex-fallback.html
 webkit.org/b/86623 http/tests/local/drag-over-remote-content.html
 webkit.org/b/86623 http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
 webkit.org/b/86623 http/tests/misc/bubble-drag-events.html
@@ -488,8 +478,6 @@ webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 
 # EFL port does not implement DeviceMotion
 webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
-
-webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
 
 # Taken from Chromium, this test verifies that a mismatch reftest will fail if both results are the
 # same.  Because the whole point is that this test should fail when run, it's
@@ -983,7 +971,6 @@ webkit.org/b/47744 mathml/presentation/row.xhtml
 
 # EFL has not fully implemented about some SVG attributes
 Bug(EFL) svg/custom
-# Bug(EFL) svg/text
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
 webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
