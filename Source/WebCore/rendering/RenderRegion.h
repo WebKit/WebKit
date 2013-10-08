@@ -139,8 +139,6 @@ public:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    virtual bool requiresLayer() const OVERRIDE;
-
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
     LayoutRect layoutOverflowRectForBox(const RenderBox*);

@@ -118,8 +118,6 @@ private:
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const OVERRIDE;
 
-    virtual bool requiresLayer() const OVERRIDE;
-
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
 
     virtual const char* renderName() const;

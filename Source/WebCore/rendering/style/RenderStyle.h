@@ -889,6 +889,7 @@ public:
     // End CSS3 Getters
 
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
+    bool hasStyleRegion() const { return !rareNonInheritedData->m_regionThread.isNull(); }
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
     RegionFragment regionFragment() const { return static_cast<RegionFragment>(rareNonInheritedData->m_regionFragment); }
 
