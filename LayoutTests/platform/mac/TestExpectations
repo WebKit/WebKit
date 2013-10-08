@@ -1379,3 +1379,5 @@ webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
 
 webkit.org/b/122509 inspector/debugger/debugger-activation-crash2.html [ Pass Failure ]
+
+webkit.org/b/122510 inspector/styles/add-new-rule-with-style-after-body.html [ Pass Failure ]
