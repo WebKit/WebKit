@@ -53,9 +53,13 @@ class WinPort(ApplePort):
 
     CRASH_LOG_PREFIX = "CrashLog"
 
-    POST_MORTEM_DEBUGGER_KEY = "/HKLM/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
+    POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
+
+    WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Microsoft/Windows/Windows Error Reporting/%s"
 
     previous_debugger_values = {}
+
+    previous_error_reporting_values = {}
 
     def do_text_results_differ(self, expected_text, actual_text):
         # Sanity was restored in WK2, so we don't need this hack there.
@@ -157,33 +161,41 @@ class WinPort(ApplePort):
         self._filesystem.write_text_file(command_file, commands)
         return command_file
 
-    def read_registry_string(self, key):
-        registry_key = self.POST_MORTEM_DEBUGGER_KEY % key
-        read_registry_command = ["regtool", "--wow32", "get", registry_key]
+    def read_registry_string(self, reg_path, arch, root, key):
+        registry_key = reg_path % (root, key)
+        read_registry_command = ["regtool", arch, "get", registry_key]
         value = self._executive.run_command(read_registry_command, error_handler=Executive.ignore_error)
         return value.rstrip()
 
-    def write_registry_string(self, key, value):
-        registry_key = self.POST_MORTEM_DEBUGGER_KEY % key
-        set_reg_value_command = ["regtool", "--wow32", "set", "-s", str(registry_key), str(value)]
+    def write_registry_value(self, reg_path, arch, root, key, regType, value):
+        registry_key = reg_path % (root, key)
+
+        _log.debug("Writing to %s" % registry_key)
+
+        set_reg_value_command = ["regtool", arch, "set", regType, str(registry_key), str(value)]
         rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
         if rc == 2:
-            add_reg_value_command = ["regtool", "--wow32", "add", "-s", str(registry_key)]
+            add_reg_value_command = ["regtool", arch, "add", regType, str(registry_key)]
             rc = self._executive.run_command(add_reg_value_command, return_exit_code=True)
             if rc == 0:
                 rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
         if rc:
-            _log.warn("Error setting key: %s to value %s.  Error=%ld." % (key, value, rc))
+            _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%ld." % (arch, root, key, value, rc))
+            _log.warn("You many need to adjust permissions on the %s key." % registry_key)
             return False
 
         # On Windows Vista/7 with UAC enabled, regtool will fail to modify the registry, but will still
         # return a successful exit code. So we double-check here that the value we tried to write to the
         # registry was really written.
-        if self.read_registry_string(key) != value:
+        if self.read_registry_string(reg_path, arch, root, key) != str(value):
             _log.warn("Regtool reported success, but value of key %s did not change." % key)
+            _log.warn("You many need to adjust permissions on the %s key." % registry_key)
             return False
 
         return True
+
+    def write_registry_string(self, reg_path, arch, root, key, value):
+        return self.write_registry_value(reg_path, arch, root, key, "-s", value)
 
     def setup_crash_log_saving(self):
         if '_NT_SYMBOL_PATH' not in os.environ:
@@ -204,12 +216,25 @@ class WinPort(ApplePort):
         debugger_options = '"{0}" -p %ld -e %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
         registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
         for key in registry_settings:
-            self.previous_debugger_values[key] = self.read_registry_string(key)
-            self.write_registry_string(key, registry_settings[key])
+            for arch in ["--wow32", "--wow64"]:
+                self.previous_debugger_values[(arch, "HKLM", key)] = self.read_registry_string(self.POST_MORTEM_DEBUGGER_KEY, arch, "HKLM", key)
+                self.write_registry_string(self.POST_MORTEM_DEBUGGER_KEY, arch, "HKLM", key, registry_settings[key])
 
     def restore_crash_log_saving(self):
         for key in self.previous_debugger_values:
-            self.write_registry_string(key, self.previous_debugger_values[key])
+            self.write_registry_string(self.POST_MORTEM_DEBUGGER_KEY, key[0], key[1], key[2], self.previous_debugger_values[key])
+
+    def prevent_error_dialogs(self):
+        registry_settings = {'DontShowUI': 1, 'Disabled': 1}
+        for key in registry_settings:
+            for root in ["HKLM", "HKCU"]:
+                for arch in ["--wow32", "--wow64"]:
+                    self.previous_error_reporting_values[(arch, root, key)] = self.read_registry_string(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key)
+                    self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, arch, root, key, "-d", registry_settings[key])
+
+    def allow_error_dialogs(self):
+        for key in self.previous_error_reporting_values:
+            self.write_registry_value(self.WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], "-d", self.previous_error_reporting_values[key])
 
     def delete_sem_locks(self):
         os.system("rm -rf /dev/shm/sem.*")
@@ -217,10 +242,12 @@ class WinPort(ApplePort):
     def setup_test_run(self):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
+        self.prevent_error_dialogs()
         self.delete_sem_locks()
         super(WinPort, self).setup_test_run()
 
     def clean_up_test_run(self):
+        self.allow_error_dialogs()
         self.restore_crash_log_saving()
         super(WinPort, self).clean_up_test_run()
 

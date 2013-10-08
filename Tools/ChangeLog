@@ -1,3 +1,34 @@
+2013-10-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Add checks for proper build and test environment
+        https://bugs.webkit.org/show_bug.cgi?id=122466
+
+        Reviewed by Darin Adler.
+
+        This patch makes two changes:
+        1. Update webkitdirs.pm to check for some common misconfigurations and provide helpful warnings or
+           error messages so that people know what to fix to get things working.
+        2. Modify the win.py port to handle the 32-bit and 64-bit test environments, as well as making sure
+           the various environment settings are properly configured for our test environment.
+
+        * Scripts/webkitdirs.pm:
+        (checkInstalledTools): Add checks for some common Cygwin configuration problems that have
+        caused problems in the past.
+        (setupAppleWinEnv):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+        (WinPort.read_registry_string): Parameterize for run architecture and registry root.
+        (WinPort.write_registry_value): Parameterize registry writing by data type (string versus
+        DWORD, etc.)
+        (WinPort.write_registry_string): Revise to call new generic registry write function.
+        (WinPort.setup_crash_log_saving): Revise for new API
+        (WinPort.restore_crash_log_saving): Ditto
+        (WinPort.prevent_error_dialogs): Add new methods to prevent Windows dialogs that block our test
+        servers from running.
+        (WinPort.allow_error_dialogs): Ditto.
+        (WinPort.setup_test_run): Call new API to turn off user input dialogs on program failure.
+        (WinPort.clean_up_test_run): Call new API to reactivatea user input dialogs after test run finished.
+
 2013-10-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] enable v4l2 plugin
