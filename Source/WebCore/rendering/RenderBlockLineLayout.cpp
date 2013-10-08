@@ -1635,7 +1635,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                     }
 
                     if (layoutState.flowThread())
-                        lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
+                        // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                        toRenderBlockFlow(this)->updateRegionForLine(lineBox);
                 }
             }
         }
@@ -1759,7 +1760,8 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                     line->adjustBlockDirectionPosition(delta);
                 }
                 if (layoutState.flowThread())
-                    line->setContainingRegion(regionAtBlockOffset(line->lineTopWithLeading()));
+                    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                    toRenderBlockFlow(this)->updateRegionForLine(line);
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                     Vector<RenderBox*>::iterator end = cleanLineFloats->end();
                     for (Vector<RenderBox*>::iterator f = cleanLineFloats->begin(); f != end; ++f) {
@@ -1798,7 +1800,8 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
             if (layoutState.flowThread())
-                trailingFloatsLineBox->setContainingRegion(regionAtBlockOffset(trailingFloatsLineBox->lineTopWithLeading()));
+                // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                toRenderBlockFlow(this)->updateRegionForLine(trailingFloatsLineBox);
         }
 
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -1999,7 +2002,8 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
                     curr->adjustBlockDirectionPosition(paginationDelta);
                 }
                 if (layoutState.flowThread())
-                    curr->setContainingRegion(regionAtBlockOffset(curr->lineTopWithLeading()));
+                    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                    toRenderBlockFlow(this)->updateRegionForLine(curr);
             }
 
             // If a new float has been inserted before this line or before its last known float, just do a full layout.
@@ -3501,6 +3505,22 @@ LayoutUnit RenderBlock::startAlignedOffsetForLine(LayoutUnit position, bool firs
     if (!style()->isLeftToRightDirection())
         return logicalWidth() - logicalLeft;
     return logicalLeft;
+}
+
+void RenderBlockFlow::updateRegionForLine(RootInlineBox* lineBox) const
+{
+    ASSERT(lineBox);
+    lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
+
+    RootInlineBox* prevLineBox = lineBox->prevRootBox();
+    if (!prevLineBox)
+        return;
+
+    // This check is more accurate than the one in |adjustLinePositionForPagination| because it takes into
+    // account just the container changes between lines. The before mentioned function doesn't set the flag
+    // correctly if the line is positioned at the top of the last fragment container.
+    if (lineBox->containingRegion() != prevLineBox->containingRegion())
+        lineBox->setIsFirstAfterPageBreak(true);
 }
 
 }

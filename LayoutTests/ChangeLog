@@ -1,3 +1,16 @@
+2013-10-08  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Widows don't work if the first line in a region is aligned with the top of the region
+        https://bugs.webkit.org/show_bug.cgi?id=122450
+
+        Reviewed by David Hyatt.
+
+        Simple test veryfing that widows are correctly computed when there is a float affecting the lines
+        and when they are vertically aligned with the regions height.
+
+        * fast/regions/regions-widows-float-top-aligned-expected.html: Added.
+        * fast/regions/regions-widows-float-top-aligned.html: Added.
+
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. Adding ImageOnlyFailure expectations to:

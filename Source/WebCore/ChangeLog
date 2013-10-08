@@ -1,3 +1,27 @@
+2013-10-08  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Widows don't work if the first line in a region is aligned with the top of the region
+        https://bugs.webkit.org/show_bug.cgi?id=122450
+
+        Reviewed by David Hyatt.
+
+        The patch adds a new function updateRegionForLine that updates the containing region for a line and the
+        flag used to determine if it's the first line in that region. This is necessary because the code in
+        adjustLinePositionForPagination is not sufficient to determine when an unforced break occurs and the line
+        being positioned is the first one in the fragmentation container or not.
+
+        Test: fast/regions/regions-widows-float-top-aligned.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination): Added FIXME comment.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlockFlow::updateRegionForLine): New function used to update the containing region and
+        the first line flag.
+
 2013-10-08  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Get EFL and GTK compiling with media stream enabled
