@@ -1,3 +1,11 @@
+2013-10-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build correction.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.write_registry_value): Use string representation of error message to avoid
+        format conversion problem.
+
 2013-10-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Add checks for proper build and test environment

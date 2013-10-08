@@ -180,7 +180,7 @@ class WinPort(ApplePort):
             if rc == 0:
                 rc = self._executive.run_command(set_reg_value_command, return_exit_code=True)
         if rc:
-            _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%ld." % (arch, root, key, value, rc))
+            _log.warn("Error setting (%s) %s\key: %s to value: %s.  Error=%s." % (arch, root, key, value, str(rc)))
             _log.warn("You many need to adjust permissions on the %s key." % registry_key)
             return False
 
