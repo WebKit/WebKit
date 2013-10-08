@@ -63,15 +63,12 @@ public:
 
 private:
     typedef Vector<RefPtr<Node> > AdjustedNodes;
-    typedef HashMap<TreeScope*, Node*> RelatedNodeMap;
     enum EventWithRelatedTargetDispatchBehavior {
         StopAtBoundaryIfNeeded,
         DoesNotStopAtBoundary
     };
     static void adjustForRelatedTarget(const Node*, EventTarget* relatedTarget, EventPath&);
     static void calculateAdjustedNodes(const Node*, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior, EventPath&, AdjustedNodes&);
-    static void buildRelatedNodeMap(const Node*, RelatedNodeMap&);
-    static Node* findRelatedNode(TreeScope*, RelatedNodeMap&);
 #if ENABLE(TOUCH_EVENTS)
     static void adjustTouchList(const Node*, const TouchList*, const EventPath&, EventPathTouchLists&);
 #endif

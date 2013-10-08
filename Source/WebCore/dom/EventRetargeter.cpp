@@ -181,9 +181,45 @@ void EventRetargeter::adjustForRelatedTarget(const Node* node, EventTarget* rela
     }
 }
 
+static void buildRelatedNodeMap(const Node* relatedNode, HashMap<TreeScope*, Node*>& relatedNodeMap)
+{
+    Node* relatedNodeInCurrentTree = 0;
+    TreeScope* lastTreeScope = 0;
+    for (Node* node = nodeOrHostIfPseudoElement(const_cast<Node*>(relatedNode)); node; node = node->parentOrShadowHostNode()) {
+        if (!relatedNodeInCurrentTree)
+            relatedNodeInCurrentTree = node;
+        TreeScope* scope = &node->treeScope();
+        // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
+        if (scope != lastTreeScope)
+            relatedNodeMap.add(scope, relatedNodeInCurrentTree);
+        lastTreeScope = scope;
+        if (node->isShadowRoot()) {
+            ASSERT(relatedNodeInCurrentTree);
+            relatedNodeInCurrentTree = 0;
+        }
+    }
+}
+
+static Node* addRelatedNodeForUnmapedTreeScopes(TreeScope* scope, HashMap<TreeScope*, Node*>& relatedNodeMap)
+{
+    Node* relatedNode = 0;
+    TreeScope* endScope = 0;
+    for (TreeScope* currentScope = scope; currentScope; currentScope = currentScope->parentTreeScope()) {
+        auto result = relatedNodeMap.find(currentScope);
+        if (result != relatedNodeMap.end()) {
+            relatedNode = result->value;
+            endScope = currentScope;
+            break;
+        }
+    }
+    for (TreeScope* currentScope = scope; currentScope != endScope; currentScope = currentScope->parentTreeScope())
+        relatedNodeMap.add(currentScope, relatedNode);
+    return relatedNode;
+}
+
 void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior eventWithRelatedTargetDispatchBehavior, EventPath& eventPath, AdjustedNodes& adjustedNodes)
 {
-    RelatedNodeMap relatedNodeMap;
+    HashMap<TreeScope*, Node*> relatedNodeMap;
     buildRelatedNodeMap(relatedNode, relatedNodeMap);
 
     // Synthetic mouse events can have a relatedTarget which is identical to the target.
@@ -193,13 +229,12 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
     Node* adjustedNode = 0;
     for (EventPath::const_iterator iter = eventPath.begin(); iter < eventPath.end(); ++iter) {
         TreeScope* scope = &(*iter)->node()->treeScope();
-        if (scope == lastTreeScope) {
-            // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
-            adjustedNodes.append(adjustedNode);
-        } else {
-            adjustedNode = findRelatedNode(scope, relatedNodeMap);
-            adjustedNodes.append(adjustedNode);
-        }
+
+        // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
+        if (scope != lastTreeScope)
+            adjustedNode = addRelatedNodeForUnmapedTreeScopes(scope, relatedNodeMap);
+        adjustedNodes.append(adjustedNode);
+
         lastTreeScope = scope;
         if (eventWithRelatedTargetDispatchBehavior == DoesNotStopAtBoundary)
             continue;
@@ -215,43 +250,6 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
             break;
         }
     }
-}
-
-void EventRetargeter::buildRelatedNodeMap(const Node* relatedNode, RelatedNodeMap& relatedNodeMap)
-{
-    Vector<Node*, 32> relatedNodeStack;
-    TreeScope* lastTreeScope = 0;
-    for (Node* node = nodeOrHostIfPseudoElement(const_cast<Node*>(relatedNode)); node; node = node->parentOrShadowHostNode()) {
-        if (relatedNodeStack.isEmpty())
-            relatedNodeStack.append(node);
-        TreeScope* scope = &node->treeScope();
-        // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
-        if (scope != lastTreeScope)
-            relatedNodeMap.add(scope, relatedNodeStack.last());
-        lastTreeScope = scope;
-        if (node->isShadowRoot()) {
-            ASSERT(!relatedNodeStack.isEmpty());
-            relatedNodeStack.removeLast();
-        }
-    }
-}
-
-Node* EventRetargeter::findRelatedNode(TreeScope* scope, RelatedNodeMap& relatedNodeMap)
-{
-    Vector<TreeScope*, 32> parentTreeScopes;
-    Node* relatedNode = 0;
-    while (scope) {
-        parentTreeScopes.append(scope);
-        RelatedNodeMap::const_iterator found = relatedNodeMap.find(scope);
-        if (found != relatedNodeMap.end()) {
-            relatedNode = found->value;
-            break;
-        }
-        scope = scope->parentTreeScope();
-    }
-    for (Vector<TreeScope*, 32>::iterator iter = parentTreeScopes.begin(); iter < parentTreeScopes.end(); ++iter)
-        relatedNodeMap.add(*iter, relatedNode);
-    return relatedNode;
 }
 
 }
