@@ -1,3 +1,18 @@
+2013-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Refined power management in SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122525
+
+        Reviewed by Gavin Barraclough.
+
+        Sync'd sunspider-1.0.2 to PerformanceTests/SunSpider/hosted/sunspider-1.0.2.
+
+        * perf/sunspider-1.0.2/sunspider-1.0.2/driver.html:
+        * perf/sunspider-1.0.2/sunspider-1.0.2/sunspider-test-contents.js:
+        * perf/sunspider-1.0.2/sunspider.css:
+        (#frameparent):
+        (#countdown):
+
 2013-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Sync'd sunspider-1.0.2 to PerformanceTests/SunSpider/hosted/sunspider-1.0.2.

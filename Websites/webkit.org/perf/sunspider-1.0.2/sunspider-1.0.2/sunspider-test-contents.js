@@ -30,27 +30,18 @@ var testContents = [ "<!DOCTYPE html>\n\
 \n\
 <title>SunSpider 3d-cube</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>3d-cube</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -457,27 +448,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider 3d-morph</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>3d-morph</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -592,27 +574,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider 3d-raytrace</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>3d-raytrace</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1111,27 +1084,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider access-binary-trees</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>access-binary-trees</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1236,27 +1200,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider access-fannkuch</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>access-fannkuch</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1378,27 +1333,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider access-nbody</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>access-nbody</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1624,27 +1570,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider access-nsieve</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>access-nsieve</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1742,27 +1679,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider bitops-3bit-bits-in-byte</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>bitops-3bit-bits-in-byte</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1854,27 +1782,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider bitops-bits-in-byte</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>bitops-bits-in-byte</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -1956,27 +1875,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider bitops-bitwise-and</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>bitops-bitwise-and</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -2063,27 +1973,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider bitops-nsieve-bits</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>bitops-nsieve-bits</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -2177,27 +2078,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider controlflow-recursive</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>controlflow-recursive</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -2281,27 +2173,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider crypto-aes</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>crypto-aes</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -2779,27 +2662,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider crypto-md5</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>crypto-md5</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -3143,27 +3017,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider crypto-sha1</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>crypto-sha1</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -3443,27 +3308,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider date-format-tofte</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>date-format-tofte</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -3816,27 +3672,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider date-format-xparb</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>date-format-xparb</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -4308,27 +4155,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider math-cordic</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>math-cordic</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -4486,27 +4324,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider math-partial-sums</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>math-partial-sums</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -4603,27 +4432,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider math-spectral-norm</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>math-spectral-norm</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -4734,27 +4554,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider regexp-dna</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>regexp-dna</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -6527,27 +6338,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider string-base64</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>string-base64</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -6736,27 +6538,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider string-fasta</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>string-fasta</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -6898,27 +6691,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider string-tagcloud</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>string-tagcloud</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -7241,27 +7025,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider string-unpack-code</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>string-unpack-code</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
@@ -7394,27 +7169,18 @@ record(_sunSpiderInterval);\n\
 \n\
 <title>SunSpider string-validate-input</title>\n\
 <link rel=\"stylesheet\" href=\"../sunspider.css\">\n\
-<style>\n\
-#countdown {\n\
-    font-size: 128px; \n\
-    text-align: center;\n\
-}\n\
-</style>\n\
 </head>\n\
 \n\
 <body>\n\
-<h3 id=\"countdown\"></h3>\n\
+<h3>string-validate-input</h3>\n\
+<div id=\"console\">\n\
+</div>\n\
 <script>\n\
-if (window.parent) {\n\
-    document.getElementById(\"countdown\").innerHTML =\n\
-        window.parent.currentRepeat < 0\n\
-            ? \"warmup\"\n\
-            : (window.parent.repeatCount - window.parent.currentRepeat);\n\
-}\n\
-\n\
 function record(time) {\n\
-    if (window.parent)\n\
+    document.getElementById(\"console\").innerHTML = time + \"ms\";\n\
+    if (window.parent) {\n\
         parent.recordResult(time);\n\
+    }\n\
 }\n\
 \n\
 window.onerror = function(e) {\n\
