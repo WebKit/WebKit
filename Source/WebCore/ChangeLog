@@ -1,3 +1,13 @@
+2013-10-08  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed. Rollout of r156536. ~5% regression in inline layout performance.
+
+        * rendering/LineWidth.cpp:
+        * rendering/LineWidth.h:
+        (WebCore::LineWidth::addUncommittedWidth):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineBreaker::nextSegmentBreak):
+
 2013-10-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use toCSSFooValue() instead of using static_cast<const CSSFooValue*>
