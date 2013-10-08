@@ -1,3 +1,10 @@
+2013-10-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: media/video-layer-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=114744
+
+        * platform/mac/TestExpectations: Marking as such.
+
 2013-10-08  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
 
         Composited layer that painted into composited ancestor is not repainted after moving
