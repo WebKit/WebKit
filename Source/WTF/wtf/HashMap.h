@@ -90,15 +90,15 @@ public:
     bool contains(const KeyType&) const;
     MappedPeekType get(const KeyType&) const;
 
-    // replaces value but not key if key is already present
-    // return value is a pair of the iterator to the key location, 
-    // and a boolean that's true if a new value was actually added
+    // Replaces the value but not the key if the key is already present.
+    // Return value includes both an iterator to the key location,
+    // and an isNewEntry boolean that's true if a new entry was added.
     template<typename V> AddResult set(const KeyType&, V&&);
     template<typename V> AddResult set(KeyType&&, V&&);
 
-    // does nothing if key is already present
-    // return value is a pair of the iterator to the key location, 
-    // and a boolean that's true if a new value was actually added
+    // Does nothing if the key is already present.
+    // Return value includes both an iterator to the key location,
+    // and an isNewEntry boolean that's true if a new entry was added.
     template<typename V> AddResult add(const KeyType&, V&&);
     template<typename V> AddResult add(KeyType&&, V&&);
 

@@ -1,3 +1,16 @@
+2013-10-06  Darin Adler  <darin@apple.com>
+
+        Improve HashMap::add comment and other similar comments
+        https://bugs.webkit.org/show_bug.cgi?id=122432
+
+        Reviewed by Andreas Kling.
+
+        * wtf/HashCountedSet.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        Updated comment wording. They were a bit old and out of date.
+        They also featured the word "interator".
+
 2013-10-07  Darin Adler  <darin@apple.com>
 
         Make Vector::insert work for move-only types

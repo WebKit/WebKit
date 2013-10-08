@@ -27,8 +27,8 @@
 
 namespace WTF {
 
-    template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash,
-        typename Traits = HashTraits<Value> > class HashCountedSet {
+    template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value>>
+    class HashCountedSet {
         WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashMap<Value, unsigned, HashFunctions, Traits> ImplType;
@@ -38,8 +38,6 @@ namespace WTF {
         typedef typename ImplType::const_iterator const_iterator;
         typedef typename ImplType::AddResult AddResult;
         
-        HashCountedSet() {}
-
         void swap(HashCountedSet&);
         
         int size() const;
@@ -57,17 +55,18 @@ namespace WTF {
         bool contains(const ValueType&) const;
         unsigned count(const ValueType&) const;
 
-        // Increases the count if an equal value is already present
-        // the return value is a pair of an interator to the new value's 
-        // location, and a bool that is true if an new entry was added.
+        // Increments the count if an equal value is already present.
+        // The return value includes both an iterator to the value's location,
+        // and an isNewEntry bool that indicates whether it is a new or existing entry.
         AddResult add(const ValueType&);
         
-        // Reduces the count of the value, and removes it if count
-        // goes down to zero, returns true if the value is removed.
+        // Decrements the count of the value, and removes it if count goes down to zero.
+        // Returns true if the value is removed.
         bool remove(const ValueType&);
         bool remove(iterator);
  
         // Removes the value, regardless of its count.
+        // Returns true if a value was removed.
         bool removeAll(iterator);
         bool removeAll(const ValueType&);
 

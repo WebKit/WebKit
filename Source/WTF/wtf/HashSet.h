@@ -71,8 +71,8 @@ namespace WTF {
         template<typename HashTranslator, typename T> iterator find(const T&) const;
         template<typename HashTranslator, typename T> bool contains(const T&) const;
 
-        // The return value is a pair of an interator to the new value's location, 
-        // and a bool that is true if an new entry was added.
+        // The return value includes both an iterator to the added value's location,
+        // and an isNewEntry bool that indicates if it is a new or existing entry in the set.
         AddResult add(const ValueType&);
         AddResult add(ValueType&&);
 
