@@ -223,21 +223,16 @@ void RenderBox::willBeDestroyed()
     RenderBoxModelObject::willBeDestroyed();
 }
 
-RenderBlock* RenderBox::outermostBlockContainingFloatingObject()
+RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
 {
     ASSERT(isFloating());
-    RenderBlock* parentBlock = 0;
+    RenderBlockFlow* parentBlock = 0;
     for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
-        if (curr->isRenderBlock()) {
-            RenderBlock* currBlock = toRenderBlock(curr);
+        if (curr->isRenderBlockFlow()) {
+            RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
             if (!parentBlock || currBlock->containsFloat(this))
                 parentBlock = currBlock;
         }
-    }
-    if (parentBlock) {
-        RenderObject* parent = parentBlock->parent();
-        if (parent && parent->isFlexibleBoxIncludingDeprecated())
-            parentBlock = toRenderBlock(parent);
     }
     return parentBlock;
 }
@@ -250,7 +245,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         return;
 
     if (isFloating()) {
-        if (RenderBlock* parentBlock = outermostBlockContainingFloatingObject()) {
+        if (RenderBlockFlow* parentBlock = outermostBlockContainingFloatingObject()) {
             parentBlock->markSiblingsWithFloatsForLayout(this);
             parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
         }

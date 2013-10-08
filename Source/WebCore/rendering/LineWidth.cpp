@@ -30,12 +30,12 @@
 #include "config.h"
 #include "LineWidth.h"
 
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderRubyRun.h"
 
 namespace WebCore {
 
-LineWidth::LineWidth(RenderBlock& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
+LineWidth::LineWidth(RenderBlockFlow& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
     : m_block(block)
     , m_uncommittedWidth(0)
     , m_committedWidth(0)

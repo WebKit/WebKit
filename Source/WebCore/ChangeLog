@@ -1,3 +1,127 @@
+2013-10-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move m_floatingObjects to RenderBlockFlow from RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=122512
+
+        Reviewed by David Hyatt.
+
+        Floats are part of block flow, not every RenderBlock can contain
+        floars. This change makes it so that RenderBlock no longer can contain
+        floats, only RenderBlockFlow can.
+
+        This also moves a bunch of line layout stuff over to RenderBlockFlow,
+        but makes no effort to move all of line layout, as all of that is
+        destined to move out of both RenderBlockFlow and RenderBlock into its
+        own class.
+
+        No new tests, no behavior change.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::LineWidth):
+        * rendering/LineWidth.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::splitFlow):
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::containsFloats):
+        (WebCore::RenderBlock::shouldSkipCreatingRunsForObject):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine):
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine):
+        (WebCore::RenderBlock::moveAllChildrenOnRemovalTo):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::clipOutFloatingObjects):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::collapseMargins):
+        (WebCore::RenderBlockFlow::clearFloatsIfNeeded):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::containsFloat):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::styleWillChange):
+        (WebCore::RenderBlockFlow::deleteLineBoxTree):
+        (WebCore::RenderBlockFlow::moveAllChildrenOnRemovalTo):
+        (WebCore::RenderBlockFlow::addOverflowFromFloats):
+        (WebCore::RenderBlockFlow::computeOverflow):
+        (WebCore::RenderBlockFlow::repaintOverhangingFloats):
+        (WebCore::RenderBlockFlow::paintFloats):
+        (WebCore::RenderBlockFlow::clipOutFloatingObjects):
+        (WebCore::RenderBlockFlow::createFloatingObjects):
+        (WebCore::RenderBlockFlow::removeFloatingObjects):
+        (WebCore::RenderBlockFlow::insertFloatingObject):
+        (WebCore::RenderBlockFlow::removeFloatingObject):
+        (WebCore::RenderBlockFlow::removeFloatingObjectsBelow):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::newLine):
+        (WebCore::RenderBlockFlow::logicalLeftFloatOffsetForLine):
+        (WebCore::RenderBlockFlow::logicalRightFloatOffsetForLine):
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlockFlow::lowestFloatLogicalBottom):
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        (WebCore::RenderBlockFlow::hasOverhangingFloat):
+        (WebCore::RenderBlockFlow::addIntrudingFloats):
+        (WebCore::RenderBlockFlow::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlockFlow::markSiblingsWithFloatsForLayout):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::hitTestFloats):
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::hasOverhangingFloats):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineBreaker::LineBreaker):
+        (WebCore::RenderBlockFlow::appendRunsForObject):
+        (WebCore::RenderBlockFlow::createLineBoxes):
+        (WebCore::RenderBlockFlow::constructLine):
+        (WebCore::RenderBlockFlow::setMarginsForRubyRun):
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+        (WebCore::RenderBlockFlow::computeBlockDirectionPositionsForLine):
+        (WebCore::setStaticPositions):
+        (WebCore::RenderBlockFlow::handleTrailingSpaces):
+        (WebCore::RenderBlockFlow::appendFloatingObjectToLastLine):
+        (WebCore::constructBidiRunsForLine):
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::restartLayoutRunsAndFloatsInRange):
+        (WebCore::pushShapeContentOverflowBelowTheContentBox):
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLine):
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread):
+        (WebCore::RenderBlockFlow::adjustLogicalLineTopAndLogicalHeightIfNeeded):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        (WebCore::RenderBlockFlow::repaintDirtyFloats):
+        (WebCore::RenderBlockFlow::checkFloatsInCleanLine):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::determineEndPosition):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+        (WebCore::RenderBlockFlow::matchedEndLine):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::updateSegmentsForShapes):
+        (WebCore::RenderBlockFlow::deleteEllipsisLineBoxes):
+        (WebCore::RenderBlockFlow::checkLinesForTextOverflow):
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outermostBlockContainingFloatingObject):
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow):
+
 2013-10-08  Dean Jackson  <dino@apple.com>
 
         Support unprefixed WebGL context creation

@@ -35,7 +35,7 @@
 namespace WebCore {
 
 class FloatingObject;
-class RenderBlock;
+class RenderBlockFlow;
 class RenderObject;
 class RenderRubyRun;
 
@@ -45,7 +45,7 @@ enum IndentTextOrNot { DoNotIndentText, IndentText };
 
 class LineWidth {
 public:
-    LineWidth(RenderBlock&, bool isFirstLine, IndentTextOrNot shouldIndentText);
+    LineWidth(RenderBlockFlow&, bool isFirstLine, IndentTextOrNot shouldIndentText);
 
     bool fitsOnLine(bool ignoringTrailingSpace = false) const;
     bool fitsOnLineIncludingExtraWidth(float extra) const;
@@ -75,7 +75,7 @@ private:
     void computeAvailableWidthFromLeftAndRight();
     bool fitsOnLineExcludingTrailingCollapsedWhitespace() const;
 
-    RenderBlock& m_block;
+    RenderBlockFlow& m_block;
     float m_uncommittedWidth;
     float m_committedWidth;
     float m_overhangWidth; // The amount by which |m_availableWidth| has been inflated to account for possible contraction due to ruby overhang.

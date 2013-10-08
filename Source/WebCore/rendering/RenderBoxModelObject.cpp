@@ -2801,9 +2801,9 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
     // anonymous blocks which can no longer carry positioned objects (see r120761)
     // or when fullRemoveInsert is false.
     if (fullRemoveInsert && isRenderBlock()) {
-        RenderBlock* block = toRenderBlock(this);
-        block->removePositionedObjects(0);
-        block->removeFloatingObjects(); 
+        toRenderBlock(this)->removePositionedObjects(0);
+        if (isRenderBlockFlow())
+            toRenderBlockFlow(this)->removeFloatingObjects(); 
     }
 
     ASSERT(!beforeChild || toBoxModelObject == beforeChild->parent());

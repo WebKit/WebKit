@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+class LineBreaker;
+
 class RenderBlockFlow : public RenderBlock {
 public:
     explicit RenderBlockFlow(Element*);
@@ -232,6 +234,16 @@ public:
     }
     void layoutLineGridBox();
 
+    bool containsFloats() const OVERRIDE { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
+    bool containsFloat(RenderBox*) const;
+
+    virtual void deleteLineBoxTree() OVERRIDE;
+    virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) OVERRIDE;
+
+    void removeFloatingObjects();
+    void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
+    void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = 0);
+
 protected:
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(this); }
     LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockFlowRareData::negativeMarginBeforeDefault(this); }
@@ -267,13 +279,98 @@ protected:
     LayoutUnit applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
     LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
 
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
+    void createFloatingObjects();
+
+private:
+    virtual void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert) OVERRIDE;
+    virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE FINAL;
+    virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) OVERRIDE;
+    virtual void clipOutFloatingObjects(RenderBlock*, const PaintInfo*, const LayoutPoint&, const LayoutSize&) OVERRIDE;
+
+    FloatingObject* insertFloatingObject(RenderBox*);
+    void removeFloatingObject(RenderBox*);
+    void removeFloatingObjectsBelow(FloatingObject*, int logicalOffset);
+    LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset) const;
+
+    // Called from lineWidth, to position the floats added in the last line.
+    // Returns true if and only if it has positioned any floats.
+    bool positionNewFloats();
+
+    void newLine(EClear);
+
+    virtual LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode) const OVERRIDE;
+    virtual LayoutUnit logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, LayoutUnit* heightRemaining, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode) const OVERRIDE;
+    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
+    LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit, ShapeOutsideFloatOffsetMode = ShapeOutsideFloatMarginBoxOffset) const;
+    
+    LayoutUnit addOverhangingFloats(RenderBlockFlow* child, bool makeChildPaintOtherFloats);
+    bool hasOverhangingFloat(RenderBox*);
+    void addIntrudingFloats(RenderBlockFlow* prev, LayoutUnit xoffset, LayoutUnit yoffset);
+    bool hasOverhangingFloats() { return parent() && !hasColumns() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
+    LayoutUnit getClearDelta(RenderBox* child, LayoutUnit yPos);
+
+    virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) OVERRIDE;
+    void addOverflowFromFloats();
+    virtual void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const OVERRIDE;
+
+
+// FIXME-BLOCKFLOW: These methods have implementations in
+// RenderBlockLineLayout. They should be moved to the proper header once the
+// line layout code is separated from RenderBlock and RenderBlockFlow.
+// START METHODS DEFINED IN RenderBlockLineLayout
+public:
+    static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
+
+private:
+    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox, bool startsNewSegment);
+    RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
+    void setMarginsForRubyRun(BidiRun*, RenderRubyRun*, RenderObject*, const LineInfo&);
+    void computeInlineDirectionPositionsForLine(RootInlineBox*, const LineInfo&, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&, WordMeasurements&);
+    BidiRun* computeInlineDirectionPositionsForSegment(RootInlineBox*, const LineInfo&, ETextAlign, float& logicalLeft,
+        float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache&, WordMeasurements&);
+    void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
+    BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
+    void appendFloatingObjectToLastLine(FloatingObject*);
+    // Helper function for layoutInlineChildren()
+    RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
+    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
+    const InlineIterator& restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver&,  const InlineIterator&);
+    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines);
+#if ENABLE(CSS_SHAPES)
+    void updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo*&, const LayoutSize&, LineLayoutState&);
+    void updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideInfo*&, LineLayoutState&);
+    bool adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo*, LayoutUnit, LineLayoutState&, InlineBidiResolver&, FloatingObject*, InlineIterator&, WordMeasurements&);
+#endif
+    void linkToEndLineIfNeeded(LineLayoutState&);
+    static void repaintDirtyFloats(Vector<FloatWithRect>& floats);
+    void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
+    RootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
+    void determineEndPosition(LineLayoutState&, RootInlineBox* startBox, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
+    bool checkPaginationAndFloatsAtEndLine(LineLayoutState&);
+    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus);
+    void deleteEllipsisLineBoxes();
+    void checkLinesForTextOverflow();
+    // Positions new floats and also adjust all floats encountered on the line if any of them
+    // have to move to the next page/column.
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo&, LineWidth&);
+
+
+// END METHODS DEFINED IN RenderBlockLineLayout
+    
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     void updateRegionForLine(RootInlineBox*) const;
 
 protected:
+    OwnPtr<FloatingObjects> m_floatingObjects;
     OwnPtr<RenderBlockFlowRareData> m_rareData;
+
+    friend class LineBreaker;
+    friend class LineWidth; // Needs to know FloatingObject
 };
 
 inline RenderBlockFlow& toRenderBlockFlow(RenderObject& object)

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class RenderBlockFlow;
 class RenderBoxRegionInfo;
 class RenderRegion;
 struct PaintInfo;
@@ -502,7 +503,7 @@ public:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
 
-    RenderBlock* outermostBlockContainingFloatingObject();
+    RenderBlockFlow* outermostBlockContainingFloatingObject();
 
     void removeFloatingOrPositionedChildFromBlockLists();
     

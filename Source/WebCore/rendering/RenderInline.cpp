@@ -448,7 +448,11 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
         pre->removePositionedObjects(0);
-        pre->removeFloatingObjects();
+        // FIXME-BLOCKFLOW: The enclosing method should likely be switched over
+        // to only work on RenderBlockFlow, in which case this conversion can be
+        // removed.
+        if (pre->isRenderBlockFlow())
+            toRenderBlockFlow(pre)->removeFloatingObjects();
         block = block->containingBlock();
     } else {
         // No anonymous block available for use.  Make one.
