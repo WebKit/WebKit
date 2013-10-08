@@ -1,3 +1,12 @@
+2013-10-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Re-enable MathML for release builds
+        https://bugs.webkit.org/show_bug.cgi?id=122361
+
+        Reviewed by Darin Adler.
+
+        * Source/autotools/SetupWebKitFeatures.m4: Enable MathML for release builds.
+
 2013-10-02  Anders Carlsson  <andersca@apple.com>
 
         Remove Qt related files from the root directories
