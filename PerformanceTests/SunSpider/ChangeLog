@@ -1,3 +1,23 @@
+2013-10-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Refined power management in SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122525
+
+        Reviewed by Gavin Barraclough.
+
+        * hosted/sunspider.css:
+        (#frameparent):
+        (#countdown):
+        * resources/TEMPLATE.html: Provide an explicit countdown element in the
+        parent, instead of hacking it into each child frame.
+
+        * resources/driver-TEMPLATE.html: Be more explicit about how we respond
+        to power management. Just moving setTimeout(0) inside the loop is a
+        little too subtle, and may not work across browsers.
+
+        Also, leave a little extra time after changing the countdown graphic,
+        to give the browser some time to paint.
+
 2013-10-02  Geoffrey Garen  <ggaren@apple.com>
 
         Improved painting behavior in SunSpider 1.0.2
