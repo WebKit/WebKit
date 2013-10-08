@@ -73,7 +73,7 @@ public:
             context = m_scriptExecutionContext.release().leakRef();
             callback = m_callback.release().leakRef();
         }
-        context->postTask(std::make_unique<SafeReleaseTask>(callback));
+        context->postTask(SafeReleaseTask::create(callback));
     }
 
     PassRefPtr<T> unwrap()
@@ -90,21 +90,26 @@ public:
 private:
     class SafeReleaseTask : public ScriptExecutionContext::Task {
     public:
-        explicit SafeReleaseTask(T* callbackToRelease)
-            : m_callbackToRelease(callbackToRelease)
+        static PassOwnPtr<SafeReleaseTask> create(T* callbackToRelease)
         {
+            return adoptPtr(new SafeReleaseTask(callbackToRelease));
         }
 
-    private:
-        virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+        virtual void performTask(ScriptExecutionContext* context)
         {
             ASSERT(m_callbackToRelease && context && context->isContextThread());
             m_callbackToRelease->deref();
             context->deref();
         }
 
-        virtual bool isCleanupTask() const OVERRIDE { return true; }
-        
+        virtual bool isCleanupTask() const { return true; }
+
+    private:
+        explicit SafeReleaseTask(T* callbackToRelease)
+            : m_callbackToRelease(callbackToRelease)
+        {
+        }
+
         T* m_callbackToRelease;
     };
 

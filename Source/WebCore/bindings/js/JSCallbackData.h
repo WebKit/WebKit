@@ -77,18 +77,19 @@ private:
 
 class DeleteCallbackDataTask : public ScriptExecutionContext::Task {
 public:
-    explicit DeleteCallbackDataTask(JSCallbackData* data)
-        : m_data(data)
+    static PassOwnPtr<DeleteCallbackDataTask> create(JSCallbackData* data)
     {
+        return adoptPtr(new DeleteCallbackDataTask(data));
     }
 
-private:
-    virtual void performTask(ScriptExecutionContext*) OVERRIDE
+    virtual void performTask(ScriptExecutionContext*)
     {
         delete m_data;
     }
+    virtual bool isCleanupTask() const { return true; }
+private:
 
-    virtual bool isCleanupTask() const OVERRIDE { return true; }
+    DeleteCallbackDataTask(JSCallbackData* data) : m_data(data) {}
 
     JSCallbackData* m_data;
 };

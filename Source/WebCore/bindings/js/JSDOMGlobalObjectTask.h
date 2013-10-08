@@ -35,10 +35,16 @@ class JSGlobalObjectCallback;
 
 class JSGlobalObjectTask FINAL : public ScriptExecutionContext::Task {
 public:
-    JSGlobalObjectTask(JSDOMGlobalObject*, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<JSC::TaskContext>);
+    static PassOwnPtr<JSGlobalObjectTask> create(JSDOMGlobalObject* globalObject, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<JSC::TaskContext> taskContext)
+    {
+        return adoptPtr(new JSGlobalObjectTask(globalObject, functionPtr, taskContext));
+    }
+
     virtual ~JSGlobalObjectTask();
 
 private:
+    JSGlobalObjectTask(JSDOMGlobalObject*, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<JSC::TaskContext>);
+
     virtual void performTask(ScriptExecutionContext*) OVERRIDE;
 
     RefPtr<JSGlobalObjectCallback> m_callback;

@@ -83,7 +83,7 @@ namespace WebCore {
 
         bool hasPendingActivity() const;
 
-        virtual void postTask(std::unique_ptr<Task>) OVERRIDE; // Executes the task on context's thread asynchronously.
+        virtual void postTask(PassOwnPtr<Task>) OVERRIDE; // Executes the task on context's thread asynchronously.
 
         // WorkerGlobalScope
         WorkerGlobalScope* self() { return this; }

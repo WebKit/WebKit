@@ -48,11 +48,9 @@ WorkerEventQueue::~WorkerEventQueue()
 
 class WorkerEventQueue::EventDispatcherTask FINAL : public ScriptExecutionContext::Task {
 public:
-    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
-        : m_event(event)
-        , m_eventQueue(eventQueue)
-        , m_isCancelled(false)
+    static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
     {
+        return adoptPtr(new EventDispatcherTask(event, eventQueue));
     }
 
     virtual ~EventDispatcherTask()
@@ -61,13 +59,11 @@ public:
             m_eventQueue.m_eventTaskMap.remove(m_event.get());
     }
 
-    void cancel()
+    void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
     {
-        m_isCancelled = true;
-        m_event.clear();
+        event->target()->dispatchEvent(event);
     }
 
-private:
     virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
         if (m_isCancelled)
@@ -77,9 +73,18 @@ private:
         m_event.clear();
     }
 
-    void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
+    void cancel()
     {
-        event->target()->dispatchEvent(event);
+        m_isCancelled = true;
+        m_event.clear();
+    }
+
+private:
+    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
+        : m_event(event)
+        , m_eventQueue(eventQueue)
+        , m_isCancelled(false)
+    {
     }
 
     RefPtr<Event> m_event;
@@ -92,9 +97,9 @@ bool WorkerEventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
     if (m_isClosed)
         return false;
     RefPtr<Event> event = prpEvent;
-    auto task = std::make_unique<EventDispatcherTask>(event, *this);
+    OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, *this);
     m_eventTaskMap.add(event.release(), task.get());
-    m_scriptExecutionContext.postTask(std::move(task));
+    m_scriptExecutionContext.postTask(task.release());
     return true;
 }
 

@@ -99,7 +99,7 @@ bool JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled(const JSGlobalObject*
 void JSWorkerGlobalScopeBase::queueTaskToEventLoop(const JSGlobalObject* object, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
 {
     const JSWorkerGlobalScopeBase* thisObject = static_cast<const JSWorkerGlobalScopeBase*>(object);
-    thisObject->scriptExecutionContext()->postTask(std::make_unique<JSGlobalObjectTask>((JSDOMGlobalObject*)thisObject, functionPtr, taskContext));
+    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMGlobalObject*)thisObject, functionPtr, taskContext));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope* workerGlobalScope)

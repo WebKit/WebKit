@@ -130,7 +130,7 @@ public:
         virtual bool isCleanupTask() const { return false; }
     };
 
-    virtual void postTask(std::unique_ptr<Task>) = 0; // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
@@ -157,15 +157,18 @@ public:
 protected:
     class AddConsoleMessageTask : public Task {
     public:
+        static PassOwnPtr<AddConsoleMessageTask> create(MessageSource source, MessageLevel level, const String& message)
+        {
+            return adoptPtr(new AddConsoleMessageTask(source, level, message));
+        }
+        virtual void performTask(ScriptExecutionContext*) OVERRIDE;
+    private:
         AddConsoleMessageTask(MessageSource source, MessageLevel level, const String& message)
             : m_source(source)
             , m_level(level)
             , m_message(message.isolatedCopy())
         {
         }
-
-        virtual void performTask(ScriptExecutionContext*) OVERRIDE;
-
         MessageSource m_source;
         MessageLevel m_level;
         String m_message;

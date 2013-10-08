@@ -232,10 +232,9 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
         m_context->postTask(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::processPendingTasksCallback, this));
         return;
     }
-
-    auto tasks = std::move(m_pendingTasks);
-
-    for (auto iter = tasks.begin(); iter != tasks.end(); ++iter)
+    Vector<OwnPtr<ScriptExecutionContext::Task> > tasks;
+    tasks.swap(m_pendingTasks);
+    for (Vector<OwnPtr<ScriptExecutionContext::Task> >::const_iterator iter = tasks.begin(); iter != tasks.end(); ++iter)
         (*iter)->performTask(0);
 }
 

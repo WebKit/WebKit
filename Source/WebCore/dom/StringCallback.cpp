@@ -40,16 +40,21 @@ namespace {
 
 class DispatchCallbackTask : public ScriptExecutionContext::Task {
 public:
+    static PassOwnPtr<DispatchCallbackTask> create(PassRefPtr<StringCallback> callback, const String& data)
+    {
+        return adoptPtr(new DispatchCallbackTask(callback, data));
+    }
+
+    virtual void performTask(ScriptExecutionContext*)
+    {
+        m_callback->handleEvent(m_data);
+    }
+
+private:
     DispatchCallbackTask(PassRefPtr<StringCallback> callback, const String& data)
         : m_callback(callback)
         , m_data(data)
     {
-    }
-
-private:
-    virtual void performTask(ScriptExecutionContext*) OVERRIDE
-    {
-        m_callback->handleEvent(m_data);
     }
 
     RefPtr<StringCallback> m_callback;
@@ -60,7 +65,7 @@ private:
 
 void StringCallback::scheduleCallback(ScriptExecutionContext* context, const String& data)
 {
-    context->postTask(std::make_unique<DispatchCallbackTask>(this, data));
+    context->postTask(DispatchCallbackTask::create(this, data));
 }
 
 } // namespace WebCore

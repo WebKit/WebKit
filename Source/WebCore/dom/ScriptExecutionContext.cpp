@@ -51,12 +51,12 @@ namespace WebCore {
 
 class ProcessMessagesSoonTask : public ScriptExecutionContext::Task {
 public:
-    ProcessMessagesSoonTask()
+    static PassOwnPtr<ProcessMessagesSoonTask> create()
     {
+        return adoptPtr(new ProcessMessagesSoonTask);
     }
 
-private:
-    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
+    virtual void performTask(ScriptExecutionContext* context)
     {
         context->dispatchMessagePortEvents();
     }
@@ -119,7 +119,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {
-    postTask(std::make_unique<ProcessMessagesSoonTask>());
+    postTask(ProcessMessagesSoonTask::create());
 }
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
