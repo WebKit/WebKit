@@ -78,8 +78,7 @@ void NPRemoteObjectMap::npObjectProxyDestroyed(NPObject* npObject)
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject, Plugin* plugin)
 {
     uint64_t npObjectID = generateNPObjectID();
-    m_registeredNPObjects.set(npObjectID, std::make_unique<NPObjectMessageReceiver>(this, plugin, npObjectID, npObject).release());
-
+    m_registeredNPObjects.add(npObjectID, std::make_unique<NPObjectMessageReceiver>(this, plugin, npObjectID, npObject));
     return npObjectID;
 }
 
@@ -196,34 +195,26 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
 
 void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
 {
-    Vector<NPObjectMessageReceiver*> messageReceivers;
-
-    // Gather the receivers associated with this plug-in.
-    for (HashMap<uint64_t, NPObjectMessageReceiver*>::const_iterator it = m_registeredNPObjects.begin(), end = m_registeredNPObjects.end(); it != end; ++it) {
-        NPObjectMessageReceiver* npObjectMessageReceiver = it->value;
-        if (npObjectMessageReceiver->plugin() == plugin)
-            messageReceivers.append(npObjectMessageReceiver);
-    }
-
-    // Now delete all the receivers.
-    deleteAllValues(messageReceivers);
-
-    Vector<NPObjectProxy*> objectProxies;
-    for (HashSet<NPObjectProxy*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {
-        NPObjectProxy* npObjectProxy = *it;
-
-        if (npObjectProxy->plugin() == plugin)
-            objectProxies.append(npObjectProxy);
+    // Delete all receivers associated with this plug-in.
+    Vector<std::unique_ptr<NPObjectMessageReceiver>> receivers;
+    for (auto it = m_registeredNPObjects.values().begin(), end = m_registeredNPObjects.values().end(); it != end; ++it) {
+        if ((*it)->plugin() == plugin) {
+            // Move each receiver to the vector so we don't destroy the receiver inside this loop,
+            // which would risk reentering and modifying m_registeredNPObjects. When the vector is
+            // destroyed, all the receivers will be destroyed too.
+            receivers.append(std::move(*it));
+        }
     }
 
     // Invalidate and remove all proxies associated with this plug-in.
-    for (size_t i = 0; i < objectProxies.size(); ++i) {
-        NPObjectProxy* npObjectProxy = objectProxies[i];
-
-        npObjectProxy->invalidate();
-
-        ASSERT(m_npObjectProxies.contains(npObjectProxy));
-        m_npObjectProxies.remove(npObjectProxy);
+    Vector<NPObjectProxy*> proxies;
+    for (auto it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {
+        if ((*it)->plugin() == plugin)
+            proxies.append(*it);
+    }
+    for (size_t i = 0; i < proxies.size(); ++i) {
+        proxies[i]->invalidate();
+        m_npObjectProxies.remove(proxies[i]);
     }
 }
 
