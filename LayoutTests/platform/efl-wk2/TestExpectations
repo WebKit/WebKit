@@ -180,7 +180,7 @@ webkit.org/b/115901 accessibility/poorly-formed-aria-table.html [ Failure ]
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 
-webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Crash ]
+webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Failure ]
 
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
 accessibility/deleting-iframe-destroys-axcache.html [ Skip ]

@@ -1484,6 +1484,14 @@ webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 # New accessibility test added in r147801 that is failing for EFL.
 webkit.org/b/114151 accessibility/svg-group-element-with-title.html [ Failure ]
 
+# New accessibility test added in r149155 is failing. Has been moved to the mac port in r155603.
+webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
+
+webkit.org/b/121684 accessibility/aria-describedby-on-input.html [ Failure ]
+webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
+webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
+webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failure ]
+
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
 
@@ -1602,9 +1610,6 @@ webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-cover.html [
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure Crash ]
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure Crash ]
-
-# New accessibility test added in r149155 is failing.
-webkit.org/b/115659 accessibility/meter-element.html [ Failure ]
 
 # Newly added test in r148131 is failing.
 webkit.org/b/114876 media/click-volume-bar-not-pausing.html [ Failure ]
