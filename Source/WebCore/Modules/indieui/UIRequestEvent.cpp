@@ -73,26 +73,10 @@ UIRequestEvent::UIRequestEvent()
 UIRequestEvent::~UIRequestEvent()
 {
 }
-    
+
 EventInterface UIRequestEvent::eventInterface() const
 {
     return UIRequestEventInterfaceType;
-}
-
-UIRequestEventDispatchMediator::UIRequestEventDispatchMediator(PassRefPtr<UIRequestEvent> event)
-    : EventDispatchMediator(event)
-{
-}
-
-UIRequestEvent* UIRequestEventDispatchMediator::event() const
-{
-    return static_cast<UIRequestEvent*>(EventDispatchMediator::event());
-}
-
-bool UIRequestEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
-{
-    dispatcher->dispatch();
-    return event()->defaultHandled() || event()->defaultPrevented();
 }
     
 } // namespace WebCore

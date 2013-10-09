@@ -105,26 +105,6 @@ GestureEvent::GestureEvent(const AtomicString& type, double timestamp, PassRefPt
 {
 }
 
-GestureEventDispatchMediator::GestureEventDispatchMediator(PassRefPtr<GestureEvent> gestureEvent)
-    : EventDispatchMediator(gestureEvent)
-{
-}
-
-GestureEvent* GestureEventDispatchMediator::event() const
-{
-    return static_cast<GestureEvent*>(EventDispatchMediator::event());
-}
-
-bool GestureEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
-{
-    if (isDisabledFormControl(dispatcher->node()))
-        return true;
-
-    dispatcher->dispatch();
-    ASSERT(!event()->defaultPrevented());
-    return event()->defaultHandled() || event()->defaultPrevented();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(GESTURE_EVENTS)

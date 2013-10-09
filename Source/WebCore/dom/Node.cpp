@@ -2111,7 +2111,14 @@ bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
     RefPtr<GestureEvent> gestureEvent = GestureEvent::create(document().defaultView(), event);
     if (!gestureEvent.get())
         return false;
-    return EventDispatcher::dispatchEvent(this, GestureEventDispatchMediator::create(gestureEvent));
+
+    if (isDisabledFormControl(this))
+        return true;
+
+    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(gestureEvent));
+
+    ASSERT(!gestureEvent->defaultPrevented());
+    return gestureEvent->defaultHandled() || gestureEvent->defaultPrevented();
 }
 #endif
 
@@ -2125,7 +2132,8 @@ bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
 #if ENABLE(INDIE_UI)
 bool Node::dispatchUIRequestEvent(PassRefPtr<UIRequestEvent> event)
 {
-    return EventDispatcher::dispatchEvent(this, UIRequestEventDispatchMediator::create(event));
+    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
+    return event->defaultHandled() || event->defaultPrevented();
 }
 #endif
     

@@ -128,14 +128,6 @@ private:
 
 KeyboardEvent* findKeyboardEvent(Event*);
 
-class KeyboardEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<KeyboardEventDispatchMediator> create(PassRefPtr<KeyboardEvent>);
-private:
-    explicit KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent>);
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
-};
-
 } // namespace WebCore
 
 #endif // KeyboardEvent_h

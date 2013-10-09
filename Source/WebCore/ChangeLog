@@ -1,3 +1,31 @@
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove all subclasses of EventDispatchMediator except MouseEventDispatchMediator
+        https://bugs.webkit.org/show_bug.cgi?id=122579
+
+        Reviewed by Antti Koivisto.
+
+        Removed UIRequestEventDispatchMediator, GestureEventDispatchMediator, KeyboardEventDispatchMediator,
+        and WheelEventDispatchMediator. Moved the code in the respective mediateAndDispatchEvent functions
+        to their respective dispatch*Event functions in Node.cpp and Element.cpp.
+
+        * Modules/indieui/UIRequestEvent.cpp:
+        (WebCore::UIRequestEvent::eventInterface):
+        * Modules/indieui/UIRequestEvent.h:
+        * dom/Element.cpp:
+        (WebCore::deltaMode):
+        (WebCore::Element::dispatchWheelEvent):
+        (WebCore::Element::dispatchKeyEvent):
+        * dom/GestureEvent.cpp:
+        * dom/GestureEvent.h:
+        * dom/KeyboardEvent.cpp:
+        * dom/KeyboardEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGestureEvent):
+        (WebCore::Node::dispatchUIRequestEvent):
+        * dom/WheelEvent.cpp:
+        * dom/WheelEvent.h:
+
 2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Lines that don't intersect shape-outside should ignore both left and right margins

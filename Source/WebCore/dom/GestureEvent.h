@@ -61,21 +61,6 @@ private:
     float m_deltaY;
 };
 
-class GestureEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<GestureEventDispatchMediator> create(PassRefPtr<GestureEvent> gestureEvent)
-    {
-        return adoptRef(new GestureEventDispatchMediator(gestureEvent));
-    }
-
-private:
-    explicit GestureEventDispatchMediator(PassRefPtr<GestureEvent>);
-
-    GestureEvent* event() const;
-
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(GESTURE_EVENTS)

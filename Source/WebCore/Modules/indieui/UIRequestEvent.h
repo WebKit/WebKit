@@ -63,21 +63,6 @@ private:
     RefPtr<EventTarget> m_receiver;
 };
 
-class UIRequestEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<UIRequestEventDispatchMediator> create(PassRefPtr<UIRequestEvent> event)
-    {
-        return adoptRef(new UIRequestEventDispatchMediator(event));
-    }
-    
-private:
-    explicit UIRequestEventDispatchMediator(PassRefPtr<UIRequestEvent>);
-    
-    UIRequestEvent* event() const;
-    
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
-};
-    
 } // namespace WebCore
 
 #endif // ENABLE(INDIE_UI)

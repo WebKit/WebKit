@@ -111,15 +111,6 @@ private:
     bool m_directionInvertedFromDevice;
 };
 
-class WheelEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<WheelEventDispatchMediator> create(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
-private:
-    WheelEventDispatchMediator(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
-    WheelEvent* event() const;
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
-};
-
 } // namespace WebCore
 
 #endif // WheelEvent_h

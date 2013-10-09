@@ -213,20 +213,4 @@ KeyboardEvent* findKeyboardEvent(Event* event)
     return 0;
 }
 
-PassRefPtr<KeyboardEventDispatchMediator> KeyboardEventDispatchMediator::create(PassRefPtr<KeyboardEvent> event)
-{
-    return adoptRef(new KeyboardEventDispatchMediator(event));
-}
-
-KeyboardEventDispatchMediator::KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent> event)
-    : EventDispatchMediator(event)
-{
-}
-
-bool KeyboardEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
-{
-    // Make sure not to return true if we already took default action while handling the event.
-    return EventDispatchMediator::mediateAndDispatchEvent(dispatcher) && !event()->defaultHandled();
-}
-
 } // namespace WebCore

@@ -72,6 +72,7 @@
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "PlatformWheelEvent.h"
 #include "PointerLockController.h"
 #include "PseudoElement.h"
 #include "RenderRegion.h"
@@ -245,14 +246,34 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicSt
     return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document().defaultView(), event, detail, relatedTarget)));
 }
 
-bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
+inline static unsigned deltaMode(const PlatformWheelEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document().defaultView()));
+    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
 }
 
-bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& event)
+bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document().defaultView())));
+    if (!(event.deltaX() || event.deltaY()))
+        return true;
+
+    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(
+        FloatPoint(event.wheelTicksX(), event.wheelTicksY()),
+        FloatPoint(event.deltaX(), event.deltaY()),
+        deltaMode(event),
+        document().defaultView(),
+        event.globalPosition(),
+        event.position(),
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
+        event.directionInvertedFromDevice(),
+        event.timestamp());
+
+    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(wheelEvent)) && !wheelEvent->defaultHandled();
+}
+
+bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
+{
+    RefPtr<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
+    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event)) && !event->defaultHandled();
 }
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
