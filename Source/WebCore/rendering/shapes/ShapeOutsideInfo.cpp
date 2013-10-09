@@ -73,8 +73,15 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlock* con
             }
         }
 
-        m_leftMarginBoxDelta = containingBlock->logicalWidthForChild(m_renderer) + containingBlock->marginStartForChild(m_renderer);
-        m_rightMarginBoxDelta = -containingBlock->logicalWidthForChild(m_renderer) - containingBlock->marginEndForChild(m_renderer);
+        // Lines that do not overlap the shape should act as if the float
+        // wasn't there for layout purposes. So we set the deltas to remove the
+        // entire width of the float. 
+        // FIXME: The latest CSS Shapes spec says that in this case, the
+        // content should interact with previously stacked floats on the line
+        // as if this outermost float did not exist. Perhaps obviously, this
+        // solution cannot do that, and will be revisted with bug 122576.
+        m_leftMarginBoxDelta = floatingObject->logicalWidth(containingBlock->isHorizontalWritingMode());
+        m_rightMarginBoxDelta = -floatingObject->logicalWidth(containingBlock->isHorizontalWritingMode());
     }
 }
 

@@ -1,5 +1,25 @@
 2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        [CSS Shapes] Lines that don't intersect shape-outside should ignore both left and right margins
+        https://bugs.webkit.org/show_bug.cgi?id=122570
+
+        Reviewed by Alexandru Chiculita.
+
+        Due to an oversight, the left margin on left floats and the right
+        margin on right floats was having an effect on lines that did not
+        intersect the shape (but did intersect the margin box of the float).
+        By the spec, lines that do not intersect the shape should act as if
+        the float isn't there, so those margins should have no effect on
+        those lines. This patch fixes this.
+
+        No new tests, it is covered by the existing tests now that they have
+        been fixed to have the proper behavior.
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+
+2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         [CSS Shapes] Clip shape-outside to the bottom of the margin box
         https://bugs.webkit.org/show_bug.cgi?id=122562
 
