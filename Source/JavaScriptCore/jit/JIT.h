@@ -868,6 +868,7 @@ namespace JSC {
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
         MacroAssembler::Call callOperation(J_JITOperation_E, int);
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
+        MacroAssembler::Call callOperationWithCallFrameRollbackOnException(J_JITOperation_E);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
 

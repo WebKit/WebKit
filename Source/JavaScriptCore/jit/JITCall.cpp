@@ -131,8 +131,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
 void JIT::compileCallEval(Instruction* instruction)
 {
-    JITStubCall stubCall(this, cti_op_call_eval); // Initializes ScopeChain; ReturnPC; CodeBlock.
-    stubCall.call();
+    callOperationWithCallFrameRollbackOnException(operationCallEval);
     addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
     emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
 
@@ -146,7 +145,7 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
     linkSlowCase(iter);
 
     emitGetFromCallFrameHeader64(JSStack::Callee, regT0);
-    emitNakedCall(m_vm->getCTIStub(oldStyleVirtualCallGenerator).code());
+    emitNakedCall(m_vm->getCTIStub(virtualCallThunkGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
     
@@ -232,8 +231,8 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     }
 
     linkSlowCase(iter);
-    
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(oldStyleLinkConstructGenerator).code() : m_vm->getCTIStub(oldStyleLinkCallGenerator).code());
+
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(linkConstructThunkGenerator).code() : m_vm->getCTIStub(linkCallThunkGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
     
@@ -263,7 +262,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     
     patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(oldStyleVirtualCallGenerator).code()));
+    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(virtualCallThunkGenerator).code()));
     
     RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
         FINALIZE_CODE(
@@ -281,8 +280,8 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     repatchBuffer.replaceWithJump(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo->hotPathBegin),
         CodeLocationLabel(stubRoutine->code().code()));
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(oldStyleVirtualCallGenerator).code());
-    
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(virtualCallThunkGenerator).code());
+
     callLinkInfo->stub = stubRoutine.release();
 }
 

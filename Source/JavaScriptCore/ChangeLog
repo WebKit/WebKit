@@ -1,3 +1,38 @@
+2013-10-08  Michael Saboff  <msaboff@apple.com>
+
+        Transition call and construct JITStubs to CCallHelper functions
+        https://bugs.webkit.org/show_bug.cgi?id=122453
+
+        Reviewed by Geoffrey Garen.
+
+        Transitioned cti_op_call_eval to operationCallEval.  Migrated baseline JIT to use the same 
+        call thunks as the DFG.  Eliminated all of the "oldStyle" thunks and related functions.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        (JSC::JIT::linkSlowCall):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/ThunkGenerators.cpp:
+        * jit/ThunkGenerators.h:
+
 2013-10-09  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Fix lots of unused parameter warnings.

@@ -32,12 +32,29 @@
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JITOperationWrappers.h"
+#include "JSGlobalObjectFunctions.h"
 #include "Operations.h"
 #include "Repatch.h"
 
 namespace JSC {
 
 extern "C" {
+
+#if COMPILER(MSVC)
+void * _ReturnAddress(void);
+#pragma intrinsic(_ReturnAddress)
+
+#define OUR_RETURN_ADDRESS _ReturnAddress()
+#else
+#define OUR_RETURN_ADDRESS __builtin_return_address(0)
+#endif
+
+#if ENABLE(OPCODE_SAMPLING)
+#define CTI_SAMPLER vm->interpreter->sampler()
+#else
+#define CTI_SAMPLER 0
+#endif
+
 
 void JIT_OPERATION operationStackCheck(ExecState* exec, CodeBlock* codeBlock)
 {
@@ -445,6 +462,28 @@ void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObj
     base->putDirect(vm, offset, JSValue::decode(value));
 }
 
+EncodedJSValue JIT_OPERATION operationCallEval(ExecState* execCallee)
+{
+    CallFrame* callerFrame = execCallee->callerFrame();
+    ASSERT(execCallee->callerFrame()->codeBlock()->codeType() != FunctionCode
+        || !execCallee->callerFrame()->codeBlock()->needsFullScopeChain()
+        || execCallee->callerFrame()->uncheckedR(execCallee->callerFrame()->codeBlock()->activationRegister().offset()).jsValue());
+
+    execCallee->setScope(callerFrame->scope());
+    execCallee->setReturnPC(static_cast<Instruction*>(OUR_RETURN_ADDRESS));
+    execCallee->setCodeBlock(0);
+
+    if (!isHostFunction(execCallee->calleeAsValue(), globalFuncEval))
+        return JSValue::encode(JSValue());
+
+    VM* vm = &execCallee->vm();
+    JSValue result = eval(execCallee);
+    if (vm->exception())
+        return EncodedJSValue();
+    
+    return JSValue::encode(result);
+}
+
 static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializationKind kind)
 {
     ExecState* exec = execCallee->callerFrame();
@@ -513,6 +552,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
+    CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(execCallee->returnPC());
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeFor(kind)->addressForCall();
     else {
@@ -523,12 +563,11 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
             return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
         codeBlock = functionExecutable->codeBlockFor(kind);
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType == CallLinkInfo::CallVarargs)
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
         else
             codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
-    CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(execCallee->returnPC());
     if (!callLinkInfo.seenOnce())
         callLinkInfo.setSeen();
     else

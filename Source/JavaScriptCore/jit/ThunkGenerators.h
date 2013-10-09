@@ -31,12 +31,6 @@
 #if ENABLE(JIT)
 namespace JSC {
 
-MacroAssemblerCodeRef oldStyleLinkCallGenerator(VM*);
-MacroAssemblerCodeRef oldStyleLinkConstructGenerator(VM*);
-MacroAssemblerCodeRef oldStyleLinkClosureCallGenerator(VM*);
-MacroAssemblerCodeRef oldStyleVirtualCallGenerator(VM*);
-MacroAssemblerCodeRef oldStyleVirtualConstructGenerator(VM*);
-
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 
 MacroAssemblerCodeRef linkCallThunkGenerator(VM*);

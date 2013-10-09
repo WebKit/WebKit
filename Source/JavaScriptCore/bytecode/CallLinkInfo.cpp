@@ -45,7 +45,7 @@ void CallLinkInfo::unlink(VM& vm, RepatchBuffer& repatchBuffer)
         RELEASE_ASSERT_NOT_REACHED();
 #endif
     } else
-        repatchBuffer.relink(callReturnLocation, callType == Construct ? vm.getCTIStub(oldStyleLinkConstructGenerator).code() : vm.getCTIStub(oldStyleLinkCallGenerator).code());
+        repatchBuffer.relink(callReturnLocation, callType == Construct ? vm.getCTIStub(linkConstructThunkGenerator).code() : vm.getCTIStub(linkCallThunkGenerator).code());
     hasSeenShouldRepatch = false;
     callee.clear();
     stub.clear();

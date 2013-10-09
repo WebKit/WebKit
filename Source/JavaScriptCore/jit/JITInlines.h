@@ -243,6 +243,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EP operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(J_JITOperation_E operation)
+{
+    setupArgumentsExecState();
+    return appendCallWithCallFrameRollbackOnException(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb operation, CodeBlock* pointer)
 {
     setupArgumentsWithExecState(TrustedImmPtr(pointer));
