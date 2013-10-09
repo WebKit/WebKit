@@ -129,7 +129,7 @@ void EventRetargeter::adjustForTouchEvent(Node* node, const TouchEvent& touchEve
     EventPathTouchLists eventPathChangedTouches(eventPathSize);
 
     for (size_t i = 0; i < eventPathSize; ++i) {
-        TouchEventContext& context = toTouchEventContext(eventPath.item(i));
+        TouchEventContext& context = toTouchEventContext(eventPath.contextAt(i));
         eventPathTouches[i] = context.touches();
         eventPathTargetTouches[i] = context.targetTouches();
         eventPathChangedTouches[i] = context.changedTouches();

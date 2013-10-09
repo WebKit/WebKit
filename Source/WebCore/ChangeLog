@@ -1,3 +1,10 @@
+2013-10-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix EFL buildbreak since r157152.
+
+        * dom/EventRetargeter.cpp:
+        (WebCore::EventRetargeter::adjustForTouchEvent):
+
 2013-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Improved WinLauncher.
