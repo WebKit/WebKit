@@ -1,5 +1,11 @@
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Fix expectation for geolocation test that has been timing out.
+
+        * platform/gtk-wk2/TestExpectations:
+
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed gardening. Move http/tests/loading/307-after-303-after-post.html failure
         expectation to the global gtk expectations file, since it's also true for gtk-wk2.
 
