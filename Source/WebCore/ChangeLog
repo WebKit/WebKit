@@ -1,3 +1,58 @@
+2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename EventRetargeter::adjustForRelatedTarget to EventPath::setRelatedTarget
+        https://bugs.webkit.org/show_bug.cgi?id=122539
+
+        Reviewed by Darin Adler.
+
+        Renamed EventRetargeter::adjustForRelatedTarget to EventPath::setRelatedTarget and got rid of
+        EventDispatchMediators for focus events. We set the related target inside EventDispatcher's
+        dispatch via Event::relatedTarget, which is now virtual and overridden by mouse/focus events.
+
+        * dom/Element.cpp: The following functions no longer use FocusEventDispatchMediators.
+        (WebCore::Element::dispatchFocusInEvent):
+        (WebCore::Element::dispatchFocusOutEvent):
+        (WebCore::Element::dispatchFocusEvent):
+        (WebCore::Element::dispatchBlurEvent):
+
+        * dom/Event.h:
+        (WebCore::Event::relatedTarget): Added as a virtual function.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Cache Event*.
+        (WebCore::EventDispatcher::dispatch): Call setRelatedTargetToPath at the beginning to update
+        related targets in the path.
+
+        * dom/EventDispatcher.h:
+
+        * dom/EventRetargeter.cpp:
+        (WebCore::EventPath::EventPath): Initialize m_origin, used in EventPath::setRelatedTarget.
+        (WebCore::EventRetargeter::adjustTouchList):
+        (WebCore::EventPath::setRelatedTarget): Renamed from EventRetargeter::adjustForRelatedTarget.
+        Delegated the nullity checks to callers by taking references instead of pointers.
+        (WebCore::EventRetargeter::calculateAdjustedNodes):
+
+        * dom/EventRetargeter.h: Removed AdjustedNodes typedef. It's just a Vector of RefPtr<Node>.
+
+        * dom/FocusEvent.cpp: Removed FocusEventDispatchMediators for focus events.
+        * dom/FocusEvent.h:
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::toElement): Cache the related target now that relatedTarget() is virtual.
+        (WebCore::MouseEvent::fromElement): Ditto.
+        (WebCore::MouseEventDispatchMediator::mediateAndDispatchEvent): No longer sets the related
+        targets since that's done in EventDispatcher::dispatch now.
+
+        * dom/MouseEvent.h:
+
+        * dom/Node.cpp: Removed obnoxious Node::dispatchScopedEventDispatchMediator.
+        (WebCore::Node::dispatchScopedEvent):
+        * dom/Node.h:
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderContainerElement::defaultEventHandler): Cache the related
+        target in a local variable now that relatedTarget() is virtual.
+
 2013-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver does not speak aria-expanded state on iOS

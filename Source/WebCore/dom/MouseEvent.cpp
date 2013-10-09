@@ -205,19 +205,23 @@ int MouseEvent::which() const
 Node* MouseEvent::toElement() const
 {
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent)
-        return relatedTarget() ? relatedTarget()->toNode() : 0;
-    
-    return target() ? target()->toNode() : 0;
+    if (type() == eventNames().mouseoutEvent || type() == eventNames().mouseleaveEvent) {
+        EventTarget* relatedTarget = this->relatedTarget();
+        return relatedTarget ? relatedTarget->toNode() : nullptr;
+    }
+
+    return target() ? target()->toNode() : nullptr;
 }
 
 Node* MouseEvent::fromElement() const
 {
     // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
-    if (type() != eventNames().mouseoutEvent && type() != eventNames().mouseleaveEvent)
-        return relatedTarget() ? relatedTarget()->toNode() : 0;
-    
-    return target() ? target()->toNode() : 0;
+    if (type() != eventNames().mouseoutEvent && type() != eventNames().mouseleaveEvent) {
+        EventTarget* relatedTarget = this->relatedTarget();
+        return relatedTarget ? relatedTarget->toNode() : nullptr;
+    }
+
+    return target() ? target()->toNode() : nullptr;
 }
 
 // FIXME: Fix positioning. e.g. We need to consider border/padding.
@@ -298,10 +302,8 @@ MouseEvent* MouseEventDispatchMediator::event() const
 
 bool MouseEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispatcher) const
 {
-    if (isSyntheticMouseEvent()) {
-        EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->eventPath());
+    if (isSyntheticMouseEvent())
         return dispatcher->dispatch();
-    }
 
     if (isDisabledFormControl(dispatcher->node()))
         return false;
@@ -309,10 +311,8 @@ bool MouseEventDispatchMediator::mediateAndDispatchEvent(EventDispatcher* dispat
     if (event()->type().isEmpty())
         return true; // Shouldn't happen.
 
-    ASSERT(!event()->target() || event()->target() != event()->relatedTarget());
-
     EventTarget* relatedTarget = event()->relatedTarget();
-    EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->eventPath());
+    ASSERT(!event()->target() || event()->target() != relatedTarget);
 
     dispatcher->dispatch();
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();

@@ -2069,12 +2069,7 @@ void Node::handleLocalEvents(Event* event)
 
 void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 {
-    dispatchScopedEventDispatchMediator(EventDispatchMediator::create(event));
-}
-
-void Node::dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator> eventDispatchMediator)
-{
-    EventDispatcher::dispatchScopedEvent(*this, eventDispatchMediator);
+    EventDispatcher::dispatchScopedEvent(*this, EventDispatchMediator::create(event));
 }
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)

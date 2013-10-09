@@ -368,10 +368,11 @@ void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
 
     // Poor man's mouseleave event detection.
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    if (!mouseEvent->relatedTarget() || !mouseEvent->relatedTarget()->toNode())
+    EventTarget* relatedTarget = mouseEvent->relatedTarget();
+    if (!relatedTarget || !relatedTarget->toNode())
         return;
 
-    if (this->containsIncludingShadowDOM(mouseEvent->relatedTarget()->toNode()))
+    if (this->containsIncludingShadowDOM(relatedTarget->toNode()))
         return;
 
     hide();

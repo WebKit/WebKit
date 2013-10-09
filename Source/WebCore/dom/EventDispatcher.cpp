@@ -30,6 +30,7 @@
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
 #include "EventRetargeter.h"
+#include "FocusEvent.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
@@ -46,9 +47,10 @@ namespace WebCore {
 bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    if (!mediator->event())
+    Event* event = mediator->event();
+    if (!event)
         return true;
-    EventDispatcher dispatcher(node, mediator->event());
+    EventDispatcher dispatcher(node, event);
     return mediator->mediateAndDispatchEvent(&dispatcher);
 }
 
@@ -100,6 +102,9 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
 
 bool EventDispatcher::dispatch()
 {
+    if (EventTarget* relatedTarget = m_event->relatedTarget())
+        m_eventPath.setRelatedTarget(*relatedTarget);
+
 #ifndef NDEBUG
     ASSERT(!m_eventDispatched);
     m_eventDispatched = true;

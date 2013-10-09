@@ -48,8 +48,6 @@ class TreeScope;
 
 class EventRetargeter {
 public:
-    static void adjustForMouseEvent(Node*, const MouseEvent&, EventPath&);
-    static void adjustForFocusEvent(Node*, const FocusEvent&, EventPath&);
 #if ENABLE(TOUCH_EVENTS)
     typedef Vector<RefPtr<TouchList> > EventPathTouchLists;
     static void adjustForTouchEvent(Node*, const TouchEvent&, EventPath&);
@@ -57,16 +55,16 @@ public:
     static EventTarget& eventTargetRespectingTargetRules(Node& referenceNode);
 
 private:
-    typedef Vector<RefPtr<Node> > AdjustedNodes;
     enum EventWithRelatedTargetDispatchBehavior {
         StopAtBoundaryIfNeeded,
         DoesNotStopAtBoundary
     };
     static void adjustForRelatedTarget(const Node*, EventTarget* relatedTarget, EventPath&);
-    static void calculateAdjustedNodes(const Node*, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior, EventPath&, AdjustedNodes&);
+    static void calculateAdjustedNodes(const Node*, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior, EventPath&, Vector<RefPtr<Node>>& adjustedNodes);
 #if ENABLE(TOUCH_EVENTS)
     static void adjustTouchList(const Node*, const TouchList*, const EventPath&, EventPathTouchLists&);
 #endif
+    friend class EventPath;
 };
 
 inline EventTarget& EventRetargeter::eventTargetRespectingTargetRules(Node& referenceNode)

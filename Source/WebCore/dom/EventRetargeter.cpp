@@ -75,6 +75,7 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 }
 
 EventPath::EventPath(Node& targetNode, Event& event)
+    : m_origin(&targetNode)
 {
     bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
@@ -109,16 +110,6 @@ EventPath::EventPath(Node& targetNode, Event& event)
     }
 }
 
-void EventRetargeter::adjustForMouseEvent(Node* node, const MouseEvent& mouseEvent, EventPath& eventPath)
-{
-    adjustForRelatedTarget(node, mouseEvent.relatedTarget(), eventPath);
-}
-
-void EventRetargeter::adjustForFocusEvent(Node* node, const FocusEvent& focusEvent, EventPath& eventPath)
-{
-    adjustForRelatedTarget(node, focusEvent.relatedTarget(), eventPath);
-}
-
 #if ENABLE(TOUCH_EVENTS)
 void EventRetargeter::adjustForTouchEvent(Node* node, const TouchEvent& touchEvent, EventPath& eventPath)
 {
@@ -148,7 +139,7 @@ void EventRetargeter::adjustTouchList(const Node* node, const TouchList* touchLi
     ASSERT(eventPathTouchLists.size() == eventPathSize);
     for (size_t i = 0; i < touchList->length(); ++i) {
         const Touch& touch = *touchList->item(i);
-        AdjustedNodes adjustedNodes;
+        Vector<RefPtr<Node>> adjustedNodes;
         calculateAdjustedNodes(node, touch.target()->toNode(), DoesNotStopAtBoundary, const_cast<EventPath&>(eventPath), adjustedNodes);
         ASSERT(adjustedNodes.size() == eventPathSize);
         for (size_t j = 0; j < eventPathSize; ++j)
@@ -157,20 +148,16 @@ void EventRetargeter::adjustTouchList(const Node* node, const TouchList* touchLi
 }
 #endif
 
-void EventRetargeter::adjustForRelatedTarget(const Node* node, EventTarget* relatedTarget, EventPath& eventPath)
+void EventPath::setRelatedTarget(EventTarget& relatedTarget)
 {
-    if (!node)
-        return;
-    if (!relatedTarget)
-        return;
-    Node* relatedNode = relatedTarget->toNode();
+    Node* relatedNode = relatedTarget.toNode();
     if (!relatedNode)
         return;
-    AdjustedNodes adjustedNodes;
-    calculateAdjustedNodes(node, relatedNode, StopAtBoundaryIfNeeded, eventPath, adjustedNodes);
-    ASSERT(adjustedNodes.size() <= eventPath.size());
+    Vector<RefPtr<Node>> adjustedNodes;
+    EventRetargeter::calculateAdjustedNodes(m_origin.get(), relatedNode, EventRetargeter::StopAtBoundaryIfNeeded, *this, adjustedNodes);
+    ASSERT(adjustedNodes.size() <= m_path.size());
     for (size_t i = 0; i < adjustedNodes.size(); ++i)
-        toMouseOrFocusEventContext(eventPath.contextAt(i)).setRelatedTarget(adjustedNodes[i]);
+        toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(adjustedNodes[i]);
 }
 
 static void buildRelatedNodeMap(const Node* relatedNode, HashMap<TreeScope*, Node*>& relatedNodeMap)
@@ -209,7 +196,7 @@ static Node* addRelatedNodeForUnmapedTreeScopes(TreeScope* scope, HashMap<TreeSc
     return relatedNode;
 }
 
-void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior eventWithRelatedTargetDispatchBehavior, EventPath& eventPath, AdjustedNodes& adjustedNodes)
+void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior eventWithRelatedTargetDispatchBehavior, EventPath& eventPath, Vector<RefPtr<Node>>& adjustedNodes)
 {
     HashMap<TreeScope*, Node*> relatedNodeMap;
     buildRelatedNodeMap(relatedNode, relatedNodeMap);

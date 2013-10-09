@@ -533,7 +533,6 @@ public:
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     void dispatchScopedEvent(PassRefPtr<Event>);
-    void dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator>);
 
     virtual void handleLocalEvents(Event*);
 

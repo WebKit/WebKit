@@ -172,6 +172,8 @@ public:
 
     virtual PassRefPtr<Event> cloneFor(HTMLIFrameElement*) const;
 
+    virtual EventTarget* relatedTarget() const { return nullptr; }
+
 protected:
     Event();
     Event(const AtomicString& type, bool canBubble, bool cancelable);

@@ -54,12 +54,14 @@ enum EventDispatchContinuation {
 
 class EventPath {
 public:
-    EventPath(Node&, Event&);
+    EventPath(Node& origin, Event&);
 
     bool isEmpty() const { return m_path.isEmpty(); }
     size_t size() const { return m_path.size(); }
     const EventContext& contextAt(size_t i) const { return *m_path[i]; }
     EventContext& contextAt(size_t i) { return *m_path[i]; }
+    
+    void setRelatedTarget(EventTarget&);
 
     bool hasEventListeners(const AtomicString& eventType) const;
 
@@ -70,6 +72,7 @@ public:
 
 private:
     Vector<std::unique_ptr<EventContext>, 32> m_path;
+    RefPtr<Node> m_origin;
 };
 
 class EventDispatcher {
