@@ -90,7 +90,7 @@ void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* layer)
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 {
     m_rootLayer->setSize(newSize);
-    m_client->notifyFlushRequired();
+    notifyFlushRequired(m_rootLayer.get());
 }
 
 bool CompositingCoordinator::flushPendingLayerChanges()
@@ -255,7 +255,8 @@ void CompositingCoordinator::notifyAnimationStarted(const GraphicsLayer*, double
 
 void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
 {
-    m_client->notifyFlushRequired();
+    if (!isFlushingLayerChanges())
+        m_client->notifyFlushRequired();
 }
 
 
@@ -271,7 +272,7 @@ std::unique_ptr<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(Graph
     m_registeredLayers.add(layer->id(), layer);
     m_state.layersToCreate.append(layer->id());
     layer->setNeedsVisibleRectAdjustment();
-    m_client->notifyFlushRequired();
+    notifyFlushRequired(layer);
     return std::unique_ptr<GraphicsLayer>(layer);
 }
 
@@ -352,7 +353,7 @@ void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
     }
 
     m_state.layersToRemove.append(layer->id());
-    m_client->notifyFlushRequired();
+    notifyFlushRequired(layer);
 }
 
 void CompositingCoordinator::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)

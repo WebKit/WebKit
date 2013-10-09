@@ -1,3 +1,42 @@
+2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [CoordinatedGraphics] ASSERTION FAILED: !m_flushingLayers (after r156291)
+        https://bugs.webkit.org/show_bug.cgi?id=122016
+
+        Reviewed by Noam Rosenthal.
+
+        To prevent calling scheduleLayerFlush() inside flushCompositingState(),
+        we now only call m_client->notifyFlushRequired() - which will trigger
+        scheduleLayerFlush() - if we are not already flushing layer changes.
+
+        No new tests, covered by existing ones.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::notifyFlushRequired): Check if we
+        are already flushing layer changes before calling notifyFlushRequired.
+        (WebCore::CompositingCoordinator::sizeDidChange): Use notifyFlushRequired()
+        from CompositingCoordinator instead of calling the one from m_client
+        directly.
+        (WebCore::CompositingCoordinator::createGraphicsLayer): Ditto.
+        (WebCore::CompositingCoordinator::detachLayer): Ditto.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::notifyFlushRequired): Added helper
+        to check whether we are flushing layer changes before calling client()'s
+        notifyFlushRequired(). It returns a boolean indicating whether it
+        called the client's method.
+        (WebCore::CoordinatedGraphicsLayer::didChangeLayerState): Use the
+        notifyFlushRequired() helper.
+        (WebCore::CoordinatedGraphicsLayer::didChangeAnimations): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::didChangeChildren): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::didChangeFilters): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::didChangeImageBacking): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::setContentsToCanvas): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation):Ditto.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        Declaration of the notifyFlushRequired() helper.
+
 2013-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver double speaks all items in <li> nodes

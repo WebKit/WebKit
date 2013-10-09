@@ -48,41 +48,46 @@ static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
     return layer ? toCoordinatedGraphicsLayer(layer)->id() : 0;
 }
 
+bool CoordinatedGraphicsLayer::notifyFlushRequired()
+{
+    ASSERT(m_coordinator);
+    if (client() && !m_coordinator->isFlushingLayerChanges()) {
+        client()->notifyFlushRequired(this);
+        return true;
+    }
+    return false;
+}
+
 void CoordinatedGraphicsLayer::didChangeLayerState()
 {
     m_shouldSyncLayerState = true;
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 
 void CoordinatedGraphicsLayer::didChangeAnimations()
 {
     m_shouldSyncAnimations = true;
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 
 void CoordinatedGraphicsLayer::didChangeChildren()
 {
     m_shouldSyncChildren = true;
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 
 #if ENABLE(CSS_FILTERS)
 void CoordinatedGraphicsLayer::didChangeFilters()
 {
     m_shouldSyncFilters = true;
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 #endif
 
 void CoordinatedGraphicsLayer::didChangeImageBacking()
 {
     m_shouldSyncImageBacking = true;
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 
 void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
@@ -382,9 +387,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
         m_pendingCanvasOperation |= SyncCanvas;
 #endif
 
-    if (client())
-        client()->notifyFlushRequired(this);
-
+    notifyFlushRequired();
     addRepaintRect(contentsRect());
 }
 
@@ -411,8 +414,7 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
     m_canvasToken = m_canvasPlatformLayer ? m_canvasPlatformLayer->graphicsSurfaceToken() : GraphicsSurfaceToken();
     ASSERT(!(!m_canvasToken.isValid() && m_canvasPlatformLayer));
 
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 #else
     UNUSED_PARAM(platformLayer);
 #endif
@@ -588,11 +590,8 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
 
 void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
 {
-    if (!m_coordinator->isFlushingLayerChanges()) {
-        if (client())
-            client()->notifyFlushRequired(this);
+    if (notifyFlushRequired())
         return;
-    }
 
     if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
         mask->flushCompositingStateForThisLayerOnly();
@@ -918,8 +917,7 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& 
 void CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation()
 {
     setNeedsVisibleRectAdjustment();
-    if (client())
-        client()->notifyFlushRequired(this);
+    notifyFlushRequired();
 }
 
 IntRect CoordinatedGraphicsLayer::tiledBackingStoreContentsRect()
