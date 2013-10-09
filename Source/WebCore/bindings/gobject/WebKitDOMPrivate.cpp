@@ -62,6 +62,7 @@
 #include "WebKitDOMStyleSheetPrivate.h"
 #include "WebKitDOMTextPrivate.h"
 #include "WebKitDOMUIEventPrivate.h"
+#include "WebKitDOMWheelEventPrivate.h"
 
 namespace WebKit {
 
@@ -111,14 +112,18 @@ WebKitDOMEvent* wrap(Event* event)
 {
     ASSERT(event);
 
-    if (event->isMouseEvent())
-        return WEBKIT_DOM_EVENT(wrapMouseEvent(static_cast<MouseEvent*>(event)));
+    if (event->isUIEvent()) {
+        if (event->isMouseEvent())
+            return WEBKIT_DOM_EVENT(wrapMouseEvent(static_cast<MouseEvent*>(event)));
 
-    if (event->isKeyboardEvent())
-        return WEBKIT_DOM_EVENT(wrapKeyboardEvent(static_cast<KeyboardEvent*>(event)));
+        if (event->isKeyboardEvent())
+            return WEBKIT_DOM_EVENT(wrapKeyboardEvent(static_cast<KeyboardEvent*>(event)));
 
-    if (event->isUIEvent())
+        if (event->eventInterface() == WheelEventInterfaceType)
+            return WEBKIT_DOM_EVENT(wrapWheelEvent(static_cast<WheelEvent*>(event)));
+
         return WEBKIT_DOM_EVENT(wrapUIEvent(static_cast<UIEvent*>(event)));
+    }
 
     return wrapEvent(event);
 }

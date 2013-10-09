@@ -1,3 +1,17 @@
+2013-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] mouse wheel events are not considered to be mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=120648
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Expose WheelEvent in the GObject DOM bindings API.
+
+        * bindings/gobject/GNUmakefile.am: Add new files to compilation.
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap): Create a WebKitDOMWheelEvent when the given Event
+        is a WheelEvent.
+
 2013-10-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix EFL buildbreak since r157152.

@@ -271,6 +271,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMWebKitPoint.cpp \
 	DerivedSources/webkitdom/WebKitDOMWebKitPointPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMWebKitNamedFlow.cpp \
+	DerivedSources/webkitdom/WebKitDOMWheelEvent.cpp \
+	DerivedSources/webkitdom/WebKitDOMWheelEventPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMXPathExpression.cpp \
 	DerivedSources/webkitdom/WebKitDOMXPathExpressionPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMXPathNSResolver.cpp \
@@ -422,6 +424,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMPerformanceEntryList.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceNavigation.h \
 	DerivedSources/webkitdom/WebKitDOMPerformanceTiming.h \
+	DerivedSources/webkitdom/WebKitDOMWheelEvent.h \
 	DerivedSources/webkitdom/webkitdom.h \
 	DerivedSources/webkitdom/webkitdomdefines.h
 
