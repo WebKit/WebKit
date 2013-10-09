@@ -68,4 +68,9 @@ Buildbot.BuildArchitecture = {
 Buildbot.prototype = {
     constructor: Buildbot,
     __proto__: BaseObject.prototype,
+
+    buildPageURLForIteration: function(iteration)
+    {
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
+    }
 };

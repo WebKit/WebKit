@@ -89,8 +89,9 @@ BuildbotTesterQueueView.prototype = {
                 } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && bindingTestResults.errorOccurred) {
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, "binding tests failed");
                 } else {
+                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
                     var totalFailures = layoutTestResults.failureCount + javascriptTestResults.failureCount + apiTestResults.failureCount + pythonTestResults.failureCount + perlTestResults.failureCount + bindingTestResults.errorOccurred;
-                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, totalFailures === 1 ? "test failure" : "test failures", totalFailures);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, totalFailures === 1 ? "test failure" : "test failures", totalFailures, url);
                 }
 
                 this.element.appendChild(status.element);

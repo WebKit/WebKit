@@ -24,6 +24,19 @@
 
 2013-10-09  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard doesn't provide a results link when there issues at multiple steps
+        https://bugs.webkit.org/show_bug.cgi?id=122573
+
+        Reviewed by Tim Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): Provide a URL.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.buildPageURLForIteration): Added.
+
+2013-10-09  Alexey Proskuryakov  <ap@apple.com>
+
         http://build.webkit.org/dashboard/ links to a wrong jscore-test results page
         https://bugs.webkit.org/show_bug.cgi?id=122569
 
