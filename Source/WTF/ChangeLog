@@ -1,3 +1,15 @@
+2013-10-09  Michael Saboff  <msaboff@apple.com>
+
+        Change to std::unique_ptr breaks wtf/DataLog.cpp when DATA_LOG_TO_FILE set to 1
+        https://bugs.webkit.org/show_bug.cgi?id=122557
+
+        Reviewed by Filip Pizlo.
+
+        Changed the leakPtr() to release().
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+
 2013-10-08  Tim Horton  <timothy_horton@apple.com>
 
         Turn threaded scrolling on for all Mac ports.

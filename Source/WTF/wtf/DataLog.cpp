@@ -75,7 +75,7 @@ static void initializeLogFileOnce()
 #endif
 
     if (filename) {
-        file = FilePrintStream::open(actualFilename, "w").leakPtr();
+        file = FilePrintStream::open(actualFilename, "w").release();
         if (!file)
             fprintf(stderr, "Warning: Could not open log file %s for writing.\n", actualFilename);
     }
