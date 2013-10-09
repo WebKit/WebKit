@@ -90,6 +90,10 @@ void ViewClientEfl::webProcessCrashed(WKViewRef, WKURLRef url, const void* clien
 
 void ViewClientEfl::webProcessDidRelaunch(WKViewRef viewRef, const void* clientInfo)
 {
+    // WebProcess just relaunched and the underlying scene from the view is not set to active by default, which
+    // means from that point on we would only get a blank screen, hence we set it to active here to avoid that.
+    WKViewSetIsActive(viewRef, true);
+
     if (const char* themePath = toEwkView(clientInfo)->themePath())
         WKViewSetThemePath(viewRef, adoptWK(WKStringCreateWithUTF8CString(themePath)).get());
 }

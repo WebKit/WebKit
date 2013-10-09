@@ -1,3 +1,22 @@
+2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Set view to active in ViewClientEfl after WebProcess has relaunched
+        https://bugs.webkit.org/show_bug.cgi?id=118650
+
+        Reviewed by Noam Rosenthal.
+
+        Once WebProcess relaunches, the underlying scene from the view is recreated
+        and is not active by default, which means it will be in `background'. In
+        practice, from that point on we are going to get a blank screen, unless we
+        set it to active.
+
+        In the normal flow, the view is set to active during its initialization; this
+        patch sets it to active also in ViewClientEfl, in the webProcessDidRelaunch
+        callback.
+
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::webProcessDidRelaunch): Added WKViewSetIsActive call.
+
 2013-10-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157157.
