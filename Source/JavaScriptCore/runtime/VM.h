@@ -270,6 +270,7 @@ namespace JSC {
         Strong<Structure> propertyTableStructure;
         Strong<Structure> mapDataStructure;
         Strong<Structure> weakMapDataStructure;
+        Strong<JSCell> iterationTerminator;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

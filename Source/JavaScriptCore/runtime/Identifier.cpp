@@ -132,6 +132,8 @@ PassRefPtr<StringImpl> Identifier::add8(VM* vm, const UChar* s, int length)
 
 PassRefPtr<StringImpl> Identifier::addSlowCase(VM* vm, StringImpl* r)
 {
+    if (r->isEmptyUnique())
+        return r;
     ASSERT(!r->isIdentifier());
     // The empty & null strings are static singletons, and static strings are handled
     // in ::add() in the header, so we should never get here with a zero length string.

@@ -1,3 +1,15 @@
+2013-10-08  Oliver Hunt  <oliver@apple.com>
+
+        Convert for-of iteration to in-band signalling so we can trivially avoid unnecessary object allocation
+        https://bugs.webkit.org/show_bug.cgi?id=122532
+
+        Reviewed by Michael Saboff.
+
+        Update tests to reflect our non-exposure of .next()
+
+        * js/array-iterators-expected.txt:
+        * js/script-tests/array-iterators.js:
+
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. Make platform-specific expectation file apply only to gtk-wk1, since

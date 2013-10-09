@@ -245,7 +245,7 @@ VM::VM(VMType vmType, HeapType heapType)
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
     mapDataStructure.set(*this, MapData::createStructure(*this, 0, jsNull()));
     weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
-
+    iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
     smallStrings.initializeCommonStrings(*this);
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);

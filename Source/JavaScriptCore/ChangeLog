@@ -1,3 +1,37 @@
+2013-10-08  Oliver Hunt  <oliver@apple.com>
+
+        Convert for-of iteration to in-band signalling so we can trivially avoid unnecessary object allocation
+        https://bugs.webkit.org/show_bug.cgi?id=122532
+
+        Reviewed by Michael Saboff.
+
+        Switch for-of enumeration to use in band signalling to determine the end
+        of iteration.  This allows us to trivially remove an otherwise unnecessary
+        object allocation, and paves the way for optimised thunks in future.
+
+        We can re-add explicit .next() functions in future that would marshall
+        the true iteration functions, but for now we'll ignore them.
+
+        This results in a huge improvement in the performance of for-of (in the order
+        of 2x) but there's still a long way to go in order to get the performance to
+        a satisfactory level.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForOfNode::emitBytecode):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        (JSC::createIteratorResult):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::addSlowCase):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::create):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2013-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Fixed compile errors while compiling without the JIT enabled.

@@ -10,7 +10,6 @@ PASS key is 3
 PASS key is 4
 PASS key is 5
 PASS testArray.length is 6
-PASS keys.next().value is undefined.
 PASS value is 1
 PASS value is 2
 PASS value is 3
@@ -18,7 +17,6 @@ PASS value is 4
 PASS value is 5
 PASS value is 6
 PASS testArray.length is 6
-PASS values.next().value is undefined.
 PASS value is testArray[key]
 PASS key is 0
 PASS value is 1
@@ -38,7 +36,6 @@ PASS value is testArray[key]
 PASS key is 5
 PASS value is 6
 PASS testArray.length is 6
-PASS entries.next().value is undefined.
 PASS value is testArray[key]
 PASS key is i
 PASS value is testArray[key]
@@ -58,7 +55,6 @@ PASS key is i
 PASS value is testArray[key]
 PASS key is i
 PASS testArray.length is 9
-PASS entries.next().value is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

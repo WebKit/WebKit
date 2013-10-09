@@ -1033,6 +1033,7 @@ public:
     }
 
     static JSFinalObject* create(ExecState*, Structure*);
+    static JSFinalObject* create(VM&, Structure*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), info(), NonArray, inlineCapacity);
@@ -1073,6 +1074,13 @@ inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structur
         )
     ) JSFinalObject(exec->vm(), structure);
     finalObject->finishCreation(exec->vm());
+    return finalObject;
+}
+
+inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
+{
+    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm.heap, allocationSize(structure->inlineCapacity()))) JSFinalObject(vm, structure);
+    finalObject->finishCreation(vm);
     return finalObject;
 }
 

@@ -1778,7 +1778,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitMove(args.thisRegister(), subject.get());
         generator.emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd());
     }
-    RefPtr<RegisterID> iteratorNext = generator.emitGetById(generator.newTemporary(), iterator.get(), generator.propertyNames().next);
+    RefPtr<RegisterID> iteratorNext = generator.emitGetById(generator.newTemporary(), iterator.get(), generator.propertyNames().iteratorNextPrivateName);
     RefPtr<RegisterID> value = generator.newTemporary();
     generator.emitLoad(value.get(), jsUndefined());
     
@@ -1822,14 +1822,13 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitNode(dst, m_statement);
     
     generator.emitLabel(scope->continueTarget());
-    RefPtr<RegisterID> result = generator.newTemporary();
     CallArguments nextArguments(generator, 0, 1);
     generator.emitMove(nextArguments.thisRegister(), iterator.get());
     generator.emitMove(nextArguments.argumentRegister(0), value.get());
-    generator.emitCall(result.get(), iteratorNext.get(), NoExpectedFunction, nextArguments, divot(), divotStart(), divotEnd());
-    generator.emitGetById(value.get(), result.get(), generator.propertyNames().value);
-    RefPtr<RegisterID> done = generator.emitGetById(generator.newTemporary(), result.get(), generator.propertyNames().done);
-    generator.emitJumpIfFalse(done.get(), loopStart.get());
+    generator.emitCall(value.get(), iteratorNext.get(), NoExpectedFunction, nextArguments, divot(), divotStart(), divotEnd());
+    RefPtr<RegisterID> result = generator.emitLoad(generator.newTemporary(), JSValue(generator.vm()->iterationTerminator.get()));
+    generator.emitJumpIfFalse(generator.emitEqualityOp(op_stricteq, result.get(), value.get(), result.get()), loopStart.get());
+    generator.emitLoad(value.get(), jsUndefined());
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     generator.emitLabel(scope->breakTarget());
 }

@@ -213,6 +213,7 @@ namespace JSC {
         const Identifier thisIdentifier;
         const Identifier useStrictIdentifier;
         const Identifier iteratorPrivateName;
+        const Identifier iteratorNextPrivateName;
         const Identifier hasNextIdentifier;
 
         
