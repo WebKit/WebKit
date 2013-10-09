@@ -1,5 +1,18 @@
 2013-10-09  Timothy Hatcher  <timothy@apple.com>
 
+        Add API tests to the Dashbord page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=122283
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.apiTestResultsURLForIteration):
+
+2013-10-09  Timothy Hatcher  <timothy@apple.com>
+
         Attempt to fix faulty Dashboard iteration updating by always rebuilding test result objects.
 
         https://bugs.webkit.org/show_bug.cgi?id=122515
