@@ -114,6 +114,9 @@ fast/events/option-tab.html [ WontFix Failure ]
 fast/images/embed-image.html [ WontFix Pass ]
 fast/images/object-image.html [ WontFix Pass ]
 
+# The 64 bits release bot has been made to use 8 bpp depth, so this won't pass there.
+webkit.org/b/121951 fast/dom/Window/window-screen-properties.html [ Failure Pass ]
+
 # This test requires Mac ObjC bindings, although it currently passes
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
 

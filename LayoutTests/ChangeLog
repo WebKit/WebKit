@@ -1,3 +1,10 @@
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening. The 64 bits release bot has been made to use 8 bpp depth, so
+        fast/dom/Window/window-screen-properties.html won't pass there.
+
+        * platform/gtk/TestExpectations:
+
 2013-10-08  Oliver Hunt  <oliver@apple.com>
 
         Convert for-of iteration to in-band signalling so we can trivially avoid unnecessary object allocation
