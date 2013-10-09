@@ -60,7 +60,6 @@ public:
     size_t size() const { return m_path.size(); }
     const EventContext& contextAt(size_t i) const { return *m_path[i]; }
     EventContext& contextAt(size_t i) { return *m_path[i]; }
-    EventTarget* targetRespectingTargetRules() { return m_targetRespectingTargetRules.get(); }
 
     bool hasEventListeners(const AtomicString& eventType) const;
 
@@ -71,7 +70,6 @@ public:
 
 private:
     Vector<std::unique_ptr<EventContext>, 32> m_path;
-    RefPtr<EventTarget> m_targetRespectingTargetRules;
 };
 
 class EventDispatcher {
