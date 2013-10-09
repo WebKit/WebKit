@@ -2463,11 +2463,8 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
     }
 
-    if (webView->needsDisplay()) {
-        webView->paint(0, 0);
-        if (webView->usesLayeredWindow())
-            webView->performLayeredWindowUpdate();
-    }
+    if (webView->needsDisplay() && message != WM_PAINT)
+        ::UpdateWindow(hWnd);
 
     if (!handled)
         lResult = DefWindowProc(hWnd, message, wParam, lParam);
