@@ -1,3 +1,15 @@
+2013-10-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/table-cells.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=122544
+
+        Unreviewed EFL gardening
+
+        Changed expectations so that they show proper name of the parent (the table)
+
+        * platform/efl-wk1/accessibility/table-cells-expected.txt:
+        * platform/efl-wk2/accessibility/table-cells-expected.txt:
+
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Fix expectation for geolocation test that has been timing out.
