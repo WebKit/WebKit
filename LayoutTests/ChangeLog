@@ -1,3 +1,17 @@
+2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
+
+        CoordinatedGraphics: Fix integer rounding when computing pixel alignment
+        https://bugs.webkit.org/show_bug.cgi?id=122565
+
+        Reviewed by Noam Rosenthal.
+
+        Added test that rotates 45 degrees a very long text in a dt tag that
+        might crash the browser depending on how it handles the integer
+        rounding when computing pixel alignment.
+
+        * transforms/3d/general/rotate-45-degrees-long-inner-text-in-dt-expected.txt: Added.
+        * transforms/3d/general/rotate-45-degrees-long-inner-text-in-dt.html: Added.
+
 2013-10-09  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Some accessibility tests are failing

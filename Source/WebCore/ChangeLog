@@ -1,3 +1,19 @@
+2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
+
+        CoordinatedGraphics: Fix integer rounding when computing pixel alignment
+        https://bugs.webkit.org/show_bug.cgi?id=122565
+
+        Reviewed by Noam Rosenthal.
+
+        Replace roundedIntRect call in computePixelAlignment() with enclosingIntRect,
+        so that very small rectangles (after content scaling) don't appear to be empty,
+        creating a crash later.
+
+        Test: transforms/3d/general/rotate-45-degrees-long-inner-text-in-dt.html
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::computePixelAlignment):
+
 2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename EventRetargeter::adjustForRelatedTarget to EventPath::setRelatedTarget

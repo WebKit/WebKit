@@ -1103,7 +1103,7 @@ void CoordinatedGraphicsLayer::computePixelAlignment(FloatPoint& position, Float
 
     // Round to integer boundaries.
     // NOTE: When using enclosingIntRect (as mac) it will have different sizes depending on position.
-    FloatRect alignedBounds = roundedIntRect(scaledBounds);
+    FloatRect alignedBounds = enclosingIntRect(scaledBounds);
 
     // Convert back to layer coordinates.
     alignedBounds.scale(1 / effectiveContentsScale());
