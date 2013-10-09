@@ -1,3 +1,12 @@
+2013-10-09  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Add sh4 support when building with CMake.
+        https://bugs.webkit.org/show_bug.cgi?id=122542
+
+        Reviewed by Csaba Osztrogonác.
+
+        * CMakeLists.txt:
+
 2013-10-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Re-enable MathML for release builds
