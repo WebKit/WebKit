@@ -459,7 +459,7 @@ public:
     void andlImm8r(int imm8, RegisterID dst)
     {
         ASSERT((imm8 <= 255) && (imm8 >= 0));
-        ASSERT(dst == SH4Registers::r0);
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup5(ANDIMM_OPCODE, imm8);
         oneShortOp(opc);
@@ -492,7 +492,7 @@ public:
     void orlImm8r(int imm8, RegisterID dst)
     {
         ASSERT((imm8 <= 255) && (imm8 >= 0));
-        ASSERT(dst == SH4Registers::r0);
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup5(ORIMM_OPCODE, imm8);
         oneShortOp(opc);
@@ -519,7 +519,7 @@ public:
     void xorlImm8r(int imm8, RegisterID dst)
     {
         ASSERT((imm8 <= 255) && (imm8 >= 0));
-        ASSERT(dst == SH4Registers::r0);
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup5(XORIMM_OPCODE, imm8);
         oneShortOp(opc);
@@ -687,6 +687,7 @@ public:
 
     void cmpEqImmR0(int imm, RegisterID dst)
     {
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
         uint16_t opc = getOpcodeGroup5(CMPEQIMM_OPCODE, imm);
         oneShortOp(opc);
     }
@@ -699,7 +700,8 @@ public:
 
     void testlImm8r(int imm, RegisterID dst)
     {
-        ASSERT((dst == SH4Registers::r0) && (imm <= 255) && (imm >= 0));
+        ASSERT((imm <= 255) && (imm >= 0));
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup5(TSTIMM_OPCODE, imm);
         oneShortOp(opc);
@@ -1062,7 +1064,7 @@ public:
 
     void movwPCReg(int offset, RegisterID base, RegisterID dst)
     {
-        ASSERT(base == SH4Registers::pc);
+        ASSERT_UNUSED(base, base == SH4Registers::pc);
         ASSERT((offset <= 255) && (offset >= 0));
 
         uint16_t opc = getOpcodeGroup3(MOVW_READ_OFFPC_OPCODE, dst, offset);
@@ -1071,7 +1073,7 @@ public:
 
     void movwMemReg(int offset, RegisterID base, RegisterID dst)
     {
-        ASSERT(dst == SH4Registers::r0);
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup11(MOVW_READ_OFFRM_OPCODE, base, offset);
         oneShortOp(opc);
@@ -1137,7 +1139,7 @@ public:
 
     void movbMemReg(int offset, RegisterID base, RegisterID dst)
     {
-        ASSERT(dst == SH4Registers::r0);
+        ASSERT_UNUSED(dst, dst == SH4Registers::r0);
 
         uint16_t opc = getOpcodeGroup11(MOVB_READ_OFFRM_OPCODE, base, offset);
         oneShortOp(opc);
@@ -2205,8 +2207,8 @@ public:
         printfStdoutInstr(">> end repatch\n");
     }
 #else
-    static void printInstr(uint16_t opc, unsigned size, bool isdoubleInst = true) { };
-    static void printBlockInstr(uint16_t* first, unsigned offset, int nbInstr) { };
+    static void printInstr(uint16_t, unsigned, bool = true) { };
+    static void printBlockInstr(uint16_t*, unsigned, int) { };
 #endif
 
     static void replaceWithLoad(void* instructionStart)

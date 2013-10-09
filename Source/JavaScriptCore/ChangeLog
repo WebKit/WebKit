@@ -1,5 +1,26 @@
 2013-10-09  Julien Brianceau  <jbriance@cisco.com>
 
+        [sh4] Fix lots of unused parameter warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=122545
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::andlImm8r):
+        (JSC::SH4Assembler::orlImm8r):
+        (JSC::SH4Assembler::xorlImm8r):
+        (JSC::SH4Assembler::cmpEqImmR0):
+        (JSC::SH4Assembler::testlImm8r):
+        (JSC::SH4Assembler::movwPCReg):
+        (JSC::SH4Assembler::movwMemReg):
+        (JSC::SH4Assembler::movbMemReg):
+        (JSC::SH4Assembler::printInstr):
+        (JSC::SH4Assembler::printBlockInstr):
+
+2013-10-09  Julien Brianceau  <jbriance@cisco.com>
+
         [sh4] Add sh4 support when building with CMake.
         https://bugs.webkit.org/show_bug.cgi?id=122542
 
