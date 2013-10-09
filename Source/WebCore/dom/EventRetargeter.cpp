@@ -22,6 +22,7 @@
 
 #include "ContainerNode.h"
 #include "EventContext.h"
+#include "EventDispatcher.h"
 #include "FocusEvent.h"
 #include "MouseEvent.h"
 #include "ShadowRoot.h"
@@ -73,7 +74,7 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
     return node->isPseudoElement() ? toPseudoElement(node)->hostElement() : node;
 }
 
-void EventRetargeter::calculateEventPath(Node& targetNode, Event& event, EventPath& eventPath)
+EventPath::EventPath(Node& targetNode, Event& event)
 {
     bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
@@ -86,17 +87,17 @@ void EventRetargeter::calculateEventPath(Node& targetNode, Event& event, EventPa
     Node* node = nodeOrHostIfPseudoElement(&targetNode);
     while (node) {
         if (!target || !isSVGElement) // FIXME: This code doesn't make sense once we've climbed out of the SVG subtree in a HTML document.
-            target = &eventTargetRespectingTargetRules(*node);
+            target = &EventRetargeter::eventTargetRespectingTargetRules(*node);
         for (; node; node = node->parentNode()) {
-            EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
+            EventTarget& currentTarget = EventRetargeter::eventTargetRespectingTargetRules(*node);
             if (isMouseOrFocusEvent)
-                eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, &currentTarget, target)));
+                m_path.append(std::make_unique<MouseOrFocusEventContext>(node, &currentTarget, target));
 #if ENABLE(TOUCH_EVENTS)
             else if (isTouchEvent)
-                eventPath.append(adoptPtr(new TouchEventContext(node, &currentTarget, target)));
+                m_path.append(std::make_unique<TouchEventContext>(node, &currentTarget, target));
 #endif
             else
-                eventPath.append(adoptPtr(new EventContext(node, &currentTarget, target)));
+                m_path.append(std::make_unique<EventContext>(node, &currentTarget, target));
             if (!inDocument)
                 return;
             if (node->isShadowRoot())
@@ -128,11 +129,10 @@ void EventRetargeter::adjustForTouchEvent(Node* node, const TouchEvent& touchEve
     EventPathTouchLists eventPathChangedTouches(eventPathSize);
 
     for (size_t i = 0; i < eventPathSize; ++i) {
-        ASSERT(eventPath[i]->isTouchEventContext());
-        TouchEventContext* touchEventContext = toTouchEventContext(eventPath[i].get());
-        eventPathTouches[i] = touchEventContext->touches();
-        eventPathTargetTouches[i] = touchEventContext->targetTouches();
-        eventPathChangedTouches[i] = touchEventContext->changedTouches();
+        TouchEventContext& context = toTouchEventContext(eventPath.item(i));
+        eventPathTouches[i] = context.touches();
+        eventPathTargetTouches[i] = context.targetTouches();
+        eventPathChangedTouches[i] = context.changedTouches();
     }
 
     adjustTouchList(node, touchEvent.touches(), eventPath, eventPathTouches);
@@ -169,11 +169,8 @@ void EventRetargeter::adjustForRelatedTarget(const Node* node, EventTarget* rela
     AdjustedNodes adjustedNodes;
     calculateAdjustedNodes(node, relatedNode, StopAtBoundaryIfNeeded, eventPath, adjustedNodes);
     ASSERT(adjustedNodes.size() <= eventPath.size());
-    for (size_t i = 0; i < adjustedNodes.size(); ++i) {
-        ASSERT(eventPath[i]->isMouseOrFocusEventContext());
-        MouseOrFocusEventContext* mouseOrFocusEventContext = static_cast<MouseOrFocusEventContext*>(eventPath[i].get());
-        mouseOrFocusEventContext->setRelatedTarget(adjustedNodes[i]);
-    }
+    for (size_t i = 0; i < adjustedNodes.size(); ++i)
+        toMouseOrFocusEventContext(eventPath.contextAt(i)).setRelatedTarget(adjustedNodes[i]);
 }
 
 static void buildRelatedNodeMap(const Node* relatedNode, HashMap<TreeScope*, Node*>& relatedNodeMap)
@@ -222,8 +219,10 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
 
     TreeScope* lastTreeScope = 0;
     Node* adjustedNode = 0;
-    for (EventPath::const_iterator iter = eventPath.begin(); iter < eventPath.end(); ++iter) {
-        TreeScope* scope = &(*iter)->node()->treeScope();
+    size_t eventPathSize = eventPath.size();
+    for (size_t i = 0; i < eventPathSize; i++) {
+        EventContext& context = eventPath.contextAt(i);
+        TreeScope* scope = &context.node()->treeScope();
 
         // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
         if (scope != lastTreeScope)
@@ -234,13 +233,13 @@ void EventRetargeter::calculateAdjustedNodes(const Node* node, const Node* relat
         if (eventWithRelatedTargetDispatchBehavior == DoesNotStopAtBoundary)
             continue;
         if (targetIsIdenticalToToRelatedTarget) {
-            if (node->treeScope().rootNode() == (*iter)->node()) {
-                eventPath.shrink(iter + 1 - eventPath.begin());
+            if (node->treeScope().rootNode() == context.node()) {
+                eventPath.shrink(i + 1);
                 break;
             }
-        } else if ((*iter)->target() == adjustedNode) {
+        } else if (context.target() == adjustedNode) {
             // Event dispatching should be stopped here.
-            eventPath.shrink(iter - eventPath.begin());
+            eventPath.shrink(i);
             adjustedNodes.shrink(adjustedNodes.size() - 1);
             break;
         }

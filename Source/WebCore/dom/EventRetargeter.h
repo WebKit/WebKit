@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class EventPath;
 class EventTarget;
 class FocusEvent;
 class MouseEvent;
@@ -47,7 +48,6 @@ class TreeScope;
 
 class EventRetargeter {
 public:
-    static void calculateEventPath(Node&, Event&, EventPath&);
     static void adjustForMouseEvent(Node*, const MouseEvent&, EventPath&);
     static void adjustForFocusEvent(Node*, const FocusEvent&, EventPath&);
 #if ENABLE(TOUCH_EVENTS)

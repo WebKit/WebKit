@@ -1,3 +1,42 @@
+2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Turn EventPath into a real class
+        https://bugs.webkit.org/show_bug.cgi?id=122533
+
+        Reviewed by Antti Koivisto.
+
+        Turned EventPath into a real class and made EventRetargeter::calculateEventPath its constructor.
+        We can turn a lot of functions in EventRetargeter.cpp member functions of EventPath since many
+        of them manipulate EventPath in one way or another.
+
+        * dom/EventContext.h:
+        (WebCore::toMouseOrFocusEventContext):
+        (WebCore::toTouchEventContext):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::EventDispatcher):
+        (WebCore::EventDispatcher::dispatchEventAtCapturing):
+        (WebCore::EventDispatcher::dispatchEventAtTarget):
+        (WebCore::EventDispatcher::dispatchEventAtBubbling):
+        (WebCore::EventDispatcher::dispatchEventPostProcess):
+        (WebCore::EventDispatcher::topEventContext):
+        (WebCore::EventPath::hasEventListeners):
+        * dom/EventDispatcher.h:
+        (WebCore::EventPath::isEmpty):
+        (WebCore::EventPath::size):
+        (WebCore::EventPath::item):
+        (WebCore::EventPath::targetRespectingTargetRules):
+        (WebCore::EventPath::shrink):
+        (WebCore::EventPath::lastContextIfExists):
+        * dom/EventRetargeter.cpp:
+        (WebCore::EventPath::EventPath):
+        (WebCore::EventRetargeter::adjustForTouchEvent):
+        (WebCore::EventRetargeter::adjustForRelatedTarget):
+        (WebCore::EventRetargeter::calculateAdjustedNodes):
+        * dom/EventRetargeter.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::eventHasListeners):
+        * inspector/InspectorInstrumentation.h:
+
 2013-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Enabled all necessary files for Win64 build.

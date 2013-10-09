@@ -62,8 +62,6 @@ protected:
     RefPtr<EventTarget> m_target;
 };
 
-typedef Vector<OwnPtr<EventContext>, 32> EventPath;
-
 class MouseOrFocusEventContext : public EventContext {
 public:
     MouseOrFocusEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
@@ -76,6 +74,12 @@ public:
 private:
     RefPtr<EventTarget> m_relatedTarget;
 };
+
+inline MouseOrFocusEventContext& toMouseOrFocusEventContext(EventContext& eventContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(eventContext.isMouseOrFocusEventContext());
+    return static_cast<MouseOrFocusEventContext&>(eventContext);
+}
 
 
 #if ENABLE(TOUCH_EVENTS)
@@ -99,6 +103,12 @@ private:
     void checkReachability(TouchList*) const;
 #endif
 };
+
+inline TouchEventContext& toTouchEventContext(EventContext& eventContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(eventContext.isTouchEventContext());
+    return static_cast<TouchEventContext&>(eventContext);
+}
 
 inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
 {

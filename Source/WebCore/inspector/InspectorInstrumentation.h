@@ -57,6 +57,7 @@ class Database;
 class Document;
 class Element;
 class EventContext;
+class EventPath;
 class DocumentLoader;
 class DocumentStyleSheetCollection;
 class DeviceOrientationData;

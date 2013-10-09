@@ -52,6 +52,28 @@ enum EventDispatchContinuation {
     DoneDispatching
 };
 
+class EventPath {
+public:
+    EventPath(Node&, Event&);
+
+    bool isEmpty() const { return m_path.isEmpty(); }
+    size_t size() const { return m_path.size(); }
+    const EventContext& contextAt(size_t i) const { return *m_path[i]; }
+    EventContext& contextAt(size_t i) { return *m_path[i]; }
+    EventTarget* targetRespectingTargetRules() { return m_targetRespectingTargetRules.get(); }
+
+    bool hasEventListeners(const AtomicString& eventType) const;
+
+    // FIXME: We shouldn't expose this function.
+    void shrink(size_t newSize) { m_path.shrink(newSize); }
+
+    EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
+
+private:
+    Vector<std::unique_ptr<EventContext>, 32> m_path;
+    RefPtr<EventTarget> m_targetRespectingTargetRules;
+};
+
 class EventDispatcher {
 public:
     static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
