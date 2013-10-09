@@ -1,5 +1,11 @@
 2013-10-09  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed gardening. Many inspector protocol tests are timing out on the bots, unreproducible locally.
+
+        * platform/gtk/TestExpectations:
+
+2013-10-09  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed gardening. A couple of paste tests began timing out after
         http://trac.webkit.org/changeset/156678.
 

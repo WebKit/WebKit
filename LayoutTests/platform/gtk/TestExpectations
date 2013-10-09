@@ -811,6 +811,35 @@ webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
 
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
 
+webkit.org/b/122571 http/tests/inspector-protocol/access-inspected-object.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/call-frame-function-name.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-options-exception.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setPauseOnExceptions-all.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setPauseOnExceptions-none.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-host.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-autoContinue.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-actions.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-nonstrict.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-column.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setBreakpoint-condition.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/removeBreakpoint.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/setVariableValue.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/debugger/call-frame-this-strict.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/dom/setFileInputFiles.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/dom/request-child-nodes-depth.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/dom/focus.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/input/dispatchMouseEvent.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/input/dispatchKeyEvent.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/runtime/getProperties.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/page/javascriptDialogEvents.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/page/frameStartedLoading.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/page/frameScheduledNavigation.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/page/setEmulatedMedia.html [ Timeout Pass ]
+webkit.org/b/122571 inspector-protocol/css/getSupportedCSSProperties.html [ Timeout Pass ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
