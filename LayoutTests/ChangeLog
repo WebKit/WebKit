@@ -1,5 +1,12 @@
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed gardening. Make platform-specific expectation file apply only to gtk-wk1, since
+        gtk-wk2 gets the output right.
+
+        * platform/gtk-wk1/fast/loader/show-only-one-beforeunload-dialog-expected.txt: Renamed from LayoutTests/platform/gtk/fast/loader/show-only-one-beforeunload-dialog-expected.txt.
+
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed gardening. Update gtk-wk2-specific expectations for a couple of
         fast/dom/Window tests:
 
