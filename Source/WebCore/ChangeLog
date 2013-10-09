@@ -1,3 +1,22 @@
+2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Clip shape-outside to the bottom of the margin box
+        https://bugs.webkit.org/show_bug.cgi?id=122562
+
+        Reviewed by Alexandru Chiculita.
+
+        The spec says that a shape-outside shape must be clipped to the
+        margin box. This implements clipping the bottom of the shape to the
+        bottom of the margin box.
+
+        Test: csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000.html
+              csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html
+              csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002.html
+              csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelow):
+
 2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
 
         [CoordinatedGraphics] ASSERTION FAILED: !m_flushingLayers (after r156291)

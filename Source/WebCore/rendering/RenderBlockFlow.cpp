@@ -2030,14 +2030,16 @@ LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* floatingObject = it->get();
-        LayoutUnit floatBottom;
+        LayoutUnit floatBottom = floatingObject->logicalBottom(isHorizontalWritingMode());
 #if ENABLE(CSS_SHAPES)
         ShapeOutsideInfo* shapeOutside = floatingObject->renderer().shapeOutsideInfo();
-        if (offsetMode == ShapeOutsideFloatShapeOffset && shapeOutside)
-            floatBottom = floatingObject->logicalTop(isHorizontalWritingMode()) + marginBeforeForChild(&(floatingObject->renderer())) + shapeOutside->shapeLogicalBottom();
-        else
+        if (offsetMode == ShapeOutsideFloatShapeOffset && shapeOutside) {
+            LayoutUnit shapeBottom = floatingObject->logicalTop(isHorizontalWritingMode()) + marginBeforeForChild(&(floatingObject->renderer())) + shapeOutside->shapeLogicalBottom();
+            // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
+            if (shapeBottom < floatBottom)
+                floatBottom = shapeBottom;
+        }
 #endif
-            floatBottom = floatingObject->logicalBottom(isHorizontalWritingMode());
         if (floatBottom > logicalHeight)
             bottom = min(floatBottom, bottom);
     }

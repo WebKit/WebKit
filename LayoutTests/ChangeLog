@@ -1,3 +1,23 @@
+2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Clip shape-outside to the bottom of the margin box
+        https://bugs.webkit.org/show_bug.cgi?id=122562
+
+        Reviewed by Alexandru Chiculita.
+
+        Test that the shape is properly clipped to the bottom of the float.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+
 2013-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver double speaks all items in <li> nodes
