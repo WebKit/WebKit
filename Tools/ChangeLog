@@ -1,3 +1,20 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Improved WinLauncher.
+        https://bugs.webkit.org/show_bug.cgi?id=122536
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/PrintWebUIDelegate.cpp:
+        (PrintWebUIDelegate::runJavaScriptAlertPanelWithMessage): Added.
+        (PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessage): Added.
+        * WinLauncher/PrintWebUIDelegate.h: Removed stubs.
+        * WinLauncher/WinLauncher.cpp:
+        (createCrashReport): Use the executable name instead of "WinLauncher".
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.exe.manifest: Removed.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props: Link to Wininet.lib.
+        * win/DLLLauncher/DLLLauncherMain.cpp: Remove VS2005 dependency for WinCairo.
+
 2013-10-08  Mark Lam  <mark.lam@apple.com>
 
         Fix ruby LoadError when running run-javascriptcore-tests.

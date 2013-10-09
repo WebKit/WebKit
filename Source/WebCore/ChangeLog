@@ -1,3 +1,14 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Improved WinLauncher.
+        https://bugs.webkit.org/show_bug.cgi?id=122536
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::cookieJarPath):
+        Put cookies.dat into the AppData directory on Windows.
+
 2013-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the code erroneously in the previous commit.

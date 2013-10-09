@@ -38,6 +38,18 @@
 
 static const int MARGIN = 20;
 
+HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::runJavaScriptAlertPanelWithMessage(IWebView*, BSTR message)
+{
+    ::MessageBoxW(0, message, L"JavaScript Alert", MB_OK);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::runJavaScriptConfirmPanelWithMessage(IWebView*, BSTR message, BOOL* result)
+{
+    *result = ::MessageBoxW(0, message, L"JavaScript Confirm", MB_OKCANCEL) == IDOK;
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE PrintWebUIDelegate::createWebViewWithRequest(IWebView*, IWebURLRequest* request, IWebView**)
 {
     if (!request)

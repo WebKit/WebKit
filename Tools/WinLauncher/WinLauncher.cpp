@@ -418,7 +418,11 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
     if (FAILED(SHGetFolderPathW(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory)))
         return;
 
-    std::wstring directory = std::wstring(appDataDirectory) + L"\\WinLauncher";
+    wchar_t executablePath[MAX_PATH];
+    ::GetModuleFileNameW(0, executablePath, MAX_PATH);
+    ::PathRemoveExtensionW(executablePath);
+
+    std::wstring directory = std::wstring(appDataDirectory) + L"\\" + PathFindFileNameW(executablePath);
     if (::SHCreateDirectoryEx(0, directory.c_str(), 0) != ERROR_SUCCESS
         && ::GetLastError() != ERROR_FILE_EXISTS
         && ::GetLastError() != ERROR_ALREADY_EXISTS)
