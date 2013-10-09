@@ -297,6 +297,8 @@ Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failu
 # Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
 
+Bug(GTK) fast/dom/Window/window-postmessage-clone.html [ Timeout ]
+
 Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Timeout ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
 
@@ -380,6 +382,9 @@ webkit.org/b/97655 fast/css/style-scoped [ Failure ]
 webkit.org/b/97655 fast/regions/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
 webkit.org/b/97655 fast/regions/style-scoped-in-flow-override-region-styling.html [ ImageOnlyFailure ]
 webkit.org/b/97655 fast/regions/style-scoped-in-flow.html [ ImageOnlyFailure ]
+
+# Apparently our WebkitTestRunner is disregarding window features? We open the window sized 800x600.
+webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
 
 # Unexplained failures
 Bug(GTK) editing/deleting/delete-ligature-003.html [ Failure ]

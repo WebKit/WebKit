@@ -1,5 +1,15 @@
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed gardening. Update gtk-wk2-specific expectations for a couple of
+        fast/dom/Window tests:
+
+          - fast/dom/Window/window-postmessage-clone.html (times out)
+          - fast/dom/Window/open-window-min-size.html (fails)
+
+        * platform/gtk-wk2/TestExpectations:
+
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
         Upgrade accessibility/title-ui-element-correctness.html from crash (wk2-specific)
         to fail (gtk-wide) expectation.
 
