@@ -1,3 +1,9 @@
+2013-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update GObject DOM symbols file after r157163.
+
+        * bindings/gobject/webkitdom.symbols:
+
 2013-10-08  Anders Carlsson  <andersca@apple.com>
 
         Remove RunLoopMac.mm
