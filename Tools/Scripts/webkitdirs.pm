@@ -1433,7 +1433,7 @@ sub checkRequiredSystemConfig
             print "most likely fail. The latest Xcode is available from the App Store.\n";
             print "*************************************************************\n";
         }
-    } elsif (isGtk() or isEfl()) {
+    } elsif (isGtk() or isEfl() or isWindows()) {
         my @cmds = qw(bison gperf flex);
         my @missing = ();
         my $oldPath = $ENV{PATH};
@@ -1477,12 +1477,15 @@ sub windowsOutputDir()
     return windowsSourceDir() . "\\WebKitBuild";
 }
 
+sub fontExists($)
+{
+    my $font = shift;
+    my $val = system qw(regtool get), '\\HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\\' . $font . ' (TrueType)';
+    return 0 == $val;
+}
+
 sub checkInstalledTools()
 {
-    # Make sure gperf is installed.
-    my $gperfVer = `gperf --version`;
-    die "You must have gperf installed to build WebKit.\n" if ($?);
-
     # SVN 1.7.10 is known to be compatible with current servers. SVN 1.8.x seems to be missing some authentication
     # protocols we use for svn.webkit.org:
     my $svnVersion = `svn --version | grep "\\sversion"`;
@@ -1496,6 +1499,23 @@ sub checkInstalledTools()
     my $pythonVer = `python --version 2>&1`;
     die "You must have Python installed to build WebKit.\n" if ($?);
     die "Python 2.7.3 is not compatible with the WebKit build. Please downgrade to Python 2.6.8.\n" if ($pythonVer =~ /2\.7\.3/);
+
+    # MathML requires fonts that do not ship with Windows (at least through Windows 8). Warn the user if they are missing
+    my @fonts = qw(STIXGeneral-Regular MathJax_Main-Regular);
+    my @missing = ();
+    foreach my $font (@fonts) {
+        push @missing, $font if not fontExists($font);
+    }
+
+    if (scalar @missing > 0) {
+        print "*************************************************************\n";
+        print "Mathematical fonts, such as STIX and MathJax, are needed to\n";
+        print "use the MathML feature.  You do not appear to have these fonts\n";
+        print "on your system.\n\n";
+        print "You can download a suitable set of fonts from the following URL:\n";
+        print "https://developer.mozilla.org/Mozilla/MathML_Projects/Fonts\n";
+        print "*************************************************************\n";
+    }
 
     print "Installed tools are correct for the WebKit build.\n";
 }
