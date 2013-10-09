@@ -1,3 +1,12 @@
+2013-10-09  Frédéric Wang  <fred.wang@free.fr>
+
+        Add Frédéric Wang's blog to the planet
+        https://bugs.webkit.org/show_bug.cgi?id=122541
+
+        Reviewed by Martin Robinson.
+
+        * config.ini: Add my blog to the planet.
+
 2013-06-12  Brent Fulgham  <bfulgham@apple.com>
 
         Correct URL *again* for webkit.org RSS feed.
