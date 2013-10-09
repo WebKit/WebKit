@@ -1,3 +1,18 @@
+2013-10-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver double speaks all items in <li> nodes
+        https://bugs.webkit.org/show_bug.cgi?id=122564
+
+        Reviewed by Brent Fulgham.
+
+        Make a mac specific expectation for listitem-title on Mac.
+        Make a more directed test for Mac regarding listitem labeling.
+
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/listitem-title-expected.txt: Added.
+        * platform/mac/accessibility/native-list-item-should-not-expose-label-expected.txt: Added.
+        * platform/mac/accessibility/native-list-item-should-not-expose-label.html: Added.
+
 2013-10-09  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. Many inspector protocol tests are timing out on the bots, unreproducible locally.

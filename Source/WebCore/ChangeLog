@@ -1,3 +1,15 @@
+2013-10-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver double speaks all items in <li> nodes
+        https://bugs.webkit.org/show_bug.cgi?id=122564
+
+        Reviewed by Brent Fulgham.
+
+        Test: platform/mac/accessibility/native-list-item-should-not-expose-label.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::visibleText):
+
 2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
 
         CoordinatedGraphics: Fix integer rounding when computing pixel alignment
