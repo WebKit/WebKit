@@ -1,3 +1,13 @@
+2013-10-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Implement new API in AtkText: atk_text_get_string_at_offset()
+        https://bugs.webkit.org/show_bug.cgi?id=120638
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/jhbuild.modules: Raised ATK and AT-SPI versions to 2.10.0, so we
+        can check both the old and new APIs to retrieve text at a given offset.
+
 2013-10-08  Alex Christensen  <achristensen@webkit.org>
 
         Improved WinLauncher.

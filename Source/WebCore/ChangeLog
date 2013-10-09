@@ -1,3 +1,19 @@
+2013-10-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Implement new API in AtkText: atk_text_get_string_at_offset()
+        https://bugs.webkit.org/show_bug.cgi?id=120638
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Implemented new atk_text_get_string_at_offset() API, introduced in
+        ATK 2.9.4 to simplify how text at a given offset is retrieved.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetStringAtOffset): New function implementing
+        the new API, which basically translates calls to the new API to
+        calls to the old API using 'at' positions and START boundaries.
+        (webkitAccessibleTextInterfaceInit): Hook the new function.
+
 2013-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] mouse wheel events are not considered to be mouse events

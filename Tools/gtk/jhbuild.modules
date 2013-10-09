@@ -231,16 +231,16 @@
   <autotools id="atk"
              autogen-sh="configure"
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/atk/2.8/atk-2.8.0.tar.xz" version="2.8.0"
+    <branch module="pub/GNOME/sources/atk/2.10/atk-2.10.0.tar.xz" version="2.10.0"
             repo="ftp.gnome.org"
-            hash="sha256:b22519176226f3e07cf6d932b77852e6b6be4780977770704b32d0f4e0686df4"/>
+            hash="sha256:636917a5036bc851d8491194645d284798ec118919a828be5e713b6ecc5b50b0"/>
   </autotools>
 
   <autotools id="at-spi2-core" 
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.8/at-spi2-core-2.8.0.tar.xz" version="2.8.0"
+    <branch module="pub/GNOME/sources/at-spi2-core/2.10/at-spi2-core-2.10.0.tar.xz" version="2.10.0"
             repo="ftp.gnome.org"
-            hash="sha256:1861a30fc7f583d5a567a0ba547db67ce9bd294f0d1c9f7403c96a10a481c458">
+            hash="sha256:964155c7574220a00e11e1c0d91f2d3017ed603920eb1333ff9cbdb6a22744db">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -248,10 +248,9 @@
   </autotools>
 
   <autotools id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.8/at-spi2-atk-2.8.0.tar.xz" version="2.8.0"
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.10/at-spi2-atk-2.10.0.tar.xz" version="2.10.0"
             repo="ftp.gnome.org"
-            hash="sha256:4688acbc1474cda0aa49341f109ad0726603ce3e872cc6521c74931338c7ba20">
-      <patch file="at-spi2-atk-2.8.0-null-check-after-cleanup.patch" strip="1"/>
+            hash="sha256:dea7ff2f9bc9bbdb0351112616d738de718b55739cd2511afecac51604c31a94">
     </branch>
     <dependencies>
       <dep package="glib"/>

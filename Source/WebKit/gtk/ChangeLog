@@ -1,3 +1,29 @@
+2013-10-09  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Implement new API in AtkText: atk_text_get_string_at_offset()
+        https://bugs.webkit.org/show_bug.cgi?id=120638
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update ATK unit test to check the new API as well if the version
+        of ATK is new enough.
+
+        * tests/testatk.c:
+        (testGetStringFunction): New helper function, to check the new API.
+        (runGetStringTests): Ditto.
+        (testWebkitAtkGetStringAtOffset): New unit test, similar to the
+        one already present to check the old API but focused in the new one.
+        (testWebkitAtkGetStringAtOffsetNewlines): Ditto.
+        (testWebkitAtkGetStringAtOffsetTextarea): Ditto.
+        (testWebkitAtkGetStringAtOffsetTextInput): Ditto.
+        (testWebkitAtkGetStringAtOffsetWithPreformattedText): Ditto.
+        (testWebkitAtkGetStringAtOffsetWithSpecialCharacters): Ditto.
+        (testWebkitAtkGetStringAtOffsetWithWrappedLines): Ditto.
+        (testWebkitAtkGetStringAtOffsetWithEmbeddedObjects): Ditto.
+        (testWebkitAtkGetExtents): Add checks for the new API, if possible.
+        (testWebkitAtkLinksWithInlineImages): Ditto.
+        (main): Add the new unit tests to check the new API, if possible.
+
 2013-10-07  Sam Weinig  <sam@webkit.org>
 
         Consolidate findString functions
