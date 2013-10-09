@@ -1,3 +1,14 @@
+2013-10-09  Julien Brianceau  <jbriance@cisco.com>
+
+        [arm] Inverted src and dest FP registers in DFG speculative JIT when using hardfp.
+        https://bugs.webkit.org/show_bug.cgi?id=122555
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+
 2013-10-08  Michael Saboff  <msaboff@apple.com>
 
         Transition call and construct JITStubs to CCallHelper functions
