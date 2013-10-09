@@ -979,6 +979,9 @@ webkit.org/b/40601 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
 
+webkit.org/b/122121 editing/spelling/spellcheck-paste.html [ Timeout ]
+webkit.org/b/122121 editing/spelling/spelling-changed-text.html [ Timeout ]
+
 # Tests that fail across all platforms.
 # Even though some platforms don't skip these tests, there are platform-specific
 # results generated that make these tests 'pass'.
