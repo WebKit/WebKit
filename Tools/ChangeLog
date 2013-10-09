@@ -1,3 +1,14 @@
+2013-10-09  Timothy Hatcher  <timothy@apple.com>
+
+        Attempt to fix faulty Dashboard iteration updating by always rebuilding test result objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=122515
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.update):
+
 2013-10-09  Alexey Proskuryakov  <ap@apple.com>
 
         http://build.webkit.org/dashboard/ links to a wrong jscore-test results page
