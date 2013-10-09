@@ -1,3 +1,15 @@
+2013-10-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Move some functions from WebKitBuildbot to Buildbot class.
+
+        Suggested by Tim Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.javascriptTestResultsURLForIteration):
+        (Buildbot.prototype.apiTestResultsURLForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.layoutTestResultsURLForIteration):
+
 2013-10-09  Timothy Hatcher  <timothy@apple.com>
 
         Add API tests to the Dashbord page.
