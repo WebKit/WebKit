@@ -4691,7 +4691,6 @@
 		BC06EE040BFD71AA00856E9D /* JSHTMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */; };
 		BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */; };
 		BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC073BA90C399B1F000F5979 /* FloatConversion.h */; };
-		BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0B358214C4F9540055E22A /* RunLoopMac.mm */; };
 		BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B358514C4F9830055E22A /* RunLoop.cpp */; };
 		BC0B358814C4F9830055E22A /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B358614C4F9830055E22A /* RunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */; };
@@ -11554,7 +11553,6 @@
 		BC06F24C06D18A7E004A6FA3 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC06F24D06D18A7E004A6FA3 /* XSLTProcessorLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTProcessorLibxslt.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC073BA90C399B1F000F5979 /* FloatConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatConversion.h; sourceTree = "<group>"; };
-		BC0B358214C4F9540055E22A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
 		BC0B358514C4F9830055E22A /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		BC0B358614C4F9830055E22A /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
@@ -15162,7 +15160,6 @@
 				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
 				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
-				BC0B358214C4F9540055E22A /* RunLoopMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
@@ -27022,7 +27019,6 @@
 				078E090217D14CEE00420AA1 /* MediaStreamTrack.cpp in Sources */,
 				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 				29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */,
-				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,
 				7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,

@@ -63,7 +63,6 @@ void RunLoop::wakeUp()
     CFRunLoopWakeUp(m_runLoop.get());
 }
 
-#if !PLATFORM(MAC) || PLATFORM(IOS)
 void RunLoop::run()
 {
     current()->m_nestingLevel++;
@@ -81,7 +80,6 @@ void RunLoop::stop()
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
     CFRunLoopStop(m_runLoop.get());
 }
-#endif
 
 // RunLoop::Timer
 

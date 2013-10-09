@@ -31,12 +31,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC)
-void RunLoop::setUseApplicationRunLoopOnMainRunLoop()
-{
-}
-#endif
-
 static RunLoop* s_mainRunLoop;
 
 // Helper class for ThreadSpecificData.

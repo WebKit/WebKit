@@ -1,3 +1,21 @@
+2013-10-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove RunLoopMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=122527
+
+        Reviewed by Antti Koivisto.
+
+        RunLoop::setUseApplicationRunLoopOnMainRunLoop() is no longer used, so we can just use the run() and stop()
+        implementations from RunLoopCF.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/RunLoop.cpp:
+        * platform/RunLoop.h:
+        * platform/cf/RunLoopCF.cpp:
+        (WebCore::RunLoop::stop):
+        * platform/mac/RunLoopMac.mm: Removed.
+
 2013-10-09  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Implement new API in AtkText: atk_text_get_string_at_offset()
