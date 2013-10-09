@@ -1,3 +1,13 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed compile errors while compiling without the JIT enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=122530
+
+        Reviewed by Brent Fulgham.
+
+        * jit/JITOperations.cpp:
+        Protected with #if ENABLE(JIT) like the rest of the JIT source.
+
 2013-10-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSManagedValue should be able to store non-object JSValues

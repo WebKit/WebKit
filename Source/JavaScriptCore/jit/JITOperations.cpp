@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if ENABLE(JIT)
 #include "JITOperations.h"
 
 #include "CommonSlowPaths.h"
@@ -758,3 +759,4 @@ extern "C" {
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)

@@ -1,3 +1,14 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Generate pdb files for debugging ANGLE DLLs.
+        https://bugs.webkit.org/show_bug.cgi?id=122530
+
+        Reviewed by Brent Fulgham.
+
+        * ANGLE.vcxproj/libEGLCommon.props:
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        Generate debug information.
+
 2013-10-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/15116673> [mac] Build failure when the source directory is not named ANGLE

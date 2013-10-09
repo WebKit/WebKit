@@ -1,3 +1,13 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fixed Win64 linking.
+        https://bugs.webkit.org/show_bug.cgi?id=122530
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added 64-bit linker symbols.
+
 2013-10-06  Andreas Kling  <akling@apple.com>
 
         No? Okay, let's try that again..

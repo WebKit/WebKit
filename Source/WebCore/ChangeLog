@@ -1,3 +1,14 @@
+2013-10-08  Alex Christensen  <achristensen@webkit.org>
+
+        Enabled all necessary files for Win64 build.
+        https://bugs.webkit.org/show_bug.cgi?id=122530
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Enabled MediaPlayerPrivateFullscreenWindow and
+        RenderLayerModelObject to be built in Win64 build.
+
 2013-10-07  Sam Weinig  <sam@webkit.org>
 
         Consolidate findString functions
