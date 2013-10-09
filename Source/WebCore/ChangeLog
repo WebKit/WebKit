@@ -1,3 +1,15 @@
+2013-10-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver does not speak aria-expanded state on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=122540
+
+        Expose aria-pressed state for iOS.
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityIsExpanded]):
+
 2013-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GObject DOM symbols file after r157163.
