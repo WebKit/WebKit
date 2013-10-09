@@ -1,5 +1,12 @@
 2013-10-09  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed gardening. Add timeout as expected result for fast/history/go-back-to-iframe-with-plugin.html,
+        since it times out sometimes.
+
+        * platform/gtk/TestExpectations:
+
+2013-10-09  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed gardening. Add timeout as expected result for mathml/very-large-stretchy-operators.html,
         since it times out on the bots.
 
