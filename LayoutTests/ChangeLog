@@ -1,5 +1,13 @@
 2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed gardening. Move http/tests/loading/307-after-303-after-post.html failure
+        expectation to the global gtk expectations file, since it's also true for gtk-wk2.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-10-08  Gustavo Noronha Silva  <gns@gnome.org>
+
         Unreviewed gardening. The 64 bits release bot has been made to use 8 bpp depth, so
         fast/dom/Window/window-screen-properties.html won't pass there.
 
