@@ -73,6 +73,6 @@ WebKitBuildbot.prototype = {
 
     javascriptTestResultsURLForIteration: function(iteration)
     {
-        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/jscore-test/logs/actual.html";
+        return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id + "/steps/jscore-test/logs/stdio";
     }
 };

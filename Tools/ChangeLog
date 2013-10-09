@@ -1,3 +1,14 @@
+2013-10-09  Alexey Proskuryakov  <ap@apple.com>
+
+        http://build.webkit.org/dashboard/ links to a wrong jscore-test results page
+        https://bugs.webkit.org/show_bug.cgi?id=122569
+
+        Reviewed by Tim Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.javascriptTestResultsURLForIteration): "actual.html" used
+        to be produced by the old Mozilla test harness that we don't use any more.
+
 2013-10-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         Add GTK 64 bits release to the buildbot dashboard
