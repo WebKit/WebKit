@@ -135,3 +135,8 @@ table.queue-grid tr.platform.windows-7 img.logo {
 table.queue-grid tr.platform.windows-xp img.logo {
     content: -webkit-image-set(url(../Images/WindowsXP@2x.png) 2x, url(../Images/WindowsXP.png) 1x);
 }
+
+table.queue-grid tr.platform.linux-gtk img.logo {
+    content: -webkit-image-set(url(../Images/GTK.png) 1x);
+}
+
