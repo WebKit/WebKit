@@ -37,7 +37,6 @@ struct CallbackData {
     JSContext *context;
     JSValue *preservedException;
     JSValueRef thisValue;
-    JSValue *currentThis;
     size_t argumentCount;
     const JSValueRef *arguments;
     NSArray *currentArguments;

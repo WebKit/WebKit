@@ -1,3 +1,20 @@
+2013-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CallbackData unnecessarily caches the JSValue for currentThis
+        https://bugs.webkit.org/show_bug.cgi?id=122616
+
+        Reviewed by Oliver Hunt.
+
+        CallbackData implements its own version of caching the JSValue* for the JSValueRef it stores. 
+        +[JSValue valueWithJSValueRef:inContext:] already does caching, thus obviating the need for 
+        CallbackData to do its own caching.
+
+        * API/JSContext.mm:
+        (+[JSContext currentThis]):
+        (-[JSContext beginCallbackWithData:thisValue:argumentCount:arguments:]):
+        (-[JSContext endCallbackWithData:]):
+        * API/JSContextInternal.h:
+
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out r157193. It broke some builds.

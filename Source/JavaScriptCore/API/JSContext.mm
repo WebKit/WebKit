@@ -136,11 +136,7 @@
 {
     WTFThreadData& threadData = wtfThreadData();
     CallbackData *entry = (CallbackData *)threadData.m_apiData;
-
-    if (!entry->currentThis)
-        entry->currentThis = [[JSValue alloc] initWithValue:entry->thisValue inContext:[JSContext currentContext]];
-
-    return entry->currentThis;
+    return [JSValue valueWithJSValueRef:entry->thisValue inContext:[JSContext currentContext]];
 }
 
 + (NSArray *)currentArguments
@@ -226,7 +222,7 @@
     WTFThreadData& threadData = wtfThreadData();
     [self retain];
     CallbackData *prevStack = (CallbackData *)threadData.m_apiData;
-    *callbackData = (CallbackData){ prevStack, self, [self.exception retain], thisValue, nil, argumentCount, arguments, nil };
+    *callbackData = (CallbackData){ prevStack, self, [self.exception retain], thisValue, argumentCount, arguments, nil };
     threadData.m_apiData = callbackData;
     self.exception = nil;
 }
@@ -236,7 +232,6 @@
     WTFThreadData& threadData = wtfThreadData();
     self.exception = callbackData->preservedException;
     [callbackData->preservedException release];
-    [callbackData->currentThis release];
     [callbackData->currentArguments release];
     threadData.m_apiData = callbackData->next;
     [self release];
