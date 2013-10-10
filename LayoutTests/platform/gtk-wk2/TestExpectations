@@ -120,7 +120,7 @@ Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 
 # Implement testRunner.setAsynchronousSpellCheckingEnabled
 # http://webkit.org/b/81042
-webkit.org/b/81042 editing/spelling/spellcheck-paste.html [ Failure ]
+webkit.org/b/81042 editing/spelling/spellcheck-paste.html [ Timeout Failure ]
 webkit.org/b/81042 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
 
 # Implement testRunner.numberOfPendingGeolocationPermissionRequests()
