@@ -1,3 +1,15 @@
+2013-10-10  Andy Estes  <aestes@apple.com>
+
+        Add SPI for telling WebKit to prefer pictograph glyphs over monochrome ones
+        https://bugs.webkit.org/show_bug.cgi?id=122608
+
+        Reviewed by Dan Bernstein.
+
+        Based on patches by Dan Bernstein.
+
+        * fonts/font-fallback-prefers-pictographs-expected.html: Added.
+        * fonts/font-fallback-prefers-pictographs.html: Added.
+
 2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. Add timeout annotation to gtk-wk2-specific expectation for

@@ -3154,6 +3154,12 @@ static Vector<String> toStringVector(NSArray* patterns)
     return _private->sourceApplicationAuditData.get();
 }
 
+- (void)_setFontFallbackPrefersPictographs:(BOOL)flag
+{
+    if (_private->page)
+        _private->page->settings().setFontFallbackPrefersPictographs(flag);
+}
+
 @end
 
 @implementation _WebSafeForwarder

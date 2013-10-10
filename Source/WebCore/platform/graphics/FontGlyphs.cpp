@@ -99,8 +99,20 @@ const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description
     // Make sure we're not passing in some crazy value here.
     ASSERT(realizedFontIndex == m_realizedFontData.size());
 
-    if (m_familyIndex == cAllFamiliesScanned)
-        return 0;
+    if (m_familyIndex <= cAllFamiliesScanned) {
+        if (!m_fontSelector)
+            return 0;
+
+        size_t index = cAllFamiliesScanned - m_familyIndex;
+        if (index == m_fontSelector->fallbackFontDataCount())
+            return 0;
+
+        m_familyIndex--;
+        RefPtr<FontData> fallback = m_fontSelector->getFallbackFontData(description, index);
+        if (fallback)
+            m_realizedFontData.append(fallback);
+        return fallback.get();
+    }
 
     // Ask the font cache for the font data.
     // We are obtaining this font for the first time. We keep track of the families we've looked at before

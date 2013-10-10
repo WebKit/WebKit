@@ -632,4 +632,29 @@ bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) cons
     return false;
 }
 
+size_t CSSFontSelector::fallbackFontDataCount()
+{
+    if (!m_document)
+        return 0;
+
+    if (Settings* settings = m_document->settings())
+        return settings->fontFallbackPrefersPictographs() ? 1 : 0;
+
+    return 0;
+}
+
+PassRefPtr<FontData> CSSFontSelector::getFallbackFontData(const FontDescription& fontDescription, size_t index)
+{
+    ASSERT_UNUSED(index, !index);
+
+    if (!m_document)
+        return 0;
+
+    Settings* settings = m_document->settings();
+    if (!settings || !settings->fontFallbackPrefersPictographs())
+        return 0;
+
+    return fontCache()->getCachedFontData(fontDescription, settings->pictographFontFamily());
+}
+
 }

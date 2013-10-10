@@ -39,7 +39,12 @@ class FontSelectorClient;
 class FontSelector : public RefCounted<FontSelector> {
 public:
     virtual ~FontSelector() { }
+
+    // FIXME: Remove the "get" prefix from these two member functions
     virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString& familyName) = 0;
+    virtual PassRefPtr<FontData> getFallbackFontData(const FontDescription&, size_t) = 0;
+
+    virtual size_t fallbackFontDataCount() = 0;
     virtual bool resolvesFamilyFor(const FontDescription&) const = 0;
 
     virtual void fontCacheInvalidated() { }

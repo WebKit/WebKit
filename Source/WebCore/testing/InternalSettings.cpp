@@ -522,4 +522,10 @@ void InternalSettings::setAutoscrollForDragAndDropEnabled(bool enabled, Exceptio
     settings()->setAutoscrollForDragAndDropEnabled(enabled);
 }
 
+void InternalSettings::setFontFallbackPrefersPictographs(bool preferPictographs, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setFontFallbackPrefersPictographs(preferPictographs);
+}
+
 }

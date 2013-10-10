@@ -261,6 +261,9 @@ public:
     void setHiddenPageCSSAnimationSuspensionEnabled(bool);
 #endif
 
+    void setFontFallbackPrefersPictographs(bool);
+    bool fontFallbackPrefersPictographs() const { return m_fontFallbackPrefersPictographs; }
+
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
@@ -323,6 +326,8 @@ private:
 #if ENABLE(PAGE_VISIBILITY_API)
     bool m_hiddenPageCSSAnimationSuspensionEnabled : 1;
 #endif
+    bool m_fontFallbackPrefersPictographs : 1;
+
     static double gDefaultMinDOMTimerInterval;
     static double gDefaultDOMTimerAlignmentInterval;
 

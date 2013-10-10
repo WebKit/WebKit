@@ -649,6 +649,8 @@ Could be worth adding to the API.
 
 @property (nonatomic, copy, getter=_sourceApplicationAuditData, setter=_setSourceApplicationAuditData:) NSData *sourceApplicationAuditData;
 
+- (void)_setFontFallbackPrefersPictographs:(BOOL)flag;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

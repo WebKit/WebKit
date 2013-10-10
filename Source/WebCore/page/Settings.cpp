@@ -182,6 +182,7 @@ Settings::Settings(Page* page)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
 #endif
+    , m_fontFallbackPrefersPictographs(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -640,6 +641,15 @@ void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
     m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 #endif
+
+void Settings::setFontFallbackPrefersPictographs(bool preferPictographs)
+{
+    if (m_fontFallbackPrefersPictographs == preferPictographs)
+        return;
+
+    m_fontFallbackPrefersPictographs = preferPictographs;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
 
 void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
 {

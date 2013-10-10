@@ -1,3 +1,48 @@
+2013-10-10  Andy Estes  <aestes@apple.com>
+
+        Add SPI for telling WebKit to prefer pictograph glyphs over monochrome ones
+        https://bugs.webkit.org/show_bug.cgi?id=122608
+
+        Reviewed by Dan Bernstein.
+
+        Based on patches by Dan Bernstein.
+
+        Test: fonts/font-fallback-prefers-pictographs.html
+
+        Created a mechanism to append a font to the end of a font's fallback
+        list, before the system fallback list. This mechanism is used when
+        Settings::fontFallbackPrefersPictographs() is true to insert a
+        pictograph font ahead of a monochrome one from the system fallback list.
+
+        * WebCore.exp.in: Moved
+        __ZN7WebCore8Settings33setFontFallbackPrefersPictographsEb outside of
+        an iOS platform guard.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fallbackFontDataCount): Retuned 1 if
+        pictograph fonts are preferred.
+        (WebCore::CSSFontSelector::getFallbackFontData): Returned the
+        pictograph font's FontData if it is preferred.
+        * css/CSSFontSelector.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialized
+        m_fontFallbackPrefersPictographs to false.
+        (WebCore::Settings::setFontFallbackPrefersPictographs): Set
+        m_fontFallbackPrefersPictographs and called
+        Page::setNeedsRecalcStyleInAllFrames().
+        * page/Settings.h:
+        (WebCore::Settings::fontFallbackPrefersPictographs):
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::realizeFontDataAt): Realized the selector's
+        fallback font if necessary.
+        * platform/graphics/FontSelector.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree): Removed iOS platform guards.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setFontFallbackPrefersPictographs): Set the
+        corresponding WebCore::Setting.
+        * testing/InternalSettings.h: Defined an internal setting for the test.
+        * testing/InternalSettings.idl: Ditto.
+
 2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Remove unused attribute in CoordinatedTile class

@@ -135,6 +135,7 @@ public:
     void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
     void setUseLegacyBackgroundSizeShorthandBehavior(bool enabled, ExceptionCode&);
     void setAutoscrollForDragAndDropEnabled(bool enabled, ExceptionCode&);
+    void setFontFallbackPrefersPictographs(bool preferPictographs, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);

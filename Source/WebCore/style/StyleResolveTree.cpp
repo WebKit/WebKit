@@ -27,6 +27,7 @@
 #include "StyleResolveTree.h"
 
 #include "AXObjectCache.h"
+#include "CSSFontSelector.h"
 #include "Element.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -791,7 +792,6 @@ void resolveTree(Document& document, Change change)
     if (resolveRootStyle) {
         RefPtr<RenderStyle> documentStyle = resolveForDocument(document);
 
-#if PLATFORM(IOS)
         // Inserting the pictograph font at the end of the font fallback list is done by the
         // font selector, so set a font selector if needed.
         if (Settings* settings = document.settings()) {
@@ -799,7 +799,6 @@ void resolveTree(Document& document, Change change)
             if (settings->fontFallbackPrefersPictographs() && styleResolver)
                 documentStyle->font().update(styleResolver->fontSelector());
         }
-#endif
 
         Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style(), document.settings());
         if (documentChange != NoChange)
