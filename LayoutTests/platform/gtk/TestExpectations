@@ -492,8 +492,6 @@ webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-cras
 
 webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash ]
 
-webkit.org/b/118421 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Crash ]
-
 webkit.org/b/118422 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-cached.html [ Crash Pass ]
 
 webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
@@ -1264,8 +1262,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure ]
 
-webkit.org/b/107257 [ Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
-
 # Test fails on JSC platforms due to GC timing issues
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
@@ -1399,8 +1395,6 @@ Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
 # MathML tests failing after MathML pixel tests were replaced with ref tests
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
 
-webkit.org/b/119730 fast/dom/Window/open-zero-size-as-default.html [ Failure ]
-
 webkit.org/b/119840 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
@@ -1419,14 +1413,6 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailu
 webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
 
 webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
-
-webkit.org/b/120776 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-fraction.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-fraction-1.5x.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-correct-src.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
-webkit.org/b/120776 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 

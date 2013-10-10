@@ -68,6 +68,17 @@
 
         Unreviewed gardening.
 
+        Move the tests that only fail in wk1 to their file, and unskip the
+        ones that are passing in all cases.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-10-10  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed gardening.
+
         dom/xhtml/level2/html/HTMLInputElement20.xhtml no longer crashes.
 
         * platform/gtk/TestExpectations:

@@ -62,8 +62,6 @@ inspector/console/console-long-eval-crash.html [ WontFix Timeout ]
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
 
-Bug(GTK) fast/loader/subframe-removes-itself.html [ Failure ]
-
 # Missing support in DRT for Geolocation's Coordinate attributes.
 Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
@@ -105,6 +103,8 @@ webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Crash ]
 
 webkit.org/b/117688 http/tests/security/video-poster-cross-origin-crash.html [ Crash Pass ]
+
+webkit.org/b/118421 [ Debug ] fast/repaint/fixed-right-bottom-in-page-scale.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -218,6 +218,8 @@ Bug(GTK) plugins/form-value.html [ Failure ]
 
 webkit.org/b/116807 fast/dom/Window/window-focus-self.html [ Failure ]
 
+webkit.org/b/119730 fast/dom/Window/open-zero-size-as-default.html [ Failure ]
+
 webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 
 webkit.org/b/113747 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
@@ -229,6 +231,14 @@ webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failur
 webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
 
 webkit.org/b/114625 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+
+webkit.org/b/120776 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-fraction.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-fraction-1.5x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-correct-src.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 
 # Needed to cover the fix for <rdar://problem/6727495>
 Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
