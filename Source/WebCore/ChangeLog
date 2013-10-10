@@ -1,3 +1,17 @@
+2013-10-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::accessibleNameForNode when visiting Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=122572
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test: accessibility/aria-labeled-with-hidden-node.html
+
+        Handle the case where aria-labelledby references a non-rendered node.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::accessibleNameForNode):
+
 2013-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r157210): Crashes in WebCore::ScopedEventQueue::dispatchEvent for platforms using GCC

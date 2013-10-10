@@ -1803,7 +1803,15 @@ static String accessibleNameForNode(Node* node)
     if (isHTMLInputElement(node))
         return toHTMLInputElement(node)->value();
     
-    String text = node->document().axObjectCache()->getOrCreate(node)->textUnderElement();
+    // If the node can be turned into an AX object, we can use standard name computation rules.
+    // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
+    AccessibilityObject* axObject = node->document().axObjectCache()->getOrCreate(node);
+    String text;
+    if (axObject)
+        text = axObject->textUnderElement();
+    else if (node->isElementNode())
+        text = toElement(node)->innerText();
+    
     if (!text.isEmpty())
         return text;
     

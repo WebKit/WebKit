@@ -1,3 +1,13 @@
+2013-10-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::accessibleNameForNode when visiting Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=122572
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/aria-labeled-with-hidden-node-expected.txt: Added.
+        * accessibility/aria-labeled-with-hidden-node.html: Added.
+
 2013-10-10  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed gardening.
