@@ -533,7 +533,7 @@ enum FeatureToAnimate {
     // If we are fading the scrollbar away, that is a good indication that we are no longer going to
     // be moving it around on the scrolling thread. Calling [scrollerPainter setUsePresentationValue:NO]
     // will pass that information on to the ScrollbarPainter API.
-    if (newKnobAlpha == 0)
+    if (newKnobAlpha == 0 && _scrollbar->supportsUpdateOnSecondaryThread())
         [scrollerPainter setUsePresentationValue:NO];
 
     [self setUpAlphaAnimation:_knobAlphaAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
