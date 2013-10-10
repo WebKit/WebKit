@@ -121,6 +121,7 @@ protected:
     virtual int visibleWidth() const OVERRIDE;
     virtual WebCore::IntSize contentsSize() const OVERRIDE;
     virtual WebCore::IntRect scrollableAreaBoundingBox() const OVERRIDE;
+    virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE { return true; }
 
     // FIXME: We should provide a way to set this value.
     virtual bool isActive() const { return true; }
