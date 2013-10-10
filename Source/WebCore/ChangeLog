@@ -1,5 +1,12 @@
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix after r157204.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatch):
+
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r157204.
 
         * dom/EventDispatcher.cpp:
