@@ -23,7 +23,6 @@
     JSCustomMarkFunction,
     JSCustomPushEventHandlerScope,
     CustomIsReachable,
-    JSCustomFinalize,
     CustomToJSObject,
     EventTarget,
     JSGenerateToNativeObject,

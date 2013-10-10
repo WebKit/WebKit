@@ -1,5 +1,15 @@
 2013-10-10  Andreas Kling  <akling@apple.com>
 
+        Remove custom finalizer for Node JS wrappers.
+        <https://webkit.org/b/122603>
+
+        Reviewed by Geoff Garen.
+
+        Node can just use the auto-generated finalizer, the custom one was
+        identical to what the generator would output.
+
+2013-10-10  Andreas Kling  <akling@apple.com>
+
         CTTE: activeDOMWindow() and firstDOMWindow() should return references.
         <https://webkit.org/b/122598>
 
