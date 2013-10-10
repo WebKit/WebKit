@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+#gridWithSingleStringTemplate {
+    -webkit-grid-template: "area";
+}
+
+#gridWithTwoColumnsTemplate {
+    -webkit-grid-template: "first second";
+}
+
+#gridWithTwoRowsTemplate {
+    -webkit-grid-template: "first"
+                   "second";
+}
+
+#gridWithSpanningColumnsTemplate {
+    -webkit-grid-template: "span span";
+}
+
+#gridWithSpanningRowsDotTemplate {
+    -webkit-grid-template: "span"
+                   ".";
+}
+
+#gridWithDotColumn {
+    -webkit-grid-template: "header ."
+                   "footer .";
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div class="grid" id="gridWithDefaultTemplate"></div>
+<div class="grid" id="gridWithSingleStringTemplate"></div>
+<div class="grid" id="gridWithTwoColumnsTemplate"></div>
+<div class="grid" id="gridWithTwoRowsTemplate"></div>
+<div class="grid" id="gridWithSpanningColumnsTemplate"></div>
+<div class="grid" id="gridWithSpanningRowsDotTemplate"></div>
+<div class="grid" id="gridWithDotColumn"></div>
+<script>
+    description("This test checks that grid-template is properly parsed.");
+
+    function testGridTemplate(gridItemID, expectedResult) {
+        shouldBeEqualToString("getComputedStyle(" + gridItemID + ").getPropertyValue('-webkit-grid-template')", expectedResult);
+    }
+
+    function testJSGridTemplate(element, expectedResult) {
+        this.element = element;
+        shouldBeEqualToString("getComputedStyle(element).getPropertyValue('-webkit-grid-template')", expectedResult);
+    }
+
+    debug("Test getting grid-template set through CSS.");
+    testGridTemplate("gridWithDefaultTemplate", "none");
+    testGridTemplate("gridWithSingleStringTemplate", '"area"');
+    testGridTemplate("gridWithTwoColumnsTemplate", '"first second"');
+    testGridTemplate("gridWithTwoRowsTemplate", '"first" "second"');
+    testGridTemplate("gridWithSpanningColumnsTemplate", '"span span"');
+    testGridTemplate("gridWithSpanningRowsDotTemplate", '"span" "."');
+    testGridTemplate("gridWithDotColumn", '"header ." "footer ."');
+
+    debug("Test grid-template: initial");
+    var element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.webkitGridTemplate = "'foobar'";
+    testJSGridTemplate(element, '"foobar"');
+    element.style.webkitGridTemplate = "initial";
+    document.body.removeChild(element);
+
+    debug("Test grid-template: inherit");
+    var parentElement = document.createElement("div");
+    document.body.appendChild(parentElement);
+    parentElement.style.webkitGridTemplate = "'foo bar'";
+    shouldBeEqualToString("getComputedStyle(parentElement).getPropertyValue('-webkit-grid-template')", '"foo bar"');
+
+    var element = document.createElement("div");
+    parentElement.appendChild(element);
+    element.style.webkitGridTemplate = "inherit";
+    testJSGridTemplate(element, '"foo bar"');
+    document.body.removeChild(parentElement);
+
+    debug("Test invalid grid-template values.");
+    var element = document.createElement("div");
+    document.body.appendChild(element);
+
+    // 'nav' is not a rectangular definition.
+    element.style.webkitGridTemplate = "'nav head' 'nav nav'";
+    testJSGridTemplate(element, "none");
+
+    // 'nav' is not contiguous in the column direction.
+    element.style.webkitGridTemplate = "'nav head nav'";
+    testJSGridTemplate(element, "none");
+
+    // 'nav' is not contiguous in the row direction.
+    element.style.webkitGridTemplate = "'nav head' 'middle middle' 'nav footer'";
+    testJSGridTemplate(element, "none");
+
+    // The rows don't have the same number of columns.
+    element.style.webkitGridTemplate = "'nav head' 'foot'";
+    testJSGridTemplate(element, "none");
+
+    // Empty rows.
+    element.style.webkitGridTemplate = "'' ''";
+    testJSGridTemplate(element, "none");
+
+    debug("");
+    debug("FIXME: We currently don't validate that the named grid areas are &lt;indent&gt;.");
+    // <ident> only allows a leading '-'.
+    element.style.webkitGridTemplate = "'nav-up'";
+    testJSGridTemplate(element, "none");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

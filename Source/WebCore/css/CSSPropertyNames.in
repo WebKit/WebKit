@@ -314,6 +314,7 @@ z-index
 -webkit-grid-row-start
 -webkit-grid-column
 -webkit-grid-row
+-webkit-grid-template
 -webkit-grid-auto-flow
 -webkit-highlight [Inherited]
 -webkit-hyphenate-character [Inherited]

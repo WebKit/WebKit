@@ -1,3 +1,83 @@
+2013-10-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement support for grid-template
+        https://bugs.webkit.org/show_bug.cgi?id=103313
+
+        Reviewed by Dean Jackson.
+
+        Based on Blink r153427, r155199 and r155712 by <jchaffraix@chromium.org>
+
+        Test: fast/css-grid-layout/grid-template-get-set.html
+
+        Recognize, parse, store and return properly the value of
+        grid-template. It required some extra parsing code because the
+        specs mandates to check that the defined grid areas are indeed
+        rectangular. Named grid areas are still not fully supported, will
+        be done in a follow up patch.
+
+        As validating involves building the grid areas a new CSSValue was
+        added to hold the computed value. Note that we have to track the
+        explicit size of the named grid areas as the named grid areas
+        (".") are not tracked in our HashMap of grid areas.
+
+        This change also involves moving GridCoordinate and GridSpan to a
+        separate file in order to share the code that describes the grid
+        area coordinates.
+
+        * CMakeLists.txt: Added new files to the build.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSGridTemplateValue.cpp: Added.
+        (WebCore::CSSGridTemplateValue::CSSGridTemplateValue):
+        (WebCore::stringForPosition):
+        (WebCore::CSSGridTemplateValue::customCSSText):
+        * css/CSSGridTemplateValue.h: Added.
+        (WebCore::CSSGridTemplateValue::create):
+        (WebCore::CSSGridTemplateValue::~CSSGridTemplateValue):
+        (WebCore::CSSGridTemplateValue::gridAreaMap):
+        (WebCore::CSSGridTemplateValue::rowCount):
+        (WebCore::CSSGridTemplateValue::columnCount):
+        (WebCore::toCSSGridTemplateValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridTemplate): create the grid areas and
+        validate that they define rectangular sections.
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in: Added -webkit-grid-template.
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals): add support for the new CSSGridTemplateValue.
+        (WebCore::CSSValue::cssText): Ditto.
+        (WebCore::CSSValue::destroy): Ditto.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isGridTemplateValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::cachedGridCoordinate): Replaced RenderGrid::GridSpan by WebCore::GridSpan.
+        (WebCore::RenderGrid::resolveGridPositionsFromAutoPlacementPosition): Ditto.
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle): Ditto.
+        (WebCore::RenderGrid::resolveGridPositionAgainstOppositePosition): Ditto.
+        (WebCore::RenderGrid::resolveNamedGridLinePositionAgainstOppositePosition): Ditto.
+        (WebCore::RenderGrid::resolveRowStartColumnStartNamedGridLinePositionAgainstOppositePosition): Ditto.
+        (WebCore::RenderGrid::resolveRowEndColumnEndNamedGridLinePositionAgainstOppositePosition): Ditto.
+        * rendering/RenderGrid.h: Took GridSpan and GridCoordinate out.
+        * rendering/style/GridCoordinate.h: Added.
+        (WebCore::GridSpan::create):
+        (WebCore::GridSpan::GridSpan):
+        (WebCore::GridSpan::operator==):
+        (WebCore::GridCoordinate::GridCoordinate):
+        (WebCore::GridCoordinate::operator==):
+        (WebCore::GridCoordinate::operator!=):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator==):
+
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make EventDispatcher::dispatch comprehensible

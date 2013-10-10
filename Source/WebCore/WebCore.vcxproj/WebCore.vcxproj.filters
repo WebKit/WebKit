@@ -9570,6 +9570,9 @@
     <ClInclude Include="..\rendering\style\FillLayer.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\style\GridCoordinate.h">
+      <Filter>rendering\style</Filter>
+    </ClInclude>
     <ClInclude Include="..\rendering\style\GridPosition.h">
       <Filter>rendering\style</Filter>
     </ClInclude>

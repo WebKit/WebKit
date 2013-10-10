@@ -33,6 +33,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
+#include "CSSGridTemplateValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
@@ -2144,6 +2145,14 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return getCSSPropertyValuesForGridShorthand(webkitGridColumnShorthand());
         case CSSPropertyWebkitGridRow:
             return getCSSPropertyValuesForGridShorthand(webkitGridRowShorthand());
+
+        case CSSPropertyWebkitGridTemplate:
+            if (!style->namedGridAreaRowCount()) {
+                ASSERT(!style->namedGridAreaColumnCount());
+                return cssValuePool().createIdentifierValue(CSSValueNone);
+            }
+
+            return CSSGridTemplateValue::create(style->namedGridArea(), style->namedGridAreaRowCount(), style->namedGridAreaColumnCount());
 
         case CSSPropertyHeight:
             if (renderer) {

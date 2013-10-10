@@ -1,3 +1,18 @@
+2013-10-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement support for grid-template
+        https://bugs.webkit.org/show_bug.cgi?id=103313
+
+        Reviewed by Dean Jackson.
+
+        From Blink r153427, r155199 and r155712  by <jchaffraix@chromium.org>
+
+        Added a test to verify that we properly recognize, parse, store
+        and return the value of grid-template.
+
+        * fast/css-grid-layout/grid-template-get-set-expected.txt: Added.
+        * fast/css-grid-layout/grid-template-get-set.html: Added.
+
 2013-10-09  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Display the correct fragment boxes for content inside flow threads

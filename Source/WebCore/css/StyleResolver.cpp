@@ -39,6 +39,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
+#include "CSSGridTemplateValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPageRule.h"
 #include "CSSParser.h"
@@ -2784,6 +2785,31 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         if (!createGridPosition(value, rowEndPosition))
             return;
         state.style()->setGridItemRowEnd(rowEndPosition);
+        return;
+    }
+    case CSSPropertyWebkitGridTemplate: {
+        if (isInherit) {
+            state.style()->setNamedGridArea(state.parentStyle()->namedGridArea());
+            state.style()->setNamedGridAreaRowCount(state.parentStyle()->namedGridAreaRowCount());
+            state.style()->setNamedGridAreaColumnCount(state.parentStyle()->namedGridAreaColumnCount());
+            return;
+        }
+        if (isInitial) {
+            state.style()->setNamedGridArea(RenderStyle::initialNamedGridArea());
+            state.style()->setNamedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount());
+            state.style()->setNamedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount());
+            return;
+        }
+
+        if (value->isPrimitiveValue()) {
+            ASSERT(toCSSPrimitiveValue(value)->getValueID() == CSSValueNone);
+            return;
+        }
+
+        CSSGridTemplateValue* gridTemplateValue = toCSSGridTemplateValue(value);
+        state.style()->setNamedGridArea(gridTemplateValue->gridAreaMap());
+        state.style()->setNamedGridAreaRowCount(gridTemplateValue->rowCount());
+        state.style()->setNamedGridAreaColumnCount(gridTemplateValue->columnCount());
         return;
     }
 

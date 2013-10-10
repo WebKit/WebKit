@@ -26,6 +26,7 @@
 #ifndef StyleGridData_h
 #define StyleGridData_h
 
+#include "GridCoordinate.h"
 #include "GridTrackSize.h"
 #include "RenderStyleConstants.h"
 #include <wtf/PassRefPtr.h>
@@ -45,7 +46,7 @@ public:
     bool operator==(const StyleGridData& o) const
     {
         // FIXME: comparing two hashes doesn't look great for performance. Something to keep in mind going forward.
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns && m_namedGridColumnLines == o.m_namedGridColumnLines && m_namedGridRowLines == o.m_namedGridRowLines;
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns && m_namedGridColumnLines == o.m_namedGridColumnLines && m_namedGridRowLines == o.m_namedGridRowLines && m_namedGridArea == o.m_namedGridArea && m_namedGridArea == o.m_namedGridArea && m_namedGridAreaRowCount == o.m_namedGridAreaRowCount && m_namedGridAreaColumnCount == o.m_namedGridAreaColumnCount;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -64,6 +65,12 @@ public:
 
     GridTrackSize m_gridAutoRows;
     GridTrackSize m_gridAutoColumns;
+
+    NamedGridAreaMap m_namedGridArea;
+    // Because m_namedGridArea doesn't store the unnamed grid areas, we need to keep track
+    // of the explicit grid size defined by both named and unnamed grid areas.
+    size_t m_namedGridAreaRowCount;
+    size_t m_namedGridAreaColumnCount;
 
 private:
     StyleGridData();
