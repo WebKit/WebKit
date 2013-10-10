@@ -252,7 +252,10 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
+# Skipping the tests for the old inspector UI
 webkit.org/b/121096 inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 # There are no expected result set yet.
 editing/unsupported-content/list-delete-001.html 
@@ -279,9 +282,6 @@ fast/events/drag-dataTransferItemList-file-handling.html
 # most likely related to https://bugs.webkit.org/show_bug.cgi?id=84102
 fast/profiler/stop-profiling-after-setTimeout.html
 fast/profiler/dead-time.html
-
-# following tests started failing on EFL afrer r122952.
-http/tests/inspector/resource-parameters.html
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
@@ -484,15 +484,6 @@ webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 # not SKIP, just WONTFIX.
 webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
-# -------------------------------------------------------------------------------------
-# Only the Chromium port supports the features below, but its DRT implementation is not
-# capable of running those tests either. They are currently skipped by all ports.
-# -------------------------------------------------------------------------------------
-# Comment from chromium/TestExpectations: Transferred time/size are not supported in DRT.
-webkit.org/b/97459 http/tests/inspector/network/network-size.html [ WontFix ]
-webkit.org/b/97459 http/tests/inspector/network/network-size-chunked.html [ WontFix ]
-webkit.org/b/97459 http/tests/inspector/network/network-size-sync.html [ WontFix ]
-
 # CSS Regions tests for region styling and scoped styles, of which the latter are not enabled by default.
 webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-container-style.html [ ImageOnlyFailure ]
 webkit.org/b/82340 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
@@ -583,12 +574,6 @@ webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-added-after-transiti
 
 # Flaky websocket tests.
 Bug(EFL) http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Failure Pass ]
-
-# Flaky inspector tests
-webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
-webkit.org/b/91958 http/tests/inspector-enabled/injected-script-discard.html [ Failure Pass ]
-webkit.org/b/85615 http/tests/inspector/resource-har-pages.html [ Failure Pass ]
-Bug(EFL) http/tests/inspector/search/resources-search-match-index.html [ Failure Pass ]
 
 # Sometimes asserts in MessagePort::contextDestroyed
 webkit.org/b/94458 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure Pass ]
@@ -1518,10 +1503,6 @@ webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ Failure ]
 
 webkit.org/b/67921 [ Release ] perf/show-hide-table-rows.html [ Failure Pass Slow ]
-
-# This test has slightly networking different output on the build bots but the
-# result still looks OK.
-Bug(EFL) http/tests/inspector/console-websocket-error.html [ Failure Pass ]
 
 # Failing after r142947.
 webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]

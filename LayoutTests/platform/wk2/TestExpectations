@@ -60,9 +60,10 @@ platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
 compositing/iframes/iframe-size-from-zero.html
 compositing/iframes/iframe-src-change.html
 
-# Flakey on Snow Leopard Intel WebKit2 Release Tests
-# <https://bugs.webkit.org/show_bug.cgi?id=57638>
-inspector/styles/styles-add-blank-property.html
+# Skipping the tests for the old inspector UI
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 # Flakey on Snow Leopard Intel WebKit2 Release Tests
 # https://bugs.webkit.org/show_bug.cgi?id=58183
@@ -71,23 +72,6 @@ editing/execCommand/convert-style-elements-to-spans.html
 # Flakey on Snow Leopard Intel WebKit2 Release Tests
 # https://bugs.webkit.org/show_bug.cgi?id=60648
 fast/frames/flattening/frameset-flattening-subframesets.html
-
-# Time out on Snow Leopard Intel WebKit2 Release Tests
-# https://bugs.webkit.org/show_bug.cgi?id=63325
-http/tests/inspector/extensions-headers.html
-http/tests/inspector/extensions-network-redirect.html
-
-# Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
-inspector/extensions/extensions-eval-content-script.html
-inspector/extensions/extensions-audits-content-script.html
-
-# A bunch of inspector tests time out on Lion Intel Debug WebKit2 testers.
-# https://bugs.webkit.org/show_bug.cgi?id=81601
-http/tests/inspector/console-cross-origin-iframe-logging.html
-inspector/debugger/script-formatter-breakpoints.html
-inspector/elements/edit-dom-actions.html
-inspector/extensions/extensions-events.html
-inspector/styles/styles-computed-trace.html
 
 # WebKitTestRunner needs overridePreference for non-boolean values
 # (zero-font-size.html passes because overridePreference does not work)
@@ -212,10 +196,6 @@ transitions/default-timing-function.html
 plugins/geturlnotify-during-document-teardown.html
 plugins/open-and-close-window-with-plugin.html
 
-# Sometimes fails
-# http://webkit.org/b/56530
-http/tests/inspector/resource-har-conversion.html
-
 platform/mac/accessibility/search-predicate.html
 
 # Sometimes fails
@@ -242,10 +222,6 @@ http/tests/multipart/multipart-wait-before-boundary.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/selectors/selection-window-inactive.html
 fast/dom/Window/window-focus-self.html
-
-# WebKit2 needs an implementation of InspectorClient::overrideDeviceMetrics() and
-# autoZoomPageToFitWidth().
-inspector/styles/override-screen-size.html
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
@@ -321,7 +297,6 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 # WebKit2 needs showModalDialog
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
-inspector/console/console-long-eval-crash.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 fast/dom/HTMLDocument/hasFocus.html
@@ -617,11 +592,6 @@ fast/workers/storage/open-database-creation-callback-sync.html
 fast/workers/storage/open-database-inputs-sync.html
 fast/workers/storage/sql-exception-codes-sync.html
 storage/websql/multiple-databases-garbage-collection.html
-
-# Unknown failures after enabling inspector tests
-inspector/timeline/timeline-paint.html
-inspector/timeline/timeline-script-tag-1.html
-inspector/debugger/open-close-open.html
 
 # Crashes the WebProcess
 editing/pasteboard/copy-standalone-image.html

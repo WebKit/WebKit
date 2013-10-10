@@ -1,3 +1,26 @@
+2013-10-10  Marcelo Morais  <m.morais@samsung.com>
+
+        Web Inspector: Remove the old front-end from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=122295
+
+        Reviewed by Timothy Hatcher.
+
+        Skipping the tests of the old Inspector UI for all ports.
+
+        * TestExpectations:
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-lion/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-10-10  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: Shape cropped to margin box

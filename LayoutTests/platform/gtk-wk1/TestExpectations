@@ -57,7 +57,6 @@ fast/events/scroll-event-during-modal-dialog.html [ WontFix Failure ]
 fast/harness/show-modal-dialog.html [ WontFix Timeout ]
 http/tests/security/cross-frame-access-call.html [ WontFix Failure ]
 http/tests/security/cross-frame-access-get.html [ WontFix Failure ]
-inspector/console/console-long-eval-crash.html [ WontFix Timeout ]
 
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]

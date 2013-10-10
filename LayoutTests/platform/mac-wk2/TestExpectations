@@ -183,7 +183,11 @@ fast/events/drag-link.html
 # appcache tests often fail on the Mac WebKit2 bot
 # https://bugs.webkit.org/show_bug.cgi?id=82061 rdar://problem/11108649
 http/tests/appcache
-http/tests/inspector/appcache
+
+# Skipping the tests for the old inspector UI
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 # flaky storage tests
 # https://bugs.webkit.org/show_bug.cgi?id=82679
@@ -232,15 +236,11 @@ webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
-webkit.org/b/105956 inspector/geolocation-watchPosition.html [ Pass Failure ]
-
 webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 
 webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky.html [ ImageOnlyFailure Pass ]
 webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
 webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
@@ -269,11 +269,6 @@ webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pas
 webkit.org/b/112642 [ Debug ] editing/deleting/paste-with-transparent-background-color.html [ Crash Pass ]
 webkit.org/b/112642 [ Debug ] editing/pasteboard/5780697-1.html [ Crash Pass ]
 
-webkit.org/b/113020 [ Debug ] inspector/profiler/cpu-profiler-profile-removal.html [ Crash Pass ]
-webkit.org/b/113020 [ Debug ] inspector/profiler/webgl/webgl-profiler-get-error.html [ Crash Pass ]
-webkit.org/b/113020 [ Debug ] inspector/profiler/canvas2d/canvas2d-gradient-capturing.html [ Crash Pass ]
-
-webkit.org/b/113513 inspector/styles/paste-property.html [ Failure ]
 webkit.org/b/113515 compositing/iframes/remove-iframe-crash.html [ Crash Pass ]
 
 # http/tests/canvas/canvas-slow-font-loading.html pass from time to time on WebKit2 Release builds.
@@ -339,8 +334,6 @@ webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
 webkit.org/b/120148 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash Failure ]
 
 webkit.org/b/120161 [ Lion ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
-
-webkit.org/b/120544 inspector/storage-panel-dom-storage-update.html [ Failure ]
 
 webkit.org/b/121581 [ Lion ] media/video-object-fit.html [ ImageOnlyFailure ]
 
@@ -423,9 +416,6 @@ editing/spelling/spelling-marker-description.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 http/tests/security/credentials-in-referer.html
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
-
-# An additional test that failed on the Lion WebKit2 Debug bot in r111739
-inspector/elements/edit-dom-actions.html
 
 # A test that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
 fast/workers/worker-cloneport.html

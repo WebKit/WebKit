@@ -44,8 +44,10 @@ webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pas
 # This test will run slowly in debug mode, but is plenty fast in release.
 [ Debug ] js/regress/emscripten-memops.html [ Skip ]
 
-# This test is based on incorrect assumptions about front-end behavior, and passes or fails randomly.
-webkit.org/b/114209 http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html [ WontFix ]
+# Skipping the tests for the old inspector UI
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode.html [ Pass Failure ]
 webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode.html [ Pass Crash ]

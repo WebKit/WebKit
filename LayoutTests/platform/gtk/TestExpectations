@@ -81,9 +81,6 @@ webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 # Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
-# These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ Skip ]
-
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
@@ -166,7 +163,6 @@ webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-vert-lr.h
 webkit.org/b/98927 fast/dom/Window/window-properties-device-orientation.html [ Skip ]
 webkit.org/b/98927 fast/dom/DeviceMotion [ Skip ]
 webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
-webkit.org/b/98927 inspector/device-orientation-success.html [ Skip ]
 
 # Desktop notifications are not yet supported.
 webkit.org/b/61140 fast/notifications [ Skip ]
@@ -285,7 +281,6 @@ webkit.org/b/71849 http/tests/canvas/webgl [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
-webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
 webkit.org/b/71849 webkit.org/b/111477 inspector-protocol/layers [ Skip ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
@@ -446,7 +441,6 @@ webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
 # IndexedDB code is going through refactoring/refreshing, so the tests are quite unstable at this point.
 webkit.org/b/107194 storage/indexeddb [ Skip ]
-webkit.org/b/107194 http/tests/inspector/indexeddb [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
@@ -981,6 +975,7 @@ webkit.org/b/36627 editing/selection/extend-after-mouse-selection.html [ Failure
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
+# Skipping the tests for the old inspector UI
 webkit.org/b/83174 inspector [ Skip ]
 webkit.org/b/83174 inspector-protocol/heap-profiler [ Skip ]
 webkit.org/b/83174 http/tests/inspector [ Skip ]

@@ -432,14 +432,10 @@ fonts/monospace.html
 fonts/sans-serif.html 
 fonts/serif.html 
 
-inspector/debugger/breakpoint-manager.html
-inspector/debugger/raw-source-code.html
-inspector/extensions/extensions-console.html
-inspector/extensions/extensions-events.html
-inspector/styles/styles-invalid-color-values.html
-inspector/timeline/timeline-animation-frame.html 
-inspector/timeline/timeline-load-event.html
-inspector/timeline/timeline-receive-response-event.html
+# Skipping the tests for the old inspector UI
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 loader/go-back-to-different-window-size.html 
 loader/load-defer-resume-crash.html
@@ -530,8 +526,6 @@ http/tests/canvas/philip/tests
 http/tests/css
 http/tests/history
 http/tests/incremental
-http/tests/inspector-enabled/console-log-before-frame-navigation.html
-http/tests/inspector
 http/tests/loading
 http/tests/local
 http/tests/media
@@ -604,19 +598,6 @@ http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
-http/tests/inspector/console-websocket-error.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=55372
-http/tests/inspector/network/network-size.html
-http/tests/inspector/network/network-timing.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=19793
-http/tests/inspector/network/network-size-chunked.html
-http/tests/inspector/network/network-size-sync.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=64097
-http/tests/inspector/network/network-disable-cache-memory.html
-http/tests/inspector/network/network-disable-cache-xhrs.html
 
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html
@@ -923,9 +904,6 @@ http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
 # Failing in Release builds http://webkit.org/b/46976
 sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_The_Unsigned_Right_Shift_Operator/S11.7.3_A2.3_T1.html
 
-# Sometimes fails https://webkit.org/b/49412
-inspector/timeline/timeline-network-resource.html
-
 # Sometimes fails http://webkit.org/b/46998
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
 
@@ -1011,12 +989,6 @@ http/tests/websocket
 
 # Timing out http://webkit.org/b/58654
 media/video-controls-in-media-document.html
-
-# Sometimes fails http://webkit.org/b/58367
-http/tests/inspector/resource-tree/resource-tree-document-url.html
-http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
-http/tests/inspector/resource-tree/resource-tree-reload.html
-http/tests/inspector/resource-tree/resource-tree-frame-add.html
 
 # Flaky http://webkit.org/b/62561
 animations/animation-direction-normal.html
@@ -1581,9 +1553,6 @@ media/media-document-audio-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=38794 - contains an ALERT message, indicating a failure
 fast/css/display-none-inline-style-change-crash.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=38795 - doesn't print PaintEvent instrumentation output
-inspector/timeline/timeline-paint.html
-
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 canvas/philip
 
@@ -1611,7 +1580,6 @@ editing/spelling/spelling-marker-description.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
-http/tests/inspector/indexeddb
 http/tests/security/cross-origin-indexeddb-allowed.html
 http/tests/security/cross-origin-indexeddb.html
 http/tests/security/cross-origin-worker-indexeddb-allowed.html
@@ -1652,7 +1620,6 @@ fast/text/hyphens.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
 fast/events/scroll-event-during-modal-dialog.html
-inspector/console/console-long-eval-crash.html
 
 # These tests fail when showModalDialog is unsupported, even though they don't
 # rely on it directly http://webkit.org/b/53676
@@ -1798,40 +1765,6 @@ perf/
 http/tests/appcache/origin-quota.html
 http/tests/appcache/origin-quota-continued-download.html
 http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=43332
-inspector/debugger/dom-breakpoints.html
-inspector/debugger/event-listener-breakpoints.html
-inspector/debugger/step-through-event-listeners.html
-inspector/debugger/xhr-breakpoints.html
-
-# JSC doesn't support heap profiling
-# https://bugs.webkit.org/show_bug.cgi?id=50485
-inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
-inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
-inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html
-inspector/profiler/heap-snapshot-comparison-show-all.html
-inspector/profiler/heap-snapshot-loader.html
-inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
-inspector/profiler/heap-snapshot-summary-show-ranges.html
-inspector/profiler/heap-snapshot-summary-retainers.html
-inspector/profiler/heap-snapshot-summary-sorting-fields.html
-inspector/profiler/heap-snapshot-summary-sorting.html
-inspector/profiler/heap-snapshot-summary-sorting-instances.html
-
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=40300
-inspector/debugger/live-edit.html
-inspector/debugger/live-edit-breakpoints.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=89652
-inspector/debugger/debugger-compile-and-run.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=53003
-http/tests/inspector/compiler-source-mapping-debug.html
 
 # <https://bugs.webkit.org/show_bug.cgi?id=44484>
 svg/batik/paints/patternRegions-positioned-objects.svg
@@ -2030,7 +1963,6 @@ fast/events/constructors/webgl-context-event-constructor.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
-inspector/profiler/webgl
 fast/images/webgl-teximage2d.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
@@ -2302,19 +2234,12 @@ fast/sub-pixel
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 
-# http://webkit.org/b/82886
-inspector/styles/override-screen-size.html
-
 # Interferes with the other requestAnimationFrame tests
 # https://bugs.webkit.org/show_bug.cgi?id=85689
 fast/animation/request-animation-frame-disabled.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=86000
 http/tests/security/referrer-policy-redirect-link.html
-
-# Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
-inspector/extensions/extensions-eval-content-script.html 
-inspector/extensions/extensions-audits-content-script.html
 
 # Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=84167
 editing/pasteboard/innerText-inline-table.html
@@ -2457,7 +2382,6 @@ fast/table/027.html
 fast/table/027-vertical.html
 fast/table/max-width-integer-overflow.html
 fast/writing-mode/fallback-orientation.html
-inspector/styles/svg-style.xhtml
 media/controls-after-reload.html
 media/controls-strict.html
 media/controls-styling.html
@@ -2715,18 +2639,6 @@ media/video-controls-captions.html
 # https://bugs.webkit.org/show_bug.cgi?id=95795
 editing/style/apply-style-atomic.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=94374
-inspector/timeline/timeline-decode-resize.html
-
-# Flaky inspector tests
-# https://bugs.webkit.org/show_bug.cgi?id=95802
-http/tests/inspector/console-resource-errors.html
-http/tests/inspector/resource-tree/resource-request-content-while-loading.html
-http/tests/inspector/search/resources-search-match-index.html
-inspector/profiler/heap-snapshot.html
-inspector/styles/media-queries.html
-inspector/styles/region-style-crash.html
-
 # Flaky http/tests/security tests
 # https://bugs.webkit.org/show_bug.cgi?id=95803
 http/tests/security/local-image-from-remote-whitelisted.html
@@ -2780,12 +2692,6 @@ fast/events/constructors/device-proximity-event-constructor.html
 fast/forms/state-restore-broken-state.html
 fast/html/progress-user-modify.html
 fast/multicol/shrink-to-column-height-for-pagination.html
-inspector/device-orientation-success.html
-inspector/geolocation-error.html
-inspector/geolocation-success.html
-inspector/geolocation-watchPosition.html
-inspector/styles/variables/css-variables.html
-inspector/timeline/timeline-receive-response-event.html
 media/audio-controls-rendering.html
 media/audio-repaint.html
 media/controls-styling-strict.html
@@ -2806,11 +2712,6 @@ tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html
 http/tests/fullscreen/fullscreenelement-different-origin.html
 http/tests/fullscreen/fullscreenelement-same-origin.html
 http/tests/history/back-with-fragment-change.php
-http/tests/inspector/console-cross-origin-iframe-logging.html
-http/tests/inspector/inspect-element.html
-http/tests/inspector/resource-har-conversion.html
-http/tests/inspector/resource-parameters.html
-http/tests/inspector/websocket/web-socket-frame.html
 http/tests/loading/pdf-commit-load-callbacks.html
 http/tests/loading/post-in-iframe-with-back-navigation.html
 http/tests/media/media-document.html
@@ -2833,9 +2734,6 @@ http/tests/xmlhttprequest/range-test.html
 #https://bugs.webkit.org/show_bug.cgi?id=97271
 http/tests/security/sandboxed-iframe-origin-add.html
 http/tests/security/sandboxed-iframe-origin-remove.html
-
-#https://bugs.webkit.org/show_bug.cgi?id=96942
-http/tests/inspector/network/network-xhr-replay.html
 
 #AX role needs to be updated on Windows, many test cases involve AX role crash or fail
 accessibility/svg-bounds.html
@@ -2866,9 +2764,6 @@ http/tests/security/cross-origin-local-storage-wk1.html
 #Skipped on other platforms here: http://trac.webkit.org/changeset/129897
 svg/custom/clip-mask-negative-scale.svg
 
-#https://bugs.webkit.org/show_bug.cgi?id=98095
-inspector/debugger/dynamic-script-tag.html
-
 #https://bugs.webkit.org/show_bug.cgi?id=98306
 css3/flexbox/flexbox-baseline.html
 #https://bugs.webkit.org/show_bug.cgi?id=99878
@@ -2878,9 +2773,6 @@ css3/flexbox/flexbox-baseline-margins.html
 css3/supports.html
 css3/supports-cssom.html
 css3/supports-dom-api.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=98169
-http/tests/inspector/stacktraces
 
 # Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
 webkit.org/b/11645 fast/table/025.html [ Failure ]
@@ -2900,10 +2792,6 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
 webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=99567
-# Not supported on Mac or Windows ports
-inspector/elements/update-shadowdom.html
 
 # Not supported in CFNetwork yet. https://bugs.webkit.org/show_bug.cgi?id=100349
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html

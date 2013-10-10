@@ -123,7 +123,6 @@ canvas/philip/tests/2d.drawImage.outsidesource.html
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
-http/tests/inspector/indexeddb
 http/tests/security/cross-origin-indexeddb-allowed.html
 http/tests/security/cross-origin-indexeddb.html
 http/tests/security/cross-origin-worker-indexeddb-allowed.html
@@ -222,49 +221,14 @@ webkit.org/b/42821 animations/play-state.html
 webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
-# window.eventSender doesn't exist in devtools front-end on mac.
-# https://bugs.webkit.org/show_bug.cgi?id=106793
-inspector/editor/text-editor-formatter.html [ Skip ]
-inspector/editor/text-editor-word-jumps.html [ Skip ]
-inspector/editor/text-editor-home-button.html [ Skip ]
-inspector/editor/text-editor-smart-braces.html [ Skip ]
-
-webkit.org/b/71120 inspector/debugger/selected-call-frame-after-formatting-source.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=43332
-inspector/debugger/dom-breakpoints.html
-inspector/debugger/event-listener-breakpoints.html
-inspector/debugger/step-through-event-listeners.html
-inspector/debugger/xhr-breakpoints.html
+# Skipping the tests for the old inspector UI
+inspector [ Skip ]
+http/tests/inspector [ Skip ]
+http/tests/inspector-enabled [ Skip ]
 
 # JSC doesn't support heap profiling
 # https://bugs.webkit.org/show_bug.cgi?id=50485
-inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
-inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
-inspector/profiler/heap-snapshot-comparison-expansion-preserved-when-sorting.html
-inspector/profiler/heap-snapshot-comparison-show-all.html
-inspector/profiler/heap-snapshot-loader.html
-inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
-inspector/profiler/heap-snapshot-summary-retainers.html
-inspector/profiler/heap-snapshot-summary-show-ranges.html
-inspector/profiler/heap-snapshot-summary-sorting-fields.html
-inspector/profiler/heap-snapshot-summary-sorting.html
-inspector/profiler/heap-snapshot-summary-sorting-instances.html
 webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
-
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
-
-webkit.org/b/40300 inspector/debugger/live-edit.html [ Failure ]
-webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html [ Failure ]
-webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html
-webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html
-
-webkit.org/b/96942 http/tests/inspector/network/network-xhr-replay.html
-
-webkit.org/b/109546 inspector/script-execution-state-change-notification.html [ Skip ]
-webkit.org/b/112502 inspector/elements/highlight-node-scaled.html [ Pass Failure ]
 
 # Flakey notification test.
 webkit.org/b/112499 http/tests/notifications/window-show-on-click.html [ Pass Failure ]
@@ -357,9 +321,6 @@ plugins/mouse-click-iframe-to-plugin.html
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
 
-# console long eval test is timeout 60616
-inspector/console/console-long-eval-crash.html
-
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
 # Styled scope element is not yet enabled.
@@ -381,7 +342,6 @@ fast/multicol/seamless-flowed-through-columns.html
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow
 editing/shadow
-inspector/elements/update-shadowdom.html
 accessibility/corresponding-control-deleted-crash.html
 editing/text-iterator/basic-iteration-shadowdom.html
 
@@ -547,8 +507,6 @@ webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
-webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Failure ]
-
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
@@ -562,19 +520,12 @@ webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracke
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Pass Failure ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
 
-# We don't implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
-# FIXME: Delete this test.
-webkit.org/b/82886 inspector/styles/override-screen-size.html
-webkit.org/b/82932 inspector/profiler/cpu-profiler-profiling.html
-
 webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
 webkit.org/b/82972 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Pass Failure ]
 webkit.org/b/82972 plugins/mouse-events-fixedpos.html [ Pass Failure ]
 webkit.org/b/82972 plugins/multiple-plugins.html [ Pass Failure ]
 
 webkit.org/b/82976 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
-
-webkit.org/b/82978 inspector/styles/svg-style.xhtml [ Pass Failure ]
 
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
@@ -591,8 +542,6 @@ webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Pass Failure 
 
 webkit.org/b/84102 fast/profiler/stop-profiling-after-setTimeout.html [ Pass Failure ]
 webkit.org/b/84102 fast/profiler/dead-time.html [ Pass Failure ]
-
-webkit.org/b/85319 inspector/debugger/linkifier.html [ Pass Failure ]
 
 # Failing subpixel reference tests
 webkit.org/b/85532 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
@@ -612,10 +561,6 @@ webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
 webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]
 
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html
-
-# Inspector only supports evaluation in content script world with v8
-webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html
-webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html
 
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
@@ -639,8 +584,6 @@ webkit.org/b/89528 [ Lion ] svg/filters/feSpecularLight-premultiplied.svg [ Imag
 
 # Implement textInputController.setComposition()
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
-
-webkit.org/b/90707 inspector/timeline/timeline-receive-response-event.html [ Pass Failure ]
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
 
@@ -876,7 +819,6 @@ fast/dom/custom
 
 # CSS Variables are not yet enabled.
 webkit.org/b/85580 fast/css/variables
-webkit.org/b/85580 inspector/styles/variables
 
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
@@ -931,7 +873,6 @@ webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-
 webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
-webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure Pass ]
 webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
@@ -1006,9 +947,6 @@ webkit.org/b/84186 fast/text-autosizing
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
-
-# (r125790): Newly added test inspector/timeline/timeline-decode-resize.html is failing on mac
-webkit.org/b/94374 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
 # Flakey WebGL tests
 webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Failure Pass ]
@@ -1163,8 +1101,6 @@ webkit.org/b/111647 [ Debug ] sputnik/Conformance/12_Statement/12.6_Iteration_St
 webkit.org/b/111647 [ Debug ] sputnik/Conformance/13_Function_Definition/S13_A4_T4.html [ Slow ]
 webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Slow ]
 
-webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
-
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
@@ -1246,12 +1182,6 @@ webkit.org/b/115292 fast/writing-mode/japanese-ruby-vertical-rl.html
 webkit.org/b/115292 fast/writing-mode/vertical-baseline-alignment.html
 webkit.org/b/115292 fast/writing-mode/vertical-font-fallback.html
 
-webkit.org/b/105988 [ Debug ] inspector/debugger/pause-in-internal-script.html [ Pass Crash ]
-webkit.org/b/105988 [ Debug ] inspector/debugger/watch-expressions-panel-switch.html [ Pass Crash ]
-webkit.org/b/105988 [ Debug ] inspector/debugger/properties-special.html [ Pass Crash ]
-webkit.org/b/105988 [ Debug ] inspector/debugger/reveal-execution-line.html [ Pass Crash ]
-webkit.org/b/105988 [ Debug ] inspector/debugger/watch-expressions-preserve-expansion.html [ Pass Crash ]
-
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
@@ -1260,10 +1190,6 @@ webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ Pass 
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
-
-webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
-
-webkit.org/b/116592 inspector/geolocation-error.html [ Pass Failure ]
 
 # Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
@@ -1278,8 +1204,6 @@ plugins/unavailable-plugin-indicator-obscurity.html
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Pass Failure ]
 
 webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
-
-webkit.org/b/120085 [ Lion ] http/tests/inspector/resource-tree/resource-tree-document-url.html [ Pass Failure ]
 
 webkit.org/b/120087 [ Lion ] fast/forms/submit-to-url-fragment.html [ Pass Crash ]
 
@@ -1297,20 +1221,13 @@ webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/121053 fast/history/go-back-to-iframe-with-plugin.html [ Crash Timeout Pass ]
 
-webkit.org/b/121343 http/tests/inspector/network/network-size-chunked.html [ Failure ]
-webkit.org/b/121343 http/tests/inspector/network/network-size-sync.html [ Failure ]
-
 webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
 
 webkit.org/b/90363 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Failure Pass Timeout ]
-webkit.org/b/104511 [ Debug ] inspector/elements/edit-dom-actions.html [ Failure Pass Timeout ]
 webkit.org/b/121452 [ Debug ] fast/frames/lots-of-objects.html [ Failure Pass Timeout ]
-
-# Frequently times out in DumpRenderTree (which is reported as a text failure).
-webkit.org/b/120544 inspector/storage-panel-dom-storage-update.html [ Pass Failure ]
 
 webkit.org/b/121582 [ Lion ] media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Failure ]
 
@@ -1320,8 +1237,6 @@ webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
 
 webkit.org/b/114193 transitions/cancel-transition.html [ Pass Failure ]
-
-webkit.org/b/121998 http/tests/inspector/network/network-iframe-load-and-delete.html [ Pass Failure ]
 
 webkit.org/b/121990 accessibility/media-element.html [ Failure ]
 webkit.org/b/121992 media/media-volume-slider-rendered-below.html [ Failure ]
@@ -1376,7 +1291,3 @@ webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
 webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
-
-webkit.org/b/122509 inspector/debugger/debugger-activation-crash2.html [ Pass Failure ]
-
-webkit.org/b/122510 inspector/styles/add-new-rule-with-style-after-body.html [ Pass Failure ]
