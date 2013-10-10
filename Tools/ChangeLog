@@ -1,3 +1,10 @@
+2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening, the inspector protocol timeouts are also affecting TestInspectorServer.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): skip TestInspectorServer.
+
 2013-10-10  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Provide search functionality to MiniBrowser
