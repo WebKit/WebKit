@@ -76,6 +76,12 @@ inline FocusEvent* toFocusEvent(Event* event)
     return static_cast<FocusEvent*>(event);
 }
 
+inline FocusEvent& toFocusEvent(Event& event)
+{
+    ASSERT(event.isFocusEvent());
+    return static_cast<FocusEvent&>(event);
+}
+
 } // namespace WebCore
 
 #endif // FocusEvent_h

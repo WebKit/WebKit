@@ -100,6 +100,12 @@ inline TouchEvent* toTouchEvent(Event* event)
     return static_cast<TouchEvent*>(event);
 }
 
+inline TouchEvent& toTouchEvent(Event& event)
+{
+    ASSERT(event.isTouchEvent());
+    return static_cast<TouchEvent&>(event);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(TOUCH_EVENTS)

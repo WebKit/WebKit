@@ -2055,15 +2055,15 @@ void Node::notifyMutationObserversNodeWillDetach()
     }
 }
 
-void Node::handleLocalEvents(Event* event)
+void Node::handleLocalEvents(Event& event)
 {
     if (!hasEventTargetData())
         return;
 
-    if (isDisabledFormControl(this) && event->isMouseEvent())
+    if (isDisabledFormControl(this) && event.isMouseEvent())
         return;
 
-    fireEventListeners(event);
+    fireEventListeners(&event);
 }
 
 void Node::dispatchScopedEvent(PassRefPtr<Event> event)

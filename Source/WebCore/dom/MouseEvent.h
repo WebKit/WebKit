@@ -138,6 +138,12 @@ inline MouseEvent* toMouseEvent(Event* event)
     return static_cast<MouseEvent*>(event);
 }
 
+inline MouseEvent& toMouseEvent(Event& event)
+{
+    ASSERT(event.isMouseEvent());
+    return static_cast<MouseEvent&>(event);
+}
+
 } // namespace WebCore
 
 #endif // MouseEvent_h

@@ -90,11 +90,6 @@ private:
     EventDispatcher(Node*, PassRefPtr<Event>);
     const EventContext* topEventContext();
 
-    EventDispatchContinuation dispatchEventAtCapturing(WindowEventContext&);
-    EventDispatchContinuation dispatchEventAtTarget();
-    void dispatchEventAtBubbling(WindowEventContext&);
-    void dispatchEventPostProcess(const InputElementClickState&);
-
     EventPath m_eventPath;
     RefPtr<Node> m_node;
     RefPtr<Event> m_event;

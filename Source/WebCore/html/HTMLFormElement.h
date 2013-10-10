@@ -116,7 +116,7 @@ private:
     virtual void removedFrom(ContainerNode&) OVERRIDE;
     virtual void finishParsingChildren() OVERRIDE;
 
-    virtual void handleLocalEvents(Event*) OVERRIDE;
+    virtual void handleLocalEvents(Event&) OVERRIDE;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;

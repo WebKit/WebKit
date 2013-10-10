@@ -43,7 +43,7 @@ public:
 
     DOMWindow* window() const;
     EventTarget* target() const;
-    bool handleLocalEvents(Event* event);
+    bool handleLocalEvents(Event&);
 
 private:
     RefPtr<DOMWindow> m_window;

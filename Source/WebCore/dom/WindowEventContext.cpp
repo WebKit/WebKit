@@ -50,14 +50,14 @@ WindowEventContext::WindowEventContext(Event* event, PassRefPtr<Node> node, cons
     m_target = topEventContext ? topEventContext->target() : node.get();
 }
 
-bool WindowEventContext::handleLocalEvents(Event* event)
+bool WindowEventContext::handleLocalEvents(Event& event)
 {
     if (!m_window)
         return false;
 
-    event->setTarget(target());
-    event->setCurrentTarget(window());
-    m_window->fireEventListeners(event);
+    event.setTarget(target());
+    event.setCurrentTarget(window());
+    m_window->fireEventListeners(&event);
     return true;
 }
 

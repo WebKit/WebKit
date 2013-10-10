@@ -1,5 +1,51 @@
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Make EventDispatcher::dispatch comprehensible
+        https://bugs.webkit.org/show_bug.cgi?id=122588
+
+        Reviewed by Andreas Kling.
+
+        Merged EventDispatcher::dispatchEventAtCapturing, EventDispatcher::dispatchEventAtTarget,
+        EventDispatcher::dispatchEventAtBubbling, and EventDispatcher::dispatchEventPostProcess into EventDispatcher::dispatch,
+        and extracted static local callDefaultEventHandlersInTheBubblingOrder and dispatchEventInDOM out of it.
+
+        Also made handleLocalEvents of subclasses of EventContext and Node take Event& instead of Event*.
+
+        * dom/EventContext.cpp: The following functions now take Event& instead of Event*.
+        (WebCore::EventContext::handleLocalEvents):
+        (WebCore::MouseOrFocusEventContext::handleLocalEvents):
+        (WebCore::TouchEventContext::handleLocalEvents):
+        * dom/EventContext.h:
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::callDefaultEventHandlersInTheBubblingOrder): Extracted from EventDispatcher::dispatchEventPostProcess,
+        which is now merged into EventDispatcher::dispatch.
+        (WebCore::dispatchEventInDOM): Extracted out of EventDispatcher::dispatch, EventDispatcher::dispatchEventAtCapturing,
+        EventDispatcher::dispatchEventAtTarget and EventDispatcher::dispatchEventAtBubbling. This function is responsible for
+        dispatching the event for capturing, at the target, and then bubbling through the event path chain.
+        (WebCore::EventDispatcher::dispatch): EventDispatcher::dispatchEventPostProcess got merged into this. The calls to
+        dispatchEventAtCapturing, dispatchEventAtTarget, and dispatchEventAtBubbling are replaced by a single call to
+        dispatchEventInDOM.
+        * dom/EventDispatcher.h:
+
+        * dom/FocusEvent.h:
+        (WebCore::toFocusEvent): Added the version that takes a reference.
+        * dom/MouseEvent.h:
+        (WebCore::toMouseEvent): Ditto.
+        * dom/TouchEvent.h:
+        (WebCore::toTouchEvent): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::handleLocalEvents): Now takes Event& instead of Event*.
+        * dom/Node.h:
+        * dom/WindowEventContext.cpp:
+        (WebCore::WindowEventContext::handleLocalEvents): Ditto.
+        * dom/WindowEventContext.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::handleLocalEvents): Ditto.
+        * html/HTMLFormElement.h:
+
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix after r157204.
 
         * dom/EventDispatcher.cpp:

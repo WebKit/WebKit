@@ -48,7 +48,7 @@ public:
     Node* node() const { return m_node.get(); }
     EventTarget* target() const { return m_target.get(); }
     bool currentTargetSameAsTarget() const { return m_currentTarget.get() == m_target.get(); }
-    virtual void handleLocalEvents(Event*) const;
+    virtual void handleLocalEvents(Event&) const;
     virtual bool isMouseOrFocusEventContext() const;
     virtual bool isTouchEventContext() const;
 
@@ -62,13 +62,13 @@ protected:
     RefPtr<EventTarget> m_target;
 };
 
-class MouseOrFocusEventContext : public EventContext {
+class MouseOrFocusEventContext FINAL : public EventContext {
 public:
     MouseOrFocusEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
     virtual ~MouseOrFocusEventContext();
     EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget>);
-    virtual void handleLocalEvents(Event*) const OVERRIDE;
+    virtual void handleLocalEvents(Event&) const OVERRIDE;
     virtual bool isMouseOrFocusEventContext() const OVERRIDE;
 
 private:
@@ -83,12 +83,12 @@ inline MouseOrFocusEventContext& toMouseOrFocusEventContext(EventContext& eventC
 
 
 #if ENABLE(TOUCH_EVENTS)
-class TouchEventContext : public EventContext {
+class TouchEventContext FINAL : public EventContext {
 public:
     TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
     virtual ~TouchEventContext();
 
-    virtual void handleLocalEvents(Event*) const OVERRIDE;
+    virtual void handleLocalEvents(Event&) const OVERRIDE;
     virtual bool isTouchEventContext() const OVERRIDE;
 
     TouchList* touches() { return m_touches.get(); }
