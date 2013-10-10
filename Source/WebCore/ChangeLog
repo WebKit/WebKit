@@ -1,3 +1,49 @@
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventDispatchMediator is goner
+        https://bugs.webkit.org/show_bug.cgi?id=122581
+
+        Reviewed by Antti Koivisto.
+
+        Killed the death.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+        (WebCore::Element::dispatchKeyEvent):
+        (WebCore::Element::dispatchFocusEvent):
+        (WebCore::Element::dispatchBlurEvent):
+        * dom/EventDispatchMediator.cpp: Removed.
+        * dom/EventDispatchMediator.h: Removed.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        * dom/EventDispatcher.h:
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEvent):
+        (WebCore::Node::dispatchEvent):
+        (WebCore::Node::dispatchGestureEvent):
+        (WebCore::Node::dispatchTouchEvent):
+        (WebCore::Node::dispatchUIRequestEvent):
+        * dom/Node.h:
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::~ScopedEventQueue):
+        (WebCore::ScopedEventQueue::enqueueEvent):
+        (WebCore::ScopedEventQueue::dispatchAllEvents):
+        (WebCore::ScopedEventQueue::dispatchEvent):
+        * dom/ScopedEventQueue.h:
+        * dom/TouchEvent.cpp:
+        * dom/TouchEvent.h:
+        * dom/UIEvent.h:
+        * dom/WheelEvent.h:
+
 2013-10-09  Andreas Kling  <akling@apple.com>
 
         Kill some RenderObject::firstChildSlow/lastChildSlow usage.

@@ -3180,9 +3180,6 @@
     <ClCompile Include="..\dom\EventDispatcher.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\EventDispatchMediator.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\EventException.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10030,9 +10027,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\EventDispatcher.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\EventDispatchMediator.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\EventException.h">

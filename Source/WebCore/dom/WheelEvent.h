@@ -25,7 +25,6 @@
 #ifndef WheelEvent_h
 #define WheelEvent_h
 
-#include "EventDispatchMediator.h"
 #include "FloatPoint.h"
 #include "MouseEvent.h"
 

@@ -24,7 +24,6 @@
 #ifndef MouseEvent_h
 #define MouseEvent_h
 
-#include "EventDispatchMediator.h"
 #include "MouseRelatedEvent.h"
 
 namespace WebCore {

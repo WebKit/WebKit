@@ -1127,7 +1127,6 @@ set(WebCore_SOURCES
     dom/ErrorEvent.cpp
     dom/Event.cpp
     dom/EventContext.cpp
-    dom/EventDispatchMediator.cpp
     dom/EventDispatcher.cpp
     dom/EventException.cpp
     dom/EventListenerMap.cpp

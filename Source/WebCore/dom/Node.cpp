@@ -52,7 +52,6 @@
 #include "ElementRareData.h"
 #include "Event.h"
 #include "EventContext.h"
-#include "EventDispatchMediator.h"
 #include "EventDispatcher.h"
 #include "EventException.h"
 #include "EventHandler.h"
@@ -2069,7 +2068,7 @@ void Node::handleLocalEvents(Event* event)
 
 void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 {
-    EventDispatcher::dispatchScopedEvent(*this, EventDispatchMediator::create(event));
+    EventDispatcher::dispatchScopedEvent(*this, event);
 }
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
@@ -2078,7 +2077,7 @@ bool Node::dispatchEvent(PassRefPtr<Event> event)
     if (event->isTouchEvent())
         return dispatchTouchEvent(adoptRef(toTouchEvent(event.leakRef())));
 #endif
-    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
+    return EventDispatcher::dispatchEvent(this, event);
 }
 
 void Node::dispatchSubtreeModifiedEvent()
@@ -2113,7 +2112,7 @@ bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
     if (isDisabledFormControl(this))
         return true;
 
-    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(gestureEvent));
+    EventDispatcher::dispatchEvent(this, gestureEvent.release());
 
     ASSERT(!gestureEvent->defaultPrevented());
     return gestureEvent->defaultHandled() || gestureEvent->defaultPrevented();
@@ -2123,14 +2122,14 @@ bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
 #if ENABLE(TOUCH_EVENTS)
 bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
 {
-    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
+    return EventDispatcher::dispatchEvent(this, event);
 }
 #endif
 
 #if ENABLE(INDIE_UI)
 bool Node::dispatchUIRequestEvent(PassRefPtr<UIRequestEvent> event)
 {
-    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
+    EventDispatcher::dispatchEvent(this, event);
     return event->defaultHandled() || event->defaultPrevented();
 }
 #endif

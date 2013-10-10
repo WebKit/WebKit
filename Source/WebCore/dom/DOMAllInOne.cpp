@@ -72,7 +72,6 @@
 #include "ErrorEvent.cpp"
 #include "Event.cpp"
 #include "EventContext.cpp"
-#include "EventDispatchMediator.cpp"
 #include "EventDispatcher.cpp"
 #include "EventException.cpp"
 #include "EventListenerMap.cpp"

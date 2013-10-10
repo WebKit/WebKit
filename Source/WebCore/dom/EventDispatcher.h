@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class Event;
-class EventDispatchMediator;
 class EventTarget;
 class FrameView;
 class Node;
@@ -77,8 +76,8 @@ private:
 
 class EventDispatcher {
 public:
-    static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
-    static void dispatchScopedEvent(Node&, PassRefPtr<EventDispatchMediator>);
+    static bool dispatchEvent(Node*, PassRefPtr<Event>);
+    static void dispatchScopedEvent(Node&, PassRefPtr<Event>);
 
     static void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 

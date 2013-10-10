@@ -26,7 +26,6 @@
 
 #include "DOMWindow.h"
 #include "Event.h"
-#include "EventDispatchMediator.h"
 
 namespace WebCore {
 

@@ -29,7 +29,6 @@
 
 #if ENABLE(TOUCH_EVENTS)
 
-#include "EventDispatchMediator.h"
 #include "MouseRelatedEvent.h"
 #include "TouchList.h"
 
@@ -93,16 +92,6 @@ private:
     bool m_touchHold;
     bool m_doubleTap;
 #endif
-};
-
-class TouchEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<TouchEventDispatchMediator> create(PassRefPtr<TouchEvent>);
-
-private:
-    explicit TouchEventDispatchMediator(PassRefPtr<TouchEvent>);
-    TouchEvent* event() const;
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
 };
 
 inline TouchEvent* toTouchEvent(Event* event)

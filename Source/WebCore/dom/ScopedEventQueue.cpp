@@ -32,7 +32,6 @@
 #include "ScopedEventQueue.h"
 
 #include "Event.h"
-#include "EventDispatchMediator.h"
 #include "EventDispatcher.h"
 #include "EventTarget.h"
 #include <wtf/OwnPtr.h>
@@ -50,7 +49,7 @@ ScopedEventQueue::ScopedEventQueue()
 ScopedEventQueue::~ScopedEventQueue()
 {
     ASSERT(!m_scopingLevel);
-    ASSERT(!m_queuedEventDispatchMediators.size());
+    ASSERT(!m_queuedEvents.size());
 }
 
 void ScopedEventQueue::initialize()
@@ -60,28 +59,27 @@ void ScopedEventQueue::initialize()
     s_instance = instance.leakPtr();
 }
 
-void ScopedEventQueue::enqueueEventDispatchMediator(PassRefPtr<EventDispatchMediator> mediator)
+void ScopedEventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
     if (m_scopingLevel)
-        m_queuedEventDispatchMediators.append(mediator);
+        m_queuedEvents.append(event);
     else
-        dispatchEvent(mediator);
+        dispatchEvent(event);
 }
 
 void ScopedEventQueue::dispatchAllEvents()
 {
-    Vector<RefPtr<EventDispatchMediator> > queuedEventDispatchMediators;
-    queuedEventDispatchMediators.swap(m_queuedEventDispatchMediators);
+    Vector<RefPtr<Event>> queuedEvents;
+    queuedEvents.swap(m_queuedEvents);
 
-    for (size_t i = 0; i < queuedEventDispatchMediators.size(); i++)
-        dispatchEvent(queuedEventDispatchMediators[i].release());
+    for (size_t i = 0; i < queuedEvents.size(); i++)
+        dispatchEvent(queuedEvents[i].release());
 }
 
-void ScopedEventQueue::dispatchEvent(PassRefPtr<EventDispatchMediator> mediator) const
+void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
 {
-    ASSERT(mediator->event()->target());
-    Node* node = mediator->event()->target()->toNode();
-    EventDispatcher::dispatchEvent(node, mediator);
+    ASSERT(event->target());
+    EventDispatcher::dispatchEvent(event->target()->toNode(), event);
 }
 
 ScopedEventQueue* ScopedEventQueue::instance()

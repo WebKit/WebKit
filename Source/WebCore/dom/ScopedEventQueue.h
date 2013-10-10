@@ -38,14 +38,14 @@
 
 namespace WebCore {
 
-class EventDispatchMediator;
+class Event;
 
 class ScopedEventQueue {
     WTF_MAKE_NONCOPYABLE(ScopedEventQueue); WTF_MAKE_FAST_ALLOCATED;
 public:
     ~ScopedEventQueue();
 
-    void enqueueEventDispatchMediator(PassRefPtr<EventDispatchMediator>);
+    void enqueueEvent(PassRefPtr<Event>);
     void dispatchAllEvents();
     static ScopedEventQueue* instance();
 
@@ -55,9 +55,9 @@ public:
 private:
     ScopedEventQueue();
     static void initialize();
-    void dispatchEvent(PassRefPtr<EventDispatchMediator>) const;
+    void dispatchEvent(PassRefPtr<Event>) const;
 
-    Vector<RefPtr<EventDispatchMediator> > m_queuedEventDispatchMediators;
+    Vector<RefPtr<Event> > m_queuedEvents;
     unsigned m_scopingLevel;
 
     static ScopedEventQueue* s_instance;

@@ -28,7 +28,6 @@
 
 #include "ContainerNode.h"
 #include "EventContext.h"
-#include "EventDispatchMediator.h"
 #include "EventRetargeter.h"
 #include "FocusEvent.h"
 #include "FrameView.h"
@@ -44,14 +43,13 @@
 
 namespace WebCore {
 
-bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
+bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> event)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    Event* event = mediator->event();
     if (!event)
         return true;
     EventDispatcher dispatcher(node, event);
-    return mediator->mediateAndDispatchEvent(&dispatcher);
+    return dispatcher.dispatch();
 }
 
 EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
@@ -68,11 +66,11 @@ EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
     m_view = node->document().view();
 }
 
-void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<EventDispatchMediator> mediator)
+void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    mediator->event()->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(node));
-    ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
+    event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(node));
+    ScopedEventQueue::instance()->enqueueEvent(event);
 }
 
 void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)

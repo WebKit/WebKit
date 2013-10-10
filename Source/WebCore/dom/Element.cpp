@@ -296,13 +296,13 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& event)
         event.directionInvertedFromDevice(),
         event.timestamp());
 
-    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(wheelEvent)) && !wheelEvent->defaultHandled();
+    return EventDispatcher::dispatchEvent(this, wheelEvent) && !wheelEvent->defaultHandled();
 }
 
 bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 {
     RefPtr<KeyboardEvent> event = KeyboardEvent::create(platformEvent, document().defaultView());
-    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event)) && !event->defaultHandled();
+    return EventDispatcher::dispatchEvent(this, event) && !event->defaultHandled();
 }
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
@@ -2087,7 +2087,7 @@ void Element::dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDir
         document().page()->chrome().client().elementDidFocus(this);
 
     RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document().defaultView(), 0, oldFocusedElement);
-    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event.release()));
+    EventDispatcher::dispatchEvent(this, event.release());
 }
 
 void Element::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
@@ -2096,7 +2096,7 @@ void Element::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
         document().page()->chrome().client().elementDidBlur(this);
 
     RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document().defaultView(), 0, newFocusedElement);
-    EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event.release()));
+    EventDispatcher::dispatchEvent(this, event.release());
 }
 
 

@@ -57,7 +57,6 @@ class Document;
 class Element;
 class Event;
 class EventContext;
-class EventDispatchMediator;
 class EventListener;
 class FloatPoint;
 class Frame;
