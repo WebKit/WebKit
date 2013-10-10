@@ -89,16 +89,6 @@ EncodedJSValue JIT_OPERATION operationArrayPopAndRecoverLength(ExecState*, JSArr
 EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
 // These comparisons return a boolean within a size_t such that the value is zero extended to fill the register.
 size_t JIT_OPERATION operationRegExpTest(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-size_t JIT_OPERATION operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-#if USE(JSVALUE64)
-EncodedJSValue JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
-#else
-size_t JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
-#endif
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 size_t JIT_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateActivation(ExecState*, int32_t offset) WTF_INTERNAL;
@@ -146,7 +136,6 @@ EncodedJSValue JIT_OPERATION operationFTLConstruct(ExecState*) WTF_INTERNAL;
 // These operations implement the implicitly called ToInt32 and ToBoolean conversions from ES5.
 // This conversion returns an int32_t within a size_t such that the value is zero extended to fill the register.
 size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue) WTF_INTERNAL;
-size_t JIT_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_INTERNAL;
 
 void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
 

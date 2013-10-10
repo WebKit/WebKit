@@ -512,63 +512,6 @@ size_t JIT_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
     JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
     return asRegExpObject(base)->test(exec, input);
 }
-        
-size_t JIT_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return jsLess<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
-}
-
-size_t JIT_OPERATION operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return jsLessEq<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
-}
-
-size_t JIT_OPERATION operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return jsLess<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
-}
-
-size_t JIT_OPERATION operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
-}
-
-size_t JIT_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
-}
-
-#if USE(JSVALUE64)
-EncodedJSValue JIT_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSCell* right)
-#else
-size_t JIT_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSCell* right)
-#endif
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    bool result = asString(left)->value(exec) == asString(right)->value(exec);
-#if USE(JSVALUE64)
-    return JSValue::encode(jsBoolean(result));
-#else
-    return result;
-#endif
-}
 
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
@@ -1073,14 +1016,6 @@ size_t JIT_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue va
     
     // toInt32/toUInt32 return the same value; we want the value zero extended to fill the register.
     return JSValue::decode(value).toUInt32(exec);
-}
-
-size_t JIT_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    
-    return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
 void JIT_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* debugInfoRaw, void* scratch)

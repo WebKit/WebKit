@@ -52,6 +52,7 @@ namespace JSC {
     C: JSCell*
     Cb: CodeBlock*
     A: JSArray*
+    R: Register
     S: size_t
     Z: int32_t
     D: double
@@ -99,6 +100,7 @@ typedef int32_t JIT_OPERATION (*Z_JITOperation_E)(ExecState*);
 typedef size_t JIT_OPERATION (*S_JITOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t JIT_OPERATION (*S_JITOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef size_t JIT_OPERATION (*S_JITOperation_EOJss)(ExecState*, JSObject*, JSString*);
 typedef size_t JIT_OPERATION (*S_JITOperation_J)(EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_E)(ExecState*);
 typedef void JIT_OPERATION (*V_JITOperation_EOZD)(ExecState*, JSObject*, int32_t, double);
@@ -205,6 +207,18 @@ char* JIT_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkClosureCall(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
+size_t JIT_OPERATION operationConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_INTERNAL;
+size_t JIT_OPERATION operationCompareEq(ExecState*, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+#if USE(JSVALUE64)
+EncodedJSValue JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
+#else
+size_t JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
+#endif
+size_t JIT_OPERATION operationHasProperty(ExecState*, JSObject*, JSString*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 
 }

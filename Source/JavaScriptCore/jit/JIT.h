@@ -664,7 +664,7 @@ namespace JSC {
 #endif
 
         void emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition);
-        void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator&);
+        void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
@@ -868,9 +868,17 @@ namespace JSC {
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
         MacroAssembler::Call callOperation(J_JITOperation_E, int);
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
+        MacroAssembler::Call callOperation(S_JITOperation_ECC, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID);
+        MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(S_JITOperation_EOJss, RegisterID, RegisterID);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(J_JITOperation_E);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_ECb, CodeBlock*);
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_E);
+#if USE(JSVALUE32_64)
+        MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID, RegisterID, RegisterID);
+#endif
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 

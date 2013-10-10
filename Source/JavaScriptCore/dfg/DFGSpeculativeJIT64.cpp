@@ -2034,7 +2034,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         JITCompiler::Jump slowCase = m_jit.branchTest64(JITCompiler::NonZero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
     
         addSlowPathGenerator(
-            slowPathCall(slowCase, this, dfgConvertJSValueToBoolean, resultGPR, arg1GPR));
+            slowPathCall(slowCase, this, operationConvertJSValueToBoolean, resultGPR, arg1GPR));
     
         m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
         jsValueResult(resultGPR, node, DataFormatJSBoolean, UseChildrenCalledExplicitly);
@@ -2177,7 +2177,7 @@ void SpeculativeJIT::emitBranch(Node* node)
             value.use();
     
             silentSpillAllRegisters(resultGPR);
-            callOperation(dfgConvertJSValueToBoolean, resultGPR, valueGPR);
+            callOperation(operationConvertJSValueToBoolean, resultGPR, valueGPR);
             silentFillAllRegisters(resultGPR);
     
             branchTest32(MacroAssembler::NonZero, resultGPR, taken);

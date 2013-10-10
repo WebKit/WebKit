@@ -1651,7 +1651,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
 
         addSlowPathGenerator(
             slowPathCall(
-                slowCase, this, dfgConvertJSValueToBoolean, resultPayloadGPR, arg1TagGPR,
+                slowCase, this, operationConvertJSValueToBoolean, resultPayloadGPR, arg1TagGPR,
                 arg1PayloadGPR));
     
         m_jit.xor32(TrustedImm32(1), resultPayloadGPR);
@@ -1795,7 +1795,7 @@ void SpeculativeJIT::emitBranch(Node* node)
 
         slowPath.link(&m_jit);
         silentSpillAllRegisters(resultGPR);
-        callOperation(dfgConvertJSValueToBoolean, resultGPR, valueTagGPR, valuePayloadGPR);
+        callOperation(operationConvertJSValueToBoolean, resultGPR, valueTagGPR, valuePayloadGPR);
         silentFillAllRegisters(resultGPR);
     
         branchTest32(JITCompiler::NonZero, resultGPR, taken);

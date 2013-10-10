@@ -137,7 +137,7 @@ void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target
     end.link(this);
 }
 
-void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     if (isOperandConstantImmediateChar(op1) || isOperandConstantImmediateChar(op2)) {
         linkSlowCase(iter);
@@ -158,11 +158,10 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
                 linkSlowCase(iter); // double check
         }
     }
-    JITStubCall stubCall(this, stub);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call();
-    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+    emitLoad(op1, regT1, regT0);
+    emitLoad(op2, regT3, regT2);
+    callOperation(operation, regT1, regT0, regT3, regT2);
+    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
 }
 
 // LeftShift (<<)

@@ -320,6 +320,8 @@
 		A57E2F24120749E600048DF3 /* WebQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A57E2F22120749E600048DF3 /* WebQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A58A5799143E727000125F50 /* WebOpenPanelResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */; };
 		A58A579A143E727000125F50 /* WebOpenPanelResultListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */; };
+		A5C566BD127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */; };
+		A5C566BE127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */; };
 		A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */; };
 		A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */; };
 		A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -363,8 +365,6 @@
 		CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */; };
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */; };
-		A5C566BD127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */; };
-		A5C566BE127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */; };
 		CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */; };
 		CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
@@ -643,6 +643,8 @@
 		A57E2F22120749E600048DF3 /* WebQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebQuotaManager.h; sourceTree = "<group>"; };
 		A58A5797143E727000125F50 /* WebOpenPanelResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelResultListener.h; sourceTree = "<group>"; };
 		A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebOpenPanelResultListener.mm; sourceTree = "<group>"; };
+		A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiskImageCacheClientIOS.h; sourceTree = "<group>"; };
+		A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDiskImageCacheClientIOS.mm; sourceTree = "<group>"; };
 		A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
 		A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginInternal.h; sourceTree = "<group>"; };
 		A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
@@ -699,8 +701,6 @@
 		CD8EAC7211CAC9A300774075 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenController.h; sourceTree = "<group>"; };
 		CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenController.mm; sourceTree = "<group>"; };
-		A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiskImageCacheClientIOS.h; sourceTree = "<group>"; };
-		A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDiskImageCacheClientIOS.mm; sourceTree = "<group>"; };
 		CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAlternativeTextClient.mm; sourceTree = "<group>"; };
 		CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
@@ -1043,6 +1043,15 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		44A11FBE0EBA93B2009F69ED /* WebCoreSupport */ = {
+			isa = PBXGroup;
+			children = (
+				A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */,
+				A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */,
+			);
+			path = WebCoreSupport;
+			sourceTree = "<group>";
+		};
 		511F3FC30CECC7E200852565 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -1243,23 +1252,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		FED1400A0CECCD6800D89466 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				44A11FBE0EBA93B2009F69ED /* WebCoreSupport */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
-		44A11FBE0EBA93B2009F69ED /* WebCoreSupport */ = {
-			isa = PBXGroup;
-			children = (
-				A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */,
-				A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */,
-			);
-			path = WebCoreSupport;
-			sourceTree = "<group>";
-		};
 		F52CA6BD02DF9D0F018635CA /* HTML */ = {
 			isa = PBXGroup;
 			children = (
@@ -1429,6 +1421,14 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		FED1400A0CECCD6800D89466 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				44A11FBE0EBA93B2009F69ED /* WebCoreSupport */,
+			);
+			path = ios;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 

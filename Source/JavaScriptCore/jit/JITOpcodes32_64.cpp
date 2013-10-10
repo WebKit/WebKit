@@ -497,10 +497,8 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
         notNumber.link(this);
     }
 
-    JITStubCall stubCall(this, cti_op_jtrue);
-    stubCall.addArgument(cond);
-    stubCall.call();
-    emitJumpSlowToHot(branchTest32(Zero, regT0), target); // Inverted.
+    callOperation(operationConvertJSValueToBoolean, regT1, regT0);
+    emitJumpSlowToHot(branchTest32(Zero, returnValueRegister), target); // Inverted.
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -533,10 +531,8 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
         notNumber.link(this);
     }
 
-    JITStubCall stubCall(this, cti_op_jtrue);
-    stubCall.addArgument(cond);
-    stubCall.call();
-    emitJumpSlowToHot(branchTest32(NonZero, regT0), target);
+    callOperation(operationConvertJSValueToBoolean, regT1, regT0);
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueRegister), target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
@@ -634,22 +630,18 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
 
     // String case.
-    JITStubCall stubCallEqStrings(this, cti_op_eq_strings);
-    stubCallEqStrings.addArgument(regT0);
-    stubCallEqStrings.addArgument(regT2);
-    stubCallEqStrings.call();
+    callOperation(operationCompareStringEq, regT0, regT2);
     storeResult.append(jump());
 
     // Generic case.
     genericCase.append(getSlowCase(iter)); // doubles
     genericCase.link(this);
-    JITStubCall stubCallEq(this, cti_op_eq);
-    stubCallEq.addArgument(op1);
-    stubCallEq.addArgument(op2);
-    stubCallEq.call(regT0);
+    emitLoad(op1, regT1, regT0);
+    emitLoad(op2, regT3, regT2);
+    callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
 
     storeResult.link(this);
-    emitStoreBool(dst, regT0);
+    emitStoreBool(dst, returnValueRegister);
 }
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
@@ -682,23 +674,17 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     genericCase.append(branchPtr(NotEqual, Address(regT2, JSCell::structureOffset()), TrustedImmPtr(m_vm->stringStructure.get())));
 
     // String case.
-    JITStubCall stubCallEqStrings(this, cti_op_eq_strings);
-    stubCallEqStrings.addArgument(regT0);
-    stubCallEqStrings.addArgument(regT2);
-    stubCallEqStrings.call(regT0);
+    callOperation(operationCompareStringEq, regT0, regT2);
     storeResult.append(jump());
 
     // Generic case.
     genericCase.append(getSlowCase(iter)); // doubles
     genericCase.link(this);
-    JITStubCall stubCallEq(this, cti_op_eq);
-    stubCallEq.addArgument(regT1, regT0);
-    stubCallEq.addArgument(regT3, regT2);
-    stubCallEq.call(regT0);
+    callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
 
     storeResult.link(this);
-    xor32(TrustedImm32(0x1), regT0);
-    emitStoreBool(dst, regT0);
+    xor32(TrustedImm32(0x1), returnValueRegister);
+    emitStoreBool(dst, returnValueRegister);
 }
 
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
@@ -935,10 +921,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     // Slow case: Ask the object if i is valid.
     callHasProperty.link(this);
     loadPtr(addressFor(dst), regT1);
-    JITStubCall stubCall(this, cti_has_property);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call();
+    callOperation(operationHasProperty, regT0, regT1);
 
     // Test for valid key.
     addJump(branchTest32(NonZero, regT0), target);

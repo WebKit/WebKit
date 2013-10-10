@@ -243,6 +243,30 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EP operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_ECC operation, RegisterID regOp1, RegisterID regOp2)
+{
+    setupArgumentsWithExecState(regOp1, regOp2);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJ operation, RegisterID regOp)
+{
+    setupArgumentsWithExecState(regOp);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operation, RegisterID regOp1, RegisterID regOp2)
+{
+    setupArgumentsWithExecState(regOp1, regOp2);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EOJss operation, RegisterID regOp1, RegisterID regOp2)
+{
+    setupArgumentsWithExecState(regOp1, regOp2);
+    return appendCallWithExceptionCheck(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnException(J_JITOperation_E operation)
 {
     setupArgumentsExecState();
@@ -260,6 +284,41 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
     setupArgumentsExecState();
     return appendCallWithCallFrameRollbackOnException(operation);
 }
+
+#if USE(JSVALUE32_64)
+
+// EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
+// To avoid assemblies from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
+#if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
+#define EABI_32BIT_DUMMY_ARG      TrustedImm32(0),
+#else
+#define EABI_32BIT_DUMMY_ARG
+#endif
+
+// JSVALUE32_64 is a 64-bit integer that cannot be put half in an argument register and half on stack when using SH4 architecture.
+// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary.
+#if CPU(SH4)
+#define SH4_32BIT_DUMMY_ARG      TrustedImm32(0),
+#else
+#define SH4_32BIT_DUMMY_ARG
+#endif
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJ operation, RegisterID argTag, RegisterID argPayload)
+{
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG argPayload, argTag);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operation, RegisterID arg1Tag, RegisterID arg1Payload, RegisterID arg2Tag, RegisterID arg2Payload)
+{
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, SH4_32BIT_DUMMY_ARG arg2Payload, arg2Tag);
+    return appendCallWithExceptionCheck(operation);
+}
+
+#undef EABI_32BIT_DUMMY_ARG
+#undef SH4_32BIT_DUMMY_ARG
+
+#endif // USE(JSVALUE32_64)
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {

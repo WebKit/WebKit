@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "JITInlines.h"
+#include "JITOperations.h"
 #include "JITStubCall.h"
 #include "JITStubs.h"
 #include "JSArray.h"
@@ -126,7 +127,7 @@ void JIT::emitSlow_op_jless(Instruction* currentInstruction, Vector<SlowCaseEntr
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThan, cti_op_jless, false, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThan, operationCompareLess, false, iter);
 }
 
 void JIT::emitSlow_op_jlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -135,7 +136,7 @@ void JIT::emitSlow_op_jlesseq(Instruction* currentInstruction, Vector<SlowCaseEn
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqual, cti_op_jlesseq, false, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqual, operationCompareLessEq, false, iter);
 }
 
 void JIT::emitSlow_op_jgreater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -144,7 +145,7 @@ void JIT::emitSlow_op_jgreater(Instruction* currentInstruction, Vector<SlowCaseE
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThan, cti_op_jgreater, false, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThan, operationCompareGreater, false, iter);
 }
 
 void JIT::emitSlow_op_jgreatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -153,7 +154,7 @@ void JIT::emitSlow_op_jgreatereq(Instruction* currentInstruction, Vector<SlowCas
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrEqual, cti_op_jgreatereq, false, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrEqual, operationCompareGreaterEq, false, iter);
 }
 
 void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -162,7 +163,7 @@ void JIT::emitSlow_op_jnless(Instruction* currentInstruction, Vector<SlowCaseEnt
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrEqualOrUnordered, cti_op_jless, true, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrEqualOrUnordered, operationCompareLess, true, iter);
 }
 
 void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -171,7 +172,7 @@ void JIT::emitSlow_op_jnlesseq(Instruction* currentInstruction, Vector<SlowCaseE
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrUnordered, cti_op_jlesseq, true, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleGreaterThanOrUnordered, operationCompareLessEq, true, iter);
 }
 
 void JIT::emitSlow_op_jngreater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -180,7 +181,7 @@ void JIT::emitSlow_op_jngreater(Instruction* currentInstruction, Vector<SlowCase
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqualOrUnordered, cti_op_jgreater, true, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrEqualOrUnordered, operationCompareGreater, true, iter);
 }
 
 void JIT::emitSlow_op_jngreatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -189,7 +190,7 @@ void JIT::emitSlow_op_jngreatereq(Instruction* currentInstruction, Vector<SlowCa
     int op2 = currentInstruction[2].u.operand;
     unsigned target = currentInstruction[3].u.operand;
 
-    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrUnordered, cti_op_jgreatereq, true, iter);
+    emit_compareAndJumpSlow(op1, op2, target, DoubleLessThanOrUnordered, operationCompareGreaterEq, true, iter);
 }
 
 #if USE(JSVALUE64)
@@ -457,7 +458,7 @@ void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, Relat
     }
 }
 
-void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition condition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition condition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jlesseq), OPCODE_LENGTH_op_jlesseq_equals_op_jless);
     COMPILE_ASSERT(OPCODE_LENGTH(op_jless) == OPCODE_LENGTH(op_jnless), OPCODE_LENGTH_op_jnless_equals_op_jless);
@@ -476,11 +477,11 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         linkSlowCase(iter);
         linkSlowCase(iter);
         linkSlowCase(iter);
-        JITStubCall stubCall(this, stub);
-        stubCall.addArgument(op1, regT0);
-        stubCall.addArgument(op2, regT1);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+
+        emitGetVirtualRegister(op1, firstArgumentRegister);
+        emitGetVirtualRegister(op2, secondArgumentRegister);
+        callOperation(operation, firstArgumentRegister, secondArgumentRegister);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
         return;
     }
 
@@ -504,12 +505,9 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
             fail1.link(this);
         }
 
-        JITStubCall stubCall(this, stub);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(op2, regT2);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
-
+        emitGetVirtualRegister(op2, regT1);
+        callOperation(operation, regT0, regT1);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
 
@@ -530,11 +528,9 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
             fail1.link(this);
         }
 
-        JITStubCall stubCall(this, stub);
-        stubCall.addArgument(op1, regT2);
-        stubCall.addArgument(regT1);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+        emitGetVirtualRegister(op1, regT2);
+        callOperation(operation, regT2, regT1);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
     } else {
         linkSlowCase(iter);
 
@@ -557,11 +553,8 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         }
 
         linkSlowCase(iter);
-        JITStubCall stubCall(this, stub);
-        stubCall.addArgument(regT0);
-        stubCall.addArgument(regT1);
-        stubCall.call();
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, regT0), target);
+        callOperation(operation, regT0, regT1);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
     }
 }
 

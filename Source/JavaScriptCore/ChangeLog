@@ -1,3 +1,55 @@
+2013-10-10  Michael Saboff  <msaboff@apple.com>
+
+        transition cti_op_* methods returning int to JIT operations.
+        https://bugs.webkit.org/show_bug.cgi?id=122563
+
+        Reviewed by Oliver Hunt.
+
+        Moved serveral operationCompare* functions from DFGOperations to JITOperations as well as changing
+        dfgConvertJSValueToBoolean to operationConvertJSValueToBoolean so that they can be shared with the baseline JIT.
+        Added JITOperation operationHasProperty().  Added needed callOperation helpers and transitioned baseline JIT code
+        to use the new operations.
+        
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jgreater):
+        (JSC::JIT::emitSlow_op_jgreatereq):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jngreater):
+        (JSC::JIT::emitSlow_op_jngreatereq):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_next_pname):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         OSR exit using llvm.webkit.stackmap should pass more tests

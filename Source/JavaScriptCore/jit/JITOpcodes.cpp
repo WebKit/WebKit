@@ -591,10 +591,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     // Slow case: Ask the object if i is valid.
     callHasProperty.link(this);
     emitGetVirtualRegister(dst, regT1);
-    JITStubCall stubCall(this, cti_has_property);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call();
+    callOperation(operationHasProperty, regT0, regT1);
 
     // Test for valid key.
     addJump(branchTest32(NonZero, regT0), target);
@@ -975,19 +972,15 @@ void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>
 void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_jtrue);
-    stubCall.addArgument(regT0);
-    stubCall.call();
-    emitJumpSlowToHot(branchTest32(Zero, regT0), currentInstruction[2].u.operand); // inverted!
+    callOperation(operationConvertJSValueToBoolean, regT0);
+    emitJumpSlowToHot(branchTest32(Zero, returnValueRegister), currentInstruction[2].u.operand); // inverted!
 }
 
 void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_jtrue);
-    stubCall.addArgument(regT0);
-    stubCall.call();
-    emitJumpSlowToHot(branchTest32(NonZero, regT0), currentInstruction[2].u.operand);
+    callOperation(operationConvertJSValueToBoolean, regT0);
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueRegister), currentInstruction[2].u.operand);
 }
 
 void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -1009,24 +1002,18 @@ void JIT::emitSlow_op_bitor(Instruction* currentInstruction, Vector<SlowCaseEntr
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_eq);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call();
-    emitTagAsBoolImmediate(regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    callOperation(operationCompareEq, regT0, regT1);
+    emitTagAsBoolImmediate(returnValueRegister);
+    emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
 }
 
 void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_eq);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(regT1);
-    stubCall.call();
+    callOperation(operationCompareEq, regT0, regT1);
     xor32(TrustedImm32(0x1), regT0);
-    emitTagAsBoolImmediate(regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    emitTagAsBoolImmediate(returnValueRegister);
+    emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
 }
 
 void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
