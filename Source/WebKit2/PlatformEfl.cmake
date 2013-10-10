@@ -1,4 +1,7 @@
 list(APPEND WebKit2_SOURCES
+    NetworkProcess/soup/NetworkProcessSoup.cpp
+    NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp
+
     Platform/CoreIPC/unix/AttachmentUnix.cpp
     Platform/CoreIPC/unix/ConnectionUnix.cpp
 
@@ -109,6 +112,8 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
 
+    UIProcess/Network/soup/NetworkProcessProxySoup.cpp
+
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
@@ -148,6 +153,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebUIPopupMenuClient.cpp
     UIProcess/efl/WebViewEfl.cpp
 
+    UIProcess/soup/WebContextSoup.cpp
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp
     UIProcess/soup/WebSoupRequestManagerProxy.cpp

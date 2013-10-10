@@ -95,6 +95,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebKit2 \
 	-I$(srcdir)/Source/WebKit2/gtk \
+	-I$(srcdir)/Source/WebKit2/NetworkProcess \
 	-I$(srcdir)/Source/WebKit2/Platform \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC/gtk \
@@ -127,6 +128,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/UIProcess/gtk \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher/gtk \
+	-I$(srcdir)/Source/WebKit2/UIProcess/Network \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Notifications \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins/unix \

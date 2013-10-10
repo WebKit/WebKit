@@ -300,6 +300,8 @@ webkit2platform_sources += \
 
 webkit2_sources += \
 	Source/WebKit2/config.h \
+	Source/WebKit2/NetworkProcess/soup/NetworkProcessSoup.cpp \
+	Source/WebKit2/NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.cpp \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.h \
 	Source/WebKit2/PluginProcess/PluginCreationParameters.cpp \
@@ -854,6 +856,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
+	Source/WebKit2/UIProcess/Network/soup/NetworkProcessProxySoup.cpp \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.cpp \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.h \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
@@ -888,6 +891,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Storage/LocalStorageDatabaseTracker.h \
 	Source/WebKit2/UIProcess/Storage/StorageManager.cpp \
 	Source/WebKit2/UIProcess/Storage/StorageManager.h \
+	Source/WebKit2/UIProcess/soup/WebContextSoup.cpp \
 	Source/WebKit2/UIProcess/soup/WebCookieManagerProxySoup.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.h \

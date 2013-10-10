@@ -1,3 +1,32 @@
+2013-10-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2][Soup] Add platform specific stubs for NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=110115
+
+        Reviewed by Carlos Garcia Campos.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org> and Kwang Yul Seo  <skyul@company100.net>.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * NetworkProcess/gtk/NetworkProcessSoup.cpp: Added.
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::NetworkProcess::platformSetCacheModel):
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        Stubs.
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        (WebKit::NetworkProcess::platformTerminate):
+        * NetworkProcess/soup/NetworkResourceLoadSchedulerSoup.cpp: Added.
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost):
+        Added platform default based on the comment in ResourceRequestSoup.cpp.
+        * UIProcess/Network/soup/NetworkProcessProxySoup.cpp: Added.
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions):
+        Stub.
+        * UIProcess/soup/WebContextSoup.cpp: Added.
+        (WebKit::WebContext::platformInitializeNetworkProcess):
+        Stub.
+
 2013-10-10  Beth Dakin  <bdakin@apple.com>
 
         Scrollbars are updated on the main thread rather than the scrolling thread 
