@@ -1,3 +1,16 @@
+2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Fix debug build after r157210
+        https://bugs.webkit.org/show_bug.cgi?id=122593
+
+        Reviewed by Andreas Kling.
+
+        No new tests, build fix.
+
+        * dom/EventContext.cpp:
+        (WebCore::TouchEventContext::handleLocalEvents): Fix ASSERT, now that
+        event is a reference instead of a pointer.
+
 2013-10-10  Andreas Kling  <akling@apple.com>
 
         Tighten some renderer access in Document.

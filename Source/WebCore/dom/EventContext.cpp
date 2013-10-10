@@ -115,7 +115,7 @@ void TouchEventContext::handleLocalEvents(Event& event) const
     checkReachability(m_targetTouches.get());
     checkReachability(m_changedTouches.get());
 #endif
-    ASSERT(event->isTouchEvent());
+    ASSERT(event.isTouchEvent());
     TouchEvent& touchEvent = toTouchEvent(event);
     touchEvent.setTouches(m_touches);
     touchEvent.setTargetTouches(m_targetTouches);
