@@ -46,28 +46,7 @@ class TouchEvent;
 #endif
 class TreeScope;
 
-class EventRetargeter {
-public:
-#if ENABLE(TOUCH_EVENTS)
-    typedef Vector<RefPtr<TouchList> > EventPathTouchLists;
-    static void adjustForTouchEvent(Node*, const TouchEvent&, EventPath&);
-#endif
-    static EventTarget& eventTargetRespectingTargetRules(Node& referenceNode);
-
-private:
-    enum EventWithRelatedTargetDispatchBehavior {
-        StopAtBoundaryIfNeeded,
-        DoesNotStopAtBoundary
-    };
-    static void adjustForRelatedTarget(const Node*, EventTarget* relatedTarget, EventPath&);
-    static void calculateAdjustedNodes(const Node*, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior, EventPath&, Vector<RefPtr<Node>>& adjustedNodes);
-#if ENABLE(TOUCH_EVENTS)
-    static void adjustTouchList(const Node*, const TouchList*, const EventPath&, EventPathTouchLists&);
-#endif
-    friend class EventPath;
-};
-
-inline EventTarget& EventRetargeter::eventTargetRespectingTargetRules(Node& referenceNode)
+inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
 {
     if (referenceNode.isPseudoElement()) {
         EventTarget* hostElement = toPseudoElement(referenceNode).hostElement();

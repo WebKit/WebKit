@@ -1,3 +1,27 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move the rest of EventRetargeter functions to EventPath
+        https://bugs.webkit.org/show_bug.cgi?id=122586
+
+        Reviewed by Andreas Kling.
+
+        Moved the rest of EventRetargeter functiosn either static local or EventPath member functions.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        (WebCore::EventDispatcher::dispatch):
+        (WebCore::EventDispatcher::dispatchEventPostProcess):
+        * dom/EventDispatcher.h:
+        * dom/EventRetargeter.cpp:
+        (WebCore::EventPath::EventPath):
+        (WebCore::calculateAdjustedNodes): Made static local. Also takes const EventPath and returns the size
+        to which EventPath should be shrunk; this allows us to remove EventPath::shrink.
+        (WebCore::updateTouchListsInEventPath): Moved and renamed from EventRetargeter::adjustTouchList.
+        (WebCore::EventPath::updateTouchLists): Moved and renamed from EventRetargeter::adjustForTouchEvent.
+        (WebCore::EventPath::setRelatedTarget): Moved.
+        * dom/EventRetargeter.h:
+        (WebCore::eventTargetRespectingTargetRules): Renamed from EventRetargeter::eventTargetRespectingTargetRules.
+
 2013-10-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13341666> WebKit should always build against an SDK.

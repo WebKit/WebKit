@@ -70,7 +70,7 @@ EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
 void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(node));
+    event->setTarget(&eventTargetRespectingTargetRules(node));
     ScopedEventQueue::instance()->enqueueEvent(event);
 }
 
@@ -165,7 +165,7 @@ bool EventDispatcher::dispatch()
         m_eventPath.setRelatedTarget(*relatedTarget);
 #if ENABLE(TOUCH_EVENTS)
     if (m_event->isTouchEvent())
-        EventRetargeter::adjustForTouchEvent(m_node.get(), *toTouchEvent(m_event.get()), m_eventPath); 
+        m_eventPath.updateTouchLists(*toTouchEvent(m_event.get())); 
 #endif
 
 #ifndef NDEBUG
@@ -175,7 +175,7 @@ bool EventDispatcher::dispatch()
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
     ASSERT(m_node);
-    m_event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(*m_node));
+    m_event->setTarget(&eventTargetRespectingTargetRules(*m_node));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(m_event->target());
     WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
@@ -188,7 +188,7 @@ bool EventDispatcher::dispatch()
     if (!m_event->propagationStopped() && !m_eventPath.isEmpty())
         dispatchEventInDOM(*m_event, m_eventPath, windowEventContext);
 
-    m_event->setTarget(&EventRetargeter::eventTargetRespectingTargetRules(*m_node));
+    m_event->setTarget(&eventTargetRespectingTargetRules(*m_node));
     m_event->setCurrentTarget(0);
     m_event->setEventPhase(0);
 
