@@ -1,3 +1,10 @@
+2013-10-10  Seokju Kwon  <seokju@webkit.org>
+
+        Unreviewed build fix after r157250
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+
 2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Create MediaStream object with ended attribute set if all tracks that are being used on its creation are ended

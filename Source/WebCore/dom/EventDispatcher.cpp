@@ -152,7 +152,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
         eventPath.setRelatedTarget(*relatedTarget);
 #if ENABLE(TOUCH_EVENTS)
     if (event->isTouchEvent())
-        eventPath.updateTouchLists(*toTouchEvent(m_event.get())); 
+        eventPath.updateTouchLists(*toTouchEvent(event.get()));
 #endif
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
