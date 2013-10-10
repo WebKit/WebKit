@@ -34,7 +34,7 @@
 #include "ShapeOutsideInfo.h"
 
 #include "FloatingObjects.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderBox.h"
 
 namespace WebCore {
@@ -54,9 +54,9 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
     }
 }
 
-void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlock* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
+void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
-    LayoutUnit shapeTop = floatingObject->logicalTop(containingBlock->isHorizontalWritingMode()) + std::max(LayoutUnit(), containingBlock->marginBeforeForChild(m_renderer));
+    LayoutUnit shapeTop = containingBlock->logicalTopForFloat(floatingObject) + std::max(LayoutUnit(), containingBlock->marginBeforeForChild(m_renderer));
     LayoutUnit lineTopInShapeCoordinates = lineTop - shapeTop + logicalTopOffset();
 
     if (shapeSizeDirty() || m_lineTop != lineTopInShapeCoordinates || m_lineHeight != lineHeight) {
@@ -80,8 +80,8 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlock* con
         // content should interact with previously stacked floats on the line
         // as if this outermost float did not exist. Perhaps obviously, this
         // solution cannot do that, and will be revisted with bug 122576.
-        m_leftMarginBoxDelta = floatingObject->logicalWidth(containingBlock->isHorizontalWritingMode());
-        m_rightMarginBoxDelta = -floatingObject->logicalWidth(containingBlock->isHorizontalWritingMode());
+        m_leftMarginBoxDelta = containingBlock->logicalWidthForFloat(floatingObject);
+        m_rightMarginBoxDelta = -containingBlock->logicalWidthForFloat(floatingObject);
     }
 }
 

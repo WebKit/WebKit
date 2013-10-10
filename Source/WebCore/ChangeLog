@@ -1,3 +1,75 @@
+2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move float logical location/dimension methods to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=122282
+
+        Reviewed by David Hyatt.
+
+        I recently moved the logical location and dimension methods from
+        RenderBlock to FloatingObject. This made it so that the methods needed
+        to take in the horizontal writing mode of the FloatingObject's
+        container in order to do their thing. When looking into how to fix
+        this, I came to understand why RenderBlock has methods to determine
+        the logical location and dimensions of its children, when the children
+        themselves have those methods: the methods on RenderBlock are for
+        determining the logical value in the writing mode of that RenderBlock,
+        and the method on the child is for determining the logical value in
+        the writing mode of the child.
+
+        Since the floating object list has moved from RenderBlock to
+        RenderBlockFlow, this change moves the logical dimension methods from
+        FloatingObject to RenderBlockFlow.
+
+        No new tests, no new behavior.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::FloatingObjects::FloatingObjects):
+        (WebCore::::updateOffsetIfNeeded):
+        (WebCore::::collectIfNeeded):
+        (WebCore::::getHeightRemaining):
+        * rendering/FloatingObjects.h:
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::repaintOverhangingFloats):
+        (WebCore::RenderBlockFlow::insertFloatingObject):
+        (WebCore::RenderBlockFlow::removeFloatingObject):
+        (WebCore::RenderBlockFlow::removeFloatingObjectsBelow):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlockFlow::lowestFloatLogicalBottom):
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        (WebCore::RenderBlockFlow::hasOverhangingFloat):
+        (WebCore::RenderBlockFlow::addIntrudingFloats):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::logicalTopForFloat):
+        (WebCore::RenderBlockFlow::logicalBottomForFloat):
+        (WebCore::RenderBlockFlow::logicalLeftForFloat):
+        (WebCore::RenderBlockFlow::logicalRightForFloat):
+        (WebCore::RenderBlockFlow::logicalWidthForFloat):
+        (WebCore::RenderBlockFlow::logicalHeightForFloat):
+        (WebCore::RenderBlockFlow::logicalSizeForFloat):
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalTopForFloat):
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalBottomForFloat):
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalLeftForFloat):
+        (WebCore::RenderBlockFlow::pixelSnappedLogicalRightForFloat):
+        (WebCore::RenderBlockFlow::setLogicalTopForFloat):
+        (WebCore::RenderBlockFlow::setLogicalLeftForFloat):
+        (WebCore::RenderBlockFlow::setLogicalHeightForFloat):
+        (WebCore::RenderBlockFlow::setLogicalWidthForFloat):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::adjustLogicalLineTopAndLogicalHeightIfNeeded):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+        (WebCore::updateSegmentsForShapes):
+        (WebCore::LineBreaker::nextSegmentBreak):
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove MouseEventDispatchMediator

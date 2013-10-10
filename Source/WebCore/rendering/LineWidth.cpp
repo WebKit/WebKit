@@ -92,7 +92,7 @@ void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
 void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat)
 {
     LayoutUnit height = m_block.logicalHeight();
-    if (height < newFloat->logicalTop(m_block.isHorizontalWritingMode()) || height >= newFloat->logicalBottom(m_block.isHorizontalWritingMode()))
+    if (height < m_block.logicalTopForFloat(newFloat) || height >= m_block.logicalBottomForFloat(newFloat))
         return;
 
 #if ENABLE(CSS_SHAPES)
@@ -122,7 +122,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
 #endif
 
     if (newFloat->type() == FloatingObject::FloatLeft) {
-        float newLeft = newFloat->logicalRight(m_block.isHorizontalWritingMode());
+        float newLeft = m_block.logicalRightForFloat(newFloat);
 #if ENABLE(CSS_SHAPES)
         if (previousShapeOutsideInfo)
             newLeft -= previousShapeOutsideInfo->rightMarginBoxDelta();
@@ -134,7 +134,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
             newLeft += floorToInt(m_block.textIndentOffset());
         m_left = std::max<float>(m_left, newLeft);
     } else {
-        float newRight = newFloat->logicalLeft(m_block.isHorizontalWritingMode());
+        float newRight = m_block.logicalLeftForFloat(newFloat);
 #if ENABLE(CSS_SHAPES)
         if (previousShapeOutsideInfo)
             newRight -= previousShapeOutsideInfo->leftMarginBoxDelta();
