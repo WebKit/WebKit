@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,14 +32,11 @@
 #include "XPathUtil.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-
-using std::numeric_limits;
 
 namespace WebCore {
 namespace XPath {
-
-const Value::AdoptTag Value::adopt = {};
 
 const NodeSet& Value::toNodeSet() const
 {
@@ -47,11 +44,11 @@ const NodeSet& Value::toNodeSet() const
         Expression::evaluationContext().hadTypeConversionError = true;
 
     if (!m_data) {
-        DEFINE_STATIC_LOCAL(NodeSet, emptyNodeSet, ());
+        static NeverDestroyed<NodeSet> emptyNodeSet;
         return emptyNodeSet;
     }
 
-    return m_data->m_nodeSet;
+    return m_data->nodeSet;
 }    
 
 NodeSet& Value::modifiableNodeSet()
@@ -60,23 +57,23 @@ NodeSet& Value::modifiableNodeSet()
         Expression::evaluationContext().hadTypeConversionError = true;
 
     if (!m_data)
-        m_data = ValueData::create();
-    
+        m_data = Data::create();
+
     m_type = NodeSetValue;
-    return m_data->m_nodeSet;
+    return m_data->nodeSet;
 }
 
 bool Value::toBoolean() const
 {
     switch (m_type) {
         case NodeSetValue:
-            return !m_data->m_nodeSet.isEmpty();
+            return !m_data->nodeSet.isEmpty();
         case BooleanValue:
             return m_bool;
         case NumberValue:
             return m_number && !std::isnan(m_number);
         case StringValue:
-            return !m_data->m_string.isEmpty();
+            return !m_data->string.isEmpty();
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -90,25 +87,26 @@ double Value::toNumber() const
         case NumberValue:
             return m_number;
         case StringValue: {
-            const String& str = m_data->m_string.simplifyWhiteSpace();
+            const String& str = m_data->string.simplifyWhiteSpace();
 
             // String::toDouble() supports exponential notation, which is not allowed in XPath.
             unsigned len = str.length();
             for (unsigned i = 0; i < len; ++i) {
                 UChar c = str[i];
                 if (!isASCIIDigit(c) && c != '.'  && c != '-')
-                    return numeric_limits<double>::quiet_NaN();
+                    return std::numeric_limits<double>::quiet_NaN();
             }
 
             bool canConvert;
             double value = str.toDouble(&canConvert);
             if (canConvert)
                 return value;
-            return numeric_limits<double>::quiet_NaN();
+            return std::numeric_limits<double>::quiet_NaN();
         }
         case BooleanValue:
             return m_bool;
     }
+
     ASSERT_NOT_REACHED();
     return 0.0;
 }
@@ -117,22 +115,23 @@ String Value::toString() const
 {
     switch (m_type) {
         case NodeSetValue:
-            if (m_data->m_nodeSet.isEmpty()) 
-                return "";
-            return stringValue(m_data->m_nodeSet.firstNode());
+            if (m_data->nodeSet.isEmpty())
+                return emptyString();
+            return stringValue(m_data->nodeSet.firstNode());
         case StringValue:
-            return m_data->m_string;
+            return m_data->string;
         case NumberValue:
             if (std::isnan(m_number))
-                return "NaN";
+                return ASCIILiteral("NaN");
             if (m_number == 0)
-                return "0";
+                return ASCIILiteral("0");
             if (std::isinf(m_number))
-                return std::signbit(m_number) ? "-Infinity" : "Infinity";
+                return ASCIILiteral(std::signbit(m_number) ? "-Infinity" : "Infinity");
             return String::number(m_number);
         case BooleanValue:
-            return m_bool ? "true" : "false";
+            return ASCIILiteral(m_bool ? "true" : "false");
     }
+
     ASSERT_NOT_REACHED();
     return String();
 }

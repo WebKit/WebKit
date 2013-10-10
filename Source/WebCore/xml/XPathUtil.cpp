@@ -50,7 +50,7 @@ String stringValue(Node* node)
         case Node::XPATH_NAMESPACE_NODE:
             return node->nodeValue();
         default:
-            if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE)
+            if (isRootDomNode(node) || node->isElementNode())
                 return TextNodeTraversal::contentsAsString(node);
     }
     return String();

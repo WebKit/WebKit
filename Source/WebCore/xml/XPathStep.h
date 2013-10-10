@@ -27,8 +27,8 @@
 #ifndef XPathStep_h
 #define XPathStep_h
 
-#include "XPathExpressionNode.h"
-#include "XPathNodeSet.h"
+#include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -36,10 +36,10 @@ class Node;
 
 namespace XPath {
 
-class Predicate;
-        
-class Step : public ParseNode {
-    WTF_MAKE_NONCOPYABLE(Step);
+class Expression;
+class NodeSet;
+
+class Step {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Axis {
@@ -49,57 +49,73 @@ public:
         ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
         SelfAxis
     };
-           
+
     class NodeTest {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        enum Kind {
-            TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest
-        };
+        enum Kind { TextNodeTest, CommentNodeTest, ProcessingInstructionNodeTest, AnyNodeTest, NameTest };
 
-        NodeTest(Kind kind) : m_kind(kind) { }
-        NodeTest(Kind kind, const String& data) : m_kind(kind), m_data(data) { }
-        NodeTest(Kind kind, const String& data, const String& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
-                
-        Kind kind() const { return m_kind; }
-        const AtomicString& data() const { return m_data; }
-        const AtomicString& namespaceURI() const { return m_namespaceURI; }
-        Vector<Predicate*>& mergedPredicates() { return m_mergedPredicates; }
-        const Vector<Predicate*>& mergedPredicates() const { return m_mergedPredicates; }
-                
+        explicit NodeTest(Kind kind) : m_kind(kind) { }
+        NodeTest(Kind kind, const AtomicString& data) : m_kind(kind), m_data(data) { }
+        NodeTest(Kind kind, const AtomicString& data, const AtomicString& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) { }
+
+#if COMPILER(MSVC)
+        NodeTest(const NodeTest&);
+        void operator=(const NodeTest&);
+
+        NodeTest(NodeTest&& other)
+            : m_kind(other.m_kind)
+            , m_data(std::move(other.m_data))
+            , m_namespaceURI(std::move(other.m_namespaceURI))
+            , m_mergedPredicates(std::move(m_mergedPredicates))
+        {
+        }
+        NodeTest& operator=(NodeTest&& other)
+        {
+            m_kind = other.m_kind;
+            m_data = std::move(other.m_data);
+            m_namespaceURI = std::move(other.m_namespaceURI);
+            m_mergedPredicates = std::move(m_mergedPredicates);
+            return *this;
+        }
+#endif
+
     private:
+        friend class Step;
+        friend void optimizeStepPair(Step&, Step&, bool&);
+        friend bool nodeMatchesBasicTest(Node&, Axis, const NodeTest&);
+        friend bool nodeMatches(Node&, Axis, const NodeTest&);
+
         Kind m_kind;
         AtomicString m_data;
         AtomicString m_namespaceURI;
-
-        // When possible, we merge some or all predicates with node test for better performance.
-        Vector<Predicate*> m_mergedPredicates;
+        Vector<std::unique_ptr<Expression>> m_mergedPredicates;
     };
 
-    Step(Axis, const NodeTest&, const Vector<Predicate*>& predicates = Vector<Predicate*>());
+    Step(Axis, NodeTest);
+    Step(Axis, NodeTest, Vector<std::unique_ptr<Expression>>);
     ~Step();
 
     void optimize();
 
-    void evaluate(Node* context, NodeSet&) const;
+    void evaluate(Node& context, NodeSet&) const;
 
     Axis axis() const { return m_axis; }
-    const NodeTest& nodeTest() const { return m_nodeTest; }
 
 private:
-    friend void optimizeStepPair(Step*, Step*, bool&);
+    friend void optimizeStepPair(Step&, Step&, bool&);
+
     bool predicatesAreContextListInsensitive() const;
 
     void parseNodeTest(const String&);
-    void nodesInAxis(Node* context, NodeSet&) const;
-    String namespaceFromNodetest(const String& nodeTest) const;
+    void nodesInAxis(Node& context, NodeSet&) const;
 
     Axis m_axis;
     NodeTest m_nodeTest;
-    Vector<Predicate*> m_predicates;
+    Vector<std::unique_ptr<Expression>> m_predicates;
 };
 
-void optimizeStepPair(Step*, Step*, bool& dropSecondStep);
+void optimizeStepPair(Step&, Step&, bool& dropSecondStep);
 
 } // namespace XPath
 

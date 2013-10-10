@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +27,6 @@
 #ifndef XPathNodeSet_h
 #define XPathNodeSet_h
 
-#include <wtf/Vector.h>
-#include <wtf/Forward.h>
-
 #include "Node.h"
 
 namespace WebCore {
@@ -36,26 +34,24 @@ namespace WebCore {
     namespace XPath {
 
         class NodeSet {
-            WTF_MAKE_FAST_ALLOCATED;
         public:
             NodeSet() : m_isSorted(true), m_subtreesAreDisjoint(false) { }
+            explicit NodeSet(PassRefPtr<Node> node) : m_isSorted(true), m_subtreesAreDisjoint(false), m_nodes(1, node) { }
             
             size_t size() const { return m_nodes.size(); }
-            bool isEmpty() const { return !m_nodes.size(); }
+            bool isEmpty() const { return m_nodes.isEmpty(); }
             Node* operator[](unsigned i) const { return m_nodes.at(i).get(); }
             void reserveCapacity(size_t newCapacity) { m_nodes.reserveCapacity(newCapacity); }
             void clear() { m_nodes.clear(); }
-            void swap(NodeSet& other) { std::swap(m_isSorted, other.m_isSorted); std::swap(m_subtreesAreDisjoint, other.m_subtreesAreDisjoint); m_nodes.swap(other.m_nodes); }
 
             // NodeSet itself does not verify that nodes in it are unique.
-            void append(Node* node) { m_nodes.append(node); }
             void append(PassRefPtr<Node> node) { m_nodes.append(node); }
             void append(const NodeSet& nodeSet) { m_nodes.appendVector(nodeSet.m_nodes); }
 
-            // Returns the set's first node in document order, or 0 if the set is empty.
+            // Returns the set's first node in document order, or nullptr if the set is empty.
             Node* firstNode() const;
 
-            // Returns 0 if the set is empty.
+            // Returns nullptr if the set is empty.
             Node* anyNode() const;
 
             // NodeSet itself doesn't check if it contains nodes in document order - the caller should tell it if it does not.
@@ -68,14 +64,12 @@ namespace WebCore {
             void markSubtreesDisjoint(bool disjoint) { m_subtreesAreDisjoint = disjoint; }
             bool subtreesAreDisjoint() const { return m_subtreesAreDisjoint || m_nodes.size() < 2; }
 
-            void reverse();
-        
         private:
             void traversalSort() const;
 
-            bool m_isSorted;
+            mutable bool m_isSorted;
             bool m_subtreesAreDisjoint;
-            Vector<RefPtr<Node> > m_nodes;
+            mutable Vector<RefPtr<Node>> m_nodes;
         };
 
     }

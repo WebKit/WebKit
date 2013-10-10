@@ -41,21 +41,22 @@ namespace WebCore {
 
 using namespace XPath;
     
+inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expression)
+    : m_topExpression(std::move(expression))
+{
+}
+
 PassRefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, XPathNSResolver* resolver, ExceptionCode& ec)
 {
-    RefPtr<XPathExpression> expr = XPathExpression::create();
-    Parser parser;
+    auto parsedExpression = Parser::parseStatement(expression, resolver, ec);
+    if (!parsedExpression)
+        return nullptr;
 
-    expr->m_topExpression = parser.parseStatement(expression, resolver, ec);
-    if (!expr->m_topExpression)
-        return 0;
-
-    return expr.release();
+    return adoptRef(new XPathExpression(std::move(parsedExpression)));
 }
 
 XPathExpression::~XPathExpression()
 {
-    delete m_topExpression;
 }
 
 PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode& ec)
@@ -71,20 +72,20 @@ PassRefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned sh
     evaluationContext.position = 1;
     evaluationContext.hadTypeConversionError = false;
     RefPtr<XPathResult> result = XPathResult::create(&contextNode->document(), m_topExpression->evaluate());
-    evaluationContext.node = 0; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
+    evaluationContext.node = nullptr; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (evaluationContext.hadTypeConversionError) {
         // It is not specified what to do if type conversion fails while evaluating an expression, and INVALID_EXPRESSION_ERR is not exactly right
         // when the failure happens in an otherwise valid expression because of a variable. But XPathEvaluator does not support variables, so it's close enough.
         ec = XPathException::INVALID_EXPRESSION_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (type != XPathResult::ANY_TYPE) {
         ec = 0;
         result->convertTo(type, ec);
         if (ec)
-            return 0;
+            return nullptr;
     }
 
     return result;

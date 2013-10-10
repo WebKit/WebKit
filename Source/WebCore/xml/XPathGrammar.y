@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +30,9 @@
 #include "config.h"
 
 #include "XPathFunctions.h"
-#include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathPath.h"
-#include "XPathPredicate.h"
-#include "XPathStep.h"
 #include "XPathVariableReference.h"
-#include <wtf/FastMalloc.h>
 
 #define YYMALLOC fastMalloc
 #define YYFREE fastFree
@@ -46,99 +42,89 @@
 #define YYDEBUG 0
 #define YYMAXDEPTH 10000
 
+#define YYLEX_PARAM parser
+
 using namespace WebCore;
 using namespace XPath;
 
 %}
 
 %pure_parser
-%parse-param { WebCore::XPath::Parser* parser }
+%parse-param { Parser& parser }
 
-%union
-{
-    Step::Axis axis;
-    Step::NodeTest* nodeTest;
-    NumericOp::Opcode numop;
-    EqTestOp::Opcode eqop;
-    String* str;
-    Expression* expr;
-    Vector<Predicate*>* predList;
-    Vector<Expression*>* argList;
-    Step* step;
-    LocationPath* locationPath;
-}
+%union { NumericOp::Opcode numericOpcode; }
+%left <numericOpcode> MULOP
+
+%union { EqTestOp::Opcode equalityTestOpcode; }
+%left <equalityTestOpcode> EQOP RELOP
+
+%left PLUS MINUS
+
+%left OR AND
+
+%union { StringImpl* string; }
+%token <string> FUNCTIONNAME LITERAL NAMETEST NUMBER NODETYPE VARIABLEREFERENCE
+%destructor { if ($$) $$->deref(); } FUNCTIONNAME LITERAL NAMETEST NUMBER NODETYPE VARIABLEREFERENCE
+
+%union { Step::Axis axis; }
+%token <axis> AXISNAME
+%type <axis> AxisSpecifier
+
+%token COMMENT DOTDOT PI NODE SLASHSLASH TEXT XPATH_ERROR
+
+%union { LocationPath* locationPath; }
+%type <locationPath> LocationPath AbsoluteLocationPath RelativeLocationPath
+%destructor { delete $$; } LocationPath AbsoluteLocationPath RelativeLocationPath
+
+%union { Step::NodeTest* nodeTest; }
+%type <nodeTest> NodeTest
+%destructor { delete $$; } NodeTest
+
+%union { Vector<std::unique_ptr<Expression>>* expressionVector; }
+%type <expressionVector> ArgumentList PredicateList OptionalPredicateList
+%destructor { delete $$; } ArgumentList PredicateList OptionalPredicateList
+
+%union { Step* step; }
+%type <step> Step AbbreviatedStep DescendantOrSelf
+%destructor { delete $$; } Step AbbreviatedStep DescendantOrSelf
+
+%union { Expression* expression; }
+%type <expression> AdditiveExpr AndExpr Argument EqualityExpr Expr FilterExpr FunctionCall MultiplicativeExpr OrExpr PathExpr Predicate PrimaryExpr RelationalExpr UnaryExpr UnionExpr
+%destructor { delete $$; } AdditiveExpr AndExpr Argument EqualityExpr Expr FilterExpr FunctionCall MultiplicativeExpr OrExpr PathExpr Predicate PrimaryExpr RelationalExpr UnaryExpr UnionExpr
 
 %{
 
-static int xpathyylex(YYSTYPE* yylval) { return Parser::current()->lex(yylval); }
-static void xpathyyerror(void*, const char*) { }
-    
+static int xpathyylex(YYSTYPE* yylval, Parser& parser) { return parser.lex(*yylval); }
+static void xpathyyerror(Parser&, const char*) { }
+
 %}
-
-%left <numop> MULOP
-%left <eqop> EQOP RELOP
-%left PLUS MINUS
-%left OR AND
-%token <axis> AXISNAME
-%token <str> NODETYPE PI FUNCTIONNAME LITERAL
-%token <str> VARIABLEREFERENCE NUMBER
-%token DOTDOT SLASHSLASH
-%token <str> NAMETEST
-%token XPATH_ERROR
-
-%type <locationPath> LocationPath
-%type <locationPath> AbsoluteLocationPath
-%type <locationPath> RelativeLocationPath
-%type <step> Step
-%type <axis> AxisSpecifier
-%type <step> DescendantOrSelf
-%type <nodeTest> NodeTest
-%type <expr> Predicate
-%type <predList> OptionalPredicateList
-%type <predList> PredicateList
-%type <step> AbbreviatedStep
-%type <expr> Expr
-%type <expr> PrimaryExpr
-%type <expr> FunctionCall
-%type <argList> ArgumentList
-%type <expr> Argument
-%type <expr> UnionExpr
-%type <expr> PathExpr
-%type <expr> FilterExpr
-%type <expr> OrExpr
-%type <expr> AndExpr
-%type <expr> EqualityExpr
-%type <expr> RelationalExpr
-%type <expr> AdditiveExpr
-%type <expr> MultiplicativeExpr
-%type <expr> UnaryExpr
 
 %%
 
-Expr:
-    OrExpr
+Top:
+    Expr
     {
-        parser->m_topExpr = $1;
+        parser.setParseResult(std::unique_ptr<Expression>($1));
     }
     ;
 
+Expr:
+    OrExpr
+    ;
+
 LocationPath:
-    RelativeLocationPath
-    {
-        $$->setAbsolute(false);
-    }
-    |
     AbsoluteLocationPath
     {
-        $$->setAbsolute(true);
+        $$->setAbsolute();
     }
+    |
+    RelativeLocationPath
     ;
 
 AbsoluteLocationPath:
     '/'
     {
         $$ = new LocationPath;
-        parser->registerParseNode($$);
     }
     |
     '/' RelativeLocationPath
@@ -149,8 +135,7 @@ AbsoluteLocationPath:
     DescendantOrSelf RelativeLocationPath
     {
         $$ = $2;
-        $$->insertFirstStep($1);
-        parser->unregisterParseNode($1);
+        $$->prependStep(std::unique_ptr<Step>($1));
     }
     ;
 
@@ -158,83 +143,75 @@ RelativeLocationPath:
     Step
     {
         $$ = new LocationPath;
-        $$->appendStep($1);
-        parser->unregisterParseNode($1);
-        parser->registerParseNode($$);
+        $$->appendStep(std::unique_ptr<Step>($1));
     }
     |
     RelativeLocationPath '/' Step
     {
-        $$->appendStep($3);
-        parser->unregisterParseNode($3);
+        $$->appendStep(std::unique_ptr<Step>($3));
     }
     |
     RelativeLocationPath DescendantOrSelf Step
     {
-        $$->appendStep($2);
-        $$->appendStep($3);
-        parser->unregisterParseNode($2);
-        parser->unregisterParseNode($3);
+        $$->appendStep(std::unique_ptr<Step>($2));
+        $$->appendStep(std::unique_ptr<Step>($3));
     }
     ;
 
 Step:
     NodeTest OptionalPredicateList
     {
-        if ($2) {
-            $$ = new Step(Step::ChildAxis, *$1, *$2);
-            parser->deletePredicateVector($2);
-        } else
-            $$ = new Step(Step::ChildAxis, *$1);
-        parser->deleteNodeTest($1);
-        parser->registerParseNode($$);
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
+        if (predicateList)
+            $$ = new Step(Step::ChildAxis, std::move(*$1), std::move(*predicateList));
+        else
+            $$ = new Step(Step::ChildAxis, std::move(*$1));
     }
     |
     NAMETEST OptionalPredicateList
     {
+        String nametest = adoptRef($1);
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
+
         String localName;
         String namespaceURI;
-        if (!parser->expandQName(*$1, localName, namespaceURI)) {
-            parser->m_gotNamespaceError = true;
+        if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
+            $$ = nullptr;
             YYABORT;
         }
-        
-        if ($2) {
-            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), *$2);
-            parser->deletePredicateVector($2);
-        } else
+
+        if (predicateList)
+            $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), std::move(*predicateList));
+        else
             $$ = new Step(Step::ChildAxis, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
-        parser->deleteString($1);
-        parser->registerParseNode($$);
     }
     |
     AxisSpecifier NodeTest OptionalPredicateList
     {
-        if ($3) {
-            $$ = new Step($1, *$2, *$3);
-            parser->deletePredicateVector($3);
-        } else
-            $$ = new Step($1, *$2);
-        parser->deleteNodeTest($2);
-        parser->registerParseNode($$);
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($3);
+
+        if (predicateList)
+            $$ = new Step($1, std::move(*$2), std::move(*predicateList));
+        else
+            $$ = new Step($1, std::move(*$2));
     }
     |
     AxisSpecifier NAMETEST OptionalPredicateList
     {
+        String nametest = adoptRef($2);
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($3);
+
         String localName;
         String namespaceURI;
-        if (!parser->expandQName(*$2, localName, namespaceURI)) {
-            parser->m_gotNamespaceError = true;
+        if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
+            $$ = nullptr;
             YYABORT;
         }
 
-        if ($3) {
-            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), *$3);
-            parser->deletePredicateVector($3);
-        } else
+        if (predicateList)
+            $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI), std::move(*predicateList));
+        else
             $$ = new Step($1, Step::NodeTest(Step::NodeTest::NameTest, localName, namespaceURI));
-        parser->deleteString($2);
-        parser->registerParseNode($$);
     }
     |
     AbbreviatedStep
@@ -250,37 +227,37 @@ AxisSpecifier:
     ;
 
 NodeTest:
-    NODETYPE '(' ')'
+    NODE '(' ')'
     {
-        if (*$1 == "node")
-            $$ = new Step::NodeTest(Step::NodeTest::AnyNodeTest);
-        else if (*$1 == "text")
-            $$ = new Step::NodeTest(Step::NodeTest::TextNodeTest);
-        else if (*$1 == "comment")
-            $$ = new Step::NodeTest(Step::NodeTest::CommentNodeTest);
-
-        parser->deleteString($1);
-        parser->registerNodeTest($$);
+        $$ = new Step::NodeTest(Step::NodeTest::AnyNodeTest);
+    }
+    |
+    TEXT '(' ')'
+    {
+        $$ = new Step::NodeTest(Step::NodeTest::TextNodeTest);
+    }
+    |
+    COMMENT '(' ')'
+    {
+        $$ = new Step::NodeTest(Step::NodeTest::CommentNodeTest);
     }
     |
     PI '(' ')'
     {
         $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest);
-        parser->registerNodeTest($$);
     }
     |
     PI '(' LITERAL ')'
     {
-        $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest, $3->stripWhiteSpace());
-        parser->deleteString($3);
-        parser->registerNodeTest($$);
+        String literal = adoptRef($3);
+        $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest, literal.stripWhiteSpace());
     }
     ;
 
 OptionalPredicateList:
     /* empty */
     {
-        $$ = 0;
+        $$ = nullptr;
     }
     |
     PredicateList
@@ -289,16 +266,14 @@ OptionalPredicateList:
 PredicateList:
     Predicate
     {
-        $$ = new Vector<Predicate*>;
-        $$->append(new Predicate($1));
-        parser->unregisterParseNode($1);
-        parser->registerPredicateVector($$);
+        $$ = new Vector<std::unique_ptr<Expression>>;
+        $$->append(std::unique_ptr<Expression>($1));
     }
     |
     PredicateList Predicate
     {
-        $$->append(new Predicate($2));
-        parser->unregisterParseNode($2);
+        $$ = $1;
+        $$->append(std::unique_ptr<Expression>($2));
     }
     ;
 
@@ -313,7 +288,6 @@ DescendantOrSelf:
     SLASHSLASH
     {
         $$ = new Step(Step::DescendantOrSelfAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
-        parser->registerParseNode($$);
     }
     ;
 
@@ -321,22 +295,19 @@ AbbreviatedStep:
     '.'
     {
         $$ = new Step(Step::SelfAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
-        parser->registerParseNode($$);
     }
     |
     DOTDOT
     {
         $$ = new Step(Step::ParentAxis, Step::NodeTest(Step::NodeTest::AnyNodeTest));
-        parser->registerParseNode($$);
     }
     ;
 
 PrimaryExpr:
     VARIABLEREFERENCE
     {
-        $$ = new VariableReference(*$1);
-        parser->deleteString($1);
-        parser->registerParseNode($$);
+        String name = adoptRef($1);
+        $$ = new VariableReference(name);
     }
     |
     '(' Expr ')'
@@ -346,16 +317,14 @@ PrimaryExpr:
     |
     LITERAL
     {
-        $$ = new StringExpression(*$1);
-        parser->deleteString($1);
-        parser->registerParseNode($$);
+        String literal = adoptRef($1);
+        $$ = new StringExpression(std::move(literal));
     }
     |
     NUMBER
     {
-        $$ = new Number($1->toDouble());
-        parser->deleteString($1);
-        parser->registerParseNode($$);
+        String numeral = adoptRef($1);
+        $$ = new Number(numeral.toDouble());
     }
     |
     FunctionCall
@@ -364,37 +333,32 @@ PrimaryExpr:
 FunctionCall:
     FUNCTIONNAME '(' ')'
     {
-        $$ = createFunction(*$1);
+        String name = adoptRef($1);
+        $$ = XPath::Function::create(name).release();
         if (!$$)
             YYABORT;
-        parser->deleteString($1);
-        parser->registerParseNode($$);
     }
     |
     FUNCTIONNAME '(' ArgumentList ')'
     {
-        $$ = createFunction(*$1, *$3);
+        String name = adoptRef($1);
+        $$ = XPath::Function::create(name, std::move(*$3)).release();
         if (!$$)
             YYABORT;
-        parser->deleteString($1);
-        parser->deleteExpressionVector($3);
-        parser->registerParseNode($$);
     }
     ;
 
 ArgumentList:
     Argument
     {
-        $$ = new Vector<Expression*>;
-        $$->append($1);
-        parser->unregisterParseNode($1);
-        parser->registerExpressionVector($$);
+        $$ = new Vector<std::unique_ptr<Expression>>;
+        $$->append(std::unique_ptr<Expression>($1));
     }
     |
     ArgumentList ',' Argument
     {
-        $$->append($3);
-        parser->unregisterParseNode($3);
+        $$ = $1;
+        $$->append(std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -407,41 +371,26 @@ UnionExpr:
     |
     UnionExpr '|' PathExpr
     {
-        $$ = new Union;
-        $$->addSubExpression($1);
-        $$->addSubExpression($3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new Union(std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
 PathExpr:
     LocationPath
-    {
-        $$ = $1;
-    }
     |
     FilterExpr
     |
     FilterExpr '/' RelativeLocationPath
     {
-        $3->setAbsolute(true);
-        $$ = new Path(static_cast<Filter*>($1), $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $3->setAbsolute();
+        $$ = new Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
     }
     |
     FilterExpr DescendantOrSelf RelativeLocationPath
     {
-        $3->insertFirstStep($2);
-        $3->setAbsolute(true);
-        $$ = new Path(static_cast<Filter*>($1), $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($2);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $3->prependStep(std::unique_ptr<Step>($2));
+        $3->setAbsolute();
+        $$ = new Path(std::unique_ptr<Expression>($1), std::unique_ptr<LocationPath>($3));
     }
     ;
 
@@ -450,10 +399,8 @@ FilterExpr:
     |
     PrimaryExpr PredicateList
     {
-        $$ = new Filter($1, *$2);
-        parser->unregisterParseNode($1);
-        parser->deletePredicateVector($2);
-        parser->registerParseNode($$);
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
+        $$ = new Filter(std::unique_ptr<Expression>($1), std::move(*predicateList));
     }
     ;
 
@@ -462,10 +409,7 @@ OrExpr:
     |
     OrExpr OR AndExpr
     {
-        $$ = new LogicalOp(LogicalOp::OP_Or, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new LogicalOp(LogicalOp::OP_Or, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -474,10 +418,7 @@ AndExpr:
     |
     AndExpr AND EqualityExpr
     {
-        $$ = new LogicalOp(LogicalOp::OP_And, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new LogicalOp(LogicalOp::OP_And, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -486,10 +427,7 @@ EqualityExpr:
     |
     EqualityExpr EQOP RelationalExpr
     {
-        $$ = new EqTestOp($2, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new EqTestOp($2, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -498,10 +436,7 @@ RelationalExpr:
     |
     RelationalExpr RELOP AdditiveExpr
     {
-        $$ = new EqTestOp($2, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new EqTestOp($2, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -510,18 +445,12 @@ AdditiveExpr:
     |
     AdditiveExpr PLUS MultiplicativeExpr
     {
-        $$ = new NumericOp(NumericOp::OP_Add, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new NumericOp(NumericOp::OP_Add, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     |
     AdditiveExpr MINUS MultiplicativeExpr
     {
-        $$ = new NumericOp(NumericOp::OP_Sub, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new NumericOp(NumericOp::OP_Sub, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -530,10 +459,7 @@ MultiplicativeExpr:
     |
     MultiplicativeExpr MULOP UnaryExpr
     {
-        $$ = new NumericOp($2, $1, $3);
-        parser->unregisterParseNode($1);
-        parser->unregisterParseNode($3);
-        parser->registerParseNode($$);
+        $$ = new NumericOp($2, std::unique_ptr<Expression>($1), std::unique_ptr<Expression>($3));
     }
     ;
 
@@ -542,10 +468,7 @@ UnaryExpr:
     |
     MINUS UnaryExpr
     {
-        $$ = new Negative;
-        $$->addSubExpression($2);
-        parser->unregisterParseNode($2);
-        parser->registerParseNode($$);
+        $$ = new Negative(std::unique_ptr<Expression>($2));
     }
     ;
 

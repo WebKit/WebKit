@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Maksim Orlovich <maksim@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,26 +34,40 @@
 #include "XPathNSResolver.h"
 #include "XPathPath.h"
 #include "XPathStep.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
 using namespace WebCore;
-using namespace WTF;
-using namespace Unicode;
 using namespace XPath;
 
-extern int xpathyyparse(WebCore::XPath::Parser*);
+extern int xpathyyparse(Parser&);
+
 #include "XPathGrammar.h"
 
-Parser* Parser::currentParser = 0;
+namespace WebCore {
+namespace XPath {
+
+struct Parser::Token {
+    int type;
+    String string;
+    Step::Axis axis;
+    NumericOp::Opcode numericOpcode;
+    EqTestOp::Opcode equalityTestOpcode;
+
+    Token(int type) : type(type) { }
+    Token(int type, const String& string) : type(type), string(string) { }
+    Token(int type, Step::Axis axis) : type(type), axis(axis) { }
+    Token(int type, NumericOp::Opcode opcode) : type(type), numericOpcode(opcode) { }
+    Token(int type, EqTestOp::Opcode opcode) : type(type), equalityTestOpcode(opcode) { }
+};
 
 enum XMLCat { NameStart, NameCont, NotPartOfName };
 
-typedef HashMap<String, Step::Axis> AxisNamesMap;
-
 static XMLCat charCat(UChar aChar)
 {
-    //### might need to add some special cases from the XML spec.
+    using namespace WTF;
+    using namespace Unicode;
 
     if (aChar == '_')
         return NameStart;
@@ -68,7 +82,7 @@ static XMLCat charCat(UChar aChar)
     return NotPartOfName;
 }
 
-static void setUpAxisNamesMap(AxisNamesMap& axisNames)
+static void populateAxisNamesMap(HashMap<String, Step::Axis>& axisNames)
 {
     struct AxisName {
         const char* name;
@@ -89,27 +103,21 @@ static void setUpAxisNamesMap(AxisNamesMap& axisNames)
         { "preceding-sibling", Step::PrecedingSiblingAxis },
         { "self", Step::SelfAxis }
     };
-    for (unsigned i = 0; i < sizeof(axisNameList) / sizeof(axisNameList[0]); ++i)
-        axisNames.set(axisNameList[i].name, axisNameList[i].axis);
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(axisNameList); ++i)
+        axisNames.add(axisNameList[i].name, axisNameList[i].axis);
 }
 
-static bool isAxisName(const String& name, Step::Axis& type)
+static bool parseAxisName(const String& name, Step::Axis& type)
 {
-    DEFINE_STATIC_LOCAL(AxisNamesMap, axisNames, ());
+    static NeverDestroyed<HashMap<String, Step::Axis>> axisNames;
+    if (axisNames.get().isEmpty())
+        populateAxisNamesMap(axisNames);
 
-    if (axisNames.isEmpty())
-        setUpAxisNamesMap(axisNames);
-
-    AxisNamesMap::iterator it = axisNames.find(name);
-    if (it == axisNames.end())
+    auto it = axisNames.get().find(name);
+    if (it == axisNames.get().end())
         return false;
     type = it->value;
     return true;
-}
-
-static bool isNodeTypeName(const String& name)
-{
-    return name == "comment" || name == "text" || name == "processing-instruction" || name == "node";
 }
 
 // Returns whether the current token can possibly be a binary operator, given
@@ -136,25 +144,25 @@ void Parser::skipWS()
         ++m_nextPos;
 }
 
-Token Parser::makeTokenAndAdvance(int code, int advance)
+Parser::Token Parser::makeTokenAndAdvance(int code, int advance)
 {
     m_nextPos += advance;
     return Token(code);
 }
 
-Token Parser::makeTokenAndAdvance(int code, NumericOp::Opcode val, int advance)
+Parser::Token Parser::makeTokenAndAdvance(int code, NumericOp::Opcode val, int advance)
 {
     m_nextPos += advance;
     return Token(code, val);
 }
 
-Token Parser::makeTokenAndAdvance(int code, EqTestOp::Opcode val, int advance)
+Parser::Token Parser::makeTokenAndAdvance(int code, EqTestOp::Opcode val, int advance)
 {
     m_nextPos += advance;
     return Token(code, val);
 }
 
-// Returns next char if it's there and interesting, 0 otherwise
+// Returns next char if it's there and interesting, 0 otherwise.
 char Parser::peekAheadHelper()
 {
     if (m_nextPos + 1 >= m_data.length())
@@ -175,7 +183,7 @@ char Parser::peekCurHelper()
     return next;
 }
 
-Token Parser::lexString()
+Parser::Token Parser::lexString()
 {
     UChar delimiter = m_data[m_nextPos];
     int startPos = m_nextPos + 1;
@@ -194,7 +202,7 @@ Token Parser::lexString()
     return Token(XPATH_ERROR);
 }
 
-Token Parser::lexNumber()
+Parser::Token Parser::lexNumber()
 {
     int startPos = m_nextPos;
     bool seenDot = false;
@@ -256,7 +264,7 @@ bool Parser::lexQName(String& name)
     return true;
 }
 
-Token Parser::nextTokenInternal()
+inline Parser::Token Parser::nextTokenInternal()
 {
     skipWS();
 
@@ -344,7 +352,7 @@ Token Parser::nextTokenInternal()
             
             //It might be an axis name.
             Step::Axis axis;
-            if (isAxisName(name, axis))
+            if (parseAxisName(name, axis))
                 return Token(AXISNAME, axis);
             // Ugh, :: is only valid in axis names -> error
             return Token(XPATH_ERROR);
@@ -370,13 +378,16 @@ Token Parser::nextTokenInternal()
     if (peekCurHelper() == '(') {
         // note: we don't swallow the '(' here!
 
-        // either node type of function name
-        if (isNodeTypeName(name)) {
-            if (name == "processing-instruction")
-                return Token(PI);
+        // Either node type oor function name.
 
-            return Token(NODETYPE, name);
-        }
+        if (name == "processing-instruction")
+            return Token(PI);
+        if (name == "node")
+            return Token(NODE);
+        if (name == "text")
+            return Token(TEXT);
+        if (name == "comment")
+            return Token(COMMENT);
 
         return Token(FUNCTIONNAME, name);
     }
@@ -385,47 +396,36 @@ Token Parser::nextTokenInternal()
     return Token(NAMETEST, name);
 }
 
-Token Parser::nextToken()
+inline Parser::Token Parser::nextToken()
 {
-    Token toRet = nextTokenInternal();
-    m_lastTokenType = toRet.type;
-    return toRet;
+    Token token = nextTokenInternal();
+    m_lastTokenType = token.type;
+    return token;
 }
 
-Parser::Parser()
+Parser::Parser(const String& statement, XPathNSResolver* resolver)
+    : m_data(statement)
+    , m_resolver(resolver)
+    , m_nextPos(0)
+    , m_lastTokenType(0)
+    , m_sawNamespaceError(false)
 {
-    reset(String());
 }
 
-Parser::~Parser()
+int Parser::lex(YYSTYPE& yylval)
 {
-}
+    Token token = nextToken();
 
-void Parser::reset(const String& data)
-{
-    m_nextPos = 0;
-    m_data = data;
-    m_lastTokenType = 0;
-    
-    m_topExpr = 0;
-    m_gotNamespaceError = false;
-}
-
-int Parser::lex(void* data)
-{
-    YYSTYPE* yylval = static_cast<YYSTYPE*>(data);
-    Token tok = nextToken();
-
-    switch (tok.type) {
+    switch (token.type) {
     case AXISNAME:
-        yylval->axis = tok.axis;
+        yylval.axis = token.axis;
         break;
     case MULOP:
-        yylval->numop = tok.numop;
+        yylval.numericOpcode = token.numericOpcode;
         break;
     case RELOP:
     case EQOP:
-        yylval->eqop = tok.eqop;
+        yylval.equalityTestOpcode = token.equalityTestOpcode;
         break;
     case NODETYPE:
     case FUNCTIONNAME:
@@ -433,190 +433,50 @@ int Parser::lex(void* data)
     case VARIABLEREFERENCE:
     case NUMBER:
     case NAMETEST:
-        yylval->str = new String(tok.str);
-        registerString(yylval->str);
+        yylval.string = token.string.releaseImpl().leakRef();
         break;
     }
 
-    return tok.type;
+    return token.type;
 }
 
-bool Parser::expandQName(const String& qName, String& localName, String& namespaceURI)
+bool Parser::expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI)
 {
-    size_t colon = qName.find(':');
+    size_t colon = qualifiedName.find(':');
     if (colon != notFound) {
-        if (!m_resolver)
+        if (!m_resolver) {
+            m_sawNamespaceError = true;
             return false;
-        namespaceURI = m_resolver->lookupNamespaceURI(qName.left(colon));
-        if (namespaceURI.isNull())
+        }
+        namespaceURI = m_resolver->lookupNamespaceURI(qualifiedName.left(colon));
+        if (namespaceURI.isNull()) {
+            m_sawNamespaceError = true;
             return false;
-        localName = qName.substring(colon + 1);
+        }
+        localName = qualifiedName.substring(colon + 1);
     } else
-        localName = qName;
-    
+        localName = qualifiedName;
+
     return true;
 }
 
-Expression* Parser::parseStatement(const String& statement, PassRefPtr<XPathNSResolver> resolver, ExceptionCode& ec)
+std::unique_ptr<Expression> Parser::parseStatement(const String& statement, XPathNSResolver* resolver, ExceptionCode& ec)
 {
-    reset(statement);
+    Parser parser(statement, resolver);
 
-    m_resolver = resolver;
-    
-    Parser* oldParser = currentParser;
-    currentParser = this;
-    int parseError = xpathyyparse(this);
-    currentParser = oldParser;
+    int parseError = xpathyyparse(parser);
 
-    if (parseError) {
-        deleteAllValues(m_parseNodes);
-        m_parseNodes.clear();
-
-        HashSet<Vector<Predicate*>*>::iterator pend = m_predicateVectors.end();
-        for (HashSet<Vector<Predicate*>*>::iterator it = m_predicateVectors.begin(); it != pend; ++it) {
-            deleteAllValues(**it);
-            delete *it;
-        }
-        m_predicateVectors.clear();
-
-        HashSet<Vector<Expression*>*>::iterator eend = m_expressionVectors.end();
-        for (HashSet<Vector<Expression*>*>::iterator it = m_expressionVectors.begin(); it != eend; ++it) {
-            deleteAllValues(**it);
-            delete *it;
-        }
-        m_expressionVectors.clear();
-
-        deleteAllValues(m_strings);
-        m_strings.clear();
-
-        deleteAllValues(m_nodeTests);
-        m_nodeTests.clear();
-
-        m_topExpr = 0;
-
-        if (m_gotNamespaceError)
-            ec = NAMESPACE_ERR;
-        else
-            ec = XPathException::INVALID_EXPRESSION_ERR;
-        return 0;
+    if (parser.m_sawNamespaceError) {
+        ec = NAMESPACE_ERR;
+        return nullptr;
     }
 
-    ASSERT(m_parseNodes.size() == 1);
-    ASSERT(*m_parseNodes.begin() == m_topExpr);
-    ASSERT(m_expressionVectors.size() == 0);
-    ASSERT(m_predicateVectors.size() == 0);
-    ASSERT(m_strings.size() == 0);
-    ASSERT(m_nodeTests.size() == 0);
+    if (parseError) {
+        ec = XPathException::INVALID_EXPRESSION_ERR;
+        return nullptr;
+    }
 
-    m_parseNodes.clear();
-    Expression* result = m_topExpr;
-    m_topExpr = 0;
-
-    return result;
+    return std::move(parser.m_result);
 }
 
-void Parser::registerParseNode(ParseNode* node)
-{
-    if (node == 0)
-        return;
-    
-    ASSERT(!m_parseNodes.contains(node));
-    
-    m_parseNodes.add(node);
-}
-
-void Parser::unregisterParseNode(ParseNode* node)
-{
-    if (node == 0)
-        return;
-    
-    ASSERT(m_parseNodes.contains(node));
-
-    m_parseNodes.remove(node);
-}
-
-void Parser::registerPredicateVector(Vector<Predicate*>* vector)
-{
-    if (vector == 0)
-        return;
-
-    ASSERT(!m_predicateVectors.contains(vector));
-    
-    m_predicateVectors.add(vector);
-}
-
-void Parser::deletePredicateVector(Vector<Predicate*>* vector)
-{
-    if (vector == 0)
-        return;
-
-    ASSERT(m_predicateVectors.contains(vector));
-    
-    m_predicateVectors.remove(vector);
-    delete vector;
-}
-
-
-void Parser::registerExpressionVector(Vector<Expression*>* vector)
-{
-    if (vector == 0)
-        return;
-
-    ASSERT(!m_expressionVectors.contains(vector));
-    
-    m_expressionVectors.add(vector);    
-}
-
-void Parser::deleteExpressionVector(Vector<Expression*>* vector)
-{
-    if (vector == 0)
-        return;
-
-    ASSERT(m_expressionVectors.contains(vector));
-    
-    m_expressionVectors.remove(vector);
-    delete vector;
-}
-
-void Parser::registerString(String* s)
-{
-    if (s == 0)
-        return;
-    
-    ASSERT(!m_strings.contains(s));
-    
-    m_strings.add(s);        
-}
-
-void Parser::deleteString(String* s)
-{
-    if (s == 0)
-        return;
-    
-    ASSERT(m_strings.contains(s));
-    
-    m_strings.remove(s);
-    delete s;
-}
-
-void Parser::registerNodeTest(Step::NodeTest* t)
-{
-    if (t == 0)
-        return;
-    
-    ASSERT(!m_nodeTests.contains(t));
-    
-    m_nodeTests.add(t);        
-}
-
-void Parser::deleteNodeTest(Step::NodeTest* t)
-{
-    if (t == 0)
-        return;
-    
-    ASSERT(m_nodeTests.contains(t));
-    
-    m_nodeTests.remove(t);
-    delete t;
-}
-
+} }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc.
+ * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,20 +34,17 @@ namespace XPath {
 
 class Function : public Expression {
 public:
-    void setArguments(const Vector<Expression*>&);
-    void setName(const String& name) { m_name = name; }
+    static std::unique_ptr<Function> create(const String& name);
+    static std::unique_ptr<Function> create(const String& name, Vector<std::unique_ptr<Expression>> arguments);
 
 protected:
-    unsigned argumentCount() const { return subExpressionCount(); }
-    const Expression& argument(int pos) const { return subExpression(pos); }
-
-    String name() const { return m_name; }
+    unsigned argumentCount() const { return subexpressionCount(); }
+    const Expression& argument(unsigned i) const { return subexpression(i); }
 
 private:
-    String m_name;
+    static std::unique_ptr<Function> create(const String& name, unsigned numArguments);
+    void setArguments(const String& name, Vector<std::unique_ptr<Expression>>);
 };
-
-Function* createFunction(const String& name, const Vector<Expression*>& args = Vector<Expression*>());
 
 } // namespace XPath
 } // namespace WebCore

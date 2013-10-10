@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Maksim Orlovich <maksim@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 #include "XPathStep.h"
 #include "XPathPredicate.h"
 
+union YYSTYPE;
+
 namespace WebCore {
 
     typedef int ExceptionCode;
@@ -38,58 +40,20 @@ namespace WebCore {
 
     namespace XPath {
 
-        class Expression;
-        class ParseNode;
-        class Predicate;
-
-        struct Token {
-            int type;
-            String str;
-            Step::Axis axis;
-            NumericOp::Opcode numop;
-            EqTestOp::Opcode eqop;
-            
-            Token(int t) : type(t) {}
-            Token(int t, const String& v): type(t), str(v) {}
-            Token(int t, Step::Axis v): type(t), axis(v) {}
-            Token(int t, NumericOp::Opcode v): type(t), numop(v) {}
-            Token(int t, EqTestOp::Opcode v): type(t), eqop(v) {}
-        };
-
         class Parser {
             WTF_MAKE_NONCOPYABLE(Parser);
         public:
-            Parser();
-            ~Parser();
+            static std::unique_ptr<Expression> parseStatement(const String& statement, XPathNSResolver*, ExceptionCode&);
 
-            XPathNSResolver* resolver() const { return m_resolver.get(); }
-            bool expandQName(const String& qName, String& localName, String& namespaceURI);
-
-            Expression* parseStatement(const String& statement, PassRefPtr<XPathNSResolver>, ExceptionCode&);
-
-            static Parser* current() { return currentParser; }
-
-            int lex(void* yylval);
-
-            Expression* m_topExpr;
-            bool m_gotNamespaceError;
-
-            void registerParseNode(ParseNode*);
-            void unregisterParseNode(ParseNode*);
-
-            void registerPredicateVector(Vector<Predicate*>*);
-            void deletePredicateVector(Vector<Predicate*>*);
-
-            void registerExpressionVector(Vector<Expression*>*);
-            void deleteExpressionVector(Vector<Expression*>*);
-
-            void registerString(String*);
-            void deleteString(String*);
-
-            void registerNodeTest(Step::NodeTest*);
-            void deleteNodeTest(Step::NodeTest*);
+            int lex(YYSTYPE&);
+            bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
+            void setParseResult(std::unique_ptr<Expression> expression) { m_result = std::move(expression); }
 
         private:
+            Parser(const String&, XPathNSResolver*);
+
+            struct Token;
+
             bool isBinaryOperatorContext() const;
 
             void skipWS();
@@ -107,20 +71,14 @@ namespace WebCore {
             Token nextToken();
             Token nextTokenInternal();
 
-            void reset(const String& data);
-
-            static Parser* currentParser;
+            const String& m_data;
+            XPathNSResolver* m_resolver;
 
             unsigned m_nextPos;
-            String m_data;
             int m_lastTokenType;
-            RefPtr<XPathNSResolver> m_resolver;
 
-            HashSet<ParseNode*> m_parseNodes;
-            HashSet<Vector<Predicate*>*> m_predicateVectors;
-            HashSet<Vector<Expression*>*> m_expressionVectors;
-            HashSet<String*> m_strings;
-            HashSet<Step::NodeTest*> m_nodeTests;
+            std::unique_ptr<Expression> m_result;
+            bool m_sawNamespaceError;
         };
 
     }

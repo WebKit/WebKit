@@ -1,3 +1,182 @@
+2013-10-07  Darin Adler  <darin@apple.com>
+
+        Use unique_ptr instead of deleteAllValues in XPath
+        https://bugs.webkit.org/show_bug.cgi?id=121082
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Attr.h: Made the namespaceURI function public so it can be called by
+        code in XPath. Since the class is FINAL, calls won't do virtual dispatch.
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::XPathExpression): Added. Use std::move.
+        (WebCore::XPathExpression::createExpression): Use the new Parser::parseStatement
+        and more std::move.
+        (WebCore::XPathExpression::~XPathExpression): Removed now-unneeded delete.
+        * xml/XPathExpression.h: Removed unused create function. Use std::unique_ptr.
+
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::evaluationContext): Use NeverDestroyed instead of
+        DEFINE_STATIC_LOCAL.
+        (WebCore::XPath::Expression::setSubexpressions): Added. Used to set all the
+        subexpressions at once rather than adding one at a time.
+
+        * xml/XPathExpressionNode.h: Use plain unsigned instead of unsigned long.
+        Eliminated the ParseNode class, used only by the parser to delete objects,
+        which we now do with %destructor. Made more functions protected. Fixed the
+        capitalization of the word "subexpression". Made m_subexpressions be a Vector
+        of std::unique_ptr.
+
+        * xml/XPathFunctions.cpp: Marked all the classes FINAL and all their virtual
+        functions OVERRIDE. Reduced some of the boilerplate.
+        (WebCore::XPath::Function::setArguments): Passed in the name so we don't have
+        to store the function names in all the function objects.
+        (WebCore::XPath::FunId::evaluate): Use std::move instead of Value::adopt.
+        (WebCore::XPath::FunLocalName::evaluate): Use emptyString instead of "".
+        (WebCore::XPath::FunNamespaceURI::evaluate): Ditto.
+        (WebCore::XPath::FunName::evaluate): Ditto.
+        (WebCore::XPath::FunSubstringBefore::evaluate): Ditto.
+        (WebCore::XPath::FunSubstringAfter::evaluate): Ditto.
+        (WebCore::XPath::FunSubstring::evaluate): Ditto.
+        (WebCore::XPath::FunLang::evaluate): Use Value(false) so we can make the
+        constructor that takes a boolean explicit.
+        (WebCore::XPath::FunFalse::evaluate): Ditto.
+        (WebCore::XPath::populateFunctionMap): Changed idiom slightly to match other
+        maps we set up.
+        (WebCore::XPath::Function::create): Refactored createFunction into three
+        member functions of this name.
+
+        * xml/XPathFunctions.h: Made all the Function members private or protected
+        except for Function::create.
+
+        * xml/XPathGrammar.y: Changed the parser to use a reference instead of
+        a pointer, and to pass the reference through to yylex as well. Break up
+        the union into pieces and add %destructor as needed to make sure everything
+        gets deallocated if parsing fails. Added a new top level rule "Top" so that
+        we would not try to set the parse result multiple times during parsing.
+        Call setParseResult instead of setting m_topExpr directly. Use std::unique_ptr
+        to adopt pointers from the union. Removed all the register/unregister calls
+        that used to be used to manage storage. Also changed the four different node
+        types to be separate tokens instead of using string matching at this level
+        for them.
+
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::sort): Removed const_cast since m_isSorted and
+        m_nodes are now both marked mutable. Also set m_isSorted after sorting; this
+        was an oversight that hurt performance before.
+        (WebCore::XPath::NodeSet::traversalSort): Ditto.
+        (WebCore::XPath::NodeSet::firstNode): Use nullptr.
+        (WebCore::XPath::NodeSet::anyNode): Ditto.
+
+        * xml/XPathNodeSet.h: Removed unneeded extra includes. Removed the
+        WTF_MAKE_FAST_ALLOCATED for NodeSet since we never allocate these on the heap.
+        Added a constructor that takes a single node. Deleted the swap function, since
+        we now move instead of swap. Deleted the append function that takes a raw Node*,
+        since calling the PassRefPtr<Node> overload does the same thing. Removed the
+        unused reverse function. Marked both m_isSorted and m_nodes mutable so the
+        sort function can be const.
+
+        * xml/XPathParser.cpp: Moved the Token struct in here instead of the header.
+        (WebCore::XPath::populateAxisNamesMap):Renamed to match our normal naming scheme,
+        and changed to use add instead of set, use WTF_ARRAY_LENGTH, and not use a typedef.
+        (WebCore::XPath::parseAxisName): Related style changes, including renaming to
+        better reflect the way this works with a boolean.
+        (WebCore::XPath::Parser::nextTokenInternal): Updated to call parseAxisName,
+        and to produce four separate tokens for the four node type functions.
+        (WebCore::XPath::Parser::nextToken): Renamed local variable.
+        (WebCore::XPath::Parser::Parser): Made this a real constructor that takes arguments
+        and initializes all the fields. Deleted the unneeded reset function.
+        (WebCore::XPath::Parser::lex): Changed to take an argument of an appropriate type
+        instead of casting from void*. Also changed the string code to leak a StringImpl,
+        which is now what the grammar code expects.
+        (WebCore::XPath::Parser::expandQualifiedName): Renamed from expandQName. Changed
+        to set m_sawNamespaceError instead of relying on code in the grammar to do it.
+        (WebCore::XPath::Parser::parseStatement): Removed most of the code in this function.
+        Changed to a much simpler model. Also made this a static member function so it
+        takes care of creating the parser itself and does not need to call reset. Also
+        changed return value to be a std::unique_ptr to make ownership more clear.
+
+        * xml/XPathParser.h: Added a declaration of YYSTYPE. Removed unneeded forward
+        declarations and moved Token into the cpp file. Deleted most public functions,
+        leaving only parseStatement, the entry point, and the three functions needed by
+        the grammar, lex, expandQualifiedName, and setParseResult.
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::Filter): Move in the arguments instead of copying them.
+        (WebCore::XPath::Filter::evaluate): Updated for name and type changes.
+        (WebCore::XPath::LocationPath::LocationPath): Ditto.
+        (WebCore::XPath::LocationPath::evaluate): Ditto. Also use std::move instead of
+        Value::adopt and instead of swap.
+        (WebCore::XPath::LocationPath::appendStep): Changed to take ownership of a
+        unique_ptr.
+        (WebCore::XPath::LocationPath::prependStep): Ditto. Renamed from insertFirstStep.
+        (WebCore::XPath::Path::Path): Move in the arguments.
+
+        * xml/XPathPath.h: Removed unneeded includes. Changed arugument types to use
+        std::unique_ptr to pass ownership in. Added override to all virtual functions.
+        Changed data members to use std::unique_ptr.
+
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::StringExpression::StringExpression): Use move.
+        (WebCore::XPath::Negative::Negative): Added.
+        (WebCore::XPath::Negative::evaluate): Updated for name changes.
+        (WebCore::XPath::NumericOp::NumericOp): Use move.
+        (WebCore::XPath::NumericOp::evaluate): Tweak formatting.
+        (WebCore::XPath::EqTestOp::EqTestOp): Use move.
+        (WebCore::XPath::EqTestOp::evaluate): Updated for name changes.
+        (WebCore::XPath::LogicalOp::LogicalOp): Use move.
+        (WebCore::XPath::LogicalOp::shortCircuitOn): Made shorter.
+        (WebCore::XPath::LogicalOp::evaluate): Updated for name changes.
+        (WebCore::XPath::Union::Union): Added.
+        (WebCore::XPath::Union::evaluate): Updated for name changes.
+        (WebCore::XPath::evaluatePredicate): Updated for name changes, to use
+        ASCIILiteral, and to be a free function that takes an expression.
+        (WebCore::XPath::predicateIsContextPositionSensitive): Added.
+        Replaces the Predicate::isContextPositionSensitive function.
+
+        * xml/XPathPredicate.h: Made all the classes FINAL and added a lot of OVERRIDE.
+        Added a constructor for Negative and Union. Got rid of the Predicate class and
+        instead provided two functions that operate on an Expression.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::Step): Use move instea dof copying.
+        (WebCore::XPath::Step::~Step): Removed calls to deleteAllValues.
+        (WebCore::XPath::Step::optimize): Use move instead of swap and copy. Also
+        operate directly on the data members of the node test instead of using functions
+        that just return references to those data members.
+        (WebCore::XPath::optimizeStepPair): Use references instead of pointers, move
+        instead of swap, and early return instead of nested if statements.
+        (WebCore::XPath::Step::predicatesAreContextListInsensitive): Use references.
+        (WebCore::XPath::Step::evaluate): Use references instead of pointers and move
+        instead of swap.
+        (WebCore::XPath::nodeMatchesBasicTest): Use references instead of pointers and
+        more specific types when possible.
+        (WebCore::XPath::nodeMatches): Ditto.
+        (WebCore::XPath::Step::nodesInAxis): Use references instead of pointers. Added
+        braces to match style. Use words instead of letters for local variable names.
+
+        * xml/XPathStep.h: Make almost everything in NodeTest private since callers
+        just set these up and Step is what actually uses them. Changed the predicate
+        vectors to be vectors of Predicate instead of Predicate*, since a Predicate
+        is just a wrapper around a single std::unique_ptr<Expression>. Changed to use
+        move instead of copy when making a Step and to use references instead of pointers.
+
+        * xml/XPathValue.cpp: Use std::numeric_limits explicitly instead of using using.
+        Got rid of Value::adopt.
+        (WebCore::XPath::Value::toNodeSet): Use NeverDestroyed instead of DEFINE_STATE_LOCAL.
+        Updated for name changes.
+        (WebCore::XPath::Value::modifiableNodeSet): Ditto.
+        (WebCore::XPath::Value::toBoolean): Ditto.
+        (WebCore::XPath::Value::toNumber): Ditto.
+        (WebCore::XPath::Value::toString): Ditto. Use ASCIILiteral.
+
+        * xml/XPathValue.h: Moved ValueData class inside the Value class and renamed
+        it Value::Data. Removed fancy trick that avoids turning pointers into bool, and
+        just take the risk. Made many, but not all, of the Value constructors explicit
+        since we normally are explicit at call sites. Removed unneeded unsigned long
+        overload of the constructor. Changed the NodeSet version of the constructor to
+        use std::move and use that instead of AdoptTag.
+
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Add back the missing call to EventRetargeter::adjustForTouchEvent.

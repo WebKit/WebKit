@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc.
+ * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,60 +28,54 @@
 #define XPathPath_h
 
 #include "XPathExpressionNode.h"
-#include "XPathNodeSet.h"
 
 namespace WebCore {
 
     namespace XPath {
 
-        class Predicate;
         class Step;
 
-        class Filter : public Expression {
+        class Filter FINAL : public Expression {
         public:
-            Filter(Expression*, const Vector<Predicate*>& = Vector<Predicate*>());
-            virtual ~Filter();
-
-            virtual Value evaluate() const;
+            Filter(std::unique_ptr<Expression>, Vector<std::unique_ptr<Expression>> predicates);
 
         private:
-            virtual Value::Type resultType() const { return Value::NodeSetValue; }
+            virtual Value evaluate() const OVERRIDE;
+            virtual Value::Type resultType() const OVERRIDE { return Value::NodeSetValue; }
 
-            Expression* m_expr;
-            Vector<Predicate*> m_predicates;
+            std::unique_ptr<Expression> m_expression;
+            Vector<std::unique_ptr<Expression>> m_predicates;
         };
 
-        class LocationPath : public Expression {
+        class LocationPath FINAL : public Expression {
         public:
             LocationPath();
-            virtual ~LocationPath();
-            void setAbsolute(bool value) { m_absolute = value; setIsContextNodeSensitive(!m_absolute); }
 
-            virtual Value evaluate() const;
+            void setAbsolute() { m_isAbsolute = true; setIsContextNodeSensitive(false); }
+
             void evaluate(NodeSet& nodes) const; // nodes is an input/output parameter
 
-            void appendStep(Step* step);
-            void insertFirstStep(Step* step);
+            void appendStep(std::unique_ptr<Step>);
+            void prependStep(std::unique_ptr<Step>);
 
         private:
-            virtual Value::Type resultType() const { return Value::NodeSetValue; }
+            virtual Value evaluate() const OVERRIDE;
+            virtual Value::Type resultType() const OVERRIDE { return Value::NodeSetValue; }
 
-            Vector<Step*> m_steps;
-            bool m_absolute;
+            Vector<std::unique_ptr<Step>> m_steps;
+            bool m_isAbsolute;
         };
 
-        class Path : public Expression {
+        class Path FINAL : public Expression {
         public:
-            Path(Filter*, LocationPath*);
-            virtual ~Path();
-
-            virtual Value evaluate() const;
+            Path(std::unique_ptr<Expression> filter, std::unique_ptr<LocationPath>);
 
         private:
-            virtual Value::Type resultType() const { return Value::NodeSetValue; }
+            virtual Value evaluate() const OVERRIDE;
+            virtual Value::Type resultType() const OVERRIDE { return Value::NodeSetValue; }
 
-            Filter* m_filter;
-            LocationPath* m_path;
+            std::unique_ptr<Expression> m_filter;
+            std::unique_ptr<LocationPath> m_path;
         };
 
     }
