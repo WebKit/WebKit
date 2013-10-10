@@ -1,3 +1,16 @@
+2013-10-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Missing checks in returnIfWebKitAccessibleIsInvalid
+        https://bugs.webkit.org/show_bug.cgi?id=122600
+
+        Reviewed by Chris Fleizach.
+
+        Check that the AccessibilityObject associated to the ATK wrapper
+        is not NULL and contains a valid reference to the document before
+        calling AccessibilityObject::updateBackingStore().
+
+        * accessibility/atk/WebKitAccessibleUtil.h: Add extra checks.
+
 2013-10-10  Andreas Kling  <akling@apple.com>
 
         Clean up JSDOMWindowShell a little.

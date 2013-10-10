@@ -39,7 +39,10 @@ class VisibleSelection;
     if (!webkitAccessible || webkitAccessibleIsDetached(webkitAccessible)) { \
         return; \
     } else { \
-        webkitAccessibleGetAccessibilityObject(webkitAccessible)->updateBackingStore(); \
+        AccessibilityObject* coreObject = webkitAccessibleGetAccessibilityObject(webkitAccessible); \
+        if (!coreObject || !coreObject->document()) \
+            return; \
+        coreObject->updateBackingStore(); \
         if (webkitAccessibleIsDetached(webkitAccessible)) \
             return; \
     }; } G_STMT_END
@@ -48,7 +51,10 @@ class VisibleSelection;
     if (!webkitAccessible || webkitAccessibleIsDetached(webkitAccessible)) { \
         return (val); \
     } else { \
-        webkitAccessibleGetAccessibilityObject(webkitAccessible)->updateBackingStore(); \
+        AccessibilityObject* coreObject = webkitAccessibleGetAccessibilityObject(webkitAccessible); \
+        if (!coreObject || !coreObject->document()) \
+            return (val); \
+        coreObject->updateBackingStore(); \
         if (webkitAccessibleIsDetached(webkitAccessible)) \
             return (val); \
     }; } G_STMT_END
