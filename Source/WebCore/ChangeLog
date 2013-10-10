@@ -1,3 +1,59 @@
+2013-10-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display the correct fragment boxes for content inside flow threads
+        https://bugs.webkit.org/show_bug.cgi?id=122291
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector/elements/highlight-regions-flow-horiz-bt.html
+               inspector/elements/highlight-regions-flow-transform-horiz-bt.html
+               inspector/elements/highlight-regions-flow-transform-vert-lr.html
+               inspector/elements/highlight-regions-flow-transform-vert-rl.html
+               inspector/elements/highlight-regions-flow-transform.html
+               inspector/elements/highlight-regions-flow-vert-lr.html
+               inspector/elements/highlight-regions-flow-vert-rl.html
+               inspector/elements/highlight-regions-flow.html
+
+        Nodes inside a RenderFlowThread can be split across multiple regions. This patch adds the required
+        code to compute "fragments" for each region. Each fragment will display its own label.
+
+        There are a couple of changes:
+        1. The node highlight object now has a "scroll" property to hold the main view's scroll offset.
+        2. There's a "fragment" array to get a list of quads for each renderer fragment. Renderers outside 
+        RenderFlowThreads will just have one fragment.
+        3. ElementInfo now has two more properties: "regionFlowInfo" (renamed from former flowInfo) and "contentFlowInfo".
+        If the renderer is a RenderRegion it will have a regionFlowInfo. If the renderer is inside a RenderFlowThread
+        then it will have a "contentFlowInfo".
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::getHighlight): It should now take a "region" parameter to customize the output for a specific
+        containing region.
+        (WebCore::buildObjectForHighlight):
+        (WebCore::buildObjectForCSSRegionContentClip): We need to know how to clip the fragments inside regions.
+        (WebCore::buildObjectForRendererFragments): Extracted code from buildObjectForHighlight and added
+        the new regions lookup code.
+        (WebCore::buildObjectForElementInfo): Extracted from buildObjectForHighlight.
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        (WebCore::InspectorOverlay::drawQuadHighlight):
+        * inspector/InspectorOverlayPage.css: There can be multiple labels on screen at once, so I've
+        created the #element-title-template element that we clone for each label. .element-title-container is now
+        holding all the .element-title elements, so that we can remove them all at once.
+        (.element-title-container):
+        (.element-title):
+        (#element-title-template):
+        (.tag-name):
+        (.node-id):
+        (.class-name):
+        * inspector/InspectorOverlayPage.html:
+        * inspector/InspectorOverlayPage.js:
+        (reset):
+        (_toggleOptionalValue):
+        (_createElementTitle): Creates an element populated with data read from elementInfo.
+        (_drawElementTitle): Added code to create more labels for multiple fragments.
+        (_drawRegionsHighlight):
+        (_drawFragmentHighlight):
+        (drawNodeHighlight): Consolidated the scroll property into a canvas.transform.
+
 2013-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Layout assertion failure in WebCore::RenderView::paint

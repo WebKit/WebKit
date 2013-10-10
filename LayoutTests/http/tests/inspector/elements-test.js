@@ -620,9 +620,25 @@ function dumpInspectorHighlightedRegions()
     }
     // Reformat the string using JSON.stringify.
     var json = JSON.parse(highlight);
-    if (!json.elementInfo || !json.elementInfo.flowInfo) {
+    if (!json.elementInfo || !json.elementInfo.regionFlowInfo) {
         output("No highlighted regions.");
         return;
     }
-    output(JSON.stringify(json.elementInfo.flowInfo, null, 4));
+    output(JSON.stringify(json.elementInfo.regionFlowInfo, null, 4));
+}
+
+function dumpInspectorHighlightedNode()
+{
+    var highlight = window.internals.inspectorHighlightObject(document);
+    if (!highlight.length) {
+        output("No highlighted node.");
+        return;
+    }
+    // Reformat the string using JSON.stringify.
+    var json = JSON.parse(highlight);
+    if (!json) {
+        output("No highlighted node.");
+        return;
+    }
+    output(JSON.stringify(json, null, 4));
 }

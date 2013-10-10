@@ -243,45 +243,116 @@ function reset(resetData)
     context.scale(deviceScaleFactor, deviceScaleFactor);
 
     document.getElementById("paused-in-debugger").style.visibility = "hidden";
-    document.getElementById("element-title").style.visibility = "hidden";
+    document.getElementById("element-title-container").innerHTML = "";
     document.body.classList.remove("dimmed");
 }
 
-function _drawElementTitle(highlight)
+function DOMBuilder(tagName, className)
 {
-    var elementInfo = highlight.elementInfo;
-    if (!highlight.elementInfo)
+    this.element = document.createElement(tagName);
+    this.element.className = className;
+}
+
+DOMBuilder.prototype.appendTextNode = function(content)
+{
+    var node = document.createTextNode();
+    node.textContent = content;
+    this.element.appendChild(node);
+    return node;
+}
+
+DOMBuilder.prototype.appendSpan = function(className, value)
+{
+    var span = document.createElement("span");
+    span.className = className;
+    span.textContent = value;
+    this.element.appendChild(span);
+    return span;
+}
+
+DOMBuilder.prototype.appendSpanIfNotNull = function(className, value, prefix)
+{
+    return value ? this.appendSpan(className, (prefix ? prefix : "") + value) : null;
+}
+
+DOMBuilder.prototype.appendProperty = function(className, propertyName, value)
+{
+    var builder = new DOMBuilder("div", className);
+    builder.appendSpan("css-property", propertyName);
+    builder.appendTextNode(" ");
+    builder.appendSpan("value", value);
+    this.element.appendChild(builder.element);
+    return builder.element;
+}
+
+DOMBuilder.prototype.appendPropertyIfNotNull = function(className, propertyName, value)
+{
+    return value ? this.appendProperty(className, propertyName, value) : null;
+}
+
+function _truncateString(value, maxLength)
+{
+    return value && value.length > maxLength ? value.substring(0, 50) + "\u2026" : value;
+}
+
+function _createElementTitle(elementInfo)
+{
+    var builder = new DOMBuilder("div", "element-title");
+    
+    builder.appendSpanIfNotNull("tag-name", elementInfo.tagName);
+    builder.appendSpanIfNotNull("node-id", elementInfo.idValue, "#");
+    builder.appendSpanIfNotNull("class-name", _truncateString(elementInfo.className, 50));
+
+    builder.appendTextNode(" ");
+    builder.appendSpan("node-width", elementInfo.nodeWidth);
+    // \xd7 is the code for the &times; HTML entity.
+    builder.appendSpan("px", "px \xd7 ");
+    builder.appendSpan("node-height", elementInfo.nodeHeight);
+    builder.appendSpan("px", "px");
+
+    builder.appendPropertyIfNotNull("region-flow-name", "Region Flow", elementInfo.regionFlowInfo ? elementInfo.regionFlowInfo.name : null);
+    builder.appendPropertyIfNotNull("content-flow-name", "Content Flow", elementInfo.contentFlowInfo ? elementInfo.contentFlowInfo.name : null);
+
+    document.getElementById("element-title-container").appendChild(builder.element);
+
+    return builder.element;
+}
+
+function _drawElementTitle(elementInfo, fragmentHighlight, scroll)
+{
+    if (!elementInfo || !fragmentHighlight.quads.length)
         return;
+    
+    var elementTitle = _createElementTitle(elementInfo);
 
-    document.getElementById("tag-name").textContent = elementInfo.tagName;
-    document.getElementById("node-id").textContent = elementInfo.idValue ? "#" + elementInfo.idValue : "";
-    var className = elementInfo.className;
-    if (className && className.length > 50)
-       className = className.substring(0, 50) + "\u2026";
-    document.getElementById("class-name").textContent = className || "";
-    document.getElementById("node-width").textContent = elementInfo.nodeWidth;
-    document.getElementById("node-height").textContent = elementInfo.nodeHeight;
-    var flowNameElement = document.getElementById("flow-name");
-    if (elementInfo.flowInfo) {
-        flowNameElement.style.display = "";
-        document.getElementById("flow-name-value").textContent = elementInfo.flowInfo.name || "";
-    } else
-        flowNameElement.style.display = "none";
-    var elementTitle = document.getElementById("element-title");
-
-    var marginQuad = highlight.quads[0];
+    var marginQuad = fragmentHighlight.quads[0];
 
     var titleWidth = elementTitle.offsetWidth + 6;
     var titleHeight = elementTitle.offsetHeight + 4;
 
     var anchorTop = marginQuad[0].y;
-    var anchorBottom = marginQuad[3].y
+    var anchorBottom = marginQuad[3].y;
 
     const arrowHeight = 7;
     var renderArrowUp = false;
     var renderArrowDown = false;
 
-    var boxX = Math.max(2, marginQuad[0].x);
+    var boxX = marginQuad[0].x;
+    
+    var containingRegion = fragmentHighlight.region;
+    if (containingRegion) {
+        // Restrict the position of the title box to the area of the containing region.
+        var clipQuad = containingRegion.quad;
+        anchorTop = Math.max(anchorTop, Math.min(clipQuad[0].y, clipQuad[1].y, clipQuad[2].y, clipQuad[3].y));
+        anchorBottom = Math.min(anchorBottom, Math.max(clipQuad[0].y, clipQuad[1].y, clipQuad[2].y, clipQuad[3].y));
+        boxX = Math.max(boxX, Math.min(clipQuad[0].x, clipQuad[1].x, clipQuad[2].x, clipQuad[3].x));
+        boxX = Math.min(boxX, Math.max(clipQuad[0].x, clipQuad[1].x, clipQuad[2].x, clipQuad[3].x));
+    }
+
+    boxX = Math.max(2, boxX - scroll.x);
+    anchorTop -= scroll.y;
+    anchorBottom -= scroll.y;
+
     if (boxX + titleWidth > canvas.width)
         boxX = canvas.width - titleWidth - 2;
 
@@ -326,7 +397,6 @@ function _drawElementTitle(highlight)
 
     context.restore();
 
-    elementTitle.style.visibility = "visible";
     elementTitle.style.top = (boxY + 3) + "px";
     elementTitle.style.left = (boxX + 3) + "px";
 }
@@ -413,22 +483,10 @@ function _drawRegionLink(pointA, pointB)
     context.restore();
 }
 
-function _fixQuadScrollPosition(quad, scrollX, scrollY)
-{
-    for (var j = 0; j < quad.length; ++j) {
-        quad[j].x -= scrollX;
-        quad[j].y -= scrollY;
-    }
-}
-
-function _drawRegionsHighlight(regions, scrollX, scrollY)
+function _drawRegionsHighlight(regions)
 {
     for (var i = 0; i < regions.length; ++i) {
         var region = regions[i];
-        _fixQuadScrollPosition(region.borderQuad, scrollX, scrollY);
-        _fixQuadScrollPosition(region.incomingQuad, scrollX, scrollY);
-        _fixQuadScrollPosition(region.outgoingQuad, scrollX, scrollY);
-    
         drawOutlinedQuad(region.borderQuad, region.isHighlighted ? highlightedRegionBackgroundColor : regionBackgroundColor, regionStrokeColor);
         _drawRegionNumber(region.borderQuad, i + 1);
     }
@@ -448,7 +506,7 @@ function _drawRegionsHighlight(regions, scrollX, scrollY)
     }
 }
 
-function drawNodeHighlight(highlight)
+function _drawFragmentHighlight(highlight)
 {
     if (!highlight.quads.length) {
         _drawGrid(highlight, false, false);
@@ -457,8 +515,10 @@ function drawNodeHighlight(highlight)
 
     context.save();
 
-    for (var i = 0; i < highlight.quads.length; ++i)
-        _fixQuadScrollPosition(highlight.quads[i], highlight.scrollX, highlight.scrollY);
+    if (highlight.region) {
+        // Clip to the containing region to avoid showing fragments that are not rendered by this region.
+        quadToPath(highlight.region.quad).clip();
+    }
 
     var quads = highlight.quads.slice();
     var contentQuad = quads.pop();
@@ -500,17 +560,32 @@ function drawNodeHighlight(highlight)
         }
     }
 
+    context.restore();
+
     var rulerAtRight = minX < 20 && maxX + 20 < width;
     var rulerAtBottom = minY < 20 && maxY + 20 < height;
 
     _drawGrid(highlight, rulerAtRight, rulerAtBottom);
     _drawRulers(highlight, rulerAtRight, rulerAtBottom);
+}
 
-    if (highlight.elementInfo && highlight.elementInfo.flowInfo)
-        _drawRegionsHighlight(highlight.elementInfo.flowInfo.regions, highlight.scrollX, highlight.scrollY);
+function drawNodeHighlight(highlight)
+{
+    context.save();
+    context.translate(-highlight.scroll.x, -highlight.scroll.y);
 
-    _drawElementTitle(highlight);
+    for (var i = 0; i < highlight.fragments.length; ++i)
+        _drawFragmentHighlight(highlight.fragments[i], highlight);
+
+    if (highlight.elementInfo && highlight.elementInfo.regionFlowInfo)
+        _drawRegionsHighlight(highlight.elementInfo.regionFlowInfo.regions, highlight);
+
     context.restore();
+
+    var elementTitleContainer = document.getElementById("element-title-container");
+    elementTitleContainer.innerHTML = "";
+    for (var i = 0; i < highlight.fragments.length; ++i)
+        _drawElementTitle(highlight.elementInfo, highlight.fragments[i], highlight.scroll);
 }
 
 function drawQuadHighlight(highlight)

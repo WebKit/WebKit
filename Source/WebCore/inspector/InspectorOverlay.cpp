@@ -105,20 +105,15 @@ static void contentsQuadToPage(const FrameView* mainView, const FrameView* view,
     quad += mainView->scrollOffset();
 }
 
-static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfig, Highlight* highlight)
+static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight)
 {
-    RenderObject* renderer = node->renderer();
-    Frame* containingFrame = node->document().frame();
-
-    if (!renderer || !containingFrame)
+    Frame* containingFrame = renderer->document().frame();
+    if (!containingFrame)
         return;
 
     highlight->setDataFromConfig(highlightConfig);
     FrameView* containingView = containingFrame->view();
     FrameView* mainView = containingFrame->page()->mainFrame().view();
-    IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
-    boundingBox.move(mainView->scrollOffset());
-    IntRect titleAnchorBox = boundingBox;
 
     // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
 #if ENABLE(SVG)
@@ -141,42 +136,76 @@ static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfi
         if (renderer->isBox()) {
             RenderBox* renderBox = toRenderBox(renderer);
 
-            // RenderBox returns the "pure" content area box, exclusive of the scrollbars (if present), which also count towards the content area in CSS.
-            contentBox = renderBox->contentBoxRect();
-            contentBox.setWidth(contentBox.width() + renderBox->verticalScrollbarWidth());
-            contentBox.setHeight(contentBox.height() + renderBox->horizontalScrollbarHeight());
+            LayoutBoxExtent margins(renderBox->marginTop(), renderBox->marginRight(), renderBox->marginBottom(), renderBox->marginLeft());
 
-            paddingBox = LayoutRect(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
-                    contentBox.width() + renderBox->paddingLeft() + renderBox->paddingRight(), contentBox.height() + renderBox->paddingTop() + renderBox->paddingBottom());
+            if (!renderBox->isOutOfFlowPositioned() && region) {
+                RenderBox::LogicalExtentComputedValues computedValues;
+                renderBox->computeLogicalWidthInRegion(computedValues, region);
+                margins.mutableLogicalLeft(renderBox->style()->writingMode()) = computedValues.m_margins.m_start;
+                margins.mutableLogicalRight(renderBox->style()->writingMode()) = computedValues.m_margins.m_end;
+            }
+
+            paddingBox = renderBox->clientBoxRectInRegion(region);
+            contentBox = LayoutRect(paddingBox.x() + renderBox->paddingLeft(), paddingBox.y() + renderBox->paddingTop(),
+                paddingBox.width() - renderBox->paddingLeft() - renderBox->paddingRight(), paddingBox.height() - renderBox->paddingTop() - renderBox->paddingBottom());
             borderBox = LayoutRect(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
-                    paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
-            marginBox = LayoutRect(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
-                    borderBox.width() + renderBox->marginWidth(), borderBox.height() + renderBox->marginHeight());
+                paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
+            marginBox = LayoutRect(borderBox.x() - margins.left(), borderBox.y() - margins.top(),
+                borderBox.width() + margins.left() + margins.right(), borderBox.height() + margins.top() + margins.bottom());
         } else {
             RenderInline* renderInline = toRenderInline(renderer);
 
             // RenderInline's bounding box includes paddings and borders, excludes margins.
             borderBox = renderInline->linesBoundingBox();
             paddingBox = LayoutRect(borderBox.x() + renderInline->borderLeft(), borderBox.y() + renderInline->borderTop(),
-                    borderBox.width() - renderInline->borderLeft() - renderInline->borderRight(), borderBox.height() - renderInline->borderTop() - renderInline->borderBottom());
+                borderBox.width() - renderInline->borderLeft() - renderInline->borderRight(), borderBox.height() - renderInline->borderTop() - renderInline->borderBottom());
             contentBox = LayoutRect(paddingBox.x() + renderInline->paddingLeft(), paddingBox.y() + renderInline->paddingTop(),
-                    paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
+                paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
             // Ignore marginTop and marginBottom for inlines.
             marginBox = LayoutRect(borderBox.x() - renderInline->marginLeft(), borderBox.y(),
-                    borderBox.width() + renderInline->marginWidth(), borderBox.height());
+                borderBox.width() + renderInline->marginWidth(), borderBox.height());
         }
 
-        FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
-        FloatQuad absPaddingQuad = renderer->localToAbsoluteQuad(FloatRect(paddingBox));
-        FloatQuad absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
-        FloatQuad absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
+        FloatQuad absContentQuad;
+        FloatQuad absPaddingQuad;
+        FloatQuad absBorderQuad;
+        FloatQuad absMarginQuad;
+
+        if (region) {
+            RenderFlowThread* flowThread = region->flowThread();
+
+            // Figure out the quads in the space of the RenderFlowThread.
+            absContentQuad = renderer->localToContainerQuad(FloatRect(contentBox), flowThread);
+            absPaddingQuad = renderer->localToContainerQuad(FloatRect(paddingBox), flowThread);
+            absBorderQuad = renderer->localToContainerQuad(FloatRect(borderBox), flowThread);
+            absMarginQuad = renderer->localToContainerQuad(FloatRect(marginBox), flowThread);
+
+            // Move the quad relative to the space of the current region.
+            LayoutRect flippedRegionRect(region->flowThreadPortionRect());
+            flowThread->flipForWritingMode(flippedRegionRect);
+
+            FloatSize delta = region->contentBoxRect().location() - flippedRegionRect.location();
+            absContentQuad.move(delta);
+            absPaddingQuad.move(delta);
+            absBorderQuad.move(delta);
+            absMarginQuad.move(delta);
+
+            // Resolve the absolute quads starting from the current region.
+            absContentQuad = region->localToAbsoluteQuad(absContentQuad);
+            absPaddingQuad = region->localToAbsoluteQuad(absPaddingQuad);
+            absBorderQuad = region->localToAbsoluteQuad(absBorderQuad);
+            absMarginQuad = region->localToAbsoluteQuad(absMarginQuad);
+        } else {
+            absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
+            absPaddingQuad = renderer->localToAbsoluteQuad(FloatRect(paddingBox));
+            absBorderQuad = renderer->localToAbsoluteQuad(FloatRect(borderBox));
+            absMarginQuad = renderer->localToAbsoluteQuad(FloatRect(marginBox));
+        }
 
         contentsQuadToPage(mainView, containingView, absContentQuad);
         contentsQuadToPage(mainView, containingView, absPaddingQuad);
         contentsQuadToPage(mainView, containingView, absBorderQuad);
         contentsQuadToPage(mainView, containingView, absMarginQuad);
-
-        titleAnchorBox = absMarginQuad.enclosingBoundingBox();
 
         highlight->type = HighlightTypeNode;
         highlight->quads.append(absMarginQuad);
@@ -184,6 +213,14 @@ static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfi
         highlight->quads.append(absPaddingQuad);
         highlight->quads.append(absContentQuad);
     }
+}
+
+static void buildNodeHighlight(Node* node, RenderRegion* region, const HighlightConfig& highlightConfig, Highlight* highlight)
+{
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return;
+    buildRendererHighlight(renderer, region, highlightConfig, highlight);
 }
 
 static void buildQuadHighlight(Page* page, const FloatQuad& quad, const HighlightConfig& highlightConfig, Highlight *highlight)
@@ -230,7 +267,7 @@ void InspectorOverlay::getHighlight(Highlight* highlight) const
 
     highlight->type = HighlightTypeRects;
     if (m_highlightNode)
-        buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, highlight);
+        buildNodeHighlight(m_highlightNode.get(), nullptr, m_nodeHighlightConfig, highlight);
     else
         buildQuadHighlight(m_page, *m_highlightQuad, m_quadHighlightConfig, highlight);
 }
@@ -331,7 +368,7 @@ static PassRefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
     return array.release();
 }
 
-static PassRefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, const Highlight& highlight)
+static PassRefPtr<InspectorObject> buildObjectForHighlight(const Highlight& highlight)
 {
     RefPtr<InspectorObject> object = InspectorObject::create();
     RefPtr<InspectorArray> array = InspectorArray::create();
@@ -344,16 +381,6 @@ static PassRefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, 
     object->setString("paddingColor", highlight.paddingColor.serialized());
     object->setString("borderColor", highlight.borderColor.serialized());
     object->setString("marginColor", highlight.marginColor.serialized());
-
-    FloatRect visibleRect = mainView->visibleContentRect();
-    if (!mainView->delegatesScrolling()) {
-        object->setNumber("scrollX", visibleRect.x());
-        object->setNumber("scrollY", visibleRect.y());
-    } else {
-        object->setNumber("scrollX", 0);
-        object->setNumber("scrollY", 0);
-    }
-
     return object.release();
 }
 
@@ -361,7 +388,7 @@ static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* main
 {
     FrameView* containingView = region->frame().view();
     if (!containingView)
-        return 0;
+        return nullptr;
 
     LayoutRect borderBox = region->borderBoxRect();
     borderBox.setWidth(borderBox.width() + region->verticalScrollbarWidth());
@@ -429,65 +456,155 @@ static PassRefPtr<InspectorObject> buildObjectForSize(const IntSize& size)
     return result.release();
 }
 
+static PassRefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegion* region)
+{
+    Frame* containingFrame = region->document().frame();
+    if (!containingFrame)
+        return nullptr;
+
+    FrameView* containingView = containingFrame->view();
+    FrameView* mainView = containingFrame->page()->mainFrame().view();
+    RenderFlowThread* flowThread = region->flowThread();
+
+    // Get the clip box of the current region and covert it into an absolute quad.
+    LayoutRect flippedRegionRect(region->flowThreadPortionOverflowRect());
+    flowThread->flipForWritingMode(flippedRegionRect);
+
+    // Apply any border or padding of the region.
+    flippedRegionRect.setLocation(region->contentBoxRect().location());
+    
+    FloatQuad clipQuad = region->localToAbsoluteQuad(FloatRect(flippedRegionRect));
+    contentsQuadToPage(mainView, containingView, clipQuad);
+
+    RefPtr<InspectorObject> regionObject = InspectorObject::create();
+    regionObject->setArray("quad", buildArrayForQuad(clipQuad));
+    return regionObject.release();
+}
+
 void InspectorOverlay::drawGutter()
 {
     evaluateInOverlay("drawGutter", "");
 }
 
+static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
+{
+    RefPtr<InspectorArray> fragmentsArray = InspectorArray::create();
+
+    RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
+    if (!containingFlowThread) {
+        Highlight highlight;
+        buildRendererHighlight(renderer, nullptr, config, &highlight);
+        fragmentsArray->pushObject(buildObjectForHighlight(highlight));
+    } else {
+        RenderBox* enclosingBox = renderer->enclosingBox();
+        RenderRegion* startRegion = nullptr;
+        RenderRegion* endRegion = nullptr;
+        containingFlowThread->getRegionRangeForBox(enclosingBox, startRegion, endRegion);
+        if (!startRegion) {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+        const RenderRegionList& regionList = containingFlowThread->renderRegionList();
+        for (RenderRegionList::const_iterator iter = regionList.find(startRegion); iter != regionList.end(); ++iter) {
+            RenderRegion* region = *iter;
+            if (region->isValid()) {
+                // Compute the highlight of the fragment inside the current region.
+                Highlight highlight;
+                buildRendererHighlight(renderer, region, config, &highlight);
+                RefPtr<InspectorObject> fragmentObject = buildObjectForHighlight(highlight);
+
+                // Compute the clipping area of the region.
+                fragmentObject->setObject("region", buildObjectForCSSRegionContentClip(region));
+                fragmentsArray->pushObject(fragmentObject.release());
+            }
+            if (region == endRegion)
+                break;
+        }
+    }
+
+    return fragmentsArray.release();
+}
+
+static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
+{
+    if (!node->isElementNode() || !node->document().frame())
+        return nullptr;
+
+    RefPtr<InspectorObject> elementInfo = InspectorObject::create();
+
+    Element* element = toElement(node);
+    bool isXHTML = element->document().isXHTMLDocument();
+    elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
+    elementInfo->setString("idValue", element->getIdAttribute());
+    HashSet<AtomicString> usedClassNames;
+    if (element->hasClass() && element->isStyledElement()) {
+        StringBuilder classNames;
+        const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
+        size_t classNameCount = classNamesString.size();
+        for (size_t i = 0; i < classNameCount; ++i) {
+            const AtomicString& className = classNamesString[i];
+            if (usedClassNames.contains(className))
+                continue;
+            usedClassNames.add(className);
+            classNames.append('.');
+            classNames.append(className);
+        }
+        elementInfo->setString("className", classNames.toString());
+    }
+
+    RenderObject* renderer = node->renderer();
+    Frame* containingFrame = node->document().frame();
+    FrameView* containingView = containingFrame->view();
+    IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
+    RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
+    elementInfo->setString("nodeWidth", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width()));
+    elementInfo->setString("nodeHeight", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height()));
+    
+    if (renderer->isRenderRegion()) {
+        RenderRegion* region = toRenderRegion(renderer);
+        RenderFlowThread* flowThread = region->flowThread();
+        if (flowThread && flowThread->isRenderNamedFlowThread()) {
+            RefPtr<InspectorObject> regionFlowInfo = InspectorObject::create();
+            regionFlowInfo->setString("name", toRenderNamedFlowThread(flowThread)->flowThreadName());
+            regionFlowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(region, flowThread));
+            elementInfo->setObject("regionFlowInfo", regionFlowInfo.release());
+        }
+    }
+
+    RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
+    if (containingFlowThread && containingFlowThread->isRenderNamedFlowThread()) {
+        RefPtr<InspectorObject> contentFlowInfo = InspectorObject::create();
+        contentFlowInfo->setString("name", toRenderNamedFlowThread(containingFlowThread)->flowThreadName());
+        elementInfo->setObject("contentFlowInfo", contentFlowInfo.release());
+    }
+
+    return elementInfo.release();
+}
+
 PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() const
 {
     if (!m_highlightNode)
-        return 0;
-
-    Highlight highlight;
-    buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, &highlight);
-    RefPtr<InspectorObject> highlightObject = buildObjectForHighlight(m_page->mainFrame().view(), highlight);
+        return nullptr;
 
     Node* node = m_highlightNode.get();
-    if (node->isElementNode() && m_nodeHighlightConfig.showInfo && node->renderer() && node->document().frame()) {
-        RefPtr<InspectorObject> elementInfo = InspectorObject::create();
-        Element* element = toElement(node);
-        bool isXHTML = element->document().isXHTMLDocument();
-        elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
-        elementInfo->setString("idValue", element->getIdAttribute());
-        HashSet<AtomicString> usedClassNames;
-        if (element->hasClass() && element->isStyledElement()) {
-            StringBuilder classNames;
-            const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
-            size_t classNameCount = classNamesString.size();
-            for (size_t i = 0; i < classNameCount; ++i) {
-                const AtomicString& className = classNamesString[i];
-                if (usedClassNames.contains(className))
-                    continue;
-                usedClassNames.add(className);
-                classNames.append('.');
-                classNames.append(className);
-            }
-            elementInfo->setString("className", classNames.toString());
-        }
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return nullptr;
 
-        RenderObject* renderer = node->renderer();
-        Frame* containingFrame = node->document().frame();
-        FrameView* containingView = containingFrame->view();
-        IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
-        RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
-        elementInfo->setString("nodeWidth", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width()));
-        elementInfo->setString("nodeHeight", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height()));
-        
-        if (renderer->isRenderRegion()) {
-            RenderRegion* region = toRenderRegion(renderer);
-            RenderFlowThread* flowThread = region->flowThread();
-            if (flowThread && flowThread->isRenderNamedFlowThread()) {
-                RefPtr<InspectorObject> flowInfo = InspectorObject::create();
-                flowInfo->setString("name", toRenderNamedFlowThread(flowThread)->flowThreadName());
-                flowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(region, flowThread));
-                elementInfo->setObject("flowInfo", flowInfo.release());
-            }
-        }
-        
-        highlightObject->setObject("elementInfo", elementInfo.release());
+    RefPtr<InspectorObject> highlightObject = InspectorObject::create();
+
+    // The main view's scroll offset is shared across all quads.
+    FrameView* mainView = m_page->mainFrame().view();
+    highlightObject->setObject("scroll", buildObjectForPoint(!mainView->delegatesScrolling() ? mainView->visibleContentRect().location() : FloatPoint()));
+
+    highlightObject->setArray("fragments", buildObjectForRendererFragments(renderer, m_nodeHighlightConfig));
+
+    if (m_nodeHighlightConfig.showInfo) {
+        RefPtr<InspectorObject> elementInfo = buildObjectForElementInfo(node);
+        if (elementInfo)
+            highlightObject->setObject("elementInfo", elementInfo.release());
     }
-    
+        
     return highlightObject.release();
 }
 
@@ -506,7 +623,7 @@ void InspectorOverlay::drawQuadHighlight()
 
     Highlight highlight;
     buildQuadHighlight(m_page, *m_highlightQuad, m_quadHighlightConfig, &highlight);
-    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(m_page->mainFrame().view(), highlight));
+    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(highlight));
 }
 
 void InspectorOverlay::drawPausedInDebuggerMessage()

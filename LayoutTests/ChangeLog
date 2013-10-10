@@ -1,3 +1,30 @@
+2013-10-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display the correct fragment boxes for content inside flow threads
+        https://bugs.webkit.org/show_bug.cgi?id=122291
+
+        Reviewed by Timothy Hatcher.
+
+        Added tests to check the result of the InspectorOverlay when it inspects nodes inside RenderFlowThreads.
+
+        * http/tests/inspector/elements-test.js:
+        * inspector/elements/highlight-regions-flow-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-horiz-bt-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-horiz-bt.html: Added.
+        * inspector/elements/highlight-regions-flow-transform-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-transform-horiz-bt-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-transform-horiz-bt.html: Added.
+        * inspector/elements/highlight-regions-flow-transform-vert-lr-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-transform-vert-lr.html: Added.
+        * inspector/elements/highlight-regions-flow-transform-vert-rl-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-transform-vert-rl.html: Added.
+        * inspector/elements/highlight-regions-flow-transform.html: Added.
+        * inspector/elements/highlight-regions-flow-vert-lr-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-vert-lr.html: Added.
+        * inspector/elements/highlight-regions-flow-vert-rl-expected.txt: Added.
+        * inspector/elements/highlight-regions-flow-vert-rl.html: Added.
+        * inspector/elements/highlight-regions-flow.html: Added.
+
 2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Lines that don't intersect shape-outside should ignore both left and right margins
