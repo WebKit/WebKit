@@ -956,6 +956,11 @@ void testObjectiveCAPI()
         checkResult(@"exception.message is correct'", context.exception 
             && [@"Objective-C blocks called as constructors must return an object." isEqualToString:[context.exception[@"message"] toString]]);
     }
+
+    @autoreleasepool {
+        checkResult(@"[JSContext currentThis] == nil outside of callback", ![JSContext currentThis]);
+        checkResult(@"[JSContext currentArguments] == nil outside of callback", ![JSContext currentArguments]);
+    }
 }
 
 #else

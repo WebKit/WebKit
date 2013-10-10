@@ -136,6 +136,8 @@
 {
     WTFThreadData& threadData = wtfThreadData();
     CallbackData *entry = (CallbackData *)threadData.m_apiData;
+    if (!entry)
+        return nil;
     return [JSValue valueWithJSValueRef:entry->thisValue inContext:[JSContext currentContext]];
 }
 
@@ -143,6 +145,9 @@
 {
     WTFThreadData& threadData = wtfThreadData();
     CallbackData *entry = (CallbackData *)threadData.m_apiData;
+
+    if (!entry)
+        return nil;
 
     if (!entry->currentArguments) {
         JSContext *context = [JSContext currentContext];

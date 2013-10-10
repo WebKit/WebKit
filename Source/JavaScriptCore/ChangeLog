@@ -1,3 +1,18 @@
+2013-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        currentThis and currentArguments crash if called from outside a callback
+        https://bugs.webkit.org/show_bug.cgi?id=122620
+
+        Reviewed by Filip Pizlo.
+
+        The documentation for these methods claims that they will return nil if called 
+        from somewhere other than an API callback, but currently they both crash.
+
+        * API/JSContext.mm:
+        (+[JSContext currentThis]):
+        (+[JSContext currentArguments]):
+        * API/tests/testapi.mm:
+
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         Minor clean-ups in the JSC Xcode project.
