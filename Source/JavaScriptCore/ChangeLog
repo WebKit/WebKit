@@ -1,3 +1,48 @@
+2013-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: blocks aren't callable via 'new'
+        https://bugs.webkit.org/show_bug.cgi?id=122561
+
+        Reviewed by Oliver Hunt.
+
+        Currently the only way for clients to vend new native objects to JavaScript code 
+        is via factory methods in the form of exported class methods or blocks. Blocks can 
+        be called like normal functions from JavaScript code, but they cannot be invoked 
+        with 'new'. This would give a simple way for clients to expose constructor-like 
+        behavior to their JavaScript code.
+
+        This patch adds the ability for blocks to be invoked as if they were a constructor.
+        Blocks invoked as constructors are required to return an object. If the block doesn't
+        return an object then an error is thrown. The 'this' object is not provided to the 
+        block and must be created within the block itself. 
+
+        This patch also unifies the native 'construct' callback used in both the C and Obj-C
+        APIs under the APICallbackFunction struct, similar to how we unified the 'call' callback
+        between ObjCCallbackFunction and JSCallbackFunction before.
+
+        This patch also adds tests to make sure that different blocks generate objects that
+        correctly behave when queried with instanceof. It also makes sure that the correct 
+        JS exception is thrown when a block fails to return an object.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        (JSC::APICallbackFunction::construct):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::getConstructData):
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::constructCallback):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::functionCallback):
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::functionCallback):
+        (JSC::ObjCCallbackFunction::constructCallback):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::objCCallbackFunctionCallAsConstructor):
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction):
+        (JSC::ObjCCallbackFunction::create):
+        (JSC::ObjCCallbackFunction::getConstructData):
+        * API/tests/testapi.mm:
+
 2013-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to do simple OSR exits using llvm.webkit.stackmap

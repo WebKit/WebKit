@@ -61,12 +61,17 @@ public:
     ObjCCallbackFunctionImpl* impl() { return m_impl.get(); }
 
 protected:
-    ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, JSObjectCallAsConstructorCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
 
 private:
     static CallType getCallData(JSCell*, CallData&);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
 
-    JSObjectCallAsFunctionCallback m_callback;
+    JSObjectCallAsFunctionCallback functionCallback() { return m_functionCallback; }
+    JSObjectCallAsConstructorCallback constructCallback() { return m_constructCallback; }
+
+    JSObjectCallAsFunctionCallback m_functionCallback;
+    JSObjectCallAsConstructorCallback m_constructCallback;
     OwnPtr<ObjCCallbackFunctionImpl> m_impl;
 };
 

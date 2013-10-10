@@ -906,6 +906,56 @@ void testObjectiveCAPI()
             [context.virtualMachine addManagedReference:managedTestObject withOwner:testObject];
         }
     }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"MyClass"] = ^{
+            JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
+            JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
+            JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
+            JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentContext][@"MyClass"][@"prototype"] JSValueRef]);
+            return newThis;
+        };
+
+        context[@"MyOtherClass"] = ^{
+            JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
+            JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
+            JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
+            JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentContext][@"MyOtherClass"][@"prototype"] JSValueRef]);
+            return newThis;
+        };
+
+        context.exceptionHandler = ^(JSContext *context, JSValue *exception) {
+            NSLog(@"EXCEPTION: %@", [exception toString]);
+            context.exception = nil;
+        };
+
+        JSValue *constructor1 = context[@"MyClass"];
+        JSValue *constructor2 = context[@"MyOtherClass"];
+
+        JSValue *value1 = [context evaluateScript:@"new MyClass()"];
+        checkResult(@"value1 instanceof MyClass", [value1 isInstanceOf:constructor1]);
+        checkResult(@"!(value1 instanceof MyOtherClass)", ![value1 isInstanceOf:constructor2]);
+        checkResult(@"MyClass.prototype.constructor === MyClass", [[context evaluateScript:@"MyClass.prototype.constructor === MyClass"] toBool]);
+        checkResult(@"MyClass instanceof Function", [[context evaluateScript:@"MyClass instanceof Function"] toBool]);
+
+        JSValue *value2 = [context evaluateScript:@"new MyOtherClass()"];
+        checkResult(@"value2 instanceof MyOtherClass", [value2 isInstanceOf:constructor2]);
+        checkResult(@"!(value2 instanceof MyClass)", ![value2 isInstanceOf:constructor1]);
+        checkResult(@"MyOtherClass.prototype.constructor === MyOtherClass", [[context evaluateScript:@"MyOtherClass.prototype.constructor === MyOtherClass"] toBool]);
+        checkResult(@"MyOtherClass instanceof Function", [[context evaluateScript:@"MyOtherClass instanceof Function"] toBool]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"MyClass"] = ^{
+            NSLog(@"I'm intentionally not returning anything.");
+        };
+        JSValue *result = [context evaluateScript:@"new MyClass()"];
+        checkResult(@"result === undefined", [result isUndefined]);
+        checkResult(@"exception.message is correct'", context.exception 
+            && [@"Objective-C blocks called as constructors must return an object." isEqualToString:[context.exception[@"message"] toString]]);
+    }
 }
 
 #else

@@ -59,7 +59,11 @@ protected:
     static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
 private:
+    friend struct APICallbackFunction;
+
     static ConstructType getConstructData(JSCell*, ConstructData&);
+
+    JSObjectCallAsConstructorCallback constructCallback() { return m_callback; }
 
     JSClassRef m_class;
     JSObjectCallAsConstructorCallback m_callback;

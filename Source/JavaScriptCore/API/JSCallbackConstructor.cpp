@@ -26,8 +26,9 @@
 #include "config.h"
 #include "JSCallbackConstructor.h"
 
-#include "APIShims.h"
+#include "APICallbackFunction.h"
 #include "APICast.h"
+#include "APIShims.h"
 #include "Error.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -65,40 +66,9 @@ void JSCallbackConstructor::destroy(JSCell* cell)
     static_cast<JSCallbackConstructor*>(cell)->JSCallbackConstructor::~JSCallbackConstructor();
 }
 
-static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
-{
-    JSObject* constructor = exec->callee();
-    JSContextRef ctx = toRef(exec);
-    JSObjectRef constructorRef = toRef(constructor);
-
-    JSObjectCallAsConstructorCallback callback = jsCast<JSCallbackConstructor*>(constructor)->callback();
-    if (callback) {
-        size_t argumentCount = exec->argumentCount();
-        Vector<JSValueRef, 16> arguments;
-        arguments.reserveInitialCapacity(argumentCount);
-        for (size_t i = 0; i < argumentCount; ++i)
-            arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
-
-        JSValueRef exception = 0;
-        JSObjectRef result;
-        {
-            APICallbackShim callbackShim(exec);
-            result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
-        }
-        if (exception)
-            exec->vm().throwException(exec, toJS(exec, exception));
-        // result must be a valid JSValue.
-        if (!result)
-            return throwVMTypeError(exec);
-        return JSValue::encode(toJS(result));
-    }
-    
-    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(constructor)->classRef(), 0)));
-}
-
 ConstructType JSCallbackConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSCallback;
+    constructData.native.function = APICallbackFunction::construct<JSCallbackConstructor>;
     return ConstructTypeHost;
 }
 

@@ -387,8 +387,13 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     ASSERT([object isKindOfClass:m_class]);
     ASSERT(m_block == [object isKindOfClass:getNSBlockClass()]);
     if (m_block) {
-        if (JSObjectRef method = objCCallbackFunctionForBlock(m_context, object))
-            return [JSValue valueWithJSValueRef:method inContext:m_context];
+        if (JSObjectRef method = objCCallbackFunctionForBlock(m_context, object)) {
+            JSValue *constructor = [JSValue valueWithJSValueRef:method inContext:m_context];
+            JSValue *prototype = [JSValue valueWithNewObjectInContext:m_context];
+            putNonEnumerable(constructor, @"prototype", prototype);
+            putNonEnumerable(prototype, @"constructor", constructor);
+            return constructor;
+        }
     }
 
     if (!m_prototype)

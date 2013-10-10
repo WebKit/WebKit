@@ -53,6 +53,8 @@ private:
 
     static CallType getCallData(JSCell*, CallData&);
 
+    JSObjectCallAsFunctionCallback functionCallback() { return m_callback; }
+
     JSObjectCallAsFunctionCallback m_callback;
 };
 
