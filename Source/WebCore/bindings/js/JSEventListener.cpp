@@ -94,10 +94,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
     if (scriptExecutionContext->isDocument()) {
         JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
-        if (!window->impl()->isCurrentlyDisplayedInFrame())
+        if (!window->impl().isCurrentlyDisplayedInFrame())
             return;
         // FIXME: Is this check needed for other contexts?
-        ScriptController& script = window->impl()->frame()->script();
+        ScriptController& script = window->impl().frame()->script();
         if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
             return;
     }

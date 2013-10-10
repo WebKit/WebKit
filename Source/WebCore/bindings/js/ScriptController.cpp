@@ -182,7 +182,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSDOMWindowShell* windowShell = iter->value.get();
 
-        if (windowShell->window()->impl() == newDOMWindow)
+        if (&windowShell->window()->impl() == newDOMWindow)
             continue;
 
         // Clear the debugger from the current window before setting the new window.
@@ -341,7 +341,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSC::ExecState* exec = iter->value->window()->globalExec();
-        SecurityOrigin* origin = iter->value->window()->impl()->document()->securityOrigin();
+        SecurityOrigin* origin = iter->value->window()->impl().document()->securityOrigin();
         result.append(std::pair<JSC::ExecState*, SecurityOrigin*>(exec, origin));
     }
 }

@@ -42,7 +42,7 @@ void JSStyleSheet::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(thisObject->impl()));
+    visitor.addOpaqueRoot(root(&thisObject->impl()));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)

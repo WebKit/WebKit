@@ -38,12 +38,10 @@ namespace WebCore {
 
 void JSBiquadFilterNode::setType(ExecState* exec, JSValue value)
 {
-    BiquadFilterNode* imp = impl();
-
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
         uint32_t type = value.toUInt32(exec);
-        if (!imp->setType(type))
+        if (!impl().setType(type))
             exec->vm().throwException(exec, createTypeError(exec, "Illegal BiquadFilterNode type"));
         return;
     }
@@ -52,7 +50,7 @@ void JSBiquadFilterNode::setType(ExecState* exec, JSValue value)
     if (value.isString()) {
         String type = value.toString(exec)->value(exec);
         if (type == "lowpass" || type == "highpass" || type == "bandpass" || type == "lowshelf" || type == "highshelf" || type == "peaking" || type == "notch" || type == "allpass") {
-            imp->setType(type);
+            impl().setType(type);
             return;
         }
     }

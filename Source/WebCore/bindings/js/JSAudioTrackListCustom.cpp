@@ -43,9 +43,9 @@ void JSAudioTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsAudioTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsAudioTrackList, visitor);
 
-    AudioTrackList* audioTrackList = jsAudioTrackList->impl();
-    visitor.addOpaqueRoot(root(audioTrackList->element()));
-    audioTrackList->visitJSEventListeners(visitor);
+    AudioTrackList& audioTrackList = jsAudioTrackList->impl();
+    visitor.addOpaqueRoot(root(audioTrackList.element()));
+    audioTrackList.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

@@ -139,7 +139,7 @@ void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    thisObject->impl()->visitJSEventListeners(visitor);
+    thisObject->impl().visitJSEventListeners(visitor);
 }
 
 

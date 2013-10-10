@@ -140,12 +140,12 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
         return true;
     }
     unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex && index < thisObject->impl()->length()) {
+    if (index != PropertyName::NotAnIndex && index < thisObject->impl().length()) {
         unsigned attributes = DontDelete | ReadOnly;
         slot.setCustomIndex(thisObject, attributes, index, indexGetter);
         return true;
     }
-    if (canGetItemsForName(exec, thisObject->impl(), propertyName)) {
+    if (canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
@@ -156,13 +156,13 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* e
 {
     JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (index < thisObject->impl()->length()) {
+    if (index < thisObject->impl().length()) {
         unsigned attributes = DontDelete | ReadOnly;
         slot.setCustomIndex(thisObject, attributes, index, thisObject->indexGetter);
         return true;
     }
     PropertyName propertyName = Identifier::from(exec, index);
-    if (canGetItemsForName(exec, thisObject->impl(), propertyName)) {
+    if (canGetItemsForName(exec, &thisObject->impl(), propertyName)) {
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
@@ -179,7 +179,7 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* exec, P
 {
     JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    for (unsigned i = 0; i < thisObject->impl()->length(); ++i)
+    for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)
         propertyNames.add(Identifier::from(exec, i));
      Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -196,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
         return throwVMTypeError(exec);
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    TestEventTarget* impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     int index(toUInt32(exec, exec->argument(0), NormalConversion));
@@ -207,7 +207,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->item(index)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.item(index)));
     return JSValue::encode(result);
 }
 
@@ -218,11 +218,11 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
         return throwVMTypeError(exec);
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    TestEventTarget* impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
+    impl.addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
@@ -233,11 +233,11 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
         return throwVMTypeError(exec);
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    TestEventTarget* impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
+    impl.removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
@@ -248,7 +248,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
         return throwVMTypeError(exec);
     JSTestEventTarget* castedThis = jsCast<JSTestEventTarget*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
-    TestEventTarget* impl = castedThis->impl();
+    TestEventTarget& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -256,7 +256,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionDispatchEvent(Exe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsBoolean(impl->dispatchEvent(evt, ec));
+    JSC::JSValue result = jsBoolean(impl.dispatchEvent(evt, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -268,7 +268,7 @@ void JSTestEventTarget::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    thisObject->impl()->visitJSEventListeners(visitor);
+    thisObject->impl().visitJSEventListeners(visitor);
 }
 
 
@@ -276,14 +276,14 @@ JSValue JSTestEventTarget::indexGetter(ExecState* exec, JSValue slotBase, unsign
 {
     JSTestEventTarget* thisObj = jsCast<JSTestEventTarget*>(asObject(slotBase));
     ASSERT_GC_OBJECT_INHERITS(thisObj, info());
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->item(index));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl().item(index));
 }
 
 static inline bool isObservable(JSTestEventTarget* jsTestEventTarget)
 {
     if (jsTestEventTarget->hasCustomProperties())
         return true;
-    if (jsTestEventTarget->impl()->hasEventListeners())
+    if (jsTestEventTarget->impl().hasEventListeners())
         return true;
     return false;
 }
@@ -291,7 +291,7 @@ static inline bool isObservable(JSTestEventTarget* jsTestEventTarget)
 bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());
-    if (jsTestEventTarget->impl()->isFiringEventListeners())
+    if (jsTestEventTarget->impl().isFiringEventListeners())
         return true;
     if (!isObservable(jsTestEventTarget))
         return false;
@@ -303,7 +303,7 @@ void JSTestEventTargetOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* co
 {
     JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestEventTarget->impl(), jsTestEventTarget);
+    uncacheWrapper(world, &jsTestEventTarget->impl(), jsTestEventTarget);
     jsTestEventTarget->releaseImpl();
 }
 
@@ -346,7 +346,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 
 TestEventTarget* toTestEventTarget(JSC::JSValue value)
 {
-    return value.inherits(JSTestEventTarget::info()) ? jsCast<JSTestEventTarget*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestEventTarget::info()) ? &jsCast<JSTestEventTarget*>(asObject(value))->impl() : 0;
 }
 
 }

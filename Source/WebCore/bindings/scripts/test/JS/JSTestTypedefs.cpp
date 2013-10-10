@@ -180,8 +180,8 @@ JSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, Pr
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestTypedefs* impl = castedThis->impl();
-    JSValue result = jsNumber(impl->unsignedLongLongAttr());
+    TestTypedefs& impl = castedThis->impl();
+    JSValue result = jsNumber(impl.unsignedLongLongAttr());
     return result;
 }
 
@@ -190,8 +190,8 @@ JSValue jsTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSValue sl
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestTypedefs* impl = castedThis->impl();
-    JSValue result = impl->immutableSerializedScriptValue() ? impl->immutableSerializedScriptValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
+    TestTypedefs& impl = castedThis->impl();
+    JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
     return result;
 }
 
@@ -207,8 +207,8 @@ JSValue jsTestTypedefsAttrWithGetterException(ExecState* exec, JSValue slotBase,
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     ExceptionCode ec = 0;
-    TestTypedefs* impl = castedThis->impl();
-    JSC::JSValue result = jsNumber(impl->attrWithGetterException(ec));
+    TestTypedefs& impl = castedThis->impl();
+    JSC::JSValue result = jsNumber(impl.attrWithGetterException(ec));
     setDOMException(exec, ec);
     return result;
 }
@@ -218,8 +218,8 @@ JSValue jsTestTypedefsAttrWithSetterException(ExecState* exec, JSValue slotBase,
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestTypedefs* impl = castedThis->impl();
-    JSValue result = jsNumber(impl->attrWithSetterException());
+    TestTypedefs& impl = castedThis->impl();
+    JSValue result = jsNumber(impl.attrWithSetterException());
     return result;
 }
 
@@ -228,8 +228,8 @@ JSValue jsTestTypedefsStringAttrWithGetterException(ExecState* exec, JSValue slo
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     ExceptionCode ec = 0;
-    TestTypedefs* impl = castedThis->impl();
-    JSC::JSValue result = jsStringWithCache(exec, impl->stringAttrWithGetterException(ec));
+    TestTypedefs& impl = castedThis->impl();
+    JSC::JSValue result = jsStringWithCache(exec, impl.stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
     return result;
 }
@@ -239,8 +239,8 @@ JSValue jsTestTypedefsStringAttrWithSetterException(ExecState* exec, JSValue slo
 {
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestTypedefs* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->stringAttrWithSetterException());
+    TestTypedefs& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.stringAttrWithSetterException());
     return result;
 }
 
@@ -262,11 +262,11 @@ void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     unsigned long long nativeValue(toUInt64(exec, value, NormalConversion));
     if (exec->hadException())
         return;
-    impl->setUnsignedLongLongAttr(nativeValue);
+    impl.setUnsignedLongLongAttr(nativeValue);
 }
 
 
@@ -274,11 +274,11 @@ void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSObject* 
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
     if (exec->hadException())
         return;
-    impl->setImmutableSerializedScriptValue(nativeValue);
+    impl.setImmutableSerializedScriptValue(nativeValue);
 }
 
 
@@ -286,11 +286,11 @@ void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* thisObj
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
         return;
-    impl->setAttrWithGetterException(nativeValue);
+    impl.setAttrWithGetterException(nativeValue);
 }
 
 
@@ -298,12 +298,12 @@ void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* thisObj
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     ExceptionCode ec = 0;
     int nativeValue(toInt32(exec, value, NormalConversion));
     if (exec->hadException())
         return;
-    impl->setAttrWithSetterException(nativeValue, ec);
+    impl.setAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
@@ -312,11 +312,11 @@ void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, JSObject* t
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
-    impl->setStringAttrWithGetterException(nativeValue);
+    impl.setStringAttrWithGetterException(nativeValue);
 }
 
 
@@ -324,12 +324,12 @@ void setJSTestTypedefsStringAttrWithSetterException(ExecState* exec, JSObject* t
 {
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     ExceptionCode ec = 0;
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
-    impl->setStringAttrWithSetterException(nativeValue, ec);
+    impl.setStringAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
@@ -346,18 +346,18 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
-        impl->func();
+        impl.func();
         return JSValue::encode(jsUndefined());
     }
 
     Vector<int> x(toNativeArray<int>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    impl->func(x);
+    impl.func(x);
     return JSValue::encode(jsUndefined());
 }
 
@@ -368,7 +368,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 3)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     float width(exec->argument(0).toFloat(exec));
@@ -383,7 +383,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 3) {
-        impl->setShadow(width, height, blur);
+        impl.setShadow(width, height, blur);
         return JSValue::encode(jsUndefined());
     }
 
@@ -391,14 +391,14 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 4) {
-        impl->setShadow(width, height, blur, color);
+        impl.setShadow(width, height, blur, color);
         return JSValue::encode(jsUndefined());
     }
 
     float alpha(exec->argument(4).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    impl->setShadow(width, height, blur, color, alpha);
+    impl.setShadow(width, height, blur, color, alpha);
     return JSValue::encode(jsUndefined());
 }
 
@@ -409,14 +409,14 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, exec->argument(0), &toSerializedScriptValue)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsNumber(impl->methodWithSequenceArg(sequenceArg));
+    JSC::JSValue result = jsNumber(impl.methodWithSequenceArg(sequenceArg));
     return JSValue::encode(result);
 }
 
@@ -427,13 +427,13 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(Exe
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<String> arrayArg(toNativeArray<String>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    impl->nullableArrayArg(arrayArg);
+    impl.nullableArrayArg(arrayArg);
     return JSValue::encode(jsUndefined());
 }
 
@@ -444,7 +444,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     unsigned long long arg1 = 0;
@@ -458,7 +458,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
 
     size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
-        impl->funcWithClamp(arg1);
+        impl.funcWithClamp(arg1);
         return JSValue::encode(jsUndefined());
     }
 
@@ -470,7 +470,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     if (!std::isnan(arg2NativeValue))
         arg2 = clampTo<unsigned long long>(arg2NativeValue);
 
-    impl->funcWithClamp(arg1, arg2);
+    impl.funcWithClamp(arg1, arg2);
     return JSValue::encode(jsUndefined());
 }
 
@@ -481,9 +481,9 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionImmutablePointFuncti
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl->immutablePointFunction())));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction())));
     return JSValue::encode(result);
 }
 
@@ -494,7 +494,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -502,7 +502,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl->stringArrayFunction(values, ec));
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -514,7 +514,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -522,7 +522,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl->stringArrayFunction2(values, ec));
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl.stringArrayFunction2(values, ec));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -534,14 +534,14 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionCallWithSequenceThat
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Vector<RefPtr<TestEventTarget> > sequenceArg((toRefPtrNativeArray<TestEventTarget, JSTestEventTarget>(exec, exec->argument(0), &toTestEventTarget)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = jsBoolean(impl->callWithSequenceThatRequiresInclude(sequenceArg));
+    JSC::JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(sequenceArg));
     return JSValue::encode(result);
 }
 
@@ -552,9 +552,9 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(
         return throwVMTypeError(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestTypedefs::info());
-    TestTypedefs* impl = castedThis->impl();
+    TestTypedefs& impl = castedThis->impl();
     ExceptionCode ec = 0;
-    impl->methodWithException(ec);
+    impl.methodWithException(ec);
     setDOMException(exec, ec);
     return JSValue::encode(jsUndefined());
 }
@@ -579,7 +579,7 @@ void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* conte
 {
     JSTestTypedefs* jsTestTypedefs = jsCast<JSTestTypedefs*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestTypedefs->impl(), jsTestTypedefs);
+    uncacheWrapper(world, &jsTestTypedefs->impl(), jsTestTypedefs);
     jsTestTypedefs->releaseImpl();
 }
 
@@ -622,7 +622,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestTyp
 
 TestTypedefs* toTestTypedefs(JSC::JSValue value)
 {
-    return value.inherits(JSTestTypedefs::info()) ? jsCast<JSTestTypedefs*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestTypedefs::info()) ? &jsCast<JSTestTypedefs*>(asObject(value))->impl() : 0;
 }
 
 }

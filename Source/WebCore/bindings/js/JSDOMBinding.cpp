@@ -156,7 +156,7 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
-        if (!window->impl()->isCurrentlyDisplayedInFrame())
+        if (!window->impl().isCurrentlyDisplayedInFrame())
             return;
     }
 
@@ -255,13 +255,11 @@ bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame, String& message)
     return false;
 }
 
-bool shouldAllowAccessToDOMWindow(ExecState* exec, DOMWindow* target, String& message)
+bool shouldAllowAccessToDOMWindow(ExecState* exec, DOMWindow& target, String& message)
 {
-    if (!target)
-        return false;
     if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, target, DoNotReportSecurityError))
         return true;
-    message = target->crossDomainAccessErrorMessage(activeDOMWindow(exec));
+    message = target.crossDomainAccessErrorMessage(activeDOMWindow(exec));
     return false;
 }
 

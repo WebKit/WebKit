@@ -54,7 +54,7 @@ DOMWindow* domWindowFromExecState(JSC::ExecState* scriptState)
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     if (!globalObject->inherits(JSDOMWindowBase::info()))
         return 0;
-    return JSC::jsCast<JSDOMWindowBase*>(globalObject)->impl();
+    return &JSC::jsCast<JSDOMWindowBase*>(globalObject)->impl();
 }
 
 ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState* scriptState)

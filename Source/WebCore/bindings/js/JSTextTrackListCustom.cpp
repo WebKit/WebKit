@@ -43,9 +43,9 @@ void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsTextTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrackList, visitor);
     
-    TextTrackList* textTrackList = jsTextTrackList->impl();
-    visitor.addOpaqueRoot(root(textTrackList->element()));
-    textTrackList->visitJSEventListeners(visitor);
+    TextTrackList& textTrackList = jsTextTrackList->impl();
+    visitor.addOpaqueRoot(root(textTrackList.element()));
+    textTrackList.visitJSEventListeners(visitor);
 }
     
 } // namespace WebCore

@@ -39,10 +39,9 @@ public:
     // Used for non-animated POD types that are not associated with a SVGAnimatedProperty object, nor with a XML DOM attribute
     // and that contain a parent type that's exposed to the bindings via a SVGStaticPropertyTearOff object
     // (for example: SVGTransform::matrix).
-    static PassRefPtr<Self> create(SVGProperty* parent, PropertyType& value, UpdateMethod update)
+    static PassRefPtr<Self> create(SVGProperty& parent, PropertyType& value, UpdateMethod update)
     {
-        ASSERT(parent);
-        return adoptRef(new Self(parent, value, update));
+        return adoptRef(new Self(&parent, value, update));
     }
 
     virtual void commitChange()

@@ -90,7 +90,7 @@ JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    InjectedScriptHost::InspectableObject* object = impl()->inspectedObject(exec->uncheckedArgument(0).toInt32(exec));
+    InjectedScriptHost::InspectableObject* object = impl().inspectedObject(exec->uncheckedArgument(0).toInt32(exec));
     if (!object)
         return jsUndefined();
 
@@ -230,7 +230,7 @@ JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
         return jsUndefined();
 
     Vector<EventListenerInfo> listenersArray;
-    impl()->getEventListenersImpl(node, listenersArray);
+    impl().getEventListenersImpl(node, listenersArray);
 
     JSObject* result = constructEmptyObject(exec);
     for (size_t i = 0; i < listenersArray.size(); ++i) {
@@ -249,7 +249,7 @@ JSValue JSInjectedScriptHost::inspect(ExecState* exec)
     if (exec->argumentCount() >= 2) {
         ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
         ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
-        impl()->inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
+        impl().inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
     }
     return jsUndefined();
 }
@@ -261,7 +261,7 @@ JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
 #if ENABLE(SQL_DATABASE)
     Database* database = toDatabase(exec->uncheckedArgument(0));
     if (database)
-        return jsStringWithCache(exec, impl()->databaseIdImpl(database));
+        return jsStringWithCache(exec, impl().databaseIdImpl(database));
 #endif
     return jsUndefined();
 }
@@ -272,7 +272,7 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
         return jsUndefined();
     Storage* storage = toStorage(exec->uncheckedArgument(0));
     if (storage)
-        return jsStringWithCache(exec, impl()->storageIdImpl(storage));
+        return jsStringWithCache(exec, impl().storageIdImpl(storage));
     return jsUndefined();
 }
 

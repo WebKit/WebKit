@@ -43,8 +43,8 @@ void JSAudioTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsAudioTrack->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsAudioTrack, visitor);
 
-    AudioTrack* audioTrack = jsAudioTrack->impl();
-    visitor.addOpaqueRoot(root(audioTrack));
+    AudioTrack& audioTrack = jsAudioTrack->impl();
+    visitor.addOpaqueRoot(root(&audioTrack));
 }
 
 } // namespace WebCore

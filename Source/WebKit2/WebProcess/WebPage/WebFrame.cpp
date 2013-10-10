@@ -628,7 +628,7 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
     if (strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell") != 0)
         return 0;
 
-    Frame* coreFrame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl()->frame();
+    Frame* coreFrame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl().frame();
 
     WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(coreFrame->loader().client());
     return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
@@ -663,7 +663,7 @@ String WebFrame::counterValue(JSObjectRef element)
     if (!toJS(element)->inherits(JSElement::info()))
         return String();
 
-    return counterValueForElement(static_cast<JSElement*>(toJS(element))->impl());
+    return counterValueForElement(&static_cast<JSElement*>(toJS(element))->impl());
 }
 
 String WebFrame::provisionalURL() const

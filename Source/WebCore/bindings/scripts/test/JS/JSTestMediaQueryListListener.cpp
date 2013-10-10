@@ -146,13 +146,13 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
         return throwVMTypeError(exec);
     JSTestMediaQueryListListener* castedThis = jsCast<JSTestMediaQueryListListener*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());
-    TestMediaQueryListListener* impl = castedThis->impl();
+    TestMediaQueryListListener& impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
     RefPtr<MediaQueryListListener> listener = JSMediaQueryListListener::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
-    impl->method(listener);
+    impl.method(listener);
     return JSValue::encode(jsUndefined());
 }
 
@@ -176,7 +176,7 @@ void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     JSTestMediaQueryListListener* jsTestMediaQueryListListener = jsCast<JSTestMediaQueryListListener*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
+    uncacheWrapper(world, &jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
     jsTestMediaQueryListListener->releaseImpl();
 }
 
@@ -219,7 +219,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMed
 
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)
 {
-    return value.inherits(JSTestMediaQueryListListener::info()) ? jsCast<JSTestMediaQueryListListener*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestMediaQueryListListener::info()) ? &jsCast<JSTestMediaQueryListListener*>(asObject(value))->impl() : 0;
 }
 
 }

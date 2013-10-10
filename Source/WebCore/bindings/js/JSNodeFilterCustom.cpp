@@ -43,13 +43,13 @@ void JSNodeFilter::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(thisObject->impl());
+    visitor.addOpaqueRoot(&thisObject->impl());
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(VM& vm, JSValue value)
 {
     if (value.inherits(JSNodeFilter::info()))
-        return jsCast<JSNodeFilter*>(asObject(value))->impl();
+        return &jsCast<JSNodeFilter*>(asObject(value))->impl();
 
     RefPtr<NodeFilter> result = NodeFilter::create();
     result->setCondition(JSNodeFilterCondition::create(vm, result.get(), value));

@@ -75,7 +75,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState* exec)
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(exec, globalObject(), impl()->createObjectStore(name, keyPath, autoIncrement, ec).get());
+    JSValue result = toJS(exec, globalObject(), impl().createObjectStore(name, keyPath, autoIncrement, ec).get());
     setDOMException(exec, ec);
     return result;
 }

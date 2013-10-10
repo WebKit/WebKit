@@ -38,12 +38,12 @@ namespace WebCore {
 
 void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
 {
-    PannerNode* imp = impl();
+    PannerNode& imp = impl();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
         uint32_t model = value.toUInt32(exec);
-        if (!imp->setPanningModel(model))
+        if (!imp.setPanningModel(model))
             exec->vm().throwException(exec, createTypeError(exec, "Illegal panningModel"));
         return;
     }
@@ -52,7 +52,7 @@ void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
     if (value.isString()) {
         String model = value.toString(exec)->value(exec);
         if (model == "equalpower" || model == "HRTF" || model == "soundfield") {
-            imp->setPanningModel(model);
+            imp.setPanningModel(model);
             return;
         }
     }
@@ -62,12 +62,12 @@ void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
 
 void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
 {
-    PannerNode* imp = impl();
+    PannerNode& imp = impl();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
         uint32_t model = value.toUInt32(exec);
-        if (!imp->setDistanceModel(model))
+        if (!imp.setDistanceModel(model))
             exec->vm().throwException(exec, createTypeError(exec, "Illegal distanceModel"));
         return;
     }
@@ -76,7 +76,7 @@ void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
     if (value.isString()) {
         String model = value.toString(exec)->value(exec);
         if (model == "linear" || model == "inverse" || model == "exponential") {
-            imp->setDistanceModel(model);
+            imp.setDistanceModel(model);
             return;
         }
     }

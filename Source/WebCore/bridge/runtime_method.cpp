@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits(JSHTMLElement::info()))
-            instance = pluginInstance(*jsCast<JSHTMLElement*>(asObject(thisValue))->impl());
+            instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->impl());
         if (!instance)
             return throwVMTypeError(exec);
     }

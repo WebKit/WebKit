@@ -44,7 +44,7 @@ void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& vi
     // Skip JSEventTarget::visitChildren because event listener registration is
     // forwarded to the corresponding element.
     JSEventTarget::Base::visitChildren(thisObject, visitor);
-    visitor.addOpaqueRoot(root(thisObject->impl()->correspondingElement()));
+    visitor.addOpaqueRoot(root(thisObject->impl().correspondingElement()));
 }
 
 } // namespace WebCore

@@ -488,7 +488,7 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
         anyWorldGlobalObject = static_cast<WebCore::JSDOMWindowShell*>(globalObjectObj)->window();
 
     // Comment from mac: Get the frame from the global object we've settled on.
-    WebCore::Frame* globalFrame = anyWorldGlobalObject->impl()->frame();
+    WebCore::Frame* globalFrame = anyWorldGlobalObject->impl().frame();
     if (!globalFrame)
         return;
 

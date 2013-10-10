@@ -61,7 +61,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
     String message;
-    if (shouldAllowAccessToFrame(exec, impl()->frame(), message))
+    if (shouldAllowAccessToFrame(exec, impl().frame(), message))
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
@@ -89,7 +89,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
         }
     }
 
-    printErrorMessageForFrame(impl()->frame(), message);
+    printErrorMessageForFrame(impl().frame(), message);
     slot.setUndefined();
     return true;
 }
@@ -97,7 +97,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
 bool JSHistory::putDelegate(ExecState* exec, PropertyName, JSValue, PutPropertySlot&)
 {
     // Only allow putting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, impl().frame()))
         return true;
     return false;
 }
@@ -106,7 +106,7 @@ bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 {
     JSHistory* thisObject = jsCast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -115,7 +115,7 @@ bool JSHistory::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned pr
 {
     JSHistory* thisObject = jsCast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
@@ -124,20 +124,20 @@ void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 {
     JSHistory* thisObject = jsCast<JSHistory*>(object);
     // Only allow the history object to enumerated by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 JSValue JSHistory::state(ExecState *exec) const
 {
-    History* history = impl();
+    History& history = impl();
 
     JSValue cachedValue = m_state.get();
-    if (!cachedValue.isEmpty() && !history->stateChanged())
+    if (!cachedValue.isEmpty() && !history.stateChanged())
         return cachedValue;
 
-    RefPtr<SerializedScriptValue> serialized = history->state();
+    RefPtr<SerializedScriptValue> serialized = history.state();
     JSValue result = serialized ? serialized->deserialize(exec, globalObject(), 0) : jsNull();
     const_cast<JSHistory*>(this)->m_state.set(exec->vm(), this, result);
     return result;
@@ -161,7 +161,7 @@ JSValue JSHistory::pushState(ExecState* exec)
     }
 
     ExceptionCode ec = 0;
-    impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectPush, ec);
+    impl().stateObjectAdded(historyState.release(), title, url, History::StateObjectPush, ec);
     setDOMException(exec, ec);
 
     m_state.clear();
@@ -187,7 +187,7 @@ JSValue JSHistory::replaceState(ExecState* exec)
     }
 
     ExceptionCode ec = 0;
-    impl()->stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
+    impl().stateObjectAdded(historyState.release(), title, url, History::StateObjectReplace, ec);
     setDOMException(exec, ec);
 
     m_state.clear();

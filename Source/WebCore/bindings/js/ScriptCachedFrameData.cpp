@@ -81,7 +81,7 @@ void ScriptCachedFrameData::restore(Frame& frame)
             windowShell->setWindow(window->vm(), window);
         else {
             DOMWindow* domWindow = frame.document()->domWindow();
-            if (windowShell->window()->impl() == domWindow)
+            if (&windowShell->window()->impl() == domWindow)
                 continue;
 
             windowShell->setWindow(domWindow);

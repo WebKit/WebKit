@@ -76,7 +76,7 @@ JSValue JSIDBObjectStore::createIndex(ExecState* exec)
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(exec, globalObject(), impl()->createIndex(context, name, keyPath, unique, multiEntry, ec).get());
+    JSValue result = toJS(exec, globalObject(), impl().createIndex(context, name, keyPath, unique, multiEntry, ec).get());
     setDOMException(exec, ec);
     return result;
 }

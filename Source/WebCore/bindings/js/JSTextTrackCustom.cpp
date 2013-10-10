@@ -42,10 +42,10 @@ void JSTextTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsTextTrack->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrack, visitor);
 
-    TextTrack* textTrack = jsTextTrack->impl();
-    visitor.addOpaqueRoot(root(textTrack));
+    TextTrack& textTrack = jsTextTrack->impl();
+    visitor.addOpaqueRoot(root(&textTrack));
 
-    textTrack->visitJSEventListeners(visitor);
+    textTrack.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

@@ -51,13 +51,13 @@ JSValue JSPopStateEvent::state(ExecState* exec) const
     if (!cachedValue.isEmpty())
         return cachedValue;
 
-    PopStateEvent* event = impl();
+    PopStateEvent& event = impl();
 
-    if (!event->state().hasNoValue())
-        return cacheState(exec, const_cast<JSPopStateEvent*>(this), event->state().jsValue());
+    if (!event.state().hasNoValue())
+        return cacheState(exec, const_cast<JSPopStateEvent*>(this), event.state().jsValue());
 
-    History* history = event->history();
-    if (!history || !event->serializedState())
+    History* history = event.history();
+    if (!history || !event.serializedState())
         return cacheState(exec, const_cast<JSPopStateEvent*>(this), jsNull());
 
     // There's no cached value from a previous invocation, nor a state value was provided by the
@@ -66,14 +66,14 @@ JSValue JSPopStateEvent::state(ExecState* exec) const
     // The current history state object might've changed in the meantime, so we need to take care
     // of using the correct one, and always share the same deserialization with history.state.
 
-    bool isSameState = history->isSameAsCurrentState(event->serializedState().get());
+    bool isSameState = history->isSameAsCurrentState(event.serializedState().get());
     JSValue result;
 
     if (isSameState) {
         JSHistory* jsHistory = jsCast<JSHistory*>(toJS(exec, globalObject(), history).asCell());
         result = jsHistory->state(exec);
     } else
-        result = event->serializedState()->deserialize(exec, globalObject(), 0);
+        result = event.serializedState()->deserialize(exec, globalObject(), 0);
 
     return cacheState(exec, const_cast<JSPopStateEvent*>(this), result);
 }

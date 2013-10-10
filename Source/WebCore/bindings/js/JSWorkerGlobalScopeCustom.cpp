@@ -61,12 +61,12 @@ void JSWorkerGlobalScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
-    if (WorkerLocation* location = thisObject->impl()->optionalLocation())
+    if (WorkerLocation* location = thisObject->impl().optionalLocation())
         visitor.addOpaqueRoot(location);
-    if (WorkerNavigator* navigator = thisObject->impl()->optionalNavigator())
+    if (WorkerNavigator* navigator = thisObject->impl().optionalNavigator())
         visitor.addOpaqueRoot(navigator);
 
-    thisObject->impl()->visitJSEventListeners(visitor);
+    thisObject->impl().visitJSEventListeners(visitor);
 }
 
 bool JSWorkerGlobalScope::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -90,31 +90,31 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState* exec)
     }
     ExceptionCode ec = 0;
 
-    impl()->importScripts(urls, ec);
+    impl().importScripts(urls, ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }
 
 JSValue JSWorkerGlobalScope::setTimeout(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(impl()->setTimeout(action.release(), delay));
+    return jsNumber(impl().setTimeout(action.release(), delay));
 }
 
 JSValue JSWorkerGlobalScope::setInterval(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl().contentSecurityPolicy());
     if (exec->hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(impl()->setInterval(action.release(), delay));
+    return jsNumber(impl().setInterval(action.release(), delay));
 }
 
 } // namespace WebCore

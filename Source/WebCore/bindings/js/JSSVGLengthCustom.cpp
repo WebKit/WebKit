@@ -34,9 +34,9 @@ namespace WebCore {
 
 JSValue JSSVGLength::value(ExecState* exec) const
 {
-    SVGLength& podImp = impl()->propertyReference();
+    SVGLength& podImp = impl().propertyReference();
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl()->contextElement());
+    SVGLengthContext lengthContext(impl().contextElement());
     float value = podImp.value(lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
@@ -48,7 +48,7 @@ JSValue JSSVGLength::value(ExecState* exec) const
 
 void JSSVGLength::setValue(ExecState* exec, JSValue value)
 {
-    if (impl()->isReadOnly()) {
+    if (impl().isReadOnly()) {
         setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
         return;
     }
@@ -58,27 +58,27 @@ void JSSVGLength::setValue(ExecState* exec, JSValue value)
         return;
     }
 
-    SVGLength& podImp = impl()->propertyReference();
+    SVGLength& podImp = impl().propertyReference();
 
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl()->contextElement());
+    SVGLengthContext lengthContext(impl().contextElement());
     podImp.setValue(value.toFloat(exec), lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
         return;
     }
 
-    impl()->commitChange();
+    impl().commitChange();
 }
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
-    if (impl()->isReadOnly()) {
+    if (impl().isReadOnly()) {
         setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);
         return jsUndefined();
     }
 
-    SVGLength& podImp = impl()->propertyReference();
+    SVGLength& podImp = impl().propertyReference();
 
     if (exec->argumentCount() < 1)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
@@ -88,14 +88,14 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl()->contextElement());
+    SVGLengthContext lengthContext(impl().contextElement());
     podImp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
     }
 
-    impl()->commitChange();
+    impl().commitChange();
     return jsUndefined();
 }
 

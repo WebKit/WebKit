@@ -65,7 +65,7 @@ public:
     JSC::JSValue customMethod(JSC::ExecState*);
     JSC::JSValue customMethodWithArgs(JSC::ExecState*);
     static JSC::JSValue classMethod2(JSC::ExecState*);
-    TestObj* impl() const { return m_impl; }
+    TestObj& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

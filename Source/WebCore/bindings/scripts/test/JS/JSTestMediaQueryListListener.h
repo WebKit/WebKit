@@ -51,7 +51,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestMediaQueryListListener* impl() const { return m_impl; }
+    TestMediaQueryListListener& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

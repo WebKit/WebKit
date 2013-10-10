@@ -47,7 +47,7 @@ void JSCanvasRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.addOpaqueRoot(root(thisObject->impl()->canvas()));
+    visitor.addOpaqueRoot(root(thisObject->impl().canvas()));
 }
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)

@@ -68,7 +68,7 @@ static NSURL *toNSURL(const String& s)
 static WebFrame *toWebFrame(JSGlobalObject* globalObject)
 {
     JSDOMWindow* window = static_cast<JSDOMWindow*>(globalObject);
-    return kit(window->impl()->frame());
+    return kit(window->impl().frame());
 }
 
 WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)

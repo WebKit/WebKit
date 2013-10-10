@@ -53,7 +53,7 @@ JSValue JSXSLTProcessor::setParameter(ExecState* exec)
     String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
     String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
     String value = exec->uncheckedArgument(2).toString(exec)->value(exec);
-    impl()->setParameter(namespaceURI, localName, value);
+    impl().setParameter(namespaceURI, localName, value);
     return jsUndefined();
 }
 
@@ -63,7 +63,7 @@ JSValue JSXSLTProcessor::getParameter(ExecState* exec)
         return jsUndefined();
     String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
     String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
-    String value = impl()->getParameter(namespaceURI, localName);
+    String value = impl().getParameter(namespaceURI, localName);
     return jsStringOrUndefined(exec, value);
 }
 
@@ -73,7 +73,7 @@ JSValue JSXSLTProcessor::removeParameter(ExecState* exec)
         return jsUndefined();
     String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
     String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
-    impl()->removeParameter(namespaceURI, localName);
+    impl().removeParameter(namespaceURI, localName);
     return jsUndefined();
 }
 

@@ -47,7 +47,7 @@ void JSAttr::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     Base::visitChildren(thisObject, visitor);
-    Element* element = thisObject->impl()->ownerElement();
+    Element* element = thisObject->impl().ownerElement();
     if (!element)
         return;
     visitor.addOpaqueRoot(root(element));

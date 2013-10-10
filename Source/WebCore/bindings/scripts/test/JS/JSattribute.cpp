@@ -124,8 +124,8 @@ JSValue jsattributeReadonly(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSattribute* castedThis = jsCast<JSattribute*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    attribute* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->readonly());
+    attribute& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.readonly());
     return result;
 }
 
@@ -161,7 +161,7 @@ void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     JSattribute* jsattribute = jsCast<JSattribute*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsattribute->impl(), jsattribute);
+    uncacheWrapper(world, &jsattribute->impl(), jsattribute);
     jsattribute->releaseImpl();
 }
 
@@ -204,7 +204,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, attribu
 
 attribute* toattribute(JSC::JSValue value)
 {
-    return value.inherits(JSattribute::info()) ? jsCast<JSattribute*>(asObject(value))->impl() : 0;
+    return value.inherits(JSattribute::info()) ? &jsCast<JSattribute*>(asObject(value))->impl() : 0;
 }
 
 }

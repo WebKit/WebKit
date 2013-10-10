@@ -36,17 +36,17 @@ using namespace JSC;
 
 JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) const
 {
-    HTMLElement* element = impl();
+    HTMLElement& element = impl();
 
     // The document is put on first, fall back to searching it only after the element and form.
-    scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element->document())), scope);
+    scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element.document())), scope);
 
     // The form is next, searched before the document, but after the element itself.
-    if (HTMLFormElement* form = element->form())
+    if (HTMLFormElement* form = element.form())
         scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), form)), scope);
 
     // The element is on top, searched first.
-    return JSWithScope::create(exec, asObject(toJS(exec, globalObject(), element)), scope);
+    return JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element)), scope);
 }
 
 } // namespace WebCore

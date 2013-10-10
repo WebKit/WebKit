@@ -45,7 +45,7 @@ namespace WebCore {
 
         DECLARE_INFO;
 
-        WorkerGlobalScope* impl() const { return m_impl.get(); }
+        WorkerGlobalScope& impl() const { return *m_impl; }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

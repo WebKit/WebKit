@@ -94,7 +94,7 @@ static inline id createDOMWrapper(JSC::JSObject* object)
 {
     #define WRAP(className) \
         if (object->inherits(WebCore::JS##className::info())) \
-            return kit(static_cast<WebCore::JS##className*>(object)->impl());
+            return kit(&static_cast<WebCore::JS##className*>(object)->impl());
 
     WRAP(CSSRule)
     WRAP(CSSRuleList)

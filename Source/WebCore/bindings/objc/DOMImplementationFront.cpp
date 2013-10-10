@@ -36,7 +36,7 @@ DOMImplementationFront* implementationFront(Document* document)
 
 DOMImplementationFront* implementationFront(JSDOMImplementation* wrapper)
 {
-    return reinterpret_cast<DOMImplementationFront*>(wrapper->impl());
+    return reinterpret_cast<DOMImplementationFront*>(&wrapper->impl());
 }
 
 void DOMImplementationFront::ref()

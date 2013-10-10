@@ -60,7 +60,7 @@ void JSMessagePort::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)
 {
-    return handlePostMessage(exec, impl());
+    return handlePostMessage(exec, &impl());
 }
 
 void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)

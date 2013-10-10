@@ -45,7 +45,7 @@ namespace WebCore {
     public:
         void updateDocument();
 
-        DOMWindow* impl() const { return m_impl.get(); }
+        DOMWindow& impl() const { return *m_impl; }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         // Called just before removing this window from the JSDOMWindowShell.

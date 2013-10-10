@@ -49,11 +49,11 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     if (JSValue cachedValue = m_data.get())
         return cachedValue;
 
-    MessageEvent* event = impl();
+    MessageEvent& event = impl();
     JSValue result;
-    switch (event->dataType()) {
+    switch (event.dataType()) {
     case MessageEvent::DataTypeScriptValue: {
-        ScriptValue scriptValue = event->dataAsScriptValue();
+        ScriptValue scriptValue = event.dataAsScriptValue();
         if (scriptValue.hasNoValue())
             result = jsNull();
         else
@@ -62,8 +62,8 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     }
 
     case MessageEvent::DataTypeSerializedScriptValue:
-        if (RefPtr<SerializedScriptValue> serializedValue = event->dataAsSerializedScriptValue()) {
-            MessagePortArray ports = impl()->ports();
+        if (RefPtr<SerializedScriptValue> serializedValue = event.dataAsSerializedScriptValue()) {
+            MessagePortArray ports = impl().ports();
             result = serializedValue->deserialize(exec, globalObject(), &ports, NonThrowing);
         }
         else
@@ -71,15 +71,15 @@ JSValue JSMessageEvent::data(ExecState* exec) const
         break;
 
     case MessageEvent::DataTypeString:
-        result = jsStringWithCache(exec, event->dataAsString());
+        result = jsStringWithCache(exec, event.dataAsString());
         break;
 
     case MessageEvent::DataTypeBlob:
-        result = toJS(exec, globalObject(), event->dataAsBlob());
+        result = toJS(exec, globalObject(), event.dataAsBlob());
         break;
 
     case MessageEvent::DataTypeArrayBuffer:
-        result = toJS(exec, globalObject(), event->dataAsArrayBuffer());
+        result = toJS(exec, globalObject(), event.dataAsArrayBuffer());
         break;
     }
 
@@ -109,8 +109,8 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     if (exec->hadException())
         return jsUndefined();
 
-    MessageEvent* event = jsEvent->impl();
-    event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
+    MessageEvent& event = jsEvent->impl();
+    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
     jsEvent->m_data.set(exec->vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

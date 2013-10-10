@@ -52,7 +52,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestTypedefs* impl() const { return m_impl; }
+    TestTypedefs& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

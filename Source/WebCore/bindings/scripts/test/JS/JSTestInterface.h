@@ -78,7 +78,7 @@ public:
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::ExecState*);
 #endif
-    TestInterface* impl() const { return m_impl; }
+    TestInterface& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

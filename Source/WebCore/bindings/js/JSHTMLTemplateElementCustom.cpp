@@ -47,8 +47,7 @@ JSValue JSHTMLTemplateElement::content(ExecState* exec) const
 {
     JSLockHolder lock(exec);
 
-    HTMLTemplateElement* imp = impl();
-    DocumentFragment* content = imp->content();
+    DocumentFragment* content = impl().content();
 
     JSObject* wrapper = getCachedWrapper(currentWorld(exec), content);
     if (wrapper)

@@ -1,3 +1,13 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        JS DOM wrappers' impl() functions should return references.
+        <https://webkit.org/b/122497>
+
+        Reviewed by Antti Koivisto.
+
+        JS DOM wrappers always have a corresponding WebCore object during
+        their lifetime, so make impl() return a reference.
+
 2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix debug build after r157210

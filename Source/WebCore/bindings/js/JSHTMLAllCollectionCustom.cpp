@@ -43,7 +43,7 @@ namespace WebCore {
 static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, PropertyName propertyName)
 {
     Vector<Ref<Element>> namedItems;
-    collection->impl()->namedItems(propertyNameToAtomicString(propertyName), namedItems);
+    collection->impl().namedItems(propertyNameToAtomicString(propertyName), namedItems);
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -63,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
     JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->callee());
-    HTMLAllCollection* collection = jsCollection->impl();
+    HTMLAllCollection& collection = jsCollection->impl();
 
     // Also, do we need the TypeError test here ?
 
@@ -72,7 +72,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         String string = exec->argument(0).toString(exec)->value(exec);
         unsigned index = toUInt32FromStringImpl(string.impl());
         if (index != PropertyName::NotAnIndex)
-            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection->item(index)));
+            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index)));
 
         // Support for document.images('<name>') etc.
         return JSValue::encode(getNamedItems(exec, jsCollection, Identifier(exec, string)));
@@ -82,7 +82,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     String string = exec->argument(0).toString(exec)->value(exec);
     unsigned index = toUInt32FromStringImpl(exec->argument(1).toWTFString(exec).impl());
     if (index != PropertyName::NotAnIndex) {
-        if (Node* node = collection->namedItemWithIndex(string, index))
+        if (Node* node = collection.namedItemWithIndex(string, index))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), node));
     }
 
@@ -110,7 +110,7 @@ JSValue JSHTMLAllCollection::item(ExecState* exec)
 {
     uint32_t index = toUInt32FromStringImpl(exec->argument(0).toString(exec)->value(exec).impl());
     if (index != PropertyName::NotAnIndex)
-        return toJS(exec, globalObject(), impl()->item(index));
+        return toJS(exec, globalObject(), impl().item(index));
     return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
 }
 

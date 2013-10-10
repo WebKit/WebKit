@@ -41,9 +41,9 @@ bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
     JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.get().asCell());
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
-    if (CSSStyleSheet* styleSheet = jsCSSRuleList->impl()->styleSheet())
+    if (CSSStyleSheet* styleSheet = jsCSSRuleList->impl().styleSheet())
         return visitor.containsOpaqueRoot(root(styleSheet));
-    if (CSSRule* cssRule = jsCSSRuleList->impl()->item(0))
+    if (CSSRule* cssRule = jsCSSRuleList->impl().item(0))
         return visitor.containsOpaqueRoot(root(cssRule));
     return false;
 }

@@ -53,7 +53,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestEventConstructor* impl() const { return m_impl; }
+    TestEventConstructor& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

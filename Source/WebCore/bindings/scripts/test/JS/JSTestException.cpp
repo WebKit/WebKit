@@ -124,8 +124,8 @@ JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestException* castedThis = jsCast<JSTestException*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestException* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->name());
+    TestException& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.name());
     return result;
 }
 
@@ -161,7 +161,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     JSTestException* jsTestException = jsCast<JSTestException*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestException->impl(), jsTestException);
+    uncacheWrapper(world, &jsTestException->impl(), jsTestException);
     jsTestException->releaseImpl();
 }
 
@@ -204,7 +204,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestExc
 
 TestException* toTestException(JSC::JSValue value)
 {
-    return value.inherits(JSTestException::info()) ? jsCast<JSTestException*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestException::info()) ? &jsCast<JSTestException*>(asObject(value))->impl() : 0;
 }
 
 }

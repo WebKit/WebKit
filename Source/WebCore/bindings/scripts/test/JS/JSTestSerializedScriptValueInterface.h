@@ -58,7 +58,7 @@ public:
     JSC::WriteBarrier<JSC::Unknown> m_cachedReadonlyValue;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    TestSerializedScriptValueInterface* impl() const { return m_impl; }
+    TestSerializedScriptValueInterface& impl() const { return *m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
     void releaseImplIfNotNull()

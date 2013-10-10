@@ -47,7 +47,7 @@ static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, JSValue, Pr
 
 bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    Frame* frame = impl()->frame();
+    Frame* frame = impl().frame();
     if (!frame) {
         slot.setUndefined();
         return true;
@@ -89,7 +89,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
 bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    Frame* frame = impl()->frame();
+    Frame* frame = impl().frame();
     if (!frame)
         return true;
 
@@ -118,7 +118,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -127,7 +127,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
@@ -136,7 +136,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     // Only allow the location object to enumerated by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -153,7 +153,7 @@ void JSLocation::setHref(ExecState* exec, JSValue value)
     String href = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setHref(href, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setHref(href, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setProtocol(ExecState* exec, JSValue value)
@@ -162,7 +162,7 @@ void JSLocation::setProtocol(ExecState* exec, JSValue value)
     if (exec->hadException())
         return;
     ExceptionCode ec = 0;
-    impl()->setProtocol(protocol, activeDOMWindow(exec), firstDOMWindow(exec), ec);
+    impl().setProtocol(protocol, activeDOMWindow(exec), firstDOMWindow(exec), ec);
     setDOMException(exec, ec);
 }
 
@@ -171,7 +171,7 @@ void JSLocation::setHost(ExecState* exec, JSValue value)
     String host = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setHost(host, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setHost(host, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setHostname(ExecState* exec, JSValue value)
@@ -179,7 +179,7 @@ void JSLocation::setHostname(ExecState* exec, JSValue value)
     String hostname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setHostname(hostname, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setHostname(hostname, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setPort(ExecState* exec, JSValue value)
@@ -187,7 +187,7 @@ void JSLocation::setPort(ExecState* exec, JSValue value)
     String port = value.toWTFString(exec);
     if (exec->hadException())
         return;
-    impl()->setPort(port, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setPort(port, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setPathname(ExecState* exec, JSValue value)
@@ -195,7 +195,7 @@ void JSLocation::setPathname(ExecState* exec, JSValue value)
     String pathname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setPathname(pathname, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setPathname(pathname, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setSearch(ExecState* exec, JSValue value)
@@ -203,7 +203,7 @@ void JSLocation::setSearch(ExecState* exec, JSValue value)
     String pathname = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setSearch(pathname, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setSearch(pathname, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 void JSLocation::setHash(ExecState* exec, JSValue value)
@@ -211,7 +211,7 @@ void JSLocation::setHash(ExecState* exec, JSValue value)
     String hash = value.toString(exec)->value(exec);
     if (exec->hadException())
         return;
-    impl()->setHash(hash, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().setHash(hash, activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue JSLocation::replace(ExecState* exec)
@@ -219,13 +219,13 @@ JSValue JSLocation::replace(ExecState* exec)
     String urlString = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
-    impl()->replace(urlString, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().replace(urlString, activeDOMWindow(exec), firstDOMWindow(exec));
     return jsUndefined();
 }
 
 JSValue JSLocation::reload(ExecState* exec)
 {
-    impl()->reload(activeDOMWindow(exec));
+    impl().reload(activeDOMWindow(exec));
     return jsUndefined();
 }
 
@@ -234,17 +234,17 @@ JSValue JSLocation::assign(ExecState* exec)
     String urlString = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
-    impl()->assign(urlString, activeDOMWindow(exec), firstDOMWindow(exec));
+    impl().assign(urlString, activeDOMWindow(exec), firstDOMWindow(exec));
     return jsUndefined();
 }
 
 JSValue JSLocation::toStringFunction(ExecState* exec)
 {
-    Frame* frame = impl()->frame();
+    Frame* frame = impl().frame();
     if (!frame || !shouldAllowAccessToFrame(exec, frame))
         return jsUndefined();
 
-    return jsStringWithCache(exec, impl()->toString());
+    return jsStringWithCache(exec, impl().toString());
 }
 
 bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&)

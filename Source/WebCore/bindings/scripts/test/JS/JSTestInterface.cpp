@@ -298,8 +298,8 @@ JSValue jsTestInterfaceImplementsStr1(ExecState* exec, JSValue slotBase, Propert
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->implementsStr1());
+    TestInterface& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.implementsStr1());
     return result;
 }
 
@@ -310,8 +310,8 @@ JSValue jsTestInterfaceImplementsStr2(ExecState* exec, JSValue slotBase, Propert
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->implementsStr2());
+    TestInterface& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.implementsStr2());
     return result;
 }
 
@@ -331,8 +331,8 @@ JSValue jsTestInterfaceImplementsNode(ExecState* exec, JSValue slotBase, Propert
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->implementsNode()));
+    TestInterface& impl = castedThis->impl();
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
     return result;
 }
 
@@ -365,8 +365,8 @@ JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, Prope
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr1(impl));
+    TestInterface& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr1(&impl));
     return result;
 }
 
@@ -377,8 +377,8 @@ JSValue jsTestInterfaceSupplementalStr2(ExecState* exec, JSValue slotBase, Prope
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr2(impl));
+    TestInterface& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, TestSupplemental::supplementalStr2(&impl));
     return result;
 }
 
@@ -398,8 +398,8 @@ JSValue jsTestInterfaceSupplementalNode(ExecState* exec, JSValue slotBase, Prope
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* impl = castedThis->impl();
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(impl)));
+    TestInterface& impl = castedThis->impl();
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(&impl)));
     return result;
 }
 
@@ -448,11 +448,11 @@ void setJSTestInterfaceImplementsStr2(ExecState* exec, JSObject* thisObject, JSV
 {
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
-    impl->setImplementsStr2(nativeValue);
+    impl.setImplementsStr2(nativeValue);
 }
 
 #endif
@@ -471,11 +471,11 @@ void setJSTestInterfaceImplementsNode(ExecState* exec, JSObject* thisObject, JSV
 {
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     Node* nativeValue(toNode(value));
     if (exec->hadException())
         return;
-    impl->setImplementsNode(nativeValue);
+    impl.setImplementsNode(nativeValue);
 }
 
 #endif
@@ -497,11 +497,11 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
 {
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
-    TestSupplemental::setSupplementalStr2(impl, nativeValue);
+    TestSupplemental::setSupplementalStr2(&impl, nativeValue);
 }
 
 #endif
@@ -520,11 +520,11 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, J
 {
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     Node* nativeValue(toNode(value));
     if (exec->hadException())
         return;
-    TestSupplemental::setSupplementalNode(impl, nativeValue);
+    TestSupplemental::setSupplementalNode(&impl, nativeValue);
 }
 
 #endif
@@ -542,8 +542,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
         return throwVMTypeError(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    TestInterface* impl = castedThis->impl();
-    impl->implementsMethod1();
+    TestInterface& impl = castedThis->impl();
+    impl.implementsMethod1();
     return JSValue::encode(jsUndefined());
 }
 
@@ -557,7 +557,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
         return throwVMTypeError(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -571,7 +571,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->implementsMethod2(scriptContext, strArg, objArg, ec)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.implementsMethod2(scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -608,8 +608,8 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
         return throwVMTypeError(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    TestInterface* impl = castedThis->impl();
-    TestSupplemental::supplementalMethod1(impl);
+    TestInterface& impl = castedThis->impl();
+    TestSupplemental::supplementalMethod1(&impl);
     return JSValue::encode(jsUndefined());
 }
 
@@ -623,7 +623,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
         return throwVMTypeError(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    TestInterface* impl = castedThis->impl();
+    TestInterface& impl = castedThis->impl();
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
@@ -637,7 +637,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(impl, scriptContext, strArg, objArg, ec)));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalMethod2(&impl, scriptContext, strArg, objArg, ec)));
     setDOMException(exec, ec);
     return JSValue::encode(result);
 }
@@ -710,7 +710,7 @@ static inline bool isObservable(JSTestInterface* jsTestInterface)
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());
-    if (jsTestInterface->impl()->hasPendingActivity())
+    if (jsTestInterface->impl().hasPendingActivity())
         return true;
     if (!isObservable(jsTestInterface))
         return false;
@@ -722,7 +722,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestInterface->impl(), jsTestInterface);
+    uncacheWrapper(world, &jsTestInterface->impl(), jsTestInterface);
     jsTestInterface->releaseImpl();
 }
 
@@ -745,7 +745,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInt
 
 TestInterface* toTestInterface(JSC::JSValue value)
 {
-    return value.inherits(JSTestInterface::info()) ? jsCast<JSTestInterface*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestInterface::info()) ? &jsCast<JSTestInterface*>(asObject(value))->impl() : 0;
 }
 
 }

@@ -34,7 +34,7 @@ using namespace HTMLNames;
 
 JSValue JSHTMLSelectElement::remove(ExecState* exec)
 {
-    HTMLSelectElement& select = *impl();
+    HTMLSelectElement& select = impl();
 
     if (!exec->argumentCount()) {
         // When called with no argument, we should call Element::remove() to detach.
@@ -69,7 +69,7 @@ void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned
 
 void JSHTMLSelectElement::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)
 {
-    selectIndexSetter(impl(), exec, index, value);
+    selectIndexSetter(&impl(), exec, index, value);
 }
 
 }

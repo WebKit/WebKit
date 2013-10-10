@@ -43,9 +43,9 @@ void JSVideoTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsVideoTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsVideoTrackList, visitor);
 
-    VideoTrackList* videoTrackList = jsVideoTrackList->impl();
-    visitor.addOpaqueRoot(root(videoTrackList->element()));
-    videoTrackList->visitJSEventListeners(visitor);
+    VideoTrackList& videoTrackList = jsVideoTrackList->impl();
+    visitor.addOpaqueRoot(root(videoTrackList.element()));
+    videoTrackList.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

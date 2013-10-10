@@ -171,8 +171,8 @@ JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, PropertyN
 {
     JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestEventConstructor* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->attr1());
+    TestEventConstructor& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.attr1());
     return result;
 }
 
@@ -181,8 +181,8 @@ JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, PropertyN
 {
     JSTestEventConstructor* castedThis = jsCast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestEventConstructor* impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl->attr2());
+    TestEventConstructor& impl = castedThis->impl();
+    JSValue result = jsStringWithCache(exec, impl.attr2());
     return result;
 }
 
@@ -218,7 +218,7 @@ void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     JSTestEventConstructor* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.get().asCell());
     DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, jsTestEventConstructor->impl(), jsTestEventConstructor);
+    uncacheWrapper(world, &jsTestEventConstructor->impl(), jsTestEventConstructor);
     jsTestEventConstructor->releaseImpl();
 }
 
@@ -261,7 +261,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEve
 
 TestEventConstructor* toTestEventConstructor(JSC::JSValue value)
 {
-    return value.inherits(JSTestEventConstructor::info()) ? jsCast<JSTestEventConstructor*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestEventConstructor::info()) ? &jsCast<JSTestEventConstructor*>(asObject(value))->impl() : 0;
 }
 
 }

@@ -68,7 +68,7 @@ static void get3DContextAttributes(ExecState* exec, RefPtr<CanvasContextAttribut
 
 JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = impl();
+    HTMLCanvasElement& canvas = impl();
     const String& contextId = exec->argument(0).toString(exec)->value(exec);
     
     RefPtr<CanvasContextAttributes> attrs;
@@ -80,18 +80,18 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     }
 #endif
     
-    CanvasRenderingContext* context = canvas->getContext(contextId, attrs.get());
+    CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
     if (!context)
         return jsNull();
     JSValue jsValue = toJS(exec, globalObject(), WTF::getPtr(context));
-    if (InspectorInstrumentation::canvasAgentEnabled(&canvas->document())) {
+    if (InspectorInstrumentation::canvasAgentEnabled(&canvas.document())) {
         ScriptObject contextObject(exec, jsValue.getObject());
         ScriptObject wrapped;
         if (context->is2d())
-            wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(&canvas->document(), contextObject);
+            wrapped = InspectorInstrumentation::wrapCanvas2DRenderingContextForInstrumentation(&canvas.document(), contextObject);
 #if ENABLE(WEBGL)
         else if (context->is3d())
-            wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(&canvas->document(), contextObject);
+            wrapped = InspectorInstrumentation::wrapWebGLRenderingContextForInstrumentation(&canvas.document(), contextObject);
 #endif
         if (!wrapped.hasNoValue())
             return wrapped.jsValue();
@@ -101,7 +101,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = impl();
+    HTMLCanvasElement& canvas = impl();
     if (!exec->argumentCount())
         return jsBoolean(false);
     const String& contextId = exec->uncheckedArgument(0).toString(exec)->value(exec);
@@ -117,12 +117,12 @@ JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
     }
 #endif
     
-    return jsBoolean(canvas->probablySupportsContext(contextId, attrs.get()));
+    return jsBoolean(canvas.probablySupportsContext(contextId, attrs.get()));
 }
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = impl();
+    HTMLCanvasElement& canvas = impl();
     ExceptionCode ec = 0;
 
     const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
@@ -136,7 +136,7 @@ JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
         }
     }
 
-    JSValue result = JSC::jsString(exec, canvas->toDataURL(type, qualityPtr, ec));
+    JSValue result = JSC::jsString(exec, canvas.toDataURL(type, qualityPtr, ec));
     setDOMException(exec, ec);
     return result;
 }

@@ -49,8 +49,8 @@ bool JSHTMLFrameSetElement::canGetItemsForName(ExecState*, HTMLFrameSetElement* 
 
 JSValue JSHTMLFrameSetElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    HTMLElement* element = jsCast<JSHTMLElement*>(asObject(slotBase))->impl();
-    Node* frameElement = element->children()->namedItem(propertyNameToAtomicString(propertyName));
+    HTMLElement& element = jsCast<JSHTMLElement*>(asObject(slotBase))->impl();
+    Node* frameElement = element.children()->namedItem(propertyNameToAtomicString(propertyName));
     if (Document* document = static_cast<HTMLFrameElement*>(frameElement)->contentDocument()) {
         if (JSDOMWindowShell* window = toJSDOMWindowShell(document->frame(), currentWorld(exec)))
             return window;

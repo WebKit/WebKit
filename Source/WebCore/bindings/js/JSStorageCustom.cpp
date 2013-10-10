@@ -51,7 +51,7 @@ JSValue JSStorage::nameGetter(ExecState* exec, JSValue slotBase, PropertyName pr
         return asObject(prototype)->get(exec, propertyName);
  
     ExceptionCode ec = 0;
-    JSValue result = jsStringOrNull(exec, thisObj->impl()->getItem(propertyNameToString(propertyName), ec));
+    JSValue result = jsStringOrNull(exec, thisObj->impl().getItem(propertyNameToString(propertyName), ec));
     setDOMException(exec, ec);
     return result;
 }
@@ -117,7 +117,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
         return true;
     
     ExceptionCode ec = 0;
-    impl()->setItem(propertyNameToString(propertyName), stringValue, ec);
+    impl().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
 
     return true;

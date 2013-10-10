@@ -37,7 +37,7 @@ namespace WebCore {
 
 JSValue JSClipboard::types(ExecState* exec) const
 {
-    Vector<String> types = impl()->types();
+    Vector<String> types = impl().types();
     return types.isEmpty() ? jsNull() : jsArray(exec, globalObject(), types);
 }
 

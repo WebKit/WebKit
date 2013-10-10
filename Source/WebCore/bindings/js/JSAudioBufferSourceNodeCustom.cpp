@@ -40,14 +40,13 @@ namespace WebCore {
 
 void JSAudioBufferSourceNode::setBuffer(ExecState* exec, JSValue value)
 {
-    AudioBufferSourceNode* imp = impl();
     AudioBuffer* buffer = toAudioBuffer(value);
     if (!buffer) {
         exec->vm().throwException(exec, createTypeError(exec, "Value is not of type AudioBuffer"));
         return;
     }
     
-    if (!imp->setBuffer(buffer))
+    if (!impl().setBuffer(buffer))
         exec->vm().throwException(exec, createTypeError(exec, "AudioBuffer unsupported number of channels"));
 }
 

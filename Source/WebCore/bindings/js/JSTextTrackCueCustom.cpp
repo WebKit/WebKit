@@ -38,22 +38,22 @@ namespace WebCore {
 bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(handle.get().asCell());
-    TextTrackCue* textTrackCue = jsTextTrackCue->impl();
+    TextTrackCue& textTrackCue = jsTextTrackCue->impl();
 
     // If the cue is firing event listeners, its wrapper is reachable because
     // the wrapper is responsible for marking those event listeners.
-    if (textTrackCue->isFiringEventListeners())
+    if (textTrackCue.isFiringEventListeners())
         return true;
 
     // If the cue has no event listeners and has no custom properties, it is not reachable.
-    if (!textTrackCue->hasEventListeners() && !jsTextTrackCue->hasCustomProperties())
+    if (!textTrackCue.hasEventListeners() && !jsTextTrackCue->hasCustomProperties())
         return false;
 
     // If the cue is not associated with a track, it is not reachable.
-    if (!textTrackCue->track())
+    if (!textTrackCue.track())
         return false;
 
-    return visitor.containsOpaqueRoot(root(textTrackCue->track()));
+    return visitor.containsOpaqueRoot(root(textTrackCue.track()));
 }
 
 void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -65,11 +65,11 @@ void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(jsTextTrackCue, visitor);
     
     // Mark the cue's track root if it has one.
-    TextTrackCue* textTrackCue = jsTextTrackCue->impl();
-    if (TextTrack* textTrack = textTrackCue->track())
+    TextTrackCue& textTrackCue = jsTextTrackCue->impl();
+    if (TextTrack* textTrack = textTrackCue.track())
         visitor.addOpaqueRoot(root(textTrack));
     
-    textTrackCue->visitJSEventListeners(visitor);
+    textTrackCue.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore

@@ -37,50 +37,50 @@ namespace WebCore {
 
 JSValue JSMediaSourceStates::width(ExecState*) const
 {
-    if (!impl()->hasVideoSource())
+    if (!impl().hasVideoSource())
         return jsUndefined();
 
-    return jsNumber(impl()->width());
+    return jsNumber(impl().width());
 }
 
 JSValue JSMediaSourceStates::height(ExecState*) const
 {
-    if (!impl()->hasVideoSource())
+    if (!impl().hasVideoSource())
         return jsUndefined();
     
-    return jsNumber(impl()->height());
+    return jsNumber(impl().height());
 }
 
 JSValue JSMediaSourceStates::frameRate(ExecState*) const
 {
-    if (!impl()->hasVideoSource())
+    if (!impl().hasVideoSource())
         return jsUndefined();
     
-    return jsNumber(impl()->frameRate());
+    return jsNumber(impl().frameRate());
 }
 
 JSValue JSMediaSourceStates::aspectRatio(ExecState*) const
 {
-    if (!impl()->hasVideoSource())
+    if (!impl().hasVideoSource())
         return jsUndefined();
     
-    return jsNumber(impl()->aspectRatio());
+    return jsNumber(impl().aspectRatio());
 }
 
 JSValue JSMediaSourceStates::facingMode(ExecState* exec) const
 {
-    if (!impl()->hasVideoSource())
+    if (!impl().hasVideoSource())
         return jsUndefined();
 
-    return jsStringWithCache(exec, impl()->facingMode());
+    return jsStringWithCache(exec, impl().facingMode());
 }
 
 JSValue JSMediaSourceStates::volume(ExecState*) const
 {
-    if (impl()->hasVideoSource())
+    if (impl().hasVideoSource())
         return jsUndefined();
     
-    return jsNumber(impl()->volume());
+    return jsNumber(impl().volume());
 }
 
 } // namespace WebCore

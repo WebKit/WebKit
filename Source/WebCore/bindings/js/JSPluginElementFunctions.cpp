@@ -51,9 +51,9 @@ Instance* pluginInstance(HTMLElement& element)
     return instance;
 }
 
-static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement* pluginElement, JSGlobalObject* globalObject)
+static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginElement, JSGlobalObject* globalObject)
 {
-    Widget* pluginWidget = pluginElement->pluginWidget();
+    Widget* pluginWidget = pluginElement.pluginWidget();
     if (!pluginWidget)
         return 0;
     
@@ -66,21 +66,21 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement* pluginE
 
 static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
 {
-    HTMLElement* element = jsHTMLElement->impl();
-    if (!isPluginElement(*element))
+    HTMLElement& element = jsHTMLElement->impl();
+    if (!isPluginElement(element))
         return 0;
 
-    HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(element);
+    HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
     return pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject());
 }
 
 JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
-    HTMLElement* element = jsHTMLElement->impl();
-    if (!isPluginElement(*element))
+    HTMLElement& element = jsHTMLElement->impl();
+    if (!isPluginElement(element))
         return 0;
 
-    HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(element);
+    HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
 
     // First, see if we can ask the plug-in view for its script object.
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject()))
@@ -89,7 +89,7 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     // Otherwise, fall back to getting the object from the instance.
 
     // The plugin element holds an owning reference, so we don't have to.
-    Instance* instance = pluginElement->getInstance().get();
+    Instance* instance = pluginElement.getInstance().get();
     if (!instance || !instance->rootObject())
         return 0;
 
@@ -164,7 +164,7 @@ CallType pluginElementGetCallData(JSHTMLElement* element, CallData& callData)
         return CallTypeHost;
     }
     
-    Instance* instance = pluginInstance(*element->impl());
+    Instance* instance = pluginInstance(element->impl());
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callPlugin;

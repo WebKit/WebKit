@@ -44,11 +44,11 @@ bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, Pr
 
 JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    JSHTMLElement* jsForm = jsCast<JSHTMLFormElement*>(asObject(slotBase));
-    HTMLFormElement* form = toHTMLFormElement(jsForm->impl());
+    JSHTMLFormElement* jsForm = jsCast<JSHTMLFormElement*>(asObject(slotBase));
+    HTMLFormElement& form = jsForm->impl();
 
     Vector<Ref<Element>> namedItems;
-    form->getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
+    form.getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
     
     if (namedItems.isEmpty())
         return jsUndefined();

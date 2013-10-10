@@ -92,7 +92,7 @@ ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const
 {
-    printErrorMessageForFrame(impl()->frame(), message);
+    printErrorMessageForFrame(impl().frame(), message);
 }
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
@@ -102,7 +102,7 @@ bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
     return false;
 #else
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    Frame* frame = thisObject->impl()->frame();
+    Frame* frame = thisObject->impl().frame();
     if (!frame)
         return false;
 
@@ -121,7 +121,7 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
     return false;
 #else
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    Frame* frame = thisObject->impl()->frame();
+    Frame* frame = thisObject->impl().frame();
     if (!frame)
         return false;
 
@@ -139,8 +139,8 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    ASSERT(thisObject->impl()->frame());
-    Page* page = thisObject->impl()->frame()->page();
+    ASSERT(thisObject->impl().frame());
+    Page* page = thisObject->impl().frame()->page();
 
     // See <rdar://problem/5479443>. We don't think that page can ever be NULL
     // in this case, but if it is, we've gotten into a state where we may have
@@ -158,7 +158,7 @@ bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
-    Frame* frame = thisObject->impl()->frame();
+    Frame* frame = thisObject->impl().frame();
     if (!frame)
         return false;
     return frame->settings().javaScriptExperimentsEnabled();
