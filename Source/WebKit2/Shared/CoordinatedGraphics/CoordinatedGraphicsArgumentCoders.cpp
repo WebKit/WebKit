@@ -59,6 +59,7 @@
 #include <WebCore/CoordinatedCustomFilterOperation.h>
 #include <WebCore/CoordinatedCustomFilterProgram.h>
 #include <WebCore/CustomFilterArrayParameter.h>
+#include <WebCore/CustomFilterColorParameter.h>
 #include <WebCore/CustomFilterConstants.h>
 #include <WebCore/CustomFilterNumberParameter.h>
 #include <WebCore/CustomFilterOperation.h>
@@ -163,11 +164,17 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
                 encoder.encodeEnum(parameter->parameterType());
 
                 switch (parameter->parameterType()) {
+                case CustomFilterParameter::MATRIX:
                 case CustomFilterParameter::ARRAY: {
                     CustomFilterArrayParameter* arrayParameter = static_cast<CustomFilterArrayParameter*>(parameter.get());
                     encoder << static_cast<uint32_t>(arrayParameter->size());
                     for (size_t j = 0; j < arrayParameter->size(); ++j)
                         encoder << arrayParameter->valueAt(j);
+                    break;
+                }
+                case CustomFilterParameter::COLOR: {
+                    CustomFilterColorParameter* colorParameter = static_cast<CustomFilterColorParameter*>(parameter.get());
+                    encoder << colorParameter->color();
                     break;
                 }
                 case CustomFilterParameter::NUMBER: {
@@ -284,8 +291,9 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
                     return false;
 
                 switch (parameterType) {
+                case CustomFilterParameter::MATRIX:
                 case CustomFilterParameter::ARRAY: {
-                    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name);
+                    RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name, parameterType);
                     uint32_t arrayParameterSize;
                     if (!decoder.decode(arrayParameterSize))
                         return false;
@@ -296,6 +304,15 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder& decoder, 
                         arrayParameter->addValue(arrayParameterValue);
                     }
                     parameters[i] = arrayParameter.release();
+                    break;
+                }
+                case CustomFilterParameter::COLOR: {
+                    RefPtr<CustomFilterColorParameter> colorParameter = CustomFilterColorParameter::create(name);
+                    Color c;
+                    if (!decoder.decode(c))
+                        return false;
+                    colorParameter->setColor(c);
+                    parameters[i] = colorParameter.release();
                     break;
                 }
                 case CustomFilterParameter::NUMBER: {

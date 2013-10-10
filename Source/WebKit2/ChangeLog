@@ -1,3 +1,16 @@
+2013-10-10  Ralph Thomas  <ralpht@gmail.com>
+
+        [CoordinatedGraphics][CSS Shaders] marshal color and matrix custom filter parameters
+        https://bugs.webkit.org/show_bug.cgi?id=117904
+
+        Correctly encode and decode the "matrix" and "color" custom filter parameter types.
+        No port currently enables this code, however with this change the relevant layout tests now pass when enabled in EFL.
+        Reviewed by Noam Rosenthal.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2013-10-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13871522> WebKit2 fails to build with C++ 98 conformance changes
