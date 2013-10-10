@@ -6686,7 +6686,6 @@
 		07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFragmentURIParser.h; sourceTree = "<group>"; };
 		07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InbandTextTrackPrivateAVFObjC.h; path = objc/InbandTextTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InbandTextTrackPrivateAVFObjC.mm; path = objc/InbandTextTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
-		07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsQuickTime.css; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -9336,17 +9335,17 @@
 		86D982F6125C154000AD9E3D /* DocumentTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTiming.h; sourceTree = "<group>"; };
 		86FF885E15DE3B8200BD6B28 /* RenderTextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextTrackCue.cpp; sourceTree = "<group>"; };
 		86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextTrackCue.h; sourceTree = "<group>"; };
-		892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSNavigatorStorageQuota.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSNavigatorStorageQuota.cpp; sourceTree = "<group>"; };
-		892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSNavigatorStorageQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSNavigatorStorageQuota.h; sourceTree = "<group>"; };
-		892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMWindowQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMWindowQuota.h; sourceTree = "<group>"; };
-		892ABE6016EEE2E5009F3587 /* JSStorageErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageErrorCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageErrorCallback.cpp; sourceTree = "<group>"; };
-		892ABE6116EEE2E5009F3587 /* JSStorageErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageErrorCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageErrorCallback.h; sourceTree = "<group>"; };
-		892ABE6216EEE2E5009F3587 /* JSStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageQuota.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuota.cpp; sourceTree = "<group>"; };
-		892ABE6316EEE2E5009F3587 /* JSStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuota.h; sourceTree = "<group>"; };
-		892ABE6416EEE2E5009F3587 /* JSStorageQuotaCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageQuotaCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuotaCallback.cpp; sourceTree = "<group>"; };
-		892ABE6516EEE2E5009F3587 /* JSStorageQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageQuotaCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuotaCallback.h; sourceTree = "<group>"; };
-		892ABE6616EEE2E5009F3587 /* JSStorageUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageUsageCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageUsageCallback.cpp; sourceTree = "<group>"; };
-		892ABE6716EEE2E5009F3587 /* JSStorageUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageUsageCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageUsageCallback.h; sourceTree = "<group>"; };
+		892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorStorageQuota.cpp; sourceTree = "<group>"; };
+		892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorStorageQuota.h; sourceTree = "<group>"; };
+		892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowQuota.h; sourceTree = "<group>"; };
+		892ABE6016EEE2E5009F3587 /* JSStorageErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageErrorCallback.cpp; sourceTree = "<group>"; };
+		892ABE6116EEE2E5009F3587 /* JSStorageErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageErrorCallback.h; sourceTree = "<group>"; };
+		892ABE6216EEE2E5009F3587 /* JSStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageQuota.cpp; sourceTree = "<group>"; };
+		892ABE6316EEE2E5009F3587 /* JSStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageQuota.h; sourceTree = "<group>"; };
+		892ABE6416EEE2E5009F3587 /* JSStorageQuotaCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageQuotaCallback.cpp; sourceTree = "<group>"; };
+		892ABE6516EEE2E5009F3587 /* JSStorageQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageQuotaCallback.h; sourceTree = "<group>"; };
+		892ABE6616EEE2E5009F3587 /* JSStorageUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageUsageCallback.cpp; sourceTree = "<group>"; };
+		892ABE6716EEE2E5009F3587 /* JSStorageUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageUsageCallback.h; sourceTree = "<group>"; };
 		8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobCustom.cpp; sourceTree = "<group>"; };
 		898785EE122E1E87003AABDA /* JSFileException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileException.cpp; sourceTree = "<group>"; };
 		898785EF122E1E87003AABDA /* JSFileException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileException.h; sourceTree = "<group>"; };
@@ -20323,7 +20322,6 @@
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
 				FA654A631108ABB7002615E0 /* mathml.css */,
 				070DD8F50F01868000727DEB /* mediaControls.css */,
-				07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */,
 				4E19591F0A39DABA00220FE5 /* MediaFeatureNames.cpp */,
 				4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */,
 				A8EA80010A19516E00A8EF5F /* MediaList.cpp */,

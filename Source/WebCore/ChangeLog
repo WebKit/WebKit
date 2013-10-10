@@ -1,3 +1,15 @@
+2013-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some bad paths in the Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=122583
+
+        Reviewed by Mark Rowe.
+
+        Fix paths for some storage quota-related files, and remove
+        reference to mediaControlsQuickTime.css which was removed in r156546.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-10-09  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Display the correct fragment boxes for content inside flow threads
