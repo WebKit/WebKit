@@ -178,7 +178,7 @@ static CString resolveSymlinksInPath(const CString& path)
         return realpath(path.data(), resolvedName);
     }
 
-    char* slashPtr = strrchr(path.data(), '/');
+    const char* slashPtr = strrchr(path.data(), '/');
     if (slashPtr == path.data())
         return path;
 

@@ -1,3 +1,13 @@
+2013-10-10  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13871507> JavaScriptCore fails to build with C++ 98 conformance changes
+
+        Reviewed by Andreas Kling.
+
+        * heap/VTableSpectrum.cpp:
+        (JSC::VTableSpectrum::dump): strrchr returns a const char* when passed one.
+        Update the type of the local variable to accommodate that.
+
 2013-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: blocks aren't callable via 'new'
