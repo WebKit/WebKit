@@ -1,3 +1,11 @@
+2013-10-10  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed gardening.
+
+        dom/xhtml/level2/html/HTMLInputElement20.xhtml no longer crashes.
+
+        * platform/gtk/TestExpectations:
+
 2013-10-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Implement support for grid-template
