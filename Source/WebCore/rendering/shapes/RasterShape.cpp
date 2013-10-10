@@ -244,7 +244,7 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     if (!shapeMargin())
         return *m_intervals;
 
-    unsigned marginBoundaryRadius = std::min(clampToUnsigned(ceil(shapeMargin())), std::max(m_imageSize.width(), m_imageSize.height()));
+    unsigned marginBoundaryRadius = std::min(clampToUnsigned(ceil(shapeMargin())), std::max<unsigned>(m_imageSize.width(), m_imageSize.height()));
     if (!m_marginIntervals)
         m_marginIntervals = m_intervals->computeShapeMarginIntervals(marginBoundaryRadius);
 

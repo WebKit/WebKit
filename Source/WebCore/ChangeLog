@@ -1,3 +1,16 @@
+2013-10-10  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] clampToUnsigned() should return unsigned, not int
+        https://bugs.webkit.org/show_bug.cgi?id=122601
+
+        Reviewed by Andreas Kling.
+
+        Corrected the return type for clampToUnsigned() in MathExtras.h. It's now unsigned.
+        No new tests since this is just an internal refactoring of existing code.
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShape::marginIntervals): Use the redefined clampToUnsigned method.
+
 2013-10-10  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: Shape cropped to margin box
