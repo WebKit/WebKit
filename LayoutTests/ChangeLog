@@ -1,3 +1,13 @@
+2013-10-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver speaking too much when group elements with tabindex=-1 are used
+        https://bugs.webkit.org/show_bug.cgi?id=122574
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/negative-tabindex-does-not-expose-label-expected.txt: Added.
+        * accessibility/negative-tabindex-does-not-expose-label.html: Added.
+
 2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Remove duplicate entry for editing/spelling/spellcheck-paste.html.

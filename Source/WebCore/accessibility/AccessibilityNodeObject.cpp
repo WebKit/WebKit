@@ -1312,8 +1312,13 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     
     // If it's focusable but it's not content editable or a known control type, then it will appear to
     // the user as a single atomic object, so we should use its text as the default title.
-    if (isHeading() || isLink() || isGenericFocusableElement())
+    if (isHeading() || isLink())
         useTextUnderElement = true;
+    else if (isGenericFocusableElement()) {
+        // If a node uses a negative tabindex, do not expose it as a generic focusable element, because keyboard focus management
+        // will never land on this specific element.
+        useTextUnderElement = !(node && node->isElementNode() && toElement(node)->tabIndex() < 0);
+    }
     
     if (useTextUnderElement) {
         AccessibilityTextUnderElementMode mode;
@@ -1691,8 +1696,15 @@ String AccessibilityNodeObject::title() const
 
     // If it's focusable but it's not content editable or a known control type, then it will appear to
     // the user as a single atomic object, so we should use its text as the default title.                              
-    if (isGenericFocusableElement())
+    if (isGenericFocusableElement()) {
+        // If a node uses a negative tabindex, do not expose it as a generic focusable element, because keyboard focus management
+        // will never land on this specific element.
+        Node* node = this->node();
+        if (node && node->isElementNode() && toElement(node)->tabIndex() < 0)
+            return String();
+        
         return textUnderElement();
+    }
 
     return String();
 }
