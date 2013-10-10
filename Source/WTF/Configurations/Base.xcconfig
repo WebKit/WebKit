@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -102,16 +102,9 @@ DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
-TARGETING_SAME_OS_X_VERSION = $(TARGETING_SAME_OS_X_VERSION_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-TARGETING_SAME_OS_X_VERSION_1070_1070 = YES;
-TARGETING_SAME_OS_X_VERSION_1080_1080 = YES;
-TARGETING_SAME_OS_X_VERSION_1090_1090 = YES;
-
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 
-// Don't build against an SDK unless we're targeting an older OS version.
-SDKROOT = $(SDKROOT_TARGETING_SAME_OS_X_VERSION_$(TARGETING_SAME_OS_X_VERSION));
-SDKROOT_TARGETING_SAME_OS_X_VERSION_ = macosx;
+SDKROOT = macosx.internal;
 
 TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME));
 TOOLCHAINS_iphoneos = $(TOOLCHAINS);

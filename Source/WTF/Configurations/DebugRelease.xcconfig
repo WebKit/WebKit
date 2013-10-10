@@ -1,4 +1,4 @@
-// Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+// Copyright (C) 2009, 2010, 2013 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+#include "../../../../Internal/Configurations/UseInternalSDK.xcconfig"
 #include "Base.xcconfig"
 
 ARCHS = $(ARCHS_STANDARD_32_64_BIT);
@@ -38,3 +39,10 @@ GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 DEBUG_INFORMATION_FORMAT = dwarf;
 OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
 OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
+
+SDKROOT = $(SDKROOT_$(PLATFORM_NAME));
+SDKROOT_iphoneos = $(SDKROOT);
+SDKROOT_iphonesimulator = $(SDKROOT);
+SDKROOT_macosx = $(SDKROOT_macosx_$(USE_INTERNAL_SDK));
+SDKROOT_macosx_ = macosx;
+SDKROOT_macosx_YES = macosx.internal;
