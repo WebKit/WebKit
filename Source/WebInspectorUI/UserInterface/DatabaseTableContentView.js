@@ -26,9 +26,9 @@
 WebInspector.DatabaseTableContentView = function(representedObject)
 {
     WebInspector.ContentView.call(this, representedObject);
-    
+
     this.element.classList.add(WebInspector.DatabaseTableContentView.StyleClassName);
-    
+
     this.update();
 };
 
@@ -48,6 +48,14 @@ WebInspector.DatabaseTableContentView.prototype = {
     {
         if (this._dataGrid)
             this._dataGrid.updateLayout();
+    },
+
+    saveToCookie: function(cookie)
+    {
+        cookie.type = WebInspector.ContentViewCookieType.DatabaseTable;
+        cookie.host = this.representedObject.host;
+        cookie.name = this.representedObject.name;
+        cookie.database = this.representedObject.database.name;
     },
 
     get scrollableElements()

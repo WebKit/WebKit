@@ -24,14 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BackForwardEntry = function(contentView, cookie, restoreCallback)
+WebInspector.BackForwardEntry = function(contentView, cookie)
 {
     WebInspector.Object.call(this);
     this._contentView = contentView;
     // Cookies are compared with Object.shallowEqual, so should not store objects or arrays.
     this._cookie = cookie || {};
     this._scrollPositions = [];
-    this._restoreCallback = restoreCallback;
+
+    contentView.saveToCookie(this._cookie);
 };
 
 WebInspector.BackForwardEntry.prototype = {
@@ -73,9 +74,7 @@ WebInspector.BackForwardEntry.prototype = {
     _restoreFromCookie: function()
     {
         this._restoreScrollPositions();
-
-        if (this._restoreCallback && typeof this._restoreCallback === "function")
-            this._restoreCallback.call(null, this.contentView, this.cookie);
+        this.contentView.restoreFromCookie(this.cookie);
     },
 
     _restoreScrollPositions: function()

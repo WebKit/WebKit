@@ -133,7 +133,7 @@ WebInspector.ContentViewContainer.prototype = {
         return contentView;
     },
 
-    showContentView: function(contentView, cookie, restoreCallback)
+    showContentView: function(contentView, cookie)
     {
         console.assert(contentView instanceof WebInspector.ContentView);
         if (!(contentView instanceof WebInspector.ContentView))
@@ -146,7 +146,7 @@ WebInspector.ContentViewContainer.prototype = {
             return null;
 
         var currentEntry = this.currentBackForwardEntry;
-        var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie, restoreCallback);
+        var provisionalEntry = new WebInspector.BackForwardEntry(contentView, cookie);
         // Don't do anything if we would have added an identical back/forward list entry.
         if (currentEntry && currentEntry.contentView === contentView && Object.shallowEqual(provisionalEntry.cookie, currentEntry.cookie))
             return currentEntry.contentView;

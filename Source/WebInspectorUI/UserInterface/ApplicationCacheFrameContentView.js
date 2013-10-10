@@ -45,7 +45,7 @@ WebInspector.ApplicationCacheFrameContentView = function(representedObject)
     this.element.appendChild(this._emptyView);
 
     this._markDirty();
-    
+
     var status = representedObject.status;
     this.updateStatus(status);
 
@@ -73,6 +73,13 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
             this.dataGrid.updateLayout();
     },
 
+    saveToCookie: function(cookie)
+    {
+        cookie.type = WebInspector.ContentViewCookieType.ApplicationCache;
+        cookie.frame = this.representedObject.frame.url;
+        cookie.manifest = this.representedObject.manifest.manifestURL;
+    },
+
     get scrollableElements()
     {
         if (!this._dataGrid)
@@ -84,7 +91,7 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
     {
         if (!this.visible || !this._viewDirty)
             return;
-        
+
         this._update();
         this._viewDirty = false;
     },
@@ -99,9 +106,9 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
         var frameManifest = event.data.frameManifest;
         if (frameManifest !== this.representedObject)
             return;
-        
+
         console.assert(frameManifest instanceof WebInspector.ApplicationCacheFrame);
-        
+
         this.updateStatus(frameManifest.status);
     },
 
@@ -112,7 +119,7 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
     {
         var oldStatus = this._status;
         this._status = status;
-        
+
         if (this.visible && this._status === WebInspector.ApplicationCacheManager.Status.Idle && (oldStatus === WebInspector.ApplicationCacheManager.Status.UpdateReady || !this._resources))
             this._markDirty();
 
@@ -135,9 +142,9 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
             delete this._updateTime;
             delete this._size;
             delete this._resources;
-            
+
             this._emptyView.classList.remove("hidden");
-            
+
             if (this._dataGrid)
                 this._dataGrid.element.classList.add("hidden");
             return;
@@ -156,7 +163,7 @@ WebInspector.ApplicationCacheFrameContentView.prototype = {
         this._populateDataGrid();
         this._dataGrid.autoSizeColumns(20, 80);
         this._dataGrid.element.classList.remove("hidden");
-        
+
         this._emptyView.classList.add("hidden");
     },
 

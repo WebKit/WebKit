@@ -233,6 +233,16 @@ WebInspector.ContentView.prototype = {
         // Implemented by subclasses.
     },
 
+    saveToCookie: function(cookie)
+    {
+        // Implemented by subclasses.
+    },
+
+    restoreFromCookie: function(cookie)
+    {
+        // Implemented by subclasses.
+    },
+
     canGoBack: function()
     {
         // Implemented by subclasses.

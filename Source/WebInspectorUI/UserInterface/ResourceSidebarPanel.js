@@ -88,13 +88,6 @@ WebInspector.ResourceSidebarPanel = function() {
     this._resourcesContentTreeOutline.includeSourceMapResourceChildren = true;
 };
 
-WebInspector.ResourceSidebarPanel.ResourceContentViewCookieType = "resource";
-WebInspector.ResourceSidebarPanel.CookieStorageContentViewCookieType = "cookie-storage";
-WebInspector.ResourceSidebarPanel.DatabaseContentViewCookieType = "database";
-WebInspector.ResourceSidebarPanel.DatabaseTableContentViewCookieType = "database-table";
-WebInspector.ResourceSidebarPanel.DOMStorageContentViewCookieType = "dom-storage";
-WebInspector.ResourceSidebarPanel.ApplicationCacheContentViewCookieType = "application-cache";
-
 WebInspector.ResourceSidebarPanel.prototype = {
     constructor: WebInspector.ResourceSidebarPanel,
 
@@ -103,109 +96,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
     get contentTreeOutlineToAutoPrune()
     {
         return this._searchContentTreeOutline;
-    },
-
-    cookieForContentView: function(contentView)
-    {
-        console.assert(contentView instanceof WebInspector.FrameContentView || contentView instanceof WebInspector.ResourceClusterContentView || contentView instanceof WebInspector.ScriptContentView || contentView instanceof WebInspector.CookieStorageContentView || contentView instanceof WebInspector.DOMStorageContentView || contentView instanceof WebInspector.DatabaseTableContentView || contentView instanceof WebInspector.DatabaseContentView || contentView instanceof WebInspector.ApplicationCacheFrameContentView);
-
-        var representedObject = contentView.representedObject;
-
-        // The main frame does not need a URL, an empty cookie is enough.
-        if (representedObject instanceof WebInspector.Frame && representedObject.isMainFrame())
-            return {type: WebInspector.ResourceSidebarPanel.ResourceContentViewCookieType};
-
-        // If it has a URL, return a cookie with the frame/resource/script URL represented by the content view.
-        if (representedObject.url) {
-            console.assert(representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Script);
-            return {type: WebInspector.ResourceSidebarPanel.ResourceContentViewCookieType, url: contentView.representedObject.url};
-        }
-
-        var cookie = {};
-
-        if (representedObject instanceof WebInspector.CookieStorageObject) {
-            cookie.type = WebInspector.ResourceSidebarPanel.CookieStorageContentViewCookieType;
-            cookie.host = representedObject.host;
-        } else if (representedObject instanceof WebInspector.DatabaseObject) {
-            cookie.type = WebInspector.ResourceSidebarPanel.DatabaseContentViewCookieType;
-            cookie.host = representedObject.host;
-            cookie.name = representedObject.name;
-        } else if (representedObject instanceof WebInspector.DatabaseTableObject) {
-            cookie.type = WebInspector.ResourceSidebarPanel.DatabaseTableContentViewCookieType;
-            cookie.host = representedObject.database.host;
-            cookie.database = representedObject.database.name;
-            cookie.name = representedObject.name;
-        } else if (representedObject instanceof WebInspector.DOMStorageObject) {
-            cookie.type = WebInspector.ResourceSidebarPanel.DOMStorageContentViewCookieType;
-            cookie.isLocalStorage = representedObject.isLocalStorage();
-            cookie.host = representedObject.host;
-        } else if (representedObject instanceof WebInspector.ApplicationCacheFrame) {
-            cookie.type = WebInspector.ResourceSidebarPanel.ApplicationCacheContentViewCookieType;
-            cookie.frame = representedObject.frame.url;
-            cookie.manifest = representedObject.manifest.manifestURL;
-        } else if (representedObject instanceof WebInspector.Script) {
-            // If the Script does not have a URL, then there is not much more we can do to make a cookie.
-            // The URL case is handled above, do nothing here to prevent triggering the "Unknown" error below.
-            console.assert(!representedObject.url);
-        } else {
-            console.error("Unknown represented object.");
-        }
-
-        return cookie;
-    },
-
-    showContentViewForCookie: function(contentViewCookie)
-    {
-        if (!contentViewCookie || !contentViewCookie.type)
-            return;
-
-        this._contentViewCookieToShowWhenAvailable = contentViewCookie;
-
-        if (contentViewCookie.type === WebInspector.ResourceSidebarPanel.ResourceContentViewCookieType) {
-            // We can't show anything until we have the main frame in the sidebar. Otherwise the path components in the navigation bar would be missing.
-            if (!this._mainFrameTreeElement) {
-                this._contentViewCookieToShowWhenAvailable = contentViewCookie;
-                return;
-            }
-
-            var representedObject = contentViewCookie.url ? WebInspector.frameResourceManager.resourceForURL(contentViewCookie.url) : WebInspector.frameResourceManager.mainFrame;
-            if (!representedObject)
-                representedObject = WebInspector.frameResourceManager.mainFrame;
-
-            if (!representedObject)
-                return;
-
-            if (representedObject instanceof WebInspector.Resource && representedObject.isMainResource())
-                representedObject = representedObject.parentFrame;
-
-            this.treeElementForRepresentedObject(representedObject).revealAndSelect(true, true);
-
-            return;
-        }
-
-        // It must be a storage cookie.
-
-        function finalizeCookieChecking()
-        {
-            // Walk all the tree elements and match them based on type alone. So if you were looking at cookies
-            // on one site, and later open the inspector on another site, the new site's cookies will show.
-            var currentTreeElement = this.contentTreeOutline.children[0];
-            while (currentTreeElement && !currentTreeElement.root) {
-                if (this._checkStorageTreeElementAgainstPendingContentViewCookie(currentTreeElement, true))
-                    break;
-                currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
-            }
-
-            delete this._contentViewCookieToShowWhenAvailable;
-            delete this._finalizeCookieCheckingTimeout;
-        }
-
-        if (this._finalizeCookieCheckingTimeout)
-            clearTimeout(this._finalizeCookieCheckingTimeout);
-
-        // When the specific storage item wasn't found we want to relax the check to show the first item with the
-        // same type. There is no good time to naturally declare the cookie wasn't found, so we do that on a timeout.
-        this._finalizeCookieCheckingTimeout = setTimeout(finalizeCookieChecking.bind(this), 500);
     },
 
     showMainFrameDOMTree: function(nodeToSelect, preventFocusChange)
@@ -263,20 +153,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
         var newContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(representedObject);
         var cookie = {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber};
 
-        var restoreCallback = function(contentView, savedCookie) {
-            var lineNumber = savedCookie.lineNumber;
-            var columnNumber = savedCookie.columnNumber;
-            var position = new WebInspector.SourceCodePosition(lineNumber, columnNumber);
-
-            if (contentView instanceof WebInspector.FrameContentView)
-                contentView.showSourceCode(position)
-            else if (contentView instanceof WebInspector.ResourceClusterContentView)
-                contentView.showResponse(position)
-            else if (contentView instanceof WebInspector.ScriptContentView)
-                contentView.revealPosition(position)
-        };
-
-        WebInspector.contentBrowser.showContentView(newContentView, cookie, restoreCallback);
+        WebInspector.contentBrowser.showContentView(newContentView, cookie);
     },
 
     showSourceCodeLocation: function(sourceCodeLocation)
@@ -618,12 +495,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
             if (this._frameIdentifierToShowSourceCodeWhenAvailable)
                 this.showSourceCodeForFrame(this._frameIdentifierToShowSourceCodeWhenAvailable, true);
-            else if (this._contentViewCookieToShowWhenAvailable) {
-                this.showContentViewForCookie(this._contentViewCookieToShowWhenAvailable);
-
-                // The cookie is only useful until the main frame loads.
-                delete this._contentViewCookieToShowWhenAvailable;
-            }
         }
 
         // We only care about the first time the main frame changes.
@@ -764,75 +635,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
         this.showMainFrameDOMTree(event.data.node);
     },
 
-    _checkStorageTreeElementAgainstPendingContentViewCookie: function(treeElement, matchOnTypeAlone)
-    {
-        var contentViewCookie = this._contentViewCookieToShowWhenAvailable;
-        if (!contentViewCookie || !contentViewCookie.type)
-            return false;
-
-        if (contentViewCookie.type === WebInspector.ResourceSidebarPanel.ResourceContentViewCookieType)
-            return;
-
-        var representedObject = treeElement.representedObject;
-
-        switch (contentViewCookie.type) {
-        case WebInspector.ResourceSidebarPanel.CookieStorageContentViewCookieType:
-            if (!(representedObject instanceof WebInspector.CookieStorageObject))
-                return;
-            if (!matchOnTypeAlone && representedObject.host !== contentViewCookie.host)
-                return false;
-            break;
-
-        case WebInspector.ResourceSidebarPanel.DatabaseContentViewCookieType:
-            if (!(representedObject instanceof WebInspector.DatabaseObject))
-                return false;
-            if (!matchOnTypeAlone && representedObject.host !== contentViewCookie.host)
-                return false;
-            if (!matchOnTypeAlone && representedObject.name !== contentViewCookie.name)
-                return false;
-            break;
-
-        case WebInspector.ResourceSidebarPanel.DatabaseTableContentViewCookieType:
-            // FIXME: This isn't easy to implement like the others since DatabaseTreeElement
-            // populates the tables instead of ResourceSidebarPanel. Just select the database.
-            if (!(representedObject instanceof WebInspector.DatabaseObject))
-                return false;
-            if (!matchOnTypeAlone && representedObject.host !== contentViewCookie.host)
-                return false;
-            if (!matchOnTypeAlone && representedObject.name !== contentViewCookie.database)
-                return false;
-            return;
-
-        case WebInspector.ResourceSidebarPanel.DOMStorageContentViewCookieType:
-            if (!(representedObject instanceof WebInspector.DOMStorageObject))
-                return false;
-            if (!matchOnTypeAlone && representedObject.host !== contentViewCookie.host)
-                return false;
-            if (!matchOnTypeAlone && representedObject.isLocalStorage() !== contentViewCookie.isLocalStorage)
-                return false;
-            break;
-
-        case WebInspector.ResourceSidebarPanel.ApplicationCacheContentViewCookieType:
-            if (!(representedObject instanceof WebInspector.ApplicationCacheFrame))
-                return;
-            if (!matchOnTypeAlone && representedObject.frame.url !== contentViewCookie.frame)
-                return;
-            if (!matchOnTypeAlone && representedObject.manifest.manifestURL !== contentViewCookie.manifest)
-                return false;
-            break;
-
-        default:
-            console.assert("Unknown content view cookie type.");
-            return false;
-        }
-
-        // If we got here, then the tree element was a match to the content view cookie.
-        // Selecting the tree element will cause the content view to show.
-        treeElement.revealAndSelect(true, true);
-
-        return true;
-    },
-
     _domStorageObjectWasAdded: function(event)
     {
         var domStorage = event.data.domStorage;
@@ -842,8 +644,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
             this._localStorageRootTreeElement = this._addStorageChild(storageElement, this._localStorageRootTreeElement, WebInspector.UIString("Local Storage"));
         else
             this._sessionStorageRootTreeElement = this._addStorageChild(storageElement, this._sessionStorageRootTreeElement, WebInspector.UIString("Session Storage"));
-
-        this._checkStorageTreeElementAgainstPendingContentViewCookie(storageElement);
     },
 
     _domStorageObjectWasInspected: function(event)
@@ -866,8 +666,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
         var databaseElement = new WebInspector.DatabaseTreeElement(database);
         this._databaseHostTreeElementMap[database.host].appendChild(databaseElement);
-
-        this._checkStorageTreeElementAgainstPendingContentViewCookie(databaseElement);
     },
 
     _databaseWasInspected: function(event)
@@ -883,8 +681,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
         var cookieElement = new WebInspector.CookieStorageTreeElement(event.data.cookieStorage);
         this._cookieStorageRootTreeElement = this._addStorageChild(cookieElement, this._cookieStorageRootTreeElement, WebInspector.UIString("Cookies"));
-
-        this._checkStorageTreeElementAgainstPendingContentViewCookie(cookieElement);
     },
 
     _frameManifestAdded: function(event)
@@ -901,8 +697,6 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
         var frameCacheElement = new WebInspector.ApplicationCacheFrameTreeElement(frameManifest);
         this._applicationCacheURLTreeElementMap[manifestURL].appendChild(frameCacheElement);
-
-        this._checkStorageTreeElementAgainstPendingContentViewCookie(frameCacheElement);
     },
 
     _frameManifestRemoved: function(event)

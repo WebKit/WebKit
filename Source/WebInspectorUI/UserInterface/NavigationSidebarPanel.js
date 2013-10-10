@@ -171,17 +171,6 @@ WebInspector.NavigationSidebarPanel.prototype = {
         return this._contentTreeOutline.getCachedTreeElement(representedObject);
     },
 
-    cookieForContentView: function(contentView)
-    {
-        // Implemented by subclasses.
-        return null;
-    },
-
-    showContentViewForCookie: function(contentViewCookie)
-    {
-        // Implemented by subclasses.
-    },
-
     showContentViewForCurrentSelection: function()
     {
         // Reselect the selected tree element to cause the content view to be shown as well. <rdar://problem/10854727>

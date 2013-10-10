@@ -69,7 +69,7 @@ WebInspector.ApplicationCacheManager.prototype = {
     networkStateUpdated: function(isNowOnline)
     {
         this._online = isNowOnline;
-        
+
         this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.NetworkStateUpdated, {online: this._online});
     },
 
@@ -83,7 +83,7 @@ WebInspector.ApplicationCacheManager.prototype = {
         var frame = WebInspector.frameResourceManager.frameForIdentifier(frameId);
         if (!frame)
             return;
-        
+
         this._frameManifestUpdated(frame, manifestURL, status);
     },
 
@@ -95,11 +95,24 @@ WebInspector.ApplicationCacheManager.prototype = {
                 callback(null);
                 return;
             }
-            
+
             callback(applicationCache);
         }
-        
+
         ApplicationCacheAgent.getApplicationCacheForFrame(frame.id, callbackWrapper);
+    },
+
+    objectForCookie: function(cookie, matchOnTypeAlone)
+    {
+        console.assert(cookie.type && cookie.type === WebInspector.ContentViewCookieType.ApplicationCache);
+
+        for (var i = 0; i < this._applicationCacheObjects.length; ++i) {
+            var object = this._applicationCacheObjects[i];
+            if (object.frame.url === cookie.frame && object.manifest.manifestURL === cookie.manifest)
+                return object;
+        }
+
+        return matchOnTypeAlone && this._applicationCacheObjects.length ? this._applicationCacheObjects[0] : null;
     },
 
     // Private
@@ -133,16 +146,16 @@ WebInspector.ApplicationCacheManager.prototype = {
         var frame = WebInspector.frameResourceManager.frameForIdentifier(frameId);
         if (!frame)
             return;
-        
+
         if (!manifestURL)
             this._frameManifestRemoved(frame);
     },
-    
+
     _framesWithManifestsLoaded: function(error, framesWithManifests)
     {
         if (error)
             return;
-        
+
         for (var i = 0; i < framesWithManifests.length; ++i) {
             var frame = WebInspector.frameResourceManager.frameForIdentifier(framesWithManifests[i].frameId);
             if (!frame)
@@ -151,7 +164,7 @@ WebInspector.ApplicationCacheManager.prototype = {
             this._frameManifestUpdated(frame, framesWithManifests[i].manifestURL, framesWithManifests[i].status);
         }
     },
-    
+
     _frameManifestUpdated: function(frame, manifestURL, status)
     {
         if (status === WebInspector.ApplicationCacheManager.Status.Uncached) {
@@ -170,18 +183,18 @@ WebInspector.ApplicationCacheManager.prototype = {
         var statusChanged = manifestFrame && status !== oldStatus;
         if (manifestFrame)
             manifestFrame.status = status;
-        
+
         if (!this._applicationCacheObjects[frame.id]) {
             var cacheManifest = new WebInspector.ApplicationCacheManifest(manifestURL);
             this._applicationCacheObjects[frame.id] = new WebInspector.ApplicationCacheFrame(frame, cacheManifest, status);
 
             this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.FrameManifestAdded, {frameManifest: this._applicationCacheObjects[frame.id]});
         }
-        
+
         if (statusChanged)
             this.dispatchEventToListeners(WebInspector.ApplicationCacheManager.Event.FrameManifestStatusChanged, {frameManifest: this._applicationCacheObjects[frame.id]});
     },
-    
+
     _frameManifestRemoved: function(frame)
     {
         if (!this._applicationCacheObjects[frame.id])

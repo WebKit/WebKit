@@ -147,6 +147,57 @@ WebInspector.StorageManager.prototype = {
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasInspected, {domStorage: domStorage});
     },
 
+    objectForCookie: function(cookie, matchOnTypeAlone)
+    {
+        console.assert(cookie.type);
+
+        var findMatchingObjectInArray = function (array, matchesFunction) {
+            for (var i = 0; i < array.length; ++i)
+                if (matchesFunction.call(null, array[i]))
+                    return array[i];
+
+            return matchOnTypeAlone && array.length ? array[0] : null;
+        };
+
+        if (cookie.type === WebInspector.ContentViewCookieType.CookieStorage) {
+            if (this._cookieStorageObjects[cookie.host])
+                return this._cookieStorageObjects[cookie.host];
+
+            if (!matchOnTypeAlone)
+                return null;
+
+            // If we just want any cookie storage object, use the first one.
+            for (var key in this._cookieStorageObjects)
+                return this._cookieStorageObjects[key];
+
+            return null;
+        }
+
+        if (cookie.type === WebInspector.ContentViewCookieType.DOMStorage) {
+            return findMatchingObjectInArray(this._domStorageObjects, function(object) {
+                return object.host === cookie.host && object.isLocalStorage() === cookie.isLocalStorage;
+            });
+        }
+
+        if (cookie.type === WebInspector.ContentViewCookieType.Database) {
+            return findMatchingObjectInArray(this._databaseObjects, function(object) {
+                return object.host === cookie.host && object.name === cookie.name;
+            });
+        }
+
+        // FIXME: This isn't easy to implement like the others since DatabaseTreeElement
+        // creates database table objects, and they aren't known by StorageManager. Just
+        // display the database instead.
+        if (cookie.type === WebInspector.ContentViewCookieType.DatabaseTable) {
+            return findMatchingObjectInArray(this._databaseObjects, function(object) {
+                return object.host === cookie.host && object.database === cookie.name;
+            });
+        }
+
+        console.assert("Unknown content view cookie: ", cookie);
+        return null;
+    },
+
     // Private
 
     _mainResourceDidChange: function(event)

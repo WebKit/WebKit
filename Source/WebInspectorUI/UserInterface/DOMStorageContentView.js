@@ -45,6 +45,13 @@ WebInspector.DOMStorageContentView.prototype = {
         this.representedObject.getEntries(this._showDOMStorageEntries.bind(this));
     },
 
+    saveToCookie: function(cookie)
+    {
+        cookie.type = WebInspector.ContentViewCookieType.DOMStorage;
+        cookie.isLocalStorage = this.representedObject.isLocalStorage();
+        cookie.host = this.representedObject.host;
+    },
+
     itemsCleared: function()
     {
         this._dataGrid.removeChildren();

@@ -49,7 +49,7 @@ WebInspector.CookieStorageContentView.prototype = {
             this._cookies = this._filterCookies(cookies);
             this._rebuildTable();
         }
-    
+
         PageAgent.getCookies(callback.bind(this));
     },
 
@@ -57,6 +57,12 @@ WebInspector.CookieStorageContentView.prototype = {
     {
         if (this._dataGrid)
             this._dataGrid.updateLayout();
+    },
+
+    saveToCookie: function(cookie)
+    {
+        cookie.type = WebInspector.ContentViewCookieType.CookieStorage;
+        cookie.host = this.representedObject.host;
     },
 
     get scrollableElements()
@@ -108,7 +114,7 @@ WebInspector.CookieStorageContentView.prototype = {
             this.element.appendChild(this._dataGrid.element);
             this._dataGrid.updateLayout();
         }
-        
+
         console.assert(this._dataGrid);
         this._dataGrid.removeChildren();
 
@@ -136,7 +142,7 @@ WebInspector.CookieStorageContentView.prototype = {
             var node = new WebInspector.DataGridNode(data);
             node.cookie = cookie;
             node.selectable = true;
-            
+
             this._dataGrid.appendChild(node);
         }
     },
@@ -170,10 +176,10 @@ WebInspector.CookieStorageContentView.prototype = {
                 }
             }
         }
-        
+
         return filteredCookies;
     },
-    
+
     _sortCookies: function(cookies)
     {
         var sortDirection = this._dataGrid.sortOrder === "ascending" ? 1 : -1;

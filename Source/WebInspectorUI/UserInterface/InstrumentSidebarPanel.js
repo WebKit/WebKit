@@ -55,9 +55,7 @@ WebInspector.InstrumentSidebarPanel = function()
     this._timelinesTreeOutline = new TreeOutline(timelinesTreeOutlineElement);
     this._timelinesTreeOutline.allowsRepeatSelection = true;
 
-    this._timelinesObject = new WebInspector.TimelinesObject;
-
-    this._timelinesTreeElement = new WebInspector.GeneralTreeElement(WebInspector.InstrumentSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, this._timelinesObject);
+    this._timelinesTreeElement = new WebInspector.GeneralTreeElement(WebInspector.InstrumentSidebarPanel.StopwatchIconStyleClass, WebInspector.UIString("Timelines"), null, WebInspector.timelineManager.timelines);
 
     var networkTimelineTreeElement = new WebInspector.GeneralTreeElement(WebInspector.InstrumentSidebarPanel.NetworkIconStyleClass, WebInspector.UIString("Network Requests"), null, WebInspector.TimelineRecord.Type.Network);
     networkTimelineTreeElement.small = true;
@@ -174,7 +172,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
 
     showTimeline: function()
     {
-        WebInspector.contentBrowser.showContentViewForRepresentedObject(this._timelinesObject);
+        WebInspector.contentBrowser.showContentViewForRepresentedObject(WebInspector.timelineManager.timelines);
     },
 
     showTimelineForRecordType: function(type)
@@ -184,22 +182,6 @@ WebInspector.InstrumentSidebarPanel.prototype = {
             return;
 
         treeElementToSelect.select(true, true);
-    },
-
-    cookieForContentView: function(contentView)
-    {
-        if (contentView instanceof WebInspector.TimelinesContentView)
-            return {timeline: true};
-        return null;
-    },
-
-    showContentViewForCookie: function(contentViewCookie)
-    {
-        if (!contentViewCookie)
-            return;
-
-        if (contentViewCookie.timeline)
-            this.showTimeline();
     },
 
     showProfile: function(type, title)
@@ -217,11 +199,8 @@ WebInspector.InstrumentSidebarPanel.prototype = {
 
     shown: function()
     {
-        // Reselect the selected tree element to cause the content view to be shown as well. <rdar://problem/10854727>
-        var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
-        if (selectedTreeElement)
-            selectedTreeElement.select(true, true);
-
+        // Delegate to TimelinesContentView to select the default record type.
+        WebInspector.contentBrowser.showContentViewForRepresentedObject(WebInspector.timelineManager.timelines);
         WebInspector.NavigationSidebarPanel.prototype.shown.call(this);
     },
 
@@ -237,7 +216,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
         if (selectedTreeElement)
             selectedTreeElement.deselect();
 
-        var contentView = WebInspector.contentBrowser.contentViewForRepresentedObject(this._timelinesObject);
+        var contentView = WebInspector.contentBrowser.contentViewForRepresentedObject(WebInspector.timelineManager.timelines);
         contentView.showTimelineForRecordType(treeElement.representedObject);
         WebInspector.contentBrowser.showContentView(contentView);
     },

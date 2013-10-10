@@ -1,3 +1,113 @@
+2013-10-10  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: content views and managers should save/restore view state.
+        https://bugs.webkit.org/show_bug.cgi?id=122546
+
+        To restore the same content view and sidebars when re-opening the
+        inspector, a cookie is saved whenever a new content view is shown
+        in the main content browser. Previously, this cookie was created
+        and restored using navigation sidebar-specific logic. This has two
+        major flaws: non-default sidebars for a represented object are not
+        restored correctly; and it centralizes storage of view-specific
+        state such as subview selections.
+
+        This patch adds ContentView methods for saving a key for the
+        view's represented object, and saving/restoring any view-specific
+        state as the view is shown. The 'type' field of the cookie
+        specifies the manager which deserializes the cookie into a
+        represented object.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView):
+        (WebInspector.ApplicationCacheFrameContentView.prototype.saveToCookie):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._maybeUpdate):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._updateStatus):
+        (WebInspector.ApplicationCacheFrameContentView.prototype.updateStatus):
+        (WebInspector.ApplicationCacheFrameContentView.prototype._updateCallback):
+        * UserInterface/ApplicationCacheManager.js:
+        (WebInspector.ApplicationCacheManager.prototype.networkStateUpdated):
+        (WebInspector.ApplicationCacheManager.prototype.applicationCacheStatusUpdated):
+        (WebInspector.ApplicationCacheManager.prototype.):
+        (WebInspector.ApplicationCacheManager.prototype.requestApplicationCache):
+        (WebInspector.ApplicationCacheManager.prototype.objectForCookie):
+        (WebInspector.ApplicationCacheManager.prototype._manifestForFrameLoaded):
+        (WebInspector.ApplicationCacheManager.prototype._framesWithManifestsLoaded):
+        (WebInspector.ApplicationCacheManager.prototype._frameManifestUpdated):
+        * UserInterface/BackForwardEntry.js:
+        (WebInspector.BackForwardEntry):
+        (WebInspector.BackForwardEntry.prototype._restoreFromCookie):
+        * UserInterface/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype.showContentViewForRepresentedObject):
+        (WebInspector.ContentBrowser.prototype.showContentView):
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView.prototype.saveToCookie):
+        (WebInspector.ContentView.prototype.restoreFromCookie):
+        * UserInterface/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+        * UserInterface/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype.update):
+        (WebInspector.CookieStorageContentView.prototype.saveToCookie):
+        (WebInspector.CookieStorageContentView.prototype._rebuildTable):
+        (WebInspector.CookieStorageContentView.prototype._filterCookies):
+        * UserInterface/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.saveToCookie):
+        * UserInterface/DatabaseContentView.js:
+        (WebInspector.DatabaseContentView.prototype.saveToCookie):
+        (WebInspector.DatabaseContentView.prototype._messagesClicked):
+        * UserInterface/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView):
+        (WebInspector.DatabaseTableContentView.prototype.saveToCookie):
+        * UserInterface/FrameContentView.js:
+        (WebInspector.FrameContentView.prototype.saveToCookie):
+        (WebInspector.FrameContentView.prototype.restoreFromCookie):
+        * UserInterface/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.objectForCookie):
+        * UserInterface/InstrumentSidebarPanel.js:
+        (WebInspector.InstrumentSidebarPanel):
+        (WebInspector.InstrumentSidebarPanel.prototype.showTimeline):
+        (WebInspector.InstrumentSidebarPanel.prototype.shown):
+        (WebInspector.InstrumentSidebarPanel.prototype._timelinesTreeElementSelected):
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.contentLoaded):
+        (WebInspector.openURL):
+        (WebInspector._updateCurrentContentViewCookie):
+        (WebInspector._showContentViewForCookie.lastAttemptToRestoreFromCookie):
+        (WebInspector._showContentViewForCookie):
+        (WebInspector._resolveAndShowPendingContentViewCookie.delayedWork):
+        (WebInspector._resolveAndShowPendingContentViewCookie):
+        (WebInspector.elementDragStart):
+        (WebInspector.elementDragEnd):
+        (WebInspector.createMessageTextView):
+        (WebInspector.linkifyStringAsFragment):
+        * UserInterface/NavigationSidebarPanel.js:
+        * UserInterface/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.saveToCookie):
+        (WebInspector.ResourceClusterContentView.prototype.restoreFromCookie):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showSourceCode):
+        (WebInspector.ResourceSidebarPanel.prototype._mainFrameDidChange):
+        (WebInspector.ResourceSidebarPanel.prototype._domStorageObjectWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._databaseWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._cookieStorageObjectWasAdded):
+        (WebInspector.ResourceSidebarPanel.prototype._frameManifestAdded):
+        * UserInterface/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype.saveToCookie):
+        (WebInspector.ScriptContentView.prototype.restoreFromCookie):
+        * UserInterface/StorageManager.js:
+        (WebInspector.StorageManager.prototype.findMatchingObjectInArray):
+        (WebInspector.StorageManager.prototype.objectForCookie):
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.get timelines):
+        (WebInspector.TimelineManager.prototype.objectForCookie):
+        * UserInterface/TimelinesContentView.js:
+        (WebInspector.TimelinesContentView.prototype.saveToCookie):
+        (WebInspector.TimelinesContentView.prototype.restoreFromCookie):
+        (WebInspector.TimelinesContentView.prototype._makeColumnScopeBar):
+
 2013-10-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13341666> WebKit should always build against an SDK.
@@ -250,7 +360,7 @@
         CSS pseudo-classes working with DOM order, the background colors of nodes in the LayerTreeDataGrid
         can be incorrect depending on the sort order and the number of nodes. To fix this, we now manually
         set "even" and "odd" CSS classes on those nodes when they're sorted such that we have a chance
-        to style them as intended. 
+        to style them as intended.
 
         * UserInterface/LayerTreeDataGrid.js:
         (WebInspector.LayerTreeDataGrid.prototype._updateChildren):
@@ -1801,7 +1911,7 @@
 
 2013-07-22  Diego Pino Garcia  <dpino@igalia.com>
 
-        Web Inspector: When right-clicking on a DataGrid column, show editing 
+        Web Inspector: When right-clicking on a DataGrid column, show editing
         menu option as "Edit <columnName>" instead of just "Edit"
         https://bugs.webkit.org/show_bug.cgi?id=118970
 
@@ -2077,7 +2187,7 @@
 
 2013-06-27  James Craig  <james@cookiecrook.com>
 
-        Web Inspector: AX: Add container ARIA roles (toolbar, main, labeled regions, etc.) 
+        Web Inspector: AX: Add container ARIA roles (toolbar, main, labeled regions, etc.)
         so the layout is more discoverable to screen reader users
         https://bugs.webkit.org/show_bug.cgi?id=118104
 
@@ -2108,7 +2218,7 @@
 
         Main console log area (div.console-messages) is now an ARIA live region (role="log")
         so screen readers speak plain text updates.
-        
+
         Also added contextual labels (e.g. input/output) but speech output verification of
         those is currently blocked by http://webkit.org/b/118096
 

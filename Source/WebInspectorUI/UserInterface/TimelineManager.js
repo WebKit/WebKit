@@ -36,6 +36,7 @@ WebInspector.TimelineManager = function()
     this._typeRecords = {};
     this._loadEventTime = NaN;
     this._eventMarkers = [];
+    this._timelinesObject = new WebInspector.TimelinesObject;
 };
 
 WebInspector.TimelineManager.Event = {
@@ -73,6 +74,11 @@ WebInspector.TimelineManager.prototype = {
     get records()
     {
         return this._records;
+    },
+
+    get timelines()
+    {
+        return this._timelinesObject;
     },
 
     recordsWithType: function(type)
@@ -291,6 +297,11 @@ WebInspector.TimelineManager.prototype = {
     {
         if (isNaN(this._loadEventTime))
             this._loadEventTime = timestamp;
+    },
+
+    objectForCookie: function(cookie)
+    {
+        return this.timelines;
     },
 
     // Private
