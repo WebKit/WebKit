@@ -384,7 +384,6 @@
     <ClCompile Include="..\..\win\WebResource.cpp" />
     <ClCompile Include="..\..\win\WebScriptObject.cpp" />
     <ClCompile Include="..\..\win\WebScriptWorld.cpp" />
-    <ClCompile Include="..\..\win\WebScrollBar.cpp" />
     <ClCompile Include="..\..\win\WebSecurityOrigin.cpp" />
     <ClCompile Include="..\..\win\WebSerializedJSValue.cpp" />
     <ClCompile Include="..\..\win\WebTextRenderer.cpp" />
@@ -490,7 +489,6 @@
     <ClInclude Include="..\..\win\WebResource.h" />
     <ClInclude Include="..\..\win\WebScriptObject.h" />
     <ClInclude Include="..\..\win\WebScriptWorld.h" />
-    <ClInclude Include="..\..\win\WebScrollBar.h" />
     <ClInclude Include="..\..\win\WebSecurityOrigin.h" />
     <ClInclude Include="..\..\win\WebSerializedJSValue.h" />
     <ClInclude Include="..\..\win\WebTextRenderer.h" />

@@ -48,7 +48,6 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
-#include "WebScrollBar.h"
 #include "WebSerializedJSValue.h"
 #include "WebTextRenderer.h"
 #include "WebURLCredential.h"
@@ -160,8 +159,6 @@ HRESULT STDMETHODCALLTYPE WebKitClassFactory::CreateInstance(IUnknown* pUnkOuter
     // These #defines are needed to appease the INITIALIZE_IF_CLASS macro.
     // There is no ICFDictionaryPropertyBag, we use IPropertyBag instead.
 #define ICFDictionaryPropertyBag IPropertyBag
-    // There is no IWebScrollBar, we only have IWebScrollBarPrivate.
-#define IWebScrollBar IWebScrollBarPrivate
     // There is no class called WebURLRequest -- WebMutableURLRequest implements it for us.
 #define WebURLRequest WebMutableURLRequest
 
@@ -170,7 +167,6 @@ HRESULT STDMETHODCALLTYPE WebKitClassFactory::CreateInstance(IUnknown* pUnkOuter
         return CLASS_E_CLASSNOTAVAILABLE;
 
 #undef ICFDictionaryPropertyBag
-#undef IWebScrollBar
 #undef WebURLRequest
 #undef INITIALIZE_IF_CLASS
 

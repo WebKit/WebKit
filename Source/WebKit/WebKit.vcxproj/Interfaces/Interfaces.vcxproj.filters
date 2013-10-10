@@ -193,12 +193,6 @@
     <Midl Include="..\..\win\Interfaces\IWebScriptWorld.idl">
       <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="..\..\win\Interfaces\IWebScrollBarDelegatePrivate.idl">
-      <Filter>IDL</Filter>
-    </Midl>
-    <Midl Include="..\..\win\Interfaces\IWebScrollBarPrivate.idl">
-      <Filter>IDL</Filter>
-    </Midl>
     <Midl Include="..\..\win\Interfaces\IWebSecurityOrigin.idl">
       <Filter>IDL</Filter>
     </Midl>

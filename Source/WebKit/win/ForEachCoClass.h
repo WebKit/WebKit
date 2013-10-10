@@ -52,7 +52,6 @@
     macro(WebMutableURLRequest) \
     macro(WebNotificationCenter) \
     macro(WebPreferences) \
-    macro(WebScrollBar) \
     macro(WebTextRenderer) \
     macro(WebURLCredential) \
     macro(WebURLProtectionSpace) \

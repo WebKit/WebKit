@@ -220,9 +220,6 @@
     <ClCompile Include="..\..\win\WebScriptWorld.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\win\WebScrollBar.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\win\WebSecurityOrigin.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -500,9 +497,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebScriptWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\win\WebScrollBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebSecurityOrigin.h">
