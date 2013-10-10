@@ -60,9 +60,10 @@ static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourc
         sourceVector.append(source);
 }
 
-static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended)
 {
-    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(audioSources, videoSources);
+    MediaStreamDescriptor::EndedAtCreationFlag flag = ended ? MediaStreamDescriptor::IsEnded : MediaStreamDescriptor::IsNotEnded;
+    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(audioSources, videoSources, flag);
     return MediaStream::create(context, descriptor.release());
 }
 
@@ -71,7 +72,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context)
     MediaStreamSourceVector audioSources;
     MediaStreamSourceVector videoSources;
 
-    return createFromSourceVectors(context, audioSources, videoSources);
+    return createFromSourceVectors(context, audioSources, videoSources, false);
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStream> stream)
@@ -87,7 +88,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, Pas
     for (size_t i = 0; i < stream->m_videoTracks.size(); ++i)
         processTrack(stream->m_videoTracks[i].get(), videoSources);
 
-    return createFromSourceVectors(context, audioSources, videoSources);
+    return createFromSourceVectors(context, audioSources, videoSources, stream->ended());
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, const MediaStreamTrackVector& tracks)
@@ -95,10 +96,13 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, con
     MediaStreamSourceVector audioSources;
     MediaStreamSourceVector videoSources;
 
-    for (size_t i = 0; i < tracks.size(); ++i)
+    bool allEnded = true;
+    for (size_t i = 0; i < tracks.size(); ++i) {
+        allEnded &= tracks[i]->ended();
         processTrack(tracks[i].get(), tracks[i]->kind() == "audio" ? audioSources : videoSources);
+    }
 
-    return createFromSourceVectors(context, audioSources, videoSources);
+    return createFromSourceVectors(context, audioSources, videoSources, allEnded);
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)

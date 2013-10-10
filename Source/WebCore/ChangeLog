@@ -1,3 +1,30 @@
+2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Create MediaStream object with ended attribute set if all tracks that are being used on its creation are ended
+        https://bugs.webkit.org/show_bug.cgi?id=122358
+
+        Reviewed by Jer Noble.
+
+        Spec tells that if all tracks that belongs to a new MediaStream object being created are ended,
+        then the ended attribute of this MediaStream must be set to true.
+        http://www.w3.org/TR/mediacapture-streams/#widl-MediaStream-ended
+
+        Since there is no port supporting MediaStream yet, we are skipping this test for now.
+
+        Test: fast/mediastream/MediaStream-construct-with-ended-tracks.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::createFromSourceVectors):
+        (WebCore::MediaStream::create):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::create):
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockMediaStreamCenter::createMediaStream):
+
 2013-10-10  Andy Estes  <aestes@apple.com>
 
         Add SPI for telling WebKit to prefer pictograph glyphs over monochrome ones

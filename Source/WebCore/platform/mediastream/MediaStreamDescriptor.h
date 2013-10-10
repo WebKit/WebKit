@@ -52,7 +52,9 @@ public:
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
-    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    enum EndedAtCreationFlag { IsNotEnded, IsEnded };
+
+    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, EndedAtCreationFlag);
 
     virtual ~MediaStreamDescriptor();
 
@@ -77,7 +79,7 @@ public:
     void setEnded();
 
 private:
-    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended);
 
     MediaStreamDescriptorClient* m_client;
     String m_id;

@@ -43,9 +43,9 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, EndedAtCreationFlag flag)
 {
-    return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources));
+    return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources, flag == IsEnded));
 }
 
 MediaStreamDescriptor::~MediaStreamDescriptor()
@@ -108,10 +108,10 @@ void MediaStreamDescriptor::removeRemoteSource(MediaStreamSource* source)
         removeSource(source);
 }
 
-MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended)
     : m_client(0)
     , m_id(id)
-    , m_ended(false)
+    , m_ended(ended)
 {
     ASSERT(m_id.length());
     for (size_t i = 0; i < audioSources.size(); i++) {
