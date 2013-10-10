@@ -169,19 +169,19 @@ static inline bool isInlineWithContinuation(RenderObject* object)
     return toRenderInline(renderer)->continuation();
 }
 
-static inline RenderObject* firstChildInContinuation(RenderObject* renderer)
+static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
 {
-    RenderObject* r = toRenderInline(renderer)->continuation();
+    auto continuation = renderer.continuation();
 
-    while (r) {
-        if (r->isRenderBlock())
-            return r;
-        if (RenderObject* child = r->firstChildSlow())
+    while (continuation) {
+        if (continuation->isRenderBlock())
+            return continuation;
+        if (RenderObject* child = continuation->firstChild())
             return child;
-        r = toRenderInline(r)->continuation(); 
+        continuation = toRenderInline(continuation)->continuation();
     }
 
-    return 0;
+    return nullptr;
 }
 
 static inline RenderObject* firstChildConsideringContinuation(RenderObject* renderer)
@@ -189,7 +189,7 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject* rend
     RenderObject* firstChild = renderer->firstChildSlow();
 
     if (!firstChild && isInlineWithContinuation(renderer))
-        firstChild = firstChildInContinuation(renderer);
+        firstChild = firstChildInContinuation(toRenderInline(*renderer));
 
     return firstChild;
 }
@@ -388,9 +388,9 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
     // after the parent of the end, since everything in between will be linked up via the continuation.
     else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer)) {
-        RenderObject* lastParent = endOfContinuations(m_renderer->lastChildSlow())->parent();
+        RenderElement* lastParent = endOfContinuations(toRenderBlock(m_renderer)->lastChild())->parent();
         while (lastChildHasContinuation(lastParent))
-            lastParent = endOfContinuations(lastParent->lastChildSlow())->parent();
+            lastParent = endOfContinuations(lastParent->lastChild())->parent();
         nextSibling = lastParent->nextSibling();
     }
 
@@ -405,7 +405,7 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 
     // Case 5: node has no next sibling, and its parent is an inline with a continuation.
     else if (isInlineWithContinuation(m_renderer->parent())) {
-        RenderObject* continuation = toRenderInline(m_renderer->parent())->continuation();
+        auto continuation = toRenderInline(m_renderer->parent())->continuation();
         
         // Case 5a: continuation is a block - in this case the block itself is the next sibling.
         if (continuation->isRenderBlock())
@@ -436,11 +436,11 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
     if (!m_renderer)
         return 0;
 
-    RenderObject* parent = m_renderer->parent();
+    RenderElement* parent = m_renderer->parent();
 
     // Case 1: node is a block and is an inline's continuation. Parent
     // is the start of the continuation chain.
-    RenderObject* startOfConts = 0;
+    RenderInline* startOfConts = nullptr;
     RenderObject* firstChild = 0;
     if (m_renderer->isRenderBlock() && (startOfConts = startOfContinuations(m_renderer)))
         parent = startOfConts;
@@ -451,7 +451,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
         parent = startOfConts;
     
     // Case 3: The first sibling is the beginning of a continuation chain. Find the origin of that continuation.
-    else if (parent && (firstChild = parent->firstChildSlow()) && firstChild->node()) {
+    else if (parent && (firstChild = parent->firstChild()) && firstChild->node()) {
         // Get the node's renderer and follow that continuation chain until the first child is found
         RenderObject* nodeRenderFirstChild = firstChild->node()->renderer();
         while (nodeRenderFirstChild != firstChild) {
@@ -461,7 +461,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
                     break;
                 }
             }
-            RenderObject* parentFirstChild = parent->firstChildSlow();
+            RenderObject* parentFirstChild = parent->firstChild();
             if (firstChild == parentFirstChild)
                 break;
             firstChild = parentFirstChild;

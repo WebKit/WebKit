@@ -1,3 +1,16 @@
+2013-10-09  Andreas Kling  <akling@apple.com>
+
+        Kill some RenderObject::firstChildSlow/lastChildSlow usage.
+        <https://webkit.org/b/122582>
+
+        Reviewed by Antti Koivisto.
+
+        Use tighter typing in some random places to flush out unnecessary use
+        of virtual first/last child getters on RenderObject.
+
+        There are more of these opportunities, but I left them untouched to
+        avoid snowballing this patch.
+
 2013-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some bad paths in the Xcode project
