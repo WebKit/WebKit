@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Scrollbar;
 class ScrollingStateNode;
 class ScrollingStateScrollingNode;
 class ScrollingStateTree;
@@ -122,6 +123,7 @@ private:
     void setCounterScrollingLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
     void setHeaderLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
     void setFooterLayerForNode(GraphicsLayer*, ScrollingStateScrollingNode*);
+    void setScrollbarPaintersFromScrollbarsForNode(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar, ScrollingStateScrollingNode*);
     void setNonFastScrollableRegionForNode(const Region&, ScrollingStateScrollingNode*);
     void setWheelEventHandlerCountForNode(unsigned, ScrollingStateScrollingNode*);
 

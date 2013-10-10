@@ -589,4 +589,15 @@ IntPoint Scrollbar::convertFromContainingView(const IntPoint& parentPoint) const
     return Widget::convertFromContainingView(parentPoint);
 }
 
+bool Scrollbar::supportsUpdateOnSecondaryThread() const
+{
+    // It's unfortunate that this needs to be done with an ifdef. Ideally there would be able to feature-detect
+    // the necessary support within AppKit.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && ENABLE(THREADED_SCROLLING)
+    return m_scrollableArea ? !m_scrollableArea->updatesScrollLayerPositionOnMainThread() : false;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebCore

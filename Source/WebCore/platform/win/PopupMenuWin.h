@@ -105,6 +105,7 @@ private:
     virtual int visibleWidth() const OVERRIDE;
     virtual IntSize contentsSize() const OVERRIDE;
     virtual IntRect scrollableAreaBoundingBox() const OVERRIDE;
+    virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE { return true; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);

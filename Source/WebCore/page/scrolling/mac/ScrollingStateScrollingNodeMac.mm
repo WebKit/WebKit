@@ -27,6 +27,8 @@
 #include "ScrollingStateScrollingNode.h"
 
 #include "GraphicsLayer.h"
+#include "Scrollbar.h"
+#include "ScrollbarThemeMac.h"
 #include "ScrollingStateTree.h"
 
 #if ENABLE(THREADED_SCROLLING)
@@ -86,6 +88,27 @@ void ScrollingStateScrollingNode::setFooterLayer(GraphicsLayer* graphicsLayer)
     m_footerLayer = graphicsLayer;
 
     setPropertyChanged(FooterLayer);
+    if (m_scrollingStateTree)
+        m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
+{
+    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
+    if (scrollbarTheme->isMockTheme())
+        return;
+    ScrollbarThemeMac* macTheme = static_cast<ScrollbarThemeMac*>(scrollbarTheme);
+
+    ScrollbarPainter verticalPainter = verticalScrollbar ? macTheme->painterForScrollbar(verticalScrollbar) : 0;
+    ScrollbarPainter horizontalPainter = horizontalScrollbar ? macTheme->painterForScrollbar(horizontalScrollbar) : 0;
+
+    if (m_verticalScrollbarPainter == verticalPainter && m_horizontalScrollbarPainter == horizontalPainter)
+        return;
+
+    m_verticalScrollbarPainter = verticalPainter;
+    m_horizontalScrollbarPainter = horizontalPainter;
+
+    setPropertyChanged(PainterForScrollbar);
     if (m_scrollingStateTree)
         m_scrollingStateTree->setHasChangedProperties(true);
 }

@@ -39,6 +39,8 @@
 - (void)setEnabled:(BOOL)enabled;
 - (void)setBoundsSize:(NSSize)boundsSize;
 - (void)setDoubleValue:(double)doubleValue;
+- (void)setPresentationValue:(double)presentationValue;
+- (void)setUsePresentationValue:(BOOL)usePresentationValue;
 - (void)setKnobProportion:(CGFloat)proportion;
 - (void)setKnobStyle:(NSScrollerKnobStyle)knobStyle;
 - (void)setExpanded:(BOOL)expanded;

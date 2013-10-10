@@ -2693,7 +2693,8 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
             m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
-            m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
+            m_layerForHorizontalScrollbar->setName("horizontal scrollbar container");
+
 #endif
 #if PLATFORM(MAC) && USE(CA)
             m_layerForHorizontalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
@@ -2716,7 +2717,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
             m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
-            m_layerForVerticalScrollbar->setName("vertical scrollbar");
+            m_layerForVerticalScrollbar->setName("vertical scrollbar container");
 #endif
 #if PLATFORM(MAC) && USE(CA)
             m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());

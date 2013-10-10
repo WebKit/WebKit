@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "ScrollElasticityController.h"
+#include "ScrollbarThemeMac.h"
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/RetainPtr.h>
 
@@ -84,6 +85,8 @@ private:
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
+    ScrollbarPainter m_verticalScrollbarPainter;
+    ScrollbarPainter m_horizontalScrollbarPainter;
     IntPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels;
 };

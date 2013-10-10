@@ -92,6 +92,9 @@ public:
     virtual void didAddHorizontalScrollbar(Scrollbar*) { }
     virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
 
+    virtual void verticalScrollbarLayerDidChange() { }
+    virtual void horizontalScrollbarLayerDidChange() { }
+
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
 
     virtual void notifyContentAreaScrolled(const FloatSize& delta) { UNUSED_PARAM(delta); }

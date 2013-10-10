@@ -23,24 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollingTreeScrollingNodeMac.h"
+#import "config.h"
+#import "ScrollingTreeScrollingNodeMac.h"
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "FrameView.h"
-#include "PlatformWheelEvent.h"
-#include "ScrollingCoordinator.h"
-#include "ScrollingTree.h"
-#include "ScrollingStateTree.h"
-#include "Settings.h"
-#include "TileController.h"
-#include "WebTileLayer.h"
+#import "FrameView.h"
+#import "NSScrollerImpDetails.h"
+#import "PlatformWheelEvent.h"
+#import "ScrollingCoordinator.h"
+#import "ScrollingTree.h"
+#import "ScrollingStateTree.h"
+#import "Settings.h"
+#import "TileController.h"
+#import "WebTileLayer.h"
 
-#include <wtf/CurrentTime.h>
-#include <wtf/Deque.h>
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/CString.h>
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/CurrentTime.h>
+#import <wtf/Deque.h>
+#import <wtf/text/StringBuilder.h>
+#import <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -56,6 +58,8 @@ PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(Scroll
 ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeScrollingNode(scrollingTree, nodeID)
     , m_scrollElasticityController(this)
+    , m_verticalScrollbarPainter(0)
+    , m_horizontalScrollbarPainter(0)
     , m_lastScrollHadUnfilledPixels(false)
 {
 }
@@ -82,6 +86,11 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(ScrollingStateNode* sta
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::FooterLayer))
         m_footerLayer = scrollingStateNode->footerPlatformLayer();
+
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::PainterForScrollbar)) {
+        m_verticalScrollbarPainter = scrollingStateNode->verticalScrollbarPainter();
+        m_horizontalScrollbarPainter = scrollingStateNode->horizontalScrollbarPainter();
+    }
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)) {
         unsigned mainThreadScrollingReasons = this->shouldUpdateScrollLayerPositionOnMainThread();
@@ -323,10 +332,34 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     if (m_footerLayer)
         m_footerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, totalContentsSize().height() - footerHeight());
 
+    IntRect viewportRect = this->viewportRect();
+
+    if (m_verticalScrollbarPainter || m_horizontalScrollbarPainter) {
+        [CATransaction begin];
+        [CATransaction lock];
+
+        if (m_verticalScrollbarPainter) {
+            [m_verticalScrollbarPainter setUsePresentationValue:YES];
+            float presentationValue;
+            float overhangAmount;
+            ScrollableArea::computeScrollbarValueAndOverhang(position.y(), totalContentsSize().height(), viewportRect.height(), presentationValue, overhangAmount);
+            [m_verticalScrollbarPainter setPresentationValue:presentationValue];
+        }
+
+        if (m_horizontalScrollbarPainter) {
+            [m_horizontalScrollbarPainter setUsePresentationValue:YES];
+            float presentationValue;
+            float overhangAmount;
+            ScrollableArea::computeScrollbarValueAndOverhang(position.x(), totalContentsSize().width(), viewportRect.width(), presentationValue, overhangAmount);
+            [m_horizontalScrollbarPainter setPresentationValue:presentationValue];
+        }
+        [CATransaction unlock];
+        [CATransaction commit];
+    }
+
     if (!m_children)
         return;
 
-    IntRect viewportRect = this->viewportRect();
     viewportRect.setLocation(IntPoint(scrollOffsetForFixedChildren));
 
     size_t size = m_children->size();

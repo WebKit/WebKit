@@ -31,11 +31,14 @@
 #include "IntRect.h"
 #include "Region.h"
 #include "ScrollTypes.h"
+#include "ScrollbarThemeComposite.h"
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateNode.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+class Scrollbar;
 
 class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
@@ -64,7 +67,8 @@ public:
         HeaderHeight,
         FooterHeight,
         HeaderLayer,
-        FooterLayer
+        FooterLayer,
+        PainterForScrollbar
     };
 
     virtual bool isScrollingNode() OVERRIDE { return true; }
@@ -132,6 +136,12 @@ public:
     void setFooterLayer(GraphicsLayer*);
     PlatformLayer* footerPlatformLayer() const;
 
+#if PLATFORM(MAC)
+    ScrollbarPainter verticalScrollbarPainter() const { return m_verticalScrollbarPainter; }
+    ScrollbarPainter horizontalScrollbarPainter() const { return m_horizontalScrollbarPainter; }
+#endif
+    void setScrollbarPaintersFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
+
     bool requestedScrollPositionRepresentsProgrammaticScroll() const { return m_requestedScrollPositionRepresentsProgrammaticScroll; }
 
     virtual void dumpProperties(TextStream&, int indent) const OVERRIDE;
@@ -147,6 +157,8 @@ private:
     RetainPtr<PlatformLayer> m_counterScrollingPlatformLayer;
     RetainPtr<PlatformLayer> m_headerPlatformLayer;
     RetainPtr<PlatformLayer> m_footerPlatformLayer;
+    ScrollbarPainter m_verticalScrollbarPainter;
+    ScrollbarPainter m_horizontalScrollbarPainter;
 #endif
     
     IntRect m_viewportRect;

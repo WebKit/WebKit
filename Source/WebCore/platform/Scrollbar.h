@@ -160,6 +160,8 @@ public:
     virtual bool isAlphaLocked() const OVERRIDE { return m_isAlphaLocked; }
     virtual void setIsAlphaLocked(bool flag) OVERRIDE { m_isAlphaLocked = flag; }
 
+    virtual bool supportsUpdateOnSecondaryThread() const;
+
 protected:
     Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 

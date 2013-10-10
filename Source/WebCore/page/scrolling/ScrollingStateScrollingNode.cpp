@@ -44,6 +44,10 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
     , m_counterScrollingLayer(0)
     , m_headerLayer(0)
     , m_footerLayer(0)
+#if PLATFORM(MAC)
+    , m_verticalScrollbarPainter(0)
+    , m_horizontalScrollbarPainter(0)
+#endif
     , m_frameScaleFactor(1)
     , m_wheelEventHandlerCount(0)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
@@ -61,6 +65,10 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
 
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode)
     : ScrollingStateNode(stateNode)
+#if PLATFORM(MAC)
+    , m_verticalScrollbarPainter(stateNode.verticalScrollbarPainter())
+    , m_horizontalScrollbarPainter(stateNode.horizontalScrollbarPainter())
+#endif
     , m_viewportRect(stateNode.viewportRect())
     , m_totalContentsSize(stateNode.totalContentsSize())
     , m_frameScaleFactor(stateNode.frameScaleFactor())

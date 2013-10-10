@@ -87,6 +87,8 @@ public:
     virtual bool isAlphaLocked() const = 0;
     virtual void setIsAlphaLocked(bool) = 0;
 
+    virtual bool supportsUpdateOnSecondaryThread() const = 0;
+
 protected:
     virtual ~ScrollbarThemeClient() { }
 };

@@ -401,6 +401,7 @@ public:
 #endif
 
     virtual bool isActive() const OVERRIDE;
+    virtual bool updatesScrollLayerPositionOnMainThread() const OVERRIDE;
 
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;

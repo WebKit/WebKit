@@ -28,8 +28,6 @@
 
 #include "ScrollbarThemeComposite.h"
 
-typedef id ScrollbarPainter;
-
 namespace WebCore {
 
 class ScrollbarThemeMac : public ScrollbarThemeComposite {
@@ -60,6 +58,8 @@ public:
 
     void setNewPainterForScrollbar(ScrollbarThemeClient*, ScrollbarPainter);
     ScrollbarPainter painterForScrollbar(ScrollbarThemeClient*);
+
+    void setPaintCharacteristicsForScrollbar(ScrollbarThemeClient*);
 
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);

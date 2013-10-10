@@ -344,6 +344,18 @@ void ScrollableArea::invalidateScrollCorner(const IntRect& rect)
     invalidateScrollCornerRect(rect);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void ScrollableArea::verticalScrollbarLayerDidChange()
+{
+    scrollAnimator()->verticalScrollbarLayerDidChange();
+}
+
+void ScrollableArea::horizontalScrollbarLayerDidChange()
+{
+    scrollAnimator()->horizontalScrollbarLayerDidChange();
+}
+#endif
+
 bool ScrollableArea::hasLayerForHorizontalScrollbar() const
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -448,6 +460,29 @@ IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntRect& visib
 IntPoint ScrollableArea::constrainScrollPositionForOverhang(const IntPoint& scrollPosition)
 {
     return constrainScrollPositionForOverhang(visibleContentRect(), totalContentsSize(), scrollPosition, scrollOrigin(), headerHeight(), footerHeight());
+}
+
+void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount)
+{
+    doubleValue = 0;
+    overhangAmount = 0;
+    float maximum = totalSize - visibleSize;
+
+    if (currentPosition < 0) {
+        // Scrolled past the top.
+        doubleValue = 0;
+        overhangAmount = -currentPosition;
+    } else if (visibleSize + currentPosition > totalSize) {
+        // Scrolled past the bottom.
+        doubleValue = 1;
+        overhangAmount = currentPosition + visibleSize - totalSize;
+    } else {
+        // Within the bounds of the scrollable area.
+        if (maximum > 0)
+            doubleValue = currentPosition / maximum;
+        else
+            doubleValue = 0;
+    }
 }
 
 } // namespace WebCore

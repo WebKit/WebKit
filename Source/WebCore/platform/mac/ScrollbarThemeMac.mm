@@ -461,13 +461,23 @@ void ScrollbarThemeMac::updateEnabledState(ScrollbarThemeClient* scrollbar)
     [scrollbarMap()->get(scrollbar) setEnabled:scrollbar->enabled()];
 }
 
-static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
+void ScrollbarThemeMac::setPaintCharacteristicsForScrollbar(ScrollbarThemeClient* scrollbar)
 {
-    [scrollbarPainter setEnabled:enabled];
-    [scrollbarPainter setBoundsSize: NSSizeFromCGSize(frameRect.size)];
-    [scrollbarPainter setDoubleValue:value];
-    [scrollbarPainter setKnobProportion:proportion];
+    ScrollbarPainter painter = painterForScrollbar(scrollbar);
 
+    float value;
+    float overhang;
+    ScrollableArea::computeScrollbarValueAndOverhang(scrollbar->currentPos(), scrollbar->totalSize(), scrollbar->visibleSize(), value, overhang);
+    float proportion = (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize();
+
+    [painter setEnabled:scrollbar->enabled()];
+    [painter setBoundsSize:scrollbar->frameRect().size()];
+    [painter setDoubleValue:value];
+    [painter setKnobProportion:proportion];
+}
+
+static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enabled)
+{
     // Use rectForPart: here; it will take the expansion transition progress into account.
     NSRect trackRect = [scrollbarPainter rectForPart:NSScrollerKnobSlot];
     [scrollbarPainter drawKnobSlotInRect:trackRect highlight:NO];
@@ -480,37 +490,18 @@ static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enable
 
 bool ScrollbarThemeMac::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
-    float value = 0;
-    float overhang = 0;
+    setPaintCharacteristicsForScrollbar(scrollbar);
 
-    if (scrollbar->currentPos() < 0) {
-        // Scrolled past the top.
-        value = 0;
-        overhang = -scrollbar->currentPos();
-    } else if (scrollbar->visibleSize() + scrollbar->currentPos() > scrollbar->totalSize()) {
-        // Scrolled past the bottom.
-        value = 1;
-        overhang = scrollbar->currentPos() + scrollbar->visibleSize() - scrollbar->totalSize();
-    } else {
-        // Within the bounds of the scrollable area.
-        int maximum = scrollbar->maximum();
-        if (maximum > 0)
-            value = scrollbar->currentPos() / maximum;
-        else
-            value = 0;
+    if (!scrollbar->supportsUpdateOnSecondaryThread()) {
+        TemporaryChange<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context->isCALayerContext());
+    
+        GraphicsContextStateSaver stateSaver(*context);
+        context->clip(damageRect);
+        context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
+        LocalCurrentGraphicsContext localContext(context);
+        scrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
     }
 
-    TemporaryChange<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context->isCALayerContext());
-    
-    GraphicsContextStateSaver stateSaver(*context);
-    context->clip(damageRect);
-    context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
-    LocalCurrentGraphicsContext localContext(context);
-    scrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
-                            scrollbar->enabled(),
-                            value,
-                            (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
-                            scrollbar->frameRect());
     return true;
 }
 

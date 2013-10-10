@@ -28,6 +28,12 @@
 
 #include "ScrollbarTheme.h"
 
+#if PLATFORM(MAC)
+typedef id ScrollbarPainter;
+#else
+typedef void* ScrollbarPainter;
+#endif
+
 namespace WebCore {
 
 class ScrollbarThemeComposite : public ScrollbarTheme {

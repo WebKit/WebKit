@@ -3014,6 +3014,16 @@ bool FrameView::isActive() const
     return page && page->focusController().isActive();
 }
 
+bool FrameView::updatesScrollLayerPositionOnMainThread() const
+{
+    if (Page* page = frame().page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            return scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+    }
+
+    return true;
+}
+
 void FrameView::scrollTo(const IntSize& newOffset)
 {
     LayoutSize offset = scrollOffset();

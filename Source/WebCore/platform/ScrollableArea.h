@@ -110,6 +110,8 @@ public:
     virtual IntRect scrollCornerRect() const = 0;
     virtual void invalidateScrollCorner(const IntRect&);
 
+    virtual bool updatesScrollLayerPositionOnMainThread() const = 0;
+
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
     // like CSS transforms.
@@ -172,6 +174,10 @@ public:
     static IntPoint constrainScrollPositionForOverhang(const IntRect& visibleContentRect, const IntSize& totalContentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, int headerHeight, int footetHeight);
     IntPoint constrainScrollPositionForOverhang(const IntPoint& scrollPosition);
 
+    // Computes the double value for the scrollbar's current position and the current overhang amount.
+    // This function is static so that it can be called from the main thread or the scrolling thread.
+    static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount);
+
     // Let subclasses provide a way of asking for and servicing scroll
     // animations.
     virtual bool scheduleAnimation() { return false; }
@@ -180,6 +186,12 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual TiledBacking* tiledBacking() { return 0; }
     virtual bool usesCompositedScrolling() const { return false; }
+
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
+    virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
+
+    void verticalScrollbarLayerDidChange();
+    void horizontalScrollbarLayerDidChange();
 #endif
 
 protected:
@@ -195,8 +207,6 @@ protected:
 #if USE(ACCELERATED_COMPOSITING)
     friend class ScrollingCoordinator;
     virtual GraphicsLayer* layerForScrolling() const { return 0; }
-    virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
-    virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForScrollCorner() const { return 0; }
 #if ENABLE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const { return 0; }

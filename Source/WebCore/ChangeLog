@@ -1,3 +1,135 @@
+2013-10-10  Beth Dakin  <bdakin@apple.com>
+
+        Scrollbars are updated on the main thread rather than the scrolling thread 
+        (causing scroll bars not to appear/update quickly in some cases)
+        https://bugs.webkit.org/show_bug.cgi?id=122585
+        -and corresponding-
+        <rdar://problem/10710775>
+
+        Reviewed by Simon Fraser.
+
+        This patch does a few things in order to allow scrollbars to be updated on the 
+        scrolling thread:
+
+        1. This patch adds the ability to know if the lower-level APIs necessary to get 
+        this to work right are available, AND if the content is actually capable of taking 
+        advantage of this feature. This is currently implemented as 
+        Scrollbar::supportsUpdateOnSecondaryThread() which makes use of a new 
+        ScrollableArea function called updatesScrollLayerPositionOnMainThread()
+        
+        2. To update on the scrolling thread, the scrolling tree needs to know about the 
+        ScrollbarPainters.
+        
+        3. Once it knows about them, it should update the presentation value whenever the 
+        layer position changes.
+        
+        4. Presentation value is basically the same thing as double value. There is a bit 
+        of code we maintain currently to compute that. This patch moves that code to a 
+        static function on ScrollableArea that can be called from both the main thread and 
+        the scrolling thread.
+        
+        5. ScrollbarPainter API needs to know about the layers we have created for the 
+        vertical and horizontal scrollbars, then they will use those layers and the 
+        presentation value that we set on the scrolling thread to move the layers around.
+
+        This is part of #1 above. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updatesScrollLayerPositionOnMainThread):
+        * page/FrameView.h:
+
+        This is part of #2. ScrollingStateScrollingNodes now have vertical and horizontal 
+        ScrollbarPainters for Mac only.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::verticalScrollbarPainter):
+        (WebCore::ScrollingStateScrollingNode::horizontalScrollbarPainter):
+
+        Also part of #2. Make sure to set the ScrollbarPainters for scrolling nodes when 
+        appropriate.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated):
+
+        Implement this function that was just stubbed out before. This is part of #5 in 
+        that is will allow the ScrollbarPainter API to know about any layer changes. 
+        (WebCore::ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange):
+
+        Back to #2, making sure we properly set the ScrollbarPainters to send over to the 
+        scrolling thread.
+        (WebCore::ScrollingCoordinatorMac::setScrollbarPaintersForNode):
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPainters):
+
+        This code achieves #3. It uses new ScrollbarPainter API to adjust the position of 
+        the scrollbars from the scrolling thread.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac):
+        (WebCore::ScrollingTreeScrollingNodeMac::updateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        This is for #5. ScrollbarPainter needs to know about our scrollbar layers.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimator::horizontalScrollbarLayerDidChange):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollableArea::horizontalScrollbarLayerDidChange):
+
+        This is for #4. This code computes the scrollbar’s value and current overhang 
+        amount.
+        (WebCore::ScrollableArea::computeScrollbarValueAndOverhang):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrolling):
+
+        This is for #1. We need to know if we have the ability to update scrollbars on a 
+        different thread. We can do that only on certain versions of the OS, only when 
+        threaded scrolling is enabled, and only when the current page is actually using 
+        the scrolling thread to scroll.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::supportsUpdateOnSecondaryThread):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarThemeClient.h:
+
+        New ScrollbarPainter APIs.
+        * platform/mac/NSScrollerImpDetails.h:
+
+        This is for #5, letting the ScrollbarPainter API  know about the layers.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate layer]):
+        (-[WebScrollbarPainterDelegate convertRectToLayer:]):
+        (-[WebScrollbarPainterDelegate shouldUseLayerPerPartForScrollerImp:]):
+
+        Before we kick off a scroll animation, set the current painting characteristics so 
+        they are up-to-date in case we are scrolling on the scrolling thread.
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollAnimatorMac::horizontalScrollbarLayerDidChange):
+
+        Only paint the scrollbars through ScrollbarThemeMac if they are NOT being updated 
+        by the scrolling thread.
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::setCurrentPaintCharacteristics):
+        (WebCore::scrollbarPainterPaint):
+        (WebCore::ScrollbarThemeMac::paint):
+
+        Back to #1.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updatesScrollLayerPositionOnMainThread):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        * rendering/RenderListBox.h:
+
 2013-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after r157228

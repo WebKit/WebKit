@@ -119,6 +119,9 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    virtual void verticalScrollbarLayerDidChange();
+    virtual void horizontalScrollbarLayerDidChange();
+
     virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*);
 
     virtual void notifyContentAreaScrolled(const FloatSize& delta) OVERRIDE;
