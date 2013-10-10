@@ -1,3 +1,10 @@
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r157204.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatch):
+
 2013-10-07  Darin Adler  <darin@apple.com>
 
         Use unique_ptr instead of deleteAllValues in XPath

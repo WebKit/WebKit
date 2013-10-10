@@ -105,7 +105,7 @@ bool EventDispatcher::dispatch()
         m_eventPath.setRelatedTarget(*relatedTarget);
 #if ENABLE(TOUCH_EVENTS)
     if (m_event->isTouchEvent())
-        EventRetargeter::adjustForTouchEvent(m_node.get(), *m_event, m_eventPath); 
+        EventRetargeter::adjustForTouchEvent(m_node.get(), *toTouchEvent(m_event), m_eventPath); 
 #endif
 
 #ifndef NDEBUG
