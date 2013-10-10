@@ -79,7 +79,10 @@ void ScopedEventQueue::dispatchAllEvents()
 void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
 {
     ASSERT(event->target());
-    EventDispatcher::dispatchEvent(event->target()->toNode(), event);
+    // Passing a naked Event pointer instead of the PassRefPtr<Event> prevents the PassRefPtr copy
+    // that nullifies the original PassRefPtr. This prevents crashes on GCC-compiled code since
+    // GCC creates the copy first, which leaves the event->target() call to be made on a null pointer.
+    EventDispatcher::dispatchEvent(event->target()->toNode(), event.get());
 }
 
 ScopedEventQueue* ScopedEventQueue::instance()

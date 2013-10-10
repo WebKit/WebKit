@@ -1,3 +1,18 @@
+2013-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r157210): Crashes in WebCore::ScopedEventQueue::dispatchEvent for platforms using GCC
+        https://bugs.webkit.org/show_bug.cgi?id=122592
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent): When calling EventDispatcher::dispatchEvent(), the GCC-compiled code
+        first creates a copy of the PassRefPtr<Event> object that's being passed into the method call. The copy will be used
+        in that method while the original is left with a null pointer. Only after that is the original queried for its pointer
+        while trying to get the Event's target, resulting in a crash due to calling the Event::target() on a null pointer.
+        To avoid it, pass a naked Event pointer to the method call. This will create a new PassRefPtr object without nullifying
+        the original one.
+
 2013-10-10  Andreas Kling  <akling@apple.com>
 
         Use more Element iterators in SVG code.
