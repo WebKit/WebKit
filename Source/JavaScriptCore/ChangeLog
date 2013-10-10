@@ -17,6 +17,23 @@
 
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Minor clean-ups in the JSC Xcode project.
+
+        Rubber stamped by Mark Rowe.
+        
+        - When we copy the jsc binary into the framework,
+          $(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/Resources/jsc is the *output* file not
+          the input file. The input file is $(BUILT_PRODUCTS_DIR)/jsc.
+        
+        - Correct capitalization of "JavaScriptcore.framework" in a comment in a shell script in
+          the project.
+        
+        Roll back in after confirming that Mark's fixes make this work right.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2013-10-10  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, roll out r157193. It broke some builds.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
