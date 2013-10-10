@@ -1,3 +1,26 @@
+2013-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Layout assertion failure in WebCore::RenderView::paint
+        https://bugs.webkit.org/show_bug.cgi?id=121925
+
+        Reviewed by Tim Horton.
+
+        This fixes the assertion seen when running WK2 API tests.
+        
+        If RenderLayerCompositor::flushPendingLayerChanges() was called before
+        the root layer was attached, it would set m_shouldFlushOnReattach
+        to do the flush later, after attaching (bypassing the runloop observer
+        that updated layout if necessary).
+        
+        This could cause us to get to a CA commit without having updated
+        layout, hence the assertion.
+        
+        Fix by having attachRootLayer() schedule a layer flush, rather than doing
+        one right away.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+
 2013-10-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Move float logical location/dimension methods to RenderBlockFlow

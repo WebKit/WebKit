@@ -2899,7 +2899,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
     rootLayerAttachmentChanged();
     
     if (m_shouldFlushOnReattach) {
-        flushPendingLayerChanges(true);
+        scheduleLayerFlushNow();
         m_shouldFlushOnReattach = false;
     }
 }
