@@ -654,7 +654,7 @@ DOMWindow* toDOMWindow(JSValue value)
     if (object->inherits(JSDOMWindow::info()))
         return &jsCast<JSDOMWindow*>(object)->impl();
     if (object->inherits(JSDOMWindowShell::info()))
-        return jsCast<JSDOMWindowShell*>(object)->impl();
+        return &jsCast<JSDOMWindowShell*>(object)->impl();
     return 0;
 }
 

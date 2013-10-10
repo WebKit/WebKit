@@ -45,7 +45,7 @@ const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 
 
 JSDOMWindowShell::JSDOMWindowShell(VM& vm, Structure* structure, DOMWrapperWorld& world)
     : Base(vm, structure)
-    , m_world(&world)
+    , m_world(world)
 {
 }
 
@@ -94,9 +94,9 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 // JSDOMWindow methods
 // ----
 
-DOMWindow* JSDOMWindowShell::impl() const
+DOMWindow& JSDOMWindowShell::impl() const
 {
-    return &window()->impl();
+    return window()->impl();
 }
 
 // ----

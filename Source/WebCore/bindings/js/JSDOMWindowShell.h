@@ -48,7 +48,7 @@ namespace WebCore {
 
         DECLARE_INFO;
 
-        DOMWindow* impl() const;
+        DOMWindow& impl() const;
 
         static JSDOMWindowShell* create(JSC::VM& vm, PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld& world)
         {
@@ -62,13 +62,13 @@ namespace WebCore {
             return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), info());
         }
 
-        DOMWrapperWorld& world() { return *m_world; }
+        DOMWrapperWorld& world() { return m_world.get(); }
 
     protected:
         JSDOMWindowShell(JSC::VM&, JSC::Structure*, DOMWrapperWorld&);
         void finishCreation(JSC::VM&, PassRefPtr<DOMWindow>);
 
-        RefPtr<DOMWrapperWorld> m_world;
+        Ref<DOMWrapperWorld> m_world;
     };
 
     JSC::JSValue toJS(JSC::ExecState*, Frame*);

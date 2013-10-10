@@ -1,3 +1,14 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        Clean up JSDOMWindowShell a little.
+        <https://webkit.org/b/122599>
+
+        Reviewed by Anders Carlsson.
+
+        - Have impl() return a DOMWindow& instead of a pointer.
+        - Store the DOMWrapperWorld in a Ref instead of a RefPtr.
+        - Reuse TRY_TO_UNWRAP_WITH_INTERFACE in EventTarget bindings.
+
 2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Make XPathGrammar.y bison3-friendly again after r157205

@@ -124,7 +124,7 @@ static inline id createDOMWrapper(JSC::JSObject* object)
     #undef WRAP
 
     if (object->inherits(WebCore::JSDOMWindowShell::info()))
-        return kit(static_cast<WebCore::JSDOMWindowShell*>(object)->impl());
+        return kit(&static_cast<WebCore::JSDOMWindowShell*>(object)->impl());
 
     if (object->inherits(WebCore::JSDOMImplementation::info()))
         return kit(implementationFront(static_cast<WebCore::JSDOMImplementation*>(object)));
