@@ -114,9 +114,7 @@ function gotStream2(s) {
     tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
     shouldBeTrue('stream2.ended');
 
-    stream1.stop();
-
-    debug("<br>*** it should be impossible to add a track after the stream has been stopped");
+    debug("<br>*** it should be impossible to add a track after the stream has ended");
     shouldThrow('stream1.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
     shouldThrow('stream1.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
 

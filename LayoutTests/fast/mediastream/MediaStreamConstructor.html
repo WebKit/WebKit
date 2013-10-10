@@ -84,18 +84,6 @@ function testConstructor(s) {
     verifyStream("new webkitMediaStream([stream.getVideoTracks()[0]])", 0, 1);
     verifyStream("new webkitMediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
     verifyStream("new webkitMediaStream([stream.getVideoTracks()[0], stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
-
-    stream.onended = function () {
-        debug("<br>Creating a new stream from a stream that has stopped");
-        verifyStream("new webkitMediaStream([stream.getAudioTracks()[0]])", 0, 0);
-        verifyStream("new webkitMediaStream([stream.getVideoTracks()[0]])", 0, 0);
-        verifyStream("new webkitMediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 0, 0);
-        verifyStream("new webkitMediaStream(stream)", 0, 0);
-
-        finishJSTest();
-    };
-
-    s.stop();
 }
 
 function verifyStream(script, numAudioTracks, numVideoTracks) {

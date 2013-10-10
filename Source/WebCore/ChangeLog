@@ -1,3 +1,22 @@
+2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [MediaStream API] update MediaStream object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121939
+
+        Reviewed by Jer Noble.
+
+        Test: fast/mediastream/MediaStream-clone.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::ended):
+        (WebCore::MediaStream::clone):
+        (WebCore::MediaStream::cloneMediaStreamTrackVector):
+        (WebCore::MediaStream::contextDestroyed):
+        (WebCore::MediaStream::scheduledEventTimerFired):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+
 2013-10-10  Beth Dakin  <bdakin@apple.com>
 
         Calling setUsePresentationValue on MountainLion results in unrecognized selector 

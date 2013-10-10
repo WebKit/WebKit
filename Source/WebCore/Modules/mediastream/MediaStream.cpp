@@ -112,7 +112,6 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, Pas
 
 MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
     : ContextDestructionObserver(context)
-    , m_stopped(false)
     , m_descriptor(streamDescriptor)
     , m_scheduledEventTimer(this, &MediaStream::scheduledEventTimerFired)
 {
@@ -137,7 +136,7 @@ MediaStream::~MediaStream()
 
 bool MediaStream::ended() const
 {
-    return m_stopped || m_descriptor->ended();
+    return m_descriptor->ended();
 }
 
 void MediaStream::setEnded()
@@ -147,12 +146,19 @@ void MediaStream::setEnded()
     m_descriptor->setEnded();
 }
 
-void MediaStream::stop()
+PassRefPtr<MediaStream> MediaStream::clone()
 {
-    if (ended())
-        return;
+    MediaStreamTrackVector trackSet;
 
-    setEnded();
+    cloneMediaStreamTrackVector(trackSet, getAudioTracks());
+    cloneMediaStreamTrackVector(trackSet, getVideoTracks());
+    return MediaStream::create(scriptExecutionContext(), trackSet);
+}
+
+void MediaStream::cloneMediaStreamTrackVector(MediaStreamTrackVector& destination, const MediaStreamTrackVector& origin)
+{
+    for (unsigned i = 0; i < origin.size(); i++)
+        destination.append(origin[i]->clone());
 }
 
 void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
@@ -257,7 +263,6 @@ void MediaStream::streamDidEnd()
 void MediaStream::contextDestroyed()
 {
     ContextDestructionObserver::contextDestroyed();
-    m_stopped = true;
 }
 
 void MediaStream::addRemoteSource(MediaStreamSource* source)
@@ -326,9 +331,6 @@ void MediaStream::scheduleDispatchEvent(PassRefPtr<Event> event)
 
 void MediaStream::scheduledEventTimerFired(Timer<MediaStream>*)
 {
-    if (m_stopped)
-        return;
-
     Vector<RefPtr<Event> > events;
     events.swap(m_scheduledEvents);
 

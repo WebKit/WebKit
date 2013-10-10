@@ -41,9 +41,9 @@
     [RaisesException] void addTrack(MediaStreamTrack track);
     [RaisesException] void removeTrack(MediaStreamTrack track);
     MediaStreamTrack getTrackById(DOMString trackId);
+    MediaStream clone();
 
     readonly attribute boolean ended;
-    void stop();
 
     attribute EventListener onended;
     attribute EventListener onaddtrack;
