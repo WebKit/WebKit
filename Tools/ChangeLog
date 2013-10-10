@@ -1,3 +1,43 @@
+2013-10-10  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Provide search functionality to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=117631
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adds a search bar to MiniBrowser with the minimum functionality
+        and a new button to the toolbar for showing the new search
+        bar. Typical keyboard shortcuts are also added.
+
+        * MiniBrowser/gtk/BrowserSearchBar.c: Added.
+        (doSearch):
+        (searchNext):
+        (searchPrevious):
+        (searchCloseButtonClickedCallback):
+        (searchEntryMenuIconPressedCallback):
+        (searchEntryClearIconReleasedCallback):
+        (searchEntryChangedCallback):
+        (searchEntryActivatedCallback):
+        (searchPrevButtonClickedCallback):
+        (searchNextButtonClickedCallback):
+        (searchMenuCheckButtonToggledCallback):
+        (browser_search_bar_init):
+        (browserSearchBarFinalize):
+        (browser_search_bar_class_init):
+        (browser_search_bar_new):
+        (browser_search_bar_add_accelerators):
+        (browser_search_bar_open):
+        (browser_search_bar_close):
+        * MiniBrowser/gtk/BrowserSearchBar.h: Added.
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (webViewEnterFullScreen): Closes new search bar.
+        (webViewLeaveFullScreen): Opens new search bar if previously
+        visible.
+        (searchCallback): Added. Shows and hides the new search bar.
+        (browser_window_init): Added search button to the toolbar.
+        (browserWindowConstructed): Creates the new search bar.
+        * MiniBrowser/gtk/GNUmakefile.am: Added new files to compilation.
+
 2013-10-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         webkit-patch failure-reason fails with UnicodeDecodeError when name has non-ascii characters

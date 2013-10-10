@@ -28,6 +28,7 @@
 #include "BrowserWindow.h"
 
 #include "BrowserDownloadsBar.h"
+#include "BrowserSearchBar.h"
 #include "BrowserSettingsDialog.h"
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
@@ -41,6 +42,7 @@ enum {
 struct _BrowserWindow {
     GtkWindow parent;
 
+    GtkAccelGroup *accelGroup;
     GtkWidget *mainBox;
     GtkWidget *toolbar;
     GtkWidget *uriEntry;
@@ -52,6 +54,8 @@ struct _BrowserWindow {
     GtkWidget *settingsDialog;
     WebKitWebView *webView;
     GtkWidget *downloadsBar;
+    BrowserSearchBar *searchBar;
+    gboolean searchBarVisible;
     GdkPixbuf *favicon;
     GtkWidget *reloadOrStopButton;
     GtkWidget *fullScreenMessageLabel;
@@ -308,6 +312,8 @@ static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *wi
 
     window->fullScreenMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)fullScreenMessageTimeoutCallback, window);
     gtk_widget_hide(window->toolbar);
+    window->searchBarVisible = gtk_widget_get_visible(GTK_WIDGET(window->searchBar));
+    browser_search_bar_close(window->searchBar);
 
     return FALSE;
 }
@@ -320,6 +326,13 @@ static gboolean webViewLeaveFullScreen(WebKitWebView *webView, BrowserWindow *wi
     }
     gtk_widget_hide(window->fullScreenMessageLabel);
     gtk_widget_show(window->toolbar);
+    if (window->searchBarVisible) {
+        // Opening the search bar steals the focus. Usually, we want
+        // this but not when coming back from fullscreen.
+        GtkWidget *focusWidget = gtk_window_get_focus(GTK_WINDOW(window));
+        browser_search_bar_open(window->searchBar);
+        gtk_window_set_focus(GTK_WINDOW(window), focusWidget);
+    }
 
     return FALSE;
 }
@@ -478,12 +491,22 @@ static void zoomOutCallback(BrowserWindow *window)
     webkit_web_view_set_zoom_level(window->webView, zoomLevel);
 }
 
+static void searchCallback(BrowserWindow *window)
+{
+    browser_search_bar_open(window->searchBar);
+}
+
 static void browserWindowFinalize(GObject *gObject)
 {
     BrowserWindow *window = BROWSER_WINDOW(gObject);
     if (window->favicon) {
         g_object_unref(window->favicon);
         window->favicon = NULL;
+    }
+
+    if (window->accelGroup) {
+        g_object_unref(window->accelGroup);
+        window->accelGroup = NULL;
     }
 
     if (window->fullScreenMessageLabelId)
@@ -534,9 +557,8 @@ static void browser_window_init(BrowserWindow *window)
     updateUriEntryIcon(window);
 
     /* Keyboard accelerators */
-    GtkAccelGroup *accelGroup = gtk_accel_group_new();
-    gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
-    g_object_unref(accelGroup);
+    window->accelGroup = gtk_accel_group_new();
+    gtk_window_add_accel_group(GTK_WINDOW(window), window->accelGroup);
 
     GtkWidget *toolbar = gtk_toolbar_new();
     window->toolbar = toolbar;
@@ -574,6 +596,12 @@ static void browser_window_init(BrowserWindow *window)
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_FIND);
+    g_signal_connect_swapped(item, "clicked", G_CALLBACK(searchCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", window->accelGroup, GDK_KEY_F, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+    gtk_widget_show(GTK_WIDGET(item));
+
     item = gtk_tool_item_new();
     gtk_tool_item_set_expand(item, TRUE);
     gtk_container_add(GTK_CONTAINER(item), window->uriEntry);
@@ -585,7 +613,7 @@ static void browser_window_init(BrowserWindow *window)
     window->reloadOrStopButton = GTK_WIDGET(item);
     g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadOrStopCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_add_accelerator(window->reloadOrStopButton, "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
+    gtk_widget_add_accelerator(window->reloadOrStopButton, "clicked", window->accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
     gtk_widget_show(window->reloadOrStopButton);
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -618,6 +646,10 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "notify::is-loading", G_CALLBACK(webViewIsLoadingChanged), window);
 
     g_signal_connect(webkit_web_view_get_context(window->webView), "download-started", G_CALLBACK(downloadStarted), window);
+
+    window->searchBar = BROWSER_SEARCH_BAR(browser_search_bar_new(window->webView));
+    browser_search_bar_add_accelerators(window->searchBar, window->accelGroup);
+    gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->searchBar), FALSE, FALSE, 0);
 
     WebKitBackForwardList *backForwadlist = webkit_web_view_get_back_forward_list(window->webView);
     g_signal_connect(backForwadlist, "changed", G_CALLBACK(backForwadlistChanged), window);

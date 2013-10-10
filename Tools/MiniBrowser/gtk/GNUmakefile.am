@@ -23,6 +23,8 @@ Programs_MiniBrowser_SOURCES = \
 	Tools/MiniBrowser/gtk/BrowserCellRendererVariant.c \
 	Tools/MiniBrowser/gtk/BrowserDownloadsBar.h \
 	Tools/MiniBrowser/gtk/BrowserDownloadsBar.c \
+	Tools/MiniBrowser/gtk/BrowserSearchBar.h \
+	Tools/MiniBrowser/gtk/BrowserSearchBar.c \
 	Tools/MiniBrowser/gtk/BrowserSettingsDialog.h \
 	Tools/MiniBrowser/gtk/BrowserSettingsDialog.c \
 	Tools/MiniBrowser/gtk/BrowserWindow.h \
