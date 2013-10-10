@@ -133,20 +133,6 @@ private:
     SimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<AbstractView>, PassRefPtr<Event> underlyingEvent);
 };
 
-class MouseEventDispatchMediator : public EventDispatchMediator {
-public:
-    enum MouseEventType { SyntheticMouseEvent, NonSyntheticMouseEvent};
-    static PassRefPtr<MouseEventDispatchMediator> create(PassRefPtr<MouseEvent>, MouseEventType = NonSyntheticMouseEvent);
-
-private:
-    explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>, MouseEventType);
-    MouseEvent* event() const;
-
-    virtual bool mediateAndDispatchEvent(EventDispatcher*) const OVERRIDE;
-    bool isSyntheticMouseEvent() const { return m_mouseEventType == SyntheticMouseEvent; }
-    MouseEventType m_mouseEventType;
-};
-
 inline MouseEvent* toMouseEvent(Event* event)
 {
     ASSERT(event && event->isMouseEvent());

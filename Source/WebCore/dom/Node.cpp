@@ -2074,8 +2074,6 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
-    if (event->isMouseEvent())
-        return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(adoptRef(toMouseEvent(event.leakRef())), MouseEventDispatchMediator::SyntheticMouseEvent));
 #if ENABLE(TOUCH_EVENTS)
     if (event->isTouchEvent())
         return dispatchTouchEvent(adoptRef(toTouchEvent(event.leakRef())));
@@ -2125,7 +2123,7 @@ bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
 #if ENABLE(TOUCH_EVENTS)
 bool Node::dispatchTouchEvent(PassRefPtr<TouchEvent> event)
 {
-    return EventDispatcher::dispatchEvent(this, TouchEventDispatchMediator::create(event));
+    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
 }
 #endif
 

@@ -241,9 +241,38 @@ bool Element::shouldUseInputMethod()
     return isContentEditable(UserSelectAllIsAlwaysNonEditable);
 }
 
-bool Element::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType, int detail, Element* relatedTarget)
+bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomicString& eventType, int detail, Element* relatedTarget)
 {
-    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document().defaultView(), event, detail, relatedTarget)));
+    if (isDisabledFormControl())
+        return false;
+
+    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, document().defaultView(), platformEvent, detail, relatedTarget);
+
+    if (mouseEvent->type().isEmpty())
+        return true; // Shouldn't happen.
+
+    ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
+    bool didNotSwallowEvent = dispatchEvent(mouseEvent) && !mouseEvent->defaultHandled();
+
+    if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
+        // Special case: If it's a double click event, we also send the dblclick event. This is not part
+        // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
+        // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
+        RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
+        doubleClickEvent->initMouseEvent(eventNames().dblclickEvent,
+            mouseEvent->bubbles(), mouseEvent->cancelable(), mouseEvent->view(), mouseEvent->detail(),
+            mouseEvent->screenX(), mouseEvent->screenY(), mouseEvent->clientX(), mouseEvent->clientY(),
+            mouseEvent->ctrlKey(), mouseEvent->altKey(), mouseEvent->shiftKey(), mouseEvent->metaKey(),
+            mouseEvent->button(), relatedTarget);
+
+        if (mouseEvent->defaultHandled())
+            doubleClickEvent->setDefaultHandled();
+
+        dispatchEvent(doubleClickEvent);
+        if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
+            return false;
+    }
+    return didNotSwallowEvent;
 }
 
 inline static unsigned deltaMode(const PlatformWheelEvent& event)
