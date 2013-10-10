@@ -1,3 +1,21 @@
+2013-10-10  Roger Fong  <roger_fong@apple.com>
+
+        Store uniform type information in WebGLUniformationLocation.
+        https://bugs.webkit.org/show_bug.cgi?id=122607.
+
+        Reviewed by Dean Jackson.
+
+        Covered by Khronos Conformance Suite 1.0.2.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::getUniformLocation):
+        * html/canvas/WebGLUniformLocation.cpp:
+        (WebCore::WebGLUniformLocation::create):
+        (WebCore::WebGLUniformLocation::WebGLUniformLocation):
+        (WebCore::WebGLUniformLocation::type):
+        * html/canvas/WebGLUniformLocation.h:
+
 2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r157203): WebKit crashes after dispatching gesture event
