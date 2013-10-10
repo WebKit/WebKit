@@ -1,3 +1,37 @@
+2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Convert some OwnPtr/PassOwnPtr in CoordinatedGraphics code to std::unique_ptr's
+        https://bugs.webkit.org/show_bug.cgi?id=122614
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, covered by existing ones.
+
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        (WebCore::CompositingCoordinator::paintToSurface):
+        (WebCore::CompositingCoordinator::releaseInactiveAtlasesTimerFired):
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::adjustContentsScale):
+        (WebCore::CoordinatedGraphicsLayer::createBackingStore):
+        (WebCore::CoordinatedGraphicsLayer::updateContentBuffers):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::createLayer):
+        (WebCore::CoordinatedGraphicsScene::deleteLayer):
+        (WebCore::CoordinatedGraphicsScene::ensureRootLayer):
+        (WebCore::CoordinatedGraphicsScene::purgeGLResources):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h:
+        * platform/graphics/texmap/coordinated/ThreadSafeCoordinatedSurface.cpp:
+        (WebCore::ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface):
+        * platform/graphics/texmap/coordinated/ThreadSafeCoordinatedSurface.h:
+        * platform/graphics/texmap/coordinated/UpdateAtlas.cpp:
+        (WebCore::UpdateAtlas::buildLayoutIfNeeded):
+        (WebCore::UpdateAtlas::didSwapBuffers):
+        * platform/graphics/texmap/coordinated/UpdateAtlas.h:
+        (WebCore::UpdateAtlas::isInUse):
+
 2013-10-10  Roger Fong  <roger_fong@apple.com>
 
         Store uniform type information in WebGLUniformationLocation.

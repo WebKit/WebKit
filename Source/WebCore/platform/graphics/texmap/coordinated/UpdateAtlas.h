@@ -60,14 +60,14 @@ public:
         const double inactiveSecondsTolerance = 3;
         return m_inactivityInSeconds > inactiveSecondsTolerance;
     }
-    bool isInUse() const { return m_areaAllocator; }
+    bool isInUse() const { return !!m_areaAllocator; }
 
 private:
     void buildLayoutIfNeeded();
 
 private:
     Client* m_client;
-    OwnPtr<GeneralAreaAllocator> m_areaAllocator;
+    std::unique_ptr<GeneralAreaAllocator> m_areaAllocator;
     RefPtr<CoordinatedSurface> m_surface;
     double m_inactivityInSeconds;
     uint32_t m_ID;

@@ -238,8 +238,8 @@ private:
 #endif
 
     CoordinatedGraphicsLayerClient* m_coordinator;
-    OwnPtr<TiledBackingStore> m_mainBackingStore;
-    OwnPtr<TiledBackingStore> m_previousBackingStore;
+    std::unique_ptr<TiledBackingStore> m_mainBackingStore;
+    std::unique_ptr<TiledBackingStore> m_previousBackingStore;
 
     RefPtr<Image> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;

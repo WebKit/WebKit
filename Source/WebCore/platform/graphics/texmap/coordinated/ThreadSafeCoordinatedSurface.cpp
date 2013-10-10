@@ -37,9 +37,9 @@ PassRefPtr<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(co
     return adoptRef(new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size)));
 }
 
-ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, PassOwnPtr<ImageBuffer> buffer)
+ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, std::unique_ptr<ImageBuffer> buffer)
     : CoordinatedSurface(size, flags)
-    , m_imageBuffer(buffer)
+    , m_imageBuffer(std::move(buffer))
 {
 }
 

@@ -885,7 +885,7 @@ void CoordinatedGraphicsLayer::adjustContentsScale()
     // we do not want to drop the previous one as that might result in
     // briefly seeing flickering as the old tiles may be dropped before
     // something replaces them.
-    m_previousBackingStore = m_mainBackingStore.release();
+    m_previousBackingStore = std::move(m_mainBackingStore);
 
     // No reason to save the previous backing store for non-visible areas.
     m_previousBackingStore->removeAllNonVisibleTiles();
@@ -893,7 +893,7 @@ void CoordinatedGraphicsLayer::adjustContentsScale()
 
 void CoordinatedGraphicsLayer::createBackingStore()
 {
-    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, CoordinatedTileBackend::create(this)));
+    m_mainBackingStore = std::make_unique<TiledBackingStore>(this, CoordinatedTileBackend::create(this));
     m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
     m_mainBackingStore->setContentsScale(effectiveContentsScale());
 }
@@ -1014,8 +1014,8 @@ void CoordinatedGraphicsLayer::updateContentBuffersIncludingSubLayers()
 void CoordinatedGraphicsLayer::updateContentBuffers()
 {
     if (!shouldHaveBackingStore()) {
-        m_mainBackingStore.clear();
-        m_previousBackingStore.clear();
+        m_mainBackingStore = nullptr;
+        m_previousBackingStore = nullptr;
         return;
     }
 
@@ -1040,7 +1040,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     // removing the existing tiles and painting the new ones. The first time
     // the visibleRect is full painted we remove the previous backing store.
     if (m_mainBackingStore->visibleAreaIsCovered())
-        m_previousBackingStore.clear();
+        m_previousBackingStore = nullptr;
 }
 
 void CoordinatedGraphicsLayer::purgeBackingStores()
@@ -1048,8 +1048,8 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
 #ifndef NDEBUG
     TemporaryChange<bool> updateModeProtector(m_isPurging, true);
 #endif
-    m_mainBackingStore.clear();
-    m_previousBackingStore.clear();
+    m_mainBackingStore = nullptr;
+    m_previousBackingStore = nullptr;
 
     releaseImageBackingIfNeeded();
 

@@ -77,14 +77,14 @@ UpdateAtlas::~UpdateAtlas()
 void UpdateAtlas::buildLayoutIfNeeded()
 {
     if (!m_areaAllocator) {
-        m_areaAllocator = adoptPtr(new GeneralAreaAllocator(size()));
+        m_areaAllocator = std::make_unique<GeneralAreaAllocator>(size());
         m_areaAllocator->setMinimumAllocation(IntSize(32, 32));
     }
 }
 
 void UpdateAtlas::didSwapBuffers()
 {
-    m_areaAllocator.clear();
+    m_areaAllocator = nullptr;
 }
 
 

@@ -42,9 +42,9 @@ public:
     virtual void copyToTexture(PassRefPtr<BitmapTexture>, const IntRect& target, const IntPoint& sourceOffset) OVERRIDE;
 
 private:
-    ThreadSafeCoordinatedSurface(const IntSize&, Flags, PassOwnPtr<ImageBuffer>);
+    ThreadSafeCoordinatedSurface(const IntSize&, Flags, std::unique_ptr<ImageBuffer>);
 
-    OwnPtr<ImageBuffer> m_imageBuffer;
+    std::unique_ptr<ImageBuffer> m_imageBuffer;
 };
 
 } // namespace WebCore
