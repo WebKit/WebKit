@@ -39,14 +39,27 @@ static size_t bytesForGPRs()
     return (MacroAssembler::lastRegister() - MacroAssembler::firstRegister() + 1) * sizeof(int64_t);
 }
 
+static size_t bytesForFPRs()
+{
+    // FIXME: It might be worthwhile saving the full state of the FP registers, at some point.
+    // Right now we don't need this since we only do the save/restore just prior to OSR exit, and
+    // OSR exit will be guaranteed to only need the double portion of the FP registers.
+    return (MacroAssembler::lastFPRegister() - MacroAssembler::firstFPRegister() + 1) * sizeof(double);
+}
+
 size_t requiredScratchMemorySizeInBytes()
 {
-    return bytesForGPRs() + FPRInfo::numberOfArgumentRegisters * sizeof(double);
+    return bytesForGPRs() + bytesForFPRs();
 }
 
 size_t offsetOfGPR(GPRReg reg)
 {
     return (reg - MacroAssembler::firstRegister()) * sizeof(int64_t);
+}
+
+size_t offsetOfFPR(FPRReg reg)
+{
+    return bytesForGPRs() + (reg - MacroAssembler::firstFPRegister()) * sizeof(double);
 }
 
 void saveAllRegisters(MacroAssembler& jit, char* scratchMemory)
@@ -63,27 +76,19 @@ void saveAllRegisters(MacroAssembler& jit, char* scratchMemory)
     jit.peek64(MacroAssembler::secondRealRegister(), 0);
     jit.store64(MacroAssembler::secondRealRegister(), MacroAssembler::Address(MacroAssembler::firstRealRegister(), offsetOfGPR(MacroAssembler::firstRealRegister())));
     
-    // Save all FP argument registers.
-    // FIXME: We should actually be saving all FP registers.
-    // https://bugs.webkit.org/show_bug.cgi?id=122518
-    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
-        jit.move(MacroAssembler::TrustedImmPtr(scratchMemory + bytesForGPRs() + sizeof(double) * i), GPRInfo::regT0);
-        jit.storeDouble(FPRInfo::toArgumentRegister(i), GPRInfo::regT0);
-    }
+    // Finally save all FPR's.
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg))
+        jit.storeDouble(reg, MacroAssembler::Address(MacroAssembler::firstRealRegister(), offsetOfFPR(reg)));
 }
 
 void restoreAllRegisters(MacroAssembler& jit, char* scratchMemory)
 {
-    // Restore all FP argument registers.
-    // FIXME: We should actually be restoring all FP registers.
-    // https://bugs.webkit.org/show_bug.cgi?id=122518
-    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
-        jit.move(MacroAssembler::TrustedImmPtr(scratchMemory + bytesForGPRs() + sizeof(double) * i), GPRInfo::regT0);
-        jit.loadDouble(GPRInfo::regT0, FPRInfo::toArgumentRegister(i));
-    }
-    
-    // Now, restore all GPRs.
+    // Give ourselves a pointer to the scratch memory.
     jit.move(MacroAssembler::TrustedImmPtr(scratchMemory), MacroAssembler::firstRealRegister());
+    
+    // Restore all FPR's.
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg))
+        jit.loadDouble(MacroAssembler::Address(MacroAssembler::firstRealRegister(), offsetOfFPR(reg)), reg);
     
     for (MacroAssembler::RegisterID reg = MacroAssembler::secondRealRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg))
         jit.load64(MacroAssembler::Address(MacroAssembler::firstRealRegister(), offsetOfGPR(reg)), reg);

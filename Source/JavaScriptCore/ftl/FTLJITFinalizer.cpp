@@ -30,6 +30,7 @@
 
 #include "CodeBlockWithJITType.h"
 #include "DFGPlan.h"
+#include "FTLThunks.h"
 
 namespace JSC { namespace FTL {
 
@@ -52,27 +53,46 @@ bool JITFinalizer::finalize()
 
 bool JITFinalizer::finalizeFunction()
 {
-    for (unsigned i = m_jitCode->handles().size(); i--;) {
+    for (unsigned i = jitCode->handles().size(); i--;) {
         MacroAssembler::cacheFlush(
-            m_jitCode->handles()[i]->start(), m_jitCode->handles()[i]->sizeInBytes());
+            jitCode->handles()[i]->start(), jitCode->handles()[i]->sizeInBytes());
     }
     
-    if (m_exitThunksLinkBuffer) {
-        m_jitCode->initializeExitThunks(
+    if (exitThunksLinkBuffer) {
+        StackMaps::RecordMap recordMap = jitCode->stackmaps.getRecordMap();
+        
+        for (unsigned i = 0; i < osrExit.size(); ++i) {
+            OSRExitCompilationInfo& info = osrExit[i];
+            OSRExit& exit = jitCode->osrExit[i];
+            StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
+            if (iter == recordMap.end()) {
+                // It's OK, it was optimized out.
+                continue;
+            }
+            
+            exitThunksLinkBuffer->link(
+                info.m_thunkJump,
+                CodeLocationLabel(
+                    m_plan.vm.ftlThunks->getOSRExitGenerationThunk(
+                        m_plan.vm, Location::forStackmaps(
+                            jitCode->stackmaps, iter->value.locations[0])).code()));
+        }
+        
+        jitCode->initializeExitThunks(
             FINALIZE_DFG_CODE(
-                *m_exitThunksLinkBuffer,
+                *exitThunksLinkBuffer,
                 ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data())));
     } // else this function had no OSR exits, so no exit thunks.
     
     MacroAssemblerCodePtr withArityCheck;
-    if (m_arityCheck.isSet())
-        withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
-    m_jitCode->initializeCode(
+    if (arityCheck.isSet())
+        withArityCheck = entrypointLinkBuffer->locationOf(arityCheck);
+    jitCode->initializeCode(
         FINALIZE_DFG_CODE(
-            *m_entrypointLinkBuffer,
-            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), m_function)));
+            *entrypointLinkBuffer,
+            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), function)));
     
-    m_plan.codeBlock->setJITCode(m_jitCode, withArityCheck);
+    m_plan.codeBlock->setJITCode(jitCode, withArityCheck);
     
     return true;
 }

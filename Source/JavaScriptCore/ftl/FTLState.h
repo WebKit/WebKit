@@ -35,7 +35,6 @@
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
-#include "FTLOSRExitCompilationInfo.h"
 #include "FTLStackMaps.h"
 #include <wtf/Noncopyable.h>
 
@@ -55,7 +54,6 @@ public:
     LModule module;
     LValue function;
     RefPtr<JITCode> jitCode;
-    Vector<OSRExitCompilationInfo> osrExit;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
     Vector<CString> codeSectionNames;

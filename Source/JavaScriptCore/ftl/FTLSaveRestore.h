@@ -30,6 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "FPRInfo.h"
 #include "GPRInfo.h"
 
 namespace JSC {
@@ -41,6 +42,7 @@ namespace FTL {
 size_t requiredScratchMemorySizeInBytes();
 
 size_t offsetOfGPR(GPRReg);
+size_t offsetOfFPR(FPRReg);
 
 // Assumes that top-of-stack can be used as a pointer-sized scratchpad. Saves all of
 // the registers into the scratch buffer such that RegisterID * sizeof(int64_t) is the

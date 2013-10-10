@@ -38,6 +38,7 @@
 #include "DFGWorklist.h"
 #include "DebuggerActivation.h"
 #include "ErrorInstance.h"
+#include "FTLThunks.h"
 #include "FunctionConstructor.h"
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
@@ -254,6 +255,10 @@ VM::VM(VMType vmType, HeapType heapType)
     jitStubs = adoptPtr(new JITThunks());
     performPlatformSpecificJITAssertions(this);
 #endif
+
+#if ENABLE(FTL_JIT)
+    ftlThunks = std::make_unique<FTL::Thunks>();
+#endif // ENABLE(FTL_JIT)
     
     interpreter->initialize(this->canUseJIT());
     

@@ -32,7 +32,6 @@
 
 #include "DataView.h"
 #include "GPRInfo.h"
-#include "JSCJSValue.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
@@ -42,8 +41,7 @@ class MacroAssembler;
 namespace FTL {
 
 struct StackMaps {
-    union Constant {
-        EncodedJSValue value;
+    struct Constant {
         int64_t integer;
         
         void parse(DataView*, unsigned& offset);
@@ -66,16 +64,7 @@ struct StackMaps {
         void parse(DataView*, unsigned& offset);
         void dump(PrintStream& out) const;
         
-        bool isGPR() const;
-        bool involvesGPR() const;
-        GPRReg gpr() const;
-        
-        // Assuming that all registers are saved to the savedRegisters buffer according
-        // to FTLSaveRestore convention, this loads the value into the given register.
-        // The code that this generates isn't exactly super fast.
-        void restoreInto(
-            MacroAssembler&, const StackMaps& stackmaps, char* savedRegisters,
-            GPRReg result);
+        void restoreInto(MacroAssembler&, StackMaps&, char* savedRegisters, GPRReg result) const;
     };
     
     struct Record {

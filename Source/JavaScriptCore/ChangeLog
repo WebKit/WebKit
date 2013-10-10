@@ -1,3 +1,109 @@
+2013-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        OSR exit using llvm.webkit.stackmap should pass more tests
+        https://bugs.webkit.org/show_bug.cgi?id=122518
+
+        Reviewed by Mark Hahnenberg.
+        
+        - Make the X86Assembler capable of dealing with all XMM registers.
+        
+        - Make the StackMaps code on WebKit's side capable of dealing with XMM registers.
+        
+        - Factor out most of the smarts of StackMaps::Location into a self-contained object.
+          Previously you needed both StackMaps::Location and a StackMaps reference to do most
+          things since the Location might have referred to a constant. Now you can just get a
+          self-contained Location object.
+        
+        - Fix a bug where OSR exit generation thunk generator was assuming that the call frame
+          register is already in argumentGPR0. In the future, the call frame will just be the
+          machine FP and we won't have to do anything special. But for now the "call frame" is
+          just a normal value in LLVM IR and may end up in any register. Make the OSR exit
+          generation thunk generator polymorphic over the call frame argument's Location.
+        
+        - Move the stuff that depends on the polymorphic OSR exit generation thunk generator
+          into the finalizer, since generating and linking one of those thunks requires a cache
+          flush and we need to do that on the main thread.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::firstRegister):
+        (JSC::ARMv7Assembler::lastRegister):
+        (JSC::ARMv7Assembler::firstFPRegister):
+        (JSC::ARMv7Assembler::lastFPRegister):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::firstFPRegister):
+        (JSC::AbstractMacroAssembler::lastFPRegister):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::nextFPRegister):
+        * assembler/MacroAssemblerARMv7.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::firstFPRegister):
+        (JSC::X86Assembler::lastFPRegister):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        (JSC::FTL::ExitThunkGenerator::emitThunks):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLocation.cpp: Added.
+        (JSC::FTL::Location::forStackmaps):
+        (JSC::FTL::Location::dump):
+        (JSC::FTL::Location::involvesGPR):
+        (JSC::FTL::Location::isGPR):
+        (JSC::FTL::Location::gpr):
+        (JSC::FTL::Location::isFPR):
+        (JSC::FTL::Location::fpr):
+        (JSC::FTL::Location::restoreInto):
+        (WTF::printInternal):
+        * ftl/FTLLocation.h: Added.
+        (JSC::FTL::Location::Location):
+        (JSC::FTL::Location::forRegister):
+        (JSC::FTL::Location::forIndirect):
+        (JSC::FTL::Location::forConstant):
+        (JSC::FTL::Location::kind):
+        (JSC::FTL::Location::hasDwarfRegNum):
+        (JSC::FTL::Location::dwarfRegNum):
+        (JSC::FTL::Location::hasOffset):
+        (JSC::FTL::Location::offset):
+        (JSC::FTL::Location::hasConstant):
+        (JSC::FTL::Location::constant):
+        (JSC::FTL::Location::operator!):
+        (JSC::FTL::Location::isHashTableDeletedValue):
+        (JSC::FTL::Location::operator==):
+        (JSC::FTL::Location::hash):
+        (JSC::FTL::LocationHash::hash):
+        (JSC::FTL::LocationHash::equal):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::linkOSRExitsAndCompleteInitializationBlocks):
+        * ftl/FTLSaveRestore.cpp:
+        (JSC::FTL::bytesForFPRs):
+        (JSC::FTL::requiredScratchMemorySizeInBytes):
+        (JSC::FTL::offsetOfFPR):
+        (JSC::FTL::saveAllRegisters):
+        (JSC::FTL::restoreAllRegisters):
+        * ftl/FTLSaveRestore.h:
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Location::restoreInto):
+        * ftl/FTLStackMaps.h:
+        * ftl/FTLState.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationWithoutStackMapThunkGenerator):
+        (JSC::FTL::osrExitGenerationWithStackMapThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::generateIfNecessary):
+        (JSC::FTL::Thunks::getOSRExitGenerationThunk):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2013-10-09  Filip Pizlo  <fpizlo@apple.com>
 
         FTL: Soft-link LLVM as a workaround for LLVM's static initializers and exit-time destructors

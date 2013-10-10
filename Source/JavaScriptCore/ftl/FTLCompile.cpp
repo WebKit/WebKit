@@ -110,9 +110,6 @@ static void fixFunctionBasedOnStackMaps(
     StackMaps::RecordMap& recordMap)
 {
     VM& vm = state.graph.m_vm;
-    MacroAssemblerCodeRef osrExitThunk =
-        vm.getCTIStub(osrExitGenerationThunkGenerator);
-    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
 
     ExitThunkGenerator exitThunkGenerator(state);
     exitThunkGenerator.emitThunks();
@@ -120,28 +117,37 @@ static void fixFunctionBasedOnStackMaps(
         OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
             vm, &exitThunkGenerator, codeBlock, JITCompilationMustSucceed));
         
-        ASSERT(state.osrExit.size() == state.jitCode->osrExit.size());
+        ASSERT(state.finalizer->osrExit.size() == state.jitCode->osrExit.size());
         
-        for (unsigned i = 0; i < state.osrExit.size(); ++i) {
-            OSRExitCompilationInfo& info = state.osrExit[i];
+        for (unsigned i = 0; i < state.jitCode->osrExit.size(); ++i) {
+            OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
             OSRExit& exit = jitCode->osrExit[i];
-            
-            linkBuffer->link(info.m_thunkJump, target);
+            StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
+            if (iter == recordMap.end()) {
+                // It was optimized out.
+                continue;
+            }
             
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
         }
         
-        state.finalizer->initializeExitThunksLinkBuffer(linkBuffer.release());
+        state.finalizer->exitThunksLinkBuffer = linkBuffer.release();
     }
 
     RepatchBuffer repatchBuffer(codeBlock);
     
     for (unsigned exitIndex = jitCode->osrExit.size(); exitIndex--;) {
-        OSRExitCompilationInfo& info = state.osrExit[exitIndex];
+        OSRExitCompilationInfo& info = state.finalizer->osrExit[exitIndex];
         OSRExit& exit = jitCode->osrExit[exitIndex];
-        StackMaps::Record& record = recordMap.find(exit.m_stackmapID)->value;
+        StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
+        if (iter == recordMap.end()) {
+            // This could happen if LLVM optimizes out an OSR exit.
+            continue;
+        }
+        
+        StackMaps::Record& record = iter->value;
         
         repatchBuffer.replaceWithJump(
             CodeLocationLabel(

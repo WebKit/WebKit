@@ -28,7 +28,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLSaveRestore.h"
+#include "FTLLocation.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/DataLog.h>
 #include <wtf/ListDump.h>
@@ -73,88 +73,11 @@ void StackMaps::Location::dump(PrintStream& out) const
     out.print("(", kind, ", reg", dwarfRegNum, ", ", offset, ")");
 }
 
-bool StackMaps::Location::involvesGPR() const
-{
-    return isGPR() || kind == Indirect;
-}
-
-#if CPU(X86_64) // CPU cases for StackMaps::Location
-// This decodes Dwarf flavour 0 for x86-64.
-bool StackMaps::Location::isGPR() const
-{
-    return kind == Register && dwarfRegNum < 16;
-}
-
-GPRReg StackMaps::Location::gpr() const
-{
-    // Stupidly, Dwarf doesn't number the registers in the same way as the architecture;
-    // for example, the architecture encodes CX as 1 and DX as 2 while Dwarf does the
-    // opposite. Hence we need the switch.
-    
-    switch (dwarfRegNum) {
-    case 0:
-        return X86Registers::eax;
-    case 1:
-        return X86Registers::edx;
-    case 2:
-        return X86Registers::ecx;
-    case 3:
-        return X86Registers::ebx;
-    case 4:
-        return X86Registers::esi;
-    case 5:
-        return X86Registers::edi;
-    case 6:
-        return X86Registers::ebp;
-    case 7:
-        return X86Registers::esp;
-    default:
-        RELEASE_ASSERT(dwarfRegNum < 16);
-        // Registers r8..r15 are numbered sensibly.
-        return static_cast<GPRReg>(dwarfRegNum);
-    }
-}
-
 void StackMaps::Location::restoreInto(
-    MacroAssembler& jit, const StackMaps& stackmaps, char* savedRegisters, GPRReg result)
+    MacroAssembler& jit, StackMaps& stackmaps, char* savedRegisters, GPRReg result) const
 {
-    if (isGPR()) {
-        jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
-        return;
-    }
-    
-    switch (kind) {
-    case Register:
-        // FIXME: We need to handle the other registers.
-        // https://bugs.webkit.org/show_bug.cgi?id=122518
-        RELEASE_ASSERT_NOT_REACHED();
-        return;
-        
-    case Indirect:
-        jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
-        jit.load64(MacroAssembler::Address(result, offset), result);
-        return;
-        
-    case Constant:
-        jit.move(MacroAssembler::TrustedImm32(offset), result);
-        return;
-        
-    case ConstantIndex:
-        jit.move(MacroAssembler::TrustedImm64(stackmaps.constants[offset].integer), result);
-        return;
-        
-    case Unprocessed:
-        // Should never see this - it's an enumeration entry on LLVM's side that means that
-        // it hasn't processed this location.
-        RELEASE_ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    RELEASE_ASSERT_NOT_REACHED();
+    FTL::Location::forStackmaps(stackmaps, *this).restoreInto(jit, savedRegisters, result);
 }
-#else // CPU cases for StackMaps::Location
-#error "CPU architecture not supported."
-#endif // CPU cases for StackMaps::Location
 
 bool StackMaps::Record::parse(DataView* view, unsigned& offset)
 {

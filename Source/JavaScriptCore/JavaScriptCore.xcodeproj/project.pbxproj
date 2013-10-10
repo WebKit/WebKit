@@ -391,6 +391,8 @@
 		0FCEFADC18064A1400472CE4 /* config_llvm.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADB18064A1400472CE4 /* config_llvm.h */; };
 		0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */; };
 		0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFADD180738C000472CE4 /* FTLLocation.cpp */; };
+		0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADE180738C000472CE4 /* FTLLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3C82014115CF800FD81CB /* DFGDriver.cpp */; };
 		0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3C82214115D0E00FD81CB /* DFGDriver.h */; };
@@ -1642,6 +1644,8 @@
 		0FCEFADB18064A1400472CE4 /* config_llvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config_llvm.h; sourceTree = "<group>"; };
 		0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSaveRestore.cpp; path = ftl/FTLSaveRestore.cpp; sourceTree = "<group>"; };
 		0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSaveRestore.h; path = ftl/FTLSaveRestore.h; sourceTree = "<group>"; };
+		0FCEFADD180738C000472CE4 /* FTLLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLocation.cpp; path = ftl/FTLLocation.cpp; sourceTree = "<group>"; };
+		0FCEFADE180738C000472CE4 /* FTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLocation.h; path = ftl/FTLLocation.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
 		0FD3C82014115CF800FD81CB /* DFGDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDriver.cpp; path = dfg/DFGDriver.cpp; sourceTree = "<group>"; };
 		0FD3C82214115D0E00FD81CB /* DFGDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDriver.h; path = dfg/DFGDriver.h; sourceTree = "<group>"; };
@@ -2710,6 +2714,8 @@
 				A78A977E179738D5009DF744 /* FTLJITFinalizer.h */,
 				0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */,
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
+				0FCEFADD180738C000472CE4 /* FTLLocation.cpp */,
+				0FCEFADE180738C000472CE4 /* FTLLocation.h */,
 				0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */,
 				0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */,
 				A7D89D0117A0B90400773AD8 /* FTLLoweredNodeValue.h */,
@@ -4329,6 +4335,7 @@
 				0F2B66E917B6B5AB00A7AE3F /* JSArrayBufferView.h in Headers */,
 				0F2B66EA17B6B5AB00A7AE3F /* JSArrayBufferViewInlines.h in Headers */,
 				BC18C4180E16F5CD00B34460 /* JSBase.h in Headers */,
+				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
 				86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */,
 				BC18C4190E16F5CD00B34460 /* JSCallbackConstructor.h in Headers */,
@@ -5253,6 +5260,7 @@
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
+				0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
 				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,

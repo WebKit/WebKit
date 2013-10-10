@@ -48,7 +48,7 @@ ExitThunkGenerator::~ExitThunkGenerator()
 
 void ExitThunkGenerator::emitThunk(unsigned index)
 {
-    OSRExitCompilationInfo& info = m_state.osrExit[index];
+    OSRExitCompilationInfo& info = m_state.finalizer->osrExit[index];
     
     info.m_thunkLabel = label();
     if (Options::ftlOSRExitUsesStackmap())
@@ -62,7 +62,7 @@ void ExitThunkGenerator::emitThunk(unsigned index)
 
 void ExitThunkGenerator::emitThunks()
 {
-    for (unsigned i = 0; i < m_state.osrExit.size(); ++i)
+    for (unsigned i = 0; i < m_state.finalizer->osrExit.size(); ++i)
         emitThunk(i);
 }
 

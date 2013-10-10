@@ -77,7 +77,7 @@ static CompilationResult compileImpl(
         dataLog("DFG(Driver) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     
     // Make sure that any stubs that the DFG is going to use are initialized. We want to
-    // make sure that al JIT code generation does finalization on the main thread.
+    // make sure that all JIT code generation does finalization on the main thread.
     vm.getCTIStub(osrExitGenerationThunkGenerator);
     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
     vm.getCTIStub(linkCallThunkGenerator);
@@ -86,7 +86,7 @@ static CompilationResult compileImpl(
     vm.getCTIStub(virtualCallThunkGenerator);
     vm.getCTIStub(virtualConstructThunkGenerator);
 #if ENABLE(FTL_JIT)
-    vm.getCTIStub(FTL::osrExitGenerationThunkGenerator);
+    vm.getCTIStub(FTL::osrExitGenerationWithoutStackMapThunkGenerator);
 #endif
     
     RefPtr<Plan> plan = adoptRef(

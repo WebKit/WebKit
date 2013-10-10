@@ -30,7 +30,9 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "FTLLocation.h"
 #include "MacroAssemblerCodeRef.h"
+#include <wtf/HashMap.h>
 
 namespace JSC {
 
@@ -38,7 +40,34 @@ class VM;
 
 namespace FTL {
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM*);
+MacroAssemblerCodeRef osrExitGenerationWithoutStackMapThunkGenerator(VM*);
+
+MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(VM&, const Location&);
+
+template<typename MapType, typename KeyType, typename GeneratorType>
+MacroAssemblerCodeRef generateIfNecessary(
+    VM& vm, MapType& map, const KeyType& key, GeneratorType generator)
+{
+    typename MapType::iterator iter = map.find(key);
+    if (iter != map.end())
+        return iter->value;
+    
+    MacroAssemblerCodeRef result = generator(vm, key);
+    map.add(key, result);
+    return result;
+}
+
+class Thunks {
+public:
+    MacroAssemblerCodeRef getOSRExitGenerationThunk(VM& vm, const Location& location)
+    {
+        return generateIfNecessary(
+            vm, m_osrExitThunks, location, osrExitGenerationWithStackMapThunkGenerator);
+    }
+    
+private:
+    HashMap<Location, MacroAssemblerCodeRef> m_osrExitThunks;
+};
 
 } } // namespace JSC::FTL
 

@@ -39,12 +39,9 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
+MacroAssemblerCodeRef osrExitGenerationWithoutStackMapThunkGenerator(VM* vm)
 {
     AssemblyHelpers jit(vm, 0);
-    
-    // Note that in the ftlOSRExitUsesStackmap() case, the "return address" will be the
-    // OSR exit ID.
     
     // Pretend that we're a C call frame.
     jit.push(MacroAssembler::framePointerRegister);
@@ -52,8 +49,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.push(GPRInfo::regT0);
     jit.push(GPRInfo::regT0);
     
-    if (!Options::ftlOSRExitUsesStackmap())
-        jit.poke(GPRInfo::nonArgGPR0, 1);
+    jit.poke(GPRInfo::nonArgGPR0, 1);
     
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(requiredScratchMemorySizeInBytes());
     char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
@@ -65,10 +61,7 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
     // argument 0 is already the call frame.
-    if (Options::ftlOSRExitUsesStackmap())
-        jit.peek(GPRInfo::argumentGPR1, 3);
-    else
-        jit.peek(GPRInfo::argumentGPR1, 1);
+    jit.peek(GPRInfo::argumentGPR1, 1);
     MacroAssembler::Call functionCall = jit.call();
     
     // At this point we want to make a tail call to what was returned to us in the
@@ -96,6 +89,59 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     patchBuffer.link(functionCall, compileFTLOSRExit);
     return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk"));
+}
+
+MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(
+    VM& vm, const Location& location)
+{
+    AssemblyHelpers jit(&vm, 0);
+    
+    // Note that the "return address" will be the OSR exit ID.
+    
+    // Pretend that we're a C call frame.
+    jit.push(MacroAssembler::framePointerRegister);
+    jit.move(MacroAssembler::stackPointerRegister, MacroAssembler::framePointerRegister);
+    jit.push(GPRInfo::regT0);
+    jit.push(GPRInfo::regT0);
+    
+    ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(requiredScratchMemorySizeInBytes());
+    char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
+    
+    saveAllRegisters(jit, buffer);
+    
+    // Tell GC mark phase how much of the scratch buffer is active during call.
+    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR1);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
+
+    location.restoreInto(jit, buffer, GPRInfo::argumentGPR0);
+    jit.peek(GPRInfo::argumentGPR1, 3);
+    MacroAssembler::Call functionCall = jit.call();
+    
+    // At this point we want to make a tail call to what was returned to us in the
+    // returnValueGPR. But at the same time as we do this, we must restore all registers.
+    // The way we will accomplish this is by arranging to have the tail call target in the
+    // return address "slot" (be it a register or the stack).
+    
+    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
+    
+    // Prepare for tail call.
+    jit.pop(GPRInfo::regT1);
+    jit.pop(GPRInfo::regT1);
+    jit.pop(MacroAssembler::framePointerRegister);
+    
+    // At this point we're sitting on the return address - so if we did a jump right now, the
+    // tail-callee would be happy. Instead we'll stash the callee in the return address and then
+    // restore all registers.
+    
+    jit.restoreReturnAddressBeforeReturn(GPRInfo::regT0);
+    
+    restoreAllRegisters(jit, buffer);
+
+    jit.ret();
+    
+    LinkBuffer patchBuffer(vm, &jit, GLOBAL_THUNK_ID);
+    patchBuffer.link(functionCall, compileFTLOSRExit);
+    return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk for callFrame at %s", toCString(location).data()));
 }
 
 } } // namespace JSC::FTL

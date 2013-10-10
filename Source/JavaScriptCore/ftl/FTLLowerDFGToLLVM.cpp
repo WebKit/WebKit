@@ -3241,17 +3241,17 @@ private:
         if (verboseCompilationEnabled())
             dataLog("    OSR exit with value sources: ", m_valueSources, "\n");
         
-        ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.osrExit.size());
-        unsigned index = m_ftlState.osrExit.size();
+        ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.finalizer->osrExit.size());
+        unsigned index = m_ftlState.finalizer->osrExit.size();
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand.offset(),
             m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
-        m_ftlState.osrExit.append(OSRExitCompilationInfo());
+        m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
-        OSRExitCompilationInfo& info = m_ftlState.osrExit.last();
+        OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit.last();
 
         LBasicBlock lastNext = 0;
         LBasicBlock continuation = 0;
@@ -3493,7 +3493,7 @@ private:
     void linkOSRExitsAndCompleteInitializationBlocks()
     {
         MacroAssemblerCodeRef osrExitThunk =
-            vm().getCTIStub(osrExitGenerationThunkGenerator);
+            vm().getCTIStub(osrExitGenerationWithoutStackMapThunkGenerator);
         CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
         
         m_out.appendTo(m_prologue);
@@ -3506,10 +3506,10 @@ private:
                 vm(), &m_exitThunkGenerator, m_ftlState.graph.m_codeBlock,
                 JITCompilationMustSucceed));
         
-            ASSERT(m_ftlState.osrExit.size() == m_ftlState.jitCode->osrExit.size());
+            ASSERT(m_ftlState.finalizer->osrExit.size() == m_ftlState.jitCode->osrExit.size());
         
-            for (unsigned i = 0; i < m_ftlState.osrExit.size(); ++i) {
-                OSRExitCompilationInfo& info = m_ftlState.osrExit[i];
+            for (unsigned i = 0; i < m_ftlState.finalizer->osrExit.size(); ++i) {
+                OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit[i];
                 OSRExit& exit = m_ftlState.jitCode->osrExit[i];
             
                 linkBuffer->link(info.m_thunkJump, target);
@@ -3522,7 +3522,7 @@ private:
                 exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
             }
         
-            m_ftlState.finalizer->initializeExitThunksLinkBuffer(linkBuffer.release());
+            m_ftlState.finalizer->exitThunksLinkBuffer = linkBuffer.release();
         }
 
         m_out.jump(lowBlock(m_graph.block(0)));

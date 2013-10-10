@@ -101,8 +101,6 @@ public:
     };
     
 public:
-    typedef ARMRegisters::FPDoubleRegisterID FPRegisterID;
-
     static const Scale ScalePtr = TimesFour;
 
     enum RelationalCondition {

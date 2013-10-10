@@ -92,6 +92,11 @@ public:
     {
         return nextRegister(firstRealRegister());
     }
+    
+    static FPRegisterID nextFPRegister(FPRegisterID reg)
+    {
+        return static_cast<FPRegisterID>(reg + 1);
+    }
 
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;

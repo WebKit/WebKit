@@ -174,10 +174,10 @@ void link(State& state)
         break;
     }
     
-    state.finalizer->initializeEntrypointLinkBuffer(linkBuffer.release());
-    state.finalizer->initializeFunction(state.generatedFunction);
-    state.finalizer->initializeArityCheck(arityCheck);
-    state.finalizer->initializeJITCode(state.jitCode);
+    state.finalizer->entrypointLinkBuffer = linkBuffer.release();
+    state.finalizer->function = state.generatedFunction;
+    state.finalizer->arityCheck = arityCheck;
+    state.finalizer->jitCode = state.jitCode;
 }
 
 } } // namespace JSC::FTL

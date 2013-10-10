@@ -74,6 +74,17 @@ namespace X86Registers {
         xmm5,
         xmm6,
         xmm7,
+
+#if CPU(X86_64)
+        xmm8,
+        xmm9,
+        xmm10,
+        xmm11,
+        xmm12,
+        xmm13,
+        xmm14,
+        xmm15,
+#endif
     } XMMRegisterID;
 
 #if USE(MASM_PROBE)
@@ -126,6 +137,7 @@ namespace X86Registers {
 class X86Assembler {
 public:
     typedef X86Registers::RegisterID RegisterID;
+    
     static RegisterID firstRegister() { return X86Registers::eax; }
     static RegisterID lastRegister()
     {
@@ -138,6 +150,16 @@ public:
     
     typedef X86Registers::XMMRegisterID XMMRegisterID;
     typedef XMMRegisterID FPRegisterID;
+    
+    static FPRegisterID firstFPRegister() { return X86Registers::xmm0; }
+    static FPRegisterID lastFPRegister()
+    {
+#if CPU(X86_64)
+        return X86Registers::xmm15;
+#else
+        return X86Registers::xmm7;
+#endif
+    }
 
     typedef enum {
         ConditionO,

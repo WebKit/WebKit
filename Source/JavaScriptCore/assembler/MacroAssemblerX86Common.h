@@ -46,7 +46,6 @@ protected:
     static const int DoubleConditionBits = DoubleConditionBitInvert | DoubleConditionBitSpecial;
 
 public:
-    typedef X86Assembler::FPRegisterID FPRegisterID;
     typedef X86Assembler::XMMRegisterID XMMRegisterID;
     
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
