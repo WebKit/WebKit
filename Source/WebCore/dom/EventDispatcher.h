@@ -78,25 +78,7 @@ class EventDispatcher {
 public:
     static bool dispatchEvent(Node*, PassRefPtr<Event>);
     static void dispatchScopedEvent(Node&, PassRefPtr<Event>);
-
     static void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
-
-    bool dispatch();
-    Node* node() const { return m_node.get(); }
-    Event* event() const { return m_event.get(); }
-    EventPath& eventPath() { return m_eventPath; }
-
-private:
-    EventDispatcher(Node*, PassRefPtr<Event>);
-    const EventContext* topEventContext();
-
-    EventPath m_eventPath;
-    RefPtr<Node> m_node;
-    RefPtr<Event> m_event;
-    RefPtr<FrameView> m_view;
-#ifndef NDEBUG
-    bool m_eventDispatched;
-#endif
 };
 
 }

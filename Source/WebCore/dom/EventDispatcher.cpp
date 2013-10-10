@@ -44,29 +44,6 @@
 
 namespace WebCore {
 
-bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> event)
-{
-    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    if (!event)
-        return true;
-    EventDispatcher dispatcher(node, event);
-    return dispatcher.dispatch();
-}
-
-EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
-    : m_eventPath(*node, *event)
-    , m_node(node)
-    , m_event(event)
-#ifndef NDEBUG
-    , m_eventDispatched(false)
-#endif
-{
-    ASSERT(m_node);
-    ASSERT(m_event);
-    ASSERT(!m_event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
-    m_view = node->document().view();
-}
-
 void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
@@ -84,17 +61,17 @@ void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlying
         return;
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
-        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mouseoverEvent, element->document().defaultView(), underlyingEvent)).dispatch();
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseoverEvent, element->document().defaultView(), underlyingEvent));
 
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mousedownEvent, element->document().defaultView(), underlyingEvent)).dispatch();
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mousedownEvent, element->document().defaultView(), underlyingEvent));
     element->setActive(true, visualOptions == ShowPressedLook);
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(element, SimulatedMouseEvent::create(eventNames().mouseupEvent, element->document().defaultView(), underlyingEvent)).dispatch();
+        dispatchEvent(element, SimulatedMouseEvent::create(eventNames().mouseupEvent, element->document().defaultView(), underlyingEvent));
     element->setActive(false);
 
     // always send click
-    EventDispatcher(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document().defaultView(), underlyingEvent)).dispatch();
+    dispatchEvent(element, SimulatedMouseEvent::create(eventNames().clickEvent, element->document().defaultView(), underlyingEvent));
 
     elementsDispatchingSimulatedClicks.remove(element);
 }
@@ -159,60 +136,60 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
     }
 }
 
-bool EventDispatcher::dispatch()
+bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 {
-    if (EventTarget* relatedTarget = m_event->relatedTarget())
-        m_eventPath.setRelatedTarget(*relatedTarget);
+    ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
+    if (!prpEvent)
+        return true;
+
+    ASSERT(origin);
+    RefPtr<Node> node(origin);
+    RefPtr<Event> event(prpEvent);
+    RefPtr<FrameView> view = node->document().view();
+    EventPath eventPath(*node, *event);
+
+    if (EventTarget* relatedTarget = event->relatedTarget())
+        eventPath.setRelatedTarget(*relatedTarget);
 #if ENABLE(TOUCH_EVENTS)
-    if (m_event->isTouchEvent())
-        m_eventPath.updateTouchLists(*toTouchEvent(m_event.get())); 
+    if (event->isTouchEvent())
+        eventPath.updateTouchLists(*toTouchEvent(m_event.get())); 
 #endif
 
-#ifndef NDEBUG
-    ASSERT(!m_eventDispatched);
-    m_eventDispatched = true;
-#endif
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    ASSERT(m_node);
-    m_event->setTarget(&eventTargetRespectingTargetRules(*m_node));
+    event->setTarget(&eventTargetRespectingTargetRules(*node));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(m_event->target());
-    WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&m_node->document(), *m_event, windowEventContext.window(), m_node.get(), m_eventPath);
+    ASSERT(event->target());
+    WindowEventContext windowEventContext(event.get(), node.get(), eventPath.lastContextIfExists());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&node->document(), *event, windowEventContext.window(), node.get(), eventPath);
 
     InputElementClickState clickHandlingState;
-    if (isHTMLInputElement(m_node.get()))
-        toHTMLInputElement(*m_node).willDispatchEvent(*m_event, clickHandlingState);
+    if (isHTMLInputElement(node.get()))
+        toHTMLInputElement(*node).willDispatchEvent(*event, clickHandlingState);
 
-    if (!m_event->propagationStopped() && !m_eventPath.isEmpty())
-        dispatchEventInDOM(*m_event, m_eventPath, windowEventContext);
+    if (!event->propagationStopped() && !eventPath.isEmpty())
+        dispatchEventInDOM(*event, eventPath, windowEventContext);
 
-    m_event->setTarget(&eventTargetRespectingTargetRules(*m_node));
-    m_event->setCurrentTarget(0);
-    m_event->setEventPhase(0);
+    event->setTarget(&eventTargetRespectingTargetRules(*node));
+    event->setCurrentTarget(0);
+    event->setEventPhase(0);
 
     if (clickHandlingState.stateful)
-        toHTMLInputElement(*m_node).didDispatchClickEvent(*m_event, clickHandlingState);
+        toHTMLInputElement(*node).didDispatchClickEvent(*event, clickHandlingState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal
     // implementation detail and not part of the DOM.
-    if (!m_event->defaultPrevented() && !m_event->defaultHandled())
-        callDefaultEventHandlersInTheBubblingOrder(*m_event, m_eventPath);
+    if (!event->defaultPrevented() && !event->defaultHandled())
+        callDefaultEventHandlersInTheBubblingOrder(*event, eventPath);
 
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
-    m_event->setTarget(windowEventContext.target());
-    m_event->setCurrentTarget(0);
+    event->setTarget(windowEventContext.target());
+    event->setCurrentTarget(0);
     InspectorInstrumentation::didDispatchEvent(cookie);
 
-    return !m_event->defaultPrevented();
-}
-
-const EventContext* EventDispatcher::topEventContext()
-{
-    return m_eventPath.lastContextIfExists();
+    return !event->defaultPrevented();
 }
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const
