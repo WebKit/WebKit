@@ -120,7 +120,7 @@ void SharedBuffer::append(CFDataRef data)
     m_size += CFDataGetLength(data);
 }
 
-void SharedBuffer::copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const
+void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
 {
     if (m_dataArray.isEmpty())
         return;

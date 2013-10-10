@@ -1,3 +1,36 @@
+2013-10-10  Daniel Bates  <dabates@apple.com>
+
+        Avoid resizing the internal buffer of SharedBuffer when creating a PurgeableBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=122516
+
+        Reviewed by Darin Adler.
+
+        Currently when we create a PurgeableBuffer from a SharedBuffer we may
+        resize the internal buffer of the SharedBuffer so that it can fit the
+        concatenated contents of all of its segments before copying this
+        internal buffer to the internal buffer of the PurgeableBuffer. Instead,
+        we can avoid resizing the internal buffer of SharedBuffer by allocating
+        a PurgeableBuffer and then copying the internal buffer of SharedBuffer
+        and its segments directly into it.
+
+        * platform/PurgeableBuffer.h:
+        (WebCore::PurgeableBuffer::createUninitialized): Add inline implementation
+        when building with ENABLE_PURGEABLE_MEMORY disabled.
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::createPurgeableBuffer): Implemented in terms of
+        SharedBuffer::{copyBufferAndClear, createUninitialized}().
+        (WebCore::SharedBuffer::copyBufferAndClear): Added.
+        (WebCore::SharedBuffer::buffer): Moved logic to copy segments/data array to
+        SharedBuffer::copyBufferAndClear() and modified this function to use it.
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::copyBufferAndClear): Renamed; formerly called SharedBuffer::copyDataArrayAndClear.
+        * platform/mac/PurgeableBufferMac.cpp:
+        (WebCore::allocatePurgeableBuffer): Added.
+        (WebCore::PurgeableBuffer::createUninitialized): Added.
+        (WebCore::PurgeableBuffer::create): Moved logic to allocate a purgeable buffer into
+        PurgeableBuffer::createUninitialized() and modified this function to use it.
+
 2013-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver speaking too much when group elements with tabindex=-1 are used

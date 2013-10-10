@@ -52,7 +52,7 @@ PurgeableBuffer::~PurgeableBuffer()
     vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(m_data), m_size);
 }
 
-PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char* data, size_t size)
+PassOwnPtr<PurgeableBuffer> PurgeableBuffer::createUninitialized(size_t size, char*& data)
 {
     if (size < minPurgeableBufferSize)
         return nullptr;
@@ -64,9 +64,18 @@ PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char* data, size_t siz
     if (ret != KERN_SUCCESS)
         return nullptr;
 
-    memcpy(reinterpret_cast<char*>(buffer), data, size);
+    data = reinterpret_cast<char*>(buffer);
+    return adoptPtr(new PurgeableBuffer(data, size));
+}
 
-    return adoptPtr(new PurgeableBuffer(reinterpret_cast<char*>(buffer), size));
+PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char* data, size_t size)
+{
+    char* destination;
+    OwnPtr<PurgeableBuffer> purgeableBuffer = PurgeableBuffer::createUninitialized(size, destination);
+    if (!purgeableBuffer)
+        return nullptr;
+    memcpy(destination, data, size);
+    return purgeableBuffer.release();
 }
 
 bool PurgeableBuffer::makePurgeable(bool purgeable)

@@ -230,7 +230,17 @@ void SharedBuffer::createPurgeableBuffer() const
         return;
 #endif
 
-    m_purgeableBuffer = PurgeableBuffer::create(buffer().data(), m_size);
+    char* destination;
+    m_purgeableBuffer = PurgeableBuffer::createUninitialized(m_size, destination);
+    if (!m_purgeableBuffer)
+        return;
+    unsigned bufferSize = m_buffer.size();
+    if (bufferSize) {
+        memcpy(destination, m_buffer.data(), bufferSize);
+        destination += bufferSize;
+        m_buffer.clear();
+    }
+    copyBufferAndClear(destination, m_size - bufferSize);
 }
 
 const char* SharedBuffer::data() const
@@ -366,6 +376,20 @@ PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
     return m_purgeableBuffer.release(); 
 }
 
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
+{
+    for (unsigned i = 0; i < m_segments.size(); ++i) {
+        unsigned effectiveBytesToCopy = min(bytesToCopy, segmentSize);
+        memcpy(destination, m_segments[i], effectiveBytesToCopy);
+        destination += effectiveBytesToCopy;
+        bytesToCopy -= effectiveBytesToCopy;
+        freeSegment(m_segments[i]);
+    }
+    m_segments.clear();
+}
+#endif
+
 const Vector<char>& SharedBuffer::buffer() const
 {
 #if ENABLE(DISK_IMAGE_CACHE)
@@ -374,20 +398,7 @@ const Vector<char>& SharedBuffer::buffer() const
     unsigned bufferSize = m_buffer.size();
     if (m_size > bufferSize) {
         m_buffer.resize(m_size);
-        char* destination = m_buffer.data() + bufferSize;
-        unsigned bytesLeft = m_size - bufferSize;
-#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-        for (unsigned i = 0; i < m_segments.size(); ++i) {
-            unsigned bytesToCopy = min(bytesLeft, segmentSize);
-            memcpy(destination, m_segments[i], bytesToCopy);
-            destination += bytesToCopy;
-            bytesLeft -= bytesToCopy;
-            freeSegment(m_segments[i]);
-        }
-        m_segments.clear();
-#else
-        copyDataArrayAndClear(destination, bytesLeft);
-#endif
+        copyBufferAndClear(m_buffer.data() + bufferSize, m_size - bufferSize);
     }
     return m_buffer;
 }

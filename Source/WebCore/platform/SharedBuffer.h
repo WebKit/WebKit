@@ -174,13 +174,14 @@ private:
     void clearPlatformData();
     void maybeTransferPlatformData();
     bool hasPlatformData() const;
-    
+
+    void copyBufferAndClear(char* destination, unsigned bytesToCopy) const;
+
     unsigned m_size;
     mutable Vector<char> m_buffer;
     mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
-    void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;
 #else
