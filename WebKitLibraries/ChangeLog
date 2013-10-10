@@ -1,3 +1,13 @@
+2013-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Update the binary drops to the latest version of LLVM, built without -fvisibility=hidden
+        now that we have soft linking. Also include DataTypes.h in the drop.
+
+        Rubber stamped by Michael Saboff.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
 2013-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use the new version of LLVM MCJIT memory manager APIs that take a SectionName

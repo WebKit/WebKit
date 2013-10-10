@@ -121,6 +121,10 @@ Dir.mktmpdir {
             mysys("cp", configSrcPath + filename, configDstPath + filename)
         }
     }
+    ["include/llvm/Support/DataTypes.h"].each {
+        | genFileName |
+        mysys("cp", $llvmPath + genFileName, directory + genFileName)
+    }
     Dir.chdir(directory + "include") {
         mysys("tar", "-cyvf", $currentPath + $includePackage, ".")
     }
