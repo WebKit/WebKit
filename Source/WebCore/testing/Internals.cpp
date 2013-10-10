@@ -1428,7 +1428,7 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     DOMWindow* window = page->mainFrame().document()->domWindow();
     ASSERT(window);
 
-    m_frontendWindow = window->open(url, "", "", window, window);
+    m_frontendWindow = window->open(url, "", "", *window, *window);
     ASSERT(m_frontendWindow);
 
     Page* frontendPage = m_frontendWindow->document()->page();

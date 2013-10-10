@@ -143,14 +143,14 @@ String Location::hash() const
     return fragmentIdentifier.isEmpty() ? emptyString() : "#" + fragmentIdentifier;
 }
 
-void Location::setHref(const String& url, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setHref(const String& url, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
     setLocation(url, activeWindow, firstWindow);
 }
 
-void Location::setProtocol(const String& protocol, DOMWindow* activeWindow, DOMWindow* firstWindow, ExceptionCode& ec)
+void Location::setProtocol(const String& protocol, DOMWindow& activeWindow, DOMWindow& firstWindow, ExceptionCode& ec)
 {
     if (!m_frame)
         return;
@@ -162,7 +162,7 @@ void Location::setProtocol(const String& protocol, DOMWindow* activeWindow, DOMW
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setHost(const String& host, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setHost(const String& host, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -171,7 +171,7 @@ void Location::setHost(const String& host, DOMWindow* activeWindow, DOMWindow* f
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setHostname(const String& hostname, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setHostname(const String& hostname, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -180,7 +180,7 @@ void Location::setHostname(const String& hostname, DOMWindow* activeWindow, DOMW
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setPort(const String& portString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setPort(const String& portString, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -193,7 +193,7 @@ void Location::setPort(const String& portString, DOMWindow* activeWindow, DOMWin
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setPathname(const String& pathname, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setPathname(const String& pathname, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -202,7 +202,7 @@ void Location::setPathname(const String& pathname, DOMWindow* activeWindow, DOMW
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setSearch(const String& search, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setSearch(const String& search, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -211,7 +211,7 @@ void Location::setSearch(const String& search, DOMWindow* activeWindow, DOMWindo
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setHash(const String& hash, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -229,14 +229,14 @@ void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* f
     setLocation(url.string(), activeWindow, firstWindow);
 }
 
-void Location::assign(const String& url, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::assign(const String& url, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
     setLocation(url, activeWindow, firstWindow);
 }
 
-void Location::replace(const String& url, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::replace(const String& url, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     if (!m_frame)
         return;
@@ -244,7 +244,7 @@ void Location::replace(const String& url, DOMWindow* activeWindow, DOMWindow* fi
     m_frame->document()->domWindow()->setLocation(url, activeWindow, firstWindow, LockHistoryAndBackForwardList);
 }
 
-void Location::reload(DOMWindow* activeWindow)
+void Location::reload(DOMWindow& activeWindow)
 {
     if (!m_frame)
         return;
@@ -252,7 +252,7 @@ void Location::reload(DOMWindow* activeWindow)
     // We allow one page to change the location of another. Why block attempts to reload?
     // Other location operations simply block use of JavaScript URLs cross origin.
     DOMWindow* targetWindow = m_frame->document()->domWindow();
-    if (!activeWindow->document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin())) {
+    if (!activeWindow.document()->securityOrigin()->canAccess(m_frame->document()->securityOrigin())) {
         targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow));
         return;
     }
@@ -261,11 +261,11 @@ void Location::reload(DOMWindow* activeWindow)
     m_frame->navigationScheduler().scheduleRefresh();
 }
 
-void Location::setLocation(const String& url, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void Location::setLocation(const String& url, DOMWindow& activeWindow, DOMWindow& firstWindow)
 {
     ASSERT(m_frame);
     // We call findFrameForNavigation to handle the case of a seamless iframe correctly.
-    Frame* frame = m_frame->loader().findFrameForNavigation(String(), activeWindow->document());
+    Frame* frame = m_frame->loader().findFrameForNavigation(String(), activeWindow.document());
     if (!frame)
         return;
     frame->document()->domWindow()->setLocation(url, activeWindow, firstWindow);

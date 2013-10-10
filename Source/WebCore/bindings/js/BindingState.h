@@ -42,8 +42,8 @@ class Frame;
 
 typedef JSC::ExecState BindingState;
 
-DOMWindow* activeDOMWindow(BindingState*);
-DOMWindow* firstDOMWindow(BindingState*);
+DOMWindow& activeDOMWindow(BindingState*);
+DOMWindow& firstDOMWindow(BindingState*);
 
 }
 

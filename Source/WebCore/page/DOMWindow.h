@@ -145,7 +145,7 @@ namespace WebCore {
         Navigator* clientInformation() const { return navigator(); }
 
         Location* location() const;
-        void setLocation(const String& location, DOMWindow* activeWindow, DOMWindow* firstWindow,
+        void setLocation(const String& location, DOMWindow& activeWindow, DOMWindow& firstWindow,
             SetLocationLocking = LockHistoryBasedOnGestureState);
 
         DOMSelection* getSelection();
@@ -159,11 +159,11 @@ namespace WebCore {
         void stop();
 
         PassRefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
-            DOMWindow* activeWindow, DOMWindow* firstWindow);
+            DOMWindow& activeWindow, DOMWindow& firstWindow);
 
         typedef void (*PrepareDialogFunction)(DOMWindow*, void* context);
         void showModalDialog(const String& urlString, const String& dialogFeaturesString,
-            DOMWindow* activeWindow, DOMWindow* firstWindow, PrepareDialogFunction, void* functionContext);
+            DOMWindow& activeWindow, DOMWindow& firstWindow, PrepareDialogFunction, void* functionContext);
 
         void alert(const String& message);
         bool confirm(const String& message);
@@ -238,11 +238,11 @@ namespace WebCore {
         PageConsole* pageConsole() const;
 
         void printErrorMessage(const String&);
-        String crossDomainAccessErrorMessage(DOMWindow* activeWindow);
+        String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).
-        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, const String& targetOrigin, DOMWindow* source, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         void postMessageTimerFired(PassOwnPtr<PostMessageTimer>);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, PassRefPtr<Event>, PassRefPtr<ScriptCallStack>);
 
@@ -430,9 +430,9 @@ namespace WebCore {
         virtual void derefEventTarget() OVERRIDE { deref(); }
 
         static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
-            DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,
+            DOMWindow& activeWindow, Frame* firstFrame, Frame* openerFrame,
             PrepareDialogFunction = 0, void* functionContext = 0);
-        bool isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString);
+        bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
         void resetDOMWindowProperties();
         void disconnectDOMWindowProperties();

@@ -1,3 +1,13 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        CTTE: activeDOMWindow() and firstDOMWindow() should return references.
+        <https://webkit.org/b/122598>
+
+        Reviewed by Anders Carlsson.
+
+        Now that wrappers vend references to their WebCore objects, follow
+        up and make these two return references as well.
+
 2013-10-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Missing checks in returnIfWebKitAccessibleIsInvalid

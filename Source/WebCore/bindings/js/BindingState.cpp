@@ -37,14 +37,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-DOMWindow* activeDOMWindow(ExecState* exec)
+DOMWindow& activeDOMWindow(ExecState* exec)
 {
-    return &asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
 }
 
-DOMWindow* firstDOMWindow(ExecState* exec)
+DOMWindow& firstDOMWindow(ExecState* exec)
 {
-    return &asJSDOMWindow(exec->dynamicGlobalObject())->impl();
+    return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
 }
 
 }

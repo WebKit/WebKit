@@ -427,7 +427,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Frame* activeFrame = activeDOMWindow(exec)->frame()) {
+    if (Frame* activeFrame = activeDOMWindow(exec).frame()) {
         if (activeFrame->settings().usesDashboardBackwardCompatibilityMode() && !activeFrame->tree().parent()) {
             if (BindingSecurity::shouldAllowAccessToDOMWindow(exec, impl()))
                 putDirect(exec->vm(), Identifier(exec, "location"), value);
