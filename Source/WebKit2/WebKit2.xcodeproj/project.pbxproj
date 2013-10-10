@@ -2575,7 +2575,7 @@
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
 		E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
-		E1B78470163F24690007B692 /* RemoteNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNetworkingContext.h; sourceTree = "<group>"; };
+		E1B78470163F24690007B692 /* RemoteNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteNetworkingContext.h; path = NetworkProcess/RemoteNetworkingContext.h; sourceTree = "<group>"; };
 		E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteNetworkingContext.mm; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
@@ -3470,6 +3470,7 @@
 				E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */,
 				51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */,
 				51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */,
+				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 				51FCB18317BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp */,
 				51FCB18417BBFE0300394CD8 /* SynchronousNetworkLoaderClient.h */,
 			);
@@ -3485,7 +3486,6 @@
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */,
 				512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */,
-				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 				E1B78472163F253E0007B692 /* RemoteNetworkingContext.mm */,
 			);
 			name = mac;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 University of Szeged. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +31,11 @@
 
 namespace WebKit {
 
-class RemoteNetworkingContext : public WebCore::NetworkingContext {
+class RemoteNetworkingContext FINAL : public WebCore::NetworkingContext {
 public:
-    static PassRefPtr<RemoteNetworkingContext> create(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static PassRefPtr<RemoteNetworkingContext> create(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(new RemoteNetworkingContext(needsSiteSpecificQuirks, localFileContentSniffingEnabled, privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect));
+        return adoptRef(new RemoteNetworkingContext(privateBrowsingEnabled, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
     virtual ~RemoteNetworkingContext();
 
@@ -44,23 +45,41 @@ public:
 
     static WebCore::NetworkStorageSession* privateBrowsingSession();
 
-    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const OVERRIDE;
+    virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const OVERRIDE { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
 
 private:
-    RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled, bool m_shouldClearReferrerOnHTTPSToHTTPRedirect);
+    RemoteNetworkingContext(bool privateBrowsingEnabled, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+        : m_privateBrowsingEnabled(privateBrowsingEnabled)
+        , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
+#if PLATFORM(MAC)
+        , m_needsSiteSpecificQuirks(false)
+        , m_localFileContentSniffingEnabled(false)
+#endif
+    { }
 
     virtual bool isValid() const OVERRIDE;
-
-    virtual bool needsSiteSpecificQuirks() const OVERRIDE;
-    virtual bool localFileContentSniffingEnabled() const OVERRIDE;
     virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
+
+#if PLATFORM(MAC)
+    void setNeedsSiteSpecificQuirks(bool value) { m_needsSiteSpecificQuirks = value; }
+    virtual bool needsSiteSpecificQuirks() const OVERRIDE;
+    void setLocalFileContentSniffingEnabled(bool value) { m_localFileContentSniffingEnabled = value; }
+    virtual bool localFileContentSniffingEnabled() const OVERRIDE;
     virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
+#endif
 
-    bool m_needsSiteSpecificQuirks;
-    bool m_localFileContentSniffingEnabled;
+#if USE(SOUP)
+    virtual uint64_t initiatingPageID() const;
+#endif
+
     bool m_privateBrowsingEnabled;
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
+
+#if PLATFORM(MAC)
+    bool m_needsSiteSpecificQuirks;
+    bool m_localFileContentSniffingEnabled;
+#endif
 };
 
 }

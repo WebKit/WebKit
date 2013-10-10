@@ -1,3 +1,43 @@
+2013-10-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Port RemoteNetworkingContext for Soup
+        https://bugs.webkit.org/show_bug.cgi?id=110097
+
+        Reviewed by Darin Adler.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org> and Kwang Yul Seo <skyul@company100.net>.
+
+        This should be a cross-platform interface so I lifted the header from
+        the mac directory. Removed mac specific arguments from constructor,
+        added setters instead. Moved platform things behind ifdefs and added
+        Soup specific bits.
+
+        The following things were fixed by Csaba Osztrogonác:
+        - solved conflicts in project.pbxproj
+        - removed the change in the non-existent SyncNetworkResourceLoader.cpp
+        - marked RemoteNetworkingContext class as FINAL
+        - reordered the members for platform specific initialization
+        - added initializers to m_needsSiteSpecificQuirks and m_localFileContentSniffingEnabled members on PLATFORM(MAC)
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        * NetworkProcess/RemoteNetworkingContext.h: Renamed from Source/WebKit2/NetworkProcess/mac/RemoteNetworkingContext.h.
+        (WebKit::RemoteNetworkingContext::create):
+        (WebKit::RemoteNetworkingContext::RemoteNetworkingContext):
+        (WebKit::RemoteNetworkingContext::setNeedsSiteSpecificQuirks):
+        (WebKit::RemoteNetworkingContext::setLocalFileContentSniffingEnabled):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp: Added.
+        (WebKit::RemoteNetworkingContext::~RemoteNetworkingContext):
+        (WebKit::RemoteNetworkingContext::isValid):
+        (WebKit::RemoteNetworkingContext::initiatingPageID):
+        (WebKit::RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::RemoteNetworkingContext::destroyPrivateBrowsingSession):
+        (WebKit::RemoteNetworkingContext::storageSession):
+        (WebKit::RemoteNetworkingContext::privateBrowsingSession):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Convert some OwnPtr/PassOwnPtr in CoordinatedGraphics code to std::unique_ptr's
