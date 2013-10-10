@@ -26,6 +26,8 @@
 #ifndef ShareableResource_h
 #define ShareableResource_h
 
+#if ENABLE(SHAREABLE_RESOURCE)
+
 #include "SharedMemory.h"
 
 #include <wtf/PassRefPtr.h>
@@ -86,5 +88,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SHAREABLE_RESOURCE)
 
 #endif // ShareableResource_h

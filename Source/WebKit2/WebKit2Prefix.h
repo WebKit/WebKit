@@ -40,6 +40,8 @@
 
 #define ENABLE_CUSTOM_PROTOCOLS 1
 
+#define ENABLE_SHAREABLE_RESOURCE 1
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 

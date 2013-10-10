@@ -68,8 +68,10 @@ private:
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
+#if ENABLE(SHAREABLE_RESOURCE)
     // Message handlers.
     void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
+#endif
 
     // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;

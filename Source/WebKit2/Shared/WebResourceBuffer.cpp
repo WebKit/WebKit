@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebResourceBuffer.h"
 
+#if ENABLE(SHAREABLE_RESOURCE)
+
 #include "Logging.h"
 #include "ShareableResource.h"
 
@@ -57,3 +59,5 @@ bool WebResourceBuffer::isEmpty() const
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SHAREABLE_RESOURCE)

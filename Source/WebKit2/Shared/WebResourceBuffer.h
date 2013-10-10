@@ -26,6 +26,8 @@
 #ifndef WebResourceBuffer_h
 #define WebResourceBuffer_h
 
+#if ENABLE(SHAREABLE_RESOURCE)
+
 #include <WebCore/ResourceBuffer.h>
 
 namespace WebKit {
@@ -49,5 +51,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(SHAREABLE_RESOURCE)
 
 #endif // WebResourceBuffer_h

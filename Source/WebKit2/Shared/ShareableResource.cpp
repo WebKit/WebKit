@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ShareableResource.h"
 
+#if ENABLE(SHAREABLE_RESOURCE)
+
 #include "ArgumentCoders.h"
 #include <WebCore/SharedBuffer.h>
 
@@ -143,3 +145,5 @@ unsigned ShareableResource::size() const
 }
     
 } // namespace WebKit
+
+#endif // ENABLE(SHAREABLE_RESOURCE)

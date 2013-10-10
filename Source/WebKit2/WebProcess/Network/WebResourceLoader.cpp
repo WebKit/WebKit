@@ -136,6 +136,7 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     m_coreLoader->didFail(error);
 }
 
+#if ENABLE(SHAREABLE_RESOURCE)
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().utf8().data());
@@ -158,6 +159,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 
     m_coreLoader->didFinishLoading(finishTime);
 }
+#endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)

@@ -1,3 +1,22 @@
+2013-10-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix for non Mac platforms with enabled NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=121793
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ShareableResource.cpp:
+        * Shared/ShareableResource.h:
+        * Shared/WebResourceBuffer.cpp:
+        * Shared/WebResourceBuffer.h:
+        * WebKit2Prefix.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2013-10-09  Sergio Correia  <sergio.correia@openbossa.org>
 
         Set view to active in ViewClientEfl after WebProcess has relaunched

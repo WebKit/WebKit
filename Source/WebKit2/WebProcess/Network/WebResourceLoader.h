@@ -80,7 +80,9 @@ private:
     void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
+#if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
+#endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);

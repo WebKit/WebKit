@@ -80,6 +80,7 @@ void NetworkProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, Co
 {
 }
 
+#if ENABLE(SHAREABLE_RESOURCE)
 void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, const ShareableResource::Handle& handle)
 {
     CachedResource* resource = memoryCache()->resourceForRequest(request);
@@ -94,6 +95,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 
     resource->tryReplaceEncodedData(buffer.release());
 }
+#endif
 
 } // namespace WebKit
 
