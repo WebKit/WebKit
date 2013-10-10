@@ -660,7 +660,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 if (frame->document() != &node->document())
                     return String();
 
-                return plainText(rangeOfContents(node).get(), textIteratorBehaviorForTextRange());
+                return plainText(rangeOfContents(*node).get(), textIteratorBehaviorForTextRange());
             }
         }
     

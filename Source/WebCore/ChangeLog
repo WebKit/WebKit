@@ -1,3 +1,13 @@
+2013-10-08  Andreas Kling  <akling@apple.com>
+
+        rangeOfContents() should take a Node&.
+        <https://webkit.org/b/122438>
+
+        Reviewed by Darin Adler.
+
+        All callers of rangeOfContents() either have a Node& already,
+        or do some kind of null-checking before calling it.
+
 2013-10-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Implement support for grid-template

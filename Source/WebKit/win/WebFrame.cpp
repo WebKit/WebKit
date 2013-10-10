@@ -1932,7 +1932,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::string(
     if (!coreFrame)
         return E_FAIL;
 
-    RefPtr<Range> allRange(rangeOfContents(coreFrame->document()));
+    RefPtr<Range> allRange(rangeOfContents(*coreFrame->document()));
     String allString = plainText(allRange.get());
     *result = BString(allString).release();
     return S_OK;

@@ -174,7 +174,7 @@ private:
     RangeBoundaryPoint m_end;
 };
 
-PassRefPtr<Range> rangeOfContents(Node*);
+PassRefPtr<Range> rangeOfContents(Node&);
 
 bool areRangesEqual(const Range*, const Range*);
 

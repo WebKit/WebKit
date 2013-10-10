@@ -1683,7 +1683,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
     VisibleSelection selection(m_frame.selection().selection());
-    RefPtr<Range> spellingSearchRange(rangeOfContents(&document()));
+    RefPtr<Range> spellingSearchRange(rangeOfContents(document()));
 
     bool startedWithSelection = false;
     if (selection.start().deprecatedNode()) {
@@ -2858,7 +2858,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
 
     // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
-    RefPtr<Range> searchRange(rangeOfContents(&document()));
+    RefPtr<Range> searchRange(rangeOfContents(document()));
 
     bool forward = !(options & Backwards);
     bool startInReferenceRange = referenceRange && (options & StartInSelection);
@@ -2882,7 +2882,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
     if (startInReferenceRange && areRangesEqual(VisibleSelection(resultRange.get()).toNormalizedRange().get(), referenceRange)) {
-        searchRange = rangeOfContents(&document());
+        searchRange = rangeOfContents(document());
         if (forward)
             searchRange->setStart(referenceRange->endPosition());
         else
@@ -2900,7 +2900,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
 
     // If nothing was found in the shadow tree, search in main content following the shadow tree.
     if (resultRange->collapsed(ASSERT_NO_EXCEPTION) && shadowTreeRoot) {
-        searchRange = rangeOfContents(&document());
+        searchRange = rangeOfContents(document());
         if (forward)
             searchRange->setStartAfter(shadowTreeRoot->shadowHost());
         else
@@ -2912,7 +2912,7 @@ PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRa
     // If we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
     if (resultRange->collapsed(ASSERT_NO_EXCEPTION) && options & WrapAround) {
-        searchRange = rangeOfContents(&document());
+        searchRange = rangeOfContents(document());
         resultRange = findPlainText(searchRange.get(), target, options);
         // We used to return false here if we ended up with the same range that we started with
         // (e.g., the reference range was already the only instance of this text). But we decided that
@@ -2947,7 +2947,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             return 0;
     }
     if (!searchRange)
-        searchRange = rangeOfContents(&document());
+        searchRange = rangeOfContents(document());
 
     Node* originalEndContainer = searchRange->endContainer();
     int originalEndOffset = searchRange->endOffset();

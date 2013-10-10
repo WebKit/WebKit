@@ -1697,12 +1697,11 @@ bool areRangesEqual(const Range* a, const Range* b)
     return a->startPosition() == b->startPosition() && a->endPosition() == b->endPosition();
 }
 
-PassRefPtr<Range> rangeOfContents(Node* node)
+PassRefPtr<Range> rangeOfContents(Node& node)
 {
-    ASSERT(node);
-    RefPtr<Range> range = Range::create(node->document());
+    RefPtr<Range> range = Range::create(node.document());
     int exception = 0;
-    range->selectNodeContents(node, exception);
+    range->selectNodeContents(&node, exception);
     return range.release();
 }
 

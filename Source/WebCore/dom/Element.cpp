@@ -2108,7 +2108,7 @@ String Element::innerText()
     if (!renderer())
         return textContent(true);
 
-    return plainText(rangeOfContents(const_cast<Element*>(this)).get());
+    return plainText(rangeOfContents(*this).get());
 }
 
 String Element::outerText()
