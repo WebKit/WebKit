@@ -28,6 +28,8 @@
 
 #include "CodeBlock.h"
 #include "JITOperations.h"
+#include "JSArray.h"
+#include "JSArrayIterator.h"
 #include "JSStack.h"
 #include "Operations.h"
 #include "SpecializedThunkJIT.h"
@@ -986,6 +988,98 @@ MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
     return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "imul");
 }
 
+MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm)
+{
+    typedef SpecializedThunkJIT::TrustedImm32 TrustedImm32;
+    typedef SpecializedThunkJIT::TrustedImmPtr TrustedImmPtr;
+    typedef SpecializedThunkJIT::Address Address;
+    typedef SpecializedThunkJIT::BaseIndex BaseIndex;
+    typedef SpecializedThunkJIT::Jump Jump;
+    
+    SpecializedThunkJIT jit(vm);
+    // Make sure we're being called on an array iterator, and load m_iteratedObject, and m_nextIndex into regT0 and regT1 respectively
+    jit.loadArgumentWithSpecificClass(JSArrayIterator::info(), SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT4, SpecializedThunkJIT::regT1);
+
+    // Early exit if we don't have a thunk for this form of iteration
+    jit.appendFailure(jit.branch32(SpecializedThunkJIT::AboveOrEqual, Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfIterationKind()), TrustedImm32(ArrayIterateKeyValue)));
+    
+    jit.loadPtr(Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfIteratedObject()), SpecializedThunkJIT::regT0);
+    
+    jit.load32(Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()), SpecializedThunkJIT::regT1);
+    
+    // Pull out the butterfly from iteratedObject
+    jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSCell::structureOffset()), SpecializedThunkJIT::regT2);
+    
+    jit.load8(Address(SpecializedThunkJIT::regT2, Structure::indexingTypeOffset()), SpecializedThunkJIT::regT3);
+    jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
+    
+    jit.and32(TrustedImm32(IndexingShapeMask), SpecializedThunkJIT::regT3);
+    
+    Jump notDone = jit.branch32(SpecializedThunkJIT::Below, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfPublicLength()));
+    // Return the termination signal to indicate that we've finished
+    jit.move(TrustedImmPtr(vm->iterationTerminator.get()), SpecializedThunkJIT::regT0);
+    jit.returnJSCell(SpecializedThunkJIT::regT0);
+    
+    notDone.link(&jit);
+    
+    
+    Jump notKey = jit.branch32(SpecializedThunkJIT::NotEqual, Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfIterationKind()), TrustedImm32(ArrayIterateKey));
+    // If we're doing key iteration we just need to increment m_nextIndex and return the current value
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnInt32(SpecializedThunkJIT::regT1);
+    
+    notKey.link(&jit);
+    
+    
+    // Okay, now we're returning a value so make sure we're inside the vector size
+    jit.appendFailure(jit.branch32(SpecializedThunkJIT::AboveOrEqual, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfVectorLength())));
+    
+    // So now we perform inline loads for int32, value/undecided, and double storage
+    Jump undecidedStorage = jit.branch32(SpecializedThunkJIT::Equal, SpecializedThunkJIT::regT3, TrustedImm32(UndecidedShape));
+    Jump notContiguousStorage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(ContiguousShape));
+    
+    undecidedStorage.link(&jit);
+    
+    jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
+    
+#if USE(JSVALUE64)
+    jit.load64(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight), SpecializedThunkJIT::regT0);
+    Jump notHole = jit.branchTest64(SpecializedThunkJIT::NonZero, SpecializedThunkJIT::regT0);
+    jit.move(JSInterfaceJIT::TrustedImm64(ValueUndefined), JSInterfaceJIT::regT0);
+    notHole.link(&jit);
+    jit.addPtr(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnJSValue(SpecializedThunkJIT::regT0);
+#else
+    jit.load32(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight, JSValue::offsetOfTag()), SpecializedThunkJIT::regT3);
+    Jump notHole = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(JSValue::EmptyValueTag));
+    jit.move(JSInterfaceJIT::TrustedImm32(JSValue::UndefinedTag), JSInterfaceJIT::regT1);
+    jit.move(JSInterfaceJIT::TrustedImm32(0), JSInterfaceJIT::regT0);
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnJSValue(SpecializedThunkJIT::regT0, JSInterfaceJIT::regT1);
+    notHole.link(&jit);
+    jit.load32(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight, JSValue::offsetOfPayload()), SpecializedThunkJIT::regT0);
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.move(SpecializedThunkJIT::regT3, SpecializedThunkJIT::regT1);
+    jit.returnJSValue(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
+#endif
+    notContiguousStorage.link(&jit);
+    
+    Jump notInt32Storage = jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(Int32Shape));
+    jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
+    jit.load32(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight, JSValue::offsetOfPayload()), SpecializedThunkJIT::regT0);
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    notInt32Storage.link(&jit);
+    
+    jit.appendFailure(jit.branch32(SpecializedThunkJIT::NotEqual, SpecializedThunkJIT::regT3, TrustedImm32(DoubleShape)));
+    jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
+    jit.loadDouble(BaseIndex(SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT1, SpecializedThunkJIT::TimesEight), SpecializedThunkJIT::fpRegT0);
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    
+    return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "array-iterator-next");
+}
+    
 }
 
 #endif // ENABLE(JIT)

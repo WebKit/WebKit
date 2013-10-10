@@ -1,3 +1,16 @@
+2013-10-09  Oliver Hunt  <oliver@apple.com>
+
+        Further improve ArrayIterator performance
+        https://bugs.webkit.org/show_bug.cgi?id=122575
+
+        Reviewed by Mark Hahnenberg.
+
+        Add a few new tests to make sure the new asm thunk correctly
+        handles non-arrays.
+
+        * js/array-iterators-expected.txt:
+        * js/script-tests/array-iterators.js:
+
 2013-10-10  Andy Estes  <aestes@apple.com>
 
         Add SPI for telling WebKit to prefer pictograph glyphs over monochrome ones

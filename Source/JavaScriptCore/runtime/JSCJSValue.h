@@ -278,6 +278,9 @@ public:
     // converted to Int52s and back again.
     static const unsigned numberOfInt52Bits = 52;
     static const unsigned int52ShiftAmount = 12;
+    
+    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSValue, u.asBits.payload); }
+    static ptrdiff_t offsetOfTag() { return OBJECT_OFFSETOF(JSValue, u.asBits.tag); }
 
 private:
     template <class T> JSValue(WriteBarrierBase<T>);

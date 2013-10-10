@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-enum ArrayIterationKind {
+enum ArrayIterationKind : uint32_t {
     ArrayIterateKey,
     ArrayIterateValue,
     ArrayIterateKeyValue,
@@ -63,9 +63,12 @@ public:
     JSObject* iteratedObject() const { return m_iteratedObject.get(); }
     size_t nextIndex() const { return m_nextIndex; }
     void setNextIndex(size_t nextIndex) { m_nextIndex = nextIndex; }
-    void finish() { m_nextIndex = std::numeric_limits<size_t>::max(); }
+    void finish() { m_nextIndex = std::numeric_limits<uint32_t>::max(); }
     
     using JSNonFinalObject::arrayStorageOrNull;
+    static ptrdiff_t offsetOfIterationKind() { return OBJECT_OFFSETOF(JSArrayIterator, m_iterationKind); }
+    static ptrdiff_t offsetOfIteratedObject() { return OBJECT_OFFSETOF(JSArrayIterator, m_iteratedObject); }
+    static ptrdiff_t offsetOfNextIndex() { return OBJECT_OFFSETOF(JSArrayIterator, m_nextIndex); }
 
 private:
 
@@ -82,7 +85,7 @@ private:
     
     ArrayIterationKind m_iterationKind;
     WriteBarrier<JSObject> m_iteratedObject;
-    size_t m_nextIndex;
+    uint32_t m_nextIndex;
 };
 
 }

@@ -1,3 +1,35 @@
+2013-10-09  Oliver Hunt  <oliver@apple.com>
+
+        Further improve ArrayIterator performance
+        https://bugs.webkit.org/show_bug.cgi?id=122575
+
+        Reviewed by Mark Hahnenberg.
+
+        Add an assembly thunk for ArrayIterator.@@next so that we
+        can avoid marshalling costs when iterating arrays.
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::loadSpecificClassArgument):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arrayIteratorNextThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayIterator.h:
+        (JSC::JSArrayIterator::offsetOfIterationKind):
+        (JSC::JSArrayIterator::offsetOfIteratedObject):
+        (JSC::JSArrayIterator::offsetOfNextIndex):
+        * runtime/JSCJSValue.h:
+        (JSC::JSValue::offsetOfPayload):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::iteratorResultStructureOffset):
+        * runtime/VM.cpp:
+        (JSC::thunkGeneratorForIntrinsic):
+
 2013-10-10  Michael Saboff  <msaboff@apple.com>
 
         transition cti_op_* methods returning int to JIT operations.

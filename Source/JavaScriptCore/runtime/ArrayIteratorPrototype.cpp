@@ -45,7 +45,8 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorNextPrivateName, arrayIteratorPrototypeNext, DontEnum, 0);
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->iteratorNextPrivateName, arrayIteratorPrototypeNext, DontEnum, 0, ArrayIteratorNextIntrinsic);
+
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorPrototypeIterate, DontEnum, 0);
 }
 
