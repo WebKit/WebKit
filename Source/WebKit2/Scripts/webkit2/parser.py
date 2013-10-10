@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import sys
 
 from webkit2 import model
 
@@ -43,6 +44,11 @@ def parse(file):
             continue
         if line.startswith('#'):
             if line.startswith('#if '):
+                if condition:
+                    # FIXME: generate-message-receiver.py can't handle nested ifs
+                    # https://bugs.webkit.org/show_bug.cgi?id=121877
+                    sys.stderr.write("ERROR: Nested #ifs aren't supported, please fix %s\n" % file.name)
+                    sys.exit(1)
                 condition = line.rstrip()[4:]
             elif line.startswith('#endif'):
                 condition = None
