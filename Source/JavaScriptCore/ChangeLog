@@ -1,3 +1,9 @@
+2013-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out r157193. It broke some builds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-10-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13341666> WebKit should always build against an SDK.
