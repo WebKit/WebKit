@@ -4151,6 +4151,11 @@ void WebGLRenderingContext::uniform1i(const WebGLUniformLocation* location, GC3D
         return;
     }
 
+    if ((location->type() == GraphicsContext3D::SAMPLER_2D || location->type() == GraphicsContext3D::SAMPLER_CUBE) && x >= (int)m_textureUnits.size()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1i", "invalid texture unit");
+        return;
+    }
+
     m_context->uniform1i(location->location(), x);
     cleanupAfterGraphicsCall(false);
 }
@@ -4161,6 +4166,14 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, Int
     if (isContextLost() || !validateUniformParameters("uniform1iv", location, v, 1))
         return;
 
+    if (location->type() == GraphicsContext3D::SAMPLER_2D || location->type() == GraphicsContext3D::SAMPLER_CUBE)
+        for (unsigned i = 0; i < v->length(); ++i) {
+            if (((GC3Dint*)v)[i] >= static_cast<int>(m_textureUnits.size())) {
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1i", "invalid texture unit");
+                return;
+            }
+        }
+
     m_context->uniform1iv(location->location(), v->length(), v->data());
     cleanupAfterGraphicsCall(false);
 }
@@ -4170,6 +4183,14 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, GC3
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformParameters("uniform1iv", location, v, size, 1))
         return;
+
+    if (location->type() == GraphicsContext3D::SAMPLER_2D || location->type() == GraphicsContext3D::SAMPLER_CUBE)
+        for (unsigned i = 0; i < static_cast<unsigned>(size); ++i) {
+            if (((GC3Dint*)v)[i] >= static_cast<int>(m_textureUnits.size())) {
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "uniform1i", "invalid texture unit");
+                return;
+            }
+        }
 
     m_context->uniform1iv(location->location(), size, v);
     cleanupAfterGraphicsCall(false);
