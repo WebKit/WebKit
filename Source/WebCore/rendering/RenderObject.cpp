@@ -62,7 +62,6 @@
 #include "htmlediting.h"
 #include <algorithm>
 #include <wtf/RefCountedLeakCounter.h>
-#include <wtf/StackStats.h>
 
 #if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
@@ -2211,19 +2210,6 @@ void RenderObject::updateHitTestResult(HitTestResult& result, const LayoutPoint&
 bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& /*locationInContainer*/, const LayoutPoint& /*accumulatedOffset*/, HitTestAction)
 {
     return false;
-}
-
-void RenderObject::layout()
-{
-    StackStats::LayoutCheckPoint layoutCheckPoint;
-    ASSERT(needsLayout());
-    RenderObject* child = firstChildSlow();
-    while (child) {
-        child->layoutIfNeeded();
-        ASSERT(!child->needsLayout());
-        child = child->nextSibling();
-    }
-    clearNeedsLayout();
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const

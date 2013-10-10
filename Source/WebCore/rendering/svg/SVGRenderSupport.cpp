@@ -272,7 +272,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
             child->setNeedsLayout(MarkOnlyThis);
 
         if (child->needsLayout()) {
-            child->layout();
+            toRenderElement(child)->layout();
             // Renderers are responsible for repainting themselves when changing, except
             // for the initial paint to avoid potential double-painting caused by non-sensical "old" bounds.
             // We could handle this in the individual objects, but for now it's easier to have

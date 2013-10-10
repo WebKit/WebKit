@@ -1893,7 +1893,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
                     if (isFullLayout)
                         replacedChildren.append(box);
                     else
-                        o->layoutIfNeeded();
+                        box->layoutIfNeeded();
                 }
             } else if (o->isTextOrLineBreak() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (o->isRenderInline())

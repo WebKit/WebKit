@@ -55,7 +55,8 @@ void RenderMathMLRow::layout()
 {
     int stretchLogicalHeight = 0;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        child->layoutIfNeeded();
+        if (child->needsLayout())
+            toRenderElement(child)->layout();
         // FIXME: Only skip renderMo if it is stretchy.
         if (child->isRenderMathMLBlock() && toRenderMathMLBlock(child)->unembellishedOperator())
             continue;

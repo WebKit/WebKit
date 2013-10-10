@@ -1892,9 +1892,10 @@ void RenderBlock::simplifiedNormalFlowLayout()
         for (InlineWalker walker(this); !walker.atEnd(); walker.advance()) {
             RenderObject* o = walker.current();
             if (!o->isOutOfFlowPositioned() && (o->isReplaced() || o->isFloating())) {
-                o->layoutIfNeeded();
-                if (toRenderBox(o)->inlineBoxWrapper())
-                    lineBoxes.add(&toRenderBox(o)->inlineBoxWrapper()->root());
+                RenderBox& box = toRenderBox(*o);
+                box.layoutIfNeeded();
+                if (box.inlineBoxWrapper())
+                    lineBoxes.add(&box.inlineBoxWrapper()->root());
             } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline()))
                 o->clearNeedsLayout();
         }

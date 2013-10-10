@@ -1,3 +1,17 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        Move RenderObject::layout() to RenderElement.
+        <https://webkit.org/b/122537>
+
+        Reviewed by Antti Koivisto.
+
+        RenderText will ASSERT_NOT_REACHED() in its layout(), so move this
+        to RenderElement. This allows us to use the fast firstChild()
+        instead of virtual dispatch.
+
+        The needsLayout() bit remains on RenderObject for now. Moving that
+        to RenderElement is a far more involved change.
+
 2013-10-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::accessibleNameForNode when visiting Facebook

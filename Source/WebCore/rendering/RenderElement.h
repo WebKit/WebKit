@@ -89,6 +89,12 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&) = 0;
 
+    // Recursive function that computes the size and position of this object and all its descendants.
+    virtual void layout();
+
+    /* This function performs a layout only if one is needed. */
+    void layoutIfNeeded() { if (needsLayout()) layout(); }
+
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
     RenderElement* rendererForRootBackground();
 

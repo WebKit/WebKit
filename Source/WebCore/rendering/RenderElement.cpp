@@ -54,6 +54,7 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
+#include <wtf/StackStats.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -1070,6 +1071,20 @@ RenderElement* RenderElement::hoverAncestor() const
     }
 
     return hoverAncestor;
+}
+
+void RenderElement::layout()
+{
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+    ASSERT(needsLayout());
+    RenderObject* child = firstChild();
+    while (child) {
+        if (child->needsLayout())
+            toRenderElement(child)->layout();
+        ASSERT(!child->needsLayout());
+        child = child->nextSibling();
+    }
+    clearNeedsLayout();
 }
 
 }

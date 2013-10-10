@@ -188,7 +188,7 @@ void RenderMathMLRoot::layout()
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (!child->isBox())
             continue;
-        child->layoutIfNeeded();
+        toRenderBox(child)->layoutIfNeeded();
     }
 
     int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style()->fontSize();

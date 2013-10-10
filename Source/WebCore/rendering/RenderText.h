@@ -171,7 +171,6 @@ private:
     // callers with a RenderObject* can continue to use length().
     virtual unsigned length() const OVERRIDE FINAL { return textLength(); }
 
-    virtual void layout() OVERRIDE FINAL { ASSERT_NOT_REACHED(); }
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) OVERRIDE FINAL { ASSERT_NOT_REACHED(); return false; }
 
     void deleteTextBoxes();

@@ -441,7 +441,7 @@ void RenderTable::layout()
                 section->recalcOuterBorder();
             ASSERT(!section->needsLayout());
         } else if (child->isRenderTableCol()) {
-            child->layoutIfNeeded();
+            toRenderTableCol(child)->layoutIfNeeded();
             ASSERT(!child->needsLayout());
         }
     }

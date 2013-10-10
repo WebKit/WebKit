@@ -452,7 +452,8 @@ void RenderBox::layout()
 
     LayoutStateMaintainer statePusher(&view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
     while (child) {
-        child->layoutIfNeeded();
+        if (child->needsLayout())
+            toRenderElement(child)->layout();
         ASSERT(!child->needsLayout());
         child = child->nextSibling();
     }
