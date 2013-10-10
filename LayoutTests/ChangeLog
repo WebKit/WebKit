@@ -1,3 +1,9 @@
+2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Remove duplicate entry for editing/spelling/spellcheck-paste.html.
+
+        * platform/gtk/TestExpectations:
+
 2013-10-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::accessibleNameForNode when visiting Facebook

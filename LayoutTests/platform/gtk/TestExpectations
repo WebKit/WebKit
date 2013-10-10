@@ -760,7 +760,6 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.h
 
 webkit.org/b/73003 editing/spelling/spellcheck-async.html [ Failure Slow ]
 webkit.org/b/73003 editing/spelling/spellcheck-async-mutation.html [ Failure Slow ]
-webkit.org/b/73003 editing/spelling/spellcheck-paste.html [ Pass Slow ]
 webkit.org/b/73003 editing/spelling/spellcheck-sequencenum.html [ Failure Slow ]
 webkit.org/b/50740 editing/spelling/spellcheck-queue.html [ Failure Slow ]
 
