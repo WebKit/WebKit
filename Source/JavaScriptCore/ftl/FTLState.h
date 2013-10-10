@@ -36,6 +36,7 @@
 #include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 #include "FTLOSRExitCompilationInfo.h"
+#include "FTLStackMaps.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC { namespace FTL {
@@ -57,6 +58,9 @@ public:
     Vector<OSRExitCompilationInfo> osrExit;
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
+    Vector<CString> codeSectionNames;
+    Vector<CString> dataSectionNames;
+    RefCountedArray<LSectionWord> stackmapsSection;
     
     void dumpState(const char* when);
 };

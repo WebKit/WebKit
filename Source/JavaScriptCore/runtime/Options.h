@@ -123,9 +123,11 @@ typedef OptionRange optionRange;
     v(bool, useLLVMSmallCodeModel, false) \
     v(bool, ftlTrapsOnOSRExit, false) \
     v(bool, ftlOSRExitOmitsMarshalling, false) \
+    v(bool, ftlOSRExitUsesStackmap, false) \
     v(bool, useLLVMOSRExitIntrinsic, false) \
     v(bool, dumpLLVMIR, false) \
-    v(bool, llvmAlwaysFails, false) \
+    v(bool, llvmAlwaysFailsBeforeCompile, false) \
+    v(bool, llvmAlwaysFailsBeforeLink, false) \
     v(unsigned, llvmBackendOptimizationLevel, 2) \
     v(unsigned, llvmOptimizationLevel, 2) \
     v(unsigned, llvmSizeLevel, 0) \

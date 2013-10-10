@@ -28,6 +28,67 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "AssemblyHelpers.h"
+
+namespace JSC { namespace FTL {
+
+void reboxAccordingToFormat(
+    ValueFormat format, AssemblyHelpers& jit, GPRReg value, GPRReg scratch1, GPRReg scratch2)
+{
+    switch (format) {
+    case ValueFormatInt32: {
+        jit.or64(GPRInfo::tagTypeNumberRegister, value);
+        break;
+    }
+    
+    case ValueFormatUInt32: {
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
+        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+    
+    case ValueFormatInt52: {
+        jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), value);
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
+        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+    
+    case ValueFormatStrictInt52: {
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
+        jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+    
+    case ValueFormatBoolean: {
+        jit.or32(MacroAssembler::TrustedImm32(ValueFalse), value);
+        break;
+    }
+    
+    case ValueFormatJSValue: {
+        // Done already!
+        break;
+    }
+    
+    case ValueFormatDouble: {
+        jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
+        jit.move64ToDouble(value, FPRInfo::fpRegT0);
+        jit.boxDouble(FPRInfo::fpRegT0, value);
+        jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
+        break;
+    }
+    
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+} } // namespace JSC::FTL
+
 namespace WTF {
 
 using namespace JSC::FTL;

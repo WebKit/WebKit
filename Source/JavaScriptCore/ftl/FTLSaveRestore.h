@@ -23,50 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLExitThunkGenerator.h"
+#ifndef FTLSaveRestore_h
+#define FTLSaveRestore_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(FTL_JIT)
 
-#include "FTLOSRExitCompilationInfo.h"
-#include "FTLState.h"
+#include "GPRInfo.h"
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-using namespace JSC::DFG;
+class MacroAssembler;
 
-ExitThunkGenerator::ExitThunkGenerator(State& state)
-    : CCallHelpers(&state.graph.m_vm, state.graph.m_codeBlock)
-    , m_state(state)
-    , m_didThings(false)
-{
-}
+namespace FTL {
 
-ExitThunkGenerator::~ExitThunkGenerator()
-{
-}
+size_t requiredScratchMemorySizeInBytes();
 
-void ExitThunkGenerator::emitThunk(unsigned index)
-{
-    OSRExitCompilationInfo& info = m_state.osrExit[index];
-    
-    info.m_thunkLabel = label();
-    if (Options::ftlOSRExitUsesStackmap())
-        push(TrustedImm32(index));
-    else
-        move(TrustedImm32(index), GPRInfo::nonArgGPR0);
-    info.m_thunkJump = patchableJump();
-    
-    m_didThings = true;
-}
+size_t offsetOfGPR(GPRReg);
 
-void ExitThunkGenerator::emitThunks()
-{
-    for (unsigned i = 0; i < m_state.osrExit.size(); ++i)
-        emitThunk(i);
-}
+// Assumes that top-of-stack can be used as a pointer-sized scratchpad. Saves all of
+// the registers into the scratch buffer such that RegisterID * sizeof(int64_t) is the
+// offset of every register.
+void saveAllRegisters(MacroAssembler& jit, char* scratchMemory);
+
+void restoreAllRegisters(MacroAssembler& jit, char* scratchMemory);
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
+
+#endif // FTLSaveRestore_h
 

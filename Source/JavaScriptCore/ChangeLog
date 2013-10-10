@@ -1,3 +1,121 @@
+2013-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do simple OSR exits using llvm.webkit.stackmap
+        https://bugs.webkit.org/show_bug.cgi?id=122538
+
+        Reviewed by Oliver Hunt.
+        
+        This gives the FTL the ability to OSR exit using the llvm.webkit.stackmap intrinsic.
+        
+        - The FTL compiles all OSR exit calls as calls to llvm.webkit.stackmap with a unique
+          ID, passing a requested size that is big enough for own jump replacement.
+        
+        - After LLVM compilation, we parse the new LLVM stackmap section.
+        
+        - For all llvm.webkit.stackmaps that we used for OSR exits, we do a jumpReplacement,
+          which targets exit thunks that we generate.
+        
+        - If an exit thunk fires, it causes JSC to compile an exit off-ramp that uses a
+          combination of the JSC-internal OSR exit accounting (FTL::ExitValue and friends) and
+          LLVM stackmap's accounting of where data actually ended up (register, indirect,
+          constant) to reconstruct bytecode state.
+        
+        This still has shortcomings; for example it cannot handle XMM or YMM registers. Handling
+        YMM registers will require adding some basic YMM support to our assemblers - really we
+        just need the ability to move a YMM's value into a GPR.
+        
+        This patch preserves all of the old, intrinsic-less, FTL OSR exit support. Hence it
+        manages to pass all existing FTL tests even despite its incompleteness. I think that's
+        the right way to go since this is already a big patch, and anyway it would be great to
+        keep the intrinsic-less FTL OSR exit support so long as the LLVM side of this hasn't
+        landed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::firstRegister):
+        (JSC::AbstractMacroAssembler::lastRegister):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::isStackRelated):
+        (JSC::MacroAssembler::firstRealRegister):
+        (JSC::MacroAssembler::nextRegister):
+        (JSC::MacroAssembler::secondRealRegister):
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::firstRegister):
+        (JSC::X86Assembler::lastRegister):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * ftl/FTLCArgumentGetter.cpp:
+        (JSC::FTL::CArgumentGetter::loadNextAndBox):
+        * ftl/FTLCArgumentGetter.h:
+        (JSC::FTL::CArgumentGetter::loadNextDoubleIntoGPR):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateCodeSection):
+        (JSC::FTL::mmAllocateDataSection):
+        (JSC::FTL::dumpDataSection):
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        (JSC::FTL::compile):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        (JSC::FTL::ExitThunkGenerator::emitThunks):
+        * ftl/FTLExitThunkGenerator.h:
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::isInJSStackSomehow):
+        (JSC::FTL::ExitValue::valueFormat):
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLJITCode.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::generateExitThunks):
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::LowerDFGToLLVM::linkOSRExitsAndCompleteInitializationBlocks):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStubWithOSRExitStackmap):
+        (JSC::FTL::compileStubWithoutOSRExitStackmap):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLSaveRestore.cpp: Added.
+        (JSC::FTL::bytesForGPRs):
+        (JSC::FTL::requiredScratchMemorySizeInBytes):
+        (JSC::FTL::offsetOfGPR):
+        (JSC::FTL::saveAllRegisters):
+        (JSC::FTL::restoreAllRegisters):
+        * ftl/FTLSaveRestore.h: Added.
+        * ftl/FTLStackMaps.cpp: Added.
+        (JSC::FTL::readObject):
+        (JSC::FTL::StackMaps::Constant::parse):
+        (JSC::FTL::StackMaps::Constant::dump):
+        (JSC::FTL::StackMaps::Location::parse):
+        (JSC::FTL::StackMaps::Location::dump):
+        (JSC::FTL::StackMaps::Location::involvesGPR):
+        (JSC::FTL::StackMaps::Location::isGPR):
+        (JSC::FTL::StackMaps::Location::gpr):
+        (JSC::FTL::StackMaps::Location::restoreInto):
+        (JSC::FTL::StackMaps::Record::parse):
+        (JSC::FTL::StackMaps::Record::dump):
+        (JSC::FTL::StackMaps::parse):
+        (JSC::FTL::StackMaps::dump):
+        (JSC::FTL::StackMaps::dumpMultiline):
+        (JSC::FTL::StackMaps::getRecordMap):
+        (WTF::printInternal):
+        * ftl/FTLStackMaps.h: Added.
+        * ftl/FTLState.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        * ftl/FTLValueFormat.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+        * ftl/FTLValueFormat.h:
+        * runtime/DataView.cpp:
+        (JSC::DataView::create):
+        * runtime/DataView.h:
+        (JSC::DataView::read):
+        * runtime/Options.h:
+
 2013-10-09  Filip Pizlo  <fpizlo@apple.com>
 
         Minor clean-ups in the JSC Xcode project.

@@ -38,6 +38,7 @@ protected:
     
 public:
     JS_EXPORT_PRIVATE static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+    static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>);
     
     virtual unsigned byteLength() const OVERRIDE
     {
@@ -65,6 +66,15 @@ public:
         return flipBytesIfLittleEndian(
             *reinterpret_cast<T*>(static_cast<uint8_t*>(m_baseAddress) + offset),
             littleEndian);
+    }
+    
+    template<typename T>
+    T read(unsigned& offset, bool littleEndian, bool* status = 0)
+    {
+        T result = this->template get<T>(offset, littleEndian, status);
+        if (!status || *status)
+            offset += sizeof(T);
+        return result;
     }
     
     template<typename T>

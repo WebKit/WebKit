@@ -28,11 +28,12 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "AssemblyHelpers.h"
 #include "FPRInfo.h"
 #include "FTLOSRExitCompiler.h"
+#include "FTLSaveRestore.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
-#include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
 
@@ -40,7 +41,10 @@ using namespace DFG;
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
 {
-    MacroAssembler jit;
+    AssemblyHelpers jit(vm, 0);
+    
+    // Note that in the ftlOSRExitUsesStackmap() case, the "return address" will be the
+    // OSR exit ID.
     
     // Pretend that we're a C call frame.
     jit.push(MacroAssembler::framePointerRegister);
@@ -48,44 +52,46 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.push(GPRInfo::regT0);
     jit.push(GPRInfo::regT0);
     
-    size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfArgumentRegisters + FPRInfo::numberOfArgumentRegisters);
-    ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(scratchSize);
-    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+    if (!Options::ftlOSRExitUsesStackmap())
+        jit.poke(GPRInfo::nonArgGPR0, 1);
     
-    for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i)
-        jit.store64(GPRInfo::toArgumentRegister(i), buffer + i);
-    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
-        jit.move(MacroAssembler::TrustedImmPtr(buffer + GPRInfo::numberOfArgumentRegisters + i), GPRInfo::nonArgGPR1);
-        jit.storeDouble(FPRInfo::toArgumentRegister(i), GPRInfo::nonArgGPR1);
-    }
+    ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(requiredScratchMemorySizeInBytes());
+    char* buffer = static_cast<char*>(scratchBuffer->dataBuffer());
+    
+    saveAllRegisters(jit, buffer);
     
     // Tell GC mark phase how much of the scratch buffer is active during call.
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), GPRInfo::nonArgGPR1);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
     // argument 0 is already the call frame.
-    jit.move(GPRInfo::nonArgGPR0, GPRInfo::argumentGPR1);
+    if (Options::ftlOSRExitUsesStackmap())
+        jit.peek(GPRInfo::argumentGPR1, 3);
+    else
+        jit.peek(GPRInfo::argumentGPR1, 1);
     MacroAssembler::Call functionCall = jit.call();
     
-    // Make sure that we're not using the return register if it's an argument register.
-    jit.move(GPRInfo::returnValueGPR, GPRInfo::nonArgGPR0);
+    // At this point we want to make a tail call to what was returned to us in the
+    // returnValueGPR. But at the same time as we do this, we must restore all registers.
+    // The way we will accomplish this is by arranging to have the tail call target in the
+    // return address "slot" (be it a register or the stack).
+    
+    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0);
     
     // Prepare for tail call.
-    jit.pop(GPRInfo::nonArgGPR1);
-    jit.pop(GPRInfo::nonArgGPR1);
+    jit.pop(GPRInfo::regT1);
+    jit.pop(GPRInfo::regT1);
     jit.pop(MacroAssembler::framePointerRegister);
     
-    jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR1);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(0), GPRInfo::nonArgGPR1);
+    // At this point we're sitting on the return address - so if we did a jump right now, the
+    // tail-callee would be happy. Instead we'll stash the callee in the return address and then
+    // restore all registers.
     
-    for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i) {
-        jit.move(MacroAssembler::TrustedImmPtr(buffer + GPRInfo::numberOfArgumentRegisters + i), GPRInfo::nonArgGPR1);
-        jit.loadDouble(GPRInfo::nonArgGPR1, FPRInfo::toArgumentRegister(i));
-    }
-    for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i)
-        jit.load64(buffer + i, GPRInfo::toArgumentRegister(i));
+    jit.restoreReturnAddressBeforeReturn(GPRInfo::regT0);
     
-    jit.jump(GPRInfo::nonArgGPR0);
+    restoreAllRegisters(jit, buffer);
+
+    jit.ret();
     
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     patchBuffer.link(functionCall, compileFTLOSRExit);

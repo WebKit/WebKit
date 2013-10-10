@@ -52,6 +52,11 @@ using namespace DFG;
 
 static int compileCounter;
 
+static bool generateExitThunks()
+{
+    return !Options::useLLVMOSRExitIntrinsic() && !Options::ftlOSRExitUsesStackmap();
+}
+
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
 #define FTL_TYPE_CHECK(lowValue, highValue, typesPassedThrough, failCondition) do { \
@@ -75,6 +80,7 @@ public:
         , m_exitThunkGenerator(state)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
+        , m_stackmapIDs(0)
     {
     }
     
@@ -3256,8 +3262,10 @@ private:
             
             m_out.branch(failCondition, failCase, continuation);
 
-            m_out.appendTo(m_prologue);
-            info.m_thunkAddress = buildAlloca(m_out.m_builder, m_out.intPtr);
+            if (generateExitThunks()) {
+                m_out.appendTo(m_prologue);
+                info.m_thunkAddressValue = buildAlloca(m_out.m_builder, m_out.intPtr);
+            }
         
             lastNext = m_out.appendTo(failCase, continuation);
         }
@@ -3265,7 +3273,7 @@ private:
         if (Options::ftlOSRExitOmitsMarshalling()) {
             m_out.call(
                 m_out.intToPtr(
-                    m_out.get(info.m_thunkAddress),
+                    m_out.get(info.m_thunkAddressValue),
                     pointerType(functionType(m_out.voidType))));
         } else
             emitOSRExitCall(failCondition, index, exit, info, lowValue, direction, recovery);
@@ -3275,7 +3283,8 @@ private:
             
             m_out.appendTo(continuation, lastNext);
         
-            m_exitThunkGenerator.emitThunk(index);
+            if (generateExitThunks())
+                m_exitThunkGenerator.emitThunk(index);
         }
     }
     
@@ -3341,9 +3350,18 @@ private:
             return;
         }
         
+        if (Options::ftlOSRExitUsesStackmap()) {
+            exit.m_stackmapID = m_stackmapIDs++;
+            arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
+            arguments.insert(0, m_out.constInt32(exit.m_stackmapID));
+        
+            m_out.call(m_out.webkitStackmapIntrinsic(), arguments);
+            return;
+        }
+        
         m_out.call(
             m_out.intToPtr(
-                m_out.get(info.m_thunkAddress),
+                m_out.get(info.m_thunkAddressValue),
                 pointerType(functionType(m_out.voidType, argumentTypes))),
             arguments);
     }
@@ -3499,7 +3517,7 @@ private:
                 m_out.set(
                     m_out.constIntPtr(
                         linkBuffer->locationOf(info.m_thunkLabel).executableAddress()),
-                    info.m_thunkAddress);
+                    info.m_thunkAddressValue);
             
                 exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
             }
@@ -3696,6 +3714,8 @@ private:
     unsigned m_nodeIndex;
     Node* m_node;
     SpeculationDirection m_direction;
+    
+    uint32_t m_stackmapIDs;
 };
 
 void lowerDFGToLLVM(State& state)

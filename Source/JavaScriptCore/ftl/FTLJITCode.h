@@ -32,6 +32,7 @@
 
 #include "DFGCommonData.h"
 #include "FTLOSRExit.h"
+#include "FTLStackMaps.h"
 #include "JITCode.h"
 #include <wtf/LLVMHeaders.h>
 #include <wtf/RefCountedArray.h>
@@ -67,6 +68,7 @@ public:
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
+    StackMaps stackmaps;
     
 private:
     Vector<RefCountedArray<LSectionWord>> m_dataSections;

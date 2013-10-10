@@ -264,12 +264,18 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         if (Options::reportCompileTimes())
             beforeFTL = currentTimeMS();
         
-        if (Options::llvmAlwaysFails()) {
+        if (Options::llvmAlwaysFailsBeforeCompile()) {
             FTL::fail(state);
             return FTLPath;
         }
         
         FTL::compile(state);
+
+        if (Options::llvmAlwaysFailsBeforeLink()) {
+            FTL::fail(state);
+            return FTLPath;
+        }
+        
         FTL::link(state);
         return FTLPath;
 #else

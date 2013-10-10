@@ -100,6 +100,16 @@ public:
         loadNext64(destination);
     }
     
+    void loadNextDoubleIntoGPR(GPRReg destination)
+    {
+        if (m_fprArgumentIndex < FPRInfo::numberOfArgumentRegisters) {
+            m_jit.moveDoubleTo64(FPRInfo::toArgumentRegister(m_fprArgumentIndex++), destination);
+            return;
+        }
+        
+        m_jit.load64(nextAddress(), destination);
+    }
+    
     void loadNextDouble(FPRReg destination)
     {
         ASSERT(

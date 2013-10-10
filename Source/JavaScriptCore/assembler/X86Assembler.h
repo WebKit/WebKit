@@ -126,6 +126,16 @@ namespace X86Registers {
 class X86Assembler {
 public:
     typedef X86Registers::RegisterID RegisterID;
+    static RegisterID firstRegister() { return X86Registers::eax; }
+    static RegisterID lastRegister()
+    {
+#if CPU(X86_64)
+        return X86Registers::r15;
+#else
+        return X86Registers::edi;
+#endif
+    }
+    
     typedef X86Registers::XMMRegisterID XMMRegisterID;
     typedef XMMRegisterID FPRegisterID;
 

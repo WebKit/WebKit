@@ -74,6 +74,9 @@ public:
     class Jump;
 
     typedef typename AssemblerType::RegisterID RegisterID;
+    
+    static RegisterID firstRegister() { return AssemblerType::firstRegister(); }
+    static RegisterID lastRegister() { return AssemblerType::lastRegister(); }
 
     // Section 1: MacroAssembler operand types
     //

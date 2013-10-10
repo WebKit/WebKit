@@ -67,6 +67,32 @@ namespace JSC {
 class MacroAssembler : public MacroAssemblerBase {
 public:
 
+    static bool isStackRelated(RegisterID reg)
+    {
+        return reg == stackPointerRegister || reg == framePointerRegister;
+    }
+    
+    static RegisterID firstRealRegister()
+    {
+        RegisterID firstRegister = MacroAssembler::firstRegister();
+        while (MacroAssembler::isStackRelated(firstRegister))
+            firstRegister = static_cast<RegisterID>(firstRegister + 1);
+        return firstRegister;
+    }
+    
+    static RegisterID nextRegister(RegisterID reg)
+    {
+        RegisterID result = static_cast<RegisterID>(reg + 1);
+        while (MacroAssembler::isStackRelated(result))
+            result = static_cast<RegisterID>(result + 1);
+        return result;
+    }
+    
+    static RegisterID secondRealRegister()
+    {
+        return nextRegister(firstRealRegister());
+    }
+
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;

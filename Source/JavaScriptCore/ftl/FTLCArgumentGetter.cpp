@@ -52,60 +52,31 @@ void CArgumentGetter::loadNextAndBox(
     }
     
     switch (format) {
-    case ValueFormatInt32: {
+    case ValueFormatInt32:
+    case ValueFormatUInt32:
         loadNext32(destination);
-        m_jit.or64(GPRInfo::tagTypeNumberRegister, destination);
         break;
-    }
-            
-    case ValueFormatUInt32: {
-        loadNext32(destination);
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
-        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
-        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
-        break;
-    }
         
-    case ValueFormatInt52: {
+    case ValueFormatInt52:
+    case ValueFormatStrictInt52:
+    case ValueFormatJSValue:
         loadNext64(destination);
-        m_jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), destination);
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
-        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
-        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
         break;
-    }
             
-    case ValueFormatStrictInt52: {
-        loadNext64(destination);
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
-        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
-        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
-        break;
-    }
-            
-    case ValueFormatBoolean: {
+    case ValueFormatBoolean:
         loadNext8(destination);
-        m_jit.or32(MacroAssembler::TrustedImm32(ValueFalse), destination);
         break;
-    }
             
-    case ValueFormatJSValue: {
-        loadNext64(destination);
+    case ValueFormatDouble:
+        loadNextDoubleIntoGPR(destination);
         break;
-    }
-            
-    case ValueFormatDouble: {
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
-        loadNextDouble(FPRInfo::fpRegT0);
-        m_jit.boxDouble(FPRInfo::fpRegT0, destination);
-        m_jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
-        break;
-    }
             
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+    
+    reboxAccordingToFormat(format, m_jit, destination, scratch1, scratch2);
 }
 
 } } // namespace JSC::FTL

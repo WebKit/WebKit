@@ -165,6 +165,8 @@ struct OSRExit : public DFG::OSRExitBase {
     
     Operands<ExitValue> m_values;
     
+    uint32_t m_stackmapID;
+    
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     
     void convertToForward(

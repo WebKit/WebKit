@@ -43,6 +43,12 @@ PassRefPtr<DataView> DataView::create(
     return adoptRef(new DataView(buffer, byteOffset, byteLength));
 }
 
+PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> passedBuffer)
+{
+    RefPtr<ArrayBuffer> buffer = passedBuffer;
+    return create(buffer, 0, buffer->byteLength());
+}
+
 JSArrayBufferView* DataView::wrap(ExecState* exec, JSGlobalObject* globalObject)
 {
     return JSDataView::create(

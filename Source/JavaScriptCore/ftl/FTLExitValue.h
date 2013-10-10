@@ -126,6 +126,7 @@ public:
         switch (kind()) {
         case ExitValueInJSStack:
         case ExitValueInJSStackAsInt32:
+        case ExitValueInJSStackAsInt52:
         case ExitValueInJSStackAsDouble:
             return true;
         default:
@@ -152,7 +153,40 @@ public:
         ASSERT(isInJSStackSomehow());
         return VirtualRegister(u.virtualRegister);
     }
-    
+
+    // If it's in the JSStack somehow, this will tell you what format it's in, in a manner
+    // that is compatible with exitArgument().format(). If it's a constant or it's dead, it
+    // will claim to be a JSValue. If it's an argument then it will tell you the argument's
+    // format.
+    ValueFormat valueFormat() const
+    {
+        switch (kind()) {
+        case InvalidExitValue:
+            RELEASE_ASSERT_NOT_REACHED();
+            return InvalidValueFormat;
+            
+        case ExitValueDead:
+        case ExitValueConstant:
+        case ExitValueInJSStack:
+            return ValueFormatJSValue;
+            
+        case ExitValueArgument:
+            return exitArgument().format();
+            
+        case ExitValueInJSStackAsInt32:
+            return ValueFormatInt32;
+            
+        case ExitValueInJSStackAsInt52:
+            return ValueFormatInt52;
+            
+        case ExitValueInJSStackAsDouble:
+            return ValueFormatDouble;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+        return InvalidValueFormat;
+    }
+
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
     

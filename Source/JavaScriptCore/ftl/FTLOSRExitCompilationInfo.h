@@ -37,13 +37,14 @@ namespace JSC { namespace FTL {
 
 struct OSRExitCompilationInfo {
     OSRExitCompilationInfo()
-        : m_thunkAddress(0)
+        : m_thunkAddressValue(0)
     {
     }
     
     MacroAssembler::Label m_thunkLabel;
     MacroAssembler::PatchableJump m_thunkJump;
-    LValue m_thunkAddress;
+    CodeLocationLabel m_thunkAddress;
+    LValue m_thunkAddressValue;
 };
 
 } } // namespace JSC::FTL

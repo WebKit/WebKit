@@ -43,6 +43,7 @@ public:
     ~ExitThunkGenerator();
     
     void emitThunk(unsigned index);
+    void emitThunks();
     
     bool didThings() const { return m_didThings; }
 

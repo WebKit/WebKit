@@ -40,7 +40,8 @@ void fail(State& state)
 {
     state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
     
-    LLVMDisposeModule(state.module);
+    if (state.module)
+        LLVMDisposeModule(state.module);
 }
 
 } } // namespace JSC::FTL
