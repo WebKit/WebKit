@@ -1,5 +1,16 @@
 2013-10-10  Andreas Kling  <akling@apple.com>
 
+        SVGUseElement: Use iterative traversal to find disallowed elements.
+        <https://webkit.org/b/122596>
+
+        Reviewed by Antti Koivisto.
+
+        Rewrote subtreeContainsDisallowedElement() in SVGUseElement.cpp to
+        use iterative traversal with descendantsOfType<Element> instead of
+        recursing through the tree.
+
+2013-10-10  Andreas Kling  <akling@apple.com>
+
         Move RenderObject::layout() to RenderElement.
         <https://webkit.org/b/122537>
 
