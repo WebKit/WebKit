@@ -94,7 +94,7 @@ inline bool operator!=(const CString& a, const char* b) { return !(a == b); }
 bool operator<(const CString& a, const CString& b);
 
 struct CStringHash {
-    WTF_EXPORT_PRIVATE static unsigned hash(const CString& string) { return string.hash(); }
+    static unsigned hash(const CString& string) { return string.hash(); }
     WTF_EXPORT_PRIVATE static bool equal(const CString& a, const CString& b);
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

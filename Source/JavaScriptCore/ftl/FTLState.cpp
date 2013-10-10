@@ -39,7 +39,7 @@ using namespace DFG;
 
 State::State(Graph& graph)
     : graph(graph)
-    , context(LLVMContextCreate())
+    , context(llvm->ContextCreate())
     , module(0)
     , function(0)
     , generatedFunction(0)
@@ -67,7 +67,7 @@ State::State(Graph& graph)
 
 State::~State()
 {
-    LLVMContextDispose(context);
+    llvm->ContextDispose(context);
 }
 
 void State::dumpState(const char* when)

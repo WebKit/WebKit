@@ -23,28 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLFail.h"
+#import "config.h"
+#import "InitializeLLVM.h"
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM)
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
-#include "LLVMAPI.h"
+#import "InitializeLLVMPOSIX.h"
+#import <Foundation/Foundation.h>
 
-namespace JSC { namespace FTL {
+// Use the "JS" prefix to make check-for-inappropriate-objc-class-names happy. I
+// think this is better than hacking that script.
 
-using namespace DFG;
+@interface JSJavaScriptCoreBundleFinder : NSObject
+@end
 
-void fail(State& state)
+@implementation JSJavaScriptCoreBundleFinder
+@end
+
+namespace JSC {
+
+void initializeLLVMImpl()
 {
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
+    @autoreleasepool {
+        NSBundle *myBundle = [NSBundle bundleForClass:[JSJavaScriptCoreBundleFinder class]];
+        NSString *path = [[myBundle bundlePath] stringByAppendingPathComponent:@"Libraries/libllvmForJSC.dylib"];
+        
+        initializeLLVMPOSIX([path UTF8String]);
+    }
 }
 
-} } // namespace JSC::FTL
+} // namespace JSC
 
-#endif // ENABLE(FTL_JIT)
-
+#endif // HAVE(LLVM)

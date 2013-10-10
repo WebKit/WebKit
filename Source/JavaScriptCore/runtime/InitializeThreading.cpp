@@ -40,7 +40,6 @@
 #include "LLIntData.h"
 #include "WriteBarrier.h"
 #include <wtf/dtoa.h>
-#include <wtf/LLVMHeaders.h>
 #include <wtf/Threading.h>
 #include <wtf/dtoa/cached-powers.h>
 
@@ -70,24 +69,6 @@ static void initializeThreadingOnce()
 #if ENABLE(LLINT)
     LLInt::initialize();
 #endif
-#if HAVE(LLVM)
-    bool ftl = false;
-    bool disassembler = false;
-#if ENABLE(FTL_JIT)
-    ftl = true;
-#endif
-#if USE(LLVM_DISASSEMBLER)
-    disassembler = true;
-#endif
-    if (ftl)
-        LLVMLinkInMCJIT();
-    if (ftl || disassembler)
-        LLVMInitializeNativeTarget();
-    if (ftl)
-        LLVMInitializeX86AsmPrinter();
-    if (disassembler)
-        LLVMInitializeX86Disassembler();
-#endif // HAVE(LLVM)
 }
 
 void initializeThreading()

@@ -1,3 +1,150 @@
+2013-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL: Soft-link LLVM as a workaround for LLVM's static initializers and exit-time destructors
+        https://bugs.webkit.org/show_bug.cgi?id=122566
+
+        Reviewed by Mark Rowe.
+        
+        The JSC project now builds a libllvmForJSC.dylib. If FTL is enabled, this
+        gets copied into JavaScriptCore.framework/Versions/A/Libraries. JSC will
+        load the dylib by finding it using NSBundle APIs and then doing dlopen().
+        That will only happen lazily, when something happens that requires LLVM.
+        
+        This mostly takes care of LLVM static initialization overhead by deferring
+        it until it's really needed.
+        
+        This takes care of LLVM's exit-time destructors because inside
+        libllvmForJSC.dylib, we override __cxa_atexit.
+        
+        * Configurations/JavaScriptCore.xcconfig:
+        * Configurations/LLVMForJSC.xcconfig: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * disassembler/LLVMDisassembler.cpp:
+        (JSC::tryToDisassembleWithLLVM):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::voidType):
+        (JSC::FTL::int1Type):
+        (JSC::FTL::int8Type):
+        (JSC::FTL::int16Type):
+        (JSC::FTL::int32Type):
+        (JSC::FTL::int64Type):
+        (JSC::FTL::intPtrType):
+        (JSC::FTL::floatType):
+        (JSC::FTL::doubleType):
+        (JSC::FTL::pointerType):
+        (JSC::FTL::structType):
+        (JSC::FTL::functionType):
+        (JSC::FTL::typeOf):
+        (JSC::FTL::mdKindID):
+        (JSC::FTL::mdString):
+        (JSC::FTL::mdNode):
+        (JSC::FTL::setMetadata):
+        (JSC::FTL::addFunction):
+        (JSC::FTL::setLinkage):
+        (JSC::FTL::setFunctionCallingConv):
+        (JSC::FTL::getParam):
+        (JSC::FTL::constInt):
+        (JSC::FTL::constReal):
+        (JSC::FTL::constIntToPtr):
+        (JSC::FTL::constBitCast):
+        (JSC::FTL::appendBasicBlock):
+        (JSC::FTL::insertBasicBlock):
+        (JSC::FTL::buildPhi):
+        (JSC::FTL::addIncoming):
+        (JSC::FTL::buildAlloca):
+        (JSC::FTL::buildAdd):
+        (JSC::FTL::buildSub):
+        (JSC::FTL::buildMul):
+        (JSC::FTL::buildDiv):
+        (JSC::FTL::buildRem):
+        (JSC::FTL::buildNeg):
+        (JSC::FTL::buildFAdd):
+        (JSC::FTL::buildFSub):
+        (JSC::FTL::buildFMul):
+        (JSC::FTL::buildFDiv):
+        (JSC::FTL::buildFRem):
+        (JSC::FTL::buildFNeg):
+        (JSC::FTL::buildAnd):
+        (JSC::FTL::buildOr):
+        (JSC::FTL::buildXor):
+        (JSC::FTL::buildShl):
+        (JSC::FTL::buildAShr):
+        (JSC::FTL::buildLShr):
+        (JSC::FTL::buildNot):
+        (JSC::FTL::buildLoad):
+        (JSC::FTL::buildStore):
+        (JSC::FTL::buildSExt):
+        (JSC::FTL::buildZExt):
+        (JSC::FTL::buildFPToSI):
+        (JSC::FTL::buildFPToUI):
+        (JSC::FTL::buildSIToFP):
+        (JSC::FTL::buildUIToFP):
+        (JSC::FTL::buildIntCast):
+        (JSC::FTL::buildFPCast):
+        (JSC::FTL::buildIntToPtr):
+        (JSC::FTL::buildPtrToInt):
+        (JSC::FTL::buildBitCast):
+        (JSC::FTL::buildICmp):
+        (JSC::FTL::buildFCmp):
+        (JSC::FTL::buildCall):
+        (JSC::FTL::setTailCall):
+        (JSC::FTL::buildExtractValue):
+        (JSC::FTL::buildSelect):
+        (JSC::FTL::buildBr):
+        (JSC::FTL::buildCondBr):
+        (JSC::FTL::buildSwitch):
+        (JSC::FTL::addCase):
+        (JSC::FTL::buildRet):
+        (JSC::FTL::buildUnreachable):
+        (JSC::FTL::dumpModule):
+        (JSC::FTL::verifyModule):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLFail.cpp:
+        (JSC::FTL::fail):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLink.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::Output):
+        (JSC::FTL::Output::~Output):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::appendTo):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        (JSC::FTL::State::~State):
+        * ftl/WebKitLLVMLibraryAnchor.cpp: Removed.
+        * jsc.cpp:
+        (jscmain):
+        * llvm: Added.
+        * llvm/InitializeLLVM.cpp: Added.
+        (JSC::initializeLLVM):
+        * llvm/InitializeLLVM.h: Added.
+        * llvm/InitializeLLVMMac.mm: Added.
+        (JSC::initializeLLVMImpl):
+        * llvm/InitializeLLVMPOSIX.cpp: Added.
+        (JSC::initializeLLVMPOSIX):
+        * llvm/InitializeLLVMPOSIX.h: Added.
+        * llvm/LLVMAPI.cpp: Added.
+        * llvm/LLVMAPI.h: Added.
+        * llvm/LLVMAPIFunctions.h: Added.
+        * llvm/LLVMHeaders.h: Added.
+        * llvm/library: Added.
+        * llvm/library/LLVMAnchor.cpp: Added.
+        * llvm/library/LLVMExports.cpp: Added.
+        (initializeAndGetJSCLLVMAPI):
+        * llvm/library/LLVMOverrides.cpp: Added.
+        (__cxa_atexit):
+        * llvm/library/config_llvm.h: Added.
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/Options.h:
+
 2013-10-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         currentThis and currentArguments crash if called from outside a callback

@@ -67,6 +67,7 @@
 #include "FTLLink.h"
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
+#include "InitializeLLVM.h"
 #endif
 
 namespace JSC { namespace DFG {
@@ -255,8 +256,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
-        // FIXME: Support OSR entry.
-        // https://bugs.webkit.org/show_bug.cgi?id=113625
+        initializeLLVM();
         
         FTL::State state(dfg);
         FTL::lowerDFGToLLVM(state);

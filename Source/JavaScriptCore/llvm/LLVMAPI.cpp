@@ -24,27 +24,14 @@
  */
 
 #include "config.h"
-#include "FTLFail.h"
-
-#if ENABLE(FTL_JIT)
-
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
 #include "LLVMAPI.h"
 
-namespace JSC { namespace FTL {
+#if HAVE(LLVM)
 
-using namespace DFG;
+namespace JSC {
 
-void fail(State& state)
-{
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
+LLVMAPI* llvm;
+
 }
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
+#endif // HAVE(LLVM)

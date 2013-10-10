@@ -207,9 +207,7 @@ typedef OptionRange optionRange;
     v(bool, logGC, false) \
     v(unsigned, gcMaxHeapSize, 0) \
     v(bool, recordGCPauseTimes, false) \
-    v(bool, logHeapStatisticsAtExit, false) \
-    \
-    v(bool, neverDeleteVMInCommandLine, false)
+    v(bool, logHeapStatisticsAtExit, false)
 
 class Options {
 public:

@@ -97,7 +97,7 @@ public:
         m_graph.m_dominators.computeIfNecessary(m_graph);
         
         m_ftlState.module =
-            LLVMModuleCreateWithNameInContext(name.data(), m_ftlState.context);
+            llvm->ModuleCreateWithNameInContext(name.data(), m_ftlState.context);
         
         m_ftlState.function = addFunction(
             m_ftlState.module, name.data(), functionType(m_out.int64, m_out.intPtr));

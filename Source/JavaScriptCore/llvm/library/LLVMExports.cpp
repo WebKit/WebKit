@@ -23,28 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLFail.h"
+#include "config_llvm.h"
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM)
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
 #include "LLVMAPI.h"
 
-namespace JSC { namespace FTL {
+extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI();
 
-using namespace DFG;
-
-void fail(State& state)
+extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI()
 {
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
+    LLVMLinkInMCJIT();
+    LLVMInitializeNativeTarget();
+    LLVMInitializeX86AsmPrinter();
+    LLVMInitializeX86Disassembler();
     
-    if (state.module)
-        llvm->DisposeModule(state.module);
+    JSC::LLVMAPI* result = new JSC::LLVMAPI;
+    
+#define LLVM_API_FUNCTION_ASSIGNMENT(returnType, name, signature) \
+    result->name = LLVM##name;
+    FOR_EACH_LLVM_API_FUNCTION(LLVM_API_FUNCTION_ASSIGNMENT);
+#undef LLVM_API_FUNCTION_ASSIGNMENT
+    
+    return result;
 }
 
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)
-
+#endif // HAVE(LLVM)

@@ -330,7 +330,6 @@
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
 		A70DA0821799F04D00529A9B /* Insertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Insertion.h; sourceTree = "<group>"; };
 		A70DA0831799F04D00529A9B /* ListDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListDump.h; sourceTree = "<group>"; };
-		A736B3581799E11A00C6F05E /* LLVMHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLVMHeaders.h; sourceTree = "<group>"; };
 		A748744F17A0BDAE00FA04CB /* SixCharacterHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SixCharacterHash.cpp; sourceTree = "<group>"; };
 		A748745017A0BDAE00FA04CB /* SixCharacterHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SixCharacterHash.h; sourceTree = "<group>"; };
 		A748745117A0BDAE00FA04CB /* StringHashDumpContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHashDumpContext.h; sourceTree = "<group>"; };
@@ -672,7 +671,6 @@
 				A70DA0821799F04D00529A9B /* Insertion.h */,
 				A70DA0831799F04D00529A9B /* ListDump.h */,
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
-				A736B3581799E11A00C6F05E /* LLVMHeaders.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
 				A8A472CA151A825B004123FF /* MD5.cpp */,
 				A8A472CB151A825B004123FF /* MD5.h */,

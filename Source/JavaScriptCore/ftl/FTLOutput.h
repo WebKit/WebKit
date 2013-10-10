@@ -94,7 +94,7 @@ public:
     {
         m_block = block;
         
-        LLVMPositionBuilderAtEnd(m_builder, block);
+        llvm->PositionBuilderAtEnd(m_builder, block);
     }
     LBasicBlock newBlock(const char* name = "")
     {

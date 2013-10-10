@@ -257,7 +257,6 @@
 		0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63948215E48114006A597C /* DFGArrayMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6E5C191724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6E5C181724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp */; };
 		0F7025A91714B0FA00382C0E /* DFGOSRExitCompilerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7025A71714B0F800382C0E /* DFGOSRExitCompilerCommon.cpp */; };
 		0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7025A81714B0F800382C0E /* DFGOSRExitCompilerCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */; };
@@ -374,6 +373,22 @@
 		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC815121405118600CFA603 /* VTableSpectrum.cpp */; };
 		0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCCAE4316D0CF6E00D0C65B /* ParserError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFAB01805CA6D00472CE4 /* InitializeLLVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFAB11805CA6D00472CE4 /* InitializeLLVMMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAAF1805CA6D00472CE4 /* InitializeLLVMMac.mm */; };
+		0FCEFAC11805D94E00472CE4 /* LLVMOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */; };
+		0FCEFAC31805E74000472CE4 /* LLVMExports.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */; };
+		0FCEFACA1805E75500472CE4 /* InitializeLLVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */; };
+		0FCEFACB1805E75500472CE4 /* InitializeLLVMPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */; };
+		0FCEFACC1805E75500472CE4 /* InitializeLLVMPOSIX.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */; };
+		0FCEFACE1805E75500472CE4 /* LLVMAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC81805E75500472CE4 /* LLVMAPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFACF1805E75500472CE4 /* LLVMAPIFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFAD11805E77900472CE4 /* LLVMAPIFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */; };
+		0FCEFAD31805EDCC00472CE4 /* LLVMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FCEFAD41805EDCC00472CE4 /* LLVMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */; };
+		0FCEFAD71806174600472CE4 /* LLVMAnchor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */; };
+		0FCEFADA180620DA00472CE4 /* LLVMAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAC81805E75500472CE4 /* LLVMAPI.h */; };
+		0FCEFADC18064A1400472CE4 /* config_llvm.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADB18064A1400472CE4 /* config_llvm.h */; };
 		0FCEFAAB1804C13E00472CE4 /* FTLSaveRestore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */; };
 		0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD2C92316D01EE900C7803F /* StructureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1185,6 +1200,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0FCEFABC1805D66300472CE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0FCEFAB51805D61600472CE4;
+			remoteInfo = llvmForJSC;
+		};
 		0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1475,7 +1497,6 @@
 		0F63948215E48114006A597C /* DFGArrayMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayMode.h; path = dfg/DFGArrayMode.h; sourceTree = "<group>"; };
 		0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAdjacencyList.h; path = dfg/DFGAdjacencyList.h; sourceTree = "<group>"; };
 		0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdge.h; path = dfg/DFGEdge.h; sourceTree = "<group>"; };
-		0F6E5C181724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebKitLLVMLibraryAnchor.cpp; path = ftl/WebKitLLVMLibraryAnchor.cpp; sourceTree = "<group>"; };
 		0F7025A71714B0F800382C0E /* DFGOSRExitCompilerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitCompilerCommon.cpp; path = dfg/DFGOSRExitCompilerCommon.cpp; sourceTree = "<group>"; };
 		0F7025A81714B0F800382C0E /* DFGOSRExitCompilerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilerCommon.h; path = dfg/DFGOSRExitCompilerCommon.h; sourceTree = "<group>"; };
 		0F714CA116EA92ED00F3EBEB /* DFGBackwardsPropagationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBackwardsPropagationPhase.cpp; path = dfg/DFGBackwardsPropagationPhase.cpp; sourceTree = "<group>"; };
@@ -1604,6 +1625,21 @@
 		0FC815141405118D00CFA603 /* VTableSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTableSpectrum.h; sourceTree = "<group>"; };
 		0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotVisitorInlines.h; sourceTree = "<group>"; };
 		0FCCAE4316D0CF6E00D0C65B /* ParserError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserError.h; sourceTree = "<group>"; };
+		0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitializeLLVM.h; path = llvm/InitializeLLVM.h; sourceTree = "<group>"; };
+		0FCEFAAF1805CA6D00472CE4 /* InitializeLLVMMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InitializeLLVMMac.mm; path = llvm/InitializeLLVMMac.mm; sourceTree = "<group>"; };
+		0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libllvmForJSC.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LLVMForJSC.xcconfig; sourceTree = "<group>"; };
+		0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMOverrides.cpp; sourceTree = "<group>"; };
+		0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMExports.cpp; sourceTree = "<group>"; };
+		0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVM.cpp; path = llvm/InitializeLLVM.cpp; sourceTree = "<group>"; };
+		0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVMPOSIX.cpp; path = llvm/InitializeLLVMPOSIX.cpp; sourceTree = "<group>"; };
+		0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InitializeLLVMPOSIX.h; path = llvm/InitializeLLVMPOSIX.h; sourceTree = "<group>"; };
+		0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLVMAPI.cpp; path = llvm/LLVMAPI.cpp; sourceTree = "<group>"; };
+		0FCEFAC81805E75500472CE4 /* LLVMAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMAPI.h; path = llvm/LLVMAPI.h; sourceTree = "<group>"; };
+		0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMAPIFunctions.h; path = llvm/LLVMAPIFunctions.h; sourceTree = "<group>"; };
+		0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLVMHeaders.h; path = llvm/LLVMHeaders.h; sourceTree = "<group>"; };
+		0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLVMAnchor.cpp; sourceTree = "<group>"; };
+		0FCEFADB18064A1400472CE4 /* config_llvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config_llvm.h; sourceTree = "<group>"; };
 		0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSaveRestore.cpp; path = ftl/FTLSaveRestore.cpp; sourceTree = "<group>"; };
 		0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSaveRestore.h; path = ftl/FTLSaveRestore.h; sourceTree = "<group>"; };
 		0FD2C92316D01EE900C7803F /* StructureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureInlines.h; sourceTree = "<group>"; };
@@ -2439,6 +2475,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0FCEFAB31805D61600472CE4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FF922C614F46B130041A24E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2507,6 +2550,7 @@
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
+				0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2539,6 +2583,7 @@
 				1429D77A0ED20D7300B89619 /* interpreter */,
 				1429D92C0ED22D7000B89619 /* jit */,
 				0F46809C14BA7F4D00BFE272 /* llint */,
+				0FCEFAAD1805CA4400472CE4 /* llvm */,
 				7E39D8370EC3A388003AF11A /* parser */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
@@ -2594,6 +2639,35 @@
 				86A054481556451B00445157 /* LowLevelInterpreter64.asm */,
 			);
 			name = llint;
+			sourceTree = "<group>";
+		};
+		0FCEFAAD1805CA4400472CE4 /* llvm */ = {
+			isa = PBXGroup;
+			children = (
+				0FCEFABF1805D94100472CE4 /* library */,
+				0FCEFAC41805E75500472CE4 /* InitializeLLVM.cpp */,
+				0FCEFAAE1805CA6D00472CE4 /* InitializeLLVM.h */,
+				0FCEFAAF1805CA6D00472CE4 /* InitializeLLVMMac.mm */,
+				0FCEFAC51805E75500472CE4 /* InitializeLLVMPOSIX.cpp */,
+				0FCEFAC61805E75500472CE4 /* InitializeLLVMPOSIX.h */,
+				0FCEFAC71805E75500472CE4 /* LLVMAPI.cpp */,
+				0FCEFAC81805E75500472CE4 /* LLVMAPI.h */,
+				0FCEFAC91805E75500472CE4 /* LLVMAPIFunctions.h */,
+				0FCEFAD21805EDCC00472CE4 /* LLVMHeaders.h */,
+			);
+			name = llvm;
+			sourceTree = "<group>";
+		};
+		0FCEFABF1805D94100472CE4 /* library */ = {
+			isa = PBXGroup;
+			children = (
+				0FCEFADB18064A1400472CE4 /* config_llvm.h */,
+				0FCEFAD61806174600472CE4 /* LLVMAnchor.cpp */,
+				0FCEFAC21805E74000472CE4 /* LLVMExports.cpp */,
+				0FCEFAC01805D94100472CE4 /* LLVMOverrides.cpp */,
+			);
+			name = library;
+			path = llvm/library;
 			sourceTree = "<group>";
 		};
 		0FEA09FC1705137F00BB722C /* ftl */ = {
@@ -2663,7 +2737,6 @@
 				0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */,
 				0F235BCF17178E1C00690C7F /* FTLValueSource.cpp */,
 				0F235BD017178E1C00690C7F /* FTLValueSource.h */,
-				0F6E5C181724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp */,
 			);
 			name = ftl;
 			sourceTree = "<group>";
@@ -3020,6 +3093,7 @@
 		1C90513E0BA9E8830081E9D0 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */,
 				1C9051450BA9E8A70081E9D0 /* Base.xcconfig */,
 				1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */,
 				449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */,
@@ -3894,6 +3968,17 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0FCEFAB41805D61600472CE4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FCEFAD41805EDCC00472CE4 /* LLVMHeaders.h in Headers */,
+				0FCEFADA180620DA00472CE4 /* LLVMAPI.h in Headers */,
+				0FCEFAD11805E77900472CE4 /* LLVMAPIFunctions.h in Headers */,
+				0FCEFADC18064A1400472CE4 /* config_llvm.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		144005C70A5338C60005F061 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3952,6 +4037,7 @@
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
 				0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */,
+				0FCEFAD31805EDCC00472CE4 /* LLVMHeaders.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				0F73D7AF165A143000ACAB71 /* ClosureCallStubRoutine.h in Headers */,
 				969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */,
@@ -3982,6 +4068,7 @@
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
 				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,
+				0FCEFACF1805E75500472CE4 /* LLVMAPIFunctions.h in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
 				0F2B66DF17B6B5AB00A7AE3F /* DataView.h in Headers */,
@@ -4099,6 +4186,7 @@
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
 				A7D89D0017A0B8CC00773AD8 /* DFGSSAConversionPhase.h in Headers */,
 				0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */,
+				0FCEFACC1805E75500472CE4 /* InitializeLLVMPOSIX.h in Headers */,
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,
@@ -4205,6 +4293,7 @@
 				A78853FA17972629001440E4 /* IntendedStructureChain.h in Headers */,
 				BC11667B0E199C05008066DD /* InternalFunction.h in Headers */,
 				1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */,
+				0FCEFAB01805CA6D00472CE4 /* InitializeLLVM.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				BC18C4130E16F5CD00B34460 /* JavaScript.h in Headers */,
 				BC18C4140E16F5CD00B34460 /* JavaScriptCore.h in Headers */,
@@ -4258,6 +4347,7 @@
 				A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */,
 				0F2B66EC17B6B5AB00A7AE3F /* JSDataView.h in Headers */,
 				0F2B66EE17B6B5AB00A7AE3F /* JSDataViewPrototype.h in Headers */,
+				0FCEFACE1805E75500472CE4 /* LLVMAPI.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
 				C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
@@ -4577,6 +4667,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0FCEFAB51805D61600472CE4 /* llvmForJSC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0FCEFAB71805D61600472CE4 /* Build configuration list for PBXNativeTarget "llvmForJSC" */;
+			buildPhases = (
+				0FCEFAB21805D61600472CE4 /* Sources */,
+				0FCEFAB31805D61600472CE4 /* Frameworks */,
+				0FCEFAB41805D61600472CE4 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = llvmForJSC;
+			productName = llvmForJSC;
+			productReference = 0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0FF922CA14F46B130041A24E /* Build configuration list for PBXNativeTarget "JSCLLIntOffsetsExtractor" */;
@@ -4657,6 +4764,7 @@
 				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
 				932F5BD20822A1C700736975 /* Frameworks */,
+				0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */,
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
 				3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */,
 				A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */,
@@ -4664,6 +4772,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0FCEFABD1805D66300472CE4 /* PBXTargetDependency */,
 				65FB3F7E09D11EF300F49DEB /* PBXTargetDependency */,
 			);
 			name = JavaScriptCore;
@@ -4724,6 +4833,7 @@
 				0F4680A914BA7FD900BFE272 /* LLInt Offsets */,
 				0FF922C314F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				5D6B2A47152B9E17005231DE /* Test Tools */,
+				0FCEFAB51805D61600472CE4 /* llvmForJSC */,
 			);
 		};
 /* End PBXProject section */
@@ -4744,6 +4854,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/LLIntDesiredOffsets.h\"\n";
+		};
+		0FCEFAD91806191800472CE4 /* Copy LLVM Library Into Framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/libllvmForJSC.dylib",
+			);
+			name = "Copy LLVM Library Into Framework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\n# Copy the llvmForJSC library into the framework.\nditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4792,7 +4917,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# FIXME: <rdar://problem/13539888> LLVM libraries shouldn't have weak vtables\nexit 0\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
+			shellScript = "if [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi";
 		};
 		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4890,6 +5015,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0FCEFAB21805D61600472CE4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FCEFAC31805E74000472CE4 /* LLVMExports.cpp in Sources */,
+				0FCEFAD71806174600472CE4 /* LLVMAnchor.cpp in Sources */,
+				0FCEFAC11805D94E00472CE4 /* LLVMOverrides.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0FF922C414F46B130041A24E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4950,6 +5085,7 @@
 				14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */,
 				148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */,
 				1428082D107EC0570013E7B2 /* CallData.cpp in Sources */,
+				0FCEFAB11805CA6D00472CE4 /* InitializeLLVMMac.mm in Sources */,
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
 				0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */,
 				0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */,
@@ -5089,6 +5225,7 @@
 				0F235BD117178E1C00690C7F /* FTLCArgumentGetter.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
 				0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */,
+				0FCEFACD1805E75500472CE4 /* LLVMAPI.cpp in Sources */,
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,
 				0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */,
@@ -5106,6 +5243,7 @@
 				0F235BE117178E1C00690C7F /* FTLThunks.cpp in Sources */,
 				0F235BE317178E1C00690C7F /* FTLValueFormat.cpp in Sources */,
 				0F235BE517178E1C00690C7F /* FTLValueSource.cpp in Sources */,
+				0FCEFACA1805E75500472CE4 /* InitializeLLVM.cpp in Sources */,
 				147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */,
 				0FF0F19F16B72A17005DF95B /* FunctionExecutableDump.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
@@ -5274,6 +5412,7 @@
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
 				0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */,
 				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
+				0FCEFACB1805E75500472CE4 /* InitializeLLVMPOSIX.cpp in Sources */,
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
@@ -5353,7 +5492,6 @@
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				14E84FA014EE1ACC00D6D5D4 /* WeakSet.cpp in Sources */,
-				0F6E5C191724AF3D005C574F /* WebKitLLVMLibraryAnchor.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
 				0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */,
 				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
@@ -5377,6 +5515,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0FCEFABD1805D66300472CE4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0FCEFAB51805D61600472CE4 /* llvmForJSC */;
+			targetProxy = 0FCEFABC1805D66300472CE4 /* PBXContainerItemProxy */;
+		};
 		0FF922D314F46B2F0041A24E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
@@ -5450,6 +5593,34 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources copy";
+			};
+			name = Production;
+		};
+		0FCEFAB81805D61600472CE4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		0FCEFAB91805D61600472CE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		0FCEFABA1805D61600472CE4 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
+			buildSettings = {
+			};
+			name = Profiling;
+		};
+		0FCEFABB1805D61600472CE4 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0FCEFABE1805D86900472CE4 /* LLVMForJSC.xcconfig */;
+			buildSettings = {
 			};
 			name = Production;
 		};
@@ -5753,6 +5924,17 @@
 				0F4680AE14BA7FD900BFE272 /* Release */,
 				0F4680AF14BA7FD900BFE272 /* Profiling */,
 				0F4680B014BA7FD900BFE272 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		0FCEFAB71805D61600472CE4 /* Build configuration list for PBXNativeTarget "llvmForJSC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FCEFAB81805D61600472CE4 /* Debug */,
+				0FCEFAB91805D61600472CE4 /* Release */,
+				0FCEFABA1805D61600472CE4 /* Profiling */,
+				0FCEFABB1805D61600472CE4 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

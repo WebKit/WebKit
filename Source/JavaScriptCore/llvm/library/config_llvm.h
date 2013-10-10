@@ -23,40 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLVMHeaders_h
-#define LLVMHeaders_h
-
 #include <wtf/Platform.h>
+#include <wtf/ExportMacros.h>
 
-#if HAVE(LLVM)
-
-// It is necessary to include LLVM headers via this file, because:
-// - LLVM requires defining things that we don't normally define, and
-// - LLVM includes its C++ headers from its C headers, and its C++
-//   headers don't compile cleanly with our warnings.
-
-#undef __STDC_LIMIT_MACROS
-#undef __STDC_CONSTANT_MACROS
-#define __STDC_LIMIT_MACROS
-#define __STDC_CONSTANT_MACROS
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
-
-#include <llvm-c/Analysis.h>
-#include <llvm-c/Core.h>
-#include <llvm-c/Disassembler.h>
-#include <llvm-c/ExecutionEngine.h>
-#include <llvm-c/Target.h>
-#include <llvm-c/Transforms/PassManagerBuilder.h>
-
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-
-#endif // HAVE(LLVM)
-
-#endif // LLVMHeaders_h

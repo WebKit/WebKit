@@ -28,8 +28,9 @@
 
 #if USE(LLVM_DISASSEMBLER)
 
+#include "InitializeLLVM.h"
+#include "LLVMAPI.h"
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/LLVMHeaders.h>
 
 namespace JSC {
 
@@ -79,6 +80,8 @@ bool tryToDisassembleWithLLVM(
     const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out,
     InstructionSubsetHint)
 {
+    initializeLLVM();
+    
     const char* triple;
 #if CPU(X86_64)
     triple = "x86_64-apple-darwin";
@@ -91,7 +94,7 @@ bool tryToDisassembleWithLLVM(
     char symbolString[symbolStringSize];
     
     LLVMDisasmContextRef disassemblyContext =
-        LLVMCreateDisasm(triple, symbolString, 0, 0, symbolLookupCallback);
+        llvm->CreateDisasm(triple, symbolString, 0, 0, symbolLookupCallback);
     RELEASE_ASSERT(disassemblyContext);
     
     char pcString[20];
@@ -105,7 +108,7 @@ bool tryToDisassembleWithLLVM(
             pcString, sizeof(pcString), "0x%lx",
             static_cast<unsigned long>(bitwise_cast<uintptr_t>(pc)));
 
-        size_t instructionSize = LLVMDisasmInstruction(
+        size_t instructionSize = llvm->DisasmInstruction(
             disassemblyContext, pc, end - pc, bitwise_cast<uintptr_t>(pc),
             instructionString, sizeof(instructionString));
         
@@ -117,7 +120,7 @@ bool tryToDisassembleWithLLVM(
         out.printf("%s%16s: %s\n", prefix, pcString, instructionString);
     }
     
-    LLVMDisasmDispose(disassemblyContext);
+    llvm->DisasmDispose(disassemblyContext);
     
     return true;
 }

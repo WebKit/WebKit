@@ -24,27 +24,22 @@
  */
 
 #include "config.h"
-#include "FTLFail.h"
+#include "InitializeLLVM.h"
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM)
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
-#include "LLVMAPI.h"
+#include <pthread.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-using namespace DFG;
+static pthread_once_t initializeLLVMOnceKey = PTHREAD_ONCE_INIT;
 
-void fail(State& state)
+void initializeLLVM()
 {
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
+    pthread_once(&initializeLLVMOnceKey, initializeLLVMImpl);
 }
 
-} } // namespace JSC::FTL
+} // namespace JSC
 
-#endif // ENABLE(FTL_JIT)
+#endif // HAVE(LLVM)
 

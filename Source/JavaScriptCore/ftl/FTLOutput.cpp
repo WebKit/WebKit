@@ -34,7 +34,7 @@ Output::Output(LContext context)
     : IntrinsicRepository(context)
     , m_function(0)
     , m_heaps(0)
-    , m_builder(LLVMCreateBuilderInContext(m_context))
+    , m_builder(llvm->CreateBuilderInContext(m_context))
     , m_block(0)
     , m_nextBlock(0)
 {
@@ -42,7 +42,7 @@ Output::Output(LContext context)
 
 Output::~Output()
 {
-    LLVMDisposeBuilder(m_builder);
+    llvm->DisposeBuilder(m_builder);
 }
 
 } } // namespace JSC::FTL

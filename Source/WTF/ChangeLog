@@ -1,3 +1,20 @@
+2013-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL: Soft-link LLVM as a workaround for LLVM's static initializers and exit-time destructors
+        https://bugs.webkit.org/show_bug.cgi?id=122566
+
+        Reviewed by Mark Rowe.
+        
+        Remove all LLVM stuff from WTF since to get LLVM you need to soft-link and it's
+        entirely the responsibility of JSC to do that.
+        
+        Also fixed an export goof that I found after fixing the weak thingy script in JSC.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/LLVMHeaders.h: Removed.
+        * wtf/text/CString.h:
+        (WTF::CStringHash::hash):
+
 2013-10-10  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13341666> WebKit should always build against an SDK.

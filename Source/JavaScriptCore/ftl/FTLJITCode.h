@@ -34,7 +34,7 @@
 #include "FTLOSRExit.h"
 #include "FTLStackMaps.h"
 #include "JITCode.h"
-#include <wtf/LLVMHeaders.h>
+#include "LLVMAPI.h"
 #include <wtf/RefCountedArray.h>
 
 namespace JSC { namespace FTL {

@@ -23,28 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLFail.h"
+#ifndef LLVMAPI_h
+#define LLVMAPI_h
 
-#if ENABLE(FTL_JIT)
+#include <wtf/Platform.h>
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
-#include "LLVMAPI.h"
+#if HAVE(LLVM)
 
-namespace JSC { namespace FTL {
+#include "LLVMAPIFunctions.h"
+#include "LLVMHeaders.h"
 
-using namespace DFG;
+namespace JSC {
 
-void fail(State& state)
-{
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
-}
+struct LLVMAPI {
+#define LLVM_API_FUNCTION_DECLARATION(returnType, name, signature) \
+    returnType (*name) signature;
+    FOR_EACH_LLVM_API_FUNCTION(LLVM_API_FUNCTION_DECLARATION)
+#undef LLVM_API_FUNCTION_DECLARATION
+};
 
-} } // namespace JSC::FTL
+extern LLVMAPI* llvm;
 
-#endif // ENABLE(FTL_JIT)
+} // namespace JSC
+
+#endif // HAVE(LLVM)
+
+#endif // LLVMAPI_h
 

@@ -23,28 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLFail.h"
+#ifndef LLVMHeaders_h
+#define LLVMHeaders_h
 
-#if ENABLE(FTL_JIT)
+#if HAVE(LLVM)
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
-#include "LLVMAPI.h"
+// It is necessary to include LLVM headers via this file, because:
+// - LLVM requires defining things that we don't normally define, and
+// - LLVM includes its C++ headers from its C headers, and its C++
+//   headers don't compile cleanly with our warnings.
 
-namespace JSC { namespace FTL {
+#define __STDC_LIMIT_MACROS
+#define __STDC_CONSTANT_MACROS
 
-using namespace DFG;
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif // COMPILER(CLANG)
 
-void fail(State& state)
-{
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
-}
+#include <llvm-c/Analysis.h>
+#include <llvm-c/Core.h>
+#include <llvm-c/Disassembler.h>
+#include <llvm-c/ExecutionEngine.h>
+#include <llvm-c/Target.h>
+#include <llvm-c/Transforms/PassManagerBuilder.h>
+#include <llvm-c/Transforms/Scalar.h>
 
-} } // namespace JSC::FTL
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif // COMPILER(CLANG)
 
-#endif // ENABLE(FTL_JIT)
+#undef __STDC_LIMIT_MACROS
+#undef __STDC_CONSTANT_MACROS
+
+#endif // HAVE(LLVM)
+
+#endif // LLVMHeaders_h
+
 

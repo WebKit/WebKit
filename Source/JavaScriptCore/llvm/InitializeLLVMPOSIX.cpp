@@ -24,11 +24,30 @@
  */
 
 #include "config.h"
+#include "InitializeLLVMPOSIX.h"
 
-#if ENABLE(FTL_JIT)
-// This is a hack for ensuring that the build system relinks JavaScriptCore if any
-// of the LLVM libraries are known to have changed.
-#include "WebKitLLVMLibraryToken.h"
+#if HAVE(LLVM)
 
-#endif
+#include "LLVMAPI.h"
+#include <dlfcn.h>
+
+namespace JSC {
+
+typedef LLVMAPI* (*InitializerFunction)();
+
+void initializeLLVMPOSIX(const char* libraryName)
+{
+    void* library = dlopen(libraryName, RTLD_NOW);
+    ASSERT_WITH_MESSAGE(library, "%s", dlerror());
+    
+    InitializerFunction initializer = bitwise_cast<InitializerFunction>(
+        dlsym(library, "initializeAndGetJSCLLVMAPI"));
+    ASSERT_WITH_MESSAGE(initializer, "%s", dlerror());
+    
+    llvm = initializer();
+}
+
+} // namespace JSC
+
+#endif // HAVE(LLVM)
 

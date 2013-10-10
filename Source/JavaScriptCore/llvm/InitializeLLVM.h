@@ -23,28 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FTLFail.h"
+#ifndef InitializeLLVM_h
+#define InitializeLLVM_h
 
-#if ENABLE(FTL_JIT)
+#include <wtf/Platform.h>
 
-#include "DFGFailedFinalizer.h"
-#include "FTLJITCode.h"
-#include "LLVMAPI.h"
+#if HAVE(LLVM)
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-using namespace DFG;
+void initializeLLVMImpl();
 
-void fail(State& state)
-{
-    state.graph.m_plan.finalizer = adoptPtr(new FailedFinalizer(state.graph.m_plan));
-    
-    if (state.module)
-        llvm->DisposeModule(state.module);
-}
+void initializeLLVM(); // It's safe to call this multiple times.
 
-} } // namespace JSC::FTL
+} // namespace JSC
 
-#endif // ENABLE(FTL_JIT)
+#endif // HAVE(LLVM)
+
+#endif // InitializeLLVM_h
 

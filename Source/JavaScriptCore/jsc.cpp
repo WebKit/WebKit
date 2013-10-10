@@ -846,10 +846,10 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
-    RefPtr<VM> vm = VM::create(LargeHeap);
+    VM* vm = VM::create(LargeHeap).leakRef();
     int result;
     {
-        APIEntryShim shim(vm.get());
+        APIEntryShim shim(vm);
 
         if (options.m_profile && !vm->m_perBytecodeProfiler)
             vm->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*vm));
@@ -868,14 +868,6 @@ int jscmain(int argc, char** argv)
             if (!vm->m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
                 fprintf(stderr, "could not save profiler output.\n");
         }
-    }
-    
-    if (Options::neverDeleteVMInCommandLine()) {
-        JSC::VM* temp = vm.release().leakRef();
-        UNUSED_PARAM(temp);
-    } else {
-        JSLockHolder lock(*vm);
-        vm.clear();
     }
     
     return result;
