@@ -1,3 +1,22 @@
+2013-10-10  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: Shape cropped to margin box
+        https://bugs.webkit.org/show_bug.cgi?id=118092
+
+        Reviewed by Alexandru Chiculita.
+
+        Clip the shape to the margin box when it extends out the left or right
+        edges. Also added a few local variables to make the code easier to
+        read.
+
+        Tests: csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref.html
+               csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004.html
+               csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005.html
+               csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006.html
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+
 2013-10-10  Daniel Bates  <dabates@apple.com>
 
         Avoid resizing the internal buffer of SharedBuffer when creating a PurgeableBuffer

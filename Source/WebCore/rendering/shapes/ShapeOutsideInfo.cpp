@@ -64,11 +64,16 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow*
         m_shapeLineTop = lineTopInShapeCoordinates - logicalTopOffset();
         m_lineHeight = lineHeight;
 
+        LayoutUnit floatMarginBoxWidth = containingBlock->logicalWidthForFloat(floatingObject);
+
         if (lineOverlapsShapeBounds()) {
             SegmentList segments = computeSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
             if (segments.size()) {
-                m_leftMarginBoxDelta = segments.first().logicalLeft + containingBlock->marginStartForChild(m_renderer);
-                m_rightMarginBoxDelta = segments.last().logicalRight - containingBlock->logicalWidthForChild(m_renderer) - containingBlock->marginEndForChild(m_renderer);
+                LayoutUnit rawLeftMarginBoxDelta = segments.first().logicalLeft + containingBlock->marginStartForChild(m_renderer);
+                m_leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, LayoutUnit(), floatMarginBoxWidth);
+
+                LayoutUnit rawRightMarginBoxDelta = segments.last().logicalRight - containingBlock->logicalWidthForChild(m_renderer) - containingBlock->marginEndForChild(m_renderer);
+                m_rightMarginBoxDelta = clampTo<LayoutUnit>(rawRightMarginBoxDelta, -floatMarginBoxWidth, LayoutUnit());
                 return;
             }
         }
@@ -80,8 +85,8 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow*
         // content should interact with previously stacked floats on the line
         // as if this outermost float did not exist. Perhaps obviously, this
         // solution cannot do that, and will be revisted with bug 122576.
-        m_leftMarginBoxDelta = containingBlock->logicalWidthForFloat(floatingObject);
-        m_rightMarginBoxDelta = -containingBlock->logicalWidthForFloat(floatingObject);
+        m_leftMarginBoxDelta = floatMarginBoxWidth;
+        m_rightMarginBoxDelta = -floatMarginBoxWidth;
     }
 }
 

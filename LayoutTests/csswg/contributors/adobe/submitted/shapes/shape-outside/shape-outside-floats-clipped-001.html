@@ -3,7 +3,7 @@
 <link rel="author" title="Adobe" href="http://html.adobe.com/">
 <link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
 <link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#relation-to-box-model-and-float-behavior">
-<link rel="match" href="shape-outside-floats-clipped-000-ref.html">
+<link rel="match" href="shape-outside-floats-clipped-001-ref.html">
 <meta name="flags" content="ahem">
 <head>
 <style>
@@ -13,8 +13,8 @@
     width: 100px;
     height: 100px;
     border: 1px solid black;
-    color: green;
-    background-color: red;
+    color: black;
+    background-color: blue;
     display: inline-block;
 }
 
@@ -25,8 +25,6 @@
     margin-bottom: 25px;
     -webkit-shape-outside: rectangle(0, 0, 100%, 200%);
     background-color: green;
-    color: green;
-    overflow: visible;
 }
 
 #float-right {
@@ -36,23 +34,17 @@
     margin-bottom: 25px;
     -webkit-shape-outside: rectangle(0, 0, 100%, 200%);
     background-color: green;
-    color: green;
-    overflow: visible;
 }
 </style>
 
 <body>
-    <p>This should display two green squares. You should not see any red.</p>
+    <p>This should display two squares containing a green stripe, a blue strupe, and a black rectangle, in that order.</p>
     <div class="container">
-        <div id="float-left">
-            XX
-        </div>
+        <div id="float-left"></div>
         XX
     </div>
     <div class="container">
-        <div id="float-right">
-            XX
-        </div>
+        <div id="float-right"></div>
         XX
     </div>
 </body>

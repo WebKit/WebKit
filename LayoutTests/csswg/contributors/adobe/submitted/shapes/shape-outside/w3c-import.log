@@ -8,7 +8,7 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2013-10-09 14:13
+Last Import: 2013-10-10 09:20
 W3C Mercurial changeset: Not Available
 Test status at time of import: unknown
 ------------------------------------------------------------------------
@@ -24,12 +24,20 @@ List of files:
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-ellipse-000-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-ellipse-000.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-000-expected.html

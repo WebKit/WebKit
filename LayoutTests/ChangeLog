@@ -1,3 +1,37 @@
+2013-10-10  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: Shape cropped to margin box
+        https://bugs.webkit.org/show_bug.cgi?id=118092
+
+        Reviewed by Alexandru Chiculita.
+
+        Add tests for shapes that extend out left/right of the margin box.
+
+        Fix polygon and image threshold tests so that they have a large enough
+        margin box so the shape isn't clipped.
+
+        Also update some of the top/bottom tests to have a better reference,
+        they should be more likely to break if the implementation fails now.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref-expected.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004-expected.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005-expected.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006-expected.html: Copied from LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-001.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-002.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-threshold-001.html:
+
 2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. plugins/document-open.html will some times timeout.
