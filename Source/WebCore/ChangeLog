@@ -1,3 +1,12 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        Tighten some renderer access in Document.
+        <https://webkit.org/b/121865>
+
+        Reviewed by Antti Koivisto.
+
+        A bit of Node/Element and RenderObject/RenderElement tightening.
+
 2013-10-08  Andreas Kling  <akling@apple.com>
 
         rangeOfContents() should take a Node&.

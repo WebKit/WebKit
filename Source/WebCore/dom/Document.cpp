@@ -327,11 +327,11 @@ static bool shouldInheritSecurityOriginFromOwner(const URL& url)
     return url.isEmpty() || url.isBlankURL();
 }
 
-static Widget* widgetForNode(Node* focusedNode)
+static Widget* widgetForElement(Element* focusedElement)
 {
-    if (!focusedNode)
+    if (!focusedElement)
         return 0;
-    RenderObject* renderer = focusedNode->renderer();
+    auto renderer = focusedElement->renderer();
     if (!renderer || !renderer->isWidget())
         return 0;
     return toRenderWidget(renderer)->widget();
@@ -3366,8 +3366,7 @@ bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, Focus
             frame()->editor().didEndEditing();
 
         if (view()) {
-            Widget* oldWidget = widgetForNode(oldFocusedElement.get());
-            if (oldWidget)
+            if (Widget* oldWidget = widgetForElement(oldFocusedElement.get()))
                 oldWidget->setFocus(false);
             else
                 view()->setFocus(false);
@@ -3418,14 +3417,14 @@ bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, Focus
         // eww, I suck. set the qt focus correctly
         // ### find a better place in the code for this
         if (view()) {
-            Widget* focusWidget = widgetForNode(m_focusedElement.get());
+            Widget* focusWidget = widgetForElement(m_focusedElement.get());
             if (focusWidget) {
                 // Make sure a widget has the right size before giving it focus.
                 // Otherwise, we are testing edge cases of the Widget code.
                 // Specifically, in WebCore this does not work well for text fields.
                 updateLayout();
                 // Re-get the widget in case updating the layout changed things.
-                focusWidget = widgetForNode(m_focusedElement.get());
+                focusWidget = widgetForElement(m_focusedElement.get());
             }
             if (focusWidget)
                 focusWidget->setFocus(true);
@@ -5297,7 +5296,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     // when the element is removed from the normal flow.  Only do this for a RenderBox, as only 
     // a box will have a frameRect.  The placeholder will be created in setFullScreenRenderer()
     // during layout.
-    RenderObject* renderer = m_fullScreenElement->renderer();
+    auto renderer = m_fullScreenElement->renderer();
     bool shouldCreatePlaceholder = renderer && renderer->isBox();
     if (shouldCreatePlaceholder) {
         m_savedPlaceholderFrameRect = toRenderBox(renderer)->frameRect();
