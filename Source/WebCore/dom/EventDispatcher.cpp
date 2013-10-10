@@ -38,6 +38,7 @@
 #include "MouseEvent.h"
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
+#include "TouchEvent.h"
 #include "WindowEventContext.h"
 #include <wtf/RefPtr.h>
 
@@ -102,6 +103,10 @@ bool EventDispatcher::dispatch()
 {
     if (EventTarget* relatedTarget = m_event->relatedTarget())
         m_eventPath.setRelatedTarget(*relatedTarget);
+#if ENABLE(TOUCH_EVENTS)
+    if (m_event->isTouchEvent())
+        EventRetargeter::adjustForTouchEvent(m_node.get(), *m_event, m_eventPath); 
+#endif
 
 #ifndef NDEBUG
     ASSERT(!m_eventDispatched);

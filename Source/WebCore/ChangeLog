@@ -1,5 +1,12 @@
 2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Add back the missing call to EventRetargeter::adjustForTouchEvent.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatch):
+
+2013-10-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         EventDispatchMediator is goner
         https://bugs.webkit.org/show_bug.cgi?id=122581
 
