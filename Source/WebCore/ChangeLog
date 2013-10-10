@@ -1,3 +1,20 @@
+2013-10-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r157228
+
+        The changes in r157228 trigger a bug in VS2010. This patch works around the compiler bug
+        to allow this platform to build.
+
+        * dom/Range.cpp: Move implementation to header file.
+        * dom/Range.h: Inline the method.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open): Add stub method (with pointer arguments) to call the real
+        method with references.
+        * page/DOMWindow.h: Declare stub method taking pointer arguments to avoid compiler bug.
+        * testing/Internals.cpp:
+        (WebCore::Internals::openDummyInspectorFrontend): Use work-around method when building under
+        the buggy version of Visual Studio.
+
 2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make all functions of EventDispatcher static

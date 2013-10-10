@@ -174,7 +174,13 @@ private:
     RangeBoundaryPoint m_end;
 };
 
-PassRefPtr<Range> rangeOfContents(Node&);
+inline PassRefPtr<Range> rangeOfContents(Node& node)
+{
+    RefPtr<Range> range = Range::create(node.document());
+    int exception = 0;
+    range->selectNodeContents(&node, exception);
+    return range.release();
+}
 
 bool areRangesEqual(const Range*, const Range*);
 

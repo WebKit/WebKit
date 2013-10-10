@@ -1428,7 +1428,11 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     DOMWindow* window = page->mainFrame().document()->domWindow();
     ASSERT(window);
 
+#if defined(_MSC_VER) && _MSC_VER <= 1700
+    m_frontendWindow = window->open(url, "", "", window, window); // Work around bug in VS2010 and earlier
+#else
     m_frontendWindow = window->open(url, "", "", *window, *window);
+#endif
     ASSERT(m_frontendWindow);
 
     Page* frontendPage = m_frontendWindow->document()->page();
