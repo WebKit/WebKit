@@ -194,7 +194,7 @@ webkit.org/b/120401 editing/selection [ Skip ]
 # Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(GTK) plugins/document-open.html [ Crash ]
+Bug(GTK) plugins/document-open.html [ Crash Timeout ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Crash ]

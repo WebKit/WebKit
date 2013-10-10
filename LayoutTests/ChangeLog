@@ -1,3 +1,9 @@
+2013-10-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening. plugins/document-open.html will some times timeout.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-10-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver speaking too much when group elements with tabindex=-1 are used
