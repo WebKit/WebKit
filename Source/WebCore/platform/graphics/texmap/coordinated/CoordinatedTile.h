@@ -68,8 +68,6 @@ private:
 
     uint32_t m_ID;
     IntRect m_dirtyRect;
-
-    OwnPtr<ImageBuffer> m_localBuffer;
 };
 
 class CoordinatedTileClient {

@@ -1,3 +1,15 @@
+2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Remove unused attribute in CoordinatedTile class
+        https://bugs.webkit.org/show_bug.cgi?id=122619
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests, covered by existing ones.
+
+        * platform/graphics/texmap/coordinated/CoordinatedTile.h: Remove
+        m_localBuffer.
+
 2013-10-10  Beth Dakin  <bdakin@apple.com>
 
         Scrollbars are updated on the main thread rather than the scrolling thread 
