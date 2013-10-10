@@ -1,5 +1,17 @@
 2013-10-10  Andreas Kling  <akling@apple.com>
 
+        Use more Element iterators in SVG code.
+        <http://webkit.org/b/121127>
+
+        Reviewed by Antti Koivisto.
+
+        Use childrenOfType to iterate over only SVGElement (or even more
+        specific) children in a bunch of places.
+
+        Also auto-generate type helpers for SVGElement and SVGStopElement.
+
+2013-10-10  Andreas Kling  <akling@apple.com>
+
         JS DOM wrappers' impl() functions should return references.
         <https://webkit.org/b/122497>
 

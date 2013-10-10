@@ -27,12 +27,11 @@
 #if ENABLE(SVG)
 #include "SVGUseElement.h"
 
-#include "Attribute.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedSVGDocument.h"
 #include "Document.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "HTMLNames.h"
@@ -614,22 +613,19 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     // is the SVGGElement object for the 'g', and then two child SVGElementInstance objects, each of which has
     // its correspondingElement that is an SVGRectElement object.
 
-    for (Node* node = target->firstChild(); node; node = node->nextSibling()) {
-        SVGElement* element = 0;
-        if (node->isSVGElement())
-            element = toSVGElement(node);
-
+    auto svgChildren = childrenOfType<SVGElement>(target);
+    for (auto element = svgChildren.begin(), end = svgChildren.end(); element != end; ++element) {
         // Skip any non-svg nodes or any disallowed element.
-        if (!element || isDisallowedElement(element))
+        if (isDisallowedElement(&*element))
             continue;
 
         // Create SVGElementInstance object, for both container/non-container nodes.
-        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, 0, element);
+        RefPtr<SVGElementInstance> instance = SVGElementInstance::create(this, 0, &*element);
         SVGElementInstance* instancePtr = instance.get();
         targetInstance->appendChild(instance.release());
 
         // Enter recursion, appending new instance tree nodes to the "instance" object.
-        buildInstanceTree(element, instancePtr, foundProblem, foundUse);
+        buildInstanceTree(&*element, instancePtr, foundProblem, foundUse);
         if (foundProblem)
             return;
     }

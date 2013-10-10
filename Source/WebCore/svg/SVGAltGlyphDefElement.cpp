@@ -22,6 +22,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FONTS)
 #include "SVGAltGlyphDefElement.h"
 
+#include "ElementIterator.h"
 #include "SVGAltGlyphItemElement.h"
 #include "SVGGlyphRefElement.h"
 #include "SVGNames.h"
@@ -88,12 +89,14 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
     bool fountFirstGlyphRef = false;
     bool foundFirstAltGlyphItem = false;
 
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+    auto svgChildren = childrenOfType<SVGElement>(this);
+    for (auto it = svgChildren.begin(), end = svgChildren.end(); it != end; ++it) {
+        const SVGElement& child = *it;
         if (!foundFirstAltGlyphItem && isSVGGlyphRefElement(child)) {
             fountFirstGlyphRef = true;
             String referredGlyphName;
 
-            if (toSVGGlyphRefElement(child)->hasValidGlyphElement(referredGlyphName))
+            if (toSVGGlyphRefElement(child).hasValidGlyphElement(referredGlyphName))
                 glyphNames.append(referredGlyphName);
             else {
                 // As the spec says "If any of the referenced glyphs are unavailable,
@@ -108,7 +111,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
 
             // As the spec says "The first 'altGlyphItem' in which all referenced glyphs
             // are available is chosen."
-            if (toSVGAltGlyphItemElement(child)->hasValidGlyphElements(glyphNames) && !glyphNames.isEmpty())
+            if (toSVGAltGlyphItemElement(child).hasValidGlyphElements(glyphNames) && !glyphNames.isEmpty())
                 return true;
         }
     }

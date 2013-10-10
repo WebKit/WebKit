@@ -84,7 +84,7 @@ polyline
 radialGradient generateTypeHelpers
 rect generateTypeHelpers
 script constructorNeedsCreatedByParser, generateTypeHelpers
-stop
+stop generateTypeHelpers
 style constructorNeedsCreatedByParser, generateTypeHelpers
 svg interfaceName=SVGSVGElement, generateTypeHelpers
 switch

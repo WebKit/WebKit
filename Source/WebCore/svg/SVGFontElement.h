@@ -80,7 +80,7 @@ public:
     SVGGlyph svgGlyphForGlyph(Glyph);
     Glyph missingGlyph();
 
-    SVGMissingGlyphElement* firstMissingGlyphElement() const;
+    const SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
 private:
     SVGFontElement(const QualifiedName&, Document&);

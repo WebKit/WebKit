@@ -510,11 +510,10 @@ void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attribute
 
 bool SVGElement::haveLoadedRequiredResources()
 {
-    Node* child = firstChild();
-    while (child) {
-        if (child->isSVGElement() && !toSVGElement(child)->haveLoadedRequiredResources())
+    auto svgChildren = childrenOfType<SVGElement>(this);
+    for (auto child = svgChildren.begin(), end = svgChildren.end(); child != end; ++child) {
+        if (!child->haveLoadedRequiredResources())
             return false;
-        child = child->nextSibling();
     }
     return true;
 }

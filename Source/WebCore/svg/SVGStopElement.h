@@ -50,11 +50,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-inline SVGStopElement* toSVGStopElement(SVGElement* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isGradientStop());
-    return static_cast<SVGStopElement*>(element);
-}
+ELEMENT_TYPE_CASTS(SVGStopElement)
 
 } // namespace WebCore
 

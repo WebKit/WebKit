@@ -26,6 +26,7 @@
 
 #include "AffineTransform.h"
 #include "Attribute.h"
+#include "ElementIterator.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
@@ -138,15 +139,13 @@ void SVGAnimateMotionElement::updateAnimationPath()
     m_animationPath = Path();
     bool foundMPath = false;
 
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(SVGNames::mpathTag)) {
-            SVGMPathElement* mPath = toSVGMPathElement(child);
-            SVGPathElement* pathElement = mPath->pathElement();
-            if (pathElement) {
-                updatePathFromGraphicsElement(pathElement, m_animationPath);
-                foundMPath = true;
-                break;
-            }
+    auto mPathChildren = childrenOfType<SVGMPathElement>(this);
+    for (auto mPath = mPathChildren.begin(), end = mPathChildren.end(); mPath != end; ++mPath) {
+        SVGPathElement* pathElement = mPath->pathElement();
+        if (pathElement) {
+            updatePathFromGraphicsElement(pathElement, m_animationPath);
+            foundMPath = true;
+            break;
         }
     }
 
