@@ -126,6 +126,8 @@ public:
         return Header::fromPayload(m_data)->length;
     }
     
+    size_t byteSize() const { return size() * sizeof(T); }
+    
     T* data() { return m_data; }
     T* begin() { return m_data; }
     T* end()

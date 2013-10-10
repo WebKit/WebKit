@@ -257,6 +257,8 @@ inline void printInternal(PrintStream& out, CString& value) { printInternal(out,
 inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
 inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, short);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned short);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, int);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, long);

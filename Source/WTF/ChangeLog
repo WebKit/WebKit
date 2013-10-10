@@ -1,3 +1,16 @@
+2013-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do simple OSR exits using llvm.webkit.stackmap
+        https://bugs.webkit.org/show_bug.cgi?id=122538
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/PrintStream.cpp:
+        (WTF::printInternal):
+        * wtf/PrintStream.h:
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::byteSize):
+
 2013-10-09  Michael Saboff  <msaboff@apple.com>
 
         Change to std::unique_ptr breaks wtf/DataLog.cpp when DATA_LOG_TO_FILE set to 1
