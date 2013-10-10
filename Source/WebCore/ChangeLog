@@ -1,3 +1,15 @@
+2013-10-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Make XPathGrammar.y bison3-friendly again after r157205
+        https://bugs.webkit.org/show_bug.cgi?id=122595
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, build fix.
+
+        * xml/XPathGrammar.y: Replace YYLEX_PARAM with %lex-param, as the
+        former was removed in bison3.
+
 2013-10-10  Andreas Kling  <akling@apple.com>
 
         SVGUseElement: Use iterative traversal to find disallowed elements.

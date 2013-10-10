@@ -42,14 +42,13 @@
 #define YYDEBUG 0
 #define YYMAXDEPTH 10000
 
-#define YYLEX_PARAM parser
-
 using namespace WebCore;
 using namespace XPath;
 
 %}
 
 %pure_parser
+%lex-param { parser }
 %parse-param { Parser& parser }
 
 %union { NumericOp::Opcode numericOpcode; }
