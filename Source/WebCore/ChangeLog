@@ -1,5 +1,54 @@
 2013-10-10  Darin Adler  <darin@apple.com>
 
+        Do a bit of optimization and cleanup in the HTMLElement class
+        https://bugs.webkit.org/show_bug.cgi?id=122640
+
+        Reviewed by Andreas Kling.
+
+        * html/HTMLElement.cpp:
+        (WebCore::unicodeBidiAttributeForDirAuto): Take a reference.
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute): Pass one.
+        (WebCore::mergeWithNextTextNode): Take a reference to a Text node instead
+        of a PassRefPtr to a Node. Also removed unnecessary check of parentNode.
+        Also update to new calling convention for mergeWithNextTextNode.
+        (WebCore::HTMLElement::setOuterHTML): Use parentElement instead of
+        parentNode, since Antti says that's the future, and either will work here.
+        Also use nullptr.
+        (WebCore::HTMLElement::textToFragment): Fix indentation and use nullptr.
+        (WebCore::HTMLElement::setOuterText): Use a RefPtr for the parent here,
+        since otherwise there is no guarantee it survives. Also use nullptr and
+        update to new calling convention for mergeWithNextTextNode.
+        (WebCore::HTMLElement::insertAdjacent): Use nullptr.
+        (WebCore::HTMLElement::insertAdjacentElement): Use nullptr.
+        (WebCore::contextElementForInsertion): Use nullptr.
+        (WebCore::HTMLElement::contentEditable): Use ASCIILiteral.
+        (WebCore::HTMLElement::setContentEditable): Use AtomicString::ConstructFromLiteral.
+        (WebCore::HTMLElement::draggable): Use fastGetAttribute.
+        (WebCore::HTMLElement::setDraggable): Use AtomicString::ConstructFromLiteral.
+        (WebCore::HTMLElement::setSpellcheck): Use AtomicString::ConstructFromLiteral.
+        (WebCore::HTMLElement::click): Use nullptr.
+        (WebCore::HTMLElement::accessKeyAction): Use nullptr.
+        (WebCore::HTMLElement::title): Use fastGetAttribute.
+        (WebCore::HTMLElement::translateAttributeMode): Use fastGetAttribute, isNull,
+        and isEmpty.
+        (WebCore::HTMLElement::translate): Use parentElement and toHTMLElement.
+        Use early-continue style instead of nesting the whole loop body inside an if.
+        (WebCore::setHasDirAutoFlagRecursively): Use nullptr.
+        (WebCore::HTMLElement::hasDirectionAuto): Use isNull.
+        (WebCore::HTMLElement::directionality): Use nullptr.
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged): Use nullptr.
+        (WebCore::HTMLElement::addHTMLLengthToStyle): Use longer variable names.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::abbr): Use fastGetAttribute.
+        (WebCore::HTMLTableCellElement::axis): Ditto.
+        (WebCore::HTMLTableCellElement::headers): Ditto.
+        (WebCore::HTMLTableCellElement::scope): Ditto.
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::width): Ditto.
+
+2013-10-10  Darin Adler  <darin@apple.com>
+
         Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
         https://bugs.webkit.org/show_bug.cgi?id=121033
 
