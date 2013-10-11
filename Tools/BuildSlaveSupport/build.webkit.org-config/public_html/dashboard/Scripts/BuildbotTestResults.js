@@ -45,5 +45,5 @@ BaseObject.addConstructorFunctions(BuildbotTestResults);
 
 BuildbotTestResults.prototype = {
     constructor: BuildbotTestResults,
-    __proto__: BaseObject.prototype,
+    __proto__: BaseObject.prototype
 };
