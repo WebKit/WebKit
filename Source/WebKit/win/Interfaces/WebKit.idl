@@ -241,6 +241,7 @@ library WebKit
         [default] interface IWebURLProtectionSpace;
     }
 
+    [uuid(AB201196-8DD2-4d45-AEBD-029B6A37AA27)]
     coclass WebURLResponse {
         [default] interface IWebURLResponse;
     }
