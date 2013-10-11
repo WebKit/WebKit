@@ -196,54 +196,6 @@ WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent& webEvent)
     return WebKit2PlatformKeyboardEvent(webEvent);
 }
 
-#if ENABLE(GESTURE_EVENTS)
-class WebKit2PlatformGestureEvent : public WebCore::PlatformGestureEvent {
-public:
-    WebKit2PlatformGestureEvent(const WebGestureEvent& webEvent)
-    {
-        // PlatformEvent
-        switch (webEvent.type()) {
-        case WebEvent::GestureScrollBegin:
-            m_type = WebCore::PlatformEvent::GestureScrollBegin;
-            break;
-        case WebEvent::GestureScrollEnd:
-            m_type = WebCore::PlatformEvent::GestureScrollEnd;
-            break;
-        case WebEvent::GestureSingleTap:
-            m_type = WebCore::PlatformEvent::GestureTap;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-
-        m_modifiers = 0;
-        if (webEvent.shiftKey())
-            m_modifiers |= ShiftKey;
-        if (webEvent.controlKey())
-            m_modifiers |= CtrlKey;
-        if (webEvent.altKey())
-            m_modifiers |= AltKey;
-        if (webEvent.metaKey())
-            m_modifiers |= MetaKey;
-
-        m_timestamp = webEvent.timestamp();
-
-        // PlatformGestureEvent
-        m_position = webEvent.position();
-        m_globalPosition = webEvent.globalPosition();
-
-        m_area = webEvent.area();
-        m_deltaX = webEvent.delta().x();
-        m_deltaY = webEvent.delta().y();
-    }
-};
-
-WebCore::PlatformGestureEvent platform(const WebGestureEvent& webEvent)
-{
-    return WebKit2PlatformGestureEvent(webEvent);
-}
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:

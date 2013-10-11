@@ -240,21 +240,6 @@ static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
     return static_cast<WebWheelEvent::Phase>(phase);
 }
 
-#if ENABLE(GESTURE_EVENTS)
-static WebEvent::Type gestureEventTypeForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-    case NSEventTypeBeginGesture:
-        return WebEvent::GestureScrollBegin;
-    case NSEventTypeEndGesture:
-        return WebEvent::GestureScrollEnd;
-    default:
-        ASSERT_NOT_REACHED();
-        return WebEvent::GestureScrollEnd;
-    }
-}
-#endif
-
 static inline String textFromEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged)
@@ -461,19 +446,6 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView 
 
     return WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
-
-#if ENABLE(GESTURE_EVENTS)
-WebGestureEvent WebEventFactory::createWebGestureEvent(NSEvent *event, NSView *windowView)
-{
-    WebEvent::Type type             = gestureEventTypeForEvent(event);
-    NSPoint position                = pointForEvent(event, windowView);
-    NSPoint globalPosition          = globalPointForEvent(event);
-    WebEvent::Modifiers modifiers   = modifiersForEvent(event);
-    double timestamp                = eventTimeStampSince1970(event);
-
-    return WebGestureEvent(type, IntPoint(position), IntPoint(globalPosition), modifiers, timestamp);
-}
-#endif
 
 } // namespace WebKit
 

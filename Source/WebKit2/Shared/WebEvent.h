@@ -62,13 +62,6 @@ public:
         RawKeyDown,
         Char,
 
-#if ENABLE(GESTURE_EVENTS)
-        // WebGestureEvent
-        GestureScrollBegin,
-        GestureScrollEnd,
-        GestureSingleTap,
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
         // WebTouchEvent
         TouchStart,
@@ -244,34 +237,6 @@ private:
     bool m_isKeypad;
     bool m_isSystemKey;
 };
-
-
-#if ENABLE(GESTURE_EVENTS)
-// FIXME: Move this class to its own header file.
-class WebGestureEvent : public WebEvent {
-public:
-    WebGestureEvent() { }
-    WebGestureEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, Modifiers, double timestamp);
-    WebGestureEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, Modifiers, double timestamp, const WebCore::IntSize& area, const WebCore::FloatPoint& delta);
-
-    const WebCore::IntPoint position() const { return m_position; }
-    const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
-    const WebCore::IntSize area() const { return m_area; }
-    const WebCore::FloatPoint delta() const { return m_delta; }
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, WebGestureEvent&);
-
-private:
-    static bool isGestureEventType(Type);
-
-    WebCore::IntPoint m_position;
-    WebCore::IntPoint m_globalPosition;
-    WebCore::IntSize m_area;
-    WebCore::FloatPoint m_delta;
-};
-#endif // ENABLE(GESTURE_EVENTS)
-
 
 #if ENABLE(TOUCH_EVENTS)
 // FIXME: Move this class to its own header file.

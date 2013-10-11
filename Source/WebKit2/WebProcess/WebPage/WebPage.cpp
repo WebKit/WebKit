@@ -1709,30 +1709,6 @@ void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 }
 
-#if ENABLE(GESTURE_EVENTS)
-static bool handleGestureEvent(const WebGestureEvent& gestureEvent, Page* page)
-{
-    Frame& frame = page->mainFrame();
-    if (!frame.view())
-        return false;
-
-    PlatformGestureEvent platformGestureEvent = platform(gestureEvent);
-    return frame.eventHandler().handleGestureEvent(platformGestureEvent);
-}
-
-void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
-{
-    bool handled = false;
-
-    if (canHandleUserEvents()) {
-        CurrentEvent currentEvent(gestureEvent);
-
-        handled = handleGestureEvent(gestureEvent, m_page.get());
-    }
-    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
-}
-#endif
-    
 WKTypeRef WebPage::pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
 {
     if (!m_pageOverlays.size())

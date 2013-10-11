@@ -1,3 +1,32 @@
+2013-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove ENABLE(GESTURE_EVENTS) from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=122673
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        * Shared/WebEventConversion.h:
+        * Shared/WebGestureEvent.cpp: Removed.
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
 2013-10-11  Adam Roben  <aroben@webkit.org>
 
         Confusing CGImageRef memory management in ImageBuffer::copyImage

@@ -194,10 +194,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _ignoringMouseDraggedEvents;
 
     id _flagsChangedEventMonitor;
-#if ENABLE(GESTURE_EVENTS)
-    id _endGestureMonitor;
-#endif
-    
+
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
@@ -1214,41 +1211,6 @@ NATIVE_EVENT_HANDLER(scrollWheel, Wheel)
     return result;
 }
 
-#if ENABLE(GESTURE_EVENTS)
-
-static const short kIOHIDEventTypeScroll = 6;
-
-- (void)shortCircuitedEndGestureWithEvent:(NSEvent *)event
-{
-    if ([event subtype] != kIOHIDEventTypeScroll)
-        return;
-
-    WebGestureEvent webEvent = WebEventFactory::createWebGestureEvent(event, self);
-    _data->_page->handleGestureEvent(webEvent);
-
-    if (_data->_endGestureMonitor) {
-        [NSEvent removeMonitor:_data->_endGestureMonitor];
-        _data->_endGestureMonitor = nil;
-    }
-}
-
-- (void)beginGestureWithEvent:(NSEvent *)event
-{
-    if ([event subtype] != kIOHIDEventTypeScroll)
-        return;
-
-    WebGestureEvent webEvent = WebEventFactory::createWebGestureEvent(event, self);
-    _data->_page->handleGestureEvent(webEvent);
-
-    if (!_data->_endGestureMonitor) {
-        _data->_endGestureMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskEndGesture handler:^(NSEvent *blockEvent) {
-            [self shortCircuitedEndGestureWithEvent:blockEvent];
-            return blockEvent;
-        }];
-    }
-}
-#endif
-
 - (void)doCommandBySelector:(SEL)selector
 {
     LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
@@ -2017,12 +1979,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
 
-#if ENABLE(GESTURE_EVENTS)
-        if (_data->_endGestureMonitor) {
-            [NSEvent removeMonitor:_data->_endGestureMonitor];
-            _data->_endGestureMonitor = nil;
-        }
-#endif
         WKHideWordDefinitionWindow();
     }
 

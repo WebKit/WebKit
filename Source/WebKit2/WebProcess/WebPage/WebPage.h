@@ -147,10 +147,6 @@ struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
-#if ENABLE(GESTURE_EVENTS)
-class WebGestureEvent;
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
 #endif
@@ -567,9 +563,6 @@ public:
 #endif
 
     void wheelEvent(const WebWheelEvent&);
-#if ENABLE(GESTURE_EVENTS)
-    void gestureEvent(const WebGestureEvent&);
-#endif
 
     void numWheelEventHandlersChanged(unsigned);
     void recomputeShortCircuitHorizontalWheelEventsState();
