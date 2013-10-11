@@ -1,3 +1,40 @@
+2013-10-11  Mark Lam  <mark.lam@apple.com>
+
+        Transition op_new_* JITStubs to JIT operations.
+        https://bugs.webkit.org/show_bug.cgi?id=122460.
+
+        Reviewed by Michael Saboff.
+
+        Also:
+        - Removed the redundant operationNewFunctionExpression().  It is identical to
+          operationNewFunctionNoCheck().
+        - Sorted JIT operation signature keys in the comment in JITOperations.h.
+        - Removed the unused returnValue2Register definition for X86_64.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_new_array_with_size):
+        (JSC::JIT::emit_op_new_array_buffer):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+
 2013-10-11  Oliver Hunt  <oliver@apple.com>
 
         Separate out array iteration intrinsics

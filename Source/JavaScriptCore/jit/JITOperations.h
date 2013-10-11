@@ -46,17 +46,25 @@ namespace JSC {
 // this helps prevent calling a helper routine with the wrong arguments!
 /*
     Key:
-    V: void
-    J: JSValue
-    P: pointer (void*)
+    A: JSArray*
+    Aap: ArrayAllocationProfile*
     C: JSCell*
     Cb: CodeBlock*
-    A: JSArray*
+    D: double
+    E: ExecState*
+    I: StringImpl*
+    Icf: InlineCalLFrame*
+    J: EncodedJSValue
+    Jcp: const JSValue*
+    Jss: JSString*
+    O: JSObject*
+    P: pointer (void*)
     R: Register
     S: size_t
+    St: Structure*
+    V: void
+    W: WatchpointSet*
     Z: int32_t
-    D: double
-    I: StringImpl*
 */
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_E)(ExecState*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EA)(ExecState*, JSArray*);
@@ -74,6 +82,8 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJJ)(ExecState*, EncodedJS
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJssZ)(ExecState*, JSString*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EP)(ExecState*, void*);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EAapJ)(ExecState*, ArrayAllocationProfile*, EncodedJSValue);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EAapJcpZ)(ExecState*, ArrayAllocationProfile*, const JSValue*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EPP)(ExecState*, void*, void*);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EPS)(ExecState*, void*, size_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESS)(ExecState*, size_t, size_t);
@@ -219,6 +229,11 @@ EncodedJSValue JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, 
 size_t JIT_OPERATION operationCompareStringEq(ExecState*, JSCell* left, JSCell* right) WTF_INTERNAL;
 #endif
 size_t JIT_OPERATION operationHasProperty(ExecState*, JSObject*, JSString*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(ExecState*, ArrayAllocationProfile*, const JSValue* values, int32_t size) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewArrayBufferWithProfile(ExecState*, ArrayAllocationProfile*, const JSValue* values, int32_t size) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState*, ArrayAllocationProfile*, EncodedJSValue size) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationNewFunction(ExecState*, JSCell*) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 
 }

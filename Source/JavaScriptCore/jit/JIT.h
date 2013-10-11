@@ -51,6 +51,7 @@
 
 namespace JSC {
 
+    class ArrayAllocationProfile;
     class CodeBlock;
     class FunctionExecutable;
     class JIT;
@@ -866,7 +867,16 @@ namespace JSC {
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr&);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
+        MacroAssembler::Call callOperation(C_JITOperation_ESt, Structure*);
         MacroAssembler::Call callOperation(J_JITOperation_E, int);
+#if USE(JSVALUE64)
+        MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg);
+#else
+        MacroAssembler::Call callOperation(J_JITOperation_EAapJ, int, ArrayAllocationProfile*, GPRReg, GPRReg);
+#endif
+        MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, GPRReg, int32_t);
+        MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, const JSValue*, int32_t);
+        MacroAssembler::Call callOperation(J_JITOperation_EC, int, JSCell*);
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
         MacroAssembler::Call callOperation(S_JITOperation_ECC, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(S_JITOperation_EJ, RegisterID);

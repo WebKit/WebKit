@@ -113,9 +113,10 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_new_object);
-    stubCall.addArgument(TrustedImmPtr(currentInstruction[3].u.objectAllocationProfile->structure()));
-    stubCall.call(currentInstruction[1].u.operand);
+    int dst = currentInstruction[1].u.operand;
+    Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
+    callOperation(operationNewObject, structure);
+    emitStoreCell(dst, returnValueRegister);
 }
 
 void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
@@ -1213,9 +1214,8 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 #endif
     }
 
-    JITStubCall stubCall(this, cti_op_new_func);
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
-    stubCall.call(dst);
+    FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[2].u.operand);
+    callOperation(operationNewFunction, dst, funcExec);
 
     if (currentInstruction[3].u.operand) {
 #if USE(JSVALUE32_64)        
@@ -1229,39 +1229,43 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
 
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    int dst = currentInstruction[1].u.operand;
+    FunctionExecutable* funcExpr = m_codeBlock->functionExpr(currentInstruction[2].u.operand);
+    callOperation(operationNewFunction, dst, funcExpr);
 }
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_array);
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.addArgument(TrustedImmPtr(currentInstruction[4].u.arrayAllocationProfile));
-    stubCall.call(currentInstruction[1].u.operand);
+    int dst = currentInstruction[1].u.operand;
+    int valuesIndex = currentInstruction[2].u.operand;
+    int size = currentInstruction[3].u.operand;
+    addPtr(TrustedImm32(valuesIndex * sizeof(Register)), callFrameRegister, regT0);
+    callOperation(operationNewArrayWithProfile, dst,
+        currentInstruction[4].u.arrayAllocationProfile, regT0, size);
 }
 
 void JIT::emit_op_new_array_with_size(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_array_with_size);
+    int dst = currentInstruction[1].u.operand;
+    int sizeIndex = currentInstruction[2].u.operand;
 #if USE(JSVALUE64)
-    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
+    emitGetVirtualRegister(sizeIndex, regT0);
+    callOperation(operationNewArrayWithSizeAndProfile, dst,
+        currentInstruction[3].u.arrayAllocationProfile, regT0);
 #else
-    stubCall.addArgument(currentInstruction[2].u.operand);
+    emitLoad(sizeIndex, regT1, regT0);
+    callOperation(operationNewArrayWithSizeAndProfile, dst,
+        currentInstruction[3].u.arrayAllocationProfile, regT1, regT0);
 #endif
-    stubCall.addArgument(TrustedImmPtr(currentInstruction[3].u.arrayAllocationProfile));
-    stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_new_array_buffer);
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.addArgument(TrustedImmPtr(currentInstruction[4].u.arrayAllocationProfile));
-    stubCall.call(currentInstruction[1].u.operand);
+    int dst = currentInstruction[1].u.operand;
+    int valuesIndex = currentInstruction[2].u.operand;
+    int size = currentInstruction[3].u.operand;
+    const JSValue* values = codeBlock()->constantBuffer(valuesIndex);
+    callOperation(operationNewArrayBufferWithProfile, dst, currentInstruction[4].u.arrayAllocationProfile, values, size);
 }
 
 } // namespace JSC

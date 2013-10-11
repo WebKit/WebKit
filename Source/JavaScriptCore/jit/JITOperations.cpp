@@ -27,12 +27,14 @@
 #if ENABLE(JIT)
 #include "JITOperations.h"
 
+#include "ArrayConstructor.h"
 #include "CommonSlowPaths.h"
 #include "Error.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JITOperationWrappers.h"
 #include "JSGlobalObjectFunctions.h"
+#include "ObjectConstructor.h"
 #include "Operations.h"
 #include "Repatch.h"
 
@@ -742,6 +744,44 @@ size_t JIT_OPERATION operationHasProperty(ExecState* exec, JSObject* base, JSStr
     return result;
 }
     
+
+EncodedJSValue JIT_OPERATION operationNewArrayWithProfile(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, int size)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    return JSValue::encode(constructArrayNegativeIndexed(exec, profile, values, size));
+}
+
+EncodedJSValue JIT_OPERATION operationNewArrayBufferWithProfile(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, int size)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    return JSValue::encode(constructArray(exec, profile, values, size));
+}
+
+EncodedJSValue JIT_OPERATION operationNewArrayWithSizeAndProfile(ExecState* exec, ArrayAllocationProfile* profile, EncodedJSValue size)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    JSValue sizeValue = JSValue::decode(size);
+    return JSValue::encode(constructArrayWithSizeQuirk(exec, profile, exec->lexicalGlobalObject(), sizeValue));
+}
+
+EncodedJSValue JIT_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
+{
+    ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return JSValue::encode(JSFunction::create(vm, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
+}
+
+JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    return constructEmptyObject(exec, structure);
+}
 
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)
 {

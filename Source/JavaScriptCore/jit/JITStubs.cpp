@@ -436,13 +436,6 @@ DEFINE_STUB_FUNCTION(void, handle_watchdog_timer)
     }
 }
 
-DEFINE_STUB_FUNCTION(JSObject*, op_new_object)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    return constructEmptyObject(stackFrame.callFrame, stackFrame.args[0].structure());
-}
-
 DEFINE_STUB_FUNCTION(void, op_put_by_id_generic)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1139,14 +1132,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_del_by_id)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    ASSERT(stackFrame.callFrame->codeBlock()->codeType() != FunctionCode || !stackFrame.callFrame->codeBlock()->needsFullScopeChain() || stackFrame.callFrame->uncheckedR(stackFrame.callFrame->codeBlock()->activationRegister().offset()).jsValue());
-    return JSFunction::create(stackFrame.callFrame->vm(), stackFrame.args[0].function(), stackFrame.callFrame->scope());
-}
-
 DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1200,27 +1185,6 @@ DEFINE_STUB_FUNCTION(void, op_profile_did_call)
 
     if (LegacyProfiler* profiler = stackFrame.vm->enabledProfiler())
         profiler->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
-}
-
-DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    return constructArrayNegativeIndexed(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
-}
-
-DEFINE_STUB_FUNCTION(JSObject*, op_new_array_with_size)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    return constructArrayWithSizeQuirk(stackFrame.callFrame, stackFrame.args[1].arrayAllocationProfile(), stackFrame.callFrame->lexicalGlobalObject(), stackFrame.args[0].jsValue());
-}
-
-DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    return constructArray(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
 }
 
 static JSValue getByVal(
@@ -1442,18 +1406,6 @@ DEFINE_STUB_FUNCTION(void*, op_load_varargs)
     if (!newCallFrame)
         VM_THROW_EXCEPTION();
     return newCallFrame;
-}
-
-DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    FunctionExecutable* function = stackFrame.args[0].function();
-    JSFunction* func = JSFunction::create(callFrame->vm(), function, callFrame->scope());
-    ASSERT(callFrame->codeBlock()->codeType() != FunctionCode || !callFrame->codeBlock()->needsFullScopeChain() || callFrame->uncheckedR(callFrame->codeBlock()->activationRegister().offset()).jsValue());
-
-    return func;
 }
 
 DEFINE_STUB_FUNCTION(void*, op_throw)

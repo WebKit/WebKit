@@ -4389,7 +4389,7 @@ void SpeculativeJIT::compileNewFunctionExpression(Node* node)
     GPRReg resultGPR = result.gpr();
     flushRegisters();
     callOperation(
-        operationNewFunctionExpression,
+        operationNewFunctionNoCheck,
         resultGPR,
         m_jit.codeBlock()->functionExpr(node->functionExprIndex()));
     cellResult(resultGPR, node);
