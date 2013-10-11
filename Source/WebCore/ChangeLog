@@ -1,3 +1,22 @@
+2013-10-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix with ENABLE_DEVICE_ORIENTATION after r157215
+
+        Now, impl() return reference instead of a pointer.
+
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::acceleration):
+        (WebCore::JSDeviceMotionEvent::accelerationIncludingGravity):
+        (WebCore::JSDeviceMotionEvent::rotationRate):
+        (WebCore::JSDeviceMotionEvent::interval):
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::alpha):
+        (WebCore::JSDeviceOrientationEvent::beta):
+        (WebCore::JSDeviceOrientationEvent::gamma):
+        (WebCore::JSDeviceOrientationEvent::absolute):
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+
 2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [MediaStream API] update MediaStream object to match spec
