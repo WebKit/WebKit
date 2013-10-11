@@ -1,3 +1,14 @@
+2013-10-11  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Fix build after r157209.
+        https://bugs.webkit.org/show_bug.cgi?id=122643
+
+        Reviewed by Ryosuke Niwa.
+
+        * assembler/MacroAssemblerSH4.h: Add framePointerRegister declaration.
+        * assembler/SH4Assembler.h: Add firstRegister() declaration.
+        (JSC::SH4Assembler::firstRegister):
+
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         FTL shouldn't pass i1's into llvm.webkit.stackmap's

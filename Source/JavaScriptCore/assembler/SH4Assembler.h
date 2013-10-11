@@ -325,6 +325,8 @@ public:
     static const RegisterID scratchReg2 = SH4Registers::r11;
     static const uint32_t maxInstructionSize = 16;
 
+    static RegisterID firstRegister() { return SH4Registers::r0; }
+
     enum {
         padForAlign8 = 0x00,
         padForAlign16 = 0x0009,
