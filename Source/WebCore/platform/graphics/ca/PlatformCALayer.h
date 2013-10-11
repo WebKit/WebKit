@@ -124,7 +124,6 @@ public:
     void appendSublayer(PlatformCALayer*);
     void insertSublayer(PlatformCALayer*, size_t index);
     void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*);
-    size_t sublayerCount() const;
 
     // This method removes the sublayers from the source and reparents them to the current layer.
     // Any sublayers previously in the current layer are removed.
@@ -134,7 +133,6 @@ public:
     void removeAnimationForKey(const String& key);
     PassRefPtr<PlatformCAAnimation> animationForKey(const String& key);
     
-    PlatformCALayer* mask() const;
     void setMask(PlatformCALayer*);
     
     bool isOpaque() const;
@@ -156,10 +154,8 @@ public:
     TransformationMatrix sublayerTransform() const;
     void setSublayerTransform(const TransformationMatrix&);
 
-    bool isHidden() const;
     void setHidden(bool);
 
-    bool isGeometryFlipped() const;
     void setGeometryFlipped(bool);
 
     bool isDoubleSided() const;
@@ -174,7 +170,6 @@ public:
     CFTypeRef contents() const;
     void setContents(CFTypeRef);
 
-    FloatRect contentsRect() const;
     void setContentsRect(const FloatRect&);
 
     void setMinificationFilter(FilterType);
@@ -183,10 +178,8 @@ public:
     Color backgroundColor() const;
     void setBackgroundColor(const Color&);
 
-    float borderWidth() const;
     void setBorderWidth(float);
 
-    Color borderColor() const;
     void setBorderColor(const Color&);
 
     float opacity() const;
@@ -198,16 +191,12 @@ public:
     void copyFiltersFrom(const PlatformCALayer*);
 #endif
 
-    String name() const;
     void setName(const String&);
 
-    FloatRect frame() const;
     void setFrame(const FloatRect&);
 
-    float speed() const;
     void setSpeed(float);
 
-    CFTimeInterval timeOffset() const;
     void setTimeOffset(CFTimeInterval);
     
     float contentsScale() const;

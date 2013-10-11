@@ -277,7 +277,7 @@ void PlatformCALayer::removeAllSublayers()
 void PlatformCALayer::appendSublayer(PlatformCALayer* layer)
 {
     // This must be in terms of insertSublayer instead of a direct call so PlatformCALayerInternal can override.
-    insertSublayer(layer, sublayerCount());
+    insertSublayer(layer, intern(this)->sublayerCount());
 }
 
 void PlatformCALayer::insertSublayer(PlatformCALayer* layer, size_t index)
@@ -305,11 +305,6 @@ void PlatformCALayer::replaceSublayer(PlatformCALayer* reference, PlatformCALaye
         newLayer->removeFromSuperlayer();
         insertSublayer(newLayer, referenceIndex);
     }
-}
-
-size_t PlatformCALayer::sublayerCount() const
-{
-    return intern(this)->sublayerCount();
 }
 
 void PlatformCALayer::adoptSublayers(PlatformCALayer* source)
@@ -356,11 +351,6 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& k
         return 0;
 
     return it->value;
-}
-
-PlatformCALayer* PlatformCALayer::mask() const
-{
-    return platformCALayer(CACFLayerGetMask(m_layer.get()));
 }
 
 void PlatformCALayer::setMask(PlatformCALayer* layer)
@@ -440,20 +430,10 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
     setNeedsCommit();
 }
 
-bool PlatformCALayer::isHidden() const
-{
-    return CACFLayerIsHidden(m_layer.get());
-}
-
 void PlatformCALayer::setHidden(bool value)
 {
     CACFLayerSetHidden(m_layer.get(), value);
     setNeedsCommit();
-}
-
-bool PlatformCALayer::isGeometryFlipped() const
-{
-    return CACFLayerIsGeometryFlipped(m_layer.get());
 }
 
 void PlatformCALayer::setGeometryFlipped(bool value)
@@ -504,11 +484,6 @@ void PlatformCALayer::setContents(CFTypeRef value)
     setNeedsCommit();
 }
 
-FloatRect PlatformCALayer::contentsRect() const
-{
-    return CACFLayerGetContentsRect(m_layer.get());
-}
-
 void PlatformCALayer::setContentsRect(const FloatRect& value)
 {
     CACFLayerSetContentsRect(m_layer.get(), value);
@@ -543,20 +518,10 @@ void PlatformCALayer::setBackgroundColor(const Color& value)
     setNeedsCommit();
 }
 
-float PlatformCALayer::borderWidth() const
-{
-    return CACFLayerGetBorderWidth(m_layer.get());
-}
-
 void PlatformCALayer::setBorderWidth(float value)
 {
     CACFLayerSetBorderWidth(m_layer.get(), value);
     setNeedsCommit();
-}
-
-Color PlatformCALayer::borderColor() const
-{
-    return CACFLayerGetBorderColor(m_layer.get());
 }
 
 void PlatformCALayer::setBorderColor(const Color& value)
@@ -599,20 +564,10 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations&)
 
 #endif // ENABLE(CSS_FILTERS)
 
-String PlatformCALayer::name() const
-{
-    return CACFLayerGetName(m_layer.get());
-}
-
 void PlatformCALayer::setName(const String& value)
 {
     CACFLayerSetName(m_layer.get(), value.createCFString().get());
     setNeedsCommit();
-}
-
-FloatRect PlatformCALayer::frame() const
-{
-    return CACFLayerGetFrame(m_layer.get());
 }
 
 void PlatformCALayer::setFrame(const FloatRect& value)
@@ -621,20 +576,10 @@ void PlatformCALayer::setFrame(const FloatRect& value)
     setNeedsLayout();
 }
 
-float PlatformCALayer::speed() const
-{
-    return CACFLayerGetSpeed(m_layer.get());
-}
-
 void PlatformCALayer::setSpeed(float value)
 {
     CACFLayerSetSpeed(m_layer.get(), value);
     setNeedsCommit();
-}
-
-CFTimeInterval PlatformCALayer::timeOffset() const
-{
-    return CACFLayerGetTimeOffset(m_layer.get());
 }
 
 void PlatformCALayer::setTimeOffset(CFTimeInterval value)
@@ -697,7 +642,7 @@ static void printLayer(const PlatformCALayer* layer, int indent)
         layerAnchorPoint.x(), layerAnchorPoint.y(), layerAnchorPoint.z(), layer->superlayer());
 
     // Print name if needed
-    String layerName = layer->name();
+    String layerName = CACFLayerGetName(layer->platformLayer());
     if (!layerName.isEmpty()) {
         printIndent(indent + 1);
         fprintf(stderr, "(name %s)\n", layerName.utf8().data());
@@ -747,7 +692,7 @@ static void printLayer(const PlatformCALayer* layer, int indent)
     }
 
     // Print sublayers if needed
-    int n = layer->sublayerCount();
+    int n = intern(layer)->sublayerCount();
     if (n > 0) {
         printIndent(indent + 1);
         fprintf(stderr, "(sublayers\n");

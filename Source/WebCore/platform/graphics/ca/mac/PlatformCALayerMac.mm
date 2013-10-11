@@ -401,11 +401,6 @@ void PlatformCALayer::replaceSublayer(PlatformCALayer* reference, PlatformCALaye
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-size_t PlatformCALayer::sublayerCount() const
-{
-    return [[m_layer.get() sublayers] count];
-}
-
 void PlatformCALayer::adoptSublayers(PlatformCALayer* source)
 {
     // Workaround for <rdar://problem/7390716>: -[CALayer setSublayers:] crashes if sublayers is an empty array, or nil, under GC.
@@ -455,11 +450,6 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& k
     if (!propertyAnimation)
         return 0;
     return PlatformCAAnimation::create(propertyAnimation);
-}
-
-PlatformCALayer* PlatformCALayer::mask() const
-{
-    return platformCALayer([m_layer.get() mask]);
 }
 
 void PlatformCALayer::setMask(PlatformCALayer* layer)
@@ -547,21 +537,11 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-bool PlatformCALayer::isHidden() const
-{
-    return [m_layer.get() isHidden];
-}
-
 void PlatformCALayer::setHidden(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setHidden:value];
     END_BLOCK_OBJC_EXCEPTIONS
-}
-
-bool PlatformCALayer::isGeometryFlipped() const
-{
-    return [m_layer.get() isGeometryFlipped];
 }
 
 void PlatformCALayer::setGeometryFlipped(bool value)
@@ -619,11 +599,6 @@ void PlatformCALayer::setContents(CFTypeRef value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-FloatRect PlatformCALayer::contentsRect() const
-{
-    return [m_layer.get() contentsRect];
-}
-
 void PlatformCALayer::setContentsRect(const FloatRect& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -663,21 +638,11 @@ void PlatformCALayer::setBackgroundColor(const Color& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-float PlatformCALayer::borderWidth() const
-{
-    return [m_layer.get() borderWidth];
-}
-
 void PlatformCALayer::setBorderWidth(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setBorderWidth:value];
     END_BLOCK_OBJC_EXCEPTIONS
-}
-
-Color PlatformCALayer::borderColor() const
-{
-    return [m_layer.get() borderColor];
 }
 
 void PlatformCALayer::setBorderColor(const Color& value)
@@ -747,21 +712,11 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations& filters)
 }
 #endif
 
-String PlatformCALayer::name() const
-{
-    return [m_layer.get() name];
-}
-
 void PlatformCALayer::setName(const String& value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setName:value];
     END_BLOCK_OBJC_EXCEPTIONS
-}
-
-FloatRect PlatformCALayer::frame() const
-{
-    return [m_layer.get() frame];
 }
 
 void PlatformCALayer::setFrame(const FloatRect& value)
@@ -771,21 +726,11 @@ void PlatformCALayer::setFrame(const FloatRect& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-float PlatformCALayer::speed() const
-{
-    return [m_layer.get() speed];
-}
-
 void PlatformCALayer::setSpeed(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setSpeed:value];
     END_BLOCK_OBJC_EXCEPTIONS
-}
-
-CFTimeInterval PlatformCALayer::timeOffset() const
-{
-    return [m_layer.get() timeOffset];
 }
 
 void PlatformCALayer::setTimeOffset(CFTimeInterval value)

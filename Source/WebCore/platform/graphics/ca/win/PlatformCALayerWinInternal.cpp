@@ -331,7 +331,7 @@ void PlatformCALayerWinInternal::setBounds(const FloatRect& rect)
 
 void PlatformCALayerWinInternal::setFrame(const FloatRect& rect)
 {
-    CGRect oldFrame = owner()->frame();
+    CGRect oldFrame = CACFLayerGetFrame(owner()->platformLayer());
     if (CGRectEqualToRect(rect, oldFrame))
         return;
 
