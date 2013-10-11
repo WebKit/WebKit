@@ -1,4 +1,12 @@
-2013-10-10  Darin Adler  <darin@apple.com>
+2013-10-11  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::translate): Do a const_cast when creating the
+        lineage, since it doesn't yet work with const pointers.
+
+2013-10-11  Darin Adler  <darin@apple.com>
 
         Do a bit of optimization and cleanup in the HTMLElement class
         https://bugs.webkit.org/show_bug.cgi?id=122640

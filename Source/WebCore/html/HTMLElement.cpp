@@ -747,7 +747,8 @@ TranslateAttributeMode HTMLElement::translateAttributeMode() const
 
 bool HTMLElement::translate() const
 {
-    auto lineage = lineageOfType<HTMLElement>(this);
+    // FIXME: Need to fix lineageOfType to work with const and remove this const_cast.
+    auto lineage = lineageOfType<HTMLElement>(const_cast<HTMLElement*>(this));
     for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
         TranslateAttributeMode mode = element->translateAttributeMode();
         if (mode == TranslateAttributeInherit)
