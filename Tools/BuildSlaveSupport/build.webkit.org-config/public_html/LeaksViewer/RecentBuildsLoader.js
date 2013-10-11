@@ -39,7 +39,7 @@ RecentBuildsLoader.prototype = {
                 var build = data[buildNumber];
                 var svnRevisionProperty = build.properties.first(function(property) { return property[0] === "got_revision"; });
                 if (!svnRevisionProperty)
-                    continue;
+                    return;
 
                 var buildInfo = {
                     revision: parseInt(svnRevisionProperty[1], 10),
