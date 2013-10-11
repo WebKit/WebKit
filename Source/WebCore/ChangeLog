@@ -1,3 +1,14 @@
+2013-10-11  Andreas Kling  <akling@apple.com>
+
+        Make RenderLayer not arena-allocated.
+        <https://webkit.org/b/87523>
+
+        Reviewed by Antti Koivisto.
+
+        Let RenderLayerModelObject store its RenderLayer in a unique_ptr.
+        Layers are relatively low-volume objects and this looks neutral
+        on our performance tests.
+
 2013-10-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r155607): Javascript site does not load visually on panerabread.com
