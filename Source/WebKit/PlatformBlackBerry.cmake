@@ -234,26 +234,6 @@ if (ENABLE_VIDEO_TRACK)
     )
 endif ()
 
-install(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
-        DESTINATION ../../usr/share/webkit/inspector/
-        FILES_MATCHING PATTERN "*.js")
-install(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
-        DESTINATION ../../usr/share/webkit/inspector/
-        FILES_MATCHING PATTERN "*.css")
-install(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
-        DESTINATION ../../usr/share/webkit/inspector/
-        FILES_MATCHING PATTERN "*.png")
-install(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
-        DESTINATION ../../usr/share/webkit/inspector/
-        FILES_MATCHING PATTERN "*.jpg")
-install(DIRECTORY ${WEBCORE_DIR}/inspector/front-end/
-        DESTINATION ../../usr/share/webkit/inspector/
-        FILES_MATCHING PATTERN "*.gif")
-install(FILES ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
-              ${WEBKIT_DIR}/blackberry/WebCoreSupport/inspectorBB.js
-              ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendCommands.js
-        DESTINATION ../../usr/share/webkit/inspector/)
-
 if (NOT PUBLIC_BUILD)
     # Add the custom target to build the host-side ImageDiff binary.
     # Reuse the Qt version.
@@ -265,13 +245,6 @@ if (NOT PUBLIC_BUILD)
         COMMENT "ImageDiff building..."
     )
 endif ()
-
-add_custom_target(
-    inspector ALL
-    command cp ${WEBCORE_DIR}/inspector/front-end/inspector.html ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html && echo '<script src="inspectorBB.js"></script>'  >> ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
-    DEPENDS WebCore
-    COMMENT "Web Inspector resources building..."
-)
 
 # Generate contents for AboutData.cpp
 add_custom_command(

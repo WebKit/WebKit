@@ -1,3 +1,13 @@
+2013-10-10  Marcelo Morais  <m.morais@samsung.com>
+
+        Web Inspector: Remove the old front-end from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=122295
+
+        Reviewed by Timothy Hatcher.
+
+        * Source/PlatformGTK.cmake: Removed. This file was using files from the
+        old inspector, not needed anymore.
+
 2013-10-09  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Add sh4 support when building with CMake.
