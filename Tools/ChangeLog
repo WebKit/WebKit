@@ -1,3 +1,17 @@
+2013-10-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        webkit-patch failure-reason should allow specifying failures one is interested in
+        https://bugs.webkit.org/show_bug.cgi?id=122554
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (FailureReason):
+        (FailureReason._explain_failures_for_builder): keep track of explained failures and drop out of the
+        loop if the ones we're interested in been explained.
+        (FailureReason._done_explaining): check the failures we're interested in have been explained, if any.
+        (FailureReason.execute): initialize failures to explain and the explained set.
+
 2013-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         Make sure that DataTypes.h is in the binary drop.

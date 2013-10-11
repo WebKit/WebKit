@@ -247,6 +247,7 @@ class ResultsFor(Command):
 class FailureReason(Command):
     name = "failure-reason"
     help_text = "Lists revisions where individual test failures started at %s" % config_urls.buildbot_url
+    arguments_names = "[LAYOUT_TESTS]"
 
     def _blame_line_for_revision(self, revision):
         try:
@@ -277,7 +278,7 @@ class FailureReason(Command):
         results_to_explain = set(layout_test_results.failing_tests())
         last_build_with_results = build
         print "Starting at %s" % revision_to_test
-        while results_to_explain:
+        while results_to_explain and not self._done_explaining():
             revision_to_test -= 1
             new_build = builder.build_for_revision(revision_to_test, allow_failed_lookups=True)
             if not new_build:
@@ -299,6 +300,7 @@ class FailureReason(Command):
                 print "No change in build %s (r%s), %s unexplained failures (%s in this build)" % (build._number, build.revision(), len(results_to_explain), len(failures))
                 last_build_with_results = build
                 continue
+            self.explained_failures.update(fixed_results)
             regression_window = RegressionWindow(build, last_build_with_results)
             self._print_blame_information_for_transition(regression_window, fixed_results)
             last_build_with_results = build
@@ -321,9 +323,17 @@ class FailureReason(Command):
             if status["name"] == chosen_name:
                 return (self._tool.buildbot.builder_with_name(chosen_name), status["built_revision"])
 
+    def _done_explaining(self):
+        if not self.failures_to_explain:
+            return False
+
+        return self.explained_failures.issuperset(self.failures_to_explain)
+
     def execute(self, options, args, tool):
         (builder, latest_revision) = self._builder_to_explain()
         start_revision = self._tool.user.prompt("Revision to walk backwards from? [%s] " % latest_revision) or latest_revision
+        self.failures_to_explain = args
+        self.explained_failures = set()
         if not start_revision:
             print "Revision required."
             return 1
