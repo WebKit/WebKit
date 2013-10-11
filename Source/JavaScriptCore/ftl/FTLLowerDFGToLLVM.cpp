@@ -3442,7 +3442,12 @@ private:
         
         value = m_booleanValues.get(node);
         if (isValid(value)) {
-            addExitArgument(exit, arguments, index, ValueFormatBoolean, value.value());
+            LValue valueToPass;
+            if (Options::ftlOSRExitUsesStackmap())
+                valueToPass = m_out.zeroExt(value.value(), m_out.int32);
+            else
+                valueToPass = value.value();
+            addExitArgument(exit, arguments, index, ValueFormatBoolean, valueToPass);
             return;
         }
         

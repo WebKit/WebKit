@@ -1,3 +1,22 @@
+2013-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL shouldn't pass i1's into llvm.webkit.stackmap's
+        https://bugs.webkit.org/show_bug.cgi?id=122629
+        <rdar://problem/15203037>
+
+        Reviewed by Sam Weinig and Nadav Rotem.
+        
+        LLVM's stackmap support requires that we only pass operands with legal types (i.e. types
+        that are hardware-representable). i1, which the FTL previously used for Booleans, is not
+        legal.
+        
+        We have two options: either add support in LLVM to legalize stackmap operands, or add
+        support to the FTL to legalize stackmap operands. It's easier to fix this in FTL, and
+        that's what this patch does.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+
 2013-10-09  Oliver Hunt  <oliver@apple.com>
 
         Further improve ArrayIterator performance
