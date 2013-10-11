@@ -1,3 +1,10 @@
+2013-10-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed gardening. Rebaseline after 157292.
+
+        * platform/gtk/editing/unsupported-content/table-delete-001-expected.txt:
+        * platform/gtk/editing/unsupported-content/table-delete-003-expected.txt:
+
 2013-10-11  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape-Image-Threshold should be animatable
