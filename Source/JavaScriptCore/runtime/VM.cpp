@@ -425,8 +425,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return logThunkGenerator;
     case IMulIntrinsic:
         return imulThunkGenerator;
-    case ArrayIteratorNextIntrinsic:
-        return arrayIteratorNextThunkGenerator;
+    case ArrayIteratorNextKeyIntrinsic:
+        return arrayIteratorNextKeyThunkGenerator;
+    case ArrayIteratorNextValueIntrinsic:
+        return arrayIteratorNextValueThunkGenerator;
     default:
         return 0;
     }
