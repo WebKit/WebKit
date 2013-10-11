@@ -132,10 +132,8 @@ JSGenericTypedArrayViewPrototype<ViewClass>::JSGenericTypedArrayViewPrototype(VM
 
 template<typename ViewClass>
 void JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation(
-    ExecState* exec, JSGlobalObject* globalObject)
+    VM& vm, JSGlobalObject* globalObject)
 {
-    VM& vm = exec->vm();
-    
     Base::finishCreation(vm);
     
     ASSERT(inherits(info()));
@@ -148,12 +146,12 @@ void JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation(
 template<typename ViewClass>
 JSGenericTypedArrayViewPrototype<ViewClass>*
 JSGenericTypedArrayViewPrototype<ViewClass>::create(
-    ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     JSGenericTypedArrayViewPrototype* prototype =
-        new (NotNull, allocateCell<JSGenericTypedArrayViewPrototype>(exec->vm().heap))
-        JSGenericTypedArrayViewPrototype(exec->vm(), structure);
-    prototype->finishCreation(exec, globalObject);
+        new (NotNull, allocateCell<JSGenericTypedArrayViewPrototype>(vm.heap))
+        JSGenericTypedArrayViewPrototype(vm, structure);
+    prototype->finishCreation(vm, globalObject);
     return prototype;
 }
 

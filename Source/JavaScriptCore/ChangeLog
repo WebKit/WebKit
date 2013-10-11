@@ -1,3 +1,12 @@
+2013-10-11  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSGenericTypedArrayViewPrototype.
+        <https://webkit.org/b/122632>
+
+        Reviewed by Sam Weinig.
+
+        This code was only using the ExecState to find the VM.
+
 2013-10-11  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Fix build after r157209.

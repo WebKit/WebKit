@@ -37,11 +37,11 @@ public:
 
 protected:
     JSGenericTypedArrayViewPrototype(VM&, Structure*);
-    void finishCreation(ExecState*, JSGlobalObject*);
+    void finishCreation(VM&, JSGlobalObject*);
 
 public:
     static JSGenericTypedArrayViewPrototype* create(
-        ExecState*, JSGlobalObject*, Structure*);
+        VM&, JSGlobalObject*, Structure*);
     
     DECLARE_INFO;
     
