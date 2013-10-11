@@ -1047,7 +1047,7 @@ private:
 
     void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = 0);
 #if USE(ACCELERATED_COMPOSITING)
-    bool updateDescendantClippingContext(bool addClipping);
+    bool checkIfDescendantClippingContextNeedsUpdate(bool isClipping);
 #endif
 
     // This flag is computed by RenderLayerCompositor, which knows more about 3d hierarchies than we do.

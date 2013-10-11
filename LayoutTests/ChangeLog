@@ -1,3 +1,25 @@
+2013-10-11  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r155607): Javascript site does not load visually on panerabread.com
+        https://bugs.webkit.org/show_bug.cgi?id=122461
+
+        Reviewed by Simon Fraser.
+        
+        Do not modify the composited layer backing's internal layer structure directly 
+        when the clipping behaviour changes.
+        
+        When we directly create/destroy RenderLayerBacking::m_ancestorClippingLayer to 
+        reflect the new clipping state, other, depending layers need updating. In order to
+        not to corrupt the internal hierarchy, mark the compositing layers dirty and let
+        the normal updating mechanism take care of creating/destroying the ancestor layers.
+
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html:
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html:
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+
 2013-10-10  Santosh Mahto  <santosh.ma@samsung.com>
 
         contentEditable with "position:relative" paragraphs is buggy
