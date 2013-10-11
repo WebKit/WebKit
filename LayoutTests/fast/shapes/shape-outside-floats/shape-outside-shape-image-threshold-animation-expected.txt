@@ -1,0 +1,3 @@
+Moving Text
+PASS - "-webkit-shape-image-threshold" property for "shape" element at 1s saw something close to: 0.5
+

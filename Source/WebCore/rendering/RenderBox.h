@@ -643,7 +643,7 @@ protected:
  
 private:
 #if ENABLE(CSS_SHAPES)
-    void updateShapeOutsideInfoAfterStyleChange(const ShapeValue* shapeOutside, const ShapeValue* oldShapeOutside);
+    void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 #endif
 
     bool fixedElementLaysOutRelativeToFrame(const FrameView&) const;

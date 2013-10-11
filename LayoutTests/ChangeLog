@@ -1,3 +1,20 @@
+2013-10-11  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape-Image-Threshold should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=122622
+
+        Reviewed by Darin Adler.
+
+        Adding tests for dynamically changing shape-image threshold via JS and CSS
+        animations. Included are some SVG resources used as the shape image sources.
+
+        * fast/shapes/resources/svg-shape-002.svg: Added.
+        * fast/shapes/resources/svg-shape-003.svg: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-image-threshold-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-image-threshold.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-image-threshold-animation.html: Added.
+
 2013-10-11  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: Negative margins

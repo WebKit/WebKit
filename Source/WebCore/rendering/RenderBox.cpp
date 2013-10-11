@@ -376,23 +376,30 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeOutsideInfoAfterStyleChange(style()->shapeOutside(), oldStyle ? oldStyle->shapeOutside() : 0);
+    updateShapeOutsideInfoAfterStyleChange(*style(), oldStyle);
 #endif
 }
 
 #if ENABLE(CSS_SHAPES)
-void RenderBox::updateShapeOutsideInfoAfterStyleChange(const ShapeValue* shapeOutside, const ShapeValue* oldShapeOutside)
+void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
+    ShapeValue* shapeOutside = style.shapeOutside();
+    ShapeValue* oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : nullptr;
+
+    float shapeImageThreshold = style.shapeImageThreshold();
+    float oldShapeImageThreshold = oldStyle ? oldStyle->shapeImageThreshold() : RenderStyle::initialShapeImageThreshold();
+
     // FIXME: A future optimization would do a deep comparison for equality. (bug 100811)
-    if (shapeOutside == oldShapeOutside)
+    if (shapeOutside == oldShapeOutside && shapeImageThreshold == oldShapeImageThreshold)
         return;
 
-    if (shapeOutside) {
-        ShapeOutsideInfo* shapeOutsideInfo = ShapeOutsideInfo::ensureInfo(this);
-        shapeOutsideInfo->dirtyShapeSize();
-    } else
+    if (!shapeOutside)
         ShapeOutsideInfo::removeInfo(this);
-    markShapeOutsideDependentsForLayout();
+    else
+        ShapeOutsideInfo::ensureInfo(this)->dirtyShapeSize();
+
+    if (shapeOutside || shapeOutside != oldShapeOutside)
+        markShapeOutsideDependentsForLayout();
 }
 #endif
 
