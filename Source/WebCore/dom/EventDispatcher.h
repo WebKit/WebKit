@@ -28,58 +28,20 @@
 
 #include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Element;
 class Event;
-class EventContext;
-class EventTarget;
-class FrameView;
 class Node;
-class PlatformKeyboardEvent;
-class PlatformMouseEvent;
-class ShadowRoot;
-class TouchEvent;
-class TreeScope;
-struct InputElementClickState;
 
-enum EventDispatchContinuation {
-    ContinueDispatching,
-    DoneDispatching
-};
+namespace EventDispatcher {
 
-class EventPath {
-public:
-    EventPath(Node& origin, Event&);
+bool dispatchEvent(Node*, PassRefPtr<Event>);
+void dispatchScopedEvent(Node&, PassRefPtr<Event>);
+void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
-    bool isEmpty() const { return m_path.isEmpty(); }
-    size_t size() const { return m_path.size(); }
-    const EventContext& contextAt(size_t i) const { return *m_path[i]; }
-    EventContext& contextAt(size_t i) { return *m_path[i]; }
-
-#if ENABLE(TOUCH_EVENTS)
-    void updateTouchLists(const TouchEvent&);
-#endif
-    void setRelatedTarget(EventTarget&);
-
-    bool hasEventListeners(const AtomicString& eventType) const;
-
-    EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
-
-private:
-    Vector<std::unique_ptr<EventContext>, 32> m_path;
-    RefPtr<Node> m_origin;
-};
-
-class EventDispatcher {
-public:
-    static bool dispatchEvent(Node*, PassRefPtr<Event>);
-    static void dispatchScopedEvent(Node&, PassRefPtr<Event>);
-    static void dispatchSimulatedClick(Element*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 };
 
 }

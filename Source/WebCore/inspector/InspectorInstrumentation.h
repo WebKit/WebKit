@@ -55,7 +55,6 @@ class DOMWrapperWorld;
 class Database;
 class Document;
 class Element;
-class EventPath;
 class DocumentLoader;
 class DocumentStyleSheetCollection;
 class DeviceOrientationData;
@@ -893,7 +892,6 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     UNUSED_PARAM(event);
     UNUSED_PARAM(window);
     UNUSED_PARAM(node);
-    UNUSED_PARAM(eventPath);
 #endif
     return InspectorInstrumentationCookie();
 }

@@ -1,3 +1,22 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make EventPath private to EventDispatcher.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122638
+
+        Reviewed by Darin Adler.
+
+        Move the declaration of EventPath into EventDispatcher.cpp since EventPath is only used in this file.
+        Also make EventDispatcher a namespace since it is never instantiated since r157250.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventPath::isEmpty):
+        (WebCore::EventPath::size):
+        (WebCore::EventPath::contextAt):
+        (WebCore::EventPath::lastContextIfExists):
+        * dom/EventDispatcher.h:
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+
 2013-10-10  Santosh Mahto  <santosh.ma@samsung.com>
 
         contentEditable with "position:relative" paragraphs is buggy

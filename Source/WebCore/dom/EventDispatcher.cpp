@@ -83,6 +83,29 @@ bool WindowEventContext::handleLocalEvents(Event& event)
     return true;
 }
 
+class EventPath {
+public:
+    EventPath(Node& origin, Event&);
+
+    bool isEmpty() const { return m_path.isEmpty(); }
+    size_t size() const { return m_path.size(); }
+    const EventContext& contextAt(size_t i) const { return *m_path[i]; }
+    EventContext& contextAt(size_t i) { return *m_path[i]; }
+
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchLists(const TouchEvent&);
+#endif
+    void setRelatedTarget(EventTarget&);
+
+    bool hasEventListeners(const AtomicString& eventType) const;
+
+    EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
+
+private:
+    Vector<std::unique_ptr<EventContext>, 32> m_path;
+    RefPtr<Node> m_origin;
+};
+
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
 {
     if (referenceNode.isPseudoElement()) {
