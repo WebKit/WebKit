@@ -1,3 +1,19 @@
+2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Making the base implementation of isAudioStreamSource, in MediaStreamSource, return the correct value
+        https://bugs.webkit.org/show_bug.cgi?id=122612
+
+        Reviewed by Jer Noble.
+
+        There is no reason for this implementation, in the base class, to always return false
+        if we already have the information about the type of the source.
+
+        No new tests needed.
+
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * platform/mediastream/MediaStreamSource.h:
+        (WebCore::MediaStreamSource::isAudioStreamSource):
+
 2013-10-10  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove the old front-end from WebKit.

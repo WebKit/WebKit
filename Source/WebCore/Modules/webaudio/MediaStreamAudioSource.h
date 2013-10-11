@@ -45,7 +45,6 @@ public:
 
     ~MediaStreamAudioSource() { }
 
-    virtual bool isAudioStreamSource() const { return true; }
     virtual bool useIDForTrackID() const { return true; }
 
     virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const;

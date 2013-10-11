@@ -65,7 +65,7 @@ public:
 
     virtual ~MediaStreamSource() { }
 
-    virtual bool isAudioStreamSource() const { return false; }
+    bool isAudioStreamSource() const { return type() == Audio; }
     virtual bool useIDForTrackID() const { return false; }
 
     void reset();
