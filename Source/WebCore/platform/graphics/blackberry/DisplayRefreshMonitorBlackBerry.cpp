@@ -27,6 +27,15 @@
 
 namespace WebCore {
 
+class DisplayAnimationClient : public BlackBerry::Platform::AnimationFrameRateClient {
+public:
+    DisplayAnimationClient(DisplayRefreshMonitor *);
+    ~DisplayAnimationClient() { }
+private:
+    virtual void animationFrameChanged();
+    DisplayRefreshMonitor* m_monitor;
+};
+
 DisplayAnimationClient::DisplayAnimationClient(DisplayRefreshMonitor *monitor)
     : m_monitor(monitor)
 {

@@ -1,3 +1,30 @@
+2013-10-10  Darin Adler  <darin@apple.com>
+
+        Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=121033
+
+        Reviewed by Dean Jackson.
+
+        For safe iteration, use a set rather than a vector, and remove the clients from
+        the set if they are removed during iteration.
+
+        Test: fast/animation/request-animation-frame-remove-client.html
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor): Initialize the
+        m_clientsToBeNotified pointer to null.
+        (WebCore::DisplayRefreshMonitor::removeClient): If there is a m_clientsToBeNotified
+        set, remove from it as well as the real m_clients set.
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh): Use a HashSet instead of a
+        vector for the copy of the clients set we iterate.
+
+        * platform/graphics/DisplayRefreshMonitor.h: Moved some of the BlackBerry-specific
+        part of this out of the header. Added a new HashSet pointer, m_clientsToBeNotified,
+        to be used to remove clients during the notification process. Also added a FIXME.
+
+        * platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp: Moved the
+        DisplayAnimationClient class in here.
+
 2013-10-10  Dean Jackson  <dino@apple.com>
 
         Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
