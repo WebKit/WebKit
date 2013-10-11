@@ -49,7 +49,7 @@
 #include <wtf/gobject/GRefPtr.h>
 typedef gboolean (*GSourceFunc) (gpointer data);
 #elif PLATFORM(EFL)
-#include <Ecore.h>
+#include <DispatchQueueEfl.h>
 #endif
 
 class WorkQueue : public ThreadSafeRefCounted<WorkQueue> {
@@ -98,46 +98,7 @@ private:
     HashMap<int, Vector<SocketEventSource*>> m_eventSources;
     typedef HashMap<int, Vector<SocketEventSource*>>::iterator SocketEventSourceIterator;
 #elif PLATFORM(EFL)
-    class TimerWorkItem {
-    public:
-        static PassOwnPtr<TimerWorkItem> create(Function<void()>, double expireTime);
-        void dispatch() { m_function(); }
-        double expireTime() const { return m_expireTime; }
-        bool expired(double currentTime) const { return currentTime >= m_expireTime; }
-
-    protected:
-        TimerWorkItem(Function<void()>, double expireTime);
-
-    private:
-        Function<void()> m_function;
-        double m_expireTime;
-    };
-
-    fd_set m_fileDescriptorSet;
-    int m_maxFileDescriptor;
-    int m_readFromPipeDescriptor;
-    int m_writeToPipeDescriptor;
-    Mutex m_writeToPipeDescriptorLock;
-
-    bool m_threadLoop;
-
-    Vector<Function<void()>> m_workItemQueue;
-    Mutex m_workItemQueueLock;
-
-    int m_socketDescriptor;
-    Function<void()> m_socketEventHandler;
-
-    Vector<OwnPtr<TimerWorkItem>> m_timerWorkItems;
-    Mutex m_timerWorkItemsLock;
-
-    void sendMessageToThread(const char*);
-    static void* workQueueThread(WorkQueue*);
-    void performWork();
-    void performFileDescriptorWork();
-    static double getCurrentTime();
-    struct timeval* getNextTimeOut();
-    void performTimerWork();
-    void insertTimerWorkItem(PassOwnPtr<TimerWorkItem>);
+    RefPtr<DispatchQueue> m_dispatchQueue;
 #endif
 };
 

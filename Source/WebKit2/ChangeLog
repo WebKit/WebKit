@@ -1,3 +1,64 @@
+2013-10-10  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Separate dispatch context from WorkQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=115332
+
+        Reviewed by Anders Carlsson.
+
+        Refactor WorkQueue to prevent dangling workqueue access.
+
+        Previously, the WorkQueue class had all context about dispatch.
+        WorkQueue had dispatch item queue and socket event handler,
+        and those were accessed on the work queue thread through WorkQueue
+        instance.
+
+        With reference countable WorkQueue concept, this implementation
+        complicates handling workqueue ref-counting and causes dangling
+        workqueue access problem.
+
+        To make it easy to handle WorkQueue reference count and to prevent
+        dangling access problem, DispatchQueue class is added to handle
+        dispatch tasks, and the WorkQueue instance and DispatchQueue thread
+        will have the reference count of the DispatchQueue instance to prevent
+        dangling access.
+
+        * Platform/WorkQueue.h:
+        * Platform/efl/DispatchQueueEfl.cpp: Added.
+        (DispatchQueue::ThreadContext::start):
+        (DispatchQueue::ThreadContext::ThreadContext):
+        (DispatchQueue::ThreadContext::function):
+        (DispatchQueue::create):
+        (DispatchQueue::DispatchQueue):
+        (DispatchQueue::~DispatchQueue):
+        (DispatchQueue::dispatch):
+        (DispatchQueue::stopThread):
+        (DispatchQueue::setSocketEventHandler):
+        (DispatchQueue::clearSocketEventHandler):
+        (DispatchQueue::performWork):
+        (DispatchQueue::performTimerWork):
+        (DispatchQueue::performFileDescriptorWork):
+        (DispatchQueue::insertTimerWorkItem):
+        (DispatchQueue::dispatchQueueThread):
+        (DispatchQueue::wakeUpThread):
+        (DispatchQueue::getNextTimeOut):
+        * Platform/efl/DispatchQueueEfl.h: Added.
+        * Platform/efl/DispatchQueueWorkItemEfl.h: Added.
+        (WorkItem::create):
+        (WorkItem::dispatch):
+        (WorkItem::WorkItem):
+        (TimerWorkItem::create):
+        (TimerWorkItem::expirationTimeSeconds):
+        (TimerWorkItem::hasExpired):
+        (TimerWorkItem::TimerWorkItem):
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::unregisterSocketEventHandler):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        * PlatformEfl.cmake:
+
 2013-10-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2][Soup] Add platform specific stubs for NetworkProcess

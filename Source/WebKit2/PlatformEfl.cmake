@@ -5,6 +5,7 @@ list(APPEND WebKit2_SOURCES
     Platform/CoreIPC/unix/AttachmentUnix.cpp
     Platform/CoreIPC/unix/ConnectionUnix.cpp
 
+    Platform/efl/DispatchQueueEfl.cpp
     Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
     Platform/efl/WorkQueueEfl.cpp
@@ -199,6 +200,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
+    "${WEBKIT2_DIR}/Platform/efl"
     "${WEBKIT2_DIR}/Shared/API/c/efl"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/efl"
