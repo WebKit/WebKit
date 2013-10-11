@@ -1,3 +1,11 @@
+2013-10-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed gardening. Remove a Windows work-around that is not needed.
+
+        * dom/Range.cpp:
+        (WebCore::rangeOfContents): Move implementation back to source file.
+        * dom/Range.h: Remove inline I added to work around a compiler bug.
+
 2013-10-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157297.
