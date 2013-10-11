@@ -1,3 +1,12 @@
+2013-10-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix for --64-bit target.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Use 'isWin64' test, since @ARGV value may have
+        been removed by this point.
+        (hasArgument): Remove unused temporary.
+
 2013-10-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         webkit-patch failure-reason has a quite low limit for 'too many failures'
