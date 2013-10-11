@@ -1,3 +1,12 @@
+2013-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix 64-bit build on everything but Windows.
+
+        Rubber stamped by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+
 2013-10-11  Alexey Proskuryakov  <ap@apple.com>
 
         Touch a file to see how auto-update works.

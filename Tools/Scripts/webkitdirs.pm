@@ -376,7 +376,7 @@ sub argumentsForConfiguration()
     push(@args, '--debug') if $configuration eq "Debug";
     push(@args, '--release') if $configuration eq "Release";
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
-    push(@args, '--64-bit') if ($architecture eq "x86_64" or isWin64());
+    push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
     push(@args, '--wincairo') if isWinCairo();
