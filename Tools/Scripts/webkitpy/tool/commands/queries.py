@@ -290,9 +290,9 @@ class FailureReason(Command):
                 print "No results build %s (r%s)" % (build._number, build.revision())
                 continue
             failures = set(latest_results.failing_tests())
-            if len(failures) >= 20:
+            if len(failures) >= 500:
                 # FIXME: We may need to move this logic into the LayoutTestResults class.
-                # The buildbot stops runs after 20 failures so we don't have full results to work with here.
+                # The buildbot stops runs after 500 failures so we don't have full results to work with here.
                 print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
                 continue
             fixed_results = results_to_explain - failures

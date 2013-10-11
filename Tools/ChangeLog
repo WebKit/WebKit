@@ -1,5 +1,16 @@
 2013-10-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
+        webkit-patch failure-reason has a quite low limit for 'too many failures'
+        https://bugs.webkit.org/show_bug.cgi?id=122556
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (FailureReason._explain_failures_for_builder): adjust the number of too many failures
+        to match what the layout test runners use these days.
+
+2013-10-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
         webkit-patch failure-reason should allow specifying failures one is interested in
         https://bugs.webkit.org/show_bug.cgi?id=122554
 
