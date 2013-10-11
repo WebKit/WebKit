@@ -349,9 +349,9 @@ String CSSValue::cssText() const
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
-        return static_cast<const SVGColor*>(this)->customCSSText();
+        return toSVGColor(this)->customCSSText();
     case SVGPaintClass:
-        return static_cast<const SVGPaint*>(this)->customCSSText();
+        return toSVGPaint(this)->customCSSText();
     case WebKitCSSSVGDocumentClass:
         return toWebKitCSSSVGDocumentValue(this)->customCSSText();
 #endif
@@ -497,10 +497,10 @@ void CSSValue::destroy()
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
-        delete static_cast<SVGColor*>(this);
+        delete toSVGColor(this);
         return;
     case SVGPaintClass:
-        delete static_cast<SVGPaint*>(this);
+        delete toSVGPaint(this);
         return;
     case WebKitCSSSVGDocumentClass:
         delete toWebKitCSSSVGDocumentValue(this);
@@ -540,9 +540,9 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:
-        return static_cast<const SVGColor*>(this)->cloneForCSSOM();
+        return toSVGColor(this)->cloneForCSSOM();
     case SVGPaintClass:
-        return static_cast<const SVGPaint*>(this)->cloneForCSSOM();
+        return toSVGPaint(this)->cloneForCSSOM();
 #endif
     default:
         ASSERT(!isSubtypeExposedToCSSOM());
