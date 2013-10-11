@@ -26,8 +26,6 @@
 #include "config.h"
 #include "UIRequestEvent.h"
 
-#include "EventDispatcher.h"
-
 #if ENABLE(INDIE_UI)
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 namespace WebCore {
 
 class Clipboard;
-class EventDispatcher;
 class PlatformMouseEvent;
 
 struct MouseEventInit : public UIEventInit {

@@ -27,9 +27,7 @@
 #include "FocusEvent.h"
 
 #include "Event.h"
-#include "EventDispatcher.h"
 #include "EventNames.h"
-#include "EventRetargeter.h"
 #include "Node.h"
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-class EventDispatcher;
 class Node;
 class PlatformKeyboardEvent;
 

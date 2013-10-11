@@ -32,7 +32,6 @@
 
 #include "EventDispatcher.h"
 #include "EventNames.h"
-#include "EventRetargeter.h"
 #include "TouchList.h"
 #include <wtf/CurrentTime.h>
 

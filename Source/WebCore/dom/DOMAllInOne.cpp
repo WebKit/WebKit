@@ -76,7 +76,6 @@
 #include "EventException.cpp"
 #include "EventListenerMap.cpp"
 #include "EventNames.cpp"
-#include "EventRetargeter.cpp"
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCodePlaceholder.cpp"

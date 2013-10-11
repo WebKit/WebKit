@@ -24,9 +24,7 @@
 #include "MouseEvent.h"
 
 #include "Clipboard.h"
-#include "EventDispatcher.h"
 #include "EventNames.h"
-#include "EventRetargeter.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"

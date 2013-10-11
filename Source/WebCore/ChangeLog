@@ -1,3 +1,41 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove EventRetargeter.h/cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122625
+
+        Reviewed by Anders Carlsson.
+
+        Merged the remaining contents of EventRetargeter.h and EventRetargter.cpp into EventDispatcher.cpp.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/indieui/UIRequestEvent.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingTargetRules):
+        (WebCore::shouldEventCrossShadowBoundary):
+        (WebCore::nodeOrHostIfPseudoElement):
+        (WebCore::EventPath::EventPath):
+        (WebCore::buildRelatedNodeMap):
+        (WebCore::addRelatedNodeForUnmapedTreeScopes):
+        (WebCore::calculateAdjustedNodes):
+        (WebCore::updateTouchListsInEventPath):
+        (WebCore::EventPath::updateTouchLists):
+        (WebCore::EventPath::setRelatedTarget):
+        * dom/EventRetargeter.cpp: Removed.
+        * dom/EventRetargeter.h: Removed.
+        * dom/FocusEvent.cpp:
+        * dom/GestureEvent.h:
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.cpp:
+        * dom/MouseEvent.h:
+        * dom/TouchEvent.cpp:
+        * dom/UIEvent.cpp:
+        * dom/WheelEvent.cpp:
+
 2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Making the base implementation of isAudioStreamSource, in MediaStreamSource, return the correct value

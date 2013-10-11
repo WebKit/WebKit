@@ -23,7 +23,6 @@
 #include "config.h"
 #include "Event.h"
 
-#include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "UserGestureIndicator.h"
