@@ -1,3 +1,18 @@
+2013-10-10  Brendan Long  <b.long@cablelabs.com>
+
+        Track controls show metadata and chapter tracks
+        https://bugs.webkit.org/show_bug.cgi?id=122468
+
+        Reviewed by Darin Adler.
+
+        Add a test to make sure we don't show metadata and chapter tracks in the track controls.
+
+        * media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Added.
+        * media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html: Added.
+        * platform/efl/TestExpectations: Skip, uses caption button, not track menu.
+        * platform/mac/TestExpectations: Skip, track menu tests all fail on Mac.
+        * platform/win/TestExpectations: Same.
+
 2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add failing expectations to some tests on Mac Lion.

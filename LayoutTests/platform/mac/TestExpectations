@@ -1257,6 +1257,7 @@ webkit.org/b/122021 media/video-controls-no-scripting.html
 webkit.org/b/122021 media/video-controls-rendering.html
 webkit.org/b/122021 media/video-controls-toggling.html
 webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html
+webkit.org/b/122021 media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles.html
 webkit.org/b/122021 media/video-display-toggle.html
 webkit.org/b/122021 media/video-empty-source.html
 webkit.org/b/122021 media/video-rtl.html
