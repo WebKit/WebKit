@@ -1,3 +1,13 @@
+2013-10-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Added new accessibility expectation after r154697
+        https://bugs.webkit.org/show_bug.cgi?id=122646
+
+        Unreviewed EFL gardening
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/accessibility/aria-checkbox-sends-notification-expected.txt: Added.
+
 2013-10-10  Dean Jackson  <dino@apple.com>
 
         Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
