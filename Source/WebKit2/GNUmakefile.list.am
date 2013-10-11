@@ -1040,6 +1040,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \
 	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \
 	Source/WebKit2/WebProcess/IconDatabase/WebIconDatabaseProxy.h \
+	Source/WebKit2/WebProcess/IndexedDB/WebIDBFactoryBackend.cpp \
+	Source/WebKit2/WebProcess/IndexedDB/WebIDBFactoryBackend.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleAPICast.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \

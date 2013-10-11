@@ -1,3 +1,27 @@
+2013-10-11  Brady Eidson  <beidson@apple.com>
+
+        Lay the groundwork for a multi-process aware Indexed DB implementation in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=122675
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/IndexedDB/WebIDBFactoryBackend.cpp: Added.
+        (WebKit::WebIDBFactoryBackend::WebIDBFactoryBackend):
+        (WebKit::WebIDBFactoryBackend::~WebIDBFactoryBackend):
+        (WebKit::WebIDBFactoryBackend::getDatabaseNames):
+        (WebKit::WebIDBFactoryBackend::open):
+        (WebKit::WebIDBFactoryBackend::deleteDatabase):
+        * WebProcess/IndexedDB/WebIDBFactoryBackend.h: Added.
+        (WebKit::WebIDBFactoryBackend::create):
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createIDBFactoryBackend): Return a WebIDBFactoryBackend.
+
 2013-10-11  Anders Carlsson  <andersca@apple.com>
 
         Remove ENABLE(GESTURE_EVENTS) from WebKit2
