@@ -31,7 +31,6 @@
 #include "config.h"
 #include "BindingSecurity.h"
 
-#include "BindingState.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
@@ -43,7 +42,7 @@
 
 namespace WebCore {
 
-static bool canAccessDocument(BindingState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)
+static bool canAccessDocument(JSC::ExecState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)
 {
     if (!targetDocument)
         return false;
@@ -59,22 +58,22 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
     return false;
 }
 
-bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow& target, SecurityReportingOption reportingOption)
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::ExecState* state, DOMWindow& target, SecurityReportingOption reportingOption)
 {
     return canAccessDocument(state, target.document(), reportingOption);
 }
 
-bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
+bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* target, SecurityReportingOption reportingOption)
 {
     return target && canAccessDocument(state, target->document(), reportingOption);
 }
 
-bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* target)
+bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* target)
 {
     return target && canAccessDocument(state, &target->document());
 }
 
-bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)
+bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(JSC::ExecState* state, HTMLFrameElementBase* frame, const String& value)
 {
     return !protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value)) || canAccessDocument(state, frame->contentDocument());
 }

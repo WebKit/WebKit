@@ -4257,9 +4257,6 @@
     <ClCompile Include="..\bindings\js\ArrayValue.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\BindingState.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\CallbackFunction.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11215,9 +11212,6 @@
       <Filter>bindings\generic</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\ArrayValue.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\js\BindingState.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\CachedScriptSourceProvider.h">

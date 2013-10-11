@@ -2239,8 +2239,6 @@ webcore_sources += \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	Source/WebCore/bindings/js/ArrayValue.cpp \
 	Source/WebCore/bindings/js/ArrayValue.h \
-	Source/WebCore/bindings/js/BindingState.cpp \
-	Source/WebCore/bindings/js/BindingState.h \
 	Source/WebCore/bindings/js/CachedScriptSourceProvider.h \
 	Source/WebCore/bindings/js/CallbackFunction.cpp \
 	Source/WebCore/bindings/js/CallbackFunction.h \

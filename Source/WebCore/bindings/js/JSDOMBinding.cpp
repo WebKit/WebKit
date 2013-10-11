@@ -433,4 +433,14 @@ uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration
     return n;
 }
 
+DOMWindow& activeDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+}
+
+DOMWindow& firstDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
+}
+
 } // namespace WebCore

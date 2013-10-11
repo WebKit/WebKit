@@ -1,3 +1,12 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        Kill WebCore::BindingState.
+        <https://webkit.org/b/122606>
+
+        Reviewed by Darin Adler.
+
+        Just use JSC::ExecState directly instead.
+
 2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove EventRetargeter.h/cpp
