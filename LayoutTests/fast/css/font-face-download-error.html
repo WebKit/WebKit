@@ -55,15 +55,14 @@
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body onload="runTest()">
+<body onload="test()">
 <div id="description"></div>
 <div id="tests"></div>
 
 <div id="console"></div>
 <div id="out"></div>
 <script>
-if (window.testRunner)
-    window.testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 description("If no font resources are available for an @font-face rule due to download errors, the rule must be ignored but others must remain in effect.");
 
@@ -109,8 +108,7 @@ function test()
             shouldBe("document.getElementById('" + testId(mainTestId, subTestId) + "').offsetWidth", "document.getElementById('" + refId(mainTestId, subTestId) + "').offsetWidth");
         }
     }
-    if (window.testRunner)
-        window.testRunner.notifyDone();
+    finishJSTest();
 }
 
 for (var mainTestId = 0; mainTestId < expectedResults.length; mainTestId++) {
@@ -123,12 +121,9 @@ for (var mainTestId = 0; mainTestId < expectedResults.length; mainTestId++) {
     testsElement.appendChild(document.createElement("br"));
 }
 
-// We need to run tests after the font downloading succeeded or failed.
-// Using a timer is not ideal, but there seems to be no better options.
-function runTest()
-{
-    window.setTimeout(test, 200);
-}
+// Force layout, so that fonts begin to load before the document finishes loading, and thus delay the load event.
+document.body.offsetTop;
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
