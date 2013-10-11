@@ -1,3 +1,14 @@
+2013-10-10  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r157205?): Leaks in XPath
+        https://bugs.webkit.org/show_bug.cgi?id=122609
+
+        Reviewed by Andreas Kling.
+
+        * xml/XPathGrammar.y: Fixed warnings by adding missing "$$ = $1" to various rules.
+        Added local unique_ptr for NodeTest and ArgumentList in three rules, so they
+        won't be leaked.
+
 2013-10-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toSVGColor|Paint() to cleanup static_cast<>, and use it 

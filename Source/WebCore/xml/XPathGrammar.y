@@ -114,6 +114,7 @@ Expr:
 LocationPath:
     AbsoluteLocationPath
     {
+        $$ = $1;
         $$->setAbsolute();
     }
     |
@@ -147,11 +148,13 @@ RelativeLocationPath:
     |
     RelativeLocationPath '/' Step
     {
+        $$ = $1;
         $$->appendStep(std::unique_ptr<Step>($3));
     }
     |
     RelativeLocationPath DescendantOrSelf Step
     {
+        $$ = $1;
         $$->appendStep(std::unique_ptr<Step>($2));
         $$->appendStep(std::unique_ptr<Step>($3));
     }
@@ -160,11 +163,12 @@ RelativeLocationPath:
 Step:
     NodeTest OptionalPredicateList
     {
+        std::unique_ptr<Step::NodeTest> nodeTest($1);
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($2);
         if (predicateList)
-            $$ = new Step(Step::ChildAxis, std::move(*$1), std::move(*predicateList));
+            $$ = new Step(Step::ChildAxis, std::move(*nodeTest), std::move(*predicateList));
         else
-            $$ = new Step(Step::ChildAxis, std::move(*$1));
+            $$ = new Step(Step::ChildAxis, std::move(*nodeTest));
     }
     |
     NAMETEST OptionalPredicateList
@@ -187,12 +191,13 @@ Step:
     |
     AxisSpecifier NodeTest OptionalPredicateList
     {
+        std::unique_ptr<Step::NodeTest> nodeTest($2);
         std::unique_ptr<Vector<std::unique_ptr<Expression>>> predicateList($3);
 
         if (predicateList)
-            $$ = new Step($1, std::move(*$2), std::move(*predicateList));
+            $$ = new Step($1, std::move(*nodeTest), std::move(*predicateList));
         else
-            $$ = new Step($1, std::move(*$2));
+            $$ = new Step($1, std::move(*nodeTest));
     }
     |
     AxisSpecifier NAMETEST OptionalPredicateList
@@ -341,7 +346,8 @@ FunctionCall:
     FUNCTIONNAME '(' ArgumentList ')'
     {
         String name = adoptRef($1);
-        $$ = XPath::Function::create(name, std::move(*$3)).release();
+        std::unique_ptr<Vector<std::unique_ptr<Expression>>> argumentList($3);
+        $$ = XPath::Function::create(name, std::move(*argumentList)).release();
         if (!$$)
             YYABORT;
     }
@@ -376,6 +382,9 @@ UnionExpr:
 
 PathExpr:
     LocationPath
+    {
+        $$ = $1;
+    }
     |
     FilterExpr
     |
