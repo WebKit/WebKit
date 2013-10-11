@@ -219,24 +219,12 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(attached ? DOCKED_TO_BOTTOM : UNDOCKED);
 }
 
-static bool useWebKitWebInspector()
+String WebInspectorFrontendClient::localizedStringsURL()
 {
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
     WebInspectorUILibrary();
 
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
-        return true;
-
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
-        return false;
-
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"UseWebKitWebInspector"];
-}
-
-String WebInspectorFrontendClient::localizedStringsURL()
-{
-    NSBundle *bundle = useWebKitWebInspector() ? [NSBundle bundleWithIdentifier:@"com.apple.WebCore"] : [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
     if ([path length])
         return [[NSURL fileURLWithPath:path] absoluteString];
     return String();
@@ -436,12 +424,10 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (NSString *)inspectorPagePath
 {
-    NSString *path;
-    if (useWebKitWebInspector())
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
-    else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
     ASSERT([path length]);
     return path;
 }

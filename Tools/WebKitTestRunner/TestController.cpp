@@ -586,7 +586,6 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
     WKPreferencesSetScreenFontSubstitutionEnabled(preferences, true);
-    WKPreferencesSetInspectorUsesWebKitUserInterface(preferences, true);
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
 #if !PLATFORM(MAC)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);

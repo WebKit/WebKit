@@ -800,12 +800,13 @@ bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef preferencesRe
 
 void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setInspectorUsesWebKitUserInterface(enabled);
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
 }
 
 bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->inspectorUsesWebKitUserInterface();
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
+    return false;
 }
 
 void WKPreferencesSetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled)

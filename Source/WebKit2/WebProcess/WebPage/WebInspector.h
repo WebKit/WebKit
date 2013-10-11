@@ -78,10 +78,6 @@ public:
     void remoteFrontendDisconnected();
 #endif
 
-#if PLATFORM(MAC)
-    void setInspectorUsesWebKitUserInterface(bool);
-#endif
-
 private:
     friend class WebInspectorClient;
     friend class WebInspectorFrontendClient;
@@ -133,7 +129,6 @@ private:
 #if PLATFORM(MAC)
     mutable String m_localizedStringsURL;
     mutable bool m_hasLocalizedStringsURL;
-    bool m_usesWebKitUserInterface;
 #endif
 #if ENABLE(INSPECTOR_SERVER)
     bool m_remoteFrontendConnected;

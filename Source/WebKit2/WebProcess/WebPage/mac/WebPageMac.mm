@@ -110,8 +110,6 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
-    if (WebInspector* inspector = this->inspector())
-        inspector->setInspectorUsesWebKitUserInterface(store.getBoolValueForKey(WebPreferencesKey::inspectorUsesWebKitUserInterfaceKey()));
 }
 
 bool WebPage::shouldUsePDFPlugin() const

@@ -32,31 +32,6 @@ SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 namespace WebKit {
 
-static bool inspectorReallyUsesWebKitUserInterface(bool preference)
-{
-    // This matches a similar check in WebInspectorProxyMac.mm. Keep them in sync.
-
-    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorUILibrary();
-
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
-        return true;
-
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
-        return false;
-
-    return preference;
-}
-
-void WebInspector::setInspectorUsesWebKitUserInterface(bool flag)
-{
-    if (m_usesWebKitUserInterface == flag)
-        return;
-
-    m_usesWebKitUserInterface = flag;
-    m_hasLocalizedStringsURL = false;
-}
-
 bool WebInspector::canSave() const
 {
     return true;
@@ -65,8 +40,10 @@ bool WebInspector::canSave() const
 String WebInspector::localizedStringsURL() const
 {
     if (!m_hasLocalizedStringsURL) {
-        NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(m_usesWebKitUserInterface) ? @"com.apple.WebCore" : @"com.apple.WebInspectorUI";
-        NSString *path = [[NSBundle bundleWithIdentifier:bundleIdentifier] pathForResource:@"localizedStrings" ofType:@"js"];
+        // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+        WebInspectorUILibrary();
+
+        NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
         if ([path length])
             m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];
         else

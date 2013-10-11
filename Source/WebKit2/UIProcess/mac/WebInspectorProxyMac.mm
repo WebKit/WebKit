@@ -191,22 +191,6 @@ static const NSUInteger windowStyleMask = NSTitledWindowMask | NSClosableWindowM
 
 namespace WebKit {
 
-static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
-{
-    // This matches a similar check in WebInspectorMac.mm. Keep them in sync.
-
-    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
-    WebInspectorUILibrary();
-
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"])
-        return true;
-
-    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"])
-        return false;
-
-    return preferences->inspectorUsesWebKitUserInterface();
-}
-
 static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
 {
     WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
@@ -765,12 +749,10 @@ void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    NSString *path;
-    if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
-    else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
     ASSERT([path length]);
 
     return [[NSURL fileURLWithPath:path] absoluteString];
@@ -778,12 +760,10 @@ String WebInspectorProxy::inspectorPageURL() const
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    NSString *path;
-    if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
-    else
-        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] resourcePath];
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] resourcePath];
     ASSERT([path length]);
 
     return [[NSURL fileURLWithPath:path] absoluteString];

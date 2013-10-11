@@ -58,7 +58,6 @@ WebInspector::WebInspector(WebPage* page, InspectorFrontendChannel* frontendChan
     , m_frontendChannel(frontendChannel)
 #if PLATFORM(MAC)
     , m_hasLocalizedStringsURL(false)
-    , m_usesWebKitUserInterface(false)
 #endif
 #if ENABLE(INSPECTOR_SERVER)
     , m_remoteFrontendConnected(false)

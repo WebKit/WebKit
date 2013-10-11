@@ -1,3 +1,24 @@
+2013-10-11  Timothy Hatcher  <timothy@apple.com>
+
+        Remove preference support for picking the old Web Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=122655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::WebInspector):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::WebInspector::localizedStringsURL):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange):
+
 2013-10-11  Brady Eidson  <beidson@apple.com>
 
         Lay the groundwork for a multi-process aware Indexed DB implementation in WebKit2.
