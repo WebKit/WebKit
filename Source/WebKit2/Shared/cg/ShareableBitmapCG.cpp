@@ -113,10 +113,9 @@ PassRefPtr<Image> ShareableBitmap::createImage()
 {
     RetainPtr<CGImageRef> platformImage = makeCGImage();
     if (!platformImage)
-        return 0;
+        return nullptr;
 
-    // BitmapImage::create adopts the CGImageRef that's passed in, which is why we need to leakRef here.
-    return BitmapImage::create(platformImage.leakRef());
+    return BitmapImage::create(platformImage.get());
 }
 
 } // namespace WebKit

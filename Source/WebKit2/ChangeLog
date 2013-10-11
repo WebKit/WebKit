@@ -1,3 +1,15 @@
+2013-10-11  Adam Roben  <aroben@webkit.org>
+
+        Confusing CGImageRef memory management in ImageBuffer::copyImage
+        https://bugs.webkit.org/show_bug.cgi?id=122605
+
+        Reviewed by Simon Fraser.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createImage): BitmapImage::create now
+        retains the passed-in CGImage, so we don't need to dance around it
+        anymore. Also changed to use nullptr instead of 0 while I was in here.
+
 2013-10-10  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Separate dispatch context from WorkQueue.
