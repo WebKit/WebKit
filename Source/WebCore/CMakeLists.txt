@@ -1137,7 +1137,6 @@ set(WebCore_SOURCES
     dom/ExceptionCodePlaceholder.cpp
     dom/FocusEvent.cpp
     dom/GenericEventQueue.cpp
-    dom/GestureEvent.cpp
     dom/IconURL.cpp
     dom/IdTargetObserver.cpp
     dom/IdTargetObserverRegistry.cpp

@@ -134,10 +134,6 @@
 #define ENABLE_GEOLOCATION 1
 #endif
 
-#if !defined(ENABLE_GESTURE_EVENTS)
-#define ENABLE_GESTURE_EVENTS 1
-#endif
-
 #if !defined(ENABLE_ICONDATABASE)
 #define ENABLE_ICONDATABASE 1
 #endif

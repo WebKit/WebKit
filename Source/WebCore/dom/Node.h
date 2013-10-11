@@ -79,10 +79,6 @@ class RenderStyle;
 class ShadowRoot;
 class TagNodeList;
 
-#if ENABLE(GESTURE_EVENTS)
-class PlatformGestureEvent;
-#endif
-
 #if ENABLE(INDIE_UI)
 class UIRequestEvent;
 #endif
@@ -537,9 +533,6 @@ public:
     void dispatchSubtreeModifiedEvent();
     bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
 
-#if ENABLE(GESTURE_EVENTS)
-    bool dispatchGestureEvent(const PlatformGestureEvent&);
-#endif
 #if ENABLE(TOUCH_EVENTS)
     bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
 #endif

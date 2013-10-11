@@ -33,7 +33,6 @@
 #include "FloatPoint.h"
 #include "GraphicsLayer.h"
 #include "NSScrollerImpDetails.h"
-#include "PlatformGestureEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollView.h"
 #include "ScrollableArea.h"

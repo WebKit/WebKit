@@ -125,9 +125,7 @@
 		071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */; };
 		071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = 071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0720B09E14D3323500642955 /* GenericEventQueue.cpp */; };
-		0720B0A014D3323500642956 /* GestureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642956 /* GestureEvent.cpp */; };
 		0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642955 /* GenericEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0720B0A114D3323500642957 /* GestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642957 /* GestureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07277E4C17D018CC0015534D /* JSMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4017D018CC0015534D /* JSMediaStream.cpp */; };
 		07277E4D17D018CC0015534D /* JSMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4117D018CC0015534D /* JSMediaStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07277E4E17D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4217D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp */; };
@@ -4940,7 +4938,6 @@
 		BC94D14F0C275C68006BC617 /* JSHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D14D0C275C68006BC617 /* JSHistory.h */; };
 		BC94D1530C275C8B006BC617 /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC94D1500C275C8B006BC617 /* History.cpp */; };
 		BC94D1540C275C8B006BC617 /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = BC94D1510C275C8B006BC617 /* History.h */; };
-		BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9585DF12F0989500755821 /* PlatformGestureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */; };
 		BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E238109144950010D361 /* HTMLAllCollection.h */; };
@@ -6492,8 +6489,6 @@
 		071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueGeneric.h; sourceTree = "<group>"; };
 		0720B09E14D3323500642955 /* GenericEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericEventQueue.cpp; sourceTree = "<group>"; };
 		0720B09F14D3323500642955 /* GenericEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericEventQueue.h; sourceTree = "<group>"; };
-		0720B09F14D3323500642956 /* GestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GestureEvent.cpp; sourceTree = "<group>"; };
-		0720B09F14D3323500642957 /* GestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureEvent.h; sourceTree = "<group>"; };
 		07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsImpl.cpp; sourceTree = "<group>"; };
 		07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsImpl.h; sourceTree = "<group>"; };
 		07221B4C17CEC32700848E51 /* MediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStream.cpp; sourceTree = "<group>"; };
@@ -11811,7 +11806,6 @@
 		BC94D1500C275C8B006BC617 /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = History.cpp; sourceTree = "<group>"; };
 		BC94D1510C275C8B006BC617 /* History.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		BC94D1520C275C8B006BC617 /* History.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = History.idl; sourceTree = "<group>"; };
-		BC9585DF12F0989500755821 /* PlatformGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGestureEvent.h; sourceTree = "<group>"; };
 		BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderBoxModelObject.h; sourceTree = "<group>"; };
 		BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBoxModelObject.cpp; sourceTree = "<group>"; };
 		BC97E238109144950010D361 /* HTMLAllCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAllCollection.h; sourceTree = "<group>"; };
@@ -19771,7 +19765,6 @@
 				E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */,
 				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
 				A723F77A1484CA4C008C6DBE /* PlatformExportMacros.h */,
-				BC9585DF12F0989500755821 /* PlatformGestureEvent.h */,
 				935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */,
 				932871BF0B20DEB70049035A /* PlatformMenuDescription.h */,
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
@@ -20854,8 +20847,6 @@
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
-				0720B09F14D3323500642956 /* GestureEvent.cpp */,
-				0720B09F14D3323500642957 /* GestureEvent.h */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
 				45099C401370A7800058D513 /* IconURL.cpp */,
@@ -22442,7 +22433,6 @@
 				9746AF2914F4DDE6003E7A70 /* GeolocationPosition.h in Headers */,
 				9746AF2A14F4DDE6003E7A70 /* Geoposition.h in Headers */,
 				078E092A17D14D1C00420AA1 /* RTCStatsReport.h in Headers */,
-				0720B0A114D3323500642957 /* GestureEvent.h in Headers */,
 				086BBD0F136039C2008B15D8 /* Glyph.h in Headers */,
 				B2C3DA6C0D006CD600EF6F26 /* GlyphBuffer.h in Headers */,
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
@@ -23535,7 +23525,6 @@
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
 				A723F77B1484CA4C008C6DBE /* PlatformExportMacros.h in Headers */,
-				BC9585E112F0989500755821 /* PlatformGestureEvent.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
 				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
@@ -24670,8 +24659,6 @@
 				3717D7E717ECC573003C276D /* Copy Scripts */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				CD0DBF001422765700280263 /* Copy Audio Resources */,
-				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
-				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */,
@@ -25655,7 +25642,6 @@
 				0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */,
 				9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */,
 				9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */,
-				0720B0A014D3323500642956 /* GestureEvent.cpp in Sources */,
 				B2C3DA6D0D006CD600EF6F26 /* GlyphPageTreeNode.cpp in Sources */,
 				B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */,
 				BC53C6080DA56C570021EB5D /* Gradient.cpp in Sources */,

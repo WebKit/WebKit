@@ -1,3 +1,13 @@
+2013-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove gesture event support from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=122650
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/FeatureDefines.h:
+        * wtf/nix/FeatureDefinesNix.h:
+
 2013-10-09  Filip Pizlo  <fpizlo@apple.com>
 
         FTL: Soft-link LLVM as a workaround for LLVM's static initializers and exit-time destructors

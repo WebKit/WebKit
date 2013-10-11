@@ -174,10 +174,6 @@
 #define ENABLE_FULLSCREEN_API 1
 #endif
 
-#if !defined(ENABLE_GESTURE_EVENTS)
-#define ENABLE_GESTURE_EVENTS 1
-#endif
-
 #if !defined(ENABLE_RUBBER_BANDING)
 #define ENABLE_RUBBER_BANDING 1
 #endif
@@ -483,10 +479,6 @@
 
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 0
-#endif
-
-#if !defined(ENABLE_GESTURE_EVENTS)
-#define ENABLE_GESTURE_EVENTS 0
 #endif
 
 #if !defined(ENABLE_GLIB_SUPPORT)

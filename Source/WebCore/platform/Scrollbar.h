@@ -41,10 +41,6 @@ class PlatformMouseEvent;
 class ScrollableArea;
 class ScrollbarTheme;
 
-#if ENABLE(GESTURE_EVENTS)
-class PlatformGestureEvent;
-#endif
-
 class Scrollbar : public Widget,
                   public ScrollbarThemeClient {
 
@@ -125,10 +121,6 @@ public:
     bool shouldParticipateInHitTesting();
 
     bool isWindowActive() const;
-
-#if ENABLE(GESTURE_EVENTS)
-    bool gestureEvent(const PlatformGestureEvent&);
-#endif
 
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start

@@ -2490,10 +2490,6 @@ __ZN7WebCore21GeolocationController14supplementNameEv
 __ZN7WebCore21GeolocationController15positionChangedEPNS_19GeolocationPositionE
 #endif
 
-#if ENABLE(GESTURE_EVENTS)
-__ZN7WebCore12EventHandler18handleGestureEventERKNS_20PlatformGestureEventE
-#endif
-
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 __ZN7WebCore8Settings38setHiddenPageDOMTimerThrottlingEnabledEb
 #endif

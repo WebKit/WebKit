@@ -30,10 +30,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#endif
-
 namespace WebCore {
 
 class PlatformEventFactory {
@@ -41,9 +37,6 @@ public:
     static PlatformMouseEvent createPlatformMouseEvent(NSEvent *, NSView *windowView);
     static PlatformWheelEvent createPlatformWheelEvent(NSEvent *, NSView *windowView);
     static PlatformKeyboardEvent createPlatformKeyboardEvent(NSEvent *);
-#if ENABLE(GESTURE_EVENTS)
-    static PlatformGestureEvent createPlatformGestureEvent(NSEvent *, NSView *windowView);
-#endif
 };
 
 #if PLATFORM(MAC) && defined(__OBJC__)
