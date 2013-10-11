@@ -64,3 +64,5 @@ fast/mediastream/MediaStream-clone.html [ Skip ]
 # The spec is not clear if the MediaStream ended event should be fired if stop is called on each MediaStream's track
 # Skipping it for now, then put it again when the spec decides it
 fast/mediastream/MediaStream-onended.html [ Skip ]
+
+webkit.org/b/121033 fast/animation/request-animation-frame-remove-client.html [ Pass Crash ]

@@ -1,3 +1,17 @@
+2013-10-10  Dean Jackson  <dino@apple.com>
+
+        Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
+        http://webkit.org/b/121033
+
+        Reviewed by Darin Adler.
+
+        Test that assertion fires if you try to remove potential client while in a
+        animation dispatch.
+
+        * TestExpectations: Mark test as crashing.
+        * fast/animation/request-animation-frame-remove-client-expected.txt: Added.
+        * fast/animation/request-animation-frame-remove-client.html: Added.
+
 2013-10-11  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r155607): Javascript site does not load visually on panerabread.com

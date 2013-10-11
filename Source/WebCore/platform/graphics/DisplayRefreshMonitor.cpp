@@ -105,8 +105,11 @@ void DisplayRefreshMonitor::displayDidRefresh()
     
     Vector<DisplayRefreshMonitorClient*> clients;
     copyToVector(m_clients, clients);
-    for (size_t i = 0; i < clients.size(); ++i)
-        clients[i]->fireDisplayRefreshIfNeeded(monotonicAnimationStartTime);
+    for (size_t i = 0; i < clients.size(); ++i) {
+        DisplayRefreshMonitorClient* client = clients[i];
+        ASSERT(m_clients.contains(client));
+        client->fireDisplayRefreshIfNeeded(monotonicAnimationStartTime);
+    }
 
     {
         MutexLocker lock(m_mutex);
