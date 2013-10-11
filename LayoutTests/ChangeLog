@@ -1,3 +1,9 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add failing expectations to some tests on Mac Lion.
+
+        * platform/mac-lion/TestExpectations:
+
 2013-10-10  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [MediaStream API] update MediaStream object to match spec
