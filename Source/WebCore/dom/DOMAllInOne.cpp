@@ -151,7 +151,6 @@
 #include "WebKitNamedFlow.cpp"
 #include "WebKitTransitionEvent.cpp"
 #include "WheelEvent.cpp"
-#include "WindowEventContext.cpp"
 #include "XMLDocumentParser.cpp"
 #include "XMLDocumentParserScope.cpp"
 

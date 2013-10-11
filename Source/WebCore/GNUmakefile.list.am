@@ -3016,8 +3016,6 @@ webcore_sources += \
 	Source/WebCore/dom/WebKitTransitionEvent.h \
 	Source/WebCore/dom/WheelEvent.cpp \
 	Source/WebCore/dom/WheelEvent.h \
-	Source/WebCore/dom/WindowEventContext.cpp \
-	Source/WebCore/dom/WindowEventContext.h \
 	Source/WebCore/editing/AlternativeTextController.cpp \
 	Source/WebCore/editing/AlternativeTextController.h \
 	Source/WebCore/editing/AppendNodeCommand.cpp \

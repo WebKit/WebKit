@@ -51,7 +51,6 @@
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "Event.h"
-#include "EventContext.h"
 #include "EventDispatcher.h"
 #include "EventException.h"
 #include "EventHandler.h"
@@ -105,7 +104,6 @@
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
 #include "WheelEvent.h"
-#include "WindowEventContext.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include <wtf/HashSet.h>

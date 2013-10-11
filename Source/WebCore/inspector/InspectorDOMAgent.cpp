@@ -54,7 +54,6 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "Event.h"
-#include "EventContext.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"

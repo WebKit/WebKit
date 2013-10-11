@@ -5,7 +5,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2011, 2012, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +39,6 @@
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "TouchEvent.h"
-#include "WindowEventContext.h"
 #include <wtf/RefPtr.h>
 
 #if ENABLE(SVG)
@@ -49,6 +48,40 @@
 #endif
 
 namespace WebCore {
+
+class WindowEventContext {
+public:
+    WindowEventContext(PassRefPtr<Node>, const EventContext*);
+
+    DOMWindow* window() const { return m_window.get(); }
+    EventTarget* target() const { return m_target.get(); }
+    bool handleLocalEvents(Event&);
+
+private:
+    RefPtr<DOMWindow> m_window;
+    RefPtr<EventTarget> m_target;
+};
+
+WindowEventContext::WindowEventContext(PassRefPtr<Node> node, const EventContext* topEventContext)
+{
+    Node* topLevelContainer = topEventContext ? topEventContext->node() : node.get();
+    if (!topLevelContainer->isDocumentNode())
+        return;
+
+    m_window = toDocument(topLevelContainer)->domWindow();
+    m_target = topEventContext ? topEventContext->target() : node.get();
+}
+
+bool WindowEventContext::handleLocalEvents(Event& event)
+{
+    if (!m_window)
+        return false;
+
+    event.setTarget(m_target.get());
+    event.setCurrentTarget(m_window.get());
+    m_window->fireEventListeners(&event);
+    return true;
+}
 
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
 {
@@ -132,7 +165,10 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
     // Trigger capturing event handlers, starting at the top and working our way down.
     event.setEventPhase(Event::CAPTURING_PHASE);
 
-    if (windowEventContext.handleLocalEvents(event) && event.propagationStopped())
+    // We don't dispatch load events to the window. This quirk was originally
+    // added because Mozilla doesn't propagate load events to the window object.
+    bool shouldFireEventAtWindow = event.type() != eventNames().loadEvent;
+    if (shouldFireEventAtWindow && windowEventContext.handleLocalEvents(event) && event.propagationStopped())
         return;
 
     for (size_t i = path.size() - 1; i > 0; --i) {
@@ -165,7 +201,8 @@ static void dispatchEventInDOM(Event& event, const EventPath& path, WindowEventC
     }
     if (event.bubbles() && !event.cancelBubble()) {
         event.setEventPhase(Event::BUBBLING_PHASE);
-        windowEventContext.handleLocalEvents(event);
+        if (shouldFireEventAtWindow)
+            windowEventContext.handleLocalEvents(event);
     }
 }
 
@@ -193,8 +230,10 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     event->setTarget(&eventTargetRespectingTargetRules(*node));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
-    WindowEventContext windowEventContext(event.get(), node.get(), eventPath.lastContextIfExists());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&node->document(), *event, windowEventContext.window(), node.get(), eventPath);
+    WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
+    bool hasEventListners = (windowEventContext.window() && windowEventContext.window()->hasEventListeners(event->type()))
+        || node->hasEventListeners(event->type()) || eventPath.hasEventListeners(event->type());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&node->document(), *event, hasEventListners);
 
     InputElementClickState clickHandlingState;
     if (isHTMLInputElement(node.get()))

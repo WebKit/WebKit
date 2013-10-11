@@ -1,3 +1,43 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventContext should be used only in EventDispatcher.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122631
+
+        Reviewed by Anders Carlsson.
+
+        Merged WindowEventContext into EventDispatcher. Moved the code to avoid dispatching load event on
+        window into dispatchEventInDOM so that WindowEventContext's constructor doesn't need Event.
+
+        Also replaced DOMWindow, Node, and EventPath arguments to InspectorInstrumentation::willDispatchEvent
+        by a single boolean indicating whether window, the origin, or the event path has an event listener.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/EventDispatcher.cpp:
+        (WebCore::WindowEventContext::window): Moved from WindowEventContext.
+        (WebCore::WindowEventContext::target): Ditto.
+        (WebCore::WindowEventContext::WindowEventContext): Ditto; removed the code to avoid dispatching load
+        event on window since that's checked in dispatchEventInDOM now.
+        (WebCore::WindowEventContext::handleLocalEvents): Ditto.
+        (WebCore::dispatchEventInDOM): Avoid calling handleLocalEvent on a load event with WindowEventContext.
+        (WebCore::EventDispatcher::dispatchEvent): Pass a boolean to indicate whether window, the origin, or
+        the event path contains any event listener to InspectorInstrumentation::willDispatchEvent to hide
+        EventPath from the inspector code.
+        * dom/EventDispatcher.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/WindowEventContext.cpp: Removed.
+        * dom/WindowEventContext.h: Removed.
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+
 2013-10-10  Darin Adler  <darin@apple.com>
 
         REGRESSION (r157205?): Leaks in XPath

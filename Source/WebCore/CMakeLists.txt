@@ -1216,7 +1216,6 @@ set(WebCore_SOURCES
     dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
-    dom/WindowEventContext.cpp
 
     dom/default/PlatformMessagePortChannel.cpp
 

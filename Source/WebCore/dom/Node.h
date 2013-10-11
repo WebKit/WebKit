@@ -56,7 +56,6 @@ class DOMSettableTokenList;
 class Document;
 class Element;
 class Event;
-class EventContext;
 class EventListener;
 class FloatPoint;
 class Frame;

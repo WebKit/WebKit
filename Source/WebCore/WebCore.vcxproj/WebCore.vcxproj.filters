@@ -3405,9 +3405,6 @@
     <ClCompile Include="..\dom\WheelEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\WindowEventContext.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\workers\AbstractWorker.cpp">
       <Filter>workers</Filter>
     </ClCompile>
@@ -10285,9 +10282,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\WheelEvent.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\WindowEventContext.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\workers\AbstractWorker.h">

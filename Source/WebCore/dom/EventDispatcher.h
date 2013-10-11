@@ -26,7 +26,6 @@
 #ifndef EventDispatcher_h
 #define EventDispatcher_h
 
-#include "EventContext.h"
 #include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -35,15 +34,17 @@
 
 namespace WebCore {
 
+class Element;
 class Event;
+class EventContext;
 class EventTarget;
 class FrameView;
 class Node;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class ShadowRoot;
+class TouchEvent;
 class TreeScope;
-class WindowEventContext;
 struct InputElementClickState;
 
 enum EventDispatchContinuation {
