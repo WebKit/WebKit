@@ -988,7 +988,7 @@ MacroAssemblerCodeRef imulThunkGenerator(VM* vm)
     return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "imul");
 }
 
-static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterationKind kind)
+MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm)
 {
     typedef SpecializedThunkJIT::TrustedImm32 TrustedImm32;
     typedef SpecializedThunkJIT::TrustedImmPtr TrustedImmPtr;
@@ -1014,7 +1014,7 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
     jit.loadPtr(Address(SpecializedThunkJIT::regT0, JSObject::butterflyOffset()), SpecializedThunkJIT::regT2);
     
     jit.and32(TrustedImm32(IndexingShapeMask), SpecializedThunkJIT::regT3);
-
+    
     Jump notDone = jit.branch32(SpecializedThunkJIT::Below, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfPublicLength()));
     // Return the termination signal to indicate that we've finished
     jit.move(TrustedImmPtr(vm->iterationTerminator.get()), SpecializedThunkJIT::regT0);
@@ -1022,13 +1022,14 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
     
     notDone.link(&jit);
     
-    if (kind == ArrayIterateKey) {
-        jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
-        jit.returnInt32(SpecializedThunkJIT::regT1);
-        return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "array-iterator-next-key");
-        
-    }
-    ASSERT(kind == ArrayIterateKeyValue);
+    
+    Jump notKey = jit.branch32(SpecializedThunkJIT::NotEqual, Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfIterationKind()), TrustedImm32(ArrayIterateKey));
+    // If we're doing key iteration we just need to increment m_nextIndex and return the current value
+    jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
+    jit.returnInt32(SpecializedThunkJIT::regT1);
+    
+    notKey.link(&jit);
+    
     
     // Okay, now we're returning a value so make sure we're inside the vector size
     jit.appendFailure(jit.branch32(SpecializedThunkJIT::AboveOrEqual, SpecializedThunkJIT::regT1, Address(SpecializedThunkJIT::regT2, Butterfly::offsetOfVectorLength())));
@@ -1076,17 +1077,7 @@ static MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM* vm, ArrayIterat
     jit.add32(TrustedImm32(1), Address(SpecializedThunkJIT::regT4, JSArrayIterator::offsetOfNextIndex()));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
     
-    return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "array-iterator-next-value");
-}
-
-MacroAssemblerCodeRef arrayIteratorNextKeyThunkGenerator(VM* vm)
-{
-    return arrayIteratorNextThunkGenerator(vm, ArrayIterateKey);
-}
-
-MacroAssemblerCodeRef arrayIteratorNextValueThunkGenerator(VM* vm)
-{
-    return arrayIteratorNextThunkGenerator(vm, ArrayIterateValue);
+    return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "array-iterator-next");
 }
     
 }

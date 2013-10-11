@@ -36,6 +36,7 @@ namespace JSC {
 
 const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 
+static EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeNext(ExecState*);
 static EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(ExecState*);
 
 void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
@@ -44,7 +45,88 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 
+    JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->iteratorNextPrivateName, arrayIteratorPrototypeNext, DontEnum, 0, ArrayIteratorNextIntrinsic);
+
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, arrayIteratorPrototypeIterate, DontEnum, 0);
+}
+
+static EncodedJSValue createIteratorResult(CallFrame* callFrame, ArrayIterationKind kind, size_t index, JSValue result, bool done)
+{
+    callFrame->setArgument(callFrame->argumentCount() - 1, jsBoolean(done));
+    if (done)
+        return JSValue::encode(callFrame->vm().iterationTerminator.get());
+
+    switch (kind & ~ArrayIterateSparseTag) {
+    case ArrayIterateKey:
+        return JSValue::encode(jsNumber(index));
+
+    case ArrayIterateValue:
+        return JSValue::encode(result);
+
+    case ArrayIterateKeyValue: {
+        MarkedArgumentBuffer args;
+        args.append(jsNumber(index));
+        args.append(result);
+        JSGlobalObject* globalObject = callFrame->callee()->globalObject();
+        return JSValue::encode(constructArray(callFrame, 0, globalObject, args));
+
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    return JSValue::encode(JSValue());
+}
+
+EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeNext(CallFrame* callFrame)
+{
+    JSArrayIterator* iterator = jsDynamicCast<JSArrayIterator*>(callFrame->thisValue());
+    if (!iterator)
+        throwTypeError(callFrame, ASCIILiteral("Cannot call ArrayIterator.next() on a non-ArrayIterator object"));
+    JSObject* iteratedObject = iterator->iteratedObject();
+    size_t index = iterator->nextIndex();
+    ArrayIterationKind kind = iterator->iterationKind();
+    JSValue jsLength = JSValue(iteratedObject).get(callFrame, callFrame->propertyNames().length);
+    if (callFrame->hadException())
+        return JSValue::encode(jsNull());
+
+    size_t length = jsLength.toUInt32(callFrame);
+    if (callFrame->hadException())
+        return JSValue::encode(jsNull());
+
+    if (index >= length) {
+        iterator->finish();
+        return createIteratorResult(callFrame, kind, index, jsUndefined(), true);
+    }
+    if (JSValue result = iteratedObject->tryGetIndexQuickly(index)) {
+        iterator->setNextIndex(index + 1);
+        return createIteratorResult(callFrame, kind, index, result, false);
+    }
+    
+    JSValue result = jsUndefined();
+    PropertySlot slot(iteratedObject);
+    if (kind > ArrayIterateSparseTag) {
+        // We assume that the indexed property will be an own property so cache the getOwnProperty
+        // method locally
+        auto getOwnPropertySlotByIndex = iteratedObject->methodTable()->getOwnPropertySlotByIndex;
+        while (index < length) {
+            if (getOwnPropertySlotByIndex(iteratedObject, callFrame, index, slot)) {
+                result = slot.getValue(callFrame, index);
+                break;
+            }
+            if (iteratedObject->getPropertySlot(callFrame, index, slot)) {
+                result = slot.getValue(callFrame, index);
+                break;
+            }
+            index++;
+        }
+    } else if (iteratedObject->getPropertySlot(callFrame, index, slot))
+        result = slot.getValue(callFrame, index);
+
+    if (index == length)
+        iterator->finish();
+    else
+        iterator->setNextIndex(index + 1);
+    return createIteratorResult(callFrame, kind, index, jsUndefined(), index == length);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayIteratorPrototypeIterate(CallFrame* callFrame)
