@@ -1,3 +1,9 @@
+2013-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-10-10  Marcelo Morais  <m.morais@samsung.com>
 
         Web Inspector: Remove the old front-end from WebKit
