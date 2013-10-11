@@ -37,9 +37,12 @@ RecentBuildsLoader.prototype = {
             var builds = [];
             Object.keys(data).forEach(function(buildNumber) {
                 var build = data[buildNumber];
+                var svnRevisionProperty = build.properties.first(function(property) { return property[0] === "got_revision"; });
+                if (!svnRevisionProperty)
+                    continue;
 
                 var buildInfo = {
-                    revision: parseInt(build.properties.first(function(property) { return property[0] === "got_revision"; })[1], 10),
+                    revision: parseInt(svnRevisionProperty[1], 10),
                     leakCount: 0,
                     url: null,
                 };
