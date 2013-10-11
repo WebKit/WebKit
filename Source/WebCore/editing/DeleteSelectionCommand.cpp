@@ -134,7 +134,9 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
         
         if (!startSpecialContainer && !endSpecialContainer)
             break;
-            
+
+        m_mergeBlocksAfterDelete = false;
+
         if (VisiblePosition(start) != m_selectionToDelete.visibleStart() || VisiblePosition(end) != m_selectionToDelete.visibleEnd())
             break;
 
