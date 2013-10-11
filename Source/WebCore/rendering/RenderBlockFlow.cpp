@@ -1804,13 +1804,16 @@ LayoutPoint RenderBlockFlow::computeLogicalLocationForFloat(const FloatingObject
     ShapeInsideInfo* shapeInsideInfo = this->layoutShapeInsideInfo();
     // FIXME: Implement behavior for right floats.
     if (shapeInsideInfo) {
-        LayoutSize floatLogicalSize = LayoutSize(childBox->logicalWidth(), childBox->logicalHeight());
+        LayoutSize floatLogicalSize = logicalSizeForFloat(floatingObject);
+        // floatingObject's logicalSize doesn't contain the actual height at this point, so we need to calculate it
+        floatLogicalSize.setHeight(logicalHeightForChild(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
+
         // FIXME: If the float doesn't fit in the shape we should push it under the content box
         logicalTopOffset = shapeInsideInfo->computeFirstFitPositionForFloat(floatLogicalSize);
         if (logicalHeight() > logicalTopOffset)
             logicalTopOffset = logicalHeight();
 
-        SegmentList segments = shapeInsideInfo->computeSegmentsForLine(logicalTopOffset, childBox->logicalHeight());
+        SegmentList segments = shapeInsideInfo->computeSegmentsForLine(logicalTopOffset, floatLogicalSize.height());
         // FIXME Bug 102949: Add support for shapes with multiple segments.
         if (segments.size() == 1) {
             // The segment offsets are relative to the content box.
