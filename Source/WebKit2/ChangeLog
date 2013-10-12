@@ -1,3 +1,12 @@
+2013-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a feature define for SubtleCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=122683
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-09-27  Jessica Pease  <jessica_n_pease@apple.com>
 
         Replace static cast ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION
