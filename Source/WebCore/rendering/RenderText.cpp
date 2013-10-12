@@ -239,13 +239,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
 void RenderText::removeAndDestroyTextBoxes()
 {
-    if (!documentBeingDestroyed()) {
-        if (firstTextBox()) {
-            for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-                box->remove();
-        } else if (parent())
-            parent()->dirtyLinesFromChangedChild(this);
-    }
+    if (!documentBeingDestroyed())
+        m_lineBoxes.removeAllFromParent(*this);
     m_lineBoxes.deleteAll(*this);
 }
 
@@ -1124,79 +1119,12 @@ void RenderText::setTextWithOffset(const String& text, unsigned offset, unsigned
     if (!force && m_text == text)
         return;
 
-    unsigned oldLen = textLength();
-    unsigned newLen = text.length();
-    int delta = newLen - oldLen;
+    int delta = text.length() - textLength();
     unsigned end = len ? offset + len - 1 : offset;
 
-    RootInlineBox* firstRootBox = 0;
-    RootInlineBox* lastRootBox = 0;
+    m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
 
-    bool dirtiedLines = false;
-
-    // Dirty all text boxes that include characters in between offset and offset+len.
-    for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
-        // FIXME: This shouldn't rely on the end of a dirty line box. See https://bugs.webkit.org/show_bug.cgi?id=97264
-        // Text run is entirely before the affected range.
-        if (curr->end() < offset)
-            continue;
-
-        // Text run is entirely after the affected range.
-        if (curr->start() > end) {
-            curr->offsetRun(delta);
-            RootInlineBox& rootBox = curr->root();
-            if (!firstRootBox) {
-                firstRootBox = &rootBox;
-                if (!dirtiedLines) {
-                    // The affected area was in between two runs. Go ahead and mark the root box of
-                    // the run after the affected area as dirty.
-                    firstRootBox->markDirty();
-                    dirtiedLines = true;
-                }
-            }
-            lastRootBox = &rootBox;
-        } else if (curr->end() >= offset && curr->end() <= end) {
-            // Text run overlaps with the left end of the affected range.
-            curr->dirtyLineBoxes();
-            dirtiedLines = true;
-        } else if (curr->start() <= offset && curr->end() >= end) {
-            // Text run subsumes the affected range.
-            curr->dirtyLineBoxes();
-            dirtiedLines = true;
-        } else if (curr->start() <= end && curr->end() >= end) {
-            // Text run overlaps with right end of the affected range.
-            curr->dirtyLineBoxes();
-            dirtiedLines = true;
-        }
-    }
-
-    // Now we have to walk all of the clean lines and adjust their cached line break information
-    // to reflect our updated offsets.
-    if (lastRootBox)
-        lastRootBox = lastRootBox->nextRootBox();
-    if (firstRootBox) {
-        RootInlineBox* prev = firstRootBox->prevRootBox();
-        if (prev)
-            firstRootBox = prev;
-    } else if (lastTextBox()) {
-        ASSERT(!lastRootBox);
-        firstRootBox = &lastTextBox()->root();
-        firstRootBox->markDirty();
-        dirtiedLines = true;
-    }
-    for (RootInlineBox* curr = firstRootBox; curr && curr != lastRootBox; curr = curr->nextRootBox()) {
-        if (curr->lineBreakObj() == this && curr->lineBreakPos() > end)
-            curr->setLineBreakPos(curr->lineBreakPos() + delta);
-    }
-
-    // If the text node is empty, dirty the line where new text will be inserted.
-    if (!firstTextBox() && parent()) {
-        parent()->dirtyLinesFromChangedChild(this);
-        dirtiedLines = true;
-    }
-
-    m_linesDirty = dirtiedLines;
-    setText(text, force || dirtiedLines);
+    setText(text, force || m_linesDirty);
 }
 
 void RenderText::transformText()
@@ -1338,10 +1266,8 @@ void RenderText::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
         m_lineBoxes.deleteAll(*this);
-    else if (!m_linesDirty) {
-        for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-            box->dirtyLineBoxes();
-    }
+    else if (!m_linesDirty)
+        m_lineBoxes.dirtyAll();
     m_linesDirty = false;
 }
 

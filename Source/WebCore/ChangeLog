@@ -1,5 +1,20 @@
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
+        Move line dirtying code to RenderTextLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=122699
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::removeAllFromParent):
+        
+            Also moved the removal loop.
+
+        (WebCore::RenderTextLineBoxes::dirtyAll):
+        (WebCore::RenderTextLineBoxes::dirtyRange):
+
+2013-10-12  Antti Koivisto  <antti@apple.com>
+
         Move more code to RenderTextLineBoxes
         https://bugs.webkit.org/show_bug.cgi?id=122697
 

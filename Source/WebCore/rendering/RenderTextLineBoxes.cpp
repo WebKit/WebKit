@@ -28,6 +28,7 @@
 
 #include "InlineTextBox.h"
 #include "RenderStyle.h"
+#include "RootInlineBox.h"
 
 namespace WebCore {
 
@@ -101,6 +102,17 @@ void RenderTextLineBoxes::remove(InlineTextBox& box)
         box.prevTextBox()->setNextTextBox(box.nextTextBox());
 
     checkConsistency();
+}
+
+void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
+{
+    if (!m_first) {
+        if (renderer.parent())
+            renderer.parent()->dirtyLinesFromChangedChild(&renderer);
+        return;
+    }
+    for (auto box = m_first; box; box = box->nextTextBox())
+        box->remove();
 }
 
 void RenderTextLineBoxes::deleteAll(RenderText& renderer)
@@ -210,6 +222,87 @@ int RenderTextLineBoxes::caretMaxOffset(const RenderText& renderer) const
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
         maxOffset = std::max<int>(maxOffset, box->start() + box->len());
     return maxOffset;
+}
+
+void RenderTextLineBoxes::dirtyAll()
+{
+    for (auto box = m_first; box; box = box->nextTextBox())
+        box->dirtyLineBoxes();
+}
+
+bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsigned end, int lengthDelta)
+{
+    RootInlineBox* firstRootBox = nullptr;
+    RootInlineBox* lastRootBox = nullptr;
+
+    // Dirty all text boxes that include characters in between offset and offset+len.
+    bool dirtiedLines = false;
+    for (auto current = m_first; current; current = current->nextTextBox()) {
+        // FIXME: This shouldn't rely on the end of a dirty line box. See https://bugs.webkit.org/show_bug.cgi?id=97264
+        // Text run is entirely before the affected range.
+        if (current->end() < start)
+            continue;
+        // Text run is entirely after the affected range.
+        if (current->start() > end) {
+            current->offsetRun(lengthDelta);
+            auto& rootBox = current->root();
+            if (!firstRootBox) {
+                firstRootBox = &rootBox;
+                if (!dirtiedLines) {
+                    // The affected area was in between two runs. Go ahead and mark the root box of
+                    // the run after the affected area as dirty.
+                    firstRootBox->markDirty();
+                    dirtiedLines = true;
+                }
+            }
+            lastRootBox = &rootBox;
+            continue;
+        }
+        if (current->end() >= start && current->end() <= end) {
+            // Text run overlaps with the left end of the affected range.
+            current->dirtyLineBoxes();
+            dirtiedLines = true;
+            continue;
+        }
+        if (current->start() <= start && current->end() >= end) {
+            // Text run subsumes the affected range.
+            current->dirtyLineBoxes();
+            dirtiedLines = true;
+            continue;
+        }
+        if (current->start() <= end && current->end() >= end) {
+            // Text run overlaps with right end of the affected range.
+            current->dirtyLineBoxes();
+            dirtiedLines = true;
+            continue;
+        }
+    }
+
+    // Now we have to walk all of the clean lines and adjust their cached line break information
+    // to reflect our updated offsets.
+    if (lastRootBox)
+        lastRootBox = lastRootBox->nextRootBox();
+    if (firstRootBox) {
+        auto previousRootBox = firstRootBox->prevRootBox();
+        if (previousRootBox)
+            firstRootBox = previousRootBox;
+    } else if (m_last) {
+        ASSERT(!lastRootBox);
+        firstRootBox = &m_last->root();
+        firstRootBox->markDirty();
+        dirtiedLines = true;
+    }
+    for (auto current = firstRootBox; current && current != lastRootBox; current = current->nextRootBox()) {
+        if (current->lineBreakObj() == &renderer && current->lineBreakPos() > end)
+            current->setLineBreakPos(current->lineBreakPos() + lengthDelta);
+    }
+    
+    // If the text node is empty, dirty the line where new text will be inserted.
+    if (!m_first && renderer.parent()) {
+        renderer.parent()->dirtyLinesFromChangedChild(&renderer);
+        dirtiedLines = true;
+    }
+    return dirtiedLines;
 }
 
 #if !ASSERT_DISABLED

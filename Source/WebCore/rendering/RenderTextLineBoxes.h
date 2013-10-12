@@ -47,6 +47,7 @@ public:
     void attach(InlineTextBox&);
     void remove(InlineTextBox&);
 
+    void removeAllFromParent(RenderText&);
     void deleteAll(RenderText&);
 
     InlineTextBox* findNext(int offset, int& position) const;
@@ -57,6 +58,9 @@ public:
 
     IntRect boundingBox(const RenderText&) const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
+
+    void dirtyAll();
+    bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);
 
 #if !ASSERT_DISABLED
     ~RenderTextLineBoxes();
