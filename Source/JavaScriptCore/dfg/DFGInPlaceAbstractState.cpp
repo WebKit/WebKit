@@ -159,10 +159,9 @@ void InPlaceAbstractState::initialize()
             continue;
         if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
             continue;
-        for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
-            AbstractValue value;
-            value.setMostSpecific(m_graph, m_graph.m_plan.mustHandleValues[i]);
-            int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
+        for (size_t i = 0; i < m_graph.m_mustHandleAbstractValues.size(); ++i) {
+            AbstractValue value = m_graph.m_mustHandleAbstractValues[i];
+            int operand = m_graph.m_mustHandleAbstractValues.operandForIndex(i);
             block->valuesAtHead.operand(operand).merge(value);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);

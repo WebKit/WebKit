@@ -54,6 +54,7 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_codeBlock(m_plan.codeBlock.get())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(longLivedState.m_allocator)
+    , m_mustHandleAbstractValues(OperandsLike, plan.mustHandleValues)
     , m_inlineCallFrames(adoptPtr(new InlineCallFrameSet()))
     , m_hasArguments(false)
     , m_nextMachineLocal(0)
@@ -64,6 +65,9 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_refCountState(EverythingIsLive)
 {
     ASSERT(m_profiledBlock);
+    
+    for (unsigned i = m_mustHandleAbstractValues.size(); i--;)
+        m_mustHandleAbstractValues[i].setMostSpecific(*this, plan.mustHandleValues[i]);
 }
 
 Graph::~Graph()

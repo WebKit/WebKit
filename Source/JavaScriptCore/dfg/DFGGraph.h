@@ -776,6 +776,8 @@ public:
     
     NodeAllocator& m_allocator;
 
+    Operands<AbstractValue> m_mustHandleAbstractValues;
+    
     Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;

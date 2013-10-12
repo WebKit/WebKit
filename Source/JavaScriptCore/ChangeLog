@@ -1,5 +1,37 @@
 2013-10-11  Filip Pizlo  <fpizlo@apple.com>
 
+        sunspider-1.0/math-spectral-norm.js.dfg-eager occasionally fails with Trap 5 (i.e int $3)
+        https://bugs.webkit.org/show_bug.cgi?id=122462
+
+        Reviewed by Mark Hahnenberg.
+        
+        This fixes two bugs, both of which led to GetByVal on Int32 trapping because the
+        array no longer had Int32 shape but the check wasn't executed:
+        
+        1) We weren't snapshotting the structures of mustHandleValues. This led to an awesome
+           race where if a mustHandleValue JSValue's structure changed on the main thread
+           between runs of the AI, the AI would contradict each other and things would just
+           get corrupted in funny ways.
+        
+        2) The constant folder has a long standing bug! It will fold a node to a constant if
+           the AI proved it to be a constant. But it's possible that the original node also
+           proved things about the constant's structure. In that case "folding" to a
+           JSConstant actually loses information since JSConstant doesn't guarantee anything
+           about a constant's structure. There are various things we could do here to ensure
+           that a folded constant's structure doesn't change, and that if it does, we
+           deoptimize the code. But for now we can just make this sound by disabling folding
+           in this pathological case.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+
+2013-10-11  Filip Pizlo  <fpizlo@apple.com>
+
         Fix handling of indirect stackmap locations in FTL OSR exit
         https://bugs.webkit.org/show_bug.cgi?id=122666
 
