@@ -1768,6 +1768,26 @@ public:
         m_assembler.movImm8(1, dest);
     }
 
+    void test32(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
+    {
+        ASSERT((cond == Zero) || (cond == NonZero));
+
+        load32(address, dest);
+        if (mask.m_value == -1)
+            compare32(0, dest, static_cast<RelationalCondition>(cond));
+        else
+            testlImm(mask.m_value, dest);
+        if (cond != NonZero) {
+            m_assembler.movt(dest);
+            return;
+        }
+
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize + 4);
+        m_assembler.movImm8(0, dest);
+        m_assembler.branch(BT_OPCODE, 0);
+        m_assembler.movImm8(1, dest);
+    }
+
     void loadPtrLinkReg(ImplicitAddress address)
     {
         RegisterID scr = claimScratch();

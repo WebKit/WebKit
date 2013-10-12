@@ -1,3 +1,13 @@
+2013-10-12  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Add missing test32 implementation in macro assembler.
+        https://bugs.webkit.org/show_bug.cgi?id=122689
+
+        Reviewed by Andreas Kling.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::test32):
+
 2013-10-11  Darin Adler  <darin@apple.com>
 
         Change most call sites to call ICU directly instead of through WTF::Unicode
