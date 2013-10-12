@@ -1,3 +1,11 @@
+2013-10-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip tests that are already passing.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-10-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed gardening. Rebaseline after 157292.
