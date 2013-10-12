@@ -62,7 +62,7 @@ void SVGTextChunkBuilder::buildTextChunks(Vector<SVGInlineTextBox*>& lineLayoutB
             lastChunkStartPosition = boxPosition;
             foundStart = true;
         } else {
-            ASSERT(boxPosition > lastChunkStartPosition);
+            ASSERT_WITH_SECURITY_IMPLICATION(boxPosition > lastChunkStartPosition);
             addTextChunk(lineLayoutBoxes, lastChunkStartPosition, boxPosition - lastChunkStartPosition);
             lastChunkStartPosition = boxPosition;
         }

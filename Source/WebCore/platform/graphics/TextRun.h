@@ -139,7 +139,7 @@ public:
 
     TextRun subRun(unsigned startOffset, unsigned length) const
     {
-        ASSERT(startOffset < m_len);
+        ASSERT_WITH_SECURITY_IMPLICATION(startOffset < m_len);
 
         TextRun result = *this;
 

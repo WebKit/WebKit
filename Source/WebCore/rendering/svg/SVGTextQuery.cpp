@@ -151,7 +151,7 @@ bool SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates(Data* queryData, 
     if (!queryData->textBox->mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition))
         return false;
 
-    ASSERT(startPosition < endPosition);
+    ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     return true;
 }
 

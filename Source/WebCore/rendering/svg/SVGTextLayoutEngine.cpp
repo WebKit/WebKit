@@ -367,7 +367,7 @@ bool SVGTextLayoutEngine::currentLogicalCharacterMetrics(SVGTextLayoutAttributes
         }
 
         ASSERT(textMetricsSize);
-        ASSERT(m_logicalMetricsListOffset < textMetricsSize);
+        ASSERT_WITH_SECURITY_IMPLICATION(m_logicalMetricsListOffset < textMetricsSize);
         logicalMetrics = textMetricsValues->at(m_logicalMetricsListOffset);
         if (logicalMetrics.isEmpty() || (!logicalMetrics.width() && !logicalMetrics.height())) {
             advanceToNextLogicalCharacter(logicalMetrics);

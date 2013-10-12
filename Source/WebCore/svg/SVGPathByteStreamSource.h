@@ -63,7 +63,7 @@ private:
         size_t typeSize = sizeof(ByteType);
 
         for (size_t i = 0; i < typeSize; ++i) {
-            ASSERT(m_streamCurrent < m_streamEnd);
+            ASSERT_WITH_SECURITY_IMPLICATION(m_streamCurrent < m_streamEnd);
             data.bytes[i] = *m_streamCurrent;
             ++m_streamCurrent;
         }

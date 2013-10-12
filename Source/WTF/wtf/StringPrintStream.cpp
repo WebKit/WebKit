@@ -106,7 +106,7 @@ String StringPrintStream::toString()
 
 void StringPrintStream::increaseSize(size_t newSize)
 {
-    ASSERT(newSize > m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(newSize > m_size);
     ASSERT(newSize > sizeof(m_inlineBuffer));
     
     // Use exponential resizing to reduce thrashing.

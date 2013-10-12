@@ -324,7 +324,7 @@ inline Element* nextMatchingElement(const NodeListType* nodeList, Element* curre
 template <class NodeListType>
 inline Element* traverseMatchingElementsForwardToOffset(const NodeListType* nodeList, unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root)
 {
-    ASSERT(currentOffset < offset);
+    ASSERT_WITH_SECURITY_IMPLICATION(currentOffset < offset);
     while ((currentElement = nextMatchingElement(nodeList, currentElement, root))) {
         if (++currentOffset == offset)
             return currentElement;
@@ -336,7 +336,7 @@ inline Element* traverseMatchingElementsForwardToOffset(const NodeListType* node
 inline Node* LiveNodeListBase::traverseChildNodeListForwardToOffset(unsigned offset, Node* currentNode, unsigned& currentOffset) const
 {
     ASSERT(type() == ChildNodeListType);
-    ASSERT(currentOffset < offset);
+    ASSERT_WITH_SECURITY_IMPLICATION(currentOffset < offset);
     while ((currentNode = currentNode->nextSibling())) {
         if (++currentOffset == offset)
             return currentNode;
@@ -548,7 +548,7 @@ inline Element* HTMLCollection::traverseNextElement(unsigned& offsetInArray, Ele
 
 inline Element* HTMLCollection::traverseForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, unsigned& offsetInArray, ContainerNode* root) const
 {
-    ASSERT(currentOffset < offset);
+    ASSERT_WITH_SECURITY_IMPLICATION(currentOffset < offset);
     if (overridesItemAfter()) {
         offsetInArray = m_cachedElementsArrayOffset;
         while ((currentElement = virtualItemAfter(offsetInArray, currentElement))) {

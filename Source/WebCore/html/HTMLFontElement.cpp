@@ -71,7 +71,7 @@ static bool parseFontSize(const CharacterType* characters, unsigned length, int&
     // Step 4
     if (position == end)
         return false;
-    ASSERT(position < end);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
     // Step 5
     enum {

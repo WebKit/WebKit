@@ -59,8 +59,8 @@ static inline int boundedTextBreakFollowing(TextBreakIterator* it, int offset, i
 
 static unsigned centerTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, UChar* buffer)
 {
-    ASSERT(keepCount < length);
-    ASSERT(keepCount < STRING_BUFFER_SIZE);
+    ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
+    ASSERT_WITH_SECURITY_IMPLICATION(keepCount < STRING_BUFFER_SIZE);
     
     unsigned omitStart = (keepCount + 1) / 2;
     NonSharedCharacterBreakIterator it(string.characters(), length);
@@ -79,8 +79,8 @@ static unsigned centerTruncateToBuffer(const String& string, unsigned length, un
 
 static unsigned rightTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, UChar* buffer)
 {
-    ASSERT(keepCount < length);
-    ASSERT(keepCount < STRING_BUFFER_SIZE);
+    ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
+    ASSERT_WITH_SECURITY_IMPLICATION(keepCount < STRING_BUFFER_SIZE);
     
     NonSharedCharacterBreakIterator it(string.characters(), length);
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
@@ -139,8 +139,8 @@ static String truncateString(const String& string, float maxWidth, const Font& f
     }
     
     while (keepCountForLargestKnownToFit + 1 < keepCountForSmallestKnownToNotFit) {
-        ASSERT(widthForLargestKnownToFit <= maxWidth);
-        ASSERT(widthForSmallestKnownToNotFit > maxWidth);
+        ASSERT_WITH_SECURITY_IMPLICATION(widthForLargestKnownToFit <= maxWidth);
+        ASSERT_WITH_SECURITY_IMPLICATION(widthForSmallestKnownToNotFit > maxWidth);
 
         float ratio = (keepCountForSmallestKnownToNotFit - keepCountForLargestKnownToFit)
             / (widthForSmallestKnownToNotFit - widthForLargestKnownToFit);
@@ -152,10 +152,10 @@ static String truncateString(const String& string, float maxWidth, const Font& f
             keepCount = keepCountForSmallestKnownToNotFit - 1;
         }
         
-        ASSERT(keepCount < length);
+        ASSERT_WITH_SECURITY_IMPLICATION(keepCount < length);
         ASSERT(keepCount > 0);
-        ASSERT(keepCount < keepCountForSmallestKnownToNotFit);
-        ASSERT(keepCount > keepCountForLargestKnownToFit);
+        ASSERT_WITH_SECURITY_IMPLICATION(keepCount < keepCountForSmallestKnownToNotFit);
+        ASSERT_WITH_SECURITY_IMPLICATION(keepCount > keepCountForLargestKnownToFit);
         
         truncatedLength = truncateToBuffer(string, length, keepCount, stringBuffer);
 

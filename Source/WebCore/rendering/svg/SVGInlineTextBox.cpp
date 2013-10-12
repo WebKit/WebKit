@@ -108,7 +108,7 @@ float SVGInlineTextBox::positionForOffset(int) const
 
 FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& fragment, int startPosition, int endPosition, RenderStyle* style)
 {
-    ASSERT(startPosition < endPosition);
+    ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     ASSERT(style);
 
     FontCachePurgePreventer fontCachePurgePreventer;
@@ -454,7 +454,7 @@ bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGText
         endPosition -= offset;
     }
 
-    ASSERT(startPosition < endPosition);
+    ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     return true;
 }
 

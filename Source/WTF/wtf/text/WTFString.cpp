@@ -849,7 +849,7 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
         return String();
 
     unsigned utf16Length = bufferCurrent - bufferStart;
-    ASSERT(utf16Length < length);
+    ASSERT_WITH_SECURITY_IMPLICATION(utf16Length < length);
     return StringImpl::create(bufferStart, utf16Length);
 }
 

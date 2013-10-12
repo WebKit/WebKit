@@ -1,3 +1,53 @@
+2013-09-06  Jessica Pease  <jessica_n_pease@apple.com>
+
+        Replace bounds checking ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=120893
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPathLexer::lex):
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::compareEncodedIDBKeys):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyIDForJSCSSPropertyName):
+        * css/CSSFontSelector.cpp:
+        (WebCore::compareFontFaces):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * html/HTMLCollection.cpp:
+        (WebCore::traverseMatchingElementsForwardToOffset):
+        (WebCore::LiveNodeListBase::traverseChildNodeListForwardToOffset):
+        (WebCore::HTMLCollection::traverseForwardToOffset):
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSize):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLIntegerInternal):
+        (WebCore::parseHTMLNonNegativeIntegerInternal):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorStyleProperty::setRawTextFromStyleDeclaration):
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::truncateString):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::subRun):
+        * platform/text/BidiRunList.h:
+        (WebCore::::reverseRuns):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+        (WebCore::SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates):
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::buildTextChunks):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterMetrics):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::mapStartEndPositionsIntoFragmentCoordinates):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        * svg/SVGPathByteStreamSource.h:
+        (WebCore::SVGPathByteStreamSource::readType):
+
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
         Factor line box code from RenderText to a class

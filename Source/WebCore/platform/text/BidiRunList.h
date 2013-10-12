@@ -204,7 +204,7 @@ void BidiRunList<Run>::reverseRuns(unsigned start, unsigned end)
     if (start >= end)
         return;
 
-    ASSERT(end < m_runCount);
+    ASSERT_WITH_SECURITY_IMPLICATION(end < m_runCount);
 
     // Get the item before the start of the runs to reverse and put it in
     // |beforeStart|. |curr| should point to the first run to reverse.

@@ -153,7 +153,7 @@ namespace double_conversion {
         // spanning from and including 'from', to but not including 'to'.
         BufferReference<T> SubBufferReference(int from, int to) {
             ASSERT(to <= length_);
-            ASSERT(from < to);
+            ASSERT_WITH_SECURITY_IMPLICATION(from < to);
             ASSERT(0 <= from);
             return BufferReference<T>(start() + from, to - from);
         }

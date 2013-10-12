@@ -75,7 +75,7 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
 {
     if (m_ptr >= m_end)
         return TokenEnd;
-    ASSERT(m_ptr < m_end);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_ptr < m_end);
 
     if (*m_ptr == '.') {
         ++m_ptr;

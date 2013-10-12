@@ -584,8 +584,8 @@ static int compareEncodedIDBKeys(const char*& ptrA, const char* limitA, const ch
 {
     ok = true;
     ASSERT(&ptrA != &ptrB);
-    ASSERT(ptrA < limitA);
-    ASSERT(ptrB < limitB);
+    ASSERT_WITH_SECURITY_IMPLICATION(ptrA < limitA);
+    ASSERT_WITH_SECURITY_IMPLICATION(ptrB < limitB);
     unsigned char typeA = *ptrA++;
     unsigned char typeB = *ptrB++;
 

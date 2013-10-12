@@ -466,7 +466,7 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
         ruleSetIndex++;
     }
 
-    ASSERT(ruleSetIndex < fallbackRuleSets);
+    ASSERT_WITH_SECURITY_IMPLICATION(ruleSetIndex < fallbackRuleSets);
     const FontTraitsMask* weightFallbackRule = weightFallbackRuleSets[ruleSetIndex];
     for (unsigned i = 0; i < rulesPerSet; ++i) {
         if (secondTraitsMask & weightFallbackRule[i])

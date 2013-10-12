@@ -260,9 +260,9 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
             *bufferPtr++ = toASCIILower(c);
         } else
             *bufferPtr++ = c;
-        ASSERT(bufferPtr < bufferEnd);
+        ASSERT_WITH_SECURITY_IMPLICATION(bufferPtr < bufferEnd);
     }
-    ASSERT(bufferPtr < bufferEnd);
+    ASSERT_WITH_SECURITY_IMPLICATION(bufferPtr < bufferEnd);
     *bufferPtr = '\0';
 
     unsigned outputLength = bufferPtr - buffer;

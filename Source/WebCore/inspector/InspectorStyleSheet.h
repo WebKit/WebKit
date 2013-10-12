@@ -121,7 +121,7 @@ struct InspectorStyleProperty {
     {
         unsigned start = sourceData.range.start;
         unsigned end = sourceData.range.end;
-        ASSERT(start < end);
+        ASSERT_WITH_SECURITY_IMPLICATION(start < end);
         ASSERT(end <= styleDeclaration.length());
         rawText = styleDeclaration.substring(start, end - start);
     }

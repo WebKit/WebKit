@@ -169,7 +169,7 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
     // Step 5
     if (position == end)
         return false;
-    ASSERT(position < end);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
     // Step 6
     if (*position == '-') {
@@ -179,7 +179,7 @@ static bool parseHTMLIntegerInternal(const CharacterType* position, const Charac
         ++position;
     if (position == end)
         return false;
-    ASSERT(position < end);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
     // Step 7
     if (!isASCIIDigit(*position))
@@ -230,7 +230,7 @@ static bool parseHTMLNonNegativeIntegerInternal(const CharacterType* position, c
     // Step 4
     if (position == end)
         return false;
-    ASSERT(position < end);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
     // Step 5
     if (*position == '+')
@@ -239,7 +239,7 @@ static bool parseHTMLNonNegativeIntegerInternal(const CharacterType* position, c
     // Step 6
     if (position == end)
         return false;
-    ASSERT(position < end);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < end);
 
     // Step 7
     if (!isASCIIDigit(*position))

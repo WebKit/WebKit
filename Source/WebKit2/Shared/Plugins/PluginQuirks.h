@@ -113,7 +113,7 @@ public:
     void add(PluginQuirk quirk)
     {
         ASSERT(quirk >= 0);
-        ASSERT(quirk < NumPluginQuirks);
+        ASSERT_WITH_SECURITY_IMPLICATION(quirk < NumPluginQuirks);
         
         m_quirks |= (1 << quirk);
     }

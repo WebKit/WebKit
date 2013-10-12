@@ -3799,7 +3799,7 @@ static void** DumpStackTraces() {
   SpinLockHolder h(&pageheap_lock);
   int used_slots = 0;
   for (Span* s = sampled_objects.next; s != &sampled_objects; s = s->next) {
-    ASSERT(used_slots < needed_slots);  // Need to leave room for terminator
+    ASSERT_WITH_SECURITY_IMPLICATION(used_slots < needed_slots); // Need to leave room for terminator
     StackTrace* stack = reinterpret_cast<StackTrace*>(s->objects);
     if (used_slots + 3 + stack->depth >= needed_slots) {
       // No more room
@@ -4163,7 +4163,7 @@ static void* do_memalign(size_t align, size_t size) {
   while ((((span->start+skip) << kPageShift) & (align - 1)) != 0) {
     skip++;
   }
-  ASSERT(skip < alloc);
+  ASSERT_WITH_SECURITY_IMPLICATION(skip < alloc);
   if (skip > 0) {
     Span* rest = pageheap->Split(span, skip);
     pageheap->Delete(span);

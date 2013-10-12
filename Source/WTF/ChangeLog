@@ -1,3 +1,23 @@
+2013-09-06  Jessica Pease  <jessica_n_pease@apple.com>
+
+        Replace bounds checking ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=120893
+
+        Reviewed by Darin Adler.
+
+        * wtf/BumpPointerAllocator.h:
+        (WTF::BumpPointerPool::ensureCapacity):
+        (WTF::BumpPointerPool::alloc):
+        (WTF::BumpPointerPool::ensureCapacityCrossPool):
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::increaseSize):
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::BufferReference::SubBufferReference):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8):
+
 2013-10-11  Darin Adler  <darin@apple.com>
 
         Change most call sites to call ICU directly instead of through WTF::Unicode

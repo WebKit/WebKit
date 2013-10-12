@@ -12164,7 +12164,7 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         // This stuff is only executed when the style data retrieval is requested by client.
         const unsigned start = m_propertyRange.start;
         const unsigned end = m_propertyRange.end;
-        ASSERT(start < end);
+        ASSERT_WITH_SECURITY_IMPLICATION(start < end);
         String propertyString;
         if (is8BitSource())
             propertyString = String(m_dataStart8.get() + start, end - start).stripWhiteSpace();

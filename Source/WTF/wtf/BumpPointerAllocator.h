@@ -47,7 +47,7 @@ public:
     BumpPointerPool* ensureCapacity(size_t size)
     {
         void* allocationEnd = static_cast<char*>(m_current) + size;
-        ASSERT(allocationEnd > m_current); // check for overflow
+        ASSERT_WITH_SECURITY_IMPLICATION(allocationEnd > m_current); // check for overflow
         if (allocationEnd <= static_cast<void*>(this))
             return this;
         return ensureCapacityCrossPool(this, size);
@@ -59,7 +59,7 @@ public:
     {
         void* current = m_current;
         void* allocationEnd = static_cast<char*>(current) + size;
-        ASSERT(allocationEnd > current); // check for overflow
+        ASSERT_WITH_SECURITY_IMPLICATION(allocationEnd > current); // check for overflow
         ASSERT(allocationEnd <= static_cast<void*>(this));
         m_current = allocationEnd;
         return current;
@@ -163,7 +163,7 @@ private:
             // 
             void* current = pool->m_current;
             void* allocationEnd = static_cast<char*>(current) + size;
-            ASSERT(allocationEnd > current); // check for overflow
+            ASSERT_WITH_SECURITY_IMPLICATION(allocationEnd > current); // check for overflow
             if (allocationEnd <= static_cast<void*>(pool))
                 return pool;
         }
