@@ -1,5 +1,14 @@
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
+        Factor line box code from RenderText to a class
+        https://bugs.webkit.org/show_bug.cgi?id=122694
+
+        Reviewed by Andreas Kling.
+
+        Create RenderTextLineBoxes and move some line box specific code there.
+
+2013-10-12  Antti Koivisto  <antti@apple.com>
+
         Replace RenderText::renderedTextLength with hasRenderedText
         https://bugs.webkit.org/show_bug.cgi?id=122693
 

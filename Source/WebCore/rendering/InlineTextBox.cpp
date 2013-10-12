@@ -243,7 +243,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
 
 void InlineTextBox::deleteLine(RenderArena& arena)
 {
-    renderer().removeTextBox(this);
+    renderer().removeTextBox(*this);
     destroy(arena);
 }
 
@@ -252,7 +252,7 @@ void InlineTextBox::extractLine()
     if (extracted())
         return;
 
-    renderer().extractTextBox(this);
+    renderer().extractTextBox(*this);
 }
 
 void InlineTextBox::attachLine()
@@ -260,7 +260,7 @@ void InlineTextBox::attachLine()
     if (!extracted())
         return;
     
-    renderer().attachTextBox(this);
+    renderer().attachTextBox(*this);
 }
 
 float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)

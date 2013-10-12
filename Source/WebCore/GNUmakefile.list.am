@@ -4442,18 +4442,20 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderTableRow.h \
 	Source/WebCore/rendering/RenderTableSection.cpp \
 	Source/WebCore/rendering/RenderTableSection.h \
+	Source/WebCore/rendering/RenderText.cpp \
+	Source/WebCore/rendering/RenderText.h \
 	Source/WebCore/rendering/RenderTextControl.cpp \
 	Source/WebCore/rendering/RenderTextControl.h \
 	Source/WebCore/rendering/RenderTextControlMultiLine.cpp \
 	Source/WebCore/rendering/RenderTextControlMultiLine.h \
 	Source/WebCore/rendering/RenderTextControlSingleLine.cpp \
 	Source/WebCore/rendering/RenderTextControlSingleLine.h \
-	Source/WebCore/rendering/RenderText.cpp \
 	Source/WebCore/rendering/RenderTextTrackCue.cpp \
 	Source/WebCore/rendering/RenderTextTrackCue.h \
 	Source/WebCore/rendering/RenderTextFragment.cpp \
 	Source/WebCore/rendering/RenderTextFragment.h \
-	Source/WebCore/rendering/RenderText.h \
+	Source/WebCore/rendering/RenderTextLineBoxes.cpp \
+	Source/WebCore/rendering/RenderTextLineBoxes.h \
 	Source/WebCore/rendering/RenderTheme.cpp \
 	Source/WebCore/rendering/RenderTheme.h \
 	Source/WebCore/rendering/RenderTreeAsText.cpp \

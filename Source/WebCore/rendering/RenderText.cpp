@@ -155,8 +155,6 @@ RenderText::RenderText(Text* textNode, const String& text)
     , m_beginMinWidth(0)
     , m_endMinWidth(0)
     , m_text(text)
-    , m_firstTextBox(0)
-    , m_lastTextBox(0)
 {
     ASSERT(!m_text.isNull());
 
@@ -172,8 +170,6 @@ RenderText::RenderText(Text* textNode, const String& text)
 
 RenderText::~RenderText()
 {
-    ASSERT(!m_firstTextBox);
-    ASSERT(!m_lastTextBox);
 }
 
 #endif
@@ -260,70 +256,6 @@ void RenderText::willBeDestroyed()
 
     removeAndDestroyTextBoxes();
     RenderObject::willBeDestroyed();
-}
-
-void RenderText::extractTextBox(InlineTextBox* box)
-{
-    checkConsistency();
-
-    m_lastTextBox = box->prevTextBox();
-    if (box == m_firstTextBox)
-        m_firstTextBox = 0;
-    if (box->prevTextBox())
-        box->prevTextBox()->setNextTextBox(0);
-    box->setPreviousTextBox(0);
-    for (InlineTextBox* curr = box; curr; curr = curr->nextTextBox())
-        curr->setExtracted();
-
-    checkConsistency();
-}
-
-void RenderText::attachTextBox(InlineTextBox* box)
-{
-    checkConsistency();
-
-    if (m_lastTextBox) {
-        m_lastTextBox->setNextTextBox(box);
-        box->setPreviousTextBox(m_lastTextBox);
-    } else
-        m_firstTextBox = box;
-    InlineTextBox* last = box;
-    for (InlineTextBox* curr = box; curr; curr = curr->nextTextBox()) {
-        curr->setExtracted(false);
-        last = curr;
-    }
-    m_lastTextBox = last;
-
-    checkConsistency();
-}
-
-void RenderText::removeTextBox(InlineTextBox* box)
-{
-    checkConsistency();
-
-    if (box == m_firstTextBox)
-        m_firstTextBox = box->nextTextBox();
-    if (box == m_lastTextBox)
-        m_lastTextBox = box->prevTextBox();
-    if (box->nextTextBox())
-        box->nextTextBox()->setPreviousTextBox(box->prevTextBox());
-    if (box->prevTextBox())
-        box->prevTextBox()->setNextTextBox(box->nextTextBox());
-
-    checkConsistency();
-}
-
-void RenderText::deleteTextBoxes()
-{
-    if (firstTextBox()) {
-        RenderArena& arena = renderArena();
-        InlineTextBox* next;
-        for (InlineTextBox* curr = firstTextBox(); curr; curr = next) {
-            next = curr->nextTextBox();
-            curr->destroy(arena);
-        }
-        m_firstTextBox = m_lastTextBox = 0;
-    }
 }
 
 String RenderText::originalText() const
@@ -474,27 +406,6 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
                 quads.append(localToAbsoluteQuad(rect, 0, wasFixed));
         }
     }
-}
-
-InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
-{
-    // The text runs point to parts of the RenderText's m_text
-    // (they don't include '\n')
-    // Find the text run that includes the character at offset
-    // and return pos, which is the position of the char in the run.
-
-    if (!m_firstTextBox)
-        return 0;
-
-    InlineTextBox* s = m_firstTextBox;
-    int off = s->len();
-    while (offset > off && s->nextTextBox()) {
-        s = s->nextTextBox();
-        off = s->start() + s->len();
-    }
-    // we are now in the correct text run
-    pos = (offset > off ? s->len() : s->len() - (off - offset) );
-    return s;
 }
 
 enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
@@ -1166,12 +1077,12 @@ FloatPoint RenderText::firstRunOrigin() const
 
 float RenderText::firstRunX() const
 {
-    return m_firstTextBox ? m_firstTextBox->x() : 0;
+    return firstTextBox() ? firstTextBox()->x() : 0;
 }
 
 float RenderText::firstRunY() const
 {
-    return m_firstTextBox ? m_firstTextBox->y() : 0;
+    return firstTextBox() ? firstTextBox()->y() : 0;
 }
     
 void RenderText::setSelectionState(SelectionState state)
@@ -1439,41 +1350,20 @@ InlineTextBox* RenderText::createTextBox()
     return new (renderArena()) InlineTextBox(*this);
 }
 
-InlineTextBox* RenderText::createInlineTextBox()
-{
-    InlineTextBox* textBox = createTextBox();
-    if (!m_firstTextBox)
-        m_firstTextBox = m_lastTextBox = textBox;
-    else {
-        m_lastTextBox->setNextTextBox(textBox);
-        textBox->setPreviousTextBox(m_lastTextBox);
-        m_lastTextBox = textBox;
-    }
-    textBox->setBehavesLikeText(true);
-    return textBox;
-}
-
 void RenderText::positionLineBox(InlineBox* box)
 {
-    InlineTextBox* s = toInlineTextBox(box);
+    InlineTextBox* textBox = toInlineTextBox(box);
 
     // FIXME: should not be needed!!!
-    if (!s->len()) {
+    if (!textBox->len()) {
         // We want the box to be destroyed.
-        s->remove();
-        if (m_firstTextBox == s)
-            m_firstTextBox = s->nextTextBox();
-        else
-            s->prevTextBox()->setNextTextBox(s->nextTextBox());
-        if (m_lastTextBox == s)
-            m_lastTextBox = s->prevTextBox();
-        else
-            s->nextTextBox()->setPreviousTextBox(s->prevTextBox());
-        s->destroy(renderArena());
+        textBox->remove();
+        m_lineBoxes.remove(*textBox);
+        textBox->destroy(renderArena());
         return;
     }
 
-    m_containsReversedText |= !s->isLeftToRightDirection();
+    m_containsReversedText |= !textBox->isLeftToRightDirection();
 }
 
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
@@ -1844,23 +1734,6 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
         return true;
     return Font::characterRangeCodePath(characters(), length()) == Font::Simple;
 }
-
-#ifndef NDEBUG
-
-void RenderText::checkConsistency() const
-{
-#ifdef CHECK_CONSISTENCY
-    const InlineTextBox* prev = 0;
-    for (const InlineTextBox* child = m_firstTextBox; child != 0; child = child->nextTextBox()) {
-        ASSERT(child->renderer() == this);
-        ASSERT(child->prevTextBox() == prev);
-        prev = child;
-    }
-    ASSERT(prev == m_lastTextBox);
-#endif
-}
-
-#endif
 
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset)
 {

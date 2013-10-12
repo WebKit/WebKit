@@ -24,6 +24,7 @@
 #define RenderText_h
 
 #include "RenderElement.h"
+#include "RenderTextLineBoxes.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -51,14 +52,14 @@ public:
 
     virtual String originalText() const;
 
-    void extractTextBox(InlineTextBox*);
-    void attachTextBox(InlineTextBox*);
-    void removeTextBox(InlineTextBox*);
+    void extractTextBox(InlineTextBox& box) { m_lineBoxes.extract(box); }
+    void attachTextBox(InlineTextBox& box) { m_lineBoxes.attach(box); }
+    void removeTextBox(InlineTextBox& box) { m_lineBoxes.remove(box); }
 
     StringImpl* text() const { return m_text.impl(); }
     String textWithoutConvertingBackslashToYenSymbol() const;
 
-    InlineTextBox* createInlineTextBox();
+    InlineTextBox* createInlineTextBox() { return m_lineBoxes.createAndAppendLineBox(*this); }
     void dirtyLineBoxes(bool fullLayout);
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE FINAL;
@@ -116,8 +117,8 @@ public:
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE FINAL;
 
-    InlineTextBox* firstTextBox() const { return m_firstTextBox; }
-    InlineTextBox* lastTextBox() const { return m_lastTextBox; }
+    InlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
+    InlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
 
     virtual int caretMinOffset() const OVERRIDE;
     virtual int caretMaxOffset() const OVERRIDE;
@@ -132,7 +133,7 @@ public:
     bool isSecure() const { return style()->textSecurity() != TSNONE; }
     void momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset);
 
-    InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
+    InlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
 
     void checkConsistency() const;
 
@@ -145,6 +146,8 @@ public:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    virtual InlineTextBox* createTextBox(); // Subclassed by RenderSVGInlineText.
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float s) { m_candidateComputedTextSize = s; }
@@ -156,8 +159,6 @@ protected:
 
     virtual void setTextInternal(const String&);
     virtual UChar previousCharacter() const;
-    
-    virtual InlineTextBox* createTextBox(); // Subclassed by SVG.
 
 private:
     virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
@@ -173,7 +174,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) OVERRIDE FINAL { ASSERT_NOT_REACHED(); return false; }
 
-    void deleteTextBoxes();
+    void deleteTextBoxes() { m_lineBoxes.deleteAll(*this); }
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     float widthFromCache(const Font&, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow*) const;
     bool isAllASCII() const { return m_isAllASCII; }
@@ -210,8 +211,7 @@ private:
 
     String m_text;
 
-    InlineTextBox* m_firstTextBox;
-    InlineTextBox* m_lastTextBox;
+    RenderTextLineBoxes m_lineBoxes;
 };
 
 inline RenderText& toRenderText(RenderObject& object)
