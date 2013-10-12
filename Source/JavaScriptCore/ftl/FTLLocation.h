@@ -155,7 +155,11 @@ public:
     
     // Assuming that all registers are saved to the savedRegisters buffer according
     // to FTLSaveRestore convention, this loads the value into the given register.
-    // The code that this generates isn't exactly super fast.
+    // The code that this generates isn't exactly super fast. This assumes that FP
+    // and SP contain the same values that they would have contained in the original
+    // frame. If we did push things onto the stack then probably we'll have to change
+    // the signature of this method to take a stack offset for stack-relative
+    // indirects.
     void restoreInto(MacroAssembler&, char* savedRegisters, GPRReg result) const;
     
 private:

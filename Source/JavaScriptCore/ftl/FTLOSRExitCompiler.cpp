@@ -67,10 +67,17 @@ static void compileStubWithOSRExitStackmap(
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
     char* registerScratch = bitwise_cast<char*>(scratch + exit.m_values.size());
     
+    // Make sure that saveAllRegisters() has a place on top of the stack to spill things. That
+    // function expects to be able to use top of stack for scratch memory.
+    jit.push(GPRInfo::regT0);
     saveAllRegisters(jit, registerScratch);
     
     // Bring the stack back into a sane form.
     jit.pop(GPRInfo::regT0);
+    jit.pop(GPRInfo::regT0);
+    
+    // The remaining code assumes that SP/FP are in the same state that they were in the FTL's
+    // call frame.
     
     // Get the call frame and tag thingies.
     record->locations[0].restoreInto(jit, jitCode->stackmaps, registerScratch, GPRInfo::callFrameRegister);

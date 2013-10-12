@@ -87,7 +87,7 @@ GPRReg Location::gpr() const
     // for example, the architecture encodes CX as 1 and DX as 2 while Dwarf does the
     // opposite. Hence we need the switch.
     
-    ASSERT(isGPR());
+    ASSERT(involvesGPR());
     
     switch (dwarfRegNum()) {
     case 0:
@@ -127,6 +127,12 @@ FPRReg Location::fpr() const
 void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg result) const
 {
     if (isGPR()) {
+        if (MacroAssembler::isStackRelated(gpr())) {
+            // These don't get saved.
+            jit.move(gpr(), result);
+            return;
+        }
+        
         jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
         return;
     }
@@ -143,6 +149,12 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
         return;
         
     case Indirect:
+        if (MacroAssembler::isStackRelated(gpr())) {
+            // These don't get saved.
+            jit.load64(MacroAssembler::Address(gpr(), offset()), result);
+            return;
+        }
+        
         jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
         jit.load64(MacroAssembler::Address(result, offset()), result);
         return;
