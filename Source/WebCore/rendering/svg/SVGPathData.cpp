@@ -48,7 +48,7 @@ static void updatePathFromCircleElement(SVGElement* element, Path& path)
 
 static void updatePathFromEllipseElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::ellipseTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(SVGNames::ellipseTag));
     SVGEllipseElement* ellipse = static_cast<SVGEllipseElement*>(element);
 
     SVGLengthContext lengthContext(element);
@@ -63,7 +63,7 @@ static void updatePathFromEllipseElement(SVGElement* element, Path& path)
 
 static void updatePathFromLineElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::lineTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(SVGNames::lineTag));
     SVGLineElement* line = static_cast<SVGLineElement*>(element);
 
     SVGLengthContext lengthContext(element);
@@ -78,7 +78,7 @@ static void updatePathFromPathElement(SVGElement* element, Path& path)
 
 static void updatePathFromPolygonElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::polygonTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(SVGNames::polygonTag));
     SVGPolygonElement* polygon = static_cast<SVGPolygonElement*>(element);
 
     SVGPointList& points = polygon->pointList();
@@ -96,7 +96,7 @@ static void updatePathFromPolygonElement(SVGElement* element, Path& path)
 
 static void updatePathFromPolylineElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::polylineTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(SVGNames::polylineTag));
     SVGPolylineElement* polyline = static_cast<SVGPolylineElement*>(element);
 
     SVGPointList& points = polyline->pointList();

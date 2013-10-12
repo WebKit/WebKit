@@ -55,7 +55,7 @@ private:
     
 inline AccessibilityMockObject* toAccessibilityMockObject(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isMockObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMockObject());
     return static_cast<AccessibilityMockObject*>(object);
 }
     

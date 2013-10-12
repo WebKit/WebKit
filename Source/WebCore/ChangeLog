@@ -1,3 +1,65 @@
+2013-09-27  Jessica Pease  <jessica_n_pease@apple.com>
+
+        Replace static cast ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=120803
+
+        Reviewed by Andreas Kling.
+
+        No new tests because we're just changing assertions.
+
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::toAccessibilityMockObject):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyTextUnderlinePosition::applyValue):
+        * dom/Element.cpp:
+        (WebCore::Element::elementRareData):
+        (WebCore::Element::synchronizeAttribute):
+        * dom/FocusEvent.h:
+        (WebCore::toFocusEvent):
+        * dom/MouseEvent.h:
+        (WebCore::toMouseEvent):
+        * dom/Node.cpp:
+        (WebCore::Node::rareData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::ensureMutableInlineStyle):
+        * dom/TouchEvent.h:
+        (WebCore::toTouchEvent):
+        * editing/CompositeEditCommand.h:
+        (WebCore::toCompositeEditCommand):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk):
+        * html/track/AudioTrack.h:
+        (WebCore::toAudioTrack):
+        * html/track/TextTrack.h:
+        (WebCore::toTextTrack):
+        * html/track/VideoTrack.h:
+        (WebCore::toVideoTrack):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * loader/cache/CachedResourceClientWalker.h:
+        (WebCore::CachedResourceClientWalker::next):
+        * page/FrameView.h:
+        (WebCore::toFrameView):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::root):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxesFromBidiRuns):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromEllipseElement):
+        (WebCore::updatePathFromLineElement):
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::document):
+
 2013-09-06  Jessica Pease  <jessica_n_pease@apple.com>
 
         Replace bounds checking ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION

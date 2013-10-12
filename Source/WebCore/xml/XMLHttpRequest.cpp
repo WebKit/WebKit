@@ -208,7 +208,7 @@ XMLHttpRequest::~XMLHttpRequest()
 
 Document* XMLHttpRequest::document() const
 {
-    ASSERT(scriptExecutionContext()->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext()->isDocument());
     return static_cast<Document*>(scriptExecutionContext());
 }
 

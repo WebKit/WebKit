@@ -133,7 +133,7 @@ private:
 
 inline MouseEvent* toMouseEvent(Event* event)
 {
-    ASSERT(event && event->isMouseEvent());
+    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isMouseEvent());
     return static_cast<MouseEvent*>(event);
 }
 

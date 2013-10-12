@@ -1347,7 +1347,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttribut
     if (!attributeStyle)
         return 0;
 
-    ASSERT(attributeStyle->isMutable());
+    ASSERT_WITH_SECURITY_IMPLICATION(attributeStyle->isMutable());
     MutableStylePropertySet* mutableAttributeStyle = static_cast<MutableStylePropertySet*>(attributeStyle);
 
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableAttributeStyle->ensureCSSStyleDeclaration(), 0);

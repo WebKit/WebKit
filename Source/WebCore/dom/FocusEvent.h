@@ -72,7 +72,7 @@ private:
 
 inline FocusEvent* toFocusEvent(Event* event)
 {
-    ASSERT(event && event->isFocusEvent());
+    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isFocusEvent());
     return static_cast<FocusEvent*>(event);
 }
 

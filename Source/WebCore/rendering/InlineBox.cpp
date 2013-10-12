@@ -269,7 +269,7 @@ const RootInlineBox& InlineBox::root() const
 { 
     if (m_parent)
         return m_parent->root(); 
-    ASSERT(isRootInlineBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(isRootInlineBox());
     return static_cast<const RootInlineBox&>(*this);
 }
 
@@ -277,7 +277,7 @@ RootInlineBox& InlineBox::root()
 { 
     if (m_parent)
         return m_parent->root(); 
-    ASSERT(isRootInlineBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(isRootInlineBox());
     return static_cast<RootInlineBox&>(*this);
 }
 

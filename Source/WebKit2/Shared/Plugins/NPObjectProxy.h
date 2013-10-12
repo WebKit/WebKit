@@ -46,7 +46,7 @@ public:
     
     static NPObjectProxy* toNPObjectProxy(NPObject* npObject)
     {
-        ASSERT(isNPObjectProxy(npObject));
+        ASSERT_WITH_SECURITY_IMPLICATION(isNPObjectProxy(npObject));
         return static_cast<NPObjectProxy*>(npObject);
     }
 

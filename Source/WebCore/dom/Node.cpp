@@ -368,7 +368,7 @@ void Node::willBeDeletedFrom(Document* document)
 
 NodeRareData* Node::rareData() const
 {
-    ASSERT(hasRareData());
+    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
     return static_cast<NodeRareData*>(m_data.m_rareData);
 }
 

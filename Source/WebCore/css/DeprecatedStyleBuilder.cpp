@@ -1373,7 +1373,7 @@ public:
         unsigned t = 0;
         for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
-            ASSERT(item->isPrimitiveValue());
+            ASSERT_WITH_SECURITY_IMPLICATION(item->isPrimitiveValue());
             TextUnderlinePosition t2 = *toCSSPrimitiveValue(item);
             t |= t2;
         }

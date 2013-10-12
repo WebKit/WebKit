@@ -89,7 +89,7 @@ private:
 
 inline AudioTrack* toAudioTrack(TrackBase* track)
 {
-    ASSERT(track->type() == TrackBase::AudioTrack);
+    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::AudioTrack);
     return static_cast<AudioTrack*>(track);
 }
 

@@ -96,7 +96,7 @@ private:
 
 inline TouchEvent* toTouchEvent(Event* event)
 {
-    ASSERT(event && event->isTouchEvent());
+    ASSERT_WITH_SECURITY_IMPLICATION(event && event->isTouchEvent());
     return static_cast<TouchEvent*>(event);
 }
 

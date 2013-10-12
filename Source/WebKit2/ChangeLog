@@ -1,3 +1,17 @@
+2013-09-27  Jessica Pease  <jessica_n_pease@apple.com>
+
+        Replace static cast ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION
+        https://bugs.webkit.org/show_bug.cgi?id=120803
+
+        Reviewed by Andreas Kling.
+
+        No new tests because we're just changing assertions.
+
+        * Shared/Plugins/NPObjectProxy.h:
+        (WebKit::NPObjectProxy::toNPObjectProxy):
+        * WebProcess/Plugins/Netscape/NPJSObject.h:
+        (WebKit::NPJSObject::toNPJSObject):
+
 2013-09-06  Jessica Pease  <jessica_n_pease@apple.com>
 
         Replace bounds checking ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION

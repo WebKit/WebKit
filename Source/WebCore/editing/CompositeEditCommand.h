@@ -180,7 +180,7 @@ void applyCommand(PassRefPtr<CompositeEditCommand>);
 inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
 {
     ASSERT(command);
-    ASSERT(command->isCompositeEditCommand());
+    ASSERT_WITH_SECURITY_IMPLICATION(command->isCompositeEditCommand());
     return static_cast<CompositeEditCommand*>(command);
 }
 

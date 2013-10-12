@@ -1229,7 +1229,7 @@ RootInlineBox* RenderBlockFlow::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>
     // contains reversed text or not. If we wouldn't do that editing and thus
     // text selection in RTL boxes would not work as expected.
     if (isSVGRootInlineBox) {
-        ASSERT(isSVGText());
+        ASSERT_WITH_SECURITY_IMPLICATION(isSVGText());
         static_cast<SVGRootInlineBox*>(lineBox)->computePerCharacterLayoutInformation();
     }
 #endif

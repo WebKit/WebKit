@@ -89,7 +89,7 @@ private:
 
 inline VideoTrack* toVideoTrack(TrackBase* track)
 {
-    ASSERT(track->type() == TrackBase::VideoTrack);
+    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::VideoTrack);
     return static_cast<VideoTrack*>(track);
 }
 

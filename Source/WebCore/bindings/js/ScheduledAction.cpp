@@ -81,7 +81,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
         execute(toDocument(context));
 #if ENABLE(WORKERS)
     else {
-        ASSERT(context->isWorkerGlobalScope());
+        ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
         execute(static_cast<WorkerGlobalScope*>(context));
     }
 #else

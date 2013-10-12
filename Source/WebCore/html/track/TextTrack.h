@@ -192,7 +192,7 @@ private:
 
 inline TextTrack* toTextTrack(TrackBase* track)
 {
-    ASSERT(track->type() == TrackBase::TextTrack);
+    ASSERT_WITH_SECURITY_IMPLICATION(track->type() == TrackBase::TextTrack);
     return static_cast<TextTrack*>(track);
 }
 
