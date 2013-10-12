@@ -137,8 +137,11 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
     ASSERT(tagName.localName().impl());
 }
 
+template <typename Type> bool isElementOfType(const HTMLElement*);
+
 inline bool isHTMLElement(const Node& node) { return node.isHTMLElement(); }
 template <> inline bool isElementOfType<HTMLElement>(const Element* element) { return element->isHTMLElement(); }
+template <> inline bool isElementOfType<HTMLElement>(const HTMLElement*) { return true; }
 
 ELEMENT_TYPE_CASTS(HTMLElement)
 

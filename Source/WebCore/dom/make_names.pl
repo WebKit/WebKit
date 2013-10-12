@@ -627,21 +627,41 @@ sub printTypeHelpers
         my $checkHelper = "is$class";
 
         print F "class $class;\n";
-        if ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
-            # We need to check for HTMLUnknownElement if it might have been created by the factory.
-            print F <<END
+
+        if ($parameters{namespace} eq "HTML") {
+            if ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable}) {
+                # We need to check for HTMLUnknownElement if it might have been created by the factory.
+                print F <<END
 inline bool $checkHelper(const HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasLocalName($parameters{namespace}Names::${name}Tag); }
 inline bool $checkHelper(const HTMLElement* element) { return $checkHelper(*element); }
-inline bool $checkHelper(const Element& element) { return isHTMLElement(element) && $checkHelper(toHTMLElement(element)); }
+END
+                ;
+            } else {
+                print F <<END
+inline bool $checkHelper(const HTMLElement& element) { return element.hasLocalName(HTMLNames::${name}Tag); }
+inline bool $checkHelper(const HTMLElement* element) { return $checkHelper(*element); }
+END
+                ;
+            }
+
+                print F <<END
+inline bool $checkHelper(const Node& node) { return node.isHTMLElement() && $checkHelper(toHTMLElement(node)); }
+inline bool $checkHelper(const Node* node) { ASSERT(node); return $checkHelper(*node); }
+template <> inline bool isElementOfType<$class>(const HTMLElement* element) { return $checkHelper(element); }
+template <> inline bool isElementOfType<$class>(const Element* element) { return $checkHelper(element); }
+END
+                ;
+
+        } else {
+            print F <<END
+inline bool $checkHelper(const Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }
+inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }
+inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }
+inline bool $checkHelper(const Node& node) { return node.isElementNode() && $checkHelper(toElement(node)); }
+template <> inline bool isElementOfType<$class>(const Element* element) { return $checkHelper(element); }
 END
             ;
-        } else {
-            print F "inline bool $checkHelper(const Element& element) { return element.hasTagName($parameters{namespace}Names::${name}Tag); }\n";
         }
-        print F "inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }\n";
-        print F "inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }\n";
-        print F "inline bool $checkHelper(const Node& node) { return node.isElementNode() && $checkHelper(toElement(node)); }\n";
-        print F "template <> inline bool isElementOfType<$class>(const Element* element) { return $checkHelper(element); }\n";
 
         print F "\n";
     }
