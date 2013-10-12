@@ -42,7 +42,7 @@ NetworkStorageSession::NetworkStorageSession(SoupSession* session)
 static std::unique_ptr<NetworkStorageSession>& defaultSession()
 {
     ASSERT(isMainThread());
-    NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
     return session;
 }
 

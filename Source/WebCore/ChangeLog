@@ -1,3 +1,14 @@
+2013-10-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Soup] The NeverDestroyed<std::unique_ptr<NetworkStorageSession>> variable in defaultSession() should be static
+        https://bugs.webkit.org/show_bug.cgi?id=122700
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::defaultSession): The NeverDestroyed variable should be static to avoid its reinitialization every time
+        the function is called. This was exposed by r157337 and should fix the subsequent crashes.
+
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
         Move line dirtying code to RenderTextLineBoxes
