@@ -67,7 +67,7 @@ public:
             : m_kind(other.m_kind)
             , m_data(std::move(other.m_data))
             , m_namespaceURI(std::move(other.m_namespaceURI))
-            , m_mergedPredicates(std::move(m_mergedPredicates))
+            , m_mergedPredicates(std::move(other.m_mergedPredicates))
         {
         }
         NodeTest& operator=(NodeTest&& other)
@@ -75,7 +75,7 @@ public:
             m_kind = other.m_kind;
             m_data = std::move(other.m_data);
             m_namespaceURI = std::move(other.m_namespaceURI);
-            m_mergedPredicates = std::move(m_mergedPredicates);
+            m_mergedPredicates = std::move(other.m_mergedPredicates);
             return *this;
         }
 #endif

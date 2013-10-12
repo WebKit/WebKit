@@ -1,3 +1,15 @@
+2013-10-11  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Fix for fast/xpath test regressions caused by r157205.
+        https://bugs.webkit.org/show_bug.cgi?id=122658.
+
+        Reviewed by Darin Adler.
+
+        * xml/XPathStep.h:
+        (WebCore::XPath::Step::NodeTest::NodeTest):
+        (WebCore::XPath::Step::NodeTest::operator=):
+        We were incorrectly setting the predicate list to null instead of the predicate list of the NodeTest being passed in.
+
 2013-10-11  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Use the floatingObject's logical coordinates to determine its size in computeLogicalLocationForFloat
