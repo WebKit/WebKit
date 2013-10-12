@@ -1659,12 +1659,13 @@ int RenderText::caretMaxOffset() const
     return maxOffset;
 }
 
-unsigned RenderText::renderedTextLength() const
+bool RenderText::hasRenderedText() const
 {
-    int l = 0;
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        l += box->len();
-    return l;
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (box->len())
+            return true;
+    }
+    return false;
 }
 
 int RenderText::previousOffset(int current) const
