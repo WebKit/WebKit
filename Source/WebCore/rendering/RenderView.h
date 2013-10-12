@@ -149,7 +149,7 @@ public:
 
     // Returns true if layoutState should be used for its cached offset and clip.
     bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
-    LayoutState* layoutState() const { return m_layoutState; }
+    LayoutState* layoutState() const { return m_layoutState.get(); }
 
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) OVERRIDE;
 
@@ -256,7 +256,7 @@ private:
 #endif
             ) {
             pushLayoutStateForCurrentFlowThread(renderer);
-            m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, pageHeightChanged, colInfo);
+            m_layoutState = std::make_unique<LayoutState>(std::move(m_layoutState), renderer, offset, pageHeight, pageHeightChanged, colInfo);
             return true;
         }
         return false;
@@ -264,9 +264,7 @@ private:
 
     void popLayoutState()
     {
-        LayoutState* state = m_layoutState;
-        m_layoutState = state->m_next;
-        state->destroy(renderArena());
+        m_layoutState = std::move(m_layoutState->m_next);
         popLayoutStateForCurrentFlowThread();
     }
 
@@ -324,7 +322,7 @@ private:
     OwnPtr<ImageQualityController> m_imageQualityController;
     LayoutUnit m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
-    LayoutState* m_layoutState;
+    std::unique_ptr<LayoutState> m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class RenderArena;
 class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
@@ -55,7 +54,6 @@ public:
 #endif
         , m_columnInfo(nullptr)
         , m_lineGrid(nullptr)
-        , m_next(nullptr)
 #if ENABLE(CSS_SHAPES)
         , m_shapeInsideInfo(nullptr)
 #endif
@@ -66,16 +64,8 @@ public:
     {
     }
 
-    LayoutState(LayoutState*, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
+    LayoutState(std::unique_ptr<LayoutState> state, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
     explicit LayoutState(RenderObject*);
-
-    void destroy(RenderArena&);
-
-    // Overloaded new operator.
-    void* operator new(size_t, RenderArena&);
-
-    // Overridden to prevent the normal delete from being called.
-    void operator delete(void*, size_t);
 
     void clearPaginationInformation();
     bool isPaginatingColumns() const { return m_columnInfo && m_columnInfo->paginationUnit() == ColumnInfo::Column; }
@@ -102,9 +92,6 @@ public:
     ShapeInsideInfo* shapeInsideInfo() const { return m_shapeInsideInfo; }
 #endif
 private:
-    // The normal operator new is disallowed.
-    void* operator new(size_t) throw();
-
     void propagateLineGridInfo(RenderBox*);
     void establishLineGrid(RenderBlockFlow*);
 
@@ -125,7 +112,7 @@ public:
     ColumnInfo* m_columnInfo;
     // The current line grid that we're snapping to and the offset of the start of the grid.
     RenderBlockFlow* m_lineGrid;
-    LayoutState* m_next;
+    std::unique_ptr<LayoutState> m_next;
 #if ENABLE(CSS_SHAPES)
     ShapeInsideInfo* m_shapeInsideInfo;
 #endif

@@ -1,3 +1,13 @@
+2013-10-11  Andreas Kling  <akling@apple.com>
+
+        Make LayoutState not arena-allocated.
+        <https://webkit.org/b/122649>
+
+        Reviewed by Antti Koivisto.
+
+        Let RenderView own a singly-linked chain of LayoutState objects
+        managed by unique_ptr.
+
 2013-10-10  Andreas Kling  <akling@apple.com>
 
         Make RenderLayer not arena-allocated.
