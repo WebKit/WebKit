@@ -1,3 +1,29 @@
+2013-10-10  Andreas Kling  <akling@apple.com>
+
+        Make RenderLayer not arena-allocated.
+        <https://webkit.org/b/87523>
+
+        Reviewed by Antti Koivisto.
+
+        Let RenderLayerModelObject store its RenderLayer in a unique_ptr.
+        Layers are relatively low-volume objects and this looks neutral
+        on our performance tests.
+
+        Re-landing this since the original commit exposed a problem with
+        the destruction order. This pattern:
+
+            m_someRenderer->destroy();
+            m_someRenderer = nullptr;
+
+        ..is different from what we get with unique_ptr, which clears
+        the pointer storage before calling the destructor.
+        I believe that the new order is strictly better as it removes
+        one path to accessing an object that is undergoing destruction.
+
+        The exposed bug was in RLC::fixedRootBackgroundLayerChanged()
+        where we were dereferencing the RenderView's layer() without
+        checking, despite it being called below ~RenderLayer.
+
 2013-10-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Move firstPositiveWidth/adjustLogicalLineTop functions where they're actually used

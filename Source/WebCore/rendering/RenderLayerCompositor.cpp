@@ -1336,6 +1336,9 @@ void RenderLayerCompositor::scrollingLayerDidChange(RenderLayer& layer)
 
 void RenderLayerCompositor::fixedRootBackgroundLayerChanged()
 {
+    if (m_renderView.documentBeingDestroyed())
+        return;
+
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         RenderLayerBacking* renderViewBacking = m_renderView.layer()->backing();
         if (!renderViewBacking)

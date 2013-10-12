@@ -38,7 +38,7 @@ public:
     void destroyLayer();
 
     bool hasSelfPaintingLayer() const;
-    RenderLayer* layer() const { return m_layer; }
+    RenderLayer* layer() const { return m_layer.get(); }
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
@@ -56,7 +56,7 @@ protected:
     virtual void willBeDestroyed() OVERRIDE;
 
 private:
-    RenderLayer* m_layer;
+    std::unique_ptr<RenderLayer> m_layer;
 
     // Used to store state between styleWillChange and styleDidChange
     static bool s_wasFloating;
