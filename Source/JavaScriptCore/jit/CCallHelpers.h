@@ -949,8 +949,8 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3)
     {
-        move(arg1, GPRInfo::argumentGPR1);
         move(arg2, GPRInfo::argumentGPR2);
+        move(arg1, GPRInfo::argumentGPR1);
         move(arg3, GPRInfo::argumentGPR3);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
