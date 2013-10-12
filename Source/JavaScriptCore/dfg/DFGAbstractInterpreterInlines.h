@@ -568,6 +568,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case Int32Use:
             case NumberUse:
             case UntypedUse:
+            case StringUse:
                 break;
             case ObjectOrOtherUse:
                 node->setCanExit(true);

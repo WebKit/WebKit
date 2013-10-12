@@ -2040,7 +2040,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         jsValueResult(resultGPR, node, DataFormatJSBoolean, UseChildrenCalledExplicitly);
         return;
     }
-        
+    case StringUse:
+        return compileStringZeroLength(node);
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;

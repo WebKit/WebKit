@@ -1981,6 +1981,8 @@ public:
     void compileLogicalNot(Node*);
     void compileStringEquality(Node*);
     void compileStringIdentEquality(Node*);
+    void compileStringZeroLength(Node*);
+
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);
     

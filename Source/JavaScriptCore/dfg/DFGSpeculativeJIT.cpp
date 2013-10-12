@@ -4167,6 +4167,28 @@ void SpeculativeJIT::compileStringIdentEquality(Node* node)
 #endif
 }
 
+void SpeculativeJIT::compileStringZeroLength(Node* node)
+{
+    SpeculateCellOperand str(this, node->child1());
+    GPRReg strGPR = str.gpr();
+
+    // Make sure that this is a string.
+    speculateString(node->child1(), strGPR);
+
+    GPRTemporary eq(this);
+    GPRReg eqGPR = eq.gpr();
+
+    // Fetch the length field from the string object.
+    m_jit.test32(MacroAssembler::Zero, MacroAssembler::Address(strGPR, JSString::offsetOfLength()), MacroAssembler::TrustedImm32(-1), eqGPR);
+
+#if USE(JSVALUE64)
+    m_jit.or32(TrustedImm32(ValueFalse), eqGPR);
+    jsValueResult(eqGPR, node, DataFormatJSBoolean);
+#else
+    booleanResult(eqGPR, node);
+#endif
+}
+
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());

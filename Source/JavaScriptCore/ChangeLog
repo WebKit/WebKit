@@ -1,3 +1,22 @@
+2013-10-11  Nadav Rotem  <nrotem@apple.com>
+
+        DFG: Add JIT support for  LogicalNot(String/StringIdent)
+        https://bugs.webkit.org/show_bug.cgi?id=122627
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+
 2013-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         sunspider-1.0/math-spectral-norm.js.dfg-eager occasionally fails with Trap 5 (i.e int $3)

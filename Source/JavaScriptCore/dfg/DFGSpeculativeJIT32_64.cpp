@@ -1658,7 +1658,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         booleanResult(resultPayloadGPR, node, UseChildrenCalledExplicitly);
         return;
     }
-        
+    case StringUse:
+        return compileStringZeroLength(node);
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
