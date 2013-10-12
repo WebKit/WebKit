@@ -1341,28 +1341,6 @@ inline const InlineIterator& RenderBlockFlow::restartLayoutRunsAndFloatsInRange(
 }
 
 #if ENABLE(CSS_SHAPES)
-static inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
-{
-    for (size_t i = 0; i < wordMeasurements.size(); ++i) {
-        if (wordMeasurements[i].width > 0)
-            return wordMeasurements[i].width;
-    }
-    return 0;
-}
-
-static inline LayoutUnit adjustLogicalLineTop(ShapeInsideInfo* shapeInsideInfo, InlineIterator start, InlineIterator end, const WordMeasurements& wordMeasurements)
-{
-    if (!shapeInsideInfo || end != start)
-        return 0;
-
-    float minWidth = firstPositiveWidth(wordMeasurements);
-    ASSERT(minWidth || wordMeasurements.isEmpty());
-    if (minWidth > 0 && shapeInsideInfo->adjustLogicalLineTop(minWidth))
-        return shapeInsideInfo->logicalLineTop();
-
-    return shapeInsideInfo->shapeLogicalBottom();
-}
-
 static inline void pushShapeContentOverflowBelowTheContentBox(RenderBlockFlow* block, ShapeInsideInfo* shapeInsideInfo, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     ASSERT(shapeInsideInfo);
@@ -1474,6 +1452,28 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
 
     if (currentRegion->isLastRegion())
         pushShapeContentOverflowBelowTheContentBox(this, shapeInsideInfo, lineTop, lineHeight);
+}
+
+static inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
+{
+    for (size_t i = 0; i < wordMeasurements.size(); ++i) {
+        if (wordMeasurements[i].width > 0)
+            return wordMeasurements[i].width;
+    }
+    return 0;
+}
+
+static inline LayoutUnit adjustLogicalLineTop(ShapeInsideInfo* shapeInsideInfo, InlineIterator start, InlineIterator end, const WordMeasurements& wordMeasurements)
+{
+    if (!shapeInsideInfo || end != start)
+        return 0;
+
+    float minWidth = firstPositiveWidth(wordMeasurements);
+    ASSERT(minWidth || wordMeasurements.isEmpty());
+    if (minWidth > 0 && shapeInsideInfo->adjustLogicalLineTop(minWidth))
+        return shapeInsideInfo->logicalLineTop();
+
+    return shapeInsideInfo->shapeLogicalBottom();
 }
 
 bool RenderBlockFlow::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* shapeInsideInfo, LayoutUnit absoluteLogicalTop, LineLayoutState& layoutState, InlineBidiResolver& resolver, FloatingObject* lastFloatFromPreviousLine, InlineIterator& end, WordMeasurements& wordMeasurements)

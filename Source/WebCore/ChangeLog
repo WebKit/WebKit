@@ -1,3 +1,19 @@
+2013-10-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move firstPositiveWidth/adjustLogicalLineTop functions where they're actually used
+        https://bugs.webkit.org/show_bug.cgi?id=122685
+
+        Reviewed by Darin Adler.
+
+        I'm working on the refactoring of RenderBlockLineLayout, progress tracked under bug #121261. For the better readability, I moved
+        firstPositiveWidth and adjustLogicalLineTop functions above pushShapeContentOverflowBelowTheContentBox, where these're actually used.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::firstPositiveWidth):
+        (WebCore::adjustLogicalLineTop):
+
 2013-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract an iterator/resolver class from calculateAdjustedNodes
