@@ -1,3 +1,20 @@
+2013-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dramatically simplify calculateAdjustedNodes
+        https://bugs.webkit.org/show_bug.cgi?id=122680
+
+        Reviewed by Antti Koivisto.
+
+        Without insertion points, we never have to worry about entering a shadow DOM we've already climbed out of.
+        Deleted the logic to deal with insertion points in calculateAdjustedNodes accordingly.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventPath::EventPath):
+        (WebCore::calculateAdjustedNodes):
+        (WebCore::updateTouchListsInEventPath):
+        (WebCore::EventPath::updateTouchLists):
+        (WebCore::EventPath::setRelatedTarget):
+
 2013-10-11  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Fix for fast/xpath test regressions caused by r157205.

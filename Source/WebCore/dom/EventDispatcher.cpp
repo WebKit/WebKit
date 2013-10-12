@@ -103,7 +103,6 @@ public:
 
 private:
     Vector<std::unique_ptr<EventContext>, 32> m_path;
-    RefPtr<Node> m_origin;
 };
 
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
@@ -326,7 +325,6 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 }
 
 EventPath::EventPath(Node& targetNode, Event& event)
-    : m_origin(&targetNode)
 {
     bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
@@ -361,83 +359,41 @@ EventPath::EventPath(Node& targetNode, Event& event)
     }
 }
 
-static void buildRelatedNodeMap(const Node* relatedNode, HashMap<TreeScope*, Node*>& relatedNodeMap)
+static size_t calculateAdjustedNodes(Node* relatedNode, const EventPath& eventPath, Vector<RefPtr<Node>>& adjustedNodes)
 {
-    Node* relatedNodeInCurrentTree = 0;
-    TreeScope* lastTreeScope = 0;
-    for (Node* node = nodeOrHostIfPseudoElement(const_cast<Node*>(relatedNode)); node; node = node->parentOrShadowHostNode()) {
-        if (!relatedNodeInCurrentTree)
-            relatedNodeInCurrentTree = node;
-        TreeScope* scope = &node->treeScope();
-        // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
-        if (scope != lastTreeScope)
-            relatedNodeMap.add(scope, relatedNodeInCurrentTree);
-        lastTreeScope = scope;
-        if (node->isShadowRoot()) {
-            ASSERT(relatedNodeInCurrentTree);
-            relatedNodeInCurrentTree = 0;
-        }
-    }
-}
-
-static Node* addRelatedNodeForUnmapedTreeScopes(TreeScope* scope, HashMap<TreeScope*, Node*>& relatedNodeMap)
-{
-    Node* relatedNode = 0;
-    TreeScope* endScope = 0;
-    for (TreeScope* currentScope = scope; currentScope; currentScope = currentScope->parentTreeScope()) {
-        auto result = relatedNodeMap.find(currentScope);
-        if (result != relatedNodeMap.end()) {
-            relatedNode = result->value;
-            endScope = currentScope;
-            break;
-        }
-    }
-    for (TreeScope* currentScope = scope; currentScope != endScope; currentScope = currentScope->parentTreeScope())
-        relatedNodeMap.add(currentScope, relatedNode);
-    return relatedNode;
-}
-
-enum EventWithRelatedTargetDispatchBehavior {
-    StopAtBoundaryIfNeeded,
-    DoesNotStopAtBoundary
-};
-static size_t calculateAdjustedNodes(const Node* node, const Node* relatedNode, EventWithRelatedTargetDispatchBehavior eventWithRelatedTargetDispatchBehavior, const EventPath& eventPath, Vector<RefPtr<Node>>& adjustedNodes)
-{
-    HashMap<TreeScope*, Node*> relatedNodeMap;
-    buildRelatedNodeMap(relatedNode, relatedNodeMap);
-
-    // Synthetic mouse events can have a relatedTarget which is identical to the target.
-    bool targetIsIdenticalToToRelatedTarget = (node == relatedNode);
+    TreeScope& relatedNodeTreeScope = relatedNode->treeScope();
 
     TreeScope* lastTreeScope = 0;
-    Node* adjustedNode = 0;
+    Node* relatedNodeInCurrentTreeScope = 0;
     size_t eventPathSize = eventPath.size();
     for (size_t i = 0; i < eventPathSize; i++) {
-        const EventContext& context = eventPath.contextAt(i);
-        TreeScope* scope = &context.node()->treeScope();
+        Node* currentTarget = eventPath.contextAt(i).node();
+        TreeScope* currentTreeScope = &currentTarget->treeScope();
 
         // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
-        if (scope != lastTreeScope)
-            adjustedNode = addRelatedNodeForUnmapedTreeScopes(scope, relatedNodeMap);
-        adjustedNodes.append(adjustedNode);
+        if (currentTreeScope != lastTreeScope) {
+            if (lastTreeScope) {
+                ASSERT(lastTreeScope->rootNode()->isShadowRoot());
+                ASSERT(currentTarget == toShadowRoot(lastTreeScope->rootNode())->hostElement());
+                ASSERT(lastTreeScope->parentTreeScope() == currentTreeScope);
+            }
 
-        lastTreeScope = scope;
-        if (eventWithRelatedTargetDispatchBehavior == DoesNotStopAtBoundary)
-            continue;
-        if (targetIsIdenticalToToRelatedTarget) {
-            if (node->treeScope().rootNode() == context.node())
-                return i + 1;
-        } else if (context.target() == adjustedNode) {
-            // Event dispatching should be stopped here.
-            adjustedNodes.shrink(adjustedNodes.size() - 1);
-            return i;
+            if (relatedNodeInCurrentTreeScope) { // relatedNode is under the last tree scope
+                ASSERT(lastTreeScope);
+                relatedNodeInCurrentTreeScope = currentTarget;
+            } else if (currentTreeScope == &relatedNodeTreeScope) // relatedNode is in the current tree scope;
+                relatedNodeInCurrentTreeScope = relatedNode;
+            // Otherwise, we haven't reached the tree scope that contains relatedNode yet.
+
+            lastTreeScope = currentTreeScope;
         }
+        adjustedNodes.append(relatedNodeInCurrentTreeScope);
     }
     return eventPathSize;
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static void updateTouchListsInEventPath(Vector<RefPtr<TouchList>>& touchListsInEventPath, const Node* node, const TouchList* touchList, const EventPath& eventPath)
+static void updateTouchListsInEventPath(Vector<RefPtr<TouchList>>& touchListsInEventPath, const TouchList* touchList, const EventPath& eventPath)
 {
     if (!touchList)
         return;
@@ -447,7 +403,7 @@ static void updateTouchListsInEventPath(Vector<RefPtr<TouchList>>& touchListsInE
         const Touch& touch = *touchList->item(i);
 
         Vector<RefPtr<Node>> adjustedNodes;
-        calculateAdjustedNodes(node, touch.target()->toNode(), DoesNotStopAtBoundary, eventPath, adjustedNodes);
+        calculateAdjustedNodes(touch.target()->toNode(), eventPath, adjustedNodes);
 
         ASSERT(adjustedNodes.size() == eventPathSize);
         for (size_t j = 0; j < eventPathSize; ++j)
@@ -470,9 +426,9 @@ void EventPath::updateTouchLists(const TouchEvent& touchEvent)
         changedTouchesInEventPath[i] = context.changedTouches();
     }
 
-    updateTouchListsInEventPath(touchesInEventPath, m_origin.get(), touchEvent.touches(), *this);
-    updateTouchListsInEventPath(targetTouchesInEventPath, m_origin.get(), touchEvent.targetTouches(), *this);
-    updateTouchListsInEventPath(changedTouchesInEventPath, m_origin.get(), touchEvent.changedTouches(), *this);
+    updateTouchListsInEventPath(touchesInEventPath, touchEvent.touches(), *this);
+    updateTouchListsInEventPath(targetTouchesInEventPath, touchEvent.targetTouches(), *this);
+    updateTouchListsInEventPath(changedTouchesInEventPath, touchEvent.changedTouches(), *this);
 }
 #endif
 
@@ -482,7 +438,7 @@ void EventPath::setRelatedTarget(EventTarget& relatedTarget)
     if (!relatedNode)
         return;
     Vector<RefPtr<Node>> adjustedNodes;
-    m_path.shrink(calculateAdjustedNodes(m_origin.get(), relatedNode, StopAtBoundaryIfNeeded, *this, adjustedNodes));
+    m_path.shrink(calculateAdjustedNodes(relatedNode, *this, adjustedNodes));
     ASSERT(adjustedNodes.size() <= m_path.size());
     for (size_t i = 0; i < adjustedNodes.size(); ++i)
         toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(adjustedNodes[i]);
