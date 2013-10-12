@@ -1,5 +1,14 @@
 2013-10-12  Julien Brianceau  <jbriance@cisco.com>
 
+        [sh4] Add missing spaces in JITStubsSH4.h
+        https://bugs.webkit.org/show_bug.cgi?id=122690
+
+        Reviewed by Andreas Kling.
+
+        * jit/JITStubsSH4.h: Space between string concatenation is mandatory with C++11
+
+2013-10-12  Julien Brianceau  <jbriance@cisco.com>
+
         [sh4] Add missing test32 implementation in macro assembler.
         https://bugs.webkit.org/show_bug.cgi?id=122689
 
