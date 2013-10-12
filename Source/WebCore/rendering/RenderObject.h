@@ -669,8 +669,8 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
-    VisiblePosition createVisiblePosition(int offset, EAffinity);
-    VisiblePosition createVisiblePosition(const Position&);
+    VisiblePosition createVisiblePosition(int offset, EAffinity) const;
+    VisiblePosition createVisiblePosition(const Position&) const;
 
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;

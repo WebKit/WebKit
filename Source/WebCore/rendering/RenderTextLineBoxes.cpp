@@ -27,6 +27,7 @@
 #include "RenderTextLineBoxes.h"
 
 #include "InlineTextBox.h"
+#include "RenderBlock.h"
 #include "RenderStyle.h"
 #include "RootInlineBox.h"
 
@@ -224,6 +225,170 @@ int RenderTextLineBoxes::caretMaxOffset(const RenderText& renderer) const
     return maxOffset;
 }
 
+enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
+
+static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineTextBox& box, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)
+{
+    shouldAffinityBeDownstream = AlwaysDownstream;
+
+    // the x coordinate is equal to the left edge of this box
+    // the affinity must be downstream so the position doesn't jump back to the previous line
+    // except when box is the first box in the line
+    if (pointLineDirection <= box.logicalLeft()) {
+        shouldAffinityBeDownstream = !box.prevLeafChild() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
+        return true;
+    }
+
+    // and the x coordinate is to the left of the right edge of this box
+    // check to see if position goes in this box
+    if (pointLineDirection < box.logicalRight()) {
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
+        return true;
+    }
+
+    // box is first on line
+    // and the x coordinate is to the left of the first text box left edge
+    if (!box.prevLeafChildIgnoringLineBreak() && pointLineDirection < box.logicalLeft())
+        return true;
+
+    if (!box.nextLeafChildIgnoringLineBreak()) {
+        // box is last on line
+        // and the x coordinate is to the right of the last text box right edge
+        // generate VisiblePosition, use UPSTREAM affinity if possible
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
+        return true;
+    }
+
+    return false;
+}
+
+static VisiblePosition createVisiblePositionForBox(const InlineBox& box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    EAffinity affinity = VP_DEFAULT_AFFINITY;
+    switch (shouldAffinityBeDownstream) {
+    case AlwaysDownstream:
+        affinity = DOWNSTREAM;
+        break;
+    case AlwaysUpstream:
+        affinity = VP_UPSTREAM_IF_POSSIBLE;
+        break;
+    case UpstreamIfPositionIsNotAtStart:
+        affinity = offset > box.caretMinOffset() ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        break;
+    }
+    return box.renderer().createVisiblePosition(offset, affinity);
+}
+
+static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const InlineTextBox& box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    ASSERT(offset >= 0);
+
+    if (offset && static_cast<unsigned>(offset) < box.len())
+        return createVisiblePositionForBox(box, box.start() + offset, shouldAffinityBeDownstream);
+
+    bool positionIsAtStartOfBox = !offset;
+    if (positionIsAtStartOfBox == box.isLeftToRightDirection()) {
+        // offset is on the left edge
+
+        const InlineBox* prevBox = box.prevLeafChildIgnoringLineBreak();
+        if ((prevBox && prevBox->bidiLevel() == box.bidiLevel())
+            || box.renderer().containingBlock()->style()->direction() == box.direction()) // FIXME: left on 12CBA
+            return createVisiblePositionForBox(box, box.caretLeftmostOffset(), shouldAffinityBeDownstream);
+
+        if (prevBox && prevBox->bidiLevel() > box.bidiLevel()) {
+            // e.g. left of B in aDC12BAb
+            const InlineBox* leftmostBox;
+            do {
+                leftmostBox = prevBox;
+                prevBox = leftmostBox->prevLeafChildIgnoringLineBreak();
+            } while (prevBox && prevBox->bidiLevel() > box.bidiLevel());
+            return createVisiblePositionForBox(*leftmostBox, leftmostBox->caretRightmostOffset(), shouldAffinityBeDownstream);
+        }
+
+        if (!prevBox || prevBox->bidiLevel() < box.bidiLevel()) {
+            // e.g. left of D in aDC12BAb
+            const InlineBox* rightmostBox;
+            const InlineBox* nextBox = &box;
+            do {
+                rightmostBox = nextBox;
+                nextBox = rightmostBox->nextLeafChildIgnoringLineBreak();
+            } while (nextBox && nextBox->bidiLevel() >= box.bidiLevel());
+            return createVisiblePositionForBox(*rightmostBox,
+                box.isLeftToRightDirection() ? rightmostBox->caretMaxOffset() : rightmostBox->caretMinOffset(), shouldAffinityBeDownstream);
+        }
+
+        return createVisiblePositionForBox(box, box.caretRightmostOffset(), shouldAffinityBeDownstream);
+    }
+
+    const InlineBox* nextBox = box.nextLeafChildIgnoringLineBreak();
+    if ((nextBox && nextBox->bidiLevel() == box.bidiLevel())
+        || box.renderer().containingBlock()->style()->direction() == box.direction())
+        return createVisiblePositionForBox(box, box.caretRightmostOffset(), shouldAffinityBeDownstream);
+
+    // offset is on the right edge
+    if (nextBox && nextBox->bidiLevel() > box.bidiLevel()) {
+        // e.g. right of C in aDC12BAb
+        const InlineBox* rightmostBox;
+        do {
+            rightmostBox = nextBox;
+            nextBox = rightmostBox->nextLeafChildIgnoringLineBreak();
+        } while (nextBox && nextBox->bidiLevel() > box.bidiLevel());
+        return createVisiblePositionForBox(*rightmostBox, rightmostBox->caretLeftmostOffset(), shouldAffinityBeDownstream);
+    }
+
+    if (!nextBox || nextBox->bidiLevel() < box.bidiLevel()) {
+        // e.g. right of A in aDC12BAb
+        const InlineBox* leftmostBox;
+        const InlineBox* prevBox = &box;
+        do {
+            leftmostBox = prevBox;
+            prevBox = leftmostBox->prevLeafChildIgnoringLineBreak();
+        } while (prevBox && prevBox->bidiLevel() >= box.bidiLevel());
+        return createVisiblePositionForBox(*leftmostBox,
+            box.isLeftToRightDirection() ? leftmostBox->caretMinOffset() : leftmostBox->caretMaxOffset(), shouldAffinityBeDownstream);
+    }
+
+    return createVisiblePositionForBox(box, box.caretLeftmostOffset(), shouldAffinityBeDownstream);
+}
+
+VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer, const LayoutPoint& point) const
+{
+    if (!m_first || !renderer.textLength())
+        return renderer.createVisiblePosition(0, DOWNSTREAM);
+
+    LayoutUnit pointLineDirection = m_first->isHorizontal() ? point.x() : point.y();
+    LayoutUnit pointBlockDirection = m_first->isHorizontal() ? point.y() : point.x();
+    bool blocksAreFlipped = renderer.style()->isFlippedBlocksWritingMode();
+
+    InlineTextBox* lastBox = nullptr;
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        if (box->isLineBreak() && !box->prevLeafChild() && box->nextLeafChild() && !box->nextLeafChild()->isLineBreak())
+            box = box->nextTextBox();
+
+        auto& rootBox = box->root();
+        LayoutUnit top = std::min(rootBox.selectionTop(), rootBox.lineTop());
+        if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
+            LayoutUnit bottom = rootBox.selectionBottom();
+            if (rootBox.nextRootBox())
+                bottom = std::min(bottom, rootBox.nextRootBox()->lineTop());
+
+            if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
+                ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+                if (lineDirectionPointFitsInBox(pointLineDirection, *box, shouldAffinityBeDownstream))
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(*box, box->offsetForPosition(pointLineDirection), shouldAffinityBeDownstream);
+            }
+        }
+        lastBox = box;
+    }
+
+    if (lastBox) {
+        ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+        lineDirectionPointFitsInBox(pointLineDirection, *lastBox, shouldAffinityBeDownstream);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(*lastBox, lastBox->offsetForPosition(pointLineDirection) + lastBox->start(), shouldAffinityBeDownstream);
+    }
+    return renderer.createVisiblePosition(0, DOWNSTREAM);
+}
+
 void RenderTextLineBoxes::dirtyAll()
 {
     for (auto box = m_first; box; box = box->nextTextBox())
@@ -305,15 +470,9 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
     return dirtiedLines;
 }
 
+inline void RenderTextLineBoxes::checkConsistency() const
+{
 #if !ASSERT_DISABLED
-RenderTextLineBoxes::~RenderTextLineBoxes()
-{
-    ASSERT(!m_first);
-    ASSERT(!m_last);
-}
-
-void RenderTextLineBoxes::checkConsistency() const
-{
 #ifdef CHECK_CONSISTENCY
     const InlineTextBox* prev = nullptr;
     for (auto child = m_first; child; child = child->nextTextBox()) {
@@ -323,6 +482,14 @@ void RenderTextLineBoxes::checkConsistency() const
     }
     ASSERT(prev == m_last);
 #endif
+#endif
+}
+
+#if !ASSERT_DISABLED
+RenderTextLineBoxes::~RenderTextLineBoxes()
+{
+    ASSERT(!m_first);
+    ASSERT(!m_last);
 }
 #endif
 

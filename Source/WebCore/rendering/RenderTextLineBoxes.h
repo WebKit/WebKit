@@ -27,6 +27,7 @@
 #define RenderTextLineBoxes_h
 
 #include "LayoutRect.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 
@@ -56,6 +57,8 @@ public:
     int caretMinOffset() const;
     int caretMaxOffset(const RenderText&) const;
 
+    VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
+
     IntRect boundingBox(const RenderText&) const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
@@ -67,17 +70,12 @@ public:
 #endif
 
 private:
-#if !ASSERT_DISABLED
     void checkConsistency() const;
-#else
-    void checkConsistency() const { }
-#endif
 
     InlineTextBox* m_first;
     InlineTextBox* m_last;
 };
 
 }
-
 
 #endif

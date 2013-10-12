@@ -2497,7 +2497,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     return curr && curr->isBoxModelObject() ? toRenderBoxModelObject(curr) : 0;
 }
 
-VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
+VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity) const
 {
     // If this is a non-anonymous renderer in an editable area, then it's simple.
     if (Node* node = nonPseudoNode()) {
@@ -2521,10 +2521,10 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
     // find a single non-anonymous renderer.
 
     // Find a nearby non-anonymous renderer.
-    RenderObject* child = this;
-    while (RenderObject* parent = child->parent()) {
+    const RenderObject* child = this;
+    while (const RenderElement* parent = child->parent()) {
         // Find non-anonymous content after.
-        RenderObject* renderer = child;
+        const RenderObject* renderer = child;
         while ((renderer = renderer->nextInPreOrder(parent))) {
             if (Node* node = renderer->nonPseudoNode())
                 return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
@@ -2540,8 +2540,8 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         }
 
         // Use the parent itself unless it too is anonymous.
-        if (Node* node = parent->nonPseudoNode())
-            return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+        if (Element* element = parent->nonPseudoElement())
+            return VisiblePosition(firstPositionInOrBeforeNode(element), DOWNSTREAM);
 
         // Repeat at the next level up.
         child = parent;
@@ -2551,7 +2551,7 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
     return VisiblePosition();
 }
 
-VisiblePosition RenderObject::createVisiblePosition(const Position& position)
+VisiblePosition RenderObject::createVisiblePosition(const Position& position) const
 {
     if (position.isNotNull())
         return VisiblePosition(position);
