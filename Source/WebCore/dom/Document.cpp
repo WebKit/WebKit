@@ -5633,10 +5633,6 @@ void Document::didAddTouchEventHandler(Node* handler)
         return;
     }
     if (Page* page = this->page()) {
-#if ENABLE(TOUCH_EVENT_TRACKING)
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingCoordinator->touchEventTargetRectsDidChange(this);
-#endif
         if (m_touchEventTargets->size() == 1)
             page->chrome().client().needTouchEvents(true);
     }
@@ -5660,10 +5656,6 @@ void Document::didRemoveTouchEventHandler(Node* handler)
     Page* page = this->page();
     if (!page)
         return;
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-        scrollingCoordinator->touchEventTargetRectsDidChange(this);
-#endif
     if (m_touchEventTargets->size())
         return;
     for (const Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {

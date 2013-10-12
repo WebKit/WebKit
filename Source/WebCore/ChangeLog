@@ -1,3 +1,13 @@
+2013-10-12  Andreas Kling  <akling@apple.com>
+
+        Remove unused ScrollingCoordinator hooks.
+        <https://webkit.org/b/122701>
+
+        Reviewed by Anders Carlsson.
+
+        Remove leftover ScrollingCoordinator hooks that were only used
+        by the Chromium port.
+
 2013-10-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [Soup] The NeverDestroyed<std::unique_ptr<NetworkStorageSession>> variable in defaultSession() should be static
