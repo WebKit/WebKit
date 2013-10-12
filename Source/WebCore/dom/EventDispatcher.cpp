@@ -102,7 +102,52 @@ public:
     EventContext* lastContextIfExists() { return m_path.isEmpty() ? 0 : m_path.last().get(); }
 
 private:
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchListsInEventPath(const TouchList*, TouchEventContext::TouchListType);
+#endif
+
     Vector<std::unique_ptr<EventContext>, 32> m_path;
+};
+
+class EventRelatedNodeResolver {
+public:
+    EventRelatedNodeResolver(Node& relatedNode)
+        : m_relatedNode(relatedNode)
+        , m_relatedNodeTreeScope(relatedNode.treeScope())
+        , m_relatedNodeInCurrentTreeScope(nullptr)
+        , m_currentTreeScope(nullptr)
+    {
+    }
+
+    Node* moveToParentOrShadowHost(Node& newTarget)
+    {
+        TreeScope& newTreeScope = newTarget.treeScope();
+        if (&newTreeScope == m_currentTreeScope)
+            return m_relatedNodeInCurrentTreeScope;
+
+        if (m_currentTreeScope) {
+            ASSERT(m_currentTreeScope->rootNode()->isShadowRoot());
+            ASSERT(&newTarget == toShadowRoot(m_currentTreeScope->rootNode())->hostElement());
+            ASSERT(m_currentTreeScope->parentTreeScope() == &newTreeScope);
+        }
+
+        if (m_relatedNodeInCurrentTreeScope) { // relatedNode is under the current tree scope
+            ASSERT(m_currentTreeScope);
+            m_relatedNodeInCurrentTreeScope = &newTarget;
+        } else if (&newTreeScope == &m_relatedNodeTreeScope) // relatedNode is in the current tree scope;
+            m_relatedNodeInCurrentTreeScope = &m_relatedNode;
+        // Otherwise, we haven't reached the tree scope that contains relatedNode yet.
+
+        m_currentTreeScope = &newTreeScope;
+
+        return m_relatedNodeInCurrentTreeScope;
+    }
+
+private:
+    Node& m_relatedNode;
+    const TreeScope& m_relatedNodeTreeScope;
+    Node* m_relatedNodeInCurrentTreeScope;
+    TreeScope* m_currentTreeScope;
 };
 
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
@@ -359,76 +404,30 @@ EventPath::EventPath(Node& targetNode, Event& event)
     }
 }
 
-static size_t calculateAdjustedNodes(Node* relatedNode, const EventPath& eventPath, Vector<RefPtr<Node>>& adjustedNodes)
-{
-    TreeScope& relatedNodeTreeScope = relatedNode->treeScope();
-
-    TreeScope* lastTreeScope = 0;
-    Node* relatedNodeInCurrentTreeScope = 0;
-    size_t eventPathSize = eventPath.size();
-    for (size_t i = 0; i < eventPathSize; i++) {
-        Node* currentTarget = eventPath.contextAt(i).node();
-        TreeScope* currentTreeScope = &currentTarget->treeScope();
-
-        // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
-        if (currentTreeScope != lastTreeScope) {
-            if (lastTreeScope) {
-                ASSERT(lastTreeScope->rootNode()->isShadowRoot());
-                ASSERT(currentTarget == toShadowRoot(lastTreeScope->rootNode())->hostElement());
-                ASSERT(lastTreeScope->parentTreeScope() == currentTreeScope);
-            }
-
-            if (relatedNodeInCurrentTreeScope) { // relatedNode is under the last tree scope
-                ASSERT(lastTreeScope);
-                relatedNodeInCurrentTreeScope = currentTarget;
-            } else if (currentTreeScope == &relatedNodeTreeScope) // relatedNode is in the current tree scope;
-                relatedNodeInCurrentTreeScope = relatedNode;
-            // Otherwise, we haven't reached the tree scope that contains relatedNode yet.
-
-            lastTreeScope = currentTreeScope;
-        }
-        adjustedNodes.append(relatedNodeInCurrentTreeScope);
-    }
-    return eventPathSize;
-}
-
 #if ENABLE(TOUCH_EVENTS)
-static void updateTouchListsInEventPath(Vector<RefPtr<TouchList>>& touchListsInEventPath, const TouchList* touchList, const EventPath& eventPath)
+void EventPath::updateTouchListsInEventPath(const TouchList* touchList, TouchEventContext::TouchListType touchListType)
 {
     if (!touchList)
         return;
-    size_t eventPathSize = eventPath.size();
-    ASSERT(touchListsInEventPath.size() == eventPathSize);
     for (size_t i = 0; i < touchList->length(); ++i) {
         const Touch& touch = *touchList->item(i);
 
-        Vector<RefPtr<Node>> adjustedNodes;
-        calculateAdjustedNodes(touch.target()->toNode(), eventPath, adjustedNodes);
-
-        ASSERT(adjustedNodes.size() == eventPathSize);
-        for (size_t j = 0; j < eventPathSize; ++j)
-            touchListsInEventPath[j]->append(touch.cloneWithNewTarget(adjustedNodes[j].get()));
+        ASSERT(touch.target()->toNode());
+        EventRelatedNodeResolver resolver(*touch.target()->toNode());
+        size_t eventPathSize = m_path.size();
+        for (size_t j = 0; j < eventPathSize; ++j) {
+            EventContext& context = *m_path[i];
+            Node* nodeInCurrentTreeScope = resolver.moveToParentOrShadowHost(*context.node());
+            toTouchEventContext(context).touchList(touchListType)->append(touch.cloneWithNewTarget(nodeInCurrentTreeScope));
+        }
     }
 }
 
 void EventPath::updateTouchLists(const TouchEvent& touchEvent)
 {
-    size_t eventPathSize = m_path.size();
-
-    Vector<RefPtr<TouchList>> touchesInEventPath(eventPathSize);
-    Vector<RefPtr<TouchList>> targetTouchesInEventPath(eventPathSize);
-    Vector<RefPtr<TouchList>> changedTouchesInEventPath(eventPathSize);
-
-    for (size_t i = 0; i < eventPathSize; ++i) {
-        TouchEventContext& context = *toTouchEventContext(m_path[i].get());
-        touchesInEventPath[i] = context.touches();
-        targetTouchesInEventPath[i] = context.targetTouches();
-        changedTouchesInEventPath[i] = context.changedTouches();
-    }
-
-    updateTouchListsInEventPath(touchesInEventPath, touchEvent.touches(), *this);
-    updateTouchListsInEventPath(targetTouchesInEventPath, touchEvent.targetTouches(), *this);
-    updateTouchListsInEventPath(changedTouchesInEventPath, touchEvent.changedTouches(), *this);
+    updateTouchListsInEventPath(touchEvent.touches(), TouchEventContext::Touches);
+    updateTouchListsInEventPath(touchEvent.targetTouches(), TouchEventContext::TargetTouches);
+    updateTouchListsInEventPath(touchEvent.changedTouches(), TouchEventContext::ChangedTouches);
 }
 #endif
 
@@ -437,11 +436,12 @@ void EventPath::setRelatedTarget(EventTarget& relatedTarget)
     Node* relatedNode = relatedTarget.toNode();
     if (!relatedNode)
         return;
-    Vector<RefPtr<Node>> adjustedNodes;
-    m_path.shrink(calculateAdjustedNodes(relatedNode, *this, adjustedNodes));
-    ASSERT(adjustedNodes.size() <= m_path.size());
-    for (size_t i = 0; i < adjustedNodes.size(); ++i)
-        toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(adjustedNodes[i]);
+
+    EventRelatedNodeResolver resolver(*relatedNode);
+
+    size_t eventPathSize = m_path.size();
+    for (size_t i = 0; i < eventPathSize; i++)
+        toMouseOrFocusEventContext(*m_path[i]).setRelatedTarget(resolver.moveToParentOrShadowHost(*m_path[i]->node()));
 }
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const

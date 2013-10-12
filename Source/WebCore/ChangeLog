@@ -1,3 +1,24 @@
+2013-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract an iterator/resolver class from calculateAdjustedNodes
+        https://bugs.webkit.org/show_bug.cgi?id=122687
+
+        Reviewed by Darin Adler.
+
+        Extracted EventRelatedNodeResolver out of calculateAdjustedNodes and replaced calls to calculateAdjustedNodes
+        in updateTouchListsInEventPath and setRelatedTarget by the use of this newly added class.
+
+        * dom/EventContext.h: Added some helper functions to TouchEventContext so that updateTouchListsInEventPath
+        could obtain respective TouchList* without having to hard-code the name.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::EventRelatedNodeResolver): Added.
+        (WebCore::EventRelatedNodeResolver::moveToParentOrShadowHost): Extracted from calculateAdjustedNodes.
+        (WebCore::EventPath::updateTouchListsInEventPath): Updated to use EventRelatedNodeResolver. Also made this
+        a member function of EventPath.
+        (WebCore::EventPath::updateTouchLists): Removed local Vectors to TouchList now that updateTouchListsInEventPath
+        can obtain TouchList* on demand.
+        (WebCore::EventPath::setRelatedTarget): Upsed to use EventRelatedNodeResolver.
+
 2013-10-11  Darin Adler  <darin@apple.com>
 
         Change most call sites to call ICU directly instead of through WTF::Unicode
