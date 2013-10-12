@@ -1,3 +1,54 @@
+2013-10-11  Darin Adler  <darin@apple.com>
+
+        Change most call sites to call ICU directly instead of through WTF::Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=122635
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/text/StringHash.h:
+        (WTF::CaseFoldingHash::foldCase): Use u_foldCase instead of WTF::Unicode::foldCase.
+        (WTF::CaseFoldingHash::hash): Added an overload for a StringImpl& because why not.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::lower): Use u_tolower rather than WTF::Unicode::toLower. Also added
+        an assertion to check that the lowercase version is also part of Latin-1. If this
+        is not guaranteed it would be good to know in a debug build at least. Use u_strToLower
+        rather than WTF::Unicode::toLower. Also removed #if USE(ICU_UNICODE) around the
+        locale-specific version.
+        (WTF::StringImpl::upper): Use u_toupper and u_strToUpper, as above.
+        (WTF::StringImpl::foldCase): Use u_tolower and u_strFoldCase, as above.
+        (WTF::equalIgnoringCase): Use u_foldCase instead of WTF::Unicode::foldCase.
+        (WTF::StringImpl::defaultWritingDirection): Use u_charDirection and UCharDirection
+        instead of WTF::Unicode::direction and WTF::Unicode::Direction.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringCase): Use u_memcasecmp instead of WTF::Unicode::umemcasecmp.
+        (WTF::isSpaceOrNewline): Use u_charDirection instead of WTF::Unicode::direction.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::defaultWritingDirection): Use UCharDirection instead of WTF::Unicode::Direction.
+
+        * wtf/unicode/icu/UnicodeIcu.h: Removed almost everything.
+
+        * wtf/unicode/wchar/UnicodeWchar.cpp: Tried to do the right thing in this file, but
+        I did not actually compile it. Also, the implementations here aren't really sufficient
+        to make WebKit work broadly. There are many things that just aren't working with this
+        implementation, such as parsing that uses u_charType to figure out which characters are valid.
+        (unorm_normalize): Added.
+        (u_charDirection): Added.
+        (u_charMirror): Added.
+        (u_charType): Added.
+        (u_getCombiningClass): Added.
+        (u_getIntPropertyValue): Added.
+        (u_memcasecmp): Added.
+        (convertWithFunction): Changed to work with ICU-style status code instead of error bool.
+        (u_strFoldCase): Added.
+        (u_strToLower): Added.
+        (u_strToUpper): Added.
+        * wtf/unicode/wchar/UnicodeWchar.h: Ditto. Later this file should just be named like the
+        real ICU headers so the code can include it the same way it would ICU. But that will be
+        in a future patch.
+
 2013-10-11  Anders Carlsson  <andersca@apple.com>
 
         Remove gesture event support from WebCore

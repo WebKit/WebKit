@@ -57,22 +57,22 @@ template <class Iterator> struct MidpointState {
 // be cached and then used to restart bidi resolution at that position.
 struct BidiStatus {
     BidiStatus()
-        : eor(WTF::Unicode::OtherNeutral)
-        , lastStrong(WTF::Unicode::OtherNeutral)
-        , last(WTF::Unicode::OtherNeutral)
+        : eor(U_OTHER_NEUTRAL)
+        , lastStrong(U_OTHER_NEUTRAL)
+        , last(U_OTHER_NEUTRAL)
     {
     }
 
     // Creates a BidiStatus representing a new paragraph root with a default direction.
-    // Uses TextDirection as it only has two possibilities instead of WTF::Unicode::Direction which has 19.
+    // Uses TextDirection as it only has two possibilities instead of UCharDirection which has at least 19.
     BidiStatus(TextDirection textDirection, bool isOverride)
     {
-        WTF::Unicode::Direction direction = textDirection == LTR ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+        UCharDirection direction = textDirection == LTR ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
         eor = lastStrong = last = direction;
         context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, isOverride);
     }
 
-    BidiStatus(WTF::Unicode::Direction eorDir, WTF::Unicode::Direction lastStrongDir, WTF::Unicode::Direction lastDir, PassRefPtr<BidiContext> bidiContext)
+    BidiStatus(UCharDirection eorDir, UCharDirection lastStrongDir, UCharDirection lastDir, PassRefPtr<BidiContext> bidiContext)
         : eor(eorDir)
         , lastStrong(lastStrongDir)
         , last(lastDir)
@@ -80,24 +80,24 @@ struct BidiStatus {
     {
     }
 
-    WTF::Unicode::Direction eor;
-    WTF::Unicode::Direction lastStrong;
-    WTF::Unicode::Direction last;
+    UCharDirection eor;
+    UCharDirection lastStrong;
+    UCharDirection last;
     RefPtr<BidiContext> context;
 };
 
 class BidiEmbedding {
 public:
-    BidiEmbedding(WTF::Unicode::Direction direction, BidiEmbeddingSource source)
+    BidiEmbedding(UCharDirection direction, BidiEmbeddingSource source)
     : m_direction(direction)
     , m_source(source)
     {
     }
 
-    WTF::Unicode::Direction direction() const { return m_direction; }
+    UCharDirection direction() const { return m_direction; }
     BidiEmbeddingSource source() const { return m_source; }
 private:
-    WTF::Unicode::Direction m_direction;
+    UCharDirection m_direction;
     BidiEmbeddingSource m_source;
 };
 
@@ -112,25 +112,25 @@ inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
 }
 
 struct BidiCharacterRun {
-    BidiCharacterRun(int start, int stop, BidiContext* context, WTF::Unicode::Direction dir)
+    BidiCharacterRun(int start, int stop, BidiContext* context, UCharDirection direction)
         : m_override(context->override())
         , m_next(0)
         , m_start(start)
         , m_stop(stop)
     {
-        if (dir == WTF::Unicode::OtherNeutral)
-            dir = context->dir();
+        if (direction == U_OTHER_NEUTRAL)
+            direction = context->dir();
 
         m_level = context->level();
 
         // add level of run (cases I1 & I2)
         if (m_level % 2) {
-            if (dir == WTF::Unicode::LeftToRight || dir == WTF::Unicode::ArabicNumber || dir == WTF::Unicode::EuropeanNumber)
+            if (direction == U_LEFT_TO_RIGHT || direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER)
                 m_level++;
         } else {
-            if (dir == WTF::Unicode::RightToLeft)
+            if (direction == U_RIGHT_TO_LEFT)
                 m_level++;
-            else if (dir == WTF::Unicode::ArabicNumber || dir == WTF::Unicode::EuropeanNumber)
+            else if (direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER)
                 m_level += 2;
         }
     }
@@ -170,7 +170,7 @@ template <class Iterator, class Run> class BidiResolver {
     WTF_MAKE_NONCOPYABLE(BidiResolver);
 public:
     BidiResolver()
-        : m_direction(WTF::Unicode::OtherNeutral)
+        : m_direction(U_OTHER_NEUTRAL)
         , m_reachedEndOfLine(false)
         , m_emptyRun(true)
         , m_nestedIsolateCount(0)
@@ -194,12 +194,12 @@ public:
     BidiContext* context() const { return m_status.context.get(); }
     void setContext(PassRefPtr<BidiContext> c) { m_status.context = c; }
 
-    void setLastDir(WTF::Unicode::Direction lastDir) { m_status.last = lastDir; }
-    void setLastStrongDir(WTF::Unicode::Direction lastStrongDir) { m_status.lastStrong = lastStrongDir; }
-    void setEorDir(WTF::Unicode::Direction eorDir) { m_status.eor = eorDir; }
+    void setLastDir(UCharDirection lastDir) { m_status.last = lastDir; }
+    void setLastStrongDir(UCharDirection lastStrongDir) { m_status.lastStrong = lastStrongDir; }
+    void setEorDir(UCharDirection eorDir) { m_status.eor = eorDir; }
 
-    WTF::Unicode::Direction dir() const { return m_direction; }
-    void setDir(WTF::Unicode::Direction d) { m_direction = d; }
+    UCharDirection dir() const { return m_direction; }
+    void setDir(UCharDirection d) { m_direction = d; }
 
     const BidiStatus& status() const { return m_status; }
     void setStatus(const BidiStatus s) { m_status = s; }
@@ -213,7 +213,7 @@ public:
     void exitIsolate() { ASSERT(m_nestedIsolateCount >= 1); m_nestedIsolateCount--; }
     bool inIsolate() const { return m_nestedIsolateCount; }
 
-    void embed(WTF::Unicode::Direction, BidiEmbeddingSource);
+    void embed(UCharDirection, BidiEmbeddingSource);
     bool commitExplicitEmbedding();
 
     void createBidiRunsForLine(const Iterator& end, VisualDirectionOverride = NoVisualOverride, bool hardLineBreak = false);
@@ -238,10 +238,10 @@ protected:
     Iterator m_eor; // Points to the last character in the current run.
     Iterator m_last;
     BidiStatus m_status;
-    WTF::Unicode::Direction m_direction;
+    UCharDirection m_direction;
     Iterator endOfLine;
     bool m_reachedEndOfLine;
-    Iterator m_lastBeforeET; // Before a EuropeanNumberTerminator
+    Iterator m_lastBeforeET; // Before a U_EUROPEAN_NUMBER_TERMINATOR
     bool m_emptyRun;
 
     // FIXME: This should not belong to the resolver, but rather be passed
@@ -254,11 +254,11 @@ protected:
     Vector<Run*> m_isolatedRuns;
 
 private:
-    void raiseExplicitEmbeddingLevel(WTF::Unicode::Direction from, WTF::Unicode::Direction to);
-    void lowerExplicitEmbeddingLevel(WTF::Unicode::Direction from);
+    void raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to);
+    void lowerExplicitEmbeddingLevel(UCharDirection from);
     void checkDirectionInLowerRaiseEmbeddingLevel();
 
-    void updateStatusLastFromCurrentDirection(WTF::Unicode::Direction);
+    void updateStatusLastFromCurrentDirection(UCharDirection);
     void reorderRunsFromLevels();
 
     Vector<BidiEmbedding, 8> m_currentExplicitEmbeddingSequence;
@@ -294,64 +294,59 @@ void BidiResolver<Iterator, Run>::appendRun()
         m_sor = m_eor;
     }
 
-    m_direction = WTF::Unicode::OtherNeutral;
-    m_status.eor = WTF::Unicode::OtherNeutral;
+    m_direction = U_OTHER_NEUTRAL;
+    m_status.eor = U_OTHER_NEUTRAL;
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction dir, BidiEmbeddingSource source)
+void BidiResolver<Iterator, Run>::embed(UCharDirection dir, BidiEmbeddingSource source)
 {
     // Isolated spans compute base directionality during their own UBA run.
     // Do not insert fake embed characters once we enter an isolated span.
     ASSERT(!inIsolate());
-    using namespace WTF::Unicode;
 
-    ASSERT(dir == PopDirectionalFormat || dir == LeftToRightEmbedding || dir == LeftToRightOverride || dir == RightToLeftEmbedding || dir == RightToLeftOverride);
+    ASSERT(dir == U_POP_DIRECTIONAL_FORMAT || dir == U_LEFT_TO_RIGHT_EMBEDDING || dir == U_LEFT_TO_RIGHT_OVERRIDE || dir == U_RIGHT_TO_LEFT_EMBEDDING || dir == U_RIGHT_TO_LEFT_OVERRIDE);
     m_currentExplicitEmbeddingSequence.append(BidiEmbedding(dir, source));
 }
 
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::checkDirectionInLowerRaiseEmbeddingLevel()
 {
-    using namespace WTF::Unicode;
-
-    ASSERT(m_status.eor != OtherNeutral || m_eor.atEnd());
-    ASSERT(m_status.last != NonSpacingMark
-        && m_status.last != BoundaryNeutral
-        && m_status.last != RightToLeftEmbedding
-        && m_status.last != LeftToRightEmbedding
-        && m_status.last != RightToLeftOverride 
-        && m_status.last != LeftToRightOverride 
-        && m_status.last != PopDirectionalFormat);
-    if (m_direction == OtherNeutral)
-        m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
+    ASSERT(m_status.eor != U_OTHER_NEUTRAL || m_eor.atEnd());
+    ASSERT(m_status.last != U_DIR_NON_SPACING_MARK
+        && m_status.last != U_BOUNDARY_NEUTRAL
+        && m_status.last != U_RIGHT_TO_LEFT_EMBEDDING
+        && m_status.last != U_LEFT_TO_RIGHT_EMBEDDING
+        && m_status.last != U_RIGHT_TO_LEFT_OVERRIDE 
+        && m_status.last != U_LEFT_TO_RIGHT_OVERRIDE
+        && m_status.last != U_POP_DIRECTIONAL_FORMAT);
+    if (m_direction == U_OTHER_NEUTRAL)
+        m_direction = m_status.lastStrong == U_LEFT_TO_RIGHT ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::lowerExplicitEmbeddingLevel(WTF::Unicode::Direction from)
+void BidiResolver<Iterator, Run>::lowerExplicitEmbeddingLevel(UCharDirection from)
 {
-    using namespace WTF::Unicode;
-
     if (!m_emptyRun && m_eor != m_last) {
         checkDirectionInLowerRaiseEmbeddingLevel();
         // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-        if (from == LeftToRight) {
+        if (from == U_LEFT_TO_RIGHT) {
             // bidi.sor ... bidi.eor ... bidi.last L
-            if (m_status.eor == EuropeanNumber) {
-                if (m_status.lastStrong != LeftToRight) {
-                    m_direction = EuropeanNumber;
+            if (m_status.eor == U_EUROPEAN_NUMBER) {
+                if (m_status.lastStrong != U_LEFT_TO_RIGHT) {
+                    m_direction = U_EUROPEAN_NUMBER;
                     appendRun();
                 }
-            } else if (m_status.eor == ArabicNumber) {
-                m_direction = ArabicNumber;
+            } else if (m_status.eor == U_ARABIC_NUMBER) {
+                m_direction = U_ARABIC_NUMBER;
                 appendRun();
-            } else if (m_status.lastStrong != LeftToRight) {
+            } else if (m_status.lastStrong != U_LEFT_TO_RIGHT) {
                 appendRun();
-                m_direction = LeftToRight;
+                m_direction = U_LEFT_TO_RIGHT;
             }
-        } else if (m_status.eor == EuropeanNumber || m_status.eor == ArabicNumber || m_status.lastStrong == LeftToRight) {
+        } else if (m_status.eor == U_EUROPEAN_NUMBER || m_status.eor == U_ARABIC_NUMBER || m_status.lastStrong == U_LEFT_TO_RIGHT) {
             appendRun();
-            m_direction = RightToLeft;
+            m_direction = U_RIGHT_TO_LEFT;
         }
         m_eor = m_last;
     }
@@ -366,32 +361,30 @@ void BidiResolver<Iterator, Run>::lowerExplicitEmbeddingLevel(WTF::Unicode::Dire
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(WTF::Unicode::Direction from, WTF::Unicode::Direction to)
+void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to)
 {
-    using namespace WTF::Unicode;
-
     if (!m_emptyRun && m_eor != m_last) {
         checkDirectionInLowerRaiseEmbeddingLevel();
         // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-        if (to == LeftToRight) {
+        if (to == U_LEFT_TO_RIGHT) {
             // bidi.sor ... bidi.eor ... bidi.last L
-            if (m_status.eor == EuropeanNumber) {
-                if (m_status.lastStrong != LeftToRight) {
-                    m_direction = EuropeanNumber;
+            if (m_status.eor == U_EUROPEAN_NUMBER) {
+                if (m_status.lastStrong != U_LEFT_TO_RIGHT) {
+                    m_direction = U_EUROPEAN_NUMBER;
                     appendRun();
                 }
-            } else if (m_status.eor == ArabicNumber) {
-                m_direction = ArabicNumber;
+            } else if (m_status.eor == U_ARABIC_NUMBER) {
+                m_direction = U_ARABIC_NUMBER;
                 appendRun();
-            } else if (m_status.lastStrong != LeftToRight && from == LeftToRight) {
+            } else if (m_status.lastStrong != U_LEFT_TO_RIGHT && from == U_LEFT_TO_RIGHT) {
                 appendRun();
-                m_direction = LeftToRight;
+                m_direction = U_LEFT_TO_RIGHT;
             }
-        } else if (m_status.eor == ArabicNumber
-            || (m_status.eor == EuropeanNumber && (m_status.lastStrong != LeftToRight || from == RightToLeft))
-            || (m_status.eor != EuropeanNumber && m_status.lastStrong == LeftToRight && from == RightToLeft)) {
+        } else if (m_status.eor == U_ARABIC_NUMBER
+            || (m_status.eor == U_EUROPEAN_NUMBER && (m_status.lastStrong != U_LEFT_TO_RIGHT || from == U_RIGHT_TO_LEFT))
+            || (m_status.eor != U_EUROPEAN_NUMBER && m_status.lastStrong == U_LEFT_TO_RIGHT && from == U_RIGHT_TO_LEFT)) {
             appendRun();
-            m_direction = RightToLeft;
+            m_direction = U_RIGHT_TO_LEFT;
         }
         m_eor = m_last;
     }
@@ -412,21 +405,19 @@ bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
     // We should never accrue embedding levels while skipping over isolated content.
     ASSERT(!inIsolate() || m_currentExplicitEmbeddingSequence.isEmpty());
 
-    using namespace WTF::Unicode;
-
     unsigned char fromLevel = context()->level();
     RefPtr<BidiContext> toContext = context();
 
     for (size_t i = 0; i < m_currentExplicitEmbeddingSequence.size(); ++i) {
         BidiEmbedding embedding = m_currentExplicitEmbeddingSequence[i];
-        if (embedding.direction() == PopDirectionalFormat) {
+        if (embedding.direction() == U_POP_DIRECTIONAL_FORMAT) {
             if (BidiContext* parentContext = toContext->parent())
                 toContext = parentContext;
         } else {
-            Direction direction = (embedding.direction() == RightToLeftEmbedding || embedding.direction() == RightToLeftOverride) ? RightToLeft : LeftToRight;
-            bool override = embedding.direction() == LeftToRightOverride || embedding.direction() == RightToLeftOverride;
+            UCharDirection direction = (embedding.direction() == U_RIGHT_TO_LEFT_EMBEDDING || embedding.direction() == U_RIGHT_TO_LEFT_OVERRIDE) ? U_RIGHT_TO_LEFT : U_LEFT_TO_RIGHT;
+            bool override = embedding.direction() == U_LEFT_TO_RIGHT_OVERRIDE || embedding.direction() == U_RIGHT_TO_LEFT_OVERRIDE;
             unsigned char level = toContext->level();
-            if (direction == RightToLeft)
+            if (direction == U_RIGHT_TO_LEFT)
                 level = nextGreaterOddLevel(level);
             else
                 level = nextGreaterEvenLevel(level);
@@ -438,9 +429,9 @@ bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
     unsigned char toLevel = toContext->level();
 
     if (toLevel > fromLevel)
-        raiseExplicitEmbeddingLevel(fromLevel % 2 ? RightToLeft : LeftToRight, toLevel % 2 ? RightToLeft : LeftToRight);
+        raiseExplicitEmbeddingLevel(fromLevel % 2 ? U_RIGHT_TO_LEFT : U_LEFT_TO_RIGHT, toLevel % 2 ? U_RIGHT_TO_LEFT : U_LEFT_TO_RIGHT);
     else if (toLevel < fromLevel)
-        lowerExplicitEmbeddingLevel(fromLevel % 2 ? RightToLeft : LeftToRight);
+        lowerExplicitEmbeddingLevel(fromLevel % 2 ? U_RIGHT_TO_LEFT : U_LEFT_TO_RIGHT);
 
     setContext(toContext);
 
@@ -450,41 +441,40 @@ bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
 }
 
 template <class Iterator, class Run>
-inline void BidiResolver<Iterator, Run>::updateStatusLastFromCurrentDirection(WTF::Unicode::Direction dirCurrent)
+inline void BidiResolver<Iterator, Run>::updateStatusLastFromCurrentDirection(UCharDirection dirCurrent)
 {
-    using namespace WTF::Unicode;
     switch (dirCurrent) {
-    case EuropeanNumberTerminator:
-        if (m_status.last != EuropeanNumber)
-            m_status.last = EuropeanNumberTerminator;
+    case U_EUROPEAN_NUMBER_TERMINATOR:
+        if (m_status.last != U_EUROPEAN_NUMBER)
+            m_status.last = U_EUROPEAN_NUMBER_TERMINATOR;
         break;
-    case EuropeanNumberSeparator:
-    case CommonNumberSeparator:
-    case SegmentSeparator:
-    case WhiteSpaceNeutral:
-    case OtherNeutral:
+    case U_EUROPEAN_NUMBER_SEPARATOR:
+    case U_COMMON_NUMBER_SEPARATOR:
+    case U_SEGMENT_SEPARATOR:
+    case U_WHITE_SPACE_NEUTRAL:
+    case U_OTHER_NEUTRAL:
         switch (m_status.last) {
-        case LeftToRight:
-        case RightToLeft:
-        case RightToLeftArabic:
-        case EuropeanNumber:
-        case ArabicNumber:
+        case U_LEFT_TO_RIGHT:
+        case U_RIGHT_TO_LEFT:
+        case U_RIGHT_TO_LEFT_ARABIC:
+        case U_EUROPEAN_NUMBER:
+        case U_ARABIC_NUMBER:
             m_status.last = dirCurrent;
             break;
         default:
-            m_status.last = OtherNeutral;
+            m_status.last = U_OTHER_NEUTRAL;
         }
         break;
-    case NonSpacingMark:
-    case BoundaryNeutral:
-    case RightToLeftEmbedding:
-    case LeftToRightEmbedding:
-    case RightToLeftOverride:
-    case LeftToRightOverride:
-    case PopDirectionalFormat:
+    case U_DIR_NON_SPACING_MARK:
+    case U_BOUNDARY_NEUTRAL:
+    case U_RIGHT_TO_LEFT_EMBEDDING:
+    case U_LEFT_TO_RIGHT_EMBEDDING:
+    case U_RIGHT_TO_LEFT_OVERRIDE:
+    case U_LEFT_TO_RIGHT_OVERRIDE:
+    case U_POP_DIRECTIONAL_FORMAT:
         // ignore these
         break;
-    case EuropeanNumber:
+    case U_EUROPEAN_NUMBER:
         // fall through
     default:
         m_status.last = dirCurrent;
@@ -531,9 +521,7 @@ inline void BidiResolver<Iterator, Run>::reorderRunsFromLevels()
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, VisualDirectionOverride override, bool hardLineBreak)
 {
-    using namespace WTF::Unicode;
-
-    ASSERT(m_direction == OtherNeutral);
+    ASSERT(m_direction == U_OTHER_NEUTRAL);
 
     if (override != NoVisualOverride) {
         m_emptyRun = false;
@@ -543,7 +531,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             m_eor = m_current;
             increment();
         }
-        m_direction = override == VisualLeftToRightOverride ? LeftToRight : RightToLeft;
+        m_direction = override == VisualLeftToRightOverride ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
         appendRun();
         m_runs.setLogicallyLastRun(m_runs.lastRun());
         if (override == VisualRightToLeftOverride)
@@ -560,7 +548,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
     BidiResolver<Iterator, Run> stateAtEnd;
 
     while (true) {
-        Direction dirCurrent;
+        UCharDirection dirCurrent;
         if (pastEnd && (hardLineBreak || m_current.atEnd())) {
             BidiContext* c = context();
             if (hardLineBreak) {
@@ -582,81 +570,81 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         } else {
             dirCurrent = m_current.direction();
             if (context()->override()
-                    && dirCurrent != RightToLeftEmbedding
-                    && dirCurrent != LeftToRightEmbedding
-                    && dirCurrent != RightToLeftOverride
-                    && dirCurrent != LeftToRightOverride
-                    && dirCurrent != PopDirectionalFormat)
+                    && dirCurrent != U_RIGHT_TO_LEFT_EMBEDDING
+                    && dirCurrent != U_LEFT_TO_RIGHT_EMBEDDING
+                    && dirCurrent != U_RIGHT_TO_LEFT_OVERRIDE
+                    && dirCurrent != U_LEFT_TO_RIGHT_OVERRIDE
+                    && dirCurrent != U_POP_DIRECTIONAL_FORMAT)
                 dirCurrent = context()->dir();
-            else if (dirCurrent == NonSpacingMark)
+            else if (dirCurrent == U_DIR_NON_SPACING_MARK)
                 dirCurrent = m_status.last;
         }
 
         // We ignore all character directionality while in unicode-bidi: isolate spans.
         // We'll handle ordering the isolated characters in a second pass.
         if (inIsolate())
-            dirCurrent = OtherNeutral;
+            dirCurrent = U_OTHER_NEUTRAL;
 
-        ASSERT(m_status.eor != OtherNeutral || m_eor.atEnd());
+        ASSERT(m_status.eor != U_OTHER_NEUTRAL || m_eor.atEnd());
         switch (dirCurrent) {
 
         // embedding and overrides (X1-X9 in the Bidi specs)
-        case RightToLeftEmbedding:
-        case LeftToRightEmbedding:
-        case RightToLeftOverride:
-        case LeftToRightOverride:
-        case PopDirectionalFormat:
+        case U_RIGHT_TO_LEFT_EMBEDDING:
+        case U_LEFT_TO_RIGHT_EMBEDDING:
+        case U_RIGHT_TO_LEFT_OVERRIDE:
+        case U_LEFT_TO_RIGHT_OVERRIDE:
+        case U_POP_DIRECTIONAL_FORMAT:
             embed(dirCurrent, FromUnicode);
             commitExplicitEmbedding();
             break;
 
         // strong types
-        case LeftToRight:
+        case U_LEFT_TO_RIGHT:
             switch(m_status.last) {
-                case RightToLeft:
-                case RightToLeftArabic:
-                case EuropeanNumber:
-                case ArabicNumber:
-                    if (m_status.last != EuropeanNumber || m_status.lastStrong != LeftToRight)
+                case U_RIGHT_TO_LEFT:
+                case U_RIGHT_TO_LEFT_ARABIC:
+                case U_EUROPEAN_NUMBER:
+                case U_ARABIC_NUMBER:
+                    if (m_status.last != U_EUROPEAN_NUMBER || m_status.lastStrong != U_LEFT_TO_RIGHT)
                         appendRun();
                     break;
-                case LeftToRight:
+                case U_LEFT_TO_RIGHT:
                     break;
-                case EuropeanNumberSeparator:
-                case EuropeanNumberTerminator:
-                case CommonNumberSeparator:
-                case BoundaryNeutral:
-                case BlockSeparator:
-                case SegmentSeparator:
-                case WhiteSpaceNeutral:
-                case OtherNeutral:
-                    if (m_status.eor == EuropeanNumber) {
-                        if (m_status.lastStrong != LeftToRight) {
+                case U_EUROPEAN_NUMBER_SEPARATOR:
+                case U_EUROPEAN_NUMBER_TERMINATOR:
+                case U_COMMON_NUMBER_SEPARATOR:
+                case U_BOUNDARY_NEUTRAL:
+                case U_BLOCK_SEPARATOR:
+                case U_SEGMENT_SEPARATOR:
+                case U_WHITE_SPACE_NEUTRAL:
+                case U_OTHER_NEUTRAL:
+                    if (m_status.eor == U_EUROPEAN_NUMBER) {
+                        if (m_status.lastStrong != U_LEFT_TO_RIGHT) {
                             // the numbers need to be on a higher embedding level, so let's close that run
-                            m_direction = EuropeanNumber;
+                            m_direction = U_EUROPEAN_NUMBER;
                             appendRun();
-                            if (context()->dir() != LeftToRight) {
+                            if (context()->dir() != U_LEFT_TO_RIGHT) {
                                 // the neutrals take the embedding direction, which is R
                                 m_eor = m_last;
-                                m_direction = RightToLeft;
+                                m_direction = U_RIGHT_TO_LEFT;
                                 appendRun();
                             }
                         }
-                    } else if (m_status.eor == ArabicNumber) {
+                    } else if (m_status.eor == U_ARABIC_NUMBER) {
                         // Arabic numbers are always on a higher embedding level, so let's close that run
-                        m_direction = ArabicNumber;
+                        m_direction = U_ARABIC_NUMBER;
                         appendRun();
-                        if (context()->dir() != LeftToRight) {
+                        if (context()->dir() != U_LEFT_TO_RIGHT) {
                             // the neutrals take the embedding direction, which is R
                             m_eor = m_last;
-                            m_direction = RightToLeft;
+                            m_direction = U_RIGHT_TO_LEFT;
                             appendRun();
                         }
-                    } else if (m_status.lastStrong != LeftToRight) {
+                    } else if (m_status.lastStrong != U_LEFT_TO_RIGHT) {
                         //last stuff takes embedding dir
-                        if (context()->dir() == RightToLeft) {
+                        if (context()->dir() == U_RIGHT_TO_LEFT) {
                             m_eor = m_last; 
-                            m_direction = RightToLeft;
+                            m_direction = U_RIGHT_TO_LEFT;
                         }
                         appendRun();
                     }
@@ -664,36 +652,36 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                     break;
             }
             m_eor = m_current;
-            m_status.eor = LeftToRight;
-            m_status.lastStrong = LeftToRight;
-            m_direction = LeftToRight;
+            m_status.eor = U_LEFT_TO_RIGHT;
+            m_status.lastStrong = U_LEFT_TO_RIGHT;
+            m_direction = U_LEFT_TO_RIGHT;
             break;
-        case RightToLeftArabic:
-        case RightToLeft:
+        case U_RIGHT_TO_LEFT_ARABIC:
+        case U_RIGHT_TO_LEFT:
             switch (m_status.last) {
-                case LeftToRight:
-                case EuropeanNumber:
-                case ArabicNumber:
+                case U_LEFT_TO_RIGHT:
+                case U_EUROPEAN_NUMBER:
+                case U_ARABIC_NUMBER:
                     appendRun();
-                case RightToLeft:
-                case RightToLeftArabic:
+                case U_RIGHT_TO_LEFT:
+                case U_RIGHT_TO_LEFT_ARABIC:
                     break;
-                case EuropeanNumberSeparator:
-                case EuropeanNumberTerminator:
-                case CommonNumberSeparator:
-                case BoundaryNeutral:
-                case BlockSeparator:
-                case SegmentSeparator:
-                case WhiteSpaceNeutral:
-                case OtherNeutral:
-                    if (m_status.eor == EuropeanNumber) {
-                        if (m_status.lastStrong == LeftToRight && context()->dir() == LeftToRight)
+                case U_EUROPEAN_NUMBER_SEPARATOR:
+                case U_EUROPEAN_NUMBER_TERMINATOR:
+                case U_COMMON_NUMBER_SEPARATOR:
+                case U_BOUNDARY_NEUTRAL:
+                case U_BLOCK_SEPARATOR:
+                case U_SEGMENT_SEPARATOR:
+                case U_WHITE_SPACE_NEUTRAL:
+                case U_OTHER_NEUTRAL:
+                    if (m_status.eor == U_EUROPEAN_NUMBER) {
+                        if (m_status.lastStrong == U_LEFT_TO_RIGHT && context()->dir() == U_LEFT_TO_RIGHT)
                             m_eor = m_last;
                         appendRun();
-                    } else if (m_status.eor == ArabicNumber)
+                    } else if (m_status.eor == U_ARABIC_NUMBER)
                         appendRun();
-                    else if (m_status.lastStrong == LeftToRight) {
-                        if (context()->dir() == LeftToRight)
+                    else if (m_status.lastStrong == U_LEFT_TO_RIGHT) {
+                        if (context()->dir() == U_LEFT_TO_RIGHT)
                             m_eor = m_last;
                         appendRun();
                     }
@@ -701,148 +689,148 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                     break;
             }
             m_eor = m_current;
-            m_status.eor = RightToLeft;
+            m_status.eor = U_RIGHT_TO_LEFT;
             m_status.lastStrong = dirCurrent;
-            m_direction = RightToLeft;
+            m_direction = U_RIGHT_TO_LEFT;
             break;
 
             // weak types:
 
-        case EuropeanNumber:
-            if (m_status.lastStrong != RightToLeftArabic) {
+        case U_EUROPEAN_NUMBER:
+            if (m_status.lastStrong != U_RIGHT_TO_LEFT_ARABIC) {
                 // if last strong was AL change EN to AN
                 switch (m_status.last) {
-                    case EuropeanNumber:
-                    case LeftToRight:
+                    case U_EUROPEAN_NUMBER:
+                    case U_LEFT_TO_RIGHT:
                         break;
-                    case RightToLeft:
-                    case RightToLeftArabic:
-                    case ArabicNumber:
+                    case U_RIGHT_TO_LEFT:
+                    case U_RIGHT_TO_LEFT_ARABIC:
+                    case U_ARABIC_NUMBER:
                         m_eor = m_last;
                         appendRun();
-                        m_direction = EuropeanNumber;
+                        m_direction = U_EUROPEAN_NUMBER;
                         break;
-                    case EuropeanNumberSeparator:
-                    case CommonNumberSeparator:
-                        if (m_status.eor == EuropeanNumber)
+                    case U_EUROPEAN_NUMBER_SEPARATOR:
+                    case U_COMMON_NUMBER_SEPARATOR:
+                        if (m_status.eor == U_EUROPEAN_NUMBER)
                             break;
-                    case EuropeanNumberTerminator:
-                    case BoundaryNeutral:
-                    case BlockSeparator:
-                    case SegmentSeparator:
-                    case WhiteSpaceNeutral:
-                    case OtherNeutral:
-                        if (m_status.eor == EuropeanNumber) {
-                            if (m_status.lastStrong == RightToLeft) {
+                    case U_EUROPEAN_NUMBER_TERMINATOR:
+                    case U_BOUNDARY_NEUTRAL:
+                    case U_BLOCK_SEPARATOR:
+                    case U_SEGMENT_SEPARATOR:
+                    case U_WHITE_SPACE_NEUTRAL:
+                    case U_OTHER_NEUTRAL:
+                        if (m_status.eor == U_EUROPEAN_NUMBER) {
+                            if (m_status.lastStrong == U_RIGHT_TO_LEFT) {
                                 // ENs on both sides behave like Rs, so the neutrals should be R.
                                 // Terminate the EN run.
                                 appendRun();
                                 // Make an R run.
-                                m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
-                                m_direction = RightToLeft;
+                                m_eor = m_status.last == U_EUROPEAN_NUMBER_TERMINATOR ? m_lastBeforeET : m_last;
+                                m_direction = U_RIGHT_TO_LEFT;
                                 appendRun();
                                 // Begin a new EN run.
-                                m_direction = EuropeanNumber;
+                                m_direction = U_EUROPEAN_NUMBER;
                             }
-                        } else if (m_status.eor == ArabicNumber) {
+                        } else if (m_status.eor == U_ARABIC_NUMBER) {
                             // Terminate the AN run.
                             appendRun();
-                            if (m_status.lastStrong == RightToLeft || context()->dir() == RightToLeft) {
+                            if (m_status.lastStrong == U_RIGHT_TO_LEFT || context()->dir() == U_RIGHT_TO_LEFT) {
                                 // Make an R run.
-                                m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
-                                m_direction = RightToLeft;
+                                m_eor = m_status.last == U_EUROPEAN_NUMBER_TERMINATOR ? m_lastBeforeET : m_last;
+                                m_direction = U_RIGHT_TO_LEFT;
                                 appendRun();
                                 // Begin a new EN run.
-                                m_direction = EuropeanNumber;
+                                m_direction = U_EUROPEAN_NUMBER;
                             }
-                        } else if (m_status.lastStrong == RightToLeft) {
+                        } else if (m_status.lastStrong == U_RIGHT_TO_LEFT) {
                             // Extend the R run to include the neutrals.
-                            m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
-                            m_direction = RightToLeft;
+                            m_eor = m_status.last == U_EUROPEAN_NUMBER_TERMINATOR ? m_lastBeforeET : m_last;
+                            m_direction = U_RIGHT_TO_LEFT;
                             appendRun();
                             // Begin a new EN run.
-                            m_direction = EuropeanNumber;
+                            m_direction = U_EUROPEAN_NUMBER;
                         }
                     default:
                         break;
                 }
                 m_eor = m_current;
-                m_status.eor = EuropeanNumber;
-                if (m_direction == OtherNeutral)
-                    m_direction = LeftToRight;
+                m_status.eor = U_EUROPEAN_NUMBER;
+                if (m_direction == U_OTHER_NEUTRAL)
+                    m_direction = U_LEFT_TO_RIGHT;
                 break;
             }
-        case ArabicNumber:
-            dirCurrent = ArabicNumber;
+        case U_ARABIC_NUMBER:
+            dirCurrent = U_ARABIC_NUMBER;
             switch (m_status.last) {
-                case LeftToRight:
-                    if (context()->dir() == LeftToRight)
+                case U_LEFT_TO_RIGHT:
+                    if (context()->dir() == U_LEFT_TO_RIGHT)
                         appendRun();
                     break;
-                case ArabicNumber:
+                case U_ARABIC_NUMBER:
                     break;
-                case RightToLeft:
-                case RightToLeftArabic:
-                case EuropeanNumber:
+                case U_RIGHT_TO_LEFT:
+                case U_RIGHT_TO_LEFT_ARABIC:
+                case U_EUROPEAN_NUMBER:
                     m_eor = m_last;
                     appendRun();
                     break;
-                case CommonNumberSeparator:
-                    if (m_status.eor == ArabicNumber)
+                case U_COMMON_NUMBER_SEPARATOR:
+                    if (m_status.eor == U_ARABIC_NUMBER)
                         break;
-                case EuropeanNumberSeparator:
-                case EuropeanNumberTerminator:
-                case BoundaryNeutral:
-                case BlockSeparator:
-                case SegmentSeparator:
-                case WhiteSpaceNeutral:
-                case OtherNeutral:
-                    if (m_status.eor == ArabicNumber
-                        || (m_status.eor == EuropeanNumber && (m_status.lastStrong == RightToLeft || context()->dir() == RightToLeft))
-                        || (m_status.eor != EuropeanNumber && m_status.lastStrong == LeftToRight && context()->dir() == RightToLeft)) {
+                case U_EUROPEAN_NUMBER_SEPARATOR:
+                case U_EUROPEAN_NUMBER_TERMINATOR:
+                case U_BOUNDARY_NEUTRAL:
+                case U_BLOCK_SEPARATOR:
+                case U_SEGMENT_SEPARATOR:
+                case U_WHITE_SPACE_NEUTRAL:
+                case U_OTHER_NEUTRAL:
+                    if (m_status.eor == U_ARABIC_NUMBER
+                        || (m_status.eor == U_EUROPEAN_NUMBER && (m_status.lastStrong == U_RIGHT_TO_LEFT || context()->dir() == U_RIGHT_TO_LEFT))
+                        || (m_status.eor != U_EUROPEAN_NUMBER && m_status.lastStrong == U_LEFT_TO_RIGHT && context()->dir() == U_RIGHT_TO_LEFT)) {
                         // Terminate the run before the neutrals.
                         appendRun();
                         // Begin an R run for the neutrals.
-                        m_direction = RightToLeft;
-                    } else if (m_direction == OtherNeutral)
-                        m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
+                        m_direction = U_RIGHT_TO_LEFT;
+                    } else if (m_direction == U_OTHER_NEUTRAL)
+                        m_direction = m_status.lastStrong == U_LEFT_TO_RIGHT ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
                     m_eor = m_last;
                     appendRun();
                 default:
                     break;
             }
             m_eor = m_current;
-            m_status.eor = ArabicNumber;
-            if (m_direction == OtherNeutral)
-                m_direction = ArabicNumber;
+            m_status.eor = U_ARABIC_NUMBER;
+            if (m_direction == U_OTHER_NEUTRAL)
+                m_direction = U_ARABIC_NUMBER;
             break;
-        case EuropeanNumberSeparator:
-        case CommonNumberSeparator:
+        case U_EUROPEAN_NUMBER_SEPARATOR:
+        case U_COMMON_NUMBER_SEPARATOR:
             break;
-        case EuropeanNumberTerminator:
-            if (m_status.last == EuropeanNumber) {
-                dirCurrent = EuropeanNumber;
+        case U_EUROPEAN_NUMBER_TERMINATOR:
+            if (m_status.last == U_EUROPEAN_NUMBER) {
+                dirCurrent = U_EUROPEAN_NUMBER;
                 m_eor = m_current;
                 m_status.eor = dirCurrent;
-            } else if (m_status.last != EuropeanNumberTerminator)
+            } else if (m_status.last != U_EUROPEAN_NUMBER_TERMINATOR)
                 m_lastBeforeET = m_emptyRun ? m_eor : m_last;
             break;
 
         // boundary neutrals should be ignored
-        case BoundaryNeutral:
+        case U_BOUNDARY_NEUTRAL:
             if (m_eor == m_last)
                 m_eor = m_current;
             break;
             // neutrals
-        case BlockSeparator:
-            // ### what do we do with newline and paragraph seperators that come to here?
+        case U_BLOCK_SEPARATOR:
+            // FIXME: What do we do with newline and paragraph separators that come to here?
             break;
-        case SegmentSeparator:
-            // ### implement rule L1
+        case U_SEGMENT_SEPARATOR:
+            // FIXME: Implement rule L1.
             break;
-        case WhiteSpaceNeutral:
+        case U_WHITE_SPACE_NEUTRAL:
             break;
-        case OtherNeutral:
+        case U_OTHER_NEUTRAL:
             break;
         default:
             break;
@@ -852,13 +840,13 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             if (!m_reachedEndOfLine) {
                 m_eor = endOfLine;
                 switch (m_status.eor) {
-                    case LeftToRight:
-                    case RightToLeft:
-                    case ArabicNumber:
+                    case U_LEFT_TO_RIGHT:
+                    case U_RIGHT_TO_LEFT:
+                    case U_ARABIC_NUMBER:
                         m_direction = m_status.eor;
                         break;
-                    case EuropeanNumber:
-                        m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : EuropeanNumber;
+                    case U_EUROPEAN_NUMBER:
+                        m_direction = m_status.lastStrong == U_LEFT_TO_RIGHT ? U_LEFT_TO_RIGHT : U_EUROPEAN_NUMBER;
                         break;
                     default:
                         ASSERT_NOT_REACHED();
@@ -873,7 +861,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
             m_lastBeforeET = stateAtEnd.m_lastBeforeET;
             m_emptyRun = stateAtEnd.m_emptyRun;
-            m_direction = OtherNeutral;
+            m_direction = U_OTHER_NEUTRAL;
             break;
         }
 
@@ -897,7 +885,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
                 m_lastBeforeET = stateAtEnd.m_lastBeforeET;
                 m_emptyRun = stateAtEnd.m_emptyRun;
-                m_direction = OtherNeutral;
+                m_direction = U_OTHER_NEUTRAL;
                 break;
             }
         }

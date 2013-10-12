@@ -30,12 +30,15 @@
 
 namespace WebCore {
 
-    // FIXME: this function won't be needed together with the function
-    // it calls when https://bugs.webkit.org/show_bug.cgi?id=120656
-    // will be fixed.
-    inline bool requiresContextForWordBoundary(UChar32 ch)
+    inline bool requiresContextForWordBoundary(UChar32 character)
     {
-        return WTF::Unicode::requiresComplexContextForWordBreaking(ch);
+        // FIXME: This function won't be needed when https://bugs.webkit.org/show_bug.cgi?id=120656 is fixed.
+
+        // We can get rid of this constant if we require a newer version of the ICU headers.
+        const int WK_U_LB_CONDITIONAL_JAPANESE_STARTER = 37;
+
+        int lineBreak = u_getIntPropertyValue(character, UCHAR_LINE_BREAK);
+        return lineBreak == U_LB_COMPLEX_CONTEXT || lineBreak == WK_U_LB_CONDITIONAL_JAPANESE_STARTER || lineBreak == U_LB_IDEOGRAPHIC;
     }
 
     int endOfFirstWordBoundaryContext(const UChar* characters, int length);

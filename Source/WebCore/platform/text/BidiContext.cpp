@@ -25,8 +25,6 @@
 
 namespace WebCore {
 
-using namespace WTF::Unicode;
-
 struct SameSizeAsBidiContext : public RefCounted<SameSizeAsBidiContext> {
     uint32_t bitfields : 16;
     void* parent;
@@ -34,14 +32,14 @@ struct SameSizeAsBidiContext : public RefCounted<SameSizeAsBidiContext> {
 
 COMPILE_ASSERT(sizeof(BidiContext) == sizeof(SameSizeAsBidiContext), BidiContext_should_stay_small);
 
-inline PassRefPtr<BidiContext> BidiContext::createUncached(unsigned char level, Direction direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
+inline PassRefPtr<BidiContext> BidiContext::createUncached(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
     return adoptRef(new BidiContext(level, direction, override, source, parent));
 }
 
-PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
+PassRefPtr<BidiContext> BidiContext::create(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
-    ASSERT(direction == (level % 2 ? RightToLeft : LeftToRight));
+    ASSERT(direction == (level % 2 ? U_RIGHT_TO_LEFT : U_LEFT_TO_RIGHT));
 
     if (parent)
         return createUncached(level, direction, override, source, parent);
@@ -49,20 +47,20 @@ PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direc
     ASSERT(level <= 1);
     if (!level) {
         if (!override) {
-            static BidiContext* ltrContext = createUncached(0, LeftToRight, false, FromStyleOrDOM, 0).leakRef();
+            static BidiContext* ltrContext = createUncached(0, U_LEFT_TO_RIGHT, false, FromStyleOrDOM, 0).leakRef();
             return ltrContext;
         }
 
-        static BidiContext* ltrOverrideContext = createUncached(0, LeftToRight, true, FromStyleOrDOM, 0).leakRef();
+        static BidiContext* ltrOverrideContext = createUncached(0, U_LEFT_TO_RIGHT, true, FromStyleOrDOM, 0).leakRef();
         return ltrOverrideContext;
     }
 
     if (!override) {
-        static BidiContext* rtlContext = createUncached(1, RightToLeft, false, FromStyleOrDOM, 0).leakRef();
+        static BidiContext* rtlContext = createUncached(1, U_RIGHT_TO_LEFT, false, FromStyleOrDOM, 0).leakRef();
         return rtlContext;
     }
 
-    static BidiContext* rtlOverrideContext = createUncached(1, RightToLeft, true, FromStyleOrDOM, 0).leakRef();
+    static BidiContext* rtlOverrideContext = createUncached(1, U_RIGHT_TO_LEFT, true, FromStyleOrDOM, 0).leakRef();
     return rtlOverrideContext;
 }
 
@@ -70,7 +68,7 @@ static inline PassRefPtr<BidiContext> copyContextAndRebaselineLevel(BidiContext*
 {
     ASSERT(context);
     unsigned char newLevel = parent ? parent->level() : 0;
-    if (context->dir() == RightToLeft)
+    if (context->dir() == U_RIGHT_TO_LEFT)
         newLevel = nextGreaterOddLevel(newLevel);
     else if (parent)
         newLevel = nextGreaterEvenLevel(newLevel);

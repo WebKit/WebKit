@@ -88,7 +88,7 @@ public:
     UChar characterAt(unsigned) const;
     UChar current() const;
     UChar previousInSameNode() const;
-    ALWAYS_INLINE WTF::Unicode::Direction direction() const;
+    ALWAYS_INLINE UCharDirection direction() const;
 
 private:
     RenderElement* m_root;
@@ -110,12 +110,12 @@ inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
     return it1.m_pos != it2.m_pos || it1.m_obj != it2.m_obj;
 }
 
-static inline WTF::Unicode::Direction embedCharFromDirection(TextDirection dir, EUnicodeBidi unicodeBidi)
+static inline UCharDirection embedCharFromDirection(TextDirection direction, EUnicodeBidi unicodeBidi)
 {
     using namespace WTF::Unicode;
     if (unicodeBidi == Embed)
-        return dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding;
-    return dir == RTL ? RightToLeftOverride : LeftToRightOverride;
+        return direction == RTL ? U_RIGHT_TO_LEFT_EMBEDDING : U_LEFT_TO_RIGHT_EMBEDDING;
+    return direction == RTL ? U_RIGHT_TO_LEFT_OVERRIDE : U_LEFT_TO_RIGHT_OVERRIDE;
 }
 
 template <class Observer>
@@ -161,7 +161,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
 
     // Otherwise we pop any embed/override character we added when we opened this tag.
     if (!observer->inIsolate())
-        observer->embed(WTF::Unicode::PopDirectionalFormat, FromStyleOrDOM);
+        observer->embed(U_POP_DIRECTIONAL_FORMAT, FromStyleOrDOM);
 }
 
 static inline bool isIteratorTarget(RenderObject* object)
@@ -393,15 +393,15 @@ inline UChar InlineIterator::previousInSameNode() const
     return characterAt(m_pos - 1);
 }
 
-ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const
+ALWAYS_INLINE UCharDirection InlineIterator::direction() const
 {
-    if (UChar c = current())
-        return WTF::Unicode::direction(c);
+    if (UChar character = current())
+        return u_charDirection(character);
 
     if (m_obj && m_obj->isListMarker())
-        return m_obj->style()->isLeftToRightDirection() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+        return m_obj->style()->isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
-    return WTF::Unicode::OtherNeutral;
+    return U_OTHER_NEUTRAL;
 }
 
 template<>
@@ -477,7 +477,7 @@ public:
     bool inIsolate() const { return m_nestedIsolateCount; }
 
     // We don't care if we encounter bidi directional overrides.
-    void embed(WTF::Unicode::Direction, BidiEmbeddingSource) { }
+    void embed(UCharDirection, BidiEmbeddingSource) { }
     void commitExplicitEmbedding() { }
 
     void addFakeRunIfNecessary(RenderObject* obj, unsigned pos, InlineBidiResolver& resolver)
@@ -544,8 +544,8 @@ inline void InlineBidiResolver::appendRun()
         m_sor = m_eor;
     }
 
-    m_direction = WTF::Unicode::OtherNeutral;
-    m_status.eor = WTF::Unicode::OtherNeutral;
+    m_direction = U_OTHER_NEUTRAL;
+    m_status.eor = U_OTHER_NEUTRAL;
 }
 
 }

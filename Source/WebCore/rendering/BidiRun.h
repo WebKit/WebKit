@@ -34,7 +34,7 @@ class BidiContext;
 class InlineBox;
 
 struct BidiRun : BidiCharacterRun {
-    BidiRun(int start, int stop, RenderObject* object, BidiContext* context, WTF::Unicode::Direction dir)
+    BidiRun(int start, int stop, RenderObject* object, BidiContext* context, UCharDirection dir)
         : BidiCharacterRun(start, stop, context, dir)
         , m_object(object)
         , m_box(0)

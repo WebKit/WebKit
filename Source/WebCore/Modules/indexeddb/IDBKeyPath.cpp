@@ -86,24 +86,22 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
 
 namespace {
 
-using namespace WTF::Unicode;
-
 // The following correspond to grammar in ECMA-262.
-const uint32_t unicodeLetter = Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other | Number_Letter;
-const uint32_t unicodeCombiningMark = Mark_NonSpacing | Mark_SpacingCombining;
-const uint32_t unicodeDigit = Number_DecimalDigit;
-const uint32_t unicodeConnectorPunctuation = Punctuation_Connector;
+const uint32_t unicodeLetter = U_GC_L_MASK | U_GC_NL_MASK;
+const uint32_t unicodeCombiningMark = U_GC_MN_MASK | U_GC_MC_MASK;
+const uint32_t unicodeDigit = U_GC_ND_MASK;
+const uint32_t unicodeConnectorPunctuation = U_GC_PC_MASK;
 const UChar ZWNJ = 0x200C;
 const UChar ZWJ = 0x200D;
 
 static inline bool isIdentifierStartCharacter(UChar c)
 {
-    return (category(c) & unicodeLetter) || (c == '$') || (c == '_');
+    return (U_GET_GC_MASK(c) & unicodeLetter) || (c == '$') || (c == '_');
 }
 
 static inline bool isIdentifierCharacter(UChar c)
 {
-    return (category(c) & (unicodeLetter | unicodeCombiningMark | unicodeDigit | unicodeConnectorPunctuation)) || (c == '$') || (c == '_') || (c == ZWNJ) || (c == ZWJ);
+    return (U_GET_GC_MASK(c) & (unicodeLetter | unicodeCombiningMark | unicodeDigit | unicodeConnectorPunctuation)) || (c == '$') || (c == '_') || (c == ZWNJ) || (c == ZWJ);
 }
 
 } // namespace

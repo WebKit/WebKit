@@ -327,6 +327,7 @@ void ComplexTextController::collectComplexTextRuns()
 
     bool isSmallCaps;
     bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK) && (uppercaseCharacter = u_toupper(baseCharacter)) != baseCharacter;
+    ASSERT(uppercaseCharacter == 0 || u_toupper(baseCharacter) <= 0xFFFF);
 
     if (nextIsSmallCaps) {
         m_smallCapsBuffer[sequenceStart - cp] = uppercaseCharacter;
@@ -349,7 +350,9 @@ void ComplexTextController::collectComplexTextRuns()
             return;
 
         if (m_font.isSmallCaps()) {
-            nextIsSmallCaps = (uppercaseCharacter = u_toupper(baseCharacter)) != baseCharacter;
+            ASSERT(u_toupper(baseCharacter) <= 0xFFFF);
+            uppercaseCharacter = u_toupper(baseCharacter);
+            nextIsSmallCaps = uppercaseCharacter != baseCharacter;
             if (nextIsSmallCaps) {
                 m_smallCapsBuffer[index] = uppercaseCharacter;
                 for (unsigned i = 0; i < markCount; ++i)

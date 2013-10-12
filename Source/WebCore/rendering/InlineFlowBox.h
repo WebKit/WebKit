@@ -332,9 +332,9 @@ protected:
     unsigned m_hasAnnotationsBefore : 1;
     unsigned m_hasAnnotationsAfter : 1;
 
-    unsigned m_lineBreakBidiStatusEor : 5; // WTF::Unicode::Direction
-    unsigned m_lineBreakBidiStatusLastStrong : 5; // WTF::Unicode::Direction
-    unsigned m_lineBreakBidiStatusLast : 5; // WTF::Unicode::Direction
+    unsigned m_lineBreakBidiStatusEor : 5; // UCharDirection
+    unsigned m_lineBreakBidiStatusLastStrong : 5; // UCharDirection
+    unsigned m_lineBreakBidiStatusLast : 5; // UCharDirection
 
     // End of RootInlineBox-specific members.
 

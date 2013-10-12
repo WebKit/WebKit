@@ -50,7 +50,7 @@ static String stripLeadingWhiteSpace(const String& string)
 
     unsigned i;
     for (i = 0; i < length; ++i) {
-        if (string[i] != noBreakSpace && (string[i] <= 0x7F ? !isASCIISpace(string[i]) : (direction(string[i]) != WhiteSpaceNeutral)))
+        if (string[i] != noBreakSpace && (string[i] <= 0x7F ? !isASCIISpace(string[i]) : (u_charDirection(string[i]) != U_WHITE_SPACE_NEUTRAL)))
             break;
     }
 

@@ -297,7 +297,7 @@ String SVGFontData::createStringWithMirroredCharacters(const UChar* characters, 
     while (i < length) {
         UChar32 character;
         U16_NEXT(characters, i, length, character);
-        mirroredCharacters.append(mirroredChar(character));
+        mirroredCharacters.append(u_charMirror(character));
     }
 
     return mirroredCharacters.toString();

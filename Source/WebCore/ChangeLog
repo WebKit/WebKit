@@ -1,3 +1,175 @@
+2013-10-11  Darin Adler  <darin@apple.com>
+
+        Change most call sites to call ICU directly instead of through WTF::Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=122635
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (isIdentifierStartCharacter): Use U_GET_GC_MASK instead of WTF::Unicode::category.
+        (isIdentifierCharacter): Ditto.
+
+        * css/CSSParser.cpp:
+        (WebCore::makeLower): Use u_tolower instead of WTF::Unicode::toLower.
+        Also assert the character fits in a UChar.
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameStart): Use U_GET_GC_MASK instead of WTF::Unicode::category,
+        and u_getIntPropertyValue instead of WTF::Unicode::decompositionType.
+        (WebCore::isValidNamePart): Ditto.
+        (WebCore::canonicalizedTitle): Ditto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): Use u_isPunct instead of
+        WTF::Unicode::isPunct.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::append): Use u_strFoldCase instead of WTF::Unicode::foldCase.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::directionality): Use UCharDirection instead of
+        WTF::Unicode::Direction.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::defaultEventHandler): Use u_isprint instead of
+        WTF::Unicode::isPrintableChar.
+
+        * html/TypeAhead.cpp:
+        (WebCore::stripLeadingWhiteSpace): Use u_charDirection instead of
+        WTF::Unicode::direction.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::isCueParagraphSeparator): Use u_charType instead of
+        WTF::Unicode::category.
+        (WebCore::TextTrackCue::determineTextDirection): Use u_charDirection instead of
+        WTF::Unicode::direction.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::selectionContainsPossibleWord): Use U_GET_GC_MASK instead of
+        WTF::Unicode::category.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::canReceiveTextEmphasis): Ditto.
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataAndPageForCharacter): Use u_toupper instead of
+        WTF::Unicode::toUpper. Use u_charMirror instead of WTF::Unicode::mirroredChar.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextRunIterator::direction): Use u_charDirection instead of
+        WTF::Unicode::direction.
+
+        * platform/graphics/SVGGlyph.cpp:
+        (WebCore::charactersWithArabicForm): Use ublock_getCode instead of
+        WTF::Unicode::isArabicChar.
+
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        (WebCore::SurrogatePairAwareTextIterator::normalizeVoicingMarks): Use
+        u_getCombiningClass instead of WTF::Unicode::combiningClass.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal): Use u_toupper instead of
+        WTF::Unicode::toUpper.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns): Added some
+        assertions about the user of u_toupper and tweaked coding style a bit.
+
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::createUncached): Use UCharDirection instead of
+        WTF::Unicode::Direction.
+        (WebCore::BidiContext::create): Ditto.
+        (WebCore::copyContextAndRebaselineLevel): Ditto.
+        * platform/text/BidiContext.h:
+        (WebCore::BidiContext::dir): Ditto.
+        (WebCore::BidiContext::BidiContext): Ditto.
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiStatus::BidiStatus): Ditto.
+        (WebCore::BidiEmbedding::BidiEmbedding): Ditto.
+        (WebCore::BidiEmbedding::direction): Ditto.
+        (WebCore::BidiCharacterRun::BidiCharacterRun): Ditto.
+        (WebCore::BidiResolver::BidiResolver): Ditto.
+        (WebCore::BidiResolver::setLastDir): Ditto.
+        (WebCore::BidiResolver::setLastStrongDir): Ditto.
+        (WebCore::BidiResolver::setEorDir): Ditto.
+        (WebCore::BidiResolver::dir): Ditto.
+        (WebCore::BidiResolver::setDir): Ditto.
+        (WebCore::BidiResolver::appendRun): Ditto.
+        (WebCore::BidiResolver::embed): Ditto.
+        (WebCore::BidiResolver::checkDirectionInLowerRaiseEmbeddingLevel): Ditto.
+        (WebCore::BidiResolver::lowerExplicitEmbeddingLevel): Ditto.
+        (WebCore::BidiResolver::raiseExplicitEmbeddingLevel): Ditto.
+        (WebCore::BidiResolver::commitExplicitEmbedding): Ditto.
+        (WebCore::BidiResolver::updateStatusLastFromCurrentDirection): Ditto.
+        (WebCore::BidiResolver::createBidiRunsForLine): Ditto.
+
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::advanceAndASSERTIgnoringCase): Use u_foldCase
+        instead of WTF::Unicode::foldCase.
+
+        * platform/text/TextBoundaries.cpp:
+        (WebCore::findNextWordFromIndex): Use u_isalnum instead of
+        WTF::Unicode::isAlphanumeric.
+
+        * platform/text/TextBoundaries.h:
+        (WebCore::requiresContextForWordBoundary): Use u_getIntPropertyValue directly
+        instead of WTF::Unicode::requiresComplexContextForWordBreaking.
+
+        * platform/text/mac/TextBoundaries.mm: Removed explicit use of WTF::Unicode,
+        which was unneeded and also will no longer compile.
+
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::BidiRun): Use UCharDirection instead of WTF::Unicode::Direction.
+        * rendering/InlineFlowBox.h: Ditto.
+        * rendering/InlineIterator.h:
+        (WebCore::embedCharFromDirection): Ditto.
+        (WebCore::notifyObserverWillExitObject): Ditto.
+        (WebCore::InlineIterator::direction): Ditto.
+        (WebCore::IsolateTracker::embed): Ditto.
+        (WebCore::InlineBidiResolver::appendRun): Ditto.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isPunctuationForFirstLetter): Use U_GET_GC_MASK instead of
+        WTF::Unicode::category.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::determineDirectionality): Use u_charDirection instead of
+        WTF::Unicode::direction.
+        (WebCore::RenderBlockFlow::handleTrailingSpaces): Ditto.
+        (WebCore::statusWithDirection): Ditto.
+        (WebCore::LineBreaker::nextSegmentBreak): Use U_GET_GC_MASK instead of
+        WTF::Unicode::category.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint): Use u_charDirection instead of
+        WTF::Unicode::direction.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Use UCharDirection instead of
+        WTF::Unicode::Direction.
+
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized): Use u_totile instead of WTF::Unicode::toTitleCase.
+        Also added a comment about the fact that we need to use u_strToTitle instead.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineBreakBidiStatus): Use UCharDirection instead of
+        WTF::Unicode::Direction.
+
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::createStringWithMirroredCharacters): Use u_charMirror
+        instead of WTF::Unicode::mirroredChar.
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::charCat): Use U_GET_GC_MASK instead of WTF::Unicode::category.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::paint):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::isOneLeftToRightRun):
+        More of the same for Windows.
+
 2013-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dramatically simplify calculateAdjustedNodes

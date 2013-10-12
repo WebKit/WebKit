@@ -64,20 +64,17 @@ struct Parser::Token {
 
 enum XMLCat { NameStart, NameCont, NotPartOfName };
 
-static XMLCat charCat(UChar aChar)
+static XMLCat charCat(UChar character)
 {
-    using namespace WTF;
-    using namespace Unicode;
-
-    if (aChar == '_')
+    if (character == '_')
         return NameStart;
 
-    if (aChar == '.' || aChar == '-')
+    if (character == '.' || character == '-')
         return NameCont;
-    CharCategory category = Unicode::category(aChar);
-    if (category & (Letter_Uppercase | Letter_Lowercase | Letter_Other | Letter_Titlecase | Number_Letter))
+    unsigned characterTypeMask = U_GET_GC_MASK(character);
+    if (characterTypeMask & (U_GC_LU_MASK | U_GC_LL_MASK | U_GC_LO_MASK | U_GC_LT_MASK | U_GC_NL_MASK))
         return NameStart;
-    if (category & (Mark_NonSpacing | Mark_SpacingCombining | Mark_Enclosing | Letter_Modifier | Number_DecimalDigit))
+    if (characterTypeMask & (U_GC_M_MASK | U_GC_LM_MASK | U_GC_ND_MASK))
         return NameCont;
     return NotPartOfName;
 }

@@ -27,41 +27,63 @@
 
 #include <algorithm>
 
-namespace WTF {
-namespace Unicode {
-
-CharCategory category(UChar32)
+int unorm_normalize(const UChar*, int32_t, UNormalizationMode, int32_t, UChar*, int32_t, UErrorCode*)
 {
-    return NoCategory; // FIXME: implement!
+    ASSERT_NOT_REACHED();
 }
 
-unsigned char combiningClass(UChar32)
+UCharDirection u_charDirection(UChar32)
 {
-    return 0; // FIXME: implement!
+    return U_LEFT_TO_RIGHT; // FIXME: implement!
 }
 
-Direction direction(UChar32)
+UChar32 u_charMirror(UChar32 character)
 {
-    return LeftToRight; // FIXME: implement!
+    // FIXME: Implement this.
+    return character;
 }
 
-DecompositionType decompositionType(UChar32)
+int8_t u_charType(UChar32)
 {
-    return DecompositionNone; // FIXME: implement!
+    // FIXME: Implement this.
+    return U_CHAR_CATEGORY_UNKNOWN;
 }
 
-bool requiresComplexContextForWordBreaking(UChar32)
+uint8_t u_getCombiningClass(UChar32)
 {
-    return false; // FIXME: implement!
+    // FIXME: Implement this.
+    return 0;
 }
 
-UChar32 mirroredChar(UChar32 c)
+int u_getIntPropertyValue(UChar32, UProperty property)
 {
-    return c; // FIXME: implement!
+    switch (property) {
+    case UCHAR_DECOMPOSITION_TYPE:
+        // FIXME: Implement this.
+        return U_DT_NONE;
+    case UCHAR_LINE_BREAK:
+        // FIXME: Implement this.
+        return U_LB_UNKNOWN;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+int u_memcasecmp(const UChar* a, const UChar* b, int length, unsigned options)
+{
+    for (int i = 0; i < length; ++i) {
+        UChar c1 = u_foldCase(a[i], options);
+        UChar c2 = u_foldCase(b[i], options);
+        if (c1 != c2)
+            return c1 - c2;
+    }
+
+    return 0;
 }
 
 template<UChar Function(UChar)>
-static inline int convertWithFunction(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError)
+static inline int convertWithFunction(UChar* result, int resultLength, const UChar* source, int sourceLength, UErrorCode& status)
 {
     UChar* resultIterator = result;
     UChar* resultEnd = result + std::min(resultLength, sourceLength);
@@ -71,24 +93,22 @@ static inline int convertWithFunction(UChar* result, int resultLength, const UCh
     if (sourceLength < resultLength)
         *resultIterator = '\0';
 
-    *isError = sourceLength > resultLength;
+    status = sourceLength > resultLength ? U_ERROR : U_ZERO_ERROR;
     return sourceLength;
 }
 
-int foldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError)
+int u_strFoldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, unsigned options, UErrorCode* status)
 {
-    return convertWithFunction<foldCase>(result, resultLength, source, sourceLength, isError);
+    ASSERT_UNUSED(options, options == U_FOLD_CASE_DEFAULT);
+    return convertWithFunction<u_foldCase>(result, resultLength, source, sourceLength, *status);
 }
 
-int toLower(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError)
+int u_strToLower(UChar* result, int resultLength, const UChar* source, int sourceLength, const char*, UErrorCode* status)
 {
-    return convertWithFunction<toLower>(result, resultLength, source, sourceLength, isError);
+    return convertWithFunction<u_tolower>(result, resultLength, source, sourceLength, *status);
 }
 
-int toUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError)
+int u_strToUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, const char*, UErrorCode* status)
 {
-    return convertWithFunction<toUpper>(result, resultLength, source, sourceLength, isError);
+    return convertWithFunction<u_toupper>(result, resultLength, source, sourceLength, *status);
 }
-
-} // namespace Unicode
-} // namespace WTF

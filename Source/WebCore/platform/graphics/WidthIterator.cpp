@@ -210,10 +210,10 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             if (m_fallbackFonts && fontData != primaryFont) {
                 // FIXME: This does a little extra work that could be avoided if
                 // glyphDataForCharacter() returned whether it chose to use a small caps font.
-                if (!m_font->isSmallCaps() || character == toUpper(character))
+                if (!m_font->isSmallCaps() || character == u_toupper(character))
                     m_fallbackFonts->add(fontData);
                 else {
-                    const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(toUpper(character), rtl);
+                    const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(u_toupper(character), rtl);
                     if (uppercaseGlyphData.fontData != primaryFont)
                         m_fallbackFonts->add(uppercaseGlyphData.fontData);
                 }

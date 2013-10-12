@@ -45,10 +45,8 @@
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"
 
-using namespace WTF;
-using namespace Unicode;
-
 namespace JSC {
+
 EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
 {
     return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));

@@ -178,12 +178,12 @@ static void determineDirectionality(TextDirection& dir, InlineIterator iter)
         if (iter.atParagraphSeparator())
             return;
         if (UChar current = iter.current()) {
-            Direction charDirection = direction(current);
-            if (charDirection == LeftToRight) {
+            UCharDirection charDirection = u_charDirection(current);
+            if (charDirection == U_LEFT_TO_RIGHT) {
                 dir = LTR;
                 return;
             }
-            if (charDirection == RightToLeft || charDirection == RightToLeftArabic) {
+            if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
                 dir = RTL;
                 return;
             }
@@ -1051,7 +1051,7 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
         while (BidiContext* parent = baseContext->parent())
             baseContext = parent;
 
-        BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
+        BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, U_OTHER_NEUTRAL);
         trailingSpaceRun->m_stop = firstSpace;
         if (direction == LTR)
             bidiRuns.addRun(newTrailingRun);
@@ -1083,7 +1083,7 @@ void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject* floatingObj
 // FIXME: This should be a BidiStatus constructor or create method.
 static inline BidiStatus statusWithDirection(TextDirection textDirection, bool isOverride)
 {
-    WTF::Unicode::Direction direction = textDirection == LTR ? LeftToRight : RightToLeft;
+    UCharDirection direction = textDirection == LTR ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
     RefPtr<BidiContext> context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, isOverride, FromStyleOrDOM);
 
     // This copies BidiStatus and may churn the ref on BidiContext. I doubt it matters.
@@ -3132,7 +3132,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                         breakWords = false;
                     }
 
-                    if (midWordBreak && !U16_IS_TRAIL(c) && !(category(c) & (Mark_NonSpacing | Mark_Enclosing | Mark_SpacingCombining))) {
+                    if (midWordBreak && !U16_IS_TRAIL(c) && !(U_GET_GC_MASK(c) & U_GC_M_MASK)) {
                         // Remember this as a breakable position in case
                         // adding the end width forces a break.
                         lBreak.moveTo(current.m_obj, current.m_pos, current.m_nextBreakablePosition);

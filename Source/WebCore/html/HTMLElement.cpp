@@ -853,10 +853,10 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     if (isHTMLTextFormControlElement(this)) {
         HTMLTextFormControlElement* textElement = toHTMLTextFormControlElement(const_cast<HTMLElement*>(this));
         bool hasStrongDirectionality;
-        Unicode::Direction textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
+        UCharDirection textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
         if (strongDirectionalityTextNode)
             *strongDirectionalityTextNode = hasStrongDirectionality ? textElement : nullptr;
-        return (textDirection == Unicode::LeftToRight) ? LTR : RTL;
+        return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
     }
 
     Node* node = firstChild();
@@ -879,11 +879,11 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
 
         if (node->isTextNode()) {
             bool hasStrongDirectionality;
-            WTF::Unicode::Direction textDirection = node->textContent(true).defaultWritingDirection(&hasStrongDirectionality);
+            UCharDirection textDirection = node->textContent(true).defaultWritingDirection(&hasStrongDirectionality);
             if (hasStrongDirectionality) {
                 if (strongDirectionalityTextNode)
                     *strongDirectionalityTextNode = node;
-                return (textDirection == WTF::Unicode::LeftToRight) ? LTR : RTL;
+                return (textDirection == U_LEFT_TO_RIGHT) ? LTR : RTL;
             }
         }
         node = NodeTraversal::next(node, this);

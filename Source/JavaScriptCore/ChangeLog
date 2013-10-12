@@ -1,3 +1,31 @@
+2013-10-11  Darin Adler  <darin@apple.com>
+
+        Change most call sites to call ICU directly instead of through WTF::Unicode
+        https://bugs.webkit.org/show_bug.cgi?id=122635
+
+        Reviewed by Alexey Proskuryakov.
+
+        * parser/Lexer.cpp:
+        (JSC::isNonLatin1IdentStart): Take a UChar since that's what the only caller wants to pass.
+        Use U_GET_GC_MASK instead of WTF::Unicode::category.
+        (JSC::isNonLatin1IdentPart): Ditto.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::isWhiteSpace): Use u_charType instead of WTF::Unicode::isSeparatorSpace.
+
+        * runtime/JSFunction.cpp: Removed "using namespace" for WTF::Unicode, this will no longer
+        compile since this doesn't include anything that defines that namespace.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::isStrWhiteSpace): Use u_charType instead of WTF::Unicode::isSeparatorSpace.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::atomPatternCharacter): Use u_tolower and u_toupper instead of
+        Unicode::toLower and Unicode::toUpper. Also added some assertions since this code assumes
+        it can convert any UChar to lowercase or uppercase in another UChar, with no risk of needing
+        a UChar32 for the result. I guess that's probably true, but it would be good to know in a
+        debug build if not.
+
 2013-10-11  Nadav Rotem  <nrotem@apple.com>
 
         DFG: Add JIT support for  LogicalNot(String/StringIdent)

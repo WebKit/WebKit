@@ -31,9 +31,6 @@
 #include <wtf/text/StringImpl.h>
 #include <wtf/unicode/Unicode.h>
 
-using namespace WTF;
-using namespace Unicode;
-
 namespace WebCore {
 
 int endOfFirstWordBoundaryContext(const UChar* characters, int length)
@@ -69,9 +66,8 @@ int findNextWordFromIndex(const UChar* chars, int len, int position, bool forwar
     if (forward) {
         position = textBreakFollowing(it, position);
         while (position != TextBreakDone) {
-            // We stop searching when the character preceeding the break
-            // is alphanumeric.
-            if (position < len && isAlphanumeric(chars[position - 1]))
+            // We stop searching when the character preceeding the break is alphanumeric.
+            if (position < len && u_isalnum(chars[position - 1]))
                 return position;
 
             position = textBreakFollowing(it, position);
@@ -81,9 +77,8 @@ int findNextWordFromIndex(const UChar* chars, int len, int position, bool forwar
     } else {
         position = textBreakPreceding(it, position);
         while (position != TextBreakDone) {
-            // We stop searching when the character following the break
-            // is alphanumeric.
-            if (position > 0 && isAlphanumeric(chars[position]))
+            // We stop searching when the character following the break is alphanumeric.
+            if (position > 0 && u_isalnum(chars[position]))
                 return position;
 
             position = textBreakPreceding(it, position);

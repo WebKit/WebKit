@@ -99,6 +99,8 @@ private:
 
 static void makeCapitalized(String* string, UChar previous)
 {
+    // FIXME: Need to change this to use u_strToTitle instead of u_totitle and to consider locale.
+
     if (string->isNull())
         return;
 
@@ -129,7 +131,7 @@ static void makeCapitalized(String* string, UChar previous)
     int32_t startOfWord = textBreakFirst(boundary);
     for (endOfWord = textBreakNext(boundary); endOfWord != TextBreakDone; startOfWord = endOfWord, endOfWord = textBreakNext(boundary)) {
         if (startOfWord) // Ignore first char of previous string
-            result.append(stringImpl[startOfWord - 1] == noBreakSpace ? noBreakSpace : toTitleCase(stringWithPrevious[startOfWord]));
+            result.append(stringImpl[startOfWord - 1] == noBreakSpace ? noBreakSpace : u_totitle(stringWithPrevious[startOfWord]));
         for (int i = startOfWord + 1; i < endOfWord; i++)
             result.append(stringImpl[i - 1]);
     }

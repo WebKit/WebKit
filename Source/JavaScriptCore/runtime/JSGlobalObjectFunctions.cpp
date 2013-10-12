@@ -169,7 +169,7 @@ bool isStrWhiteSpace(UChar c)
         case 0xFEFF:
             return true;
         default:
-            return c > 0xff && isSeparatorSpace(c);
+            return c > 0xFF && u_charType(c) == U_SPACE_SEPARATOR;
     }
 }
 

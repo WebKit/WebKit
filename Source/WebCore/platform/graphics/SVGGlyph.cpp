@@ -25,8 +25,6 @@
 
 #include <wtf/unicode/Unicode.h>
 
-using namespace WTF::Unicode;
-
 namespace WebCore {
 
 // Helper functions to determine the arabic character forms (initial, medial, terminal, isolated)
@@ -87,7 +85,7 @@ Vector<SVGGlyph::ArabicForm> charactersWithArabicForm(const String& input, bool 
 
     bool containsArabic = false;
     for (unsigned i = 0; i < length; ++i) {
-        if (isArabicChar(input[i])) {
+        if (ublock_getCode(input[i]) == UBLOCK_ARABIC) {
             containsArabic = true;
             break;
         }

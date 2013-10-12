@@ -33,135 +33,100 @@
 typedef wchar_t UChar;
 typedef uint32_t UChar32;
 
-namespace WTF {
-namespace Unicode {
+enum UBlockCode { UBLOCK_UNKNOWN, UBLOCK_ARABIC };
 
-enum Direction {
-    LeftToRight,
-    RightToLeft,
-    EuropeanNumber,
-    EuropeanNumberSeparator,
-    EuropeanNumberTerminator,
-    ArabicNumber,
-    CommonNumberSeparator,
-    BlockSeparator,
-    SegmentSeparator,
-    WhiteSpaceNeutral,
-    OtherNeutral,
-    LeftToRightEmbedding,
-    LeftToRightOverride,
-    RightToLeftArabic,
-    RightToLeftEmbedding,
-    RightToLeftOverride,
-    PopDirectionalFormat,
-    NonSpacingMark,
-    BoundaryNeutral
+enum UCharCategory {
+    U_CHAR_CATEGORY_UNKNOWN,
+    U_PARAGRAPH_SEPARATOR,
+    U_SPACE_SEPARATOR
 };
 
-enum DecompositionType {
-    DecompositionNone,
-    DecompositionCanonical,
-    DecompositionCompat,
-    DecompositionCircle,
-    DecompositionFinal,
-    DecompositionFont,
-    DecompositionFraction,
-    DecompositionInitial,
-    DecompositionIsolated,
-    DecompositionMedial,
-    DecompositionNarrow,
-    DecompositionNoBreak,
-    DecompositionSmall,
-    DecompositionSquare,
-    DecompositionSub,
-    DecompositionSuper,
-    DecompositionVertical,
-    DecompositionWide
+enum UCharDirection {
+    U_LEFT_TO_RIGHT,
+    U_RIGHT_TO_LEFT,
+    U_EUROPEAN_NUMBER,
+    U_EUROPEAN_NUMBER_SEPARATOR,
+    U_EUROPEAN_NUMBER_TERMINATOR,
+    U_ARABIC_NUMBER,
+    U_COMMON_NUMBER_SEPARATOR,
+    U_BLOCK_SEPARATOR,
+    U_SEGMENT_SEPARATOR,
+    U_WHITE_SPACE_NEUTRAL,
+    U_OTHER_NEUTRAL,
+    U_LEFT_TO_RIGHT_EMBEDDING,
+    U_LEFT_TO_RIGHT_OVERRIDE,
+    U_RIGHT_TO_LEFT_ARABIC,
+    U_RIGHT_TO_LEFT_EMBEDDING,
+    U_RIGHT_TO_LEFT_OVERRIDE,
+    U_POP_DIRECTIONAL_FORMAT,
+    U_DIR_NON_SPACING_MARK,
+    U_BOUNDARY_NEUTRAL
 };
 
-enum CharCategory {
-    NoCategory = 0,
-    Other_NotAssigned = U_MASK(0),
-    Letter_Uppercase = U_MASK(1),
-    Letter_Lowercase = U_MASK(2),
-    Letter_Titlecase = U_MASK(3),
-    Letter_Modifier = U_MASK(4),
-    Letter_Other = U_MASK(5),
+enum UDecompositionType { U_DT_NONE, U_DT_COMPAT, U_DT_FONT }
 
-    Mark_NonSpacing = U_MASK(6),
-    Mark_Enclosing = U_MASK(7),
-    Mark_SpacingCombining = U_MASK(8),
+enum UErrorCode { U_ZERO_ERROR = 0, U_ERROR };
 
-    Number_DecimalDigit = U_MASK(9),
-    Number_Letter = U_MASK(10),
-    Number_Other = U_MASK(11),
+enum ULineBreak { U_LB_UNKNOWN, U_LB_COMPLEX_CONTEXT, U_LB_CONDITIONAL_JAPANESE_STARTER, U_LB_IDEOGRAPHIC };
 
-    Separator_Space = U_MASK(12),
-    Separator_Line = U_MASK(13),
-    Separator_Paragraph = U_MASK(14),
+enum UNormalizationMode { UNORM_NFC };
 
-    Other_Control = U_MASK(15),
-    Other_Format = U_MASK(16),
-    Other_PrivateUse = U_MASK(17),
-    Other_Surrogate = U_MASK(18),
+enum UProperty { UCHAR_DECOMPOSITION_TYPE, UCHAR_LINE_BREAK };
 
-    Punctuation_Dash = U_MASK(19),
-    Punctuation_Open = U_MASK(20),
-    Punctuation_Close = U_MASK(21),
-    Punctuation_Connector = U_MASK(22),
-    Punctuation_Other = U_MASK(23),
+enum { UNORM_UNICODE_3_2 };
 
-    Symbol_Math = U_MASK(24),
-    Symbol_Currency = U_MASK(25),
-    Symbol_Modifier = U_MASK(26),
-    Symbol_Other = U_MASK(27),
+// FIXME: Would be good to define all of these in terms of UCharCategory constants, but until u_charType
+// is implemented, that's not really worth the time.
 
-    Punctuation_InitialQuote = U_MASK(28),
-    Punctuation_FinalQuote = U_MASK(29)
-};
+#define U_GC_CC_MASK 0
+#define U_GC_CF_MASK 0
+#define U_GC_CN_MASK 0
+#define U_GC_LL_MASK 0
+#define U_GC_LM_MASK 0
+#define U_GC_LO_MASK 0
+#define U_GC_LT_MASK 0
+#define U_GC_LU_MASK 0
+#define U_GC_MC_MASK 0
+#define U_GC_MN_MASK 0
+#define U_GC_ND_MASK 0
+#define U_GC_NL_MASK 0
+#define U_GC_PC_MASK 0
+#define U_GC_PE_MASK 0
+#define U_GC_PF_MASK 0
+#define U_GC_PI_MASK 0
+#define U_GC_PO_MASK 0
+#define U_GC_PS_MASK 0
+#define U_GC_ZL_MASK 0
+#define U_GC_ZP_MASK 0
 
+#define U_GC_L_MASK 0
+#define U_GC_M_MASK 0
+#define U_GC_Z_MASK 0
 
-WTF_EXPORT_PRIVATE CharCategory category(UChar32);
-WTF_EXPORT_PRIVATE unsigned char combiningClass(UChar32);
-WTF_EXPORT_PRIVATE Direction direction(UChar32);
-WTF_EXPORT_PRIVATE DecompositionType decompositionType(UChar32);
-WTF_EXPORT_PRIVATE bool requiresComplexContextForWordBreaking(UChar32);
-WTF_EXPORT_PRIVATE UChar32 mirroredChar(UChar32);
+#define U_SUCCESS(status) ((status) <= 0)
+#define U_FAILURE(status) ((status) > 0)
 
-inline bool isAlphanumeric(UChar c) { return !!iswalnum(c); }
-inline bool isDigit(UChar c) { return !!iswdigit(c); }
-inline bool isLetter(UChar c) { return !!iswalpha(c); }
-inline bool isLower(UChar c) { return !!iswlower(c); }
-inline bool isPrintableChar(UChar c) { return !!iswprint(c); }
-inline bool isPunct(UChar c) { return !!iswpunct(c); }
-inline bool isSpace(UChar c) { return !!iswspace(c); }
-inline bool isUpper(UChar c) { return !!iswupper(c); }
+#define U_FOLD_CASE_DEFAULT 0
 
-inline bool isArabicChar(UChar32 c) { return c >= 0x0600 && c <= 0x06ff; }
-inline bool isSeparatorSpace(UChar32 c) { return category(c) == Separator_Space; }
+#define U_GET_GC_MASK(c) U_MASK(u_charType(c))
 
-inline UChar foldCase(UChar c) { return towlower(c); }
-inline UChar toLower(UChar c) { return towlower(c); }
-inline UChar toUpper(UChar c) { return towupper(c); }
-inline UChar toTitleCase(UChar c) { return towupper(c); }
-
-WTF_EXPORT_PRIVATE int foldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
-WTF_EXPORT_PRIVATE int toLower(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
-WTF_EXPORT_PRIVATE int toUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
-
-inline int umemcasecmp(const UChar* a, const UChar* b, int len)
-{
-    for (int i = 0; i < len; ++i) {
-        UChar c1 = foldCase(a[i]);
-        UChar c2 = foldCase(b[i]);
-        if (c1 != c2)
-            return c1 - c2;
-    }
-
-    return 0;
-}
-
-} // namespace Unicode
-} // namespace WTF
+inline UBlockCode ublock_getCode(UChar32 character) { return (character & ~0xFF) == 0x600 ? UBLOCK_ARABIC : UBLOCK_UNKNOWN; }
+WTF_EXPORT_PRIVATE int unorm_normalize(const UChar* source, int32_t sourceLength, UNormalizationMode mode, int32_t options, UChar* result, int32_t resultLength, UErrorCode* status);
+WTF_EXPORT_PRIVATE UCharDirection u_charDirection(UChar32);
+WTF_EXPORT_PRIVATE UChar32 u_charMirror(UChar32);
+WTF_EXPORT_PRIVATE UCharCategory u_charType(UChar32);
+inline UChar32 u_foldCase(UChar32 character, unsigned option) { ASSERT_UNUSED(options, options == U_FOLD_CASE_DEFAULT); return towlower(character); }
+WTF_EXPORT_PRIVATE uint8_t u_getCombiningClass(UChar32);
+WTF_EXPORT_PRIVATE int u_getIntPropertyValue(UChar32, UProperty);
+inline bool u_isalnum(UChar32 character) { return iswalnum(character); }
+inline bool u_ispunct(UChar32 character) { return iswpunct(character); }
+WTF_EXPORT_PRIVATE int u_memcasecmp(const UChar*, const UChar*, int sourceLength, unsigned options);
+inline bool u_print(UChar32 character) { return iswprint(character); }
+WTF_EXPORT_PRIVATE int u_strFoldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, unsigned options, UErrorCode*);
+WTF_EXPORT_PRIVATE int u_strToLower(UChar* result, int resultLength, const UChar* source, int sourceLength, const char* locale, UErrorCode*);
+WTF_EXPORT_PRIVATE int u_strToUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, const char* locale, UErrorCode*);
+inline UChar32 u_tolower(UChar32 character) { return towlower(character); }
+inline UChar32 u_totitle(UChar32 character) { return towupper(character); }
+inline UChar32 u_toupper(UChar32 character) { return towupper(character); }
 
 #endif // WTF_UnicodeWchar_h

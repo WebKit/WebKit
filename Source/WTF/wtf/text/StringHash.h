@@ -73,26 +73,31 @@ namespace WTF {
 
     class CaseFoldingHash {
     public:
-        template<typename T> static inline UChar foldCase(T ch)
+        template<typename T> static inline UChar foldCase(T character)
         {
-            return WTF::Unicode::foldCase(ch);
+            return u_foldCase(character, U_FOLD_CASE_DEFAULT);
         }
 
         static unsigned hash(const UChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<UChar, foldCase<UChar> >(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<UChar, foldCase<UChar>>(data, length);
         }
 
-        static unsigned hash(StringImpl* str)
+        static unsigned hash(StringImpl& string)
         {
-            if (str->is8Bit())
-                return hash(str->characters8(), str->length());
-            return hash(str->characters16(), str->length());
+            if (string.is8Bit())
+                return hash(string.characters8(), string.length());
+            return hash(string.characters16(), string.length());
+        }
+        static unsigned hash(StringImpl* string)
+        {
+            ASSERT(string);
+            return hash(*string);
         }
 
         static unsigned hash(const LChar* data, unsigned length)
         {
-            return StringHasher::computeHashAndMaskTop8Bits<LChar, foldCase<LChar> >(data, length);
+            return StringHasher::computeHashAndMaskTop8Bits<LChar, foldCase<LChar>>(data, length);
         }
 
         static inline unsigned hash(const char* data, unsigned length)
@@ -107,7 +112,7 @@ namespace WTF {
 
         static unsigned hash(const RefPtr<StringImpl>& key) 
         {
-            return hash(key.get());
+            return hash(*key);
         }
 
         static bool equal(const RefPtr<StringImpl>& a, const RefPtr<StringImpl>& b)
@@ -129,7 +134,9 @@ namespace WTF {
         }
         static bool equal(const AtomicString& a, const AtomicString& b)
         {
-            return (a == b) || equal(a.impl(), b.impl());
+            // FIXME: Is the "a == b" here a helpful optimization?
+            // It makes all cases where the strings are not identical slightly slower.
+            return a == b || equal(a.impl(), b.impl());
         }
 
         static const bool safeToCompareToEmptyOrDeleted = false;

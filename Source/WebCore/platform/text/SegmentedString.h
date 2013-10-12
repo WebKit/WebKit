@@ -261,7 +261,7 @@ public:
 
     void advanceAndASSERTIgnoringCase(UChar expectedCharacter)
     {
-        ASSERT_UNUSED(expectedCharacter, WTF::Unicode::foldCase(currentChar()) == WTF::Unicode::foldCase(expectedCharacter));
+        ASSERT_UNUSED(expectedCharacter, u_foldCase(currentChar(), U_FOLD_CASE_DEFAULT) == u_foldCase(expectedCharacter, U_FOLD_CASE_DEFAULT));
         advance();
     }
 

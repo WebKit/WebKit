@@ -82,15 +82,13 @@ UChar32 SurrogatePairAwareTextIterator::normalizeVoicingMarks()
     if (m_currentCharacter + 1 >= m_endCharacter)
         return 0;
 
-    if (combiningClass(m_characters[1]) == hiraganaKatakanaVoicingMarksCombiningClass) {
-#if USE(ICU_UNICODE)
+    if (u_getCombiningClass(m_characters[1]) == hiraganaKatakanaVoicingMarksCombiningClass) {
         // Normalize into composed form using 3.2 rules.
         UChar normalizedCharacters[2] = { 0, 0 };
         UErrorCode uStatus = U_ZERO_ERROR;  
         int32_t resultLength = unorm_normalize(m_characters, 2, UNORM_NFC, UNORM_UNICODE_3_2, &normalizedCharacters[0], 2, &uStatus);
         if (resultLength == 1 && !uStatus)
             return normalizedCharacters[0];
-#endif
     }
 
     return 0;

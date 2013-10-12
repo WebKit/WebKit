@@ -1356,8 +1356,8 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context->drawText(font, textRun, textOrigin);
     else {
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
-        // and we only need to handle the direction RightToLeft for now.
-        bool textNeedsReversing = direction(m_text[0]) == RightToLeft;
+        // and we only need to handle the direction U_RIGHT_TO_LEFT for now.
+        bool textNeedsReversing = u_charDirection(m_text[0]) == U_RIGHT_TO_LEFT;
         StringBuilder reversedText;
         if (textNeedsReversing) {
             int length = m_text.length();

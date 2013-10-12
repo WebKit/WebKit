@@ -265,7 +265,7 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
 
     if (variant == AutoVariant) {
         if (description.smallCaps() && !primarySimpleFontData(description)->isSVGFont()) {
-            UChar32 upperC = WTF::Unicode::toUpper(c);
+            UChar32 upperC = u_toupper(c);
             if (upperC != c) {
                 c = upperC;
                 variant = SmallCapsVariant;
@@ -276,7 +276,7 @@ std::pair<GlyphData, GlyphPage*> FontGlyphs::glyphDataAndPageForCharacter(const 
     }
 
     if (mirror)
-        c = WTF::Unicode::mirroredChar(c);
+        c = u_charMirror(c);
 
     unsigned pageNumber = (c / GlyphPage::size);
 

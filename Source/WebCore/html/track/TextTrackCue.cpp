@@ -615,7 +615,7 @@ static bool isCueParagraphSeparator(UChar character)
 {
     // Within a cue, paragraph boundaries are only denoted by Type B characters,
     // such as U+000A LINE FEED (LF), U+0085 NEXT LINE (NEL), and U+2029 PARAGRAPH SEPARATOR.
-    return WTF::Unicode::category(character) & WTF::Unicode::Separator_Paragraph;
+    return u_charType(character) == U_PARAGRAPH_SEPARATOR;
 }
 
 void TextTrackCue::determineTextDirection()
@@ -648,13 +648,12 @@ void TextTrackCue::determineTextDirection()
             return;
 
         if (UChar current = paragraph[i]) {
-            WTF::Unicode::Direction charDirection = WTF::Unicode::direction(current);
-            if (charDirection == WTF::Unicode::LeftToRight) {
+            UCharDirection charDirection = u_charDirection(current);
+            if (charDirection == U_LEFT_TO_RIGHT) {
                 m_displayDirection = CSSValueLtr;
                 return;
             }
-            if (charDirection == WTF::Unicode::RightToLeft
-                || charDirection == WTF::Unicode::RightToLeftArabic) {
+            if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
                 m_displayDirection = CSSValueRtl;
                 return;
             }

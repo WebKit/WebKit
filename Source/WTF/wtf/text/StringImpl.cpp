@@ -415,8 +415,10 @@ SlowPath8bitLower:
             LChar character = m_data8[i];
             if (!(character & ~0x7F))
                 data8[i] = toASCIILower(character);
-            else
-                data8[i] = static_cast<LChar>(Unicode::toLower(character));
+            else {
+                ASSERT(u_tolower(character) <= 0xFF);
+                data8[i] = static_cast<LChar>(u_tolower(character));
+            }
         }
 
         return newImpl.release();
@@ -453,14 +455,15 @@ SlowPath8bitLower:
     UChar* data16;
     RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
-    bool error;
-    int32_t realLength = Unicode::toLower(data16, length, m_data16, m_length, &error);
-    if (!error && realLength == length)
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t realLength = u_strToLower(data16, length, m_data16, m_length, "", &status);
+    if (U_SUCCESS(status) && realLength == length)
         return newImpl.release();
 
     newImpl = createUninitialized(realLength, data16);
-    Unicode::toLower(data16, realLength, m_data16, m_length, &error);
-    if (error)
+    status = U_ZERO_ERROR;
+    u_strToLower(data16, realLength, m_data16, m_length, "", &status);
+    if (U_FAILURE(status))
         return this;
     return newImpl.release();
 }
@@ -506,7 +509,8 @@ PassRefPtr<StringImpl> StringImpl::upper()
             LChar c = m_data8[i];
             if (UNLIKELY(c == smallLetterSharpS))
                 ++numberSharpSCharacters;
-            UChar upper = Unicode::toUpper(c);
+            ASSERT(u_toupper(c) <= 0xFFFF);
+            UChar upper = u_toupper(c);
             if (UNLIKELY(upper > 0xff)) {
                 // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
                 goto upconvert;
@@ -527,8 +531,10 @@ PassRefPtr<StringImpl> StringImpl::upper()
             if (c == smallLetterSharpS) {
                 *dest++ = 'S';
                 *dest++ = 'S';
-            } else
-                *dest++ = static_cast<LChar>(Unicode::toUpper(c));
+            } else {
+                ASSERT(u_toupper(c) <= 0xFF);
+                *dest++ = static_cast<LChar>(u_toupper(c));
+            }
         }
 
         return newImpl.release();
@@ -551,13 +557,14 @@ upconvert:
         return newImpl.release();
 
     // Do a slower implementation for cases that include non-ASCII characters.
-    bool error;
-    int32_t realLength = Unicode::toUpper(data16, length, source16, m_length, &error);
-    if (!error && realLength == length)
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t realLength = u_strToUpper(data16, length, source16, m_length, "", &status);
+    if (U_SUCCESS(status) && realLength == length)
         return newImpl;
     newImpl = createUninitialized(realLength, data16);
-    Unicode::toUpper(data16, realLength, source16, m_length, &error);
-    if (error)
+    status = U_ZERO_ERROR;
+    u_strToUpper(data16, realLength, source16, m_length, "", &status);
+    if (U_FAILURE(status))
         return this;
     return newImpl.release();
 }
@@ -574,10 +581,6 @@ static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
 
 RefPtr<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
 {
-#if !USE(ICU_UNICODE)
-    UNUSED_PARAM(localeIdentifier);
-    return lower();
-#else
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
     // FIXME: Could possibly optimize further by looking for the specific sequences
@@ -603,21 +606,16 @@ RefPtr<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     int realLength = u_strToLower(data16, length, source16, length, "tr", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newString;
-    status = U_ZERO_ERROR;
     newString = createUninitialized(realLength, data16);
+    status = U_ZERO_ERROR;
     u_strToLower(data16, realLength, source16, length, "tr", &status);
     if (U_FAILURE(status))
         return this;
     return newString.release();
-#endif
 }
 
 RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
 {
-#if !USE(ICU_UNICODE)
-    UNUSED_PARAM(localeIdentifier);
-    return upper();
-#else
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
     // and that the only affected character is lowercase "i".
@@ -644,7 +642,6 @@ RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
     if (U_FAILURE(status))
         return this;
     return newString.release();
-#endif
 }
 
 PassRefPtr<StringImpl> StringImpl::fill(UChar character)
@@ -685,8 +682,11 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
             return newImpl.release();
 
         // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
-        for (int32_t i = 0; i < length; ++i)
-            data[i] = static_cast<LChar>(Unicode::toLower(m_data8[i]));
+        // FIXME: Shouldn't this use u_foldCase instead of u_tolower?
+        for (int32_t i = 0; i < length; ++i) {
+            ASSERT(u_tolower(m_data8[i]) <= 0xFF);
+            data[i] = static_cast<LChar>(u_tolower(m_data8[i]));
+        }
 
         return newImpl.release();
     }
@@ -704,13 +704,14 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
         return newImpl.release();
 
     // Do a slower implementation for cases that include non-ASCII characters.
-    bool error;
-    int32_t realLength = Unicode::foldCase(data, length, m_data16, m_length, &error);
-    if (!error && realLength == length)
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t realLength = u_strFoldCase(data, length, m_data16, m_length, U_FOLD_CASE_DEFAULT, &status);
+    if (U_SUCCESS(status) && realLength == length)
         return newImpl.release();
     newImpl = createUninitialized(realLength, data);
-    Unicode::foldCase(data, realLength, m_data16, m_length, &error);
-    if (error)
+    status = U_ZERO_ERROR;
+    u_strFoldCase(data, realLength, m_data16, m_length, U_FOLD_CASE_DEFAULT, &status);
+    if (U_FAILURE(status))
         return this;
     return newImpl.release();
 }
@@ -952,8 +953,7 @@ float StringImpl::toFloat(bool* ok)
 bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
-        LChar bc = *b++;
-        if (foldCase(*a++) != foldCase(bc))
+        if (u_foldCase(*a++, U_FOLD_CASE_DEFAULT) != u_foldCase(*b++, U_FOLD_CASE_DEFAULT))
             return false;
     }
     return true;
@@ -962,8 +962,7 @@ bool equalIgnoringCase(const LChar* a, const LChar* b, unsigned length)
 bool equalIgnoringCase(const UChar* a, const LChar* b, unsigned length)
 {
     while (length--) {
-        LChar bc = *b++;
-        if (foldCase(*a++) != foldCase(bc))
+        if (u_foldCase(*a++, U_FOLD_CASE_DEFAULT) != u_foldCase(*b++, U_FOLD_CASE_DEFAULT))
             return false;
     }
     return true;
@@ -1911,7 +1910,7 @@ bool equalIgnoringCase(const StringImpl* a, const LChar* b)
         if (ored & ~0x7F) {
             equal = true;
             for (unsigned i = 0; i != length; ++i)
-                equal = equal && (foldCase(as[i]) == foldCase(b[i]));
+                equal = equal && u_foldCase(as[i], U_FOLD_CASE_DEFAULT) == u_foldCase(b[i], U_FOLD_CASE_DEFAULT);
         }
         
         return equal && !b[length];        
@@ -1931,7 +1930,7 @@ bool equalIgnoringCase(const StringImpl* a, const LChar* b)
     if (ored & ~0x7F) {
         equal = true;
         for (unsigned i = 0; i != length; ++i) {
-            equal = equal && (foldCase(as[i]) == foldCase(b[i]));
+            equal = equal && u_foldCase(as[i], U_FOLD_CASE_DEFAULT) == u_foldCase(b[i], U_FOLD_CASE_DEFAULT);
         }
     }
 
@@ -1970,24 +1969,24 @@ bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
     return equal(a, b);
 }
 
-WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
+UCharDirection StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)
 {
     for (unsigned i = 0; i < m_length; ++i) {
-        WTF::Unicode::Direction charDirection = WTF::Unicode::direction(is8Bit() ? m_data8[i] : m_data16[i]);
-        if (charDirection == WTF::Unicode::LeftToRight) {
+        UCharDirection charDirection = u_charDirection(is8Bit() ? m_data8[i] : m_data16[i]);
+        if (charDirection == U_LEFT_TO_RIGHT) {
             if (hasStrongDirectionality)
                 *hasStrongDirectionality = true;
-            return WTF::Unicode::LeftToRight;
+            return U_LEFT_TO_RIGHT;
         }
-        if (charDirection == WTF::Unicode::RightToLeft || charDirection == WTF::Unicode::RightToLeftArabic) {
+        if (charDirection == U_RIGHT_TO_LEFT || charDirection == U_RIGHT_TO_LEFT_ARABIC) {
             if (hasStrongDirectionality)
                 *hasStrongDirectionality = true;
-            return WTF::Unicode::RightToLeft;
+            return U_RIGHT_TO_LEFT;
         }
     }
     if (hasStrongDirectionality)
         *hasStrongDirectionality = false;
-    return WTF::Unicode::LeftToRight;
+    return U_LEFT_TO_RIGHT;
 }
 
 PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer<LChar>& buffer)
