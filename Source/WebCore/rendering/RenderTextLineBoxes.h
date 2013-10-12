@@ -26,9 +26,12 @@
 #ifndef RenderTextLineBoxes_h
 #define RenderTextLineBoxes_h
 
+#include "LayoutRect.h"
+
 namespace WebCore {
 
 class InlineTextBox;
+class RenderStyle;
 class RenderText;
 
 class RenderTextLineBoxes {
@@ -47,6 +50,13 @@ public:
     void deleteAll(RenderText&);
 
     InlineTextBox* findNext(int offset, int& position) const;
+
+    bool hasRenderedText() const;
+    int caretMinOffset() const;
+    int caretMaxOffset(const RenderText&) const;
+
+    IntRect boundingBox(const RenderText&) const;
+    LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
 #if !ASSERT_DISABLED
     ~RenderTextLineBoxes();

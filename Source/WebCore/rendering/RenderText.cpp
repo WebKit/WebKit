@@ -246,7 +246,7 @@ void RenderText::removeAndDestroyTextBoxes()
         } else if (parent())
             parent()->dirtyLinesFromChangedChild(this);
     }
-    deleteTextBoxes();
+    m_lineBoxes.deleteAll(*this);
 }
 
 void RenderText::willBeDestroyed()
@@ -1337,7 +1337,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 void RenderText::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
-        deleteTextBoxes();
+        m_lineBoxes.deleteAll(*this);
     else if (!m_linesDirty) {
         for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
             box->dirtyLineBoxes();
@@ -1415,53 +1415,12 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
 
 IntRect RenderText::linesBoundingBox() const
 {
-    IntRect result;
-    
-    ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
-    if (firstTextBox() && lastTextBox()) {
-        // Return the width of the minimal left side and the maximal right side.
-        float logicalLeftSide = 0;
-        float logicalRightSide = 0;
-        for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
-            if (curr == firstTextBox() || curr->logicalLeft() < logicalLeftSide)
-                logicalLeftSide = curr->logicalLeft();
-            if (curr == firstTextBox() || curr->logicalRight() > logicalRightSide)
-                logicalRightSide = curr->logicalRight();
-        }
-        
-        bool isHorizontal = style()->isHorizontalWritingMode();
-        
-        float x = isHorizontal ? logicalLeftSide : firstTextBox()->x();
-        float y = isHorizontal ? firstTextBox()->y() : logicalLeftSide;
-        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastTextBox()->logicalBottom() - x;
-        float height = isHorizontal ? lastTextBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = enclosingIntRect(FloatRect(x, y, width, height));
-    }
-
-    return result;
+    return m_lineBoxes.boundingBox(*this);
 }
 
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
-    if (!firstTextBox())
-        return LayoutRect();
-
-    // Return the width of the minimal left side and the maximal right side.
-    LayoutUnit logicalLeftSide = LayoutUnit::max();
-    LayoutUnit logicalRightSide = LayoutUnit::min();
-    for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
-        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisualOverflow());
-        logicalRightSide = max(logicalRightSide, curr->logicalRightVisualOverflow());
-    }
-    
-    LayoutUnit logicalTop = firstTextBox()->logicalTopVisualOverflow();
-    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
-    LayoutUnit logicalHeight = lastTextBox()->logicalBottomVisualOverflow() - logicalTop;
-    
-    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!style()->isHorizontalWritingMode())
-        rect = rect.transposedRect();
-    return rect;
+    return m_lineBoxes.visualOverflowBoundingBox(*this);
 }
 
 LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
@@ -1528,34 +1487,17 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    InlineTextBox* box = firstTextBox();
-    if (!box)
-        return 0;
-    int minOffset = box->start();
-    for (box = box->nextTextBox(); box; box = box->nextTextBox())
-        minOffset = min<int>(minOffset, box->start());
-    return minOffset;
+    return m_lineBoxes.caretMinOffset();
 }
 
 int RenderText::caretMaxOffset() const
 {
-    InlineTextBox* box = lastTextBox();
-    if (!lastTextBox())
-        return textLength();
-
-    int maxOffset = box->start() + box->len();
-    for (box = box->prevTextBox(); box; box = box->prevTextBox())
-        maxOffset = max<int>(maxOffset, box->start() + box->len());
-    return maxOffset;
+    return m_lineBoxes.caretMaxOffset(*this);
 }
 
 bool RenderText::hasRenderedText() const
 {
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (box->len())
-            return true;
-    }
-    return false;
+    return m_lineBoxes.hasRenderedText();
 }
 
 int RenderText::previousOffset(int current) const

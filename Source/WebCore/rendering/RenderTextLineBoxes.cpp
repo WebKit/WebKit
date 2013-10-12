@@ -27,6 +27,7 @@
 #include "RenderTextLineBoxes.h"
 
 #include "InlineTextBox.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
 
@@ -106,7 +107,7 @@ void RenderTextLineBoxes::deleteAll(RenderText& renderer)
 {
     if (!m_first)
         return;
-    RenderArena& arena = renderer.renderArena();
+    auto& arena = renderer.renderArena();
     InlineTextBox* next;
     for (auto current = m_first; current; current = next) {
         next = current->nextTextBox();
@@ -130,6 +131,85 @@ InlineTextBox* RenderTextLineBoxes::findNext(int offset, int& position) const
     // we are now in the correct text run
     position = (offset > currentOffset ? current->len() : current->len() - (currentOffset - offset));
     return current;
+}
+
+IntRect RenderTextLineBoxes::boundingBox(const RenderText& renderer) const
+{
+    if (!m_first)
+        return IntRect();
+
+    // Return the width of the minimal left side and the maximal right side.
+    float logicalLeftSide = 0;
+    float logicalRightSide = 0;
+    for (auto current = m_first; current; current = current->nextTextBox()) {
+        if (current == m_first || current->logicalLeft() < logicalLeftSide)
+            logicalLeftSide = current->logicalLeft();
+        if (current == m_first || current->logicalRight() > logicalRightSide)
+            logicalRightSide = current->logicalRight();
+    }
+    
+    bool isHorizontal = renderer.style()->isHorizontalWritingMode();
+    
+    float x = isHorizontal ? logicalLeftSide : m_first->x();
+    float y = isHorizontal ? m_first->y() : logicalLeftSide;
+    float width = isHorizontal ? logicalRightSide - logicalLeftSide : m_last->logicalBottom() - x;
+    float height = isHorizontal ? m_last->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+    return enclosingIntRect(FloatRect(x, y, width, height));
+}
+
+LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& renderer) const
+{
+    if (!m_first)
+        return LayoutRect();
+
+    // Return the width of the minimal left side and the maximal right side.
+    auto logicalLeftSide = LayoutUnit::max();
+    auto logicalRightSide = LayoutUnit::min();
+    for (auto current = m_first; current; current = current->nextTextBox()) {
+        logicalLeftSide = std::min(logicalLeftSide, current->logicalLeftVisualOverflow());
+        logicalRightSide = std::max(logicalRightSide, current->logicalRightVisualOverflow());
+    }
+    
+    auto logicalTop = m_first->logicalTopVisualOverflow();
+    auto logicalWidth = logicalRightSide - logicalLeftSide;
+    auto logicalHeight = m_last->logicalBottomVisualOverflow() - logicalTop;
+    
+    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
+    if (!renderer.style()->isHorizontalWritingMode())
+        rect = rect.transposedRect();
+    return rect;
+}
+
+bool RenderTextLineBoxes::hasRenderedText() const
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        if (box->len())
+            return true;
+    }
+    return false;
+}
+
+int RenderTextLineBoxes::caretMinOffset() const
+{
+    auto box = m_first;
+    if (!box)
+        return 0;
+    int minOffset = box->start();
+    for (box = box->nextTextBox(); box; box = box->nextTextBox())
+        minOffset = std::min<int>(minOffset, box->start());
+    return minOffset;
+}
+
+int RenderTextLineBoxes::caretMaxOffset(const RenderText& renderer) const
+{
+    auto box = m_last;
+    if (!box)
+        return renderer.textLength();
+
+    int maxOffset = box->start() + box->len();
+    for (box = box->prevTextBox(); box; box = box->prevTextBox())
+        maxOffset = std::max<int>(maxOffset, box->start() + box->len());
+    return maxOffset;
 }
 
 #if !ASSERT_DISABLED
