@@ -67,7 +67,7 @@ private:
 
     virtual void allClientsRemoved() OVERRIDE;
 
-    FontCustomPlatformData* m_fontData;
+    std::unique_ptr<FontCustomPlatformData> m_fontData;
     bool m_loadInitiated;
     bool m_hasCreatedFontData;
 

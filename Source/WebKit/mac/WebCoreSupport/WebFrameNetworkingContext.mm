@@ -32,27 +32,31 @@
 #include <WebCore/Page.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
+#include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
-static NetworkStorageSession* privateSession;
+static std::unique_ptr<NetworkStorageSession>& privateSession()
+{
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
+    return session;
+}
 
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    if (privateSession)
+    if (privateSession())
         return;
 
-    privateSession = NetworkStorageSession::createPrivateBrowsingSession([[NSBundle mainBundle] bundleIdentifier]).leakPtr();
+    privateSession() = NetworkStorageSession::createPrivateBrowsingSession([[NSBundle mainBundle] bundleIdentifier]);
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
     ASSERT(isMainThread());
 
-    delete privateSession;
-    privateSession = 0;
+    privateSession() = nullptr;
 }
 
 bool WebFrameNetworkingContext::needsSiteSpecificQuirks() const
@@ -94,7 +98,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
     ASSERT(isMainThread());
 
     if (frame() && frame()->settings().privateBrowsingEnabled())
-        return *privateSession;
+        return *privateSession();
 
     return NetworkStorageSession::defaultStorageSession();
 }

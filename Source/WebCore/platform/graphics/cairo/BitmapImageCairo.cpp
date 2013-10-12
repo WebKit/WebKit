@@ -31,6 +31,7 @@
 #include "CairoUtilities.h"
 #include "ImageObserver.h"
 #include "PlatformContextCairo.h"
+#include "Timer.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -39,12 +40,10 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
     : Image(observer)
     , m_size(cairoSurfaceSize(nativeImage.get()))
     , m_currentFrame(0)
-    , m_frames(0)
-    , m_frameTimer(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
-    , m_decodedSize(0)
+    , m_decodedSize(m_size.width() * m_size.height() * 4)
     , m_frameCount(1)
     , m_isSolidColor(false)
     , m_checkedForSolidColor(false)
@@ -54,12 +53,11 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    m_decodedSize = m_size.width() * m_size.height() * 4;
-
     m_frames.grow(1);
     m_frames[0].m_hasAlpha = cairo_surface_get_content(nativeImage.get()) != CAIRO_CONTENT_COLOR;
     m_frames[0].m_frame = nativeImage;
     m_frames[0].m_haveMetadata = true;
+
     checkForSolidColor();
 }
 

@@ -31,15 +31,14 @@ namespace WebCore {
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-    CGFontRelease(m_cgFont);
 }
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode)
 {
-    return FontPlatformData(m_cgFont, size, bold, italic, orientation, widthVariant);
+    return FontPlatformData(m_cgFont.get(), size, bold, italic, orientation, widthVariant);
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
@@ -47,14 +46,14 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     OpenTypeSanitizer sanitizer(buffer);
     RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
     if (!transcodeBuffer)
-        return 0; // validation failed.
+        return nullptr; // validation failed.
     buffer = transcodeBuffer.get();
 #else
     RefPtr<SharedBuffer> sfntBuffer;
     if (isWOFF(buffer)) {
         Vector<char> sfnt;
         if (!convertWOFFToSfnt(buffer, sfnt))
-            return 0;
+            return nullptr;
 
         sfntBuffer = SharedBuffer::adoptVector(sfnt);
         buffer = sfntBuffer.get();
@@ -68,10 +67,9 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     RetainPtr<CGFontRef> cgFontRef = adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
     if (!cgFontRef)
-        return 0;
+        return nullptr;
 
-    FontCustomPlatformData* fontCustomPlatformData = new FontCustomPlatformData(containerRef, cgFontRef.leakRef());
-    return fontCustomPlatformData;
+    return std::make_unique<FontCustomPlatformData>(containerRef, cgFontRef.get());
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

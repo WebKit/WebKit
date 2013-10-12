@@ -43,7 +43,6 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
     , m_frames(0)
-    , m_frameTimer(0)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
@@ -429,7 +428,7 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
 
     if (!catchUpIfNecessary || time < m_desiredFrameStartTime) {
         // Haven't yet reached time for next frame to start; delay until then.
-        m_frameTimer = new Timer<BitmapImage>(this, &BitmapImage::advanceAnimation);
+        m_frameTimer = std::make_unique<Timer<BitmapImage>>(this, &BitmapImage::advanceAnimation);
         m_frameTimer->startOneShot(std::max(m_desiredFrameStartTime - time, 0.));
     } else {
         // We've already reached or passed the time for the next frame to start.
@@ -479,8 +478,7 @@ void BitmapImage::stopAnimation()
 {
     // This timer is used to animate all occurrences of this image.  Don't invalidate
     // the timer unless all renderers have stopped drawing.
-    delete m_frameTimer;
-    m_frameTimer = 0;
+    m_frameTimer = nullptr;
 }
 
 void BitmapImage::resetAnimation()

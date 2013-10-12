@@ -89,18 +89,18 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
     return *defaultNetworkStorageSession();
 }
 
-PassOwnPtr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String& identifierBase)
+std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String& identifierBase)
 {
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
 
 #if PLATFORM(MAC)
-    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get()))));
+    auto session = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get())));
 #else
-    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()))));
+    auto session = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));
 #endif
     session->m_isPrivate = true;
 
-    return session.release();
+    return session;
 }
 
 RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const

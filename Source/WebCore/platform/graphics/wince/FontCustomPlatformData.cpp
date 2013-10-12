@@ -70,15 +70,15 @@ static String createUniqueFontName()
     return fontName.replace('/', '_');
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(const SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(const SharedBuffer* buffer)
 {
     if (g_customFontCache) {
         String fontName = createUniqueFontName();
         RefPtr<SharedBuffer> localBuffer = SharedBuffer::create(buffer->data(), buffer->size());
         if (renameFont(localBuffer.get(), fontName) && g_customFontCache->registerFont(fontName, localBuffer.get()))
-            return new FontCustomPlatformData(fontName);
+            return std::make_unique<FontCustomPlatformData>(fontName);
     }
-    return 0;
+    return nullptr;
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

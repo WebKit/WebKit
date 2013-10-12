@@ -79,7 +79,7 @@ public:
 
 private:
     Client* m_client;
-    HashMap<uint64_t, Download*> m_downloads;
+    HashMap<uint64_t, std::unique_ptr<Download>> m_downloads;
 };
 
 } // namespace WebKit

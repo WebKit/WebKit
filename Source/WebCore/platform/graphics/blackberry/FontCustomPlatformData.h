@@ -48,7 +48,7 @@ public:
     RefPtr<SharedBuffer> m_buffer;
 };
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
 
 } // namespace WebCore
 

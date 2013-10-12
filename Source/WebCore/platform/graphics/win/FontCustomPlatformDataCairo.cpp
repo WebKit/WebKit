@@ -80,7 +80,7 @@ static String createUniqueFontName()
     return fontName;
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
@@ -88,9 +88,9 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     HANDLE fontReference = renameAndActivateFont(buffer, fontName);
 
     if (!fontReference)
-        return 0;
+        return nullptr;
 
-    return new FontCustomPlatformData(fontReference, fontName);
+    return std::make_unique<FontCustomPlatformData>(fontReference, fontName);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

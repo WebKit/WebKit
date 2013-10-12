@@ -64,7 +64,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     return FontPlatformData(m_fontFace, size, bold, italic);
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
@@ -72,22 +72,22 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (isWOFF(buffer)) {
         Vector<char> sfnt;
         if (!convertWOFFToSfnt(buffer, sfnt))
-            return 0;
+            return nullptr;
 
         sfntBuffer = SharedBuffer::adoptVector(sfnt);
         buffer = sfntBuffer.get();
     }
 
-    static FT_Library library = 0;
+    static FT_Library library;
     if (!library && FT_Init_FreeType(&library)) {
-        library = 0;
-        return 0;
+        library = nullptr;
+        return nullptr;
     }
 
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer->data()), buffer->size(), 0, &freeTypeFace))
-        return 0;
-    return new FontCustomPlatformData(freeTypeFace, buffer);
+        return nullptr;
+    return std::make_unique<FontCustomPlatformData>(freeTypeFace, buffer);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

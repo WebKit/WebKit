@@ -45,6 +45,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -167,12 +168,13 @@ static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<DatabaseGuid, HashSet<DatabaseBackendBase*>*> GuidDatabaseMap;
+typedef HashMap<DatabaseGuid, std::unique_ptr<HashSet<DatabaseBackendBase*>>> GuidDatabaseMap;
+
 static GuidDatabaseMap& guidToDatabaseMap()
 {
     // Ensure the the mutex is locked.
     ASSERT(!guidMutex().tryLock());
-    DEFINE_STATIC_LOCAL(GuidDatabaseMap, map, ());
+    static NeverDestroyed<GuidDatabaseMap> map;
     return map;
 }
 
@@ -184,12 +186,12 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
     String stringID = origin + "/" + name;
 
     typedef HashMap<String, int> IDGuidMap;
-    DEFINE_STATIC_LOCAL(IDGuidMap, stringIdentifierToGUIDMap, ());
-    DatabaseGuid guid = stringIdentifierToGUIDMap.get(stringID);
+    static NeverDestroyed<HashMap<String, int>> map;
+    DatabaseGuid guid = map.get().get(stringID);
     if (!guid) {
         static int currentNewGUID = 1;
         guid = currentNewGUID++;
-        stringIdentifierToGUIDMap.set(stringID, guid);
+        map.get().set(stringID, guid);
     }
 
     return guid;
@@ -215,7 +217,6 @@ DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> data
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
-    , m_guid(0)
     , m_opened(false)
     , m_new(false)
     , m_isSyncDatabase(databaseType == DatabaseType::Sync)
@@ -225,17 +226,14 @@ DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> data
     m_databaseAuthorizer = DatabaseAuthorizer::create(infoTableName);
 
     if (m_name.isNull())
-        m_name = "";
+        m_name = emptyString();
 
     {
         MutexLocker locker(guidMutex());
         m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
-        HashSet<DatabaseBackendBase*>* hashSet = guidToDatabaseMap().get(m_guid);
-        if (!hashSet) {
-            hashSet = new HashSet<DatabaseBackendBase*>;
-            guidToDatabaseMap().set(m_guid, hashSet);
-        }
-
+        std::unique_ptr<HashSet<DatabaseBackendBase*>>& hashSet = guidToDatabaseMap().add(m_guid, nullptr).iterator->value;
+        if (!hashSet)
+            hashSet = std::make_unique<HashSet<DatabaseBackendBase*>>();
         hashSet->add(this);
     }
 
@@ -268,13 +266,13 @@ void DatabaseBackendBase::closeDatabase()
     {
         MutexLocker locker(guidMutex());
 
-        HashSet<DatabaseBackendBase*>* hashSet = guidToDatabaseMap().get(m_guid);
-        ASSERT(hashSet);
-        ASSERT(hashSet->contains(this));
-        hashSet->remove(this);
-        if (hashSet->isEmpty()) {
-            guidToDatabaseMap().remove(m_guid);
-            delete hashSet;
+        auto it = guidToDatabaseMap().find(m_guid);
+        ASSERT(it != guidToDatabaseMap().end());
+        ASSERT(it->value);
+        ASSERT(it->value->contains(this));
+        it->value->remove(this);
+        if (it->value->isEmpty()) {
+            guidToDatabaseMap().remove(it);
             guidToVersionMap().remove(m_guid);
         }
     }
@@ -329,7 +327,7 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
     {
         MutexLocker locker(guidMutex());
 
-        GuidVersionMap::iterator entry = guidToVersionMap().find(m_guid);
+        auto entry = guidToVersionMap().find(m_guid);
         if (entry != guidToVersionMap().end()) {
             // Map null string to empty string (see updateGuidVersionMap()).
             currentVersion = entry->value.isNull() ? emptyString() : entry->value.isolatedCopy();

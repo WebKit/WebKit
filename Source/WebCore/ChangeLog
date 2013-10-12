@@ -1,3 +1,76 @@
+2013-10-12  Darin Adler  <darin@apple.com>
+
+        Use unique_ptr instead of delete in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=122639
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::guidToDatabaseMap): Use NeverDestroyed instead of DEFINE_STATIC_LOCAL.
+        (WebCore::guidForOriginAndName): Ditto.
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase): Removed unneeded initialization
+        of m_guid, which is set in the body of the constructor explicitly anyway. Use emptyString.
+        Use unique_ptr for the values in the map. Use the add idiom instead of the get/set idiom.
+        (WebCore::DatabaseBackendBase::closeDatabase): Use the find/remove idiom instead of the
+        get/remove idiom.
+        (WebCore::DatabaseBackendBase::performOpenAndVerify): Use auto here to avoid having to
+        use the map type by name.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont): Don't initialize m_fontData to 0; unique_ptr will do that.
+        (WebCore::CachedFont::~CachedFont): Don't delete m_fontData. unique_ptr will do that.
+        (WebCore::CachedFont::ensureCustomFontData): Add a get.
+        (WebCore::CachedFont::allClientsRemoved): Don't delete m_fontData. Use nullptr instead of 0.
+        * loader/cache/CachedFont.h: Changed m_fontData to a unique_ptr.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage): Don't initialize m_frameTimer to 0; unique_ptr will do that.
+        (WebCore::BitmapImage::startAnimation): Use make_unique to create the timer.
+        (WebCore::BitmapImage::stopAnimation): Don't delete m_frameTimer. Use nullptr instead of 0.
+        * platform/graphics/BitmapImage.h: Changed m_FrameTimer to a unique_ptr.
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage): Don't initialize m_frameTimer to 0; unique_ptr will do that.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData): Don't call CGFontRelease on m_cgFont.
+        (WebCore::FontCustomPlatformData::fontPlatformData): Use get on m_cgFont.
+        (WebCore::createFontCustomPlatformData): Use nullptr instead of 0, and make_unique instead of new.
+        * platform/graphics/mac/FontCustomPlatformData.h: Chnaged m_cgFont to be a RetainPtr, and the
+        return value from createFontCustomPlatformData to be a unique_ptr.
+
+        * platform/graphics/blackberry/FontCustomPlatformData.h:
+        * platform/graphics/blackberry/FontCustomPlatformDataBlackBerry.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/wince/FontCustomPlatformData.h:
+        Same thing on all the other platforms.
+
+        * platform/network/NetworkStorageSession.h: Changed return value of createPrivateBrowsingSession
+        to a unique_ptr, and made constructors public.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession): Use make_unique.
+
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::defaultSession):
+        (WebCore::NetworkStorageSession::defaultStorageSession):
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession):
+        (WebCore::NetworkStorageSession::switchToNewTestingSession):
+        Same thing on all the other platforms.
+
 2013-10-11  Andreas Kling  <akling@apple.com>
 
         Make LayoutState not arena-allocated.

@@ -87,15 +87,12 @@ bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle&
 }
 
 SandboxExtension::HandleArray::HandleArray()
-    : m_data(0)
-    , m_size(0)
+    : m_size(0)
 {
 }
 
 SandboxExtension::HandleArray::~HandleArray()
 {
-    if (m_data)
-        delete[] m_data;
 }
 
 void SandboxExtension::HandleArray::allocate(size_t size)
@@ -105,7 +102,7 @@ void SandboxExtension::HandleArray::allocate(size_t size)
 
     ASSERT(!m_data);
 
-    m_data = new SandboxExtension::Handle[size];
+    m_data = std::make_unique<SandboxExtension::Handle[]>(size);
     m_size = size;
 }
 

@@ -78,7 +78,7 @@ WebView *getWebView(WebFrame *webFrame);
 @public
     WebCore::Frame* coreFrame;
     WebFrameView *webFrameView;
-    WebScriptDebugger* scriptDebugger;
+    std::unique_ptr<WebScriptDebugger> scriptDebugger;
     id internalLoadDelegate;
     BOOL shouldCreateRenderers;
     BOOL includedInWebKitStatistics;

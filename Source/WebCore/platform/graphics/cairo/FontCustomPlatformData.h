@@ -49,7 +49,7 @@ private:
     cairo_font_face_t* m_fontFace;
 };
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
 
 }
 

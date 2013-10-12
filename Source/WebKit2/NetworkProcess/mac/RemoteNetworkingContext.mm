@@ -30,17 +30,16 @@
 #import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
-#import <wtf/PassOwnPtr.h>
-#import <wtf/OwnPtr.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-static OwnPtr<NetworkStorageSession>& privateBrowsingStorageSession()
+static std::unique_ptr<NetworkStorageSession>& privateBrowsingStorageSession()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(OwnPtr<NetworkStorageSession>, session, ());
+    static NeverDestroyed<std::unique_ptr<NetworkStorageSession>> session;
     return session;
 }
 
@@ -112,7 +111,7 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession()
     ASSERT(!privateBrowsingStorageSessionIdentifierBase().isNull());
     RetainPtr<CFStringRef> cfIdentifier = String(privateBrowsingStorageSessionIdentifierBase() + ".PrivateBrowsing").createCFString();
 
-    privateBrowsingStorageSession() = NetworkStorageSession::createPrivateBrowsingSession(privateBrowsingStorageSessionIdentifierBase());
+    privateBrowsingStorageSession() = std::move(NetworkStorageSession::createPrivateBrowsingSession(privateBrowsingStorageSessionIdentifierBase()));
 }
 
 void RemoteNetworkingContext::destroyPrivateBrowsingSession()

@@ -56,7 +56,7 @@ public:
     String m_name;
 };
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
 
 }
 

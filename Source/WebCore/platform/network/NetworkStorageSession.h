@@ -46,7 +46,7 @@ class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
 public:
     static NetworkStorageSession& defaultStorageSession();
-    static PassOwnPtr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase = String());
+    static std::unique_ptr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase = String());
 
     static void switchToNewTestingSession();
 
@@ -55,10 +55,12 @@ public:
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
+    NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     // May be null, in which case a Foundation default should be used.
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
 #elif USE(SOUP)
+    NetworkStorageSession(SoupSession*);
     void setSoupSession(SoupSession* session) { m_session = session; }
     SoupSession* soupSession() const { return m_session.get(); }
 #else
@@ -69,11 +71,9 @@ public:
 
 private:
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     NetworkStorageSession();
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
-    NetworkStorageSession(SoupSession*);
     GRefPtr<SoupSession> m_session;
 #else
     RefPtr<NetworkingContext> m_context;

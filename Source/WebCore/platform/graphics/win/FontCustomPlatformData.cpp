@@ -81,7 +81,7 @@ static String createUniqueFontName()
     return fontName;
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
@@ -89,7 +89,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     if (isWOFF(buffer)) {
         Vector<char> sfnt;
         if (!convertWOFFToSfnt(buffer, sfnt))
-            return 0;
+            return nullptr;
 
         sfntBuffer = SharedBuffer::adoptVector(sfnt);
         buffer = sfntBuffer.get();
@@ -99,8 +99,8 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     HANDLE fontReference;
     fontReference = renameAndActivateFont(buffer, fontName);
     if (!fontReference)
-        return 0;
-    return new FontCustomPlatformData(fontReference, fontName);
+        return nullptr;
+    return std::make_unique<FontCustomPlatformData>(fontReference, fontName);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

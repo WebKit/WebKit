@@ -56,7 +56,7 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
     return isSupported;
 }
 
-FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
@@ -64,16 +64,16 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
     OpenTypeSanitizer sanitizer(buffer);
     RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
     if (!transcodeBuffer)
-        return 0; // validation failed.
+        return nullptr; // validation failed.
     buffer = transcodeBuffer.get();
 #endif
 
     FILECHAR name[MAX_FONT_NAME_LEN+1];
     memset(name, 0, MAX_FONT_NAME_LEN+1);
     if (FS_load_font(BlackBerry::Platform::Graphics::getIType(), 0, const_cast<FS_BYTE*>(reinterpret_cast<const FS_BYTE*>(buffer->data())), 0, MAX_FONT_NAME_LEN, name) != SUCCESS)
-        return 0;
+        return nullptr;
 
-    return new FontCustomPlatformData(name, buffer);
+    return std::make_unique<FontCustomPlatformData>(name, buffer);
 }
 
 }

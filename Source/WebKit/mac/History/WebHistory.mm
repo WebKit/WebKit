@@ -74,7 +74,7 @@ private:
 @interface WebHistoryPrivate : NSObject {
 @private
     NSMutableDictionary *_entriesByURL;
-    DateToEntriesMap* _entriesByDate;
+    std::unique_ptr<DateToEntriesMap> _entriesByDate;
     NSMutableArray *_orderedLastVisitedDays;
     BOOL itemLimitSet;
     int itemLimit;
@@ -132,7 +132,7 @@ private:
         return nil;
     
     _entriesByURL = [[NSMutableDictionary alloc] init];
-    _entriesByDate = new DateToEntriesMap;
+    _entriesByDate = std::make_unique<DateToEntriesMap>();
 
     return self;
 }
@@ -141,13 +141,11 @@ private:
 {
     [_entriesByURL release];
     [_orderedLastVisitedDays release];
-    delete _entriesByDate;
     [super dealloc];
 }
 
 - (void)finalize
 {
-    delete _entriesByDate;
     [super finalize];
 }
 
@@ -636,7 +634,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     
     // Ignores the date and item count limits; these are respected when loading instead of when saving, so
     // that clients can learn of discarded items by listening to WebHistoryItemsDiscardedWhileLoadingNotification.
-    WebHistoryWriter writer(_entriesByDate);
+    WebHistoryWriter writer(_entriesByDate.get());
     writer.writePropertyList();
     return [[(NSData *)writer.releaseData().get() retain] autorelease];
 }
