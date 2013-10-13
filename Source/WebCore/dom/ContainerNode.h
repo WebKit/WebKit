@@ -129,6 +129,9 @@ public:
 
     RenderElement* renderer() const;
 
+    Element* querySelector(const AtomicString& selectors, ExceptionCode&);
+    RefPtr<NodeList> querySelectorAll(const AtomicString& selectors, ExceptionCode&);
+
 protected:
     explicit ContainerNode(Document*, ConstructionType = CreateContainer);
 

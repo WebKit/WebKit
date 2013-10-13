@@ -141,18 +141,18 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
 Element* TreeScope::getElementById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())
-        return 0;
+        return nullptr;
     if (!m_elementsById)
-        return 0;
+        return nullptr;
     return m_elementsById->getElementById(*elementId.impl(), *this);
 }
 
 const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())
-        return 0;
+        return nullptr;
     if (!m_elementsById)
-        return 0;
+        return nullptr;
     return m_elementsById->getAllElementsById(*elementId.impl(), *this);
 }
 
@@ -175,9 +175,9 @@ void TreeScope::removeElementById(const AtomicStringImpl& elementId, Element& el
 Element* TreeScope::getElementByName(const AtomicString& name) const
 {
     if (name.isEmpty())
-        return 0;
+        return nullptr;
     if (!m_elementsByName)
-        return 0;
+        return nullptr;
     return m_elementsByName->getElementByName(*name.impl(), *this);
 }
 
@@ -201,12 +201,12 @@ Node* TreeScope::ancestorInThisScope(Node* node) const
         if (&node->treeScope() == this)
             return node;
         if (!node->isInShadowTree())
-            return 0;
+            return nullptr;
 
         node = node->shadowHost();
     }
 
-    return 0;
+    return nullptr;
 }
 
 void TreeScope::addImageMap(HTMLMapElement& imageMap)

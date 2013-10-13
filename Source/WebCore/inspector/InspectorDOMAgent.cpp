@@ -379,7 +379,7 @@ Node* InspectorDOMAgent::assertNode(ErrorString* errorString, int nodeId)
     Node* node = nodeForId(nodeId);
     if (!node) {
         *errorString = "Could not find node with given id";
-        return 0;
+        return nullptr;
     }
     return node;
 }
@@ -388,11 +388,10 @@ Document* InspectorDOMAgent::assertDocument(ErrorString* errorString, int nodeId
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
-        return 0;
-
-    if (!(node->isDocumentNode())) {
+        return nullptr;
+    if (!node->isDocumentNode()) {
         *errorString = "Document is not available";
-        return 0;
+        return nullptr;
     }
     return toDocument(node);
 }
@@ -401,11 +400,10 @@ Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
-        return 0;
-
-    if (node->nodeType() != Node::ELEMENT_NODE) {
+        return nullptr;
+    if (!node->isElementNode()) {
         *errorString = "Node is not an Element";
-        return 0;
+        return nullptr;
     }
     return toElement(node);
 }
@@ -414,13 +412,11 @@ Node* InspectorDOMAgent::assertEditableNode(ErrorString* errorString, int nodeId
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
-        return 0;
-
+        return nullptr;
     if (node->isInShadowTree()) {
         *errorString = "Can not edit nodes from shadow trees";
-        return 0;
+        return nullptr;
     }
-
     return node;
 }
 
@@ -428,11 +424,10 @@ Element* InspectorDOMAgent::assertEditableElement(ErrorString* errorString, int 
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
-        return 0;
-
+        return nullptr;
     if (element->isInShadowTree()) {
         *errorString = "Can not edit elements from shadow trees";
-        return 0;
+        return nullptr;
     }
     return element;
 }
@@ -447,9 +442,9 @@ void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<TypeBuilder
     }
 
     // Reset backend state.
-    RefPtr<Document> doc = m_document;
+    RefPtr<Document> document = m_document;
     reset();
-    m_document = doc;
+    m_document = document;
 
     root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
@@ -539,9 +534,13 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
+    if (!node->isContainerNode()) {
+        assertElement(errorString, nodeId);
+        return;
+    }
 
     ExceptionCode ec = 0;
-    RefPtr<Element> element = node->querySelector(selectors, ec);
+    RefPtr<Element> element = toContainerNode(node)->querySelector(selectors, ec);
     if (ec) {
         *errorString = "DOM Error while querying";
         return;
@@ -551,14 +550,18 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<TypeBuilder::Array<int> >& result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<TypeBuilder::Array<int>>& result)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
+    if (!node->isContainerNode()) {
+        assertElement(errorString, nodeId);
+        return;
+    }
 
     ExceptionCode ec = 0;
-    RefPtr<NodeList> nodes = node->querySelectorAll(selectors, ec);
+    RefPtr<NodeList> nodes = toContainerNode(node)->querySelectorAll(selectors, ec);
     if (ec) {
         *errorString = "DOM Error while querying";
         return;

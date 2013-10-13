@@ -2549,9 +2549,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
     }
 
     SelectorQuery* selectorQuery = document().selectorQueryCache().add(selector, document(), ec);
-    if (!selectorQuery)
-        return false;
-    return selectorQuery->matches(this);
+    return selectorQuery && selectorQuery->matches(*this);
 }
 
 bool Element::shouldAppearIndeterminate() const

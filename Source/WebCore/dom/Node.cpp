@@ -90,7 +90,6 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
-#include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StorageEvent.h"
@@ -106,6 +105,8 @@
 #include "WheelEvent.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
+#include <runtime/Operations.h>
+#include <runtime/VM.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -120,9 +121,6 @@
 #if ENABLE(INSPECTOR)
 #include "InspectorController.h"
 #endif
-
-#include <runtime/VM.h>
-#include <runtime/Operations.h>
 
 using namespace std;
 
@@ -1099,36 +1097,10 @@ PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, RadioNodeListType, name);
 }
 
-PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, ExceptionCode& ec)
+Document* Node::ownerDocument() const
 {
-    if (selectors.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-
-    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, document(), ec);
-    if (!selectorQuery)
-        return 0;
-    return selectorQuery->queryFirst(this);
-}
-
-PassRefPtr<NodeList> Node::querySelectorAll(const AtomicString& selectors, ExceptionCode& ec)
-{
-    if (selectors.isEmpty()) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
-
-    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, document(), ec);
-    if (!selectorQuery)
-        return 0;
-    return selectorQuery->queryAll(this);
-}
-
-Document *Node::ownerDocument() const
-{
-    Document* doc = &document();
-    return doc == this ? 0 : doc;
+    Document* document = &this->document();
+    return document == this ? nullptr : document;
 }
 
 URL Node::baseURI() const

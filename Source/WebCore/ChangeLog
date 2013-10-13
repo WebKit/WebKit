@@ -1,5 +1,65 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Move querySelector from Node to ContainerNode and use references instead of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=122709
+
+        Reviewed by Anders Carlsson.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::querySelector): Moved here from Node. Pass a reference instead
+        of a pointer to SelectorQuery. Changed return types to RefPtr and raw pointer instead of
+        PassRefPtr.
+        (WebCore::ContainerNode::querySelectorAll): Ditto.
+        * dom/ContainerNode.h: Added the new functions.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitMatchesSelector): Use && instead of an if statement and a reference rather than
+        a pointer.
+
+        * dom/Node.cpp: Sorted includes, removed SelectorQuery.h, removed the querySelector functions.
+        (WebCore::Node::ownerDocument): Use document instead of doc and nullptr instead of 0.
+        * dom/Node.h: Removed the querySelector functions.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches): Take references instead of pointers.
+        (WebCore::SelectorDataList::matches): Ditto.
+        (WebCore::SelectorDataList::queryAll): Return a RefPtr instead of PassRefPtr.
+        (WebCore::SelectorDataList::queryFirst): Ditto. Also use nullptr.
+        (WebCore::selectorForIdLookup): Take references instead of pointers.
+        (WebCore::isTreeScopeRoot): Ditto.
+        (WebCore::SelectorDataList::executeFastPathForIdSelector): Ditto.
+        (WebCore::isSingleTagNameSelector): Ditto.
+        (WebCore::elementsForLocalName): Ditto. Also use iterators instead of traversal.
+        (WebCore::anyElement): Ditto.
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData): Ditto.
+        (WebCore::isSingleClassNameSelector): Ditto.
+        (WebCore::SelectorDataList::executeSingleClassNameSelectorData): Ditto.
+        (WebCore::SelectorDataList::executeSingleSelectorData): Ditto.
+        (WebCore::SelectorDataList::executeSingleMultiSelectorData): Ditto.
+        (WebCore::SelectorDataList::execute): Ditto.
+        (WebCore::SelectorQueryCache::add): Ditto.
+
+        * dom/SelectorQuery.h: Update to use ContainerNode, references, and RefPtr and raw pointers
+        rather than PassRefPtr.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getElementById): Use nullptr instead of 0.
+        (WebCore::TreeScope::getAllElementsById): Ditto.
+        (WebCore::TreeScope::getElementByName): Ditto.
+        (WebCore::TreeScope::ancestorInThisScope): Ditto.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::assertNode): Use nullptr instead of 0.
+        (WebCore::InspectorDOMAgent::assertDocument): Ditto.
+        (WebCore::InspectorDOMAgent::assertElement): Ditto. Also use isElementNode instead of nodeType.
+        (WebCore::InspectorDOMAgent::assertEditableNode): Use nullptr instead of 0.
+        (WebCore::InspectorDOMAgent::assertEditableElement): Ditto.
+        (WebCore::InspectorDOMAgent::getDocument): Use document instead of doc.
+        (WebCore::InspectorDOMAgent::querySelector): Changed to pass a ContainerNode.
+        (WebCore::InspectorDOMAgent::querySelectorAll): Ditto.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Move code to find elements in slider shadow tree into RangeInputType class, since it creates that tree
         https://bugs.webkit.org/show_bug.cgi?id=122708
 
