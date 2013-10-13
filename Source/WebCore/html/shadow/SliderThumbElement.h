@@ -39,9 +39,7 @@
 
 namespace WebCore {
 
-class HTMLElement;
 class HTMLInputElement;
-class Event;
 class FloatPoint;
 
 class SliderThumbElement FINAL : public HTMLDivElement {
@@ -49,24 +47,25 @@ public:
     static PassRefPtr<SliderThumbElement> create(Document&);
 
     void setPositionFromValue();
-
     void dragFrom(const LayoutPoint&);
-    virtual void defaultEventHandler(Event*);
-    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
-    virtual bool willRespondToMouseClickEvents() OVERRIDE;
-    virtual void willDetachRenderers() OVERRIDE;
-    virtual const AtomicString& shadowPseudoId() const;
     HTMLInputElement* hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
 
 private:
     SliderThumbElement(Document&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
+
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() OVERRIDE;
     virtual bool isDisabledFormControl() const OVERRIDE;
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
     virtual Element* focusDelegate() OVERRIDE;
+    virtual void defaultEventHandler(Event*) OVERRIDE;
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+    virtual void willDetachRenderers() OVERRIDE;
+    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
+
     void startDragging();
     void stopDragging();
 
@@ -77,22 +76,6 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& docum
 {
     return adoptRef(new SliderThumbElement(document));
 }
-
-inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
-{
-    return create(document());
-}
-
-inline SliderThumbElement* toSliderThumbElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isHTMLElement());
-    return static_cast<SliderThumbElement*>(node);
-}
-
-// This always return a valid pointer.
-// An assertion fails if the specified node is not a range input.
-SliderThumbElement* sliderThumbElementOf(HTMLInputElement&);
-HTMLElement* sliderTrackElementOf(HTMLInputElement&);
 
 // --------------------------------
 

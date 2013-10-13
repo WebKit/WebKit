@@ -108,9 +108,9 @@ void RenderSlider::computePreferredLogicalWidths()
 void RenderSlider::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    // FIXME: Find a way to cascade appearance.
-    // http://webkit.org/b/62535
-    RenderBox* thumbBox = sliderThumbElementOf(*toHTMLInputElement(element()))->renderBox();
+
+    // FIXME: Find a way to cascade appearance. http://webkit.org/b/62535
+    RenderBox* thumbBox = toHTMLInputElement(*element()).sliderThumbElement()->renderBox();
     if (thumbBox && thumbBox->isSliderThumb())
         static_cast<RenderSliderThumb*>(thumbBox)->updateAppearance(style());
 
@@ -119,7 +119,7 @@ void RenderSlider::layout()
 
 bool RenderSlider::inDragMode() const
 {
-    return sliderThumbElementOf(*toHTMLInputElement(element()))->active();
+    return toHTMLInputElement(*element()).sliderThumbElement()->active();
 }
 
 } // namespace WebCore

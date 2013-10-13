@@ -1,5 +1,51 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Move code to find elements in slider shadow tree into RangeInputType class, since it creates that tree
+        https://bugs.webkit.org/show_bug.cgi?id=122708
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect): Use HTMLInputElement::sliderThumbElement
+        to find the thumb, rather than using the sliderThumbElementOf function.
+
+        * html/InputType.h: Use nullptr instead of 0. Tweak formatting a bit.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent): Use typedSliderThumbElement function.
+        (WebCore::RangeInputType::handleTouchEvent): Ditto.
+        (WebCore::RangeInputType::createShadowSubtree): Fixed assertion to match the code below.
+        (WebCore::RangeInputType::sliderTrackElement): Moved next to the createShadowSubtree function
+        since it is finding an element in that subtree. Changed to do the work here instead of calling
+        a function in another file.
+        (WebCore::RangeInputType::typedSliderThumbElement): Added. Finds the slider thumb element,
+        and returns it as a reference with a specific type.
+        (WebCore::RangeInputType::sliderThumbElement): Changed to call typedSliderThumbElement, loosening
+        the type, and returning a pointer Changed to call typedSliderThumbElement, loosening
+        the type, and returning a pointer.
+        (WebCore::RangeInputType::minOrMaxAttributeChanged): Use typedSliderThumbElement.
+        (WebCore::RangeInputType::setValue): Ditto.
+        (WebCore::RangeInputType::listAttributeTargetChanged): Ditto.
+
+        * html/RangeInputType.h: Marked the class FINAL. Tweaked formatting a bit.
+        Added the typedSliderThumbElement function.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint): Call the HTMLInputElement::sliderTrackElement
+        function instead of having the input element's shadow subtree hierarchy hard-coded here.
+        (WebCore::SliderThumbElement::cloneElementWithoutAttributesAndChildren): Moved here from the header,
+        since it's a virtual function that won't be inlined.
+
+        * html/shadow/SliderThumbElement.h: Removed unneeded forward declarations. Made more virtual
+        functions private and added more OVERRIDE. Removed the toSliderThumbElement, sliderThumbElementOf,
+        and sliderTrackElementOf functions.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Use HTMLInputElement::sliderThumbElement.
+        (WebCore::RenderSlider::inDragMode): Ditto.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Remove unneeded extra memory allocation and indirection for ValidityState
         https://bugs.webkit.org/show_bug.cgi?id=122705
 

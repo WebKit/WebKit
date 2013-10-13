@@ -45,7 +45,6 @@ namespace WebCore {
 
 class BeforeTextInsertedEvent;
 class Chrome;
-class Color;
 class DateComponents;
 class DragData;
 class Event;
@@ -61,6 +60,7 @@ class Node;
 class RenderArena;
 class RenderStyle;
 class TouchEvent;
+
 struct InputElementClickState;
 
 typedef int ExceptionCode;
@@ -91,9 +91,6 @@ public:
     // inflexible because it's harder to add new input types if there is
     // scattered code with special cases for various types.
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    virtual bool isColorControl() const;
-#endif
     virtual bool isCheckbox() const;
     virtual bool isDateField() const;
     virtual bool isDateTimeField() const;
@@ -117,6 +114,10 @@ public:
     virtual bool isTimeField() const;
     virtual bool isURLField() const;
     virtual bool isWeekField() const;
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual bool isColorControl() const;
+#endif
 
     // Form value functions
 
@@ -184,10 +185,12 @@ public:
     virtual void handleKeypressEvent(KeyboardEvent*);
     virtual void handleKeyupEvent(KeyboardEvent*);
     virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
+    virtual void forwardEvent(Event*);
+
 #if ENABLE(TOUCH_EVENTS)
     virtual void handleTouchEvent(TouchEvent*);
 #endif
-    virtual void forwardEvent(Event*);
+
     // Helpers for event handlers.
     virtual bool shouldSubmitImplicitly(Event*);
     virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
@@ -200,6 +203,7 @@ public:
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
     virtual void subtreeHasChanged();
+
 #if ENABLE(TOUCH_EVENTS)
     virtual bool hasTouchEventHandler() const;
 #endif
@@ -211,18 +215,19 @@ public:
     virtual void createShadowSubtree();
     virtual void destroyShadowSubtree();
 
-    virtual HTMLElement* containerElement() const { return 0; }
-    virtual HTMLElement* innerBlockElement() const { return 0; }
-    virtual HTMLElement* innerTextElement() const { return 0; }
-    virtual HTMLElement* innerSpinButtonElement() const { return 0; }
-    virtual HTMLElement* resultsButtonElement() const { return 0; }
-    virtual HTMLElement* cancelButtonElement() const { return 0; }
-#if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const { return 0; }
-#endif
-    virtual HTMLElement* sliderThumbElement() const { return 0; }
-    virtual HTMLElement* sliderTrackElement() const { return 0; }
+    virtual HTMLElement* containerElement() const { return nullptr; }
+    virtual HTMLElement* innerBlockElement() const { return nullptr; }
+    virtual HTMLElement* innerTextElement() const { return nullptr; }
+    virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
+    virtual HTMLElement* resultsButtonElement() const { return nullptr; }
+    virtual HTMLElement* cancelButtonElement() const { return nullptr; }
+    virtual HTMLElement* sliderThumbElement() const { return nullptr; }
+    virtual HTMLElement* sliderTrackElement() const { return nullptr; }
     virtual HTMLElement* placeholderElement() const;
+
+#if ENABLE(INPUT_SPEECH)
+    virtual HTMLElement* speechButtonElement() const { return nullptr; }
+#endif
 
     // Miscellaneous functions
 
@@ -265,11 +270,12 @@ public:
     virtual void requiredAttributeChanged();
     virtual void valueAttributeChanged();
     virtual String defaultToolTip() const;
+    virtual void updateClearButtonVisibility();
+
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();
     virtual Decimal findClosestTickMarkValue(const Decimal&);
 #endif
-    virtual void updateClearButtonVisibility();
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

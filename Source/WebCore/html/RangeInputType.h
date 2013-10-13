@@ -37,7 +37,7 @@ namespace WebCore {
 
 class SliderThumbElement;
 
-class RangeInputType : public InputType {
+class RangeInputType FINAL : public InputType {
 public:
     static OwnPtr<InputType> create(HTMLInputElement&);
 
@@ -53,12 +53,6 @@ private:
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
     virtual void handleMouseDownEvent(MouseEvent*) OVERRIDE;
-#if ENABLE(TOUCH_EVENTS)
-#if ENABLE(TOUCH_SLIDER)
-    virtual void handleTouchEvent(TouchEvent*) OVERRIDE;
-    virtual bool hasTouchEventHandler() const OVERRIDE;
-#endif
-#endif
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
@@ -72,6 +66,9 @@ private:
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual HTMLElement* sliderThumbElement() const OVERRIDE;
     virtual HTMLElement* sliderTrackElement() const OVERRIDE;
+
+    SliderThumbElement& typedSliderThumbElement() const;
+
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged() OVERRIDE;
     void updateTickMarkValues();
@@ -79,6 +76,11 @@ private:
 
     bool m_tickMarkValuesDirty;
     Vector<Decimal> m_tickMarkValues;
+#endif
+
+#if ENABLE(TOUCH_EVENTS) && ENABLE(TOUCH_SLIDER)
+    virtual void handleTouchEvent(TouchEvent*) OVERRIDE;
+    virtual bool hasTouchEventHandler() const OVERRIDE;
 #endif
 };
 

@@ -72,24 +72,6 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
     return sliderStyle->appearance() == SliderVerticalPart;
 }
 
-SliderThumbElement* sliderThumbElementOf(HTMLInputElement& inputElement)
-{
-    ShadowRoot* shadow = inputElement.userAgentShadowRoot();
-    ASSERT(shadow);
-    Node* thumb = shadow->firstChild()->firstChild()->firstChild();
-    ASSERT(thumb);
-    return toSliderThumbElement(thumb);
-}
-
-HTMLElement* sliderTrackElementOf(HTMLInputElement& inputElement)
-{
-    ShadowRoot* shadow = inputElement.userAgentShadowRoot();
-    ASSERT(shadow);
-    Node* track = shadow->firstChild()->firstChild();
-    ASSERT(track);
-    return toHTMLElement(track);
-}
-
 // --------------------------------
 
 RenderSliderThumb::RenderSliderThumb(SliderThumbElement* element)
@@ -260,7 +242,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     if (!input || !input->renderer() || !renderBox())
         return;
 
-    HTMLElement* trackElement = sliderTrackElementOf(*input);
+    HTMLElement* trackElement = input->sliderTrackElement();
     if (!trackElement->renderBox())
         return;
 
@@ -440,6 +422,11 @@ const AtomicString& SliderThumbElement::shadowPseudoId() const
     default:
         return sliderThumbShadowPseudoId();
     }
+}
+
+PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
+{
+    return create(document());
 }
 
 // --------------------------------
