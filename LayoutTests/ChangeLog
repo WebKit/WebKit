@@ -1,3 +1,10 @@
+2013-10-13  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk-wk2/TestExpectations:
+        Add bug number to the failing animation tests.
+
 2013-10-13  Santosh Mahto  <santosh.ma@samsung.com>
 
         Removing  input-file-entries.html from TestExpectation

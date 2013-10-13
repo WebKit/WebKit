@@ -366,6 +366,11 @@ webkit.org/b/93981 media/video-display-toggle.html [ Failure ]
 webkit.org/b/93981 media/video-no-audio.html [ Failure ]
 webkit.org/b/93981 media/video-volume-slider.html [ Failure ]
 
+# Animations behave weirdly if AC is enabled.
+webkit.org/b/93984 animations/combo-transform-translate+scale.html [ Failure ]
+webkit.org/b/93984 animations/play-state-suspend.html [ Failure ]
+webkit.org/b/93984 animations/suspend-resume-animation.html [ Failure ]
+
 # Assertion failure in replaySavedEvents
 # http://webkit.org/b/21796
 webkit.org/b/21796 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Failure ]
@@ -457,10 +462,6 @@ Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # An oncontextmenu attribute is not called.
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
-
-Bug(GTK) animations/combo-transform-translate+scale.html [ Failure ]
-Bug(GTK) animations/play-state-suspend.html [ Failure ]
-Bug(GTK) animations/suspend-resume-animation.html [ Failure ]
 
 webkit.org/b/118416 [ Release ] storage/websql/sql-error-codes.html [ Failure ]
 
