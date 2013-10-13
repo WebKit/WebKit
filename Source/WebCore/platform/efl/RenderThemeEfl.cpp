@@ -327,8 +327,8 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
             return; // probably have -webkit-appearance: slider..
 
         RenderSlider* renderSlider = toRenderSlider(object);
-        HTMLInputElement* input = renderSlider->element()->toInputElement();
-        double valueRange = input->maximum() - input->minimum();
+        HTMLInputElement& input = renderSlider->element();
+        double valueRange = input.maximum() - input.minimum();
 
         OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
@@ -342,7 +342,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         else
             msg->val[0] = 0;
 
-        msg->val[1] = (input->valueAsNumber() - input->minimum()) / valueRange;
+        msg->val[1] = (input.valueAsNumber() - input.minimum()) / valueRange;
         edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {

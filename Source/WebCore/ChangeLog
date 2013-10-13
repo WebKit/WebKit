@@ -1,5 +1,17 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderSlider always has an HTMLInputElement.
+        <https://webkit.org/b/122728>
+
+        Reviewed by Anders Carlsson.
+
+        This renderer is never anonymous and always has a corresponding
+        HTMLInputElement. Tighten this up by having the constructor take
+        the element by reference, and override element() with a stronger
+        return type.
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         Remove two unused AX functions for getting a FrameView*.
         <https://webkit.org/b/122724>
 

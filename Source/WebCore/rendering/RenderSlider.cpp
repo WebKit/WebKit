@@ -49,15 +49,20 @@ namespace WebCore {
 
 const int RenderSlider::defaultTrackLength = 129;
 
-RenderSlider::RenderSlider(HTMLInputElement* element)
-    : RenderFlexibleBox(element)
+RenderSlider::RenderSlider(HTMLInputElement& element)
+    : RenderFlexibleBox(&element)
 {
     // We assume RenderSlider works only with <input type=range>.
-    ASSERT(element->isRangeControl());
+    ASSERT(element.isRangeControl());
 }
 
 RenderSlider::~RenderSlider()
 {
+}
+
+HTMLInputElement& RenderSlider::element() const
+{
+    return toHTMLInputElement(nodeForNonAnonymous());
 }
 
 bool RenderSlider::canBeReplacedWithInlineRunIn() const
@@ -110,7 +115,7 @@ void RenderSlider::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // FIXME: Find a way to cascade appearance. http://webkit.org/b/62535
-    RenderBox* thumbBox = toHTMLInputElement(*element()).sliderThumbElement()->renderBox();
+    RenderBox* thumbBox = element().sliderThumbElement()->renderBox();
     if (thumbBox && thumbBox->isSliderThumb())
         static_cast<RenderSliderThumb*>(thumbBox)->updateAppearance(style());
 
@@ -119,7 +124,7 @@ void RenderSlider::layout()
 
 bool RenderSlider::inDragMode() const
 {
-    return toHTMLInputElement(*element()).sliderThumbElement()->active();
+    return element().sliderThumbElement()->active();
 }
 
 } // namespace WebCore

@@ -288,7 +288,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
 
 RenderElement* RangeInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
-    return new (arena) RenderSlider(&element());
+    return new (arena) RenderSlider(element());
 }
 
 Decimal RangeInputType::parseToNumber(const String& src, const Decimal& defaultValue) const
