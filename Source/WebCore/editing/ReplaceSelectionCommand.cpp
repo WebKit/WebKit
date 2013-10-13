@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
+#include "ElementIterator.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
@@ -74,6 +75,8 @@ class ReplacementFragment {
     WTF_MAKE_NONCOPYABLE(ReplacementFragment);
 public:
     ReplacementFragment(Document&, DocumentFragment*, const VisibleSelection&);
+
+    DocumentFragment* fragment() { return m_fragment.get(); }
 
     Node* firstChild() const;
     Node* lastChild() const;
@@ -704,18 +707,24 @@ VisiblePosition ReplaceSelectionCommand::positionAtStartOfInsertedContent() cons
 
 static void removeHeadContents(ReplacementFragment& fragment)
 {
-    Node* next = 0;
-    for (Node* node = fragment.firstChild(); node; node = next) {
-        if (node->hasTagName(baseTag)
-            || node->hasTagName(linkTag)
-            || node->hasTagName(metaTag)
-            || node->hasTagName(styleTag)
-            || isHTMLTitleElement(node)) {
-            next = NodeTraversal::nextSkippingChildren(node);
-            fragment.removeNode(node);
-        } else
-            next = NodeTraversal::next(node);
+    if (fragment.isEmpty())
+        return;
+
+    Vector<Element*> toRemove;
+
+    auto it = elementDescendants(fragment.fragment()).begin();
+    auto end = elementDescendants(fragment.fragment()).end();
+    while (it != end) {
+        if (it->hasTagName(baseTag) || it->hasTagName(linkTag) || it->hasTagName(metaTag) || it->hasTagName(styleTag) || isHTMLTitleElement(*it)) {
+            toRemove.append(&*it);
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        ++it;
     }
+
+    for (unsigned i = 0; i < toRemove.size(); ++i)
+        fragment.removeNode(toRemove[i]);
 }
 
 // Remove style spans before insertion if they are unnecessary.  It's faster because we'll 

@@ -50,6 +50,7 @@ public:
     ElementIterator& traversePrevious();
     ElementIterator& traverseNextSibling();
     ElementIterator& traversePreviousSibling();
+    ElementIterator& traverseNextSkippingChildren();
     ElementIterator& traverseAncestor();
 
 private:
@@ -77,6 +78,7 @@ public:
     ElementConstIterator& traversePrevious();
     ElementConstIterator& traverseNextSibling();
     ElementConstIterator& traversePreviousSibling();
+    ElementConstIterator& traverseNextSkippingChildren();
     ElementConstIterator& traverseAncestor();
 
 private:
@@ -155,6 +157,20 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePrevi
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previousSibling(m_current);
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+template <typename ElementType>
+inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+    m_current = Traversal<ElementType>::nextSkippingChildren(m_current, m_root);
 #if !ASSERT_DISABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
@@ -291,6 +307,20 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::previousSibling(m_current);
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+template <typename ElementType>
+inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+    m_current = Traversal<ElementType>::nextSkippingChildren(m_current, m_root);
 #if !ASSERT_DISABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)

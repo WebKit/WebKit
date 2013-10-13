@@ -1,5 +1,14 @@
 2013-10-13  Antti Koivisto  <antti@apple.com>
 
+        Add traverseNextSkippingChildren to ElementIterators
+        https://bugs.webkit.org/show_bug.cgi?id=122727
+
+        Reviewed by Andreas Kling.
+
+        Also switch some code using ElementTraversal over to iterators.
+
+2013-10-13  Antti Koivisto  <antti@apple.com>
+
         Rename InlineBox::remove() to removeFromParent
         https://bugs.webkit.org/show_bug.cgi?id=122725
 

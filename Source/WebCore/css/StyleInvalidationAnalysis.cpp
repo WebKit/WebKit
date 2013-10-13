@@ -28,7 +28,7 @@
 
 #include "CSSSelectorList.h"
 #include "Document.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
@@ -98,13 +98,13 @@ void StyleInvalidationAnalysis::analyzeStyleSheet(StyleSheetContents* styleSheet
     }
 }
 
-static bool elementMatchesSelectorScopes(const Element* element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
+static bool elementMatchesSelectorScopes(const Element& element, const HashSet<AtomicStringImpl*>& idScopes, const HashSet<AtomicStringImpl*>& classScopes)
 {
-    if (!idScopes.isEmpty() && element->hasID() && idScopes.contains(element->idForStyleResolution().impl()))
+    if (!idScopes.isEmpty() && element.hasID() && idScopes.contains(element.idForStyleResolution().impl()))
         return true;
-    if (classScopes.isEmpty() || !element->hasClass())
+    if (classScopes.isEmpty() || !element.hasClass())
         return false;
-    const SpaceSplitString& classNames = element->classNames();
+    const SpaceSplitString& classNames = element.classNames();
     for (unsigned i = 0; i < classNames.size(); ++i) {
         if (classScopes.contains(classNames[i].impl()))
             return true;
@@ -117,15 +117,17 @@ void StyleInvalidationAnalysis::invalidateStyle(Document* document)
     ASSERT(!m_dirtiesAllStyle);
     if (m_idScopes.isEmpty() && m_classScopes.isEmpty())
         return;
-    Element* element = ElementTraversal::firstWithin(document);
-    while (element) {
-        if (elementMatchesSelectorScopes(element, m_idScopes, m_classScopes)) {
-            element->setNeedsStyleRecalc();
+
+    auto it = elementDescendants(document).begin();
+    auto end = elementDescendants(document).end();
+    while (it != end) {
+        if (elementMatchesSelectorScopes(*it, m_idScopes, m_classScopes)) {
+            it->setNeedsStyleRecalc();
             // The whole subtree is now invalidated, we can skip to the next sibling.
-            element = ElementTraversal::nextSkippingChildren(element);
+            it.traverseNextSkippingChildren();
             continue;
         }
-        element = ElementTraversal::next(element);
+        ++it;
     }
 }
 

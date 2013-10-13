@@ -663,16 +663,20 @@ bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstanc
 static inline void removeDisallowedElementsFromSubtree(SVGElement& subtree)
 {
     ASSERT(!subtree.inDocument());
-    Element* element = ElementTraversal::firstWithin(&subtree);
-    while (element) {
-        if (isDisallowedElement(*element)) {
-            Element* next = ElementTraversal::nextSkippingChildren(element, &subtree);
-            // The subtree is not in document so this won't generate events that could mutate the tree.
-            element->parentNode()->removeChild(element);
-            element = next;
-        } else
-            element = ElementTraversal::next(element, &subtree);
+    Vector<Element*> toRemove;
+    auto it = elementDescendants(&subtree).begin();
+    auto end = elementDescendants(&subtree).end();
+    while (it != end) {
+        if (isDisallowedElement(*it)) {
+            toRemove.append(&*it);
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        ++it;
     }
+    // The subtree is not in document so this won't generate events that could mutate the tree.
+    for (unsigned i = 0; i < toRemove.size(); ++i)
+        toRemove[i]->parentNode()->removeChild(toRemove[i]);
 }
 
 void SVGUseElement::buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance)
