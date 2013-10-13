@@ -789,7 +789,7 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
         if (!textTrack)
             return;
 
-        HTMLMediaElement* mediaElement = toParentMediaElement(this);
+        HTMLMediaElement* mediaElement = parentMediaElement(this);
         if (!mediaElement)
             return;
 
@@ -820,7 +820,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
         return;
     CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
 
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
         return;
 
@@ -884,7 +884,7 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     if (!mediaController()->hasClosedCaptions())
         return;
 
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
         return;
 
@@ -1060,10 +1060,10 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
         // video implementation without requiring them to implement their own full
         // screen behavior.
         if (document().settings() && document().settings()->fullScreenEnabled()) {
-            if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == toParentMediaElement(this))
+            if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == parentMediaElement(this))
                 document().webkitCancelFullScreen();
             else
-                document().requestFullScreenForElement(toParentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
+                document().requestFullScreenForElement(parentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
         } else
 #endif
             mediaController()->enterFullscreen();
@@ -1231,7 +1231,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     if (!mediaController()->closedCaptionsVisible())
         removeChildren();
 
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
     // 1. If the media element is an audio element, or is another playback
     // mechanism with no rendering area, abort these steps. There is nothing to
     // render.
@@ -1322,7 +1322,7 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
         setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSPrimitiveValue::CSS_PX);
     }
     
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
         return;
 
@@ -1340,8 +1340,8 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
 
 void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
 {
-    if (HTMLMediaElement* mediaElement = toParentMediaElement(this))
-        mediaElement->setTextTrackRepresentation(0);
+    if (HTMLMediaElement* mediaElement = parentMediaElement(this))
+        mediaElement->setTextTrackRepresentation(nullptr);
     m_textTrackRepresentation = nullptr;
     removeInlineStyleProperty(CSSPropertyPosition);
     removeInlineStyleProperty(CSSPropertyWidth);
@@ -1363,7 +1363,7 @@ void MediaControlTextTrackContainerElement::exitedFullscreen()
 
 void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
 {
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    HTMLMediaElement* mediaElement = parentMediaElement(this);
     if (!mediaElement)
         return;
 
@@ -1424,7 +1424,7 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
     if (!buffer)
         return nullptr;
 
-    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, 0, 0, RenderLayer::PaintLayerPaintingCompositingAllPhases);
+    layer->paint(buffer->context(), paintingRect, PaintBehaviorFlattenCompositingLayers, nullptr, nullptr, RenderLayer::PaintLayerPaintingCompositingAllPhases);
 
     return buffer->copyImage();
 }

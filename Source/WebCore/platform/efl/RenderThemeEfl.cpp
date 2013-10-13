@@ -1194,7 +1194,7 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
                                         rect.width(), mediaSliderHeight)), m_mediaSliderColor, ColorSpaceDeviceRGB);
 
     RenderStyle* style = object->style();
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
 
     if (!mediaElement)
         return false;

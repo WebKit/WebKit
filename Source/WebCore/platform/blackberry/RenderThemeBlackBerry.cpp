@@ -101,7 +101,7 @@ static float determineFullScreenMultiplier(Element* element)
 {
     float fullScreenMultiplier = 1.0;
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
-    if (element && element->document()->webkitIsFullScreen() && element->document()->webkitCurrentFullScreenElement() == toParentMediaElement(element)) {
+    if (element && element->document()->webkitIsFullScreen() && element->document()->webkitCurrentFullScreenElement() == parentMediaElement(element)) {
         if (Page* page = element->document()->page()) {
             if (page->deviceScaleFactor() < scaleFactorThreshold)
                 fullScreenMultiplier = fullScreenEnlargementFactor;
@@ -738,7 +738,7 @@ bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintIn
 void RenderThemeBlackBerry::adjustMediaControlStyle(StyleResolver*, RenderStyle* style, Element* element) const
 {
     float fullScreenMultiplier = determineFullScreenMultiplier(element);
-    HTMLMediaElement* mediaElement = toParentMediaElement(element);
+    HTMLMediaElement* mediaElement = parentMediaElement(element);
     if (!mediaElement)
         return;
 
@@ -820,7 +820,7 @@ static bool paintMediaButton(GraphicsContext* context, const IntRect& rect, Imag
 bool RenderThemeBlackBerry::paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
 
     if (!mediaElement)
         return false;
@@ -850,7 +850,7 @@ bool RenderThemeBlackBerry::paintMediaPlayButton(RenderObject* object, const Pai
 bool RenderThemeBlackBerry::paintMediaRewindButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
 
     if (!mediaElement)
         return false;
@@ -872,7 +872,7 @@ bool RenderThemeBlackBerry::paintMediaRewindButton(RenderObject* object, const P
 bool RenderThemeBlackBerry::paintMediaMuteButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
 
     if (!mediaElement)
         return false;
@@ -891,7 +891,7 @@ bool RenderThemeBlackBerry::paintMediaMuteButton(RenderObject* object, const Pai
 bool RenderThemeBlackBerry::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
     if (!mediaElement)
         return false;
 
@@ -920,7 +920,7 @@ bool RenderThemeBlackBerry::paintMediaFullscreenButton(RenderObject* object, con
 bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
     if (!mediaElement)
         return false;
 
@@ -994,7 +994,7 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
 bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    HTMLMediaElement* mediaElement = parentMediaElement(*object);
     if (!mediaElement)
         return false;
 

@@ -173,7 +173,7 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         wkDrawMediaUIPart(WKMediaUIPartSeekForwardButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaSlider: {
-        if (HTMLMediaElement* mediaElement = toParentMediaElement(o)) {
+        if (HTMLMediaElement* mediaElement = parentMediaElement(*o)) {
             FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
             wkDrawMediaSliderTrack(paintInfo.context->platformContext(), unzoomedRect, mediaElement->percentLoaded() * mediaElement->duration(), mediaElement->currentTime(), mediaElement->duration(), determineState(o));
         }

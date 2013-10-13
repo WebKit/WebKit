@@ -238,12 +238,8 @@ String AccessibilityMediaControlsContainer::helpText() const
 
 bool AccessibilityMediaControlsContainer::controllingVideoElement() const
 {
-    if (!m_renderer->node())
-        return true;
-
-    MediaControlTimeDisplayElement* element = static_cast<MediaControlTimeDisplayElement*>(m_renderer->node());
-
-    return toParentMediaElement(element)->isVideo();
+    auto element = parentMediaElement(*m_renderer);
+    return !element || element->isVideo();
 }
 
 const String AccessibilityMediaControlsContainer::elementTypeName() const

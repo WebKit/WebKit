@@ -1,3 +1,62 @@
+2013-10-12  Darin Adler  <darin@apple.com>
+
+        Rename toParentMediaElement to parentMediaElement, since it's not a type cast
+        https://bugs.webkit.org/show_bug.cgi?id=122707
+
+        Reviewed by Eric Carlson.
+
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControlsContainer::controllingVideoElement): Call the
+        function by its new name, and also remove unnecessary type casting.
+
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::parentMediaElement): Renamed from toParentMediaElement. Changed to use
+        nullptr. Removed an unnecessary null check.
+
+        * html/shadow/MediaControlElementTypes.h: Renamed from toParentMediaElement.
+        Changed the argument to the RenderObject overload to be a reference rather than
+        a pointer since it doesn't handle null.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::defaultEventHandler):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired):
+        (WebCore::MediaControlTextTrackContainerElement::clearTextTrackRepresentation):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        Updated to use the new name. Also use nullptr.
+
+        * html/shadow/MediaControlsBlackBerry.cpp:
+        (WebCore::MediaControlFullscreenFullscreenButtonElement::defaultEventHandler):
+        Updated to use the new name.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::determineFullScreenMultiplier):
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+        (WebCore::RenderThemeBlackBerry::paintMediaPlayButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaRewindButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaMuteButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaFullscreenButton):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaVolumeSliderTrack):
+        Updated to use the new name.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMediaSliderTrack):
+        Updated to use the new name.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintMediaSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderTrack):
+        Updated to use the new name.
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+        Call the function by its new name and with a reference instead of a pointer.
+
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
         Move positionForPoint to RenderTextLineBoxes

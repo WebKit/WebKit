@@ -555,7 +555,7 @@ static RoundedRect::Radii borderRadiiFromStyle(RenderStyle* style)
 
 bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = toParentMediaElement(o);
+    HTMLMediaElement* mediaElement = parentMediaElement(*o);
     if (!mediaElement)
         return false;
 
@@ -600,7 +600,7 @@ bool RenderThemeGtk::paintMediaVolumeSliderContainer(RenderObject*, const PaintI
 
 bool RenderThemeGtk::paintMediaVolumeSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLMediaElement* mediaElement = toParentMediaElement(renderObject);
+    HTMLMediaElement* mediaElement = parentMediaElement(*renderObject);
     if (!mediaElement)
         return true;
 

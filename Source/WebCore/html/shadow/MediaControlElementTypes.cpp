@@ -52,16 +52,15 @@ static const double cSkipTime = 0.2;
 static const double cScanRepeatDelay = 1.5;
 static const double cScanMaximumRate = 8;
 
-HTMLMediaElement* toParentMediaElement(Node* node)
+HTMLMediaElement* parentMediaElement(Node* node)
 {
     if (!node)
-        return 0;
+        return nullptr;
     Node* mediaNode = node->shadowHost();
     if (!mediaNode)
         mediaNode = node;
-    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
-        return 0;
-
+    if (!mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
+        return nullptr;
     return toHTMLMediaElement(mediaNode);
 }
 

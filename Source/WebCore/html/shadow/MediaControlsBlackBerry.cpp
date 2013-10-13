@@ -426,10 +426,10 @@ void MediaControlFullscreenFullscreenButtonElement::defaultEventHandler(Event* e
         // video implementation without requiring them to implement their own full 
         // screen behavior.
         if (document()->settings() && document()->settings()->fullScreenEnabled()) {
-            if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == toParentMediaElement(this))
+            if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == parentMediaElement(this))
                 document()->webkitCancelFullScreen();
             else
-                document()->requestFullScreenForElement(toParentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
+                document()->requestFullScreenForElement(parentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
         } else
 #endif
             mediaController()->enterFullscreen();
