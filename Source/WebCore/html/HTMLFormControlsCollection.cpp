@@ -71,12 +71,12 @@ Element* HTMLFormControlsCollection::virtualItemAfter(unsigned& offset, Element*
     if (previousItem)
         offset++;
     while (offset < elementsArray.size()) {
-        FormAssociatedElement* element = elementsArray[offset];
-        if (element->isEnumeratable())
-            return toHTMLElement(element);
+        FormAssociatedElement& element = *elementsArray[offset];
+        if (element.isEnumeratable())
+            return &element.asHTMLElement();
         offset++;
     }
-    return 0;
+    return nullptr;
 }
 
 static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& elementsArray,
@@ -85,21 +85,21 @@ static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& element
     ASSERT(attrName == idAttr || attrName == nameAttr);
 
     for (unsigned i = 0; i < elementsArray.size(); ++i) {
-        HTMLElement* element = toHTMLElement(elementsArray[i]);
-        if (elementsArray[i]->isEnumeratable() && element->fastGetAttribute(attrName) == name)
-            return element;
+        HTMLElement& element = elementsArray[i]->asHTMLElement();
+        if (elementsArray[i]->isEnumeratable() && element.fastGetAttribute(attrName) == name)
+            return &element;
     }
 
     if (!imageElementsArray)
         return 0;
 
     for (unsigned i = 0; i < imageElementsArray->size(); ++i) {
-        HTMLImageElement* element = (*imageElementsArray)[i];
-        if (element->fastGetAttribute(attrName) == name)
-            return element;
+        HTMLImageElement& element = *(*imageElementsArray)[i];
+        if (element.fastGetAttribute(attrName) == name)
+            return &element;
     }
 
-    return 0;
+    return nullptr;
 }
 
 Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
@@ -109,7 +109,7 @@ Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    const Vector<HTMLImageElement*>* imagesElements = ownerNode().hasTagName(fieldsetTag) ? 0 : &formImageElements();
+    const Vector<HTMLImageElement*>* imagesElements = ownerNode().hasTagName(fieldsetTag) ? nullptr : &formImageElements();
     if (HTMLElement* item = firstNamedItem(formControlElements(), imagesElements, idAttr, name))
         return item;
 
@@ -126,17 +126,17 @@ void HTMLFormControlsCollection::updateNameCache() const
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
 
     for (unsigned i = 0; i < elementsArray.size(); ++i) {
-        FormAssociatedElement* associatedElement = elementsArray[i];
-        if (associatedElement->isEnumeratable()) {
-            HTMLElement* element = toHTMLElement(associatedElement);
-            const AtomicString& idAttrVal = element->getIdAttribute();
-            const AtomicString& nameAttrVal = element->getNameAttribute();
+        FormAssociatedElement& associatedElement = *elementsArray[i];
+        if (associatedElement.isEnumeratable()) {
+            HTMLElement& element = associatedElement.asHTMLElement();
+            const AtomicString& idAttrVal = element.getIdAttribute();
+            const AtomicString& nameAttrVal = element.getNameAttribute();
             if (!idAttrVal.isEmpty()) {
-                appendIdCache(idAttrVal, element);
+                appendIdCache(idAttrVal, &element);
                 foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                appendNameCache(nameAttrVal, element);
+                appendNameCache(nameAttrVal, &element);
                 foundInputElements.add(nameAttrVal.impl());
             }
         }
@@ -145,13 +145,13 @@ void HTMLFormControlsCollection::updateNameCache() const
     if (isHTMLFormElement(ownerNode())) {
         const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
         for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
-            HTMLImageElement* element = imageElementsArray[i];
-            const AtomicString& idAttrVal = element->getIdAttribute();
-            const AtomicString& nameAttrVal = element->getNameAttribute();
+            HTMLImageElement& element = *imageElementsArray[i];
+            const AtomicString& idAttrVal = element.getIdAttribute();
+            const AtomicString& nameAttrVal = element.getNameAttribute();
             if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl()))
-                appendIdCache(idAttrVal, element);
+                appendIdCache(idAttrVal, &element);
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl()))
-                appendNameCache(nameAttrVal, element);
+                appendNameCache(nameAttrVal, &element);
         }
     }
 

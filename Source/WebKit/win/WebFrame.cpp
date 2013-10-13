@@ -1336,7 +1336,7 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
     const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     for (int i = 0; i < count; i++) {
         if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-            controls[*cControls] = DOMElement::createInstance(toHTMLElement(elements.at(i)));
+            controls[*cControls] = DOMElement::createInstance(&elements.at(i)->asHTMLElement());
             (*cControls)++;
         }
     }

@@ -36,9 +36,7 @@ class FormDataList;
 class HTMLElement;
 class HTMLFormElement;
 class Node;
-class ValidationMessage;
 class ValidityState;
-class VisibleSelection;
 
 class FormAssociatedElement : public FormNamedItem {
 public:
@@ -114,22 +112,12 @@ private:
 
     void resetFormAttributeTargetObserver();
 
-    virtual bool isFormAssociatedElement() OVERRIDE FINAL { return true; }
+    virtual bool isFormAssociatedElement() const OVERRIDE FINAL { return true; }
 
-    OwnPtr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
+    std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;
     String m_customValidationMessage;
 };
-
-inline const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)
-{
-    return const_cast<FormAssociatedElement*>(associatedElement)->asHTMLElement();
-}
-
-inline HTMLElement* toHTMLElement(FormAssociatedElement* associatedElement)
-{
-    return associatedElement->asHTMLElement();
-}
 
 } // namespace
 

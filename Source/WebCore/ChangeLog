@@ -1,5 +1,72 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Get rid of the toHTMLElement helper for casting FormAssociatedElement to HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=122713
+
+        Reviewed by Sam Weinig.
+
+        Since we are using the function name toHTMLElement for casting to an HTMLElement
+        from a Node or Element, it's awkward to also use it for a quite different type of
+        type conversion on a FormAssociatedElement. We already have an asHTMLElement member
+        function, so lets use that.
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData): Use references instead of pointers, and
+        asHTMLElement instead of toHTMLElement.
+
+        * html/FormAssociatedElement.cpp: Made FormAttributeTargetObserver FINAL, made
+        its private inheritance explicit, made its constructor public so we can use it
+        with make_unique and got rid of its creation function. Also use reference instead
+        of a pointer.
+        (WebCore::FormAssociatedElement::FormAssociatedElement): Use nullptr.
+        (WebCore::FormAssociatedElement::~FormAssociatedElement): Ditto.
+        (WebCore::FormAssociatedElement::didMoveToNewDocument): Use asHTMLElement instead
+        of toHTMLElement and use a reference instead of a pointer.
+        (WebCore::FormAssociatedElement::insertedInto): Ditto.
+        (WebCore::FormAssociatedElement::removedFrom): Ditto.
+        (WebCore::FormAssociatedElement::formRemovedFromTree): Ditto.
+        (WebCore::FormAssociatedElement::resetFormOwner): Ditto.
+        (WebCore::FormAssociatedElement::formAttributeChanged): Ditto.
+        (WebCore::FormAssociatedElement::customError): Ditto.
+        (WebCore::FormAssociatedElement::resetFormAttributeTargetObserver): Use make_unique
+        instead of create here.
+        (WebCore::FormAssociatedElement::name): Use asHTMLElement.
+        (WebCore::FormAttributeTargetObserver::FormAttributeTargetObserver): Ditto.
+        (WebCore::FormAttributeTargetObserver::idTargetChanged): Updated since m_element is
+        now a reference.
+
+        * html/FormAssociatedElement.h: Removed some unneeded class declarations.
+        Made isFormAssociatedElement const. Use std::unique_ptr instead of OwnPtr.
+
+        * html/FormNamedItem.h: Made asHTMLElement return a reference, and overloaded it
+        for both const and non-const. Made isFormAssociatedElement const.
+
+        * html/HTMLFormControlElement.h: Updated for FormNamedItem changes. Removed an
+        unneeded class declaration.
+
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::virtualItemAfter): Use references, asHTMLElement,
+        and nullptr.
+        (WebCore::firstNamedItem): Ditto.
+        (WebCore::HTMLFormControlsCollection::namedItem): Ditto.
+        (WebCore::HTMLFormControlsCollection::updateNameCache): Ditto.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively): Use asHTMLElement and references.
+        (WebCore::HTMLFormElement::getTextFieldValues): Ditto.
+        (WebCore::HTMLFormElement::formElementIndexWithFormAttribute): Ditto.
+        (WebCore::HTMLFormElement::formElementIndex): Ditto.
+        (WebCore::HTMLFormElement::assertItemCanBeInPastNamesMap): Ditto.
+        (WebCore::HTMLFormElement::elementFromPastNamesMap): Ditto, and nullptr.
+
+        * html/HTMLImageElement.h: Updated for FormNamedItem changes.
+        * html/HTMLObjectElement.h: Ditto.
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create): Use asHTMLElement and references.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Use nullptr instead of 0 in TreeScope.cpp
         https://bugs.webkit.org/show_bug.cgi?id=122711
 

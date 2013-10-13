@@ -970,7 +970,7 @@ void InputHandler::updateFormState()
         // Check for the focused element, and if we don't have any target nodes, use the form order next
         // and previous as placeholders. In a form without provided tab indices, this will determine the
         // control fields.
-        Element* element = const_cast<HTMLElement*>(toHTMLElement(formElementList[focusElementId]));
+        Element* element = &formElementList[focusElementId]->asHTMLElement();
         if (element == m_currentFocusElement) {
             InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState found focused element.");
 
@@ -983,7 +983,7 @@ void InputHandler::updateFormState()
             // Previous
             if (!m_previousFocusableTextElement) {
                 for (int previousElementId = focusElementId - 1; previousElementId >= 0; previousElementId--) {
-                    Element* prevElement = const_cast<HTMLElement*>(toHTMLElement(formElementList[previousElementId]));
+                    Element* prevElement = &formElementList[previousElementId]->asHTMLElement();
                     if (DOMSupport::isTextBasedContentEditableElement(prevElement) && !DOMSupport::isElementReadOnly(prevElement) && !static_cast<Node*>(prevElement)->tabIndex()) {
                         m_previousFocusableTextElement = prevElement;
                         InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState found previous element");
@@ -995,7 +995,7 @@ void InputHandler::updateFormState()
             // Next
             if (!m_nextFocusableTextElement) {
                 for (int nextElementId = focusElementId + 1; nextElementId < formElementCount; nextElementId++) {
-                    Element* nextElement = const_cast<HTMLElement*>(toHTMLElement(formElementList[nextElementId]));
+                    Element* nextElement = &formElementList[nextElementId]->asHTMLElement();
                     if (DOMSupport::isTextBasedContentEditableElement(nextElement) && !DOMSupport::isElementReadOnly(nextElement) && !static_cast<Node*>(nextElement)->tabIndex()) {
                         m_nextFocusableTextElement = nextElement;
                         InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState found next element");

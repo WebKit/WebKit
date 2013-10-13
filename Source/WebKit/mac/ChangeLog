@@ -1,3 +1,14 @@
+2013-10-12  Darin Adler  <darin@apple.com>
+
+        Get rid of the toHTMLElement helper for casting FormAssociatedElement to HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=122713
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation elementWithName:inForm:]): Use asHTMLElement.
+        (-[WebHTMLRepresentation controlsInForm:]): Ditto.
+
 2013-10-12  Adam Roben  <aroben@webkit.org>
 
         WebViews inside OS X screen savers have large caches, but should not

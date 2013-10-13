@@ -34,7 +34,6 @@ class HTMLFieldSetElement;
 class HTMLFormElement;
 class HTMLLegendElement;
 class ValidationMessage;
-class ValidityState;
 
 // HTMLFormControlElement is the default implementation of FormAssociatedElement,
 // and form-associated element implementations should use HTMLFormControlElement
@@ -144,8 +143,9 @@ private:
     virtual bool isValidFormControlElement() OVERRIDE;
     void updateAncestorDisabledState() const;
 
-    virtual HTMLElement* asHTMLElement() OVERRIDE FINAL { return this; }
-    virtual FormNamedItem* asFormNamedItem() OVERRIDE FINAL { return this; }
+    virtual HTMLElement& asHTMLElement() OVERRIDE FINAL { return *this; }
+    virtual const HTMLFormControlElement& asHTMLElement() const OVERRIDE FINAL { return *this; }
+    virtual HTMLFormControlElement* asFormNamedItem() OVERRIDE FINAL { return this; }
 
     OwnPtr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;

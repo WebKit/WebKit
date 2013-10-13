@@ -291,9 +291,9 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     AtomicString targetName = name;
     for (unsigned i = 0; i < elements.size(); i++) {
-        FormAssociatedElement* elt = elements[i];
-        if (elt->name() == targetName)
-            return kit(toHTMLElement(elt));
+        FormAssociatedElement& element = *elements[i];
+        if (element.name() == targetName)
+            return kit(&element.asHTMLElement());
     }
     return nil;
 }
@@ -339,11 +339,11 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
     for (unsigned i = 0; i < elements.size(); i++) {
         if (elements[i]->isEnumeratable()) { // Skip option elements, other duds
-            DOMElement* de = kit(toHTMLElement(elements[i]));
+            DOMElement *element = kit(&elements[i]->asHTMLElement());
             if (!results)
-                results = [NSMutableArray arrayWithObject:de];
+                results = [NSMutableArray arrayWithObject:element];
             else
-                [results addObject:de];
+                [results addObject:element];
         }
     }
     return results;

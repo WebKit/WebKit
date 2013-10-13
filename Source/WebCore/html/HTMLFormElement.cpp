@@ -228,30 +228,32 @@ bool HTMLFormElement::validateInteractively(Event* event)
     document().updateLayoutIgnorePendingStylesheets();
 
     Ref<HTMLFormElement> protect(*this);
+
     // Focus on the first focusable control and show a validation message.
     for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
-        FormAssociatedElement* unhandledAssociatedElement = unhandledInvalidControls[i].get();
-        HTMLElement* unhandled = toHTMLElement(unhandledAssociatedElement);
-        if (unhandled->isFocusable() && unhandled->inDocument()) {
-            unhandled->scrollIntoViewIfNeeded(false);
-            unhandled->focus();
-            if (unhandled->isFormControlElement())
-                static_cast<HTMLFormControlElement*>(unhandled)->updateVisibleValidationMessage();
+        HTMLElement& element = unhandledInvalidControls[i]->asHTMLElement();
+        if (element.inDocument() && element.isFocusable()) {
+            element.scrollIntoViewIfNeeded(false);
+            element.focus();
+            if (element.isFormControlElement())
+                toHTMLFormControlElement(element).updateVisibleValidationMessage();
             break;
         }
     }
+
     // Warn about all of unfocusable controls.
     if (document().frame()) {
         for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
-            FormAssociatedElement* unhandledAssociatedElement = unhandledInvalidControls[i].get();
-            HTMLElement* unhandled = toHTMLElement(unhandledAssociatedElement);
-            if (unhandled->isFocusable() && unhandled->inDocument())
+            FormAssociatedElement& control = *unhandledInvalidControls[i];
+            HTMLElement& element = control.asHTMLElement();
+            if (element.inDocument() && element.isFocusable())
                 continue;
             String message("An invalid form control with name='%name' is not focusable.");
-            message.replace("%name", unhandledAssociatedElement->name());
+            message.replace("%name", control.name());
             document().addConsoleMessage(RenderingMessageSource, ErrorMessageLevel, message);
         }
     }
+
     return false;
 }
 
@@ -302,16 +304,14 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
 
     fieldNamesAndValues.reserveCapacity(m_associatedElements.size());
     for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        FormAssociatedElement* control = m_associatedElements[i];
-        HTMLElement* element = toHTMLElement(control);
+        FormAssociatedElement& control = *m_associatedElements[i];
+        HTMLElement& element = control.asHTMLElement();
         if (!isHTMLInputElement(element))
             continue;
-
-        HTMLInputElement* input = toHTMLInputElement(element);
-        if (!input->isTextField())
+        HTMLInputElement& input = toHTMLInputElement(element);
+        if (!input.isTextField())
             continue;
-
-        fieldNamesAndValues.append(make_pair(input->name().string(), input->value()));
+        fieldNamesAndValues.append(make_pair(input.name().string(), input.value()));
     }
 }
 
@@ -431,7 +431,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     while (left != right) {
         unsigned middle = left + ((right - left) / 2);
         ASSERT(middle < m_associatedElementsBeforeIndex || middle >= m_associatedElementsAfterIndex);
-        position = element->compareDocumentPosition(toHTMLElement(m_associatedElements[middle]));
+        position = element->compareDocumentPosition(&m_associatedElements[middle]->asHTMLElement());
         if (position & DOCUMENT_POSITION_FOLLOWING)
             right = middle;
         else
@@ -439,7 +439,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     }
     
     ASSERT(left < m_associatedElementsBeforeIndex || left >= m_associatedElementsAfterIndex);
-    position = element->compareDocumentPosition(toHTMLElement(m_associatedElements[left]));
+    position = element->compareDocumentPosition(&m_associatedElements[left]->asHTMLElement());
     if (position & DOCUMENT_POSITION_FOLLOWING)
         return left;
     return left + 1;
@@ -447,28 +447,31 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
 
 unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElement)
 {
-    HTMLElement* associatedHTMLElement = toHTMLElement(associatedElement);
+    ASSERT(associatedElement);
+
+    HTMLElement& associatedHTMLElement = associatedElement->asHTMLElement();
+
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
-    if (associatedHTMLElement->fastHasAttribute(formAttr)) {
-        unsigned short position = compareDocumentPosition(associatedHTMLElement);
+    if (associatedHTMLElement.fastHasAttribute(formAttr)) {
+        unsigned short position = compareDocumentPosition(&associatedHTMLElement);
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_associatedElementsBeforeIndex;
             ++m_associatedElementsAfterIndex;
-            return HTMLFormElement::formElementIndexWithFormAttribute(associatedHTMLElement, 0, m_associatedElementsBeforeIndex - 1);
+            return HTMLFormElement::formElementIndexWithFormAttribute(&associatedHTMLElement, 0, m_associatedElementsBeforeIndex - 1);
         }
         if (position & DOCUMENT_POSITION_FOLLOWING && !(position & DOCUMENT_POSITION_CONTAINED_BY))
-            return HTMLFormElement::formElementIndexWithFormAttribute(associatedHTMLElement, m_associatedElementsAfterIndex, m_associatedElements.size());
+            return HTMLFormElement::formElementIndexWithFormAttribute(&associatedHTMLElement, m_associatedElementsAfterIndex, m_associatedElements.size());
     }
 
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
     // common case that occurs during parsing; instead we'll just return a value
     // that says "add this form element to the end of the array".
-    if (ElementTraversal::next(associatedHTMLElement, this)) {
+    if (ElementTraversal::next(&associatedHTMLElement, this)) {
         unsigned i = m_associatedElementsBeforeIndex;
         for (Element* element = this; element; element = ElementTraversal::next(element, this)) {
-            if (element == associatedHTMLElement) {
+            if (element == &associatedHTMLElement) {
                 ++m_associatedElementsAfterIndex;
                 return i;
             }
@@ -616,16 +619,17 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<Form
 #ifndef NDEBUG
 void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
 {
-    HTMLElement* element = item->asHTMLElement();
-    ASSERT_WITH_SECURITY_IMPLICATION(element);
-    ASSERT_WITH_SECURITY_IMPLICATION(element->form() == this);
+    ASSERT_WITH_SECURITY_IMPLICATION(item);
+    HTMLElement& element = item->asHTMLElement();
+    ASSERT_WITH_SECURITY_IMPLICATION(element.form() == this);
+
     if (item->isFormAssociatedElement()) {
         ASSERT_WITH_SECURITY_IMPLICATION(m_associatedElements.find(static_cast<FormAssociatedElement*>(item)) != notFound);
         return;
     }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(imgTag));
-    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(toHTMLImageElement(element)) != notFound);
+    ASSERT_WITH_SECURITY_IMPLICATION(element.hasTagName(imgTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(&toHTMLImageElement(element)) != notFound);
 }
 #else
 inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
@@ -636,12 +640,12 @@ inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
 HTMLElement* HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
 {
     if (pastName.isEmpty() || !m_pastNamesMap)
-        return 0;
+        return nullptr;
     FormNamedItem* item = m_pastNamesMap->get(pastName.impl());
     if (!item)
-        return 0;
+        return nullptr;
     assertItemCanBeInPastNamesMap(item);
-    return item->asHTMLElement();
+    return &item->asHTMLElement();
 }
 
 void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomicString& pastName)

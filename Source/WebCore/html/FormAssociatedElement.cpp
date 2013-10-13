@@ -38,32 +38,31 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class FormAttributeTargetObserver : IdTargetObserver {
+class FormAttributeTargetObserver FINAL : private IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static OwnPtr<FormAttributeTargetObserver> create(const AtomicString& id, FormAssociatedElement*);
-    virtual void idTargetChanged() OVERRIDE;
+    FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement&);
 
 private:
-    FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement*);
+    virtual void idTargetChanged() OVERRIDE;
 
-    FormAssociatedElement* m_element;
+    FormAssociatedElement& m_element;
 };
 
 FormAssociatedElement::FormAssociatedElement()
-    : m_form(0)
+    : m_form(nullptr)
 {
 }
 
 FormAssociatedElement::~FormAssociatedElement()
 {
-    setForm(0);
+    setForm(nullptr);
 }
 
 void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
 {
-    HTMLElement* element = toHTMLElement(this);
-    if (oldDocument && element->fastHasAttribute(formAttr))
+    HTMLElement& element = asHTMLElement();
+    if (oldDocument && element.fastHasAttribute(formAttr))
         resetFormAttributeTargetObserver();
 }
 
@@ -73,19 +72,19 @@ void FormAssociatedElement::insertedInto(ContainerNode& insertionPoint)
     if (!insertionPoint.inDocument())
         return;
 
-    HTMLElement* element = toHTMLElement(this);
-    if (element->fastHasAttribute(formAttr))
+    HTMLElement& element = asHTMLElement();
+    if (element.fastHasAttribute(formAttr))
         resetFormAttributeTargetObserver();
 }
 
 void FormAssociatedElement::removedFrom(ContainerNode& insertionPoint)
 {
-    HTMLElement* element = toHTMLElement(this);
-    if (insertionPoint.inDocument() && element->fastHasAttribute(formAttr))
+    HTMLElement& element = asHTMLElement();
+    if (insertionPoint.inDocument() && element.fastHasAttribute(formAttr))
         m_formAttributeTargetObserver = nullptr;
     // If the form and element are both in the same tree, preserve the connection to the form.
     // Otherwise, null out our form and remove ourselves from the form's list of elements.
-    if (m_form && element->highestAncestor() != m_form->highestAncestor())
+    if (m_form && element.highestAncestor() != m_form->highestAncestor())
         setForm(0);
 }
 
@@ -113,7 +112,7 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
 void FormAssociatedElement::formRemovedFromTree(const Node* formRoot)
 {
     ASSERT(m_form);
-    if (toHTMLElement(this)->highestAncestor() != formRoot)
+    if (asHTMLElement().highestAncestor() != formRoot)
         setForm(0);
 }
 
@@ -151,34 +150,32 @@ void FormAssociatedElement::formWillBeDestroyed()
 void FormAssociatedElement::resetFormOwner()
 {
     HTMLFormElement* originalForm = m_form;
-    setForm(findAssociatedForm(toHTMLElement(this), m_form));
-    HTMLElement* element = toHTMLElement(this);     
+    setForm(findAssociatedForm(&asHTMLElement(), m_form));
+    HTMLElement& element = asHTMLElement();
     if (m_form && m_form != originalForm && m_form->inDocument())
-        element->document().didAssociateFormControl(element);
+        element.document().didAssociateFormControl(&element);
 }
 
 void FormAssociatedElement::formAttributeChanged()
 {
-    HTMLElement* element = toHTMLElement(this);
-    if (!element->fastHasAttribute(formAttr)) {
+    HTMLElement& element = asHTMLElement();
+    if (!element.fastHasAttribute(formAttr)) {
         // The form attribute removed. We need to reset form owner here.
         HTMLFormElement* originalForm = m_form;
-        setForm(HTMLFormElement::findClosestFormAncestor(*element));
-        HTMLElement* element = toHTMLElement(this);
+        setForm(HTMLFormElement::findClosestFormAncestor(element));
         if (m_form && m_form != originalForm && m_form->inDocument())
-            element->document().didAssociateFormControl(element);
+            element.document().didAssociateFormControl(&element);
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();
-        if (element->inDocument())
+        if (element.inDocument())
             resetFormAttributeTargetObserver();
     }
 }
 
 bool FormAssociatedElement::customError() const
 {
-    const HTMLElement* element = toHTMLElement(this);
-    return element->willValidate() && !m_customValidationMessage.isEmpty();
+    return asHTMLElement().willValidate() && !m_customValidationMessage.isEmpty();
 }
 
 bool FormAssociatedElement::hasBadInput() const
@@ -245,7 +242,7 @@ void FormAssociatedElement::setCustomValidity(const String& error)
 
 void FormAssociatedElement::resetFormAttributeTargetObserver()
 {
-    m_formAttributeTargetObserver = FormAttributeTargetObserver::create(toHTMLElement(this)->fastGetAttribute(formAttr), this);
+    m_formAttributeTargetObserver = std::make_unique<FormAttributeTargetObserver>(asHTMLElement().fastGetAttribute(formAttr), *this);
 }
 
 void FormAssociatedElement::formAttributeTargetChanged()
@@ -255,7 +252,7 @@ void FormAssociatedElement::formAttributeTargetChanged()
 
 const AtomicString& FormAssociatedElement::name() const
 {
-    const AtomicString& name = toHTMLElement(this)->getNameAttribute();
+    const AtomicString& name = asHTMLElement().getNameAttribute();
     return name.isNull() ? emptyAtom : name;
 }
 
@@ -264,20 +261,15 @@ bool FormAssociatedElement::isFormControlElementWithState() const
     return false;
 }
 
-OwnPtr<FormAttributeTargetObserver> FormAttributeTargetObserver::create(const AtomicString& id, FormAssociatedElement* element)
-{
-    return adoptPtr(new FormAttributeTargetObserver(id, element));
-}
-
-FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement* element)
-    : IdTargetObserver(toHTMLElement(element)->treeScope().idTargetObserverRegistry(), id)
+FormAttributeTargetObserver::FormAttributeTargetObserver(const AtomicString& id, FormAssociatedElement& element)
+    : IdTargetObserver(element.asHTMLElement().treeScope().idTargetObserverRegistry(), id)
     , m_element(element)
 {
 }
 
 void FormAttributeTargetObserver::idTargetChanged()
 {
-    m_element->formAttributeTargetChanged();
+    m_element.formAttributeTargetChanged();
 }
 
 } // namespace Webcore
