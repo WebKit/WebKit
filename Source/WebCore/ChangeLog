@@ -1,3 +1,9 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r157381): Make Document::body() crash less when there is no documentElement.
+
+        Unreviewed.
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Rewrite Document::body and Document::head in modern style, way clearer and shorter

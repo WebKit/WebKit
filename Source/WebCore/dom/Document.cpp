@@ -2241,6 +2241,8 @@ HTMLElement* Document::body() const
 {
     // If the document element contains both a frameset and a body, the frameset wins.
     auto element = documentElement();
+    if (!element)
+        return nullptr;
     if (auto frameset = childrenOfType<HTMLFrameSetElement>(element).first())
         return frameset;
     return childrenOfType<HTMLBodyElement>(element).first();
