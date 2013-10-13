@@ -75,77 +75,74 @@ static bool contains(const char* const array[], int count, const char* item)
 
 static WebCacheModel cacheModelForMainBundle(void)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        // Apps that probably need the small setting
+        static const char* const documentViewerIDs[] = {
+            "Microsoft/com.microsoft.Messenger",
+            "com.adiumX.adiumX", 
+            "com.alientechnology.Proteus",
+            "com.apple.Dashcode",
+            "com.apple.iChat", 
+            "com.barebones.bbedit",
+            "com.barebones.textwrangler",
+            "com.barebones.yojimbo",
+            "com.equinux.iSale4",
+            "com.growl.growlframework",
+            "com.intrarts.PandoraMan",
+            "com.karelia.Sandvox",
+            "com.macromates.textmate",
+            "com.realmacsoftware.rapidweaverpro",
+            "com.red-sweater.marsedit",
+            "com.yahoo.messenger3",
+            "de.codingmonkeys.SubEthaEdit",
+            "fi.karppinen.Pyro",
+            "info.colloquy", 
+            "kungfoo.tv.ecto",
+        };
 
-    // Apps that probably need the small setting
-    static const char* const documentViewerIDs[] = {
-        "Microsoft/com.microsoft.Messenger",
-        "com.adiumX.adiumX", 
-        "com.alientechnology.Proteus",
-        "com.apple.Dashcode",
-        "com.apple.iChat", 
-        "com.barebones.bbedit", 
-        "com.barebones.textwrangler",
-        "com.barebones.yojimbo",
-        "com.equinux.iSale4",
-        "com.growl.growlframework",
-        "com.intrarts.PandoraMan",
-        "com.karelia.Sandvox",
-        "com.macromates.textmate",
-        "com.realmacsoftware.rapidweaverpro",
-        "com.red-sweater.marsedit",
-        "com.yahoo.messenger3",
-        "de.codingmonkeys.SubEthaEdit",
-        "fi.karppinen.Pyro",
-        "info.colloquy", 
-        "kungfoo.tv.ecto",
-    };
+        // Apps that probably need the medium setting
+        static const char* const documentBrowserIDs[] = {
+            "com.apple.Dictionary",
+            "com.apple.Xcode",
+            "com.apple.dashboard.client", 
+            "com.apple.helpviewer",
+            "com.culturedcode.xyle",
+            "com.macrabbit.CSSEdit",
+            "com.panic.Coda",
+            "com.ranchero.NetNewsWire",
+            "com.thinkmac.NewsLife",
+            "org.xlife.NewsFire",
+            "uk.co.opencommunity.vienna2",
+        };
 
-    // Apps that probably need the medium setting
-    static const char* const documentBrowserIDs[] = {
-        "com.apple.Dictionary",
-        "com.apple.Xcode",
-        "com.apple.dashboard.client", 
-        "com.apple.helpviewer",
-        "com.culturedcode.xyle",
-        "com.macrabbit.CSSEdit",
-        "com.panic.Coda",
-        "com.ranchero.NetNewsWire",
-        "com.thinkmac.NewsLife",
-        "org.xlife.NewsFire",
-        "uk.co.opencommunity.vienna2",
-    };
+        // Apps that probably need the large setting
+        static const char* const primaryWebBrowserIDs[] = {
+            "com.app4mac.KidsBrowser"
+            "com.app4mac.wKiosk",
+            "com.freeverse.bumpercar",
+            "com.omnigroup.OmniWeb5",
+            "com.sunrisebrowser.Sunrise",
+            "net.hmdt-web.Shiira",
+        };
 
-    // Apps that probably need the large setting
-    static const char* const primaryWebBrowserIDs[] = {
-        "com.app4mac.KidsBrowser"
-        "com.app4mac.wKiosk",
-        "com.freeverse.bumpercar",
-        "com.omnigroup.OmniWeb5",
-        "com.sunrisebrowser.Sunrise",
-        "net.hmdt-web.Shiira",
-    };
+        const char* bundleID = [[[NSBundle mainBundle] bundleIdentifier] UTF8String];
+        if (contains(documentViewerIDs, sizeof(documentViewerIDs) / sizeof(documentViewerIDs[0]), bundleID))
+            return WebCacheModelDocumentViewer;
+        if (contains(documentBrowserIDs, sizeof(documentBrowserIDs) / sizeof(documentBrowserIDs[0]), bundleID))
+            return WebCacheModelDocumentBrowser;
+        if (contains(primaryWebBrowserIDs, sizeof(primaryWebBrowserIDs) / sizeof(primaryWebBrowserIDs[0]), bundleID))
+            return WebCacheModelPrimaryWebBrowser;
 
-    WebCacheModel cacheModel;
+        bool isLinkedAgainstWebKit = WebKitLinkedOnOrAfter(0);
+        if (!isLinkedAgainstWebKit)
+            return WebCacheModelDocumentViewer; // Apps that don't link against WebKit probably aren't meant to be browsers.
 
-    const char* bundleID = [[[NSBundle mainBundle] bundleIdentifier] UTF8String];
-    if (contains(documentViewerIDs, sizeof(documentViewerIDs) / sizeof(documentViewerIDs[0]), bundleID))
-        cacheModel = WebCacheModelDocumentViewer;
-    else if (contains(documentBrowserIDs, sizeof(documentBrowserIDs) / sizeof(documentBrowserIDs[0]), bundleID))
-        cacheModel = WebCacheModelDocumentBrowser;
-    else if (contains(primaryWebBrowserIDs, sizeof(primaryWebBrowserIDs) / sizeof(primaryWebBrowserIDs[0]), bundleID))
-        cacheModel = WebCacheModelPrimaryWebBrowser;
-    else {
         bool isLegacyApp = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CACHE_MODEL_API);
         if (isLegacyApp)
-            cacheModel = WebCacheModelDocumentBrowser; // To avoid regressions in apps that depended on old WebKit's large cache.
-        else
-            cacheModel = WebCacheModelDocumentViewer; // To save memory.
+            return WebCacheModelDocumentBrowser; // To avoid regressions in apps that depended on old WebKit's large cache.
+
+        return WebCacheModelDocumentViewer; // To save memory.
     }
-
-    [pool drain];
-
-    return cacheModel;
 }
 
 @interface WebPreferences ()
