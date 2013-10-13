@@ -1,5 +1,77 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Use nullptr in Document.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=122715
+
+        Reviewed by Sam Weinig.
+
+        * dom/Document.cpp:
+        (WebCore::widgetForElement):
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::dropChildren):
+        (WebCore::Document::getElementByAccessKey):
+        (WebCore::Document::doctype):
+        (WebCore::Document::createElement):
+        (WebCore::Document::createElementNS):
+        (WebCore::Document::registerElement):
+        (WebCore::Document::createCDATASection):
+        (WebCore::Document::createProcessingInstruction):
+        (WebCore::Document::createEntityReference):
+        (WebCore::Document::importNode):
+        (WebCore::Document::adoptNode):
+        (WebCore::Document::webkitGetNamedFlows):
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+        (WebCore::Document::setTitle):
+        (WebCore::Document::removeTitle):
+        (WebCore::Document::view):
+        (WebCore::Document::page):
+        (WebCore::Document::settings):
+        (WebCore::Document::createNodeIterator):
+        (WebCore::Document::createTreeWalker):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        (WebCore::Document::disconnectFromFrame):
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::existingAXObjectCache):
+        (WebCore::Document::axObjectCache):
+        (WebCore::Document::scriptableDocumentParser):
+        (WebCore::Document::body):
+        (WebCore::Document::head):
+        (WebCore::Document::processBaseElement):
+        (WebCore::Document::findUnsafeParentScrollPropagationBoundary):
+        (WebCore::Document::cloneNode):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::setFocusedElement):
+        (WebCore::Document::getWindowAttributeEventListener):
+        (WebCore::Document::createEvent):
+        (WebCore::Document::getOverrideStyle):
+        (WebCore::Document::ownerElement):
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::parentDocument):
+        (WebCore::Document::createAttributeNS):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::resetHiddenFocusElementTimer):
+        (WebCore::Document::getCSSCanvasContext):
+        (WebCore::Document::enqueuePopstateEvent):
+        (WebCore::Document::takeAnyMediaCanStartListener):
+        (WebCore::Document::requestFullScreenForElement):
+        (WebCore::Document::webkitExitFullscreen):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+        (WebCore::Document::fullScreenRendererDestroyed):
+        (WebCore::Document::webkitPointerLockElement):
+        (WebCore::Document::seamlessParentIFrame):
+        (WebCore::Document::loader):
+        (WebCore::eventTargetElementForDocument):
+        (WebCore::nearestCommonHoverAncestor):
+        (WebCore::Document::ensureTemplateDocument):
+        Use nullptr in many places we were using 0.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Get rid of the toHTMLElement helper for casting FormAssociatedElement to HTMLElement
         https://bugs.webkit.org/show_bug.cgi?id=122713
 
