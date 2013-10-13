@@ -115,17 +115,17 @@ LayoutUnit InlineTextBox::lineHeight() const
     return toRenderBoxModelObject(renderer().parent())->lineHeight(isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-LayoutUnit InlineTextBox::selectionTop()
+LayoutUnit InlineTextBox::selectionTop() const
 {
     return root().selectionTop();
 }
 
-LayoutUnit InlineTextBox::selectionBottom()
+LayoutUnit InlineTextBox::selectionBottom() const
 {
     return root().selectionBottom();
 }
 
-LayoutUnit InlineTextBox::selectionHeight()
+LayoutUnit InlineTextBox::selectionHeight() const
 {
     return root().selectionHeight();
 }
@@ -200,7 +200,7 @@ static const Font& fontToUse(const RenderStyle& style, const RenderText& rendere
     return style.font();
 }
 
-LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
+LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 {
     int sPos = max(startPos - m_start, 0);
     int ePos = min(endPos - m_start, (int)m_len);

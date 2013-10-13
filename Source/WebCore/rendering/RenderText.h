@@ -68,8 +68,7 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
     void absoluteQuadsForRange(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
 
-    enum ClippingOption { NoClipping, ClipToEllipsis };
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = 0, ClippingOption = NoClipping) const;
+    void absoluteQuadsClippedToEllipsis(Vector<FloatQuad>&) const;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
 

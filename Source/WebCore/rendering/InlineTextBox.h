@@ -73,7 +73,7 @@ public:
 
     void offsetRun(int d) { ASSERT(!isDirty()); m_start += d; }
 
-    unsigned short truncation() { return m_truncation; }
+    unsigned short truncation() const { return m_truncation; }
 
     virtual void markDirty(bool dirty = true) OVERRIDE FINAL;
 
@@ -102,9 +102,9 @@ public:
 #endif
 
 private:
-    LayoutUnit selectionTop();
-    LayoutUnit selectionBottom();
-    LayoutUnit selectionHeight();
+    LayoutUnit selectionTop() const;
+    LayoutUnit selectionBottom() const;
+    LayoutUnit selectionHeight() const;
 
     TextRun constructTextRun(const RenderStyle&, const Font&, BufferForAppendingHyphen* = 0) const;
     TextRun constructTextRun(const RenderStyle&, const Font&, String, int maximumLength, BufferForAppendingHyphen* = 0) const;
@@ -112,7 +112,7 @@ private:
 public:
     virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }
 
-    virtual LayoutRect localSelectionRect(int startPos, int endPos);
+    virtual LayoutRect localSelectionRect(int startPos, int endPos) const;
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
 

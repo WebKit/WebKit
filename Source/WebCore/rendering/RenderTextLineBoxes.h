@@ -27,6 +27,7 @@
 #define RenderTextLineBoxes_h
 
 #include "LayoutRect.h"
+#include "RenderObject.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
@@ -59,8 +60,17 @@ public:
 
     VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
 
+    void setSelectionState(RenderText&, RenderObject::SelectionState);
+    LayoutRect selectionRectForRange(unsigned start, unsigned end);
+
     IntRect boundingBox(const RenderText&) const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
+
+    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
+    void absoluteRectsForRange(const RenderText&, Vector<IntRect>&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
+    enum ClippingOption { NoClipping, ClipToEllipsis };
+    void absoluteQuads(const RenderText&, Vector<FloatQuad>&, bool* wasFixed, ClippingOption) const;
+    void absoluteQuadsForRange(const RenderText&, Vector<FloatQuad>&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
 
     void dirtyAll();
     bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);

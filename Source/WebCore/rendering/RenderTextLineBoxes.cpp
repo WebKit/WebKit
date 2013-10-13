@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTextLineBoxes.h"
 
+#include "EllipsisBox.h"
 #include "InlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderStyle.h"
@@ -387,6 +388,158 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
         return createVisiblePositionAfterAdjustingOffsetForBiDi(*lastBox, lastBox->offsetForPosition(pointLineDirection) + lastBox->start(), shouldAffinityBeDownstream);
     }
     return renderer.createVisiblePosition(0, DOWNSTREAM);
+}
+
+void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::SelectionState state)
+{
+    if (state == RenderObject::SelectionInside || state == RenderObject::SelectionNone) {
+        for (auto box = m_first; box; box = box->nextTextBox())
+            box->root().setHasSelectedChildren(state == RenderObject::SelectionInside);
+        return;
+    }
+
+    int start, end;
+    renderer.selectionStartEnd(start, end);
+    if (state == RenderObject::SelectionStart) {
+        end = renderer.textLength();
+
+        // to handle selection from end of text to end of line
+        if (start && start == end)
+            start = end - 1;
+    } else if (state == RenderObject::SelectionEnd)
+        start = 0;
+
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        if (box->isSelected(start, end))
+            box->root().setHasSelectedChildren(true);
+    }
+}
+
+static IntRect ellipsisRectForBox(const InlineTextBox& box, unsigned start, unsigned end)
+{
+    unsigned short truncation = box.truncation();
+    if (truncation == cNoTruncation)
+        return IntRect();
+
+    auto ellipsis = box.root().ellipsisBox();
+    if (!ellipsis)
+        return IntRect();
+    
+    IntRect rect;
+    int ellipsisStartPosition = std::max<int>(start - box.start(), 0);
+    int ellipsisEndPosition = std::min<int>(end - box.start(), box.len());
+    
+    // The ellipsis should be considered to be selected if the end of
+    // the selection is past the beginning of the truncation and the
+    // beginning of the selection is before or at the beginning of the truncation.
+    if (ellipsisEndPosition < truncation && ellipsisStartPosition > truncation)
+        return IntRect();
+    return ellipsis->selectionRect();
+}
+
+LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned end)
+{
+    LayoutRect rect;
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        rect.unite(box->localSelectionRect(start, end));
+        rect.unite(ellipsisRectForBox(*box, start, end));
+    }
+    return rect;
+}
+
+void RenderTextLineBoxes::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+{
+    for (auto box = m_first; box; box = box->nextTextBox())
+        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
+}
+
+static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, unsigned end, bool useSelectionHeight)
+{
+    unsigned realEnd = std::min(box.end() + 1, end);
+    LayoutRect boxSelectionRect = box.localSelectionRect(start, realEnd);
+    if (!boxSelectionRect.height())
+        return FloatRect();
+    if (useSelectionHeight)
+        return boxSelectionRect;
+    // Change the height and y position (or width and x for vertical text)
+    // because selectionRect uses selection-specific values.
+    if (box.isHorizontal()) {
+        boxSelectionRect.setHeight(box.height());
+        boxSelectionRect.setY(box.y());
+    } else {
+        boxSelectionRect.setWidth(box.width());
+        boxSelectionRect.setX(box.x());
+    }
+    return boxSelectionRect;
+}
+
+void RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        // Note: box->end() returns the index of the last character, not the index past it
+        if (start <= box->start() && box->end() < end) {
+            FloatRect boundaries = box->calculateBoundaries();
+            if (useSelectionHeight) {
+                LayoutRect selectionRect = box->localSelectionRect(start, end);
+                if (box->isHorizontal()) {
+                    boundaries.setHeight(selectionRect.height());
+                    boundaries.setY(selectionRect.y());
+                } else {
+                    boundaries.setWidth(selectionRect.width());
+                    boundaries.setX(selectionRect.x());
+                }
+            }
+            rects.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed).enclosingBoundingBox());
+            continue;
+        }
+        // FIXME: This code is wrong. It's converting local to absolute twice. http://webkit.org/b/65722
+        FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
+        if (!rect.isZero())
+            rects.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed).enclosingBoundingBox());
+    }
+}
+
+void RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, Vector<FloatQuad>& quads, bool* wasFixed, ClippingOption option) const
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        FloatRect boundaries = box->calculateBoundaries();
+
+        // Shorten the width of this text box if it ends in an ellipsis.
+        // FIXME: ellipsisRectForBox should switch to return FloatRect soon with the subpixellayout branch.
+        IntRect ellipsisRect = (option == ClipToEllipsis) ? ellipsisRectForBox(*box, 0, renderer.textLength()) : IntRect();
+        if (!ellipsisRect.isEmpty()) {
+            if (renderer.style()->isHorizontalWritingMode())
+                boundaries.setWidth(ellipsisRect.maxX() - boundaries.x());
+            else
+                boundaries.setHeight(ellipsisRect.maxY() - boundaries.y());
+        }
+        quads.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed));
+    }
+}
+
+void RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        // Note: box->end() returns the index of the last character, not the index past it
+        if (start <= box->start() && box->end() < end) {
+            FloatRect boundaries = box->calculateBoundaries();
+            if (useSelectionHeight) {
+                LayoutRect selectionRect = box->localSelectionRect(start, end);
+                if (box->isHorizontal()) {
+                    boundaries.setHeight(selectionRect.height());
+                    boundaries.setY(selectionRect.y());
+                } else {
+                    boundaries.setWidth(selectionRect.width());
+                    boundaries.setX(selectionRect.x());
+                }
+            }
+            quads.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed));
+            continue;
+        }
+        FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
+        if (!rect.isZero())
+            quads.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed));
+    }
 }
 
 void RenderTextLineBoxes::dirtyAll()

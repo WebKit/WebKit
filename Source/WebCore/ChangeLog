@@ -1,3 +1,23 @@
+2013-10-12  Antti Koivisto  <antti@apple.com>
+
+        Move absoluteRects/Quads to RenderTextLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=122706
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::absoluteRects):
+        (WebCore::RenderTextLineBoxes::absoluteRectsForRange):
+        (WebCore::RenderTextLineBoxes::absoluteQuads):
+        (WebCore::RenderTextLineBoxes::absoluteQuadsForRange):
+        
+            These move.
+
+        (WebCore::RenderTextLineBoxes::selectionRectForRange):
+        (WebCore::RenderTextLineBoxes::setSelectionState):
+        
+            Also moved a few smaller functions.
+
 2013-10-13  Andreas Kling  <akling@apple.com>
 
         Remove dead code hiding behind ENABLE(TOUCH_EVENT_TRACKING).
