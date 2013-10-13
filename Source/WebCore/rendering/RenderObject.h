@@ -1173,20 +1173,6 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, RenderObject
 }
 #endif
 
-inline void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* renderer)
-{
-    float zoom = renderer->style()->effectiveZoom();
-    if (zoom != 1)
-        quad.scale(1 / zoom, 1 / zoom);
-}
-
-inline void adjustFloatRectForAbsoluteZoom(FloatRect& rect, RenderObject* renderer)
-{
-    float zoom = renderer->style()->effectiveZoom();
-    if (zoom != 1)
-        rect.scale(1 / zoom, 1 / zoom);
-}
-
 } // namespace WebCore
 
 #ifndef NDEBUG

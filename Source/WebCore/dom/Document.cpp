@@ -5669,11 +5669,12 @@ Element* eventTargetElementForDocument(Document* doc)
     return element;
 }
 
-void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>& quads, RenderObject* renderer)
+void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>& quads, const RenderStyle& style)
 {
     if (!view())
         return;
 
+    float zoom = style.effectiveZoom();
     float inverseFrameScale = 1;
     if (frame())
         inverseFrameScale = 1 / frame()->frameScaleFactor();
@@ -5681,24 +5682,27 @@ void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<Floa
     LayoutRect visibleContentRect = view()->visibleContentRect();
     for (size_t i = 0; i < quads.size(); ++i) {
         quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
-        adjustFloatQuadForAbsoluteZoom(quads[i], renderer);
+        if (zoom != 1)
+            quads[i].scale(1 / zoom, 1 / zoom);
         if (inverseFrameScale != 1)
             quads[i].scale(inverseFrameScale, inverseFrameScale);
     }
 }
 
-void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& rect, RenderObject* renderer)
+void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& rect, const RenderStyle& style)
 {
     if (!view())
         return;
 
+    float zoom = style.effectiveZoom();
     float inverseFrameScale = 1;
     if (frame())
         inverseFrameScale = 1 / frame()->frameScaleFactor();
 
     LayoutRect visibleContentRect = view()->visibleContentRect();
     rect.move(-visibleContentRect.x(), -visibleContentRect.y());
-    adjustFloatRectForAbsoluteZoom(rect, renderer);
+    if (zoom != 1)
+        rect.scale(1 / zoom);
     if (inverseFrameScale != 1)
         rect.scale(inverseFrameScale);
 }

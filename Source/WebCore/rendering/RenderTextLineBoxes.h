@@ -66,11 +66,11 @@ public:
     IntRect boundingBox(const RenderText&) const;
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
-    void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
-    void absoluteRectsForRange(const RenderText&, Vector<IntRect>&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
+    Vector<IntRect> absoluteRects(const LayoutPoint& accumulatedOffset) const;
+    Vector<IntRect> absoluteRectsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
     enum ClippingOption { NoClipping, ClipToEllipsis };
-    void absoluteQuads(const RenderText&, Vector<FloatQuad>&, bool* wasFixed, ClippingOption) const;
-    void absoluteQuadsForRange(const RenderText&, Vector<FloatQuad>&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
+    Vector<FloatQuad> absoluteQuads(const RenderText&, bool* wasFixed, ClippingOption) const;
+    Vector<FloatQuad> absoluteQuadsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
 
     void dirtyAll();
     bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);

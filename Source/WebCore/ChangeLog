@@ -1,3 +1,48 @@
+2013-10-13  Antti Koivisto  <antti@apple.com>
+
+        Make absoluteQuads/Rects functions return Vectors
+        https://bugs.webkit.org/show_bug.cgi?id=122722
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale):
+        (WebCore::Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale):
+            
+            Take RenderStyle instead of RenderObject
+
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+        * dom/Range.cpp:
+        (WebCore::Range::textRects):
+        (WebCore::Range::textQuads):
+        (WebCore::Range::getBorderAndTextQuads):
+            
+            Adapt to the changes.
+
+        * rendering/RenderObject.h:
+        
+            Removed unnecessary adjustFloatQuad/RectForAbsoluteZoom functions, inline code to
+            adjustFloatQuads/RectForScrollAndAbsoluteZoomAndFrameScale.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsClippedToEllipsis):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderText.h:
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::absoluteRects):
+        (WebCore::RenderTextLineBoxes::absoluteRectsForRange):
+        (WebCore::RenderTextLineBoxes::absoluteQuads):
+        (WebCore::RenderTextLineBoxes::absoluteQuadsForRange):
+        * rendering/RenderTextLineBoxes.h:
+        
+            Use return value instead of an out-arg, except for the virtual versions.
+
 2013-10-13  Andreas Kling  <akling@apple.com>
 
         LiveNodeList: rootNode() and document() should return references.

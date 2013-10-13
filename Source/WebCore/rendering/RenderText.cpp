@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -260,11 +260,10 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
+    rects.appendVector(m_lineBoxes.absoluteRects(accumulatedOffset));
 }
 
-void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
+Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
@@ -276,20 +275,20 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
     start = min(start, static_cast<unsigned>(INT_MAX));
     end = min(end, static_cast<unsigned>(INT_MAX));
     
-    m_lineBoxes.absoluteRectsForRange(*this, rects, start, end, useSelectionHeight, wasFixed);
+    return m_lineBoxes.absoluteRectsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
 
-void RenderText::absoluteQuadsClippedToEllipsis(Vector<FloatQuad>& quads) const
+Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
-    return m_lineBoxes.absoluteQuads(*this, quads, nullptr, RenderTextLineBoxes::ClipToEllipsis);
+    return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
 }
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    return m_lineBoxes.absoluteQuads(*this, quads, wasFixed, RenderTextLineBoxes::NoClipping);
+    quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
 }
 
-void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
+Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
@@ -301,7 +300,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
     start = min(start, static_cast<unsigned>(INT_MAX));
     end = min(end, static_cast<unsigned>(INT_MAX));
     
-    m_lineBoxes.absoluteQuadsForRange(*this, quads, start, end, useSelectionHeight, wasFixed);
+    return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
 
 VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)

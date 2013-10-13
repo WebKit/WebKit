@@ -447,10 +447,12 @@ LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned e
     return rect;
 }
 
-void RenderTextLineBoxes::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+Vector<IntRect> RenderTextLineBoxes::absoluteRects(const LayoutPoint& accumulatedOffset) const
 {
+    Vector<IntRect> rects;
     for (auto box = m_first; box; box = box->nextTextBox())
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
+    return rects;
 }
 
 static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, unsigned end, bool useSelectionHeight)
@@ -473,8 +475,9 @@ static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, u
     return boxSelectionRect;
 }
 
-void RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
+Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
+    Vector<IntRect> rects;
     for (auto box = m_first; box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
@@ -497,10 +500,12 @@ void RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, Vect
         if (!rect.isZero())
             rects.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed).enclosingBoundingBox());
     }
+    return rects;
 }
 
-void RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, Vector<FloatQuad>& quads, bool* wasFixed, ClippingOption option) const
+Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
 {
+    Vector<FloatQuad> quads;
     for (auto box = m_first; box; box = box->nextTextBox()) {
         FloatRect boundaries = box->calculateBoundaries();
 
@@ -515,10 +520,12 @@ void RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, Vector<Float
         }
         quads.append(renderer.localToAbsoluteQuad(boundaries, 0, wasFixed));
     }
+    return quads;
 }
 
-void RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, Vector<FloatQuad>& quads, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
+Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
+    Vector<FloatQuad> quads;
     for (auto box = m_first; box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
@@ -540,6 +547,7 @@ void RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, Vect
         if (!rect.isZero())
             quads.append(renderer.localToAbsoluteQuad(rect, 0, wasFixed));
     }
+    return quads;
 }
 
 void RenderTextLineBoxes::dirtyAll()

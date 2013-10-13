@@ -1139,8 +1139,8 @@ public:
     TextAutosizer* textAutosizer() { return m_textAutosizer.get(); }
 #endif
 
-    void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
-    void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
+    void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, const RenderStyle&);
+    void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, const RenderStyle&);
 
     bool hasActiveParser();
     void incrementActiveParserCount() { ++m_activeParserCount; }

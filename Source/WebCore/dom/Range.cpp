@@ -1614,7 +1614,7 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
         else if (r->isText()) {
             int startOffset = node == startContainer ? m_start.offset() : 0;
             int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
-            toRenderText(r)->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight, &isFixed);
+            rects.appendVector(toRenderText(r)->absoluteRectsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
         allFixed &= isFixed;
@@ -1650,7 +1650,7 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
         else if (r->isText()) {
             int startOffset = node == startContainer ? m_start.offset() : 0;
             int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
-            toRenderText(r)->absoluteQuadsForRange(quads, startOffset, endOffset, useSelectionHeight, &isFixed);
+            quads.appendVector(toRenderText(r)->absoluteQuadsForRange(startOffset, endOffset, useSelectionHeight, &isFixed));
         } else
             continue;
         allFixed &= isFixed;
@@ -1931,19 +1931,18 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
             if (RenderBoxModelObject* renderBoxModelObject = toElement(node)->renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;
                 renderBoxModelObject->absoluteQuads(elementQuads);
-                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, renderBoxModelObject);
+                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(elementQuads, *renderBoxModelObject->style());
 
                 quads.appendVector(elementQuads);
             }
         } else if (node->isTextNode()) {
             if (RenderObject* renderer = toText(node)->renderer()) {
-                RenderText* renderText = toRenderText(renderer);
+                const RenderText& renderText = toRenderText(*renderer);
                 int startOffset = (node == startContainer) ? m_start.offset() : 0;
                 int endOffset = (node == endContainer) ? m_end.offset() : INT_MAX;
                 
-                Vector<FloatQuad> textQuads;
-                renderText->absoluteQuadsForRange(textQuads, startOffset, endOffset);
-                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, renderText);
+                auto textQuads = renderText.absoluteQuadsForRange(startOffset, endOffset);
+                ownerDocument().adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(textQuads, *renderText.style());
 
                 quads.appendVector(textQuads);
             }

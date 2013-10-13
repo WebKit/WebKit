@@ -790,7 +790,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
         isSVGRoot = true;
 #endif
     if (obj->isText())
-        toRenderText(obj)->absoluteQuadsClippedToEllipsis(quads);
+        quads = toRenderText(obj)->absoluteQuadsClippedToEllipsis();
     else if (isWebArea() || isSeamlessWebArea() || isSVGRoot)
         obj->absoluteQuads(quads);
     else
