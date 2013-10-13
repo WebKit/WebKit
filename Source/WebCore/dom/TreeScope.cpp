@@ -81,7 +81,7 @@ TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
 TreeScope::TreeScope(Document* document)
     : m_rootNode(document)
     , m_documentScope(document)
-    , m_parentTreeScope(0)
+    , m_parentTreeScope(nullptr)
     , m_selfOnlyRefCount(0)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
@@ -90,9 +90,9 @@ TreeScope::TreeScope(Document* document)
 }
 
 TreeScope::TreeScope()
-    : m_rootNode(0)
-    , m_documentScope(0)
-    , m_parentTreeScope(0)
+    : m_rootNode(nullptr)
+    , m_documentScope(nullptr)
+    , m_parentTreeScope(nullptr)
     , m_selfOnlyRefCount(0)
 {
 }
@@ -104,7 +104,7 @@ TreeScope::~TreeScope()
 
     if (m_selection) {
         m_selection->clearTreeScope();
-        m_selection = 0;
+        m_selection = nullptr;
     }
 
     if (m_parentTreeScope)
@@ -121,7 +121,7 @@ void TreeScope::destroyTreeScopeData()
 void TreeScope::clearDocumentScope()
 {
     ASSERT(rootNode()->isDocumentNode());
-    m_documentScope = 0;
+    m_documentScope = nullptr;
 }
 
 void TreeScope::setParentTreeScope(TreeScope* newParentScope)
@@ -197,15 +197,12 @@ void TreeScope::removeElementByName(const AtomicStringImpl& name, Element& eleme
 
 Node* TreeScope::ancestorInThisScope(Node* node) const
 {
-    while (node) {
+    for (; node; node = node->shadowHost()) {
         if (&node->treeScope() == this)
             return node;
         if (!node->isInShadowTree())
             return nullptr;
-
-        node = node->shadowHost();
     }
-
     return nullptr;
 }
 
@@ -232,13 +229,13 @@ void TreeScope::removeImageMap(HTMLMapElement& imageMap)
 HTMLMapElement* TreeScope::getImageMap(const String& url) const
 {
     if (url.isNull())
-        return 0;
+        return nullptr;
     if (!m_imageMapsByName)
-        return 0;
+        return nullptr;
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     if (name.isEmpty())
-        return 0;
+        return nullptr;
     if (rootNode()->document().isHTMLDocument()) {
         AtomicString lowercasedName = name.lower();
         return m_imageMapsByName->getElementByLowercasedMapName(*lowercasedName.impl(), *this);
@@ -251,16 +248,16 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
     Frame* frame = document->frame();
 
     if (!frame)
-        return 0;
+        return nullptr;
     FrameView* frameView = frame->view();
     if (!frameView)
-        return 0;
+        return nullptr;
 
     float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
     IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->scrollX(), y * scaleFactor + frameView->scrollY()));
 
     if (!frameView->visibleContentRect().contains(point))
-        return 0;
+        return nullptr;
 
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     HitTestResult result(point);
@@ -297,7 +294,7 @@ void TreeScope::removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabel
 HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeValue)
 {
     if (forAttributeValue.isEmpty())
-        return 0;
+        return nullptr;
 
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
@@ -317,7 +314,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
 DOMSelection* TreeScope::getSelection() const
 {
     if (!rootNode()->document().frame())
-        return 0;
+        return nullptr;
 
     if (m_selection)
         return m_selection.get();
@@ -342,7 +339,7 @@ DOMSelection* TreeScope::getSelection() const
 Element* TreeScope::findAnchor(const String& name)
 {
     if (name.isEmpty())
-        return 0;
+        return nullptr;
     if (Element* element = getElementById(name))
         return element;
     auto anchorDescendants = descendantsOfType<HTMLAnchorElement>(rootNode());
@@ -357,7 +354,7 @@ Element* TreeScope::findAnchor(const String& name)
                 return &*anchor;
         }
     }
-    return 0;
+    return nullptr;
 }
 
 bool TreeScope::applyAuthorStyles() const
@@ -382,7 +379,7 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFram
         if (focusedFrame->tree().parent() == currentFrame)
             return focusedFrame->ownerElement();
     }
-    return 0;
+    return nullptr;
 }
 
 Element* TreeScope::focusedElement()
@@ -393,14 +390,14 @@ Element* TreeScope::focusedElement()
     if (!element && document.page())
         element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
     if (!element)
-        return 0;
+        return nullptr;
     TreeScope* treeScope = &element->treeScope();
     while (treeScope != this && treeScope != &document) {
         element = toShadowRoot(treeScope->rootNode())->hostElement();
         treeScope = &element->treeScope();
     }
     if (this != treeScope)
-        return 0;
+        return nullptr;
     return element;
 }
 
@@ -418,7 +415,7 @@ static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
 {
     if (!nodeA || !nodeB)
-        return 0;
+        return nullptr;
 
     if (&nodeA->treeScope() == &nodeB->treeScope())
         return &nodeA->treeScope();
@@ -434,7 +431,7 @@ TreeScope* commonTreeScope(Node* nodeA, Node* nodeB)
 
     for (; indexA > 0 && indexB > 0 && treeScopesA[indexA - 1] == treeScopesB[indexB - 1]; --indexA, --indexB) { }
 
-    return treeScopesA[indexA] == treeScopesB[indexB] ? treeScopesA[indexA] : 0;
+    return treeScopesA[indexA] == treeScopesB[indexB] ? treeScopesA[indexA] : nullptr;
 }
 
 #ifndef NDEBUG
