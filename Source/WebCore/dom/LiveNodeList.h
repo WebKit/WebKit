@@ -68,13 +68,13 @@ public:
         ASSERT(!m_overridesItemAfter || !isNodeList(collectionType));
 
         if (collectionType != ChildNodeListType)
-            document()->registerNodeList(this);
+            document().registerNodeList(this);
     }
 
     virtual ~LiveNodeListBase()
     {
         if (type() != ChildNodeListType)
-            document()->unregisterNodeList(this);
+            document().unregisterNodeList(this);
     }
 
     // DOM API
@@ -99,8 +99,8 @@ public:
     static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 protected:
-    Document* document() const { return &m_ownerNode->document(); }
-    Node* rootNode() const;
+    Document& document() const { return m_ownerNode->document(); }
+    Node& rootNode() const;
     ContainerNode* rootContainerNode() const;
     bool overridesItemAfter() const { return m_overridesItemAfter; }
 

@@ -1,5 +1,16 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        LiveNodeList: rootNode() and document() should return references.
+        <https://webkit.org/b/122720>
+
+        Reviewed by Antti Koivisto.
+
+        Tighten up this code a bit by having rootNode() and document()
+        return references. Also replaced some handwritten traversal
+        with a call to Node::lastDescendant().
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         Document::createRenderTree() should assert that there is no arena.
         <https://webkit.org/b/122723>
 

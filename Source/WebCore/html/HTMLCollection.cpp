@@ -255,29 +255,21 @@ template <> inline bool isMatchingElement(const ClassNodeList* nodeList, Element
     return nodeList->nodeMatchesInlined(element);
 }
 
-static Node* previousNode(Node* base, Node* previous, bool onlyIncludeDirectChildren)
+static Node* previousNode(Node& base, Node* previous, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? previous->previousSibling() : NodeTraversal::previous(previous, base);
+    return onlyIncludeDirectChildren ? previous->previousSibling() : NodeTraversal::previous(previous, &base);
 }
 
-static inline Node* lastDescendent(Node* node)
+static Node* lastNode(Node& rootNode, bool onlyIncludeDirectChildren)
 {
-    node = node->lastChild();
-    for (Node* current = node; current; current = current->lastChild())
-        node = current;
-    return node;
-}
-
-static Node* lastNode(Node* rootNode, bool onlyIncludeDirectChildren)
-{
-    return onlyIncludeDirectChildren ? rootNode->lastChild() : lastDescendent(rootNode);
+    return onlyIncludeDirectChildren ? rootNode.lastChild() : rootNode.lastDescendant();
 }
 
 ALWAYS_INLINE Node* LiveNodeListBase::iterateForPreviousNode(Node* current) const
 {
     bool onlyIncludeDirectChildren = shouldOnlyIncludeDirectChildren();
     CollectionType collectionType = type();
-    Node* rootNode = this->rootNode();
+    Node& rootNode = this->rootNode();
     for (; current; current = previousNode(rootNode, current, onlyIncludeDirectChildren)) {
         if (isNodeList(collectionType)) {
             if (current->isElementNode() && isMatchingElement(static_cast<const LiveNodeList*>(this), toElement(current)))
