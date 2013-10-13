@@ -1,3 +1,15 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        RenderLayer: Check SVG bit instead of element namespace in isTransparent().
+        <https://webkit.org/b/118171>
+
+        Reviewed by Darin Adler.
+
+        Replace the (virtual) namespaceURI() check with an isSVGElement() bit check.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparent):
+
 2013-10-12  Darin Adler  <darin@apple.com>
 
         Use nullptr in Document.cpp

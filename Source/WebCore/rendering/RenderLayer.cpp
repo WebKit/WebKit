@@ -1594,7 +1594,7 @@ bool RenderLayer::cannotBlitToWindow() const
 bool RenderLayer::isTransparent() const
 {
 #if ENABLE(SVG)
-    if (renderer().element() && renderer().element()->namespaceURI() == SVGNames::svgNamespaceURI)
+    if (renderer().element() && renderer().element()->isSVGElement())
         return false;
 #endif
     return renderer().isTransparent() || renderer().hasMask();
