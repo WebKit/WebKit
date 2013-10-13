@@ -2275,7 +2275,9 @@ void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
 
 HTMLHeadElement* Document::head()
 {
-    return childrenOfType<HTMLHeadElement>(documentElement()).first();
+    if (auto element = documentElement())
+        return childrenOfType<HTMLHeadElement>(element).first();
+    return nullptr;
 }
 
 void Document::close()

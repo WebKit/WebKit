@@ -1,5 +1,9 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        Uncrashify Document::head() too. (Why am I even awake?)
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r157381): Make Document::body() crash less when there is no documentElement.
 
         Unreviewed.
