@@ -71,6 +71,7 @@ public:
     void formRemovedFromTree(const Node* formRoot);
 
     // ValidityState attribute implementations
+    bool badInput() const { return hasBadInput(); }
     bool customError() const;
 
     // Override functions for patterMismatch, rangeOverflow, rangerUnderflow,
@@ -117,7 +118,6 @@ private:
 
     OwnPtr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;
-    OwnPtr<ValidityState> m_validityState;
     String m_customValidationMessage;
 };
 

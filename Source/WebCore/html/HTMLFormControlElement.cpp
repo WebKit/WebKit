@@ -39,7 +39,6 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ValidationMessage.h"
-#include "ValidityState.h"
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
@@ -423,13 +422,13 @@ bool HTMLFormControlElement::isValidFormControlElement()
 {
     // If the following assertion fails, setNeedsValidityCheck() is not called
     // correctly when something which changes validity is updated.
-    ASSERT(m_isValid == validity()->valid());
+    ASSERT(m_isValid == valid());
     return m_isValid;
 }
 
 void HTMLFormControlElement::setNeedsValidityCheck()
 {
-    bool newIsValid = validity()->valid();
+    bool newIsValid = valid();
     if (willValidate() && newIsValid != m_isValid) {
         // Update style for pseudo classes such as :valid :invalid.
         setNeedsStyleRecalc();

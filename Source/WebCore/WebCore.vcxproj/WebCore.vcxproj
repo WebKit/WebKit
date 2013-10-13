@@ -15334,7 +15334,6 @@
     <ClCompile Include="..\html\TypeAhead.cpp" />
     <ClCompile Include="..\html\URLInputType.cpp" />
     <ClCompile Include="..\html\ValidationMessage.cpp" />
-    <ClCompile Include="..\html\ValidityState.cpp" />
     <ClCompile Include="..\html\WeekInputType.cpp" />
     <ClCompile Include="..\html\forms\FileIconLoader.cpp" />
     <ClCompile Include="..\html\parser\BackgroundHTMLInputStream.cpp" />

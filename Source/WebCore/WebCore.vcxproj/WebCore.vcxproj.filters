@@ -4086,9 +4086,6 @@
     <ClCompile Include="..\html\ValidationMessage.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\ValidityState.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\WeekInputType.cpp">
       <Filter>html</Filter>
     </ClCompile>

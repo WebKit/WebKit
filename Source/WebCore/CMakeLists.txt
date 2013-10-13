@@ -1440,7 +1440,6 @@ set(WebCore_SOURCES
     html/TypeAhead.cpp
     html/URLInputType.cpp
     html/ValidationMessage.cpp
-    html/ValidityState.cpp
     html/WeekInputType.cpp
 
     html/canvas/CanvasContextAttributes.cpp

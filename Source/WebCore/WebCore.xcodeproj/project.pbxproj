@@ -545,7 +545,6 @@
 		15B8B7C81652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B8B7C61652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp */; };
 		15B8B7C91652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 15B8B7C71652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h */; };
 		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; };
-		15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C7708B100D3C6A005BA267 /* ValidityState.cpp */; };
 		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
 		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
 		15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C770A3100D41CD005BA267 /* DOMValidityState.mm */; };
@@ -6975,7 +6974,6 @@
 		15B8B7C71652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMixFunctionValue.h; sourceTree = "<group>"; };
 		15C77089100D3C6A005BA267 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
 		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
-		15C7708B100D3C6A005BA267 /* ValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidityState.cpp; sourceTree = "<group>"; };
 		15C77091100D3CA8005BA267 /* JSValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValidityState.h; sourceTree = "<group>"; };
 		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
 		15C770A3100D41CD005BA267 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
@@ -16589,7 +16587,6 @@
 				CDEE393817974274001D7580 /* URLRegistry.h */,
 				F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */,
 				F5A154261279534D00D0B0C0 /* ValidationMessage.h */,
-				15C7708B100D3C6A005BA267 /* ValidityState.cpp */,
 				15C7708A100D3C6A005BA267 /* ValidityState.h */,
 				15C77089100D3C6A005BA267 /* ValidityState.idl */,
 				E44613B40CD6344E00FADA75 /* VoidCallback.h */,
@@ -27444,7 +27441,6 @@
 				50D32857163B313F0016111E /* ValidatedCustomFilterOperation.cpp in Sources */,
 				511EF2A517F0FA7700E4FA16 /* IDBOpenDBRequest.cpp in Sources */,
 				F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */,
-				15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */,
 				FD3160AE12B026F700C1A359 /* VectorMath.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,

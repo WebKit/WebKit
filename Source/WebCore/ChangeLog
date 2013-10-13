@@ -1,5 +1,43 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Remove unneeded extra memory allocation and indirection for ValidityState
+        https://bugs.webkit.org/show_bug.cgi?id=122705
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt: Removed ValidityState.cpp.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/FormAssociatedElement.cpp: Removed ValidityState.h include and the
+        FormAssociatedElement::validity function. That function is now an inline
+        in the ValidityState.h header.
+
+        * html/FormAssociatedElement.h: Added badInput function, the only function
+        from the ValidityState interface that was not already present here. Removed
+        m_validityState.
+
+        * html/HTMLFormControlElement.cpp: Removed include of ValidityState.h.
+        (WebCore::HTMLFormControlElement::isValidFormControlElement): Use the valid
+        function directly instead of indirectly through the validity state.
+        (WebCore::HTMLFormControlElement::setNeedsValidityCheck): Ditto.
+
+        * html/ValidityState.cpp: Removed.
+
+        * html/ValidityState.h: Removed the body of the ValidityState class and
+        made it effectively a "typedef" for FormAssociatedElement. It's actually
+        a derived class that adds no members, which is not quite right but will
+        work just fine for this.
+        (WebCore::FormAssociatedElement::validity): Implemented; just returns the
+        FormAssociatedElement, which the bindings expose as a ValidityState.
+
+        * html/ValidityState.idl: Use SkipVTableValidation instead of
+        ImplementationLacksVTable because FormAssociatedElement does have a vtable.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Rename toParentMediaElement to parentMediaElement, since it's not a type cast
         https://bugs.webkit.org/show_bug.cgi?id=122707
 

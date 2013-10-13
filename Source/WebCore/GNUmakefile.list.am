@@ -3693,7 +3693,6 @@ webcore_sources += \
 	Source/WebCore/html/URLInputType.h \
 	Source/WebCore/html/ValidationMessage.cpp \
 	Source/WebCore/html/ValidationMessage.h \
-	Source/WebCore/html/ValidityState.cpp \
 	Source/WebCore/html/ValidityState.h \
 	Source/WebCore/html/VoidCallback.h \
 	Source/WebCore/html/WeekInputType.cpp \

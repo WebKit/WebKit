@@ -33,7 +33,6 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
-#include "ValidityState.h"
 
 namespace WebCore {
 
@@ -59,14 +58,6 @@ FormAssociatedElement::FormAssociatedElement()
 FormAssociatedElement::~FormAssociatedElement()
 {
     setForm(0);
-}
-
-ValidityState* FormAssociatedElement::validity()
-{
-    if (!m_validityState)
-        m_validityState = ValidityState::create(this);
-
-    return m_validityState.get();
 }
 
 void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
