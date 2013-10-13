@@ -34,7 +34,7 @@
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
 #include "NodeTraversal.h"
-#include "RenderObject.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"

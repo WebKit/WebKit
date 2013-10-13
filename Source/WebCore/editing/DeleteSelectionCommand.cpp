@@ -39,6 +39,7 @@
 #include "HTMLTableElement.h"
 #include "NodeTraversal.h"
 #include "RenderTableCell.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 

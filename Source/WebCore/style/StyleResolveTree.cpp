@@ -409,7 +409,7 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
 {
     if (!textNode.attached())
         return;
-    RenderText* textRenderer = toRenderText(textNode.renderer());
+    RenderText* textRenderer = textNode.renderer();
     if (!textRenderer) {
         attachTextRenderer(textNode);
         reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(textNode);
@@ -628,7 +628,7 @@ static Change resolveLocal(Element& current, Change inheritedChange)
 
 static void updateTextStyle(Text& text)
 {
-    RenderText* renderer = toRenderText(text.renderer());
+    RenderText* renderer = text.renderer();
 
     if (!text.needsStyleRecalc())
         return;

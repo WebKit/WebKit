@@ -77,6 +77,7 @@
 #include "PageGroup.h"
 #include "RegularExpression.h"
 #include "RenderTableCell.h"
+#include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

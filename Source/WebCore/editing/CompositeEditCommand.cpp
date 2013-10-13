@@ -734,7 +734,7 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
 
     document().updateLayout();
 
-    RenderText* textRenderer = toRenderText(textNode->renderer());
+    RenderText* textRenderer = textNode->renderer();
     if (!textRenderer)
         return;
 

@@ -25,12 +25,12 @@
 
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
+#include "Text.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class InlineTextBox;
-class Text;
 
 class RenderText : public RenderObject {
 public:
@@ -133,8 +133,6 @@ public:
     void momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset);
 
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
-
-    void checkConsistency() const;
 
     bool isAllCollapsibleWhitespace() const;
 
@@ -250,13 +248,12 @@ inline RenderStyle* RenderText::firstLineStyle() const
     return parent()->firstLineStyle();
 }
 
-#ifdef NDEBUG
-inline void RenderText::checkConsistency() const
-{
-}
-#endif
-
 void applyTextTransform(const RenderStyle*, String&, UChar);
+
+inline RenderText* Text::renderer() const
+{
+    return toRenderText(Node::renderer());
+}
 
 } // namespace WebCore
 

@@ -27,6 +27,7 @@
 #include "HTMLInterchange.h"
 
 #include "RenderElement.h"
+#include "RenderText.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include <wtf/text/StringBuilder.h>
