@@ -90,7 +90,7 @@ void RenderLineBreak::deleteInlineBoxWrapper()
     if (!m_inlineBoxWrapper)
         return;
     if (!documentBeingDestroyed())
-        m_inlineBoxWrapper->remove();
+        m_inlineBoxWrapper->removeFromParent();
     m_inlineBoxWrapper->destroy(renderArena());
     m_inlineBoxWrapper = nullptr;
 }

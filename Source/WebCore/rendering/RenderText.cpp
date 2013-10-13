@@ -1002,7 +1002,7 @@ void RenderText::positionLineBox(InlineBox* box)
     // FIXME: should not be needed!!!
     if (!textBox->len()) {
         // We want the box to be destroyed.
-        textBox->remove();
+        textBox->removeFromParent();
         m_lineBoxes.remove(*textBox);
         textBox->destroy(renderArena());
         return;

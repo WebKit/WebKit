@@ -234,9 +234,9 @@ void RenderBlock::willBeDestroyed()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox()) {
-                    while (InlineBox* childBox = box->firstChild())
-                        childBox->remove();
+                for (auto box = firstLineBox(); box; box = box->nextLineBox()) {
+                    while (auto childBox = box->firstChild())
+                        childBox->removeFromParent();
                 }
             }
         } else if (parent())

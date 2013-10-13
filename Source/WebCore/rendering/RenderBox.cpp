@@ -1968,7 +1968,7 @@ void RenderBox::positionLineBox(InlineBox* box)
         }
 
         // Nuke the box.
-        box->remove();
+        box->removeFromParent();
         box->destroy(renderArena());
     } else if (isReplaced()) {
         setLocation(roundedLayoutPoint(box->topLeft()));
@@ -1984,7 +1984,7 @@ void RenderBox::deleteLineBoxWrapper()
 {
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
-            m_inlineBoxWrapper->remove();
+            m_inlineBoxWrapper->removeFromParent();
         m_inlineBoxWrapper->destroy(renderArena());
         m_inlineBoxWrapper = 0;
     }

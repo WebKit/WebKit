@@ -51,7 +51,6 @@ InlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& renderTex
         textBox->setPreviousTextBox(m_last);
         m_last = textBox;
     }
-    textBox->setBehavesLikeText(true);
     return textBox;
 }
 
@@ -114,7 +113,7 @@ void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
         return;
     }
     for (auto box = m_first; box; box = box->nextTextBox())
-        box->remove();
+        box->removeFromParent();
 }
 
 void RenderTextLineBoxes::deleteAll(RenderText& renderer)

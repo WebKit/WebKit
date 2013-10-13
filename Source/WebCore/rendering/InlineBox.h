@@ -154,7 +154,7 @@ public:
     void setIsFirstLine(bool firstLine) { m_bitfields.setFirstLine(firstLine); }
     bool isFirstLine() const { return m_bitfields.firstLine(); }
 
-    void remove();
+    void removeFromParent();
 
     InlineBox* nextOnLine() const { return m_next; }
     InlineBox* prevOnLine() const { return m_prev; }

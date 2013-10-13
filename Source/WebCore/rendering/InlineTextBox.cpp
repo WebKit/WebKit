@@ -99,7 +99,7 @@ void InlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
 
 int InlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
-    if (!behavesLikeText() || !parent())
+    if (!parent())
         return 0;
     if (&parent()->renderer() == renderer().parent())
         return parent()->baselinePosition(baselineType);
@@ -108,7 +108,7 @@ int InlineTextBox::baselinePosition(FontBaseline baselineType) const
 
 LayoutUnit InlineTextBox::lineHeight() const
 {
-    if (!behavesLikeText() || !renderer().parent())
+    if (!renderer().parent())
         return 0;
     if (&parent()->renderer() == renderer().parent())
         return parent()->lineHeight();

@@ -51,6 +51,7 @@ public:
         , m_len(0)
         , m_truncation(cNoTruncation)
     {
+        setBehavesLikeText(true);
     }
 
     RenderText& renderer() const { return toRenderText(InlineBox::renderer()); }
@@ -161,16 +162,6 @@ public:
     // Needs to be public, so the static paintTextWithShadows() function can use it.
     static FloatSize applyShadowToGraphicsContext(GraphicsContext*, const ShadowData*, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal);
 
-private:
-    InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject
-    InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject
-
-    int m_start;
-    unsigned short m_len;
-
-    unsigned short m_truncation; // Where to truncate when text overflow is applied.  We use special constants to
-                      // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
-
 protected:
     void paintCompositionBackground(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
@@ -191,6 +182,18 @@ private:
         return (canHaveLeadingExpansion() ? TextRun::AllowLeadingExpansion : TextRun::ForbidLeadingExpansion)
             | (expansion() && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
     }
+
+    void behavesLikeText() const WTF_DELETED_FUNCTION;
+
+    InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject
+    InlineTextBox* m_nextTextBox; // The next box that also uses our RenderObject
+
+    int m_start;
+    unsigned short m_len;
+
+    // Where to truncate when text overflow is applied. We use special constants to
+    // denote no truncation (the whole run paints) and full truncation (nothing paints at all).
+    unsigned short m_truncation;
 };
 
 inline InlineTextBox* toInlineTextBox(InlineBox* inlineBox)

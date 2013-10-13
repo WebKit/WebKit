@@ -64,7 +64,7 @@ InlineBox::~InlineBox()
 }
 #endif
 
-void InlineBox::remove()
+void InlineBox::removeFromParent()
 { 
     if (parent())
         parent()->removeChild(this);
