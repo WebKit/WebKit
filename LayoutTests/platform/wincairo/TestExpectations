@@ -783,7 +783,6 @@ editing/pasteboard/file-input-files-access.html
 fast/files
 http/tests/fileapi
 fast/dom/DOMURL/check-instanceof-domurl-functions.html
-fast/forms/file/input-file-entries.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
 fast/workers/worker-domurl.html

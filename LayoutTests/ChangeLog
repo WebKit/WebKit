@@ -1,3 +1,17 @@
+2013-10-13  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Removing  input-file-entries.html from TestExpectation
+        https://bugs.webkit.org/show_bug.cgi?id=122674
+
+        Reviewed by Anders Carlsson.
+
+        input-file-entries.html has been removed in
+        changeset 156692. so removing references to this file.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-10-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.
