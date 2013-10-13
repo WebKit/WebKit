@@ -651,7 +651,6 @@ public:
     virtual Widget* widgetForAttachmentView() const { return 0; }
     Page* page() const;
     virtual Document* document() const;
-    virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
     String language() const;
     // 1-based, to match the aria-level spec.

@@ -119,7 +119,6 @@ public:
     // Should be called on the root accessibility object to kick off a hit test.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const OVERRIDE;
 
-    FrameView* frameViewIfRenderView() const;
     virtual Element* anchorElement() const OVERRIDE;
     
     virtual LayoutRect boundingBoxRect() const OVERRIDE;
@@ -135,7 +134,6 @@ public:
 
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
-    virtual FrameView* topDocumentFrameView() const OVERRIDE;
     Document* topDocument() const;
     HTMLLabelElement* labelElementContainer() const;
     

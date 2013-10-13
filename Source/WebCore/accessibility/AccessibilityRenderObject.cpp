@@ -1682,14 +1682,6 @@ Document* AccessibilityRenderObject::topDocument() const
         return 0;
     return document()->topDocument();
 }
-    
-FrameView* AccessibilityRenderObject::topDocumentFrameView() const
-{
-    RenderView* renderView = topRenderer();
-    if (!renderView)
-        return 0;
-    return &renderView->view().frameView();
-}
 
 Widget* AccessibilityRenderObject::widget() const
 {
@@ -1751,14 +1743,6 @@ Widget* AccessibilityRenderObject::widgetForAttachmentView() const
     if (!isAttachment())
         return 0;
     return toRenderWidget(m_renderer)->widget();
-}
-
-FrameView* AccessibilityRenderObject::frameViewIfRenderView() const
-{
-    if (!m_renderer->isRenderView())
-        return 0;
-    // this is the RenderObject's Document's renderer's FrameView
-    return &m_renderer->view().frameView();
 }
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns

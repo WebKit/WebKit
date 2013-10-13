@@ -1,3 +1,10 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        Remove two unused AX functions for getting a FrameView*.
+        <https://webkit.org/b/122724>
+
+        Reviewed by Anders Carlsson.
+
 2013-10-13  Antti Koivisto  <antti@apple.com>
 
         Add traverseNextSkippingChildren to ElementIterators
