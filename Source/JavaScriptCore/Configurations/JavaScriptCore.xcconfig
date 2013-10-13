@@ -33,7 +33,7 @@ JSVALUE_MODEL_ppc = 32_64;
 JSVALUE_MODEL_x86_64 = 64;
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
-OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-all_load;
+OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__ZNKSt3__18functionIFvvEEclEv -Wl,-unexported_symbol -Wl,__ZNSt3__18functionIFvvEEC1EOS2_ -Wl,-unexported_symbol -Wl,__ZNSt3__18functionIFvvEEC2EOS2_ -Wl,-unexported_symbol -Wl,__ZNSt3__18functionIFvvEED1Ev -Wl,-unexported_symbol -Wl,__ZNSt3__18functionIFvvEED2Ev -Wl,-all_load;
 
 OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));

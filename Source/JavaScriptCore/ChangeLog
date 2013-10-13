@@ -1,3 +1,9 @@
+2013-10-13  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Lion build.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2013-10-12  Alexey Proskuryakov  <ap@apple.com>
 
         Add a feature define for SubtleCrypto
