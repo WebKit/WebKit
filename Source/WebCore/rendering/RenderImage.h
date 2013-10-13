@@ -40,6 +40,9 @@ public:
 
     static RenderImage* createAnonymous(Document&);
 
+    // Set the style of the object if it's generated content.
+    void setPseudoStyle(PassRefPtr<RenderStyle>);
+
     void setImageResource(PassOwnPtr<RenderImageResource>);
 
     RenderImageResource* imageResource() { return m_imageResource.get(); }

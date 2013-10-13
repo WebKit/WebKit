@@ -75,6 +75,19 @@ RenderImage::~RenderImage()
     m_imageResource->shutdown();
 }
 
+
+void RenderImage::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
+{
+    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
+
+    // Images are special and must inherit the pseudoStyle so the width and height of
+    // the pseudo element doesn't change the size of the image. In all other cases we
+    // can just share the style.
+    RefPtr<RenderStyle> style = RenderStyle::create();
+    style->inheritFrom(pseudoStyle.get());
+    setStyle(style.release());
+}
+
 void RenderImage::setImageResource(PassOwnPtr<RenderImageResource> imageResource)
 {
     ASSERT(!m_imageResource);

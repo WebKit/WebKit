@@ -1,5 +1,15 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        Move setPseudoStyle() to RenderImage (from RenderElement.)
+        <https://webkit.org/b/122726>
+
+        Reviewed by Antti Koivisto.
+
+        Only RenderImages ever use setPseudoStyle() so move it there and
+        remove the non-image codepath.
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSlider always has an HTMLInputElement.
         <https://webkit.org/b/122728>
 

@@ -39,8 +39,6 @@ public:
     virtual void setStyle(PassRefPtr<RenderStyle>);
     // Called to update a style that is allowed to trigger animations.
     void setAnimatableStyle(PassRefPtr<RenderStyle>);
-    // Set the style of the object if it's generated content.
-    void setPseudoStyle(PassRefPtr<RenderStyle>);
 
     // This is null for anonymous renderers.
     Element* element() const { return toElement(RenderObject::node()); }

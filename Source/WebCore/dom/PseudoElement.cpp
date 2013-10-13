@@ -30,6 +30,7 @@
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "RenderQuote.h"
 
 namespace WebCore {
@@ -113,7 +114,7 @@ void PseudoElement::didRecalcStyle(Style::Change)
         // We only manage the style for the generated content which must be images or text.
         if (!child->isImage())
             continue;
-        toRenderElement(child)->setPseudoStyle(renderer->style());
+        toRenderImage(child)->setPseudoStyle(renderer->style());
     }
 }
 
