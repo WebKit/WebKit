@@ -1,5 +1,38 @@
 2013-10-12  Darin Adler  <darin@apple.com>
 
+        Remove the not-much-used isShadowHost function from Element.h
+        https://bugs.webkit.org/show_bug.cgi?id=122710
+
+        Reviewed by Andreas Kling.
+
+        * dom/Element.h: Removed isShadowHost, which just checks if shadowRoot is null.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByShadowHost): Added
+        individual assertions instead of just asserting isShadowHost.
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByIFrame): Broke an
+        assertion with && in it into two assertions.
+        (WebCore::hasCustomFocusLogic): Changed argument type to be Element& and take
+        a reference instead of a pointer.
+        (WebCore::isNonFocusableShadowHost): Made arguments references instead of pointers.
+        Replaced isShadowHost check with a direct check of whether shadowRoot returns null
+        or not, which seems nearly as clear.
+        (WebCore::isFocusableShadowHost): Ditto.
+        (WebCore::adjustedTabIndex): Ditto.
+        (WebCore::shouldVisit): Ditto.
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument):
+        Updated for changes above.
+        (WebCore::FocusController::advanceFocusInDocumentOrder): Ditto. Also some nullptr.
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope): Ditto.
+        (WebCore::FocusController::findFocusableElementRecursively): Ditto.
+        (WebCore::FocusController::findElementWithExactTabIndex): Ditto.
+        (WebCore::nextElementWithGreaterTabIndex): Ditto.
+        (WebCore::previousElementWithLowerTabIndex): Ditto.
+        (WebCore::FocusController::nextFocusableElement): Ditto.
+        (WebCore::FocusController::previousFocusableElement): Ditto.
+
+2013-10-12  Darin Adler  <darin@apple.com>
+
         Move querySelector from Node to ContainerNode and use references instead of pointers
         https://bugs.webkit.org/show_bug.cgi?id=122709
 
