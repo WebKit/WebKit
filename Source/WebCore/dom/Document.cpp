@@ -74,12 +74,14 @@
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBaseElement.h"
+#include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
@@ -2237,20 +2239,11 @@ void Document::implicitOpen()
 
 HTMLElement* Document::body() const
 {
-    Node* de = documentElement();
-    if (!de)
-        return nullptr;
-    
-    // try to prefer a FRAMESET element over BODY
-    Node* body = nullptr;
-    for (Node* i = de->firstChild(); i; i = i->nextSibling()) {
-        if (i->hasTagName(framesetTag))
-            return toHTMLElement(i);
-        
-        if (i->hasTagName(bodyTag) && !body)
-            body = i;
-    }
-    return toHTMLElement(body);
+    // If the document element contains both a frameset and a body, the frameset wins.
+    auto element = documentElement();
+    if (auto frameset = childrenOfType<HTMLFrameSetElement>(element).first())
+        return frameset;
+    return childrenOfType<HTMLBodyElement>(element).first();
 }
 
 void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
@@ -2280,15 +2273,7 @@ void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
 
 HTMLHeadElement* Document::head()
 {
-    Node* de = documentElement();
-    if (!de)
-        return nullptr;
-
-    for (Node* e = de->firstChild(); e; e = e->nextSibling())
-        if (e->hasTagName(headTag))
-            return static_cast<HTMLHeadElement*>(e);
-
-    return nullptr;
+    return childrenOfType<HTMLHeadElement>(documentElement()).first();
 }
 
 void Document::close()

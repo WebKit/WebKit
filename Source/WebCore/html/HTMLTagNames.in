@@ -20,7 +20,7 @@ bdo interfaceName=HTMLElement
 bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
-body
+body generateTypeHelpers
 br interfaceName=HTMLBRElement
 button constructorNeedsFormElement
 canvas generateTypeHelpers
@@ -57,7 +57,7 @@ h3 interfaceName=HTMLHeadingElement
 h4 interfaceName=HTMLHeadingElement
 h5 interfaceName=HTMLHeadingElement
 h6 interfaceName=HTMLHeadingElement
-head
+head generateTypeHelpers
 header interfaceName=HTMLElement
 hgroup interfaceName=HTMLElement
 hr interfaceName=HTMLHRElement
