@@ -1,1 +1,36 @@
+2013-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL OSR exit should perform zero extension on values smaller than 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=122688
+
+        Reviewed by Gavin Barraclough.
+        
+        In the DFG we usually make the simplistic assumption that a 32-bit value in a 64-bit
+        register will have zeros on the high bits.  In the few cases where the high bits are
+        non-zero, the DFG sort of tells us this explicitly.
+
+        But when working with llvm.webkit.stackmap, it doesn't work that way.  Consider we might
+        emit LLVM IR like:
+
+            %2 = trunc i64 %1 to i32
+            stuff %2
+            call @llvm.webkit.stackmap(...., %2)
+
+        LLVM may never actually emit a truncation instruction of any kind.  And that's great - in
+        many cases it won't be needed, like if 'stuff %2' is a 32-bit op that ignores the high
+        bits anyway.  Hence LLVM may tell us that %2 is in the register that still had the value
+        from before truncation, and that register may have garbage in the high bits.
+
+        This means that on our end, if we want a 32-bit value and we want that value to be
+        zero-extended, we should zero-extend it ourselves.  This is pretty easy and should be
+        cheap, so we should just do it and not make it a requirement that LLVM does it on its
+        end.
+        
+        This makes all tests pass with JSC_ftlOSRExitUsesStackmap=true.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStubWithOSRExitStackmap):
+        * ftl/FTLValueFormat.cpp:
+        (JSC::FTL::reboxAccordingToFormat):
+
 == Rolled over to ChangeLog-2013-10-13 ==

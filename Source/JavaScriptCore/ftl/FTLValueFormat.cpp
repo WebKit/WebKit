@@ -37,11 +37,13 @@ void reboxAccordingToFormat(
 {
     switch (format) {
     case ValueFormatInt32: {
+        jit.zeroExtend32ToPtr(value, value);
         jit.or64(GPRInfo::tagTypeNumberRegister, value);
         break;
     }
     
     case ValueFormatUInt32: {
+        jit.zeroExtend32ToPtr(value, value);
         jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
         jit.boxInt52(value, value, scratch1, FPRInfo::fpRegT0);
         jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
@@ -64,6 +66,7 @@ void reboxAccordingToFormat(
     }
     
     case ValueFormatBoolean: {
+        jit.zeroExtend32ToPtr(value, value);
         jit.or32(MacroAssembler::TrustedImm32(ValueFalse), value);
         break;
     }
