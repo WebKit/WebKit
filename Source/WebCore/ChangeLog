@@ -1,3 +1,13 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        RenderLayerBacking should have RenderLayer& backpointer.
+        <https://webkit.org/b/122731>
+
+        Reviewed by Anders Carlsson.
+
+        RenderLayerBacking is always owned by a RenderLayer and so should
+        store its backpointer in a reference.
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Make element predicates and type casts work more consistently on more types

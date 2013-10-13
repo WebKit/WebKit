@@ -5571,7 +5571,7 @@ void RenderLayer::clearClipRects(ClipRectsType typeToClear)
 RenderLayerBacking* RenderLayer::ensureBacking()
 {
     if (!m_backing) {
-        m_backing = adoptPtr(new RenderLayerBacking(this));
+        m_backing = adoptPtr(new RenderLayerBacking(*this));
         compositor().layerBecameComposited(*this);
 
 #if ENABLE(CSS_FILTERS)
