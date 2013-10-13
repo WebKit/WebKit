@@ -1681,11 +1681,6 @@ void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
     }
 }
 
-LayoutRect RenderObject::viewRect() const
-{
-    return view().viewRect();
-}
-
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, MapCoordinatesFlags mode) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);

@@ -913,9 +913,6 @@ protected:
     void addPDFURLRect(GraphicsContext*, const LayoutRect&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return *m_node; }
 
-    
-    virtual LayoutRect viewRect() const;
-
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
     void clearLayoutRootIfNeeded() const;

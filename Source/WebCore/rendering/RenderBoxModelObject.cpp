@@ -1096,7 +1096,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     } else {
         geometry.setHasNonLocalGeometry();
 
-        IntRect viewportRect = pixelSnappedIntRect(viewRect());
+        IntRect viewportRect = pixelSnappedIntRect(view().viewRect());
         if (fixedBackgroundPaintsInLocalCoordinates())
             viewportRect.setLocation(IntPoint());
         else

@@ -106,7 +106,7 @@ public:
 #endif
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
-    virtual LayoutRect viewRect() const OVERRIDE;
+    LayoutRect viewRect() const;
 
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.

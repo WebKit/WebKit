@@ -1,5 +1,16 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        Devirtualize RenderView::viewRect().
+        <https://webkit.org/b/122730>
+
+        Reviewed by Antti Koivisto.
+
+        There's no need for viewRect() to be a virtual RenderObject function.
+        The single call site that didn't already access it through RenderView
+        can just go via view().
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         Move setPseudoStyle() to RenderImage (from RenderElement.)
         <https://webkit.org/b/122726>
 
