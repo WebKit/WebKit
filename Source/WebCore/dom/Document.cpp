@@ -1931,9 +1931,9 @@ void Document::createRenderTree()
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
     ASSERT(!m_axObjectCache || this != topDocument());
+    ASSERT(!m_renderArena);
 
-    if (!m_renderArena)
-        m_renderArena = std::make_unique<RenderArena>();
+    m_renderArena = std::make_unique<RenderArena>();
     
     setRenderView(new (*m_renderArena) RenderView(*this));
 #if USE(ACCELERATED_COMPOSITING)

@@ -1,5 +1,15 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        Document::createRenderTree() should assert that there is no arena.
+        <https://webkit.org/b/122723>
+
+        Reviewed by Antti Koivisto.
+
+        Calling createRenderTree() with a RenderArena already in place would
+        be a programming error.
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         Remove dead ENABLE(CUSTOM_ELEMENTS) code.
         <https://webkit.org/b/122721>
 
