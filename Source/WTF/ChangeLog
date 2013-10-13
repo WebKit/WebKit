@@ -1,3 +1,17 @@
+2013-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Change callOnMainThread to take an std::function
+        https://bugs.webkit.org/show_bug.cgi?id=122698
+
+        Reviewed by Darin Adler.
+
+        This will let us pass anything that can be converted to an std::function (including lambdas and
+        WTF::Function objects) to callOnMainThread.
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainThread):
+        * wtf/MainThread.h:
+
 2013-09-06  Jessica Pease  <jessica_n_pease@apple.com>
 
         Replace bounds checking ASSERTs with ASSERT_WITH_SECURITY_IMPLICATION

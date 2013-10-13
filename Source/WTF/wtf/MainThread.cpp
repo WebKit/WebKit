@@ -232,14 +232,13 @@ void cancelCallOnMainThread(MainThreadFunction* function, void* context)
 
 static void callFunctionObject(void* context)
 {
-    Function<void ()>* function = static_cast<Function<void ()>*>(context);
+    auto function = std::unique_ptr<std::function<void ()>>(static_cast<std::function<void ()>*>(context));
     (*function)();
-    delete function;
 }
 
-void callOnMainThread(const Function<void ()>& function)
+void callOnMainThread(std::function<void ()> function)
 {
-    callOnMainThread(callFunctionObject, new Function<void ()>(function));
+    callOnMainThread(callFunctionObject, std::make_unique<std::function<void ()>>(std::move(function)).release());
 }
 
 void setMainThreadCallbacksPaused(bool paused)
