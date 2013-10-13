@@ -149,10 +149,6 @@ public:
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) { }
     virtual void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool) { }
 
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    void computeAbsoluteTouchEventTargetRects(const Document*, Vector<IntRect>&);
-#endif
-
     static String mainThreadScrollingReasonsAsText(MainThreadScrollingReasons);
     String mainThreadScrollingReasonsAsText() const;
 

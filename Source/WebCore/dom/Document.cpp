@@ -564,12 +564,6 @@ Document::~Document()
         m_templateDocument->setTemplateDocumentHost(nullptr); // balanced in templateDocument().
 #endif
 
-#if ENABLE(TOUCH_EVENT_TRACKING)
-    // FIXME: This is dead code. The ownerDocument function returns null when called on a document.
-    if (Document* ownerDocument = this->ownerDocument())
-        ownerDocument->didRemoveEventTargetNode(this);
-#endif
-
     // FIXME: Should we reset m_domWindow when we detach from the Frame?
     if (m_domWindow)
         m_domWindow->resetUnlessSuspendedForPageCache();

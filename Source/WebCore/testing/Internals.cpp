@@ -1145,29 +1145,6 @@ unsigned Internals::touchEventHandlerCount(Document* document, ExceptionCode& ec
     return count;
 }
 
-#if ENABLE(TOUCH_EVENT_TRACKING)
-PassRefPtr<ClientRectList> Internals::touchEventTargetClientRects(Document* document, ExceptionCode& ec)
-{
-    if (!document || !document->view() || !document->page()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    if (!document->page()->scrollingCoordinator())
-        return ClientRectList::create();
-
-    document->updateLayoutIgnorePendingStylesheets();
-
-    Vector<IntRect> absoluteRects;
-    document->page()->scrollingCoordinator()->computeAbsoluteTouchEventTargetRects(document, absoluteRects);
-    Vector<FloatQuad> absoluteQuads(absoluteRects.size());
-
-    for (size_t i = 0; i < absoluteRects.size(); ++i)
-        absoluteQuads[i] = FloatQuad(absoluteRects[i]);
-
-    return ClientRectList::create(absoluteQuads);
-}
-#endif
-
 PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
     unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode& ec) const
 {

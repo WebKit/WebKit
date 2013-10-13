@@ -1,5 +1,15 @@
 2013-10-13  Andreas Kling  <akling@apple.com>
 
+        Remove dead code hiding behind ENABLE(TOUCH_EVENT_TRACKING).
+        <https://webkit.org/b/122719>
+
+        Reviewed by Antti Koivisto.
+
+        Nobody is building with this flag, and it has broken-looking code
+        behind it anyway. Nuke from orbit.
+
+2013-10-13  Andreas Kling  <akling@apple.com>
+
         RenderLayer: Check SVG bit instead of element namespace in isTransparent().
         <https://webkit.org/b/118171>
 

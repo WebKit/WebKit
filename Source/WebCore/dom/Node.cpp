@@ -350,13 +350,8 @@ Node::~Node()
 
 void Node::willBeDeletedFrom(Document* document)
 {
-    if (hasEventTargetData()) {
-#if ENABLE(TOUCH_EVENT_TRACKING)
-        if (document)
-            document->didRemoveEventTargetNode(this);
-#endif
+    if (hasEventTargetData())
         clearEventTargetData();
-    }
 
     if (document) {
         if (AXObjectCache* cache = document->existingAXObjectCache())

@@ -131,9 +131,6 @@
 
     [RaisesException] unsigned long wheelEventHandlerCount(Document document);
     [RaisesException] unsigned long touchEventHandlerCount(Document document);
-#if defined(ENABLE_TOUCH_EVENT_TRACKING) && ENABLE_TOUCH_EVENT_TRACKING
-    [RaisesException] ClientRectList touchEventTargetClientRects(Document document);
-#endif
 
     [RaisesException] NodeList nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
