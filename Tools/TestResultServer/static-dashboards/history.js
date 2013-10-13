@@ -136,10 +136,6 @@ history.History.prototype = {
     {
         return this.crossDashboardState.testType == 'layout-tests';
     },
-    isGPUTestResults: function()
-    {
-        return this.crossDashboardState.testType == 'gpu_tests';
-    },
     parseCrossDashboardParameters: function()
     {
         this.crossDashboardState = {};

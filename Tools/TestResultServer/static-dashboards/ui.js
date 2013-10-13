@@ -176,16 +176,6 @@ ui.html._revisionLink = function(results, index, key, singleUrlTemplate, rangeUr
         return '<a href="' + rangeUrl() + '">r' + (previousRevision + 1) + ' to r' + currentRevision + '</a>';
 }
 
-ui.html.chromiumRevisionLink = function(results, index)
-{
-    return ui.html._revisionLink(
-        results,
-        index,
-        CHROME_REVISIONS_KEY,
-        'http://src.chromium.org/viewvc/chrome?view=rev&revision=<rev>',
-        'http://build.chromium.org/f/chromium/perf/dashboard/ui/changelog.html?url=/trunk/src&range=<rev2>:<rev1>&mode=html');
-}
-
 ui.html.webKitRevisionLink = function(results, index)
 {
     return ui.html._revisionLink(

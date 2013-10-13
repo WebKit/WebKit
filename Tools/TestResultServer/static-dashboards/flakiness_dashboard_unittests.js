@@ -459,16 +459,6 @@ test('htmlForSingleTestRow', 1, function() {
     equal(htmlForSingleTestRow(test), expected);
 });
 
-test('lookupVirtualTestSuite', 2, function() {
-    equal(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
-    equal(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'), 'platform/chromium/virtual/gpu/fast/canvas');
-});
-
-test('baseTest', 2, function() {
-    equal(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
-    equal(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
-});
-
 // FIXME: Create builders_tests.js and move this there.
 
 test('requestBuilderListAddsBuilderGroupEntry', 1, function() {
@@ -512,21 +502,15 @@ test('popup', 2, function() {
     ok(!document.querySelector('#popup'));
 });
 
-test('gpuResultsPath', 3, function() {
-  equal(gpuResultsPath('777777', 'Win7 Release (ATI)'), '777777_Win7_Release_ATI_');
-  equal(gpuResultsPath('123', 'GPU Linux (dbg)(NVIDIA)'), '123_GPU_Linux_dbg_NVIDIA_');
-  equal(gpuResultsPath('12345', 'GPU Mac'), '12345_GPU_Mac');
-});
-
 test('TestTrie', 3, function() {
     var builders = {
-        "Dummy Chromium Windows Builder": true,
+        "Dummy Windows Builder": true,
         "Dummy GTK Linux Builder": true,
         "Dummy Apple Mac Lion Builder": true
     };
 
     var resultsByBuilder = {
-        "Dummy Chromium Windows Builder": {
+        "Dummy Windows Builder": {
             tests: {
                 "foo": true,
                 "foo/bar/1.html": true,

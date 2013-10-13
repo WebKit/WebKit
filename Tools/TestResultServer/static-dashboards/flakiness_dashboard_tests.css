@@ -219,9 +219,6 @@ pre.expectation {
 .non-webkit-results {
     width: 99%;
 }
-.gpu-test-results {
-    width: 400px;
-}
 .used-platform {
     float: right;
     color: darkblue;

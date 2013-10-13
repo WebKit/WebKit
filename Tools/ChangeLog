@@ -1,3 +1,25 @@
+2013-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove Chromium specific code from flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122714
+
+        Reviewed by Sam Weinig.
+
+        Also removed code related to GPU tests and virtual suites.
+        "Fallbacks map" was chromium only too, not sure why they needed special handling there.
+
+        * TestResultServer/model/jsonresults_unittest.py:
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.css:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/history.js:
+        * TestResultServer/static-dashboards/loader.js:
+        * TestResultServer/static-dashboards/ui.js:
+        * TestResultServer/templates/uploadform.html:
+
 2013-10-11  Timothy Hatcher  <timothy@apple.com>
 
         Remove preference support for picking the old Web Inspector.

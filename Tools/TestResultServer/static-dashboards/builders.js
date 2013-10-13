@@ -85,6 +85,7 @@ builders._requestBuilders();
 
 // FIXME: Move everything below into the anonymous namespace above.
 
+// FIXME: We only have one master, remove the code needed to support multiple ones.
 WEBKIT_BUILDER_MASTER = 'webkit.org';
 var LEGACY_BUILDER_MASTERS_TO_GROUPS = {
     'webkit.org': '@ToT - webkit.org'

@@ -36,8 +36,6 @@ var GTEST_MODIFIERS = ['FLAKY', 'FAILS', 'MAYBE', 'DISABLED'];
 var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var EXPECTATIONS_URL_BASE_PATH = TEST_URL_BASE_PATH + "platform/";
-var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
-var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage.googleapis.com/runs/'
 
 var PLATFORMS = {
     'APPLE': {
@@ -103,12 +101,6 @@ var MIN_SECONDS_FOR_SLOW_TEST_DEBUG = 2 * MIN_SECONDS_FOR_SLOW_TEST;
 var FAIL_RESULTS = ['IMAGE', 'IMAGE+TEXT', 'TEXT', 'MISSING'];
 var CHUNK_SIZE = 25;
 var MAX_RESULTS = 1500;
-
-// FIXME: Figure out how to make this not be hard-coded.
-var VIRTUAL_SUITES = {
-    'platform/chromium/virtual/gpu/fast/canvas': 'fast/canvas',
-    'platform/chromium/virtual/gpu/canvas/philip': 'canvas/philip'
-};
 
 var resourceLoader;
 
@@ -1108,7 +1100,7 @@ function linkHTMLToOpenWindow(url, text)
     return '<a href="' + url + '" target="_blank">' + text + '</a>';
 }
 
-// FIXME: replaced with ui.html.chromiumRevisionLink/ui.html.webKitRevisionLink
+// FIXME: replaced with ui.html.webKitRevisionLink
 function createBlameListHTML(revisions, index, urlBase, separator, repo)
 {
     var thisRevision = revisions[index];
@@ -1188,18 +1180,8 @@ function showPopupForBuild(e, builder, index, opt_testName)
         html += '<li><span class=link onclick="g_history.setQueryParameter(\'revision\',' +
             revision + ')">Show results for WebKit r' + revision +
             '</span></li>';
-    } else {
-        html += '<li>' +
-            createBlameListHTML(g_resultsByBuilder[builder].chromeRevision, index,
-                'http://build.chromium.org/f/chromium/perf/dashboard/ui/changelog.html?url=/trunk/src&mode=html&range=', ':', 'Chrome') +
-            '</li>';
-
-        var chromeRevision = g_resultsByBuilder[builder].chromeRevision[index];
-        if (chromeRevision && g_history.isLayoutTestResults()) {
-            html += '<li><a href="' + TEST_RESULTS_BASE_PATH + currentBuilders()[builder] +
-                '/' + chromeRevision + '/layout-test-results.zip">layout-test-results.zip</a></li>';
-        }
-    }
+    } else
+        console.error("Unexpected master name: " + master.name);
 
     if (!g_history.isLayoutTestResults() && opt_testName && isFailure(builder, opt_testName, index))
         html += '<li>' + linkHTMLToOpenWindow(buildBasePath + pathToFailureLog(opt_testName), 'Failure log') + '</li>';
@@ -1757,9 +1739,8 @@ function htmlForIndividualTestOnAllBuildersWithResultsLinks(test)
     html += '<div class=expectations test=' + test + '><div>' +
         linkHTMLToToggleState('showExpectations', 'results')
 
-    if (g_history.isLayoutTestResults() || g_history.isGPUTestResults()) {
-        if (g_history.isLayoutTestResults())
-            html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
+    if (g_history.isLayoutTestResults()) {
+        html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
         if (testResults && currentBuilderGroup().master().name == WEBKIT_BUILDER_MASTER) {
             var revision = g_history.dashboardSpecificState.revision || '';
             html += '<form onsubmit="g_history.setQueryParameter(\'revision\', revision.value);' +
@@ -1839,8 +1820,7 @@ function maybeAddPngChecksum(expectationDiv, pngUrl)
 // @param {string} base Base path for the expectation URL.
 // @param {string} opt_builder Builder whose actual results this expectation
 //     points to.
-// @param {string} opt_suite "virtual suite" that the test belongs to, if any.
-function addExpectationItem(expectationsContainers, parentContainer, platform, path, base, opt_builder, opt_suite)
+function addExpectationItem(expectationsContainers, parentContainer, platform, path, base, opt_builder)
 {
     var parts = path.split('.')
     var fileExtension = parts[parts.length - 1];
@@ -1852,19 +1832,17 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
 
     // FIXME: Stop using script tags once all the places we pull from support CORS.
     var platformPart = platform ? ensureTrailingSlash(platform) : '';
-    var suitePart = opt_suite ? ensureTrailingSlash(opt_suite) : '';
 
     var childContainer = document.createElement('span');
     childContainer.className = 'unloaded';
 
     var appendExpectationsItem = function(item) {
-        childContainer.appendChild(expectationsTitle(platformPart + suitePart, path, opt_builder));
+        childContainer.appendChild(expectationsTitle(platformPart, path, opt_builder));
         childContainer.className = 'expectations-item';
         item.className = 'expectation ' + fileExtension;
         if (g_history.dashboardSpecificState.showLargeExpectations)
             item.className += ' large';
         childContainer.appendChild(item);
-        handleFinishedLoadingExpectations(container);
     };
 
     var url = base + platformPart + path;
@@ -1885,7 +1863,6 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
         }
         dummyNode.onerror = function() {
             childContainer.parentNode.removeChild(childContainer);
-            handleFinishedLoadingExpectations(container);
         }
 
         // Append script elements now so that they load. Images load without being
@@ -1905,107 +1882,14 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
     container.appendChild(childContainer);
 }
 
-
-// Identifies which expectations are used on which platform once all the
-// expectations of a given type have loaded (e.g. the container for png
-// expectations for this test had no child elements with the class
-// "unloaded").
-//
-// @param {string} container Element containing the expectations for a given
-//     test and a given type (e.g. png).
-function handleFinishedLoadingExpectations(container)
-{
-    if (container.getElementsByClassName('unloaded').length)
-        return;
-
-    var titles = container.getElementsByClassName('expectations-title');
-    for (var platform in g_fallbacksMap) {
-        var fallbacks = g_fallbacksMap[platform];
-        var winner = null;
-        var winningIndex = -1;
-        for (var i = 0; i < titles.length; i++) {
-            var title = titles[i];
-
-            if (!winner && title.platform == "") {
-                winner = title;
-                continue;
-            }
-
-            var rawPlatform = title.platform && title.platform.replace('platform/', '');
-            for (var j = 0; j < fallbacks.length; j++) {
-                if ((winningIndex == -1 || winningIndex > j) && rawPlatform == fallbacks[j]) {
-                    winningIndex = j;
-                    winner = title;
-                    break;
-                }
-            }
-        }
-        if (winner)
-            winner.getElementsByClassName('platforms')[0].innerHTML += '<div class=used-platform>' + platform + '</div>';
-        else {
-            console.log('No expectations identified for this test. This means ' +
-                'there is a logic bug in the dashboard for which expectations a ' +
-                'platform uses or trac.webkit.org/src.chromium.org is giving 5XXs.');
-        }
-    }
-
-    consolidateUsedPlatforms(container);
-}
-
-// Consolidate platforms when all sub-platforms for a given platform are represented.
-// e.g., if all of the WIN- platforms are there, replace them with just WIN.
-function consolidateUsedPlatforms(container)
-{
-    var allPlatforms = Object.keys(g_fallbacksMap);
-
-    var platformElements = container.getElementsByClassName('platforms');
-    for (var i = 0, platformsLength = platformElements.length; i < platformsLength; i++) {
-        var usedPlatforms = platformElements[i].getElementsByClassName('used-platform');
-        if (!usedPlatforms.length)
-            continue;
-
-        var platforms = {};
-        platforms['MAC'] = {};
-        platforms['WIN'] = {};
-        platforms['LINUX'] = {};
-        allPlatforms.forEach(function(platform) {
-            if (string.startsWith(platform, 'MAC'))
-                platforms['MAC'][platform] = 1;
-            else if (string.startsWith(platform, 'WIN'))
-                platforms['WIN'][platform] = 1;
-            else if (string.startsWith(platform, 'LINUX'))
-                platforms['LINUX'][platform] = 1;
-        });
-
-        for (var j = 0, usedPlatformsLength = usedPlatforms.length; j < usedPlatformsLength; j++) {
-            for (var platform in platforms)
-                delete platforms[platform][usedPlatforms[j].textContent];
-        }
-
-        for (var platform in platforms) {
-            if (!Object.keys(platforms[platform]).length) {
-                var nodesToRemove = [];
-                for (var j = 0, usedPlatformsLength = usedPlatforms.length; j < usedPlatformsLength; j++) {
-                    var usedPlatform = usedPlatforms[j];
-                    if (string.startsWith(usedPlatform.textContent, platform))
-                        nodesToRemove.push(usedPlatform);
-                }
-
-                nodesToRemove.forEach(function(element) { element.parentNode.removeChild(element); });
-                platformElements[i].insertAdjacentHTML('afterBegin', '<div class=used-platform>' + platform + '</div>');
-            }
-        }
-    }
-}
-
 function addExpectations(expectationsContainers, container, base,
-    platform, text, png, reftest_html_file, reftest_mismatch_html_file, suite)
+    platform, text, png, reftest_html_file, reftest_mismatch_html_file)
 {
     var builder = '';
-    addExpectationItem(expectationsContainers, container, platform, text, base, builder, suite);
-    addExpectationItem(expectationsContainers, container, platform, png, base, builder, suite);
-    addExpectationItem(expectationsContainers, container, platform, reftest_html_file, base, builder, suite);
-    addExpectationItem(expectationsContainers, container, platform, reftest_mismatch_html_file, base, builder, suite);
+    addExpectationItem(expectationsContainers, container, platform, text, base, builder);
+    addExpectationItem(expectationsContainers, container, platform, png, base, builder);
+    addExpectationItem(expectationsContainers, container, platform, reftest_html_file, base, builder);
+    addExpectationItem(expectationsContainers, container, platform, reftest_mismatch_html_file, base, builder);
 }
 
 function expectationsTitle(platform, path, builder)
@@ -2047,38 +1931,8 @@ function loadExpectations(expectationsContainer)
     else {
         var results = g_testToResultsMap[test];
         for (var i = 0; i < results.length; i++)
-            if (g_history.isGPUTestResults())
-                loadGPUResultsForBuilder(results[i].builder, test, expectationsContainer);
-            else
-                loadNonWebKitResultsForBuilder(results[i].builder, test, expectationsContainer);
+            loadNonWebKitResultsForBuilder(results[i].builder, test, expectationsContainer);
     }
-}
-
-function gpuResultsPath(chromeRevision, builder)
-{
-  return chromeRevision + '_' + builder.replace(/[^A-Za-z0-9]+/g, '_');
-}
-
-function loadGPUResultsForBuilder(builder, test, expectationsContainer)
-{
-    var container = document.createElement('div');
-    container.className = 'expectations-container';
-    container.innerHTML = '<div><b>' + builder + '</b></div>';
-    expectationsContainer.appendChild(container);
-
-    var failureIndex = indexesForFailures(builder, test)[0];
-
-    var buildNumber = g_resultsByBuilder[builder].buildNumbers[failureIndex];
-    var pathToLog = builderMaster(builder).logPath(builder, buildNumber) + pathToFailureLog(test);
-
-    var chromeRevision = g_resultsByBuilder[builder].chromeRevision[failureIndex];
-    var resultsUrl = GPU_RESULTS_BASE_PATH + gpuResultsPath(chromeRevision, builder);
-    var filename = test.split(/\./)[1] + '.png';
-
-    appendNonWebKitResults(container, pathToLog, 'non-webkit-results');
-    appendNonWebKitResults(container, resultsUrl + '/gen/' + filename, 'gpu-test-results', 'Generated');
-    appendNonWebKitResults(container, resultsUrl + '/ref/' + filename, 'gpu-test-results', 'Reference');
-    appendNonWebKitResults(container, resultsUrl + '/diff/' + filename, 'gpu-test-results', 'Diff');
 }
 
 function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)
@@ -2148,42 +2002,17 @@ function buildInfoForRevision(builder, revision)
     return {revisionStart: revisionStart, revisionEnd: revisionEnd, buildNumber: buildNumber};
 }
 
-function lookupVirtualTestSuite(test) {
-    for (var suite in VIRTUAL_SUITES) {
-        if (test.indexOf(suite) != -1)
-            return suite;
-    }
-    return '';
-}
-
-function baseTest(test, suite) {
-    base = VIRTUAL_SUITES[suite];
-    return base ? test.replace(suite, base) : test;
-}
-
 function loadBaselinesForTest(expectationsContainers, expectationsContainer, test) {
     var testWithoutSuffix = test.substring(0, test.lastIndexOf('.'));
     var text = testWithoutSuffix + "-expected.txt";
     var png = testWithoutSuffix + "-expected.png";
     var reftest_html_file = testWithoutSuffix + "-expected.html";
     var reftest_mismatch_html_file = testWithoutSuffix + "-expected-mismatch.html";
-    var suite = lookupVirtualTestSuite(test);
 
-    if (!suite)
-        addExpectationItem(expectationsContainers, expectationsContainer, null, test, TEST_URL_BASE_PATH);
+    addExpectationItem(expectationsContainers, expectationsContainer, null, test, TEST_URL_BASE_PATH);
 
     addExpectations(expectationsContainers, expectationsContainer,
-        TEST_URL_BASE_PATH, '', text, png, reftest_html_file, reftest_mismatch_html_file, suite);
-
-    var fallbacks = allFallbacks();
-    for (var i = 0; i < fallbacks.length; i++) {
-      var fallback = 'platform/' + fallbacks[i];
-      addExpectations(expectationsContainers, expectationsContainer, TEST_URL_BASE_PATH, fallback, text, png,
-          reftest_html_file, reftest_mismatch_html_file, suite);
-    }
-
-    if (suite)
-        loadBaselinesForTest(expectationsContainers, expectationsContainer, baseTest(test, suite));
+        TEST_URL_BASE_PATH, '', text, png, reftest_html_file, reftest_mismatch_html_file);
 }
 
 function loadExpectationsLayoutTests(test, expectationsContainer)
@@ -2219,7 +2048,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
             actualResultsBase = 'http://build.webkit.org/results/' + builder +
                 '/r' + buildInfo.revisionStart + ' (' + buildInfo.buildNumber + ')/';
         } else
-            actualResultsBase = TEST_RESULTS_BASE_PATH + currentBuilders()[builder] + '/results/layout-test-results/';
+            console.error("Unexpected master name: " + master.name);
 
         for (var i = 0; i < actualResultSuffixes.length; i++) {
             addExpectationItem(expectationsContainers, expectationsContainer, null,
@@ -2232,33 +2061,6 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
     var br = document.createElement('br');
     br.style.clear = 'both';
     expectationsContainer.appendChild(br);
-}
-
-var g_allFallbacks;
-
-// Returns the reverse sorted, deduped list of all platform fallback
-// directories.
-function allFallbacks()
-{
-    if (!g_allFallbacks) {
-        var holder = {};
-        for (var platform in g_fallbacksMap) {
-            var fallbacks = g_fallbacksMap[platform];
-            for (var i = 0; i < fallbacks.length; i++)
-                holder[fallbacks[i]] = 1;
-        }
-
-        g_allFallbacks = [];
-        for (var fallback in holder)
-            g_allFallbacks.push(fallback);
-
-        g_allFallbacks.sort(function(a, b) {
-            if (a == b)
-                return 0;
-            return a < b;
-        });
-    }
-    return g_allFallbacks;
 }
 
 function appendExpectations()
@@ -2315,9 +2117,7 @@ function htmlForIndividualTests(tests)
         var testNameHtml = '';
         if (g_history.dashboardSpecificState.showChrome || tests.length > 1) {
             if (g_history.isLayoutTestResults()) {
-                var suite = lookupVirtualTestSuite(test);
-                var base = suite ? baseTest(test, suite) : test;
-                var tracURL = TEST_URL_BASE_PATH_TRAC + base;
+                var tracURL = TEST_URL_BASE_PATH_TRAC + test;
                 testNameHtml += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
             } else
                 testNameHtml += '<h2>' + test + '</h2>';
@@ -2429,14 +2229,6 @@ function hideLegend()
     if (legend)
         legend.parentNode.removeChild(legend);
 }
-
-var g_fallbacksMap = {};
-g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win', 'chromium'];
-g_fallbacksMap['WIN-7'] = ['chromium-win', 'chromium'];
-g_fallbacksMap['MAC-SNOWLEOPARD'] = ['chromium-mac-snowleopard', 'chromium-mac', 'chromium'];
-g_fallbacksMap['MAC-LION'] = ['chromium-mac', 'chromium'];
-g_fallbacksMap['LINUX-32'] = ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium'];
-g_fallbacksMap['LINUX-64'] = ['chromium-linux', 'chromium-win', 'chromium'];
 
 function showLegend()
 {

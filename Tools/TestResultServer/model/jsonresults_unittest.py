@@ -42,7 +42,6 @@ JSON_RESULTS_TEMPLATE = (
     '{"Webkit":{'
     '"allFixableCount":[[TESTDATA_COUNT]],'
     '"buildNumbers":[[TESTDATA_BUILDNUMBERS]],'
-    '"chromeRevision":[[TESTDATA_CHROMEREVISION]],'
     '"deferredCounts":[[TESTDATA_COUNTS]],'
     '"fixableCount":[[TESTDATA_COUNT]],'
     '"fixableCounts":[[TESTDATA_COUNTS]],'
@@ -99,20 +98,17 @@ class JsonResultsTest(unittest.TestCase):
         counts = []
         build_numbers = []
         webkit_revision = []
-        chrome_revision = []
         times = []
         for build in builds:
             counts.append(JSON_RESULTS_COUNTS_TEMPLATE.replace("[TESTDATA]", build))
             build_numbers.append("1000%s" % build)
             webkit_revision.append("2000%s" % build)
-            chrome_revision.append("3000%s" % build)
             times.append("100000%s000" % build)
 
         json = json.replace("[TESTDATA_COUNTS]", ",".join(counts))
         json = json.replace("[TESTDATA_COUNT]", ",".join(builds))
         json = json.replace("[TESTDATA_BUILDNUMBERS]", ",".join(build_numbers))
         json = json.replace("[TESTDATA_WEBKITREVISION]", ",".join(webkit_revision))
-        json = json.replace("[TESTDATA_CHROMEREVISION]", ",".join(chrome_revision))
         json = json.replace("[TESTDATA_TIMES]", ",".join(times))
 
         version = str(test_data["version"]) if "version" in test_data else "4"

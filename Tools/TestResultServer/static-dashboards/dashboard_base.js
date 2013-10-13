@@ -65,7 +65,6 @@ var FIXABLE_DESCRIPTION = 'All tests for this release';
 var DEFERRED_DESCRIPTION = 'All deferred tests (DEFER)';
 var FIXABLE_COUNT_KEY = 'fixableCount';
 var ALL_FIXABLE_COUNT_KEY = 'allFixableCount';
-var CHROME_REVISIONS_KEY = 'chromeRevision';
 var WEBKIT_REVISIONS_KEY = 'webkitRevision';
 var TIMESTAMPS_KEY = 'secondsSinceEpoch';
 var BUILD_NUMBERS_KEY = 'buildNumbers';
