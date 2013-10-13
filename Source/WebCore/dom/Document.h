@@ -70,8 +70,6 @@ class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
 class Comment;
-class CustomElementConstructor;
-class CustomElementRegistry;
 class DOMImplementation;
 class DOMNamedFlowCollection;
 class DOMSelection;
@@ -1141,15 +1139,6 @@ public:
     TextAutosizer* textAutosizer() { return m_textAutosizer.get(); }
 #endif
 
-#if ENABLE(CUSTOM_ELEMENTS)
-    PassRefPtr<Element> createElement(const AtomicString& localName, const AtomicString& typeExtension, ExceptionCode&);
-    PassRefPtr<Element> createElementNS(const AtomicString& namespaceURI, const String& qualifiedName, const AtomicString& typeExtension, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(JSC::ExecState*, const AtomicString& name, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(JSC::ExecState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
-    CustomElementRegistry* registry() const { return m_registry.get(); }
-    void didCreateCustomElement(Element*, CustomElementConstructor*);
-#endif
-
     void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
     void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
 
@@ -1533,10 +1522,6 @@ private:
 
 #if ENABLE(TEXT_AUTOSIZING)
     OwnPtr<TextAutosizer> m_textAutosizer;
-#endif
-
-#if ENABLE(CUSTOM_ELEMENTS)
-    RefPtr<CustomElementRegistry> m_registry;
 #endif
 
     bool m_scheduledTasksAreSuspended;

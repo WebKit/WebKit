@@ -97,9 +97,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isShadowDOMEnabled(false)
     , m_isAuthorShadowDOMForAnyElementEnabled(false)
 #endif
-#if ENABLE(CUSTOM_ELEMENTS)
-    , m_isCustomDOMElementsEnabled(false)
-#endif
 #if ENABLE(INPUT_TYPE_DATE)
     , m_isInputTypeDateEnabled(true)
 #endif

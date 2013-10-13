@@ -1,3 +1,14 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        Remove dead ENABLE(CUSTOM_ELEMENTS) code.
+        <https://webkit.org/b/122721>
+
+        Reviewed by Antti Koivisto.
+
+        There are no ports building with this flag since April and the code
+        has bitrotted since. Remove it for now. If someone wants to resurrect
+        the feature someday, getting back to this point is trivial.
+
 2013-10-12  Antti Koivisto  <antti@apple.com>
 
         Move absoluteRects/Quads to RenderTextLineBoxes

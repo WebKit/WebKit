@@ -234,11 +234,6 @@ public:
     void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled) { m_isAuthorShadowDOMForAnyElementEnabled = isEnabled; }
 #endif
 
-#if ENABLE(CUSTOM_ELEMENTS)
-    bool customDOMElementsEnabled() const { return m_isCustomDOMElementsEnabled; }
-    void setCustomDOMElements(bool isEnabled) { m_isCustomDOMElementsEnabled = isEnabled; }
-#endif
-
 #if ENABLE(INPUT_TYPE_DATE)
     bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
     void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
@@ -350,10 +345,6 @@ private:
 #if ENABLE(SHADOW_DOM)
     bool m_isShadowDOMEnabled;
     bool m_isAuthorShadowDOMForAnyElementEnabled;
-#endif
-
-#if ENABLE(CUSTOM_ELEMENTS)
-    bool m_isCustomDOMElementsEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)

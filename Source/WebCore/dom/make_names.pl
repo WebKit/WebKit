@@ -944,11 +944,6 @@ END
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-#if ENABLE(CUSTOM_ELEMENTS)
-#include "CustomElementConstructor.h"
-#include "CustomElementRegistry.h"
-#endif
-
 namespace WebCore {
 
 using namespace $parameters{namespace}Names;
@@ -1000,16 +995,6 @@ END
     }
 
     print F <<END
-#if ENABLE(CUSTOM_ELEMENTS)
-    if (document.registry()) {
-        if (RefPtr<CustomElementConstructor> constructor = document.registry()->find(nullQName(), name)) {
-            RefPtr<Element> element = constructor->createElement();
-            ASSERT(element->is$parameters{namespace}Element());
-            return static_pointer_cast<$parameters{namespace}Element>(element.release());
-        }
-    }
-#endif
-
     static NeverDestroyed<HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>> functions;
     if (functions.get().isEmpty())
         populate$parameters{namespace}FactoryMap(functions);

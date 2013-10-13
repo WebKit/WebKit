@@ -336,13 +336,6 @@
     [ReturnNewObject, Custom, RaisesException] TouchList createTouchList();
 #endif
 
-#if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
-    [Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, RaisesException] CustomElementConstructor webkitRegister(DOMString name, optional Dictionary options);
-    [ReturnNewObject, RaisesException] Element createElement(DOMString localName, [TreatNullAs=NullString] DOMString typeExtension);
-    [ReturnNewObject, RaisesException] Element createElementNS([TreatNullAs=NullString] DOMString namespaceURI, DOMString qualifiedName,
-                            [TreatNullAs=NullString] DOMString typeExtension);
-#endif
-
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
     // Extra WebCore methods exposed to allow compile-time casting in C++
     boolean isHTMLDocument();

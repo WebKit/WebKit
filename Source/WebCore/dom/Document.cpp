@@ -42,8 +42,6 @@
 #include "Comment.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
-#include "CustomElementConstructor.h"
-#include "CustomElementRegistry.h"
 #include "DOMImplementation.h"
 #include "DOMNamedFlowCollection.h"
 #include "DOMWindow.h"
@@ -639,10 +637,6 @@ void Document::dropChildren()
 
     detachParser();
 
-#if ENABLE(CUSTOM_ELEMENTS)
-    m_registry.clear();
-#endif
-
     // removeDetachedChildren() doesn't always unregister IDs,
     // so tear down scope information up front to avoid having
     // stale references in the map.
@@ -821,67 +815,6 @@ PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionC
 
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
-
-#if ENABLE(CUSTOM_ELEMENTS)
-PassRefPtr<Element> Document::createElement(const AtomicString& localName, const AtomicString& typeExtension, ExceptionCode& ec)
-{
-    if (!isValidName(localName)) {
-        ec = INVALID_CHARACTER_ERR;
-        return nullptr;
-    }
-
-    if (m_registry) {
-        if (PassRefPtr<Element> created = m_registry->createElement(QualifiedName(nullAtom, localName, xhtmlNamespaceURI), typeExtension))
-            return created;
-    }
-
-    return setTypeExtension(createElement(localName, ec), typeExtension);
-}
-
-PassRefPtr<Element> Document::createElementNS(const AtomicString& namespaceURI, const String& qualifiedName, const AtomicString& typeExtension, ExceptionCode& ec)
-{
-    String prefix, localName;
-    if (!parseQualifiedName(qualifiedName, prefix, localName, ec))
-        return nullptr;
-
-    QualifiedName qName(prefix, localName, namespaceURI);
-    if (!hasValidNamespaceForElements(qName)) {
-        ec = NAMESPACE_ERR;
-        return nullptr;
-    }
-
-    if (m_registry) {
-        if (PassRefPtr<Element> created = m_registry->createElement(qName, typeExtension))
-            return created;
-    }
-
-    return setTypeExtension(createElementNS(namespaceURI, qualifiedName, ec), typeExtension);
-}
-
-PassRefPtr<CustomElementConstructor> Document::registerElement(JSC::ExecState* state, const AtomicString& name, ExceptionCode& ec)
-{
-    return registerElement(state, name, Dictionary(), ec);
-}
-
-PassRefPtr<CustomElementConstructor> Document::registerElement(JSC::ExecState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
-{
-    if (!isHTMLDocument() && !isXHTMLDocument()) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-
-    if (!m_registry)
-        m_registry = adoptRef(new CustomElementRegistry(this));
-    return m_registry->registerElement(state, name, options, ec);
-}
-
-void Document::didCreateCustomElement(Element* element, CustomElementConstructor* constructor)
-{
-    // m_registry is cleared Document::releaseChildren() and can be null here.
-    if (m_registry)
-        m_registry->didCreateElement(element);
-}
-#endif // ENABLE(CUSTOM_ELEMENTS)
 
 PassRefPtr<DocumentFragment> Document::createDocumentFragment()
 {

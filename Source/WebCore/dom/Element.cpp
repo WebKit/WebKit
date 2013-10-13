@@ -36,7 +36,6 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ContainerNodeAlgorithms.h"
-#include "CustomElementRegistry.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "Document.h"
@@ -1137,17 +1136,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
         cache->handleAttributeChanged(name, this);
 }
 
-inline void Element::attributeChangedFromParserOrByCloning(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
-{
-#if ENABLE(CUSTOM_ELEMENTS)
-    if (name == isAttr) {
-        if (CustomElementRegistry* registry = document().registry())
-            registry->didGiveTypeExtension(this);
-    }
-#endif
-    attributeChanged(name, newValue, reason);
-}
-
 template <typename CharacterType>
 static inline bool classStringHasClassName(const CharacterType* characters, unsigned length)
 {
@@ -1289,7 +1277,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector)
 
     // Use attributeVector instead of m_elementData because attributeChanged might modify m_elementData.
     for (unsigned i = 0; i < attributeVector.size(); ++i)
-        attributeChangedFromParserOrByCloning(attributeVector[i].name(), attributeVector[i].value(), ModifiedDirectly);
+        attributeChanged(attributeVector[i].name(), attributeVector[i].value(), ModifiedDirectly);
 }
 
 bool Element::hasAttributes() const
@@ -3166,7 +3154,7 @@ void Element::cloneAttributesFromElement(const Element& other)
 
     for (unsigned i = 0; i < m_elementData->length(); ++i) {
         const Attribute& attribute = const_cast<const ElementData*>(m_elementData.get())->attributeAt(i);
-        attributeChangedFromParserOrByCloning(attribute.name(), attribute.value(), ModifiedByCloning);
+        attributeChanged(attribute.name(), attribute.value(), ModifiedByCloning);
     }
 }
 
