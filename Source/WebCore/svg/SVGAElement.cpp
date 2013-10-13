@@ -161,8 +161,8 @@ void SVGAElement::defaultEventHandler(Event* event)
 
             if (url[0] == '#') {
                 Element* targetElement = treeScope().getElementById(url.substring(1));
-                if (SVGSMILElement::isSMILElement(targetElement)) {
-                    toSVGSMILElement(targetElement)->beginByLinkActivation();
+                if (targetElement && isSVGSMILElement(*targetElement)) {
+                    toSVGSMILElement(*targetElement).beginByLinkActivation();
                     event->setDefaultHandled();
                     return;
                 }

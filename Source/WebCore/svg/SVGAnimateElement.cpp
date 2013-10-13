@@ -449,6 +449,14 @@ SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
     return m_animator.get();
 }
 
+bool isSVGAnimateElement(const Node& node)
+{
+    return node.hasTagName(SVGNames::animateTag)
+        || node.hasTagName(SVGNames::animateColorTag)
+        || node.hasTagName(SVGNames::animateTransformTag)
+        || node.hasTagName(SVGNames::setTag);
+}
+
 }
 
 #endif // ENABLE(SVG)

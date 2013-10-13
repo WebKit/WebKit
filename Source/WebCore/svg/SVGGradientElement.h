@@ -108,11 +108,9 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-inline SVGGradientElement* toSVGGradientElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || (node->hasTagName(SVGNames::radialGradientTag) || node->hasTagName(SVGNames::linearGradientTag)));
-    return static_cast<SVGGradientElement*>(node);
-}
+void isSVGGradientElement(const SVGGradientElement&); // Catch unnecessary runtime check of type known at compile time.
+bool isSVGGradientElement(const Node&);
+ELEMENT_TYPE_CASTS(SVGGradientElement)
 
 } // namespace WebCore
 

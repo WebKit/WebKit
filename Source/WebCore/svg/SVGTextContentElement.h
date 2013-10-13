@@ -65,8 +65,7 @@ struct SVGPropertyTraits<SVGLengthAdjustType> {
     }
 };
 
-class SVGTextContentElement : public SVGGraphicsElement,
-                              public SVGExternalResourcesRequired {
+class SVGTextContentElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
     // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {
@@ -107,7 +106,7 @@ protected:
     virtual bool selfHasRelativeLengths() const;
 
 private:
-    virtual bool isTextContent() const { return true; }
+    virtual bool isTextContent() const OVERRIDE FINAL { return true; }
 
     // Custom 'textLength' property
     static void synchronizeTextLength(SVGElement* contextElement);
@@ -121,11 +120,10 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-inline SVGTextContentElement* toSVGTextContentElement(SVGElement* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isTextContent());
-    return static_cast<SVGTextContentElement*>(element);
-}
+void isSVGTextContentElement(const SVGTextContentElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isSVGTextContentElement(const SVGElement& element) { return element.isTextContent(); }
+inline bool isSVGTextContentElement(const Node& node) { return node.isSVGElement() && toSVGElement(node).isTextContent(); }
+ELEMENT_TYPE_CASTS(SVGTextContentElement)
 
 } // namespace WebCore
 

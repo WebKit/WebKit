@@ -981,10 +981,10 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     case ATTRIBUTE_NODE: {                   
-        Attr* attr = static_cast<Attr*>(source.get());
-        if (attr->ownerElement())
-            attr->ownerElement()->removeAttributeNode(attr, ec);
-        attr->setSpecified(true);
+        Attr& attr = static_cast<Attr&>(*source);
+        if (attr.ownerElement())
+            attr.ownerElement()->removeAttributeNode(&attr, ec);
+        attr.setSpecified(true);
         break;
     }       
     default:
@@ -993,10 +993,9 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
             ec = HIERARCHY_REQUEST_ERR;
             return nullptr;
         }
-
         if (source->isFrameOwnerElement()) {
-            HTMLFrameOwnerElement* frameOwnerElement = toFrameOwnerElement(source.get());
-            if (frame() && frame()->tree().isDescendantOf(frameOwnerElement->contentFrame())) {
+            HTMLFrameOwnerElement& frameOwnerElement = toHTMLFrameOwnerElement(*source);
+            if (frame() && frame()->tree().isDescendantOf(frameOwnerElement.contentFrame())) {
                 ec = HIERARCHY_REQUEST_ERR;
                 return nullptr;
             }
@@ -5344,8 +5343,8 @@ void Document::dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>& queue, 
             queue.append(documentElement());
 
 #if ENABLE(VIDEO)
-        if (shouldNotifyMediaElement && isMediaElement(node.get()))
-            toHTMLMediaElement(node.get())->enteredOrExitedFullscreen();
+        if (shouldNotifyMediaElement && isHTMLMediaElement(*node))
+            toHTMLMediaElement(*node).enteredOrExitedFullscreen();
 #endif
         node->dispatchEvent(Event::create(eventName, true, false));
     }
@@ -5852,7 +5851,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (oldHoveredElement && oldHoveredElement->isFrameOwnerElement()) {
-            if (Document* contentDocument = toFrameOwnerElement(oldHoveredElement.get())->contentDocument())
+            if (Document* contentDocument = toHTMLFrameOwnerElement(*oldHoveredElement).contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr, event);
         }
     }

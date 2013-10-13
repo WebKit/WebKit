@@ -165,12 +165,12 @@ Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode& 
     // magically appear on the <body> of all documents embedded through <iframe> or <frame>.
     // FIXME: Perhaps this code should be in attach() instead of here.
     Element* ownerElement = document().ownerElement();
-    if (ownerElement && isHTMLFrameElementBase(ownerElement)) {
-        HTMLFrameElementBase* ownerFrameElement = toHTMLFrameElementBase(ownerElement);
-        int marginWidth = ownerFrameElement->marginWidth();
+    if (ownerElement && isHTMLFrameElementBase(*ownerElement)) {
+        HTMLFrameElementBase& ownerFrameElement = toHTMLFrameElementBase(*ownerElement);
+        int marginWidth = ownerFrameElement.marginWidth();
         if (marginWidth != -1)
             setIntegralAttribute(marginwidthAttr, marginWidth);
-        int marginHeight = ownerFrameElement->marginHeight();
+        int marginHeight = ownerFrameElement.marginHeight();
         if (marginHeight != -1)
             setIntegralAttribute(marginheightAttr, marginHeight);
     }

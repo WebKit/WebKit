@@ -229,7 +229,7 @@ Element* FocusController::findFocusableElementDescendingDownIntoFrameDocument(Fo
     // 1) a focusable node, or
     // 2) the deepest-nested HTMLFrameOwnerElement.
     while (element && element->isFrameOwnerElement()) {
-        HTMLFrameOwnerElement& owner = toFrameOwnerElement(*element);
+        HTMLFrameOwnerElement& owner = toHTMLFrameOwnerElement(*element);
         if (!owner.contentFrame())
             break;
         Element* foundElement = findFocusableElement(direction, FocusNavigationScope::focusNavigationScopeOwnedByIFrame(&owner), 0, event);
@@ -315,7 +315,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     if (element->isFrameOwnerElement() && (!element->isPluginElement() || !element->isKeyboardFocusable(event))) {
         // We focus frames rather than frame owners.
         // FIXME: We should not focus frames that have no scrollbars, as focusing them isn't useful to the user.
-        HTMLFrameOwnerElement& owner = toFrameOwnerElement(*element);
+        HTMLFrameOwnerElement& owner = toHTMLFrameOwnerElement(*element);
         if (!owner.contentFrame())
             return false;
 

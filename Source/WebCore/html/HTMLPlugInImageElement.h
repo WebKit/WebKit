@@ -166,32 +166,10 @@ private:
     SnapshotDecision m_snapshotDecision;
 };
 
-inline HTMLPlugInImageElement& toHTMLPlugInImageElement(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isPluginElement());
-    HTMLPlugInElement& plugInElement = static_cast<HTMLPlugInElement&>(node);
-    ASSERT_WITH_SECURITY_IMPLICATION(plugInElement.isPlugInImageElement());
-    return static_cast<HTMLPlugInImageElement&>(plugInElement);
-}
-
-inline HTMLPlugInImageElement* toHTMLPlugInImageElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
-    HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(node);
-    ASSERT_WITH_SECURITY_IMPLICATION(plugInElement->isPlugInImageElement());
-    return static_cast<HTMLPlugInImageElement*>(plugInElement);
-}
-
-inline const HTMLPlugInImageElement* toHTMLPlugInImageElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
-    const HTMLPlugInElement* plugInElement = static_cast<const HTMLPlugInElement*>(node);
-    ASSERT_WITH_SECURITY_IMPLICATION(plugInElement->isPlugInImageElement());
-    return static_cast<const HTMLPlugInImageElement*>(plugInElement);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toHTMLPlugInImageElement(const HTMLPlugInImageElement*);
+void isHTMLPlugInImageElement(const HTMLPlugInImageElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLPlugInImageElement(const HTMLPlugInElement& element) { return element.isPlugInImageElement(); }
+inline bool isHTMLPlugInImageElement(const Node& node) { return node.isPluginElement() && toHTMLPlugInElement(node).isPlugInImageElement(); }
+ELEMENT_TYPE_CASTS(HTMLPlugInImageElement)
 
 } // namespace WebCore
 

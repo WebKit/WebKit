@@ -169,7 +169,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
     HTMLTextFormControlElement* textFormControlOfSelectionStart = enclosingTextFormControl(selection.start());
-    HTMLTextFormControlElement* textFromControlOfTarget = isHTMLTextFormControlElement(event->target()->toNode()) ? toHTMLTextFormControlElement(event->target()->toNode()) : 0;
+    HTMLTextFormControlElement* textFromControlOfTarget = isHTMLTextFormControlElement(*event->target()->toNode()) ? toHTMLTextFormControlElement(event->target()->toNode()) : nullptr;
     if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
         if (RefPtr<Range> range = textFromControlOfTarget->selection())
             return VisibleSelection(range.get(), DOWNSTREAM, selection.isDirectional());
@@ -1417,7 +1417,7 @@ void Editor::toggleUnderline()
 void Editor::setBaseWritingDirection(WritingDirection direction)
 {
     Element* focusedElement = document().focusedElement();
-    if (focusedElement && isHTMLTextFormControlElement(focusedElement)) {
+    if (focusedElement && isHTMLTextFormControlElement(*focusedElement)) {
         if (direction == NaturalWritingDirection)
             return;
         toHTMLElement(focusedElement)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
@@ -3077,7 +3077,7 @@ static Node* findFirstMarkable(Node* node)
             return 0;
         if (node->renderer()->isTextOrLineBreak())
             return node;
-        if (isHTMLTextFormControlElement(node))
+        if (isHTMLTextFormControlElement(*node))
             node = toHTMLTextFormControlElement(node)->visiblePositionForIndex(1).deepEquivalent().deprecatedNode();
         else if (node->firstChild())
             node = node->firstChild();

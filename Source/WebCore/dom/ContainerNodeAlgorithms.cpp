@@ -105,7 +105,7 @@ unsigned assertConnectedSubrameCountIsConsistent(Node& node)
     unsigned count = 0;
 
     if (node.isElementNode()) {
-        if (node.isFrameOwnerElement() && toFrameOwnerElement(node).contentFrame())
+        if (node.isFrameOwnerElement() && toHTMLFrameOwnerElement(node).contentFrame())
             count++;
 
         if (ShadowRoot* root = toElement(node).shadowRoot())

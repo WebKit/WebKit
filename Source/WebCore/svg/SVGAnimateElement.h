@@ -47,12 +47,12 @@ protected:
     virtual void resetAnimatedType();
     virtual void clearAnimatedType(SVGElement* targetElement);
 
-    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString);
-    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement);
-    virtual void applyResultsToTarget();
-    virtual float calculateDistance(const String& fromString, const String& toString);
+    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) OVERRIDE;
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString) OVERRIDE;
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString) OVERRIDE;
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) OVERRIDE;
+    virtual void applyResultsToTarget() OVERRIDE;
+    virtual float calculateDistance(const String& fromString, const String& toString) OVERRIDE;
     virtual bool isAdditive() const OVERRIDE;
 
     virtual void setTargetElement(SVGElement*) OVERRIDE;
@@ -65,7 +65,7 @@ private:
     SVGAnimatedTypeAnimator* ensureAnimator();
     bool animatedPropertyTypeSupportsAddition() const;
 
-    virtual bool hasValidAttributeType();
+    virtual bool hasValidAttributeType() OVERRIDE;
 
     OwnPtr<SVGAnimatedType> m_fromType;
     OwnPtr<SVGAnimatedType> m_toType;
@@ -76,15 +76,9 @@ private:
     OwnPtr<SVGAnimatedTypeAnimator> m_animator;
 };
 
-inline SVGAnimateElement* toSVGAnimateElement(Element* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element
-        || element->hasTagName(SVGNames::animateTag)
-        || element->hasTagName(SVGNames::animateColorTag)
-        || element->hasTagName(SVGNames::animateTransformTag)
-        || element->hasTagName(SVGNames::setTag));
-    return static_cast<SVGAnimateElement*>(element);
-}
+void isSVGAnimateElement(const SVGAnimateElement&); // Catch unnecessary runtime check of type known at compile time.
+bool isSVGAnimateElement(const Node&);
+ELEMENT_TYPE_CASTS(SVGAnimateElement)
 
 } // namespace WebCore
 

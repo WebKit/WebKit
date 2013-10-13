@@ -1,3 +1,187 @@
+2013-10-13  Darin Adler  <darin@apple.com>
+
+        Make element predicates and type casts work more consistently on more types
+        https://bugs.webkit.org/show_bug.cgi?id=122718
+
+        Reviewed by Antti Koivisto.
+
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::assertConnectedSubrameCountIsConsistent):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::collectFrameOwners):
+        Updated for name change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): Use a reference instead of a pointer.
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent): Updated for
+        typecast name change and also to cast a reference, since we don't overload
+        for pointers.
+        (WebCore::Document::updateHoverActiveState): Ditto.
+
+        * dom/Element.h: Made the isElementOfType functions take references instead
+        of pointers. Also use const in the type template argument. These changes go
+        hand in hand with the changes in the generated code and all the classes.
+        Also use a bit of nullptr.
+
+        * dom/ElementIterator.h:
+        (WebCore::findElementAncestorOfType): Got rid of the ElementTypeWithConst
+        naming since this works with or without const. Added const to the call site
+        for isElementOfType, because it works that way now.
+
+        * dom/ElementTraversal.h:
+        (WebCore::Traversal::firstChildTemplate): Add const to the type when calling
+        isElementOfType. Along with the corresponding changes, this makes these
+        templates work for const types.
+        (WebCore::Traversal::lastChildTemplate): Ditto.
+        (WebCore::Traversal::firstWithinTemplate): Ditto.
+        (WebCore::Traversal::lastWithinTemplate): Ditto.
+        (WebCore::Traversal::nextTemplate): Ditto.
+        (WebCore::Traversal::previousTemplate): Ditto.
+        (WebCore::Traversal::nextSiblingTemplate): Ditto.
+        (WebCore::Traversal::previousSiblingTemplate): Ditto.
+        (WebCore::Traversal::nextSkippingChildrenTemplate): Ditto.
+
+        * dom/Node.cpp:
+        (WebCore::Node::handleLocalEvents): Check isElementNode and then call the
+        isDisabledFormControl member function, since we no longer have a helper that
+        takes a node.
+        (WebCore::Node::willRespondToMouseMoveEvents): Ditto.
+        (WebCore::Node::willRespondToMouseClickEvents): Ditto.
+        (WebCore::Node::willRespondToTouchEvents): Ditto.
+
+        * dom/PseudoElement.h: Use some nullptr. Added an isPseudoElement function
+        that the ELEMENT_TYPE_CASTS macro can use, and also used that macro to make
+        the toPseudoElement functions instead of a hand-written local variant.
+
+        * dom/make_names.pl:
+        (printTypeHelpers): Added unimplemented versions of the element predicate
+        functions that return void to catch unnecessary runtime checks of types
+        that are already known at compile time. Added assertions to the pointer
+        overloads of the predicates. Maybe later we can delete them. Added const
+        to the isElementOf template arguments to make these work with both const
+        and non-const. Put overloads in a consistent order, most specific class
+        first, then less specific. Changed isElementOfType to take references
+        rather than pointers.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand): Updated to pass a reference.
+        (WebCore::Editor::setBaseWritingDirection): Ditto.
+        (WebCore::findFirstMarkable): Ditto.
+
+        * html/FormAssociatedElement.h: Tweaked a comment.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto): Updated for name change and to
+        pass a reference.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::translate): Removed FIXME and const_cast since the
+        problem is fixed.
+        (WebCore::HTMLElement::directionality): Use a reference.
+
+        * html/HTMLElement.h: Use const in the type of the isElementOfType functions.
+        Use references for all the arguments, not pointers.
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::refreshElementsIfNeeded): Use documentVersion
+        instead of docVersion for local variable name. Use elementDescendants instead
+        of elementTraversal.
+        (WebCore::HTMLFieldSetElement::length): Use length instead of len for name.
+
+        * html/HTMLFormControlElement.h: Put predicates into the standard format and
+        did them on single lines. Added ELEMENT_TYPE_CASTS so we get standard casts.
+        * html/HTMLFrameElementBase.h: Ditto.
+        * html/HTMLFrameOwnerElement.h: Ditto, but changed the name to match the class,
+        so it's now isHTMLFrameOwnerElement and toHTMLFrameOwnerElement.
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::nodeAsSupportedLabelableElement): Updated to use references.
+
+        * html/HTMLMediaElement.h: Put predicates into the standard format and did
+        them on single lines. Added ELEMENT_TYPE_CASTS so we get standard casts.
+        * html/HTMLPlugInElement.h: Ditto. Also marked isPluginElement FINAL.
+        * html/HTMLPlugInImageElement.h: Ditto.
+        * html/HTMLTableCellElement.cpp: Removed old hand-written cast functions.
+        * html/HTMLTableCellElement.h: Did same predicate and ELEMENT_TYPE_CASTS
+        changes. Also fixed up the ordering of functions in the class.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::enclosingTextFormControl): Updated to use references and nullptr.
+
+        * html/HTMLTextFormControlElement.h: Did same predicate and ELEMENT_TYPE_CASTS.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::removedFrom): Call isHTMLMediaElement by its new name.
+
+        * html/LabelableElement.h: Did same predicate and ELEMENT_TYPE_CASTS.
+
+        * html/track/WebVTTElement.h: Made isWebVTTElement private. Changed the argument
+        type of setLanguage to const AtomicString& to avoid excess reference count churn.
+        Did the predicate and type casts thing.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Update for name changes and use references.
+
+        * mathml/MathMLElement.h: Did same predicate and ELEMENT_TYPE_CASTS.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::appendCustomAttributes):
+        Update for name change.
+
+        * platform/Pasteboard.h: Removed unneeded forward declaration.
+
+        * rendering/RenderWidget.h: Updated for name change.
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives): Use element iterator
+        and nullptr.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): Update for name changes.
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::isSVGAnimateElement): Moved here since we don't want to inline such
+        a long list of tag names.
+
+        * svg/SVGAnimateElement.h: Marked a lot more virtual functions OVERRIDE.
+        Did predicate and ELEMENT_TYPE_CASTS changes, but did not make the predicate
+        be inlined.
+
+        * svg/SVGElement.h: Did predicate and ELEMENT_TYPE_CASTS changes.
+        * svg/SVGFilterPrimitiveStandardAttributes.h: Ditto.
+
+        * svg/SVGGradientElement.cpp:
+        (WebCore::isSVGGradientElement): Moved here since we don't want to inline
+        the two tag names.
+
+        * svg/SVGGradientElement.h: Did predicate and ELEMENT_TYPE_CASTS changes.
+        * svg/SVGGraphicsElement.h: Ditto.
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement): Took out assertion, since it
+        was asserting the class of the obejct we just created.
+
+        * svg/SVGPolyElement.cpp:
+        (WebCore::isSVGPolyElement): Moved here since we don't want to inline the
+        two tag names.
+
+        * svg/SVGPolyElement.h: Did predicate and ELEMENT_TYPE_CASTS changes.
+        * svg/SVGTextContentElement.h: Ditto.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::connectConditions): Update for name changes,
+        to use references and nullptr, and to get rid of a non-helpful local.
+
+        * svg/animation/SVGSMILElement.h: Added a virtual function to check if a
+        given SVGElement is an SVGSMILElement so we don't have to check a long list
+        of tag names instead. Also did the predicate and ELEMENT_TYPE_CASTS changes.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::visiblePlaceholder): Updated to use references.
+
 2013-10-13  Antti Koivisto  <antti@apple.com>
 
         Text::renderer() should return RenderText

@@ -173,28 +173,12 @@ private:
     bool m_hasAutofocused : 1;
 };
 
-inline bool isHTMLFormControlElement(const Node* node)
-{
-    return node->isElementNode() && toElement(node)->isFormControlElement();
-}
+void isHTMLFormControlElement(const HTMLFormControlElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLFormControlElement(const Element& element) { return element.isFormControlElement(); }
+inline bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
+template <> inline bool isElementOfType<const HTMLFormControlElement>(const Element& element) { return isHTMLFormControlElement(element); }
 
-inline HTMLFormControlElement& toHTMLFormControlElement(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isHTMLFormControlElement(&node));
-    return static_cast<HTMLFormControlElement&>(node);
-}
-
-inline HTMLFormControlElement* toHTMLFormControlElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFormControlElement(node));
-    return static_cast<HTMLFormControlElement*>(node);
-}
-
-void toHTMLFormControlElement(const HTMLFormControlElement*);
-void toHTMLFormControlElement(const HTMLFormControlElement&);
-
-template <> inline bool isElementOfType<HTMLFormControlElement>(const Element* element) { return isHTMLFormControlElement(element); }
-
+ELEMENT_TYPE_CASTS(HTMLFormControlElement)
 
 } // namespace
 

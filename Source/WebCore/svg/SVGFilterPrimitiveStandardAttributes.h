@@ -66,7 +66,7 @@ protected:
     }
 
 private:
-    virtual bool isFilterEffect() const { return true; }
+    virtual bool isFilterEffect() const OVERRIDE { return true; }
 
     virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
@@ -83,12 +83,12 @@ private:
 
 void invalidateFilterPrimitiveParent(SVGElement*);
 
-inline bool isSVGFilterPrimitiveStandardAttributes(const Node* node)
-{
-    return node->isSVGElement() && toSVGElement(node)->isFilterEffect();
-}
+void isSVGFilterPrimitiveStandardAttributes(const SVGFilterPrimitiveStandardAttributes&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { return element.isFilterEffect(); }
+inline bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return node.isSVGElement() && toSVGElement(node).isFilterEffect(); }
+template <> inline bool isElementOfType<const SVGFilterPrimitiveStandardAttributes>(const Element& element) { return isSVGFilterPrimitiveStandardAttributes(element); }
 
-template <> inline bool isElementOfType<SVGFilterPrimitiveStandardAttributes>(const Element* element) { return isSVGFilterPrimitiveStandardAttributes(element); }
+ELEMENT_TYPE_CASTS(SVGFilterPrimitiveStandardAttributes)
 
 
 } // namespace WebCore

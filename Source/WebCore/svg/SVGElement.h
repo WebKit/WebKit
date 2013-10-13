@@ -80,6 +80,7 @@ public:
     virtual bool isFilterEffect() const { return false; }
     virtual bool isGradientStop() const { return false; }
     virtual bool isTextContent() const { return false; }
+    virtual bool isSMILElement() const { return false; }
 
     // For SVGTests
     virtual bool isValid() const { return true; }
@@ -206,8 +207,9 @@ struct SVGAttributeHashTranslator {
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
 
+void isSVGElement(const SVGElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
-template <> inline bool isElementOfType<SVGElement>(const Element* element) { return element->isSVGElement(); }
+template <> inline bool isElementOfType<const SVGElement>(const Element& element) { return element.isSVGElement(); }
 
 ELEMENT_TYPE_CASTS(SVGElement)
 

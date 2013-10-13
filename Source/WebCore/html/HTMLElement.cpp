@@ -747,8 +747,7 @@ TranslateAttributeMode HTMLElement::translateAttributeMode() const
 
 bool HTMLElement::translate() const
 {
-    // FIXME: Need to fix lineageOfType to work with const and remove this const_cast.
-    auto lineage = lineageOfType<HTMLElement>(const_cast<HTMLElement*>(this));
+    auto lineage = lineageOfType<HTMLElement>(this);
     for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
         TranslateAttributeMode mode = element->translateAttributeMode();
         if (mode == TranslateAttributeInherit)
@@ -850,7 +849,7 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
-    if (isHTMLTextFormControlElement(this)) {
+    if (isHTMLTextFormControlElement(*this)) {
         HTMLTextFormControlElement* textElement = toHTMLTextFormControlElement(const_cast<HTMLElement*>(this));
         bool hasStrongDirectionality;
         UCharDirection textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);

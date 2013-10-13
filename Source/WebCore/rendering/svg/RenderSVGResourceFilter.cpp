@@ -27,6 +27,7 @@
 #include "RenderSVGResourceFilter.h"
 
 #include "AffineTransform.h"
+#include "ElementChildIterator.h"
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -94,26 +95,18 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
 
     // Add effects to the builder
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(SourceGraphic::create(filter), SourceAlpha::create(filter));
-    for (Node* node = filterElement().firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement())
-            continue;
-
-        SVGElement* element = toSVGElement(node);
-        if (!element->isFilterEffect())
-            continue;
-
-        SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
-        RefPtr<FilterEffect> effect = effectElement->build(builder.get(), filter);
+    auto children = childrenOfType<SVGFilterPrimitiveStandardAttributes>(&filterElement());
+    for (auto element = children.begin(), end = children.end(); element != end; ++element) {
+        RefPtr<FilterEffect> effect = element->build(builder.get(), filter);
         if (!effect) {
             builder->clearEffects();
-            return 0;
+            return nullptr;
         }
-        builder->appendEffectToEffectReferences(effect, effectElement->renderer());
-        effectElement->setStandardAttributes(effect.get());
-        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement, filterElement().primitiveUnits(), targetBoundingBox));
-        effect->setOperatingColorSpace(
-            effectElement->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
-        builder->add(effectElement->result(), effect);
+        builder->appendEffectToEffectReferences(effect, element->renderer());
+        element->setStandardAttributes(effect.get());
+        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&*element, filterElement().primitiveUnits(), targetBoundingBox));
+        effect->setOperatingColorSpace(element->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
+        builder->add(element->result(), effect.release());
     }
     return builder.release();
 }

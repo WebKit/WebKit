@@ -711,14 +711,9 @@ void to##ElementClassName(const ElementClassName&);
 
 ELEMENT_TYPE_CASTS(Element)
 
-template <typename Type> bool isElementOfType(const Element*);
-template <typename Type> bool isElementOfType(const Node* node) { return node->isElementNode() && isElementOfType<Type>(toElement(node)); }
-template <> inline bool isElementOfType<Element>(const Element*) { return true; }
-
-inline bool isDisabledFormControl(const Node* node)
-{
-    return node->isElementNode() && toElement(node)->isDisabledFormControl();
-}
+template <typename Type> bool isElementOfType(const Element&);
+template <typename Type> inline bool isElementOfType(const Node& node) { return node.isElementNode() && isElementOfType<const Type>(toElement(node)); }
+template <> inline bool isElementOfType<const Element>(const Element&) { return true; }
 
 inline bool Node::hasTagName(const QualifiedName& name) const
 {
@@ -737,13 +732,13 @@ inline bool Node::hasAttributes() const
 
 inline NamedNodeMap* Node::attributes() const
 {
-    return isElementNode() ? toElement(this)->attributes() : 0;
+    return isElementNode() ? toElement(this)->attributes() : nullptr;
 }
 
 inline Element* Node::parentElement() const
 {
     ContainerNode* parent = parentNode();
-    return parent && parent->isElementNode() ? toElement(parent) : 0;
+    return parent && parent->isElementNode() ? toElement(parent) : nullptr;
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const

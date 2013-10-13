@@ -609,9 +609,9 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
         
     Node* container = position.containerNode();
     if (!container)
-        return 0;
+        return nullptr;
     Element* ancestor = container->shadowHost();
-    return ancestor && isHTMLTextFormControlElement(ancestor) ? toHTMLTextFormControlElement(ancestor) : 0;
+    return ancestor && isHTMLTextFormControlElement(*ancestor) ? toHTMLTextFormControlElement(ancestor) : nullptr;
 }
 
 static const Element* parentHTMLElement(const Element* element)

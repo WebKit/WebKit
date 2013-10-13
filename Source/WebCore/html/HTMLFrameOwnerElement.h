@@ -28,10 +28,7 @@ namespace WebCore {
 class DOMWindow;
 class Frame;
 class RenderWidget;
-
-#if ENABLE(SVG)
 class SVGDocument;
-#endif
 
 class HTMLFrameOwnerElement : public HTMLElement {
 public:
@@ -71,32 +68,9 @@ private:
     SandboxFlags m_sandboxFlags;
 };
 
-inline HTMLFrameOwnerElement& toFrameOwnerElement(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isFrameOwnerElement());
-    return static_cast<HTMLFrameOwnerElement&>(node);
-}
-
-inline const HTMLFrameOwnerElement& toFrameOwnerElement(const Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isFrameOwnerElement());
-    return static_cast<const HTMLFrameOwnerElement&>(node);
-}
-
-inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());
-    return static_cast<HTMLFrameOwnerElement*>(node);
-}
-
-inline const HTMLFrameOwnerElement* toFrameOwnerElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());
-    return static_cast<const HTMLFrameOwnerElement*>(node);
-}
-
-void toFrameOwnerElement(const HTMLFrameOwnerElement&);
-void toFrameOwnerElement(const HTMLFrameOwnerElement*);
+void isHTMLFrameOwnerElement(const HTMLFrameOwnerElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLFrameOwnerElement(const Node& node) { return node.isFrameOwnerElement(); }
+ELEMENT_TYPE_CASTS(HTMLFrameOwnerElement)
 
 class SubframeLoadingDisabler {
 public:

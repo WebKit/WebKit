@@ -294,7 +294,7 @@ inline void ChildFrameDisconnector::collectFrameOwners(ContainerNode& root)
         return;
 
     if (root.isHTMLElement() && root.isFrameOwnerElement())
-        m_frameOwners.append(toFrameOwnerElement(root));
+        m_frameOwners.append(toHTMLFrameOwnerElement(root));
 
     for (Element* child = ElementTraversal::firstChild(&root); child; child = ElementTraversal::nextSibling(child))
         collectFrameOwners(*child);

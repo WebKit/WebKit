@@ -38,12 +38,10 @@ using namespace HTMLNames;
 
 static LabelableElement* nodeAsSupportedLabelableElement(Node* node)
 {
-    if (!node || !isLabelableElement(node))
-        return 0;
-    LabelableElement* labelableElement = static_cast<LabelableElement*>(node);
-    if (!labelableElement->supportLabels())
-        return 0;
-    return labelableElement;
+    if (!node || !isLabelableElement(*node))
+        return nullptr;
+    LabelableElement& element = toLabelableElement(*node);
+    return element.supportLabels() ? &element : nullptr;
 }
 
 inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document& document)

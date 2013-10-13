@@ -414,14 +414,6 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     return true;
 }
 
-bool SVGSMILElement::isSMILElement(const Node* node)
-{
-    if (!node)
-        return false;
-    return node->hasTagName(SVGNames::setTag) || node->hasTagName(SVGNames::animateTag) || node->hasTagName(SVGNames::animateMotionTag)
-            || node->hasTagName(SVGNames::animateTransformTag) || node->hasTagName(SVGNames::animateColorTag);
-}
-    
 void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd beginOrEnd)
 {
     Vector<SMILTimeWithOrigin>& timeList = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
@@ -538,12 +530,13 @@ void SVGSMILElement::connectConditions()
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = treeScope().getElementById(condition.m_baseID);
-            if (!isSMILElement(condition.m_syncbase.get())) {
-                condition.m_syncbase = 0;
+            if (!condition.m_syncbase)
+                continue;
+            if (!isSVGSMILElement(*condition.m_syncbase)) {
+                condition.m_syncbase = nullptr;
                 continue;
             }
-            SVGSMILElement* syncbase = toSVGSMILElement(condition.m_syncbase.get());
-            syncbase->addTimeDependent(this);
+            toSVGSMILElement(*condition.m_syncbase).addTimeDependent(this);
         }
     }
 }

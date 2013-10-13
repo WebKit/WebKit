@@ -159,6 +159,11 @@ SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::animatedPoints()
     return static_cast<SVGListPropertyTearOff<SVGPointList>*>(static_pointer_cast<SVGAnimatedPointList>(lookupOrCreatePointsWrapper(this))->animVal());
 }
 
+bool isSVGPolyElement(const Node& node)
+{
+    return node.hasTagName(SVGNames::polygonTag) || node.hasTagName(SVGNames::polylineTag);
+}
+
 }
 
 #endif // ENABLE(SVG)

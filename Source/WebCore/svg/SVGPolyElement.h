@@ -22,6 +22,7 @@
 #define SVGPolyElement_h
 
 #if ENABLE(SVG)
+
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
@@ -30,8 +31,7 @@
 
 namespace WebCore {
 
-class SVGPolyElement : public SVGGraphicsElement
-                     , public SVGExternalResourcesRequired {
+class SVGPolyElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
     SVGListPropertyTearOff<SVGPointList>* points();
     SVGListPropertyTearOff<SVGPointList>* animatedPoints();
@@ -65,19 +65,12 @@ protected:
     mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
 };
 
-inline SVGPolyElement& toSVGPolyElement(SVGElement& element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(element.hasTagName(SVGNames::polygonTag) || element.hasTagName(SVGNames::polylineTag));
-    return static_cast<SVGPolyElement&>(element);
-}
-
-inline SVGPolyElement* toSVGPolyElement(SVGElement* element)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->hasTagName(SVGNames::polygonTag) || element->hasTagName(SVGNames::polylineTag));
-    return static_cast<SVGPolyElement*>(element);
-}
+void isSVGPolyElement(const SVGPolyElement&); // Catch unnecessary runtime check of type known at compile time.
+bool isSVGPolyElement(const Node&);
+ELEMENT_TYPE_CASTS(SVGPolyElement)
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif

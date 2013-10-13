@@ -516,10 +516,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 
     size_t nodesSize = nodes.size();    
     for (size_t i = 0; i < nodesSize; ++i) {
-        Node* node = nodes[i];
+        Node& node = *nodes[i];
         Frame* childFrame;
         if ((isHTMLFrameElement(node) || isHTMLIFrameElement(node) || isHTMLObjectElement(node))
-            && (childFrame = toFrameOwnerElement(node)->contentFrame())) {
+            && (childFrame = toHTMLFrameOwnerElement(node).contentFrame())) {
             if (frameFilter && !frameFilter->shouldIncludeSubframe(childFrame))
                 continue;
                 
@@ -531,7 +531,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().data());
         } else {
             ListHashSet<URL> subresourceURLs;
-            node->getSubresourceURLs(subresourceURLs);
+            node.getSubresourceURLs(subresourceURLs);
             
             DocumentLoader* documentLoader = frame->loader().documentLoader();
             ListHashSet<URL>::iterator iterEnd = subresourceURLs.end();

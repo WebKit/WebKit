@@ -163,6 +163,11 @@ Vector<Gradient::ColorStop> SVGGradientElement::buildStops()
     return stops;
 }
 
+bool isSVGGradientElement(const Node& node)
+{
+    return node.hasTagName(SVGNames::radialGradientTag) || node.hasTagName(SVGNames::linearGradientTag);
+}
+
 }
 
 #endif // ENABLE(SVG)

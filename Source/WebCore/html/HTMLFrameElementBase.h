@@ -81,21 +81,11 @@ private:
     bool m_viewSource;
 };
 
-inline bool isHTMLFrameElementBase(const Node* node)
-{
-    return isHTMLFrameElement(node) || isHTMLIFrameElement(node);
-}
+void isHTMLFrameElementBase(const HTMLFrameElementBase&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLFrameElementBase(const Element& element) { return isHTMLFrameElement(element) || isHTMLIFrameElement(element); }
+inline bool isHTMLFrameElementBase(const Node& node) { return node.isElementNode() && isHTMLFrameElementBase(toElement(node)); }
 
-inline bool isHTMLFrameElementBase(const Element* element)
-{
-    return isHTMLFrameElement(element) || isHTMLIFrameElement(element);
-}
-
-inline HTMLFrameElementBase* toHTMLFrameElementBase(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameElementBase(node));
-    return static_cast<HTMLFrameElementBase*>(node);
-}
+ELEMENT_TYPE_CASTS(HTMLFrameElementBase)
 
 } // namespace WebCore
 

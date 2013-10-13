@@ -106,7 +106,7 @@ private:
     virtual bool supportsFocus() const OVERRIDE;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
-    virtual bool isPluginElement() const OVERRIDE;
+    virtual bool isPluginElement() const OVERRIDE FINAL;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -117,26 +117,9 @@ private:
     DisplayState m_displayState;
 };
 
-inline HTMLPlugInElement& toHTMLPlugInElement(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isPluginElement());
-    return static_cast<HTMLPlugInElement&>(node);
-}
-
-inline HTMLPlugInElement* toHTMLPlugInElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
-    return static_cast<HTMLPlugInElement*>(node);
-}
-
-inline const HTMLPlugInElement* toHTMLPlugInElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
-    return static_cast<const HTMLPlugInElement*>(node);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toHTMLPlugInElement(const HTMLPlugInElement*);
+void isHTMLPlugInElement(const HTMLPlugInElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLPlugInElement(const Node& node) { return node.isPluginElement(); }
+ELEMENT_TYPE_CASTS(HTMLPlugInElement)
 
 } // namespace WebCore
 

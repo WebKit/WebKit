@@ -86,7 +86,7 @@ Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode&
 
 void HTMLTrackElement::removedFrom(ContainerNode& insertionPoint)
 {
-    if (!parentNode() && WebCore::isMediaElement(&insertionPoint))
+    if (!parentNode() && isHTMLMediaElement(insertionPoint))
         toHTMLMediaElement(insertionPoint).didRemoveTextTrack(this);
     HTMLElement::removedFrom(insertionPoint);
 }

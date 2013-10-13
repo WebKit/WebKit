@@ -811,25 +811,12 @@ struct ValueToString<TextTrackCue*> {
 #endif
 #endif
 
-inline bool isMediaElement(Node* node)
-{
-    return node && node->isElementNode() && toElement(node)->isMediaElement();
-}
+void isHTMLMediaElement(const HTMLMediaElement&); // Catch unnecessary runtime check of type known at compile time.
+inline bool isHTMLMediaElement(const Element& element) { return element.isMediaElement(); }
+inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && toElement(node).isMediaElement(); }
+template <> inline bool isElementOfType<const HTMLMediaElement>(const Element& element) { return element.isMediaElement(); }
 
-inline HTMLMediaElement& toHTMLMediaElement(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isMediaElement(&node));
-    return static_cast<HTMLMediaElement&>(node);
-}
-
-inline HTMLMediaElement* toHTMLMediaElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isMediaElement(node));
-    return static_cast<HTMLMediaElement*>(node);
-}
-
-void toHTMLMediaElement(const HTMLMediaElement&);
-void toHTMLMediaElement(const HTMLMediaElement*);
+ELEMENT_TYPE_CASTS(HTMLMediaElement)
 
 } //namespace
 
