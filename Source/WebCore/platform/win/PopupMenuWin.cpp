@@ -112,6 +112,7 @@ PopupMenuWin::PopupMenuWin(PopupMenuClient* client)
     , m_scrollOffset(0)
     , m_wheelDelta(0)
     , m_focusedIndex(0)
+    , m_hoveredIndex(0)
     , m_scrollbarCapturingMouse(false)
     , m_showPopup(false)
 {
@@ -156,6 +157,13 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
     // Determine whether we should animate our popups
     // Note: Must use 'BOOL' and 'FALSE' instead of 'bool' and 'false' to avoid stack corruption with SystemParametersInfo
     BOOL shouldAnimate = FALSE;
+
+    if (client()) {
+        int index = client()->selectedIndex();
+        if (index >= 0)
+            setFocusedIndex(index);
+    }
+
 #if !OS(WINCE)
     ::SystemParametersInfo(SPI_GETCOMBOBOXANIMATION, 0, &shouldAnimate, 0);
 
@@ -166,13 +174,8 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
             ::AnimateWindow(m_popup, defaultAnimationDuration, AW_BLEND);
     } else
 #endif
-        ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
 
-    if (client()) {
-        int index = client()->selectedIndex();
-        if (index >= 0)
-            setFocusedIndex(index);
-    }
+    ::ShowWindow(m_popup, SW_SHOWNOACTIVATE);
 
     m_showPopup = true;
 
@@ -979,8 +982,10 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 break;
             }
 
-            if ((shouldHotTrack || wParam & MK_LBUTTON) && ::PtInRect(&bounds, mousePoint))
+            if ((shouldHotTrack || wParam & MK_LBUTTON) && ::PtInRect(&bounds, mousePoint)) {
                 setFocusedIndex(listIndexAtPoint(mousePoint), true);
+                m_hoveredIndex = listIndexAtPoint(mousePoint);
+            }
 
             break;
         }
@@ -1002,8 +1007,10 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             // hide the popup.
             RECT bounds;
             GetClientRect(m_popup, &bounds);
-            if (::PtInRect(&bounds, mousePoint))
+            if (::PtInRect(&bounds, mousePoint)) {
                 setFocusedIndex(listIndexAtPoint(mousePoint), true);
+                m_hoveredIndex = listIndexAtPoint(mousePoint);
+            }
             else
                 hide();
             break;
@@ -1029,7 +1036,9 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             GetClientRect(popupHandle(), &bounds);
             if (client() && ::PtInRect(&bounds, mousePoint)) {
                 hide();
-                int index = focusedIndex();
+                int index = m_hoveredIndex;
+                if (!client()->itemIsEnabled(index))
+                    index = client()->selectedIndex();
                 if (index >= 0)
                     client()->valueChanged(index);
             }

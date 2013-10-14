@@ -128,6 +128,7 @@ private:
     int m_scrollOffset;
     int m_wheelDelta;
     int m_focusedIndex;
+    int m_hoveredIndex;
     bool m_scrollbarCapturingMouse;
     bool m_showPopup;
 };
