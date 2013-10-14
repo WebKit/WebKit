@@ -77,7 +77,7 @@ RSSFeed::~RSSFeed()
 
 void RSSFeed::clear()
 {
-    deleteAllValues(m_items);
+    deprecatedDeleteAllValues(m_items);
     m_items.clear();
 }
 

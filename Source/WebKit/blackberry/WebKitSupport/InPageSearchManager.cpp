@@ -389,7 +389,7 @@ void InPageSearchManager::callScopeStringMatches(DeferredScopeStringMatches* cal
 
 void InPageSearchManager::cancelPendingScopingEffort()
 {
-    deleteAllValues(m_deferredScopingWork);
+    deprecatedDeleteAllValues(m_deferredScopingWork);
     m_deferredScopingWork.clear();
 }
 

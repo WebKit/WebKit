@@ -184,7 +184,7 @@ WCDataObject::~WCDataObject()
         ReleaseStgMedium(m_medium[i]);
         delete m_medium[i];
     }
-    WTF::deleteAllValues(m_formats);
+    WTF::deprecatedDeleteAllValues(m_formats);
 }
 
 STDMETHODIMP WCDataObject::QueryInterface(REFIID riid,void** ppvObject)

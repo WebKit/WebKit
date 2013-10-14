@@ -200,7 +200,7 @@ void CookieMap::updateOldestCookie()
 
 void CookieMap::deleteAllCookiesAndDomains()
 {
-    deleteAllValues(m_subdomains);
+    deprecatedDeleteAllValues(m_subdomains);
     m_subdomains.clear();
     m_cookieVector.clear();
 

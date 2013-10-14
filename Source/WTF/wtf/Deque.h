@@ -289,15 +289,6 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity>
-    void deleteAllValues(const Deque<T, inlineCapacity>& collection)
-    {
-        typedef typename Deque<T, inlineCapacity>::const_iterator iterator;
-        iterator end = collection.end();
-        for (iterator it = collection.begin(); it != end; ++it)
-            delete *it;
-    }
-
-    template<typename T, size_t inlineCapacity>
     inline Deque<T, inlineCapacity>& Deque<T, inlineCapacity>::operator=(const Deque<T, inlineCapacity>& other)
     {
         // FIXME: This is inefficient if we're using an inline buffer and T is

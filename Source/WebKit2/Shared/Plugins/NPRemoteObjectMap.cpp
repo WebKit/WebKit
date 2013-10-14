@@ -206,7 +206,7 @@ void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
     }
 
     // Now delete all the receivers.
-    deleteAllValues(messageReceivers);
+    deprecatedDeleteAllValues(messageReceivers);
 
     Vector<NPObjectProxy*> objectProxies;
     for (HashSet<NPObjectProxy*>::const_iterator it = m_npObjectProxies.begin(), end = m_npObjectProxies.end(); it != end; ++it) {

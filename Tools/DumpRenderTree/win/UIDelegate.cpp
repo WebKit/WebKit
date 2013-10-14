@@ -72,10 +72,10 @@ private:
 
 class DRTUndoStack {
 public:
-    ~DRTUndoStack() { deleteAllValues(m_undoVector); }
+    ~DRTUndoStack() { deprecatedDeleteAllValues(m_undoVector); }
 
     bool isEmpty() const { return m_undoVector.isEmpty(); }
-    void clear() { deleteAllValues(m_undoVector); m_undoVector.clear(); }
+    void clear() { deprecatedDeleteAllValues(m_undoVector); m_undoVector.clear(); }
 
     void push(DRTUndoObject* undoObject) { m_undoVector.append(undoObject); }
     DRTUndoObject* pop() { DRTUndoObject* top = m_undoVector.last(); m_undoVector.removeLast(); return top; }

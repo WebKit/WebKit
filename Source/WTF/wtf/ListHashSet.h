@@ -40,9 +40,6 @@ namespace WTF {
 
 template<typename Value, size_t inlineCapacity, typename HashFunctions> class ListHashSet;
 
-template<typename Value, size_t inlineCapacity, typename HashFunctions>
-void deleteAllValues(const ListHashSet<Value, inlineCapacity, HashFunctions>&);
-
 template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetIterator;
 template<typename ValueArg, size_t inlineCapacity, typename HashArg> class ListHashSetConstIterator;
 
@@ -154,8 +151,6 @@ private:
     
     iterator makeIterator(Node*);
     const_iterator makeConstIterator(Node*) const;
-
-    friend void deleteAllValues<>(const ListHashSet&);
 
     HashTable<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> m_impl;
     Node* m_head;
@@ -798,19 +793,6 @@ template<typename T, size_t inlineCapacity, typename U>
 inline auto ListHashSet<T, inlineCapacity, U>::makeConstIterator(Node* position) const -> const_iterator
 { 
     return const_iterator(this, position);
-}
-
-template<bool, typename ValueType, typename HashTableType>
-void deleteAllValues(HashTableType& collection)
-{
-    for (auto it = collection.begin(), end = collection.end(); it != end; ++it)
-        delete (*it)->m_value;
-}
-
-template<typename T, size_t inlineCapacity, typename U>
-inline void deleteAllValues(const ListHashSet<T, inlineCapacity, U>& collection)
-{
-    deleteAllValues<true, typename ListHashSet<T, inlineCapacity, U>::ValueType>(collection.m_impl);
 }
 
 } // namespace WTF

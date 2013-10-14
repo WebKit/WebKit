@@ -469,15 +469,6 @@ inline bool operator!=(const HashMap<T, U, V, W, X>& a, const HashMap<T, U, V, W
     return !(a == b);
 }
 
-template<typename T, typename U, typename V, typename W, typename X>
-inline void deleteAllValues(const HashMap<T, U, V, W, X>& collection)
-{
-    typedef typename HashMap<T, U, V, W, X>::const_iterator iterator;
-    iterator end = collection.end();
-    for (iterator it = collection.begin(); it != end; ++it)
-        delete it->value;
-}
-
 template<typename T, typename U, typename V, typename W, typename X, typename Y>
 inline void copyKeysToVector(const HashMap<T, U, V, W, X>& collection, Y& vector)
 {

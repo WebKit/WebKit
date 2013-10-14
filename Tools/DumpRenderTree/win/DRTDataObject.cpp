@@ -181,7 +181,7 @@ DRTDataObject::~DRTDataObject()
         ReleaseStgMedium(m_medium[i]);
         delete m_medium[i];
     }
-    WTF::deleteAllValues(m_formats);
+    WTF::deprecatedDeleteAllValues(m_formats);
 }
 
 STDMETHODIMP DRTDataObject::QueryInterface(REFIID riid, void** ppvObject)

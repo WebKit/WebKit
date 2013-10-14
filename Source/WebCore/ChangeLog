@@ -1,3 +1,18 @@
+2013-10-13  Darin Adler  <darin@apple.com>
+
+        Deprecate or remove deleteAllValues functions; there are only a few call sites left
+        https://bugs.webkit.org/show_bug.cgi?id=122738
+
+        Reviewed by Anders Carlsson.
+
+        * platform/blackberry/CookieMap.cpp:
+        (WebCore::CookieMap::deleteAllCookiesAndDomains):
+        * platform/network/blackberry/rss/RSSParserBase.cpp:
+        (WebCore::RSSFeed::clear):
+        * platform/win/WCDataObject.cpp:
+        (WebCore::WCDataObject::~WCDataObject):
+        Renamed deleteAllValues to deprecatedDeleteAllValues.
+
 2013-10-13  Sam Weinig  <sam@webkit.org>
 
         Merge NODE_TYPE_CASTS and ELEMENT_TYPE_CASTS
