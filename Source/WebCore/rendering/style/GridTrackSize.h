@@ -31,7 +31,7 @@
 #ifndef GridTrackSize_h
 #define GridTrackSize_h
 
-#include "Length.h"
+#include "GridLength.h"
 
 namespace WebCore {
 
@@ -49,42 +49,43 @@ public:
     {
     }
 
-    const Length& length() const
+    const GridLength& length() const
     {
         ASSERT(m_type == LengthTrackSizing);
-        ASSERT(!m_minTrackBreadth.isUndefined());
         ASSERT(m_minTrackBreadth == m_maxTrackBreadth);
-        return m_minTrackBreadth;
+        const GridLength& minTrackBreadth = m_minTrackBreadth;
+        ASSERT(!minTrackBreadth.isLength() || !minTrackBreadth.length().isUndefined());
+        return minTrackBreadth;
     }
 
-    void setLength(const Length& length)
+    void setLength(const GridLength& length)
     {
         m_type = LengthTrackSizing;
         m_minTrackBreadth = length;
         m_maxTrackBreadth = length;
     }
 
-    const Length& minTrackBreadth() const
+    const GridLength& minTrackBreadth() const
     {
-        ASSERT(!m_minTrackBreadth.isUndefined());
-        if (m_minTrackBreadth.isAuto()) {
-            DEFINE_STATIC_LOCAL(Length, minContent, (MinContent));
+        ASSERT(!m_minTrackBreadth.isLength() || !m_minTrackBreadth.length().isUndefined());
+        if (m_minTrackBreadth.isLength() && m_minTrackBreadth.length().isAuto()) {
+            DEFINE_STATIC_LOCAL(GridLength, minContent, (MinContent));
             return minContent;
         }
         return m_minTrackBreadth;
     }
 
-    const Length& maxTrackBreadth() const
+    const GridLength& maxTrackBreadth() const
     {
-        ASSERT(!m_maxTrackBreadth.isUndefined());
-        if (m_maxTrackBreadth.isAuto()) {
-            DEFINE_STATIC_LOCAL(Length, maxContent, (MaxContent));
+        ASSERT(!m_maxTrackBreadth.isLength() || !m_maxTrackBreadth.length().isUndefined());
+        if (m_maxTrackBreadth.isLength() && m_maxTrackBreadth.length().isAuto()) {
+            DEFINE_STATIC_LOCAL(GridLength, maxContent, (MaxContent));
             return maxContent;
         }
         return m_maxTrackBreadth;
     }
 
-    void setMinMax(const Length& minTrackBreadth, const Length& maxTrackBreadth)
+    void setMinMax(const GridLength& minTrackBreadth, const GridLength& maxTrackBreadth)
     {
         m_type = MinMaxTrackSizing;
         m_minTrackBreadth = minTrackBreadth;
@@ -98,15 +99,15 @@ public:
         return m_type == other.m_type && m_minTrackBreadth == other.m_minTrackBreadth && m_maxTrackBreadth == other.m_maxTrackBreadth;
     }
 
-    bool hasMinOrMaxContentMinTrackBreadth() const { return minTrackBreadth().isMinContent() || minTrackBreadth().isMaxContent(); }
-    bool hasMaxContentMinTrackBreadth() const { return minTrackBreadth().isMaxContent(); }
-    bool hasMinOrMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isMinContent() || maxTrackBreadth().isMaxContent(); }
-    bool hasMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isMaxContent(); }
+    bool hasMinOrMaxContentMinTrackBreadth() const { return minTrackBreadth().isLength() && (minTrackBreadth().length().isMinContent() || minTrackBreadth().length().isMaxContent()); }
+    bool hasMaxContentMinTrackBreadth() const { return minTrackBreadth().isLength() && minTrackBreadth().length().isMaxContent(); }
+    bool hasMinOrMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isLength() && (maxTrackBreadth().length().isMinContent() || maxTrackBreadth().length().isMaxContent()); }
+    bool hasMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isLength() && maxTrackBreadth().length().isMaxContent(); }
 
 private:
     GridTrackSizeType m_type;
-    Length m_minTrackBreadth;
-    Length m_maxTrackBreadth;
+    GridLength m_minTrackBreadth;
+    GridLength m_maxTrackBreadth;
 };
 
 } // namespace WebCore

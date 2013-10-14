@@ -37,6 +37,10 @@ var gridWithMaxContent = document.getElementById("gridWithMaxContent");
 shouldBe("getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-columns')", "'-webkit-max-content'");
 shouldBe("getComputedStyle(gridWithMaxContent, '').getPropertyValue('-webkit-grid-definition-rows')", "'-webkit-max-content'");
 
+var gridWithFraction = document.getElementById("gridWithFraction");
+shouldBe("getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-columns')", "'1fr'");
+shouldBe("getComputedStyle(gridWithFraction, '').getPropertyValue('-webkit-grid-definition-rows')", "'2fr'");
+
 debug("");
 debug("Test getting wrong values for -webkit-grid-definition-columns and -webkit-grid-definition-rows through CSS (they should resolve to the default: 'none')");
 var gridWithFitContentElement = document.getElementById("gridWithFitContentElement");
@@ -143,8 +147,32 @@ element.style.webkitGridDefinitionRows = "minmax(-webkit-max-content, -webkit-mi
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'minmax(-webkit-min-content, -webkit-max-content)'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'minmax(-webkit-max-content, -webkit-min-content)'");
 
+// Unit comparison should be case-insensitive.
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "3600Fr";
+element.style.webkitGridDefinitionRows = "154fR";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'3600fr'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'154fr'");
+
+// Float values are allowed.
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "3.1459fr";
+element.style.webkitGridDefinitionRows = "2.718fr";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'3.1459fr'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'2.718fr'");
+
+// A leading '+' is allowed.
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "+3fr";
+element.style.webkitGridDefinitionRows = "+4fr";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'3fr'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'4fr'");
+
 debug("");
-debug("Test setting grid-definition-columns and grid-definition-rows to bad minmax value through JS");
+debug("Test setting grid-definition-columns and grid-definition-rows to bad values through JS");
 element = document.createElement("div");
 document.body.appendChild(element);
 // No comma.
@@ -188,6 +216,39 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definitio
 
 element.style.webkitGridDefinitionColumns = "minmax(-1%, 32%)";
 element.style.webkitGridDefinitionRows = "minmax(2vw, -6em)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "-2fr";
+element.style.webkitGridDefinitionRows = "3ffr";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "-2.05fr";
+element.style.webkitGridDefinitionRows = "+-3fr";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "0fr";
+element.style.webkitGridDefinitionRows = "1r";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = ".0000fr";
+element.style.webkitGridDefinitionRows = "13 fr"; // A dimension doesn't allow spaces between the number and the unit.
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element.style.webkitGridDefinitionColumns = "7.-fr";
+element.style.webkitGridDefinitionRows = "-8,0fr";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
 

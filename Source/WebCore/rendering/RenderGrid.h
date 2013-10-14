@@ -59,13 +59,13 @@ private:
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
-    LayoutUnit computePreferredTrackWidth(const Length&, size_t) const;
+    LayoutUnit computePreferredTrackWidth(const GridLength&, size_t) const;
 
     class GridIterator;
     enum TrackSizingDirection { ForColumns, ForRows };
     void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks);
-    LayoutUnit computeUsedBreadthOfMinLength(TrackSizingDirection, const Length&) const;
-    LayoutUnit computeUsedBreadthOfMaxLength(TrackSizingDirection, const Length&) const;
+    LayoutUnit computeUsedBreadthOfMinLength(TrackSizingDirection, const GridLength&) const;
+    LayoutUnit computeUsedBreadthOfMaxLength(TrackSizingDirection, const GridLength&, LayoutUnit usedBreadth) const;
     LayoutUnit computeUsedBreadthOfSpecifiedLength(TrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace);
 
@@ -88,6 +88,8 @@ private:
     typedef bool (GridTrackSize::* FilterFunction)() const;
     void resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, RenderBox*, FilterFunction, SizingFunction, AccumulatorGetter, AccumulatorGrowFunction);
     void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter, AccumulatorGrowFunction, LayoutUnit& availableLogicalSpace);
+
+    double computeNormalizedFractionBreadth(Vector<GridTrack>&, TrackSizingDirection, LayoutUnit availableLogicalSpace) const;
 
     const GridTrackSize& gridTrackSize(TrackSizingDirection, size_t) const;
     size_t explicitGridColumnCount() const;

@@ -1888,7 +1888,7 @@ bool StyleResolver::useSVGZoomRules()
     return m_state.element() && m_state.element()->isSVGElement();
 }
 
-static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const StyleResolver::State& state, Length& workingLength)
+static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const StyleResolver::State& state, GridLength& workingLength)
 {
     if (primitiveValue->getValueID() == CSSValueWebkitMinContent) {
         workingLength = Length(MinContent);
@@ -1900,12 +1900,18 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
         return true;
     }
 
+    if (primitiveValue->isFlex()) {
+        // Fractional unit.
+        workingLength.setFlex(primitiveValue->getDoubleValue());
+        return true;
+    }
+
     workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | AutoConversion>(state.style(), state.rootElementStyle(), state.style()->effectiveZoom());
-    if (workingLength.isUndefined())
+    if (workingLength.length().isUndefined())
         return false;
 
     if (primitiveValue->isLength())
-        workingLength.setQuirk(primitiveValue->isQuirkValue());
+        workingLength.length().setQuirk(primitiveValue->isQuirkValue());
 
     return true;
 }
@@ -1918,7 +1924,7 @@ static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const
     CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
     Pair* minMaxTrackBreadth = primitiveValue->getPairValue();
     if (!minMaxTrackBreadth) {
-        Length workingLength;
+        GridLength workingLength;
         if (!createGridTrackBreadth(primitiveValue, state, workingLength))
             return false;
 
@@ -1926,8 +1932,8 @@ static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const
         return true;
     }
 
-    Length minTrackBreadth;
-    Length maxTrackBreadth;
+    GridLength minTrackBreadth;
+    GridLength maxTrackBreadth;
     if (!createGridTrackBreadth(minMaxTrackBreadth->first(), state, minTrackBreadth) || !createGridTrackBreadth(minMaxTrackBreadth->second(), state, maxTrackBreadth))
         return false;
 

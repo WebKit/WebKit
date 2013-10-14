@@ -1,3 +1,34 @@
+2013-09-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement support for <flex>
+        https://bugs.webkit.org/show_bug.cgi?id=115362
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149134, r149480, r149532, r150287 and r156127 by <jchaffraix@chromium.org>
+        From Blink r157820 by <svillar@igalia.com>
+
+        Added 4 new test cases to test the support for <flex> in CSS Grid
+        Layout code. Also updated some of the existing ones to check the
+        support for 'fr' units.
+
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-columns-expected.txt: Added.
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-columns.html: Added.
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows-expected.txt: Added.
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html: Added.
+        * fast/css-grid-layout/flex-content-resolution-columns-expected.txt: Added.
+        * fast/css-grid-layout/flex-content-resolution-columns.html: Added.
+        * fast/css-grid-layout/flex-content-resolution-rows-expected.txt: Added.
+        * fast/css-grid-layout/flex-content-resolution-rows.html: Added.
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-dynamic-updates-relayout-expected.txt:
+        * fast/css-grid-layout/grid-dynamic-updates-relayout.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+
 2013-10-14  peavo@outlook.com  <peavo@outlook.com>
 
         Broken text rendering when input field has selection.

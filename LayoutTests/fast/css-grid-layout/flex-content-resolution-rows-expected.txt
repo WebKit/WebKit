@@ -1,0 +1,14 @@
+Test that resolving auto tracks on grid items works properly.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

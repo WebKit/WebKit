@@ -60,6 +60,14 @@ if (window.testRunner)
     -webkit-grid-definition-rows: 12em minmax(35%, -webkit-max-content);
     font: 10px Ahem;
 }
+.gridWithFractionFraction {
+    -webkit-grid-definition-columns: 1fr 2fr;
+    -webkit-grid-definition-rows: 3fr 4fr;
+}
+.gridWithFractionMinMax {
+    -webkit-grid-definition-columns: minmax(-webkit-min-content, 45px) 2fr;
+    -webkit-grid-definition-rows: 3fr minmax(14px, -webkit-max-content);
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -76,6 +84,8 @@ if (window.testRunner)
 <div class="grid gridWithMinMaxContent" id="gridWithMinMaxContent"></div>
 <div class="grid gridWithMinMaxAndFixed" id="gridWithMinMaxAndFixed"></div>
 <div class="grid gridWithMinMaxAndMinMaxContent" id="gridWithMinMaxAndMinMaxContent"></div>
+<div class="grid gridWithFractionFraction" id="gridWithFractionFraction"></div>
+<div class="grid gridWithFractionMinMax" id="gridWithFractionMinMax"></div>
 <script src="resources/grid-columns-rows-get-set-multiple.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

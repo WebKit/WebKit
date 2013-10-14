@@ -5356,6 +5356,7 @@
 		CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEA7C821276230400B846DD /* RenderFullScreen.h */; };
 		CDEA7C851276230400B846DD /* RenderFullScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA7C831276230400B846DD /* RenderFullScreen.cpp */; };
 		CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEE393617974259001D7580 /* PublicURLManager.cpp */; };
+		CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEF4FD617E85C8F00AEE24B /* GridLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
@@ -12295,6 +12296,7 @@
 		CDEA7C831276230400B846DD /* RenderFullScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFullScreen.cpp; sourceTree = "<group>"; };
 		CDEE393617974259001D7580 /* PublicURLManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublicURLManager.cpp; sourceTree = "<group>"; };
 		CDEE393817974274001D7580 /* URLRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLRegistry.h; sourceTree = "<group>"; };
+		CDEF4FD617E85C8F00AEE24B /* GridLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridLength.h; path = style/GridLength.h; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
@@ -19387,6 +19389,7 @@
 			isa = PBXGroup;
 			children = (
 				CD3E251B18046B0600E27F56 /* GridCoordinate.h */,
+				CDEF4FD617E85C8F00AEE24B /* GridLength.h */,
 				FBD6AF8215EF21A3008B7110 /* BasicShapes.cpp */,
 				FBD6AF8315EF21A3008B7110 /* BasicShapes.h */,
 				BC5EB5E00E81BE8700B25965 /* BorderData.h */,
@@ -24604,6 +24607,7 @@
 				A06BFE2E17DFB43F008302BB /* LineInfo.h in Headers */,
 				CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */,
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateValue.h in Headers */,
+				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

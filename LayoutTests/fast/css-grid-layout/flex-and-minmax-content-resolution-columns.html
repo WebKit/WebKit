@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridMaxMaxContent {
+    -webkit-grid-definition-columns: minmax(10px, -webkit-max-content) minmax(10px, 1fr);
+    -webkit-grid-definition-rows: 50px;
+}
+
+.gridMinMinContent {
+    -webkit-grid-definition-columns: minmax(10px, 1fr) minmax(-webkit-min-content, 50px);
+    -webkit-grid-definition-rows: 50px;
+}
+
+.gridWithIntrinsicSizeBiggerThanFlex {
+    -webkit-grid-definition-columns: minmax(-webkit-min-content, 0.5fr) minmax(18px, 2fr);
+    -webkit-grid-definition-rows: 50px;
+}
+
+.gridShrinkBelowItemsIntrinsicSize {
+    -webkit-grid-definition-columns: minmax(0px, 1fr) minmax(0px, 2fr);
+    -webkit-grid-definition-rows: 50px;
+}
+
+.gridWithNonFlexingItems {
+    -webkit-grid-definition-columns: 40px minmax(-webkit-min-content, 1fr) auto minmax(20px, 2fr);
+    -webkit-grid-definition-rows: 50px;
+}
+
+.firstRowThirdColumn {
+    -webkit-grid-column: 3;
+    -webkit-grid-row: 1;
+}
+.firstRowFourthColumn {
+    -webkit-grid-column: 4;
+    -webkit-grid-row: 1;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>Test that resolving auto tracks on grid items works properly.</p>
+
+<div class="constrainedContainer">
+    <div class="grid gridMaxMaxContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="10" data-expected-height="50">XXXXX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="10" data-expected-height="50"></div>
+    </div>
+</div>
+
+<!-- Allow the extra logical space distribution to occur. -->
+<div style="width: 40px; height: 10px">
+    <div class="grid gridMaxMaxContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="30" data-expected-height="50">XXXXX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="10" data-expected-height="50"></div>
+    </div>
+</div>
+
+<div style="width: 110px; height: 10px;">
+    <div class="grid gridMaxMaxContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="60" data-expected-height="50"></div>
+    </div>
+</div>
+
+
+<div class="constrainedContainer">
+    <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="10" data-expected-height="50">XX XX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="20" data-expected-height="50">XX XX</div>
+    </div>
+</div>
+
+<!-- Allow the extra logical space distribution to occur. -->
+<div style="width: 40px; height: 10px">
+    <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="10" data-expected-height="50">XX XX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="30" data-expected-height="50">XX XX</div>
+    </div>
+</div>
+
+<div style="width: 110px; height: 10px;">
+    <div class="grid gridMinMinContent">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="60" data-expected-height="50">XX XX</div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="50" data-expected-height="50">XX XX</div>
+    </div>
+</div>
+
+
+<div style="width: 220px; height: 10px;">
+    <div class="grid gridWithIntrinsicSizeBiggerThanFlex">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="200" data-expected-height="50">
+            <div style="display: inline-block; width: 200px;"></div>
+        </div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="20" data-expected-height="50"></div>
+    </div>
+</div>
+
+
+<div style="width: 120px; height: 10px;">
+    <div class="grid gridShrinkBelowItemsIntrinsicSize">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="40" data-expected-height="50">
+            <div style="display: inline-block; width: 200px;"></div>
+        </div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="80" data-expected-height="50">XXXXXXXXXX</div>
+    </div>
+</div>
+
+
+<!-- No space available for the <flex> -->
+<div style="width: 220px; height: 10px;">
+    <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="40" data-expected-height="50"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="100" data-expected-height="50">
+            <div style="display: inline-block; width: 100px;"></div>
+        </div>
+        <div class="sizedToGridArea firstRowThirdColumn" data-expected-width="100" data-expected-height="50">XXXXXXXXXX XXXXXXXXX</div>
+        <div class="sizedToGridArea firstRowFourthColumn" data-expected-width="20" data-expected-height="50"></div>
+    </div>
+</div>
+
+<!-- The second track should be sized after the min-content as the <flex> value should be too small. -->
+<div style="width: 380px; height: 10px;">
+    <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="40" data-expected-height="50"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="100" data-expected-height="50">
+            <div style="display: inline-block; width: 100px;"></div>
+        </div>
+        <div class="sizedToGridArea firstRowThirdColumn" data-expected-width="200" data-expected-height="50">XXXXXXXXXX XXXXXXXXX</div>
+        <div class="sizedToGridArea firstRowFourthColumn" data-expected-width="40" data-expected-height="50"></div>
+    </div>
+</div>
+
+<div style="width: 400px; height: 10px;">
+    <div class="grid gridWithNonFlexingItems">
+        <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="40" data-expected-height="50"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="100" data-expected-height="50">
+            <div style="display: inline-block; width: 100px;"></div>
+        </div>
+        <div class="sizedToGridArea firstRowThirdColumn" data-expected-width="200" data-expected-height="50">XXXXXXXXXX XXXXXXXXX</div>
+        <div class="sizedToGridArea firstRowFourthColumn" data-expected-width="60" data-expected-height="50"></div>
+    </div>
+</div>
+
+</body>
+</html>

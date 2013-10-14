@@ -35,6 +35,8 @@ function updateRowsColumns()
     testLayout("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(20px, -webkit-max-content)' }, { 'width': '120', 'height': '10' });
     testLayout("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(150px, -webkit-max-content)' }, { 'width': '150', 'height': '10' });
     testLayout("unconstrainedGrid", { 'rows': 'auto', 'columns': 'auto' }, { 'width': '120', 'height': '10' });
+    testLayout("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(-webkit-min-content, 1fr) 3fr' }, { 'width': '250', 'height': '10' });
+    testLayout("unconstrainedGrid", { 'rows': 'auto', 'columns': 'minmax(-webkit-min-content, 3fr) 3fr' }, { 'width': '500', 'height': '10' });
 }
 
 window.addEventListener("load", updateRowsColumns, false);

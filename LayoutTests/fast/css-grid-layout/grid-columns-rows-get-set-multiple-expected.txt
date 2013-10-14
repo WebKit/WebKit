@@ -24,6 +24,10 @@ PASS getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid
 PASS getComputedStyle(gridWithMinMaxAndFixed, '').getPropertyValue('-webkit-grid-definition-rows') is '120px minmax(35%, 10px)'
 PASS getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(-webkit-min-content, 30%) 15px'
 PASS getComputedStyle(gridWithMinMaxAndMinMaxContent, '').getPropertyValue('-webkit-grid-definition-rows') is '120px minmax(35%, -webkit-max-content)'
+PASS getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-definition-columns') is '1fr 2fr'
+PASS getComputedStyle(gridWithFractionFraction, '').getPropertyValue('-webkit-grid-definition-rows') is '3fr 4fr'
+PASS getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-definition-columns') is 'minmax(-webkit-min-content, 45px) 2fr'
+PASS getComputedStyle(gridWithFractionMinMax, '').getPropertyValue('-webkit-grid-definition-rows') is '3fr minmax(14px, -webkit-max-content)'
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
@@ -40,6 +44,8 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-col
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '56% 100px auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '160px minmax(16px, 20px)'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'minmax(10%, 15%) auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '160px 2fr'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '14fr auto'
 
 Test getting wrong values set from CSS
 PASS getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'

@@ -1,3 +1,96 @@
+2013-09-16  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Implement support for <flex>
+        https://bugs.webkit.org/show_bug.cgi?id=115362
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149134, r149480, r149532, r150287 and r156127 by <jchaffraix@chromium.org>
+        From Blink r157820 by <svillar@igalia.com>
+
+        Added support for flexible lengths ('fr' unit) in CSS Grid Layout
+        code. This requires the addition of GridLength class to
+        encapsulate the knowledge of <flex> to the grid layout code.
+
+        Also updated the algorithm that computes the layout. It increases
+        the value of 1fr based on the grid tracks' usedBreath to fraction
+        ratio (called normalizedFractionValue). This enables increasing
+        the fraction value while updating the available space to account
+        for processed grid tracks. The algorithm stops when we run out of
+        grid tracks or available space (one grid item has an intrinsic
+        size too big). This matches the specs to the letter for the known
+        available space case (both the unknown case and the interaction
+        with 'span' are left out of this patch).
+
+        Tests: fast/css-grid-layout/flex-and-minmax-content-resolution-columns.html
+               fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html
+               fast/css-grid-layout/flex-content-resolution-columns.html
+               fast/css-grid-layout/flex-content-resolution-rows.html
+
+        * GNUmakefile.list.am: Added GridLength.h to the build system.
+        * Target.pri: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackBreadth): Replace Length by GridLength.
+        * css/CSSGrammar.y.in: Added FR support.
+        * css/CSSParser.cpp: Ditto.
+        (WebCore::CSSParser::parseGridBreadth):
+        (WebCore::CSSParser::detectNumberToken):
+        * css/CSSParserValues.cpp: Added FR support.
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserString::operator[]):
+        (WebCore::CSSParserString::equalIgnoringCase):
+        * css/CSSPrimitiveValue.cpp: Added FR support.
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::customCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        * css/CSSPrimitiveValue.h: Added a couple of missing const.
+        (WebCore::CSSPrimitiveValue::isFlex):
+        * css/StyleResolver.cpp: Added FR support.
+        (WebCore::createGridTrackBreadth):
+        (WebCore::createGridTrackSize):
+        * rendering/RenderGrid.cpp:
+        (WebCore::GridTrackForNormalization::GridTrackForNormalization):
+        New helper struct to ease the computation of track breadths with
+        flexible lengths.
+        (WebCore::GridTrackForNormalization::operator=):
+        (WebCore::RenderGrid::computePreferredTrackWidth): Replaced Length by GridLength.
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks): Grow grid lines
+        having a fraction as the MaxTrackSizingFunction.
+        (WebCore::RenderGrid::computeUsedBreadthOfMinLength): Replaced Length by GridLength.
+        (WebCore::RenderGrid::computeUsedBreadthOfMaxLength): Ditto.
+        (WebCore::sortByGridNormalizedFlexValue):
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth): Increase
+        the fraction value while updating the available space to account
+        for processed grid tracks.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::distributeSpaceToTracks): Never shrink track sizes.
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridLength.h: Added.
+        (WebCore::GridLength::GridLength):
+        (WebCore::GridLength::isLength):
+        (WebCore::GridLength::isFlex):
+        (WebCore::GridLength::length):
+        (WebCore::GridLength::flex):
+        (WebCore::GridLength::setFlex):
+        (WebCore::GridLength::operator==):
+        * rendering/style/GridTrackSize.h: Replaced Length by GridLength.
+        (WebCore::GridTrackSize::length):
+        (WebCore::GridTrackSize::setLength):
+        (WebCore::GridTrackSize::minTrackBreadth):
+        (WebCore::GridTrackSize::maxTrackBreadth):
+        (WebCore::GridTrackSize::setMinMax):
+        (WebCore::GridTrackSize::hasMinOrMaxContentMinTrackBreadth):
+        (WebCore::GridTrackSize::hasMaxContentMinTrackBreadth):
+        (WebCore::GridTrackSize::hasMinOrMaxContentMaxTrackBreadth):
+        (WebCore::GridTrackSize::hasMaxContentMaxTrackBreadth):
+
 2013-10-14  peavo@outlook.com  <peavo@outlook.com>
 
         Broken text rendering when input field has selection.

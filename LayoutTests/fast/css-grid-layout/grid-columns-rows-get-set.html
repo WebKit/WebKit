@@ -52,6 +52,10 @@ if (window.testRunner)
     -webkit-grid-definition-columns: -webkit-max-content;
     -webkit-grid-definition-rows: -webkit-max-content;
 }
+.gridWithFraction {
+    -webkit-grid-definition-columns: 1fr;
+    -webkit-grid-definition-rows: 2fr;
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -67,6 +71,7 @@ if (window.testRunner)
 <div class="grid gridWithMinMax" id="gridWithMinMax"></div>
 <div class="grid gridWithMinContent" id="gridWithMinContent"></div>
 <div class="grid gridWithMaxContent" id="gridWithMaxContent"></div>
+<div class="grid gridWithFraction" id="gridWithFraction"></div>
 <script src="resources/grid-columns-rows-get-set.js"></script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

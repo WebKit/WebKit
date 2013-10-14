@@ -94,6 +94,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_VH:
     case CSSPrimitiveValue::CSS_VMIN:
     case CSSPrimitiveValue::CSS_VMAX:
+    case CSSPrimitiveValue::CSS_FR:
         return true;
     case CSSPrimitiveValue::CSS_ATTR:
     case CSSPrimitiveValue::CSS_COUNTER:
@@ -510,6 +511,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_DPPX:
     case CSS_DPI:
     case CSS_DPCM:
+    case CSS_FR:
     case CSS_IDENT:
     case CSS_RGBCOLOR:
     case CSS_DIMENSION:
@@ -1036,8 +1038,12 @@ String CSSPrimitiveValue::customCSSText() const
         case CSS_TURN:
             text = formatNumber(m_value.num, "turn");
             break;
+        case CSS_FR:
+            text = formatNumber(m_value.num, "fr");
+            break;
         case CSS_DIMENSION:
-            // FIXME
+            // FIXME: We currently don't handle CSS_DIMENSION properly as we don't store
+            // the actual dimension, just the numeric value as a string.
             break;
         case CSS_STRING:
             text = quoteCSSStringIfNeeded(m_value.string);
@@ -1337,6 +1343,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     case CSS_DPI:
     case CSS_DPCM:
 #endif
+    case CSS_FR:
         result = CSSPrimitiveValue::create(m_value.num, static_cast<UnitTypes>(m_primitiveUnitType));
         break;
     case CSS_PROPERTY_ID:
@@ -1399,6 +1406,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_VH:
     case CSS_VMIN:
     case CSS_DIMENSION:
+    case CSS_FR:
         return m_value.num == other.m_value.num;
     case CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);

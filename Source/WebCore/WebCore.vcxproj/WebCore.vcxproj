@@ -19565,6 +19565,7 @@
     <ClInclude Include="..\rendering\style\DataRef.h" />
     <ClInclude Include="..\rendering\style\FillLayer.h" />
     <ClInclude Include="..\rendering\style\GridCoordinate.h" />
+    <ClInclude Include="..\rendering\style\GridLength.h" />
     <ClInclude Include="..\rendering\style\GridPosition.h" />
     <ClInclude Include="..\rendering\style\GridTrackSize.h" />
     <ClInclude Include="..\rendering\style\KeyframeList.h" />

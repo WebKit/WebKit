@@ -9561,6 +9561,9 @@
     <ClInclude Include="..\rendering\style\GridCoordinate.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\style\GridLength.h">
+      <Filter>rendering\style</Filter>
+    </ClInclude>
     <ClInclude Include="..\rendering\style\GridPosition.h">
       <Filter>rendering\style</Filter>
     </ClInclude>

@@ -101,6 +101,7 @@ public:
         CSS_DPPX = 30,
         CSS_DPI = 31,
         CSS_DPCM = 32,
+        CSS_FR = 33,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
 #if ENABLE(DASHBOARD_SUPPORT)
         CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
@@ -208,6 +209,7 @@ public:
     bool isViewportPercentageMax() const { return m_primitiveUnitType == CSS_VMAX; }
     bool isViewportPercentageMin() const { return m_primitiveUnitType == CSS_VMIN; }
     bool isValueID() const { return m_primitiveUnitType == CSS_VALUE_ID; }
+    bool isFlex() const { return primitiveType() == CSS_FR; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(new CSSPrimitiveValue(valueID)); }
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(new CSSPrimitiveValue(propertyID)); }

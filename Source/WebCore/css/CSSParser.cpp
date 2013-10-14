@@ -5002,6 +5002,16 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue* curren
     if (currentValue->id == CSSValueWebkitMinContent || currentValue->id == CSSValueWebkitMaxContent)
         return cssValuePool().createIdentifierValue(currentValue->id);
 
+    if (currentValue->unit == CSSPrimitiveValue::CSS_FR) {
+        double flexValue = currentValue->fValue;
+
+        // Fractional unit is a non-negative dimension.
+        if (flexValue <= 0)
+            return 0;
+
+        return cssValuePool().createValue(flexValue, CSSPrimitiveValue::CSS_FR);
+    }
+
     if (!validUnit(currentValue, FNonNeg | FLength | FPercent))
         return 0;
 
@@ -10793,6 +10803,10 @@ inline void CSSParser::detectNumberToken(CharacterType* type, int length)
         }
         return;
 
+    case 'f':
+        if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'r'))
+            m_token = FR;
+        return;
     case 'g':
         if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'r')
                 && isASCIIAlphaCaselessEqual(type[2], 'a') && isASCIIAlphaCaselessEqual(type[3], 'd'))
