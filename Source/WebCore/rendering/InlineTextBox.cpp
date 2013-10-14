@@ -610,7 +610,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     int sPos = 0;
     int ePos = 0;
-    if (paintSelectedTextOnly || paintSelectedTextSeparately)
+    if (haveSelection && (paintSelectedTextOnly || paintSelectedTextSeparately))
         selectionStartEnd(sPos, ePos);
 
     if (m_truncation != cNoTruncation) {

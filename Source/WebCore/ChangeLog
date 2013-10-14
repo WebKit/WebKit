@@ -1,3 +1,16 @@
+2013-10-14  peavo@outlook.com  <peavo@outlook.com>
+
+        Broken text rendering when input field has selection.
+        https://bugs.webkit.org/show_bug.cgi?id=122716
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/text/text-rendering-with-input-selection.html.
+               fast/text/text-rendering-with-input-selection-expected.html.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Check that text has selection.
+
 2013-10-14  Zalan Bujtas  <zalan@apple.com>
 
         Unexpected word wrapping for wrapped content then raw content.
