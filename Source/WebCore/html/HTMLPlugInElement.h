@@ -119,7 +119,7 @@ private:
 
 void isHTMLPlugInElement(const HTMLPlugInElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLPlugInElement(const Node& node) { return node.isPluginElement(); }
-ELEMENT_TYPE_CASTS(HTMLPlugInElement)
+NODE_TYPE_CASTS(HTMLPlugInElement)
 
 } // namespace WebCore
 

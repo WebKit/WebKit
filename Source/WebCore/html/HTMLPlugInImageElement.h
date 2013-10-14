@@ -169,7 +169,7 @@ private:
 void isHTMLPlugInImageElement(const HTMLPlugInImageElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLPlugInImageElement(const HTMLPlugInElement& element) { return element.isPlugInImageElement(); }
 inline bool isHTMLPlugInImageElement(const Node& node) { return node.isPluginElement() && toHTMLPlugInElement(node).isPlugInImageElement(); }
-ELEMENT_TYPE_CASTS(HTMLPlugInImageElement)
+NODE_TYPE_CASTS(HTMLPlugInImageElement)
 
 } // namespace WebCore
 

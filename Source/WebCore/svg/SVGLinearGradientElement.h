@@ -55,7 +55,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGLinearGradientElement)
+NODE_TYPE_CASTS(SVGLinearGradientElement)
 
 } // namespace WebCore
 

@@ -70,7 +70,7 @@ private:
     Shape m_shape;
 };
 
-ELEMENT_TYPE_CASTS(HTMLAreaElement)
+NODE_TYPE_CASTS(HTMLAreaElement)
 
 } //namespace
 

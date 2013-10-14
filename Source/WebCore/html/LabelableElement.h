@@ -55,7 +55,7 @@ inline bool isLabelableElement(const HTMLElement& element) { return element.isLa
 inline bool isLabelableElement(const Node& node) { return node.isHTMLElement() && toHTMLElement(node).isLabelable(); }
 template <> inline bool isElementOfType<const LabelableElement>(const Element& element) { return isLabelableElement(element); }
 
-ELEMENT_TYPE_CASTS(LabelableElement)
+NODE_TYPE_CASTS(LabelableElement)
 
 } // namespace WebCore
 

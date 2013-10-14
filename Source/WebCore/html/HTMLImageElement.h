@@ -123,7 +123,7 @@ private:
     AtomicString m_lowercasedUsemap;
 };
 
-ELEMENT_TYPE_CASTS(HTMLImageElement)
+NODE_TYPE_CASTS(HTMLImageElement)
 
 } //namespace
 

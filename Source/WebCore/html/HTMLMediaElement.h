@@ -816,7 +816,7 @@ inline bool isHTMLMediaElement(const Element& element) { return element.isMediaE
 inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() && toElement(node).isMediaElement(); }
 template <> inline bool isElementOfType<const HTMLMediaElement>(const Element& element) { return element.isMediaElement(); }
 
-ELEMENT_TYPE_CASTS(HTMLMediaElement)
+NODE_TYPE_CASTS(HTMLMediaElement)
 
 } //namespace
 

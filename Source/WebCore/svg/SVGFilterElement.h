@@ -76,7 +76,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGFilterElement)
+NODE_TYPE_CASTS(SVGFilterElement)
 
 }
 

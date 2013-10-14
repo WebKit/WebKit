@@ -70,7 +70,7 @@ private:
 
 void isHTMLFrameOwnerElement(const HTMLFrameOwnerElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLFrameOwnerElement(const Node& node) { return node.isFrameOwnerElement(); }
-ELEMENT_TYPE_CASTS(HTMLFrameOwnerElement)
+NODE_TYPE_CASTS(HTMLFrameOwnerElement)
 
 class SubframeLoadingDisabler {
 public:

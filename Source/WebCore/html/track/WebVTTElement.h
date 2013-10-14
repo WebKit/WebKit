@@ -82,7 +82,7 @@ private:
 
 void isWebVTTElement(const WebVTTElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isWebVTTElement(const Node& node) { return node.isWebVTTElement(); }
-ELEMENT_TYPE_CASTS(WebVTTElement)
+NODE_TYPE_CASTS(WebVTTElement)
 
 } // namespace WebCore
 

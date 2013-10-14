@@ -63,7 +63,7 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-ELEMENT_TYPE_CASTS(HTMLOptGroupElement)
+NODE_TYPE_CASTS(HTMLOptGroupElement)
 
 } //namespace
 

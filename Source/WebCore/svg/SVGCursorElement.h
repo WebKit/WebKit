@@ -73,7 +73,7 @@ private:
     HashSet<SVGElement*> m_clients;
 };
 
-ELEMENT_TYPE_CASTS(SVGCursorElement)
+NODE_TYPE_CASTS(SVGCursorElement)
 
 } // namespace WebCore
 

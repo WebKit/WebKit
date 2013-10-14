@@ -42,7 +42,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };
 
-ELEMENT_TYPE_CASTS(SVGHKernElement)
+NODE_TYPE_CASTS(SVGHKernElement)
 
 } // namespace WebCore
 

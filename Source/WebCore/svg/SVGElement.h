@@ -211,7 +211,7 @@ void isSVGElement(const SVGElement&); // Catch unnecessary runtime check of type
 inline bool isSVGElement(const Node& node) { return node.isSVGElement(); }
 template <> inline bool isElementOfType<const SVGElement>(const Element& element) { return element.isSVGElement(); }
 
-ELEMENT_TYPE_CASTS(SVGElement)
+NODE_TYPE_CASTS(SVGElement)
 
 }
 

@@ -66,7 +66,7 @@ private:
     SVGStringList m_viewTarget;
 };
 
-ELEMENT_TYPE_CASTS(SVGViewElement)
+NODE_TYPE_CASTS(SVGViewElement)
 
 } // namespace WebCore
 

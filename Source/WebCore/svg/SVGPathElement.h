@@ -131,7 +131,7 @@ private:
     bool m_isAnimValObserved;
 };
 
-ELEMENT_TYPE_CASTS(SVGPathElement)
+NODE_TYPE_CASTS(SVGPathElement)
 
 } // namespace WebCore
 

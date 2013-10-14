@@ -101,7 +101,7 @@ private:
     bool m_isGlyphCacheValid;
 };
 
-ELEMENT_TYPE_CASTS(SVGFontElement)
+NODE_TYPE_CASTS(SVGFontElement)
 
 } // namespace WebCore
 

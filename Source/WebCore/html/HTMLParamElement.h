@@ -43,7 +43,7 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 };
 
-ELEMENT_TYPE_CASTS(HTMLParamElement)
+NODE_TYPE_CASTS(HTMLParamElement)
 
 } // namespace WebCore
 

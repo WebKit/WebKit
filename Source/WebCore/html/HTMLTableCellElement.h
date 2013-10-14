@@ -64,7 +64,7 @@ private:
 
 void isHTMLTableCellElement(const HTMLTableCellElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLTableCellElement(const Node& node) { return node.hasTagName(HTMLNames::tdTag) || node.hasTagName(HTMLNames::thTag); }
-ELEMENT_TYPE_CASTS(HTMLTableCellElement)
+NODE_TYPE_CASTS(HTMLTableCellElement)
 
 } // namespace
 

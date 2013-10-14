@@ -79,7 +79,7 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
 
 void isPseudoElement(const PseudoElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isPseudoElement(const Node& node) { return node.isPseudoElement(); }
-ELEMENT_TYPE_CASTS(PseudoElement)
+NODE_TYPE_CASTS(PseudoElement)
 
 } // namespace
 

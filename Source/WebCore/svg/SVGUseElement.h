@@ -128,7 +128,7 @@ private:
     Timer<SVGElement> m_svgLoadEventTimer;
 };
 
-ELEMENT_TYPE_CASTS(SVGUseElement)
+NODE_TYPE_CASTS(SVGUseElement)
 
 }
 

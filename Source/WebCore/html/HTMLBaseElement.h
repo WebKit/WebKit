@@ -44,7 +44,7 @@ private:
     virtual void removedFrom(ContainerNode&) OVERRIDE;
 };
 
-ELEMENT_TYPE_CASTS(HTMLBaseElement)
+NODE_TYPE_CASTS(HTMLBaseElement)
 
 } // namespace
 

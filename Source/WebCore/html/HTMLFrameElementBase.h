@@ -85,7 +85,7 @@ void isHTMLFrameElementBase(const HTMLFrameElementBase&); // Catch unnecessary r
 inline bool isHTMLFrameElementBase(const Element& element) { return isHTMLFrameElement(element) || isHTMLIFrameElement(element); }
 inline bool isHTMLFrameElementBase(const Node& node) { return node.isElementNode() && isHTMLFrameElementBase(toElement(node)); }
 
-ELEMENT_TYPE_CASTS(HTMLFrameElementBase)
+NODE_TYPE_CASTS(HTMLFrameElementBase)
 
 } // namespace WebCore
 

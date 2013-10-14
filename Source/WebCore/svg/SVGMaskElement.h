@@ -69,7 +69,7 @@ private:
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
-ELEMENT_TYPE_CASTS(SVGMaskElement)
+NODE_TYPE_CASTS(SVGMaskElement)
 
 }
 

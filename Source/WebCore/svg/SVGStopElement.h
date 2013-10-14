@@ -50,7 +50,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGStopElement)
+NODE_TYPE_CASTS(SVGStopElement)
 
 } // namespace WebCore
 

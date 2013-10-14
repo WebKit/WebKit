@@ -57,7 +57,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGLineElement)
+NODE_TYPE_CASTS(SVGLineElement)
 
 } // namespace WebCore
 

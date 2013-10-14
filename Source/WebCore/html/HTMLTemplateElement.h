@@ -54,7 +54,7 @@ private:
     mutable RefPtr<DocumentFragment> m_content;
 };
 
-ELEMENT_TYPE_CASTS(HTMLTemplateElement)
+NODE_TYPE_CASTS(HTMLTemplateElement)
 
 } // namespace WebCore
 

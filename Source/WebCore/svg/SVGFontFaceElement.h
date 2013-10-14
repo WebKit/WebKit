@@ -66,7 +66,7 @@ private:
     SVGFontElement* m_fontElement;
 };
 
-ELEMENT_TYPE_CASTS(SVGFontFaceElement)
+NODE_TYPE_CASTS(SVGFontFaceElement)
 
 } // namespace WebCore
 

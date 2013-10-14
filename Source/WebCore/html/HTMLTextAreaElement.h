@@ -126,7 +126,7 @@ private:
     mutable bool m_wasModifiedByUser;
 };
 
-ELEMENT_TYPE_CASTS(HTMLTextAreaElement)
+NODE_TYPE_CASTS(HTMLTextAreaElement)
 
 } //namespace
 

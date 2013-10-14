@@ -43,7 +43,7 @@ private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);
 };
 
-ELEMENT_TYPE_CASTS(HTMLAudioElement)
+NODE_TYPE_CASTS(HTMLAudioElement)
 
 } //namespace
 

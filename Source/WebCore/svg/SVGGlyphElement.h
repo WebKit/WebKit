@@ -57,7 +57,7 @@ private:
     void invalidateGlyphCache();
 };
 
-ELEMENT_TYPE_CASTS(SVGGlyphElement)
+NODE_TYPE_CASTS(SVGGlyphElement)
 
 } // namespace WebCore
 

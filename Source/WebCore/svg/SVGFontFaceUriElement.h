@@ -50,7 +50,7 @@ private:
     CachedResourceHandle<CachedFont> m_cachedFont;
 };
 
-ELEMENT_TYPE_CASTS(SVGFontFaceUriElement)
+NODE_TYPE_CASTS(SVGFontFaceUriElement)
 
 } // namespace WebCore
 

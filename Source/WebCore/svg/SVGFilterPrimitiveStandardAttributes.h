@@ -88,7 +88,7 @@ inline bool isSVGFilterPrimitiveStandardAttributes(const SVGElement& element) { 
 inline bool isSVGFilterPrimitiveStandardAttributes(const Node& node) { return node.isSVGElement() && toSVGElement(node).isFilterEffect(); }
 template <> inline bool isElementOfType<const SVGFilterPrimitiveStandardAttributes>(const Element& element) { return isSVGFilterPrimitiveStandardAttributes(element); }
 
-ELEMENT_TYPE_CASTS(SVGFilterPrimitiveStandardAttributes)
+NODE_TYPE_CASTS(SVGFilterPrimitiveStandardAttributes)
 
 
 } // namespace WebCore

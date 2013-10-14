@@ -54,7 +54,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGAltGlyphElement)
+NODE_TYPE_CASTS(SVGAltGlyphElement)
 
 } // namespace WebCore
 

@@ -1,3 +1,13 @@
+2013-10-13  Sam Weinig  <sam@webkit.org>
+
+        Merge NODE_TYPE_CASTS and ELEMENT_TYPE_CASTS
+        https://bugs.webkit.org/show_bug.cgi?id=122735
+
+        Reviewed by Antti Koivisto.
+
+        NODE_TYPE_CASTS and ELEMENT_TYPE_CASTS are identical. Let them become one
+        with one another.
+
 2013-10-13  Andreas Kling  <akling@apple.com>
 
         Uncrashify Document::head() too. (Why am I even awake?)

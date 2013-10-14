@@ -67,7 +67,7 @@ private:
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 };
 
-ELEMENT_TYPE_CASTS(HTMLScriptElement)
+NODE_TYPE_CASTS(HTMLScriptElement)
 
 } //namespace
 

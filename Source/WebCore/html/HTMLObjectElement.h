@@ -109,7 +109,7 @@ private:
     bool m_useFallbackContent : 1;
 };
 
-ELEMENT_TYPE_CASTS(HTMLObjectElement)
+NODE_TYPE_CASTS(HTMLObjectElement)
 
 }
 

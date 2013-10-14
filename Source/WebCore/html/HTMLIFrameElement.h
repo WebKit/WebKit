@@ -47,7 +47,7 @@ private:
     virtual void didRecalcStyle(Style::Change) OVERRIDE;
 };
 
-ELEMENT_TYPE_CASTS(HTMLIFrameElement)
+NODE_TYPE_CASTS(HTMLIFrameElement)
 
 } // namespace WebCore
 

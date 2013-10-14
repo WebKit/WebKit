@@ -139,7 +139,7 @@ private:
 void isHTMLTextFormControlElement(const HTMLTextFormControlElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isHTMLTextFormControlElement(const Element& element) { return element.isTextFormControl(); }
 inline bool isHTMLTextFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isTextFormControl(); }
-ELEMENT_TYPE_CASTS(HTMLTextFormControlElement)
+NODE_TYPE_CASTS(HTMLTextFormControlElement)
 
 HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 

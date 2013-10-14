@@ -87,7 +87,7 @@ private:
     Timer<SVGElement> m_svgLoadEventTimer;
 };
 
-ELEMENT_TYPE_CASTS(SVGScriptElement)
+NODE_TYPE_CASTS(SVGScriptElement)
 
 } // namespace WebCore
 

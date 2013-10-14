@@ -36,7 +36,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };
 
-ELEMENT_TYPE_CASTS(SVGMissingGlyphElement)
+NODE_TYPE_CASTS(SVGMissingGlyphElement)
 
 } // namespace WebCore
 

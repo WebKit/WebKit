@@ -56,7 +56,7 @@ private:
 void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.
 inline bool isMathMLElement(const Element& element) { return element.isMathMLElement(); }
 inline bool isMathMLElement(const Node& node) { return node.isElementNode() && toElement(node).isMathMLElement(); }
-ELEMENT_TYPE_CASTS(MathMLElement)
+NODE_TYPE_CASTS(MathMLElement)
 
 }
 

@@ -78,7 +78,7 @@ private:
 
 void isSVGAnimateElement(const SVGAnimateElement&); // Catch unnecessary runtime check of type known at compile time.
 bool isSVGAnimateElement(const Node&);
-ELEMENT_TYPE_CASTS(SVGAnimateElement)
+NODE_TYPE_CASTS(SVGAnimateElement)
 
 } // namespace WebCore
 

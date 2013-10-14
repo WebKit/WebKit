@@ -178,7 +178,7 @@ inline bool isHTMLFormControlElement(const Element& element) { return element.is
 inline bool isHTMLFormControlElement(const Node& node) { return node.isElementNode() && toElement(node).isFormControlElement(); }
 template <> inline bool isElementOfType<const HTMLFormControlElement>(const Element& element) { return isHTMLFormControlElement(element); }
 
-ELEMENT_TYPE_CASTS(HTMLFormControlElement)
+NODE_TYPE_CASTS(HTMLFormControlElement)
 
 } // namespace
 

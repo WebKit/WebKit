@@ -87,7 +87,7 @@ private:
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
-ELEMENT_TYPE_CASTS(SVGPatternElement)
+NODE_TYPE_CASTS(SVGPatternElement)
 
 } // namespace WebCore
 

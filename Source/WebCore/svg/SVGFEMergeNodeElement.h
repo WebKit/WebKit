@@ -45,7 +45,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGFEMergeNodeElement)
+NODE_TYPE_CASTS(SVGFEMergeNodeElement)
 
 } // namespace WebCore
 

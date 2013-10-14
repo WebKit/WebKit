@@ -238,7 +238,7 @@ inline bool isSVGSMILElement(const SVGElement& element) { return element.isSMILE
 inline bool isSVGSMILElement(const Node& node) { return node.isSVGElement() && toSVGElement(node).isSMILElement(); }
 template <> inline bool isElementOfType<const SVGSMILElement>(const Element& element) { return isSVGSMILElement(element); }
 
-ELEMENT_TYPE_CASTS(SVGSMILElement)
+NODE_TYPE_CASTS(SVGSMILElement)
 
 }
 

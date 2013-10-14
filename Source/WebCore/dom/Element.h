@@ -684,32 +684,7 @@ private:
 
 inline bool isElement(const Node& node) { return node.isElementNode(); }
 
-
-#define ELEMENT_TYPE_CASTS(ElementClassName) \
-inline const ElementClassName* to##ElementClassName(const Node* node) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##ElementClassName(*node)); \
-    return static_cast<const ElementClassName*>(node); \
-} \
-inline ElementClassName* to##ElementClassName(Node* node) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##ElementClassName(*node)); \
-    return static_cast<ElementClassName*>(node); \
-} \
-inline const ElementClassName& to##ElementClassName(const Node& node) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##ElementClassName(node)); \
-    return static_cast<const ElementClassName&>(node); \
-} \
-inline ElementClassName& to##ElementClassName(Node& node) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##ElementClassName(node)); \
-    return static_cast<ElementClassName&>(node); \
-} \
-void to##ElementClassName(const ElementClassName*); \
-void to##ElementClassName(const ElementClassName&);
-
-ELEMENT_TYPE_CASTS(Element)
+NODE_TYPE_CASTS(Element)
 
 template <typename Type> bool isElementOfType(const Element&);
 template <typename Type> inline bool isElementOfType(const Node& node) { return node.isElementNode() && isElementOfType<const Type>(toElement(node)); }

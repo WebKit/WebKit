@@ -166,7 +166,7 @@ private:
     bool m_wasDemoted;
 };
 
-ELEMENT_TYPE_CASTS(HTMLFormElement)
+NODE_TYPE_CASTS(HTMLFormElement)
 
 } // namespace WebCore
 

@@ -100,7 +100,7 @@ private:
     RefPtr<StylePropertySet> m_sharedCellStyle;
 };
 
-ELEMENT_TYPE_CASTS(HTMLTableElement)
+NODE_TYPE_CASTS(HTMLTableElement)
 
 } //namespace
 

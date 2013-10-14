@@ -67,7 +67,7 @@ protected:
 
 void isSVGPolyElement(const SVGPolyElement&); // Catch unnecessary runtime check of type known at compile time.
 bool isSVGPolyElement(const Node&);
-ELEMENT_TYPE_CASTS(SVGPolyElement)
+NODE_TYPE_CASTS(SVGPolyElement)
 
 } // namespace WebCore
 

@@ -56,7 +56,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-ELEMENT_TYPE_CASTS(SVGClipPathElement)
+NODE_TYPE_CASTS(SVGClipPathElement)
 
 }
 

@@ -39,7 +39,7 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 };
 
-ELEMENT_TYPE_CASTS(SVGFontFaceNameElement)
+NODE_TYPE_CASTS(SVGFontFaceNameElement)
 
 } // namespace WebCore
 

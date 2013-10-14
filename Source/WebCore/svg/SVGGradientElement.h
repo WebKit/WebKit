@@ -110,7 +110,7 @@ private:
 
 void isSVGGradientElement(const SVGGradientElement&); // Catch unnecessary runtime check of type known at compile time.
 bool isSVGGradientElement(const Node&);
-ELEMENT_TYPE_CASTS(SVGGradientElement)
+NODE_TYPE_CASTS(SVGGradientElement)
 
 } // namespace WebCore
 

@@ -186,7 +186,7 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 
-ELEMENT_TYPE_CASTS(HTMLCanvasElement)
+NODE_TYPE_CASTS(HTMLCanvasElement)
 
 } //namespace
 
