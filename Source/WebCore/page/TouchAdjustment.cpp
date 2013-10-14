@@ -157,7 +157,7 @@ static inline void appendContextSubtargetsForNode(Node* node, SubtargetGeometryL
         return appendBasicSubtargetsForNode(node, subtargets);
 
     Text* textNode = static_cast<WebCore::Text*>(node);
-    RenderText* textRenderer = static_cast<RenderText*>(textNode->renderer());
+    RenderText* textRenderer = textNode->renderer();
 
     if (textRenderer->frame().editor().behavior().shouldSelectOnContextualMenuClick()) {
         // Make subtargets out of every word.
@@ -169,8 +169,7 @@ static inline void appendContextSubtargetsForNode(Node* node, SubtargetGeometryL
         int offset;
         while ((offset = textBreakNext(wordIterator)) != -1) {
             if (isWordTextBreak(wordIterator)) {
-                Vector<FloatQuad> quads;
-                textRenderer->absoluteQuadsForRange(quads, lastOffset, offset);
+                Vector<FloatQuad> quads = textRenderer->absoluteQuadsForRange(lastOffset, offset);
                 appendQuadsToSubtargetList(quads, textNode, subtargets);
             }
             lastOffset = offset;
@@ -200,8 +199,7 @@ static inline void appendContextSubtargetsForNode(Node* node, SubtargetGeometryL
             ASSERT_NOT_REACHED();
             return;
         }
-        Vector<FloatQuad> quads;
-        textRenderer->absoluteQuadsForRange(quads, startPos, endPos);
+        Vector<FloatQuad> quads = textRenderer->absoluteQuadsForRange(startPos, endPos);
         appendQuadsToSubtargetList(quads, textNode, subtargets);
     }
 }
