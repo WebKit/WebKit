@@ -1,3 +1,16 @@
+2013-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        COLLECT_ON_EVERY_ALLOCATION causes assertion failures
+        https://bugs.webkit.org/show_bug.cgi?id=122652
+
+        Reviewed by Filip Pizlo.
+
+        COLLECT_ON_EVERY_ALLOCATION wasn't accounting for the new GC deferral mechanism,
+        so we would end up ASSERTing during garbage collection.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+
 2013-10-11  Oliver Hunt  <oliver@apple.com>
 
         Separate out array iteration intrinsics

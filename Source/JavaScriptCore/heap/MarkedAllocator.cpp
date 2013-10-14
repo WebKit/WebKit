@@ -78,7 +78,8 @@ void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
 #if COLLECT_ON_EVERY_ALLOCATION
-    m_heap->collectAllGarbage();
+    if (!m_heap->isDeferred())
+        m_heap->collectAllGarbage();
     ASSERT(m_heap->m_operationInProgress == NoOperation);
 #endif
     
