@@ -29,7 +29,7 @@
 #ifndef Crypto_h
 #define Crypto_h
 
-#include "ScriptWrappable.h"
+#include "ContextDestructionObserver.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,14 +42,19 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class Crypto : public ScriptWrappable, public RefCounted<Crypto> {
+class Document;
+
+class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
-    static PassRefPtr<Crypto> create() { return adoptRef(new Crypto()); }
+    static PassRefPtr<Crypto> create(Document& document) { return adoptRef(new Crypto(document)); }
+    virtual ~Crypto();
+
+    Document* document() const;
 
     void getRandomValues(JSC::ArrayBufferView*, ExceptionCode&);
 
 private:
-    Crypto();
+    Crypto(Document&);
 };
 
 }

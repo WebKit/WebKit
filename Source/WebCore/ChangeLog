@@ -1,3 +1,30 @@
+2013-10-14  Alexey Proskuryakov  <ap@apple.com>
+
+        window.crypto doesn't preserve custom properties
+        https://bugs.webkit.org/show_bug.cgi?id=122770
+
+        Reviewed by Mark Hahnenberg.
+
+        Test: security/crypto-gc.html
+
+        Generate isReachableFromOpaqueRoots that makes Crypto live as long as the document
+        lives (because that's when it's observable through window object).
+
+        * page/Crypto.cpp:
+        (WebCore::Crypto::Crypto):
+        (WebCore::Crypto::~Crypto):
+        (WebCore::Crypto::document):
+        * page/Crypto.h:
+        (WebCore::Crypto::create):
+        Made Crypto a ContextDestructionObserver, so that it can report its document to bindings.
+        Removed ScriptWrappable, because it seems to have served no purpose in this class.
+
+        * page/Crypto.idl: Added GenerateIsReachable. Removed ImplementationLacksVTable,
+        because the class now has a vtable, and can be checked for bindings integrity.
+
+        * page/DOMWindow.cpp: (WebCore::DOMWindow::crypto): Pass a document when creating
+        crypto.
+
 2013-10-14  Andreas Kling  <akling@apple.com>
 
         CTTE: NamedNodeMap always has a corresponding Element.

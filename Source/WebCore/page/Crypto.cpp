@@ -30,8 +30,8 @@
 #include "config.h"
 #include "Crypto.h"
 
+#include "Document.h"
 #include "ExceptionCode.h"
-#include "ScriptWrappableInlines.h"
 #include <runtime/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
@@ -46,8 +46,18 @@ bool isIntegerArray(ArrayBufferView* array)
 
 }
 
-Crypto::Crypto()
+Crypto::Crypto(Document& document)
+    : ContextDestructionObserver(&document)
 {
+}
+
+Crypto::~Crypto()
+{
+}
+
+Document* Crypto::document() const
+{
+    return toDocument(scriptExecutionContext());
 }
 
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)

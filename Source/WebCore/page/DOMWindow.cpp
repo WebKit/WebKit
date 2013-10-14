@@ -591,10 +591,11 @@ History* DOMWindow::history() const
 
 Crypto* DOMWindow::crypto() const
 {
+    // FIXME: Why is crypto not available when the window is not currently displayed in a frame?
     if (!isCurrentlyDisplayedInFrame())
         return 0;
     if (!m_crypto)
-        m_crypto = Crypto::create();
+        m_crypto = Crypto::create(*document());
     return m_crypto.get();
 }
 
