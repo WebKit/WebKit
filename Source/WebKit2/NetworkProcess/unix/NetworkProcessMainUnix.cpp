@@ -29,6 +29,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include "WebKit2Initialize.h"
 #include <WebCore/RunLoop.h>
@@ -37,6 +38,7 @@
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <wtf/MainThread.h>
+#include <wtf/gobject/GRefPtr.h>
 
 #if PLATFORM(EFL)
 #include <Ecore.h>
@@ -61,7 +63,18 @@ WK_EXPORT int NetworkProcessMain(int argc, char* argv[])
 
     InitializeWebKit2();
 
-    // FIXME: handle proxy settings.
+#if USE(SOUP)
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+#if PLATFORM(EFL)
+    // Only for EFL because GTK port uses the default resolver, which uses GIO's proxy resolver.
+    const char* httpProxy = getenv("http_proxy");
+    if (httpProxy) {
+        const char* noProxy = getenv("no_proxy");
+        GRefPtr<SoupProxyURIResolver> resolver = adoptGRef(soupProxyResolverWkNew(httpProxy, noProxy));
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolver.get()));
+    }
+#endif
+#endif
 
     int socket = atoi(argv[1]);
 

@@ -1,3 +1,25 @@
+2013-10-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2][Efl][Soup] Make NetworkProcessMainUnix handle proxy settings.
+        https://bugs.webkit.org/show_bug.cgi?id=118388
+
+        Reviewed by Carlos Garcia Campos.
+
+        Original patch by Kwang Yul Seo <skyul@company100.net> .
+
+        Proxy configuration should honor the no_proxy environment variable
+        same to WebProcess. It is necessary not to change the current behaviour.
+        See https://bugs.webkit.org/show_bug.cgi?id=91747 for details.
+
+        The following things were fixed by Csaba Osztrogonác:
+        - moved session variable before #if not to have conflict with https://bugs.webkit.org/show_bug.cgi?id=118343
+        - added GRefPtr.h include
+        - fixed ifdef guards
+
+        * NetworkProcess/unix/NetworkProcessMainUnix.cpp:
+        (WebKit::NetworkProcessMain):
+        Copied from WebProcessMainEfl.cpp.
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Deprecate or remove deleteAllValues functions; there are only a few call sites left
