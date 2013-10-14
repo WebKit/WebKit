@@ -109,7 +109,7 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
 
 RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
 {
-    RenderFullScreen* fullscreenRenderer = new (object->renderArena()) RenderFullScreen(document);
+    RenderFullScreen* fullscreenRenderer = new (*document.renderArena()) RenderFullScreen(document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
     if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();

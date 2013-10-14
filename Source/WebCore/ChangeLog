@@ -1,3 +1,17 @@
+2013-10-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r157408): Crashes in RenderFullScreen::wrapRenderer().
+
+        Unreviewed crash fix for these two tests:
+
+        - fullscreen/full-screen-restrictions.html
+        - fullscreen/empty-anonymous-block-continuation-crash.html
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::wrapRenderer):
+
+            Get the RenderArena from Document like we did before this patch.
+
 2013-10-14  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image valued shape-outside shapes should update the layout after the image has been loaded
