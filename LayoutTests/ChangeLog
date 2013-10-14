@@ -1,3 +1,15 @@
+2013-10-14  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Present replaced objects with 0xFFFC character
+        https://bugs.webkit.org/show_bug.cgi?id=122744
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added new accessibility expectation after r156532.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/accessibility/deleting-iframe-destroys-axcache-expected.txt: Added.
+
 2013-09-16  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Implement support for <flex>

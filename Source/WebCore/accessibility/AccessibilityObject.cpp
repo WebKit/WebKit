@@ -1960,7 +1960,7 @@ TextIteratorBehavior AccessibilityObject::textIteratorBehaviorForTextRange() con
 {
     TextIteratorBehavior behavior = TextIteratorIgnoresStyleVisibility;
     
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     // We need to emit replaced elements for GTK, and present
     // them with the 'object replacement character' (0xFFFC).
     behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsObjectReplacementCharacters);
