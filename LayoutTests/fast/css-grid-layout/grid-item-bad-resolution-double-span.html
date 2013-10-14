@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    display: -webkit-grid;
+    -webkit-grid-definition-rows: "firstRow" 10px 20px;
+    -webkit-grid-definition-columns: "firstColumn" 30px 40px;
+    -webkit-grid-auto-flow: row;
+}
+
+.bothSpanRow {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: span 5 "firstRow" / span 1;
+}
+
+.bothSpanColumn {
+    -webkit-grid-column: span / span 3;
+    -webkit-grid-row: 1;
+}
+
+.spanAutoRow {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: span 5 "firstRow" / auto;
+}
+
+.spanAutoColumn {
+    -webkit-grid-column: span / auto;
+    -webkit-grid-row: 1;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>This test checks that we resolve 2 opposite 'span' / 'auto' positions by applying the auto-placement algorithm.</p>
+
+<div style="position: relative">
+    <div class="grid">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
+        <div class="sizedToGridArea bothSpanRow" data-offset-x="0" data-offset-y="10" data-expected-width="30" data-expected-height="20"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
+        <div class="sizedToGridArea bothSpanColumn" data-offset-x="30" data-offset-y="0" data-expected-width="40" data-expected-height="10"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
+        <div class="sizedToGridArea spanAutoRow" data-offset-x="0" data-offset-y="10" data-expected-width="30" data-expected-height="20"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="30" data-expected-height="10"></div>
+        <div class="sizedToGridArea spanAutoColumn" data-offset-x="30" data-offset-y="0" data-expected-width="40" data-expected-height="10"></div>
+    </div>
+</div>
+
+</body>
+</html>

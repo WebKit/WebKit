@@ -1,1 +1,20 @@
+2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] 2 span positions are not resolved correctly
+        https://bugs.webkit.org/show_bug.cgi?id=119717
+
+        Reviewed by Andreas Kling.
+
+        From Blink r155397 by <jchaffraix@chromium.org>
+
+        Added a new test case to check bad grid items resolution with two
+        opposite span positions. Also added a real grid container to check
+        also the resolution code path in some other tests.
+
+        * fast/css-grid-layout/grid-item-area-get-set.html: Added a grid container.
+        * fast/css-grid-layout/grid-item-bad-resolution-double-span-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-bad-resolution-double-span.html: Added.
+        * fast/css-grid-layout/grid-item-end-after-get-set.html: Added a grid container.
+        * fast/css-grid-layout/grid-item-start-before-get-set.html: Ditto.
+
 == Rolled over to ChangeLog-2013-10-13 ==

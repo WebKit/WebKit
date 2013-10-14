@@ -5,6 +5,7 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 #oneValueGridArea {
     -webkit-grid-area: 1;
@@ -25,10 +26,12 @@ if (window.testRunner)
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<div id="oneValueGridArea"></div>
-<div id="twoValueGridArea"></div>
-<div id="threeValueGridArea"></div>
-<div id="fourValueGridArea"></div>
+<div class="grid">
+    <div id="oneValueGridArea"></div>
+    <div id="twoValueGridArea"></div>
+    <div id="threeValueGridArea"></div>
+    <div id="fourValueGridArea"></div>
+</div>
 <script>
     description('This test checks that -webkit-grid-area is properly parsed and stored internally.');
     function valueOrDefaultGridPosition(gridPosition)

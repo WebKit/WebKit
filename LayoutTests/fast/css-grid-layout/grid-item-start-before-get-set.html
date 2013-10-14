@@ -5,6 +5,7 @@
 if (window.testRunner)
     testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
 </script>
+<link href="resources/grid.css" rel="stylesheet">
 <style>
 .gridItemWithPositiveInteger {
     -webkit-grid-column-start: 10;
@@ -35,14 +36,16 @@ if (window.testRunner)
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<!-- The first has no properties set on it. -->
-<div id="gridElement"></div>
-<div class="gridItemWithPositiveInteger" id="gridItemWithPositiveInteger"></div>
-<div class="gridItemWithNegativeInteger" id="gridItemWithNegativeInteger"></div>
-<div class="gridItemWithBeforeSpan" id="gridItemWithBeforeSpan"></div>
-<div class="gridItemWithAfterSpan" id="gridItemWithAfterSpan"></div>
-<div class="gridItemWithOnlySpan" id="gridItemWithOnlySpan"></div>
-<div class="gridItemWithAuto" id="gridItemWithAutoElement"></div>
+<div class="grid">
+    <!-- The first has no properties set on it. -->
+    <div id="gridElement"></div>
+    <div class="gridItemWithPositiveInteger" id="gridItemWithPositiveInteger"></div>
+    <div class="gridItemWithNegativeInteger" id="gridItemWithNegativeInteger"></div>
+    <div class="gridItemWithBeforeSpan" id="gridItemWithBeforeSpan"></div>
+    <div class="gridItemWithAfterSpan" id="gridItemWithAfterSpan"></div>
+    <div class="gridItemWithOnlySpan" id="gridItemWithOnlySpan"></div>
+    <div class="gridItemWithAuto" id="gridItemWithAutoElement"></div>
+</div>
 <script>
     description('Test that setting and getting grid-column-start and grid-row-start works as expected');
 

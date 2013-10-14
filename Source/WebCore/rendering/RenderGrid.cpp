@@ -729,7 +729,7 @@ PassOwnPtr<GridSpan> RenderGrid::resolveGridPositionsFromStyle(const RenderBox* 
     // We should NEVER see both spans as they should have been handled during style resolve.
     ASSERT(!initialPosition.isSpan() || !finalPosition.isSpan());
 
-    if (initialPosition.isAuto() && finalPosition.isAuto()) {
+    if (initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition()) {
         if (style()->gridAutoFlow() == AutoFlowNone)
             return adoptPtr(new GridSpan(0, 0));
 
