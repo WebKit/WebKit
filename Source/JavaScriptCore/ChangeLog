@@ -1,3 +1,59 @@
+2013-10-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        llint_slow_path_put_by_id can deadlock on a ConcurrentJITLock
+        https://bugs.webkit.org/show_bug.cgi?id=122667
+
+        Reviewed by Filip Pizlo.
+
+        The issue this patch is attempting to fix is that there are places in our codebase
+        where we acquire the ConcurrentJITLock for a particular CodeBlock, then we do some
+        operations that can initiate a garbage collection. Garbage collection then calls 
+        some methods of CodeBlock that also take the ConcurrentJITLock (because they don't
+        always necessarily run during garbage collection). This causes a deadlock.
+
+        To fix this issue, this patch adds a new RAII-style object (DisallowGC) that stores 
+        into a thread-local field that indicates that it is unsafe to perform any operation 
+        that could trigger garbage collection on the current thread. In debug builds, 
+        ConcurrentJITLocker contains one of these DisallowGC objects so that we can eagerly 
+        detect deadlocks.
+
+        This patch also adds a new type of ConcurrentJITLocker, GCSafeConcurrentJITLocker,
+        which uses the DeferGC mechanism to prevent collections from occurring while the 
+        lock is held.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/DeferGC.cpp: Added.
+        * heap/DeferGC.h:
+        (JSC::DisallowGC::DisallowGC):
+        (JSC::DisallowGC::~DisallowGC):
+        (JSC::DisallowGC::isGCDisallowedOnCurrentThread):
+        (JSC::DisallowGC::initialize):
+        * jit/JITStubs.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ConcurrentJITLock.h:
+        (JSC::ConcurrentJITLockerBase::ConcurrentJITLockerBase):
+        (JSC::ConcurrentJITLockerBase::~ConcurrentJITLockerBase):
+        (JSC::ConcurrentJITLockerBase::unlockEarly):
+        (JSC::GCSafeConcurrentJITLocker::GCSafeConcurrentJITLocker):
+        (JSC::ConcurrentJITLocker::ConcurrentJITLocker):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::createPropertyMap):
+        * runtime/Structure.h:
+
 2013-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should use the DFG's PutById IC

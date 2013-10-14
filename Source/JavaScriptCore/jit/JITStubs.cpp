@@ -125,7 +125,7 @@ void performPlatformSpecificJITAssertions(VM* vm)
 
 NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo* stubInfo)
 {
-    ConcurrentJITLocker locker(codeBlock->m_lock);
+    GCSafeConcurrentJITLocker locker(codeBlock->m_lock, callFrame->vm().heap);
     
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
@@ -555,7 +555,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         return JSValue::encode(result);
     }
 
-    ConcurrentJITLocker locker(codeBlock->m_lock);
+    GCSafeConcurrentJITLocker locker(codeBlock->m_lock, callFrame->vm().heap);
     
     Structure* structure = baseValue.asCell()->structure();
 

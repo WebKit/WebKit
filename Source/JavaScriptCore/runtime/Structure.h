@@ -393,7 +393,7 @@ private:
     PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(const ConcurrentJITLocker&, VM&, unsigned keyCount = 0);
+    void createPropertyMap(const GCSafeConcurrentJITLocker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
 
     bool despecifyFunction(VM&, PropertyName);

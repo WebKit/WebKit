@@ -873,6 +873,9 @@
     <ClCompile Include="..\heap\CodeBlockSet.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\DeferGC.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -1221,6 +1224,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\CopyWorkList.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\DeferGC.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\GCAssertions.h">

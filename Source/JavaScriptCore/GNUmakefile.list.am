@@ -467,6 +467,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CopyWorkList.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
+	Source/JavaScriptCore/heap/DeferGC.cpp \
 	Source/JavaScriptCore/heap/DeferGC.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/GCIncomingRefCounted.h \
