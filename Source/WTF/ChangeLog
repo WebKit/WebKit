@@ -1,3 +1,16 @@
+2013-10-14  Anders Carlsson  <andersca@apple.com>
+
+        WebKit Nightlies broken by r157374
+        https://bugs.webkit.org/show_bug.cgi?id=122736
+
+        Reviewed by Andreas Kling.
+
+        Add back a callOnMainThread overload that Safari is using.
+
+        * wtf/MainThread.cpp:
+        (WTF::callOnMainThread):
+        * wtf/MainThread.h:
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Deprecate or remove deleteAllValues functions; there are only a few call sites left
