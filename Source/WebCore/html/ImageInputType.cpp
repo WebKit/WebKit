@@ -103,7 +103,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
 
 RenderElement* ImageInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
-    RenderImage* image = new (arena) RenderImage(&element());
+    RenderImage* image = new (arena) RenderImage(element());
     image->setImageResource(RenderImageResource::create());
     return image;
 }

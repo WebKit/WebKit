@@ -353,12 +353,13 @@ static CounterNode* makeCounterNode(RenderObject* object, const AtomicString& id
     return newNode.get();
 }
 
-RenderCounter::RenderCounter(const CounterContent& counter)
-    : RenderText(nullptr, emptyString())
+RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
+    : RenderText(document, emptyString())
     , m_counter(counter)
-    , m_counterNode(0)
+    , m_counterNode(nullptr)
     , m_nextForSameCounter(0)
 {
+    view().addRenderCounter();
 }
 
 RenderCounter::~RenderCounter()
@@ -367,15 +368,6 @@ RenderCounter::~RenderCounter()
         m_counterNode->removeRenderer(this);
         ASSERT(!m_counterNode);
     }
-}
-
-RenderCounter* RenderCounter::createAnonymous(Document& document, const CounterContent& content)
-{
-    RenderCounter* counter = new (*document.renderArena()) RenderCounter(content);
-    counter->setDocumentForAnonymous(document);
-    counter->view().addRenderCounter();
-
-    return counter;
 }
 
 void RenderCounter::willBeDestroyed()

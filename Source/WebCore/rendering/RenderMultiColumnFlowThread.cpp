@@ -31,20 +31,14 @@
 
 namespace WebCore {
 
-RenderMultiColumnFlowThread::RenderMultiColumnFlowThread()
+RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document)
+    : RenderFlowThread(document)
 {
     setFlowThreadState(InsideInFlowThread);
 }
 
 RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()
 {
-}
-
-RenderMultiColumnFlowThread* RenderMultiColumnFlowThread::createAnonymous(Document& document)
-{
-    RenderMultiColumnFlowThread* renderer = new (*document.renderArena()) RenderMultiColumnFlowThread();
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 const char* RenderMultiColumnFlowThread::renderName() const
@@ -92,7 +86,7 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     invalidateRegions();
 
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    firstSet = RenderMultiColumnSet::createAnonymous(*this);
+    firstSet = new (renderArena()) RenderMultiColumnSet(*this);
     firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
     parentBlock->RenderBlock::addChild(firstSet);
 

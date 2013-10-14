@@ -32,7 +32,7 @@
 
 namespace WebCore {
     
-RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element* element)
+RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element& element)
     : RenderMathMLRoot(element)
 {
 }

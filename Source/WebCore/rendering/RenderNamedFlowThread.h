@@ -45,9 +45,8 @@ typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread FINAL : public RenderFlowThread {
 public:
+    explicit RenderNamedFlowThread(Document&, PassRefPtr<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();
-
-    static RenderNamedFlowThread* createAnonymous(Document&, PassRefPtr<WebKitNamedFlow>);
 
     const AtomicString& flowThreadName() const;
 
@@ -86,8 +85,6 @@ protected:
     void resetMarkForDestruction();
 
 private:
-    explicit RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow>);
-
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;

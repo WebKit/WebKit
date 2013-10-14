@@ -81,7 +81,7 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& docum
 
 class RenderSliderThumb FINAL : public RenderBlockFlow {
 public:
-    RenderSliderThumb(SliderThumbElement*);
+    explicit RenderSliderThumb(SliderThumbElement&);
     void updateAppearance(RenderStyle* parentStyle);
 
 private:

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderMathMLFraction : public RenderMathMLBlock {
 public:
-    RenderMathMLFraction(Element*);
+    explicit RenderMathMLFraction(Element&);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void updateFromElement() OVERRIDE;
     

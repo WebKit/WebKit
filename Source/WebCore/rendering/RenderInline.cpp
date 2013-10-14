@@ -50,18 +50,18 @@ using namespace std;
 
 namespace WebCore {
 
-RenderInline::RenderInline(Element* element)
+RenderInline::RenderInline(Element& element)
     : RenderBoxModelObject(element, RenderInlineFlag)
     , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
 }
 
-RenderInline* RenderInline::createAnonymous(Document& document)
+RenderInline::RenderInline(Document& document)
+    : RenderBoxModelObject(document, RenderInlineFlag)
+    , m_alwaysCreateLineBoxes(false)
 {
-    RenderInline* renderer = new (*document.renderArena()) RenderInline(0);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
+    setChildrenInline(true);
 }
 
 void RenderInline::willBeDestroyed()
@@ -319,7 +319,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle->setPosition(positionedAncestor->style()->position());
 
-        RenderBlock* newBox = RenderBlock::createAnonymous(document());
+        RenderBlock* newBox = new (renderArena()) RenderBlockFlow(document());
         newBox->setStyle(newStyle.release());
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);
@@ -335,7 +335,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderInline* RenderInline::clone() const
 {
-    RenderInline* cloneInline = new (renderArena()) RenderInline(element());
+    RenderInline* cloneInline = new (renderArena()) RenderInline(*element());
     cloneInline->setStyle(style());
     cloneInline->setFlowThreadState(flowThreadState());
     return cloneInline;

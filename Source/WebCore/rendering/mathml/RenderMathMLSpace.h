@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLSpace : public RenderMathMLBlock {
 public:
-    explicit RenderMathMLSpace(Element*);
+    explicit RenderMathMLSpace(Element&);
 
     virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual void updateLogicalWidth() OVERRIDE;

@@ -28,8 +28,6 @@ namespace WebCore {
 
 class RenderReplaced : public RenderBox {
 public:
-    explicit RenderReplaced(Element*);
-    RenderReplaced(Element*, const LayoutSize& intrinsicSize);
     virtual ~RenderReplaced();
 
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;
@@ -41,6 +39,10 @@ public:
     bool hasReplacedLogicalHeight() const;
 
 protected:
+    explicit RenderReplaced(Element&);
+    RenderReplaced(Element&, const LayoutSize& intrinsicSize);
+    RenderReplaced(Document&, const LayoutSize& intrinsicSize);
+
     virtual void willBeDestroyed() OVERRIDE;
 
     virtual void layout() OVERRIDE;

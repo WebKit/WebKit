@@ -57,33 +57,33 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
 RenderElement* MathMLInlineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     if (hasLocalName(mrowTag))
-        return new (arena) RenderMathMLRow(this);
+        return new (arena) RenderMathMLRow(*this);
     if (hasLocalName(msubTag))
-        return new (arena) RenderMathMLScripts(this);
+        return new (arena) RenderMathMLScripts(*this);
     if (hasLocalName(msupTag))
-        return new (arena) RenderMathMLScripts(this);
+        return new (arena) RenderMathMLScripts(*this);
     if (hasLocalName(msubsupTag))
-        return new (arena) RenderMathMLScripts(this);
+        return new (arena) RenderMathMLScripts(*this);
     if (hasLocalName(mmultiscriptsTag))
-        return new (arena) RenderMathMLScripts(this);
+        return new (arena) RenderMathMLScripts(*this);
     if (hasLocalName(moverTag))
-        return new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(*this);
     if (hasLocalName(munderTag))
-        return new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(*this);
     if (hasLocalName(munderoverTag))
-        return new (arena) RenderMathMLUnderOver(this);
+        return new (arena) RenderMathMLUnderOver(*this);
     if (hasLocalName(mfracTag))
-        return new (arena) RenderMathMLFraction(this);
+        return new (arena) RenderMathMLFraction(*this);
     if (hasLocalName(msqrtTag))
-        return new (arena) RenderMathMLSquareRoot(this);
+        return new (arena) RenderMathMLSquareRoot(*this);
     if (hasLocalName(mrootTag))
-        return new (arena) RenderMathMLRoot(this);
+        return new (arena) RenderMathMLRoot(*this);
     if (hasLocalName(mfencedTag))
-        return new (arena) RenderMathMLFenced(this);
+        return new (arena) RenderMathMLFenced(*this);
     if (hasLocalName(mtableTag))
-        return new (arena) RenderMathMLTable(this);
+        return new (arena) RenderMathMLTable(*this);
 
-    return new (arena) RenderMathMLBlock(this);
+    return new (arena) RenderMathMLBlock(*this);
 }
 
 }

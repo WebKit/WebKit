@@ -39,10 +39,9 @@ class RenderRubyRun;
 
 class RenderRubyBase FINAL : public RenderBlockFlow {
 public:
+    explicit RenderRubyBase(Document&);
     virtual ~RenderRubyBase();
     
-    static RenderRubyBase* createAnonymous(Document&);
-
     virtual const char* renderName() const { return "RenderRubyBase (anonymous)"; }
 
     virtual bool isRubyBase() const { return true; }
@@ -50,8 +49,6 @@ public:
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
 private:
-    RenderRubyBase();
-
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
 

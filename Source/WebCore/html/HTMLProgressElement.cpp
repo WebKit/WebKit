@@ -64,7 +64,7 @@ RenderElement* HTMLProgressElement::createRenderer(RenderArena& arena, RenderSty
     if (!style.hasAppearance() || hasAuthorShadowRoot())
         return RenderElement::createFor(*this, style);
 
-    return new (arena) RenderProgress(this);
+    return new (arena) RenderProgress(*this);
 }
 
 bool HTMLProgressElement::childShouldCreateRenderer(const Node* child) const

@@ -66,7 +66,7 @@ const float gRadicalLineThicknessEms = 0.02f;
 // Radical thick line thickness (em)
 const float gRadicalThickLineThicknessEms = 0.1f;
     
-RenderMathMLRoot::RenderMathMLRoot(Element* element)
+RenderMathMLRoot::RenderMathMLRoot(Element& element)
     : RenderMathMLBlock(element)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)

@@ -74,7 +74,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 
 // --------------------------------
 
-RenderSliderThumb::RenderSliderThumb(SliderThumbElement* element)
+RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element)
     : RenderBlockFlow(element)
 {
 }
@@ -106,8 +106,11 @@ bool RenderSliderThumb::isSliderThumb() const
 // http://webkit.org/b/62535
 class RenderSliderContainer : public RenderFlexibleBox {
 public:
-    RenderSliderContainer(SliderContainerElement* element)
-        : RenderFlexibleBox(element) { }
+    RenderSliderContainer(SliderContainerElement& element)
+        : RenderFlexibleBox(element)
+    {
+    }
+
 public:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
@@ -204,7 +207,7 @@ void SliderThumbElement::setPositionFromValue()
 
 RenderElement* SliderThumbElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderSliderThumb(this);
+    return new (arena) RenderSliderThumb(*this);
 }
 
 bool SliderThumbElement::isDisabledFormControl() const
@@ -443,7 +446,7 @@ PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document& docu
 
 RenderElement* SliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderSliderContainer(this);
+    return new (arena) RenderSliderContainer(*this);
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const

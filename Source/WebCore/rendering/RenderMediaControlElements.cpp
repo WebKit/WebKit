@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Element* element)
+RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer(Element& element)
     : RenderBlockFlow(element)
 {
 }
@@ -59,7 +59,7 @@ void RenderMediaVolumeSliderContainer::layout()
 
 // ----------------------------
 
-RenderMediaControlTimelineContainer::RenderMediaControlTimelineContainer(Element* element)
+RenderMediaControlTimelineContainer::RenderMediaControlTimelineContainer(Element& element)
     : RenderFlexibleBox(element)
 {
 }
@@ -81,7 +81,7 @@ void RenderMediaControlTimelineContainer::layout()
 
 #if ENABLE(VIDEO_TRACK)
 
-RenderTextTrackContainerElement::RenderTextTrackContainerElement(Element* element)
+RenderTextTrackContainerElement::RenderTextTrackContainerElement(Element& element)
     : RenderBlockFlow(element)
 {
 }

@@ -35,7 +35,7 @@ namespace WebCore {
     
 class RenderMathMLFenced : public RenderMathMLRow {
 public:
-    RenderMathMLFenced(Element*);
+    explicit RenderMathMLFenced(Element&);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void updateFromElement();
     

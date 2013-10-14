@@ -35,16 +35,16 @@ namespace WebCore {
 
 using namespace MathMLNames;
     
-RenderMathMLUnderOver::RenderMathMLUnderOver(Element* element)
+RenderMathMLUnderOver::RenderMathMLUnderOver(Element& element)
     : RenderMathMLBlock(element)
 {
     // Determine what kind of under/over expression we have by element name
-    if (element->hasLocalName(MathMLNames::munderTag))
+    if (element.hasLocalName(MathMLNames::munderTag))
         m_kind = Under;
-    else if (element->hasLocalName(MathMLNames::moverTag))
+    else if (element.hasLocalName(MathMLNames::moverTag))
         m_kind = Over;
     else {
-        ASSERT(element->hasLocalName(MathMLNames::munderoverTag));
+        ASSERT(element.hasLocalName(MathMLNames::munderoverTag));
         m_kind = UnderOver;
     }
 }

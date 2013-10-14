@@ -49,7 +49,7 @@ std::unique_ptr<ContentData> ContentData::clone() const
 
 RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderImage* image = RenderImage::createAnonymous(document);
+    RenderImage* image = new (*document.renderArena()) RenderImage(document);
     image->setPseudoStyle(&pseudoStyle);
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(m_image.get()));
@@ -60,17 +60,17 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
 
 RenderObject* TextContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    return RenderTextFragment::createAnonymous(document, m_text);
+    return new (*document.renderArena()) RenderTextFragment(document, m_text);
 }
 
 RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    return RenderCounter::createAnonymous(document, *m_counter);
+    return new (*document.renderArena()) RenderCounter(document, *m_counter);
 }
 
 RenderObject* QuoteContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    return RenderQuote::createAnonymous(document, m_quote);
+    return new (*document.renderArena()) RenderQuote(document, m_quote);
 }
 
 } // namespace WebCore

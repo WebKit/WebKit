@@ -35,7 +35,7 @@ namespace WebCore {
 // Render sqrt(base), using radical notation.
 class RenderMathMLSquareRoot : public RenderMathMLRoot {
 public:
-    RenderMathMLSquareRoot(Element*);
+    explicit RenderMathMLSquareRoot(Element&);
     
 private:
     virtual bool isRenderMathMLSquareRoot() const { return true; }

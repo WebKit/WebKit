@@ -217,7 +217,7 @@ RenderElement* HTMLPlugInImageElement::createRenderer(RenderArena& arena, Render
         return RenderElement::createFor(*this, style);
 
     if (isImageType()) {
-        RenderImage* image = new (arena) RenderImage(this);
+        RenderImage* image = new (arena) RenderImage(*this);
         image->setImageResource(RenderImageResource::create());
         return image;
     }

@@ -35,8 +35,8 @@ namespace WebCore {
     
 class RenderMathMLOperator : public RenderMathMLBlock {
 public:
-    RenderMathMLOperator(Element*);
-    RenderMathMLOperator(Element*, UChar operatorChar);
+    RenderMathMLOperator(Element&);
+    RenderMathMLOperator(Element&, UChar operatorChar);
 
     virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
     

@@ -61,7 +61,6 @@ class StickyPositionViewportConstraints;
 
 class RenderBoxModelObject : public RenderLayerModelObject {
 public:
-    explicit RenderBoxModelObject(Element*, unsigned baseTypeFlags);
     virtual ~RenderBoxModelObject();
     
     LayoutSize relativePositionOffset() const;
@@ -195,6 +194,9 @@ public:
 #endif
 
 protected:
+    RenderBoxModelObject(Element&, unsigned baseTypeFlags);
+    RenderBoxModelObject(Document&, unsigned baseTypeFlags);
+
     virtual void willBeDestroyed() OVERRIDE;
 
     class BackgroundImageGeometry {

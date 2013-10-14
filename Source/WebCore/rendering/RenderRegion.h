@@ -45,7 +45,7 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    explicit RenderRegion(Element*, RenderFlowThread*);
+    RenderRegion(Element&, RenderFlowThread*);
 
     virtual bool isRenderRegion() const OVERRIDE FINAL { return true; }
 
@@ -149,6 +149,7 @@ public:
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
 
 protected:
+    RenderRegion(Document&, RenderFlowThread*);
     RenderOverflow* ensureOverflowForBox(const RenderBox*);
 
     void setRegionObjectsRegionStyle();

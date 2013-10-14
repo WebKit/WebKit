@@ -178,7 +178,7 @@ const AtomicString& TextTrackCueBox::textTrackCueBoxShadowPseudoId()
 
 RenderElement* TextTrackCueBox::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderTextTrackCue(this);
+    return new (arena) RenderTextTrackCue(*this);
 }
 
 // ----------------------------

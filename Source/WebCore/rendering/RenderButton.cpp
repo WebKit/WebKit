@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderButton::RenderButton(HTMLFormControlElement& element)
-    : RenderFlexibleBox(&element)
+    : RenderFlexibleBox(element)
     , m_buttonText(0)
     , m_inner(0)
     , m_default(false)
@@ -155,7 +155,7 @@ void RenderButton::setText(const String& str)
         if (m_buttonText)
             m_buttonText->setText(str.impl());
         else {
-            m_buttonText = RenderTextFragment::createAnonymous(document(), str);
+            m_buttonText = new (renderArena()) RenderTextFragment(document(), str);
             addChild(m_buttonText);
         }
     }

@@ -35,13 +35,13 @@
 namespace WebCore {
 
 RenderMedia::RenderMedia(HTMLMediaElement& element)
-    : RenderImage(&element)
+    : RenderImage(element)
 {
     setImageResource(RenderImageResource::create());
 }
 
 RenderMedia::RenderMedia(HTMLMediaElement& element, const IntSize& intrinsicSize)
-    : RenderImage(&element)
+    : RenderImage(element)
 {
     setImageResource(RenderImageResource::create());
     setIntrinsicSize(intrinsicSize);

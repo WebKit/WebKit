@@ -39,7 +39,7 @@ class TextTrackCueBox;
 
 class RenderTextTrackCue FINAL : public RenderBlockFlow {
 public:
-    explicit RenderTextTrackCue(TextTrackCueBox*);
+    explicit RenderTextTrackCue(TextTrackCueBox&);
 
 private:
     virtual void layout() OVERRIDE;

@@ -97,12 +97,11 @@ public:
 #endif
 
 protected:
-    explicit RenderBlock(Element*, unsigned baseTypeFlags);
+    RenderBlock(Element&, unsigned baseTypeFlags);
+    RenderBlock(Document&, unsigned baseTypeFlags);
     virtual ~RenderBlock();
 
 public:
-    static RenderBlock* createAnonymous(Document&);
-
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // These two functions are overridden for inline-block.

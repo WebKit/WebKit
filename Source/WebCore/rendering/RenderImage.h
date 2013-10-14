@@ -35,10 +35,9 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    explicit RenderImage(Element*);
+    explicit RenderImage(Element&);
+    explicit RenderImage(Document&);
     virtual ~RenderImage();
-
-    static RenderImage* createAnonymous(Document&);
 
     // Set the style of the object if it's generated content.
     void setPseudoStyle(PassRefPtr<RenderStyle>);

@@ -339,7 +339,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
 
 RenderElement* MediaControlTimelineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderMediaControlTimelineContainer(this);
+    return new (arena) RenderMediaControlTimelineContainer(*this);
 }
 
 // ----------------------------
@@ -358,7 +358,7 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
 
 RenderElement* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderMediaVolumeSliderContainer(this);
+    return new (arena) RenderMediaVolumeSliderContainer(*this);
 }
 
 void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
@@ -1212,7 +1212,7 @@ PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainer
 
 RenderElement* MediaControlTextTrackContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderTextTrackContainerElement(this);
+    return new (arena) RenderTextTrackContainerElement(*this);
 }
 
 const AtomicString& MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId()

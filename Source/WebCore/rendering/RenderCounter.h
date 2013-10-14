@@ -31,9 +31,8 @@ class CounterNode;
 
 class RenderCounter FINAL : public RenderText {
 public:
+    explicit RenderCounter(Document&, const CounterContent&);
     virtual ~RenderCounter();
-
-    static RenderCounter* createAnonymous(Document&, const CounterContent&);
 
     static void destroyCounterNodes(RenderObject*);
     static void destroyCounterNode(RenderObject*, const AtomicString& identifier);
@@ -47,8 +46,6 @@ protected:
     virtual void willBeDestroyed();
 
 private:
-    explicit RenderCounter(const CounterContent&);
-
     virtual const char* renderName() const;
     virtual bool isCounter() const;
     virtual String originalText() const;

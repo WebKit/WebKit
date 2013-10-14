@@ -62,21 +62,21 @@ static RenderMathMLOperator::StretchyCharacter stretchyCharacters[13] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-RenderMathMLOperator::RenderMathMLOperator(Element* element)
+RenderMathMLOperator::RenderMathMLOperator(Element& element)
     : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(0)
     , m_operatorType(Default)
-    , m_stretchyCharacter(0)
+    , m_stretchyCharacter(nullptr)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Element* element, UChar operatorChar)
+RenderMathMLOperator::RenderMathMLOperator(Element& element, UChar operatorChar)
     : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
     , m_operatorType(Default)
-    , m_stretchyCharacter(0)
+    , m_stretchyCharacter(nullptr)
 {
 }
 
@@ -176,17 +176,17 @@ void RenderMathMLOperator::updateFromElement()
     newStyle->inheritFrom(style());
     newStyle->setDisplay(FLEX);
 
-    RenderMathMLBlock* container = new (renderArena()) RenderMathMLBlock(element());
+    RenderMathMLBlock* container = new (renderArena()) RenderMathMLBlock(*element());
     // This container doesn't offer any useful information to accessibility.
     container->setIgnoreInAccessibilityTree(true);
     container->setStyle(newStyle.release());
 
     addChild(container);
-    RenderText* text = 0;
+    RenderText* text;
     if (m_operator)
-        text = RenderText::createAnonymous(document(), String(&m_operator, 1));
+        text = new (renderArena()) RenderText(document(), String(&m_operator, 1));
     else
-        text = RenderText::createAnonymous(document(), element()->textContent().replace(hyphenMinus, minusSign).impl());
+        text = new (renderArena()) RenderText(document(), element()->textContent().replace(hyphenMinus, minusSign).impl());
 
     // If we can't figure out the text, leave it blank.
     if (text)

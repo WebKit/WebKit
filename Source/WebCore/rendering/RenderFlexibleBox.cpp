@@ -123,8 +123,16 @@ struct RenderFlexibleBox::Violation {
 };
 
 
-RenderFlexibleBox::RenderFlexibleBox(Element* element)
+RenderFlexibleBox::RenderFlexibleBox(Element& element)
     : RenderBlock(element, 0)
+    , m_orderIterator(this)
+    , m_numberOfInFlowChildrenOnFirstLine(-1)
+{
+    setChildrenInline(false); // All of our children must be block-level.
+}
+
+RenderFlexibleBox::RenderFlexibleBox(Document& document)
+    : RenderBlock(document, 0)
     , m_orderIterator(this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
@@ -133,13 +141,6 @@ RenderFlexibleBox::RenderFlexibleBox(Element* element)
 
 RenderFlexibleBox::~RenderFlexibleBox()
 {
-}
-
-RenderFlexibleBox* RenderFlexibleBox::createAnonymous(Document& document)
-{
-    RenderFlexibleBox* renderer = new (*document.renderArena()) RenderFlexibleBox(0);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 const char* RenderFlexibleBox::renderName() const

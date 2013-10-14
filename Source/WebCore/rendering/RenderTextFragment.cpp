@@ -28,39 +28,33 @@
 
 namespace WebCore {
 
-RenderTextFragment::RenderTextFragment(Text* textNode, const String& text, int startOffset, int length)
+RenderTextFragment::RenderTextFragment(Text& textNode, const String& text, int startOffset, int length)
     : RenderText(textNode, text.substring(startOffset, length))
     , m_start(startOffset)
     , m_end(length)
-    , m_firstLetter(0)
+    , m_firstLetter(nullptr)
 {
 }
 
-RenderTextFragment::RenderTextFragment(Text* textNode, const String& text)
+RenderTextFragment::RenderTextFragment(Document& document, const String& text, int startOffset, int length)
+    : RenderText(document, text.substring(startOffset, length))
+    , m_start(startOffset)
+    , m_end(length)
+    , m_firstLetter(nullptr)
+{
+}
+
+RenderTextFragment::RenderTextFragment(Document& textNode, const String& text)
     : RenderText(textNode, text)
     , m_start(0)
     , m_end(text.length())
     , m_contentString(text)
-    , m_firstLetter(0)
+    , m_firstLetter(nullptr)
 {
 }
 
 RenderTextFragment::~RenderTextFragment()
 {
-}
-
-RenderTextFragment* RenderTextFragment::createAnonymous(Document& document, const String& text, int startOffset, int length)
-{
-    RenderTextFragment* fragment = new (*document.renderArena()) RenderTextFragment(nullptr, text, startOffset, length);
-    fragment->setDocumentForAnonymous(document);
-    return fragment;
-}
-
-RenderTextFragment* RenderTextFragment::createAnonymous(Document& document, const String& text)
-{
-    RenderTextFragment* fragment = new (*document.renderArena()) RenderTextFragment(nullptr, text);
-    fragment->setDocumentForAnonymous(document);
-    return fragment;
 }
 
 String RenderTextFragment::originalText() const

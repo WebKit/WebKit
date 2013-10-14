@@ -34,12 +34,11 @@ class InlineTextBox;
 
 class RenderText : public RenderObject {
 public:
-    RenderText(Text*, const String&);
+    RenderText(Text&, const String&);
+    RenderText(Document&, const String&);
 #ifndef NDEBUG
     virtual ~RenderText();
 #endif
-
-    static RenderText* createAnonymous(Document&, const String&);
 
     virtual const char* renderName() const OVERRIDE;
 

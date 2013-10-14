@@ -1,3 +1,16 @@
+2013-10-14  Andreas Kling  <akling@apple.com>
+
+        Pass Document directly to anonymous renderer constructors.
+        <https://webkit.org/b/122752>
+
+        Reviewed by Antti Koivisto.
+
+        Added separate constructors for creating anonymous renderers that
+        take a Document& instead of a null Element*/Text*.
+
+        Removed setDocumentForAnonymous() and all createAnonymous() helpers.
+        ...and RenderObject::m_node is now a Node&, wohoo!
+
 2013-10-13  Sam Weinig  <sam@webkit.org>
 
         CTTE: Add more node conversion helpers

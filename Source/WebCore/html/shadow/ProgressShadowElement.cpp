@@ -63,7 +63,7 @@ ProgressInnerElement::ProgressInnerElement(Document& document)
 
 RenderElement* ProgressInnerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
-    return new (arena) RenderProgress(this);
+    return new (arena) RenderProgress(*this);
 }
 
 bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)

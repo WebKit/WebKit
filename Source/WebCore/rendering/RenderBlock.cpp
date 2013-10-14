@@ -145,10 +145,24 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-// -------------------------------------------------------------------------------------------------------
-
-RenderBlock::RenderBlock(Element* element, unsigned baseTypeFlags)
+RenderBlock::RenderBlock(Element& element, unsigned baseTypeFlags)
     : RenderBox(element, baseTypeFlags | RenderBlockFlag)
+    , m_lineHeight(-1)
+    , m_hasMarginBeforeQuirk(false)
+    , m_hasMarginAfterQuirk(false)
+    , m_beingDestroyed(false)
+    , m_hasMarkupTruncation(false)
+    , m_hasBorderOrPaddingLogicalWidthChanged(false)
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    , m_widthForTextAutosizing(-1)
+    , m_lineCountForTextAutosizing(NOT_SET)
+#endif
+{
+    setChildrenInline(true);
+}
+
+RenderBlock::RenderBlock(Document& document, unsigned baseTypeFlags)
+    : RenderBox(document, baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -189,13 +203,6 @@ RenderBlock::~RenderBlock()
         removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
     if (gPositionedDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
-}
-
-RenderBlock* RenderBlock::createAnonymous(Document& document)
-{
-    RenderBlock* renderer = new (*document.renderArena()) RenderBlockFlow(0);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 void RenderBlock::willBeDestroyed()
@@ -1668,9 +1675,9 @@ RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* 
 
     RenderBoxModelObject* newRunIn = 0;
     if (!runIn->isRenderBlockFlow())
-        newRunIn = new (renderArena()) RenderBlockFlow(runIn->element());
+        newRunIn = new (renderArena()) RenderBlockFlow(*runIn->element());
     else
-        newRunIn = new (renderArena()) RenderInline(runIn->element());
+        newRunIn = new (renderArena()) RenderInline(*runIn->element());
 
     runIn->element()->setRenderer(newRunIn);
     newRunIn->setStyle(runIn->style());
@@ -4997,9 +5004,9 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)
-            newFirstLetter = RenderInline::createAnonymous(document());
+            newFirstLetter = new (renderArena()) RenderInline(document());
         else
-            newFirstLetter = RenderBlock::createAnonymous(document());
+            newFirstLetter = new (renderArena()) RenderBlockFlow(document());
         newFirstLetter->setStyle(pseudoStyle);
 
         // Move the first letter into the new renderer.
@@ -5034,9 +5041,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderBoxModelObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
-        firstLetter = RenderInline::createAnonymous(document());
+        firstLetter = new (renderArena()) RenderInline(document());
     else
-        firstLetter = RenderBlock::createAnonymous(document());
+        firstLetter = new (renderArena()) RenderBlockFlow(document());
     firstLetter->setStyle(pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 
@@ -5072,9 +5079,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         // This text fragment might be empty.
         RenderTextFragment* remainingText;
         if (currentTextChild->textNode())
-            remainingText = new (renderArena()) RenderTextFragment(currentTextChild->textNode(), oldText, length, oldText.length() - length);
+            remainingText = new (renderArena()) RenderTextFragment(*currentTextChild->textNode(), oldText, length, oldText.length() - length);
         else
-            remainingText = RenderTextFragment::createAnonymous(document(), oldText, length, oldText.length() - length);
+            remainingText = new (renderArena()) RenderTextFragment(document(), oldText, length, oldText.length() - length);
 
         if (remainingText->textNode())
             remainingText->textNode()->setRenderer(remainingText);
@@ -5087,9 +5094,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         // construct text fragment for the first letter
         RenderTextFragment* letter;
         if (remainingText->textNode())
-            letter = new (renderArena()) RenderTextFragment(remainingText->textNode(), oldText, 0, length);
+            letter = new (renderArena()) RenderTextFragment(*remainingText->textNode(), oldText, 0, length);
         else
-            letter = RenderTextFragment::createAnonymous(document(), oldText, 0, length);
+            letter = new (renderArena()) RenderTextFragment(document(), oldText, 0, length);
 
         firstLetter->addChild(letter);
 
@@ -5952,10 +5959,10 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     EDisplay newDisplay;
     RenderBlock* newBox = 0;
     if (display == FLEX || display == INLINE_FLEX) {
-        newBox = RenderFlexibleBox::createAnonymous(parent->document());
+        newBox = new (parent->renderArena()) RenderFlexibleBox(parent->document());
         newDisplay = FLEX;
     } else {
-        newBox = RenderBlock::createAnonymous(parent->document());
+        newBox = new (parent->renderArena()) RenderBlockFlow(parent->document());
         newDisplay = BLOCK;
     }
 
@@ -5969,7 +5976,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->inheritColumnPropertiesFrom(parent->style());
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
+    RenderBlock* newBox = new (parent->renderArena()) RenderBlockFlow(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }
@@ -5979,7 +5986,7 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->setColumnSpan(ColumnSpanAll);
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
+    RenderBlock* newBox = new (parent->renderArena()) RenderBlockFlow(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }

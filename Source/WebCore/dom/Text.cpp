@@ -200,7 +200,7 @@ RenderText* Text::createTextRenderer(RenderArena& arena, RenderStyle& style)
     if (style.hasTextCombine())
         return new (arena) RenderCombineText(*this, dataImpl());
 
-    return new (arena) RenderText(this, dataImpl());
+    return new (arena) RenderText(*this, dataImpl());
 }
 
 bool Text::childTypeAllowed(NodeType) const

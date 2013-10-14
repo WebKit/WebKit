@@ -42,13 +42,16 @@ friend class RenderMathMLScripts;
 public:
     enum WrapperType { Base, SubSupPair };
 
-    RenderMathMLScriptsWrapper(Element* element, WrapperType kind) :
-    RenderMathMLBlock(element), m_kind(kind) { };
-
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject*) OVERRIDE;
 
 private:
+    RenderMathMLScriptsWrapper(Document& document, WrapperType kind)
+        : RenderMathMLBlock(document)
+        , m_kind(kind)
+    {
+    }
+
     static RenderMathMLScriptsWrapper* createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType);
 
     void addChildInternal(bool normalInsertion, RenderObject* child, RenderObject* beforeChild = 0);
@@ -94,7 +97,7 @@ class RenderMathMLScripts : public RenderMathMLBlock {
 friend class RenderMathMLScriptsWrapper;
 
 public:
-    RenderMathMLScripts(Element*);
+    explicit RenderMathMLScripts(Element&);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject*) OVERRIDE;
     

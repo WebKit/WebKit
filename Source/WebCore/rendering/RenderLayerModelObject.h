@@ -31,7 +31,6 @@ class RenderLayer;
 
 class RenderLayerModelObject : public RenderElement {
 public:
-    explicit RenderLayerModelObject(Element*, unsigned baseTypeFlags);
     virtual ~RenderLayerModelObject();
 
     // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed
@@ -51,6 +50,9 @@ public:
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
 protected:
+    RenderLayerModelObject(Element&, unsigned baseTypeFlags);
+    RenderLayerModelObject(Document&, unsigned baseTypeFlags);
+
     void ensureLayer();
 
     virtual void willBeDestroyed() OVERRIDE;

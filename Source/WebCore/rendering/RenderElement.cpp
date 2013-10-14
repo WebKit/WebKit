@@ -65,13 +65,21 @@ namespace WebCore {
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
 
-RenderElement::RenderElement(Element* element, unsigned baseTypeFlags)
+RenderElement::RenderElement(Element& element, unsigned baseTypeFlags)
     : RenderObject(element)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
-    , m_style(0)
+{
+}
+
+RenderElement::RenderElement(Document& document, unsigned baseTypeFlags)
+    : RenderObject(document)
+    , m_baseTypeFlags(baseTypeFlags)
+    , m_ancestorLineBoxDirty(false)
+    , m_firstChild(nullptr)
+    , m_lastChild(nullptr)
 {
 }
 
@@ -113,7 +121,7 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        RenderImage* image = new (arena) RenderImage(&element);
+        RenderImage* image = new (arena) RenderImage(element);
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change
         // doesn't make sense as it should be run once at renderer creation.
@@ -137,35 +145,35 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
     if (element.hasTagName(HTMLNames::rtTag) && style.display() == BLOCK)
         return new (arena) RenderRubyText(element);
     if (document.cssRegionsEnabled() && style.isDisplayRegionType() && !style.regionThread().isEmpty())
-        return new (arena) RenderRegion(&element, 0);
+        return new (arena) RenderRegion(element, nullptr);
     switch (style.display()) {
     case NONE:
         return 0;
     case INLINE:
-        return new (arena) RenderInline(&element);
+        return new (arena) RenderInline(element);
     case BLOCK:
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
         if ((!style.hasAutoColumnCount() || !style.hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
             return new (arena) RenderMultiColumnBlock(element);
-        return new (arena) RenderBlockFlow(&element);
+        return new (arena) RenderBlockFlow(element);
     case LIST_ITEM:
         return new (arena) RenderListItem(element);
     case TABLE:
     case INLINE_TABLE:
-        return new (arena) RenderTable(&element);
+        return new (arena) RenderTable(element);
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return new (arena) RenderTableSection(&element);
+        return new (arena) RenderTableSection(element);
     case TABLE_ROW:
-        return new (arena) RenderTableRow(&element);
+        return new (arena) RenderTableRow(element);
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
         return new (arena) RenderTableCol(element);
     case TABLE_CELL:
-        return new (arena) RenderTableCell(&element);
+        return new (arena) RenderTableCell(element);
     case TABLE_CAPTION:
         return new (arena) RenderTableCaption(element);
     case BOX:
@@ -173,7 +181,7 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
         return new (arena) RenderDeprecatedFlexibleBox(element);
     case FLEX:
     case INLINE_FLEX:
-        return new (arena) RenderFlexibleBox(&element);
+        return new (arena) RenderFlexibleBox(element);
     case GRID:
     case INLINE_GRID:
         return new (arena) RenderGrid(element);

@@ -55,7 +55,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMenuList::RenderMenuList(HTMLSelectElement& element)
-    : RenderFlexibleBox(&element)
+    : RenderFlexibleBox(element)
     , m_buttonText(nullptr)
     , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)
@@ -241,7 +241,7 @@ void RenderMenuList::setText(const String& s)
     if (m_buttonText)
         m_buttonText->setText(textToUse.impl(), true);
     else {
-        m_buttonText = RenderText::createAnonymous(document(), textToUse);
+        m_buttonText = new (renderArena()) RenderText(document(), textToUse);
         addChild(m_buttonText);
     }
     adjustInnerStyle();

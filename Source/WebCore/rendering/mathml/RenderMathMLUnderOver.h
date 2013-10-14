@@ -34,7 +34,7 @@ namespace WebCore {
     
 class RenderMathMLUnderOver : public RenderMathMLBlock {
 public:
-    RenderMathMLUnderOver(Element*);
+    explicit RenderMathMLUnderOver(Element&);
     
     virtual RenderMathMLOperator* unembellishedOperator();
 

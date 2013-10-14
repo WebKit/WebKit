@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element)
-    : RenderReplaced(&element, element.size())
+    : RenderReplaced(element, element.size())
 {
     // Actual size is not known yet, report the default intrinsic size.
     view().frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));

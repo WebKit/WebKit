@@ -43,8 +43,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyRun::RenderRubyRun()
-    : RenderBlockFlow(0)
+RenderRubyRun::RenderRubyRun(Document& document)
+    : RenderBlockFlow(document)
 {
     setReplaced(true);
     setInline(true);
@@ -200,7 +200,7 @@ void RenderRubyRun::removeChild(RenderObject* child)
 
 RenderRubyBase* RenderRubyRun::createRubyBase() const
 {
-    RenderRubyBase* renderer = RenderRubyBase::createAnonymous(document());
+    RenderRubyBase* renderer = new (renderArena()) RenderRubyBase(document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
     newStyle->setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
     renderer->setStyle(newStyle.release());
@@ -210,8 +210,7 @@ RenderRubyBase* RenderRubyRun::createRubyBase() const
 RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby)
 {
     ASSERT(parentRuby && parentRuby->isRuby());
-    RenderRubyRun* rr = new (parentRuby->renderArena()) RenderRubyRun();
-    rr->setDocumentForAnonymous(parentRuby->document());
+    RenderRubyRun* rr = new (parentRuby->renderArena()) RenderRubyRun(parentRuby->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentRuby->style(), INLINE_BLOCK);
     rr->setStyle(newStyle.release());
     return rr;

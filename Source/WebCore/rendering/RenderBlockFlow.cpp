@@ -44,6 +44,7 @@ struct SameSizeAsMarginInfo {
 };
 
 COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginValues) == sizeof(LayoutUnit[4]), MarginValues_should_stay_small);
+COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 
 // Our MarginInfo state used when laying out block children.
 RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow* block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
@@ -78,10 +79,14 @@ RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow* block, LayoutUnit befor
     m_negativeMargin = (m_canCollapseMarginBeforeWithChildren && !block->mustDiscardMarginBefore()) ? block->maxNegativeMarginBefore() : LayoutUnit();
 }
 
-RenderBlockFlow::RenderBlockFlow(Element* element)
+RenderBlockFlow::RenderBlockFlow(Element& element)
     : RenderBlock(element, RenderBlockFlowFlag)
 {
-    COMPILE_ASSERT(sizeof(RenderBlockFlow::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
+}
+
+RenderBlockFlow::RenderBlockFlow(Document& document)
+    : RenderBlock(document, RenderBlockFlowFlag)
+{
 }
 
 RenderBlockFlow::~RenderBlockFlow()

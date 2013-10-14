@@ -83,8 +83,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     }
 }
 
-
-RenderTableSection::RenderTableSection(Element* element)
+RenderTableSection::RenderTableSection(Element& element)
     : RenderBox(element, 0)
     , m_cCol(0)
     , m_cRow(0)
@@ -95,8 +94,21 @@ RenderTableSection::RenderTableSection(Element* element)
     , m_needsCellRecalc(false)
     , m_hasMultipleCellLevels(false)
 {
-    // init RenderObject attributes
-    setInline(false); // our object is not Inline
+    setInline(false);
+}
+
+RenderTableSection::RenderTableSection(Document& document)
+    : RenderBox(document, 0)
+    , m_cCol(0)
+    , m_cRow(0)
+    , m_outerBorderStart(0)
+    , m_outerBorderEnd(0)
+    , m_outerBorderBefore(0)
+    , m_outerBorderAfter(0)
+    , m_needsCellRecalc(false)
+    , m_hasMultipleCellLevels(false)
+{
+    setInline(false);
 }
 
 RenderTableSection::~RenderTableSection()
@@ -1426,8 +1438,7 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
 RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP);
-    RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(0);
-    newSection->setDocumentForAnonymous(parent->document());
+    RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(parent->document());
     newSection->setStyle(newStyle.release());
     return newSection;
 }

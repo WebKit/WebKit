@@ -44,16 +44,9 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread* RenderNamedFlowThread::createAnonymous(Document& document, PassRefPtr<WebKitNamedFlow> namedFlow)
-{
-    ASSERT(document.cssRegionsEnabled());
-    RenderNamedFlowThread* renderer = new (*document.renderArena()) RenderNamedFlowThread(namedFlow);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
-}
-
-RenderNamedFlowThread::RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow> namedFlow)
-    : m_overset(true)
+RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRefPtr<WebKitNamedFlow> namedFlow)
+    : RenderFlowThread(document)
+    , m_overset(true)
     , m_namedFlow(namedFlow)
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
     , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)

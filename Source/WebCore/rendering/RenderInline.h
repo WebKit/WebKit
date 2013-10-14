@@ -33,9 +33,8 @@ class Position;
 
 class RenderInline : public RenderBoxModelObject {
 public:
-    explicit RenderInline(Element*);
-
-    static RenderInline* createAnonymous(Document&);
+    explicit RenderInline(Element&);
+    explicit RenderInline(Document&);
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
 

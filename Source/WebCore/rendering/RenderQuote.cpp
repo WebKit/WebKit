@@ -30,8 +30,8 @@ using namespace WTF::Unicode;
 
 namespace WebCore {
 
-RenderQuote::RenderQuote(QuoteType quote)
-    : RenderText(nullptr, emptyString())
+RenderQuote::RenderQuote(Document& document, QuoteType quote)
+    : RenderText(document, emptyString())
     , m_type(quote)
     , m_depth(-1)
     , m_next(0)
@@ -45,13 +45,6 @@ RenderQuote::~RenderQuote()
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
-}
-
-RenderQuote* RenderQuote::createAnonymous(Document& document, QuoteType quote)
-{
-    RenderQuote* renderQuote = new (*document.renderArena()) RenderQuote(quote);
-    renderQuote->setDocumentForAnonymous(document);
-    return renderQuote;
 }
 
 void RenderQuote::willBeDestroyed()

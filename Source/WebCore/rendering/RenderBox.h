@@ -45,7 +45,6 @@ enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 
 class RenderBox : public RenderBoxModelObject {
 public:
-    explicit RenderBox(Element*, unsigned baseTypeFlags);
     virtual ~RenderBox();
 
     // hasAutoZIndex only returns true if the element is positioned or a flex-item since
@@ -602,6 +601,9 @@ public:
 #endif
 
 protected:
+    RenderBox(Element&, unsigned baseTypeFlags);
+    RenderBox(Document&, unsigned baseTypeFlags);
+
     virtual void willBeDestroyed() OVERRIDE;
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;

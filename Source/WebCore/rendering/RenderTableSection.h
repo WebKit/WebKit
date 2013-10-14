@@ -64,7 +64,8 @@ class RenderTableRow;
 
 class RenderTableSection FINAL : public RenderBox {
 public:
-    explicit RenderTableSection(Element*);
+    explicit RenderTableSection(Element&);
+    explicit RenderTableSection(Document&);
     virtual ~RenderTableSection();
 
     RenderTableRow* firstRow() const;

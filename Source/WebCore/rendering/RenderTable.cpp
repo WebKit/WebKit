@@ -50,12 +50,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(Element* element)
+RenderTable::RenderTable(Element& element)
     : RenderBlock(element, 0)
-    , m_head(0)
-    , m_foot(0)
-    , m_firstBody(0)
-    , m_currentBorder(0)
+    , m_head(nullptr)
+    , m_foot(nullptr)
+    , m_firstBody(nullptr)
+    , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
     , m_hasColElements(false)
     , m_needsSectionRecalc(false)
@@ -68,7 +68,26 @@ RenderTable::RenderTable(Element* element)
 {
     setChildrenInline(false);
     m_columnPos.fill(0, 1);
-    
+}
+
+RenderTable::RenderTable(Document& document)
+    : RenderBlock(document, 0)
+    , m_head(nullptr)
+    , m_foot(nullptr)
+    , m_firstBody(nullptr)
+    , m_currentBorder(nullptr)
+    , m_collapsedBordersValid(false)
+    , m_hasColElements(false)
+    , m_needsSectionRecalc(false)
+    , m_columnLogicalWidthChanged(false)
+    , m_columnRenderersValid(false)
+    , m_hSpacing(0)
+    , m_vSpacing(0)
+    , m_borderStart(0)
+    , m_borderEnd(0)
+{
+    setChildrenInline(false);
+    m_columnPos.fill(0, 1);
 }
 
 RenderTable::~RenderTable()
@@ -1413,8 +1432,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
-    RenderTable* newTable = new (parent->renderArena()) RenderTable(0);
-    newTable->setDocumentForAnonymous(parent->document());
+    RenderTable* newTable = new (parent->renderArena()) RenderTable(parent->document());
     newTable->setStyle(newStyle.release());
     return newTable;
 }

@@ -43,7 +43,7 @@
 namespace WebCore {
 
 RenderSVGModelObject::RenderSVGModelObject(SVGElement& element)
-    : RenderElement(&element, 0)
+    : RenderElement(element, 0)
     , m_hasSVGShadow(false)
 {
 }

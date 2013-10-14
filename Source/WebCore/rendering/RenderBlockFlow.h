@@ -31,7 +31,8 @@ class LineBreaker;
 
 class RenderBlockFlow : public RenderBlock {
 public:
-    explicit RenderBlockFlow(Element*);
+    explicit RenderBlockFlow(Element&);
+    explicit RenderBlockFlow(Document&);
     virtual ~RenderBlockFlow();
         
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;

@@ -116,7 +116,7 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
 
-RenderObject::RenderObject(Node* node)
+RenderObject::RenderObject(Node& node)
     : CachedImageClient()
     , m_node(node)
     , m_parent(0)

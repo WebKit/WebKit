@@ -48,8 +48,20 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Element* element, RenderFlowThread* flowThread)
+RenderRegion::RenderRegion(Element& element, RenderFlowThread* flowThread)
     : RenderBlockFlow(element)
+    , m_flowThread(flowThread)
+    , m_parentNamedFlowThread(0)
+    , m_isValid(false)
+    , m_hasCustomRegionStyle(false)
+    , m_hasAutoLogicalHeight(false)
+    , m_hasComputedAutoHeight(false)
+    , m_computedAutoHeight(0)
+{
+}
+
+RenderRegion::RenderRegion(Document& document, RenderFlowThread* flowThread)
+    : RenderBlockFlow(document)
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(0)
     , m_isValid(false)

@@ -114,7 +114,8 @@ protected:
         RenderBlockFlowFlag = 1 << 5,
     };
 
-    explicit RenderElement(Element*, unsigned baseTypeFlags);
+    RenderElement(Element&, unsigned baseTypeFlags);
+    RenderElement(Document&, unsigned baseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 

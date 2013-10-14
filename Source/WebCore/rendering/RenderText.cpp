@@ -139,7 +139,7 @@ static void makeCapitalized(String* string, UChar previous)
     *string = result.toString();
 }
 
-RenderText::RenderText(Text* textNode, const String& text)
+RenderText::RenderText(Text& textNode, const String& text)
     : RenderObject(textNode)
     , m_hasTab(false)
     , m_linesDirty(false)
@@ -157,13 +157,32 @@ RenderText::RenderText(Text* textNode, const String& text)
     , m_text(text)
 {
     ASSERT(!m_text.isNull());
-
     setIsText();
-
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
+    view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
+}
 
-    if (textNode)
-        view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
+RenderText::RenderText(Document& document, const String& text)
+    : RenderObject(document)
+    , m_hasTab(false)
+    , m_linesDirty(false)
+    , m_containsReversedText(false)
+    , m_isAllASCII(text.containsOnlyASCII())
+    , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
+    , m_useBackslashAsYenSymbol(false)
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    , m_candidateComputedTextSize(0)
+#endif
+    , m_minWidth(-1)
+    , m_maxWidth(-1)
+    , m_beginMinWidth(0)
+    , m_endMinWidth(0)
+    , m_text(text)
+{
+    ASSERT(!m_text.isNull());
+    setIsText();
+    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
+    view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
 }
 
 #ifndef NDEBUG
@@ -173,14 +192,6 @@ RenderText::~RenderText()
 }
 
 #endif
-
-RenderText* RenderText::createAnonymous(Document& document, const String& text)
-{
-    RenderText* renderText = new (*document.renderArena()) RenderText(nullptr, text);
-    renderText->setDocumentForAnonymous(document);
-    renderText->view().frameView().incrementVisuallyNonEmptyCharacterCount(text.length());
-    return renderText;
-}
 
 const char* RenderText::renderName() const
 {

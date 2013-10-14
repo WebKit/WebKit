@@ -32,7 +32,7 @@ class HTMLMeterElement;
 
 class RenderMeter FINAL : public RenderBlockFlow {
 public:
-    explicit RenderMeter(HTMLElement*);
+    explicit RenderMeter(HTMLElement&);
     virtual ~RenderMeter();
 
     HTMLMeterElement* meterElement() const;

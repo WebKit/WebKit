@@ -56,7 +56,7 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
 COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 8, CollapsedBorderValue_should_stay_small);
 
-RenderTableCell::RenderTableCell(Element* element)
+RenderTableCell::RenderTableCell(Element& element)
     : RenderBlockFlow(element)
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
@@ -66,6 +66,17 @@ RenderTableCell::RenderTableCell(Element* element)
     // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
     // so we need to set their initial values here in case something asks for colSpan()/rowSpan() before then.
     updateColAndRowSpanFlags();
+}
+
+RenderTableCell::RenderTableCell(Document& document)
+    : RenderBlockFlow(document)
+    , m_column(unsetColumnIndex)
+    , m_cellWidthChanged(false)
+    , m_hasColSpan(false)
+    , m_hasRowSpan(false)
+    , m_intrinsicPaddingBefore(0)
+    , m_intrinsicPaddingAfter(0)
+{
 }
 
 void RenderTableCell::willBeRemovedFromTree()
@@ -1364,16 +1375,9 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
-RenderTableCell* RenderTableCell::createAnonymous(Document& document)
-{
-    RenderTableCell* renderer = new (*document.renderArena()) RenderTableCell(0);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
-}
-
 RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableCell* newCell = RenderTableCell::createAnonymous(parent->document());
+    RenderTableCell* newCell = new (parent->renderArena()) RenderTableCell(parent->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL);
     newCell->setStyle(newStyle.release());
     return newCell;

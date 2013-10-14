@@ -43,8 +43,14 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-RenderMathMLBlock::RenderMathMLBlock(Element* container)
+RenderMathMLBlock::RenderMathMLBlock(Element& container)
     : RenderFlexibleBox(container)
+    , m_ignoreInAccessibilityTree(false)
+{
+}
+
+RenderMathMLBlock::RenderMathMLBlock(Document& document)
+    : RenderFlexibleBox(document)
     , m_ignoreInAccessibilityTree(false)
 {
 }
@@ -57,8 +63,7 @@ bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
-    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(0);
-    newBlock->setDocumentForAnonymous(document());
+    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(document());
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }

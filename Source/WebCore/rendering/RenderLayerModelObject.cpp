@@ -37,8 +37,13 @@ bool RenderLayerModelObject::s_hadLayer = false;
 bool RenderLayerModelObject::s_hadTransform = false;
 bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 
-RenderLayerModelObject::RenderLayerModelObject(Element* element, unsigned baseTypeFlags)
+RenderLayerModelObject::RenderLayerModelObject(Element& element, unsigned baseTypeFlags)
     : RenderElement(element, baseTypeFlags | RenderLayerModelObjectFlag)
+{
+}
+
+RenderLayerModelObject::RenderLayerModelObject(Document& document, unsigned baseTypeFlags)
+    : RenderElement(document, baseTypeFlags | RenderLayerModelObjectFlag)
 {
 }
 

@@ -39,36 +39,29 @@ using namespace WebCore;
 
 class RenderFullScreenPlaceholder FINAL : public RenderBlockFlow {
 public:
-    RenderFullScreenPlaceholder(RenderFullScreen* owner) 
-        : RenderBlockFlow(0)
+    RenderFullScreenPlaceholder(RenderFullScreen& owner)
+        : RenderBlockFlow(owner.document())
         , m_owner(owner) 
     {
-        setDocumentForAnonymous(owner->document());
     }
+
 private:
     virtual bool isRenderFullScreenPlaceholder() const { return true; }
     virtual void willBeDestroyed();
-    RenderFullScreen* m_owner;
+    RenderFullScreen& m_owner;
 };
 
 void RenderFullScreenPlaceholder::willBeDestroyed()
 {
-    m_owner->setPlaceholder(0);
+    m_owner.setPlaceholder(0);
     RenderBlock::willBeDestroyed();
 }
 
-RenderFullScreen::RenderFullScreen()
-    : RenderFlexibleBox(0)
+RenderFullScreen::RenderFullScreen(Document& document)
+    : RenderFlexibleBox(document)
     , m_placeholder(0)
 {
     setReplaced(false); 
-}
-
-RenderFullScreen* RenderFullScreen::createAnonymous(Document& document)
-{
-    RenderFullScreen* renderer = new (*document.renderArena()) RenderFullScreen();
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 void RenderFullScreen::willBeDestroyed()
@@ -116,7 +109,7 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
 
 RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
 {
-    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(document);
+    RenderFullScreen* fullscreenRenderer = new (object->renderArena()) RenderFullScreen(document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
     if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();
@@ -182,7 +175,7 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const La
         style->setHeight(Length(frameRect.height(), Fixed));
 
     if (!m_placeholder) {
-        m_placeholder = new (renderArena()) RenderFullScreenPlaceholder(this);
+        m_placeholder = new (renderArena()) RenderFullScreenPlaceholder(*this);
         m_placeholder->setStyle(style);
         if (parent()) {
             parent()->addChild(m_placeholder, this);

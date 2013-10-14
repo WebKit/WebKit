@@ -33,12 +33,11 @@ namespace WebCore {
 // the original unaltered string from our corresponding DOM node.
 class RenderTextFragment FINAL : public RenderText {
 public:
-    RenderTextFragment(Text*, const String&, int startOffset, int length);
+    RenderTextFragment(Text&, const String&, int startOffset, int length);
+    RenderTextFragment(Document&, const String&, int startOffset, int length);
+    RenderTextFragment(Document&, const String&);
 
     virtual ~RenderTextFragment();
-
-    static RenderTextFragment* createAnonymous(Document&, const String&);
-    static RenderTextFragment* createAnonymous(Document&, const String&, int startOffset, int length);
 
     virtual bool isTextFragment() const OVERRIDE { return true; }
 
@@ -58,8 +57,6 @@ public:
     virtual void transformText() OVERRIDE;
 
 private:
-    RenderTextFragment(Text*, const String&);
-
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual void willBeDestroyed() OVERRIDE;
 

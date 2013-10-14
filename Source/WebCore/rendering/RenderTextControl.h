@@ -104,7 +104,7 @@ void toRenderTextControl(const RenderTextControl*);
 // anymore.
 class RenderTextControlInnerContainer FINAL : public RenderFlexibleBox {
 public:
-    explicit RenderTextControlInnerContainer(Element* element)
+    explicit RenderTextControlInnerContainer(Element& element)
         : RenderFlexibleBox(element)
     { }
     virtual ~RenderTextControlInnerContainer() { }

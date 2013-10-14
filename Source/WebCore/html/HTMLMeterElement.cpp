@@ -62,7 +62,7 @@ RenderElement* HTMLMeterElement::createRenderer(RenderArena& arena, RenderStyle&
     if (hasAuthorShadowRoot() || !document().page()->theme()->supportsMeter(style.appearance()))
         return RenderElement::createFor(*this, style);
 
-    return new (arena) RenderMeter(this);
+    return new (arena) RenderMeter(*this);
 }
 
 bool HTMLMeterElement::childShouldCreateRenderer(const Node* child) const

@@ -29,15 +29,12 @@ namespace WebCore {
 
 class RenderQuote FINAL : public RenderText {
 public:
+    RenderQuote(Document&, QuoteType);
     virtual ~RenderQuote();
-
-    static RenderQuote* createAnonymous(Document&, QuoteType);
 
     void attachQuote();
 
 private:
-    explicit RenderQuote(QuoteType);
-
     void detachQuote();
 
     virtual void willBeDestroyed() OVERRIDE;

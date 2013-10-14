@@ -56,19 +56,19 @@ static bool isPrescript(RenderObject* renderObject)
     return renderObject->node() && renderObject->node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Element* element)
+RenderMathMLScripts::RenderMathMLScripts(Element& element)
     : RenderMathMLBlock(element)
     , m_baseWrapper(0)
 {
     // Determine what kind of sub/sup expression we have by element name
-    if (element->hasLocalName(MathMLNames::msubTag))
+    if (element.hasLocalName(MathMLNames::msubTag))
         m_kind = Sub;
-    else if (element->hasLocalName(MathMLNames::msupTag))
+    else if (element.hasLocalName(MathMLNames::msupTag))
         m_kind = Super;
-    else if (element->hasLocalName(MathMLNames::msubsupTag))
+    else if (element.hasLocalName(MathMLNames::msubsupTag))
         m_kind = SubSup;
     else {
-        ASSERT(element->hasLocalName(MathMLNames::mmultiscriptsTag));
+        ASSERT(element.hasLocalName(MathMLNames::mmultiscriptsTag));
         m_kind = Multiscripts;
     }
 }
@@ -368,8 +368,7 @@ int RenderMathMLScripts::firstLineBoxBaseline() const
 RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType type)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX);
-    RenderMathMLScriptsWrapper* newBlock = new (renderObject->renderArena()) RenderMathMLScriptsWrapper(0, type);
-    newBlock->setDocumentForAnonymous(renderObject->document());
+    RenderMathMLScriptsWrapper* newBlock = new (renderObject->renderArena()) RenderMathMLScriptsWrapper(renderObject->document(), type);
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }
