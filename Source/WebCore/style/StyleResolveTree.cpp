@@ -59,7 +59,7 @@ namespace Style {
 
 enum DetachType { NormalDetach, ReattachDetach };
 
-static void attachRenderTree(Element&, RenderStyle* resolvedStyle);
+static void attachRenderTree(Element&, PassRefPtr<RenderStyle> resolvedStyle);
 static void detachRenderTree(Element&, DetachType);
 
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* settings)
@@ -196,7 +196,7 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
+static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> resolvedStyle)
 {
     ASSERT(!element.renderer());
 
@@ -455,7 +455,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
     shadowRoot.setAttached(true);
 }
 
-static void attachRenderTree(Element& current, RenderStyle* resolvedStyle)
+static void attachRenderTree(Element& current, PassRefPtr<RenderStyle> resolvedStyle)
 {
     PostAttachCallbackDisabler callbackDisabler(current);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -594,7 +594,7 @@ static Change resolveLocal(Element& current, Change inheritedChange)
     if (localChange == Detach) {
         if (current.attached())
             detachRenderTree(current, ReattachDetach);
-        attachRenderTree(current, newStyle.get());
+        attachRenderTree(current, newStyle.release());
         reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded(current);
 
         return Detach;

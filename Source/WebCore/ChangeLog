@@ -1,3 +1,13 @@
+2013-10-14  Andreas Kling  <akling@apple.com>
+
+        Be more efficient about passing RenderStyle to attachRenderTree().
+        <https://webkit.org/b/122743>
+
+        Reviewed by Antti Koivisto.
+
+        Have attachRenderTree() and createRendererTreeIfNeeded() pass the
+        RenderStyle in a PassRefPtr to avoid churning the ref count.
+
 2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] 2 span positions are not resolved correctly
