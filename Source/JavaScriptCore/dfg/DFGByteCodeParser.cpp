@@ -1768,11 +1768,7 @@ void ByteCodeParser::handleGetById(
     
     ASSERT(getByIdStatus.structureSet().size());
                 
-    // The implementation of GetByOffset does not know to terminate speculative
-    // execution if it doesn't have a prediction, so we do it manually.
-    if (prediction == SpecNone)
-        addToGraph(ForceOSRExit);
-    else if (m_graph.compilation())
+    if (m_graph.compilation())
         m_graph.compilation()->noticeInlinedGetById();
     
     Node* originalBaseForBaselineJIT = base;

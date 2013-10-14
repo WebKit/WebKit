@@ -4068,10 +4068,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
     case GetById: {
-        if (!node->prediction()) {
-            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
-            break;
-        }
+        ASSERT(node->prediction());
 
         switch (node->child1().useKind()) {
         case CellUse: {

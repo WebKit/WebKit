@@ -94,6 +94,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetClosureRegisters:
     case GetClosureVar:
     case PutClosureVar:
+    case GetById:
         // These are OK.
         break;
     case GetIndexedPropertyStorage:

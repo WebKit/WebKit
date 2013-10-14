@@ -1,3 +1,29 @@
+2013-10-13  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should have an inefficient but correct implementation of GetById
+        https://bugs.webkit.org/show_bug.cgi?id=122740
+
+        Reviewed by Mark Hahnenberg.
+        
+        It took some effort to realize that the node->prediction() check in the DFG backends
+        are completely unnecessary since the ByteCodeParser will always insert a ForceOSRExit
+        if !prediction.
+        
+        But other than that this was an easy patch.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+
 2013-10-13  Mark Lam  <mark.lam@apple.com>
 
         Transition misc cti_op_* JITStubs to JIT operations.

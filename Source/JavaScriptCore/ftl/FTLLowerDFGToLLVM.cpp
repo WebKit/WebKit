@@ -348,6 +348,9 @@ private:
         case PhantomPutStructure:
             compilePhantomPutStructure();
             break;
+        case GetById:
+            compileGetById();
+            break;
         case GetButterfly:
             compileGetButterfly();
             break;
@@ -1207,6 +1210,26 @@ private:
     void compilePhantomPutStructure()
     {
         m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
+    }
+    
+    void compileGetById()
+    {
+        LValue base = 0;
+
+        switch (m_node->child1().useKind()) {
+        case CellUse:
+            base = lowCell(m_node->child1());
+            break;
+        case UntypedUse:
+            base = lowJSValue(m_node->child1());
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        
+        StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+        setJSValue(vmCall(m_out.operation(operationGetById), m_callFrame, base, m_out.constIntPtr(uid)));
     }
     
     void compileGetButterfly()
