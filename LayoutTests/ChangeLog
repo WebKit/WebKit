@@ -1,3 +1,18 @@
+2013-10-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape-Margin should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=122524
+
+        Reviewed by Darin Adler.
+
+        Test that shape-margin can be set dynamically and content lays out correctly.
+        Also test that shape-margin can be manipulated through CSS Animations.
+
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-margin-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-margin.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html: Added.
+
 2013-10-14  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Accessibility gardening

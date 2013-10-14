@@ -383,14 +383,17 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 #if ENABLE(CSS_SHAPES)
 void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
-    ShapeValue* shapeOutside = style.shapeOutside();
-    ShapeValue* oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : nullptr;
+    const ShapeValue* shapeOutside = style.shapeOutside();
+    const ShapeValue* oldShapeOutside = oldStyle ? oldStyle->shapeOutside() : nullptr;
+
+    Length shapeMargin = style.shapeMargin();
+    Length oldShapeMargin = oldStyle ? oldStyle->shapeMargin() : RenderStyle::initialShapeMargin();
 
     float shapeImageThreshold = style.shapeImageThreshold();
     float oldShapeImageThreshold = oldStyle ? oldStyle->shapeImageThreshold() : RenderStyle::initialShapeImageThreshold();
 
     // FIXME: A future optimization would do a deep comparison for equality. (bug 100811)
-    if (shapeOutside == oldShapeOutside && shapeImageThreshold == oldShapeImageThreshold)
+    if (shapeOutside == oldShapeOutside && shapeMargin == oldShapeMargin && shapeImageThreshold == oldShapeImageThreshold)
         return;
 
     if (!shapeOutside)

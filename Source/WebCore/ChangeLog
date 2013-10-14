@@ -1,3 +1,23 @@
+2013-10-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape-Margin should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=122524
+
+        Reviewed by Darin Adler.
+
+        Mark content for relayout after shape-margin changes, and add shape-margin
+        to the list of animatable properties.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-dynamic-shape-margin.html
+               fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap): Add
+        shape-margin to the map of animatable CSS properties.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateShapeOutsideInfoAfterStyleChange): Compare shape-margins,
+        and mark dependent content for relayout if they have changed.
+
 2013-10-14  Arvid Nilsson  <anilsson@blackberry.com>
 
         Don't crash after OpenGL robustness reset
