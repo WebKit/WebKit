@@ -1,3 +1,10 @@
+2013-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r122737.
+
+        * dom/Node.h: Add explicit WebCore namespace to macro definition to work around
+        Visual Studio bug.
+
 2013-10-14  Andreas Kling  <akling@apple.com>
 
         Pass Document directly to anonymous renderer constructors.

@@ -721,22 +721,22 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 #define TYPE_CASTS_BASE(ToClassName, FromClassName) \
 inline const ToClassName* to##ToClassName(const FromClassName* object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || is##ToClassName(*object)); \
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || WebCore::is##ToClassName(*object)); \
     return static_cast<const ToClassName*>(object); \
 } \
 inline ToClassName* to##ToClassName(FromClassName* object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || is##ToClassName(*object)); \
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || WebCore::is##ToClassName(*object)); \
     return static_cast<ToClassName*>(object); \
 } \
 inline const ToClassName& to##ToClassName(const FromClassName& object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##ToClassName(object)); \
+    ASSERT_WITH_SECURITY_IMPLICATION(WebCore::is##ToClassName(object)); \
     return static_cast<const ToClassName&>(object); \
 } \
 inline ToClassName& to##ToClassName(FromClassName& object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##ToClassName(object)); \
+    ASSERT_WITH_SECURITY_IMPLICATION(WebCore::is##ToClassName(object)); \
     return static_cast<ToClassName&>(object); \
 } \
 void to##ToClassName(const ToClassName*); \
