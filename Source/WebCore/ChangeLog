@@ -1,3 +1,25 @@
+2013-10-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Reintroduce PassRefPtr<Event> copy in ScopedEventQueue::dispatchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=122742
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is a follow-up to r157219 which introduced a workaround for the GCC's quirky behavior that
+        was resulting in crashes due to the PassRefPtr<Event> object passed to EventDispatcher::dispatchEvent
+        being copied and nullified first before retrieving the EventTarget of the Event object wrapped in that
+        PassRefPtr.
+
+        The implementation is now adjusted to first retrieve the pointer to the Event's EventTarget and store
+        it in a local variable. That variable is then passed as the first parameter to EventDispatcher::dispatchEvent,
+        and the PassRefPtr<Event> passed directly as the second parameter. Previously the pointer of that PassRefPtr
+        object was passed in, with a new PassRefPtr being created which would increase the reference count of the
+        ref-counted object. Passing in the original PassRefPtr avoids the unnecessary reference count increase by creating
+        a copy. That still nullifies the original PassRefPtr, but that's not a problem anymore.
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent):
+
 2013-10-14  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape-Margin should be animatable
