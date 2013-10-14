@@ -1,3 +1,27 @@
+2013-10-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        The content of the DOM panel for iframes is not updated until the "onload" event
+        https://bugs.webkit.org/show_bug.cgi?id=122653
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/inspector-protocol/loading-iframe-document-node.html
+
+        Renamed InspectorDOMAgent::loadEventFired to InspectorDOMAgent::didCommitLoad and moved the call site
+        from InspectorInstrumentation::loadEventFiredImpl to InspectorInstrumentation::didCommitLoadImpl.
+        This is to make sure that it will invalidate the content of the iframe as soon as the frame navigates
+        to a different page. This way the new node can be retrieved as soon as the page has some content, and
+        not just when the page is fully loaded.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didCommitLoad): Renamed from loadEventFired, as it is now called from
+        didCommitLoadImpl instead.
+        (WebCore::InspectorDOMAgent::frameDocumentUpdated): Updated comment to point to the new function name.
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl): Removed call do InspectorDOMAgent.loadEventFired.
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl): Added call to InspectorDOMAgent.didCommitLoad.
+
 2013-10-14  Roger Fong  <roger_fong@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=122774.

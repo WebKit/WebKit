@@ -860,9 +860,6 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
 
 void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
-        domAgent->loadEventFired(frame->document());
-
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didMarkLoadEvent(frame);
 
@@ -913,6 +910,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
 #endif
         inspectorAgent->didCommitLoad();
     }
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->didCommitLoad(loader->frame()->document());
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
         canvasAgent->frameNavigated(loader->frame());
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())

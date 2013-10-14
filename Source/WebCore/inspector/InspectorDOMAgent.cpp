@@ -1587,7 +1587,7 @@ void InspectorDOMAgent::mainFrameDOMContentLoaded()
         m_frontend->documentUpdated();
 }
 
-void InspectorDOMAgent::loadEventFired(Document* document)
+void InspectorDOMAgent::didCommitLoad(Document* document)
 {
     Element* frameOwner = document->ownerElement();
     if (!frameOwner)
@@ -1762,7 +1762,7 @@ void InspectorDOMAgent::frameDocumentUpdated(Frame* frame)
         return;
 
     // Only update the main frame document, nested frame document updates are not required
-    // (will be handled by loadEventFired()).
+    // (will be handled by didCommitLoad()).
     setDocument(document);
 }
 
