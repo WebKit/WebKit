@@ -1,3 +1,13 @@
+2013-10-14  Andreas Kling  <akling@apple.com>
+
+        Remove some silly null checks in Element/NamedNodeMap.
+        <https://webkit.org/b/122767>
+
+        Reviewed by Darin Adler.
+
+        Make shouldIgnoreAttributeCase() take a const Element&, exposing
+        some unnecessary null checks.
+
 2013-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r122737.

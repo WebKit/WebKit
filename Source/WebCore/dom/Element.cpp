@@ -105,9 +105,9 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static inline bool shouldIgnoreAttributeCase(const Element* e)
+static inline bool shouldIgnoreAttributeCase(const Element& element)
 {
-    return e && e->document().isHTMLDocument() && e->isHTMLElement();
+    return element.isHTMLElement() && element.document().isHTMLDocument();
 }
 
 typedef Vector<RefPtr<Attr> > AttrNodeList;
@@ -437,7 +437,7 @@ inline void Element::synchronizeAttribute(const AtomicString& localName) const
     // e.g when called from DOM API.
     if (!elementData())
         return;
-    if (elementData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(localName, styleAttr.localName(), shouldIgnoreAttributeCase(this))) {
+    if (elementData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(localName, styleAttr.localName(), shouldIgnoreAttributeCase(*this))) {
         ASSERT_WITH_SECURITY_IMPLICATION(isStyledElement());
         static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
@@ -1011,7 +1011,7 @@ const AtomicString& Element::getAttribute(const AtomicString& localName) const
     if (!elementData())
         return nullAtom;
     synchronizeAttribute(localName);
-    if (const Attribute* attribute = elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(this)))
+    if (const Attribute* attribute = elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(*this)))
         return attribute->value();
     return nullAtom;
 }
@@ -1029,7 +1029,7 @@ void Element::setAttribute(const AtomicString& localName, const AtomicString& va
     }
 
     synchronizeAttribute(localName);
-    const AtomicString& caseAdjustedLocalName = shouldIgnoreAttributeCase(this) ? localName.lower() : localName;
+    const AtomicString& caseAdjustedLocalName = shouldIgnoreAttributeCase(*this) ? localName.lower() : localName;
 
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedLocalName, false) : ElementData::attributeNotFound;
     const QualifiedName& qName = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName(nullAtom, caseAdjustedLocalName, nullAtom);
@@ -1795,7 +1795,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    unsigned index = elementData.findAttributeIndexByNameForAttributeNode(attrNode, shouldIgnoreAttributeCase(this));
+    unsigned index = elementData.findAttributeIndexByNameForAttributeNode(attrNode, shouldIgnoreAttributeCase(*this));
     if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
@@ -1907,7 +1907,7 @@ void Element::removeAttribute(const AtomicString& name)
     if (!elementData())
         return;
 
-    AtomicString localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
+    AtomicString localName = shouldIgnoreAttributeCase(*this) ? name.lower() : name;
     unsigned index = elementData()->findAttributeIndexByName(localName, false);
     if (index == ElementData::attributeNotFound) {
         if (UNLIKELY(localName == styleAttr) && elementData()->m_styleAttributeIsDirty && isStyledElement())
@@ -1928,7 +1928,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const AtomicString& localName)
     if (!elementData())
         return 0;
     synchronizeAttribute(localName);
-    const Attribute* attribute = elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(this));
+    const Attribute* attribute = elementData()->findAttributeByName(localName, shouldIgnoreAttributeCase(*this));
     if (!attribute)
         return 0;
     return ensureAttr(attribute->name());
@@ -1951,7 +1951,7 @@ bool Element::hasAttribute(const AtomicString& localName) const
     if (!elementData())
         return false;
     synchronizeAttribute(localName);
-    return elementData()->findAttributeByName(shouldIgnoreAttributeCase(this) ? localName.lower() : localName, false);
+    return elementData()->findAttributeByName(shouldIgnoreAttributeCase(*this) ? localName.lower() : localName, false);
 }
 
 bool Element::hasAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
