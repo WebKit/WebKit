@@ -1,5 +1,22 @@
 2013-10-13  Alexey Proskuryakov  <ap@apple.com>
 
+        build.webkit.org/dashboard incorrectly shows interrupted builds as green
+        https://bugs.webkit.org/show_bug.cgi?id=122732
+
+        Reviewed by Tim Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.update): Removed a special case for status 4 (EXCEPTION).
+        I don't see it occur any time in recent history, but judging from what happens for
+        status 5 (RETRY), we can just finish this function normally.
+        Record overall text description for iteration as BuildbotIteration.text.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus): If an iteration is a failure,
+        but no tests failed, make it yellow, and use buildbot-provided description for it.
+
+2013-10-13  Alexey Proskuryakov  <ap@apple.com>
+
         Remove Chromium specific code from flakiness dashboard
         https://bugs.webkit.org/show_bug.cgi?id=122714
 

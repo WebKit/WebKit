@@ -70,9 +70,13 @@ BuildbotTesterQueueView.prototype = {
                 var perlTestResults = iteration.perlTestResults || {failureCount: 0};
                 var bindingTestResults = iteration.bindingTestResults || {errorOccurred: false};
 
-                if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
+                if (!iteration.failed) {
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Good, "all tests passed");
                     limit = 0;
+                } else if (!layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
+                    // Something wrong happened, but it was not a test failure.
+                    var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                    var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
                 } else if (layoutTestResults.failureCount && !javascriptTestResults.failureCount && !apiTestResults.failureCount && !pythonTestResults.failureCount && !perlTestResults.failureCount && !bindingTestResults.errorOccurred) {
                     var url = iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration);
                     var status = new StatusLineView(messageLinkElement, StatusLineView.Status.Bad, layoutTestResults.failureCount === 1 ? "layout test failure" : "layout test failures", layoutTestResults.tooManyFailures ? layoutTestResults.failureCount + "\uff0b" : layoutTestResults.failureCount, url);
