@@ -62,7 +62,7 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rsi)
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, r8)
 
 #elif COMPILER(GCC) && CPU(X86)
 
@@ -80,7 +80,7 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8)
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 16)
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 20)
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 24)
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 28)
 
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
@@ -117,10 +117,10 @@ namespace JSC {
 // As a result, return address will be at a 4-byte further location in the following cases.
 #if COMPILER_SUPPORTS(EABI) && CPU(ARM)
 #define INSTRUCTION_STORE_RETURN_ADDRESS_EJI "str lr, [sp, #4]"
-#define INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "str lr, [sp, #8]"
+#define INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "str lr, [sp, #12]"
 #else
 #define INSTRUCTION_STORE_RETURN_ADDRESS_EJI "str lr, [sp, #0]"
-#define INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "str lr, [sp, #4]"
+#define INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "str lr, [sp, #8]"
 #endif
 
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
@@ -136,7 +136,7 @@ namespace JSC {
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
     asm ( \
     ".text" "\n" \
     ".align 2" "\n" \
@@ -145,7 +145,7 @@ namespace JSC {
     ".thumb" "\n" \
     ".thumb_func " THUMB_FUNC_PARAM(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
-        INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "\n" \
+        INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "\n" \
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
@@ -180,10 +180,10 @@ namespace JSC {
 // As a result, return address will be at a 4-byte further location in the following cases.
 #if COMPILER_SUPPORTS(EABI) && CPU(ARM)
 #define INSTRUCTION_STORE_RETURN_ADDRESS_EJI "str lr, [sp, #4]"
-#define INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "str lr, [sp, #8]"
+#define INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "str lr, [sp, #12]"
 #else
 #define INSTRUCTION_STORE_RETURN_ADDRESS_EJI "str lr, [sp, #0]"
-#define INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "str lr, [sp, #4]"
+#define INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "str lr, [sp, #8]"
 #endif
 
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
@@ -197,14 +197,14 @@ namespace JSC {
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
     asm ( \
     ".text" "\n" \
     ".globl " SYMBOL_STRING(function) "\n" \
     HIDE_SYMBOL(function) "\n" \
     INLINE_ARM_FUNCTION(function) \
     SYMBOL_STRING(function) ":" "\n" \
-        INSTRUCTION_STORE_RETURN_ADDRESS_EJCI "\n" \
+        INSTRUCTION_STORE_RETURN_ADDRESS_EJJI "\n" \
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
@@ -246,14 +246,14 @@ namespace JSC {
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
     asm( \
     ".text" "\n" \
     ".globl " SYMBOL_STRING(function) "\n" \
     HIDE_SYMBOL(function) "\n" \
     SYMBOL_STRING(function) ":" "\n" \
     LOAD_FUNCTION_TO_T9(function##WithReturnAddress) \
-        "sw $ra, 24($sp)" "\n" \
+        "sw $ra, 28($sp)" "\n" \
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
@@ -305,7 +305,7 @@ namespace JSC {
     );
 
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 0, SH4_SCRATCH_REGISTER)
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 4, SH4_SCRATCH_REGISTER)
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8, SH4_SCRATCH_REGISTER)
 
 #elif COMPILER(MSVC)
 
@@ -321,8 +321,8 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
     EncodedJSValue JIT_OPERATION function(ExecState* exec, EncodedJSValue value, StringImpl* string) { return function##WithReturnAddress(exec, value, string, ReturnAddressPtr(*(void**)_AddressOfReturnAddress())); }
 
-#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
-    void JIT_OPERATION function(ExecState* exec, EncodedJSValue value, JSCell* cell, StringImpl* string) { return function##WithReturnAddress(exec, value, cell, string, ReturnAddressPtr(*(void**)_AddressOfReturnAddress())); }
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
+    void JIT_OPERATION function(ExecState* exec, EncodedJSValue value, EncodedJSValue baseValue, StringImpl* string) { return function##WithReturnAddress(exec, value, baseValue, string, ReturnAddressPtr(*(void**)_AddressOfReturnAddress())); }
 
 #endif
 
@@ -342,9 +342,9 @@ _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)
 EncodedJSValue JIT_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
 _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)
 
-#define V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
-void JIT_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, JSCell*, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
-_V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function)
+#define V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
+void JIT_OPERATION function##WithReturnAddress(ExecState*, EncodedJSValue, EncodedJSValue, StringImpl*, ReturnAddressPtr) REFERENCED_FROM_ASM WTF_INTERNAL; \
+_V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function)
 
 } // namespace JSC
 

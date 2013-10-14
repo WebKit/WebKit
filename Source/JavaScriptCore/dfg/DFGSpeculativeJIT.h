@@ -1363,7 +1363,7 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
-    JITCompiler::Call callOperation(V_JITOperation_EJCI operation, GPRReg arg1, GPRReg arg2, StringImpl* uid)
+    JITCompiler::Call callOperation(V_JITOperation_EJJI operation, GPRReg arg1, GPRReg arg2, StringImpl* uid)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
         return appendCallWithExceptionCheck(operation);
@@ -1620,9 +1620,9 @@ public:
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheck(operation);
     }
-    JITCompiler::Call callOperation(V_JITOperation_EJCI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, StringImpl* uid)
+    JITCompiler::Call callOperation(V_JITOperation_EJJI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Payload, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2, TrustedImmPtr(uid));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2Payload, TrustedImm32(JSValue::CellTag), TrustedImmPtr(uid));
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)

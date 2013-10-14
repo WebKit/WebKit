@@ -2382,7 +2382,7 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
             JIT::resetPatchGetById(repatchBuffer, &stubInfo);
         else {
             RELEASE_ASSERT(isPutByIdAccess(accessType));
-            JIT::resetPatchPutById(repatchBuffer, &stubInfo);
+            resetPutByID(repatchBuffer, stubInfo);
         }
         break;
     case JITCode::DFGJIT:

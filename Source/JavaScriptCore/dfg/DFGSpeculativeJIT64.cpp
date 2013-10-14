@@ -254,7 +254,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 
     JITCompiler::Label doneLabel = m_jit.label();
     
-    V_JITOperation_EJCI optimizedCall;
+    V_JITOperation_EJJI optimizedCall;
     if (m_jit.strictModeFor(m_currentNode->codeOrigin)) {
         if (putKind == Direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;

@@ -141,6 +141,8 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
         
     default:
+        // FIXME: We should handle polymorphic PutById. We probably have some interesting things
+        // we could do about it.
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
 #else // ENABLE(JIT)

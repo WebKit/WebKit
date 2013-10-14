@@ -529,7 +529,7 @@ void JIT::compileGetByIdSlowCase(int dst, int base, const Identifier* ident, Vec
     END_UNINTERRUPTED_SEQUENCE_FOR_PUT(sequenceGetByIdSlowCase, dst);
     
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(PropertyStubGetById, coldPathBegin, call);
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call);
 }
 
 void JIT::emit_op_put_by_id(Instruction* currentInstruction)
@@ -545,42 +545,62 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     
-    BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
-    
-    Label hotPathBegin(this);
-    
-    // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
-    addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
+    PatchableJump structureCheck = patchableBranchPtrWithPatch(
+        NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare,
+        TrustedImmPtr(reinterpret_cast<void*>(unusedPointer)));
     
-    ConvertibleLoadLabel propertyStorageLoad = convertibleLoadPtr(Address(regT0, JSObject::butterflyOffset()), regT1);
-    DataLabel32 displacementLabel1 = storePtrWithAddressOffsetPatch(regT2, Address(regT1, patchPutByIdDefaultOffset)); // payload
-    DataLabel32 displacementLabel2 = storePtrWithAddressOffsetPatch(regT3, Address(regT1, patchPutByIdDefaultOffset)); // tag
+    addSlowCase(structureCheck);
     
-    END_UNINTERRUPTED_SEQUENCE(sequencePutById);
-
     emitWriteBarrier(regT0, regT2, regT1, regT2, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 
-    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo(PropertyStubPutById, m_bytecodeOffset, hotPathBegin, structureToCompare, propertyStorageLoad, displacementLabel1, displacementLabel2));
+    ConvertibleLoadLabel propertyStorageLoad =
+        convertibleLoadPtr(Address(regT0, JSObject::butterflyOffset()), regT1);
+    
+    // Payload.
+    DataLabel32 storeWithPatch1 =
+        store32WithAddressOffsetPatch(regT2, Address(regT1, patchPutByIdDefaultOffset));
+    // Tag.
+    DataLabel32 storeWithPatch2 =
+        store32WithAddressOffsetPatch(regT3, Address(regT1, patchPutByIdDefaultOffset));
+    
+    Label done = label();
+    
+    m_propertyAccessCompilationInfo.append(
+        PropertyStubCompilationInfo(
+            PropertyStubPutById, m_bytecodeOffset, structureToCompare, structureCheck,
+            propertyStorageLoad, storeWithPatch1, storeWithPatch2, done));
+    BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 }
 
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int base = currentInstruction[1].u.operand;
-    int ident = currentInstruction[2].u.operand;
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
     int direct = currentInstruction[8].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, base);
     linkSlowCase(iter);
     
-    JITStubCall stubCall(this, direct ? cti_op_put_by_id_direct : cti_op_put_by_id);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&(m_codeBlock->identifier(ident))));
-    stubCall.addArgument(regT3, regT2); 
-    Call call = stubCall.call();
+    Label coldPathBegin(this);
     
+    V_JITOperation_EJJI optimizedCall;
+    if (m_codeBlock->isStrictMode()) {
+        if (direct)
+            optimizedCall = operationPutByIdDirectStrictOptimize;
+        else
+            optimizedCall = operationPutByIdStrictOptimize;
+    } else {
+        if (direct)
+            optimizedCall = operationPutByIdDirectNonStrictOptimize;
+        else
+            optimizedCall = operationPutByIdNonStrictOptimize;
+    }
+    
+    Call call = callOperation(optimizedCall, regT3, regT2, regT1, regT0, ident->impl());
+
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(PropertyStubPutById, call);
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call);
 }
 
 // Compile a store into an object's property storage.  May overwrite base.
@@ -618,111 +638,6 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterI
     load32(Address(resultTag, offsetInButterfly(cachedOffset) * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
 }
 
-void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, PropertyOffset cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
-{
-    // The code below assumes that regT0 contains the basePayload and regT1 contains the baseTag. Restore them from the stack.
-#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
-    // For MIPS, we don't add sizeof(void*) to the stack offset.
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    // For MIPS, we don't add sizeof(void*) to the stack offset.
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-#else
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-#endif
-
-    JumpList failureCases;
-    failureCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
-    failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(oldStructure)));
-    testPrototype(oldStructure->storedPrototype(), failureCases, stubInfo);
-    
-    if (!direct) {
-        // Verify that nothing in the prototype chain has a setter for this property. 
-        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it)
-            testPrototype((*it)->storedPrototype(), failureCases, stubInfo);
-    }
-
-    // If we succeed in all of our checks, and the code was optimizable, then make sure we
-    // decrement the rare case counter.
-#if ENABLE(VALUE_PROFILER)
-    if (m_codeBlock->capabilityLevelState() != DFG::CannotCompile) {
-        sub32(
-            TrustedImm32(1),
-            AbsoluteAddress(&m_codeBlock->rareCaseProfileForBytecodeOffset(stubInfo->codeOrigin.bytecodeIndex)->m_counter));
-    }
-#endif
-    
-    // Reallocate property storage if needed.
-    Call callTarget;
-    bool willNeedStorageRealloc = oldStructure->outOfLineCapacity() != newStructure->outOfLineCapacity();
-    if (willNeedStorageRealloc) {
-        // This trampoline was called to like a JIT stub; before we can can call again we need to
-        // remove the return address from the stack, to prevent the stack from becoming misaligned.
-        preserveReturnAddressAfterCall(regT3);
-        
-        JITStubCall stubCall(this, cti_op_put_by_id_transition_realloc);
-        stubCall.skipArgument(); // base
-        stubCall.skipArgument(); // ident
-        stubCall.skipArgument(); // value
-        stubCall.addArgument(TrustedImm32(oldStructure->outOfLineCapacity()));
-        stubCall.addArgument(TrustedImmPtr(newStructure));
-        stubCall.call(regT0);
-
-        restoreReturnAddressBeforeReturn(regT3);
-
-#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
-        // For MIPS, we don't add sizeof(void*) to the stack offset.
-        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-        // For MIPS, we don't add sizeof(void*) to the stack offset.
-        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-#else
-        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-#endif
-    }
-
-    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
-
-    storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
-#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
-    // For MIPS, we don't add sizeof(void*) to the stack offset.
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
-#else
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
-    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);
-#endif
-    compilePutDirectOffset(regT0, regT2, regT3, cachedOffset);
-    
-    ret();
-    
-    ASSERT(!failureCases.empty());
-    failureCases.link(this);
-    restoreArgumentReferenceForTrampoline();
-    Call failureCall = tailRecursiveCall();
-    
-    LinkBuffer patchBuffer(*m_vm, this, m_codeBlock);
-    
-    patchBuffer.link(failureCall, FunctionPtr(direct ? cti_op_put_by_id_direct_fail : cti_op_put_by_id_fail));
-    
-    if (willNeedStorageRealloc) {
-        ASSERT(m_calls.size() == 1);
-        patchBuffer.link(m_calls[0].from, FunctionPtr(cti_op_put_by_id_transition_realloc));
-    }
-    
-    stubInfo->stubRoutine = createJITStubRoutine(
-        FINALIZE_CODE(
-            patchBuffer,
-            ("Baseline put_by_id transition stub for %s, return point %p",
-                toCString(*m_codeBlock).data(), returnAddress.value())),
-        *m_vm,
-        m_codeBlock->ownerExecutable(),
-        willNeedStorageRealloc,
-        newStructure);
-    RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relinkCallerToTrampoline(returnAddress, CodeLocationLabel(stubInfo->stubRoutine->code().code()));
-}
-
 void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
 {
     RepatchBuffer repatchBuffer(codeBlock);
@@ -736,21 +651,6 @@ void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, St
     repatchBuffer.setLoadInstructionIsActive(stubInfo->hotPathBegin.convertibleLoadAtOffset(stubInfo->patch.baseline.u.get.propertyStorageLoad), isOutOfLineOffset(cachedOffset));
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel1), offsetRelativeToPatchedStorage(cachedOffset) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel2), offsetRelativeToPatchedStorage(cachedOffset) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
-}
-
-void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress, bool direct)
-{
-    RepatchBuffer repatchBuffer(codeBlock);
-    
-    // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
-    // Should probably go to cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-    
-    // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.put.structureToCompare), structure);
-    repatchBuffer.setLoadInstructionIsActive(stubInfo->hotPathBegin.convertibleLoadAtOffset(stubInfo->patch.baseline.u.put.propertyStorageLoad), isOutOfLineOffset(cachedOffset));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel1), offsetRelativeToPatchedStorage(cachedOffset) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)); // payload
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel2), offsetRelativeToPatchedStorage(cachedOffset) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
 }
 
 void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
@@ -1481,17 +1381,6 @@ void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel1), 0);
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(stubInfo->patch.baseline.u.get.displacementLabel2), 0);
     repatchBuffer.relink(stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck), stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin));
-}
-
-void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
-{
-    if (isDirectPutById(stubInfo))
-        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id_direct);
-    else
-        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(stubInfo->patch.baseline.u.put.structureToCompare), reinterpret_cast<void*>(unusedPointer));
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel1), 0);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel2), 0);
 }
 
 } // namespace JSC

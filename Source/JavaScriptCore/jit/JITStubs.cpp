@@ -123,62 +123,6 @@ void performPlatformSpecificJITAssertions(VM* vm)
 #endif
 }
 
-NEVER_INLINE static void tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo, bool direct)
-{
-    ConcurrentJITLocker locker(codeBlock->m_lock);
-    
-    // The interpreter checks for recursion here; I do not believe this can occur in CTI.
-
-    if (!baseValue.isCell())
-        return;
-
-    // Uncacheable: give up.
-    if (!slot.isCacheable()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-        return;
-    }
-    
-    JSCell* baseCell = baseValue.asCell();
-    Structure* structure = baseCell->structure();
-
-    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-        return;
-    }
-
-    // If baseCell != base, then baseCell must be a proxy for another object.
-    if (baseCell != slot.base()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-        return;
-    }
-
-    // Cache hit: Specialize instruction and ref Structures.
-
-    // Structure transition, cache transition info
-    if (slot.type() == PutPropertySlot::NewProperty) {
-        if (structure->isDictionary()) {
-            ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-            return;
-        }
-
-        // put_by_id_transition checks the prototype chain for setters.
-        if (normalizePrototypeChain(callFrame, baseCell) == InvalidPrototypeChain) {
-            ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
-            return;
-        }
-
-        StructureChain* prototypeChain = structure->prototypeChain(callFrame);
-        ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
-        stubInfo->initPutByIdTransition(callFrame->vm(), codeBlock->ownerExecutable(), structure->previousID(), structure, prototypeChain, direct);
-        JIT::compilePutByIdTransition(callFrame->scope()->vm(), codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress, direct);
-        return;
-    }
-    
-    stubInfo->initPutByIdReplace(callFrame->vm(), codeBlock->ownerExecutable(), structure);
-
-    JIT::patchPutByIdReplace(codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress, direct);
-}
-
 NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo* stubInfo)
 {
     ConcurrentJITLocker locker(codeBlock->m_lock);
@@ -436,30 +380,6 @@ DEFINE_STUB_FUNCTION(void, handle_watchdog_timer)
     }
 }
 
-DEFINE_STUB_FUNCTION(void, op_put_by_id_generic)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    PutPropertySlot slot(
-        stackFrame.callFrame->codeBlock()->isStrictMode(),
-        stackFrame.callFrame->codeBlock()->putByIdContext());
-    stackFrame.args[0].jsValue().put(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_generic)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    PutPropertySlot slot(
-        stackFrame.callFrame->codeBlock()->isStrictMode(),
-        stackFrame.callFrame->codeBlock()->putByIdContext());
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    ASSERT(baseValue.isObject());
-    asObject(baseValue)->putDirect(stackFrame.callFrame->vm(), stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_generic)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -473,108 +393,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_generic)
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_id)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    CallFrame* callFrame = stackFrame.callFrame;
-    Identifier& ident = stackFrame.args[1].identifier();
-    
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    PutPropertySlot slot(
-        callFrame->codeBlock()->isStrictMode(),
-        callFrame->codeBlock()->putByIdContext());
-    stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
-    
-    if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
-        stubInfo->setSeen();
-        tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, false);
-    }
-    
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    CallFrame* callFrame = stackFrame.callFrame;
-    Identifier& ident = stackFrame.args[1].identifier();
-    
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
-
-    PutPropertySlot slot(
-        callFrame->codeBlock()->isStrictMode(),
-        callFrame->codeBlock()->putByIdContext());
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    ASSERT(baseValue.isObject());
-    
-    asObject(baseValue)->putDirect(callFrame->vm(), ident, stackFrame.args[2].jsValue(), slot);
-    
-    if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
-        stubInfo->setSeen();
-        tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, true);
-    }
-    
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_id_fail)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    Identifier& ident = stackFrame.args[1].identifier();
-    
-    PutPropertySlot slot(
-        callFrame->codeBlock()->isStrictMode(),
-        callFrame->codeBlock()->putByIdContext());
-    stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
-
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_fail)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    Identifier& ident = stackFrame.args[1].identifier();
-    
-    PutPropertySlot slot(
-        callFrame->codeBlock()->isStrictMode(),
-        callFrame->codeBlock()->putByIdContext());
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    ASSERT(baseValue.isObject());
-    asObject(baseValue)->putDirect(callFrame->vm(), ident, stackFrame.args[2].jsValue(), slot);
-    
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
-DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue baseValue = stackFrame.args[0].jsValue();
-    int32_t oldSize = stackFrame.args[3].int32();
-    Structure* newStructure = stackFrame.args[4].structure();
-    int32_t newSize = newStructure->outOfLineCapacity();
-    
-    ASSERT(oldSize >= 0);
-    ASSERT(newSize > oldSize);
-
-    ASSERT(baseValue.isObject());
-    JSObject* base = asObject(baseValue);
-    VM& vm = *stackFrame.vm;
-    Butterfly* butterfly = base->growOutOfLineStorage(vm, oldSize, newSize);
-    base->setStructureAndButterfly(vm, newStructure, butterfly);
-
-    return base;
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)

@@ -262,7 +262,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
     JITCompiler::DataLabel32 payloadStoreWithPatch = m_jit.store32WithAddressOffsetPatch(valuePayloadGPR, JITCompiler::Address(scratchGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 
     JITCompiler::Label doneLabel = m_jit.label();
-    V_JITOperation_EJCI optimizedCall;
+    V_JITOperation_EJJI optimizedCall;
     if (m_jit.strictModeFor(m_currentNode->codeOrigin)) {
         if (putKind == Direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;

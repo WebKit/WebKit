@@ -1,3 +1,55 @@
+2013-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should use the DFG's PutById IC
+        https://bugs.webkit.org/show_bug.cgi?id=122704
+
+        Reviewed by Mark Hahnenberg.
+        
+        Mostly no big deal, just removing the old Baseline JIT's put_by_id IC support and forcing
+        that JIT to use the DFG's (i.e. JITOperations) PutById IC.
+        
+        The only complicated part was that the PutById operations assumed that we first did a
+        cell speculation, which the baseline JIT obviously won't do. So I changed all of those
+        slow paths to deal with EncodedJSValue's.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        * jit/JIT.h:
+        (JSC::PropertyStubCompilationInfo::PropertyStubCompilationInfo):
+        (JSC::PropertyStubCompilationInfo::slowCaseInfo):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperationWrappers.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/Repatch.cpp:
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateListBuildingPutByIdFunction):
+        (JSC::resetPutByID):
+
 2013-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should have an inefficient but correct implementation of GetById
