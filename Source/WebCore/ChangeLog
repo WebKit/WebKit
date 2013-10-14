@@ -1,3 +1,13 @@
+2013-10-13  Andreas Kling  <akling@apple.com>
+
+        Use RenderElement instead of RenderObject in more places.
+        <https://webkit.org/b/122734>
+
+        Reviewed by Antti Koivisto.
+
+        Convert some sites to use RenderElement (or type inference) instead
+        of RenderObject for less branchy code.
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Deprecate or remove deleteAllValues functions; there are only a few call sites left

@@ -138,7 +138,7 @@ void RenderInline::updateFromStyle()
     setHasReflection(false);    
 }
 
-static RenderObject* inFlowPositionedInlineAncestor(RenderObject* p)
+static RenderElement* inFlowPositionedInlineAncestor(RenderElement* p)
 {
     while (p && p->isRenderInline()) {
         if (p->isInFlowPositioned())
@@ -316,7 +316,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         
         // If inside an inline affected by in-flow positioning the block needs to be affected by it too.
         // Giving the block a layer like this allows it to collect the x/y offsets from inline parents later.
-        if (RenderObject* positionedAncestor = inFlowPositionedInlineAncestor(this))
+        if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle->setPosition(positionedAncestor->style()->position());
 
         RenderBlock* newBox = RenderBlock::createAnonymous(document());

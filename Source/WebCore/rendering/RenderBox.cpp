@@ -89,7 +89,7 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
     ASSERT(bodyElementRenderer->isBody());
     // The <body> only paints its background if the root element has defined a background independent of the body,
     // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-    RenderObject* documentElementRenderer = bodyElementRenderer->document().documentElement()->renderer();
+    auto documentElementRenderer = bodyElementRenderer->document().documentElement()->renderer();
     return documentElementRenderer
         && !documentElementRenderer->hasBackground()
         && (documentElementRenderer == bodyElementRenderer->parent());
@@ -227,7 +227,7 @@ RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
 {
     ASSERT(isFloating());
     RenderBlockFlow* parentBlock = 0;
-    for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
+    for (auto curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
         if (curr->isRenderBlockFlow()) {
             RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
             if (!parentBlock || currBlock->containsFloat(this))
@@ -328,7 +328,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     // Our opaqueness might have changed without triggering layout.
     if (diff >= StyleDifferenceRepaint && diff <= StyleDifferenceRepaintLayer) {
-        RenderObject* parentToInvalidate = parent();
+        auto parentToInvalidate = parent();
         for (unsigned i = 0; i < backgroundObscurationTestMaxDepth && parentToInvalidate; ++i) {
             parentToInvalidate->invalidateBackgroundObscurationStatus();
             parentToInvalidate = parentToInvalidate->parent();
@@ -1102,7 +1102,7 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     if (paintInfo.skipRootBackground())
         return;
 
-    RenderElement* rootBackgroundRenderer = rendererForRootBackground();
+    auto rootBackgroundRenderer = rendererForRootBackground();
     
     const FillLayer* bgLayer = rootBackgroundRenderer->style()->backgroundLayers();
     Color bgColor = rootBackgroundRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
@@ -1795,7 +1795,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     bool containerSkipped;
-    RenderElement* o = container(repaintContainer, &containerSkipped);
+    auto o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -1844,7 +1844,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
+    auto container = this->container(ancestorToStopAt, &ancestorSkipped);
     if (!container)
         return 0;
 
@@ -2051,7 +2051,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     }
 
     bool containerSkipped;
-    RenderElement* o = container(repaintContainer, &containerSkipped);
+    auto o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -2287,15 +2287,15 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Lengt
     return logicalWidthResult;
 }
 
-static bool flexItemHasStretchAlignment(const RenderObject* flexitem)
+static bool flexItemHasStretchAlignment(const RenderBox& flexitem)
 {
-    RenderObject* parent = flexitem->parent();
-    return flexitem->style()->alignSelf() == AlignStretch || (flexitem->style()->alignSelf() == AlignAuto && parent->style()->alignItems() == AlignStretch);
+    auto parent = flexitem.parent();
+    return flexitem.style()->alignSelf() == AlignStretch || (flexitem.style()->alignSelf() == AlignAuto && parent->style()->alignItems() == AlignStretch);
 }
 
-static bool isStretchingColumnFlexItem(const RenderObject* flexitem)
+static bool isStretchingColumnFlexItem(const RenderBox& flexitem)
 {
-    RenderObject* parent = flexitem->parent();
+    auto parent = flexitem.parent();
     if (parent->isDeprecatedFlexibleBox() && parent->style()->boxOrient() == VERTICAL && parent->style()->boxAlign() == BSTRETCH)
         return true;
 
@@ -2336,7 +2336,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
         // For multiline columns, we need to apply align-content first, so we can't stretch now.
         if (!parent()->style()->isColumnFlexDirection() || parent()->style()->flexWrap() != FlexNoWrap)
             return true;
-        if (!flexItemHasStretchAlignment(this))
+        if (!flexItemHasStretchAlignment(*this))
             return true;
     }
 
@@ -2351,7 +2351,7 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     // stretching column flexbox.
     // FIXME: Think about block-flow here.
     // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (logicalWidth.type() == Auto && !isStretchingColumnFlexItem(this) && element() && (isHTMLInputElement(element()) || element()->hasTagName(selectTag) || element()->hasTagName(buttonTag) || isHTMLTextAreaElement(element()) || element()->hasTagName(legendTag)))
+    if (logicalWidth.type() == Auto && !isStretchingColumnFlexItem(*this) && element() && (isHTMLInputElement(element()) || element()->hasTagName(selectTag) || element()->hasTagName(buttonTag) || isHTMLTextAreaElement(element()) || element()->hasTagName(legendTag)))
         return true;
 
     if (isHorizontalWritingMode() != containingBlock()->isHorizontalWritingMode())
@@ -2818,7 +2818,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
         case Percent:
         case Calculated:
         {
-            RenderObject* cb = isOutOfFlowPositioned() ? container() : containingBlock();
+            auto cb = isOutOfFlowPositioned() ? container() : containingBlock();
             while (cb->isAnonymous() && !cb->isRenderView()) {
                 cb = cb->containingBlock();
                 toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
@@ -3052,10 +3052,10 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
     if (child->parent()->style()->direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
-        for (RenderElement* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
+        for (auto curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox()) {
                 staticPosition += toRenderBox(curr)->logicalLeft();
-                if (region && curr->isRenderBlock()) {
+                if (region && toRenderBox(curr)->isRenderBlock()) {
                     const RenderBlock* cb = toRenderBlock(curr);
                     region = cb->clampToStartAndEndRegions(region);
                     RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(region);
@@ -4380,7 +4380,7 @@ int RenderBox::baselinePosition(FontBaseline baselineType, bool /*firstLine*/, L
 
 RenderLayer* RenderBox::enclosingFloatPaintingLayer() const
 {
-    const RenderObject* curr = this;
+    const RenderElement* curr = this;
     while (curr) {
         RenderLayer* layer = curr->hasLayer() && curr->isBox() ? toRenderBox(curr)->layer() : 0;
         if (layer && layer->isSelfPaintingLayer())

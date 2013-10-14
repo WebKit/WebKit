@@ -122,7 +122,7 @@ void RenderTableCol::clearPreferredLogicalWidthsDirtyBits()
 
 RenderTable* RenderTableCol::table() const
 {
-    RenderObject* table = parent();
+    auto table = parent();
     if (table && !table->isTable())
         table = table->parent();
     return table && table->isTable() ? toRenderTable(table) : 0;

@@ -265,7 +265,7 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newSt
         else if (oldStyle->position() == StaticPosition) {
             // Remove our absolutely positioned descendants from their current containing block.
             // They will be inserted into our positioned objects list during layout.
-            RenderObject* cb = parent();
+            auto cb = parent();
             while (cb && (cb->style()->position() == StaticPosition || (cb->isInline() && !cb->isReplaced())) && !cb->isRenderView()) {
                 if (cb->style()->position() == RelativePosition && cb->isInline() && !cb->isReplaced()) {
                     cb = cb->containingBlock();
@@ -459,7 +459,7 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
 RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
 {
     RenderBlock* firstChildIgnoringAnonymousWrappers = 0;
-    for (RenderObject* curr = this; curr; curr = curr->parent()) {
+    for (RenderElement* curr = this; curr; curr = curr->parent()) {
         if (!curr->isRenderBlock() || curr->isFloatingOrOutOfFlowPositioned() || curr->isTableCell() || curr->isRoot() || curr->isRenderView() || curr->hasOverflowClip()
             || curr->isInlineBlockOrInlineTable())
             return 0;
@@ -490,7 +490,7 @@ RenderBlock* RenderBlock::clone() const
         cloneBlock = createAnonymousBlock();
         cloneBlock->setChildrenInline(childrenInline());
     } else {
-        RenderObject* cloneRenderer = element()->createRenderer(renderArena(), *style());
+        auto cloneRenderer = element()->createRenderer(renderArena(), *style());
         cloneBlock = toRenderBlock(cloneRenderer);
         cloneBlock->setStyle(style());
 
@@ -702,7 +702,7 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
         if (columnsBlockAncestor) {
             // Make sure that none of the parent ancestors have a continuation.
             // If yes, we do not want split the block into continuations.
-            RenderObject* curr = this;
+            RenderElement* curr = this;
             while (curr && curr != columnsBlockAncestor) {
                 if (curr->isRenderBlock() && toRenderBlock(curr)->continuation()) {
                     columnsBlockAncestor = 0;
@@ -1177,7 +1177,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // If we are an empty anonymous block in the continuation chain,
         // we need to remove ourself and fix the continuation chain.
         if (!beingDestroyed() && isAnonymousBlockContinuation() && !oldChild->isListMarker()) {
-            RenderObject* containingBlockIgnoringAnonymous = containingBlock();
+            auto containingBlockIgnoringAnonymous = containingBlock();
             while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
                 containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
             for (RenderObject* curr = this; curr; curr = curr->previousInPreOrder(containingBlockIgnoringAnonymous)) {
@@ -1973,7 +1973,7 @@ void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderObject* child)
     if (!hasStaticBlockPosition && !hasStaticInlinePosition)
         return;
 
-    RenderObject* o = child->parent();
+    auto o = child->parent();
     while (o && !o->isRenderView() && o->style()->position() != AbsolutePosition)
         o = o->parent();
     if (o->style()->position() != AbsolutePosition)
@@ -2955,7 +2955,7 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
     if (isSelectionRoot())
         return 0;
 
-    const RenderObject* object = this;
+    const RenderElement* object = this;
     RenderObject* sibling;
     do {
         sibling = object->previousSibling();
@@ -3498,12 +3498,12 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
-static inline bool isEditingBoundary(RenderObject* ancestor, RenderObject* child)
+static inline bool isEditingBoundary(RenderElement* ancestor, RenderObject* child)
 {
-    ASSERT(!ancestor || ancestor->nonPseudoNode());
+    ASSERT(!ancestor || ancestor->nonPseudoElement());
     ASSERT(child && child->nonPseudoNode());
     return !ancestor || !ancestor->parent() || (ancestor->hasLayer() && ancestor->parent()->isRenderView())
-        || ancestor->nonPseudoNode()->rendererIsEditable() == child->nonPseudoNode()->rendererIsEditable();
+        || ancestor->nonPseudoElement()->rendererIsEditable() == child->nonPseudoNode()->rendererIsEditable();
 }
 
 // FIXME: This function should go on RenderObject as an instance method. Then
@@ -3525,8 +3525,8 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
 
     // Otherwise, first make sure that the editability of the parent and child agree.
     // If they don't agree, then we return a visible position just before or after the child
-    RenderObject* ancestor = parent;
-    while (ancestor && !ancestor->nonPseudoNode())
+    RenderElement* ancestor = parent;
+    while (ancestor && !ancestor->nonPseudoElement())
         ancestor = ancestor->parent();
 
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
@@ -6020,12 +6020,12 @@ inline static bool isVisibleRenderText(RenderObject* renderer)
 inline static bool resizeTextPermitted(RenderObject* render)
 {
     // We disallow resizing for text input fields and textarea to address <rdar://problem/5792987> and <rdar://problem/8021123>
-    RenderObject* renderer = render->parent();
+    auto renderer = render->parent();
     while (renderer) {
         // Get the first non-shadow HTMLElement and see if it's an input.
-        if (renderer->node() && renderer->node()->isHTMLElement() && !renderer->node()->isInShadowTree()) {
-            HTMLElement* element = toHTMLElement(renderer->node());
-            return !element->hasTagName(inputTag) && !element->hasTagName(textareaTag);
+        if (renderer->element() && renderer->element()->isHTMLElement() && !renderer->element()->isInShadowTree()) {
+            const HTMLElement& element = toHTMLElement(*renderer->element());
+            return !isHTMLInputElement(element) && !isHTMLTextAreaElement(element);
         }
         renderer = renderer->parent();
     }

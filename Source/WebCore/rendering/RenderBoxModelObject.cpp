@@ -202,7 +202,7 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     if (!child->isAnonymousBlock() || !child->isInFlowPositioned())
         return LayoutSize();
     LayoutSize offset;
-    RenderObject* p = toRenderBlock(child)->inlineElementContinuation();
+    RenderElement* p = toRenderBlock(child)->inlineElementContinuation();
     while (p && p->isRenderInline()) {
         if (p->isInFlowPositioned()) {
             RenderInline* renderInline = toRenderInline(p);
@@ -309,7 +309,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             // CSS regions specification says that region flows should return the body element as their offsetParent.
             // Since we will bypass the body’s renderer anyway, just end the loop if we encounter a region flow (named flow thread).
             // See http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
-            RenderObject* curr = parent();
+            auto curr = parent();
             while (curr != offsetParent && !curr->isRenderNamedFlowThread()) {
                 // FIXME: What are we supposed to do inside SVG content?
                 if (!isOutOfFlowPositioned()) {
@@ -2739,7 +2739,7 @@ bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    RenderElement* o = container();
+    auto o = container();
     if (!o)
         return;
 

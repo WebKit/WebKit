@@ -1509,7 +1509,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         auto end = floatingObjectSet.end();
 
-        for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
+        for (auto curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
             if (curr->isRenderBlockFlow()) {
                 RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
 

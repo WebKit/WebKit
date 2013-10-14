@@ -708,7 +708,7 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
 void RenderFrameSet::setIsResizing(bool isResizing)
 {
     m_isResizing = isResizing;
-    for (RenderObject* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+    for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
         if (ancestor->isFrameSet())
             toRenderFrameSet(ancestor)->m_isChildResizing = isResizing;
     }
