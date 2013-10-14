@@ -1,5 +1,15 @@
 2013-10-14  Andreas Kling  <akling@apple.com>
 
+        CTTE: NamedNodeMap always has a corresponding Element.
+        <https://webkit.org/b/122769>
+
+        Reviewed by Anders Carlsson.
+
+        Made NamedNodeMap::m_element a reference and remove an assertion
+        that it's never null.
+
+2013-10-14  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r157408): Crashes in RenderFullScreen::wrapRenderer().
 
         Unreviewed crash fix for these two tests:

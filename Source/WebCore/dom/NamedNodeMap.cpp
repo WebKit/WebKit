@@ -42,42 +42,42 @@ static inline bool shouldIgnoreAttributeCase(const Element& element)
 
 void NamedNodeMap::ref()
 {
-    m_element->ref();
+    m_element.ref();
 }
 
 void NamedNodeMap::deref()
 {
-    m_element->deref();
+    m_element.deref();
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const AtomicString& name) const
 {
-    return m_element->getAttributeNode(name);
+    return m_element.getAttributeNode(name);
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName) const
 {
-    return m_element->getAttributeNodeNS(namespaceURI, localName);
+    return m_element.getAttributeNodeNS(namespaceURI, localName);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCode& ec)
 {
-    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(name, shouldIgnoreAttributeCase(*m_element)) : ElementData::attributeNotFound;
+    unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    return m_element->detachAttribute(index);
+    return m_element.detachAttribute(index);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
 {
-    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;
+    unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
-    return m_element->detachAttribute(index);
+    return m_element.detachAttribute(index);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
@@ -93,7 +93,7 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         return 0;
     }
 
-    return m_element->setAttributeNode(toAttr(node), ec);
+    return m_element.setAttributeNode(toAttr(node), ec);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
@@ -105,14 +105,14 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;
-    return m_element->ensureAttr(m_element->attributeAt(index).name());
+    return m_element.ensureAttr(m_element.attributeAt(index).name());
 }
 
 unsigned NamedNodeMap::length() const
 {
-    if (!m_element->hasAttributes())
+    if (!m_element.hasAttributes())
         return 0;
-    return m_element->attributeCount();
+    return m_element.attributeCount();
 }
 
 } // namespace WebCore

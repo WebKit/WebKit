@@ -41,7 +41,7 @@ class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:
-    static PassOwnPtr<NamedNodeMap> create(Element* element)
+    static PassOwnPtr<NamedNodeMap> create(Element& element)
     {
         return adoptPtr(new NamedNodeMap(element));
     }
@@ -63,17 +63,17 @@ public:
     PassRefPtr<Node> item(unsigned index) const;
     unsigned length() const;
 
-    Element* element() const { return m_element; }
+    // FIXME: It's lame that the bindings generator chokes if we return Element& here.
+    Element* element() const { return &m_element; }
 
 private:
-    explicit NamedNodeMap(Element* element)
+    explicit NamedNodeMap(Element& element)
         : m_element(element)
     {
         // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
-        ASSERT(m_element);
     }
 
-    Element* m_element;
+    Element& m_element;
 };
 
 } // namespace WebCore
