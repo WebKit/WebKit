@@ -570,7 +570,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
         PropertyStubCompilationInfo(
             PropertyStubPutById, m_bytecodeOffset, structureToCompare, structureCheck,
             propertyStorageLoad, storeWithPatch1, storeWithPatch2, done));
-    BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 }
 
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
