@@ -107,6 +107,10 @@ RenderElement::~RenderElement()
             if (auto shapeImage = shapeValue->image())
                 shapeImage->removeClient(this);
         }
+        if (auto shapeValue = m_style->shapeOutside()) {
+            if (auto shapeImage = shapeValue->image())
+                shapeImage->removeClient(this);
+        }
 #endif
     }
 }
@@ -381,6 +385,7 @@ void RenderElement::setStyle(PassRefPtr<RenderStyle> style)
 
 #if ENABLE(CSS_SHAPES)
     updateShapeImage(oldStyle ? oldStyle->shapeInside() : 0, m_style ? m_style->shapeInside() : 0);
+    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : 0, m_style ? m_style->shapeOutside() : 0);
 #endif
 
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen

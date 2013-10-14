@@ -1,3 +1,15 @@
+2013-10-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape-outside shapes should update the layout after the image has been loaded
+        https://bugs.webkit.org/show_bug.cgi?id=122340
+
+        Reviewed by Simon Fraser.
+
+        Verify that an image-valued shape-outside layout is updated after the image has been loaded.
+
+        * http/tests/css/css-image-valued-shape-expected.txt: Added.
+        * http/tests/css/css-image-valued-shape.html: Added.
+
 2013-10-14  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should use the DFG's PutById IC

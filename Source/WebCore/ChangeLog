@@ -1,3 +1,22 @@
+2013-10-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape-outside shapes should update the layout after the image has been loaded
+        https://bugs.webkit.org/show_bug.cgi?id=122340
+
+        Reviewed by Simon Fraser.
+
+        Ensure that the an image-valued shape-outside layout is updated after the image has
+        been loaded.
+
+        Test: http/tests/css/css-image-valued-shape.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::imageChanged): Added code for the shape-outside case.
+        (WebCore::RenderBlock::updateShapeInsideInfoAfterStyleChange): Ditto.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement): Ditto.
+        (WebCore::RenderElement::setStyle): Ditto.
+
 2013-10-14  Andreas Kling  <akling@apple.com>
 
         Remove some silly null checks in Element/NamedNodeMap.

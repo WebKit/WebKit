@@ -1372,7 +1372,7 @@ void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     RenderBox::imageChanged(image);
 
-    if (!parent())
+    if (!parent() || !everHadLayout())
         return;
 
     ShapeValue* shapeValue = style()->shapeInside();
@@ -1381,6 +1381,10 @@ void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
         shapeInsideInfo->dirtyShapeSize();
         markShapeInsideDescendantsForLayout();
     }
+
+    ShapeValue* shapeOutsideValue = style()->shapeOutside();
+    if (isFloating() && shapeOutsideValue && shapeOutsideValue->image() && shapeOutsideValue->image()->data() == image)
+        parent()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeInside, const ShapeValue* oldShapeInside)
