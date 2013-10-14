@@ -505,7 +505,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     if (previousChild && previousChild->isTextNode()) {
         // FIXME: We're only supposed to append to this text node if it
         // was the last text node inserted by the parser.
-        CharacterData* textNode = static_cast<CharacterData*>(previousChild);
+        Text* textNode = toText(previousChild);
         currentPosition = textNode->parserAppendData(characters, 0, lengthLimit);
     }
 
@@ -637,7 +637,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
         // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
         bool parentCanBeFosterParent = parent && (parent->isElementNode() || (m_isParsingFragment && parent == m_openElements.rootNode()));
 #if ENABLE(TEMPLATE_ELEMENT)
-        parentCanBeFosterParent = parentCanBeFosterParent || (parent && parent->isDocumentFragment() && static_cast<DocumentFragment*>(parent)->isTemplateContent());
+        parentCanBeFosterParent = parentCanBeFosterParent || (parent && parent->isDocumentFragment() && toDocumentFragment(parent)->isTemplateContent());
 #endif
         if (parentCanBeFosterParent) {
             task.parent = parent;

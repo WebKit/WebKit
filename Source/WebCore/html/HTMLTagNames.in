@@ -75,7 +75,7 @@ label generateTypeHelpers
 layer interfaceName=HTMLElement
 legend generateTypeHelpers
 li interfaceName=HTMLLIElement
-link constructorNeedsCreatedByParser
+link constructorNeedsCreatedByParser, generateTypeHelpers
 listing interfaceName=HTMLPreElement
 main interfaceName=HTMLElement
 map generateTypeHelpers

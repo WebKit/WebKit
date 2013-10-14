@@ -72,9 +72,9 @@ private:
 #endif
 };
 
+inline bool isText(const Node& node) { return node.isTextNode(); }
 void isText(const Text&); // Catch unnecessary runtime check of type known at compile time.
 void isText(const ContainerNode&); // Catch unnecessary runtime check of type known at compile time.
-inline bool isText(const Node& node) { return node.isTextNode(); }
 
 NODE_TYPE_CASTS(Text)
 

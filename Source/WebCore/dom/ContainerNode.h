@@ -170,32 +170,10 @@ private:
     Node* m_lastChild;
 };
 
-inline ContainerNode* toContainerNode(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isContainerNode());
-    return static_cast<ContainerNode*>(node);
-}
+inline bool isContainerNode(const Node& node) { return node.isContainerNode(); }
+void isContainerNode(const ContainerNode&); // Catch unnecessary runtime check of type known at compile time.
 
-inline const ContainerNode* toContainerNode(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isContainerNode());
-    return static_cast<const ContainerNode*>(node);
-}
-
-inline ContainerNode& toContainerNode(Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isContainerNode());
-    return static_cast<ContainerNode&>(node);
-}
-inline const ContainerNode& toContainerNode(const Node& node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(node.isContainerNode());
-    return static_cast<const ContainerNode&>(node);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toContainerNode(const ContainerNode*);
-void toContainerNode(const ContainerNode&);
+NODE_TYPE_CASTS(ContainerNode)
 
 inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
     : Node(document, type)

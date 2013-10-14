@@ -49,6 +49,11 @@ private:
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
 };
 
+inline bool isDocumentFragment(const Node& node) { return node.isDocumentFragment(); }
+void isDocumentFragment(const DocumentFragment&); // Catch unnecessary runtime check of type known at compile time.
+
+NODE_TYPE_CASTS(DocumentFragment)
+
 } //namespace
 
 #endif

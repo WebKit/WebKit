@@ -92,32 +92,10 @@ private:
     DocumentOrderedMap m_windowNamedItem;
 };
 
-inline HTMLDocument* toHTMLDocument(Document* document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isHTMLDocument());
-    return static_cast<HTMLDocument*>(document);
-}
+inline bool isHTMLDocument(const Document& document) { return document.isHTMLDocument(); }
+void isHTMLDocument(const HTMLDocument&); // Catch unnecessary runtime check of type known at compile time.
 
-inline const HTMLDocument* toHTMLDocument(const Document* document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isHTMLDocument());
-    return static_cast<const HTMLDocument*>(document);
-}
-
-inline HTMLDocument& toHTMLDocument(Document& document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(document.isHTMLDocument());
-    return static_cast<HTMLDocument&>(document);
-}
-
-inline const HTMLDocument& toHTMLDocument(const Document& document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(document.isHTMLDocument());
-    return static_cast<const HTMLDocument&>(document);
-}
-// This will catch anyone doing an unnecessary cast.
-void toHTMLDocument(const HTMLDocument*);
-void toHTMLDocument(const HTMLDocument&);
+DOCUMENT_TYPE_CASTS(HTMLDocument)
 
 } // namespace WebCore
 

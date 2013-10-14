@@ -61,21 +61,11 @@ private:
     RefPtr<HTMLPlugInElement> m_pluginElement;
 };
 
-inline PluginDocument* toPluginDocument(Document* document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isPluginDocument());
-    return static_cast<PluginDocument*>(document);
-}
+inline bool isPluginDocument(const Document& document) { return document.isPluginDocument(); }
+void isPluginDocument(const PluginDocument&); // Catch unnecessary runtime check of type known at compile time.
 
-inline const PluginDocument* toPluginDocument(const Document* document)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isPluginDocument());
-    return static_cast<const PluginDocument*>(document);
-}
+DOCUMENT_TYPE_CASTS(PluginDocument)
 
-// This will catch anyone doing an unnecessary cast.
-void toPluginDocument(const PluginDocument*);
-    
 }
 
 #endif // PluginDocument_h

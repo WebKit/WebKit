@@ -1622,12 +1622,12 @@ inline const Document* toDocument(const ScriptExecutionContext* scriptExecutionC
     return static_cast<const Document*>(scriptExecutionContext);
 }
 
-inline bool isDocument(const Node& node)
-{
-    return node.isDocumentNode();
-}
+inline bool isDocument(const Node& node) { return node.isDocumentNode(); }
+void isDocument(const Document&); // Catch unnecessary runtime check of type known at compile time.
 
 NODE_TYPE_CASTS(Document)
+
+#define DOCUMENT_TYPE_CASTS(ToClassName) TYPE_CASTS_BASE(ToClassName, Document)
 
 } // namespace WebCore
 

@@ -1,3 +1,14 @@
+2013-10-13  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Add more node conversion helpers
+        https://bugs.webkit.org/show_bug.cgi?id=122737
+
+        Reviewed by Darin Adler.
+
+        - Factor NODE_TYPE_CASTS into TYPE_CASTS_BASE(ToClassName, FromClassName)
+          to allow for DOCUMENT_TYPE_CASTS.
+        - Replace more static_casts<>.
+
 2013-10-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Reintroduce PassRefPtr<Event> copy in ScopedEventQueue::dispatchEvent

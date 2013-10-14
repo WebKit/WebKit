@@ -93,7 +93,7 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         return 0;
     }
 
-    return m_element->setAttributeNode(static_cast<Attr*>(node), ec);
+    return m_element->setAttributeNode(toAttr(node), ec);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)

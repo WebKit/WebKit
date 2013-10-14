@@ -268,7 +268,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
         if (n->nodeType() == Node::PROCESSING_INSTRUCTION_NODE) {
             // Processing instruction (XML documents only).
             // We don't support linking to embedded CSS stylesheets, see <https://bugs.webkit.org/show_bug.cgi?id=49281> for discussion.
-            ProcessingInstruction* pi = static_cast<ProcessingInstruction*>(n);
+            ProcessingInstruction* pi = toProcessingInstruction(n);
             sheet = pi->sheet();
 #if ENABLE(XSLT)
             // Don't apply XSL transforms to already transformed documents -- <rdar://problem/4132806>
@@ -315,11 +315,12 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             else
 #endif
             {
-                if (e->hasTagName(linkTag))
-                    sheet = static_cast<HTMLLinkElement*>(n)->sheet();
-                else
+                if (isHTMLLinkElement(e))
+                    sheet = toHTMLLinkElement(n)->sheet();
+                else {
                     // <STYLE> element
                     sheet = toHTMLStyleElement(e)->sheet();
+                }
             }
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than

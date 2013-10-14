@@ -899,19 +899,19 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case COMMENT_NODE:
         return createComment(importedNode->nodeValue());
     case ELEMENT_NODE: {
-        Element* oldElement = toElement(importedNode);
+        Element& oldElement = toElement(*importedNode);
         // FIXME: The following check might be unnecessary. Is it possible that
         // oldElement has mismatched prefix/namespace?
-        if (!hasValidNamespaceForElements(oldElement->tagQName())) {
+        if (!hasValidNamespaceForElements(oldElement.tagQName())) {
             ec = NAMESPACE_ERR;
             return nullptr;
         }
-        RefPtr<Element> newElement = createElement(oldElement->tagQName(), false);
 
-        newElement->cloneDataFromElement(*oldElement);
+        RefPtr<Element> newElement = createElement(oldElement.tagQName(), false);
+        newElement->cloneDataFromElement(oldElement);
 
         if (deep) {
-            for (Node* oldChild = oldElement->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
+            for (Node* oldChild = oldElement.firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
                 RefPtr<Node> newChild = importNode(oldChild, true, ec);
                 if (ec)
                     return nullptr;
@@ -924,17 +924,17 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
         return newElement.release();
     }
     case ATTRIBUTE_NODE:
-        return Attr::create(*this, QualifiedName(nullAtom, static_cast<Attr*>(importedNode)->name(), nullAtom), static_cast<Attr*>(importedNode)->value());
+        return Attr::create(*this, QualifiedName(nullAtom, toAttr(*importedNode).name(), nullAtom), toAttr(*importedNode).value());
     case DOCUMENT_FRAGMENT_NODE: {
         if (importedNode->isShadowRoot()) {
             // ShadowRoot nodes should not be explicitly importable.
             // Either they are imported along with their host node, or created implicitly.
             break;
         }
-        DocumentFragment* oldFragment = static_cast<DocumentFragment*>(importedNode);
+        DocumentFragment& oldFragment = toDocumentFragment(*importedNode);
         RefPtr<DocumentFragment> newFragment = createDocumentFragment();
         if (deep) {
-            for (Node* oldChild = oldFragment->firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
+            for (Node* oldChild = oldFragment.firstChild(); oldChild; oldChild = oldChild->nextSibling()) {
                 RefPtr<Node> newChild = importNode(oldChild, true, ec);
                 if (ec)
                     return nullptr;
@@ -983,7 +983,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     case ATTRIBUTE_NODE: {                   
-        Attr& attr = static_cast<Attr&>(*source);
+        Attr& attr = toAttr(*source);
         if (attr.ownerElement())
             attr.ownerElement()->removeAttributeNode(&attr, ec);
         attr.setSpecified(true);

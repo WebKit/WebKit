@@ -324,7 +324,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
         Node* child = childNode(i);
         if (!child || !child->isElementNode())
             continue;
-        Element* element = static_cast<Element*>(child);
+        Element* element = toElement(child);
         if (element->shadowPseudoId() != getMediaControlTimeRemainingDisplayElementShadowPseudoId()
             && element->shadowPseudoId() != getMediaControlCurrentTimeDisplayElementShadowPseudoId())
             continue;

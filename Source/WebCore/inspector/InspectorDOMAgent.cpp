@@ -987,8 +987,8 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                 if (ec)
                     break;
 
-                if (node->nodeType() == Node::ATTRIBUTE_NODE)
-                    node = static_cast<Attr*>(node)->ownerElement();
+                if (node->isAttributeNode())
+                    node = toAttr(node)->ownerElement();
                 resultCollector.add(node);
             }
         }
@@ -1427,12 +1427,12 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         value->setBaseURL(documentBaseURLString(document));
         value->setXmlVersion(document->xmlVersion());
     } else if (node->nodeType() == Node::DOCUMENT_TYPE_NODE) {
-        DocumentType* docType = static_cast<DocumentType*>(node);
+        DocumentType* docType = toDocumentType(node);
         value->setPublicId(docType->publicId());
         value->setSystemId(docType->systemId());
         value->setInternalSubset(docType->internalSubset());
     } else if (node->isAttributeNode()) {
-        Attr* attribute = static_cast<Attr*>(node);
+        Attr* attribute = toAttr(node);
         value->setName(attribute->name());
         value->setValue(attribute->value());
     }

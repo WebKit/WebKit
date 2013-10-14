@@ -102,6 +102,11 @@ private:
     bool m_specified : 1;
 };
 
+inline bool isAttr(const Node& node) { return node.isAttributeNode(); }
+void isAttr(const Attr&); // Catch unnecessary runtime check of type known at compile time.
+
+NODE_TYPE_CASTS(Attr)
+
 } // namespace WebCore
 
 #endif // Attr_h

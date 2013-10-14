@@ -74,6 +74,12 @@ private:
     String m_data;
 };
 
+inline bool isCharacterData(const Node& node) { return node.isCharacterDataNode(); }
+void isCharacterData(const CharacterData&); // Catch unnecessary runtime check of type known at compile time.
+void isCharacterData(const ContainerNode&); // Catch unnecessary runtime check of type known at compile time.
+
+NODE_TYPE_CASTS(CharacterData)
+
 } // namespace WebCore
 
 #endif // CharacterData_h

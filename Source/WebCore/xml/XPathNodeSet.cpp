@@ -96,7 +96,7 @@ static void sortBlock(unsigned from, unsigned to, Vector<Vector<Node*>>& parentM
         // FIXME: namespace nodes are not implemented.
         for (unsigned i = sortedEnd; i < to; ++i) {
             Node* n = parentMatrix[i][0];
-            if (n->isAttributeNode() && static_cast<Attr*>(n)->ownerElement() == commonAncestor)
+            if (n->isAttributeNode() && toAttr(n)->ownerElement() == commonAncestor)
                 parentMatrix[i].swap(parentMatrix[sortedEnd++]);
         }
         if (sortedEnd != from) {
@@ -159,7 +159,7 @@ void NodeSet::sort() const
         Node* n = m_nodes[i].get();
         parentsVector.append(n);
         if (n->isAttributeNode()) {
-            n = static_cast<Attr*>(n)->ownerElement();
+            n = toAttr(n)->ownerElement();
             parentsVector.append(n);
             containsAttributeNodes = true;
         }
@@ -181,7 +181,7 @@ void NodeSet::sort() const
 static Node* findRootNode(Node* node)
 {
     if (node->isAttributeNode())
-        node = static_cast<Attr*>(node)->ownerElement();
+        node = toAttr(node)->ownerElement();
     if (node->inDocument())
         node = &node->document();
     else {

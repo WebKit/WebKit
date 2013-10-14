@@ -718,29 +718,31 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-#define NODE_TYPE_CASTS(NodeClassName) \
-inline const NodeClassName* to##NodeClassName(const Node* node) \
+#define TYPE_CASTS_BASE(ToClassName, FromClassName) \
+inline const ToClassName* to##ToClassName(const FromClassName* object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##NodeClassName(*node)); \
-    return static_cast<const NodeClassName*>(node); \
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || is##ToClassName(*object)); \
+    return static_cast<const ToClassName*>(object); \
 } \
-inline NodeClassName* to##NodeClassName(Node* node) \
+inline ToClassName* to##ToClassName(FromClassName* object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || is##NodeClassName(*node)); \
-    return static_cast<NodeClassName*>(node); \
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || is##ToClassName(*object)); \
+    return static_cast<ToClassName*>(object); \
 } \
-inline const NodeClassName& to##NodeClassName(const Node& node) \
+inline const ToClassName& to##ToClassName(const FromClassName& object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##NodeClassName(node)); \
-    return static_cast<const NodeClassName&>(node); \
+    ASSERT_WITH_SECURITY_IMPLICATION(is##ToClassName(object)); \
+    return static_cast<const ToClassName&>(object); \
 } \
-inline NodeClassName& to##NodeClassName(Node& node) \
+inline ToClassName& to##ToClassName(FromClassName& object) \
 { \
-    ASSERT_WITH_SECURITY_IMPLICATION(is##NodeClassName(node)); \
-    return static_cast<NodeClassName&>(node); \
+    ASSERT_WITH_SECURITY_IMPLICATION(is##ToClassName(object)); \
+    return static_cast<ToClassName&>(object); \
 } \
-void to##NodeClassName(const NodeClassName*); \
-void to##NodeClassName(const NodeClassName&);
+void to##ToClassName(const ToClassName*); \
+void to##ToClassName(const ToClassName&);
+
+#define NODE_TYPE_CASTS(ToClassName) TYPE_CASTS_BASE(ToClassName, Node)
 
 } // namespace WebCore
 

@@ -1446,8 +1446,8 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (otherNode == this)
         return DOCUMENT_POSITION_EQUIVALENT;
     
-    Attr* attr1 = nodeType() == ATTRIBUTE_NODE ? static_cast<Attr*>(this) : 0;
-    Attr* attr2 = otherNode->nodeType() == ATTRIBUTE_NODE ? static_cast<Attr*>(otherNode) : 0;
+    Attr* attr1 = isAttributeNode() ? toAttr(this) : nullptr;
+    Attr* attr2 = otherNode->isAttributeNode() ? toAttr(otherNode) : nullptr;
     
     Node* start1 = attr1 ? attr1->ownerElement() : this;
     Node* start2 = attr2 ? attr2->ownerElement() : otherNode;
