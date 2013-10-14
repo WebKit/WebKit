@@ -31,6 +31,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/bridge \
 	-I$(srcdir)/Source/WebCore/bridge/c \
 	-I$(srcdir)/Source/WebCore/bridge/jsc \
+	-I$(srcdir)/Source/WebCore/crypto \
 	-I$(srcdir)/Source/WebCore/css \
 	-I$(srcdir)/Source/WebCore/dom \
 	-I$(srcdir)/Source/WebCore/dom/default \

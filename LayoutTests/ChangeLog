@@ -1,3 +1,19 @@
+2013-10-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Add an empty window.crypto.webkitSubtle
+        https://bugs.webkit.org/show_bug.cgi?id=122778
+
+        Reviewed by Mark Hahnenberg.
+
+        * TestExpectations: The feature isn't enabled anywhere yet, so skipping the new tests.
+
+        * security/crypto-subtle-gc-2-expected.txt: Added.
+        * security/crypto-subtle-gc-2.html: Added.
+        * security/crypto-subtle-gc-3-expected.txt: Added.
+        * security/crypto-subtle-gc-3.html: Added.
+        * security/crypto-subtle-gc-expected.txt: Added.
+        * security/crypto-subtle-gc.html: Added.
+
 2013-10-14  Alexandru Chiculita  <achicu@adobe.com>
 
         The content of the DOM panel for iframes is not updated until the "onload" event

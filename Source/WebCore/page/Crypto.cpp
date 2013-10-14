@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,7 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "SubtleCrypto.h"
 #include <runtime/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
@@ -72,5 +74,16 @@ void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
     }
     cryptographicallyRandomValues(array->baseAddress(), array->byteLength());
 }
+
+#if ENABLE(SUBTLE_CRYPTO)
+SubtleCrypto* Crypto::subtle()
+{
+    ASSERT(isMainThread());
+    if (!m_subtle)
+        m_subtle = SubtleCrypto::create(*document());
+
+    return m_subtle.get();
+}
+#endif
 
 }

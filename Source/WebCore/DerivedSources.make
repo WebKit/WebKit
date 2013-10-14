@@ -44,6 +44,7 @@ VPATH = \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
+    $(WebCore)/crypto \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/editing \
@@ -197,6 +198,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/crypto/SubtleCrypto.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceLoadEvent.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \

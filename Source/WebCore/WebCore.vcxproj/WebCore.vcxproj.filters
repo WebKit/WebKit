@@ -172,6 +172,9 @@
     <Filter Include="platform\mock">
       <UniqueIdentifier>{35a67667-1c77-4199-bdd3-a0627946846a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="crypto">
+      <UniqueIdentifier>{02334427-19d6-44c8-a5d1-e1a67a9c4997}</UniqueIdentifier>
+    </Filter>
     <Filter Include="css">
       <UniqueIdentifier>{353b76ca-c49a-41da-88da-33dc422325ef}</UniqueIdentifier>
     </Filter>
@@ -8804,6 +8807,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\mock\ScrollbarThemeMock.h">
       <Filter>platform\mock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\crypto\SubtleCrypto.h">
+      <Filter>crypto</Filter>
     </ClInclude>
     <ClInclude Include="..\css\BasicShapeFunctions.h">
       <Filter>css</Filter>

@@ -5593,6 +5593,11 @@
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
 		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
+		E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */; };
+		E1FF8F601807442100132674 /* SubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F5E1807442100132674 /* SubtleCrypto.h */; };
+		E1FF8F64180745D800132674 /* JSSubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F62180745D800132674 /* JSSubtleCrypto.cpp */; };
+		E1FF8F65180745D800132674 /* JSSubtleCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F63180745D800132674 /* JSSubtleCrypto.h */; };
+		E1FF8F681807460800132674 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F661807460800132674 /* JSSubtleCryptoCustom.cpp */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; };
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */; };
@@ -12557,6 +12562,12 @@
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
 		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
 		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
+		E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubtleCrypto.idl; sourceTree = "<group>"; };
+		E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubtleCrypto.cpp; sourceTree = "<group>"; };
+		E1FF8F5E1807442100132674 /* SubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtleCrypto.h; sourceTree = "<group>"; };
+		E1FF8F62180745D800132674 /* JSSubtleCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCrypto.cpp; sourceTree = "<group>"; };
+		E1FF8F63180745D800132674 /* JSSubtleCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSubtleCrypto.h; sourceTree = "<group>"; };
+		E1FF8F661807460800132674 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
@@ -13559,6 +13570,7 @@
 				29A812040FBB9B4100510293 /* accessibility */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				1A569CC40D7E2B60007C3983 /* bridge */,
+				E1FF8F5B1807362B00132674 /* crypto */,
 				F523D18402DE42E8018635CA /* css */,
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
@@ -13778,6 +13790,7 @@
 			isa = PBXGroup;
 			children = (
 				A83B79100CCB001B000B0825 /* Core */,
+				E1FF8F61180745C600132674 /* Crypto */,
 				A83B790E0CCAFF97000B0825 /* CSS */,
 				CDA98DCD1601515C00FEA3B1 /* EncryptedMedia */,
 				A83B79120CCB003F000B0825 /* Events */,
@@ -19370,6 +19383,7 @@
 				08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */,
 				08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */,
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
+				E1FF8F661807460800132674 /* JSSubtleCryptoCustom.cpp */,
 				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
 				07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */,
 				07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */,
@@ -20100,6 +20114,25 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		E1FF8F5B1807362B00132674 /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */,
+				E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */,
+				E1FF8F5E1807442100132674 /* SubtleCrypto.h */,
+			);
+			path = crypto;
+			sourceTree = "<group>";
+		};
+		E1FF8F61180745C600132674 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				E1FF8F62180745D800132674 /* JSSubtleCrypto.cpp */,
+				E1FF8F63180745D800132674 /* JSSubtleCrypto.h */,
+			);
+			name = Crypto;
+			sourceTree = "<group>";
 		};
 		E46E97860DAAD61B0071E894 /* animation */ = {
 			isa = PBXGroup;
@@ -21499,6 +21532,7 @@
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */,
 				37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */,
+				E1FF8F601807442100132674 /* SubtleCrypto.h in Headers */,
 				A8C4A80D09D563270003AC8D /* Attr.h in Headers */,
 				A8C4A80B09D563270003AC8D /* Attribute.h in Headers */,
 				FD31607A12B026F700C1A359 /* AudioArray.h in Headers */,
@@ -22469,6 +22503,7 @@
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
 				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
+				E1FF8F65180745D800132674 /* JSSubtleCrypto.h in Headers */,
 				078E094017D16E1C00420AA1 /* RTCIceCandidateDescriptor.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
@@ -25076,6 +25111,7 @@
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				FB91392716AE4C34001FE682 /* CanvasPathMethods.cpp in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
+				E1FF8F681807460800132674 /* JSSubtleCryptoCustom.cpp in Sources */,
 				49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */,
 				49484FCA102CF23C00187DD3 /* CanvasRenderingContext2D.cpp in Sources */,
 				49484FCD102CF23C00187DD3 /* CanvasStyle.cpp in Sources */,
@@ -25898,6 +25934,7 @@
 				7AA51DD5148506A900AD2752 /* InspectorMemoryAgent.cpp in Sources */,
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
+				E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */,
 				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 				82AB1775125C826700C5069D /* InspectorResourceAgent.cpp in Sources */,
 				7AA365EE12E7265400DCA242 /* InspectorRuntimeAgent.cpp in Sources */,
@@ -27412,6 +27449,7 @@
 				078E090F17D14CEE00420AA1 /* RTCStatsRequestImpl.cpp in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
+				E1FF8F64180745D800132674 /* JSSubtleCrypto.cpp in Sources */,
 				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
 				1AA7160A149BC4DB0016EC19 /* TileController.mm in Sources */,
 				498770F21242C535002226BA /* TilingData.cpp in Sources */,
