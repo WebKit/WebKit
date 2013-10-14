@@ -6904,6 +6904,12 @@
     <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
       <Filter>Modules\mediacontrols</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSGridTemplateValue.cpp" />
+    <ClCompile Include="..\rendering\RenderTextLineBoxes.cpp" />
+    <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
+    <ClCompile Include="..\platform\graphics\ca\PlatformCALayer.cpp">
+      <Filter>platform\graphics\ca</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -14517,6 +14523,12 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h" />
+    <ClInclude Include="..\css\CSSGridTemplateValue.h" />
+    <ClInclude Include="..\rendering\RenderTextLineBoxes.h" />
+    <ClInclude Include="..\rendering\TextPaintStyle.h" />
+    <ClInclude Include="..\platform\graphics\ca\win\PlatformCALayerWin.h">
+      <Filter>platform\graphics\ca\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

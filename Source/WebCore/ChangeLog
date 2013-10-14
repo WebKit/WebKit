@@ -1,3 +1,96 @@
+2013-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=122672
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, just a refactoring.
+
+        * WebCore.exp.in:
+        setGeometryFlipped is on PlatformCALayerMac now.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Add PlatformCALayer.cpp, PlatformCALayerWin.h, and let VS do its
+        thing with some other files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add PlatformCALayer.cpp and PlatformCALayerMac.h.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::platformLayer):
+        Make a PlatformCALayerWin explicitly.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createPlatformCALayer):
+        Added. Decide whether to make a PlatformCALayer{Mac, Win} based on the platform.
+        Later, we will decide between other subclasses based on other things.
+
+        (WebCore::GraphicsLayerCA::filtersCanBeComposited):
+        Do the same thing for filtersCanBeComposited.
+
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::setContentsToMedia):
+        (WebCore::GraphicsLayerCA::setContentsToCanvas):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        Use createPlatformCALayer instead of PlatformCALayer::create.
+
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        For now, use the PlatformCALayerMac version of filtersCanBeComposited,
+        since this code is heavily tied to having CALayers in the Web process.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Include PlatformCALayer.h here so we can get the LayerType enum.
+        (NOTE-to-be-removed: if there's a better way to do this, I'm open to
+        suggestions; I couldn't puzzle out nested 'enum class' stuff).
+
+        Add the createPlatformCALayers.
+
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        Friend the subclasses too.
+
+        * platform/graphics/ca/PlatformCALayer.cpp: Added.
+        (WebCore::PlatformCALayer::~PlatformCALayer):
+        Pull the shared part of the PlatformCALayer destructor out.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::platformLayer):
+        (WebCore::PlatformCALayer::setOwner):
+        (WebCore::PlatformCALayer::PlatformCALayer):
+        Virtualize all the things. Move platform specific members to their new subclasses.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.h: Added.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        Move the PLATFORM(MAC) implementations from PlatformCALayer to PlatformCALayerMac.
+
+        (PlatformCALayer::platformCALayer):
+        The platformCALayer lookup function is static on PlatformCALayer, so it can't
+        be moved to the subclasses. It might be a good idea in the future to move towards
+        a platform-independent mechanism for looking up PlatformCALayers from PlatformLayers,
+        and to avoid needing to do this as often as we do now.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::CACFLayerTreeHost):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        Move the PLATFORM(WIN) implementations from PlatformCALayer to PlatformCALayerWin.
+
+        (PlatformCALayerWin::create):
+        (PlatformCALayer::platformCALayer):
+
+        * platform/graphics/ca/win/PlatformCALayerWin.h: Added.
+
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie):
+        Include PlatformCALayerWin.h and explicitly make PlatformCALayerWins here.
+
 2013-10-14  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [cmake] MediaControlsApple is used only by Efl port and is on CMakeLists.txt

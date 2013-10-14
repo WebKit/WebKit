@@ -32,7 +32,7 @@
 #include "DefWndProcWindowClass.h"
 #include "LayerChangesFlusher.h"
 #include "LegacyCACFLayerTreeHost.h"
-#include "PlatformCALayer.h"
+#include "PlatformCALayerWin.h"
 #include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
 #include <limits.h>
@@ -123,7 +123,7 @@ PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 
 CACFLayerTreeHost::CACFLayerTreeHost()
     : m_client(0)
-    , m_rootLayer(PlatformCALayer::create(PlatformCALayer::LayerTypeRootLayer, 0))
+    , m_rootLayer(PlatformCALayerWin::create(PlatformCALayer::LayerTypeRootLayer, 0))
     , m_window(0)
     , m_shouldFlushPendingGraphicsLayerChanges(false)
     , m_isFlushingLayerChanges(false)

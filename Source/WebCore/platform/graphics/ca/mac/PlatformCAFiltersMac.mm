@@ -33,7 +33,7 @@
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "LengthFunctions.h" // This is a layering violation.
-#import "PlatformCALayer.h"
+#import "PlatformCALayerMac.h"
 #import <QuartzCore/QuartzCore.h>
 
 using namespace WebCore;
@@ -98,7 +98,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformCALayer* platformCALayer, cons
     }
     
     // Assume filtersCanBeComposited was called and it returned true.
-    ASSERT(platformCALayer->filtersCanBeComposited(filters));
+    ASSERT(PlatformCALayerMac::filtersCanBeComposited(filters));
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     

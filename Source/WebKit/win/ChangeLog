@@ -1,3 +1,14 @@
+2013-10-14  Tim Horton  <timothy_horton@apple.com>
+
+        Virtualize PlatformCALayer
+        https://bugs.webkit.org/show_bug.cgi?id=122672
+
+        Reviewed by Anders Carlsson.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::FullscreenVideoController):
+        Include PlatformCALayerWin.h and explicitly make PlatformCALayerWins here.
+
 2013-10-12  Darin Adler  <darin@apple.com>
 
         Get rid of the toHTMLElement helper for casting FormAssociatedElement to HTMLElement

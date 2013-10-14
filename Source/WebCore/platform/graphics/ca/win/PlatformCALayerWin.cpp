@@ -27,7 +27,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PlatformCALayer.h"
+#include "PlatformCALayerWin.h"
 
 #include "AbstractCACFLayerTreeHost.h"
 #include "Font.h"
@@ -40,14 +40,14 @@
 
 using namespace WebCore;
 
-bool PlatformCALayer::isValueFunctionSupported()
+PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return true;
+    return adoptRef(new PlatformCALayerWin(layerType, 0, owner));
 }
 
-void PlatformCALayer::setOwner(PlatformCALayerClient* owner)
+PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
-    m_owner = owner;
+    return adoptRef(new PlatformCALayerWin(LayerTypeCustom, platformLayer, owner));
 }
 
 static CFStringRef toCACFLayerType(PlatformCALayer::LayerType type)
@@ -85,14 +85,13 @@ static PlatformCALayerWinInternal* intern(void* layer)
     return static_cast<PlatformCALayerWinInternal*>(CACFLayerGetUserData(static_cast<CACFLayerRef>(layer)));
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayer::create(LayerType layerType, PlatformCALayerClient* owner)
+PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
 {
-    return adoptRef(new PlatformCALayer(layerType, 0, owner));
-}
-
-PassRefPtr<PlatformCALayer> PlatformCALayer::create(void* platformLayer, PlatformCALayerClient* owner)
-{
-    return adoptRef(new PlatformCALayer(LayerTypeCustom, static_cast<PlatformLayer*>(platformLayer), owner));
+    if (!platformLayer)
+        return 0;
+    
+    PlatformCALayerWinInternal* layerIntern = intern(platformLayer);
+    return layerIntern ? layerIntern->owner() : 0;
 }
 
 static void displayCallback(CACFLayerRef caLayer, CGContextRef context)
@@ -108,8 +107,8 @@ static void layoutSublayersProc(CACFLayerRef caLayer)
         layer->owner()->platformCALayerLayoutSublayersOfLayer(layer);
 }
 
-PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
-    : m_owner(owner)
+PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
+    : PlatformCALayer(owner)
 {
     if (layer) {
         m_layerType = LayerTypeCustom;
@@ -129,7 +128,7 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
     }
 }
 
-PlatformCALayer::~PlatformCALayer()
+PlatformCALayerWin::~PlatformCALayerWin()
 {
     // Toss all the kids
     removeAllSublayers();
@@ -138,29 +137,16 @@ PlatformCALayer::~PlatformCALayer()
     PlatformCALayerWinInternal* layerIntern = intern(this);
     CACFLayerSetUserData(m_layer.get(), 0);
 
-    // Clear the owner, which also clears it in the delegate to prevent attempts 
-    // to use the GraphicsLayerCA after it has been destroyed.
-    setOwner(0);
-
     CACFLayerRemoveFromSuperlayer(m_layer.get());
 
     delete layerIntern;
 }
 
-PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
-{
-    if (!platformLayer)
-        return 0;
-    
-    PlatformCALayerWinInternal* layerIntern = intern(platformLayer);
-    return layerIntern ? layerIntern->owner() : 0;
-}
-
-PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner) const
+PassRefPtr<PlatformCALayer> PlatformCALayerWin::clone(PlatformCALayerClient* owner) const
 {
     PlatformCALayer::LayerType type = (layerType() == PlatformCALayer::LayerTypeTransformLayer) ?
         PlatformCALayer::LayerTypeTransformLayer : PlatformCALayer::LayerTypeLayer;
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(type, owner);
+    RefPtr<PlatformCALayer> newLayer = PlatformCALayerWin::create(type, owner);
 
     newLayer->setPosition(position());
     newLayer->setBounds(bounds());
@@ -180,18 +166,13 @@ PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner)
     return newLayer;
 }
 
-PlatformLayer* PlatformCALayer::platformLayer() const
-{
-    return m_layer.get();
-}
-
-PlatformCALayer* PlatformCALayer::rootLayer() const
+PlatformCALayer* PlatformCALayerWin::rootLayer() const
 {
     AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     return host ? host->rootLayer() : 0;
 }
 
-void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
+void PlatformCALayerWin::animationStarted(CFTimeInterval beginTime)
 {
     // Update start time for any animation not yet started
     CFTimeInterval cacfBeginTime = currentTimeToMediaTime(beginTime);
@@ -204,36 +185,19 @@ void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
         m_owner->platformCALayerAnimationStarted(beginTime);
 }
 
-static void resubmitAllAnimations(PlatformCALayer* layer)
-{
-    HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = layer->animations().end();
-    for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = layer->animations().begin(); it != end; ++it)
-        CACFLayerAddAnimation(layer->platformLayer(), it->key.createCFString().get(), it->value->platformAnimation());
-}
-
-void PlatformCALayer::ensureAnimationsSubmitted()
-{
-    resubmitAllAnimations(this);
-
-    PlatformCALayerList children;
-    intern(this)->getSublayers(children);
-    for (size_t i = 0; i < children.size(); ++i)
-        children[i]->ensureAnimationsSubmitted();
-}
-
-void PlatformCALayer::setNeedsDisplay(const FloatRect* dirtyRect)
+void PlatformCALayerWin::setNeedsDisplay(const FloatRect* dirtyRect)
 {
     intern(this)->setNeedsDisplay(dirtyRect);
 }
     
-void PlatformCALayer::setNeedsCommit()
+void PlatformCALayerWin::setNeedsCommit()
 {
     AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     if (host)
         host->layerTreeDidChange();
 }
 
-void PlatformCALayer::setContentsChanged()
+void PlatformCALayerWin::setContentsChanged()
 {
     // FIXME: There is no equivalent of setContentsChanged in CACF. For now I will
     // set contents to 0 and then back to its original value to see if that
@@ -244,7 +208,7 @@ void PlatformCALayer::setContentsChanged()
     setNeedsCommit();
 }
 
-void PlatformCALayer::setNeedsLayout()
+void PlatformCALayerWin::setNeedsLayout()
 {
     if (!m_owner || !m_owner->platformCALayerRespondsToLayoutChanges())
         return;
@@ -253,39 +217,39 @@ void PlatformCALayer::setNeedsLayout()
     setNeedsCommit();
 }
 
-PlatformCALayer* PlatformCALayer::superlayer() const
+PlatformCALayer* PlatformCALayerWin::superlayer() const
 {
     return platformCALayer(CACFLayerGetSuperlayer(m_layer.get()));
 }
 
-void PlatformCALayer::removeFromSuperlayer()
+void PlatformCALayerWin::removeFromSuperlayer()
 {
     CACFLayerRemoveFromSuperlayer(m_layer.get());
     setNeedsCommit();
 }
 
-void PlatformCALayer::setSublayers(const PlatformCALayerList& list)
+void PlatformCALayerWin::setSublayers(const PlatformCALayerList& list)
 {
     intern(this)->setSublayers(list);
 }
 
-void PlatformCALayer::removeAllSublayers()
+void PlatformCALayerWin::removeAllSublayers()
 {
     intern(this)->removeAllSublayers();
 }
 
-void PlatformCALayer::appendSublayer(PlatformCALayer* layer)
+void PlatformCALayerWin::appendSublayer(PlatformCALayer* layer)
 {
     // This must be in terms of insertSublayer instead of a direct call so PlatformCALayerInternal can override.
     insertSublayer(layer, intern(this)->sublayerCount());
 }
 
-void PlatformCALayer::insertSublayer(PlatformCALayer* layer, size_t index)
+void PlatformCALayerWin::insertSublayer(PlatformCALayer* layer, size_t index)
 {
     intern(this)->insertSublayer(layer, index);
 }
 
-void PlatformCALayer::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* newLayer)
+void PlatformCALayerWin::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* newLayer)
 {
     // This must not use direct calls to allow PlatformCALayerInternal to override.
     ASSERT_ARG(reference, reference);
@@ -307,7 +271,7 @@ void PlatformCALayer::replaceSublayer(PlatformCALayer* reference, PlatformCALaye
     }
 }
 
-void PlatformCALayer::adoptSublayers(PlatformCALayer* source)
+void PlatformCALayerWin::adoptSublayers(PlatformCALayer* source)
 {
     PlatformCALayerList sublayers;
     intern(source)->getSublayers(sublayers);
@@ -316,7 +280,7 @@ void PlatformCALayer::adoptSublayers(PlatformCALayer* source)
     setSublayers(sublayers);
 }
 
-void PlatformCALayer::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
+void PlatformCALayerWin::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
 {
     // Add it to the animation list
     m_animations.add(key, animation);
@@ -330,7 +294,7 @@ void PlatformCALayer::addAnimationForKey(const String& key, PlatformCAAnimation*
         host->addPendingAnimatedLayer(this);
 }
 
-void PlatformCALayer::removeAnimationForKey(const String& key)
+void PlatformCALayerWin::removeAnimationForKey(const String& key)
 {
     // Remove it from the animation list
     m_animations.remove(key);
@@ -344,7 +308,7 @@ void PlatformCALayer::removeAnimationForKey(const String& key)
     setNeedsCommit();
 }
 
-PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& key)
+PassRefPtr<PlatformCAAnimation> PlatformCALayerWin::animationForKey(const String& key)
 {
     HashMap<String, RefPtr<PlatformCAAnimation> >::iterator it = m_animations.find(key);
     if (it == m_animations.end())
@@ -353,160 +317,160 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayer::animationForKey(const String& k
     return it->value;
 }
 
-void PlatformCALayer::setMask(PlatformCALayer* layer)
+void PlatformCALayerWin::setMask(PlatformCALayer* layer)
 {
     CACFLayerSetMask(m_layer.get(), layer ? layer->platformLayer() : 0);
     setNeedsCommit();
 }
 
-bool PlatformCALayer::isOpaque() const
+bool PlatformCALayerWin::isOpaque() const
 {
     return CACFLayerIsOpaque(m_layer.get());
 }
 
-void PlatformCALayer::setOpaque(bool value)
+void PlatformCALayerWin::setOpaque(bool value)
 {
     CACFLayerSetOpaque(m_layer.get(), value);
     setNeedsCommit();
 }
 
-FloatRect PlatformCALayer::bounds() const
+FloatRect PlatformCALayerWin::bounds() const
 {
     return CACFLayerGetBounds(m_layer.get());
 }
 
-void PlatformCALayer::setBounds(const FloatRect& value)
+void PlatformCALayerWin::setBounds(const FloatRect& value)
 {
     intern(this)->setBounds(value);
     setNeedsLayout();
 }
 
-FloatPoint3D PlatformCALayer::position() const
+FloatPoint3D PlatformCALayerWin::position() const
 {
     CGPoint point = CACFLayerGetPosition(m_layer.get());
     return FloatPoint3D(point.x, point.y, CACFLayerGetZPosition(m_layer.get()));
 }
 
-void PlatformCALayer::setPosition(const FloatPoint3D& value)
+void PlatformCALayerWin::setPosition(const FloatPoint3D& value)
 {
     CACFLayerSetPosition(m_layer.get(), CGPointMake(value.x(), value.y()));
     CACFLayerSetZPosition(m_layer.get(), value.z());
     setNeedsCommit();
 }
 
-FloatPoint3D PlatformCALayer::anchorPoint() const
+FloatPoint3D PlatformCALayerWin::anchorPoint() const
 {
     CGPoint point = CACFLayerGetAnchorPoint(m_layer.get());
     float z = CACFLayerGetAnchorPointZ(m_layer.get());
     return FloatPoint3D(point.x, point.y, z);
 }
 
-void PlatformCALayer::setAnchorPoint(const FloatPoint3D& value)
+void PlatformCALayerWin::setAnchorPoint(const FloatPoint3D& value)
 {
     CACFLayerSetAnchorPoint(m_layer.get(), CGPointMake(value.x(), value.y()));
     CACFLayerSetAnchorPointZ(m_layer.get(), value.z());
     setNeedsCommit();
 }
 
-TransformationMatrix PlatformCALayer::transform() const
+TransformationMatrix PlatformCALayerWin::transform() const
 {
     return CACFLayerGetTransform(m_layer.get());
 }
 
-void PlatformCALayer::setTransform(const TransformationMatrix& value)
+void PlatformCALayerWin::setTransform(const TransformationMatrix& value)
 {
     CACFLayerSetTransform(m_layer.get(), value);
     setNeedsCommit();
 }
 
-TransformationMatrix PlatformCALayer::sublayerTransform() const
+TransformationMatrix PlatformCALayerWin::sublayerTransform() const
 {
     return CACFLayerGetSublayerTransform(m_layer.get());
 }
 
-void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
+void PlatformCALayerWin::setSublayerTransform(const TransformationMatrix& value)
 {
     CACFLayerSetSublayerTransform(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setHidden(bool value)
+void PlatformCALayerWin::setHidden(bool value)
 {
     CACFLayerSetHidden(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setGeometryFlipped(bool value)
+void PlatformCALayerWin::setGeometryFlipped(bool value)
 {
     CACFLayerSetGeometryFlipped(m_layer.get(), value);
     setNeedsCommit();
 }
 
-bool PlatformCALayer::isDoubleSided() const
+bool PlatformCALayerWin::isDoubleSided() const
 {
     return CACFLayerIsDoubleSided(m_layer.get());
 }
 
-void PlatformCALayer::setDoubleSided(bool value)
+void PlatformCALayerWin::setDoubleSided(bool value)
 {
     CACFLayerSetDoubleSided(m_layer.get(), value);
     setNeedsCommit();
 }
 
-bool PlatformCALayer::masksToBounds() const
+bool PlatformCALayerWin::masksToBounds() const
 {
     return CACFLayerGetMasksToBounds(m_layer.get());
 }
 
-void PlatformCALayer::setMasksToBounds(bool value)
+void PlatformCALayerWin::setMasksToBounds(bool value)
 {
     CACFLayerSetMasksToBounds(m_layer.get(), value);
     setNeedsCommit();
 }
 
-bool PlatformCALayer::acceleratesDrawing() const
+bool PlatformCALayerWin::acceleratesDrawing() const
 {
     return false;
 }
 
-void PlatformCALayer::setAcceleratesDrawing(bool)
+void PlatformCALayerWin::setAcceleratesDrawing(bool)
 {
 }
 
-CFTypeRef PlatformCALayer::contents() const
+CFTypeRef PlatformCALayerWin::contents() const
 {
     return CACFLayerGetContents(m_layer.get());
 }
 
-void PlatformCALayer::setContents(CFTypeRef value)
+void PlatformCALayerWin::setContents(CFTypeRef value)
 {
     CACFLayerSetContents(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setContentsRect(const FloatRect& value)
+void PlatformCALayerWin::setContentsRect(const FloatRect& value)
 {
     CACFLayerSetContentsRect(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setMinificationFilter(FilterType value)
+void PlatformCALayerWin::setMinificationFilter(FilterType value)
 {
     CACFLayerSetMinificationFilter(m_layer.get(), toCACFFilterType(value));
 }
 
-void PlatformCALayer::setMagnificationFilter(FilterType value)
+void PlatformCALayerWin::setMagnificationFilter(FilterType value)
 {
     CACFLayerSetMagnificationFilter(m_layer.get(), toCACFFilterType(value));
     setNeedsCommit();
 }
 
-Color PlatformCALayer::backgroundColor() const
+Color PlatformCALayerWin::backgroundColor() const
 {
     return CACFLayerGetBackgroundColor(m_layer.get());
 }
 
-void PlatformCALayer::setBackgroundColor(const Color& value)
+void PlatformCALayerWin::setBackgroundColor(const Color& value)
 {
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
@@ -518,13 +482,13 @@ void PlatformCALayer::setBackgroundColor(const Color& value)
     setNeedsCommit();
 }
 
-void PlatformCALayer::setBorderWidth(float value)
+void PlatformCALayerWin::setBorderWidth(float value)
 {
     CACFLayerSetBorderWidth(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setBorderColor(const Color& value)
+void PlatformCALayerWin::setBorderColor(const Color& value)
 {
     CGFloat components[4];
     value.getRGBA(components[0], components[1], components[2], components[3]);
@@ -536,12 +500,12 @@ void PlatformCALayer::setBorderColor(const Color& value)
     setNeedsCommit();
 }
 
-float PlatformCALayer::opacity() const
+float PlatformCALayerWin::opacity() const
 {
     return CACFLayerGetOpacity(m_layer.get());
 }
 
-void PlatformCALayer::setOpacity(float value)
+void PlatformCALayerWin::setOpacity(float value)
 {
     CACFLayerSetOpacity(m_layer.get(), value);
     setNeedsCommit();
@@ -549,57 +513,47 @@ void PlatformCALayer::setOpacity(float value)
 
 #if ENABLE(CSS_FILTERS)
 
-void PlatformCALayer::setFilters(const FilterOperations&)
+void PlatformCALayerWin::setFilters(const FilterOperations&)
 {
 }
 
-void PlatformCALayer::copyFiltersFrom(const PlatformCALayer*)
+void PlatformCALayerWin::copyFiltersFrom(const PlatformCALayer*)
 {
-}
-
-bool PlatformCALayer::filtersCanBeComposited(const FilterOperations&)
-{
-    return false;
 }
 
 #endif // ENABLE(CSS_FILTERS)
 
-void PlatformCALayer::setName(const String& value)
+void PlatformCALayerWin::setName(const String& value)
 {
     CACFLayerSetName(m_layer.get(), value.createCFString().get());
     setNeedsCommit();
 }
 
-void PlatformCALayer::setFrame(const FloatRect& value)
+void PlatformCALayerWin::setFrame(const FloatRect& value)
 {
     intern(this)->setFrame(value);
     setNeedsLayout();
 }
 
-void PlatformCALayer::setSpeed(float value)
+void PlatformCALayerWin::setSpeed(float value)
 {
     CACFLayerSetSpeed(m_layer.get(), value);
     setNeedsCommit();
 }
 
-void PlatformCALayer::setTimeOffset(CFTimeInterval value)
+void PlatformCALayerWin::setTimeOffset(CFTimeInterval value)
 {
     CACFLayerSetTimeOffset(m_layer.get(), value);
     setNeedsCommit();
 }
 
-float PlatformCALayer::contentsScale() const
+float PlatformCALayerWin::contentsScale() const
 {
     return 1;
 }
 
-void PlatformCALayer::setContentsScale(float)
+void PlatformCALayerWin::setContentsScale(float)
 {
-}
-
-TiledBacking* PlatformCALayer::tiledBacking()
-{
-    return 0;
 }
 
 #ifndef NDEBUG
@@ -711,7 +665,7 @@ static void printLayer(const PlatformCALayer* layer, int indent)
     fprintf(stderr, ")\n");
 }
 
-void PlatformCALayer::printTree() const
+void PlatformCALayerWin::printTree() const
 {
     // Print heading info
     CGRect rootBounds = bounds();

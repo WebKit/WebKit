@@ -39,7 +39,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/Page.h>
-#include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayerWin.h>
 #include <WebCore/TextRun.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
@@ -248,7 +248,7 @@ FullscreenVideoController::FullscreenVideoController()
     , m_timer(this, &FullscreenVideoController::timerFired)
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerClient(adoptPtr(new LayerClient(this)))
-    , m_rootChild(PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
+    , m_rootChild(PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
 #endif
     , m_fullscreenWindow(adoptPtr(new MediaPlayerPrivateFullscreenWindow(this)))
 {

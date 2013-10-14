@@ -62,7 +62,7 @@
 #include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "PlatformCALayer.h"
+#include "PlatformCALayerWin.h"
 #include "WKCAImageQueue.h"
 #endif
 
@@ -1193,14 +1193,14 @@ void MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie()
 
     // Create a PlatformCALayer which will transform the contents of the video layer
     // which is in m_qtVideoLayer.
-    m_transformLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get());
+    m_transformLayer = PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get());
     if (!m_transformLayer)
         return;
 
     // Mark the layer as anchored in the top left.
     m_transformLayer->setAnchorPoint(FloatPoint3D());
 
-    m_qtVideoLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, 0);
+    m_qtVideoLayer = PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, 0);
     if (!m_qtVideoLayer)
         return;
 

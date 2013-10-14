@@ -28,6 +28,7 @@
 #if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3DPrivate.h"
+#include <WebCore/PlatformCALayerWin.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -85,7 +86,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     validateAttributes();
 
 #if USE(CA)
-    m_webGLLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, 0);
+    m_webGLLayer = PlatformCALayerWin::create(PlatformCALayer::LayerTypeLayer, 0);
 #endif
 
     if (renderStyle == RenderOffscreen) {

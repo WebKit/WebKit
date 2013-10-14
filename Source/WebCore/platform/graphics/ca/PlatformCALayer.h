@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef PlatformCALayer_h
@@ -50,6 +50,11 @@ class PlatformCALayer;
 typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
+#if PLATFORM(MAC)
+    friend class PlatformCALayerMac;
+#elif PLATFORM(WIN)
+    friend class PlatformCALayerWin;
+#endif
 public:
     static CFTimeInterval currentTimeToMediaTime(double t) { return CACurrentMediaTime() + t - monotonicallyIncreasingTime(); }
 
@@ -69,178 +74,145 @@ public:
     };
     enum FilterType { Linear, Nearest, Trilinear };
 
-    static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
-    
-    // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
-    // is defined differently for Obj C and C++. This allows callers from both languages.
-    static PassRefPtr<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
+    virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient*) const = 0;
 
-    PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient*) const;
+    virtual ~PlatformCALayer();
 
-    ~PlatformCALayer();
-    
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
     static PlatformCALayer* platformCALayer(void* platformLayer);
-    
-    PlatformLayer* platformLayer() const;
 
-#if PLATFORM(WIN)
-    bool usesTiledBackingLayer() const { return false; }
-#else
-    bool usesTiledBackingLayer() const { return m_layerType == LayerTypePageTiledBackingLayer || m_layerType == LayerTypeTiledBackingLayer; }
-#endif
+    PlatformLayer* platformLayer() const { return m_layer.get(); }
 
-    PlatformCALayer* rootLayer() const;
-    
-    // A list of sublayers that GraphicsLayerCA should maintain as the first sublayers.
-    const PlatformCALayerList* customSublayers() const { return m_customSublayers.get(); }
-    
-    static bool isValueFunctionSupported();
-    
+    virtual bool usesTiledBackingLayer() const = 0;
+
     PlatformCALayerClient* owner() const { return m_owner; }
-    void setOwner(PlatformCALayerClient*);
+    virtual void setOwner(PlatformCALayerClient* owner) { m_owner = owner; }
 
-    void animationStarted(CFTimeInterval beginTime);
-    void ensureAnimationsSubmitted();
+    virtual void animationStarted(CFTimeInterval beginTime) = 0;
 
-    // Layout support
-    void setNeedsLayout();
+    virtual void setNeedsDisplay(const FloatRect* dirtyRect = 0) = 0;
 
+    virtual void setContentsChanged() = 0;
 
-    void setNeedsDisplay(const FloatRect* dirtyRect = 0);
-    
-    // This tells the layer tree to commit changes and perform a render, without do a setNeedsDisplay on any layer.
-    void setNeedsCommit();
-
-    void setContentsChanged();
-    
     LayerType layerType() const { return m_layerType; }
 
-    PlatformCALayer* superlayer() const;
-    void removeFromSuperlayer();
-    void setSublayers(const PlatformCALayerList&);
-    void removeAllSublayers();
-    void appendSublayer(PlatformCALayer*);
-    void insertSublayer(PlatformCALayer*, size_t index);
-    void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*);
+    virtual PlatformCALayer* superlayer() const = 0;
+    virtual void removeFromSuperlayer() = 0;
+    virtual void setSublayers(const PlatformCALayerList&) = 0;
+    virtual void removeAllSublayers() = 0;
+    virtual void appendSublayer(PlatformCALayer*) = 0;
+    virtual void insertSublayer(PlatformCALayer*, size_t index) = 0;
+    virtual void replaceSublayer(PlatformCALayer* reference, PlatformCALayer*) = 0;
+
+    // A list of sublayers that GraphicsLayerCA should maintain as the first sublayers.
+    virtual const PlatformCALayerList* customSublayers() const = 0;
 
     // This method removes the sublayers from the source and reparents them to the current layer.
     // Any sublayers previously in the current layer are removed.
-    void adoptSublayers(PlatformCALayer* source);
-    
-    void addAnimationForKey(const String& key, PlatformCAAnimation* animation);    
-    void removeAnimationForKey(const String& key);
-    PassRefPtr<PlatformCAAnimation> animationForKey(const String& key);
-    
-    void setMask(PlatformCALayer*);
-    
-    bool isOpaque() const;
-    void setOpaque(bool);
+    virtual void adoptSublayers(PlatformCALayer* source) = 0;
 
-    FloatRect bounds() const;
-    void setBounds(const FloatRect&);
+    virtual void addAnimationForKey(const String& key, PlatformCAAnimation*) = 0;
+    virtual void removeAnimationForKey(const String& key) = 0;
+    virtual PassRefPtr<PlatformCAAnimation> animationForKey(const String& key) = 0;
 
-    FloatPoint3D position() const;
-    void setPosition(const FloatPoint3D&);
+    virtual void setMask(PlatformCALayer*) = 0;
+
+    virtual bool isOpaque() const = 0;
+    virtual void setOpaque(bool) = 0;
+
+    virtual FloatRect bounds() const = 0;
+    virtual void setBounds(const FloatRect&) = 0;
+
+    virtual FloatPoint3D position() const = 0;
+    virtual void setPosition(const FloatPoint3D&) = 0;
     void setPosition(const FloatPoint& pos) { setPosition(FloatPoint3D(pos.x(), pos.y(), 0)); }
 
-    FloatPoint3D anchorPoint() const;
-    void setAnchorPoint(const FloatPoint3D&);
+    virtual FloatPoint3D anchorPoint() const = 0;
+    virtual void setAnchorPoint(const FloatPoint3D&) = 0;
 
-    TransformationMatrix transform() const;
-    void setTransform(const TransformationMatrix&);
+    virtual TransformationMatrix transform() const = 0;
+    virtual void setTransform(const TransformationMatrix&) = 0;
 
-    TransformationMatrix sublayerTransform() const;
-    void setSublayerTransform(const TransformationMatrix&);
+    virtual TransformationMatrix sublayerTransform() const = 0;
+    virtual void setSublayerTransform(const TransformationMatrix&) = 0;
 
-    void setHidden(bool);
+    virtual void setHidden(bool) = 0;
 
-    void setGeometryFlipped(bool);
+    virtual void setGeometryFlipped(bool) = 0;
 
-    bool isDoubleSided() const;
-    void setDoubleSided(bool);
+    virtual bool isDoubleSided() const = 0;
+    virtual void setDoubleSided(bool) = 0;
 
-    bool masksToBounds() const;
-    void setMasksToBounds(bool);
-    
-    bool acceleratesDrawing() const;
-    void setAcceleratesDrawing(bool);
+    virtual bool masksToBounds() const = 0;
+    virtual void setMasksToBounds(bool) = 0;
 
-    CFTypeRef contents() const;
-    void setContents(CFTypeRef);
+    virtual bool acceleratesDrawing() const = 0;
+    virtual void setAcceleratesDrawing(bool) = 0;
 
-    void setContentsRect(const FloatRect&);
+    virtual CFTypeRef contents() const = 0;
+    virtual void setContents(CFTypeRef) = 0;
 
-    void setMinificationFilter(FilterType);
-    void setMagnificationFilter(FilterType);
+    virtual void setContentsRect(const FloatRect&) = 0;
 
-    Color backgroundColor() const;
-    void setBackgroundColor(const Color&);
+    virtual void setMinificationFilter(FilterType) = 0;
+    virtual void setMagnificationFilter(FilterType) = 0;
 
-    void setBorderWidth(float);
+    virtual Color backgroundColor() const = 0;
+    virtual void setBackgroundColor(const Color&) = 0;
 
-    void setBorderColor(const Color&);
+    virtual void setBorderWidth(float) = 0;
 
-    float opacity() const;
-    void setOpacity(float);
-    
+    virtual void setBorderColor(const Color&) = 0;
+
+    virtual float opacity() const = 0;
+    virtual void setOpacity(float) = 0;
+
 #if ENABLE(CSS_FILTERS)
-    void setFilters(const FilterOperations&);
-    static bool filtersCanBeComposited(const FilterOperations&);
-    void copyFiltersFrom(const PlatformCALayer*);
+    virtual void setFilters(const FilterOperations&) = 0;
+    virtual void copyFiltersFrom(const PlatformCALayer*) = 0;
 #endif
 
-    void setName(const String&);
+    virtual void setName(const String&) = 0;
 
-    void setFrame(const FloatRect&);
+    virtual void setFrame(const FloatRect&) = 0;
 
-    void setSpeed(float);
+    virtual void setSpeed(float) = 0;
 
-    void setTimeOffset(CFTimeInterval);
-    
-    float contentsScale() const;
-    void setContentsScale(float);
+    virtual void setTimeOffset(CFTimeInterval) = 0;
 
-    TiledBacking* tiledBacking();
+    virtual float contentsScale() const = 0;
+    virtual void setContentsScale(float) = 0;
+
+    virtual TiledBacking* tiledBacking() = 0;
 
 #if PLATFORM(WIN)
-    HashMap<String, RefPtr<PlatformCAAnimation> >& animations() { return m_animations; }
-#endif
-
-#if PLATFORM(WIN) && !defined(NDEBUG)
-    void printTree() const;
-#endif
+    virtual PlatformCALayer* rootLayer() const = 0;
+    virtual void setNeedsLayout() = 0;
+    virtual void setNeedsCommit() = 0;
+#ifndef NDEBUG
+    virtual void printTree() const = 0;
+#endif // NDEBUG
+#endif // PLATFORM(WIN)
 
 #if PLATFORM(MAC)
-    void synchronouslyDisplayTilesInRect(const FloatRect&);
+    virtual void synchronouslyDisplayTilesInRect(const FloatRect&) = 0;
 #endif
 
 protected:
-    PlatformCALayer(LayerType, PlatformLayer*, PlatformCALayerClient*);
+    PlatformCALayer(PlatformCALayerClient* owner)
+        : m_owner(owner)
+    {
 
-private:
-    AVPlayerLayer* playerLayer() const;
-
-    PlatformCALayerClient* m_owner;
-    LayerType m_layerType;
-    
-    OwnPtr<PlatformCALayerList> m_customSublayers;
-#if PLATFORM(MAC) || PLATFORM(WIN)
-    RetainPtr<PlatformLayer> m_layer;
-#endif
-
-#if PLATFORM(WIN)
-    HashMap<String, RefPtr<PlatformCAAnimation> > m_animations;
-#endif
+    }
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-    RetainPtr<NSObject> m_delegate;
-#else
-    RetainPtr<void> m_delegate;
+    virtual AVPlayerLayer* playerLayer() const = 0;
 #endif
-#endif
+
+    LayerType m_layerType;
+    RetainPtr<PlatformLayer> m_layer;
+    PlatformCALayerClient* m_owner;
 };
 
 }

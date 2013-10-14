@@ -31,6 +31,7 @@
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "PlatformCAAnimation.h"
+#include "PlatformCALayer.h"
 #include "PlatformCALayerClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -43,7 +44,6 @@
 
 namespace WebCore {
 
-class PlatformCALayer;
 class TransformState;
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
@@ -98,6 +98,7 @@ public:
 
 #if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&);
+    virtual bool filtersCanBeComposited(const FilterOperations&);
 #endif
 
     virtual void setNeedsDisplay();
@@ -185,6 +186,9 @@ private:
 #if ENABLE(CSS_FILTERS)
     void updateFilters();
 #endif
+    
+    PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
+    PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;

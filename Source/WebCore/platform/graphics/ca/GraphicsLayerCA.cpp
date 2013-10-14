@@ -48,7 +48,12 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
+#include "PlatformCALayerMac.h"
 #include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
+#include "PlatformCALayerWin.h"
 #endif
 
 using namespace std;
@@ -281,6 +286,35 @@ std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* facto
     return factory->createGraphicsLayer(client);
 }
 
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
+{
+#if PLATFORM(MAC)
+    return PlatformCALayerMac::filtersCanBeComposited(filters);
+#elif PLATFORM(WIN)
+    return PlatformCALayerWin::filtersCanBeComposited(filters);
+#endif
+}
+#endif
+    
+PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
+{
+#if PLATFORM(MAC)
+    return PlatformCALayerMac::create(layerType, owner);
+#elif PLATFORM(WIN)
+    return PlatformCALayerWin::create(layerType, owner);
+#endif
+}
+    
+PassRefPtr<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
+{
+#if PLATFORM(MAC)
+    return PlatformCALayerMac::create(platformLayer, owner);
+#elif PLATFORM(WIN)
+    return PlatformCALayerWin::create(platformLayer, owner);
+#endif
+}
+
 GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
@@ -296,7 +330,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
         m_isPageTiledBackingLayer = true;
     }
 
-    m_layer = PlatformCALayer::create(layerType, this);
+    m_layer = createPlatformCALayer(layerType, this);
     noteLayerPropertyChanged(ContentsScaleChanged);
 }
 
@@ -617,7 +651,7 @@ void GraphicsLayerCA::setOpacity(float opacity)
 #if ENABLE(CSS_FILTERS)
 bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
 {
-    bool canCompositeFilters = PlatformCALayer::filtersCanBeComposited(filterOperations);
+    bool canCompositeFilters = filtersCanBeComposited(filterOperations);
 
     if (m_filters == filterOperations)
         return canCompositeFilters;
@@ -781,7 +815,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
 
     if (m_contentsSolidColor.isValid()) {
         m_contentsLayerPurpose = ContentsLayerForBackgroundColor;
-        m_contentsLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+        m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #ifndef NDEBUG
         m_contentsLayer->setName("Background Color Layer");
 #endif
@@ -847,7 +881,7 @@ void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
     // the creator of the raw layer is using it for some other purpose.
     // For now we don't support such a case.
     PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(mediaLayer);
-    m_contentsLayer = mediaLayer ? (platformCALayer ? platformCALayer : PlatformCALayer::create(mediaLayer, this)) : 0;
+    m_contentsLayer = mediaLayer ? (platformCALayer ? platformCALayer : createPlatformCALayer(mediaLayer, this)) : 0;
     m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
 
     noteSublayersChanged();
@@ -860,7 +894,7 @@ void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
         return;
     
     // Create the PlatformCALayer to wrap the incoming layer
-    m_contentsLayer = canvasLayer ? PlatformCALayer::create(canvasLayer, this) : 0;
+    m_contentsLayer = canvasLayer ? createPlatformCALayer(canvasLayer, this) : 0;
     
     m_contentsLayerPurpose = canvasLayer ? ContentsLayerForCanvas : NoContentsLayer;
 
@@ -1098,7 +1132,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         static Color washFillColor(255, 0, 0, 50);
         static Color washBorderColor(255, 0, 0, 100);
         
-        m_visibleTileWashLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+        m_visibleTileWashLayer = createPlatformCALayer(createPlatformCALayer, this);
         String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
         m_visibleTileWashLayer->setName(name);
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
@@ -1606,7 +1640,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             m_structuralLayer = 0;
         
         if (!m_structuralLayer) {
-            m_structuralLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeTransformLayer, this);
+            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeTransformLayer, this);
             structuralLayerChanged = true;
         }
     } else {
@@ -1614,7 +1648,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             m_structuralLayer = 0;
 
         if (!m_structuralLayer) {
-            m_structuralLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             structuralLayerChanged = true;
         }
     }
@@ -1778,7 +1812,7 @@ void GraphicsLayerCA::updateContentsImage()
 {
     if (m_pendingContentsImage) {
         if (!m_contentsLayer.get()) {
-            m_contentsLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+            m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #ifndef NDEBUG
             m_contentsLayer->setName("Image Layer");
 #endif
@@ -1859,7 +1893,7 @@ void GraphicsLayerCA::updateContentsRects()
     bool gainedOrLostClippingLayer = false;
     if (!m_contentsClippingRect.contains(m_contentsRect)) {
         if (!m_contentsClippingLayer) {
-            m_contentsClippingLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+            m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             m_contentsClippingLayer->setMasksToBounds(true);
             m_contentsClippingLayer->setAnchorPoint(FloatPoint());
 #ifndef NDEBUG
@@ -2366,7 +2400,7 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
         
     const FilterOperations& operations = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
     // Make sure the platform layer didn't fallback to using software filter compositing instead.
-    if (!PlatformCALayer::filtersCanBeComposited(operations))
+    if (!filtersCanBeComposited(operations))
         return false;
 
     int numAnimations = operations.size();
@@ -2898,7 +2932,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer;
 #endif
 
-    m_layer = PlatformCALayer::create(layerType, this);
+    m_layer = createPlatformCALayer(layerType, this);
 
     m_usingTiledBacking = useTiledLayer;
     
