@@ -1,3 +1,12 @@
+2013-10-14  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Accessibility gardening
+        https://bugs.webkit.org/show_bug.cgi?id=122751
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations: Add bug numbers and marked missing tests.
+
 2013-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. EFL Gardening.

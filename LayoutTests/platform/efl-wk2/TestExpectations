@@ -170,6 +170,7 @@ webkit.org/b/112015 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/112016 accessibility/textarea-selected-text-range.html [ Failure ]
 webkit.org/b/112017 accessibility/textbox-role-reports-selection.html [ Failure ]
 webkit.org/b/112018 accessibility/th-as-title-ui.html [ Failure ]
+webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Failure ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
 
 # New accessibility test added in r149858 that is failing for EFL.
@@ -178,18 +179,18 @@ webkit.org/b/115901 accessibility/poorly-formed-aria-table.html [ Failure ]
 # New accessibility test added in r151079 that is failing for EFL.
 webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
 
-webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Failure ]
+webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Missing ]
+webkit.org/b/98348  accessibility/internal-link-anchors2.html [ Missing ]
+webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Missing ]
+webkit.org/b/98348  accessibility/radio-button-group-members.html [ Missing ]
+webkit.org/b/98348  accessibility/table-attributes.html [ Missing ]
+webkit.org/b/98348  accessibility/table-sections.html [ Missing ]
 
-accessibility/img-fallsback-to-title.html [ Skip ]
-accessibility/internal-link-anchors2.html [ Skip ]
-accessibility/media-element.html [ Skip ]
-accessibility/multiselect-list-reports-active-option.html [ Skip ]
-accessibility/radio-button-group-members.html [ Skip ]
-accessibility/table-attributes.html [ Skip ]
-accessibility/table-detection.html [ Skip ]
-accessibility/table-one-cell.html [ Skip ]
-accessibility/table-sections.html [ Skip ]
-accessibility/table-with-rules.html [ Skip ]
+accessibility/media-element.html [ Missing ]
+accessibility/negative-tabindex-does-not-expose-label.html [ Missing ]
+accessibility/table-detection.html [ Missing ]
+accessibility/table-one-cell.html [ Missing ]
+accessibility/table-with-rules.html [ Missing ]
 
 # EFL port doesn't support webarchives.
 webarchive [ Skip ]
