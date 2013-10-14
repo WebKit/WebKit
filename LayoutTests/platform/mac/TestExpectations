@@ -330,10 +330,7 @@ webkit.org/b/49142 fast/css/style-scoped
 fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 
 # CSS Regions tests for region styling and scoped styles
-fast/regions/style-scoped-in-flow-override-container-style.html
-fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html
-fast/regions/style-scoped-in-flow-override-region-styling.html
-fast/regions/style-scoped-in-flow.html
+fast/regions/style-scoped
 
 # seamless iframes exhibit odd repaint issues in regions and columns, but only in DumpRenderTree
 fast/regions/seamless-iframe-flowed-into-regions.html
