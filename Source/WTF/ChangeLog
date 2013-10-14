@@ -1,3 +1,14 @@
+2013-10-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Static assertions in WTF::adoptPtr should point to using adoptRef for ref-counted objects
+        https://bugs.webkit.org/show_bug.cgi?id=122745
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/PassOwnPtr.h:
+        (WTF::adoptPtr): When the object's type is convertible to the RefCountedBase or ThreadSafeRefCountedBase type,
+        the static assertion should note that adoptRef should be used instead.
+
 2013-10-14  Anders Carlsson  <andersca@apple.com>
 
         WebKit Nightlies broken by r157374

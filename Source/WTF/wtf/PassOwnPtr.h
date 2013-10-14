@@ -145,8 +145,8 @@ namespace WTF {
 
     template<typename T> inline PassOwnPtr<T> adoptPtr(T* ptr)
     {
-        static_assert(!std::is_convertible<T*, RefCountedBase*>::value, "Do not use adoptPtr with RefCounted, use adoptPtr!");
-        static_assert(!std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "Do not use adoptPtr with ThreadSafeRefCounted, use adoptPtr!");
+        static_assert(!std::is_convertible<T*, RefCountedBase*>::value, "Do not use adoptPtr with RefCounted, use adoptRef!");
+        static_assert(!std::is_convertible<T*, ThreadSafeRefCountedBase*>::value, "Do not use adoptPtr with ThreadSafeRefCounted, use adoptRef!");
 
         return PassOwnPtr<T>(ptr);
     }
