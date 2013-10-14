@@ -58,7 +58,8 @@ MacroAssemblerCodeRef roundThunkGenerator(VM*);
 MacroAssemblerCodeRef sqrtThunkGenerator(VM*);
 MacroAssemblerCodeRef powThunkGenerator(VM*);
 MacroAssemblerCodeRef imulThunkGenerator(VM*);
-MacroAssemblerCodeRef arrayIteratorNextThunkGenerator(VM*);
+MacroAssemblerCodeRef arrayIteratorNextKeyThunkGenerator(VM*);
+MacroAssemblerCodeRef arrayIteratorNextValueThunkGenerator(VM*);
 
 }
 #endif // ENABLE(JIT)
