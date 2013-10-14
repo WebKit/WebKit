@@ -1,3 +1,18 @@
+2013-10-14  Nadav Rotem  <nrotem@apple.com>
+
+        Add FTL support for LogicalNot(string)
+        https://bugs.webkit.org/show_bug.cgi?id=122765
+
+        Reviewed by Filip Pizlo.
+
+        This patch is tested by:
+        regress/script-tests/emscripten-cube2hash.js.ftl-eager
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileLogicalNot):
+
 2013-10-14  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Fixes after r157404 and r157411.

@@ -2109,6 +2109,11 @@ private:
                 equalNullOrUndefined(
                     edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
                     ManualOperandSpeculation));
+        case StringUse: {
+            LValue stringValue = lowString(m_node->child1());
+            LValue length = m_out.load32(stringValue, m_heaps.JSString_length);
+            return m_out.notEqual(length, m_out.int32Zero);
+        }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return 0;

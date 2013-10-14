@@ -189,6 +189,7 @@ inline CapabilityLevel canCompile(Node* node)
         case BooleanUse:
         case Int32Use:
         case NumberUse:
+        case StringUse:
         case ObjectOrOtherUse:
             break;
         default:
