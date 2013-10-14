@@ -82,6 +82,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
 static bool hasDoubleValue(CSSPrimitiveValue::UnitTypes type)
 {
     switch (type) {
+    case CSSPrimitiveValue::CSS_FR:
     case CSSPrimitiveValue::CSS_NUMBER:
     case CSSPrimitiveValue::CSS_PARSER_INTEGER:
     case CSSPrimitiveValue::CSS_PERCENTAGE:
