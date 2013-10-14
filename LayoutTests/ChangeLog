@@ -1,3 +1,9 @@
+2013-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix the paths so that the test passes.
+
+        * js/regress/put-by-id.html:
+
 2013-10-14  Alexey Proskuryakov  <ap@apple.com>
 
         window.crypto doesn't preserve custom properties
