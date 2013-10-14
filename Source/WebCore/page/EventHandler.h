@@ -176,13 +176,9 @@ public:
     bool handlePasteGlobalSelection(const PlatformMouseEvent&);
 
 #if ENABLE(TOUCH_ADJUSTMENT)
-    bool shouldApplyTouchAdjustment(const PlatformGestureEvent&) const;
-
     bool bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode);
     bool bestContextMenuNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode);
     bool bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntRect& targetArea, Node*& targetNode);
-
-    bool adjustGesturePosition(const PlatformGestureEvent&, IntPoint& adjustedPoint);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

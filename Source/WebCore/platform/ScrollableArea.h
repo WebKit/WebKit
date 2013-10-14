@@ -33,7 +33,6 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContext;
-class PlatformGestureEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
 #if USE(ACCELERATED_COMPOSITING)

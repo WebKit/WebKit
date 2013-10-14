@@ -42,10 +42,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {

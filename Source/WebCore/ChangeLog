@@ -1,5 +1,24 @@
 2013-10-14  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
+        Remove GestureEvent leftovers from WebCore
+        <https://webkit.org/b/122780>
+
+        Reviewed by Anders Carlsson.
+
+        - Removed some remaining references to PlatformGestureEvent, supposed to
+          be removed by r157316
+        - TOUCH_ADJUSTMENT should be reworked after GestureEvent feature
+          removal
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::bestZoomableAreaForTouchPoint):
+        * page/EventHandler.h:
+        * platform/PlatformEvent.h:
+        * platform/ScrollAnimatorNone.cpp:
+        * platform/ScrollableArea.h:
+
+2013-10-14  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
         Build fix after r157366
         http://bugs.webkit.org/show_bug.cgi?id=122783
 
