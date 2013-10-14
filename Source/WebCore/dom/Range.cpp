@@ -787,7 +787,8 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
-        ASSERT(endOffset <= toCharacterData(container)->length());
+        endOffset = std::min(endOffset, static_cast<CharacterData*>(container)->length());
+        startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
             RefPtr<CharacterData> c = static_pointer_cast<CharacterData>(container->cloneNode(true));
             deleteCharacterData(c, startOffset, endOffset, ec);
@@ -801,7 +802,8 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
             toCharacterData(container)->deleteData(startOffset, endOffset - startOffset, ec);
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
-        ASSERT(endOffset <= toProcessingInstruction(container)->data().length());
+        endOffset = std::min(endOffset, static_cast<ProcessingInstruction*>(container)->data().length());
+        startOffset = std::min(startOffset, endOffset);
         if (action == Extract || action == Clone) {
             RefPtr<ProcessingInstruction> c = static_pointer_cast<ProcessingInstruction>(container->cloneNode(true));
             c->setData(c->data().substring(startOffset, endOffset - startOffset), ec);

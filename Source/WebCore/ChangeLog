@@ -1,3 +1,21 @@
+2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assertion failure in Range::processContentsBetweenOffsets
+        https://bugs.webkit.org/show_bug.cgi?id=122777
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/c15de182774c7859c20d97126eb844ae97b792a4
+
+        This patch changes ASSERT statements for checking |endOffset| inbound in Range::processContentsBetweenOffsets()
+        to limit |endOffset|. This is necessary when DOMNodeRemovedFromDocument event handler splits text nodes,
+        Range::insertNode() on text node, in the range calling Range::deleteContents().
+
+        Test: fast/dom/Range/range-delete-contents-mutation-event-crash.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContentsBetweenOffsets):
+
 2013-10-14  Alexey Proskuryakov  <ap@apple.com>
 
         Add an empty window.crypto.webkitSubtle
