@@ -1,3 +1,15 @@
+2013-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. EFL Gardening.
+        Add baselines for new tests which was added by r156767.
+
+        * platform/efl/TestExpectations: Remove tests supported by this commit.
+        * platform/efl/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Added.
+        * platform/efl/fast/regions/text-region-split-small-pagination-expected.txt: Added.
+        * platform/efl/fast/regions/top-overflow-out-of-second-region-expected.txt: Added.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+        * platform/efl/fast/repaint/region-painting-invalidation-expected.txt: Added.
+
 2013-10-14  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Present replaced objects with 0xFFFC character
