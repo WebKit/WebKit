@@ -39,6 +39,8 @@ list(APPEND WebCore_SOURCES
 
     editing/efl/EditorEfl.cpp
 
+    html/shadow/MediaControlsApple.cpp
+
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 

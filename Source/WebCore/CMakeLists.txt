@@ -1520,7 +1520,6 @@ set(WebCore_SOURCES
     html/shadow/MediaControlElementTypes.cpp
     html/shadow/MediaControlElements.cpp
     html/shadow/MediaControls.cpp
-    html/shadow/MediaControlsApple.cpp
     html/shadow/MeterShadowElement.cpp
     html/shadow/ProgressShadowElement.cpp
     html/shadow/SliderThumbElement.cpp
