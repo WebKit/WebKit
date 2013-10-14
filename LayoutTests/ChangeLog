@@ -1,3 +1,19 @@
+2013-10-14  Zalan Bujtas  <zalan@apple.com>
+
+        Unexpected word wrapping for wrapped content then raw content.
+        https://bugs.webkit.org/show_bug.cgi?id=121130
+
+        Reviewed by Antti Koivisto.
+
+        When deciding whether a line is considered empty, we need to check if the current
+        object is fully responsible for the currently uncommitted width. It helps differentiating
+        <span></span><span>abcd</span> from <span>a</span><span>bcd</span>, where in the first
+        case when we hit the second <span> the line is still considered empty, as opposed to the
+        second example.
+
+        * fast/css/unexpected-word-wrapping-with-non-empty-spans-expected.html: Added.
+        * fast/css/unexpected-word-wrapping-with-non-empty-spans.html: Added.
+
 2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] 2 span positions are not resolved correctly
