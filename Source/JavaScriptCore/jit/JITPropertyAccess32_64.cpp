@@ -85,11 +85,8 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_del_by_id);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(property)));
-    stubCall.call(dst);
+    emitLoad(base, regT1, regT0);
+    callOperation(operationDeleteById, dst, regT1, regT0, &m_codeBlock->identifier(property));
 }
 
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)

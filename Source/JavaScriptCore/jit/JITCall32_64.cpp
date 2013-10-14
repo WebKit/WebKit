@@ -190,11 +190,10 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     if (canOptimize)
         slowCase.link(this);
 
-    JITStubCall stubCall(this, cti_op_load_varargs);
-    stubCall.addArgument(thisValue);
-    stubCall.addArgument(arguments);
-    stubCall.addArgument(Imm32(firstFreeRegister));
-    stubCall.call(regT3);
+    emitLoad(thisValue, regT1, regT0);
+    emitLoad(arguments, regT3, regT2);
+    callOperation(operationLoadVarargs, regT1, regT0, regT3, regT2, firstFreeRegister);
+    move(returnValueRegister, regT3);
 
     if (canOptimize)
         end.link(this);

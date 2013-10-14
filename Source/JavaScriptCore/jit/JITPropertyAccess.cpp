@@ -508,10 +508,11 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_del_by_id);
-    stubCall.addArgument(currentInstruction[2].u.operand, regT2);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
+    emitGetVirtualRegister(base, regT0);
+    callOperation(operationDeleteById, dst, regT0, &m_codeBlock->identifier(property));
 }
 
 void JIT::emit_op_get_by_id(Instruction* currentInstruction)

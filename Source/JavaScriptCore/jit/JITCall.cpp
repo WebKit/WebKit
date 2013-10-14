@@ -119,11 +119,10 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     if (canOptimize)
         slowCase.link(this);
 
-    JITStubCall stubCall(this, cti_op_load_varargs);
-    stubCall.addArgument(thisValue, regT0);
-    stubCall.addArgument(arguments, regT0);
-    stubCall.addArgument(Imm32(firstFreeRegister));
-    stubCall.call(regT1);
+    emitGetVirtualRegister(thisValue, regT0);
+    emitGetVirtualRegister(arguments, regT1);
+    callOperation(operationLoadVarargs, regT0, regT1, firstFreeRegister);
+    move(returnValueRegister, regT1);
 
     if (canOptimize)
         end.link(this);

@@ -1,3 +1,55 @@
+2013-10-13  Mark Lam  <mark.lam@apple.com>
+
+        Transition misc cti_op_* JITStubs to JIT operations.
+        https://bugs.webkit.org/show_bug.cgi?id=122645.
+
+        Reviewed by Michael Saboff.
+
+        Stubs converted:
+            cti_op_check_has_instance
+            cti_op_create_arguments
+            cti_op_del_by_id
+            cti_op_instanceof
+            cti_to_object
+            cti_op_push_activation
+            cti_op_get_pnames
+            cti_op_load_varargs
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        (JSC::JIT::emitStoreCell):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_check_has_instance):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+
 2013-10-13  Filip Pizlo  <fpizlo@apple.com>
 
         FTL OSR exit should perform zero extension on values smaller than 64-bit
