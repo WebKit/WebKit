@@ -1,3 +1,19 @@
+2013-10-14  Arvid Nilsson  <anilsson@blackberry.com>
+
+        Don't crash after OpenGL robustness reset
+        https://bugs.webkit.org/show_bug.cgi?id=122750
+
+        Reviewed by George Staikos.
+
+        JIRA 517132.
+        Just log the incident and pretend like nothing happened.
+
+        No new tests, we don't have repeatable steps to reproduce a robustness
+        reset.
+
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::makeContextCurrent):
+
 2013-10-14  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Buildfix after r157393

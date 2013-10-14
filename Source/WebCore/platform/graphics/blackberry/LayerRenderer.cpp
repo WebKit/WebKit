@@ -1042,10 +1042,9 @@ bool LayerRenderer::makeContextCurrent()
 {
     bool ret = m_client->context()->makeCurrent();
     if (ret && m_isRobustnessSupported) {
-        if (m_glGetGraphicsResetStatusEXT() != GL_NO_ERROR) {
-            BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Robust OpenGL context has been reset. Aborting.");
-            CRASH();
-        }
+        GLenum resetStatus = m_glGetGraphicsResetStatusEXT();
+        if (resetStatus != GL_NO_ERROR)
+            BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Robust OpenGL context has been reset with status 0x%x. Continuing anyway.", resetStatus);
     }
     return ret;
 }
