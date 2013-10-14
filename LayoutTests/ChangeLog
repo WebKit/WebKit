@@ -1,3 +1,49 @@
+2013-10-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Added new baselines for tests marked as skipped.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/overflow/nested-scrolling-expected.txt: Added.
+        * platform/efl/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+        * platform/efl/compositing/overflow/remove-overflow-crash2-expected.txt: Added.
+        * platform/efl/editing/spelling/inline-spelling-markers-hidpi-expected.png: Added.
+        * platform/efl/editing/unsupported-content/list-delete-001-expected.png:
+        * platform/efl/editing/unsupported-content/list-delete-001-expected.txt: Added.
+        * platform/efl/editing/unsupported-content/list-delete-003-expected.png:
+        * platform/efl/editing/unsupported-content/list-delete-003-expected.txt: Added.
+        * platform/efl/editing/unsupported-content/list-type-after-expected.png:
+        * platform/efl/editing/unsupported-content/list-type-after-expected.txt: Added.
+        * platform/efl/editing/unsupported-content/table-delete-002-expected.png:
+        * platform/efl/editing/unsupported-content/table-delete-002-expected.txt: Added.
+        * platform/efl/fast/canvas/fill-stroke-clip-reset-path-expected.png: Added.
+        * platform/efl/fast/table/click-near-anonymous-table-expected.png: Added.
+        * platform/efl/fast/table/click-near-anonymous-table-expected.txt: Added.
+        * platform/efl/fast/text/international/arabic-justify-expected.png: Added.
+        * platform/efl/fast/text/international/arabic-justify-expected.txt: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-001-expected.png: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-001-expected.txt: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-002-expected.png: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-002-expected.txt: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-003-expected.png: Added.
+        * platform/efl/fast/text/international/bidi-linebreak-003-expected.txt: Added.
+        * platform/efl/fast/text/unicode-variation-selector-expected.png: Added.
+        * platform/efl/fast/text/unicode-variation-selector-expected.txt: Added.
+        * platform/efl/media/video-colorspace-yuv420-expected.png: Added.
+        * platform/efl/media/video-colorspace-yuv420-expected.txt: Added.
+        * platform/efl/media/video-colorspace-yuv422-expected.png: Added.
+        * platform/efl/media/video-colorspace-yuv422-expected.txt: Added.
+        * platform/efl/svg/as-image/image-respects-deviceScaleFactor-expected.png: Added.
+        * platform/efl/svg/as-image/image-respects-deviceScaleFactor-expected.txt: Added.
+        * platform/efl/svg/hixie/data-types/002-expected.png: Added.
+        * platform/efl/svg/hixie/data-types/002-expected.txt:
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.png: Added.
+        * platform/efl/svg/text/non-bmp-positioning-lists-expected.txt: Added.
+        * platform/efl/svg/zoom/text/zoom-hixie-mixed-009-expected.png: Added.
+        * platform/efl/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+
 2013-10-14  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape-Margin should be animatable

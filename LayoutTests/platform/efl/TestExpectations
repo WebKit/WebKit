@@ -161,10 +161,6 @@ fast/forms/textfield-overflow.html
 fast/forms/color/input-appearance-color.html
 
 # BUG: international characters not being rendered correctly. they probably need a proper font.
-fast/text/international/arabic-justify.html
-fast/text/international/bidi-linebreak-001.html
-fast/text/international/bidi-linebreak-002.html
-fast/text/international/bidi-linebreak-003.html
 fast/text/international/bold-bengali.html
 fast/text/international/complex-character-based-fallback.html
 fast/text/international/danda-space.html
@@ -224,12 +220,6 @@ fast/inline/continuation-outlines-with-layers.html
 # The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html
 
-# Failing, the 2 bars are not identical
-svg/hixie/data-types/002.xhtml
-
-# Failing, text size is not the same
-svg/zoom/text/zoom-hixie-mixed-009.xml
-
 # Failing, last gradiant rectangle is blank
 svg/batik/paints/gradientLimit.svg
 
@@ -258,14 +248,9 @@ http/tests/inspector [ Skip ]
 http/tests/inspector-enabled [ Skip ]
 
 # There are no expected result set yet.
-editing/unsupported-content/list-delete-001.html 
-editing/unsupported-content/list-delete-003.html 
-editing/unsupported-content/list-type-after.html 
 editing/unsupported-content/table-delete-001.html
-editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/text/unicode-variation-selector.html
 
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 http/tests/security/contentTypeOptions
@@ -294,7 +279,6 @@ webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Fail
 
 # These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.
 Bug(EFL) fast/canvas/canvas-gradient-addStop-error.html
-Bug(EFL) fast/canvas/fill-stroke-clip-reset-path.html
 Bug(EFL) http/tests/xmlhttprequest/default-content-type-dashboard.html
 
 # Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
@@ -401,7 +385,6 @@ webkit.org/b/86623 fast/forms/file/input-file-value.html [ Failure ]
 webkit.org/b/86623 fast/forms/search-cancel-button-mouseup.html
 webkit.org/b/86623 fast/forms/textfield-drag-into-disabled.html
 webkit.org/b/86623 fast/lists/drag-into-marker.html
-webkit.org/b/86623 fast/table/click-near-anonymous-table.html
 webkit.org/b/86623 http/tests/local/drag-over-remote-content.html
 webkit.org/b/86623 http/tests/local/fileapi/file-last-modified-after-delete.html [ Failure ]
 webkit.org/b/86623 http/tests/misc/bubble-drag-events.html
@@ -959,7 +942,6 @@ Bug(EFL) svg/custom
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml
 
 webkit.org/b/98644 svg/W3C-SVG-1.1/pservers-grad-13-b.svg [ Skip ]
-webkit.org/b/98651 svg/text/non-bmp-positioning-lists.svg [ Skip ]
 webkit.org/b/98653 svg/text/lengthAdjust-text-metrics.html [ Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
@@ -1017,13 +999,9 @@ webkit.org/b/79766 compositing/iframes/iframe-size-to-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-src-change.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/resizer.html [ Missing ]
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Skip ]
-webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
-webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/no-backing-store.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
@@ -1382,15 +1360,9 @@ webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ Missin
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
-# Wrong video colors.
-webkit.org/b/102091 media/video-colorspace-yuv420.html [ Skip ]
-webkit.org/b/102091 media/video-colorspace-yuv422.html [ Skip ]
-
 # HiDPI tests are failing to render correctly.
-webkit.org/b/102097 editing/spelling/inline-spelling-markers-hidpi.html [ Skip ]
 webkit.org/b/102097 fast/hidpi [ Skip ]
 webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Skip ]
-webkit.org/b/102097 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]
 
 webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure Pass ]
 

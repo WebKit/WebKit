@@ -492,6 +492,8 @@ webkit.org/b/120671 editing/selection/doubleclick-japanese-text.html [ Failure ]
 Bug(EFL) fast/harness/results.html [ Failure ]
 
 # EFL has not fully implemented about some SVG attributes
+Bug(EFL) svg/as-image/image-respects-deviceScaleFactor.html
+Bug(EFL) svg/hixie/data-types/002.xhtml
 Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 # Text selection does not work correctly in DumpRenderTree
