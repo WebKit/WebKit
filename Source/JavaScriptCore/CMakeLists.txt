@@ -181,7 +181,6 @@ set(JavaScriptCore_SOURCES
     heap/ConservativeRoots.cpp
     heap/CopiedSpace.cpp
     heap/CopyVisitor.cpp
-    heap/DeferGC.cpp
     heap/GCThread.cpp
     heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp

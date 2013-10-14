@@ -596,7 +596,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             && baseCell == slot.base()) {
             
             if (slot.type() == PutPropertySlot::NewProperty) {
-                GCSafeConcurrentJITLocker locker(codeBlock->m_lock, vm.heap);
+                ConcurrentJITLocker locker(codeBlock->m_lock);
             
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());

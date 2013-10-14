@@ -28,7 +28,6 @@
 
 #include "Heap.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadSpecific.h>
 
 namespace JSC {
 
@@ -67,34 +66,6 @@ public:
 private:
     Heap& m_heap;
 };
-
-#ifndef NDEBUG
-class DisallowGC {
-    WTF_MAKE_NONCOPYABLE(DisallowGC);
-public:
-    DisallowGC()
-    {
-        WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(true));
-    }
-
-    ~DisallowGC()
-    {
-        WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(false));
-    }
-
-    static bool isGCDisallowedOnCurrentThread()
-    {
-        return !!WTF::threadSpecificGet(s_isGCDisallowedOnCurrentThread);
-    }
-    static void initialize()
-    {
-        WTF::threadSpecificKeyCreate(&s_isGCDisallowedOnCurrentThread, 0);
-    }
-
-private:
-    JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_isGCDisallowedOnCurrentThread;
-};
-#endif // NDEBUG
 
 } // namespace JSC
 

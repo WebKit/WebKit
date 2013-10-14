@@ -27,7 +27,6 @@
 #define JSCellInlines_h
 
 #include "CallFrame.h"
-#include "DeferGC.h"
 #include "Handle.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -86,7 +85,6 @@ inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 template<typename T>
 void* allocateCell(Heap& heap, size_t size)
 {
-    ASSERT(!DisallowGC::isGCDisallowedOnCurrentThread());
     ASSERT(size >= sizeof(T));
 #if ENABLE(GC_VALIDATION)
     ASSERT(!heap.vm()->isInitializingObject());

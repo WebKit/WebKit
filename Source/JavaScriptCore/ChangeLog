@@ -1,3 +1,35 @@
+2013-10-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r157413.
+        http://trac.webkit.org/changeset/157413
+        https://bugs.webkit.org/show_bug.cgi?id=122779
+
+        Appears to have caused frequent crashes (Requested by ap on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/DeferGC.cpp: Removed.
+        * heap/DeferGC.h:
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ConcurrentJITLock.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSCellInlines.h:
+        (JSC::allocateCell):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::createPropertyMap):
+        * runtime/Structure.h:
+
 2013-10-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         COLLECT_ON_EVERY_ALLOCATION causes assertion failures

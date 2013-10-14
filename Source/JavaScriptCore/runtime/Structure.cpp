@@ -280,7 +280,7 @@ void Structure::materializePropertyMap(VM& vm)
     // Must hold the lock on this structure, since we will be modifying this structure's
     // property map. We don't want getConcurrently() to see the property map in a half-baked
     // state.
-    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    ConcurrentJITLocker locker(m_lock);
     if (!table)
         createPropertyMap(locker, vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
     else
@@ -881,7 +881,7 @@ void Structure::despecifyAllFunctions(VM& vm)
 
 PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
-    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
+    ConcurrentJITLocker locker(m_lock);
     
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
@@ -926,7 +926,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     return offset;
 }
 
-void Structure::createPropertyMap(const GCSafeConcurrentJITLocker&, VM& vm, unsigned capacity)
+void Structure::createPropertyMap(const ConcurrentJITLocker&, VM& vm, unsigned capacity)
 {
     ASSERT(!propertyTable());
 
