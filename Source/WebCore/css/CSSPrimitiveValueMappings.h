@@ -182,6 +182,32 @@ template<> inline CSSPrimitiveValue::operator CSSReflectionDirection() const
     return ReflectionBelow;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnFill columnFill)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (columnFill) {
+    case ColumnFillAuto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case ColumnFillBalance:
+        m_value.valueID = CSSValueBalance;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ColumnFill() const
+{
+    if (m_primitiveUnitType == CSS_VALUE_ID) {
+        if (m_value.valueID == CSSValueBalance)
+            return ColumnFillBalance;
+        if (m_value.valueID == CSSValueAuto)
+            return ColumnFillAuto;
+    }
+    ASSERT_NOT_REACHED();
+    return ColumnFillBalance;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnSpan columnSpan)
     : CSSValue(PrimitiveClass)
 {

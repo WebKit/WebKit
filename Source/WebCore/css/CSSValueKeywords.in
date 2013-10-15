@@ -1040,3 +1040,5 @@ span
 -webkit-hanging
 #endif
 
+// -webkit-column-fill
+balance

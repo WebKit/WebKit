@@ -83,6 +83,8 @@ enum PseudoId {
     PUBLIC_PSEUDOID_MASK = ((1 << FIRST_INTERNAL_PSEUDOID) - 1) & ~((1 << FIRST_PUBLIC_PSEUDOID) - 1)
 };
 
+enum ColumnFill { ColumnFillBalance, ColumnFillAuto };
+
 enum ColumnSpan { ColumnSpanNone = 0, ColumnSpanAll };
 
 enum EBorderCollapse { BSEPARATE = 0, BCOLLAPSE = 1 };

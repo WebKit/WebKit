@@ -45,7 +45,7 @@ public:
 
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
-    bool requiresBalancing() const { return !m_columnHeightAvailable; }
+    bool requiresBalancing() const { return !m_columnHeightAvailable || style()->columnFill() == ColumnFillBalance; }
 
 private:
     virtual bool isRenderMultiColumnBlock() const { return true; }

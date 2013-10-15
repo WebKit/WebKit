@@ -1,3 +1,42 @@
+2013-10-15  Morten Stenshorne  <mstensho@opera.com>
+
+        Add support for the column-fill property
+        https://bugs.webkit.org/show_bug.cgi?id=117693
+
+        Reviewed by David Hyatt.
+
+        This is only supported in the (new) region based multicol implementation.
+
+        With column-fill support, a lot of multicol tests needed an update.
+        The old implementation behaved as if column-fill were 'auto', but the
+        initial value is 'balance', so now we need to be explicit about that.
+        For auto-height tests it doesn't really matter - such multicols are always
+        balanced anyway.
+
+        Tests: fast/multicol/newmulticol/fixed-height-fill-auto.html
+               fast/multicol/newmulticol/fixed-height-fill-balance.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ColumnFill):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * rendering/RenderMultiColumnBlock.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator==):
+        * rendering/style/StyleMultiColData.h:
+
 2013-10-15  Andreas Kling  <akling@apple.com>
 
         Skip unnecessary null check in RenderText::textLength().

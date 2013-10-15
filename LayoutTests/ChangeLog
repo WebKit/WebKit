@@ -1,3 +1,125 @@
+2013-10-15  Morten Stenshorne  <mstensho@opera.com>
+
+        Add support for the column-fill property
+        https://bugs.webkit.org/show_bug.cgi?id=117693
+
+        Reviewed by David Hyatt.
+
+        With column-fill support, a lot of multicol tests needed an update.
+        The old implementation behaved as if column-fill were 'auto', but the
+        initial value is 'balance', so now we need to be explicit about that.
+        For auto-height tests it doesn't really matter - such multicols are always
+        balanced anyway.
+
+        * compositing/geometry/composited-in-columns.html:
+        * fast/block/positioning/offsetLeft-offsetTop-multicolumn-expected.html:
+        * fast/block/positioning/offsetLeft-offsetTop-multicolumn.html:
+        * fast/borders/border-antialiasing.html:
+        * fast/dynamic/float-moved-downwards-for-pagination-expected.html:
+        * fast/dynamic/float-moved-downwards-for-pagination.html:
+        * fast/dynamic/layer-no-longer-paginated.html:
+        * fast/events/document-elementFromPoint.html:
+        * fast/line-grid/line-grid-inside-columns.html:
+        * fast/line-grid/line-grid-into-columns.html:
+        * fast/multicol/break-properties.html:
+        * fast/multicol/cell-shrinkback.html:
+        * fast/multicol/client-rects.html:
+        * fast/multicol/column-count-with-rules.html:
+        * fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode.html:
+        * fast/multicol/flipped-blocks-hit-test.html:
+        * fast/multicol/float-paginate-complex.html:
+        * fast/multicol/float-paginate-empty-lines.html:
+        * fast/multicol/float-paginate.html:
+        * fast/multicol/float-truncation.html:
+        * fast/multicol/hit-test-above-or-below.html:
+        * fast/multicol/hit-test-end-of-column-with-line-height.html:
+        * fast/multicol/hit-test-end-of-column.html:
+        * fast/multicol/hit-test-float.html:
+        * fast/multicol/image-inside-nested-blocks-with-border.html:
+        * fast/multicol/layers-in-multicol.html:
+        * fast/multicol/layers-split-across-columns.html:
+        * fast/multicol/margin-collapse.html:
+        * fast/multicol/mixed-opacity-fixed-test.html:
+        * fast/multicol/mixed-opacity-test.html:
+        * fast/multicol/mixed-positioning-stacking-order.html:
+        * fast/multicol/nested-columns.html:
+        * fast/multicol/newmulticol/cell-shrinkback-expected.html:
+        * fast/multicol/newmulticol/cell-shrinkback.html:
+        * fast/multicol/newmulticol/column-rules-fixed-height-expected.html:
+        * fast/multicol/newmulticol/fixed-height-fill-auto-expected.html: Added.
+        * fast/multicol/newmulticol/fixed-height-fill-auto.html: Added.
+        * fast/multicol/newmulticol/fixed-height-fill-balance-expected.html: Added.
+        * fast/multicol/newmulticol/fixed-height-fill-balance.html: Added.
+        * fast/multicol/newmulticol/float-avoidance-expected.html:
+        * fast/multicol/newmulticol/float-avoidance.html:
+        * fast/multicol/newmulticol/float-multicol-expected.html:
+        * fast/multicol/newmulticol/float-multicol.html:
+        * fast/multicol/newmulticol/float-paginate-complex-expected.html:
+        * fast/multicol/newmulticol/float-paginate-complex.html:
+        * fast/multicol/newmulticol/float-paginate-empty-lines-expected.html:
+        * fast/multicol/newmulticol/float-paginate-empty-lines.html:
+        * fast/multicol/newmulticol/float-paginate-expected.html:
+        * fast/multicol/newmulticol/float-paginate.html:
+        * fast/multicol/newmulticol/layers-in-multicol-expected.html:
+        * fast/multicol/newmulticol/layers-in-multicol.html:
+        * fast/multicol/newmulticol/layers-split-across-columns-expected.html:
+        * fast/multicol/newmulticol/layers-split-across-columns.html:
+        * fast/multicol/newmulticol/positioned-split-expected.html:
+        * fast/multicol/newmulticol/positioned-split.html:
+        * fast/multicol/newmulticol/positioned-with-constrained-height-expected.html:
+        * fast/multicol/newmulticol/positioned-with-constrained-height.html:
+        * fast/multicol/null-lastFloat-in-removeFloatingObjectsBelow.html:
+        * fast/multicol/orphans-relayout.html:
+        * fast/multicol/overflow-across-columns-percent-height.html:
+        * fast/multicol/overflow-across-columns.html:
+        * fast/multicol/overflow-content-expected.html:
+        * fast/multicol/overflow-content.html:
+        * fast/multicol/overflow-unsplittable.html:
+        * fast/multicol/pageLogicalOffset-vertical-expected.html:
+        * fast/multicol/pageLogicalOffset-vertical.html:
+        * fast/multicol/paginate-block-replaced.html:
+        * fast/multicol/positioned-outside-of-columns.html:
+        * fast/multicol/positioned-split.html:
+        * fast/multicol/positive-leading.html:
+        * fast/multicol/progression-reverse-overflow-expected.html:
+        * fast/multicol/progression-reverse-overflow.html:
+        * fast/multicol/progression-reverse.html:
+        * fast/multicol/scrolling-overflow.html:
+        * fast/multicol/seamless-flowed-through-columns-expected.html:
+        * fast/multicol/seamless-flowed-through-columns.html:
+        * fast/multicol/table-margin-collapse.html:
+        * fast/multicol/table-row-height-increase-expected.html:
+        * fast/multicol/table-row-height-increase.html:
+        * fast/multicol/table-vertical-align.html:
+        * fast/multicol/transform-inside-opacity.html:
+        * fast/multicol/unsplittable-inline-block.html:
+        * fast/multicol/vertical-lr/break-properties.html:
+        * fast/multicol/vertical-lr/column-count-with-rules.html:
+        * fast/multicol/vertical-lr/float-multicol.html:
+        * fast/multicol/vertical-lr/float-paginate-complex.html:
+        * fast/multicol/vertical-lr/float-paginate.html:
+        * fast/multicol/vertical-lr/float-truncation.html:
+        * fast/multicol/vertical-lr/image-inside-nested-blocks-with-border.html:
+        * fast/multicol/vertical-lr/nested-columns.html:
+        * fast/multicol/vertical-lr/rules-with-border-before.html:
+        * fast/multicol/vertical-lr/unsplittable-inline-block.html:
+        * fast/multicol/vertical-rl/break-properties.html:
+        * fast/multicol/vertical-rl/column-count-with-rules.html:
+        * fast/multicol/vertical-rl/float-avoidance.html:
+        * fast/multicol/vertical-rl/float-multicol.html:
+        * fast/multicol/vertical-rl/float-paginate-complex.html:
+        * fast/multicol/vertical-rl/float-paginate.html:
+        * fast/multicol/vertical-rl/float-truncation.html:
+        * fast/multicol/vertical-rl/image-inside-nested-blocks-with-border.html:
+        * fast/multicol/vertical-rl/nested-columns.html:
+        * fast/multicol/vertical-rl/rule-style.html:
+        * fast/multicol/vertical-rl/rules-with-border-before.html:
+        * fast/multicol/vertical-rl/unsplittable-inline-block.html:
+        * fast/multicol/widows-and-orphans.html:
+        * fast/regions/region-style-in-columns.html:
+        * fast/repaint/multicol-repaint.html:
+        * fast/sub-pixel/column-clipping.html:
+
 2013-10-14  Santosh Mahto  <santosh.ma@samsung.com>
 
         in safari ,the background-color of input[type="search"] can't work
