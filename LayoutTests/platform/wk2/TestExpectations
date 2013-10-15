@@ -630,9 +630,6 @@ http/tests/loading/pdf-commit-load-callbacks.html
 # Times out unexpectedly.
 http/tests/security/feed-urls-from-remote.html
 
-# Flakey unexpected audio diff
-webaudio/oscillator-sawtooth.html	
-
 ### END OF (3) Unclassified failures
 ########################################
 
