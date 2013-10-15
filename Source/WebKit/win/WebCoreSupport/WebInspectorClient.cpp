@@ -160,8 +160,6 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
 
     RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("Main"), CFSTR("html"), CFSTR("WebInspectorUI")));
     if (!htmlURLRef)
-        htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
-    if (!htmlURLRef)
         return 0;
 
     CFStringRef urlStringRef = ::CFURLGetString(htmlURLRef.get());
