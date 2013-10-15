@@ -91,7 +91,7 @@ public:
     virtual void handleLocalEvents(Event&) const OVERRIDE;
     virtual bool isTouchEventContext() const OVERRIDE;
 
-    enum TouchListType { Touches, TargetTouches, ChangedTouches, };
+    enum TouchListType { Touches, TargetTouches, ChangedTouches, NotTouchList };
     TouchList* touchList(TouchListType type)
     {
         switch (type) {
@@ -101,6 +101,8 @@ public:
             return m_targetTouches.get();
         case ChangedTouches:
             return m_changedTouches.get();
+        case NotTouchList:
+            break;
         }
         ASSERT_NOT_REACHED();
         return nullptr;

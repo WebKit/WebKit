@@ -116,8 +116,30 @@ public:
         , m_relatedNodeTreeScope(relatedNode.treeScope())
         , m_relatedNodeInCurrentTreeScope(nullptr)
         , m_currentTreeScope(nullptr)
+#if ENABLE(TOUCH_EVENTS)
+        , m_touch(0)
+        , m_touchListType(TouchEventContext::NotTouchList)
+#endif
     {
     }
+
+#if ENABLE(TOUCH_EVENTS)
+    EventRelatedNodeResolver(Touch& touch, TouchEventContext::TouchListType touchListType)
+        : m_relatedNode(*touch.target()->toNode())
+        , m_relatedNodeTreeScope(m_relatedNode.treeScope())
+        , m_relatedNodeInCurrentTreeScope(nullptr)
+        , m_currentTreeScope(nullptr)
+        , m_touch(&touch)
+        , m_touchListType(touchListType)
+    {
+        ASSERT(touch.target()->toNode());
+    }
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    Touch* touch() const { return m_touch; }
+    TouchEventContext::TouchListType touchListType() const { return m_touchListType; }
+#endif
 
     Node* moveToParentOrShadowHost(Node& newTarget)
     {
@@ -148,6 +170,10 @@ private:
     const TreeScope& m_relatedNodeTreeScope;
     Node* m_relatedNodeInCurrentTreeScope;
     TreeScope* m_currentTreeScope;
+#if ENABLE(TOUCH_EVENTS)
+    Touch* m_touch;
+    TouchEventContext::TouchListType m_touchListType;
+#endif
 };
 
 inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
@@ -405,29 +431,35 @@ EventPath::EventPath(Node& targetNode, Event& event)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void EventPath::updateTouchListsInEventPath(const TouchList* touchList, TouchEventContext::TouchListType touchListType)
+static void addRelatedNodeResolversForTouchList(Vector<EventRelatedNodeResolver, 16>& touchTargetResolvers, TouchList* touchList, TouchEventContext::TouchListType type)
 {
-    if (!touchList)
-        return;
-    for (size_t i = 0; i < touchList->length(); ++i) {
-        const Touch& touch = *touchList->item(i);
-
-        ASSERT(touch.target()->toNode());
-        EventRelatedNodeResolver resolver(*touch.target()->toNode());
-        size_t eventPathSize = m_path.size();
-        for (size_t j = 0; j < eventPathSize; ++j) {
-            EventContext& context = *m_path[i];
-            Node* nodeInCurrentTreeScope = resolver.moveToParentOrShadowHost(*context.node());
-            toTouchEventContext(context).touchList(touchListType)->append(touch.cloneWithNewTarget(nodeInCurrentTreeScope));
-        }
-    }
+    const size_t touchListSize = touchList->length();
+    for (size_t i = 0; i < touchListSize; ++i)
+        touchTargetResolvers.append(EventRelatedNodeResolver(*touchList->item(i), type));
 }
 
 void EventPath::updateTouchLists(const TouchEvent& touchEvent)
 {
-    updateTouchListsInEventPath(touchEvent.touches(), TouchEventContext::Touches);
-    updateTouchListsInEventPath(touchEvent.targetTouches(), TouchEventContext::TargetTouches);
-    updateTouchListsInEventPath(touchEvent.changedTouches(), TouchEventContext::ChangedTouches);
+    Vector<EventRelatedNodeResolver, 16> touchTargetResolvers;
+    const size_t touchNodeCount = touchEvent.touches()->length() + touchEvent.targetTouches()->length() + touchEvent.changedTouches()->length();
+    touchTargetResolvers.reserveInitialCapacity(touchNodeCount);
+
+    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.touches(), TouchEventContext::Touches);
+    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.targetTouches(), TouchEventContext::TargetTouches);
+    addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.changedTouches(), TouchEventContext::ChangedTouches);
+
+    ASSERT(touchTargetResolvers.size() == touchNodeCount);
+    size_t eventPathSize = m_path.size();
+    for (size_t i = 0; i < eventPathSize; ++i) {
+        TouchEventContext& context = toTouchEventContext(*m_path[i]);
+        Node& nodeToMoveTo = *context.node();
+        for (size_t resolverIndex = 0; resolverIndex < touchNodeCount; ++resolverIndex) {
+            EventRelatedNodeResolver& currentResolver = touchTargetResolvers[resolverIndex];
+            Node* nodeInCurrentTreeScope = currentResolver.moveToParentOrShadowHost(nodeToMoveTo);
+            ASSERT(currentResolver.touch());
+            context.touchList(currentResolver.touchListType())->append(currentResolver.touch()->cloneWithNewTarget(nodeInCurrentTreeScope));
+        }
+    }
 }
 #endif
 

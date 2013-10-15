@@ -1,3 +1,27 @@
+2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EventPath::updateTouchLists traverses through EventPath thrice
+        https://bugs.webkit.org/show_bug.cgi?id=122804
+
+        Reviewed by Benjamin Poulain.
+
+        Instead of traversing through EventPath for each TouchList, traverse through TouchList for every EventContext.
+        This paves our way to have one-pass traversal over EventPath, and evetually to remove EventContext altogether.
+
+        This change should also improve the cache hit rate since all Touch objects tend to be allocated at the same time
+        but this performance improvement is probably not observable.
+
+        * dom/EventContext.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedNodeResolver::EventRelatedNodeResolver): Added a new constructor that takes Touch and
+        and TouchListType. We need to store these two values in order to update EventContext later.
+        (WebCore::EventRelatedNodeResolver::touch): Added,
+        (WebCore::EventRelatedNodeResolver::touchListType): Added.
+        (WebCore::addRelatedNodeResolversForTouchList): Extracted from updateTouchListsInEventPath.
+        (WebCore::EventPath::updateTouchLists): Moved the loop over m_path here. Notice that the outer loop iterates
+        over m_path instead of touchList as done in updateTouchListsInEventPath. The inner loop goes through resolvers
+        and adds Touch objects each EventContext as needed.
+
 2013-10-14  Alexey Proskuryakov  <ap@apple.com>
 
         Don't generate a wasteful isObservable check in isReachableFromOpaqueRoots
