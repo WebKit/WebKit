@@ -249,8 +249,6 @@ public:
     using ContainerNode::ref;
     using ContainerNode::deref;
 
-    Element* getElementById(const AtomicString& id) const;
-
     virtual bool canContainRangeEndPoint() const OVERRIDE { return true; }
 
     Element* getElementByAccessKey(const String& key);

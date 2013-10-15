@@ -656,11 +656,6 @@ void Document::dropChildren()
 #endif
 }
 
-Element* Document::getElementById(const AtomicString& id) const
-{
-    return TreeScope::getElementById(id);
-}
-
 Element* Document::getElementByAccessKey(const String& key)
 {
     if (key.isEmpty())
