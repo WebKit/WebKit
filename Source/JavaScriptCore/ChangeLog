@@ -1,3 +1,12 @@
+2013-10-15  Mark Lam  <mark.lam@apple.com>
+
+        Fix 3 operand sub operation in C loop LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=122866.
+
+        Reviewed by Geoffrey Garen.
+
+        * offlineasm/cloop.rb:
+
 2013-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ObjCCallbackFunctionImpl shouldn't store a JSContext

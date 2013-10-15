@@ -356,7 +356,7 @@ def cloopEmitOperation(operands, type, operator)
     raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || \
         type == :int64 || type == :uint64 || type == :double
     if operands.size == 3
-        $asm.putc "#{operands[2].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
+        $asm.putc "#{operands[2].clValue(type)} = #{operands[0].clValue(type)} #{operator} #{operands[1].clValue(type)};"
         if operands[2].is_a? RegisterID and (type == :int32 or type == :uint32)
             $asm.putc "#{operands[2].clDump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
         end
