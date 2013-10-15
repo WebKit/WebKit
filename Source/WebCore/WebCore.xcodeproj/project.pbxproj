@@ -848,7 +848,6 @@
 		1CB4214C0AF2B2CA0085AD91 /* DOMHTMLElementInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711580AC5D5340053270F /* DOMHTMLElementInternal.h */; };
 		1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
 		1CCA732210ADD44A00FD440D /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CCA732110ADD43E00FD440D /* DOMHTMLInputElementPrivate.h */; };
-		1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */; };
 		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
 		1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */; };
@@ -11911,7 +11910,6 @@
 		BCC573370D695BD7006EF517 /* DOMProgressEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEventInternal.h; sourceTree = "<group>"; };
 		BCC5BDFE0C0E93110011C2DB /* JSCSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleSheet.cpp; sourceTree = "<group>"; };
 		BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSStyleSheet.h; sourceTree = "<group>"; };
-		BCC64F600DCFB84E0081EF3B /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = sourcecode.javascript; name = English; path = English.lproj/localizedStrings.js; sourceTree = SOURCE_ROOT; };
 		BCC65145159294C300ACC9E4 /* IDBMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBMetadata.h; path = Modules/indexeddb/IDBMetadata.h; sourceTree = "<group>"; };
 		BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ColorData.gperf; sourceTree = "<group>"; };
 		BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCollectionCustom.cpp; sourceTree = "<group>"; };
@@ -14195,7 +14193,6 @@
 				F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */,
 				F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */,
 				1C81BA050E97348300266E07 /* JavaScriptCallFrame.idl */,
-				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
 				59C27F04138D28C10079B7E2 /* NetworkResourcesData.cpp */,
 				59C27F06138D28CF0079B7E2 /* NetworkResourcesData.h */,
 				F382088A147D35F90010BC06 /* PageConsoleAgent.cpp */,
@@ -24812,7 +24809,6 @@
 				2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */,
 				85136C9C0AED665900F90A3D /* linkCursor.png in Resources */,
 				BCAD180A131C7A0D00990406 /* Localizable.strings in Resources */,
-				1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */,
 				93153BE214195A5700FCF5BE /* missingImage.png in Resources */,
 				93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */,
 				85136C9D0AED665900F90A3D /* moveCursor.png in Resources */,
@@ -27746,15 +27742,6 @@
 				BCAD1809131C7A0D00990406 /* English */,
 			);
 			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BCC64F600DCFB84E0081EF3B /* English */,
-			);
-			name = localizedStrings.js;
-			path = ../Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
