@@ -1,3 +1,26 @@
+2013-10-15  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Introduce const pools in LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=122746
+
+        Reviewed by Michael Saboff.
+
+        In current implementation of LLINT for sh4, immediate values outside range -128..127 are
+        loaded this way:
+
+            mov.l .label, rx
+            bra out
+            nop
+            .balign 4
+            .label: .long immvalue
+            out:
+
+        This change introduces const pools for sh4 implementation to avoid lots of useless branches
+        and reduce code size. It also removes lines of dirty code, like jmpf and callf.
+
+        * offlineasm/instructions.rb: Remove jmpf and callf sh4 specific instructions.
+        * offlineasm/sh4.rb:
+
 2013-10-15  Mark Lam  <mark.lam@apple.com>
 
         Fix broken C Loop LLINT build.

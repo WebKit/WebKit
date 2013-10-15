@@ -285,9 +285,7 @@ SH4_INSTRUCTIONS =
     "loaddReversedAndIncrementAddress",
     "storedReversedAndDecrementAddress",
     "ldspr",
-    "stspr",
-    "callf",
-    "jmpf"
+    "stspr"
     ]
 
 CXX_INSTRUCTIONS =
