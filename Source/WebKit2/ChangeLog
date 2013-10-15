@@ -1,3 +1,10 @@
+2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Soup] Unreviewed buildfix after r157445 for ENABLE(NETWORK_PROCESS) builds.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+
 2013-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the GTK+ build after r157445.
