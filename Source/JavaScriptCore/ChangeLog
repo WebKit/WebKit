@@ -1,3 +1,16 @@
+2013-10-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutById IC should use the ConcurrentJITLocker since it's now dealing with IC's that get read by the compiler thread
+        https://bugs.webkit.org/show_bug.cgi?id=122786
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStub): Resetting a stub should acquire the lock since this is observable from the thread; but we should only acquire the lock if we're resetting outside of GC.
+        * jit/Repatch.cpp:
+        (JSC::repatchPutByID): Doing the PutById patching should hold the lock.
+        (JSC::buildPutByIdList): Ditto.
+
 2013-10-14  Nadav Rotem  <nrotem@apple.com>
 
         Add FTL support for LogicalNot(string)

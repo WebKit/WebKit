@@ -2362,6 +2362,8 @@ void CodeBlock::resetStub(StructureStubInfo& stubInfo)
     if (stubInfo.accessType == access_unset)
         return;
     
+    ConcurrentJITLocker locker(m_lock);
+    
     RepatchBuffer repatchBuffer(this);
     resetStubInternal(repatchBuffer, stubInfo);
 }

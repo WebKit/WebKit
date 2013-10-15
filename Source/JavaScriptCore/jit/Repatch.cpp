@@ -999,6 +999,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
 void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
+    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    
     bool cached = tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
@@ -1092,6 +1094,8 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
 
 void buildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
+    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    
     bool cached = tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
