@@ -1,3 +1,10 @@
+2013-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ build after r157445.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didFailProvisionalLoadWithErrorForFrame):
+
 2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object

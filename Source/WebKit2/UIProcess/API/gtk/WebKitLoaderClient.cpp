@@ -56,9 +56,9 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     GOwnPtr<GError> webError(g_error_new_literal(g_quark_from_string(resourceError.domain().utf8().data()),
                                                  resourceError.errorCode(),
                                                  resourceError.localizedDescription().utf8().data()));
-    if (resourceError.tlsErrors()) {
+    if (resourceError.certificateInfo().tlsErrors()) {
         webkitWebViewLoadFailedWithTLSErrors(WEBKIT_WEB_VIEW(clientInfo), resourceError.failingURL().utf8().data(), webError.get(),
-            static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()), resourceError.certificate());
+            static_cast<GTlsCertificateFlags>(resourceError.certificateInfo().tlsErrors()), resourceError.certificateInfo().certificate());
     } else
         webkitWebViewLoadFailed(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_STARTED, resourceError.failingURL().utf8().data(), webError.get());
 }
