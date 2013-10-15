@@ -1113,11 +1113,6 @@ webkit.org/b/108507 printing/standards-percentage-heights.html [ ImageOnlyFailur
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
-# Fails on GTK as well
-webkit.org/b/84678 fast/spatial-navigation/snav-container-white-space.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-fully-aligned-horizontally.html [ Failure ]
-webkit.org/b/84678 fast/spatial-navigation/snav-iframe-no-scrollable-content.html [ Failure ]
-
 # Times-out with debug build during heavy cpu loads
 webkit.org/b/85902 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Crash Pass Slow ]
 

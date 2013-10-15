@@ -1,3 +1,13 @@
+2013-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Below tests don't be failed anymore after enabling subpixel layout.
+
+        fast/spatial-navigation/snav-container-white-space.html
+        fast/spatial-navigation/snav-fully-aligned-horizontally.html
+        fast/spatial-navigation/snav-iframe-no-scrollable-content.html
+
+        * platform/efl/TestExpectations:
+
 2013-10-14  Roger Fong  <roger_fong@apple.com>
 
         Windows select element doesn't draw RTL properly.
