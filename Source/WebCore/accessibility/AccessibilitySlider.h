@@ -46,7 +46,7 @@ protected:
     explicit AccessibilitySlider(RenderObject*);
 
 private:
-    HTMLInputElement* element() const;
+    HTMLInputElement* inputElement() const;
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const OVERRIDE;
 
     virtual AccessibilityRole roleValue() const OVERRIDE { return SliderRole; }

@@ -115,9 +115,9 @@ PASS: fieldset
       AXRoleDescription: group
       
 PASS: legend
-      AXRole: AXGroup
+      AXRole: 
       AXSubrole: 
-      AXRoleDescription: group
+      AXRoleDescription: 
       
 PASS: footer
       AXRole: AXGroup

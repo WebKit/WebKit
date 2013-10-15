@@ -1,3 +1,24 @@
+2013-10-14  Samuel White  <samuel_white@apple.com>
+
+        AX: fieldset should have GroupRole and legend should be description.
+        https://bugs.webkit.org/show_bug.cgi?id=122534
+
+        Reviewed by Chris Fleizach.
+
+        legend no longer treated as titleUIElement so removing tests that check this functionality.
+        Added test to check that legend is used as AXDescription of fieldset if present.
+
+        * accessibility/fieldset-element.html: Added.
+        * accessibility/hidden-legend-expected.txt: Removed.
+        * accessibility/hidden-legend.html: Removed.
+        * accessibility/legend.html: Removed.
+        * platform/efl/accessibility/legend-expected.txt: Removed.
+        * platform/gtk/accessibility/legend-expected.txt: Removed.
+        * platform/mac/accessibility/fieldset-element-expected.txt: Added.
+        * platform/mac/accessibility/legend-expected.txt: Removed.
+        * platform/mac/accessibility/role-subrole-roledescription-expected.txt:
+        * platform/mac/accessibility/role-subrole-roledescription.html:
+
 2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure in Range::processContentsBetweenOffsets

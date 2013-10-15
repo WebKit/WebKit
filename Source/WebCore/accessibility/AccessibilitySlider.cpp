@@ -99,7 +99,7 @@ void AccessibilitySlider::addChildren()
 
 const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
 {
-    return element()->getAttribute(attribute);
+    return inputElement()->getAttribute(attribute);
 }
     
 AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const
@@ -115,22 +115,22 @@ AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntP
 
 float AccessibilitySlider::valueForRange() const
 {
-    return element()->value().toFloat();
+    return inputElement()->value().toFloat();
 }
 
 float AccessibilitySlider::maxValueForRange() const
 {
-    return static_cast<float>(element()->maximum());
+    return static_cast<float>(inputElement()->maximum());
 }
 
 float AccessibilitySlider::minValueForRange() const
 {
-    return static_cast<float>(element()->minimum());
+    return static_cast<float>(inputElement()->minimum());
 }
 
 void AccessibilitySlider::setValue(const String& value)
 {
-    HTMLInputElement* input = element();
+    HTMLInputElement* input = inputElement();
     
     if (input->value() == value)
         return;
@@ -141,7 +141,7 @@ void AccessibilitySlider::setValue(const String& value)
     input->dispatchFormControlChangeEvent();
 }
 
-HTMLInputElement* AccessibilitySlider::element() const
+HTMLInputElement* AccessibilitySlider::inputElement() const
 {
     return toHTMLInputElement(m_renderer->node());
 }

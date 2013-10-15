@@ -1536,6 +1536,14 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+Element* AccessibilityObject::element() const
+{
+    Node* node = this->node();
+    if (node && node->isElementNode())
+        return toElement(node);
+    return 0;
+}
+
 const AtomicString& AccessibilityObject::placeholderValue() const
 {
     const AtomicString& placeholder = getAttribute(placeholderAttr);
@@ -1995,22 +2003,32 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
     return defaultObjectInclusion() == IgnoreObject;
 }
 
-bool AccessibilityObject::ariaIsHidden() const
+// ARIA component of hidden definition.
+// http://www.w3.org/TR/wai-aria/terms#def_hidden
+bool AccessibilityObject::isARIAHidden() const
 {
-    if (equalIgnoringCase(getAttribute(aria_hiddenAttr), "true"))
-        return true;
-    
-    for (AccessibilityObject* object = parentObject(); object; object = object->parentObject()) {
+    for (const AccessibilityObject* object = this; object; object = object->parentObject()) {
         if (equalIgnoringCase(object->getAttribute(aria_hiddenAttr), "true"))
             return true;
     }
-    
     return false;
+}
+
+// DOM component of hidden definition.
+// http://www.w3.org/TR/wai-aria/terms#def_hidden
+bool AccessibilityObject::isDOMHidden() const
+{
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return true;
+    
+    RenderStyle* style = renderer->style();
+    return style->display() == NONE || style->visibility() != VISIBLE;
 }
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
 {
-    if (ariaIsHidden())
+    if (isARIAHidden())
         return IgnoreObject;
     
     if (isPresentationalChildOfAriaRole())

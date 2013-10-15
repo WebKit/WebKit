@@ -515,6 +515,7 @@ public:
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     virtual bool canSetExpandedAttribute() const { return false; }
     
+    Element* element() const;
     virtual Node* node() const { return 0; }
     virtual RenderObject* renderer() const { return 0; }
     virtual bool accessibilityIsIgnored() const;
@@ -844,7 +845,12 @@ public:
     typedef Vector<pair<AccessibilityObject*, AccessibilityObject*> > AccessibilityMathMultiscriptPairs;
     virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) { }
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) { }
-
+    
+    // Visibility.
+    bool isARIAHidden() const;
+    bool isDOMHidden() const;
+    bool isHidden() const { return isARIAHidden() || isDOMHidden(); }
+    
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK) || PLATFORM(EFL)
     AccessibilityObjectWrapper* wrapper() const;
@@ -900,7 +906,6 @@ protected:
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
-    bool ariaIsHidden() const;
     bool isOnscreen() const;
     
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))

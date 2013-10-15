@@ -25,6 +25,9 @@
 
 #import "config.h"
 #import "AccessibilityObject.h"
+#import "ElementAncestorIterator.h"
+#import "HTMLFieldSetElement.h"
+#import "RenderObject.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -78,6 +81,15 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // Special case is when the unknown object is actually an attachment.
     if (roleValue() == UnknownRole && !isAttachment())
         return IgnoreObject;
+    
+    if (RenderObject* renderer = this->renderer()) {
+        // The legend element is ignored if it lives inside of a fieldset element that uses it to generate alternative text.
+        if (renderer->isLegend()) {
+            Element* element = this->element();
+            if (element && ancestorsOfType<HTMLFieldSetElement>(element).first())
+                return IgnoreObject;
+        }
+    }
     
     return DefaultBehavior;
 }

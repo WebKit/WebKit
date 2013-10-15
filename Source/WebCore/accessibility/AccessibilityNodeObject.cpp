@@ -88,6 +88,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static String accessibleNameForNode(Node*);
+
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
     , m_ariaRole(UnknownRole)
@@ -394,6 +396,9 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case ScrollBarRole:
     case ProgressIndicatorRole:
         return false;
+    case LegendRole:
+        if (Element* element = this->element())
+            return !ancestorsOfType<HTMLFieldSetElement>(element).first();
     default:
         return true;
     }
@@ -1250,6 +1255,13 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     Node* node = this->node();
     if (!node)
         return;
+    
+    // The fieldset element derives its alternative text from the first associated legend element if one is available.
+    if (isHTMLFieldSetElement(node)) {
+        AccessibilityObject* object = axObjectCache()->getOrCreate(toHTMLFieldSetElement(node)->legend());
+        if (object && !object->isHidden())
+            textOrder.append(AccessibilityText(accessibleNameForNode(object->node()), AlternativeText));
+    }
     
 #if ENABLE(SVG)
     // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
