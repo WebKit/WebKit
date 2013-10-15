@@ -104,6 +104,8 @@ add_executable(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MathExtras.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/MetaAllocator.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RefPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SHA1.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringBuilder.cpp

@@ -176,4 +176,33 @@ TEST(WTF_Vector, MoveOnly_Append)
     }
 }
 
+TEST(WTF_Vector, MoveOnly_Insert)
+{
+    Vector<MoveOnly> vector;
+
+    for (size_t i = 0; i < 100; ++i) {
+        MoveOnly moveOnly(i);
+        vector.insert(0, std::move(moveOnly));
+        EXPECT_EQ(0U, moveOnly.value());
+    }
+
+    EXPECT_EQ(vector.size(), 100U);
+    for (size_t i = 0; i < 100; ++i)
+        EXPECT_EQ(99 - i, vector[i].value());
+
+    for (size_t i = 0; i < 200; i += 2) {
+        MoveOnly moveOnly(1000 + i);
+        vector.insert(i, std::move(moveOnly));
+        EXPECT_EQ(0U, moveOnly.value());
+    }
+
+    EXPECT_EQ(vector.size(), 200U);
+    for (size_t i = 0; i < 200; ++i) {
+        if (i % 2)
+            EXPECT_EQ(99 - i / 2, vector[i].value());
+        else
+            EXPECT_EQ(1000 + i, vector[i].value());
+    }
+}
+
 } // namespace TestWebKitAPI

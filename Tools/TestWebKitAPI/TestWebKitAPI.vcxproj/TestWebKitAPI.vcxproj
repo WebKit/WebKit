@@ -294,6 +294,8 @@
     <ClCompile Include="..\Tests\WTF\MD5.cpp" />
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
+    <ClCompile Include="..\Tests\WTF\Ref.cpp" />
+    <ClCompile Include="..\Tests\WTF\RefPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\SHA1.cpp" />
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp" />
     <ClCompile Include="..\Tests\WTF\StringHasher.cpp" />

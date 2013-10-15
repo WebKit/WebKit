@@ -63,6 +63,12 @@
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\Ref.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\WTF\RefPtr.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WTF\SHA1.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
