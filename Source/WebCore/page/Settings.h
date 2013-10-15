@@ -277,7 +277,7 @@ private:
 
     String m_mediaTypeOverride;
     URL m_userStyleSheetLocation;
-    RefPtr<FontGenericFamilies> m_fontGenericFamilies;
+    const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
 #if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingFontScaleFactor;

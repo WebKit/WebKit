@@ -136,7 +136,7 @@ static const bool defaultSelectTrailingWhitespaceEnabled = false;
 Settings::Settings(Page* page)
     : m_page(0)
     , m_mediaTypeOverride("screen")
-    , m_fontGenericFamilies(FontGenericFamilies::create())
+    , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)

@@ -27,7 +27,6 @@
 #define FontGenericFamilies_h
 
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -43,9 +42,9 @@ struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
 
 typedef HashMap<int, AtomicString, DefaultHash<int>::Hash, UScriptCodeHashTraits> ScriptFontFamilyMap;
 
-class FontGenericFamilies : public RefCounted<FontGenericFamilies> {
+class FontGenericFamilies {
 public:
-    static PassRefPtr<FontGenericFamilies> create() { return adoptRef(new FontGenericFamilies); }
+    FontGenericFamilies();
 
     const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
     const AtomicString& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -64,8 +63,6 @@ public:
     bool setPictographFontFamily(const AtomicString&, UScriptCode);
 
 private:
-    FontGenericFamilies();
-
     ScriptFontFamilyMap m_standardFontFamilyMap;
     ScriptFontFamilyMap m_serifFontFamilyMap;
     ScriptFontFamilyMap m_fixedFontFamilyMap;

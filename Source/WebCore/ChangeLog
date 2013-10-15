@@ -1,3 +1,12 @@
+2013-10-15  Andreas Kling  <akling@apple.com>
+
+        FontGenericFamilies should not be ref-counted.
+        <https://webkit.org/b/122835>
+
+        Reviewed by Anders Carlsson.
+
+        FontGenericFamilies is singly-owned by Settings.
+
 2013-10-15  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Move RenderBlock::layoutShapeInsideInfo into RenderBlock.cpp
