@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGFlushedAt.h"
 
+#if ENABLE(DFG_JIT)
+
 namespace JSC { namespace DFG {
 
 void FlushedAt::dump(PrintStream& out) const
@@ -43,4 +45,4 @@ void FlushedAt::dumpInContext(PrintStream& out, DumpContext*) const
 
 } } // namespace JSC::DFG
 
-
+#endif // ENABLE(DFG_JIT)

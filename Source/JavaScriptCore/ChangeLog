@@ -1,3 +1,13 @@
+2013-10-15  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken C Loop LLINT build.
+        https://bugs.webkit.org/show_bug.cgi?id=122839.
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGFlushedAt.cpp:
+        * jit/JITOperations.h:
+
 2013-10-14  Mark Lam  <mark.lam@apple.com>
 
         Transition *switch* and *scope* JITStubs to JIT operations.

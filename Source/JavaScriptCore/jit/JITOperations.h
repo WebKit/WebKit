@@ -36,6 +36,8 @@
 
 namespace JSC {
 
+class ArrayAllocationProfile;
+
 #if CALLING_CONVENTION_IS_STDCALL
 #define JIT_OPERATION CDECL
 #else
