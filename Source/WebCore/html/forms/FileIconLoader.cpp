@@ -34,15 +34,9 @@
 
 namespace WebCore {
 
-PassRefPtr<FileIconLoader> FileIconLoader::create(FileIconLoaderClient* client)
-{
-    return adoptRef(new FileIconLoader(client));
-}
-
 void FileIconLoader::invalidate()
 {
     ASSERT(m_client);
-
     m_client = 0;
 }
 
@@ -52,8 +46,8 @@ void FileIconLoader::notifyFinished(PassRefPtr<Icon> icon)
         m_client->updateRendering(icon);
 }
 
-FileIconLoader::FileIconLoader(FileIconLoaderClient* client)
-    : m_client(client)
+FileIconLoader::FileIconLoader(FileIconLoaderClient& client)
+    : m_client(&client)
 {
 }
 

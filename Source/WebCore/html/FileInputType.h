@@ -90,7 +90,7 @@ private:
     void applyFileChooserSettings(const FileChooserSettings&);
 
     RefPtr<FileChooser> m_fileChooser;
-    RefPtr<FileIconLoader> m_fileIconLoader;
+    std::unique_ptr<FileIconLoader> m_fileIconLoader;
 
     RefPtr<FileList> m_fileList;
     RefPtr<Icon> m_icon;

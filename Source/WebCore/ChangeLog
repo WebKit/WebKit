@@ -1,5 +1,14 @@
 2013-10-15  Andreas Kling  <akling@apple.com>
 
+        FileIconLoader should not be ref-counted.
+        <https://webkit.org/b/122827>
+
+        FileIconLoader is singly-owned by FileInputType.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-15  Andreas Kling  <akling@apple.com>
+
         RenderText should cache RenderStyle in locals more.
         <https://webkit.org/b/122823>
 

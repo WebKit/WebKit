@@ -45,17 +45,14 @@ public:
     virtual void updateRendering(PassRefPtr<Icon>) = 0;
 };
 
-class FileIconLoader : public RefCounted<FileIconLoader> {
+class FileIconLoader {
 public:
-    static PassRefPtr<FileIconLoader> create(FileIconLoaderClient*);
+    explicit FileIconLoader(FileIconLoaderClient&);
 
     void invalidate();
-
     void notifyFinished(PassRefPtr<Icon>);
 
 private:
-    explicit FileIconLoader(FileIconLoaderClient*);
-
     FileIconLoaderClient* m_client;
 };
 
