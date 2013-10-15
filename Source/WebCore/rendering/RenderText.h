@@ -77,7 +77,7 @@ public:
     const UChar* characters() const { return m_text.characters(); }
     UChar characterAt(unsigned i) const { return is8Bit() ? characters8()[i] : characters16()[i]; }
     UChar operator[](unsigned i) const { return characterAt(i); }
-    unsigned textLength() const { return m_text.length(); } // non virtual implementation of length()
+    unsigned textLength() const { return m_text.impl()->length(); } // non virtual implementation of length()
     void positionLineBox(InlineBox*);
 
     virtual float width(unsigned from, unsigned len, const Font&, float xPos, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;

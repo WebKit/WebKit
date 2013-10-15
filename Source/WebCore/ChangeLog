@@ -1,5 +1,15 @@
 2013-10-15  Andreas Kling  <akling@apple.com>
 
+        Skip unnecessary null check in RenderText::textLength().
+        <https://webkit.org/b/122841>
+
+        Reviewed by Antti Koivisto.
+
+        RenderText will never have a null String in m_text, so textLength()
+        can grab at the StringImpl directly, avoiding a null check.
+
+2013-10-15  Andreas Kling  <akling@apple.com>
+
         FontGenericFamilies should not be ref-counted.
         <https://webkit.org/b/122835>
 
