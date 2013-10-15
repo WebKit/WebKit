@@ -1,3 +1,13 @@
+2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::BidiResolver<WebCore::InlineIterator, WebCore::BidiRun>::createBidiRunsForLine
+        https://bugs.webkit.org/show_bug.cgi?id=122776
+
+        Reviewed by Darin Adler.
+
+        * fast/text/whitespace/whitespace-and-margin-wrap-after-list-marker-crash-expected.txt: Added.
+        * fast/text/whitespace/whitespace-and-margin-wrap-after-list-marker-crash.html: Added.
+
 2013-10-14  Samuel White  <samuel_white@apple.com>
 
         AX: fieldset should have GroupRole and legend should be description.
