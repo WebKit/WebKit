@@ -30,12 +30,19 @@
 #include "Arguments.h"
 #include "ArrayConstructor.h"
 #include "CommonSlowPaths.h"
+#include "DFGCompilationMode.h"
+#include "DFGDriver.h"
+#include "DFGOSREntry.h"
+#include "DFGWorklist.h"
 #include "Error.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "JITOperationWrappers.h"
+#include "JITToDFGDeferredCompilationCallback.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSNameScope.h"
 #include "JSPropertyNameIterator.h"
+#include "JSWithScope.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "Repatch.h"
@@ -796,6 +803,372 @@ EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     return JSValue::encode(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
+void JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    if (UNLIKELY(vm.watchdog.didFire(exec)))
+        vm.throwException(exec, createTerminatedExecutionException(&vm));
+}
+
+void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue encodedValue, int32_t referenceErrorFlag)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    String message = errorDescriptionForValue(exec, JSValue::decode(encodedValue))->value(exec);
+    if (referenceErrorFlag)
+        vm.throwException(exec, createReferenceError(exec, message));
+    else
+        vm.throwException(exec, createTypeError(exec, message));
+}
+
+void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookID)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    vm.interpreter->debug(exec, static_cast<DebugHookID>(debugHookID));
+}
+
+#if ENABLE(DFG_JIT)
+char* JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    // Defer GC so that it doesn't run between when we enter into this slow path and
+    // when we figure out the state of our code block. This prevents a number of
+    // awkward reentrancy scenarios, including:
+    //
+    // - The optimized version of our code block being jettisoned by GC right after
+    //   we concluded that we wanted to use it.
+    //
+    // - An optimized version of our code block being installed just as we decided
+    //   that it wasn't ready yet.
+    //
+    // This still leaves the following: anytime we return from cti_optimize, we may
+    // GC, and the GC may either jettison the optimized version of our code block,
+    // or it may install the optimized version of our code block even though we
+    // concluded that it wasn't ready yet.
+    //
+    // Note that jettisoning won't happen if we already initiated OSR, because in
+    // that case we would have already planted the optimized code block into the JS
+    // stack.
+    DeferGC deferGC(vm.heap);
+    
+    CodeBlock* codeBlock = exec->codeBlock();
+
+    if (bytecodeIndex) {
+        // If we're attempting to OSR from a loop, assume that this should be
+        // separately optimized.
+        codeBlock->m_shouldAlwaysBeInlined = false;
+    }
+
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
+            ", executeCounter = ", codeBlock->jitExecuteCounter(),
+            ", optimizationDelayCounter = ", codeBlock->reoptimizationRetryCounter(),
+            ", exitCounter = ");
+        if (codeBlock->hasOptimizedReplacement())
+            dataLog(codeBlock->replacement()->osrExitCounter());
+        else
+            dataLog("N/A");
+        dataLog("\n");
+    }
+
+    if (!codeBlock->checkIfOptimizationThresholdReached()) {
+        codeBlock->updateAllPredictions();
+        if (Options::verboseOSR())
+            dataLog("Choosing not to optimize ", *codeBlock, " yet, because the threshold hasn't been reached.\n");
+        return 0;
+    }
+    
+    if (codeBlock->m_shouldAlwaysBeInlined) {
+        codeBlock->updateAllPredictions();
+        codeBlock->optimizeAfterWarmUp();
+        if (Options::verboseOSR())
+            dataLog("Choosing not to optimize ", *codeBlock, " yet, because m_shouldAlwaysBeInlined == true.\n");
+        return 0;
+    }
+
+    // We cannot be in the process of asynchronous compilation and also have an optimized
+    // replacement.
+    ASSERT(
+        !vm.worklist
+        || !(vm.worklist->compilationState(DFG::CompilationKey(codeBlock, DFG::DFGMode)) != DFG::Worklist::NotKnown
+        && codeBlock->hasOptimizedReplacement()));
+
+    DFG::Worklist::State worklistState;
+    if (vm.worklist) {
+        // The call to DFG::Worklist::completeAllReadyPlansForVM() will complete all ready
+        // (i.e. compiled) code blocks. But if it completes ours, we also need to know
+        // what the result was so that we don't plow ahead and attempt OSR or immediate
+        // reoptimization. This will have already also set the appropriate JIT execution
+        // count threshold depending on what happened, so if the compilation was anything
+        // but successful we just want to return early. See the case for worklistState ==
+        // DFG::Worklist::Compiled, below.
+        
+        // Note that we could have alternatively just called Worklist::compilationState()
+        // here, and if it returned Compiled, we could have then called
+        // completeAndScheduleOSR() below. But that would have meant that it could take
+        // longer for code blocks to be completed: they would only complete when *their*
+        // execution count trigger fired; but that could take a while since the firing is
+        // racy. It could also mean that code blocks that never run again after being
+        // compiled would sit on the worklist until next GC. That's fine, but it's
+        // probably a waste of memory. Our goal here is to complete code blocks as soon as
+        // possible in order to minimize the chances of us executing baseline code after
+        // optimized code is already available.
+        worklistState = vm.worklist->completeAllReadyPlansForVM(
+            vm, DFG::CompilationKey(codeBlock, DFG::DFGMode));
+    } else
+        worklistState = DFG::Worklist::NotKnown;
+
+    if (worklistState == DFG::Worklist::Compiling) {
+        // We cannot be in the process of asynchronous compilation and also have an optimized
+        // replacement.
+        RELEASE_ASSERT(!codeBlock->hasOptimizedReplacement());
+        codeBlock->setOptimizationThresholdBasedOnCompilationResult(CompilationDeferred);
+        return 0;
+    }
+
+    if (worklistState == DFG::Worklist::Compiled) {
+        // If we don't have an optimized replacement but we did just get compiled, then
+        // the compilation failed or was invalidated, in which case the execution count
+        // thresholds have already been set appropriately by
+        // CodeBlock::setOptimizationThresholdBasedOnCompilationResult() and we have
+        // nothing left to do.
+        if (!codeBlock->hasOptimizedReplacement()) {
+            codeBlock->updateAllPredictions();
+            if (Options::verboseOSR())
+                dataLog("Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.\n");
+            return 0;
+        }
+    } else if (codeBlock->hasOptimizedReplacement()) {
+        if (Options::verboseOSR())
+            dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
+        // If we have an optimized replacement, then it must be the case that we entered
+        // cti_optimize from a loop. That's because if there's an optimized replacement,
+        // then all calls to this function will be relinked to the replacement and so
+        // the prologue OSR will never fire.
+        
+        // This is an interesting threshold check. Consider that a function OSR exits
+        // in the middle of a loop, while having a relatively low exit count. The exit
+        // will reset the execution counter to some target threshold, meaning that this
+        // code won't be reached until that loop heats up for >=1000 executions. But then
+        // we do a second check here, to see if we should either reoptimize, or just
+        // attempt OSR entry. Hence it might even be correct for
+        // shouldReoptimizeFromLoopNow() to always return true. But we make it do some
+        // additional checking anyway, to reduce the amount of recompilation thrashing.
+        if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "Triggering reoptimization of ", *codeBlock,
+                    "(", *codeBlock->replacement(), ") (in loop).\n");
+            }
+            codeBlock->reoptimize();
+            return 0;
+        }
+    } else {
+        if (!codeBlock->shouldOptimizeNow()) {
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "Delaying optimization for ", *codeBlock,
+                    " because of insufficient profiling.\n");
+            }
+            return 0;
+        }
+
+        if (Options::verboseOSR())
+            dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
+
+        unsigned numVarsWithValues;
+        if (bytecodeIndex)
+            numVarsWithValues = codeBlock->m_numVars;
+        else
+            numVarsWithValues = 0;
+        Operands<JSValue> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
+        for (size_t i = 0; i < mustHandleValues.size(); ++i) {
+            int operand = mustHandleValues.operandForIndex(i);
+            if (operandIsArgument(operand)
+                && !VirtualRegister(operand).toArgument()
+                && codeBlock->codeType() == FunctionCode
+                && codeBlock->specializationKind() == CodeForConstruct) {
+                // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
+                // also never be used. It doesn't matter what we put into the value for this,
+                // but it has to be an actual value that can be grokked by subsequent DFG passes,
+                // so we sanitize it here by turning it into Undefined.
+                mustHandleValues[i] = jsUndefined();
+            } else
+                mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
+        }
+
+        CompilationResult result = DFG::compile(
+            vm, codeBlock->newReplacement().get(), DFG::DFGMode, bytecodeIndex,
+            mustHandleValues, JITToDFGDeferredCompilationCallback::create(),
+            vm.ensureWorklist());
+        
+        if (result != CompilationSuccessful)
+            return 0;
+    }
+    
+    CodeBlock* optimizedCodeBlock = codeBlock->replacement();
+    ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
+    
+    if (void* address = DFG::prepareOSREntry(exec, optimizedCodeBlock, bytecodeIndex)) {
+        if (Options::verboseOSR()) {
+            dataLog(
+                "Performing OSR ", *codeBlock, " -> ", *optimizedCodeBlock, ", address ",
+                RawPointer(OUR_RETURN_ADDRESS), " -> ", RawPointer(address), ".\n");
+        }
+
+        codeBlock->optimizeSoon();
+        return static_cast<char*>(address);
+    }
+
+    if (Options::verboseOSR()) {
+        dataLog(
+            "Optimizing ", *codeBlock, " -> ", *codeBlock->replacement(),
+            " succeeded, OSR failed, after a delay of ",
+            codeBlock->optimizationDelayCounter(), ".\n");
+    }
+
+    // Count the OSR failure as a speculation failure. If this happens a lot, then
+    // reoptimize.
+    optimizedCodeBlock->countOSRExit();
+
+    // We are a lot more conservative about triggering reoptimization after OSR failure than
+    // before it. If we enter the optimize_from_loop trigger with a bucket full of fail
+    // already, then we really would like to reoptimize immediately. But this case covers
+    // something else: there weren't many (or any) speculation failures before, but we just
+    // failed to enter the speculative code because some variable had the wrong value or
+    // because the OSR code decided for any spurious reason that it did not want to OSR
+    // right now. So, we only trigger reoptimization only upon the more conservative (non-loop)
+    // reoptimization trigger.
+    if (optimizedCodeBlock->shouldReoptimizeNow()) {
+        if (Options::verboseOSR()) {
+            dataLog(
+                "Triggering reoptimization of ", *codeBlock, " -> ",
+                *codeBlock->replacement(), " (after OSR fail).\n");
+        }
+        codeBlock->reoptimize();
+        return 0;
+    }
+
+    // OSR failed this time, but it might succeed next time! Let the code run a bit
+    // longer and then try again.
+    codeBlock->optimizeAfterWarmUp();
+    
+    return 0;
+}
+#endif
+
+void JIT_OPERATION operationPutByIndex(ExecState* exec, EncodedJSValue encodedArrayValue, int32_t index, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSValue arrayValue = JSValue::decode(encodedArrayValue);
+    ASSERT(isJSArray(arrayValue));
+    asArray(arrayValue)->putDirectIndex(exec, index, JSValue::decode(encodedValue));
+}
+
+#if USE(JSVALUE64)
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(JSValue::decode(encodedObjectValue).isObject());
+    JSObject* baseObj = asObject(JSValue::decode(encodedObjectValue));
+
+    GetterSetter* accessor = GetterSetter::create(vm);
+
+    JSValue getter = JSValue::decode(encodedGetterValue);
+    JSValue setter = JSValue::decode(encodedSetterValue);
+    ASSERT(getter.isObject() || getter.isUndefined());
+    ASSERT(setter.isObject() || setter.isUndefined());
+    ASSERT(getter.isObject() || setter.isObject());
+
+    if (!getter.isUndefined())
+        accessor->setGetter(vm, asObject(getter));
+    if (!setter.isUndefined())
+        accessor->setSetter(vm, asObject(setter));
+    baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
+}
+#else
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Identifier* identifier, JSCell* getter, JSCell* setter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(object && object->isObject());
+    JSObject* baseObj = object->getObject();
+
+    GetterSetter* accessor = GetterSetter::create(vm);
+
+    ASSERT(!getter || getter->isObject());
+    ASSERT(!setter || setter->isObject());
+    ASSERT(getter || setter);
+
+    if (getter)
+        accessor->setGetter(vm, getter->getObject());
+    if (setter)
+        accessor->setSetter(vm, setter->getObject());
+    baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
+}
+#endif
+
+void JIT_OPERATION operationPushNameScope(ExecState* exec, Identifier* identifier, EncodedJSValue encodedValue, int32_t attibutes)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSNameScope* scope = JSNameScope::create(exec, *identifier, JSValue::decode(encodedValue), attibutes);
+
+    exec->setScope(scope);
+}
+
+void JIT_OPERATION operationPushWithScope(ExecState* exec, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    JSObject* o = JSValue::decode(encodedValue).toObject(exec);
+    if (vm.exception())
+        return;
+
+    exec->setScope(JSWithScope::create(exec, o));
+}
+
+void JIT_OPERATION operationPopScope(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    exec->setScope(exec->scope()->next());
+}
+
+void JIT_OPERATION operationProfileDidCall(ExecState* exec, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->didExecute(exec, JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationProfileWillCall(ExecState* exec, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->willExecute(exec, JSValue::decode(encodedValue));
+}
+
 EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBaseVal)
 {
     VM* vm = &exec->vm();
@@ -835,6 +1208,25 @@ JSCell* JIT_OPERATION operationCreateArguments(ExecState* exec)
     Arguments* result = Arguments::create(vm, exec);
     ASSERT(!vm.exception());
     return result;
+}
+
+void JIT_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(exec->codeBlock()->needsFullScopeChain());
+    jsCast<JSActivation*>(activationCell)->tearOff(vm);
+}
+
+void JIT_OPERATION operationTearOffArguments(ExecState* exec, JSCell* argumentsCell, JSCell* activationCell)
+{
+    ASSERT(exec->codeBlock()->usesArguments());
+    if (activationCell) {
+        jsCast<Arguments*>(argumentsCell)->didTearOffActivation(exec, jsCast<JSActivation*>(activationCell));
+        return;
+    }
+    jsCast<Arguments*>(argumentsCell)->tearOff(exec);
 }
 
 EncodedJSValue JIT_OPERATION operationDeleteById(ExecState* exec, EncodedJSValue encodedBase, const Identifier* identifier)

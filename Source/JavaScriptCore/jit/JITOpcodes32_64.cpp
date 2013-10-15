@@ -929,14 +929,13 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
 
 void JIT::emit_op_push_with_scope(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_push_with_scope);
-    stubCall.addArgument(currentInstruction[1].u.operand);
-    stubCall.call();
+    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
+    callOperation(operationPushWithScope, regT1, regT0);
 }
 
 void JIT::emit_op_pop_scope(Instruction*)
 {
-    JITStubCall(this, cti_op_pop_scope).call();
+    callOperation(operationPopScope);
 }
 
 void JIT::emit_op_to_number(Instruction* currentInstruction)
@@ -968,11 +967,8 @@ void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_push_name_scope);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[1].u.operand)));
-    stubCall.addArgument(currentInstruction[2].u.operand);
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.call();
+    emitLoad(currentInstruction[2].u.operand, regT1, regT0);
+    callOperation(operationPushNameScope, &m_codeBlock->identifier(currentInstruction[1].u.operand), regT1, regT0, currentInstruction[3].u.operand);
 }
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
@@ -1041,12 +1037,8 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
 void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
 {
-    unsigned message = currentInstruction[1].u.operand;
-
-    JITStubCall stubCall(this, cti_op_throw_static_error);
-    stubCall.addArgument(m_codeBlock->getConstant(message));
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.call();
+    emitLoad(m_codeBlock->getConstant(currentInstruction[1].u.operand), regT1, regT0);
+    callOperation(operationThrowStaticError, regT1, regT0, currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_debug(Instruction* currentInstruction)
@@ -1055,9 +1047,7 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     UNUSED_PARAM(currentInstruction);
     breakpoint();
 #else
-    JITStubCall stubCall(this, cti_op_debug);
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.call();
+    callOperation(operationDebug, currentInstruction[1].u.operand);
 #endif
 }
 
@@ -1179,16 +1169,14 @@ void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEn
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_profile_will_call);
-    stubCall.addArgument(currentInstruction[1].u.operand);
-    stubCall.call();
+    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
+    callOperation(operationProfileWillCall, regT1, regT0);
 }
 
 void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_profile_did_call);
-    stubCall.addArgument(currentInstruction[1].u.operand);
-    stubCall.call();
+    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
+    callOperation(operationProfileDidCall, regT1, regT0);
 }
 
 void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)

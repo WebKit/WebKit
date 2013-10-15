@@ -489,21 +489,17 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_put_by_index);
-    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-    stubCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
+    callOperation(operationPutByIndex, regT0, currentInstruction[2].u.operand, regT1);
 }
 
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_put_getter_setter);
-    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(currentInstruction[3].u.operand, regT2);
-    stubCall.addArgument(currentInstruction[4].u.operand, regT2);
-    stubCall.call();
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT1);
+    emitGetVirtualRegister(currentInstruction[4].u.operand, regT2);
+    callOperation(operationPutGetterSetter, regT0, &m_codeBlock->identifier(currentInstruction[2].u.operand), regT1, regT2);
 }
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)

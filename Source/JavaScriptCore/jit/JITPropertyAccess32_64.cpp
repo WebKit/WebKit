@@ -57,12 +57,10 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
     int base = currentInstruction[1].u.operand;
     int property = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_put_by_index);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImm32(property));
-    stubCall.addArgument(value);
-    stubCall.call();
+
+    emitLoad(base, regT1, regT0);
+    emitLoad(value, regT3, regT2);
+    callOperation(operationPutByIndex, regT1, regT0, property, regT3, regT2);
 }
 
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
@@ -71,13 +69,11 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
     int property = currentInstruction[2].u.operand;
     int getter = currentInstruction[3].u.operand;
     int setter = currentInstruction[4].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_put_getter_setter);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(property)));
-    stubCall.addArgument(getter);
-    stubCall.addArgument(setter);
-    stubCall.call();
+
+    emitLoadPayload(base, regT1);
+    emitLoadPayload(getter, regT3);
+    emitLoadPayload(setter, regT4);
+    callOperation(operationPutGetterSetter, regT1, &m_codeBlock->identifier(property), regT3, regT4);
 }
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
