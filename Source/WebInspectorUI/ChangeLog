@@ -1,3 +1,17 @@
+2013-10-15  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: can't select text inside a text node
+        https://bugs.webkit.org/show_bug.cgi?id=122828
+
+        Reviewed by Timothy Hatcher.
+
+        Cancel the default user interaction when a drag action starts if the
+        element is being edited.
+
+        * UserInterface/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.onattach):
+        (WebInspector.DOMTreeElement.prototype.handleEvent):
+
 2013-10-10  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: content views and managers should save/restore view state.
