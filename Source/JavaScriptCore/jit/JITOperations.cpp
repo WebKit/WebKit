@@ -893,6 +893,133 @@ EncodedJSValue JIT_OPERATION operationToObject(ExecState* exec, EncodedJSValue v
     return JSValue::encode(JSValue::decode(value).toObject(exec));
 }
 
+char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(ExecState* exec, EncodedJSValue encodedKey, size_t tableIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue key = JSValue::decode(encodedKey);
+    CodeBlock* codeBlock = exec->codeBlock();
+
+    SimpleJumpTable& jumpTable = codeBlock->switchJumpTable(tableIndex);
+    void* result = jumpTable.ctiDefault.executableAddress();
+
+    if (key.isString()) {
+        StringImpl* value = asString(key)->value(exec).impl();
+        if (value->length() == 1)
+            result = jumpTable.ctiForValue((*value)[0]).executableAddress();
+    }
+
+    return reinterpret_cast<char*>(result);
+}
+
+char* JIT_OPERATION operationSwitchImmWithUnknownKeyType(ExecState* exec, EncodedJSValue encodedKey, size_t tableIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue key = JSValue::decode(encodedKey);
+    CodeBlock* codeBlock = exec->codeBlock();
+
+    SimpleJumpTable& jumpTable = codeBlock->switchJumpTable(tableIndex);
+    void* result;
+    if (key.isInt32())
+        result = jumpTable.ctiForValue(key.asInt32()).executableAddress();
+    else if (key.isDouble() && key.asDouble() == static_cast<int32_t>(key.asDouble()))
+        result = jumpTable.ctiForValue(static_cast<int32_t>(key.asDouble())).executableAddress();
+    else
+        result = jumpTable.ctiDefault.executableAddress();
+    return reinterpret_cast<char*>(result);
+}
+
+char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(ExecState* exec, EncodedJSValue encodedKey, size_t tableIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue key = JSValue::decode(encodedKey);
+    CodeBlock* codeBlock = exec->codeBlock();
+
+    void* result;
+    StringJumpTable& jumpTable = codeBlock->stringSwitchJumpTable(tableIndex);
+
+    if (key.isString()) {
+        StringImpl* value = asString(key)->value(exec).impl();
+        result = jumpTable.ctiForValue(value).executableAddress();
+    } else
+        result = jumpTable.ctiDefault.executableAddress();
+
+    return reinterpret_cast<char*>(result);
+}
+
+EncodedJSValue JIT_OPERATION operationResolveScope(ExecState* exec, int32_t identifierIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    const Identifier& ident = exec->codeBlock()->identifier(identifierIndex);
+    return JSValue::encode(JSScope::resolve(exec, exec->scope(), ident));
+}
+
+EncodedJSValue JIT_OPERATION operationGetFromScope(ExecState* exec, Instruction* bytecodePC)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    CodeBlock* codeBlock = exec->codeBlock();
+    Instruction* pc = bytecodePC;
+
+    const Identifier& ident = codeBlock->identifier(pc[3].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
+    ResolveModeAndType modeAndType(pc[4].u.operand);
+
+    PropertySlot slot(scope);
+    if (!scope->getPropertySlot(exec, ident, slot)) {
+        if (modeAndType.mode() == ThrowIfNotFound)
+            vm.throwException(exec, createUndefinedVariableError(exec, ident));
+        return JSValue::encode(jsUndefined());
+    }
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+        if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+
+    return JSValue::encode(slot.getValue(exec, ident));
+}
+
+void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    Instruction* pc = bytecodePC;
+
+    CodeBlock* codeBlock = exec->codeBlock();
+    const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
+    JSValue value = exec->r(pc[3].u.operand).jsValue();
+    ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
+
+    if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident)) {
+        exec->vm().throwException(exec, createUndefinedVariableError(exec, ident));
+        return;
+    }
+
+    PutPropertySlot slot(codeBlock->isStrictMode());
+    scope->methodTable()->put(scope, exec, ident, value, slot);
+    
+    if (exec->vm().exception())
+        return;
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+        if (slot.isCacheable() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+}
+
 JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState* exec)
 {
     VM* vm = &exec->vm();

@@ -1200,10 +1200,8 @@ void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<Slow
         return;
 
     linkSlowCase(iter);
-
-    JITStubCall stubCall(this, cti_op_resolve_scope);
-    stubCall.addArgument(TrustedImmPtr(currentInstruction));
-    stubCall.call(dst);
+    int32_t indentifierIndex = currentInstruction[2].u.operand;
+    callOperation(operationResolveScope, dst, indentifierIndex);
 }
 
 void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
@@ -1276,10 +1274,7 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
         return;
 
     linkSlowCase(iter);
-
-    JITStubCall stubCall(this, cti_op_get_from_scope);
-    stubCall.addArgument(TrustedImmPtr(currentInstruction));
-    stubCall.call(dst);
+    callOperation(operationGetFromScope, dst, currentInstruction);
     emitValueProfilingSite(regT4);
 }
 
@@ -1347,10 +1342,7 @@ void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowC
         return;
 
     linkSlowCase(iter);
-
-    JITStubCall stubCall(this, cti_op_put_to_scope);
-    stubCall.addArgument(TrustedImmPtr(currentInstruction));
-    stubCall.call();
+    callOperation(operationPutToScope, currentInstruction);
 }
 
 void JIT::emit_op_init_global_const(Instruction* currentInstruction)
