@@ -616,10 +616,6 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
         setupThreeStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg1, arg2, arg3);
     }
 
-    void setupStubArguments134(GPRReg arg1, GPRReg arg3, GPRReg arg4)
-    {
-        setupThreeStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, GPRInfo::argumentGPR4>(arg1, arg3, arg4);
-    }
 #if CPU(MIPS)
 #define POKE_ARGUMENT_OFFSET 4
 #else
@@ -1242,6 +1238,11 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
 #endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
 
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 5
+    void setupStubArguments134(GPRReg arg1, GPRReg arg3, GPRReg arg4)
+    {
+        setupThreeStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR3, GPRInfo::argumentGPR4>(arg1, arg3, arg4);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImmPtr arg2, TrustedImm32 arg3, GPRReg arg4)
     {
         setupTwoStubArgsGPR<GPRInfo::argumentGPR1, GPRInfo::argumentGPR4>(arg1, arg4);
