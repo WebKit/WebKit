@@ -150,9 +150,7 @@ static inline bool isObservable(JSTestException* jsTestException)
 
 bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestException* jsTestException = jsCast<JSTestException*>(handle.get().asCell());
-    if (!isObservable(jsTestException))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

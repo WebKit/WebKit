@@ -1,3 +1,28 @@
+2013-10-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't generate a wasteful isObservable check in isReachableFromOpaqueRoots
+        https://bugs.webkit.org/show_bug.cgi?id=122802
+
+        Reviewed by Mark Hahnenberg.
+
+        * bindings/scripts/CodeGeneratorJS.pm: (GenerateImplementation): Don't.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        Updated results.
+
 2013-10-14  Samuel White  <samuel_white@apple.com>
 
         AX: fieldset should have GroupRole and legend should be description.

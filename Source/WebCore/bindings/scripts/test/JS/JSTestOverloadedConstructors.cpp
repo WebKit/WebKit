@@ -212,9 +212,7 @@ static inline bool isObservable(JSTestOverloadedConstructors* jsTestOverloadedCo
 
 bool JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestOverloadedConstructors* jsTestOverloadedConstructors = jsCast<JSTestOverloadedConstructors*>(handle.get().asCell());
-    if (!isObservable(jsTestOverloadedConstructors))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

@@ -293,8 +293,6 @@ bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown
     JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());
     if (jsTestEventTarget->impl().isFiringEventListeners())
         return true;
-    if (!isObservable(jsTestEventTarget))
-        return false;
     UNUSED_PARAM(visitor);
     return false;
 }

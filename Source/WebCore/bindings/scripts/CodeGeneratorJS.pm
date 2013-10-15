@@ -2562,7 +2562,6 @@ sub GenerateImplementation
 
         push(@implContent, "bool JS${interfaceName}Owner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
         # All ActiveDOMObjects implement hasPendingActivity(), but not all of them
         # increment their C++ reference counts when hasPendingActivity() becomes
         # true. As a result, ActiveDOMObjects can be prematurely destroyed before
@@ -2570,21 +2569,37 @@ sub GenerateImplementation
         # wrappers unconditionally keep ActiveDOMObjects with pending activity alive.
         # FIXME: Fix this lifetime issue in the DOM, and move this hasPendingActivity
         # check below the isObservable check.
+        my $emittedJSCast = 0;
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
+            push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
+            $emittedJSCast = 1;
             push(@implContent, "    if (js${interfaceName}->impl().hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
+            if (!$emittedJSCast) {
+                push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
+                $emittedJSCast = 1;
+            }
             push(@implContent, "    if (js${interfaceName}->impl().isFiringEventListeners())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsInterface($interface, "Node")) {
+            if (!$emittedJSCast) {
+                push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
+                $emittedJSCast = 1;
+            }
             push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
             push(@implContent, "        return true;\n");
         }
-        push(@implContent, "    if (!isObservable(js${interfaceName}))\n");
-        push(@implContent, "        return false;\n");
         if (GetGenerateIsReachable($interface)) {
+            if (!$emittedJSCast) {
+                push(@implContent, "    JS${interfaceName}* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.get().asCell());\n");
+                $emittedJSCast = 1;
+            }
+            push(@implContent, "    if (!isObservable(js${interfaceName}))\n");
+            push(@implContent, "        return false;\n");
+
             my $rootString;
             if (GetGenerateIsReachable($interface) eq "Impl") {
                 $rootString  = "    ${implType}* root = &js${interfaceName}->impl();\n";
@@ -2618,6 +2633,9 @@ sub GenerateImplementation
             push(@implContent, $rootString);
             push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
         } else {
+            if (!$emittedJSCast) {
+                push(@implContent, "    UNUSED_PARAM(handle);\n");
+            }
             push(@implContent, "    UNUSED_PARAM(visitor);\n");
             push(@implContent, "    return false;\n");
         }

@@ -201,9 +201,7 @@ static inline bool isObservable(JSTestActiveDOMObject* jsTestActiveDOMObject)
 
 bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestActiveDOMObject* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.get().asCell());
-    if (!isObservable(jsTestActiveDOMObject))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

@@ -150,9 +150,7 @@ static inline bool isObservable(JSattribute* jsattribute)
 
 bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSattribute* jsattribute = jsCast<JSattribute*>(handle.get().asCell());
-    if (!isObservable(jsattribute))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

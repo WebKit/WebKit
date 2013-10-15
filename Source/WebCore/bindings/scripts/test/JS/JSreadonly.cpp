@@ -137,9 +137,7 @@ static inline bool isObservable(JSreadonly* jsreadonly)
 
 bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSreadonly* jsreadonly = jsCast<JSreadonly*>(handle.get().asCell());
-    if (!isObservable(jsreadonly))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

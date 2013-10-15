@@ -568,9 +568,7 @@ static inline bool isObservable(JSTestTypedefs* jsTestTypedefs)
 
 bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestTypedefs* jsTestTypedefs = jsCast<JSTestTypedefs*>(handle.get().asCell());
-    if (!isObservable(jsTestTypedefs))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }

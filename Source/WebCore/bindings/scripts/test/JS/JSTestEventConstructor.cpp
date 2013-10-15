@@ -207,9 +207,7 @@ static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)
 
 bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    JSTestEventConstructor* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.get().asCell());
-    if (!isObservable(jsTestEventConstructor))
-        return false;
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
