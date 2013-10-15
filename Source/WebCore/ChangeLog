@@ -1,3 +1,22 @@
+2013-10-14  Santosh Mahto  <santosh.ma@samsung.com>
+
+        in safari,the background-color of input[type="search"] can't work
+        https://bugs.webkit.org/show_bug.cgi?id=119967
+
+        Reviewed by Ryosuke Niwa.
+
+        When input type=search is styled with css background property then
+        it does not change the background-color of field. Its happening becasue
+        search field is not counted as styled control. Thus theme ignores the 
+        css background property. With this patch search field is also counted as 
+        styled control so background property reflects on search field.
+
+        Test: fast/forms/search/search-field-background-color.html
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isControlStyled):Now search field is also
+        a styled control.
+
 2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         EventPath::updateTouchLists traverses through EventPath thrice

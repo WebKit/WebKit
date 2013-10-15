@@ -1,3 +1,17 @@
+2013-10-14  Santosh Mahto  <santosh.ma@samsung.com>
+
+        in safari ,the background-color of input[type="search"] can't work
+        https://bugs.webkit.org/show_bug.cgi?id=119967
+
+        Reviewed by Ryosuke Niwa.
+
+        Added testcase to verify the background color of search field when
+        search field is styled with css background property.
+
+        * fast/forms/search/search-field-background-color-expected.txt: Added.
+        * fast/forms/search/search-field-background-color.html: Added.
+        * platform/mac/fast/forms/search-styled-expected.txt: Rebaselined. 
+
 2013-10-14  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Move shape-inside floats tests into their own subdirectory
