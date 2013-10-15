@@ -1,3 +1,36 @@
+2013-10-14  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Move shape-inside floats tests into their own subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=122761
+
+        Reviewed by Sam Weinig.
+
+        I'm going to add some new float tests soon. In order to keep our shapes tests organized,
+        I'm moving the shape-inside with floating content tests to their own subdirectory.
+
+        * fast/shapes/shape-inside/floats/shape-inside-floats-simple-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-floats-simple-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-floats-simple.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-floats-simple.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-left-triangle-block-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-block-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-left-triangle-block-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-block-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-left-triangle-inline-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-left-triangle-inline-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle-block-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-block-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle-block-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-block-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle-inline-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle-inline-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-lower-right-triangle.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-block-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-block-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-block-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-block-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-inline-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-inline-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-vertical-lr-inline-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-vertical-lr-inline-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-left-triangle-vertical-lr-inline-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-vertical-lr-inline-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-right-triangle-block-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-block-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-right-triangle-block-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-block-content.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-right-triangle-inline-content-expected.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content-expected.html.
+        * fast/shapes/shape-inside/floats/shape-inside-left-float-in-upper-right-triangle-inline-content.html: Renamed from LayoutTests/fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content.html.
+
 2013-10-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Below tests don't be failed anymore after enabling subpixel layout.
