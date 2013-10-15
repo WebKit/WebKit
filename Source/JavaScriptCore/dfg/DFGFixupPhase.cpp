@@ -233,7 +233,7 @@ private:
         case ArithMod: {
             if (Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node())
                 && node->canSpeculateInt32()) {
-                if (isX86() || isARMv7s()) {
+                if (isX86() || isARM64() || isARMv7s()) {
                     fixEdge<Int32Use>(node->child1());
                     fixEdge<Int32Use>(node->child2());
                     break;

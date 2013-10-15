@@ -59,17 +59,10 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     return result;
 }
 
-void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
+#if ENABLE(BRANCH_COMPACTION)
+template <typename InstructionType>
+void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort effort)
 {
-    ASSERT(!m_code);
-#if !ENABLE(BRANCH_COMPACTION)
-    m_executableMemory = m_assembler->m_assembler.executableCopy(*m_vm, ownerUID, effort);
-    if (!m_executableMemory)
-        return;
-    m_code = m_executableMemory->start();
-    m_size = m_assembler->m_assembler.codeSize();
-    ASSERT(m_code);
-#else
     m_initialSize = m_assembler->m_assembler.codeSize();
     m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, m_initialSize, ownerUID, effort);
     if (!m_executableMemory)
@@ -89,9 +82,9 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
             
         // Copy the instructions from the last jump to the current one.
         size_t regionSize = jumpsToLink[i].from() - readPtr;
-        uint16_t* copySource = reinterpret_cast_ptr<uint16_t*>(inData + readPtr);
-        uint16_t* copyEnd = reinterpret_cast_ptr<uint16_t*>(inData + readPtr + regionSize);
-        uint16_t* copyDst = reinterpret_cast_ptr<uint16_t*>(outData + writePtr);
+        InstructionType* copySource = reinterpret_cast_ptr<InstructionType*>(inData + readPtr);
+        InstructionType* copyEnd = reinterpret_cast_ptr<InstructionType*>(inData + readPtr + regionSize);
+        InstructionType* copyDst = reinterpret_cast_ptr<InstructionType*>(outData + writePtr);
         ASSERT(!(regionSize % 2));
         ASSERT(!(readPtr % 2));
         ASSERT(!(writePtr % 2));
@@ -141,6 +134,24 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 #if DUMP_CODE
     dumpCode(m_code, m_size);
 #endif
+}
+#endif
+
+
+void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
+{
+    ASSERT(!m_code);
+#if !ENABLE(BRANCH_COMPACTION)
+    m_executableMemory = m_assembler->m_assembler.executableCopy(*m_vm, ownerUID, effort);
+    if (!m_executableMemory)
+        return;
+    m_code = m_executableMemory->start();
+    m_size = m_assembler->m_assembler.codeSize();
+    ASSERT(m_code);
+#elif CPU(ARM_THUMB2)
+    copyCompactAndLinkCode<uint16_t>(ownerUID, effort);
+#elif CPU(ARM64)
+    copyCompactAndLinkCode<uint32_t>(ownerUID, effort);
 #endif
 }
 

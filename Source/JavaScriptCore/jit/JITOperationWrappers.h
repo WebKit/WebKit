@@ -82,6 +82,25 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 20)
 #define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 28)
 
+#elif CPU(ARM64)
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
+    asm ( \
+    ".text" "\n" \
+    ".align 2" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "mov " STRINGIZE(register) ", lr" "\n" \
+        "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+    );
+
+#define _P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, x1)
+#define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function)    FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, x1)
+#define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, x3)
+#define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, x3)
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, x4)
+
 #elif COMPILER(GCC) && CPU(ARM_THUMB2)
 
 #define _P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \

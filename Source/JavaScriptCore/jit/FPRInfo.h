@@ -168,6 +168,95 @@ public:
 
 #endif
 
+#if CPU(ARM64)
+
+class FPRInfo {
+public:
+    typedef FPRReg RegisterType;
+    static const unsigned numberOfRegisters = 23;
+
+    // Temporary registers.
+    // q8-q15 are callee saved, q31 is use by the MacroAssembler as fpTempRegister.
+    static const FPRReg fpRegT0 = ARM64Registers::q0;
+    static const FPRReg fpRegT1 = ARM64Registers::q1;
+    static const FPRReg fpRegT2 = ARM64Registers::q2;
+    static const FPRReg fpRegT3 = ARM64Registers::q3;
+    static const FPRReg fpRegT4 = ARM64Registers::q4;
+    static const FPRReg fpRegT5 = ARM64Registers::q5;
+    static const FPRReg fpRegT6 = ARM64Registers::q6;
+    static const FPRReg fpRegT7 = ARM64Registers::q7;
+    static const FPRReg fpRegT8 = ARM64Registers::q16;
+    static const FPRReg fpRegT9 = ARM64Registers::q17;
+    static const FPRReg fpRegT10 = ARM64Registers::q18;
+    static const FPRReg fpRegT11 = ARM64Registers::q19;
+    static const FPRReg fpRegT12 = ARM64Registers::q20;
+    static const FPRReg fpRegT13 = ARM64Registers::q21;
+    static const FPRReg fpRegT14 = ARM64Registers::q22;
+    static const FPRReg fpRegT15 = ARM64Registers::q23;
+    static const FPRReg fpRegT16 = ARM64Registers::q24;
+    static const FPRReg fpRegT17 = ARM64Registers::q25;
+    static const FPRReg fpRegT18 = ARM64Registers::q26;
+    static const FPRReg fpRegT19 = ARM64Registers::q27;
+    static const FPRReg fpRegT20 = ARM64Registers::q28;
+    static const FPRReg fpRegT21 = ARM64Registers::q29;
+    static const FPRReg fpRegT22 = ARM64Registers::q30;
+
+    static const FPRReg argumentFPR0 = ARM64Registers::q0; // fpRegT0
+    static const FPRReg argumentFPR1 = ARM64Registers::q1; // fpRegT1
+    static const FPRReg argumentFPR2 = ARM64Registers::q2; // fpRegT2
+    static const FPRReg argumentFPR3 = ARM64Registers::q3; // fpRegT3
+    static const FPRReg argumentFPR4 = ARM64Registers::q4; // fpRegT4
+    static const FPRReg argumentFPR5 = ARM64Registers::q5; // fpRegT5
+    static const FPRReg argumentFPR6 = ARM64Registers::q6; // fpRegT6
+    static const FPRReg argumentFPR7 = ARM64Registers::q7; // fpRegT7
+
+    static const FPRReg returnValueFPR = ARM64Registers::q0; // fpRegT0
+
+    static FPRReg toRegister(unsigned index)
+    {
+        ASSERT(index < numberOfRegisters);
+        static const FPRReg registerForIndex[numberOfRegisters] = {
+            fpRegT0, fpRegT1, fpRegT2, fpRegT3, fpRegT4, fpRegT5, fpRegT6, fpRegT7,
+            fpRegT8, fpRegT9, fpRegT10, fpRegT11, fpRegT12, fpRegT13, fpRegT14, fpRegT15,
+            fpRegT16, fpRegT17, fpRegT18, fpRegT19, fpRegT20, fpRegT21, fpRegT22
+        };
+        return registerForIndex[index];
+    }
+
+    static unsigned toIndex(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        static const unsigned indexForRegister[32] = {
+            0, 1, 2, 3, 4, 5, 6, 7,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, InvalidIndex
+        };
+        unsigned result = indexForRegister[reg];
+        ASSERT(result != InvalidIndex);
+        return result;
+    }
+
+    static const char* debugName(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        static const char* nameForRegister[32] = {
+            "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7",
+            "q8", "q9", "q10", "q11", "q12", "q13", "q14", "q15",
+            "q16", "q17", "q18", "q19", "q20", "q21", "q22", "q23",
+            "q24", "q25", "q26", "q27", "q28", "q29", "q30", "q31"
+        };
+        return nameForRegister[reg];
+    }
+
+private:
+    static const unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif
+
 #if CPU(MIPS)
 
 class FPRInfo {

@@ -1484,6 +1484,18 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
+#elif CPU(ARM64)
+asm (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
+HIDE_SYMBOL(getHostCallReturnValue) "\n"
+SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
+    "ldur x25, [x25, #-40]" "\n"
+     "mov x0, x25" "\n"
+     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+);
+
 #elif COMPILER(GCC) && CPU(MIPS)
 asm (
 ".text" "\n"

@@ -405,6 +405,32 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t) + 16 - sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
 
+#elif CPU(ARM64)
+    COMPILE_ASSERT(ARM64Registers::x3 != JSInterfaceJIT::regT1, prev_callframe_not_trampled_by_T1);
+    COMPILE_ASSERT(ARM64Registers::x3 != JSInterfaceJIT::regT3, prev_callframe_not_trampled_by_T3);
+    COMPILE_ASSERT(ARM64Registers::x0 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_0);
+    COMPILE_ASSERT(ARM64Registers::x1 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_1);
+    COMPILE_ASSERT(ARM64Registers::x2 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_2);
+
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, ARM64Registers::x3);
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, ARM64Registers::x3);
+    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
+
+    jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
+    jit.emitPutToCallFrameHeader(ARM64Registers::lr, JSStack::ReturnPC);
+
+    // Host function signature: f(ExecState*);
+    jit.move(JSInterfaceJIT::callFrameRegister, ARM64Registers::x0);
+
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, ARM64Registers::x1);
+    jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x1, JSFunction::offsetOfExecutable()), ARM64Registers::x2);
+    jit.move(ARM64Registers::x3, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    jit.call(JSInterfaceJIT::Address(ARM64Registers::x2, executableOffsetToFunction));
+
+    jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
+
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
@@ -755,6 +781,23 @@ double jsRound(double d)
         MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
     } \
     static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
+#elif CPU(ARM64)
+
+#define defineUnaryDoubleOpWrapper(function) \
+    asm( \
+        ".text\n" \
+        ".align 2\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        HIDE_SYMBOL(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "b " GLOBAL_REFERENCE(function) "\n" \
+    ); \
+    extern "C" { \
+        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
 #else
 
 #define defineUnaryDoubleOpWrapper(function) \
@@ -782,6 +825,14 @@ MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+#if CPU(ARM64)
+    SpecializedThunkJIT::JumpList doubleResult;
+    jit.floorDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+    jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    doubleResult.link(&jit);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+#else
     SpecializedThunkJIT::Jump intResult;
     SpecializedThunkJIT::JumpList doubleResult;
     if (jit.supportsFloatingPointTruncate()) {
@@ -801,6 +852,7 @@ MacroAssemblerCodeRef floorThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+#endif // CPU(ARM64)
     return jit.finalize(vm->jitStubs->ctiNativeCall(vm), "floor");
 }
 
@@ -814,7 +866,11 @@ MacroAssemblerCodeRef ceilThunkGenerator(VM* vm)
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+#if CPU(ARM64)
+    jit.ceilDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
+#else
     jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(ceil));
+#endif // CPU(ARM64)
     SpecializedThunkJIT::JumpList doubleResult;
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
     jit.returnInt32(SpecializedThunkJIT::regT0);

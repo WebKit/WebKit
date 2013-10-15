@@ -168,6 +168,11 @@
 #define WTF_CPU_X86_64 1
 #endif
 
+/* CPU(ARM64) - Apple */
+#if defined(__arm64__) && defined(__APPLE__)
+#define WTF_CPU_ARM64 1
+#endif
+
 /* CPU(ARM) - ARM, any version*/
 #define WTF_ARM_ARCH_AT_LEAST(N) (CPU(ARM) && WTF_ARM_ARCH_VERSION >= N)
 
@@ -223,6 +228,9 @@
     || defined(__ARM_ARCH_7R__) \
     || defined(__ARM_ARCH_7S__)
 #define WTF_ARM_ARCH_VERSION 7
+
+#elif defined(__ARM_ARCH_8__)
+#define WTF_ARM_ARCH_VERSION 8
 
 /* MSVC sets _M_ARM */
 #elif defined(_M_ARM)
@@ -537,6 +545,10 @@
 #define WTF_USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
 #define WTF_USE_SECURITY_FRAMEWORK 0
 #define WTF_USE_WEB_THREAD 1
+
+#if CPU(ARM64)
+#define ENABLE_JIT_CONSTANT_BLINDING 0
+#endif
 #endif /* PLATFORM(IOS) */
 
 #if PLATFORM(WIN) && !USE(WINGDI)
@@ -664,6 +676,7 @@
 #if (CPU(X86_64) && (OS(UNIX) || OS(WINDOWS))) \
     || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
+    || CPU(ARM64) \
     || CPU(SPARC64) \
     || CPU(S390X) \
     || CPU(PPC64)
@@ -680,7 +693,7 @@
 
 /* The JIT is enabled by default on all x86, x86-64, ARM & MIPS platforms. */
 #if !defined(ENABLE_JIT) \
-    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
     && !OS(WINCE) \
     && !OS(QNX)
@@ -714,7 +727,11 @@
 #define ENABLE_DISASSEMBLER 1
 #endif
 
-#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARMV7_DISASSEMBLER))
+#if !defined(WTF_USE_ARM64_DISASSEMBLER) && ENABLE(JIT) && PLATFORM(IOS) && CPU(ARM64)
+#define WTF_USE_ARM64_DISASSEMBLER 1
+#endif
+
+#if !defined(ENABLE_DISASSEMBLER) && (USE(UDIS86) || USE(ARMV7_DISASSEMBLER) || USE(ARM64_DISASSEMBLER))
 #define ENABLE_DISASSEMBLER 1
 #endif
 
@@ -724,7 +741,7 @@
     && ENABLE(JIT) \
     && (OS(DARWIN) || OS(LINUX)) \
     && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK)) \
-    && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL) || CPU(MIPS) || CPU(SH4))
+    && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL) || CPU(ARM64) || CPU(MIPS) || CPU(SH4))
 #define ENABLE_LLINT 1
 #endif
 
@@ -734,7 +751,7 @@
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt/GTK+ Linux. */
-#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK))
+#if (CPU(ARM_THUMB2) || CPU(ARM64)) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(GTK))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARM, MIPS and SH4. */
@@ -896,7 +913,7 @@
 #define WTF_USE_ACCESSIBILITY_CONTEXT_MENUS 1
 #endif
 
-#if CPU(ARM_THUMB2)
+#if CPU(ARM_THUMB2) || CPU(ARM64)
 #define ENABLE_BRANCH_COMPACTION 1
 #endif
 
@@ -932,7 +949,7 @@
 #define WTF_USE_IMLANG_FONT_LINK2 1
 #endif
 
-#if !defined(ENABLE_COMPARE_AND_SWAP) && (OS(WINDOWS) || (COMPILER(GCC) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2))))
+#if !defined(ENABLE_COMPARE_AND_SWAP) && (OS(WINDOWS) || (COMPILER(GCC) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2) || CPU(ARM64))))
 #define ENABLE_COMPARE_AND_SWAP 1
 #endif
 

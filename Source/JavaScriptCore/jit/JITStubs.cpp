@@ -95,6 +95,8 @@ using namespace std;
 #include "JITStubsX86.h"
 #elif CPU(X86_64)
 #include "JITStubsX86_64.h"
+#elif CPU(ARM64)
+#include "JITStubsARM64.h"
 #else
 #error "JIT not supported on this platform."
 #endif
@@ -114,6 +116,8 @@ void performPlatformSpecificJITAssertions(VM* vm)
 
 #if CPU(ARM_THUMB2)
     performARMv7JITAssertions();
+#elif CPU(ARM64)
+    performARM64JITAssertions();
 #elif CPU(ARM_TRADITIONAL)
     performARMJITAssertions();
 #elif CPU(MIPS)

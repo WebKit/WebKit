@@ -110,6 +110,31 @@ struct JITStackFrame {
     // When JIT code makes a call, it pushes its return address just below the rest of the stack.
     ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
 };
+#elif CPU(ARM64)
+struct JITStackFrame {
+    JITStubArg args[6];
+
+    ReturnAddressPtr thunkReturnAddress;
+
+    void* preservedReturnAddress;
+    void* preservedX19;
+    void* preservedX20;
+    void* preservedX21;
+    void* preservedX22;
+    void* preservedX23;
+    void* preservedX24;
+    void* preservedX25;
+    void* preservedX26;
+    void* preservedX27;
+    void* preservedX28;
+
+    JSStack* stack;
+    CallFrame* callFrame;
+    LegacyProfiler** enabledProfilerReference;
+    VM* vm;
+    
+    ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
+};
 #elif OS(WINDOWS) && CPU(X86_64)
 struct JITStackFrame {
     void* shadow[4]; // Shadow space reserved for a callee's parameters home addresses

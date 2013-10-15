@@ -243,6 +243,10 @@ private:
     }
 
     void linkCode(void* ownerUID, JITCompilationEffort);
+#if ENABLE(BRANCH_COMPACTION)
+    template <typename InstructionType>
+    void copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort);
+#endif
 
     void performFinalization();
 

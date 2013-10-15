@@ -257,12 +257,13 @@ X86_INSTRUCTIONS =
      "idivi"
     ]
 
-ARM_INSTRUCTIONS =
+RISC_INSTRUCTIONS =
     [
-     "smulli",
-     "addis",
-     "subis",
-     "oris"
+     "smulli",  # Multiply two 32-bit words and produce a 64-bit word
+     "addis",   # Add integers and set a flag.
+     "subis",   # Same, but for subtraction.
+     "oris",    # Same, but for bitwise or.
+     "addps"    # addis but for pointers.
     ]
 
 MIPS_INSTRUCTIONS =
@@ -304,7 +305,7 @@ CXX_INSTRUCTIONS =
      "cloopDo",              # no operands
     ]
 
-INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + ARM_INSTRUCTIONS + MIPS_INSTRUCTIONS + SH4_INSTRUCTIONS + CXX_INSTRUCTIONS
+INSTRUCTIONS = MACRO_INSTRUCTIONS + X86_INSTRUCTIONS + RISC_INSTRUCTIONS + MIPS_INSTRUCTIONS + SH4_INSTRUCTIONS + CXX_INSTRUCTIONS
 
 INSTRUCTION_PATTERN = Regexp.new('\\A((' + INSTRUCTIONS.join(')|(') + '))\\Z')
 

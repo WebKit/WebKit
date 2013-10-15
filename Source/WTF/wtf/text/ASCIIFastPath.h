@@ -137,6 +137,27 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
         ASSERT(!(source[i] & 0xff00));
         destination[i] = static_cast<LChar>(source[i]);
     }
+#elif COMPILER(GCC) && CPU(ARM64) && defined(NDEBUG)
+    const LChar* const end = destination + length;
+    const uintptr_t memoryAccessSize = 16;
+
+    if (length >= memoryAccessSize) {
+        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
+
+        // Vector interleaved unpack, we only store the lower 8 bits.
+        const uintptr_t lengthLeft = end - destination;
+        const LChar* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
+        do {
+            asm("ld2   { v0.16B, v1.16B }, [%[SOURCE]], #32\n\t"
+                "st1   { v0.16B }, [%[DESTINATION]], #16\n\t"
+                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
+                :
+                : "memory", "v0", "v1");
+        } while (destination != simdEnd);
+    }
+
+    while (destination != end)
+        *destination++ = static_cast<LChar>(*source++);
 #elif COMPILER(GCC) && CPU(ARM_NEON) && !(PLATFORM(BIG_ENDIAN) || PLATFORM(MIDDLE_ENDIAN)) && defined(NDEBUG)
     const LChar* const end = destination + length;
     const uintptr_t memoryAccessSize = 8;

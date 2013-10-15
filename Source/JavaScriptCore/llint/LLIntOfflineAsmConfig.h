@@ -98,6 +98,12 @@
 
 #endif // !ENABLE(LLINT_C_LOOP)
 
+#if CPU(ARM64)
+#define OFFLINE_ASM_ARM64 1
+#else
+#define OFFLINE_ASM_ARM64 0
+#endif
+
 #if USE(JSVALUE64)
 #define OFFLINE_ASM_JSVALUE64 1
 #else

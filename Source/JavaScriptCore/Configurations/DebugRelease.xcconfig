@@ -25,8 +25,8 @@
 #include "Base.xcconfig"
 
 ARCHS = $(ARCHS_$(PLATFORM_NAME));
-ARCHS_iphoneos = $(ARCHS_UNIVERSAL_IPHONE_OS);
-ARCHS_iphonesimulator = $(NATIVE_ARCH);
+ARCHS_iphoneos = $(ARCHS_STANDARD_32_64_BIT);
+ARCHS_iphonesimulator = $(ARCHS_STANDARD_32_64_BIT);
 ARCHS_macosx = $(ARCHS_STANDARD_32_64_BIT);
 
 ONLY_ACTIVE_ARCH = YES;

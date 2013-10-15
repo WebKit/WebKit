@@ -878,7 +878,7 @@ inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_ca
 WTF_EXPORT_STRING_API bool equalNonNull(const StringImpl* a, const StringImpl* b);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 {
     unsigned dwordLength = length >> 3;

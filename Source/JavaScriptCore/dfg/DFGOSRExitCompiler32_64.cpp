@@ -120,8 +120,13 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 scratch1 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2);
                 scratch2 = AssemblyHelpers::selectScratchGPR(usedRegister1, usedRegister2, scratch1);
                 
+#if CPU(ARM64)
+                m_jit.pushToSave(scratch1);
+                m_jit.pushToSave(scratch2);
+#else
                 m_jit.push(scratch1);
                 m_jit.push(scratch2);
+#endif
                 
                 GPRReg value;
                 if (exit.m_jsValueSource.isAddress()) {
@@ -137,8 +142,13 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 m_jit.lshift32(scratch1, scratch2);
                 m_jit.or32(scratch2, AssemblyHelpers::AbsoluteAddress(arrayProfile->addressOfArrayModes()));
                 
+#if CPU(ARM64)
+                m_jit.popToRestore(scratch2);
+                m_jit.popToRestore(scratch1);
+#else
                 m_jit.pop(scratch2);
                 m_jit.pop(scratch1);
+#endif
             }
         }
         
@@ -149,14 +159,22 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 // Save a register so we can use it.
                 GPRReg scratch = AssemblyHelpers::selectScratchGPR(exit.m_jsValueSource.base());
                 
+#if CPU(ARM64)
+                m_jit.pushToSave(scratch);
+#else
                 m_jit.push(scratch);
+#endif
 
                 m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), scratch);
                 m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
                 m_jit.load32(exit.m_jsValueSource.asAddress(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), scratch);
                 m_jit.store32(scratch, &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);
                 
+#if CPU(ARM64)
+                m_jit.popToRestore(scratch);
+#else
                 m_jit.pop(scratch);
+#endif
             } else if (exit.m_jsValueSource.hasKnownTag()) {
                 m_jit.store32(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.tag);
                 m_jit.store32(exit.m_jsValueSource.payloadGPR(), &bitwise_cast<EncodedValueDescriptor*>(bucket)->asBits.payload);

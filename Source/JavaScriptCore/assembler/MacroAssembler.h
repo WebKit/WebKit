@@ -34,6 +34,10 @@
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
+#elif CPU(ARM64)
+#include "MacroAssemblerARM64.h"
+namespace JSC { typedef MacroAssemblerARM64 MacroAssemblerBase; };
+
 #elif CPU(ARM_TRADITIONAL)
 #include "MacroAssemblerARM.h"
 namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
@@ -114,6 +118,11 @@ public:
     using MacroAssemblerBase::sub32;
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
+
+    static bool isPtrAlignedAddressOffset(ptrdiff_t value)
+    {
+        return value == static_cast<int32_t>(value);
+    }
 
     static const double twoToThe32; // This is super useful for some double code.
 
@@ -211,7 +220,28 @@ public:
         storePtr(imm, addressForPoke(index));
     }
 
-#if CPU(X86_64)
+#if !CPU(ARM64)
+    void pushToSave(RegisterID src)
+    {
+        push(src);
+    }
+    void popToRestore(RegisterID dest)
+    {
+        pop(dest);
+    }
+    void pushToSave(FPRegisterID src)
+    {
+        subPtr(TrustedImm32(sizeof(double)), stackPointerRegister);
+        storeDouble(src, stackPointerRegister);
+    }
+    void popToRestore(FPRegisterID dest)
+    {
+        loadDouble(stackPointerRegister, dest);
+        addPtr(TrustedImm32(sizeof(double)), stackPointerRegister);
+    }
+#endif // !CPU(ARM64)
+
+#if CPU(X86_64) || CPU(ARM64)
     void peek64(RegisterID dest, int index = 0)
     {
         load64(Address(stackPointerRegister, (index * sizeof(void*))), dest);
@@ -288,7 +318,7 @@ public:
         branchTestPtr(cond, reg).linkTo(target, this);
     }
 
-#if !CPU(ARM_THUMB2)
+#if !CPU(ARM_THUMB2) && !CPU(ARM64)
     PatchableJump patchableBranchPtr(RelationalCondition cond, Address left, TrustedImmPtr right = TrustedImmPtr(0))
     {
         return PatchableJump(branchPtr(cond, left, right));
@@ -308,14 +338,12 @@ public:
     {
         return PatchableJump(branchTest32(cond, reg, mask));
     }
-#endif // !CPU(ARM_THUMB2)
 
-#if !CPU(ARM)
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
         return PatchableJump(branch32(cond, reg, imm));
     }
-#endif // !(CPU(ARM)
+#endif
 
     void jump(Label target)
     {
@@ -360,7 +388,7 @@ public:
     // Ptr methods
     // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
     // FIXME: should this use a test for 32-bitness instead of this specific exception?
-#if !CPU(X86_64)
+#if !CPU(X86_64) && !CPU(ARM64)
     void addPtr(Address src, RegisterID dest)
     {
         add32(src, dest);
@@ -1319,7 +1347,7 @@ public:
         storePtr(value, addressForPoke(index));
     }
     
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
     void poke(Imm64 value, int index = 0)
     {
         store64(value, addressForPoke(index));

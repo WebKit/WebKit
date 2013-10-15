@@ -55,6 +55,10 @@ public:
     typedef ARMv7Assembler::LinkRecord LinkRecord;
     typedef ARMv7Assembler::JumpType JumpType;
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
+    typedef ARMv7Assembler::Condition Condition;
+
+    static const ARMv7Assembler::Condition DefaultCondition = ARMv7Assembler::ConditionInvalid;
+    static const ARMv7Assembler::JumpType DefaultJump = ARMv7Assembler::JumpNoConditionFixedSize;
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {

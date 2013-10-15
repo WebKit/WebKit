@@ -157,6 +157,20 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
         : "r"(expected), "r"(newValue)
         : "memory");
     result = !result;
+#elif CPU(ARM64)
+    unsigned tmp;
+    unsigned result;
+    asm volatile(
+        "mov %w1, #1\n\t"
+        "ldxr %w2, %0\n\t"
+        "cmp %w3, %w2\n\t"
+        "b.ne 0f\n\t"
+        "stxr %w1, %w4, %0\n\t"
+        "0:"
+        : "+m"(*location), "=&r"(result), "=&r"(tmp)
+        : "r"(expected), "r"(newValue)
+        : "memory");
+    result = !result;
 #else
 #error "Bad architecture for compare and swap."
 #endif
@@ -183,6 +197,20 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
         : "memory"
         );
     return result;
+#elif CPU(ARM64)
+    bool result;
+    void* tmp;
+    asm volatile(
+        "mov %w1, #1\n\t"
+        "ldxr %x2, %0\n\t"
+        "cmp %x3, %x2\n\t"
+        "b.ne 0f\n\t"
+        "stxr %w1, %x4, %0\n\t"
+        "0:"
+        : "+m"(*location), "=&r"(result), "=&r"(tmp)
+        : "r"(expected), "r"(newValue)
+        : "memory");
+    return !result;
 #else
     return weakCompareAndSwap(bitwise_cast<unsigned*>(location), bitwise_cast<unsigned>(expected), bitwise_cast<unsigned>(newValue));
 #endif
@@ -218,13 +246,13 @@ inline void compilerFence()
 #endif
 }
 
-#if CPU(ARM_THUMB2)
+#if CPU(ARM_THUMB2) || CPU(ARM64)
 
 // Full memory fence. No accesses will float above this, and no accesses will sink
 // below it.
 inline void armV7_dmb()
 {
-    asm volatile("dmb" ::: "memory");
+    asm volatile("dmb sy" ::: "memory");
 }
 
 // Like the above, but only affects stores.

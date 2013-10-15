@@ -78,7 +78,7 @@
 #include <windows.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && CPU(ARM_THUMB2)
 #include <fenv.h>
 #include <arm/arch.h>
 #endif
@@ -536,7 +536,7 @@ static NO_RETURN_DUE_TO_CRASH void timeoutThreadMain(void*)
 
 int main(int argc, char** argv)
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && CPU(ARM_THUMB2)
     // Enabled IEEE754 denormal support.
     fenv_t env;
     fegetenv( &env );

@@ -495,6 +495,99 @@ private:
 
 #endif
 
+#if CPU(ARM64)
+#define NUMBER_OF_ARGUMENT_REGISTERS 8
+
+class GPRInfo {
+public:
+    typedef GPRReg RegisterType;
+    static const unsigned numberOfRegisters = 16;
+
+    // These registers match the baseline JIT.
+    static const GPRReg cachedResultRegister = ARM64Registers::x0;
+    static const GPRReg timeoutCheckRegister = ARM64Registers::x26;
+    static const GPRReg callFrameRegister = ARM64Registers::x25;
+    static const GPRReg tagTypeNumberRegister = ARM64Registers::x27;
+    static const GPRReg tagMaskRegister = ARM64Registers::x28;
+    // Temporary registers.
+    static const GPRReg regT0 = ARM64Registers::x0;
+    static const GPRReg regT1 = ARM64Registers::x1;
+    static const GPRReg regT2 = ARM64Registers::x2;
+    static const GPRReg regT3 = ARM64Registers::x3;
+    static const GPRReg regT4 = ARM64Registers::x4;
+    static const GPRReg regT5 = ARM64Registers::x5;
+    static const GPRReg regT6 = ARM64Registers::x6;
+    static const GPRReg regT7 = ARM64Registers::x7;
+    static const GPRReg regT8 = ARM64Registers::x8;
+    static const GPRReg regT9 = ARM64Registers::x9;
+    static const GPRReg regT10 = ARM64Registers::x10;
+    static const GPRReg regT11 = ARM64Registers::x11;
+    static const GPRReg regT12 = ARM64Registers::x12;
+    static const GPRReg regT13 = ARM64Registers::x13;
+    static const GPRReg regT14 = ARM64Registers::x14;
+    static const GPRReg regT15 = ARM64Registers::x15;
+    // These constants provide the names for the general purpose argument & return value registers.
+    static const GPRReg argumentGPR0 = ARM64Registers::x0; // regT0
+    static const GPRReg argumentGPR1 = ARM64Registers::x1; // regT1
+    static const GPRReg argumentGPR2 = ARM64Registers::x2; // regT2
+    static const GPRReg argumentGPR3 = ARM64Registers::x3; // regT3
+    static const GPRReg argumentGPR4 = ARM64Registers::x4; // regT4
+    static const GPRReg argumentGPR5 = ARM64Registers::x5; // regT5
+    static const GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
+    static const GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
+    static const GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8
+    static const GPRReg nonArgGPR1 = ARM64Registers::x9; // regT9
+    static const GPRReg nonArgGPR2 = ARM64Registers::x10; // regT10
+    static const GPRReg returnValueGPR = ARM64Registers::x0; // regT0
+    static const GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
+    static const GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
+
+    // GPRReg mapping is direct, the machine regsiter numbers can
+    // be used directly as indices into the GPR RegisterBank.
+    COMPILE_ASSERT(ARM64Registers::q0 == 0, q0_is_0);
+    COMPILE_ASSERT(ARM64Registers::q1 == 1, q1_is_1);
+    COMPILE_ASSERT(ARM64Registers::q2 == 2, q2_is_2);
+    COMPILE_ASSERT(ARM64Registers::q3 == 3, q3_is_3);
+    COMPILE_ASSERT(ARM64Registers::q4 == 4, q4_is_4);
+    COMPILE_ASSERT(ARM64Registers::q5 == 5, q5_is_5);
+    COMPILE_ASSERT(ARM64Registers::q6 == 6, q6_is_6);
+    COMPILE_ASSERT(ARM64Registers::q7 == 7, q7_is_7);
+    COMPILE_ASSERT(ARM64Registers::q8 == 8, q8_is_8);
+    COMPILE_ASSERT(ARM64Registers::q9 == 9, q9_is_9);
+    COMPILE_ASSERT(ARM64Registers::q10 == 10, q10_is_10);
+    COMPILE_ASSERT(ARM64Registers::q11 == 11, q11_is_11);
+    COMPILE_ASSERT(ARM64Registers::q12 == 12, q12_is_12);
+    COMPILE_ASSERT(ARM64Registers::q13 == 13, q13_is_13);
+    COMPILE_ASSERT(ARM64Registers::q14 == 14, q14_is_14);
+    COMPILE_ASSERT(ARM64Registers::q15 == 15, q15_is_15);
+    static GPRReg toRegister(unsigned index)
+    {
+        return (GPRReg)index;
+    }
+    static unsigned toIndex(GPRReg reg)
+    {
+        return (unsigned)reg;
+    }
+
+    static const char* debugName(GPRReg reg)
+    {
+        ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
+        ASSERT(static_cast<unsigned>(reg) < 32);
+        static const char* nameForRegister[32] = {
+            "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
+            "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
+            "r24", "r25", "r26", "r27", "r28", "fp", "lr", "sp"
+        };
+        return nameForRegister[reg];
+    }
+private:
+
+    static const unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif
+
 #if CPU(MIPS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4
 

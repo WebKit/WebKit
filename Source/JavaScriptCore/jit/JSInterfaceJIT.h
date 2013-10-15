@@ -132,6 +132,33 @@ namespace JSC {
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;
         static const FPRegisterID fpRegT3 = ARMRegisters::d3;
+#elif CPU(ARM64)
+        static const RegisterID returnValueRegister = ARM64Registers::x0;
+        static const RegisterID cachedResultRegister = ARM64Registers::x0;
+        static const RegisterID firstArgumentRegister = ARM64Registers::x0;
+        static const RegisterID secondArgumentRegister = ARM64Registers::x1;
+
+#if ENABLE(VALUE_PROFILER)
+        static const RegisterID bucketCounterRegister = ARM64Registers::x7;
+#endif
+
+        static const RegisterID regT0 = ARM64Registers::x0;
+        static const RegisterID regT1 = ARM64Registers::x1;
+        static const RegisterID regT2 = ARM64Registers::x2;
+        static const RegisterID regT3 = ARM64Registers::x23;
+        static const RegisterID regT4 = ARM64Registers::x24;
+        
+        static const RegisterID callFrameRegister = ARM64Registers::x25;
+        static const RegisterID timeoutCheckRegister = ARM64Registers::x26;
+        static const RegisterID tagTypeNumberRegister = ARM64Registers::x27;
+        static const RegisterID tagMaskRegister = ARM64Registers::x28;
+        
+        static const FPRegisterID fpRegT0 = ARM64Registers::q0;
+        static const FPRegisterID fpRegT1 = ARM64Registers::q1;
+        static const FPRegisterID fpRegT2 = ARM64Registers::q2;
+        static const FPRegisterID fpRegT3 = ARM64Registers::q3;
+
+        static const RegisterID nonArgGPR1 = ARM64Registers::x9;
 #elif CPU(MIPS)
         static const RegisterID returnValueRegister = MIPSRegisters::v0;
         static const RegisterID returnValue2Register = MIPSRegisters::v1;

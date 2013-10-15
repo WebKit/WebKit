@@ -45,6 +45,15 @@ inline bool isARMv7s()
 #endif
 }
 
+inline bool isARM64()
+{
+#if CPU(ARM64)
+    return true;
+#else
+    return false;
+#endif
+}
+
 inline bool isX86()
 {
 #if CPU(X86_64) || CPU(X86)
@@ -291,7 +300,7 @@ public:
         {
         }
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
         explicit TrustedImm64(TrustedImmPtr ptr)
             : m_value(ptr.asIntptr())
         {
@@ -307,7 +316,7 @@ public:
             : TrustedImm64(value)
         {
         }
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
         explicit Imm64(TrustedImmPtr ptr)
             : TrustedImm64(ptr)
         {
@@ -346,8 +355,9 @@ public:
         Label(AbstractMacroAssembler<AssemblerType>* masm)
             : m_label(masm->m_assembler.label())
         {
+            masm->invalidateAllTempRegisters();
         }
-        
+
         bool isSet() const { return m_label.isSet(); }
     private:
         AssemblerLabel m_label;
@@ -400,7 +410,7 @@ public:
             : m_label(masm->m_assembler.label())
         {
         }
-        
+
         bool isSet() const { return m_label.isSet(); }
         
     private:
@@ -448,7 +458,7 @@ public:
             : m_label(masm->m_assembler.label())
         {
         }
-    
+
         DataLabelCompact(AssemblerLabel label)
             : m_label(label)
         {
@@ -527,6 +537,33 @@ public:
             , m_condition(condition)
         {
         }
+#elif CPU(ARM64)
+        Jump(AssemblerLabel jmp, ARM64Assembler::JumpType type = ARM64Assembler::JumpNoCondition, ARM64Assembler::Condition condition = ARM64Assembler::ConditionInvalid)
+            : m_label(jmp)
+            , m_type(type)
+            , m_condition(condition)
+        {
+        }
+
+        Jump(AssemblerLabel jmp, ARM64Assembler::JumpType type, ARM64Assembler::Condition condition, bool is64Bit, ARM64Assembler::RegisterID compareRegister)
+            : m_label(jmp)
+            , m_type(type)
+            , m_condition(condition)
+            , m_is64Bit(is64Bit)
+            , m_compareRegister(compareRegister)
+        {
+            ASSERT((type == ARM64Assembler::JumpCompareAndBranch) || (type == ARM64Assembler::JumpCompareAndBranchFixedSize));
+        }
+
+        Jump(AssemblerLabel jmp, ARM64Assembler::JumpType type, ARM64Assembler::Condition condition, unsigned bitNumber, ARM64Assembler::RegisterID compareRegister)
+            : m_label(jmp)
+            , m_type(type)
+            , m_condition(condition)
+            , m_bitNumber(bitNumber)
+            , m_compareRegister(compareRegister)
+        {
+            ASSERT((type == ARM64Assembler::JumpTestBit) || (type == ARM64Assembler::JumpTestBitFixedSize));
+        }
 #elif CPU(SH4)
         Jump(AssemblerLabel jmp, SH4Assembler::JumpType type = SH4Assembler::JumpFar)
             : m_label(jmp)
@@ -549,12 +586,21 @@ public:
 
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
+            masm->invalidateAllTempRegisters();
+
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
             masm->checkRegisterAllocationAgainstBranchRange(m_label.m_offset, masm->debugOffset());
 #endif
 
 #if CPU(ARM_THUMB2)
             masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition);
+#elif CPU(ARM64)
+            if ((m_type == ARM64Assembler::JumpCompareAndBranch) || (m_type == ARM64Assembler::JumpCompareAndBranchFixedSize))
+                masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition, m_is64Bit, m_compareRegister);
+            else if ((m_type == ARM64Assembler::JumpTestBit) || (m_type == ARM64Assembler::JumpTestBitFixedSize))
+                masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition, m_bitNumber, m_compareRegister);
+            else
+                masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition);
 #elif CPU(SH4)
             masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type);
 #else
@@ -570,6 +616,13 @@ public:
 
 #if CPU(ARM_THUMB2)
             masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition);
+#elif CPU(ARM64)
+            if ((m_type == ARM64Assembler::JumpCompareAndBranch) || (m_type == ARM64Assembler::JumpCompareAndBranchFixedSize))
+                masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition, m_is64Bit, m_compareRegister);
+            else if ((m_type == ARM64Assembler::JumpTestBit) || (m_type == ARM64Assembler::JumpTestBitFixedSize))
+                masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition, m_bitNumber, m_compareRegister);
+            else
+                masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition);
 #else
             masm->m_assembler.linkJump(m_label, label.m_label);
 #endif
@@ -582,6 +635,12 @@ public:
 #if CPU(ARM_THUMB2)
         ARMv7Assembler::JumpType m_type;
         ARMv7Assembler::Condition m_condition;
+#elif CPU(ARM64)
+        ARM64Assembler::JumpType m_type;
+        ARM64Assembler::Condition m_condition;
+        bool m_is64Bit;
+        unsigned m_bitNumber;
+        ARM64Assembler::RegisterID m_compareRegister;
 #endif
 #if CPU(SH4)
         SH4Assembler::JumpType m_type;
@@ -779,6 +838,70 @@ protected:
     static bool scratchRegisterForBlinding() { return false; }
     static bool shouldBlindForSpecificArch(uint32_t) { return true; }
     static bool shouldBlindForSpecificArch(uint64_t) { return true; }
+
+    class CachedTempRegister {
+        friend class DataLabelPtr;
+        friend class DataLabel32;
+        friend class DataLabelCompact;
+        friend class Jump;
+        friend class Label;
+
+    public:
+        CachedTempRegister(AbstractMacroAssembler<AssemblerType>* masm, RegisterID registerID)
+            : m_masm(masm)
+            , m_registerID(registerID)
+            , m_value(0)
+            , m_validBit(1 << static_cast<unsigned>(registerID))
+        {
+            ASSERT(static_cast<unsigned>(registerID) < (sizeof(unsigned) * 8));
+        }
+
+        ALWAYS_INLINE RegisterID registerIDInvalidate() { invalidate(); return m_registerID; }
+
+        ALWAYS_INLINE RegisterID registerIDNoInvalidate() { return m_registerID; }
+
+        bool value(intptr_t& value)
+        {
+            value = m_value;
+            return m_masm->isTempRegisterValid(m_validBit);
+        }
+
+        void setValue(intptr_t value)
+        {
+            m_value = value;
+            m_masm->setTempRegisterValid(m_validBit);
+        }
+
+        ALWAYS_INLINE void invalidate() { m_masm->clearTempRegisterValid(m_validBit); }
+
+    private:
+        AbstractMacroAssembler<AssemblerType>* m_masm;
+        RegisterID m_registerID;
+        intptr_t m_value;
+        unsigned m_validBit;
+    };
+
+    ALWAYS_INLINE void invalidateAllTempRegisters()
+    {
+        m_tempRegistersValidBits = 0;
+    }
+
+    ALWAYS_INLINE bool isTempRegisterValid(unsigned registerMask)
+    {
+        return (m_tempRegistersValidBits & registerMask);
+    }
+
+    ALWAYS_INLINE void clearTempRegisterValid(unsigned registerMask)
+    {
+        m_tempRegistersValidBits &=  ~registerMask;
+    }
+
+    ALWAYS_INLINE void setTempRegisterValid(unsigned registerMask)
+    {
+        m_tempRegistersValidBits |= registerMask;
+    }
+
+    unsigned m_tempRegistersValidBits;
 
     friend class LinkBuffer;
     friend class RepatchBuffer;

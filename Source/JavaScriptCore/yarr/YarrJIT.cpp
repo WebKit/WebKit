@@ -53,6 +53,17 @@ class YarrGenerator : private MacroAssembler {
 
     static const RegisterID returnRegister = ARMRegisters::r0;
     static const RegisterID returnRegister2 = ARMRegisters::r1;
+#elif CPU(ARM64)
+    static const RegisterID input = ARM64Registers::x0;
+    static const RegisterID index = ARM64Registers::x1;
+    static const RegisterID length = ARM64Registers::x2;
+    static const RegisterID output = ARM64Registers::x3;
+
+    static const RegisterID regT0 = ARM64Registers::x4;
+    static const RegisterID regT1 = ARM64Registers::x5;
+
+    static const RegisterID returnRegister = ARM64Registers::x0;
+    static const RegisterID returnRegister2 = ARM64Registers::x1;
 #elif CPU(MIPS)
     static const RegisterID input = MIPSRegisters::a0;
     static const RegisterID index = MIPSRegisters::a1;
@@ -322,17 +333,27 @@ class YarrGenerator : private MacroAssembler {
         jump(Address(stackPointerRegister, frameLocation * sizeof(void*)));
     }
 
+    unsigned alignCallFrameSizeInBytes(unsigned callFrameSize)
+    {
+        callFrameSize *= sizeof(void*);
+        if (callFrameSize / sizeof(void*) != m_pattern.m_body->m_callFrameSize)
+            CRASH();
+        callFrameSize = (callFrameSize + 0x3f) & ~0x3f;
+        if (!callFrameSize)
+            CRASH();
+        return callFrameSize;
+    }
     void initCallFrame()
     {
         unsigned callFrameSize = m_pattern.m_body->m_callFrameSize;
         if (callFrameSize)
-            subPtr(Imm32(callFrameSize * sizeof(void*)), stackPointerRegister);
+            subPtr(Imm32(alignCallFrameSizeInBytes(callFrameSize)), stackPointerRegister);
     }
     void removeCallFrame()
     {
         unsigned callFrameSize = m_pattern.m_body->m_callFrameSize;
         if (callFrameSize)
-            addPtr(Imm32(callFrameSize * sizeof(void*)), stackPointerRegister);
+            addPtr(Imm32(alignCallFrameSizeInBytes(callFrameSize)), stackPointerRegister);
     }
 
     // Used to record subpatters, should only be called if compileMode is IncludeSubpatterns.
@@ -2549,6 +2570,10 @@ class YarrGenerator : private MacroAssembler {
         if (compileMode == IncludeSubpatterns)
             loadPtr(Address(X86Registers::ebp, 2 * sizeof(void*)), output);
     #endif
+#elif CPU(ARM64)
+        // The ABI doesn't guarantee the upper bits are zero on unsigned arguments, so clear them ourselves.
+        zeroExtend32ToPtr(index, index);
+        zeroExtend32ToPtr(length, length);
 #elif CPU(ARM)
         push(ARMRegisters::r4);
         push(ARMRegisters::r5);

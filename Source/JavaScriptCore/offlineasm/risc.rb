@@ -371,7 +371,7 @@ def riscLowerMalformedImmediates(list, validImmediates)
             case node.opcode
             when "move"
                 newList << node
-            when "addi", "addp", "addis", "subi", "subp", "subis"
+            when "addi", "addp", "addq", "addis", "subi", "subp", "subq", "subis"
                 if node.operands[0].is_a? Immediate and
                         (not validImmediates.include? node.operands[0].value) and
                         validImmediates.include? -node.operands[0].value
@@ -387,7 +387,7 @@ def riscLowerMalformedImmediates(list, validImmediates)
                 else
                     newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)
                 end
-            when "muli", "mulp"
+            when "muli", "mulp", "mulq"
                 if node.operands[0].is_a? Immediate
                     tmp = Tmp.new(codeOrigin, :gpr)
                     newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp], annotation)
@@ -465,6 +465,12 @@ def riscLowerMisplacedAddresses(list)
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            riscAsRegisters(newList, postInstructions, node.operands, "p"),
+                                           annotation)
+            when "addq", "andq", "lshiftq", "mulq", "negq", "orq", "rshiftq", "urshiftq",
+                "subq", "xorq", /^bq/, /^btq/, /^cq/
+                newList << Instruction.new(node.codeOrigin,
+                                           node.opcode,
+                                           riscAsRegisters(newList, postInstructions, node.operands, "q"),
                                            annotation)
             when "bbeq", "bbneq", "bba", "bbaeq", "bbb", "bbbeq", "btbz", "btbnz", "tbz", "tbnz",
                 "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq"
@@ -552,3 +558,173 @@ def riscLowerRegisterReuse(list)
     newList
 end
 
+#
+# Lowering of the not instruction. The following:
+#
+# noti t0
+#
+# becomes:
+#
+# xori -1, t0
+#
+
+def riscLowerNot(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "noti", "notp"
+                raise "Wrong nubmer of operands at #{node.codeOriginString}" unless node.operands.size == 1
+                suffix = node.opcode[-1..-1]
+                newList << Instruction.new(node.codeOrigin, "xor" + suffix,
+                                           [Immediate.new(node.codeOrigin, -1), node.operands[0]])
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    return newList
+end
+
+#
+# Lowing of complex branch ops on 64-bit. For example:
+#
+# bmulio foo, bar, baz
+#
+# becomes:
+#
+# smulli foo, bar, bar
+# rshiftp bar, 32, tmp1
+# rshifti bar, 31, tmp2
+# zxi2p bar, bar 
+# bineq tmp1, tmp2, baz
+#
+
+def riscLowerHardBranchOps64(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction and node.opcode == "bmulio"
+            tmp1 = Tmp.new(node.codeOrigin, :gpr)
+            tmp2 = Tmp.new(node.codeOrigin, :gpr)
+            newList << Instruction.new(node.codeOrigin, "smulli", [node.operands[0], node.operands[1], node.operands[1]])
+            newList << Instruction.new(node.codeOrigin, "rshiftp", [node.operands[1], Immediate.new(node.codeOrigin, 32), tmp1])
+            newList << Instruction.new(node.codeOrigin, "rshifti", [node.operands[1], Immediate.new(node.codeOrigin, 31), tmp2])
+            newList << Instruction.new(node.codeOrigin, "zxi2p", [node.operands[1], node.operands[1]])
+            newList << Instruction.new(node.codeOrigin, "bineq", [tmp1, tmp2, node.operands[2]])
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+#
+# Lowering of test instructions. For example:
+#
+# btiz t0, t1, .foo
+#
+# becomes:
+#
+# andi t0, t1, tmp
+# bieq tmp, 0, .foo
+#
+# and another example:
+#
+# tiz t0, t1, t2
+#
+# becomes:
+#
+# andi t0, t1, tmp
+# cieq tmp, 0, t2
+#
+
+def riscLowerTest(list)
+    def emit(newList, andOpcode, branchOpcode, node)
+        if node.operands.size == 2
+            newList << Instruction.new(node.codeOrigin, branchOpcode, [node.operands[0], Immediate.new(node.codeOrigin, 0), node.operands[1]])
+            return
+        end
+
+        raise "Incorrect number of operands at #{codeOriginString}" unless node.operands.size == 3
+
+        if node.operands[0].immediate? and node.operands[0].value == -1
+            newList << Instruction.new(node.codeOrigin, branchOpcode, [node.operands[1], Immediate.new(node.codeOrigin, 0), node.operands[2]])
+            return
+        end
+
+        if node.operands[1].immediate? and node.operands[1].value == -1
+            newList << Instruction.new(node.codeOrigin, branchOpcode, [node.operands[0], Immediate.new(node.codeOrigin, 0), node.operands[2]])
+            return
+        end
+        
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, andOpcode, [node.operands[0], node.operands[1], tmp])
+        newList << Instruction.new(node.codeOrigin, branchOpcode, [tmp, Immediate.new(node.codeOrigin, 0), node.operands[2]])
+    end
+
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "btis"
+                emit(newList, "andi", "bilt", node)
+            when "btiz"
+                emit(newList, "andi", "bieq", node)
+            when "btinz"
+                emit(newList, "andi", "bineq", node)
+            when "btps"
+                emit(newList, "andp", "bplt", node)
+            when "btpz"
+                emit(newList, "andp", "bpeq", node)
+            when "btpnz"
+                emit(newList, "andp", "bpneq", node)
+            when "btqs"
+                emit(newList, "andq", "bqlt", node)
+            when "btqz"
+                emit(newList, "andq", "bqeq", node)
+            when "btqnz"
+                emit(newList, "andq", "bqneq", node)
+            when "btbs"
+                emit(newList, "andi", "bblt", node)
+            when "btbz"
+                emit(newList, "andi", "bbeq", node)
+            when "btbnz"
+                emit(newList, "andi", "bbneq", node)
+            when "tis"
+                emit(newList, "andi", "cilt", node)
+            when "tiz"
+                emit(newList, "andi", "cieq", node)
+            when "tinz"
+                emit(newList, "andi", "cineq", node)
+            when "tps"
+                emit(newList, "andp", "cplt", node)
+            when "tpz"
+                emit(newList, "andp", "cpeq", node)
+            when "tpnz"
+                emit(newList, "andp", "cpneq", node)
+            when "tqs"
+                emit(newList, "andq", "cqlt", node)
+            when "tqz"
+                emit(newList, "andq", "cqeq", node)
+            when "tqnz"
+                emit(newList, "andq", "cqneq", node)
+            when "tbs"
+                emit(newList, "andi", "cblt", node)
+            when "tbz"
+                emit(newList, "andi", "cbeq", node)
+            when "tbnz"
+                emit(newList, "andi", "cbneq", node)
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    return newList
+end

@@ -48,7 +48,7 @@ class ExecutablePool;
 namespace Yarr {
 
 class YarrCodeBlock {
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
     typedef MatchResult (*YarrJITCode8)(const LChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef MatchResult (*YarrJITCode16)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
     typedef MatchResult (*YarrJITCodeMatchOnly8)(const LChar* input, unsigned start, unsigned length) YARR_CALL;

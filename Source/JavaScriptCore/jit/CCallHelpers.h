@@ -558,7 +558,7 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
             swap(destB, destC);
     }
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgsFPR(FPRReg srcA, FPRReg srcB)
     {
@@ -622,7 +622,7 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
 #define POKE_ARGUMENT_OFFSET 0
 #endif
 
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM64)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
         moveDouble(arg1, FPRInfo::argumentFPR0);
@@ -870,7 +870,7 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
         move(arg2, GPRInfo::argumentGPR2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
-#if CPU(X86_64)    
+#if CPU(X86_64) || CPU(ARM64)
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, TrustedImm64 arg2)
     {
         move(arg1, GPRInfo::argumentGPR1);

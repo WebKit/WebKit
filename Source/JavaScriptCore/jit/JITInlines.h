@@ -196,7 +196,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 #if CPU(X86)
     // Within a trampoline the return address will be on the stack at this point.
     addPtr(TrustedImm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
-#elif CPU(ARM)
+#elif CPU(ARM) || CPU(ARM64)
     move(stackPointerRegister, firstArgumentRegister);
 #elif CPU(SH4)
     move(stackPointerRegister, firstArgumentRegister);

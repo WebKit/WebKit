@@ -404,6 +404,17 @@ end
 class Sequence
     def validate
         validateChildren
+        
+        # Further verify that this list contains only instructions, labels, and skips.
+        @list.each {
+            | node |
+            unless node.is_a? Instruction or
+                    node.is_a? Label or
+                    node.is_a? LocalLabel or
+                    node.is_a? Skip
+                raise "Unexpected #{node.inspect} at #{node.codeOrigin}" 
+            end
+        }
     end
 end
 

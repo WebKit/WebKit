@@ -937,6 +937,10 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
 
 static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc, JSValue callee, CodeSpecializationKind kind)
 {
+#if LLINT_SLOW_PATH_TRACING
+    dataLog("Performing host call.\n");
+#endif
+    
     ExecState* exec = execCallee->callerFrame();
     VM& vm = exec->vm();
 

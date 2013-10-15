@@ -136,14 +136,14 @@ static void replaceWithJump(RepatchBuffer& repatchBuffer, StructureStubInfo& stu
 static void emitRestoreScratch(MacroAssembler& stubJit, bool needToRestoreScratch, GPRReg scratchGPR, MacroAssembler::Jump& success, MacroAssembler::Jump& fail, MacroAssembler::JumpList failureCases)
 {
     if (needToRestoreScratch) {
-        stubJit.pop(scratchGPR);
+        stubJit.popToRestore(scratchGPR);
         
         success = stubJit.jump();
         
         // link failure cases here, so we can pop scratchGPR, and then jump back.
         failureCases.link(&stubJit);
         
-        stubJit.pop(scratchGPR);
+        stubJit.popToRestore(scratchGPR);
         
         fail = stubJit.jump();
         return;
@@ -190,7 +190,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
 #else
         scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
 #endif
-        stubJit.push(scratchGPR);
+        stubJit.pushToSave(scratchGPR);
         needToRestoreScratch = true;
     }
     
@@ -266,7 +266,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 #else
             scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
 #endif
-            stubJit.push(scratchGPR);
+            stubJit.pushToSave(scratchGPR);
             needToRestoreScratch = true;
         }
         
@@ -663,7 +663,7 @@ static void emitPutReplaceStub(
         scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR, valueTagGPR);
 #endif
         needToRestoreScratch = true;
-        stubJit.push(scratchGPR);
+        stubJit.pushToSave(scratchGPR);
     }
 
     MacroAssembler::Jump badStructure = stubJit.branchPtr(
@@ -677,9 +677,9 @@ static void emitPutReplaceStub(
 #else
     scratchGPR2 = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR, valueTagGPR, scratchGPR);
 #endif
-    stubJit.push(scratchGPR2);
+    stubJit.pushToSave(scratchGPR2);
     AssemblyHelpers::writeBarrier(stubJit, baseGPR, scratchGPR, scratchGPR2, WriteBarrierForPropertyAccess);
-    stubJit.pop(scratchGPR2);
+    stubJit.popToRestore(scratchGPR2);
 #endif
     
 #if USE(JSVALUE64)
@@ -704,11 +704,11 @@ static void emitPutReplaceStub(
     MacroAssembler::Jump failure;
     
     if (needToRestoreScratch) {
-        stubJit.pop(scratchGPR);
+        stubJit.popToRestore(scratchGPR);
         success = stubJit.jump();
         
         badStructure.link(&stubJit);
-        stubJit.pop(scratchGPR);
+        stubJit.popToRestore(scratchGPR);
         failure = stubJit.jump();
     } else {
         success = stubJit.jump();
@@ -989,6 +989,9 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             return true;
         }
 
+        if (!MacroAssembler::isPtrAlignedAddressOffset(offsetRelativeToPatchedStorage(slot.cachedOffset())))
+            return false;
+
         repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriateListBuildingPutByIdFunction(slot, putKind), false);
         stubInfo.initPutByIdReplace(*vm, codeBlock->ownerExecutable(), structure);
         return true;
@@ -1157,7 +1160,7 @@ static bool tryRepatchIn(
         bool needToRestoreScratch;
         if (scratchGPR == InvalidGPRReg) {
             scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
-            stubJit.push(scratchGPR);
+            stubJit.pushToSave(scratchGPR);
             needToRestoreScratch = true;
         } else
             needToRestoreScratch = false;
