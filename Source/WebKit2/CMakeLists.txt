@@ -34,11 +34,12 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Battery"
     "${WEBKIT2_DIR}/WebProcess/Cookies"
+    "${WEBKIT2_DIR}/WebProcess/Databases"
+    "${WEBKIT2_DIR}/WebProcess/Databases/IndexedDB"
     "${WEBKIT2_DIR}/WebProcess/FullScreen"
     "${WEBKIT2_DIR}/WebProcess/Geolocation"
     "${WEBKIT2_DIR}/WebProcess/NetworkInfo"
     "${WEBKIT2_DIR}/WebProcess/IconDatabase"
-    "${WEBKIT2_DIR}/WebProcess/IndexedDB"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c"
@@ -409,14 +410,14 @@ set(WebKit2_SOURCES
 
     WebProcess/Cookies/WebCookieManager.cpp
 
+    WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp
+
     WebProcess/FullScreen/WebFullScreenManager.cpp
 
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
     WebProcess/Geolocation/WebGeolocationManager.cpp
 
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp
-
-    WebProcess/IndexedDB/WebIDBFactoryBackend.cpp
 
     WebProcess/InjectedBundle/InjectedBundle.cpp
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp

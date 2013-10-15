@@ -1848,8 +1848,8 @@
 		511B24A9132E097200065A0C /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
 		511F8A77138B460900A95F44 /* SecItemShimLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecItemShimLibrary.h; path = ../../WebProcess/mac/SecItemShimLibrary.h; sourceTree = "<group>"; };
 		511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SecItemShimLibrary.mm; path = ../../WebProcess/mac/SecItemShimLibrary.mm; sourceTree = "<group>"; };
-		511F8EDB1808817D0047DA96 /* WebIDBFactoryBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebIDBFactoryBackend.cpp; path = IndexedDB/WebIDBFactoryBackend.cpp; sourceTree = "<group>"; };
-		511F8EDC1808817D0047DA96 /* WebIDBFactoryBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebIDBFactoryBackend.h; path = IndexedDB/WebIDBFactoryBackend.h; sourceTree = "<group>"; };
+		511F8EDB1808817D0047DA96 /* WebIDBFactoryBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebIDBFactoryBackend.cpp; path = Databases/IndexedDB/WebIDBFactoryBackend.cpp; sourceTree = "<group>"; };
+		511F8EDC1808817D0047DA96 /* WebIDBFactoryBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebIDBFactoryBackend.h; path = Databases/IndexedDB/WebIDBFactoryBackend.h; sourceTree = "<group>"; };
 		5121745E164C20E30037A5C1 /* ShareableResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableResource.cpp; sourceTree = "<group>"; };
 		5121745F164C20E30037A5C1 /* ShareableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableResource.h; sourceTree = "<group>"; };
 		51217462164C21370037A5C1 /* WebResourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceBuffer.cpp; sourceTree = "<group>"; };
@@ -3616,6 +3616,14 @@
 			name = cg;
 			sourceTree = "<group>";
 		};
+		512A9754180DF9270039A149 /* Databases */ = {
+			isa = PBXGroup;
+			children = (
+				511F8EDA180881660047DA96 /* IndexedDB */,
+			);
+			name = Databases;
+			sourceTree = "<group>";
+		};
 		512E352A130B559900ABD19A /* ApplicationCache */ = {
 			isa = PBXGroup;
 			children = (
@@ -3878,12 +3886,12 @@
 			children = (
 				512E352A130B559900ABD19A /* ApplicationCache */,
 				3309344B1315B93A0097A7BC /* Cookies */,
+				512A9754180DF9270039A149 /* Databases */,
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
 				E170876D16D6CA7200F99226 /* FileAPI */,
 				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				51FBB9C1132E079200F327B4 /* IconDatabase */,
-				511F8EDA180881660047DA96 /* IndexedDB */,
 				BC204EDF11C83E72008F3375 /* InjectedBundle */,
 				1A6FA01C11E1526300DB1371 /* mac */,
 				33D3A3BD1339609800709BE4 /* MediaCache */,
