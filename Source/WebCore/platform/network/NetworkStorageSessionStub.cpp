@@ -45,7 +45,7 @@ NetworkingContext* NetworkStorageSession::context() const
     return m_context.get();
 }
 
-PassOwnPtr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
+std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

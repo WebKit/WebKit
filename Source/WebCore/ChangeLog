@@ -1,3 +1,13 @@
+2013-10-15  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Build fails.
+        https://bugs.webkit.org/show_bug.cgi?id=122830
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/NetworkStorageSessionStub.cpp:
+        (WebCore::NetworkStorageSession::createPrivateBrowsingSession): Update to new return type.
+
 2013-10-15  Andreas Kling  <akling@apple.com>
 
         FileIconLoader should not be ref-counted.
