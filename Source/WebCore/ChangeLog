@@ -1,3 +1,21 @@
+2013-10-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Move RenderBlock::layoutShapeInsideInfo into RenderBlock.cpp
+        http://bugs.webkit.org/show_bug.cgi?id=122843
+
+        Reviewed by Oliver Hunt.
+
+        Historically, layoutShapeInsideInfo was a static function in RenderBlockLineLayout, then it has changed to be a member of RenderBlock,
+        but at that time it hasn't been moved to RenderBlock.cpp. This patch moves it into RenderBlock.cpp next to the Shapes functions. I removed
+        an unnecessary CSS_SHAPES #ifdef as well from RenderBlock.cpp.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markShapeInsideDescendantsForLayout):
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        * rendering/RenderBlockLineLayout.cpp:
+
 2013-10-15  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Build fails.
