@@ -210,8 +210,9 @@ bool RenderText::isTextFragment() const
 
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
-    const FontDescription& fontDescription = style()->font().fontDescription();
-    if (style()->font().useBackslashAsYenSymbol())
+    const RenderStyle& style = *this->style();
+    const FontDescription& fontDescription = style.font().fontDescription();
+    if (style.font().useBackslashAsYenSymbol())
         return true;
     if (fontDescription.isSpecifiedFont())
         return false;
@@ -329,9 +330,9 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, Lay
     return box->root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
-    if (style()->hasTextCombine() && isCombineText()) {
+    if (style.hasTextCombine() && isCombineText()) {
         const RenderCombineText& combineText = toRenderCombineText(*this);
         if (combineText.isCombined())
             return combineText.combinedTextWidth(f);
@@ -350,11 +351,11 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
                     w += monospaceCharacterWidth;
                     isSpace = true;
                 } else if (c == '\t') {
-                    if (style()->collapseWhiteSpace()) {
+                    if (style.collapseWhiteSpace()) {
                         w += monospaceCharacterWidth;
                         isSpace = true;
                     } else {
-                        w += f.tabWidth(style()->tabSize(), xPos + w);
+                        w += f.tabWidth(style.tabSize(), xPos + w);
                         isSpace = false;
                     }
                 } else
@@ -369,12 +370,12 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
         return w;
     }
 
-    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, start, len, *style());
+    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, start, len, style);
     run.setCharactersLength(textLength() - start);
     ASSERT(run.charactersLength() >= run.length());
 
     run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
-    run.setTabSize(!style()->collapseWhiteSpace(), style()->tabSize());
+    run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     run.setXPos(xPos);
     return f.width(run, fallbackFonts, glyphOverflow);
 }
@@ -386,7 +387,8 @@ void RenderText::trimmedPrefWidths(float leadWidth,
                                    float& beginMaxW, float& endMaxW,
                                    float& minW, float& maxW, bool& stripFrontSpaces)
 {
-    bool collapseWhiteSpace = style()->collapseWhiteSpace();
+    const RenderStyle& style = *this->style();
+    bool collapseWhiteSpace = style.collapseWhiteSpace();
     if (!collapseWhiteSpace)
         stripFrontSpaces = false;
 
@@ -420,11 +422,11 @@ void RenderText::trimmedPrefWidths(float leadWidth,
 
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
-    if (text[0] == ' ' || (text[0] == '\n' && !style()->preserveNewline()) || text[0] == '\t') {
-        const Font& font = style()->font(); // FIXME: This ignores first-line.
+    if (text[0] == ' ' || (text[0] == '\n' && !style.preserveNewline()) || text[0] == '\t') {
+        const Font& font = style.font(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
             const UChar space = ' ';
-            float spaceWidth = font.width(RenderBlock::constructTextRun(this, font, &space, 1, *style()));
+            float spaceWidth = font.width(RenderBlock::constructTextRun(this, font, &space, 1, style));
             maxW -= spaceWidth;
         } else
             maxW += font.wordSpacing();
@@ -432,12 +434,12 @@ void RenderText::trimmedPrefWidths(float leadWidth,
 
     stripFrontSpaces = collapseWhiteSpace && m_hasEndWS;
 
-    if (!style()->autoWrap() || minW > maxW)
+    if (!style.autoWrap() || minW > maxW)
         minW = maxW;
 
     // Compute our max widths by scanning the string for newlines.
     if (hasBreak) {
-        const Font& f = style()->font(); // FIXME: This ignores first-line.
+        const Font& f = style.font(); // FIXME: This ignores first-line.
         bool firstLine = true;
         beginMaxW = maxW;
         endMaxW = maxW;
@@ -447,7 +449,7 @@ void RenderText::trimmedPrefWidths(float leadWidth,
                 linelen++;
 
             if (linelen) {
-                endMaxW = widthFromCache(f, i, linelen, leadWidth + endMaxW, 0, 0);
+                endMaxW = widthFromCache(f, i, linelen, leadWidth + endMaxW, 0, 0, style);
                 if (firstLine) {
                     firstLine = false;
                     leadWidth = 0;
@@ -640,7 +642,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             lastWordBoundary++;
             continue;
         } else if (c == softHyphen && style.hyphens() != HyphensNone) {
-            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+            currMaxWidth += widthFromCache(f, lastWordBoundary, i - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
             if (firstGlyphLeftOverflow < 0)
                 firstGlyphLeftOverflow = glyphOverflow.left;
             lastWordBoundary = i + 1;
@@ -668,9 +670,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
             bool isSpace = (j < len) && isSpaceAccordingToStyle(c, style);
             float w;
             if (wordTrailingSpaceWidth && isSpace)
-                w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow) - wordTrailingSpaceWidth;
+                w = widthFromCache(f, i, wordLen + 1, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style) - wordTrailingSpaceWidth;
             else {
-                w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+                w = widthFromCache(f, i, wordLen, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 if (c == softHyphen && style.hyphens() != HyphensNone)
                     currMinWidth += hyphenWidth(this, f);
             }
@@ -682,9 +684,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 if (suffixStart) {
                     float suffixWidth;
                     if (wordTrailingSpaceWidth && isSpace)
-                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0) - wordTrailingSpaceWidth;
+                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart + 1, leadWidth + currMaxWidth, 0, 0, style) - wordTrailingSpaceWidth;
                     else
-                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0);
+                        suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
 
                     maxFragmentWidth = max(maxFragmentWidth, suffixWidth);
 
@@ -701,7 +703,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 if (lastWordBoundary == i)
                     currMaxWidth += w;
                 else
-                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow);
+                    currMaxWidth += widthFromCache(f, lastWordBoundary, j - lastWordBoundary, leadWidth + currMaxWidth, &fallbackFonts, &glyphOverflow, style);
                 lastWordBoundary = j;
             }
 
@@ -790,16 +792,17 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
 bool RenderText::isAllCollapsibleWhitespace() const
 {
+    const RenderStyle& style = *this->style();
     unsigned length = textLength();
     if (is8Bit()) {
         for (unsigned i = 0; i < length; ++i) {
-            if (!style()->isCollapsibleWhiteSpace(characters8()[i]))
+            if (!style.isCollapsibleWhiteSpace(characters8()[i]))
                 return false;
         }
         return true;
     }
     for (unsigned i = 0; i < length; ++i) {
-        if (!style()->isCollapsibleWhiteSpace(characters16()[i]))
+        if (!style.isCollapsibleWhiteSpace(characters16()[i]))
             return false;
     }
     return true;
@@ -1040,9 +1043,10 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
     if (!textLength())
         return 0;
 
+    const RenderStyle& style = *this->style();
     float w;
-    if (&f == &style()->font()) {
-        if (!style()->preserveNewline() && !from && len == textLength() && (!glyphOverflow || !glyphOverflow->computeBounds)) {
+    if (&f == &style.font()) {
+        if (!style.preserveNewline() && !from && len == textLength() && (!glyphOverflow || !glyphOverflow->computeBounds)) {
             if (fallbackFonts) {
                 ASSERT(glyphOverflow);
                 if (preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts) {
@@ -1054,14 +1058,14 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
             } else
                 w = maxLogicalWidth();
         } else
-            w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow);
+            w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow, style);
     } else {
-        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, from, len, *style());
+        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, this, from, len, style);
         run.setCharactersLength(textLength() - from);
         ASSERT(run.charactersLength() >= run.length());
 
         run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
-        run.setTabSize(!style()->collapseWhiteSpace(), style()->tabSize());
+        run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         run.setXPos(xPos);
         w = f.width(run, fallbackFonts, glyphOverflow);
     }
