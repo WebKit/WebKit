@@ -98,20 +98,20 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download
 
 // Currently, only Mac knows how to respond to authentication challenges with certificate info.
 #if !USE(SECURITY_FRAMEWORK)
-bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&)
+bool AuthenticationManager::tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&)
 {
     return false;
 }
 #endif
 
-void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const PlatformCertificateInfo& certificateInfo)
+void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const CertificateInfo& certificateInfo)
 {
     ASSERT(isMainThread());
 
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     
-    if (tryUsePlatformCertificateInfoForChallenge(challenge, certificateInfo))
+    if (tryUseCertificateInfoForChallenge(challenge, certificateInfo))
         return;
     
     AuthenticationClient* coreClient = challenge.authenticationClient();

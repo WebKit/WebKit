@@ -8538,6 +8538,9 @@
     <ClInclude Include="..\platform\network\BlobStorageData.h">
       <Filter>platform\network</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\network\CertificateInfo.h">
+      <Filter>platform\network</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\network\CookieStorage.h">
       <Filter>platform\network</Filter>
     </ClInclude>

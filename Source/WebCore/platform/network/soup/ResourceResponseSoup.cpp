@@ -52,7 +52,7 @@ SoupMessage* ResourceResponse::toSoupMessage() const
 
     soup_message_set_flags(soupMessage, m_soupFlags);
 
-    g_object_set(G_OBJECT(soupMessage), "tls-certificate", m_certificate.get(), "tls-errors", m_tlsErrors, NULL);
+    g_object_set(G_OBJECT(soupMessage), "tls-certificate", m_certificateInfo.certificate(), "tls-errors", m_certificateInfo.tlsErrors(), NULL);
 
     // Body data is not in the message.
     return soupMessage;
@@ -68,8 +68,10 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     m_soupFlags = soup_message_get_flags(soupMessage);
 
     GTlsCertificate* certificate = 0;
-    soup_message_get_https_status(soupMessage, &certificate, &m_tlsErrors);
-    m_certificate = certificate;
+    GTlsCertificateFlags tlsErrors;
+    soup_message_get_https_status(soupMessage, &certificate, &tlsErrors);
+    m_certificateInfo.setTLSErrors(tlsErrors);
+    m_certificateInfo.setCertificate(certificate);
 
     updateFromSoupMessageHeaders(soupMessage->response_headers);
 }

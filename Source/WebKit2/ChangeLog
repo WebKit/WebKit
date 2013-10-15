@@ -1,3 +1,85 @@
+2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object
+        https://bugs.webkit.org/show_bug.cgi?id=118520
+
+        Reviewed by Anders Carlsson.
+
+        Added PlatformCertificateInfo getter and setter to ResourceErrorBase
+        and ResourceResponseBase so that getting and setting certificates
+        becomes cross platform.
+
+        Changed the existing platform specific certificate getters and setters
+        of ResourceError and ResourceResponse to use the
+        PlatformCertificateInfo member.
+
+        Original patch by Kwang Yul Seo  <skyul@company100.net>
+
+        The following things were fixed by Csaba Osztrogonác:
+        - trivial conflicts resolved in WebCore.exp.in, project.pbxproj, NetworkResourceLoader.cpp,
+          WebPageProxy.h, WebFrameLoaderClient.cpp and PlatformEfl.cmake.
+        - trivial fix in the new AsynchronousNetworkLoaderClient.cpp
+        - style fixed (NULL -> 0 and smaller indentation in WebCoreArgumentCodersSoup.cpp)
+        - obsolete change removed from NetworkResourceLoader.cpp
+        - unneeded typo removed from ResourceHandleSoup.cpp
+        - Fixed the if guard of including RetainPtr.h in PlatformCertificateInfo.h to make Windows build happy.
+        - add PlatformCertificateInfoCFNet.cpp with empty constructor and destructor to make Windows build happy.
+        - resolve conflict in Source/WebCore/WebCore.xcodeproj/project.pbxproj after r156488
+        - rename KURL to URL after r156550.
+        - remove obsolete Qt changes
+        - added back initializers for m_soupFlags
+        - included gio/gio.h instead of libsoup/soup.h in PlatformCertificateInfo.h
+        - removed unused class forward declarations and includes
+
+        * GNUmakefile.list.am:
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoCreateWithCertficateChain):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create):
+        (WebKit::WebCertificateInfo::platformCertificateInfo):
+        (WebKit::WebCertificateInfo::WebCertificateInfo):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::::encode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/soup/PlatformCertificateInfo.cpp: Removed.
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Target.pri:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_tls_info):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2013-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2][Efl][Soup] Make NetworkProcessMainUnix handle proxy settings.

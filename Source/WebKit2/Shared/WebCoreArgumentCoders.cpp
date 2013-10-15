@@ -28,6 +28,7 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
@@ -39,13 +40,13 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/Image.h>
-#include <WebCore/URL.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/URL.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/ViewportArguments.h>
@@ -544,6 +545,22 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
 
     resourceResponse = response;
 
+    return true;
+}
+
+void ArgumentCoder<CertificateInfo>::encode(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
+{
+    encodePlatformData(encoder, certificateInfo);
+}
+
+bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
+{
+    CertificateInfo certificate;
+
+    if (!decodePlatformData(decoder, certificate))
+        return false;
+
+    certificateInfo = certificate;
     return true;
 }
 

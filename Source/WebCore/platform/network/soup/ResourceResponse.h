@@ -38,21 +38,18 @@ public:
     ResourceResponse()
         : ResourceResponseBase()
         , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
     {
     }
 
     ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
         , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
     {
     }
 
     ResourceResponse(SoupMessage* soupMessage)
         : ResourceResponseBase()
         , m_soupFlags(static_cast<SoupMessageFlags>(0))
-        , m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
     {
         updateFromSoupMessage(soupMessage);
     }
@@ -67,11 +64,11 @@ public:
     const String& sniffedContentType() const { return m_sniffedContentType; }
     void setSniffedContentType(const String& value) { m_sniffedContentType = value; }
 
-    GTlsCertificate* soupMessageCertificate() const { return m_certificate.get(); }
-    void setSoupMessageCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
+    GTlsCertificate* soupMessageCertificate() const { return m_certificateInfo.certificate(); }
+    void setSoupMessageCertificate(GTlsCertificate* certificate) { m_certificateInfo.setCertificate(certificate); }
 
-    GTlsCertificateFlags soupMessageTLSErrors() const { return m_tlsErrors; }
-    void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
+    GTlsCertificateFlags soupMessageTLSErrors() const { return m_certificateInfo.tlsErrors(); }
+    void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_certificateInfo.setTLSErrors(tlsErrors); }
 
     bool platformResponseIsUpToDate() const { return false; }
 
@@ -80,8 +77,6 @@ private:
 
     SoupMessageFlags m_soupFlags;
     String m_sniffedContentType;
-    GRefPtr<GTlsCertificate> m_certificate;
-    GTlsCertificateFlags m_tlsErrors;
 
     void doUpdateResourceResponse() { }
 

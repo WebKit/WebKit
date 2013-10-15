@@ -5411,6 +5411,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/BlobResourceHandle.cpp \
 	Source/WebCore/platform/network/BlobResourceHandle.h \
 	Source/WebCore/platform/network/BlobStorageData.h \
+	Source/WebCore/platform/network/CertificateInfo.h \
 	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/FormDataBuilder.cpp \
 	Source/WebCore/platform/network/FormDataBuilder.h \
@@ -5445,6 +5446,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/SocketStreamHandleClient.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
+	Source/WebCore/platform/network/soup/CertificateInfoSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.h \
 	Source/WebCore/platform/network/soup/CookieStorageSoup.cpp \

@@ -32,10 +32,10 @@
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoaderMessages.h"
-#include "PlatformCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
@@ -99,14 +99,14 @@ void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeS
     m_coreLoader->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const PlatformCertificateInfo& certificateInfo, bool needsContinueDidReceiveResponseMessage)
+void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const CertificateInfo& certificateInfo, bool needsContinueDidReceiveResponseMessage)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponseWithCertificateInfo for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
 
     Ref<WebResourceLoader> protect(*this);
 
     ResourceResponse responseCopy(response);
-    responseCopy.setCertificateChain(certificateInfo.certificateChain());
+    responseCopy.setCertificateInfo(certificateInfo);
     m_coreLoader->didReceiveResponse(responseCopy);
 
     // If m_coreLoader becomes null as a result of the didReceiveResponse callback, we can't use the send function(). 

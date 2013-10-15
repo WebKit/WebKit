@@ -1862,7 +1862,10 @@
 		5DF7F5C20F01F92A00526B4B /* CSSPropertyNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 656580EF09D12B20000E61D7 /* CSSPropertyNames.h */; };
 		5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */; };
 		5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA378BB0D15F64200B793D6 /* ScheduledAction.h */; };
+		5F2DBBE9178E3C8100141486 /* CertificateInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */; };
+		5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5F2DBBE8178E336900141486 /* CertificateInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5FC7DC26CFE2563200B85AE4 /* JSEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */; };
+		5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FE1D291178FD1F3001AA3C3 /* Security.framework */; };
 		626CDE0E1140424C001E5A68 /* SpatialNavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */; };
 		626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 626CDE0D1140424C001E5A68 /* SpatialNavigation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 628D214B12131ED10055DCFC /* NetworkingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8437,7 +8440,10 @@
 		5DA97ECC168E787B000E3676 /* SystemVersionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemVersionMac.mm; sourceTree = "<group>"; };
 		5DB1BC6810715A6400EFAA49 /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
 		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
+		5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CertificateInfoMac.mm; sourceTree = "<group>"; };
+		5F2DBBE8178E336900141486 /* CertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CertificateInfo.h; sourceTree = "<group>"; };
 		5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEventTarget.h; sourceTree = "<group>"; };
+		5FE1D291178FD1F3001AA3C3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
 		628D214B12131ED10055DCFC /* NetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingContext.h; sourceTree = "<group>"; };
@@ -13227,6 +13233,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FE1D292178FD1F3001AA3C3 /* Security.framework in Frameworks */,
 				FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */,
 				93F19B1308245E59001E9ABC /* ApplicationServices.framework in Frameworks */,
 				FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */,
@@ -13562,6 +13569,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				5FE1D291178FD1F3001AA3C3 /* Security.framework */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				9307061309E0CA8200B17FE4 /* DerivedSources.make */,
@@ -15041,6 +15049,7 @@
 				2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */,
 				2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */,
 				2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */,
+				5F2DBBE8178E336900141486 /* CertificateInfo.h */,
 				E13F01EA1270E10D00DFBA71 /* CookieStorage.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
@@ -15101,6 +15110,7 @@
 			children = (
 				514C76420CE9234E007EF3CD /* AuthenticationMac.h */,
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
+				5F2DBBE7178E332D00141486 /* CertificateInfoMac.mm */,
 				E1424C8F164B460B00F32D40 /* CookieJarMac.mm */,
 				E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */,
 				E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */,
@@ -23568,6 +23578,7 @@
 				0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */,
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
+				5FA904CA178E61F5004C8A2D /* CertificateInfo.h in Headers */,
 				07C59B5417F4AC15000FBCBB /* AudioStreamTrack.h in Headers */,
 				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
@@ -27662,6 +27673,7 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				977E2E0E12F0FC9C00C13380 /* XSSAuditorDelegate.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				5F2DBBE9178E3C8100141486 /* CertificateInfoMac.mm in Sources */,
 				FD1762DF176686D900D836A8 /* UpSampler.cpp in Sources */,
 				FD1762E3176686EA00D836A8 /* DownSampler.cpp in Sources */,
 				6E84E9E017668BEE00815B68 /* RasterShape.cpp in Sources */,

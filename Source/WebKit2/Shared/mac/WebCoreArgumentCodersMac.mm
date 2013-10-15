@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +28,14 @@
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCF.h"
-#import "PlatformCertificateInfo.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 
 using namespace WebCore;
-using namespace WebKit;
 
 namespace CoreIPC {
 
@@ -132,6 +133,37 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
     return true;
 }
 
+
+void ArgumentCoder<CertificateInfo>::encodePlatformData(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
+{
+    CFArrayRef certificateChain = certificateInfo.certificateChain();
+    if (!certificateChain) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    CoreIPC::encode(encoder, certificateChain);
+}
+
+bool ArgumentCoder<CertificateInfo>::decodePlatformData(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
+{
+    bool hasCertificateChain;
+    if (!decoder.decode(hasCertificateChain))
+        return false;
+
+    if (!hasCertificateChain)
+        return true;
+
+    RetainPtr<CFArrayRef> certificateChain;
+    if (!CoreIPC::decode(decoder, certificateChain))
+        return false;
+
+    certificateInfo.setCertificateChain(certificateChain.get());
+
+    return true;
+}
+
 static NSString* nsString(const String& string)
 {
     return string.impl() ? [NSString stringWithCharacters:reinterpret_cast<const UniChar*>(string.characters()) length:string.length()] : @"";
@@ -168,7 +200,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
-    encoder << PlatformCertificateInfo((CFArrayRef)peerCertificateChain);
+    encoder << CertificateInfo((CFArrayRef)peerCertificateChain);
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
@@ -194,7 +226,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     if (!decoder.decode(stringUserInfoMap))
         return false;
 
-    PlatformCertificateInfo certificate;
+    CertificateInfo certificate;
     if (!decoder.decode(certificate))
         return false;
 

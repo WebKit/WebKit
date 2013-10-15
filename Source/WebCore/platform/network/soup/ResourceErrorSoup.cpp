@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Company 100 Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,8 +79,8 @@ ResourceError ResourceError::tlsError(SoupRequest* request, unsigned tlsErrors, 
 {
     ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
         failingURI(request), unacceptableTLSCertificate());
-    resourceError.setTLSErrors(tlsErrors);
-    resourceError.setCertificate(certificate);
+    resourceError.m_certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(tlsErrors));
+    resourceError.m_certificateInfo.setCertificate(certificate);
     return resourceError;
 }
 
@@ -98,13 +99,12 @@ ResourceError ResourceError::timeoutError(const String& failingURL)
 
 void ResourceError::platformCopy(ResourceError& errorCopy) const
 {
-    errorCopy.m_certificate = m_certificate;
-    errorCopy.m_tlsErrors = m_tlsErrors;
+    errorCopy.setCertificateInfo(m_certificateInfo);
 }
 
 bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
 {
-    return a.tlsErrors() == b.tlsErrors();
+    return a.m_certificateInfo.tlsErrors() == b.m_certificateInfo.tlsErrors();
 }
 
 } // namespace WebCore

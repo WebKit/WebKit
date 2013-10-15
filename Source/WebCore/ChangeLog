@@ -1,3 +1,85 @@
+2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object
+        https://bugs.webkit.org/show_bug.cgi?id=118520
+
+        Reviewed by Anders Carlsson.
+
+        Added PlatformCertificateInfo getter and setter to ResourceErrorBase
+        and ResourceResponseBase so that getting and setting certificates
+        becomes cross platform.
+
+        Changed the existing platform specific certificate getters and setters
+        of ResourceError and ResourceResponse to use the
+        PlatformCertificateInfo member.
+
+        Original patch by Kwang Yul Seo  <skyul@company100.net>
+
+        The following things were fixed by Csaba Osztrogonác:
+        - trivial conflicts resolved in WebCore.exp.in, project.pbxproj, NetworkResourceLoader.cpp,
+          WebPageProxy.h, WebFrameLoaderClient.cpp and PlatformEfl.cmake.
+        - trivial fix in the new AsynchronousNetworkLoaderClient.cpp
+        - style fixed (NULL -> 0 and smaller indentation in WebCoreArgumentCodersSoup.cpp)
+        - obsolete change removed from NetworkResourceLoader.cpp
+        - unneeded typo removed from ResourceHandleSoup.cpp
+        - Fixed the if guard of including RetainPtr.h in PlatformCertificateInfo.h to make Windows build happy.
+        - add PlatformCertificateInfoCFNet.cpp with empty constructor and destructor to make Windows build happy.
+        - resolved conflict in Source/WebCore/WebCore.xcodeproj/project.pbxproj after r156488
+        - renamed KURL to URL after r156550.
+        - removed obsolete Qt changes
+        - added back initializers for m_soupFlags
+        - included gio/gio.h instead of libsoup/soup.h in PlatformCertificateInfo.h
+        - removed unused class forward declarations and includes
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/PlatformCertificateInfo.h: Renamed from Source/WebKit2/Shared/soup/PlatformCertificateInfo.h.
+        (WebCore::PlatformCertificateInfo::certificate):
+        (WebCore::PlatformCertificateInfo::setCertificate):
+        (WebCore::PlatformCertificateInfo::tlsErrors):
+        (WebCore::PlatformCertificateInfo::setTLSErrors):
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::platformCertificateInfo):
+        (WebCore::ResourceErrorBase::setPlatformCertificateInfo):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::platformCertificateInfo):
+        (WebCore::ResourceResponseBase::setPlatformCertificateInfo):
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/mac/PlatformCertificateInfoMac.mm: Renamed from Source/WebKit2/Shared/mac/PlatformCertificateInfo.mm.
+        (WebCore::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebCore::PlatformCertificateInfo::~PlatformCertificateInfo):
+        (WebCore::PlatformCertificateInfo::setCertificateChain):
+        (WebCore::PlatformCertificateInfo::certificateChain):
+        (WebCore::PlatformCertificateInfo::dump):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::setCertificateChain):
+        (WebCore::ResourceResponse::certificateChain):
+        * platform/network/soup/PlatformCertificateInfoSoup.cpp:
+        (WebCore::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebCore::PlatformCertificateInfo::~PlatformCertificateInfo):
+        * platform/network/soup/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::tlsErrors):
+        (WebCore::ResourceError::setTLSErrors):
+        (WebCore::ResourceError::certificate):
+        (WebCore::ResourceError::setCertificate):
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::platformCopy):
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::soupMessageCertificate):
+        (WebCore::ResourceResponse::setSoupMessageCertificate):
+        (WebCore::ResourceResponse::soupMessageTLSErrors):
+        (WebCore::ResourceResponse::setSoupMessageTLSErrors):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::toSoupMessage):
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2013-10-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove redundant Document::getElementById

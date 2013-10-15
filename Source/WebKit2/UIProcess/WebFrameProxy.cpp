@@ -138,7 +138,7 @@ void WebFrameProxy::didFailProvisionalLoad()
     m_unreachableURL = m_lastUnreachableURL;
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)
+void WebFrameProxy::didCommitLoad(const String& contentType, const WebCore::CertificateInfo& certificateInfo)
 {
     ASSERT(m_loadState == LoadStateProvisional);
     m_loadState = LoadStateCommitted;

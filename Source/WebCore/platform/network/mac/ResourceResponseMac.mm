@@ -181,13 +181,13 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 void ResourceResponse::setCertificateChain(CFArrayRef certificateChain)
 {
     ASSERT(!wkCopyNSURLResponseCertificateChain(nsURLResponse()));
-    m_externalCertificateChain = certificateChain;
+    m_certificateInfo.setCertificateChain(certificateChain);
 }
 
 RetainPtr<CFArrayRef> ResourceResponse::certificateChain() const
 {
-    if (m_externalCertificateChain)
-        return m_externalCertificateChain;
+    if (m_certificateInfo.certificateChain())
+        return adoptCF(m_certificateInfo.certificateChain());
 
     return adoptCF(wkCopyNSURLResponseCertificateChain(nsURLResponse()));
 }

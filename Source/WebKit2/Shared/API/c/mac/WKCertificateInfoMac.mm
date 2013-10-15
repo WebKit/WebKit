@@ -29,15 +29,16 @@
 #import "WKAPICast.h"
 #import "WebCertificateInfo.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain)
 {
-    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(PlatformCertificateInfo(certificateChain));
+    RefPtr<WebCertificateInfo> certificateInfo = WebCertificateInfo::create(CertificateInfo(certificateChain));
     return toAPI(certificateInfo.release().leakRef());
 }
 
 CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfoRef)
 {
-    return toImpl(certificateInfoRef)->platformCertificateInfo().certificateChain();
+    return toImpl(certificateInfoRef)->certificateInfo().certificateChain();
 }

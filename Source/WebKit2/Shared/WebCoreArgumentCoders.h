@@ -45,6 +45,7 @@ namespace WebCore {
     class KeyframeValueList;
     class URL;
     class Notification;
+    class CertificateInfo;
     class ProtectionSpace;
     class ResourceError;
     class ResourceRequest;
@@ -168,6 +169,13 @@ template<> struct ArgumentCoder<WebCore::ResourceResponse> {
     static bool decode(ArgumentDecoder&, WebCore::ResourceResponse&);
     static void encodePlatformData(ArgumentEncoder&, const WebCore::ResourceResponse&);
     static bool decodePlatformData(ArgumentDecoder&, WebCore::ResourceResponse&);
+};
+
+template<> struct ArgumentCoder<WebCore::CertificateInfo> {
+    static void encode(ArgumentEncoder&, const WebCore::CertificateInfo&);
+    static bool decode(ArgumentDecoder&, WebCore::CertificateInfo&);
+    static void encodePlatformData(ArgumentEncoder&, const WebCore::CertificateInfo&);
+    static bool decodePlatformData(ArgumentDecoder&, WebCore::CertificateInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {

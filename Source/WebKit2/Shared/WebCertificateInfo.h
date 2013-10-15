@@ -27,27 +27,27 @@
 #define WebCertificateInfo_h
 
 #include "APIObject.h"
-#include "PlatformCertificateInfo.h"
+#include <WebCore/CertificateInfo.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
 class WebCertificateInfo : public TypedAPIObject<APIObject::TypeCertificateInfo> {
 public:
-    static PassRefPtr<WebCertificateInfo> create(const PlatformCertificateInfo& info)
+    static PassRefPtr<WebCertificateInfo> create(const WebCore::CertificateInfo& info)
     {
         return adoptRef(new WebCertificateInfo(info));
     }
 
-    const PlatformCertificateInfo& platformCertificateInfo() const { return m_platformCertificateInfo; }
+    const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }
 
 private:
-    explicit WebCertificateInfo(const PlatformCertificateInfo& info)
-        : m_platformCertificateInfo(info)
+    explicit WebCertificateInfo(const WebCore::CertificateInfo& info)
+        : m_certificateInfo(info)
     {
     }
 
-    PlatformCertificateInfo m_platformCertificateInfo;
+    WebCore::CertificateInfo m_certificateInfo;
 };
 
 } // namespace WebKit

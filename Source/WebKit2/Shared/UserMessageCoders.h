@@ -215,7 +215,7 @@ public:
         }
         case APIObject::TypeCertificateInfo: {
             WebCertificateInfo* certificateInfo = static_cast<WebCertificateInfo*>(m_root);
-            encoder << certificateInfo->platformCertificateInfo();
+            encoder << certificateInfo->certificateInfo();
             return true;
         }
         case APIObject::TypeError: {
@@ -504,10 +504,10 @@ public:
             break;
         }
         case APIObject::TypeCertificateInfo: {
-            PlatformCertificateInfo platformCertificateInfo;
-            if (!decoder.decode(platformCertificateInfo))
+            WebCore::CertificateInfo certificateInfo;
+            if (!decoder.decode(certificateInfo))
                 return false;
-            coder.m_root = WebCertificateInfo::create(platformCertificateInfo);
+            coder.m_root = WebCertificateInfo::create(certificateInfo);
             break;
         }
         case APIObject::TypeError: {

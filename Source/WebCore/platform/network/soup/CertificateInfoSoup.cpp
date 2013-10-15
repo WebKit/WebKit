@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Company 100 Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCertificateInfo_h
-#define PlatformCertificateInfo_h
-
-#include <libsoup/soup.h>
-#include <wtf/gobject/GRefPtr.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
-}
+#include "config.h"
+#include "CertificateInfo.h"
 
 namespace WebCore {
-class ResourceError;
-class ResourceResponse;
+
+CertificateInfo::CertificateInfo()
+    : m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
+{
 }
 
-namespace WebKit {
+CertificateInfo::~CertificateInfo()
+{
+}
 
-class PlatformCertificateInfo {
-public:
-    PlatformCertificateInfo();
-    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
-    explicit PlatformCertificateInfo(const WebCore::ResourceError&);
-    ~PlatformCertificateInfo();
-
-    GTlsCertificate* certificate() const { return m_certificate.get(); }
-    GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
-
-    void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder&, PlatformCertificateInfo&);
-
-private:
-    GRefPtr<GTlsCertificate> m_certificate;
-    GTlsCertificateFlags m_tlsErrors;
-};
-
-} // namespace WebKit
-
-#endif // PlatformCertificateInfo_h
+} // namespace WebCore
