@@ -1,3 +1,9 @@
+2013-10-14  Roger Fong  <roger_fong@apple.com>
+
+        Adding myself to CC list for some components.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-10-13  Darin Adler  <darin@apple.com>
 
         Deprecate or remove deleteAllValues functions; there are only a few call sites left
