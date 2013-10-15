@@ -90,6 +90,10 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
     case NetworkProcess:
         return "networkprocess";
 #endif
+#if ENABLE(DATABASE_PROCESS)
+    case DatabaseProcess:
+        return "databaseprocess";
+#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -117,6 +121,12 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
     }
 #endif
 
+#if ENABLE(DATABASE_PROCESS)
+    if (!strcmp(string, "databaseprocess")) {
+        processType = DatabaseProcess;
+        return true;
+    }
+#endif
     return false;
 }
 

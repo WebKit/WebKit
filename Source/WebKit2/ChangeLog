@@ -1,3 +1,68 @@
+2013-10-15  Brady Eidson  <beidson@apple.com>
+
+        Add a skeleton Database process for future usage by Indexed Database.
+        https://bugs.webkit.org/show_bug.cgi?id=122849
+
+        Reviewed by Sam Weinig.
+
+        This mostly our typical "Add a new process type" boilerplate.
+
+        * Configurations/DatabaseProcess.xcconfig: Added.
+        * Configurations/DatabaseService.Development.xcconfig: Added.
+        * Configurations/DatabaseService.xcconfig: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Prefix.h:
+
+        * DatabaseProcess/DatabaseProcess.cpp: Added.
+        (WebKit::DatabaseProcess::shared):
+        (WebKit::DatabaseProcess::DatabaseProcess):
+        (WebKit::DatabaseProcess::~DatabaseProcess):
+        (WebKit::DatabaseProcess::initializeConnection):
+        (WebKit::DatabaseProcess::shouldTerminate):
+        (WebKit::DatabaseProcess::didReceiveMessage):
+        (WebKit::DatabaseProcess::didClose):
+        (WebKit::DatabaseProcess::didReceiveInvalidMessage):
+        (WebKit::DatabaseProcess::initializeProcess):
+        (WebKit::DatabaseProcess::initializeProcessName):
+        (WebKit::DatabaseProcess::initializeSandbox):
+        * DatabaseProcess/DatabaseProcess.h: Added.
+
+        * DatabaseProcess/EntryPoint/mac/LegacyProcess/DatabaseProcessMain.mm: Added.
+        (DatabaseProcessMain):
+        * DatabaseProcess/EntryPoint/mac/LegacyProcess/Info.plist: Added.
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService.Development/Info.plist: Added.
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist: Added.
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm: Added.
+        (DatabaseServiceInitializer):
+
+        * DatabaseProcess/mac/DatabaseProcessMac.mm: Added.
+        (WebKit::DatabaseProcess::initializeProcess):
+        (WebKit::DatabaseProcess::initializeProcessName):
+        (WebKit::DatabaseProcess::initializeSandbox):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp: Added.
+        (WebKit::DatabaseProcessProxy::create):
+        (WebKit::DatabaseProcessProxy::DatabaseProcessProxy):
+        (WebKit::DatabaseProcessProxy::~DatabaseProcessProxy):
+        (WebKit::DatabaseProcessProxy::getLaunchOptions):
+        (WebKit::DatabaseProcessProxy::connectionWillOpen):
+        (WebKit::DatabaseProcessProxy::connectionWillClose):
+        (WebKit::DatabaseProcessProxy::didReceiveMessage):
+        (WebKit::DatabaseProcessProxy::didClose):
+        (WebKit::DatabaseProcessProxy::didReceiveInvalidMessage):
+        (WebKit::DatabaseProcessProxy::didFinishLaunching):
+        * UIProcess/Databases/DatabaseProcessProxy.h: Added.
+        * UIProcess/Databases/mac/DatabaseProcessProxyMac.mm: Added.
+        (WebKit::shouldUseXPC):
+        (WebKit::DatabaseProcessProxy::platformGetLaunchOptions):
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::createProcess):
+
 2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Soup] Unreviewed buildfix after r157445 for ENABLE(NETWORK_PROCESS) builds.

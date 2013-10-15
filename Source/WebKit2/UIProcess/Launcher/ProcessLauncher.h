@@ -53,6 +53,9 @@ public:
 #if ENABLE(NETWORK_PROCESS)
         NetworkProcess,
 #endif
+#if ENABLE(DATABASE_PROCESS)
+        DatabaseProcess,
+#endif
     };
 
     struct LaunchOptions {

@@ -156,6 +156,12 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
             return "com.apple.WebKit.Networking.Development";
         return "com.apple.WebKit.Networking";
 #endif
+#if ENABLE(NETWORK_PROCESS)
+    case ProcessLauncher::DatabaseProcess:
+        if (forDevelopment)
+            return "com.apple.WebKit.Databases.Development";
+        return "com.apple.WebKit.Databases";
+#endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
         if (forDevelopment)
@@ -393,6 +399,11 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
 #if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
+        break;
+#endif
+#if ENABLE(DATABASE_PROCESS)
+    case ProcessLauncher::DatabaseProcess:
+        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"DatabaseProcess.app"];
         break;
 #endif
     }
