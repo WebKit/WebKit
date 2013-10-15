@@ -36,6 +36,23 @@
 
 2013-10-14  Roger Fong  <roger_fong@apple.com>
 
+        Windows select element doesn't draw RTL properly.
+        https://bugs.webkit.org/show_bug.cgi?id=122785.
+
+        Reviewed by Brent Fulgham.
+
+        Covered by fast/text/international/pop-up-button-text-alignment-and-direction.html.
+
+        Problems include the popup items not drawing on the right hand side and 
+        not respecting the direction or the directional override styling of the option.
+        The selected element (drawn in the actual select element) also doesn't respect 
+        the style settings of the selected menu option.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::paint):
+
+2013-10-14  Roger Fong  <roger_fong@apple.com>
+
         [Windows] Unreviewed build fix.
 
         * WebCore.vcxproj/WebCoreCommon.props:

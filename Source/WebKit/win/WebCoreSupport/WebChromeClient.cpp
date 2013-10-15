@@ -793,12 +793,12 @@ void WebChromeClient::exitFullscreenForNode(Node*)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-    return true;
+    return false;
 }
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
-    return false;
+    return true;
 }
 
 bool WebChromeClient::hasOpenedPopup() const

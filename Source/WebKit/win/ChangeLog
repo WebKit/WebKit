@@ -1,3 +1,14 @@
+2013-10-14  Roger Fong  <roger_fong@apple.com>
+
+        Windows select element doesn't draw RTL properly.
+        https://bugs.webkit.org/show_bug.cgi?id=122785.
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection):
+
 2013-10-14  Tim Horton  <timothy_horton@apple.com>
 
         Virtualize PlatformCALayer

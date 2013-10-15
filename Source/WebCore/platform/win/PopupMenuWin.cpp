@@ -649,10 +649,8 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         }
 
         String itemText = client()->itemText(index);
-            
-        TextDirection direction = (itemText.defaultWritingDirection() == U_RIGHT_TO_LEFT) ? RTL : LTR;
-        TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, direction);
 
+        TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
         context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         
         Font itemFont = client()->menuStyle().font();
@@ -665,9 +663,17 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         
         // Draw the item text
         if (itemStyle.isVisible()) {
-            int textX = max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
-            if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent() && itemStyle.textDirection() == LTR)
-                textX += minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
+            int textX = 0;
+            if (client()->menuStyle().textDirection() == LTR) {
+                textX = max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+                if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent())
+                    textX += minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
+            } else {
+                textX = itemRect.width() - client()->menuStyle().font().width(textRun);
+                textX = min<int>(textX, textX - client()->clientPaddingRight() + client()->clientInsetRight());
+                if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent())
+                    textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
+            }
             int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;
             context.drawBidiText(itemFont, textRun, IntPoint(textX, textY));
         }
