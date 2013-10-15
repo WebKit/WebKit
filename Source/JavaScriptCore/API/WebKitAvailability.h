@@ -43,7 +43,9 @@
 
 #ifdef __APPLE__
 #include <AvailabilityMacros.h>
+#include <CoreFoundation/CoreFoundation.h>
 #else
+#define CF_AVAILABLE(_mac, _ios)
 /*
  * For non-Mac platforms, require the newest version.
  */

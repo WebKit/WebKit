@@ -1158,6 +1158,7 @@
 		C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2981FDC17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */; };
 		C2981FDD17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */; };
 		C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2A7F687160432D400F76B98 /* JSDestructibleObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */; };
@@ -2400,6 +2401,8 @@
 		C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWeakReferences.h; path = dfg/DFGDesiredWeakReferences.h; sourceTree = "<group>"; };
 		C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWriteBarriers.cpp; path = dfg/DFGDesiredWriteBarriers.cpp; sourceTree = "<group>"; };
 		C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWriteBarriers.h; path = dfg/DFGDesiredWriteBarriers.h; sourceTree = "<group>"; };
+		C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CurrentThisInsideBlockGetterTest.mm; path = API/tests/CurrentThisInsideBlockGetterTest.mm; sourceTree = "<group>"; };
+		C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurrentThisInsideBlockGetterTest.h; path = API/tests/CurrentThisInsideBlockGetterTest.h; sourceTree = "<group>"; };
 		C2A7F687160432D400F76B98 /* JSDestructibleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObject.h; sourceTree = "<group>"; };
 		C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocator.h; sourceTree = "<group>"; };
 		C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedAllocator.cpp; sourceTree = "<group>"; };
@@ -2792,6 +2795,8 @@
 				14D857740A4696C80032146C /* testapi.js */,
 				86D22219167EF9440024C804 /* testapi.mm */,
 				651122E5140469BA002B101D /* testRegExp.cpp */,
+				C29ECB011804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm */,
+				C29ECB021804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.h */,
 			);
 			name = tests;
 			sourceTree = "<group>";
@@ -5056,6 +5061,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,
 				1440F6100A4F85670005F061 /* testapi.c in Sources */,
 				86D2221A167EF9440024C804 /* testapi.mm in Sources */,
 			);

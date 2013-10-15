@@ -40,15 +40,6 @@ extern "C" {
 
 /*!
 @function
-@abstract Gets the global context of a JavaScript execution context.
-@param ctx The JSContext whose global context you want to get.
-@result ctx's global context.
-*/
-JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx);
-
-    
-/*!
-@function
 @abstract Gets a Backtrace for the existing context
 @param ctx The JSContext whose backtrace you want to get
 @result A string containing the backtrace

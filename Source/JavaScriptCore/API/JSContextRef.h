@@ -125,6 +125,14 @@ JS_EXPORT JSObjectRef JSContextGetGlobalObject(JSContextRef ctx);
 */
 JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) AVAILABLE_IN_WEBKIT_VERSION_4_0;
 
+/*!
+@function
+@abstract Gets the global context of a JavaScript execution context.
+@param ctx The JSContext whose global context you want to get.
+@result ctx's global context.
+*/
+JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) CF_AVAILABLE(10_7, 4_0);
+
 #ifdef __cplusplus
 }
 #endif

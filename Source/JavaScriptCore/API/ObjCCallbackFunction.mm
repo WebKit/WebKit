@@ -394,9 +394,8 @@ namespace JSC {
 
 class ObjCCallbackFunctionImpl {
 public:
-    ObjCCallbackFunctionImpl(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, PassOwnPtr<CallbackArgument> arguments, PassOwnPtr<CallbackResult> result)
-        : m_context(context)
-        , m_type(type)
+    ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, PassOwnPtr<CallbackArgument> arguments, PassOwnPtr<CallbackResult> result)
+        : m_type(type)
         , m_instanceClass([instanceClass retain])
         , m_invocation(invocation)
         , m_arguments(arguments)
@@ -412,24 +411,12 @@ public:
 
     JSValueRef call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
-    JSContext *context()
-    {
-        return m_context.get();
-    }
-
-    void setContext(JSContext *context)
-    {
-        ASSERT(!m_context.get());
-        m_context.set(context);
-    }
-
     id wrappedBlock()
     {
         return m_type == CallbackBlock ? [m_invocation target] : nil;
     }
 
 private:
-    WeakContextRef m_context;
     CallbackType m_type;
     Class m_instanceClass;
     RetainPtr<NSInvocation> m_invocation;
@@ -447,11 +434,7 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(function));
     ObjCCallbackFunctionImpl* impl = callback->impl();
-    JSContext *context = impl->context();
-    if (!context) {
-        context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(toJS(callerContext)->lexicalGlobalObject()->globalExec())];
-        impl->setContext(context);
-    }
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(callback->globalObject()->globalExec())];
 
     CallbackData callbackData;
     JSValueRef result;
@@ -626,7 +609,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
 
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
     JSC::APIEntryShim shim(exec);
-    OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(context, invocation, type, instanceClass, arguments.release(), result.release()));
+    OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(invocation, type, instanceClass, arguments.release(), result.release()));
     // FIXME: Maybe we could support having the selector as the name of the function to make it a bit more user-friendly from the JS side?
     return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), "", impl.release()));
 }

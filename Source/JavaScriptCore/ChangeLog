@@ -1,3 +1,37 @@
+2013-10-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        ObjCCallbackFunctionImpl shouldn't store a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=122531
+
+        Reviewed by Geoffrey Garen.
+
+        The m_context field in ObjCCallbackFunctionImpl is vestigial and is only incidentally correct 
+        in the common case. It's also no longer necessary in that we can look up the current JSContext 
+        by looking using the globalObject of the callee when the function callback is invoked.
+ 
+        Also added a new test that would cause us to crash previously. The test required making 
+        JSContextGetGlobalContext public API so that clients can obtain a JSContext from the JSContextRef
+        in C API callbacks.
+
+        * API/JSContextRef.h:
+        * API/JSContextRefPrivate.h:
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::ObjCCallbackFunctionImpl):
+        (JSC::objCCallbackFunctionCallAsFunction):
+        (objCCallbackFunctionForInvocation):
+        * API/WebKitAvailability.h:
+        * API/tests/CurrentThisInsideBlockGetterTest.h: Added.
+        * API/tests/CurrentThisInsideBlockGetterTest.mm: Added.
+        (CallAsConstructor):
+        (ConstructorFinalize):
+        (ConstructorClass):
+        (+[JSValue valueWithConstructorDescriptor:inContext:]):
+        (-[JSContext valueWithConstructorDescriptor:]):
+        (currentThisInsideBlockGetterTest):
+        * API/tests/testapi.mm:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp: Had to add some fully qualified names to avoid conflicts with Mac OS X headers.
+
 2013-10-15  Julien Brianceau  <jbriance@cisco.com>
 
         Fix build after r157457 for architecture with 4 argument registers.

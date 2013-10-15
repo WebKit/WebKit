@@ -37,7 +37,7 @@ using namespace JSC;
 
 class Recompiler : public MarkedBlock::VoidFunctor {
 public:
-    Recompiler(Debugger*);
+    Recompiler(JSC::Debugger*);
     ~Recompiler();
     void operator()(JSCell*);
 
@@ -45,12 +45,12 @@ private:
     typedef HashSet<FunctionExecutable*> FunctionExecutableSet;
     typedef HashMap<SourceProvider*, ExecState*> SourceProviderMap;
     
-    Debugger* m_debugger;
+    JSC::Debugger* m_debugger;
     FunctionExecutableSet m_functionExecutables;
     SourceProviderMap m_sourceProviders;
 };
 
-inline Recompiler::Recompiler(Debugger* debugger)
+inline Recompiler::Recompiler(JSC::Debugger* debugger)
     : m_debugger(debugger)
 {
 }

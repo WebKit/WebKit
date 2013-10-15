@@ -25,6 +25,8 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
+#import "CurrentThisInsideBlockGetterTest.h"
+
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 extern "C" bool _Block_has_signature(id);
@@ -961,6 +963,8 @@ void testObjectiveCAPI()
         checkResult(@"[JSContext currentThis] == nil outside of callback", ![JSContext currentThis]);
         checkResult(@"[JSContext currentArguments] == nil outside of callback", ![JSContext currentArguments]);
     }
+
+    currentThisInsideBlockGetterTest();
 }
 
 #else
