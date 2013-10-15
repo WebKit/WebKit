@@ -461,7 +461,8 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
 #endif
 
 // JSVALUE32_64 is a 64-bit integer that cannot be put half in an argument register and half on stack when using SH4 architecture.
-// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary.
+// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary. This must only be done when there
+// is no other 32-bit value argument behind this 64-bit JSValue.
 #if CPU(SH4)
 #define SH4_32BIT_DUMMY_ARG      TrustedImm32(0),
 #else
@@ -470,7 +471,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperationWithCallFrameRollbackOnExce
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJJZ operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload, int32_t arg3)
 {
-    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, SH4_32BIT_DUMMY_ARG arg2Payload, arg2Tag, TrustedImm32(arg3));
+#if CPU(SH4)
+    // We have to put arg3 in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
+    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg3), arg2Payload, arg2Tag, TrustedImm32(arg3));
+#else
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2Payload, arg2Tag, TrustedImm32(arg3));
+#endif
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -530,13 +536,18 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operatio
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EIdJZ operation, const Identifier* identOp1, RegisterID regOp2Tag, RegisterID regOp2Payload, int32_t op3)
 {
-    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG TrustedImmPtr(identOp1), regOp2Payload, regOp2Tag, TrustedImm32(op3));
+    setupArgumentsWithExecState(TrustedImmPtr(identOp1), regOp2Payload, regOp2Tag, TrustedImm32(op3));
     return appendCallWithExceptionCheck(operation);
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJJI operation, RegisterID regOp1Tag, RegisterID regOp1Payload, RegisterID regOp2Tag, RegisterID regOp2Payload, StringImpl* uid)
 {
-    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG regOp1Payload, regOp1Tag, SH4_32BIT_DUMMY_ARG regOp2Payload, regOp2Tag, TrustedImmPtr(uid));
+#if CPU(SH4)
+    // We have to put uid in the 4th argument register (r7) as 64-bit value regOp2 will be put on stack for sh4 architecure.
+    setupArgumentsWithExecState(regOp1Payload, regOp1Tag, TrustedImmPtr(uid), regOp2Payload, regOp2Tag);
+#else
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG regOp1Payload, regOp1Tag, regOp2Payload, regOp2Tag, TrustedImmPtr(uid));
+#endif
     return appendCallWithExceptionCheck(operation);
 }
 

@@ -1407,7 +1407,8 @@ public:
 #endif
 
 // JSVALUE32_64 is a 64-bit integer that cannot be put half in an argument register and half on stack when using SH4 architecture.
-// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary.
+// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary. This must only be done when there
+// is no other 32-bit value argument behind this 64-bit JSValue.
 #if CPU(SH4)
 #define SH4_32BIT_DUMMY_ARG      TrustedImm32(0),
 #else
@@ -1622,7 +1623,12 @@ public:
     }
     JITCompiler::Call callOperation(V_JITOperation_EJJI operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Payload, StringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, SH4_32BIT_DUMMY_ARG arg2Payload, TrustedImm32(JSValue::CellTag), TrustedImmPtr(uid));
+#if CPU(SH4)
+        // We have to put uid in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImmPtr(uid), arg2Payload, TrustedImm32(JSValue::CellTag));
+#else
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2Payload, TrustedImm32(JSValue::CellTag), TrustedImmPtr(uid));
+#endif
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
