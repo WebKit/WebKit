@@ -1,3 +1,15 @@
+2013-10-15  Andy Estes  <aestes@apple.com>
+
+        Expose -[WebPluginPackage bundle] as SPI
+        https://bugs.webkit.org/show_bug.cgi?id=122814
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebPluginPackage.mm:
+        (-[WebPluginPackage bundle]): Defined.
+        * Plugins/WebPluginPackagePrivate.h: Declared bundle as a method in a
+        category on NSObject.
+
 2013-10-12  Darin Adler  <darin@apple.com>
 
         Get rid of the toHTMLElement helper for casting FormAssociatedElement to HTMLElement

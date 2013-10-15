@@ -108,6 +108,11 @@ NSString *WebPlugInContainingElementKey =       @"WebPlugInContainingElementKey"
     return [super load];
 }
 
+- (NSBundle *)bundle
+{
+    return nsBundle;
+}
+
 @end
 
 @implementation NSObject (WebScripting)
