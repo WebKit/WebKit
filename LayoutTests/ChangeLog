@@ -1,3 +1,16 @@
+2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Crash in XMLDocumentParser::startElementNs
+        https://bugs.webkit.org/show_bug.cgi?id=122817
+
+        Reviewed by Darin Adler.
+
+        Add a regression test from https://chromium.googlesource.com/chromium/blink/+/57afab5d21cccd89f032b9a3e62f3a61c6a0e9c2
+
+        * fast/parser/resources/remove-parent.xhtml: Added.
+        * fast/parser/xhtml-synchronous-detach-crash-expected.txt: Added.
+        * fast/parser/xhtml-synchronous-detach-crash.html: Added.
+
 2013-10-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157460.

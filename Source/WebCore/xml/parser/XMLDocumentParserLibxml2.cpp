@@ -849,6 +849,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         m_scriptStartPosition = textPosition();
 
     m_currentNode->parserAppendChild(newElement.get());
+    if (!m_currentNode) // Synchronous DOM events may have removed the current node.
+        return;
 
     const ContainerNode* currentNode = m_currentNode;
 #if ENABLE(TEMPLATE_ELEMENT)

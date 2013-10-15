@@ -1,3 +1,18 @@
+2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: Crash in XMLDocumentParser::startElementNs
+        https://bugs.webkit.org/show_bug.cgi?id=122817
+
+        Reviewed by Darin Adler.
+
+        Exit early in startElementNs when listeners and handlers of synchronous events such as load event
+        removes the inserted node inside parserAppendChild.
+
+        Test: fast/parser/xhtml-synchronous-detach-crash.html
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2013-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove old frontend localizedStrings.js
