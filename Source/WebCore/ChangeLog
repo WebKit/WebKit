@@ -1,3 +1,9 @@
+2013-10-14  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCoreCommon.props:
+
 2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure in Range::processContentsBetweenOffsets
