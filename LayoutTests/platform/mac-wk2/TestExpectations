@@ -381,6 +381,9 @@ platform/mac/editing/input/unconfirmed-text-navigation-with-page-cache.html
 webaudio/codec-tests/wav/24bit-22khz-resample.html
 [ Lion ] webaudio/codec-tests/mp3/128kbps-44khz.html
 
+# Flakey unexpected audio diff
+webaudio/oscillator-sawtooth.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
