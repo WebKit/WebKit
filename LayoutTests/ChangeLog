@@ -1,3 +1,10 @@
+2013-10-15  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed gardening of some forms tests.
+
+        * platform/win/fast/forms/search-styled-expected.txt: Added.
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt: Removed.
+
 2013-10-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Crash in XMLDocumentParser::startElementNs
