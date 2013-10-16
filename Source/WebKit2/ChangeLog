@@ -1,3 +1,15 @@
+2013-10-16  Anders Carlsson  <andersca@apple.com>
+
+        Remove Qt sandbox process code
+        https://bugs.webkit.org/show_bug.cgi?id=122920
+
+        Reviewed by Geoffrey Garen.
+
+        This code was only used by the Qt port, and the other Linux-based ports are using the seccomp based sandbox.
+
+        * Shared/linux/SandboxProcess/SandboxEnvironmentLinux.cpp: Removed.
+        * Shared/linux/SandboxProcess/SandboxEnvironmentLinux.h: Removed.
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup
