@@ -1,3 +1,0 @@
-This page tests reloading a Netscape plug-in that accesses its own DOM element. See https://bugs.webkit.org/show_bug.cgi?id=80428, "HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called". If it succeeds, you should see SUCCESS below. 
-
-FAILURE

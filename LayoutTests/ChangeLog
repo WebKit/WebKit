@@ -1,3 +1,53 @@
+2013-10-16  Andreas Kling  <akling@apple.com>
+
+        Remove Windows-specific test expectations that were identical to generic expectations.
+        <https://webkit.org/b/121551>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/win-7sp0/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+        * platform/win-future/svg/batik/text/textPosition2-expected.txt: Removed.
+        * platform/win/css3/filters/effect-reference-expected.txt: Removed.
+        * platform/win/css3/filters/effect-reference-hw-expected.txt: Removed.
+        * platform/win/editing/deleting/delete-br-009-expected.txt: Removed.
+        * platform/win/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-3800346-fix-expected.txt: Removed.
+        * platform/win/editing/selection/anchor-focus2-expected.txt: Removed.
+        * platform/win/editing/selection/anchor-focus3-expected.txt: Removed.
+        * platform/win/editing/selection/collapse-selection-in-bidi-expected.txt: Removed.
+        * platform/win/editing/selection/drag-text-delay-expected.txt: Removed.
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt: Removed.
+        * platform/win/fast/block/positioning/016-expected.txt: Removed.
+        * platform/win/fast/block/positioning/025-expected.txt: Removed.
+        * platform/win/fast/block/positioning/fixed-position-stacking-context-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-render-layer-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt: Removed.
+        * platform/win/fast/css/zoom-body-scroll-expected.txt: Removed.
+        * platform/win/fast/dom/horizontal-scrollbar-in-rtl-expected.txt: Removed.
+        * platform/win/fast/dom/icon-url-property-expected.txt: Removed.
+        * platform/win/fast/dom/vertical-scrollbar-in-rtl-expected.txt: Removed.
+        * platform/win/fast/events/event-attribute-expected.txt: Removed.
+        * platform/win/fast/events/ondragenter-expected.txt: Removed.
+        * platform/win/fast/forms/cursor-at-editable-content-boundary-expected.txt: Removed.
+        * platform/win/fast/forms/implicit-submission-expected.txt: Removed.
+        * platform/win/fast/forms/range/slider-mouse-events-expected.txt: Removed.
+        * platform/win/fast/forms/select-popup-pagekeys-expected.txt: Removed.
+        * platform/win/fast/images/crossfade-client-not-removed-crash-expected.txt: Removed.
+        * platform/win/fast/media/w3c/test_media_queries-expected.txt: Removed.
+        * platform/win/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Removed.
+        * platform/win/http/tests/inspector/resource-har-conversion-expected.txt: Removed.
+        * platform/win/http/tests/misc/acid3-expected.txt: Removed.
+        * platform/win/media/media-can-play-ogg-expected.txt: Removed.
+        * platform/win/media/media-can-play-wav-audio-expected.txt: Removed.
+        * platform/win/media/video-colorspace-yuv420-expected.txt: Removed.
+        * platform/win/media/video-colorspace-yuv422-expected.txt: Removed.
+        * platform/win/media/video-size-intrinsic-scale-expected.txt: Removed.
+        * platform/win/plugins/netscape-dom-access-and-reload-expected.txt: Removed.
+        * platform/win/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+        * platform/win/svg/custom/pattern-scaling-expected.txt: Removed.
+
 2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r155253.
