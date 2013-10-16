@@ -1,3 +1,20 @@
+2013-10-16  Mark Rowe  <mrowe@apple.com>
+
+        Fix the build after r157478.
+
+        Rubber-stamped by Tim Horton.
+
+        Due to the way WebCore.exp.in is used, it can't be used to export a differing set of symbols
+        for different architectures. We often work around this by tweaking code slightly to avoid
+        needing to export different symbols. However, in this case the symbol name itself encodes an
+        architecture-specific detail and there's no clear way to avoid the requirement to export it.
+
+        To deal with this case we turn to ld's support for wildcards in the symbol export list.
+
+        * WebCore.exp.in: Use wildcards in place of the number that represents by how much "this"
+        should be adjusted when calling through the vtable thunk. Also sort the remainder of the file.
+        * make-export-file-generator: Don't attempt to verify symbol names that contain wildcard characters.
+
 2013-10-15  Tim Horton  <timothy_horton@apple.com>
 
         Two more exports for 32-bit build fix.

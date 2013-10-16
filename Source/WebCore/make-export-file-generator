@@ -40,12 +40,22 @@ TEMPLATE = <<-EOF
 
 #if !OS(WINDOWS)
 #include <cxxabi.h>
+
+static bool symbolCanBeValidated(const char* symbol)
+{
+    // Symbols containing wildcards cannot be validated.
+    if (strchr(symbol, '?') || strchr(symbol, '*'))
+        return false;
+
+    // Other C++ symbols can be.
+    return !strncmp(symbol, "__Z", strlen("__Z"));
+}
 #endif
 
 static void validateAndPrint(const char* symbol)
 {
 #if !OS(WINDOWS)
-    if (!strncmp(symbol, "__Z", strlen("__Z"))) {
+    if (symbolCanBeValidated(symbol)) {
       char* demangledName = abi::__cxa_demangle(symbol + 1, nullptr, nullptr, nullptr);
       if (!demangledName) {
         fprintf(stderr, "ERROR: \\"%s\\" is not a valid C++ mangled name.\\n", symbol);
