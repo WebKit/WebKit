@@ -1,3 +1,10 @@
+2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r155324.
+
+        * platform/efl/fast/forms/placeholder-position-expected.png:
+        * platform/efl/fast/forms/placeholder-position-expected.txt:
+
 2013-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening.
