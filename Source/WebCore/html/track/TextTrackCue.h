@@ -64,7 +64,7 @@ public:
 protected:
     TextTrackCueBox(Document&, TextTrackCue*);
 
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(RenderStyle&) OVERRIDE;
 
     TextTrackCue* m_cue;
 };

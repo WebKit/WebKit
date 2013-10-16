@@ -784,10 +784,10 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLElement::createRenderer(RenderStyle& style)
 {
     if (hasLocalName(wbrTag))
-        return new (arena) RenderLineBreak(*this);
+        return new RenderLineBreak(*this);
     return RenderElement::createFor(*this, style);
 }
 

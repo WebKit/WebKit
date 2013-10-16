@@ -63,14 +63,14 @@ void MathMLTextElement::childrenChanged(const ChildChange& change)
         renderer()->updateFromElement();
 }
 
-RenderElement* MathMLTextElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* MathMLTextElement::createRenderer(RenderStyle& style)
 {
     if (hasLocalName(MathMLNames::moTag))
-        return new (arena) RenderMathMLOperator(*this);
+        return new RenderMathMLOperator(*this);
     if (hasLocalName(MathMLNames::mspaceTag))
-        return new (arena) RenderMathMLSpace(*this);
+        return new RenderMathMLSpace(*this);
 
-    return MathMLElement::createRenderer(arena, style);
+    return MathMLElement::createRenderer(style);
 }
 
 }

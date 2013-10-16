@@ -40,7 +40,7 @@ protected:
     MathMLInlineContainerElement(const QualifiedName& tagName, Document&);
 
 private:
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderStyle&);
 };
     
 }

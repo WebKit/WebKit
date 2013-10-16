@@ -63,9 +63,9 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node* child) const
     return false;
 }
 
-RenderElement* SVGSwitchElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGSwitchElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGTransformableContainer(*this);
+    return new RenderSVGTransformableContainer(*this);
 }
 
 }

@@ -208,9 +208,9 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
         HTMLTextFormControlElement::parseAttribute(name, value);
 }
 
-RenderElement* HTMLTextAreaElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLTextAreaElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderTextControlMultiLine(*this);
+    return new RenderTextControlMultiLine(*this);
 }
 
 bool HTMLTextAreaElement::appendFormData(FormDataList& encoding, bool)

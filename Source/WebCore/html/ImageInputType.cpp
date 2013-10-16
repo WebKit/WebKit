@@ -101,9 +101,9 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderElement* ImageInputType::createRenderer(RenderArena& arena, RenderStyle&) const
+RenderElement* ImageInputType::createRenderer(RenderStyle&) const
 {
-    RenderImage* image = new (arena) RenderImage(element());
+    RenderImage* image = new RenderImage(element());
     image->setImageResource(RenderImageResource::create());
     return image;
 }

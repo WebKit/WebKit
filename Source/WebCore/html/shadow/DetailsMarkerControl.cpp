@@ -45,9 +45,9 @@ DetailsMarkerControl::DetailsMarkerControl(Document& document)
 {
 }
 
-RenderElement* DetailsMarkerControl::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* DetailsMarkerControl::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderDetailsMarker(*this);
+    return new RenderDetailsMarker(*this);
 }
 
 bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)

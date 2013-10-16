@@ -54,9 +54,9 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
     return isURLAllowed();
 }
 
-RenderElement* HTMLFrameElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLFrameElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderFrame(*this);
+    return new RenderFrame(*this);
 }
 
 bool HTMLFrameElement::noResize() const

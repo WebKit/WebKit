@@ -101,9 +101,9 @@ bool SVGSymbolElement::selfHasRelativeLengths() const
     return hasAttribute(SVGNames::viewBoxAttr);
 }
 
-RenderElement* SVGSymbolElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGSymbolElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGHiddenContainer(*this);
+    return new RenderSVGHiddenContainer(*this);
 }
 
 }

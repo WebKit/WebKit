@@ -205,9 +205,9 @@ void SliderThumbElement::setPositionFromValue()
         renderer()->setNeedsLayout();
 }
 
-RenderElement* SliderThumbElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SliderThumbElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSliderThumb(*this);
+    return new RenderSliderThumb(*this);
 }
 
 bool SliderThumbElement::isDisabledFormControl() const
@@ -444,9 +444,9 @@ PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document& docu
     return adoptRef(new SliderContainerElement(document));
 }
 
-RenderElement* SliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SliderContainerElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSliderContainer(*this);
+    return new RenderSliderContainer(*this);
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const

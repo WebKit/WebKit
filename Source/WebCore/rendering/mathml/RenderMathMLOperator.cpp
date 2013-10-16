@@ -176,7 +176,7 @@ void RenderMathMLOperator::updateFromElement()
     newStyle->inheritFrom(style());
     newStyle->setDisplay(FLEX);
 
-    RenderMathMLBlock* container = new (renderArena()) RenderMathMLBlock(*element());
+    RenderMathMLBlock* container = new RenderMathMLBlock(*element());
     // This container doesn't offer any useful information to accessibility.
     container->setIgnoreInAccessibilityTree(true);
     container->setStyle(newStyle.release());
@@ -184,9 +184,9 @@ void RenderMathMLOperator::updateFromElement()
     addChild(container);
     RenderText* text;
     if (m_operator)
-        text = new (renderArena()) RenderText(document(), String(&m_operator, 1));
+        text = new RenderText(document(), String(&m_operator, 1));
     else
-        text = new (renderArena()) RenderText(document(), element()->textContent().replace(hyphenMinus, minusSign).impl());
+        text = new RenderText(document(), element()->textContent().replace(hyphenMinus, minusSign).impl());
 
     // If we can't figure out the text, leave it blank.
     if (text)

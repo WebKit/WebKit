@@ -109,16 +109,16 @@ void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicSt
     HTMLElement::parseAttribute(name, value);
 }
 
-RenderElement* HTMLCanvasElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLCanvasElement::createRenderer(RenderStyle& style)
 {
     Frame* frame = document().frame();
     if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
         m_rendererIsCanvas = true;
-        return new (arena) RenderHTMLCanvas(*this);
+        return new RenderHTMLCanvas(*this);
     }
 
     m_rendererIsCanvas = false;
-    return HTMLElement::createRenderer(arena, style);
+    return HTMLElement::createRenderer(style);
 }
 
 void HTMLCanvasElement::willAttachRenderers()

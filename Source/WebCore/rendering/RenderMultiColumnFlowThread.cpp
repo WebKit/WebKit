@@ -86,7 +86,7 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     invalidateRegions();
 
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    firstSet = new (renderArena()) RenderMultiColumnSet(*this);
+    firstSet = new RenderMultiColumnSet(*this);
     firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
     parentBlock->RenderBlock::addChild(firstSet);
 

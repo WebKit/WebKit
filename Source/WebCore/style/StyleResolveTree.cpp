@@ -232,7 +232,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
         nextRenderer = nextSiblingRenderer(element, renderingParentNode);
     }
 
-    RenderElement* newRenderer = element.createRenderer(*document.renderArena(), *style);
+    RenderElement* newRenderer = element.createRenderer(*style);
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {
@@ -366,12 +366,11 @@ static void createTextRendererIfNeeded(Text& textNode)
     if (!renderingParentNode->childShouldCreateRenderer(&textNode))
         return;
 
-    Document& document = textNode.document();
     RefPtr<RenderStyle> style = parentRenderer->style();
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
         return;
-    RenderText* newRenderer = textNode.createTextRenderer(*document.renderArena(), *style);
+    RenderText* newRenderer = textNode.createTextRenderer(*style);
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {

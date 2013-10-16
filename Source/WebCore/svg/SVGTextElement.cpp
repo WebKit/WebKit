@@ -68,9 +68,9 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
     return matrix;
 }
 
-RenderElement* SVGTextElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGTextElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGText(*this);
+    return new RenderSVGText(*this);
 }
 
 bool SVGTextElement::childShouldCreateRenderer(const Node* child) const

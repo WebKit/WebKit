@@ -1931,7 +1931,7 @@ void Document::createRenderTree()
 
     m_renderArena = std::make_unique<RenderArena>();
     
-    setRenderView(new (*m_renderArena) RenderView(*this));
+    setRenderView(new RenderView(*this));
 #if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
 #endif

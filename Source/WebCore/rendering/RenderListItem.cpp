@@ -62,7 +62,7 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
         // up (e.g., in some deeply nested line box). See CSS3 spec.
         newStyle->inheritFrom(style()); 
         if (!m_marker)
-            m_marker = new (renderArena()) RenderListMarker(*this);
+            m_marker = new RenderListMarker(*this);
         m_marker->setStyle(newStyle.release());
     } else if (m_marker) {
         m_marker->destroy();

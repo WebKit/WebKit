@@ -1,3 +1,16 @@
+2013-10-16  Andreas Kling  <akling@apple.com>
+
+        Take RenderObjects out of the arena.
+        <https://webkit.org/b/122895>
+
+        Reviewed by Antti Koivisto.
+
+        Stop arena-allocating renderers so we can move forward on improving
+        render tree memory management. This will also allow rendering code
+        to take advantage of malloc optimizations.
+
+        Line boxes and BiDi runs remain in the arena for now.
+
 2013-10-16  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Speculative fix for test, media/video-canvas-drawing-output.html.

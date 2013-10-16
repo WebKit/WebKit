@@ -1347,7 +1347,7 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE;
 }
 
-RenderElement* Element::createRenderer(RenderArena&, RenderStyle& style)
+RenderElement* Element::createRenderer(RenderStyle& style)
 {
     return RenderElement::createFor(*this, style);
 }

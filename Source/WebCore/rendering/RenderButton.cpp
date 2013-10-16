@@ -155,7 +155,7 @@ void RenderButton::setText(const String& str)
         if (m_buttonText)
             m_buttonText->setText(str.impl());
         else {
-            m_buttonText = new (renderArena()) RenderTextFragment(document(), str);
+            m_buttonText = new RenderTextFragment(document(), str);
             addChild(m_buttonText);
         }
     }

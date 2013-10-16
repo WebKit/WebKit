@@ -232,7 +232,7 @@ public:
     // Miscellaneous functions
 
     virtual bool rendererIsNeeded();
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const;
+    virtual RenderElement* createRenderer(RenderStyle&) const;
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();

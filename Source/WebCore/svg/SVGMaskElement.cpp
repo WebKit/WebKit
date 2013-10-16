@@ -157,9 +157,9 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout();
 }
 
-RenderElement* SVGMaskElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGMaskElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGResourceMasker(*this);
+    return new RenderSVGResourceMasker(*this);
 }
 
 bool SVGMaskElement::selfHasRelativeLengths() const

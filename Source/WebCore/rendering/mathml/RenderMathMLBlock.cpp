@@ -63,7 +63,7 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
-    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(document());
+    RenderMathMLBlock* newBlock = new RenderMathMLBlock(document());
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }

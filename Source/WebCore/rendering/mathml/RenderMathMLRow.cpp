@@ -50,7 +50,7 @@ RenderMathMLRow::RenderMathMLRow(Document& document)
 RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX);
-    RenderMathMLRow* newMRow = new (parent->renderArena()) RenderMathMLRow(parent->document());
+    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document());
     newMRow->setStyle(newStyle.release());
     return newMRow;
 }

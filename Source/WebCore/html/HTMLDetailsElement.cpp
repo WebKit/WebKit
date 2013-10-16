@@ -112,9 +112,9 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(detailsTag));
 }
 
-RenderElement* HTMLDetailsElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLDetailsElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderBlockFlow(*this);
+    return new RenderBlockFlow(*this);
 }
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)

@@ -118,14 +118,13 @@ RenderElement::~RenderElement()
 RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
 {
     Document& document = element.document();
-    RenderArena& arena = *document.renderArena();
 
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        RenderImage* image = new (arena) RenderImage(element);
+        RenderImage* image = new RenderImage(element);
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change
         // doesn't make sense as it should be run once at renderer creation.
@@ -141,54 +140,54 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
 
     if (element.hasTagName(HTMLNames::rubyTag)) {
         if (style.display() == INLINE)
-            return new (arena) RenderRubyAsInline(element);
+            return new RenderRubyAsInline(element);
         if (style.display() == BLOCK)
-            return new (arena) RenderRubyAsBlock(element);
+            return new RenderRubyAsBlock(element);
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element.hasTagName(HTMLNames::rtTag) && style.display() == BLOCK)
-        return new (arena) RenderRubyText(element);
+        return new RenderRubyText(element);
     if (document.cssRegionsEnabled() && style.isDisplayRegionType() && !style.regionThread().isEmpty())
-        return new (arena) RenderRegion(element, nullptr);
+        return new RenderRegion(element, nullptr);
     switch (style.display()) {
     case NONE:
         return 0;
     case INLINE:
-        return new (arena) RenderInline(element);
+        return new RenderInline(element);
     case BLOCK:
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
         if ((!style.hasAutoColumnCount() || !style.hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
-            return new (arena) RenderMultiColumnBlock(element);
-        return new (arena) RenderBlockFlow(element);
+            return new RenderMultiColumnBlock(element);
+        return new RenderBlockFlow(element);
     case LIST_ITEM:
-        return new (arena) RenderListItem(element);
+        return new RenderListItem(element);
     case TABLE:
     case INLINE_TABLE:
-        return new (arena) RenderTable(element);
+        return new RenderTable(element);
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return new (arena) RenderTableSection(element);
+        return new RenderTableSection(element);
     case TABLE_ROW:
-        return new (arena) RenderTableRow(element);
+        return new RenderTableRow(element);
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return new (arena) RenderTableCol(element);
+        return new RenderTableCol(element);
     case TABLE_CELL:
-        return new (arena) RenderTableCell(element);
+        return new RenderTableCell(element);
     case TABLE_CAPTION:
-        return new (arena) RenderTableCaption(element);
+        return new RenderTableCaption(element);
     case BOX:
     case INLINE_BOX:
-        return new (arena) RenderDeprecatedFlexibleBox(element);
+        return new RenderDeprecatedFlexibleBox(element);
     case FLEX:
     case INLINE_FLEX:
-        return new (arena) RenderFlexibleBox(element);
+        return new RenderFlexibleBox(element);
     case GRID:
     case INLINE_GRID:
-        return new (arena) RenderGrid(element);
+        return new RenderGrid(element);
     }
     ASSERT_NOT_REACHED();
     return nullptr;

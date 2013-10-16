@@ -36,7 +36,7 @@ public:
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);
 
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderStyle&);
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
     virtual void defaultEventHandler(Event*);
 

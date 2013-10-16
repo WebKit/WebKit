@@ -40,9 +40,9 @@ PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName
     return adoptRef(new SVGTSpanElement(tagName, document));
 }
 
-RenderElement* SVGTSpanElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGTSpanElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGTSpan(*this);
+    return new RenderSVGTSpan(*this);
 }
 
 bool SVGTSpanElement::childShouldCreateRenderer(const Node* child) const

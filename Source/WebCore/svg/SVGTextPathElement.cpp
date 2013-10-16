@@ -127,9 +127,9 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
-RenderElement* SVGTextPathElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGTextPathElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderSVGTextPath(*this);
+    return new RenderSVGTextPath(*this);
 }
 
 bool SVGTextPathElement::childShouldCreateRenderer(const Node* child) const

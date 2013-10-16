@@ -241,7 +241,7 @@ void RenderMenuList::setText(const String& s)
     if (m_buttonText)
         m_buttonText->setText(textToUse.impl(), true);
     else {
-        m_buttonText = new (renderArena()) RenderText(document(), textToUse);
+        m_buttonText = new RenderText(document(), textToUse);
         addChild(m_buttonText);
     }
     adjustInnerStyle();

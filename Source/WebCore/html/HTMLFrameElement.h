@@ -42,7 +42,7 @@ private:
     virtual void didAttachRenderers() OVERRIDE;
 
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderStyle&);
     
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

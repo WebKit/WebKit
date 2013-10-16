@@ -1432,7 +1432,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
-    RenderTable* newTable = new (parent->renderArena()) RenderTable(parent->document());
+    RenderTable* newTable = new RenderTable(parent->document());
     newTable->setStyle(newStyle.release());
     return newTable;
 }

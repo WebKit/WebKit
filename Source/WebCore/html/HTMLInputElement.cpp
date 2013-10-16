@@ -791,9 +791,9 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
     return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLInputElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLInputElement::createRenderer(RenderStyle& style)
 {
-    return m_inputType->createRenderer(arena, style);
+    return m_inputType->createRenderer(style);
 }
 
 void HTMLInputElement::willAttachRenderers()

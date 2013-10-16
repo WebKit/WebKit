@@ -468,7 +468,7 @@ PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
     return element().form();
 }
 
-RenderElement* InputType::createRenderer(RenderArena&, RenderStyle& style) const
+RenderElement* InputType::createRenderer(RenderStyle& style) const
 {
     return RenderElement::createFor(element(), style);
 }

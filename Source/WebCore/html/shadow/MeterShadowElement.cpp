@@ -76,9 +76,9 @@ bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
     return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
-RenderElement* MeterInnerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MeterInnerElement::createRenderer(RenderStyle&)
 {
-    return new (arena) RenderMeter(*this);
+    return new RenderMeter(*this);
 }
 
 const AtomicString& MeterValueElement::valuePseudoId() const

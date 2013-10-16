@@ -125,7 +125,7 @@ protected:
     virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
 
 private:
-    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(RenderStyle&) OVERRIDE;
     virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;

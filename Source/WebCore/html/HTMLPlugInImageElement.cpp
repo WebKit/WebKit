@@ -195,7 +195,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderElement* HTMLPlugInImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLPlugInImageElement::createRenderer(RenderStyle& style)
 {
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
@@ -205,7 +205,7 @@ RenderElement* HTMLPlugInImageElement::createRenderer(RenderArena& arena, Render
     }
 
     if (displayState() == DisplayingSnapshot) {
-        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new (arena) RenderSnapshottedPlugIn(*this);
+        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new RenderSnapshottedPlugIn(*this);
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
         return renderSnapshottedPlugIn;
     }
@@ -217,12 +217,12 @@ RenderElement* HTMLPlugInImageElement::createRenderer(RenderArena& arena, Render
         return RenderElement::createFor(*this, style);
 
     if (isImageType()) {
-        RenderImage* image = new (arena) RenderImage(*this);
+        RenderImage* image = new RenderImage(*this);
         image->setImageResource(RenderImageResource::create());
         return image;
     }
 
-    return new (arena) RenderEmbeddedObject(*this);
+    return new RenderEmbeddedObject(*this);
 }
 
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
