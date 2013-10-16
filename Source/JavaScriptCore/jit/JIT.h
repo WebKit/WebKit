@@ -183,7 +183,7 @@ namespace JSC {
 
 
         PropertyStubCompilationInfo(
-            PropertyStubGetById_T, unsigned bytecodeIndex, MacroAssembler::Label hotPathBegin,
+            PropertyStubGetById_T, unsigned bytecodeIndex,
             MacroAssembler::DataLabelPtr structureToCompare,
             MacroAssembler::PatchableJump structureCheck,
             MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
@@ -196,7 +196,6 @@ namespace JSC {
             MacroAssembler::Label done)
             : m_type(GetById)
             , bytecodeIndex(bytecodeIndex)
-            , hotPathBegin(hotPathBegin)
             , structureToCompare(structureToCompare)
             , structureCheck(structureCheck)
             , propertyStorageLoad(propertyStorageLoad)
@@ -311,39 +310,6 @@ namespace JSC {
             jit.privateCompileClosureCall(callLinkInfo, calleeCodeBlock, expectedStructure, expectedExecutable, codePtr);
         }
 
-        static void compileGetByIdProto(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = stubInfo->codeOrigin.bytecodeIndex;
-            jit.privateCompileGetByIdProto(stubInfo, structure, prototypeStructure, ident, slot, cachedOffset, returnAddress, callFrame);
-        }
-
-        static void compileGetByIdSelfList(VM* vm, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = stubInfo->codeOrigin.bytecodeIndex;
-            jit.privateCompileGetByIdSelfList(stubInfo, polymorphicStructures, currentIndex, structure, ident, slot, cachedOffset);
-        }
-        static void compileGetByIdProtoList(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = stubInfo->codeOrigin.bytecodeIndex;
-            jit.privateCompileGetByIdProtoList(stubInfo, prototypeStructureList, currentIndex, structure, prototypeStructure, ident, slot, cachedOffset, callFrame);
-        }
-        static void compileGetByIdChainList(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = stubInfo->codeOrigin.bytecodeIndex;
-            jit.privateCompileGetByIdChainList(stubInfo, prototypeStructureList, currentIndex, structure, chain, count, ident, slot, cachedOffset, callFrame);
-        }
-
-        static void compileGetByIdChain(VM* vm, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeOffset = stubInfo->codeOrigin.bytecodeIndex;
-            jit.privateCompileGetByIdChain(stubInfo, structure, chain, count, ident, slot, cachedOffset, returnAddress, callFrame);
-        }
-        
         static void compileGetByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
@@ -371,21 +337,6 @@ namespace JSC {
             return jit.privateCompileCTINativeCall(vm, func);
         }
 
-        static void resetPatchGetById(RepatchBuffer&, StructureStubInfo*);
-        static void patchGetByIdSelf(CodeBlock*, StructureStubInfo*, Structure*, PropertyOffset cachedOffset, ReturnAddressPtr);
-
-        static void compilePatchGetArrayLength(VM* vm, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
-        {
-            JIT jit(vm, codeBlock);
-#if ENABLE(DFG_JIT)
-            // Force profiling to be enabled during stub generation.
-            jit.m_canBeOptimized = true;
-            jit.m_canBeOptimizedOrInlined = true;
-            jit.m_shouldEmitProfiling = true;
-#endif // ENABLE(DFG_JIT)
-            return jit.privateCompilePatchGetArrayLength(returnAddress);
-        }
-
         static void linkFor(ExecState*, JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, VM*, CodeSpecializationKind);
         static void linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo*);
 
@@ -398,12 +349,6 @@ namespace JSC {
         CompilationResult privateCompile(JITCompilationEffort);
         
         void privateCompileClosureCall(CallLinkInfo*, CodeBlock* calleeCodeBlock, Structure*, ExecutableBase*, MacroAssemblerCodePtr);
-        
-        void privateCompileGetByIdProto(StructureStubInfo*, Structure*, Structure* prototypeStructure, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, ReturnAddressPtr, CallFrame*);
-        void privateCompileGetByIdSelfList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset);
-        void privateCompileGetByIdProtoList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, Structure* prototypeStructure, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, CallFrame*);
-        void privateCompileGetByIdChainList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, StructureChain*, size_t count, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, CallFrame*);
-        void privateCompileGetByIdChain(StructureStubInfo*, Structure*, StructureChain*, size_t count, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, ReturnAddressPtr, CallFrame*);
         
         void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
         void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
@@ -553,7 +498,6 @@ namespace JSC {
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterID tag);
 
         void compileGetByIdHotPath(const Identifier*);
-        void compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier*, Vector<SlowCaseEntry>::iterator&);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset, FinalObjectMode = MayBeFinal);
@@ -563,28 +507,6 @@ namespace JSC {
         void emitAdd32Constant(int dst, int op, int32_t constant, ResultType opType);
         void emitSub32Constant(int dst, int op, int32_t constant, ResultType opType);
         void emitBinaryDoubleOp(OpcodeID, int dst, int op1, int op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
-
-#if CPU(ARM_TRADITIONAL)
-        // sequenceOpCall
-        static const int sequenceOpCallInstructionSpace = 12;
-        static const int sequenceOpCallConstantSpace = 2;
-        // sequenceGetByIdHotPath
-        static const int sequenceGetByIdHotPathInstructionSpace = 36;
-        static const int sequenceGetByIdHotPathConstantSpace = 4;
-        // sequenceGetByIdSlowCase
-        static const int sequenceGetByIdSlowCaseInstructionSpace = 80;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 4;
-#elif CPU(SH4)
-        // sequenceOpCall
-        static const int sequenceOpCallInstructionSpace = 12;
-        static const int sequenceOpCallConstantSpace = 2;
-        // sequenceGetByIdHotPath
-        static const int sequenceGetByIdHotPathInstructionSpace = 36;
-        static const int sequenceGetByIdHotPathConstantSpace = 5;
-        // sequenceGetByIdSlowCase
-        static const int sequenceGetByIdSlowCaseInstructionSpace = 38;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 4;
-#endif
 
 #else // USE(JSVALUE32_64)
         /* This function is deprecated. */
@@ -628,7 +550,6 @@ namespace JSC {
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, const Identifier*);
-        void compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier*, Vector<SlowCaseEntry>::iterator&);
         void compileGetDirectOffset(RegisterID base, RegisterID result, PropertyOffset cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID result, PropertyOffset cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch, FinalObjectMode = MayBeFinal);
@@ -853,6 +774,10 @@ namespace JSC {
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr&);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr&, int);
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const FunctionPtr&, int);
+        
+        enum WithProfileTag { WithProfile };
+        
         MacroAssembler::Call callOperation(C_JITOperation_E);
         MacroAssembler::Call callOperation(C_JITOperation_EO, GPRReg);
         MacroAssembler::Call callOperation(C_JITOperation_ESt, Structure*);
@@ -864,10 +789,15 @@ namespace JSC {
         MacroAssembler::Call callOperation(J_JITOperation_EAapJcpZ, int, ArrayAllocationProfile*, const JSValue*, int32_t);
         MacroAssembler::Call callOperation(J_JITOperation_EC, int, JSCell*);
         MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg);
+#if USE(JSVALUE64)
+        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJI, int, GPRReg, StringImpl*);
+#else
+        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJI, int, GPRReg, GPRReg, StringImpl*);
+#endif
         MacroAssembler::Call callOperation(J_JITOperation_EJIdc, int, GPRReg, const Identifier*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
-        MacroAssembler::Call callOperation(J_JITOperation_EPc, int, Instruction*);
+        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EPc, int, Instruction*);
         MacroAssembler::Call callOperation(J_JITOperation_EZ, int, int32_t);
         MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, size_t);
         MacroAssembler::Call callOperation(P_JITOperation_EZ, int32_t);

@@ -1,3 +1,40 @@
+2013-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should use the DFG GetById IC
+        https://bugs.webkit.org/show_bug.cgi?id=122861
+
+        Reviewed by Oliver Hunt.
+        
+        This mostly just kills a ton of code.
+        
+        Note that this doesn't yet do all of the simplifications that can be done, but it does
+        kill dead code. I'll have another change to simplify StructureStubInfo's unions and such.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        * jit/JIT.h:
+        (JSC::PropertyStubCompilationInfo::PropertyStubCompilationInfo):
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        (JSC::JIT::callOperation):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/Repatch.cpp:
+        (JSC::repatchGetByID):
+        (JSC::buildGetByIDList):
+        * jit/ThunkGenerators.cpp:
+        * jit/ThunkGenerators.h:
+
 2013-10-15  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_WEB_ANIMATIONS flag

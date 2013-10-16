@@ -39,7 +39,6 @@
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "Interpreter.h"
-#include "JIT.h"
 #include "JITStubs.h"
 #include "JSActivation.h"
 #include "JSCJSValue.h"
@@ -2377,29 +2376,16 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
         // of the CodeBlock.
         dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", RawPointer(this), ".\n");
     }
-
-    switch (jitType()) {
-    case JITCode::BaselineJIT:
-        if (isGetByIdAccess(accessType))
-            JIT::resetPatchGetById(repatchBuffer, &stubInfo);
-        else {
-            RELEASE_ASSERT(isPutByIdAccess(accessType));
-            resetPutByID(repatchBuffer, stubInfo);
-        }
-        break;
-    case JITCode::DFGJIT:
-        if (isGetByIdAccess(accessType))
-            resetGetByID(repatchBuffer, stubInfo);
-        else if (isPutByIdAccess(accessType))
-            resetPutByID(repatchBuffer, stubInfo);
-        else {
-            RELEASE_ASSERT(isInAccess(accessType));
-            resetIn(repatchBuffer, stubInfo);
-        }
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
+    
+    RELEASE_ASSERT(JITCode::isJIT(jitType()));
+    
+    if (isGetByIdAccess(accessType))
+        resetGetByID(repatchBuffer, stubInfo);
+    else if (isPutByIdAccess(accessType))
+        resetPutByID(repatchBuffer, stubInfo);
+    else {
+        RELEASE_ASSERT(isInAccess(accessType));
+        resetIn(repatchBuffer, stubInfo);
     }
     
     stubInfo.reset();

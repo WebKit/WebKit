@@ -273,66 +273,6 @@ MacroAssemblerCodeRef virtualConstructThunkGenerator(VM* vm)
     return virtualForThunkGenerator(vm, CodeForConstruct);
 }
 
-MacroAssemblerCodeRef stringLengthTrampolineGenerator(VM* vm)
-{
-    JSInterfaceJIT jit(vm);
-    
-#if USE(JSVALUE64)
-    // Check eax is a string
-    JSInterfaceJIT::Jump failureCases1 = jit.emitJumpIfNotJSCell(JSInterfaceJIT::regT0);
-    JSInterfaceJIT::Jump failureCases2 = jit.branchPtr(
-        JSInterfaceJIT::NotEqual, JSInterfaceJIT::Address(
-            JSInterfaceJIT::regT0, JSCell::structureOffset()),
-        JSInterfaceJIT::TrustedImmPtr(vm->stringStructure.get()));
-
-    // Checks out okay! - get the length from the Ustring.
-    jit.load32(
-        JSInterfaceJIT::Address(JSInterfaceJIT::regT0, JSString::offsetOfLength()),
-        JSInterfaceJIT::regT0);
-
-    JSInterfaceJIT::Jump failureCases3 = jit.branch32(
-        JSInterfaceJIT::LessThan, JSInterfaceJIT::regT0, JSInterfaceJIT::TrustedImm32(0));
-
-    // regT0 contains a 64 bit value (is positive, is zero extended) so we don't need sign extend here.
-    jit.emitFastArithIntToImmNoCheck(JSInterfaceJIT::regT0, JSInterfaceJIT::regT0);
-    
-#else // USE(JSVALUE64)
-    // regT0 holds payload, regT1 holds tag
-
-    JSInterfaceJIT::Jump failureCases1 = jit.branch32(
-        JSInterfaceJIT::NotEqual, JSInterfaceJIT::regT1,
-        JSInterfaceJIT::TrustedImm32(JSValue::CellTag));
-    JSInterfaceJIT::Jump failureCases2 = jit.branchPtr(
-        JSInterfaceJIT::NotEqual,
-        JSInterfaceJIT::Address(JSInterfaceJIT::regT0, JSCell::structureOffset()),
-        JSInterfaceJIT::TrustedImmPtr(vm->stringStructure.get()));
-
-    // Checks out okay! - get the length from the Ustring.
-    jit.load32(
-        JSInterfaceJIT::Address(JSInterfaceJIT::regT0, JSString::offsetOfLength()),
-        JSInterfaceJIT::regT2);
-
-    JSInterfaceJIT::Jump failureCases3 = jit.branch32(
-        JSInterfaceJIT::Above, JSInterfaceJIT::regT2, JSInterfaceJIT::TrustedImm32(INT_MAX));
-    jit.move(JSInterfaceJIT::regT2, JSInterfaceJIT::regT0);
-    jit.move(JSInterfaceJIT::TrustedImm32(JSValue::Int32Tag), JSInterfaceJIT::regT1);
-#endif // USE(JSVALUE64)
-
-    jit.ret();
-    
-    JSInterfaceJIT::Call failureCases1Call = jit.makeTailRecursiveCall(failureCases1);
-    JSInterfaceJIT::Call failureCases2Call = jit.makeTailRecursiveCall(failureCases2);
-    JSInterfaceJIT::Call failureCases3Call = jit.makeTailRecursiveCall(failureCases3);
-    
-    LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
-    
-    patchBuffer.link(failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
-    patchBuffer.link(failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
-    patchBuffer.link(failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
-    
-    return FINALIZE_CODE(patchBuffer, ("string length trampoline"));
-}
-
 static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind kind)
 {
     int executableOffsetToFunction = NativeExecutable::offsetOfNativeFunctionFor(kind);

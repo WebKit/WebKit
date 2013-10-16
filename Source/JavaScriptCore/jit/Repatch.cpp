@@ -360,6 +360,8 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
 void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
+    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    
     bool cached = tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo);
     if (!cached)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
@@ -599,6 +601,8 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 
 void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
+    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    
     bool dontChangeCall = tryBuildGetByIDList(exec, baseValue, propertyName, slot, stubInfo);
     if (!dontChangeCall)
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);

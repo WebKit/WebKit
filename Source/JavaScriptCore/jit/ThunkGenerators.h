@@ -41,7 +41,6 @@ MacroAssemblerCodeRef linkClosureCallThunkGenerator(VM*);
 MacroAssemblerCodeRef virtualCallThunkGenerator(VM*);
 MacroAssemblerCodeRef virtualConstructThunkGenerator(VM*);
 
-MacroAssemblerCodeRef stringLengthTrampolineGenerator(VM*);
 MacroAssemblerCodeRef nativeCallGenerator(VM*);
 MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 MacroAssemblerCodeRef arityFixup(VM*);
