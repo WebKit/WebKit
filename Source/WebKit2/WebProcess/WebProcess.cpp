@@ -53,7 +53,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
-#include "WebToDatabaseProcessConnection.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/AXObjectCache.h>
@@ -101,6 +100,10 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManager.h"
+#endif
+
+#if ENABLE(DATABASE_PROCESS)
+#include "WebToDatabaseProcessConnection.h"
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

@@ -1,3 +1,9 @@
+2013-10-16  Brady Eidson  <beidson@apple.com>
+
+        Blind attempt to fix non-DATABASE_PROCESS builds.
+
+        * WebProcess/WebProcess.cpp:
+
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
         PlatformCALayer constructor should take layer type as an argument
