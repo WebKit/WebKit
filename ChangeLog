@@ -1,3 +1,15 @@
+2013-10-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2][Efl][CMake] Add support for ENABLE_NETWORK_PROCESS to the build system
+        https://bugs.webkit.org/show_bug.cgi?id=110139
+
+        Reviewed by Laszlo Gombos.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-10-10  Marcelo Morais  <m.morais@samsung.com>
 
         Web Inspector: Remove the old front-end from WebKit
