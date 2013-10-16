@@ -172,47 +172,44 @@ static NSString* toCAFilterType(PlatformCALayer::FilterType type)
 }
 
 PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
-    : PlatformCALayer(owner)
+    : PlatformCALayer(layer ? LayerTypeCustom : layerType, owner)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (layer) {
         if ([layer isKindOfClass:getAVPlayerLayerClass()])
             m_layerType = LayerTypeAVPlayerLayer;
-        else
-            m_layerType = LayerTypeCustom;
         m_layer = layer;
-    } else {
-        m_layerType = layerType;
-    
-        Class layerClass = Nil;
-        switch (layerType) {
-            case LayerTypeLayer:
-            case LayerTypeRootLayer:
-                layerClass = [CALayer class];
-                break;
-            case LayerTypeWebLayer:
-                layerClass = [WebLayer class];
-                break;
-            case LayerTypeTransformLayer:
-                layerClass = [CATransformLayer class];
-                break;
-            case LayerTypeWebTiledLayer:
-                layerClass = [WebTiledLayer class];
-                break;
-            case LayerTypeTiledBackingLayer:
-            case LayerTypePageTiledBackingLayer:
-                layerClass = [WebTiledBackingLayer class];
-                break;
-            case LayerTypeAVPlayerLayer:
-                layerClass = getAVPlayerLayerClass();
-                break;
-            case LayerTypeCustom:
-                break;
-        }
-
-        if (layerClass)
-            m_layer = adoptNS([[layerClass alloc] init]);
+        return;
     }
+
+    Class layerClass = Nil;
+    switch (layerType) {
+    case LayerTypeLayer:
+    case LayerTypeRootLayer:
+        layerClass = [CALayer class];
+        break;
+    case LayerTypeWebLayer:
+        layerClass = [WebLayer class];
+        break;
+    case LayerTypeTransformLayer:
+        layerClass = [CATransformLayer class];
+        break;
+    case LayerTypeWebTiledLayer:
+        layerClass = [WebTiledLayer class];
+        break;
+    case LayerTypeTiledBackingLayer:
+    case LayerTypePageTiledBackingLayer:
+        layerClass = [WebTiledBackingLayer class];
+        break;
+    case LayerTypeAVPlayerLayer:
+        layerClass = getAVPlayerLayerClass();
+        break;
+    case LayerTypeCustom:
+        break;
+    }
+
+    if (layerClass)
+        m_layer = adoptNS([[layerClass alloc] init]);
     
     // Save a pointer to 'this' in the CALayer
     [m_layer.get() setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];

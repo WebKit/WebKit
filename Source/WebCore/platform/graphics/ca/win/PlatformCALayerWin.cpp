@@ -108,24 +108,23 @@ static void layoutSublayersProc(CACFLayerRef caLayer)
 }
 
 PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
-    : PlatformCALayer(owner)
+    : PlatformCALayer(layer ? LayerTypeCustom : layerType, owner)
 {
     if (layer) {
-        m_layerType = LayerTypeCustom;
         m_layer = layer;
-    } else {
-        m_layerType = layerType;
-        ASSERT((layerType != LayerTypeTiledBackingLayer) && (layerType != LayerTypePageTiledBackingLayer));
-        m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
-
-        // Create the PlatformCALayerWinInternal object and point to it in the userdata.
-        PlatformCALayerWinInternal* intern = new PlatformCALayerWinInternal(this);
-        CACFLayerSetUserData(m_layer.get(), intern);
-
-        // Set the display callback
-        CACFLayerSetDisplayCallback(m_layer.get(), displayCallback);
-        CACFLayerSetLayoutCallback(m_layer.get(), layoutSublayersProc);    
+        return;
     }
+
+    ASSERT((layerType != LayerTypeTiledBackingLayer) && (layerType != LayerTypePageTiledBackingLayer));
+    m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
+
+    // Create the PlatformCALayerWinInternal object and point to it in the userdata.
+    PlatformCALayerWinInternal* intern = new PlatformCALayerWinInternal(this);
+    CACFLayerSetUserData(m_layer.get(), intern);
+
+    // Set the display callback
+    CACFLayerSetDisplayCallback(m_layer.get(), displayCallback);
+    CACFLayerSetLayoutCallback(m_layer.get(), layoutSublayersProc);
 }
 
 PlatformCALayerWin::~PlatformCALayerWin()

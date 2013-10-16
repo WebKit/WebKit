@@ -200,8 +200,9 @@ public:
 #endif
 
 protected:
-    PlatformCALayer(PlatformCALayerClient* owner)
-        : m_owner(owner)
+    PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
+        : m_layerType(layerType)
+        , m_owner(owner)
     {
 
     }

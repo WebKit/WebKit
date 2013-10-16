@@ -1,5 +1,16 @@
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
+        PlatformCALayer constructor should take layer type as an argument
+        https://bugs.webkit.org/show_bug.cgi?id=122915
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        Use the new LayerType argument.
+
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
         Remote Layer Tree: Use a default instead of an environment variable
         https://bugs.webkit.org/show_bug.cgi?id=122913
 

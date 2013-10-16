@@ -54,12 +54,10 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, P
 }
 
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
-    : PlatformCALayer(owner)
+    : PlatformCALayer(layerType, owner)
     , m_layerID(generateLayerID())
     , m_context(context)
 {
-    m_layerType = layerType;
-
     m_context->layerWasCreated(this, layerType);
 }
 

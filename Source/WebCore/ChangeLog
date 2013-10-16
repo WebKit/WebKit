@@ -1,3 +1,24 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        PlatformCALayer constructor should take layer type as an argument
+        https://bugs.webkit.org/show_bug.cgi?id=122915
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a minor refactoring.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::PlatformCALayer):
+        Add a LayerType argument.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::PlatformCALayerWin):
+        Use the new LayerType argument, and early-return in the case where we
+        are wrapping a custom PlatformLayer.
+        Drive-by un-indent the switch in the Mac version.
+
 2013-10-15  Brady Eidson  <beidson@apple.com>
 
         Flesh out the DatabaseProcess (and launch it!)
