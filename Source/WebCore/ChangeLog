@@ -1,3 +1,19 @@
+2013-10-16  peavo@outlook.com  <peavo@outlook.com>
+
+        Emphasis marks has wrong color.
+        https://bugs.webkit.org/show_bug.cgi?id=122829
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/text/text-emphasis.html.
+               fast/text/text-emphasis-expected.html.
+
+        Emphasis color should be set as fill color, not stroke color.
+
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::updateGraphicsContext):
+        * rendering/TextPaintStyle.h:
+
 2013-10-16  Antti Koivisto  <antti@apple.com>
 
         Move code for finding rendered character offset to RenderTextLineBoxes

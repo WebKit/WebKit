@@ -154,7 +154,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
     return selectionPaintStyle;
 }
 
-void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paintStyle, StrokeColorType strokeColorType)
+void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paintStyle, FillColorType fillColorType)
 {
     TextDrawingModeFlags mode = context.textDrawingMode();
     if (paintStyle.strokeWidth > 0) {
@@ -165,13 +165,13 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
         }
     }
     
-    if (mode & TextModeFill && (paintStyle.fillColor != context.fillColor() || paintStyle.colorSpace != context.fillColorSpace()))
-        context.setFillColor(paintStyle.fillColor, paintStyle.colorSpace);
+    Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
+    if (mode & TextModeFill && (fillColor != context.fillColor() || paintStyle.colorSpace != context.fillColorSpace()))
+        context.setFillColor(fillColor, paintStyle.colorSpace);
 
     if (mode & TextModeStroke) {
-        Color strokeColor = strokeColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.strokeColor;
-        if (strokeColor != context.strokeColor())
-            context.setStrokeColor(strokeColor, paintStyle.colorSpace);
+        if (paintStyle.strokeColor != context.strokeColor())
+            context.setStrokeColor(paintStyle.strokeColor, paintStyle.colorSpace);
         if (paintStyle.strokeWidth != context.strokeThickness())
             context.setStrokeThickness(paintStyle.strokeWidth);
     }

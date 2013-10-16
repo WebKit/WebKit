@@ -1,3 +1,13 @@
+2013-10-16  peavo@outlook.com  <peavo@outlook.com>
+
+        Emphasis marks has wrong color.
+        https://bugs.webkit.org/show_bug.cgi?id=122829
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/text-emphasis-expected.html: Added.
+        * fast/text/text-emphasis.html: Added.
+
 2013-10-16  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r155998.
