@@ -220,9 +220,6 @@ fast/inline/continuation-outlines-with-layers.html
 # The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html
 
-# Failing, last gradiant rectangle is blank
-svg/batik/paints/gradientLimit.svg
-
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
 http/tests/misc/copy-resolves-urls.html
 http/tests/misc/iframe-invalid-source-crash.html
