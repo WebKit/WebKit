@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.2.1
+=================
+
+What's new in WebKitGTK+ 2.2.1?
+
+  - Fix a crash in JavaScriptCore when visiting google groups.
+  - Fix a crash in JavaScriptCore when trying to send a message via
+    'today's birthdays' dialogue box on Facebook.
+  - Make sure the GtkWidget used for windowed plugins is destroyed
+    when the plugin instance is destroyed.
+  - Fix the build with drag and drop support disabled.
+
+=================
 WebKitGTK+  2.2.0
 =================
 

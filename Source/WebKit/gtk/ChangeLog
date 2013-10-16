@@ -1,3 +1,9 @@
+2013-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.2.1 release.
+
+        * NEWS: Add release notes.
+
 2013-09-24  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Fix compilation problems when setting ENABLE_DRAG_SUPPORT = FALSE
