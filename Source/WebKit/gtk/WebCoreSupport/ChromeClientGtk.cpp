@@ -204,6 +204,11 @@ Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoad
 {
     WebKitWebView* webView = 0;
 
+#if ENABLE(FULLSCREEN_API)
+    if (frame->document() && frame->document()->webkitCurrentFullScreenElement())
+        frame->document()->webkitCancelFullScreen();
+#endif
+
     g_signal_emit_by_name(m_webView, "create-web-view", kit(frame), &webView);
 
     if (!webView)

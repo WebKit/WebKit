@@ -233,6 +233,11 @@ Page* ChromeClientBlackBerry::createWindow(Frame* frame, const FrameLoadRequest&
         return 0;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    if (Element* element = frame->document() ? frame->document()->webkitCurrentFullScreenElement() : 0)
+        frame->document()->webkitCancelFullScreen();
+#endif
+
     int x = features.xSet ? features.x : 0;
     int y = features.ySet ? features.y : 0;
     int width = features.widthSet? features.width : -1;

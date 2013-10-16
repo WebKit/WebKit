@@ -219,6 +219,11 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
+
+#if ENABLE(FULLSCREEN_API)
+    if (frame->document() && frame->document()->webkitCurrentFullScreenElement())
+        frame->document()->webkitCancelFullScreen();
+#endif
     
     if ([delegate respondsToSelector:@selector(webView:createWebViewWithRequest:windowFeatures:)]) {
         NSNumber *x = features.xSet ? [[NSNumber alloc] initWithFloat:features.x] : nil;
