@@ -288,28 +288,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_generic)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    jsCast<JSActivation*>(stackFrame.args[0].jsValue())->tearOff(*stackFrame.vm);
-}
-
-DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    ASSERT(callFrame->codeBlock()->usesArguments());
-    Arguments* arguments = jsCast<Arguments*>(stackFrame.args[0].jsValue());
-    if (JSValue activationValue = stackFrame.args[1].jsValue()) {
-        arguments->didTearOffActivation(callFrame, jsCast<JSActivation*>(activationValue));
-        return;
-    }
-    arguments->tearOff(callFrame);
-}
-
 static JSValue getByVal(
     CallFrame* callFrame, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
 {

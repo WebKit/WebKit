@@ -389,9 +389,8 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
     int activation = currentInstruction[1].u.operand;
     Jump activationNotCreated = branch32(Equal, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
-    JITStubCall stubCall(this, cti_op_tear_off_activation);
-    stubCall.addArgument(activation);
-    stubCall.call();
+    emitLoadPayload(activation, regT0);
+    callOperation(operationTearOffActivation, regT0);
     activationNotCreated.link(this);
 }
 
@@ -401,10 +400,9 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     int activation = currentInstruction[2].u.operand;
 
     Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments).offset()), TrustedImm32(JSValue::EmptyValueTag));
-    JITStubCall stubCall(this, cti_op_tear_off_arguments);
-    stubCall.addArgument(unmodifiedArgumentsRegister(arguments).offset());
-    stubCall.addArgument(activation);
-    stubCall.call();
+    emitLoadPayload(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT0);
+    emitLoadPayload(activation, regT1);
+    callOperation(operationTearOffArguments, regT0, regT1);
     argsNotCreated.link(this);
 }
 

@@ -361,8 +361,6 @@ EncodedJSValue JIT_STUB cti_op_get_by_val_generic(STUB_ARGS_DECLARATION) WTF_INT
 EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_by_val_generic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_throw_static_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTERNAL;
