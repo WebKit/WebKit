@@ -147,6 +147,7 @@ my (
     $videoSupport,
     $videoTrackSupport,
     $webglSupport,
+    $webAnimationSupport,
     $webAudioSupport,
     $webSocketsSupport,
     $webTimingSupport,
@@ -459,6 +460,9 @@ my @features = (
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", default => (isAppleMacWebKit() || isGtk() || isEfl()), value => \$webglSupport },
+
+    { option => "web-animations", desc => "Toggle Web Animation support",
+      define => "ENABLE_WEB_ANIMATION", default => 0, value => \$webAnimationSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => (isEfl() || isGtk()), value => \$webAudioSupport },

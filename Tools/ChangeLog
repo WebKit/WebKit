@@ -1,3 +1,15 @@
+2013-10-15  Dean Jackson  <dino@apple.com>
+
+        Add ENABLE_WEB_ANIMATIONS flag
+        https://bugs.webkit.org/show_bug.cgi?id=122871
+
+        Reviewed by Tim Horton.
+
+        Eventually might be http://dev.w3.org/fxtf/web-animations/
+        but this is just engine-internal work at the moment.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-10-15  Darin Adler  <darin@apple.com>
 
         Add some API tests for Vector, RefPtr, and Ref
