@@ -1,3 +1,10 @@
+2013-10-15  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed build fix; I don't know how to export.
+        This may not help.
+
+        * WebCore.exp.in:
+
 2013-10-15  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_WEB_ANIMATIONS flag
