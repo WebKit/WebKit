@@ -139,11 +139,11 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/ApplicationCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Battery \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Cookies \
+	-I$(srcdir)/Source/WebKit2/WebProcess/Databases/IndexedDB \
 	-I$(srcdir)/Source/WebKit2/WebProcess/FullScreen \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Geolocation \
 	-I$(srcdir)/Source/WebKit2/WebProcess/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/IconDatabase \
-	-I$(srcdir)/Source/WebKit2/WebProcess/IndexedDB \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
