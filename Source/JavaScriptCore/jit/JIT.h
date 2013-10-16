@@ -557,20 +557,6 @@ namespace JSC {
 
 #endif // USE(JSVALUE32_64)
 
-#if (defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL)
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name) do { beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace, dst); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE(name) END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, 0)
-
-        void beginUninterruptedSequence(int, int);
-        void endUninterruptedSequence(int, int, int);
-
-#else
-#define BEGIN_UNINTERRUPTED_SEQUENCE(name)
-#define END_UNINTERRUPTED_SEQUENCE(name)
-#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst)
-#endif
-
         void emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition);
         void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
 

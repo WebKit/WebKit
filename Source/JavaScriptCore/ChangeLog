@@ -1,5 +1,24 @@
 2013-10-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of the UNINTERRUPTED_SEQUENCE thing
+        https://bugs.webkit.org/show_bug.cgi?id=122876
+
+        Reviewed by Mark Hahnenberg.
+        
+        It doesn't make sense anymore. We now use the DFG's IC logic, which never needed that.
+        
+        Moreover, we should resist the temptation to bring anything like this back. We don't
+        want to have inline caches that only work if the assembler lays out code in a specific
+        predetermined way.
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
+2013-10-15  Filip Pizlo  <fpizlo@apple.com>
+
         Baseline JIT should use the DFG GetById IC
         https://bugs.webkit.org/show_bug.cgi?id=122861
 
