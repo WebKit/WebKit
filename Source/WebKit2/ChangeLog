@@ -1,3 +1,29 @@
+2013-10-16  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] Minibrowser can't load child window's location
+        https://bugs.webkit.org/show_bug.cgi?id=122485
+
+        Reviewed by Gyuyoung Kim.
+
+        EwkView::createNewPage(), which is only called during handling of
+        Messages::WebPageProxy::CreateNewPage message from WebProcess, no longer passes
+        the URL to window_create(). As a result, no Messages::WebPage::LoadURL message
+        is sent back, that would load the same URL twice and effectively cancel any
+        other scheduled navigation inside WebProcess.
+
+        Additionally, since the url parameter in MiniBrowser's implementation of
+        window_create() is only used internally and is prone to bugs as demonstrated
+        in r139303 (d7f10c8), it has been removed in favour of explicit calls to
+        ewk_view_url_set().
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::createNewPage): No longer passes the URL to window_create() impl.
+        * UIProcess/API/efl/ewk_view.h: window_create() no longer has the url parameter.
+        * UIProcess/API/efl/tests/test_ewk2_window_features.cpp: Test methods updated to
+            comply with the API change.
+        (EWK2WindowFeaturesTest::createDefaultWindow): Ditto.
+        (EWK2WindowFeaturesTest::createWindow): Ditto.
+
 2013-10-15  Jae Hyun Park  <jae.park@company100.net>
 
         Unreviewed. Build fix after r157476.

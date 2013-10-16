@@ -180,7 +180,7 @@ static const Ecore_Getopt options = {
 };
 
 static Eina_Stringshare *show_file_entry_dialog(Browser_Window *window, const char *label_tag, const char *default_text);
-static Browser_Window *window_create(Evas_Object* opener, const char *url, int width, int height, Eina_Bool view_mode);
+static Browser_Window *window_create(Evas_Object* opener, int width, int height, Eina_Bool view_mode);
 
 static Browser_Window *window_find_with_elm_window(Evas_Object *elm_window)
 {
@@ -422,14 +422,16 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "F8")) {
         info("Create souce code window (F8) was pressed.");
-        Browser_Window *window = window_create(ewk_view, ewk_view_url_get(ewk_view), 0, 0, EINA_TRUE);
+        Browser_Window *window = window_create(ewk_view, 0, 0, EINA_TRUE);
+        ewk_view_url_set(window->ewk_view, ewk_view_url_get(ewk_view));
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "F11")) {
         info("Fullscreen (F11) was pressed, toggling window/fullscreen.");
         elm_win_fullscreen_set(window->elm_window, !elm_win_fullscreen_get(window->elm_window));
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.");
-        Browser_Window *window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);
+        Browser_Window *window = window_create(NULL, 0, 0, EINA_FALSE);
+        ewk_view_url_set(window->ewk_view, DEFAULT_URL);
         // 0 equals default width and height.
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
@@ -1353,7 +1355,7 @@ static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
 }
 
 static Evas_Object *
-on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Window_Features *window_features)
+on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features)
 {
     int x = 0;
     int y = 0;
@@ -1368,12 +1370,12 @@ on_window_create(Ewk_View_Smart_Data *smartData, const char *url, const Ewk_Wind
     if (!height)
         height = window_height;
 
-    Browser_Window *window = window_create(smartData->self, url, width, height, EINA_FALSE);
+    Browser_Window *window = window_create(smartData->self, width, height, EINA_FALSE);
     Evas_Object *new_view = window->ewk_view;
 
     windows = eina_list_append(windows, window);
 
-    info("minibrowser: location(%d,%d) size=(%d,%d) url=%s", x, y, width, height, url);
+    info("minibrowser: location(%d,%d) size=(%d,%d)", x, y, width, height);
 
     return new_view;
 }
@@ -1663,7 +1665,7 @@ create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
     return button;
 }
 
-static Browser_Window *window_create(Evas_Object *opener, const char *url, int width, int height, Eina_Bool view_mode)
+static Browser_Window *window_create(Evas_Object *opener, int width, int height, Eina_Bool view_mode)
 {
     Browser_Window *window = calloc(1, sizeof(Browser_Window));
     if (!window) {
@@ -1863,9 +1865,6 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     elm_box_pack_before(vertical_layout, window->ewk_view, window->search.search_bar);
     evas_object_show(window->ewk_view);
 
-    if (url && strcmp(url, "about:blank")) // Do not reset 'about:blank' as it would erase all previous document modifications.
-        ewk_view_url_set(window->ewk_view, url);
-
     evas_object_resize(window->elm_window, width ? width : window_width, height ? height : window_height);
     evas_object_show(window->elm_window);
     search_box_hide(window);
@@ -1980,10 +1979,13 @@ elm_main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        window = window_create(NULL, url, 0, 0, EINA_FALSE);
+        window = window_create(NULL, 0, 0, EINA_FALSE);
+        ewk_view_url_set(window->ewk_view, url);
         free(url);
-    } else
-        window = window_create(NULL, DEFAULT_URL, 0, 0, EINA_FALSE);
+    } else {
+        window = window_create(NULL, 0, 0, EINA_FALSE);
+        ewk_view_url_set(window->ewk_view, DEFAULT_URL);
+    }
 
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");

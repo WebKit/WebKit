@@ -1,3 +1,17 @@
+2013-10-16  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] Minibrowser can't load child window's location
+        https://bugs.webkit.org/show_bug.cgi?id=122485
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/main.c: Now calling window_create() without the url parameter
+            followed by an explicit call to ewk_view_url_set() where appropriate.
+        (on_key_down):
+        (on_window_create):
+        (window_create):
+        (elm_main):
+
 2013-10-15  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Make SeccompFilters build again after r156349 and r156353

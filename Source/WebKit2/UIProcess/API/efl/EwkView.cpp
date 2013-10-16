@@ -1085,7 +1085,7 @@ WKPageRef EwkView::createNewPage(PassRefPtr<EwkUrlRequest> request, WKDictionary
 
     RefPtr<EwkWindowFeatures> ewkWindowFeatures = EwkWindowFeatures::create(windowFeatures, this);
 
-    Evas_Object* newEwkView = sd->api->window_create(sd, request->url(), ewkWindowFeatures.get());
+    Evas_Object* newEwkView = sd->api->window_create(sd, ewkWindowFeatures.get());
     if (!newEwkView)
         return 0;
 
