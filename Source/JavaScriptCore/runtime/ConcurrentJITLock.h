@@ -26,6 +26,7 @@
 #ifndef ConcurrentJITLock_h
 #define ConcurrentJITLock_h
 
+#include "DeferGC.h"
 #include <wtf/ByteSpinLock.h>
 #include <wtf/NoLock.h>
 
@@ -33,13 +34,90 @@ namespace JSC {
 
 #if ENABLE(CONCURRENT_JIT)
 typedef ByteSpinLock ConcurrentJITLock;
-typedef ByteSpinLocker ConcurrentJITLocker;
+typedef ByteSpinLocker ConcurrentJITLockerImpl;
 #else
 typedef NoLock ConcurrentJITLock;
-typedef NoLockLocker ConcurrentJITLocker;
+typedef NoLockLocker ConcurrentJITLockerImpl;
 #endif
+
+class ConcurrentJITLockerBase {
+    WTF_MAKE_NONCOPYABLE(ConcurrentJITLockerBase);
+public:
+    explicit ConcurrentJITLockerBase(ConcurrentJITLock& lockable)
+        : m_locker(&lockable)
+    {
+    }
+    explicit ConcurrentJITLockerBase(ConcurrentJITLock* lockable)
+        : m_locker(lockable)
+    {
+    }
+
+    ~ConcurrentJITLockerBase()
+    {
+    }
+    
+    void unlockEarly()
+    {
+        m_locker.unlockEarly();
+    }
+
+private:
+    ConcurrentJITLockerImpl m_locker;
+};
+
+class GCSafeConcurrentJITLocker : public ConcurrentJITLockerBase {
+public:
+    GCSafeConcurrentJITLocker(ConcurrentJITLock& lockable, Heap& heap)
+        : ConcurrentJITLockerBase(lockable)
+        , m_deferGC(heap)
+    {
+    }
+
+    GCSafeConcurrentJITLocker(ConcurrentJITLock* lockable, Heap& heap)
+        : ConcurrentJITLockerBase(lockable)
+        , m_deferGC(heap)
+    {
+    }
+
+    ~GCSafeConcurrentJITLocker()
+    {
+        // We have to unlock early due to the destruction order of base
+        // vs. derived classes. If we didn't, then we would destroy the 
+        // DeferGC object before unlocking the lock which could cause a GC
+        // and resulting deadlock.
+        unlockEarly();
+    }
+
+private:
+#if ENABLE(CONCURRENT_JIT)
+    DeferGC m_deferGC;
+#else
+    struct NoDefer {
+        NoDefer(Heap& heap) : m_heap(heap) { }
+        Heap& m_heap;
+    };
+    NoDefer m_deferGC;
+#endif
+};
+
+class ConcurrentJITLocker : public ConcurrentJITLockerBase {
+public:
+    ConcurrentJITLocker(ConcurrentJITLock& lockable)
+        : ConcurrentJITLockerBase(lockable)
+    {
+    }
+
+    ConcurrentJITLocker(ConcurrentJITLock* lockable)
+        : ConcurrentJITLockerBase(lockable)
+    {
+    }
+
+#if ENABLE(CONCURRENT_JIT) && !defined(NDEBUG)
+private:
+    DisallowGC m_disallowGC;
+#endif
+};
 
 } // namespace JSC
 
 #endif // ConcurrentJITLock_h
-

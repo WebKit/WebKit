@@ -354,6 +354,11 @@ public:
         return m_map.find(key);
     }
     
+    Map::iterator find(const GCSafeConcurrentJITLocker&, StringImpl* key)
+    {
+        return m_map.find(key);
+    }
+    
     SymbolTableEntry get(const ConcurrentJITLocker&, StringImpl* key)
     {
         return m_map.get(key);
@@ -382,6 +387,11 @@ public:
     }
     
     Map::iterator end(const ConcurrentJITLocker&)
+    {
+        return m_map.end();
+    }
+    
+    Map::iterator end(const GCSafeConcurrentJITLocker&)
     {
         return m_map.end();
     }

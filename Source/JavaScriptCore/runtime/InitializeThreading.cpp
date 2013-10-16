@@ -69,6 +69,9 @@ static void initializeThreadingOnce()
 #if ENABLE(LLINT)
     LLInt::initialize();
 #endif
+#ifndef NDEBUG
+    DisallowGC::initialize();
+#endif
 }
 
 void initializeThreading()

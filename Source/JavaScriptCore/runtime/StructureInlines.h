@@ -77,7 +77,8 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return invalidOffset;
 
@@ -89,7 +90,8 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return invalidOffset;
 

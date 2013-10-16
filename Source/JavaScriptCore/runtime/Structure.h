@@ -51,6 +51,7 @@
 
 namespace JSC {
 
+class DeferGC;
 class LLIntOffsetsExtractor;
 class PropertyNameArray;
 class PropertyNameArrayData;
@@ -393,7 +394,7 @@ private:
     PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(const ConcurrentJITLocker&, VM&, unsigned keyCount = 0);
+    void createPropertyMap(const GCSafeConcurrentJITLocker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
 
     bool despecifyFunction(VM&, PropertyName);
@@ -404,7 +405,7 @@ private:
     PropertyTable* copyPropertyTable(VM&, Structure* owner);
     PropertyTable* copyPropertyTableForPinning(VM&, Structure* owner);
     JS_EXPORT_PRIVATE void materializePropertyMap(VM&);
-    void materializePropertyMapIfNecessary(VM& vm)
+    void materializePropertyMapIfNecessary(VM& vm, DeferGC&)
     {
         ASSERT(!isCompilationThread());
         ASSERT(structure()->classInfo() == info());
@@ -412,7 +413,7 @@ private:
         if (!propertyTable() && previousID())
             materializePropertyMap(vm);
     }
-    void materializePropertyMapIfNecessaryForPinning(VM& vm)
+    void materializePropertyMapIfNecessaryForPinning(VM& vm, DeferGC&)
     {
         ASSERT(structure()->classInfo() == info());
         checkOffsetConsistency();

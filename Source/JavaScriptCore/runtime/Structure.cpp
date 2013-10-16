@@ -280,7 +280,7 @@ void Structure::materializePropertyMap(VM& vm)
     // Must hold the lock on this structure, since we will be modifying this structure's
     // property map. We don't want getConcurrently() to see the property map in a half-baked
     // state.
-    ConcurrentJITLocker locker(m_lock);
+    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
     if (!table)
         createPropertyMap(locker, vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
     else
@@ -313,7 +313,8 @@ void Structure::despecifyDictionaryFunction(VM& vm, PropertyName propertyName)
 {
     StringImpl* rep = propertyName.uid();
 
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
 
     ASSERT(isDictionary());
     ASSERT(propertyTable());
@@ -451,7 +452,8 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
 
     transition->m_prototype.set(vm, transition, prototype);
 
-    structure->materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->pin();
@@ -467,7 +469,8 @@ Structure* Structure::despecifyFunctionTransition(VM& vm, Structure* structure, 
 
     ++transition->m_specificFunctionThrashCount;
 
-    structure->materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->pin();
@@ -485,10 +488,11 @@ Structure* Structure::despecifyFunctionTransition(VM& vm, Structure* structure, 
 
 Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes)
 {
+    DeferGC deferGC(vm.heap);
     if (!structure->isUncacheableDictionary()) {
         Structure* transition = create(vm, structure);
 
-        structure->materializePropertyMapIfNecessary(vm);
+        structure->materializePropertyMapIfNecessary(vm, deferGC);
         transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
         transition->m_offset = structure->m_offset;
         transition->pin();
@@ -511,7 +515,8 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     
     Structure* transition = create(vm, structure);
 
-    structure->materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->m_dictionaryKind = kind;
@@ -571,7 +576,8 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
 
     // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    structure->materializePropertyMapIfNecessary(vm, deferGC);
     transition->propertyTable().set(vm, transition, structure->copyPropertyTableForPinning(vm, transition));
     transition->m_offset = structure->m_offset;
     transition->m_preventExtensions = true;
@@ -583,7 +589,8 @@ Structure* Structure::preventExtensionsTransition(VM& vm, Structure* structure)
 
 PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm, Structure* owner)
 {
-    materializePropertyMapIfNecessaryForPinning(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessaryForPinning(vm, deferGC);
     
     if (m_isPinnedPropertyTable)
         return propertyTable()->copy(vm, owner, propertyTable()->size() + 1);
@@ -640,7 +647,8 @@ bool Structure::isSealed(VM& vm)
     if (isExtensible())
         return false;
 
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return true;
 
@@ -658,7 +666,8 @@ bool Structure::isFrozen(VM& vm)
     if (isExtensible())
         return false;
 
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return true;
 
@@ -718,7 +727,8 @@ PropertyOffset Structure::addPropertyWithoutTransition(VM& vm, PropertyName prop
     if (m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         specificValue = 0;
 
-    materializePropertyMapIfNecessaryForPinning(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessaryForPinning(vm, deferGC);
     
     pin();
 
@@ -730,7 +740,8 @@ PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, PropertyName p
     ASSERT(isUncacheableDictionary());
     ASSERT(!enumerationCache());
 
-    materializePropertyMapIfNecessaryForPinning(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessaryForPinning(vm, deferGC);
 
     pin();
     return remove(propertyName);
@@ -840,7 +851,8 @@ PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attri
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
 
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return invalidOffset;
 
@@ -855,7 +867,8 @@ PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attri
 
 bool Structure::despecifyFunction(VM& vm, PropertyName propertyName)
 {
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return false;
 
@@ -870,7 +883,8 @@ bool Structure::despecifyFunction(VM& vm, PropertyName propertyName)
 
 void Structure::despecifyAllFunctions(VM& vm)
 {
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return;
 
@@ -881,7 +895,7 @@ void Structure::despecifyAllFunctions(VM& vm)
 
 PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
-    ConcurrentJITLocker locker(m_lock);
+    GCSafeConcurrentJITLocker locker(m_lock, vm.heap);
     
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
@@ -926,7 +940,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     return offset;
 }
 
-void Structure::createPropertyMap(const ConcurrentJITLocker&, VM& vm, unsigned capacity)
+void Structure::createPropertyMap(const GCSafeConcurrentJITLocker&, VM& vm, unsigned capacity)
 {
     ASSERT(!propertyTable());
 
@@ -936,7 +950,8 @@ void Structure::createPropertyMap(const ConcurrentJITLocker&, VM& vm, unsigned c
 
 void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    materializePropertyMapIfNecessary(vm);
+    DeferGC deferGC(vm.heap);
+    materializePropertyMapIfNecessary(vm, deferGC);
     if (!propertyTable())
         return;
 

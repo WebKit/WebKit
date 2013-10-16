@@ -125,7 +125,7 @@ inline bool symbolTablePut(
     WriteBarrierBase<Unknown>* reg;
     {
         SymbolTable& symbolTable = *object->symbolTable();
-        ConcurrentJITLocker locker(symbolTable.m_lock);
+        GCSafeConcurrentJITLocker locker(symbolTable.m_lock, exec->vm().heap);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
         if (iter == symbolTable.end(locker))
             return false;

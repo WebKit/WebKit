@@ -360,7 +360,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
 void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
-    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     bool cached = tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo);
     if (!cached)
@@ -601,7 +601,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 
 void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
-    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     bool dontChangeCall = tryBuildGetByIDList(exec, baseValue, propertyName, slot, stubInfo);
     if (!dontChangeCall)
@@ -1006,7 +1006,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
 
 void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
-    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     bool cached = tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
@@ -1101,7 +1101,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
 
 void buildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
-    ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
+    GCSafeConcurrentJITLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     
     bool cached = tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
