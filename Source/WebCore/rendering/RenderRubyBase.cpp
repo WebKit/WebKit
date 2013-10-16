@@ -48,9 +48,9 @@ RenderRubyBase::~RenderRubyBase()
 {
 }
 
-bool RenderRubyBase::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderRubyBase::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->isInline();
+    return child.isInline();
 }
 
 void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild)

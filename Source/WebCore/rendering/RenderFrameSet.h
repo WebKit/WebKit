@@ -97,7 +97,7 @@ private:
     virtual void layout() OVERRIDE;
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual bool canHaveChildren() const OVERRIDE { return true; }
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
 
     bool flattenFrameSet() const;

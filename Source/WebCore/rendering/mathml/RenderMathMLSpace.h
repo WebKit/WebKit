@@ -46,7 +46,7 @@ private:
 
     virtual bool isRenderMathMLSpace() const OVERRIDE { return true; }
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE { return false; } 
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE { return false; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
 
     virtual void updateFromElement() OVERRIDE;

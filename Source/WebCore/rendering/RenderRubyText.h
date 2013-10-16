@@ -42,7 +42,7 @@ public:
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
 
 private:
     virtual const char* renderName() const OVERRIDE { return "RenderRubyText"; }

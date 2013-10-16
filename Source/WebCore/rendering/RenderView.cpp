@@ -138,9 +138,9 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
     return isHorizontalWritingMode() ? frameView().visibleHeight() : frameView().visibleWidth();
 }
 
-bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->isBox();
+    return child.isBox();
 }
 
 void RenderView::layoutContent(const LayoutState& state)

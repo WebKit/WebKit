@@ -40,7 +40,7 @@ public:
 
     SVGTextElement& textElement() const;
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }

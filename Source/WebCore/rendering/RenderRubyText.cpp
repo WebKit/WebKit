@@ -46,9 +46,9 @@ RenderRubyText::~RenderRubyText()
 {
 }
 
-bool RenderRubyText::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderRubyText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->isInline();
+    return child.isInline();
 }
 
 ETextAlign RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const

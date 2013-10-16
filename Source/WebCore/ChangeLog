@@ -1,3 +1,15 @@
+2013-10-16  Andreas Kling  <akling@apple.com>
+
+        RenderElement::isChildAllowed() should take const references.
+        <https://webkit.org/b/122870>
+
+        Reviewed by Anders Carlsson.
+
+        The isChildAllowed() functions expect non-null values to be passed,
+        so enforce this at compile-time.
+
+        Reordered some checks to do bit tests before virtual calls.
+
 2013-10-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] video info unset if upstream doesn't query allocation

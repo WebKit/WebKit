@@ -56,7 +56,7 @@ public:
     bool isRenderReplaced() const;
     bool isRenderInline() const;
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
     virtual void removeChild(RenderObject*);

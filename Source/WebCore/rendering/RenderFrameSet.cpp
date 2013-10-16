@@ -776,9 +776,9 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
     return noSplit;
 }
 
-bool RenderFrameSet::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderFrameSet::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->isFrame() || child->isFrameSet();
+    return child.isFrame() || child.isFrameSet();
 }
 
 CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& cursor) const

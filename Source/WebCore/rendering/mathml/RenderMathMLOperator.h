@@ -40,7 +40,7 @@ public:
 
     virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
     
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     virtual void updateFromElement() OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;

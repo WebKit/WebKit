@@ -46,9 +46,8 @@ public:
 
     virtual bool isRubyBase() const { return true; }
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
-
 private:
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const;
     virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
     virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
 

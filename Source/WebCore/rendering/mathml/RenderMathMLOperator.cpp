@@ -80,7 +80,7 @@ RenderMathMLOperator::RenderMathMLOperator(Element& element, UChar operatorChar)
 {
 }
 
-bool RenderMathMLOperator::isChildAllowed(RenderObject*, RenderStyle*) const
+bool RenderMathMLOperator::isChildAllowed(const RenderObject&, const RenderStyle&) const
 {
     return false;
 }

@@ -55,9 +55,9 @@ RenderMathMLBlock::RenderMathMLBlock(Document& document)
 {
 }
 
-bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
+    return child.node() && isElement(*child.node());
 }
 
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)

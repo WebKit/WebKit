@@ -87,7 +87,7 @@ protected:
 private:
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
 
     virtual void dispatchRegionLayoutUpdateEvent() OVERRIDE;
     virtual void dispatchRegionOversetChangeEvent() OVERRIDE;

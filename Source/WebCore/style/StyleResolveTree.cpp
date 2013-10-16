@@ -235,7 +235,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
     RenderElement* newRenderer = element.createRenderer(*document.renderArena(), *style);
     if (!newRenderer)
         return;
-    if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
+    if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {
         newRenderer->destroy();
         return;
     }
@@ -374,7 +374,7 @@ static void createTextRendererIfNeeded(Text& textNode)
     RenderText* newRenderer = textNode.createTextRenderer(*document.renderArena(), *style);
     if (!newRenderer)
         return;
-    if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
+    if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {
         newRenderer->destroy();
         return;
     }

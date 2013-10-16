@@ -476,14 +476,14 @@ const AtomicString& RenderNamedFlowThread::flowThreadName() const
     return m_namedFlow->name();
 }
 
-bool RenderNamedFlowThread::isChildAllowed(RenderObject* child, RenderStyle* style) const
+bool RenderNamedFlowThread::isChildAllowed(const RenderObject& child, const RenderStyle& style) const
 {
-    if (!child->node())
+    if (!child.node())
         return true;
 
-    ASSERT(child->node()->isElementNode());
+    ASSERT(child.node()->isElementNode());
 
-    Node* originalParent = NodeRenderingTraversal::parent(child->node());
+    Node* originalParent = NodeRenderingTraversal::parent(child.node());
     if (!originalParent || !originalParent->isElementNode() || !originalParent->renderer())
         return true;
 

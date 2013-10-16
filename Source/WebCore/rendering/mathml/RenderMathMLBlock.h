@@ -44,7 +44,7 @@ public:
     explicit RenderMathMLBlock(Element&);
     explicit RenderMathMLBlock(Document&);
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     
     virtual bool isRenderMathMLBlock() const OVERRIDE { return true; }
     virtual bool isRenderMathMLOperator() const { return false; }

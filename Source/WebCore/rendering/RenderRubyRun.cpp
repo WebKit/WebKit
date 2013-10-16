@@ -107,9 +107,9 @@ void RenderRubyRun::updateFirstLetter()
 {
 }
 
-bool RenderRubyRun::isChildAllowed(RenderObject* child, RenderStyle*) const
+bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child->isRubyText() || child->isInline();
+    return child.isInline() || child.isRubyText();
 }
 
 void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
