@@ -449,6 +449,9 @@ private:
         case ValueToInt32:
             compileValueToInt32();
             break;
+        case Int52ToValue:
+            compileInt52ToValue();
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -471,7 +474,12 @@ private:
         ASSERT(m_node->child1().useKind() == BooleanUse);
         setInt32(m_out.zeroExt(lowBoolean(m_node->child1()), m_out.int32));
     }
-    
+
+    void compileInt52ToValue()
+    {
+        setJSValue(lowJSValue(m_node->child1()));
+    }
+
     void compileUpsilon()
     {
         LValue destination = m_phis.get(m_node->phi());
@@ -1530,8 +1538,13 @@ private:
                 if (isInt(type)) {
                     LValue intValue;
                     switch (child3.useKind()) {
+                    case MachineIntUse:
                     case Int32Use: {
-                        intValue = lowInt32(child3);
+                        if (child3.useKind() == Int32Use)
+                            intValue = lowInt32(child3);
+                        else
+                            intValue = m_out.castToInt32(lowInt52(child3));
+
                         if (isClamped(type)) {
                             ASSERT(elementSize(type) == 1);
                             

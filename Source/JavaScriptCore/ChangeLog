@@ -1,3 +1,17 @@
+2013-10-15  Nadav Rotem  <nrotem@apple.com>
+
+        FTL: add support for Int52ToValue and fix putByVal of int52s.
+        https://bugs.webkit.org/show_bug.cgi?id=122873
+
+        Reviewed by Filip Pizlo.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileInt52ToValue):
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+
 2013-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the UNINTERRUPTED_SEQUENCE thing
