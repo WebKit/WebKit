@@ -205,7 +205,7 @@ void RenderObject::setParent(RenderElement* parent)
 void RenderObject::removeFromParent()
 {
     if (parent())
-        parent()->removeChild(this);
+        parent()->removeChild(*this);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const
@@ -1651,7 +1651,7 @@ void RenderObject::handleDynamicFloatPositionChange()
             // An anonymous block must be made to wrap this inline.
             RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
             parent()->insertChildInternal(block, this, RenderElement::NotifyChildren);
-            parent()->removeChildInternal(this, RenderElement::NotifyChildren);
+            parent()->removeChildInternal(*this, RenderElement::NotifyChildren);
             block->insertChildInternal(this, nullptr, RenderElement::NotifyChildren);
         }
     }

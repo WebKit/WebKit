@@ -95,9 +95,9 @@ void RenderSVGContainer::addChild(RenderObject* child, RenderObject* beforeChild
     SVGResourcesCache::clientWasAddedToTree(child, child->style());
 }
 
-void RenderSVGContainer::removeChild(RenderObject* child)
+void RenderSVGContainer::removeChild(RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    SVGResourcesCache::clientWillBeRemovedFromTree(&child);
     RenderSVGModelObject::removeChild(child);
 }
 

@@ -52,7 +52,7 @@ protected:
     virtual void layout() OVERRIDE;
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE FINAL;
-    virtual void removeChild(RenderObject*) OVERRIDE FINAL;
+    virtual void removeChild(RenderObject&) OVERRIDE FINAL;
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE FINAL;
 
     virtual FloatRect objectBoundingBox() const OVERRIDE FINAL { return m_objectBoundingBox; }

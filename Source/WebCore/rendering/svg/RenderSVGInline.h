@@ -62,7 +62,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE FINAL;
-    virtual void removeChild(RenderObject*) OVERRIDE FINAL;
+    virtual void removeChild(RenderObject&) OVERRIDE FINAL;
 };
 
 }

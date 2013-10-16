@@ -120,7 +120,7 @@ public:
     virtual void deleteLineBoxTree();
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject*) OVERRIDE;
+    virtual void removeChild(RenderObject&) OVERRIDE;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
 

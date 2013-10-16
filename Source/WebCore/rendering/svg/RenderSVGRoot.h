@@ -83,7 +83,7 @@ private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject*) OVERRIDE;
+    virtual void removeChild(RenderObject&) OVERRIDE;
 
     virtual const AffineTransform& localToParentTransform() const OVERRIDE;
 

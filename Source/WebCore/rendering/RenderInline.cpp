@@ -366,7 +366,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     while (o) {
         RenderObject* tmp = o;
         o = tmp->nextSibling();
-        removeChildInternal(tmp, NotifyChildren);
+        removeChildInternal(*tmp, NotifyChildren);
         cloneInline->addChildIgnoringContinuation(tmp, 0);
         tmp->setNeedsLayoutAndPrefWidthsRecalc();
     }
@@ -408,7 +408,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             while (o) {
                 RenderObject* tmp = o;
                 o = tmp->nextSibling();
-                inlineCurr->removeChildInternal(tmp, NotifyChildren);
+                inlineCurr->removeChildInternal(*tmp, NotifyChildren);
                 cloneInline->addChildIgnoringContinuation(tmp, 0);
                 tmp->setNeedsLayoutAndPrefWidthsRecalc();
             }
@@ -429,7 +429,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     while (o) {
         RenderObject* tmp = o;
         o = tmp->nextSibling();
-        fromBlock->removeChildInternal(tmp, NotifyChildren);
+        fromBlock->removeChildInternal(*tmp, NotifyChildren);
         toBlock->insertChildInternal(tmp, nullptr, NotifyChildren);
     }
 }
@@ -474,7 +474,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            block->removeChildInternal(no, NotifyChildren);
+            block->removeChildInternal(*no, NotifyChildren);
             pre->insertChildInternal(no, nullptr, NotifyChildren);
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
@@ -1275,7 +1275,7 @@ void RenderInline::childBecameNonInline(RenderObject* child)
     RenderBoxModelObject* oldContinuation = continuation();
     setContinuation(newBox);
     RenderObject* beforeChild = child->nextSibling();
-    removeChildInternal(child, NotifyChildren);
+    removeChildInternal(*child, NotifyChildren);
     splitFlow(beforeChild, newBox, child, oldContinuation);
 }
 

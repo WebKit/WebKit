@@ -1,3 +1,12 @@
+2013-10-16  Andreas Kling  <akling@apple.com>
+
+        RenderElement::removeChild() should take child as a reference.
+        <https://webkit.org/b/122888>
+
+        We can't remove a child without a child to remove.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-16  Antti Koivisto  <antti@apple.com>
 
         Move test for contained caret offset to RenderTextLineBoxes

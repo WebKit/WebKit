@@ -144,9 +144,9 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
         cache->childrenChanged(this);
 }
 
-void RenderMenuList::removeChild(RenderObject* oldChild)
+void RenderMenuList::removeChild(RenderObject& oldChild)
 {
-    if (oldChild == m_innerBlock || !m_innerBlock) {
+    if (&oldChild == m_innerBlock || !m_innerBlock) {
         RenderFlexibleBox::removeChild(oldChild);
         m_innerBlock = 0;
     } else

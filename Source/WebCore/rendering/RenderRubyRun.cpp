@@ -136,7 +136,7 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             // in order to avoid automatic removal of the ruby run in case there is no
             // other child besides the old ruby text.
             RenderBlock::addChild(child, beforeChild);
-            RenderBlock::removeChild(beforeChild);
+            RenderBlock::removeChild(*beforeChild);
             newRun->addChild(beforeChild);
         } else if (hasRubyBase()) {
             // Insertion before a ruby base object.
@@ -156,11 +156,11 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
     }
 }
 
-void RenderRubyRun::removeChild(RenderObject* child)
+void RenderRubyRun::removeChild(RenderObject& child)
 {
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
-    if (!beingDestroyed() && !documentBeingDestroyed() && child->isRubyText()) {
+    if (!beingDestroyed() && !documentBeingDestroyed() && child.isRubyText()) {
         RenderRubyBase* base = rubyBase();
         RenderObject* rightNeighbour = nextSibling();
         if (base && rightNeighbour && rightNeighbour->isRubyRun()) {
@@ -184,14 +184,14 @@ void RenderRubyRun::removeChild(RenderObject* child)
         // Check if our base (if any) is now empty. If so, destroy it.
         RenderBlock* base = rubyBase();
         if (base && !base->firstChild()) {
-            RenderBlock::removeChild(base);
+            RenderBlock::removeChild(*base);
             base->deleteLineBoxTree();
             base->destroy();
         }
 
         // If any of the above leaves the run empty, destroy it as well.
         if (isEmpty()) {
-            parent()->removeChild(this);
+            parent()->removeChild(*this);
             deleteLineBoxTree();
             destroy();
         }

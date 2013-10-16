@@ -487,7 +487,7 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
 #endif
 }
 
-void RenderElement::removeChild(RenderObject* oldChild)
+void RenderElement::removeChild(RenderObject& oldChild)
 {
     removeChildInternal(oldChild, NotifyChildren);
 }
@@ -561,59 +561,59 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         cache->childrenChanged(this);
 }
 
-void RenderElement::removeChildInternal(RenderObject* oldChild, NotifyChildrenType notifyChildren)
+void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
 {
     ASSERT(canHaveChildren() || canHaveGeneratedChildren());
-    ASSERT(oldChild->parent() == this);
+    ASSERT(oldChild.parent() == this);
 
-    if (oldChild->isFloatingOrOutOfFlowPositioned())
-        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
+    if (oldChild.isFloatingOrOutOfFlowPositioned())
+        toRenderBox(oldChild).removeFloatingOrPositionedChildFromBlockLists();
 
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
-    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren && oldChild->everHadLayout()) {
-        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
+    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren && oldChild.everHadLayout()) {
+        oldChild.setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
-        if (oldChild->isBody())
+        if (oldChild.isBody())
             view().repaintRootContents();
         else
-            oldChild->repaint();
+            oldChild.repaint();
     }
 
     // If we have a line box wrapper, delete it.
-    if (oldChild->isBox())
-        toRenderBox(oldChild)->deleteLineBoxWrapper();
-    else if (oldChild->isLineBreak())
-        toRenderLineBreak(oldChild)->deleteInlineBoxWrapper();
+    if (oldChild.isBox())
+        toRenderBox(oldChild).deleteLineBoxWrapper();
+    else if (oldChild.isLineBreak())
+        toRenderLineBreak(oldChild).deleteInlineBoxWrapper();
 
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
     // FIXME: The FrameSelection should be responsible for this when it
     // is notified of DOM mutations.
-    if (!documentBeingDestroyed() && oldChild->isSelectionBorder())
+    if (!documentBeingDestroyed() && oldChild.isSelectionBorder())
         view().clearSelection();
 
     if (!documentBeingDestroyed() && notifyChildren == NotifyChildren)
-        oldChild->willBeRemovedFromTree();
+        oldChild.willBeRemovedFromTree();
 
     // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
 
-    if (oldChild->previousSibling())
-        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
-    if (oldChild->nextSibling())
-        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
+    if (oldChild.previousSibling())
+        oldChild.previousSibling()->setNextSibling(oldChild.nextSibling());
+    if (oldChild.nextSibling())
+        oldChild.nextSibling()->setPreviousSibling(oldChild.previousSibling());
 
-    if (m_firstChild == oldChild)
-        m_firstChild = oldChild->nextSibling();
-    if (m_lastChild == oldChild)
-        m_lastChild = oldChild->previousSibling();
+    if (m_firstChild == &oldChild)
+        m_firstChild = oldChild.nextSibling();
+    if (m_lastChild == &oldChild)
+        m_lastChild = oldChild.previousSibling();
 
-    oldChild->setPreviousSibling(0);
-    oldChild->setNextSibling(0);
-    oldChild->setParent(0);
+    oldChild.setPreviousSibling(nullptr);
+    oldChild.setNextSibling(nullptr);
+    oldChild.setParent(nullptr);
 
     // rendererRemovedFromTree walks the whole subtree. We can improve performance
     // by skipping this step when destroying the entire tree.

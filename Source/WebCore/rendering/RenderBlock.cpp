@@ -1045,9 +1045,9 @@ static bool canMergeAnonymousBlock(RenderBlock* anonymousBlock)
     return true;
 }
 
-static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObject* previous, RenderObject* next)
+static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
 {
-    if (oldChild->documentBeingDestroyed() || oldChild->isInline() || oldChild->virtualContinuation())
+    if (oldChild.documentBeingDestroyed() || oldChild.isInline() || oldChild.virtualContinuation())
         return false;
 
     if (previous) {
@@ -1085,7 +1085,7 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     RenderFlowThread* childFlowThread = child->flowThreadContainingBlock();
     CurrentRenderFlowThreadMaintainer flowThreadMaintainer(childFlowThread);
 
-    parent->removeChildInternal(child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
+    parent->removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
     child->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
     // Delete the now-empty block's lines and nuke it.
     child->deleteLineBoxTree();
@@ -1094,7 +1094,7 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     child->destroy();
 }
 
-void RenderBlock::removeChild(RenderObject* oldChild)
+void RenderBlock::removeChild(RenderObject& oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
@@ -1109,8 +1109,8 @@ void RenderBlock::removeChild(RenderObject* oldChild)
     // If this child is a block, and if our previous and next siblings are
     // both anonymous blocks with inline content, then we can go ahead and
     // fold the inline content back together.
-    RenderObject* prev = oldChild->previousSibling();
-    RenderObject* next = oldChild->nextSibling();
+    RenderObject* prev = oldChild.previousSibling();
+    RenderObject* next = oldChild.nextSibling();
     bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev, next);
     if (canMergeAnonymousBlocks && prev && next) {
         prev->setNeedsLayoutAndPrefWidthsRecalc();
@@ -1130,7 +1130,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // Cache this value as it might get changed in setStyle() call.
             bool inlineChildrenBlockHasLayer = inlineChildrenBlock->hasLayer();
             inlineChildrenBlock->setStyle(newStyle);
-            removeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
+            removeChildInternal(*inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : nullptr;
@@ -1183,7 +1183,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
 
         // If we are an empty anonymous block in the continuation chain,
         // we need to remove ourself and fix the continuation chain.
-        if (!beingDestroyed() && isAnonymousBlockContinuation() && !oldChild->isListMarker()) {
+        if (!beingDestroyed() && isAnonymousBlockContinuation() && !oldChild.isListMarker()) {
             auto containingBlockIgnoringAnonymous = containingBlock();
             while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
                 containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();
@@ -5032,7 +5032,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         while (RenderObject* child = firstLetter->firstChild()) {
             if (child->isText())
                 toRenderText(child)->removeAndDestroyTextBoxes();
-            firstLetter->removeChild(child);
+            firstLetter->removeChild(*child);
             newFirstLetter->addChild(child, 0);
         }
 
@@ -5045,7 +5045,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         }
         // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
         // |nextSibling| to go stale, we remove the old first letter using removeChildNode first.
-        firstLetterContainer->removeChildInternal(firstLetter, NotifyChildren);
+        firstLetterContainer->removeChildInternal(*firstLetter, NotifyChildren);
         firstLetter->destroy();
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
@@ -5105,7 +5105,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
             remainingText->textNode()->setRenderer(remainingText);
 
         firstLetterContainer->addChild(remainingText, currentTextChild);
-        firstLetterContainer->removeChild(currentTextChild);
+        firstLetterContainer->removeChild(*currentTextChild);
         remainingText->setFirstLetter(firstLetter);
         firstLetter->setFirstLetterRemainingText(remainingText);
         

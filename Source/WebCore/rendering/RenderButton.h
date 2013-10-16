@@ -43,7 +43,7 @@ public:
     virtual bool canBeSelectionLeaf() const OVERRIDE;
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0) OVERRIDE;
-    virtual void removeChild(RenderObject*) OVERRIDE;
+    virtual void removeChild(RenderObject&) OVERRIDE;
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) OVERRIDE { }
     virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }
 

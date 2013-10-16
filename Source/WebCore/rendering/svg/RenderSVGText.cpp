@@ -543,13 +543,13 @@ void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
     subtreeChildWasAdded(child);
 }
 
-void RenderSVGText::removeChild(RenderObject* child)
+void RenderSVGText::removeChild(RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    SVGResourcesCache::clientWillBeRemovedFromTree(&child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     FontCachePurgePreventer fontCachePurgePreventer;
-    subtreeChildWillBeRemoved(child, affectedAttributes);
+    subtreeChildWillBeRemoved(&child, affectedAttributes);
     RenderSVGBlock::removeChild(child);
     subtreeChildWasRemoved(affectedAttributes);
 }

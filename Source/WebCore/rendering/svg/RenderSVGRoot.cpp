@@ -332,9 +332,9 @@ void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
     SVGResourcesCache::clientWasAddedToTree(child, child->style());
 }
 
-void RenderSVGRoot::removeChild(RenderObject* child)
+void RenderSVGRoot::removeChild(RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
+    SVGResourcesCache::clientWillBeRemovedFromTree(&child);
     RenderReplaced::removeChild(child);
 }
 
