@@ -1,0 +1,93 @@
+Ensure that canvas shadowBlur is not affected by transformations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS d[0] is 255
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is around 255
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 255
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is around 126
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 255
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is around 255
+PASS d[0] is 255
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is around 255
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 255
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is around 126
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS d[0] is 0
+PASS d[1] is 0
+PASS d[2] is 0
+PASS d[3] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

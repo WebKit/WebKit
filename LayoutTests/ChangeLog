@@ -1,5 +1,10 @@
 2013-10-16  Andreas Kling  <akling@apple.com>
 
+        Revert Mac-specific expecations shuffling from r157498.
+        Everything was already in order.
+
+2013-10-16  Andreas Kling  <akling@apple.com>
+
         Remove EFL-specific test expectations that were identical to generic expectations.
         <https://webkit.org/b/121551>
 
