@@ -26,13 +26,20 @@
 #ifndef WTF_Ref_h
 #define WTF_Ref_h
 
-#include <wtf/Compiler.h>
+#include "Noncopyable.h"
 
 namespace WTF {
 
+template<typename T> class PassRef;
+
 template<typename T> class Ref {
+    WTF_MAKE_NONCOPYABLE(Ref)
 public:
     Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
+    template<typename U> Ref(PassRef<U> reference) : m_ptr(&reference.takeReference()) { }
+
+    ~Ref() { m_ptr->deref(); }
+
     Ref& operator=(T& object)
     {
         object.ref();
@@ -40,8 +47,12 @@ public:
         m_ptr = &object;
         return *this;
     }
-
-    ~Ref() { m_ptr->deref(); }
+    template<typename U> Ref& operator=(PassRef<U> reference)
+    {
+        m_ptr->deref();
+        m_ptr = &reference.takeReference();
+        return *this;
+    }
 
     const T* operator->() const { return m_ptr; }
     T* operator->() { return m_ptr; }
@@ -50,9 +61,6 @@ public:
     T& get() { return *m_ptr; }
 
 private:
-    Ref(const Ref&);
-    Ref& operator=(const Ref<T>&);
-
     T* m_ptr;
 };
 

@@ -1,3 +1,51 @@
+2013-10-16  Darin Adler  <darin@apple.com>
+
+        Add PassRef and createRefCounted so we can improve creation of RefCounted objects
+        https://bugs.webkit.org/show_bug.cgi?id=122904
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am: Added PassRef.h.
+        * WTF.vcxproj/WTF.vcxproj: Ditto.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.xcodeproj/project.pbxproj: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/Forward.h: Added PassRef. Also re-sorted and un-indented to match what
+        the style-checking script expects.
+
+        * wtf/PassRef.h: Added. Includes the createRefCounted function template, which
+        is analogous to make_unique, but is for reference counted objects, and also
+        assumes that new will never return null. Also includes an overload of adoptRef
+        that takes a reference rather than a pointer.
+
+        * wtf/PassRefPtr.h: Include "PassRef.h" so we can share the adopted function.
+        Got rid of declarations that duplicate ones in there.
+        (WTF::refIfNotNull): Use nullptr.
+        (WTF::derefIfNotNull): Use nullptr.
+        (WTF::PassRefPtr::PassRefPtr): Use nullptr. Added an overload that takes a PassRef.
+        (WTF::PassRefPtr::operator UnspecifiedBoolType): Use nullptr.
+        (WTF::PassRefPtr::operator=): Made this deleted instead of compile time assertion.
+        (WTF::PassRefPtr::PassRefPtr): Made adopting constructor use an adopt tag instead
+        of an unused boolean.
+        (WTF::PassRefPtr::leakRef): Use nullptr.
+        (WTF::adoptRef): Use the adopt tag.
+
+        * wtf/Ref.h: Use Noncopyable instead of rolling our own.
+        (WTF::Ref::Ref): Add an overload that takes a PassRef.
+        (WTF::Ref::operator=): Ditto.
+
+        * wtf/RefPtr.h: Removed unneeded forward declaration of PassRefPtr.
+        (WTF::RefPtr::RefPtr): Use nullptr. Added overload that takes a PassRef.
+        (WTF::RefPtr::release): Use nullptr.
+        (WTF::RefPtr::operator UnspecifiedBoolType): Use nullptr.
+        (WTF::RefPtr::operator=): Added overload that takes a PassRef.
+        (WTF::RefPtr::clear): Use nullptr.
+
+        * wtf/StdLibExtras.h: Added inline keyword to isPointerTypeAlignmentOkay,
+        reinterpret_cast_ptr, and make_unique. Seems like a simple oversight that these
+        were missing before.
+
 2013-10-15  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_WEB_ANIMATIONS flag

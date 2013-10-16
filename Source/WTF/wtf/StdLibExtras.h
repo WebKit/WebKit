@@ -85,27 +85,27 @@
  */
 #if (CPU(ARM) || CPU(MIPS)) && COMPILER(GCC)
 template<typename Type>
-bool isPointerTypeAlignmentOkay(Type* ptr)
+inline bool isPointerTypeAlignmentOkay(Type* ptr)
 {
     return !(reinterpret_cast<intptr_t>(ptr) % __alignof__(Type));
 }
 
 template<typename TypePtr>
-TypePtr reinterpret_cast_ptr(void* ptr)
+inline TypePtr reinterpret_cast_ptr(void* ptr)
 {
     ASSERT(isPointerTypeAlignmentOkay(reinterpret_cast<TypePtr>(ptr)));
     return reinterpret_cast<TypePtr>(ptr);
 }
 
 template<typename TypePtr>
-TypePtr reinterpret_cast_ptr(const void* ptr)
+inline TypePtr reinterpret_cast_ptr(const void* ptr)
 {
     ASSERT(isPointerTypeAlignmentOkay(reinterpret_cast<TypePtr>(ptr)));
     return reinterpret_cast<TypePtr>(ptr);
 }
 #else
 template<typename Type>
-bool isPointerTypeAlignmentOkay(Type*)
+inline bool isPointerTypeAlignmentOkay(Type*)
 {
     return true;
 }
@@ -330,80 +330,80 @@ namespace std {
     };
 
 #if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
-    template<class T, class... Args> typename _Unique_if<T>::_Single_object
+    template<class T, class... Args> inline typename _Unique_if<T>::_Single_object
     make_unique(Args&&... args)
     {
         return unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
 #else
-    template<class T> typename _Unique_if<T>::_Single_object
+    template<class T> inline typename _Unique_if<T>::_Single_object
     make_unique()
     {
         return unique_ptr<T>(new T);
     }
 
-    template<class T, class A1> typename _Unique_if<T>::_Single_object
+    template<class T, class A1> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1)));
     }
 
-    template<class T, class A1, class A2> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2)));
     }
 
-    template<class T, class A1, class A2, class A3> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5, class A6> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5, class A6> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5, A6&& a6)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5), std::forward<A6>(a6)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5, A6&& a6, A7&& a7)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5), std::forward<A6>(a6), std::forward<A7>(a7)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5, A6&& a6, A7&& a7, A8&& a8)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5), std::forward<A6>(a6), std::forward<A7>(a7), std::forward<A8>(a8)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5, A6&& a6, A7&& a7, A8&& a8, A9&& a9)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5), std::forward<A6>(a6), std::forward<A7>(a7), std::forward<A8>(a8), std::forward<A9>(a9)));
     }
 
-    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9, class A10> typename _Unique_if<T>::_Single_object
+    template<class T, class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9, class A10> inline typename _Unique_if<T>::_Single_object
     make_unique(A1&& a1, A2&& a2, A3&& a3, A4&& a4, A5&& a5, A6&& a6, A7&& a7, A8&& a8, A9&& a9, A10&& a10)
     {
         return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2), std::forward<A3>(a3), std::forward<A4>(a4), std::forward<A5>(a5), std::forward<A6>(a6), std::forward<A7>(a7), std::forward<A8>(a8), std::forward<A9>(a9), std::forward<A10>(a10)));
     }
 #endif
 
-    template<class T> typename _Unique_if<T>::_Unknown_bound
+    template<class T> inline typename _Unique_if<T>::_Unknown_bound
     make_unique(size_t n)
     {
         typedef typename remove_extent<T>::type U;

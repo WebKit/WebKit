@@ -26,7 +26,9 @@
 #include "config.h"
 
 #include "RefLogger.h"
+#include <wtf/PassRef.h>
 #include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace TestWebKitAPI {
 
@@ -40,6 +42,13 @@ TEST(WTF_Ref, Basic)
         ASSERT_EQ(&a.name, &ptr->name);
     }
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        Ref<RefLogger> ptr(adoptRef(a));
+        ASSERT_EQ(&a, &ptr.get());
+        ASSERT_EQ(&a.name, &ptr->name);
+    }
+    ASSERT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_Ref, Assignment)
@@ -67,6 +76,71 @@ TEST(WTF_Ref, Assignment)
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) | ref(c) deref(a) | deref(c) ", takeLogStr().c_str());
+
+    {
+        Ref<RefLogger> ptr(a);
+        ASSERT_EQ(&a, &ptr.get());
+        log() << "| ";
+        ptr = adoptRef(b);
+        ASSERT_EQ(&b, &ptr.get());
+        log() << "| ";
+    }
+    ASSERT_STREQ("ref(a) | deref(a) | deref(b) ", takeLogStr().c_str());
+
+    {
+        Ref<RefLogger> ptr(a);
+        ASSERT_EQ(&a, &ptr.get());
+        log() << "| ";
+        ptr = adoptRef(c);
+        ASSERT_EQ(&c, &ptr.get());
+        log() << "| ";
+    }
+    ASSERT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
+}
+
+PassRef<RefLogger> passWithPassRef(PassRef<RefLogger> reference)
+{
+    return reference;
+}
+
+RefPtr<RefLogger> passWithPassRefPtr(PassRefPtr<RefLogger> reference)
+{
+    return reference;
+}
+
+TEST(WTF_Ref, ReturnValue)
+{
+    DerivedRefLogger a("a");
+    RefLogger b("b");
+    DerivedRefLogger c("c");
+
+    {
+        Ref<RefLogger> ptr(passWithPassRef(a));
+        ASSERT_EQ(&a, &ptr.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        Ref<RefLogger> ptr(a);
+        ASSERT_EQ(&a, &ptr.get());
+        log() << "| ";
+        ptr = passWithPassRef(b);
+        ASSERT_EQ(&b, &ptr.get());
+        log() << "| ";
+    }
+    ASSERT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());
+
+    {
+        RefPtr<RefLogger> ptr(passWithPassRef(a));
+        ASSERT_EQ(&a, ptr.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefPtr<RefLogger> ptr(passWithPassRefPtr(passWithPassRef(a)));
+        ASSERT_EQ(&a, ptr.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 } // namespace TestWebKitAPI

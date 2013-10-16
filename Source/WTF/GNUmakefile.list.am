@@ -117,6 +117,7 @@ wtf_sources += \
     Source/WTF/wtf/ParallelJobsLibdispatch.h \
     Source/WTF/wtf/ParallelJobsOpenMP.h \
     Source/WTF/wtf/PassOwnPtr.h \
+    Source/WTF/wtf/PassRef.h \
     Source/WTF/wtf/PassRefPtr.h \
     Source/WTF/wtf/Platform.h \
     Source/WTF/wtf/PossiblyNull.h \

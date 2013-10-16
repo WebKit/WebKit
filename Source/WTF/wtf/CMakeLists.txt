@@ -67,6 +67,7 @@ set(WTF_HEADERS
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
     PassOwnPtr.h
+    PassRef.h
     PassRefPtr.h
     Platform.h
     PossiblyNull.h

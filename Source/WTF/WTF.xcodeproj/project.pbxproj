@@ -63,6 +63,7 @@
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8134013915B092FD001FF0B8 /* Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8134013715B092FD001FF0B8 /* Base64.h */; };
+		93B1AA80180E5AF3004A2F05 /* PassRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B1AA7F180E5AF3004A2F05 /* PassRef.h */; };
 		974CFC8E16A4F327006D5404 /* WeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 974CFC8D16A4F327006D5404 /* WeakPtr.h */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
 		9BD8F40B176C2B470002D865 /* AtomicStringTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */; };
@@ -325,6 +326,7 @@
 		7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		93B1AA7F180E5AF3004A2F05 /* PassRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassRef.h; sourceTree = "<group>"; };
 		974CFC8D16A4F327006D5404 /* WeakPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
@@ -685,7 +687,6 @@
 				A8A472CE151A825B004123FF /* MetaAllocator.h */,
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
-				26299B6D17A9E5B800ADEBE5 /* Ref.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
 				A8A472D0151A825B004123FF /* Noncopyable.h */,
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
@@ -707,6 +708,7 @@
 				A8A472E6151A825B004123FF /* ParallelJobs.h */,
 				A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */,
 				A8A472EC151A825B004123FF /* PassOwnPtr.h */,
+				93B1AA7F180E5AF3004A2F05 /* PassRef.h */,
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				A8A472F3151A825B004123FF /* PossiblyNull.h */,
@@ -720,6 +722,7 @@
 				A8A472FD151A825B004123FF /* RandomNumberSeed.h */,
 				0F87105916643F190090B0AD /* RawPointer.h */,
 				A8A472FE151A825B004123FF /* RedBlackTree.h */,
+				26299B6D17A9E5B800ADEBE5 /* Ref.h */,
 				A8A472FF151A825B004123FF /* RefCounted.h */,
 				A8A47300151A825B004123FF /* RefCountedArray.h */,
 				A8A47301151A825B004123FF /* RefCountedLeakCounter.cpp */,
@@ -976,6 +979,7 @@
 				A8A473E3151A825B004123FF /* Locker.h in Headers */,
 				A8A473E6151A825B004123FF /* MainThread.h in Headers */,
 				A8A473E8151A825B004123FF /* MathExtras.h in Headers */,
+				93B1AA80180E5AF3004A2F05 /* PassRef.h in Headers */,
 				A8A473EA151A825B004123FF /* MD5.h in Headers */,
 				CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */,
 				A8A473EB151A825B004123FF /* MessageQueue.h in Headers */,

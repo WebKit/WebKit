@@ -25,47 +25,50 @@
 
 namespace WTF {
 
-    template<typename T> class Function;
-    template<typename T> class OwnPtr;
-    template<typename T> class PassOwnPtr;
-    template<typename T> class PassRefPtr;
-    template<typename T> class RefPtr;
-    template<typename T> class Ref;
-    template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vector;
+template<typename T> class Function;
+template<typename T> class OwnPtr;
+template<typename T> class PassOwnPtr;
+template<typename T> class PassRef;
+template<typename T> class PassRefPtr;
+template<typename T> class RefPtr;
+template<typename T> class Ref;
+template<typename T> class StringBuffer;
 
-    class AtomicString;
-    class AtomicStringImpl;
-    class BinarySemaphore;
-    class CString;
-    class Decoder;
-    class Encoder;
-    class FunctionDispatcher;
-    class PrintStream;
-    class String;
-    template <typename T> class StringBuffer;
-    class StringBuilder;
-    class StringImpl;
+template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vector;
+
+class AtomicString;
+class AtomicStringImpl;
+class BinarySemaphore;
+class CString;
+class Decoder;
+class Encoder;
+class FunctionDispatcher;
+class PrintStream;
+class String;
+class StringBuilder;
+class StringImpl;
+
 }
-
-using WTF::Function;
-using WTF::OwnPtr;
-using WTF::PassOwnPtr;
-using WTF::PassRefPtr;
-using WTF::RefPtr;
-using WTF::Ref;
-using WTF::Vector;
 
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
-using WTF::Encoder;
 using WTF::Decoder;
+using WTF::Encoder;
+using WTF::Function;
 using WTF::FunctionDispatcher;
+using WTF::OwnPtr;
+using WTF::PassOwnPtr;
+using WTF::PassRef;
+using WTF::PassRefPtr;
 using WTF::PrintStream;
+using WTF::Ref;
+using WTF::RefPtr;
 using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;
 using WTF::StringImpl;
+using WTF::Vector;
 
 #endif // WTF_Forward_h
