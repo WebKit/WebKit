@@ -52,11 +52,16 @@ public:
     void removeAllFromParent(RenderText&);
     void deleteAll(RenderText&);
 
+    void dirtyAll();
+    bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);
+
     InlineTextBox* findNext(int offset, int& position) const;
 
     bool hasRenderedText() const;
     int caretMinOffset() const;
     int caretMaxOffset(const RenderText&) const;
+    enum OffsetType { CaretOffset, CharacterOffset };
+    bool containsOffset(const RenderText&, unsigned, OffsetType) const;
 
     VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
 
@@ -71,9 +76,6 @@ public:
     enum ClippingOption { NoClipping, ClipToEllipsis };
     Vector<FloatQuad> absoluteQuads(const RenderText&, bool* wasFixed, ClippingOption) const;
     Vector<FloatQuad> absoluteQuadsForRange(const RenderText&, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const;
-
-    void dirtyAll();
-    bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);
 
 #if !ASSERT_DISABLED
     ~RenderTextLineBoxes();

@@ -488,7 +488,7 @@ int Position::renderedOffset() const
         return m_offset;
                     
     int result = 0;
-    RenderText* textRenderer = toRenderText(deprecatedNode()->renderer());
+    RenderText* textRenderer = toText(deprecatedNode())->renderer();
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         int start = box->start();
         int end = box->start() + box->len();
@@ -945,7 +945,7 @@ bool Position::isCandidate() const
         return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
 
     if (renderer->isText())
-        return !nodeIsUserSelectNone(deprecatedNode()) && inRenderedText();
+        return !nodeIsUserSelectNone(deprecatedNode()) && toRenderText(renderer)->containsCaretOffset(m_offset);
 
     if (isTableElement(deprecatedNode()) || editingIgnoresContent(deprecatedNode()))
         return (atFirstEditingPositionForNode() || atLastEditingPositionForNode()) && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
@@ -966,53 +966,16 @@ bool Position::isCandidate() const
     return false;
 }
 
-bool Position::inRenderedText() const
-{
-    if (isNull() || !deprecatedNode()->isTextNode())
-        return false;
-        
-    RenderObject* renderer = deprecatedNode()->renderer();
-    if (!renderer)
-        return false;
-    
-    RenderText *textRenderer = toRenderText(renderer);
-    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (m_offset < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
-            // The offset we're looking for is before this node
-            // this means the offset must be in content that is
-            // not rendered. Return false.
-            return false;
-        }
-        if (box->containsCaretOffset(m_offset))
-            // Return false for offsets inside composed characters.
-            return m_offset == 0 || m_offset == textRenderer->nextOffset(textRenderer->previousOffset(m_offset));
-    }
-    
-    return false;
-}
-
 bool Position::isRenderedCharacter() const
 {
     if (isNull() || !deprecatedNode()->isTextNode())
         return false;
         
-    RenderObject* renderer = deprecatedNode()->renderer();
+    RenderText* renderer = toText(deprecatedNode())->renderer();
     if (!renderer)
         return false;
     
-    RenderText* textRenderer = toRenderText(renderer);
-    for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (m_offset < static_cast<int>(box->start()) && !textRenderer->containsReversedText()) {
-            // The offset we're looking for is before this node
-            // this means the offset must be in content that is
-            // not rendered. Return false.
-            return false;
-        }
-        if (m_offset >= static_cast<int>(box->start()) && m_offset < static_cast<int>(box->start() + box->len()))
-            return true;
-    }
-    
-    return false;
+    return renderer->containsCharacterOffset(m_offset);
 }
 
 static bool inSameEnclosingBlockFlowElement(Node* a, Node* b)
@@ -1059,10 +1022,10 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (!inSameEnclosingBlockFlowElement(deprecatedNode(), pos.deprecatedNode()))
         return true;
 
-    if (deprecatedNode()->isTextNode() && !inRenderedText())
+    if (renderer->isText() && !toRenderText(renderer)->containsCaretOffset(m_offset))
         return false;
 
-    if (pos.deprecatedNode()->isTextNode() && !pos.inRenderedText())
+    if (posRenderer->isText() && !toRenderText(posRenderer)->containsCaretOffset(pos.m_offset))
         return false;
 
     int thisRenderedOffset = renderedOffset();

@@ -225,6 +225,24 @@ int RenderTextLineBoxes::caretMaxOffset(const RenderText& renderer) const
     return maxOffset;
 }
 
+bool RenderTextLineBoxes::containsOffset(const RenderText& renderer, unsigned offset, OffsetType type) const
+{
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        if (offset < box->start() && !renderer.containsReversedText())
+            return false;
+        unsigned boxEnd = box->start() + box->len();
+        if (offset >= box->start() && offset <= boxEnd) {
+            if (offset == boxEnd && (type == CharacterOffset || box->isLineBreak()))
+                continue;
+            if (type == CharacterOffset)
+                return true;
+            // Return false for offsets inside composed characters.
+            return !offset || offset == static_cast<unsigned>(renderer.nextOffset(renderer.previousOffset(offset)));
+        }
+    }
+    return false;
+}
+
 enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
 
 static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineTextBox& box, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)

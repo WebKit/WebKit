@@ -1,3 +1,36 @@
+2013-10-16  Antti Koivisto  <antti@apple.com>
+
+        Move test for contained caret offset to RenderTextLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=122887
+
+        Reviewed by Andreas Kling.
+
+        * dom/Position.cpp:
+        (WebCore::Position::renderedOffset):
+        (WebCore::Position::isCandidate):
+        
+            Remove isRenderedText, call RenderText::containsCaretOffset instead.
+
+        (WebCore::Position::isRenderedCharacter):
+        (WebCore::Position::rendersInDifferentPosition):
+        * dom/Position.h:
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * rendering/InlineTextBox.cpp:
+        * rendering/InlineTextBox.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::containsCharacterOffset):
+        (WebCore::RenderText::containsCaretOffset):
+        * rendering/RenderText.h:
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::containsOffset):
+        
+            Combined implementations of Position::isRenderedCharacter and Position::isRenderedText.
+
+        * rendering/RenderTextLineBoxes.h:
+        
+            Remove containsCaretOffset(), functionality is now in RenderTextLineBoxes::containsOffset.
+
 2013-10-16  Andreas Kling  <akling@apple.com>
 
         RenderElement::isChildAllowed() should take const references.

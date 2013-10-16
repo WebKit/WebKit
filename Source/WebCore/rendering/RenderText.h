@@ -120,6 +120,8 @@ public:
 
     virtual int caretMinOffset() const OVERRIDE;
     virtual int caretMaxOffset() const OVERRIDE;
+    bool containsCharacterOffset(unsigned) const;
+    bool containsCaretOffset(unsigned) const;
     bool hasRenderedText() const;
 
     virtual int previousOffset(int current) const OVERRIDE FINAL;

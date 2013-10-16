@@ -1459,30 +1459,6 @@ float InlineTextBox::positionForOffset(int offset) const
     return font.selectionRectForText(constructTextRun(lineStyle, font), IntPoint(logicalLeft(), 0), 0, from, to).maxX();
 }
 
-bool InlineTextBox::containsCaretOffset(int offset) const
-{
-    // Offsets before the box are never "in".
-    if (offset < m_start)
-        return false;
-
-    int pastEnd = m_start + m_len;
-
-    // Offsets inside the box (not at either edge) are always "in".
-    if (offset < pastEnd)
-        return true;
-
-    // Offsets outside the box are always "out".
-    if (offset > pastEnd)
-        return false;
-
-    // Offsets at the end are "out" for line breaks (they are on the next line).
-    if (isLineBreak())
-        return false;
-
-    // Offsets at the end are "in" for normal boxes (but the caller has to check affinity).
-    return true;
-}
-
 TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(renderer().text());

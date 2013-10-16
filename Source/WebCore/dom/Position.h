@@ -178,7 +178,6 @@ public:
     Position downstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
     
     bool isCandidate() const;
-    bool inRenderedText() const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position&) const;
 
