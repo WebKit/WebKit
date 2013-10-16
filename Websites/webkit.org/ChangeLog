@@ -1,3 +1,13 @@
+2013-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Publish SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122923
+
+        Reviewed by Darin Adler.
+
+        * perf/sunspider/sunspider.html:
+        * perf/sunspider/versions.html:
+
 2013-10-08  Geoffrey Garen  <ggaren@apple.com>
 
         Refined power management in SunSpider 1.0.2
