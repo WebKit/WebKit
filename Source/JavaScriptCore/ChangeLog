@@ -1,3 +1,19 @@
+2013-10-16  Filip Pizlo  <fpizlo@apple.com>
+
+        r157411 fails run-javascriptcore-tests when run with Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=122902
+
+        Reviewed by Mark Hahnenberg.
+        
+        It turns out that this was a long-standing bug in the DFG PutById repatching logic. It's
+        not legal to patch if the typeInfo tells you that you can't patch. The old JIT's patching
+        logic did this right, and the DFG's GetById patching logic did it right; but DFG PutById
+        didn't. Turns out that there's even a helpful method,
+        Structure::propertyAccessesAreCacheable(), that will even do all of the checks for you!
+
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+
 2013-10-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         llint_slow_path_put_by_id can deadlock on a ConcurrentJITLock

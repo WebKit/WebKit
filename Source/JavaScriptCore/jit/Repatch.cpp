@@ -949,7 +949,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
     
     if (!slot.isCacheable())
         return false;
-    if (structure->isUncacheableDictionary())
+    if (!structure->propertyAccessesAreCacheable())
         return false;
 
     // Optimize self access.
@@ -1026,7 +1026,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
     
     if (!slot.isCacheable())
         return false;
-    if (structure->isUncacheableDictionary())
+    if (!structure->propertyAccessesAreCacheable())
         return false;
 
     // Optimize self access.
