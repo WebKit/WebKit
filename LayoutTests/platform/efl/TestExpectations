@@ -268,6 +268,15 @@ fast/css/draggable-region-parser.html
 
 webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure Pass ]
 
+# IndexedDB is on refactoring/refreshing, so the tests are quite unstable at this point.
+webkit.org/b/87661 storage/indexeddb [ Skip ]
+webkit.org/b/87661 http/tests/inspector/indexeddb [ Skip ]
+webkit.org/b/87661 http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
+webkit.org/b/87661 http/tests/security/cross-origin-indexeddb.html [ Skip ]
+webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
+webkit.org/b/87661 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
+webkit.org/b/87661 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -663,29 +672,6 @@ webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
 
 # Controls are not zoomed.
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
-
-# Crashing IndexedDB tests
-webkit.org/b/107194 [ Release ] storage/indexeddb/cursor-advance.html [ Crash ]
-
-# Flaky IndexedDB tests
-webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/index-unique.html [ Failure Crash Pass ]
-webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Failure Crash Pass ]
-webkit.org/b/112468 storage/indexeddb/intversion-bad-parameters.html [ Crash Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-close-in-oncomplete.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-close-in-upgradeneeded.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure Crash Pass ]
-webkit.org/b/107194 storage/indexeddb/key-generator.html [ Failure Pass ]
-webkit.org/b/107377 storage/indexeddb/keypath-basics.html [ Crash Pass ]
-webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Failure Crash Pass ]
-webkit.org/b/113019 storage/indexeddb/transaction-error.html [ Failure Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash Pass ]
-webkit.org/b/111171 storage/indexeddb/cursor-advance-workers.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/keypath-edges.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/index-get-key-argument-required.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/mozilla/remove-index.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1536,14 +1522,6 @@ webkit.org/b/101400 svg/css/composite-shadow-text.svg [ Failure ]
 webkit.org/b/114919 fast/multicol/shadow-breaking.html [ Failure ]
 webkit.org/b/114920 fast/repaint/moving-shadow-on-container.html [ Failure ]
 webkit.org/b/114920 fast/repaint/moving-shadow-on-path.html [ Failure ]
-
-# Failing IndexedDB tests
-webkit.org/b/82776 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
-webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
-webkit.org/b/106732 storage/indexeddb/transaction-complete-workers.html [ Failure ]
-webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
 
 # Compositing reftests added in r148172 fail on EFL
 webkit.org/b/114739 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure Crash ]

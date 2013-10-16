@@ -1,3 +1,14 @@
+2013-10-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Skip the IndexedDB tests for now as the feature is going through substantial
+        changes that don't ensure constant proper functionality.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-10-16  Andreas Kling  <akling@apple.com>
 
         Revert Windows-specific expectations shuffling from r157497.
