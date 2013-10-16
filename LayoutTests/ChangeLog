@@ -1,3 +1,8 @@
+2013-10-16  Andreas Kling  <akling@apple.com>
+
+        Revert Windows-specific expectations shuffling from r157497.
+        This wasn't wrong either. Shame on me. :|
+
 2013-10-16  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r155957.
