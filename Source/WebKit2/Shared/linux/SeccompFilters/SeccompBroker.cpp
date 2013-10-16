@@ -196,7 +196,7 @@ SeccompBrokerClient::~SeccompBrokerClient()
 
 void SeccompBrokerClient::dispatch(Syscall* syscall) const
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> encoder = CoreIPC::ArgumentEncoder::create();
+    auto encoder = std::make_unique<CoreIPC::ArgumentEncoder>();
     encoder->encode(*syscall);
 
     char buffer[messageMaxSize];
@@ -219,7 +219,7 @@ void SeccompBrokerClient::dispatch(Syscall* syscall) const
 
     m_socketLock.unlock();
 
-    OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create((const uint8_t*) buffer, receivedBytes);
+    auto decoder = std::make_unique<CoreIPC::ArgumentDecoder>((const uint8_t*) buffer, receivedBytes);
     OwnPtr<SyscallResult> result = SyscallResult::createFromDecoder(decoder.get(), fd);
     if (!result)
         CRASH();
@@ -324,7 +324,7 @@ NO_RETURN void SeccompBroker::runLoop(int socket)
         if (receivedBytes <= 0)
             exit(receivedBytes ? EXIT_FAILURE : EXIT_SUCCESS);
 
-        OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create((const uint8_t*) buffer, receivedBytes);
+        auto decoder = std::make_unique<CoreIPC::ArgumentDecoder>((const uint8_t*) buffer, receivedBytes);
         OwnPtr<Syscall> syscall = Syscall::createFromDecoder(decoder.get());
         if (!syscall)
             exit(EXIT_FAILURE);
@@ -333,7 +333,7 @@ NO_RETURN void SeccompBroker::runLoop(int socket)
         if (!result)
             exit(EXIT_FAILURE);
 
-        OwnPtr<CoreIPC::ArgumentEncoder> encoder = CoreIPC::ArgumentEncoder::create();
+        auto encoder = std::make_unique<CoreIPC::ArgumentEncoder>();
         encoder->encode(*result);
 
         Vector<CoreIPC::Attachment> attachments = encoder->releaseAttachments();
