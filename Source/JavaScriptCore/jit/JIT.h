@@ -907,12 +907,6 @@ namespace JSC {
 #endif
         unsigned m_jumpTargetsPosition;
 
-#ifndef NDEBUG
-#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
-        Label m_uninterruptedInstructionSequenceBegin;
-        int m_uninterruptedConstantSequenceBegin;
-#endif
-#endif
         OwnPtr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;
         WeakRandom m_randomGenerator;

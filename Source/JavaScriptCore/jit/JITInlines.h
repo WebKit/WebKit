@@ -116,68 +116,6 @@ ALWAYS_INLINE bool JIT::atJumpTarget()
     return false;
 }
 
-#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
-
-ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace)
-{
-#if CPU(ARM_TRADITIONAL)
-#ifndef NDEBUG
-    // Ensure the label after the sequence can also fit
-    insnSpace += sizeof(ARMWord);
-    constSpace += sizeof(uint64_t);
-#endif
-
-    ensureSpace(insnSpace, constSpace);
-
-#elif CPU(SH4)
-#ifndef NDEBUG
-    insnSpace += sizeof(SH4Word);
-    constSpace += sizeof(uint64_t);
-#endif
-
-    m_assembler.ensureSpace(insnSpace + m_assembler.maxInstructionSize + 2, constSpace + 8);
-#endif
-
-#ifndef NDEBUG
-    m_uninterruptedInstructionSequenceBegin = label();
-    m_uninterruptedConstantSequenceBegin = sizeOfConstantPool();
-#endif
-}
-
-ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace, int dst)
-{
-#ifndef NDEBUG
-    /* There are several cases when the uninterrupted sequence is larger than
-     * maximum required offset for pathing the same sequence. Eg.: if in a
-     * uninterrupted sequence the last macroassembler's instruction is a stub
-     * call, it emits store instruction(s) which should not be included in the
-     * calculation of length of uninterrupted sequence. So, the insnSpace and
-     * constSpace should be upper limit instead of hard limit.
-     */
-
-#if CPU(SH4)
-    if ((dst > 15) || (dst < -16)) {
-        insnSpace += 8;
-        constSpace += 2;
-    }
-
-    if (((dst >= -16) && (dst < 0)) || ((dst > 7) && (dst <= 15)))
-        insnSpace += 8;
-#else
-    UNUSED_PARAM(dst);
-#endif
-
-    ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) <= insnSpace);
-    ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin <= constSpace);
-#else
-    UNUSED_PARAM(insnSpace);
-    UNUSED_PARAM(constSpace);
-    UNUSED_PARAM(dst);
-#endif
-}
-
-#endif // ASSEMBLER_HAS_CONSTANT_POOL
-
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
