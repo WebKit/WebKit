@@ -243,6 +243,21 @@ bool RenderTextLineBoxes::containsOffset(const RenderText& renderer, unsigned of
     return false;
 }
 
+unsigned RenderTextLineBoxes::countCharacterOffsetsUntil(unsigned offset) const
+{
+    unsigned result = 0;
+    for (auto box = m_first; box; box = box->nextTextBox()) {
+        if (offset < box->start())
+            return result;
+        if (offset <= box->start() + box->len()) {
+            result += offset - box->start();
+            return result;
+        }
+        result += box->len();
+    }
+    return result;
+}
+
 enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
 
 static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineTextBox& box, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)

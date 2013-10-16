@@ -207,9 +207,6 @@ public:
     
 private:
     int offsetForPositionAfterAnchor() const;
-
-    int renderedOffset() const;
-
     
     Position previousCharacterPosition(EAffinity) const;
     Position nextCharacterPosition(EAffinity) const;

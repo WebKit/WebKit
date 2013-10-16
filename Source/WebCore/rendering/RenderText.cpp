@@ -1151,7 +1151,12 @@ int RenderText::caretMaxOffset() const
     return m_lineBoxes.caretMaxOffset(*this);
 }
 
-bool RenderText::containsCharacterOffset(unsigned offset) const
+unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
+{
+    return m_lineBoxes.countCharacterOffsetsUntil(offset);
+}
+
+bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 {
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CharacterOffset);
 }

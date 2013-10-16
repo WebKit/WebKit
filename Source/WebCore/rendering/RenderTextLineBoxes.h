@@ -62,6 +62,7 @@ public:
     int caretMaxOffset(const RenderText&) const;
     enum OffsetType { CaretOffset, CharacterOffset };
     bool containsOffset(const RenderText&, unsigned, OffsetType) const;
+    unsigned countCharacterOffsetsUntil(unsigned) const;
 
     VisiblePosition positionForPoint(const RenderText&, const LayoutPoint&) const;
 

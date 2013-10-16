@@ -479,30 +479,6 @@ bool Position::atEndOfTree() const
     return !findParent(deprecatedNode()) && m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
-int Position::renderedOffset() const
-{
-    if (!deprecatedNode()->isTextNode())
-        return m_offset;
-   
-    if (!deprecatedNode()->renderer())
-        return m_offset;
-                    
-    int result = 0;
-    RenderText* textRenderer = toText(deprecatedNode())->renderer();
-    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        int start = box->start();
-        int end = box->start() + box->len();
-        if (m_offset < start)
-            return result;
-        if (m_offset <= end) {
-            result += m_offset - start;
-            return result;
-        }
-        result += box->len();
-    }
-    return result;
-}
-
 // return first preceding DOM position rendered at a different location, or "this"
 Position Position::previousCharacterPosition(EAffinity affinity) const
 {
@@ -975,7 +951,7 @@ bool Position::isRenderedCharacter() const
     if (!renderer)
         return false;
     
-    return renderer->containsCharacterOffset(m_offset);
+    return renderer->containsRenderedCharacterOffset(m_offset);
 }
 
 static bool inSameEnclosingBlockFlowElement(Node* a, Node* b)
@@ -1028,8 +1004,8 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (posRenderer->isText() && !toRenderText(posRenderer)->containsCaretOffset(pos.m_offset))
         return false;
 
-    int thisRenderedOffset = renderedOffset();
-    int posRenderedOffset = pos.renderedOffset();
+    int thisRenderedOffset = renderer->isText() ? toRenderText(renderer)->countRenderedCharacterOffsetsUntil(m_offset) : m_offset;
+    int posRenderedOffset = posRenderer->isText() ? toRenderText(posRenderer)->countRenderedCharacterOffsetsUntil(pos.m_offset) : pos.m_offset;
 
     if (renderer == posRenderer && thisRenderedOffset == posRenderedOffset)
         return false;

@@ -1,3 +1,21 @@
+2013-10-16  Antti Koivisto  <antti@apple.com>
+
+        Move code for finding rendered character offset to RenderTextLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=122892
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::countRenderedCharacterOffsets):
+        (WebCore::RenderText::containsRenderedCharacterOffset):
+        
+            Renamed for consistency.
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::countCharacterOffsets):
+        
+            This used to be Position::renderedPosition.
+
 2013-10-16  Andreas Kling  <akling@apple.com>
 
         RenderElement::removeChild() should take child as a reference.
