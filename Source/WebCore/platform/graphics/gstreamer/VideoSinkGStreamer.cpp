@@ -188,7 +188,12 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
 
     GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(buffer);
 #else
-    GRefPtr<GstCaps> caps = adoptGRef(gst_video_info_to_caps(&priv->info));
+    GRefPtr<GstCaps> caps;
+    // The video info structure is valid only if the sink handled an allocation query.
+    if (GST_VIDEO_INFO_FORMAT(&priv->info) != GST_VIDEO_FORMAT_UNKNOWN)
+        caps = adoptGRef(gst_video_info_to_caps(&priv->info));
+    else
+        caps = priv->currentCaps;
 #endif
 
     GstVideoFormat format;
