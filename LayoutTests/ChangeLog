@@ -1,5 +1,15 @@
 2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening. Rebaselining after r155253.
+
+        * platform/efl/fast/forms/formmove3-expected.txt:
+        * platform/efl/fast/forms/input-align-image-expected.txt:
+        * platform/efl/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/efl/fast/invalid/003-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug647-expected.txt:
+
+2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening. Rebaselining after r155324.
 
         * platform/efl/fast/forms/placeholder-position-expected.png:
