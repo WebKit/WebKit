@@ -79,16 +79,6 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
-void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder& encoder, const FloatPoint3D& floatPoint3D)
-{
-    SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint3D);
-}
-
-bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder& decoder, FloatPoint3D& floatPoint3D)
-{
-    return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint3D);
-}
-
 void ArgumentCoder<Length>::encode(ArgumentEncoder& encoder, const Length& length)
 {
     SimpleArgumentCoder<Length>::encode(encoder, length);

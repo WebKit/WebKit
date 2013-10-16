@@ -59,11 +59,6 @@ struct GraphicsSurfaceToken;
 
 namespace CoreIPC {
 
-template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
-    static void encode(ArgumentEncoder&, const WebCore::FloatPoint3D&);
-    static bool decode(ArgumentDecoder&, WebCore::FloatPoint3D&);
-};
-
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(ArgumentEncoder&, const WebCore::Length&);
     static bool decode(ArgumentDecoder&, WebCore::Length&);

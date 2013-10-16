@@ -1,3 +1,16 @@
+2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Removed argument coders for FloatPoint3D in CoodinatedGraphicsArgumentCoders.
+        https://bugs.webkit.org/show_bug.cgi?id=122875
+
+        Reviewed by Gyuyoung Kim.
+
+        Argument coders for FloatPoint3D is added in WebCoreArgumentCoders after r157478
+        and it caused redefinition build error in EFL port.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+
 2013-10-15  Dean Jackson  <dino@apple.com>
 
         Add ENABLE_WEB_ANIMATIONS flag
