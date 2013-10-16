@@ -1,3 +1,40 @@
+2013-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of the StructureStubInfo::patch union
+        https://bugs.webkit.org/show_bug.cgi?id=122877
+
+        Reviewed by Sam Weinig.
+        
+        Just simplifying code by getting rid of data structures that ain't used no more.
+        
+        Note that I replace the patch union with a patch struct. This means we say things like
+        stubInfo.patch.valueGPR instead of stubInfo.valueGPR. I think that this extra
+        encapsulation makes the code more readable: the patch struct contains just those things
+        that you need to know to perform patching.
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        * jit/Repatch.cpp:
+        (JSC::repatchByIdSelfAccess):
+        (JSC::replaceWithJump):
+        (JSC::linkRestoreScratch):
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryCacheGetByID):
+        (JSC::getPolymorphicStructureList):
+        (JSC::patchJumpToGetByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+
 2013-10-15  Nadav Rotem  <nrotem@apple.com>
 
         FTL: add support for Int52ToValue and fix putByVal of int52s.

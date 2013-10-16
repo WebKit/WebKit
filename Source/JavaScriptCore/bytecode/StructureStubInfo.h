@@ -223,57 +223,25 @@ struct StructureStubInfo {
 
     CodeOrigin codeOrigin;
 
-    union {
-        struct {
-            int8_t registersFlushed;
-            int8_t baseGPR;
+    struct {
+        int8_t registersFlushed;
+        int8_t baseGPR;
 #if USE(JSVALUE32_64)
-            int8_t valueTagGPR;
+        int8_t valueTagGPR;
 #endif
-            int8_t valueGPR;
-            RegisterSetPOD usedRegisters;
-            int32_t deltaCallToDone;
-            int32_t deltaCallToStorageLoad;
-            int32_t deltaCallToStructCheck;
-            int32_t deltaCallToSlowCase;
-            int32_t deltaCheckImmToCall;
+        int8_t valueGPR;
+        RegisterSet usedRegisters;
+        int32_t deltaCallToDone;
+        int32_t deltaCallToStorageLoad;
+        int32_t deltaCallToStructCheck;
+        int32_t deltaCallToSlowCase;
+        int32_t deltaCheckImmToCall;
 #if USE(JSVALUE64)
-            int32_t deltaCallToLoadOrStore;
+        int32_t deltaCallToLoadOrStore;
 #else
-            int32_t deltaCallToTagLoadOrStore;
-            int32_t deltaCallToPayloadLoadOrStore;
+        int32_t deltaCallToTagLoadOrStore;
+        int32_t deltaCallToPayloadLoadOrStore;
 #endif
-        } dfg;
-        struct {
-            union {
-                struct {
-                    int16_t structureToCompare;
-                    int16_t structureCheck;
-                    int16_t propertyStorageLoad;
-#if USE(JSVALUE64)
-                    int16_t displacementLabel;
-#else
-                    int16_t displacementLabel1;
-                    int16_t displacementLabel2;
-#endif
-                    int16_t putResult;
-                    int16_t coldPathBegin;
-                } get;
-                struct {
-                    int16_t structureToCompare;
-                    int16_t propertyStorageLoad;
-#if USE(JSVALUE64)
-                    int16_t displacementLabel;
-#else
-                    int16_t displacementLabel1;
-                    int16_t displacementLabel2;
-#endif
-                } put;
-            } u;
-            int16_t methodCheckProtoObj;
-            int16_t methodCheckProtoStructureToCompare;
-            int16_t methodCheckPutFunction;
-        } baseline;
     } patch;
 
     union {
@@ -322,7 +290,7 @@ struct StructureStubInfo {
 
     RefPtr<JITStubRoutine> stubRoutine;
     CodeLocationCall callReturnLocation;
-    CodeLocationLabel hotPathBegin;
+    CodeLocationLabel hotPathBegin; // FIXME: This is only used by DFG In IC.
     RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
 };
 
