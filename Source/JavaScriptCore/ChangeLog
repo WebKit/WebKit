@@ -1,3 +1,11 @@
+2013-10-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Build fix.
+
+        Forgot to svn add DeferGC.cpp
+
+        * heap/DeferGC.cpp: Added.
+
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         r157411 fails run-javascriptcore-tests when run with Baseline JIT
