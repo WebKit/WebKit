@@ -827,7 +827,6 @@ namespace JSC {
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
-        void restoreArgumentReferenceForTrampoline();
         void updateTopCallFrame();
 
         Call emitNakedCall(CodePtr function = CodePtr());
