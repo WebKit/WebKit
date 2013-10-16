@@ -243,6 +243,24 @@ TEST(WTF_RefPtr, Assignment)
         log() << "| ";
     }
     ASSERT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
+
+    {
+        RefPtr<RefLogger> ptr(&a);
+        ASSERT_EQ(&a, ptr.get());
+        log() << "| ";
+        ptr = ptr;
+        ASSERT_EQ(&a, ptr.get());
+        log() << "| ";
+    }
+    ASSERT_STREQ("ref(a) | ref(a) deref(a) | deref(a) ", takeLogStr().c_str());
+
+    {
+        RefPtr<RefLogger> ptr(&a);
+        ASSERT_EQ(&a, ptr.get());
+        ptr = std::move(ptr);
+        ASSERT_EQ(&a, ptr.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_RefPtr, Swap)

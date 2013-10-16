@@ -1,3 +1,9 @@
+2013-10-16  Darin Adler  <darin@apple.com>
+
+        Need tests for RefPtr self-assignment and self-move-assignment.
+
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp: Added tests.
+
 2013-10-16  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] Minibrowser can't load child window's location
