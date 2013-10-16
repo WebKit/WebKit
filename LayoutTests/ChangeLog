@@ -1,3 +1,20 @@
+2013-10-16  Oliver Hunt  <oliver@apple.com>
+
+        Implement spread
+        https://bugs.webkit.org/show_bug.cgi?id=122911
+
+        Reviewed by Michael Saboff.
+
+        Add testcases
+
+        * js/basic-spread-expected.txt: Added.
+        * js/basic-spread.html: Added.
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/basic-spread.js: Added.
+        (f):
+        (o.f.o.f.o.f.o.f.h.eval.o.h.o.h.o.h.o.h.g):
+        * js/script-tests/parser-syntax-check.js:
+
 2013-10-16  KyungTae Kim  <ktf.kim@samsung.com>
 
         During editing, merge inline style with overriding other author styles

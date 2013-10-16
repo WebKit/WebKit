@@ -398,6 +398,32 @@ invalid("for (of of in of){}")
 invalid("for (of in){}")
 invalid("for (var of in){}")
 
+debug("spread operator")
+valid("foo(...bar)")
+valid("o.foo(...bar)")
+valid("o[foo](...bar)")
+invalid("new foo(...bar)")
+invalid("new o.foo(...bar)")
+invalid("new o[foo](...bar)")
+invalid("foo(...)")
+invalid("o.foo(...)")
+invalid("o[foo](...)")
+invalid("foo(bar...)")
+invalid("o.foo(bar...)")
+invalid("o[foo](bar...)")
+invalid("foo(a,...bar)")
+invalid("o.foo(a,...bar)")
+invalid("o[foo](a,...bar)")
+invalid("foo(...bar, a)")
+invalid("o.foo(...bar, a)")
+invalid("o[foo](...bar, a)")
+valid("[...bar]")
+valid("[a, ...bar]")
+valid("[...bar, a]")
+valid("[...bar,,,,]")
+valid("[,,,,...bar]")
+
+
 
 
 try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }

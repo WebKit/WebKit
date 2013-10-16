@@ -202,6 +202,13 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         , m_ident(ident)
     {
     }
+    
+    
+    inline SpreadExpressionNode::SpreadExpressionNode(const JSTokenLocation& location, ExpressionNode* expression)
+        : ExpressionNode(location)
+        , m_expression(expression)
+    {
+    }
 
     inline ArgumentListNode::ArgumentListNode(const JSTokenLocation& location, ExpressionNode* expr)
         : ExpressionNode(location)

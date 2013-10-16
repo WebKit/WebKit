@@ -1,3 +1,48 @@
+2013-10-16  Oliver Hunt  <oliver@apple.com>
+
+        Implement ES6 spread operator
+        https://bugs.webkit.org/show_bug.cgi?id=122911
+
+        Reviewed by Michael Saboff.
+
+        Implement the ES6 spread operator
+
+        This has a little bit of refactoring to move the enumeration logic out ForOfNode
+        and into BytecodeGenerator, and then adds the logic to make it nicely callback
+        driven.
+
+        The rest of the logic is just the addition of the SpreadExpressionNode, the parsing,
+        and actually handling the spread.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SpreadExpressionNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createSpreadExpression):
+        * parser/Lexer.cpp:
+        (JSC::::lex):
+        * parser/NodeConstructors.h:
+        (JSC::SpreadExpressionNode::SpreadExpressionNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isSpreadExpression):
+        (JSC::SpreadExpressionNode::expression):
+        * parser/Parser.cpp:
+        (JSC::::parseArrayLiteral):
+        (JSC::::parseArguments):
+        (JSC::::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::getTokenName):
+        (JSC::Parser::updateErrorMessageSpecialCase):
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createSpreadExpression):
+
 2013-10-16  Mark Lam  <mark.lam@apple.com>
 
         Transition void cti_op_tear_off* methods to JIT operations for 32 bit.

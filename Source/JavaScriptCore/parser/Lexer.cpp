@@ -1578,6 +1578,12 @@ start:
     case CharacterDot:
         shift();
         if (!isASCIIDigit(m_current)) {
+            if (UNLIKELY((m_current == '.') && (peek(1) == '.'))) {
+                shift();
+                shift();
+                token = DOTDOTDOT;
+                break;
+            }
             token = DOT;
             break;
         }

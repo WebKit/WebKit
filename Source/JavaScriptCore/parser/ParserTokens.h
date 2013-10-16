@@ -102,6 +102,7 @@ enum JSTokenType {
     MODEQUAL,
     XOREQUAL,
     OREQUAL,
+    DOTDOTDOT,
     LastUntaggedToken,
 
     // Begin tagged tokens

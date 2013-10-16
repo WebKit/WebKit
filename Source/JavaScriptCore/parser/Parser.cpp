@@ -1576,7 +1576,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
         return context.createArray(location, elisions);
     }
     
-    TreeExpression elem = parseAssignmentExpression(context);
+    TreeExpression elem;
+    if (UNLIKELY(match(DOTDOTDOT))) {
+        auto spreadLocation = m_token.m_location;
+        auto start = m_token.m_startPosition;
+        auto divot = m_token.m_endPosition;
+        next();
+        auto spreadExpr = parseAssignmentExpression(context);
+        failIfFalse(spreadExpr);
+        elem = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, m_lastTokenEndPosition);
+    } else
+        elem = parseAssignmentExpression(context);
     failIfFalse(elem);
     typename TreeBuilder::ElementList elementList = context.createElementList(elisions, elem);
     typename TreeBuilder::ElementList tail = elementList;
@@ -1594,6 +1604,17 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
             JSTokenLocation location(tokenLocation());
             next(TreeBuilder::DontBuildStrings);
             return context.createArray(location, elisions, elementList);
+        }
+        if (UNLIKELY(match(DOTDOTDOT))) {
+            auto spreadLocation = m_token.m_location;
+            auto start = m_token.m_startPosition;
+            auto divot = m_token.m_endPosition;
+            next();
+            TreeExpression elem = parseAssignmentExpression(context);
+            failIfFalse(elem);
+            auto spread = context.createSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
+            tail = context.createElementList(tail, elisions, spread);
+            continue;
         }
         TreeExpression elem = parseAssignmentExpression(context);
         failIfFalse(elem);
@@ -1695,13 +1716,27 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context)
+template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context, SpreadMode mode)
 {
     consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings);
     JSTokenLocation location(tokenLocation());
     if (match(CLOSEPAREN)) {
         next(TreeBuilder::DontBuildStrings);
         return context.createArguments();
+    }
+    if (match(DOTDOTDOT) && mode == AllowSpread) {
+        JSTokenLocation spreadLocation(tokenLocation());
+        auto start = m_token.m_startPosition;
+        auto divot = m_token.m_endPosition;
+        next();
+        auto spreadExpr = parseAssignmentExpression(context);
+        auto end = m_lastTokenEndPosition;
+        if (!spreadExpr)
+            failWithMessage("Invalid spread expression.");
+        consumeOrFail(CLOSEPAREN);
+        auto spread = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, end);
+        TreeArgumentsList argList = context.createArgumentsList(location, spread);
+        return context.createArguments(argList);
     }
     TreeExpression firstArg = parseAssignmentExpression(context);
     failIfFalse(firstArg);
@@ -1769,12 +1804,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (newCount) {
                 newCount--;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context);
+                TreeArguments arguments = parseArguments(context, DontAllowSpread);
                 failIfFalse(arguments);
                 base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             } else {
                 JSTextPosition expressionEnd = lastTokenEndPosition();
-                TreeArguments arguments = parseArguments(context);
+                TreeArguments arguments = parseArguments(context, AllowSpread);
                 failIfFalse(arguments);
                 base = context.makeFunctionCallNode(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             }
