@@ -28,7 +28,7 @@ typedef unsigned long GLenum;
 [
     NoInterfaceObject,
     Conditional=WEBGL,
-    GenerateIsReachable=ImplContext,
+    GenerateIsReachable=ImplWebGLRenderingContext,
     DoNotCheckConstants,
     OperationsNotDeletable
 ] interface EXTDrawBuffers {

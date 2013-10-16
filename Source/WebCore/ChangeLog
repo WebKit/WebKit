@@ -1,3 +1,33 @@
+2013-10-15  Alexey Proskuryakov  <ap@apple.com>
+
+        GenerateIsReachable=ImplContext is confusing
+        https://bugs.webkit.org/show_bug.cgi?id=122864
+
+        Reviewed by Geoffrey Garen.
+
+        Renamed to ImplWebGLRenderingContext.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * html/canvas/EXTDrawBuffers.idl:
+        * html/canvas/EXTTextureFilterAnisotropic.idl:
+        * html/canvas/OESElementIndexUint.idl:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/OESTextureHalfFloat.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLCompressedTextureATC.idl:
+        * html/canvas/WebGLCompressedTexturePVRTC.idl:
+        * html/canvas/WebGLCompressedTextureS3TC.idl:
+        * html/canvas/WebGLDebugRendererInfo.idl:
+        * html/canvas/WebGLDebugShaders.idl:
+        * html/canvas/WebGLDepthTexture.idl:
+        * html/canvas/WebGLLoseContext.idl:
+
+        * WebCore.xcodeproj/project.pbxproj: While at it, added OESElementIndexUint.idl
+        to Xcode project.
+
 2013-10-15  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix; I don't know how to export.
