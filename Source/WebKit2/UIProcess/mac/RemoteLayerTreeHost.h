@@ -28,6 +28,7 @@
 
 #include "MessageReceiver.h"
 #include "RemoteLayerTreeTransaction.h"
+#include <WebCore/PlatformCALayer.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 
@@ -49,7 +50,8 @@ private:
     // Message handlers.
     void commit(const RemoteLayerTreeTransaction&);
 
-    CALayer *getOrCreateLayer(RemoteLayerTreeTransaction::LayerID layerID);
+    CALayer *getLayer(RemoteLayerTreeTransaction::LayerID);
+    CALayer *createLayer(RemoteLayerTreeTransaction::LayerCreationProperties);
 
     WebPageProxy* m_webPageProxy;
 

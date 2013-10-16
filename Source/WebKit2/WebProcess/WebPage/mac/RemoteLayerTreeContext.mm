@@ -60,6 +60,14 @@ void RemoteLayerTreeContext::setRootLayer(GraphicsLayer* rootLayer)
     m_rootLayer = static_cast<PlatformCALayerRemote*>(static_cast<GraphicsLayerCARemote*>(rootLayer)->platformCALayer());
 }
 
+void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote* layer, PlatformCALayer::LayerType type)
+{
+    RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
+    creationProperties.layerID = layer->layerID();
+    creationProperties.type = type;
+    m_createdLayers.append(creationProperties);
+}
+
 void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote* layer)
 {
     ASSERT(!m_destroyedLayers.contains(layer->layerID()));
@@ -92,11 +100,12 @@ void RemoteLayerTreeContext::flushLayers()
     RemoteLayerTreeTransaction transaction;
 
     transaction.setRootLayerID(m_rootLayer->layerID());
-    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
 
     m_webPage->layoutIfNeeded();
     m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
+    transaction.setCreatedLayers(std::move(m_createdLayers));
+    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
     m_rootLayer->recursiveBuildTransaction(transaction);
 
     m_webPage->send(Messages::RemoteLayerTreeHost::Commit(transaction));

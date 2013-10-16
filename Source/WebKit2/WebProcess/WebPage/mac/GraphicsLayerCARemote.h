@@ -53,6 +53,9 @@ private:
     virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner) OVERRIDE;
     virtual PassRefPtr<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) OVERRIDE;
 
+    // No accelerated animations for now.
+    virtual bool addAnimation(const WebCore::KeyframeValueList&, const WebCore::IntSize&, const WebCore::Animation*, const String&, double) OVERRIDE { return false; }
+
     RemoteLayerTreeContext* m_context;
 };
 

@@ -52,6 +52,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     class TextCheckingRequestData;
+    class TransformationMatrix;
     class UserStyleSheet;
     class UserScript;
     struct CompositionUnderline;
@@ -80,6 +81,11 @@ namespace CoreIPC {
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
     static void encode(ArgumentEncoder&, const WebCore::AffineTransform&);
     static bool decode(ArgumentDecoder&, WebCore::AffineTransform&);
+};
+
+template<> struct ArgumentCoder<WebCore::TransformationMatrix> {
+    static void encode(ArgumentEncoder&, const WebCore::TransformationMatrix&);
+    static bool decode(ArgumentDecoder&, WebCore::TransformationMatrix&);
 };
 
 template<> struct ArgumentCoder<WebCore::FloatPoint> {

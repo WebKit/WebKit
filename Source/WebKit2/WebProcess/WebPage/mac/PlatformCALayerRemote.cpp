@@ -59,6 +59,8 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     , m_context(context)
 {
     m_layerType = layerType;
+
+    m_context->layerWasCreated(this, layerType);
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
@@ -109,6 +111,7 @@ PlatformCALayer* PlatformCALayerRemote::superlayer() const
 
 void PlatformCALayerRemote::removeFromSuperlayer()
 {
+    ASSERT_NOT_REACHED();
 }
 
 void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
@@ -137,10 +140,12 @@ void PlatformCALayerRemote::insertSublayer(PlatformCALayer* layer, size_t index)
 
 void PlatformCALayerRemote::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* layer)
 {
+    ASSERT_NOT_REACHED();
 }
 
 void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
 {
+    ASSERT_NOT_REACHED();
 }
 
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
@@ -162,11 +167,13 @@ void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 
 bool PlatformCALayerRemote::isOpaque() const
 {
-    return false;
+    return m_properties.opaque;
 }
 
 void PlatformCALayerRemote::setOpaque(bool value)
 {
+    m_properties.opaque = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::OpaqueChanged);
 }
 
 FloatRect PlatformCALayerRemote::bounds() const
@@ -204,46 +211,58 @@ void PlatformCALayerRemote::setAnchorPoint(const FloatPoint3D& value)
 
 TransformationMatrix PlatformCALayerRemote::transform() const
 {
-    return TransformationMatrix();
+    return m_properties.transform;
 }
 
 void PlatformCALayerRemote::setTransform(const TransformationMatrix& value)
 {
+    m_properties.transform = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::TransformChanged);
 }
 
 TransformationMatrix PlatformCALayerRemote::sublayerTransform() const
 {
-    return TransformationMatrix();
+    return m_properties.sublayerTransform;
 }
 
 void PlatformCALayerRemote::setSublayerTransform(const TransformationMatrix& value)
 {
+    m_properties.sublayerTransform = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SublayerTransformChanged);
 }
 
 void PlatformCALayerRemote::setHidden(bool value)
 {
+    m_properties.hidden = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::HiddenChanged);
 }
 
 void PlatformCALayerRemote::setGeometryFlipped(bool value)
 {
+    m_properties.geometryFlipped = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::GeometryFlippedChanged);
 }
 
 bool PlatformCALayerRemote::isDoubleSided() const
 {
-    return false;
+    return m_properties.doubleSided;
 }
 
 void PlatformCALayerRemote::setDoubleSided(bool value)
 {
+    m_properties.doubleSided = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::DoubleSidedChanged);
 }
 
 bool PlatformCALayerRemote::masksToBounds() const
 {
-    return false;
+    return m_properties.masksToBounds;
 }
 
 void PlatformCALayerRemote::setMasksToBounds(bool value)
 {
+    m_properties.masksToBounds = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MasksToBoundsChanged);
 }
 
 bool PlatformCALayerRemote::acceleratesDrawing() const
@@ -289,19 +308,25 @@ void PlatformCALayerRemote::setBackgroundColor(const Color& value)
 
 void PlatformCALayerRemote::setBorderWidth(float value)
 {
+    m_properties.borderWidth = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BorderWidthChanged);
 }
 
 void PlatformCALayerRemote::setBorderColor(const Color& value)
 {
+    m_properties.borderColor = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BorderColorChanged);
 }
 
 float PlatformCALayerRemote::opacity() const
 {
-    return 0;
+    return m_properties.opacity;
 }
 
 void PlatformCALayerRemote::setOpacity(float value)
 {
+    m_properties.opacity = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::OpacityChanged);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -321,6 +346,8 @@ bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filte
 
 void PlatformCALayerRemote::setName(const String& value)
 {
+    m_properties.name = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::NameChanged);
 }
 
 void PlatformCALayerRemote::setFrame(const FloatRect& value)

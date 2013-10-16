@@ -1,3 +1,123 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        RemoteLayerTree: Add support for more layer properties and transform layers
+        https://bugs.webkit.org/show_bug.cgi?id=122906
+
+        Reviewed by Anders Carlsson.
+
+        Add support for name, border width, border color, opacity, transform, sublayer transform,
+        hidden, geometry flipped, double sided, masks to bounds, and opaque layer properties.
+
+        Factor layer creation out from layer changes, so that we can create layers of the correct
+        type. Use this mechanism to create CATransformLayers when handed a LayerTypeTransformLayer.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Add coders for TransformationMatrix.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        Add the new LayerChange values.
+
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        LayerProperties::layerChanges should be a LayerChange.
+
+        (WebKit::RemoteLayerTreeTransaction::createdLayers):
+        Expose the list of newly created layers (for RemoteLayerTreeHost's consumption).
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        Add (and support coding) a new LayerCreationProperties struct, which is currently
+        just a pair of LayerID and PlatformCALayer::LayerType. Additional properties may follow.
+
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        Encode and decode all of the new layer properties.
+        Encode changedProperties as an enum, not an unsigned.
+
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Encode and decode the list of newly created layers.
+
+        (WebKit::RemoteLayerTreeTransaction::setCreatedLayers):
+        Setter for the list of newly created layers, which comes from the
+        RemoteLayerTreeContext at commit time.
+
+        (WebKit::dumpProperty):
+        Helper function to dump TransformationMatrix instances.
+
+        (WebKit::dumpChangedLayers):
+        Dump all of the new layer properties.
+
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        Dump the list of newly created layers.
+
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::cgColorFromColor):
+        Factor out the code to make a CGColor from a WebCore::Color, as we need it
+        for both border and background color.
+
+        (WebKit::RemoteLayerTreeHost::commit):
+        Create layers before applying changes, using the new list of newly created layers.
+        When applying changes, ensure that the layer we're interested in was already created.
+        Rename "sublayer" to "layer", and use dot notation everywhere.
+        Apply all the new layer properties to the layers.
+
+        (WebKit::RemoteLayerTreeHost::getLayer):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Separate creating a new layer from retrieving it by ID.
+        Ensure that a layer doesn't already exist when creating it.
+        Support creating CATransformLayers.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        Disable accelerated animations, as we don't support proxying animations yet.
+        This makes GraphicsLayer fall back to software animations, which already work wonderfully remotely.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        Inform the RemoteLayerTreeContext of the creation of every PlatformCALayerRemote.
+
+        (PlatformCALayerRemote::removeFromSuperlayer):
+        (PlatformCALayerRemote::replaceSublayer):
+        (PlatformCALayerRemote::adoptSublayers):
+        Assert when we hit a few critical unimplemented methods that would
+        leave the layer tree in a broken state.
+
+        (PlatformCALayerRemote::isOpaque):
+        (PlatformCALayerRemote::setOpaque):
+        (PlatformCALayerRemote::transform):
+        (PlatformCALayerRemote::setTransform):
+        (PlatformCALayerRemote::sublayerTransform):
+        (PlatformCALayerRemote::setSublayerTransform):
+        (PlatformCALayerRemote::setHidden):
+        (PlatformCALayerRemote::setGeometryFlipped):
+        (PlatformCALayerRemote::isDoubleSided):
+        (PlatformCALayerRemote::setDoubleSided):
+        (PlatformCALayerRemote::masksToBounds):
+        (PlatformCALayerRemote::setMasksToBounds):
+        (PlatformCALayerRemote::setBorderWidth):
+        (PlatformCALayerRemote::setBorderColor):
+        (PlatformCALayerRemote::opacity):
+        (PlatformCALayerRemote::setOpacity):
+        (PlatformCALayerRemote::setName):
+        Proxy all of these properties via RemoteLayerTreeTransaction.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        Add storage for the list of newly created layers.
+        Use LayerID for the list of destroyed layers.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWasCreated):
+        Store the ID and type of the newly created layer to be pushed to the UI process later.
+
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+        Push the created and destroyed layers to the transaction *after* flushing
+        GraphicsLayers, so that any changes to e.g. structural layers will not be missed.
+
 2013-10-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2][Efl][CMake] Add support for ENABLE_NETWORK_PROCESS to the build system

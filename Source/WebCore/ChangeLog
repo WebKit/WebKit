@@ -1,3 +1,15 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        RemoteLayerTree: Add support for more layer properties and transform layers
+        https://bugs.webkit.org/show_bug.cgi?id=122906
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, this code is not yet testable.
+
+        * WebCore.exp.in:
+        Export some TextStream and TransformationMatrix stuff.
+
 2013-10-16  KyungTae Kim  <ktf.kim@samsung.com>
 
         During editing, merge inline style with overriding other author styles

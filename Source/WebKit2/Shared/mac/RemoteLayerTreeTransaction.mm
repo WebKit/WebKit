@@ -31,12 +31,34 @@
 #import "MessageEncoder.h"
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
+#import <WebCore/TextStream.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+RemoteLayerTreeTransaction::LayerCreationProperties::LayerCreationProperties()
+{
+}
+
+void RemoteLayerTreeTransaction::LayerCreationProperties::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encoder << layerID;
+    encoder.encodeEnum(type);
+}
+
+bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
+{
+    if (!decoder.decode(result.layerID))
+        return false;
+
+    if (!decoder.decodeEnum(result.type))
+        return false;
+
+    return true;
+}
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     : changedProperties(NoChange)
@@ -45,7 +67,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder << changedProperties;
+    encoder.encodeEnum(changedProperties);
 
     if (changedProperties & NameChanged)
         encoder << name;
@@ -64,11 +86,41 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & AnchorPointChanged)
         encoder << anchorPoint;
+
+    if (changedProperties & BorderWidthChanged)
+        encoder << borderWidth;
+
+    if (changedProperties & BorderColorChanged)
+        encoder << borderColor;
+
+    if (changedProperties & OpacityChanged)
+        encoder << opacity;
+
+    if (changedProperties & TransformChanged)
+        encoder << transform;
+
+    if (changedProperties & SublayerTransformChanged)
+        encoder << sublayerTransform;
+
+    if (changedProperties & HiddenChanged)
+        encoder << hidden;
+
+    if (changedProperties & GeometryFlippedChanged)
+        encoder << geometryFlipped;
+
+    if (changedProperties & DoubleSidedChanged)
+        encoder << doubleSided;
+
+    if (changedProperties & MasksToBoundsChanged)
+        encoder << masksToBounds;
+
+    if (changedProperties & OpaqueChanged)
+        encoder << opaque;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
 {
-    if (!decoder.decode(result.changedProperties))
+    if (!decoder.decodeEnum(result.changedProperties))
         return false;
 
     if (result.changedProperties & NameChanged) {
@@ -80,7 +132,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
         if (!decoder.decode(result.children))
             return false;
 
-        for (auto layerID: result.children) {
+        for (auto layerID : result.children) {
             if (!layerID)
                 return false;
         }
@@ -106,6 +158,56 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
             return false;
     }
 
+    if (result.changedProperties & BorderWidthChanged) {
+        if (!decoder.decode(result.borderWidth))
+            return false;
+    }
+
+    if (result.changedProperties & BorderColorChanged) {
+        if (!decoder.decode(result.borderColor))
+            return false;
+    }
+
+    if (result.changedProperties & OpacityChanged) {
+        if (!decoder.decode(result.opacity))
+            return false;
+    }
+
+    if (result.changedProperties & TransformChanged) {
+        if (!decoder.decode(result.transform))
+            return false;
+    }
+
+    if (result.changedProperties & SublayerTransformChanged) {
+        if (!decoder.decode(result.sublayerTransform))
+            return false;
+    }
+
+    if (result.changedProperties & HiddenChanged) {
+        if (!decoder.decode(result.hidden))
+            return false;
+    }
+
+    if (result.changedProperties & GeometryFlippedChanged) {
+        if (!decoder.decode(result.geometryFlipped))
+            return false;
+    }
+
+    if (result.changedProperties & DoubleSidedChanged) {
+        if (!decoder.decode(result.doubleSided))
+            return false;
+    }
+
+    if (result.changedProperties & MasksToBoundsChanged) {
+        if (!decoder.decode(result.masksToBounds))
+            return false;
+    }
+
+    if (result.changedProperties & OpaqueChanged) {
+        if (!decoder.decode(result.opaque))
+            return false;
+    }
+
     return true;
 }
 
@@ -120,6 +222,7 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << m_rootLayerID;
+    encoder << m_createdLayers;
     encoder << m_changedLayerProperties;
     encoder << m_destroyedLayerIDs;
 }
@@ -129,6 +232,9 @@ bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder& decoder, Remot
     if (!decoder.decode(result.m_rootLayerID))
         return false;
     if (!result.m_rootLayerID)
+        return false;
+
+    if (!decoder.decode(result.m_createdLayers))
         return false;
 
     if (!decoder.decode(result.m_changedLayerProperties))
@@ -156,6 +262,11 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(PlatformCALayerRemote* r
     m_changedLayerProperties.set(remoteLayer->layerID(), properties);
 }
 
+void RemoteLayerTreeTransaction::setCreatedLayers(Vector<LayerCreationProperties> createdLayers)
+{
+    m_createdLayers = std::move(createdLayers);
+}
+
 void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<LayerID> destroyedLayerIDs)
 {
     m_destroyedLayerIDs = std::move(destroyedLayerIDs);
@@ -167,6 +278,26 @@ static void writeIndent(StringBuilder& builder, int indent)
 {
     for (int i = 0; i < indent; ++i)
         builder.append(' ');
+}
+
+static void dumpProperty(StringBuilder& builder, String name, const TransformationMatrix& transform)
+{
+    if (transform.isIdentity())
+        return;
+
+    builder.append('\n');
+    writeIndent(builder, 3);
+    builder.append("(");
+    builder.append(name);
+    builder.append("\n");
+
+    TextStream ts;
+    ts << "    [" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
+    ts << "    [" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
+    ts << "    [" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
+    ts << "    [" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "])";
+
+    builder.append(ts.release());
 }
 
 static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerTreeTransaction::LayerID, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
@@ -182,7 +313,7 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerT
     copyKeysToVector(changedLayerProperties, layerIDs);
     std::sort(layerIDs.begin(), layerIDs.end());
 
-    for (auto layerID: layerIDs) {
+    for (auto layerID : layerIDs) {
         const RemoteLayerTreeTransaction::LayerProperties& layerProperties = changedLayerProperties.get(layerID);
 
         writeIndent(builder, 2);
@@ -252,6 +383,76 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerT
             builder.append(')');
         }
 
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(borderColor ");
+            builder.append(layerProperties.borderColor.serialized());
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(borderWidth ");
+            builder.appendNumber(layerProperties.borderWidth);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpacityChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(opacity ");
+            builder.appendNumber(layerProperties.opacity);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
+            dumpProperty(builder, "transform", layerProperties.transform);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
+            dumpProperty(builder, "sublayerTransform", layerProperties.sublayerTransform);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(hidden ");
+            builder.append(layerProperties.hidden ? "true" : "false");
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::GeometryFlippedChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(geometryFlipped ");
+            builder.append(layerProperties.geometryFlipped ? "true" : "false");
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DoubleSidedChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(doubleSided ");
+            builder.append(layerProperties.doubleSided ? "true" : "false");
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MasksToBoundsChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(masksToBounds ");
+            builder.append(layerProperties.masksToBounds ? "true" : "false");
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(opaque ");
+            builder.append(layerProperties.opaque ? "true" : "false");
+            builder.append(')');
+        }
+
         builder.append(")\n");
     }
 }
@@ -266,6 +467,46 @@ void RemoteLayerTreeTransaction::dump() const
     builder.append("(root-layer ");
     builder.appendNumber(m_rootLayerID);
     builder.append(")\n");
+
+    if (!m_createdLayers.isEmpty()) {
+        writeIndent(builder, 1);
+        builder.append("(created-layers\n");
+        for (const auto& createdLayer : m_createdLayers) {
+            writeIndent(builder, 2);
+            builder.append("(");
+            switch (createdLayer.type) {
+            case PlatformCALayer::LayerTypeLayer:
+            case PlatformCALayer::LayerTypeWebLayer:
+                builder.append("layer");
+                break;
+            case PlatformCALayer::LayerTypeTransformLayer:
+                builder.append("transform-layer");
+                break;
+            case PlatformCALayer::LayerTypeWebTiledLayer:
+                builder.append("tiled-layer");
+                break;
+            case PlatformCALayer::LayerTypeTiledBackingLayer:
+                builder.append("tiled-backing-layer");
+                break;
+            case PlatformCALayer::LayerTypePageTiledBackingLayer:
+                builder.append("page-tiled-backing-layer");
+                break;
+            case PlatformCALayer::LayerTypeRootLayer:
+                builder.append("root-layer");
+                break;
+            case PlatformCALayer::LayerTypeAVPlayerLayer:
+                builder.append("av-player-layer");
+                break;
+            case PlatformCALayer::LayerTypeCustom:
+                builder.append("custom-layer");
+                break;
+            }
+            builder.append(' ');
+            builder.appendNumber(createdLayer.layerID);
+            builder.append(")\n");
+        }
+        builder.append(")\n");
+    }
 
     dumpChangedLayers(builder, m_changedLayerProperties);
 

@@ -26,7 +26,9 @@
 #ifndef RemoteLayerTreeContext_h
 #define RemoteLayerTreeContext_h
 
+#include "RemoteLayerTreeTransaction.h"
 #include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/Timer.h>
 #include <wtf/Vector.h>
 
@@ -44,6 +46,7 @@ public:
 
     void scheduleLayerFlush();
 
+    void layerWasCreated(PlatformCALayerRemote*, WebCore::PlatformCALayer::LayerType);
     void layerWillBeDestroyed(PlatformCALayerRemote*);
 
 private:
@@ -58,7 +61,8 @@ private:
 
     RefPtr<PlatformCALayerRemote> m_rootLayer;
 
-    Vector<uint64_t> m_destroyedLayers;
+    Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
+    Vector<RemoteLayerTreeTransaction::LayerID> m_destroyedLayers;
 };
 
 } // namespace WebKit

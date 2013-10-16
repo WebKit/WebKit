@@ -68,69 +68,125 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     m_webPageProxy->process()->removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
+static RetainPtr<CGColorRef> cgColorFromColor(Color color)
+{
+    CGFloat components[4];
+    color.getRGBA(components[0], components[1], components[2], components[3]);
+
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGColorRef> cgColor = adoptCF(CGColorCreate(colorSpace.get(), components));
+    return cgColor;
+}
+
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
-    CALayer *rootLayer = getOrCreateLayer(transaction.rootLayerID());
+#ifndef NDEBUG
+    transaction.dump();
+#endif
+
+    for (auto createdLayer : transaction.createdLayers())
+        createLayer(createdLayer);
+
+    CALayer *rootLayer = getLayer(transaction.rootLayerID());
     if (m_rootLayer != rootLayer) {
         m_rootLayer = rootLayer;
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_rootLayer);
     }
 
-#ifndef NDEBUG
-    transaction.dump();
-#endif
-
     for (auto changedLayer : transaction.changedLayers()) {
         RemoteLayerTreeTransaction::LayerID layerID = changedLayer.key;
         const auto& properties = changedLayer.value;
 
-        CALayer *sublayer = getOrCreateLayer(layerID);
+        CALayer *layer = getLayer(layerID);
+        ASSERT(layer);
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
-            [sublayer setName:properties.name];
+            layer.name = properties.name;
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::PositionChanged) {
-            [sublayer setPosition:CGPointMake(properties.position.x(), properties.position.y())];
-            [sublayer setZPosition:properties.position.z()];
+            layer.position = CGPointMake(properties.position.x(), properties.position.y());
+            layer.zPosition = properties.position.z();
         }
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged) {
-            [sublayer setAnchorPoint:CGPointMake(properties.anchorPoint.x(), properties.anchorPoint.y())];
-            [sublayer setAnchorPointZ:properties.anchorPoint.z()];
+            layer.anchorPoint = CGPointMake(properties.anchorPoint.x(), properties.anchorPoint.y());
+            layer.anchorPointZ = properties.anchorPoint.z();
         }
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
-            [sublayer setBounds:FloatRect(FloatPoint(), properties.size)];
+            layer.bounds = FloatRect(FloatPoint(), properties.size);
 
-        if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged) {
-            CGFloat components[4];
-            properties.backgroundColor.getRGBA(components[0], components[1], components[2], components[3]);
-
-            RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-            RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
-
-            [sublayer setBackgroundColor:color.get()];
-        }
+        if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
+            layer.backgroundColor = cgColorFromColor(properties.backgroundColor).get();
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
             RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
             for (auto child : properties.children)
-                [children addObject:getOrCreateLayer(child)];
-            [sublayer setSublayers:children.get()];
+                [children addObject:getLayer(child)];
+            layer.sublayers = children.get();
         }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
+            layer.borderColor = cgColorFromColor(properties.borderColor).get();
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
+            layer.borderWidth = properties.borderWidth;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::OpacityChanged)
+            layer.opacity = properties.opacity;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
+            layer.transform = properties.transform;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
+            layer.sublayerTransform = properties.sublayerTransform;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged)
+            layer.hidden = properties.hidden;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::GeometryFlippedChanged)
+            layer.geometryFlipped = properties.geometryFlipped;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::DoubleSidedChanged)
+            layer.doubleSided = properties.doubleSided;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::MasksToBoundsChanged)
+            layer.masksToBounds = properties.masksToBounds;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
+            layer.opaque = properties.opaque;
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())
         m_layers.remove(destroyedLayer);
 }
 
-CALayer *RemoteLayerTreeHost::getOrCreateLayer(RemoteLayerTreeTransaction::LayerID layerID)
+CALayer *RemoteLayerTreeHost::getLayer(RemoteLayerTreeTransaction::LayerID layerID)
 {
-    RetainPtr<CALayer>& layer = m_layers.add(layerID, nullptr).iterator->value;
-    if (!layer) {
+    return m_layers.get(layerID).get();
+}
+
+
+CALayer *RemoteLayerTreeHost::createLayer(RemoteLayerTreeTransaction::LayerCreationProperties properties)
+{
+    RetainPtr<CALayer>& layer = m_layers.add(properties.layerID, nullptr).iterator->value;
+
+    ASSERT(!layer);
+
+    switch (properties.type) {
+    case PlatformCALayer::LayerTypeLayer:
+    case PlatformCALayer::LayerTypeWebLayer:
+    case PlatformCALayer::LayerTypeRootLayer:
         layer = adoptNS([[CALayer alloc] init]);
-        [layer setStyle:@{ @"actions" : nullActionsDictionary() }];
+        break;
+    case PlatformCALayer::LayerTypeTransformLayer:
+        layer = adoptNS([[CATransformLayer alloc] init]);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
+
+    [layer setStyle:@{ @"actions" : nullActionsDictionary() }];
 
     return layer.get();
 }

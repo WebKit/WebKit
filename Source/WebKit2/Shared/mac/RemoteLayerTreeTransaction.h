@@ -29,6 +29,8 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/PlatformCALayer.h>
+#include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +55,26 @@ public:
         SizeChanged = 1 << 4,
         BackgroundColorChanged = 1 << 5,
         AnchorPointChanged = 1 << 6,
+        BorderWidthChanged = 1 << 7,
+        BorderColorChanged = 1 << 8,
+        OpacityChanged = 1 << 9,
+        TransformChanged = 1 << 10,
+        SublayerTransformChanged = 1 << 11,
+        HiddenChanged = 1 << 12,
+        GeometryFlippedChanged = 1 << 13,
+        DoubleSidedChanged = 1 << 14,
+        MasksToBoundsChanged = 1 << 15,
+        OpaqueChanged = 1 << 16
+    };
+
+    struct LayerCreationProperties {
+        LayerCreationProperties();
+
+        void encode(CoreIPC::ArgumentEncoder&) const;
+        static bool decode(CoreIPC::ArgumentDecoder&, LayerCreationProperties&);
+
+        LayerID layerID;
+        WebCore::PlatformCALayer::LayerType type;
     };
 
     struct LayerProperties {
@@ -61,9 +83,9 @@ public:
         void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder&, LayerProperties&);
 
-        void notePropertiesChanged(LayerChange layerChanges) { changedProperties |= layerChanges; }
+        void notePropertiesChanged(LayerChange layerChanges) { changedProperties = static_cast<LayerChange>(changedProperties | layerChanges); }
 
-        unsigned changedProperties;
+        LayerChange changedProperties;
 
         String name;
         Vector<LayerID> children;
@@ -71,6 +93,16 @@ public:
         WebCore::FloatSize size;
         WebCore::Color backgroundColor;
         WebCore::FloatPoint3D anchorPoint;
+        float borderWidth;
+        WebCore::Color borderColor;
+        float opacity;
+        WebCore::TransformationMatrix transform;
+        WebCore::TransformationMatrix sublayerTransform;
+        bool hidden;
+        bool geometryFlipped;
+        bool doubleSided;
+        bool masksToBounds;
+        bool opaque;
     };
 
     explicit RemoteLayerTreeTransaction();
@@ -82,18 +114,21 @@ public:
     LayerID rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(LayerID rootLayerID);
     void layerPropertiesChanged(PlatformCALayerRemote*, LayerProperties&);
+    void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<LayerID>);
 
 #ifndef NDEBUG
     void dump() const;
 #endif
 
+    Vector<LayerCreationProperties> createdLayers() const { return m_createdLayers; }
     HashMap<LayerID, LayerProperties> changedLayers() const { return m_changedLayerProperties; }
     Vector<LayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
 
 private:
     LayerID m_rootLayerID;
     HashMap<LayerID, LayerProperties> m_changedLayerProperties;
+    Vector<LayerCreationProperties> m_createdLayers;
     Vector<LayerID> m_destroyedLayerIDs;
 };
 
