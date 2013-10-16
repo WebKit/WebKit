@@ -1,3 +1,14 @@
+2013-10-16  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r155957.
+
+        * platform/efl/css3/selectors3/html/css3-modsel-179a-expected.txt:
+        * platform/efl/css3/selectors3/xhtml/css3-modsel-179a-expected.txt:
+        * platform/efl/css3/selectors3/xml/css3-modsel-179a-expected.txt:
+        * platform/efl/fast/css/pseudo-first-line-border-width-expected.txt:
+        * platform/efl/fast/css/word-space-extra-expected.txt:
+        * platform/efl/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+
 2013-10-16  Andreas Kling  <akling@apple.com>
 
         Revert Mac-specific expecations shuffling from r157498.
