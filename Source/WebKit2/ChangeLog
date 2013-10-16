@@ -1,3 +1,16 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Use a default instead of an environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=122913
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView std::WebKit::]):
+        Use the default 'WebKit2UseRemoteLayerTreeDrawingArea' instead of
+        the environment variable 'WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA'
+        to indicate that WKViews should make RemoteLayerTreeDrawingAreas.
+
 2013-10-15  Brady Eidson  <beidson@apple.com>
 
         Flesh out the DatabaseProcess (and launch it!)

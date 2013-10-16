@@ -2276,7 +2276,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
-    if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
         return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(_data->_page.get());
 
     return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
