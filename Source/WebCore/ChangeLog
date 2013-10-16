@@ -1,5 +1,14 @@
 2013-10-15  Tim Horton  <timothy_horton@apple.com>
 
+        Two more exports for 32-bit build fix.
+        The duality of CGFloat means that we use a different
+        version of getRGBA (and the cast operator)
+        on 32-bit systems.
+
+        * WebCore.exp.in:
+
+2013-10-15  Tim Horton  <timothy_horton@apple.com>
+
         Another shot at a build fix; apparently these
         do need exporting for some reason, but are different
         on 32-bit.
