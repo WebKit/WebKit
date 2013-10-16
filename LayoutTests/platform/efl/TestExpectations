@@ -245,8 +245,6 @@ http/tests/inspector [ Skip ]
 http/tests/inspector-enabled [ Skip ]
 
 # There are no expected result set yet.
-editing/unsupported-content/table-delete-001.html
-editing/unsupported-content/table-delete-003.html
 fast/dom/rtl-scroll-to-leftmost-and-resize.html
 
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.

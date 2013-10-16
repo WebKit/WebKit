@@ -17,6 +17,15 @@
 
 2013-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Added new baselines for missing expected results.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/unsupported-content/table-delete-001-expected.txt: Added.
+        * platform/efl/editing/unsupported-content/table-delete-003-expected.png:
+        * platform/efl/editing/unsupported-content/table-delete-003-expected.txt: Added.
+
+2013-10-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening.
 
         * platform/efl/TestExpectations: svg/filters/filter-hidden-content.svg is passed after r142955.
