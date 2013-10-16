@@ -34,6 +34,15 @@
 
 namespace JSC {
 
+inline ThreadIdentifier createBlockFreeingThread(BlockAllocator* allocator)
+{
+    if (!GCActivityCallback::s_shouldCreateGCTimer)
+        return 0; // No block freeing thread.
+    ThreadIdentifier identifier = createThread(allocator->blockFreeingThreadStartFunc, allocator, "JavaScriptCore::BlockFree");
+    RELEASE_ASSERT(identifier);
+    return identifier;
+}
+
 BlockAllocator::BlockAllocator()
     : m_superRegion()
     , m_copiedRegionSet(CopiedBlock::blockSize)
@@ -43,9 +52,8 @@ BlockAllocator::BlockAllocator()
     , m_numberOfEmptyRegions(0)
     , m_isCurrentlyAllocating(false)
     , m_blockFreeingThreadShouldQuit(false)
-    , m_blockFreeingThread(createThread(blockFreeingThreadStartFunc, this, "JavaScriptCore::BlockFree"))
+    , m_blockFreeingThread(createBlockFreeingThread(this))
 {
-    RELEASE_ASSERT(m_blockFreeingThread);
     m_regionLock.Init();
 }
 
@@ -57,7 +65,8 @@ BlockAllocator::~BlockAllocator()
         m_blockFreeingThreadShouldQuit = true;
         m_emptyRegionCondition.broadcast();
     }
-    waitForThreadCompletion(m_blockFreeingThread);
+    if (m_blockFreeingThread)
+        waitForThreadCompletion(m_blockFreeingThread);
     ASSERT(allRegionSetsAreEmpty());
     ASSERT(m_emptyRegions.isEmpty());
 }

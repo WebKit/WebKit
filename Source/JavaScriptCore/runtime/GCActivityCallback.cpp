@@ -44,6 +44,8 @@
 
 namespace JSC {
 
+bool GCActivityCallback::s_shouldCreateGCTimer = true;
+
 #if USE(CF) || PLATFORM(EFL)
 
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB

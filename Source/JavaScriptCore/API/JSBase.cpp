@@ -134,3 +134,8 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
     APIEntryShim entryShim(exec);
     exec->vm().heap.collectAllGarbage();
 }
+
+void JSDisableGCTimer(void)
+{
+    GCActivityCallback::s_shouldCreateGCTimer = false;
+}

@@ -1,3 +1,35 @@
+2013-10-16  Daniel Bates  <dabates@apple.com>
+
+        Add SPI to disable the garbage collector timer
+        https://bugs.webkit.org/show_bug.cgi?id=122921
+
+        Reviewed by Geoffrey Garen.
+
+        Based on a patch by Mark Hahnenberg.
+
+        * API/JSBase.cpp:
+        (JSDisableGCTimer): Added; SPI function.
+        * API/JSBasePrivate.h:
+        * heap/BlockAllocator.cpp:
+        (JSC::createBlockFreeingThread): Added.
+        (JSC::BlockAllocator::BlockAllocator): Modified to use JSC::createBlockFreeingThread()
+        to conditionally create the "block freeing" thread depending on the value of
+        GCActivityCallback::s_shouldCreateGCTimer.
+        (JSC::BlockAllocator::~BlockAllocator):
+        * heap/BlockAllocator.h:
+        (JSC::BlockAllocator::deallocate):
+        * heap/Heap.cpp:
+        (JSC::Heap::didAbandon):
+        (JSC::Heap::collect):
+        (JSC::Heap::didAllocate):
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::timerDidFire):
+        * runtime/GCActivityCallback.cpp:
+        * runtime/GCActivityCallback.h:
+        (JSC::DefaultGCActivityCallback::create): Only instantiate a DefaultGCActivityCallback object
+        when GCActivityCallback::s_shouldCreateGCTimer is true so as to prevent allocating a HeapTimer
+        object (since DefaultGCActivityCallback ultimately extends HeapTimer).
+
 2013-10-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157529.

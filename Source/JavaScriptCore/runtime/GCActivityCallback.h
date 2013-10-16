@@ -50,6 +50,8 @@ public:
     bool isEnabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
+    static bool s_shouldCreateGCTimer;
+
 protected:
 #if USE(CF)
     GCActivityCallback(VM* vm, CFRunLoopRef runLoop)
@@ -102,7 +104,7 @@ private:
 
 inline PassOwnPtr<DefaultGCActivityCallback> DefaultGCActivityCallback::create(Heap* heap)
 {
-    return adoptPtr(new DefaultGCActivityCallback(heap));
+    return GCActivityCallback::s_shouldCreateGCTimer ? adoptPtr(new DefaultGCActivityCallback(heap)) : nullptr;
 }
 
 }

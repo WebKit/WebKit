@@ -45,6 +45,8 @@ region.
 */
 JS_EXPORT void JSReportExtraMemoryCost(JSContextRef ctx, size_t size) AVAILABLE_IN_WEBKIT_VERSION_4_0;
 
+JS_EXPORT void JSDisableGCTimer(void);
+
 #ifdef __cplusplus
 }
 #endif
