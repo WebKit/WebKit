@@ -1672,8 +1672,8 @@ RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(float time, const Int
 #endif
 
     AVCFAssetImageGeneratorSetMaximumSize(m_imageGenerator.get(), CGSize(rect.size()));
-    CGImageRef image = AVCFAssetImageGeneratorCopyCGImageAtTime(m_imageGenerator.get(), CMTimeMakeWithSeconds(time, 600), 0, 0);
-
+    CGImageRef rawimage = AVCFAssetImageGeneratorCopyCGImageAtTime(m_imageGenerator.get(), CMTimeMakeWithSeconds(time, 600), 0, 0);
+    CGImageRef image = CGImageCreateCopyWithColorSpace(rawimage,  CGColorSpaceCreateDeviceRGB());
 #if !LOG_DISABLED
     double duration = monotonicallyIncreasingTime() - start;
     LOG(Media, "AVFWrapper::createImageForTimeInRect(%p) - creating image took %.4f", this, narrowPrecisionToFloat(duration));
