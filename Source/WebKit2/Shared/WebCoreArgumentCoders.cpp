@@ -81,6 +81,17 @@ bool ArgumentCoder<FloatPoint>::decode(ArgumentDecoder& decoder, FloatPoint& flo
 }
 
 
+void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder& encoder, const FloatPoint3D& floatPoint)
+{
+    SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint);
+}
+
+bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder& decoder, FloatPoint3D& floatPoint)
+{
+    return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint);
+}
+
+
 void ArgumentCoder<FloatRect>::encode(ArgumentEncoder& encoder, const FloatRect& floatRect)
 {
     SimpleArgumentCoder<FloatRect>::encode(encoder, floatRect);

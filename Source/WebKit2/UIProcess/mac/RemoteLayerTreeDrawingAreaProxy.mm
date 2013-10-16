@@ -23,14 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteLayerTreeDrawingAreaProxy.h"
+#import "config.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
+
+#import "DrawingAreaMessages.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 
 namespace WebKit {
 
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(webPageProxy)
+    , m_isWaitingForDidUpdateGeometry(false)
 {
 }
 
@@ -40,10 +45,37 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
+    if (!m_webPageProxy->isValid())
+        return;
+
+    if (m_isWaitingForDidUpdateGeometry)
+        return;
+
+    sendUpdateGeometry();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
 {
+}
+
+void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
+{
+    ASSERT(m_isWaitingForDidUpdateGeometry);
+
+    m_isWaitingForDidUpdateGeometry = false;
+
+    // If the WKView was resized while we were waiting for a DidUpdateGeometry reply from the web process,
+    // we need to resend the new size here.
+    if (m_lastSentSize != m_size || m_lastSentLayerPosition != m_layerPosition)
+        sendUpdateGeometry();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
+{
+    m_lastSentSize = m_size;
+    m_lastSentLayerPosition = m_layerPosition;
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition), m_webPageProxy->pageID());
+    m_isWaitingForDidUpdateGeometry = true;
 }
 
 } // namespace WebKit

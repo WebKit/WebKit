@@ -28,6 +28,8 @@
 
 #include "DrawingAreaProxy.h"
 #include "RemoteLayerTreeHost.h"
+#include <WebCore/IntPoint.h>
+#include <WebCore/IntSize.h>
 
 namespace WebKit {
 
@@ -39,8 +41,15 @@ public:
 private:
     virtual void sizeDidChange() OVERRIDE;
     virtual void deviceScaleFactorDidChange() OVERRIDE;
+    virtual void didUpdateGeometry() OVERRIDE;
+
+    void sendUpdateGeometry();
 
     RemoteLayerTreeHost m_remoteLayerTreeHost;
+    bool m_isWaitingForDidUpdateGeometry;
+
+    WebCore::IntSize m_lastSentSize;
+    WebCore::IntSize m_lastSentLayerPosition;
 };
 
 } // namespace WebKit

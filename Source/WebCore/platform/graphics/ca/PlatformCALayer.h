@@ -82,7 +82,7 @@ public:
     // is defined differently for Obj C and C++. This allows callers from both languages.
     static PlatformCALayer* platformCALayer(void* platformLayer);
 
-    PlatformLayer* platformLayer() const { return m_layer.get(); }
+    virtual PlatformLayer* platformLayer() const { return m_layer.get(); }
 
     virtual bool usesTiledBackingLayer() const = 0;
 

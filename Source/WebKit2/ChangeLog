@@ -1,3 +1,143 @@
+2013-10-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add a PlatformCALayer subclass that proxies its property changes across the process boundary
+        https://bugs.webkit.org/show_bug.cgi?id=122773
+
+        Reviewed by Anders Carlsson.
+
+        PlatformCALayerRemote coordinates with RemoteLayerTreeDrawingArea and friends
+        to enable cross-process proxying of the hierarchy of compositing layers.
+
+        In the Web process, we have GraphicsLayerCARemote, which owns 1+ PlatformCALayerRemote(s).
+        Unlike PlatformCALayer{Mac, Win}, which own PlatformLayers (CALayer/CACFLayer),
+        PlatformCALayerRemote stores any changes to its properties in a struct, and keeps track of
+        which properties have changed since the last commit. Commits are scheduled and performed by
+        RemoteLayerTreeContext, on RemoteLayerTreeDrawingArea's behalf, and result in
+        RemoteLayerTreeTransaction encoding said property changes and throwing them across
+        to the UI process, where RemoteLayerTreeHost applies them to a tree of CALayers kept there.
+
+        This code can be enabled by running with the WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA
+        environment variable set.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::decode):
+        (CoreIPC::encode):
+        * Shared/WebCoreArgumentCoders.h:
+        Add argument coders for FloatPoint3D.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        (WebKit::RemoteLayerTreeTransaction::changedLayers):
+        (WebKit::RemoteLayerTreeTransaction::destroyedLayers):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::dumpChangedLayers):
+        Add support for background color and anchor point in the layer transaction.
+        Make layer position a 3D point because that's what it really is.
+
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        The logic in layerPropertiesChanged is moved into PlatformCALayerRemote.
+
+        * UIProcess/WebPageProxy.h:
+        Include PlatformLayer.h; it seems annoying to successfully forward-declare
+        PlatformLayer because of the difference in definition between Objective-C and C++.
+        Drive-by un-indent some namespace contents and use OBJC_CLASS.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sizeDidChange):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry):
+        Send geometry updates to the RemoteLayerTreeDrawingArea.
+
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (nullActionsDictionary):
+        (WebKit::RemoteLayerTreeHost::commit):
+        Apply layer property changes to the named sublayer.
+
+        (WebKit::RemoteLayerTreeHost::getOrCreateLayer):
+        Create CALayers instead of GraphicsLayers.
+        Ensure that they won't perform implicit animations.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+        This should take a PlatformLayer instead of a GraphicsLayer, since we don't have
+        GraphicsLayers in the UIProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add GraphicsLayerCARemote and PlatformCALayerRemote, remove RemoteGraphicsLayer.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h: Removed.
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm: Removed.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::setRootLayer):
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed):
+        (WebKit::RemoteLayerTreeContext::createGraphicsLayer):
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+        Build our transaction while flushing; it has no reason to exist outside of that scope.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::graphicsLayerFactory):
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        Fix a capitalization typo.
+        Update the WebPage's (and thus WebCore's) size when updateGeometry() is called.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp: Added.
+        (WebKit::GraphicsLayerCARemote::~GraphicsLayerCARemote):
+        (WebKit::GraphicsLayerCARemote::filtersCanBeComposited):
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayer):
+        Added. Delegate to PlatformCALayerRemote. Don't allow creation of a
+        GraphicsLayerCARemote given a PlatformLayer, because with UI process compositing,
+        there should be no PlatformLayer instances in the Web process.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h: Added.
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp: Added.
+        (generateLayerID):
+        Generate a layer ID for identification across processes.
+
+        (PlatformCALayerRemote::~PlatformCALayerRemote):
+        Inform the RemoteLayerTreeContext that we've been destroyed, so it can convey
+        that information to the UI process and the corresponding CALayer can be destroyed.
+
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Recursively accumulate changes in layer state on a RemoteLayerTreeTransaction.
+
+        The rest of this file is mostly an empty implementation of PlatformCALayer.
+        A few properties are implemented so far; see below.
+
+        (PlatformCALayerRemote::setSublayers):
+        (PlatformCALayerRemote::removeAllSublayers):
+        (PlatformCALayerRemote::appendSublayer):
+        (PlatformCALayerRemote::insertSublayer):
+        Update our list of sublayers, and note that our children have changed.
+        recursiveBuildTransaction() will walk our sublayers and record their IDs in the transaction.
+
+        (PlatformCALayerRemote::bounds):
+        (PlatformCALayerRemote::setBounds):
+        (PlatformCALayerRemote::position):
+        (PlatformCALayerRemote::setPosition):
+        (PlatformCALayerRemote::anchorPoint):
+        (PlatformCALayerRemote::setAnchorPoint):
+        (PlatformCALayerRemote::backgroundColor):
+        (PlatformCALayerRemote::setBackgroundColor):
+        Trivial implementations of basic layer properties, storing the new state in
+        our LayerProperties struct and noting that they changed in the current commit.
+        Properties with getters will return the last value that was set on the LayerProperties,
+        so we don't clear the whole struct at the end of the transaction, just the mask of changed properties.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h: Added.
+
 2013-10-15  Brady Eidson  <beidson@apple.com>
 
         Move WebProcess/IndexedDB to WebProcess/Databases/IndexedDB

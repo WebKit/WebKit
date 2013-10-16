@@ -26,7 +26,8 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
-#include <WebCore/FloatPoint.h>
+#include <WebCore/Color.h>
+#include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -38,16 +39,20 @@ class ArgumentEncoder;
 
 namespace WebKit {
 
-class RemoteGraphicsLayer;
+class PlatformCALayerRemote;
 
 class RemoteLayerTreeTransaction {
 public:
+    typedef uint64_t LayerID;
+
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2,
         PositionChanged = 1 << 3,
         SizeChanged = 1 << 4,
+        BackgroundColorChanged = 1 << 5,
+        AnchorPointChanged = 1 << 6,
     };
 
     struct LayerProperties {
@@ -56,12 +61,16 @@ public:
         void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder&, LayerProperties&);
 
+        void notePropertiesChanged(LayerChange layerChanges) { changedProperties |= layerChanges; }
+
         unsigned changedProperties;
 
         String name;
-        Vector<uint64_t> children;
-        WebCore::FloatPoint position;
+        Vector<LayerID> children;
+        WebCore::FloatPoint3D position;
         WebCore::FloatSize size;
+        WebCore::Color backgroundColor;
+        WebCore::FloatPoint3D anchorPoint;
     };
 
     explicit RemoteLayerTreeTransaction();
@@ -70,19 +79,22 @@ public:
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, RemoteLayerTreeTransaction&);
 
-    uint64_t rootLayerID() const { return m_rootLayerID; }
-    void setRootLayerID(uint64_t rootLayerID);
-    void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
-    void setDestroyedLayerIDs(Vector<uint64_t>);
+    LayerID rootLayerID() const { return m_rootLayerID; }
+    void setRootLayerID(LayerID rootLayerID);
+    void layerPropertiesChanged(PlatformCALayerRemote*, LayerProperties&);
+    void setDestroyedLayerIDs(Vector<LayerID>);
 
 #ifndef NDEBUG
     void dump() const;
 #endif
 
+    HashMap<LayerID, LayerProperties> changedLayers() const { return m_changedLayerProperties; }
+    Vector<LayerID> destroyedLayers() const { return m_destroyedLayerIDs; }
+
 private:
-    uint64_t m_rootLayerID;
-    HashMap<uint64_t, LayerProperties> m_changedLayerProperties;
-    Vector<uint64_t> m_destroyedLayerIDs;
+    LayerID m_rootLayerID;
+    HashMap<LayerID, LayerProperties> m_changedLayerProperties;
+    Vector<LayerID> m_destroyedLayerIDs;
 };
 
 } // namespace WebKit

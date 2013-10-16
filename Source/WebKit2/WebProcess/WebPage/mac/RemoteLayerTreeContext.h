@@ -32,8 +32,7 @@
 
 namespace WebKit {
 
-class RemoteGraphicsLayer;
-class RemoteLayerTreeTransaction;
+class PlatformCALayerRemote;
 class WebPage;
 
 class RemoteLayerTreeContext : public WebCore::GraphicsLayerFactory {
@@ -42,11 +41,10 @@ public:
     ~RemoteLayerTreeContext();
 
     void setRootLayer(WebCore::GraphicsLayer*);
-    void layerWillBeDestroyed(RemoteGraphicsLayer*);
 
     void scheduleLayerFlush();
 
-    RemoteLayerTreeTransaction& currentTransaction();
+    void layerWillBeDestroyed(PlatformCALayerRemote*);
 
 private:
     // WebCore::GraphicsLayerFactory
@@ -58,9 +56,9 @@ private:
     WebPage* m_webPage;
     WebCore::Timer<RemoteLayerTreeContext> m_layerFlushTimer;
 
-    uint64_t m_rootLayerID;
+    RefPtr<PlatformCALayerRemote> m_rootLayer;
+
     Vector<uint64_t> m_destroyedLayers;
-    RemoteLayerTreeTransaction* m_currentTransaction;
 };
 
 } // namespace WebKit

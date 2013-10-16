@@ -56,6 +56,8 @@ public:
     GraphicsLayerCA(GraphicsLayerClient*);
     virtual ~GraphicsLayerCA();
 
+    virtual void initialize() OVERRIDE;
+
     virtual void setName(const String&);
 
     virtual PlatformLayer* platformLayer() const;
@@ -187,8 +189,8 @@ private:
     void updateFilters();
 #endif
     
-    PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
-    PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
+    virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformCALayer::LayerType, PlatformCALayerClient* owner);
+    virtual PassRefPtr<PlatformCALayer> createPlatformCALayer(PlatformLayer*, PlatformCALayerClient* owner);
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;

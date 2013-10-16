@@ -36,6 +36,7 @@ namespace WebCore {
     class Cursor;
     class DatabaseDetails;
     class FloatPoint;
+    class FloatPoint3D;
     class FloatRect;
     class FloatSize;
     class HTTPHeaderMap;
@@ -84,6 +85,11 @@ template<> struct ArgumentCoder<WebCore::AffineTransform> {
 template<> struct ArgumentCoder<WebCore::FloatPoint> {
     static void encode(ArgumentEncoder&, const WebCore::FloatPoint&);
     static bool decode(ArgumentDecoder&, WebCore::FloatPoint&);
+};
+
+template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
+    static void encode(ArgumentEncoder&, const WebCore::FloatPoint3D&);
+    static bool decode(ArgumentDecoder&, WebCore::FloatPoint3D&);
 };
 
 template<> struct ArgumentCoder<WebCore::FloatRect> {

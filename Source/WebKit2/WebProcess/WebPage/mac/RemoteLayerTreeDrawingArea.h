@@ -42,12 +42,13 @@ private:
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) OVERRIDE;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition) OVERRIDE;
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 
-    std::unique_ptr<RemoteLayerTreeContext> m_RemoteLayerTreeContext;
+    std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
 };
 
 } // namespace WebKit

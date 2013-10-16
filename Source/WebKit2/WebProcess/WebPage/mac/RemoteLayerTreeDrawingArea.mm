@@ -26,7 +26,9 @@
 #import "config.h"
 #import "RemoteLayerTreeDrawingArea.h"
 
+#import "DrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeContext.h"
+#import "WebPage.h"
 
 using namespace WebCore;
 
@@ -34,7 +36,7 @@ namespace WebKit {
 
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
-    , m_RemoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
+    , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
 {
 }
 
@@ -56,17 +58,25 @@ void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize
 
 GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 {
-    return m_RemoteLayerTreeContext.get();
+    return m_remoteLayerTreeContext.get();
 }
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
 {
-    m_RemoteLayerTreeContext->setRootLayer(rootLayer);
+    m_remoteLayerTreeContext->setRootLayer(rootLayer);
 }
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 {
-    m_RemoteLayerTreeContext->scheduleLayerFlush();
+    m_remoteLayerTreeContext->scheduleLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
+{
+    m_webPage->setSize(viewSize);
+    scheduleCompositingLayerFlush();
+
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
 } // namespace WebKit

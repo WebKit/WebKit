@@ -228,6 +228,8 @@ public:
     
     virtual ~GraphicsLayer();
 
+    virtual void initialize() { }
+
     GraphicsLayerClient* client() const { return m_client; }
 
     // Layer name. Only used to identify layers in debug output

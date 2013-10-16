@@ -280,10 +280,15 @@ static inline bool supportsAcceleratedFilterAnimations()
 
 std::unique_ptr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
 {
+    std::unique_ptr<GraphicsLayer> graphicsLayer;
     if (!factory)
-        return std::make_unique<GraphicsLayerCA>(client);
+        graphicsLayer = std::make_unique<GraphicsLayerCA>(client);
+    else
+        graphicsLayer = factory->createGraphicsLayer(client);
 
-    return factory->createGraphicsLayer(client);
+    graphicsLayer->initialize();
+
+    return std::move(graphicsLayer);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -324,8 +329,12 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_uncommittedChanges(0)
     , m_isCommittingChanges(false)
 {
+}
+
+void GraphicsLayerCA::initialize()
+{
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
-    if (client && client->shouldUseTiledBacking(this)) {
+    if (m_client && m_client->shouldUseTiledBacking(this)) {
         layerType = PlatformCALayer::LayerTypePageTiledBackingLayer;
         m_isPageTiledBackingLayer = true;
     }

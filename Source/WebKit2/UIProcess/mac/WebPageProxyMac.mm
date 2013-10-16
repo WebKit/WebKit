@@ -511,9 +511,9 @@ void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContent
     m_pageClient->intrinsicContentSizeDidChange(intrinsicContentSize);
 }
 
-void WebPageProxy::setAcceleratedCompositingRootLayer(const GraphicsLayer* rootLayer)
+void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
 {
-    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer->platformLayer());
+    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 static NSString *temporaryPDFDirectoryPath()

@@ -27,15 +27,17 @@
 #define RemoteLayerTreeHost_h
 
 #include "MessageReceiver.h"
-#include <WebCore/GraphicsLayerClient.h>
+#include "RemoteLayerTreeTransaction.h"
 #include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CALayer;
 
 namespace WebKit {
 
-class RemoteLayerTreeTransaction;
 class WebPageProxy;
 
-class RemoteLayerTreeHost : private CoreIPC::MessageReceiver, WebCore::GraphicsLayerClient {
+class RemoteLayerTreeHost : private CoreIPC::MessageReceiver {
 public:
     explicit RemoteLayerTreeHost(WebPageProxy*);
     ~RemoteLayerTreeHost();
@@ -44,20 +46,15 @@ private:
     // CoreIPC::MessageReceiver.
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // WebCore::GraphicsLayerClient.
-    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
-    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE;
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
-
     // Message handlers.
     void commit(const RemoteLayerTreeTransaction&);
 
-    WebCore::GraphicsLayer* getOrCreateLayer(uint64_t layerID);
+    CALayer *getOrCreateLayer(RemoteLayerTreeTransaction::LayerID layerID);
 
     WebPageProxy* m_webPageProxy;
 
-    WebCore::GraphicsLayer* m_rootLayer;
-    HashMap<uint64_t, std::unique_ptr<WebCore::GraphicsLayer>> m_layers;
+    CALayer *m_rootLayer;
+    HashMap<RemoteLayerTreeTransaction::LayerID, RetainPtr<CALayer>> m_layers;
 };
 
 } // namespace WebKit

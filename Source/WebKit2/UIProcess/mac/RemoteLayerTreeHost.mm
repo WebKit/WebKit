@@ -23,16 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteLayerTreeHost.h"
+#import "config.h"
+#import "RemoteLayerTreeHost.h"
 
-#include "RemoteLayerTreeHostMessages.h"
-#include "RemoteLayerTreeTransaction.h"
-#include "WebPageProxy.h"
-#include "WebProcessProxy.h"
-#include <WebCore/GraphicsLayer.h>
+#import "RemoteLayerTreeHostMessages.h"
+#import "RemoteLayerTreeTransaction.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
+#import <WebCore/PlatformLayer.h>
+
+#import <QuartzCore/QuartzCore.h>
 
 using namespace WebCore;
+
+static NSDictionary *nullActionsDictionary()
+{
+    NSNull* nullValue = [NSNull null];
+    return @{
+        @"anchorPoint" : nullValue,
+        @"anchorPointZ" : nullValue,
+        @"bounds" : nullValue,
+        @"contents" : nullValue,
+        @"contentsRect" : nullValue,
+        @"opacity" : nullValue,
+        @"position" : nullValue,
+        @"shadowColor" : nullValue,
+        @"sublayerTransform" : nullValue,
+        @"sublayers" : nullValue,
+        @"transform" : nullValue,
+        @"zPosition" : nullValue };
+}
 
 namespace WebKit {
 
@@ -48,37 +68,69 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
     m_webPageProxy->process()->removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
-void RemoteLayerTreeHost::notifyAnimationStarted(const GraphicsLayer*, double time)
-{
-}
-
-void RemoteLayerTreeHost::notifyFlushRequired(const GraphicsLayer*)
-{
-}
-
-void RemoteLayerTreeHost::paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&)
-{
-}
-
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
-    GraphicsLayer* rootLayer = getOrCreateLayer(transaction.rootLayerID());
+    CALayer *rootLayer = getOrCreateLayer(transaction.rootLayerID());
     if (m_rootLayer != rootLayer) {
         m_rootLayer = rootLayer;
         m_webPageProxy->setAcceleratedCompositingRootLayer(m_rootLayer);
     }
 
 #ifndef NDEBUG
-    // FIXME: Apply the transaction instead of dumping it to stderr.
     transaction.dump();
 #endif
+
+    for (auto changedLayer : transaction.changedLayers()) {
+        RemoteLayerTreeTransaction::LayerID layerID = changedLayer.key;
+        const auto& properties = changedLayer.value;
+
+        CALayer *sublayer = getOrCreateLayer(layerID);
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
+            [sublayer setName:properties.name];
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::PositionChanged) {
+            [sublayer setPosition:CGPointMake(properties.position.x(), properties.position.y())];
+            [sublayer setZPosition:properties.position.z()];
+        }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged) {
+            [sublayer setAnchorPoint:CGPointMake(properties.anchorPoint.x(), properties.anchorPoint.y())];
+            [sublayer setAnchorPointZ:properties.anchorPoint.z()];
+        }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
+            [sublayer setBounds:FloatRect(FloatPoint(), properties.size)];
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged) {
+            CGFloat components[4];
+            properties.backgroundColor.getRGBA(components[0], components[1], components[2], components[3]);
+
+            RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+            RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+
+            [sublayer setBackgroundColor:color.get()];
+        }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
+            RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
+            for (auto child : properties.children)
+                [children addObject:getOrCreateLayer(child)];
+            [sublayer setSublayers:children.get()];
+        }
+    }
+
+    for (auto destroyedLayer : transaction.destroyedLayers())
+        m_layers.remove(destroyedLayer);
 }
 
-GraphicsLayer* RemoteLayerTreeHost::getOrCreateLayer(uint64_t layerID)
+CALayer *RemoteLayerTreeHost::getOrCreateLayer(RemoteLayerTreeTransaction::LayerID layerID)
 {
-    std::unique_ptr<GraphicsLayer>& layer = m_layers.add(layerID, nullptr).iterator->value;
-    if (!layer)
-        layer = GraphicsLayer::create(0, this);
+    RetainPtr<CALayer>& layer = m_layers.add(layerID, nullptr).iterator->value;
+    if (!layer) {
+        layer = adoptNS([[CALayer alloc] init]);
+        [layer setStyle:@{ @"actions" : nullActionsDictionary() }];
+    }
 
     return layer.get();
 }
