@@ -25,6 +25,9 @@
 /* Text track contains closed captions */
 "%@ CC" = "%@ CC";
 
+/* visible name of the database process. The argument is the application name. */
+"%@ Database Storage" = "%@ Database Storage";
+
 /* Text track contains simplified (3rd grade level) subtitles */
 "%@ Easy Reader" = "%@ Easy Reader";
 
@@ -33,9 +36,6 @@
 
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
-
-/* Visible name of the shared worker process. The argument is the application name. */
-"%@ Shared Worker" = "%@ Shared Worker";
 
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";

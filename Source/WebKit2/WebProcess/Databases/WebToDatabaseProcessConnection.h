@@ -24,49 +24,41 @@
  *
  */
 
-#include "config.h"
-#include "WebIDBFactoryBackend.h"
+#ifndef WebToDatabaseProcessConnection_h
+#define WebToDatabaseProcessConnection_h
 
-#include "WebProcess.h"
-#include <WebCore/NotImplemented.h>
+#include "Connection.h"
+#include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
-using namespace WebCore;
-
 namespace WebKit {
 
-WebIDBFactoryBackend::WebIDBFactoryBackend()
-{
-}
+class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, CoreIPC::Connection::Client {
+public:
+    static PassRefPtr<WebToDatabaseProcessConnection> create(CoreIPC::Connection::Identifier connectionIdentifier)
+    {
+        return adoptRef(new WebToDatabaseProcessConnection(connectionIdentifier));
+    }
+    ~WebToDatabaseProcessConnection();
+    
+    CoreIPC::Connection* connection() const { return m_connection.get(); }
 
+    void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
-WebIDBFactoryBackend::~WebIDBFactoryBackend()
-{
-}
+private:
+    WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier);
 
-void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
-{
-    LOG_ERROR("IDBFactory::getDatabaseNames is no longer exposed to the web as javascript API and should be removed. It will be once we move the Web Inspector away of of it.");
-    notImplemented();
-}
+    // CoreIPC::Connection::Client
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
+    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
-void WebIDBFactoryBackend::open(const String&, int64_t, int64_t, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
-{
-    // FIXME: Access the connection to the DatabaseProcess to make sure it has been created to assist
-    // with development of database process management.
-    // Later, we'll actually use that connection to accomplish databasey stuff.
-
-#if ENABLE(DATABASE_PROCESS)
-    WebProcess::shared().webToDatabaseProcessConnection();
-#endif
-}
-
-void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
-{
-    notImplemented();
-}
+    // The IPC connection from the web process to the database process.
+    RefPtr<CoreIPC::Connection> m_connection;
+};
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)
+#endif // WebToDatabaseProcessConnection_h

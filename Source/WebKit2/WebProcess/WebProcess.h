@@ -74,6 +74,10 @@ class NetworkProcessConnection;
 class WebResourceLoadScheduler;
 #endif
 
+#if ENABLE(DATABASE_PROCESS)
+class WebToDatabaseProcessConnection;
+#endif
+
 class WebProcess : public ChildProcess, private DownloadManager::Client {
 public:
     static WebProcess& shared();
@@ -146,6 +150,11 @@ public:
     void networkProcessConnectionClosed(NetworkProcessConnection*);
     bool usesNetworkProcess() const { return m_usesNetworkProcess; }
     WebResourceLoadScheduler& webResourceLoadScheduler();
+#endif
+
+#if ENABLE(DATABASE_PROCESS)
+    void webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnection*);
+    WebToDatabaseProcessConnection* webToDatabaseProcessConnection();
 #endif
 
     void setCacheModel(uint32_t);
@@ -289,6 +298,11 @@ private:
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;
     bool m_usesNetworkProcess;
     WebResourceLoadScheduler* m_webResourceLoadScheduler;
+#endif
+
+#if ENABLE(DATABASE_PROCESS)
+    void ensureWebToDatabaseProcessConnection();
+    RefPtr<WebToDatabaseProcessConnection> m_webToDatabaseProcessConnection;
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

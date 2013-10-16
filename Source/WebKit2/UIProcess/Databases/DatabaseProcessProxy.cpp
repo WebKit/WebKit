@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DatabaseProcessProxy.h"
 
+#include "DatabaseProcessMessages.h"
 #include "WebContext.h"
 
 #if ENABLE(DATABASE_PROCESS)
@@ -41,6 +42,7 @@ PassRefPtr<DatabaseProcessProxy> DatabaseProcessProxy::create(WebContext* contex
 
 DatabaseProcessProxy::DatabaseProcessProxy(WebContext* context)
     : m_webContext(context)
+    , m_numPendingConnectionRequests(0)
 {
     connect();
 }
@@ -64,15 +66,16 @@ void DatabaseProcessProxy::connectionWillClose(CoreIPC::Connection*)
 {
 }
 
-void DatabaseProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
+void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
 {
-    if (dispatchMessage(connection, decoder))
-        return;
+    m_pendingConnectionReplies.append(reply);
 
-    if (m_webContext->dispatchMessage(connection, decoder))
+    if (isLaunching()) {
+        m_numPendingConnectionRequests++;
         return;
+    }
 
-    // FIXME: Call through to a new didReceiveDatabaseProcessProxyMessage method when messages actually exist.
+    connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void DatabaseProcessProxy::didClose(CoreIPC::Connection*)
@@ -83,6 +86,19 @@ void DatabaseProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIP
 {
 }
 
+void DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection(const CoreIPC::Attachment& connectionIdentifier)
+{
+    ASSERT(!m_pendingConnectionReplies.isEmpty());
+
+    RefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
+
+#if PLATFORM(MAC)
+    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#else
+    notImplemented();
+#endif
+}
+
 void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
@@ -91,6 +107,11 @@ void DatabaseProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC
         // FIXME: Do better cleanup here.
         return;
     }
+
+    for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
+        connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0);
+    
+    m_numPendingConnectionRequests = 0;
 }
 
 } // namespace WebKit

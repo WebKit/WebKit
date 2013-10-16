@@ -44,4 +44,7 @@ messages -> WebProcessProxy LegacyReceiver {
 #if ENABLE(NETWORK_PROCESS)
     GetNetworkProcessConnection() -> (CoreIPC::Attachment connectionHandle) Delayed
 #endif
+#if ENABLE(DATABASE_PROCESS)
+    GetDatabaseProcessConnection() -> (CoreIPC::Attachment connectionHandle) Delayed
+#endif
 }

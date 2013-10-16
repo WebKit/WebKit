@@ -30,6 +30,7 @@
 
 #include "ChildProcessProxy.h"
 #include "ProcessLauncher.h"
+#include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
 
 namespace WebKit {
@@ -40,6 +41,8 @@ class DatabaseProcessProxy : public ChildProcessProxy {
 public:
     static PassRefPtr<DatabaseProcessProxy> create(WebContext*);
     ~DatabaseProcessProxy();
+
+    void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
 
 private:
     DatabaseProcessProxy(WebContext*);
@@ -54,12 +57,18 @@ private:
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
+    // Message handlers
+    void didCreateDatabaseToWebProcessConnection(const CoreIPC::Attachment&);
+
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) OVERRIDE;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 
     WebContext* m_webContext;
+
+    unsigned m_numPendingConnectionRequests;
+    Deque<RefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 };
 
 } // namespace WebKit

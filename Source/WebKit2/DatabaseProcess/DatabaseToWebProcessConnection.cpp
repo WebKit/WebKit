@@ -23,48 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcess_h
-#define DatabaseProcess_h
+#include "config.h"
+#include "DatabaseToWebProcessConnection.h"
+
+#include <WebCore/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
 
-#include "ChildProcess.h"
+using namespace WebCore;
 
 namespace WebKit {
 
-class DatabaseToWebProcessConnection;
+PassRefPtr<DatabaseToWebProcessConnection> DatabaseToWebProcessConnection::create(CoreIPC::Connection::Identifier connectionIdentifier)
+{
+    return adoptRef(new DatabaseToWebProcessConnection(connectionIdentifier));
+}
 
-struct DatabaseProcessCreationParameters;
+DatabaseToWebProcessConnection::DatabaseToWebProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+{
+    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
+    m_connection->open();
+}
 
-class DatabaseProcess : public ChildProcess  {
-    WTF_MAKE_NONCOPYABLE(DatabaseProcess);
-public:
-    static DatabaseProcess& shared();
+DatabaseToWebProcessConnection::~DatabaseToWebProcessConnection()
+{
 
-private:
-    DatabaseProcess();
-    ~DatabaseProcess();
+}
 
-    // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
-    virtual void initializeConnection(CoreIPC::Connection*) OVERRIDE;
-    virtual bool shouldTerminate() OVERRIDE;
+void DatabaseToWebProcessConnection::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
+{
 
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
+}
 
-    // Message Handlers
-    void createDatabaseToWebProcessConnection();
+void DatabaseToWebProcessConnection::didClose(CoreIPC::Connection*)
+{
 
-    Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
-};
+}
+
+void DatabaseToWebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
+{
+
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)
-
-#endif // DatabaseProcess_h

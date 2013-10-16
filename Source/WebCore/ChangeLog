@@ -1,3 +1,13 @@
+2013-10-15  Brady Eidson  <beidson@apple.com>
+
+        Flesh out the DatabaseProcess (and launch it!)
+        https://bugs.webkit.org/show_bug.cgi?id=122884
+
+        Reviewed by Tim Horton.
+
+        * English.lproj/Localizable.strings: Add a localizable string.
+        * WebCore.xcodeproj/project.pbxproj: Export some more headers.
+
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
         RemoteLayerTree: Add support for more layer properties and transform layers

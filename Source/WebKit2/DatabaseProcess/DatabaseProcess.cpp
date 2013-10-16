@@ -26,6 +26,9 @@
 #include "config.h"
 #include "DatabaseProcess.h"
 
+#include "DatabaseProcessProxyMessages.h"
+#include "DatabaseToWebProcessConnection.h"
+
 #if ENABLE(DATABASE_PROCESS)
 
 using namespace WebCore;
@@ -56,14 +59,6 @@ bool DatabaseProcess::shouldTerminate()
     return true;
 }
 
-void DatabaseProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
-        return;
-
-    // FIXME: Call through to a new didReceiveDatabaseProcessMessage method when messages actually exist.
-}
-
 void DatabaseProcess::didClose(CoreIPC::Connection*)
 {
     RunLoop::current()->stop();
@@ -72,6 +67,24 @@ void DatabaseProcess::didClose(CoreIPC::Connection*)
 void DatabaseProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
     RunLoop::current()->stop();
+}
+
+void DatabaseProcess::createDatabaseToWebProcessConnection()
+{
+#if PLATFORM(MAC)
+    // Create the listening port.
+    mach_port_t listeningPort;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+
+    // Create a listening connection.
+    RefPtr<DatabaseToWebProcessConnection> connection = DatabaseToWebProcessConnection::create(CoreIPC::Connection::Identifier(listeningPort));
+    m_databaseToWebProcessConnections.append(connection.release());
+
+    CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);
+#else
+    notImplemented();
+#endif
 }
 
 #if !PLATFORM(MAC)

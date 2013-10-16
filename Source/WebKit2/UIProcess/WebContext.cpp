@@ -406,6 +406,24 @@ void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProx
 }
 #endif
 
+#if ENABLE(DATABASE_PROCESS)
+void WebContext::ensureDatabaseProcess()
+{
+    if (m_databaseProcess)
+        return;
+
+    m_databaseProcess = DatabaseProcessProxy::create(this);
+}
+
+void WebContext::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
+{
+    ASSERT(reply);
+
+    ensureDatabaseProcess();
+
+    m_databaseProcess->getDatabaseProcessConnection(reply);
+}
+#endif
 
 void WebContext::willStartUsingPrivateBrowsing()
 {

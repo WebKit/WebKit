@@ -1,3 +1,77 @@
+2013-10-15  Brady Eidson  <beidson@apple.com>
+
+        Flesh out the DatabaseProcess (and launch it!)
+        https://bugs.webkit.org/show_bug.cgi?id=122884
+
+        Reviewed by Tim Horton.
+
+        This patch adds actual process launching and basic messaging infrastructure for the DatabaseProcess.
+
+        It still does very little except exist.
+
+        Project file stuff:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * DerivedSources.make:
+
+        WebContext owns the DatabaseProcess (much like the NetworkProcess):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureDatabaseProcess):
+        (WebKit::WebContext::getDatabaseProcessConnection):
+        * UIProcess/WebContext.h:
+
+        Add a basic DatabaseProcess that - for now - can only return a new Connection for a WebProcess:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::createDatabaseToWebProcessConnection):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseProcess.messages.in: Added.
+
+        Add an object to represent a single connection to a single WebProcess:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::create):
+        (WebKit::DatabaseToWebProcessConnection::DatabaseToWebProcessConnection):
+        (WebKit::DatabaseToWebProcessConnection::~DatabaseToWebProcessConnection):
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+        (WebKit::DatabaseToWebProcessConnection::didClose):
+        (WebKit::DatabaseToWebProcessConnection::didReceiveInvalidMessage):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+
+        Basic DatabaseProcessProxy with the ability to ask the DatabaseProcess for a connection to hand back to a WebProcess:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::DatabaseProcessProxy):
+        (WebKit::DatabaseProcessProxy::getDatabaseProcessConnection):
+        (WebKit::DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection):
+        (WebKit::DatabaseProcessProxy::didFinishLaunching):
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Databases/DatabaseProcessProxy.messages.in: Added.
+
+        Add an object to represent a WebProcess’s connection to a DatabaseProcess:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::WebToDatabaseProcessConnection):
+        (WebKit::WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection):
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage):
+        (WebKit::WebToDatabaseProcessConnection::didClose):
+        (WebKit::WebToDatabaseProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        (WebKit::WebToDatabaseProcessConnection::create):
+        (WebKit::WebToDatabaseProcessConnection::connection):
+
+        Give WebProcess(Proxy) an accessor for a Web -> Database process connection:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webToDatabaseProcessConnectionClosed):
+        (WebKit::WebProcess::webToDatabaseProcessConnection):
+        (WebKit::WebProcess::ensureWebToDatabaseProcessConnection):
+        * WebProcess/WebProcess.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getDatabaseProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::open): Access the database process connection to test that it works.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createIDBFactoryBackend): Keep non-DATABASE_PROCESS builds working.
+
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
         RemoteLayerTree: Add support for more layer properties and transform layers

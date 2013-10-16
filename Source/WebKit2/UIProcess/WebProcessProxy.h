@@ -152,6 +152,9 @@ private:
 #if ENABLE(NETWORK_PROCESS)
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 #endif
+#if ENABLE(DATABASE_PROCESS)
+    void getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>);
+#endif
 
     // CoreIPC::Connection::Client
     friend class WebConnectionToWebProcess;

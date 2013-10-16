@@ -25,10 +25,10 @@
  */
 
 #include "config.h"
-#include "WebIDBFactoryBackend.h"
+#include "WebToDatabaseProcessConnection.h"
 
 #include "WebProcess.h"
-#include <WebCore/NotImplemented.h>
+#include <WebCore/RunLoop.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -36,35 +36,27 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIDBFactoryBackend::WebIDBFactoryBackend()
+WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+{
+    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection->open();
+}
+
+WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
 {
 }
 
-
-WebIDBFactoryBackend::~WebIDBFactoryBackend()
+void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
 {
 }
 
-void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
+void WebToDatabaseProcessConnection::didClose(CoreIPC::Connection*)
 {
-    LOG_ERROR("IDBFactory::getDatabaseNames is no longer exposed to the web as javascript API and should be removed. It will be once we move the Web Inspector away of of it.");
-    notImplemented();
+    WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
 }
 
-void WebIDBFactoryBackend::open(const String&, int64_t, int64_t, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
+void WebToDatabaseProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
-    // FIXME: Access the connection to the DatabaseProcess to make sure it has been created to assist
-    // with development of database process management.
-    // Later, we'll actually use that connection to accomplish databasey stuff.
-
-#if ENABLE(DATABASE_PROCESS)
-    WebProcess::shared().webToDatabaseProcessConnection();
-#endif
-}
-
-void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
-{
-    notImplemented();
 }
 
 } // namespace WebKit

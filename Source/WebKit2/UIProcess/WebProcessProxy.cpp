@@ -336,6 +336,13 @@ void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProces
 }
 #endif // ENABLE(NETWORK_PROCESS)
 
+#if ENABLE(DATABASE_PROCESS)
+void WebProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
+{
+    m_context->getDatabaseProcessConnection(reply);
+}
+#endif // ENABLE(DATABASE_PROCESS)
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
     if (dispatchMessage(connection, decoder))

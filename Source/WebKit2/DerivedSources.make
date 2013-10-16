@@ -22,6 +22,7 @@
 
 VPATH = \
     $(WebKit2) \
+    $(WebKit2)/DatabaseProcess \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/PluginProcess \
@@ -46,6 +47,7 @@ VPATH = \
     $(WebKit2)/WebProcess/WebPage \
     $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess \
+    $(WebKit2)/UIProcess/Databases \
     $(WebKit2)/UIProcess/Downloads \
     $(WebKit2)/UIProcess/Network \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
@@ -59,6 +61,8 @@ MESSAGE_RECEIVERS = \
     AuthenticationManager \
     CustomProtocolManager \
     CustomProtocolManagerProxy \
+    DatabaseProcess \
+    DatabaseProcessProxy \
     DrawingArea \
     DrawingAreaProxy \
     DownloadProxy \

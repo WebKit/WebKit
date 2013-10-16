@@ -23,48 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcess_h
-#define DatabaseProcess_h
+#ifndef DatabaseToWebProcessConnection_h
+#define DatabaseToWebProcessConnection_h
+
+#include "Connection.h"
 
 #if ENABLE(DATABASE_PROCESS)
 
-#include "ChildProcess.h"
-
 namespace WebKit {
 
-class DatabaseToWebProcessConnection;
-
-struct DatabaseProcessCreationParameters;
-
-class DatabaseProcess : public ChildProcess  {
-    WTF_MAKE_NONCOPYABLE(DatabaseProcess);
+class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, CoreIPC::Connection::Client {
 public:
-    static DatabaseProcess& shared();
+    static PassRefPtr<DatabaseToWebProcessConnection> create(CoreIPC::Connection::Identifier);
+    ~DatabaseToWebProcessConnection();
 
 private:
-    DatabaseProcess();
-    ~DatabaseProcess();
-
-    // ChildProcess
-    virtual void initializeProcess(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
-    virtual void initializeConnection(CoreIPC::Connection*) OVERRIDE;
-    virtual bool shouldTerminate() OVERRIDE;
+    DatabaseToWebProcessConnection(CoreIPC::Connection::Identifier);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
-    // Message Handlers
-    void createDatabaseToWebProcessConnection();
-
-    Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
+    RefPtr<CoreIPC::Connection> m_connection;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)
-
-#endif // DatabaseProcess_h
+#endif // DatabaseToWebProcessConnection_h
