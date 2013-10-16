@@ -1,3 +1,13 @@
+2013-10-15  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r155408.
+
+        * platform/efl/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/efl/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/efl/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
 2013-10-15  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Unreviewed gardening of some forms tests.
