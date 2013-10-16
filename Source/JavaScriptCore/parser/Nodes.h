@@ -161,7 +161,6 @@ namespace JSC {
         virtual bool isAdd() const { return false; }
         virtual bool isSubtract() const { return false; }
         virtual bool isBoolean() const { return false; }
-        virtual bool isSpreadExpression() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, FallThroughMode);
 
@@ -549,19 +548,6 @@ namespace JSC {
 
         ExpressionNode* m_base;
         const Identifier& m_ident;
-    };
-
-    class SpreadExpressionNode : public ExpressionNode, public ThrowableExpressionData {
-    public:
-        SpreadExpressionNode(const JSTokenLocation&, ExpressionNode*);
-        
-        ExpressionNode* expression() const { return m_expression; }
-        
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) OVERRIDE;
-        
-        virtual bool isSpreadExpression() const OVERRIDE { return true; }
-        ExpressionNode* m_expression;
     };
 
     class ArgumentListNode : public ExpressionNode {

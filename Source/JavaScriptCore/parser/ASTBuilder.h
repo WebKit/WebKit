@@ -230,13 +230,6 @@ public:
         return node;
     }
 
-    ExpressionNode* createSpreadExpression(const JSTokenLocation& location, ExpressionNode* expression, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
-    {
-        auto node = new (m_vm) SpreadExpressionNode(location, expression);
-        setExceptionLocation(node, start, divot, end);
-        return node;
-    }
-
     ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, const JSTextPosition& start)
     {
         if (Yarr::checkSyntax(pattern.string()))

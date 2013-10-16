@@ -1515,16 +1515,13 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
 
     Vector<RefPtr<RegisterID>, 16, UnsafeVectorOverflow> argv;
     for (ElementNode* n = elements; n; n = n->next()) {
-        if (!length)
+        if (n->elision())
             break;
-        length--;
-        ASSERT(!n->value()->isSpreadExpression());
         argv.append(newTemporary());
         // op_new_array requires the initial values to be a sequential range of registers
         ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() - 1);
         emitNode(argv.last().get(), n->value());
     }
-    ASSERT(!length);
     emitOpcode(op_new_array);
     instructions().append(dst->index());
     instructions().append(argv.size() ? argv[0]->index() : 0); // argv
@@ -1697,14 +1694,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     // Generate code for arguments.
     unsigned argument = 0;
     if (callArguments.argumentsNode()) {
-        ArgumentListNode* n = callArguments.argumentsNode()->m_listNode;
-        if (n && n->m_expr->isSpreadExpression()) {
-            RELEASE_ASSERT(!n->m_next);
-            auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
-            expression->emitBytecode(*this, callArguments.argumentRegister(0));
-            return emitCallVarargs(dst, func, callArguments.thisRegister(), callArguments.argumentRegister(0), newTemporary(), callArguments.profileHookRegister(), divot, divotStart, divotEnd);
-        }
-        for (; n; n = n->m_next)
+        for (ArgumentListNode* n = callArguments.argumentsNode()->m_listNode; n; n = n->m_next)
             emitNode(callArguments.argumentRegister(argument++), n);
     }
     
@@ -2380,37 +2370,6 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
     emitOpcode(op_throw_static_error);
     instructions().append(addConstantValue(addStringConstant(Identifier(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
     instructions().append(false);
-}
-    
-void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack)
-{
-    LabelScopePtr scope = newLabelScope(LabelScope::Loop);
-    RefPtr<RegisterID> subject = newTemporary();
-    emitNode(subject.get(), subjectNode);
-    RefPtr<RegisterID> iterator = emitGetById(newTemporary(), subject.get(), propertyNames().iteratorPrivateName);
-    {
-        CallArguments args(*this, 0);
-        emitMove(args.thisRegister(), subject.get());
-        emitCall(iterator.get(), iterator.get(), NoExpectedFunction, args, node->divot(), node->divotStart(), node->divotEnd());
-    }
-    RefPtr<RegisterID> iteratorNext = emitGetById(newTemporary(), iterator.get(), propertyNames().iteratorNextPrivateName);
-    RefPtr<RegisterID> value = newTemporary();
-    emitLoad(value.get(), jsUndefined());
-    
-    emitJump(scope->continueTarget());
-    
-    RefPtr<Label> loopStart = newLabel();
-    emitLabel(loopStart.get());
-    emitLoopHint();
-    callBack(*this, value.get());
-    emitLabel(scope->continueTarget());
-    CallArguments nextArguments(*this, 0, 1);
-    emitMove(nextArguments.thisRegister(), iterator.get());
-    emitMove(nextArguments.argumentRegister(0), value.get());
-    emitCall(value.get(), iteratorNext.get(), NoExpectedFunction, nextArguments, node->divot(), node->divotStart(), node->divotEnd());
-    RefPtr<RegisterID> result = newTemporary();
-    emitJumpIfFalse(emitEqualityOp(op_stricteq, result.get(), value.get(), emitLoad(0, JSValue(vm()->iterationTerminator.get()))), loopStart.get());
-    emitLabel(scope->breakTarget());
 }
 
 } // namespace JSC

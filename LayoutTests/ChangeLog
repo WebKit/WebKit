@@ -1,3 +1,18 @@
+2013-10-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r157529.
+        http://trac.webkit.org/changeset/157529
+        https://bugs.webkit.org/show_bug.cgi?id=122919
+
+        Caused score test failures and some build failures. (Requested
+        by rfong on #webkit).
+
+        * js/basic-spread-expected.txt: Removed.
+        * js/basic-spread.html: Removed.
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/basic-spread.js: Removed.
+        * js/script-tests/parser-syntax-check.js:
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup
