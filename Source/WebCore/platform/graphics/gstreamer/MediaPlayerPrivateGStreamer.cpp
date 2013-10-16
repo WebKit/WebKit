@@ -29,7 +29,6 @@
 #include "GStreamerUtilities.h"
 #include "GStreamerVersioning.h"
 #include "URL.h"
-#include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"

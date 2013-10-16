@@ -16,6 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "Logging.h"
+
 #define LOG_MEDIA_MESSAGE(...) do { \
     GST_DEBUG(__VA_ARGS__); \
     LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
