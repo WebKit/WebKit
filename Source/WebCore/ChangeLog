@@ -1,3 +1,18 @@
+2013-10-16  KyungTae Kim  <ktf.kim@samsung.com>
+
+        During editing, merge inline style with overriding other author styles
+        https://bugs.webkit.org/show_bug.cgi?id=122874
+
+        Reviewed by Ryosuke Niwa.
+
+        Inline styles need to override other author styles even on DoNotOverrideValues mode.
+        So, merge and override inline styles to other author styles before merging them to m_mutableStyle.
+
+        Test: editing/deleting/merge-div-with-inline-style.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+
 2013-10-16  peavo@outlook.com  <peavo@outlook.com>
 
         Emphasis marks has wrong color.
