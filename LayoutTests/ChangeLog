@@ -1,5 +1,28 @@
 2013-10-16  Andreas Kling  <akling@apple.com>
 
+        Remove Mac-specific test expectations that were identical to generic expectations.
+        <https://webkit.org/b/121551>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac-lion/css3/filters/composited-during-animation-layertree-expected.txt: Removed.
+        * platform/mac-lion/fast/canvas/canvas-scale-shadowBlur-expected.txt: Removed.
+        * platform/mac-lion/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/mac-lion/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt: Removed.
+        * platform/mac-lion/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt: Removed.
+        * platform/mac-lion/http/tests/multipart/multipart-replace-non-html-content-expected.txt: Removed.
+        * platform/mac-lion/http/tests/multipart/policy-ignore-crash-expected.txt: Removed.
+        * platform/mac-lion/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Removed.
+        * platform/mac-lion/sputnik/Unicode/Unicode_320/S7.6_A2.2_T2-expected.txt: Removed.
+        * platform/mac-lion/sputnik/Unicode/Unicode_320/S7.6_A5.2_T8-expected.txt: Removed.
+        * platform/mac-wk2/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Removed.
+        * platform/mac-wk2/http/tests/security/cross-origin-local-storage-wk1-expected.txt: Removed.
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt: Removed.
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt: Removed.
+        * platform/mac/webarchive/loading/mainresource-null-mimetype-crash-expected.txt: Removed.
+
+2013-10-16  Andreas Kling  <akling@apple.com>
+
         Remove Windows-specific test expectations that were identical to generic expectations.
         <https://webkit.org/b/121551>
 
