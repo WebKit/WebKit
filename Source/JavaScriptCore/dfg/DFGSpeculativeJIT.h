@@ -1801,23 +1801,7 @@ public:
         }
         return call;
     }
-#elif CPU(ARM)
-#if CPU(ARM_HARDFP)
-    JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, FPRReg result)
-    {
-        JITCompiler::Call call = appendCallWithExceptionCheck(function);
-        if (result != InvalidFPRReg)
-            m_jit.moveDouble(FPRInfo::argumentFPR0, result);
-        return call;
-    }
-    JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
-    {
-        JITCompiler::Call call = appendCall(function);
-        if (result != InvalidFPRReg)
-            m_jit.moveDouble(FPRInfo::argumentFPR0, result);
-        return call;
-    }
-#else
+#elif CPU(ARM) && !CPU(ARM_HARDFP)
     JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, FPRReg result)
     {
         JITCompiler::Call call = appendCallWithExceptionCheck(function);
@@ -1832,8 +1816,7 @@ public:
             m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
         return call;
     }
-#endif // CPU(ARM_HARDFP)
-#else
+#else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS) || CPU(SH4)
     JITCompiler::Call appendCallWithExceptionCheckSetResult(const FunctionPtr& function, FPRReg result)
     {
         JITCompiler::Call call = appendCallWithExceptionCheck(function);
