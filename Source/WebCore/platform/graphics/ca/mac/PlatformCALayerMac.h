@@ -126,8 +126,6 @@ public:
 
     virtual void setName(const String&) OVERRIDE;
 
-    virtual void setFrame(const FloatRect&) OVERRIDE;
-
     virtual void setSpeed(float) OVERRIDE;
 
     virtual void setTimeOffset(CFTimeInterval) OVERRIDE;
@@ -144,7 +142,7 @@ public:
 private:
     PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 
-    virtual AVPlayerLayer* playerLayer() const OVERRIDE;
+    virtual AVPlayerLayer *playerLayer() const OVERRIDE;
 
     RetainPtr<NSObject> m_delegate;
     OwnPtr<PlatformCALayerList> m_customSublayers;

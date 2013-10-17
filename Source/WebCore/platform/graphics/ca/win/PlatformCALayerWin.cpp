@@ -528,12 +528,6 @@ void PlatformCALayerWin::setName(const String& value)
     setNeedsCommit();
 }
 
-void PlatformCALayerWin::setFrame(const FloatRect& value)
-{
-    intern(this)->setFrame(value);
-    setNeedsLayout();
-}
-
 void PlatformCALayerWin::setSpeed(float value)
 {
     CACFLayerSetSpeed(m_layer.get(), value);

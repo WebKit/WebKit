@@ -375,7 +375,12 @@ void GraphicsLayerCA::willBeDestroyed()
 
 void GraphicsLayerCA::setName(const String& name)
 {
-    String longName = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer->platformLayer(), this) + name;
+    String caLayerDescription;
+
+    if (!m_layer->isRemote())
+        caLayerDescription = String::format("CALayer(%p) ", m_layer->platformLayer());
+
+    String longName = caLayerDescription + String::format("GraphicsLayer(%p) ", this) + name;
     GraphicsLayer::setName(longName);
     noteLayerPropertyChanged(NameChanged);
 }
@@ -1141,7 +1146,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         static Color washFillColor(255, 0, 0, 50);
         static Color washBorderColor(255, 0, 0, 100);
         
-        m_visibleTileWashLayer = createPlatformCALayer(createPlatformCALayer, this);
+        m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
         String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
         m_visibleTileWashLayer->setName(name);
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
@@ -1151,8 +1156,10 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         noteSublayersChanged(DontScheduleFlush);
     }
 
-    if (m_visibleTileWashLayer)
-        m_visibleTileWashLayer->setFrame(m_visibleRect);
+    if (m_visibleTileWashLayer) {
+        m_visibleTileWashLayer->setPosition(m_visibleRect.location());
+        m_visibleTileWashLayer->setBounds(FloatRect(FloatPoint(), m_visibleRect.size()));
+    }
 #endif
 
     bool hadChanges = m_uncommittedChanges;

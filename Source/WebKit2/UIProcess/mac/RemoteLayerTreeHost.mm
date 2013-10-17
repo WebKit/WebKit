@@ -78,6 +78,22 @@ static RetainPtr<CGColorRef> cgColorFromColor(Color color)
     return cgColor;
 }
 
+static NSString *toCAFilterType(PlatformCALayer::FilterType type)
+{
+    switch (type) {
+    case PlatformCALayer::Linear:
+        return kCAFilterLinear;
+    case PlatformCALayer::Nearest:
+        return kCAFilterNearest;
+    case PlatformCALayer::Trilinear:
+        return kCAFilterTrilinear;
+    };
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
 #ifndef NDEBUG
@@ -155,6 +171,31 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
             layer.opaque = properties.opaque;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+            CALayer *maskLayer = getLayer(properties.maskLayer);
+            ASSERT(!maskLayer.superlayer);
+            if (!maskLayer.superlayer)
+                layer.mask = maskLayer;
+        }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
+            layer.contentsRect = properties.contentsRect;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
+            layer.contentsRect = properties.contentsRect;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
+            layer.minificationFilter = toCAFilterType(properties.minificationFilter);
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
+            layer.magnificationFilter = toCAFilterType(properties.magnificationFilter);
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
+            layer.speed = properties.speed;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged)
+            layer.timeOffset = properties.timeOffset;
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())

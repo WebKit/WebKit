@@ -1,3 +1,36 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Complete support for simple layer properties
+        https://bugs.webkit.org/show_bug.cgi?id=122933
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, not yet testable.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName):
+        Don't dump the CALayer pointer if we own a PlatformCALayerRemote.
+
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        Fix the visible tile wash (my fault!), and make it use setPosition and
+        setBounds instead of setFrame; while more convenient, it is the only
+        caller of setFrame, so we'll remove it.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::isRemote): Added.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (nullActionsDictionary):
+        (toCAFilterType):
+        (PlatformCALayerMac::synchronouslyDisplayTilesInRect):
+        (PlatformCALayerMac::playerLayer):
+        Remove setFrame, fix some pointer sides.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        Remove setFrame.
+
 2013-10-16  Andreas Kling  <akling@apple.com>
 
         Take RenderObjects out of the arena.

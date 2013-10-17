@@ -116,6 +116,27 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & OpaqueChanged)
         encoder << opaque;
+
+    if (changedProperties & MaskLayerChanged)
+        encoder << maskLayer;
+
+    if (changedProperties & ContentsRectChanged)
+        encoder << contentsRect;
+
+    if (changedProperties & ContentsScaleChanged)
+        encoder << contentsScale;
+
+    if (changedProperties & MinificationFilterChanged)
+        encoder.encodeEnum(minificationFilter);
+
+    if (changedProperties & MagnificationFilterChanged)
+        encoder.encodeEnum(magnificationFilter);
+
+    if (changedProperties & SpeedChanged)
+        encoder << speed;
+
+    if (changedProperties & TimeOffsetChanged)
+        encoder << timeOffset;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -205,6 +226,41 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
 
     if (result.changedProperties & OpaqueChanged) {
         if (!decoder.decode(result.opaque))
+            return false;
+    }
+
+    if (result.changedProperties & MaskLayerChanged) {
+        if (!decoder.decode(result.maskLayer))
+            return false;
+    }
+
+    if (result.changedProperties & ContentsRectChanged) {
+        if (!decoder.decode(result.contentsRect))
+            return false;
+    }
+
+    if (result.changedProperties & ContentsScaleChanged) {
+        if (!decoder.decode(result.contentsScale))
+            return false;
+    }
+
+    if (result.changedProperties & MinificationFilterChanged) {
+        if (!decoder.decodeEnum(result.minificationFilter))
+            return false;
+    }
+
+    if (result.changedProperties & MagnificationFilterChanged) {
+        if (!decoder.decodeEnum(result.magnificationFilter))
+            return false;
+    }
+
+    if (result.changedProperties & SpeedChanged) {
+        if (!decoder.decode(result.speed))
+            return false;
+    }
+
+    if (result.changedProperties & TimeOffsetChanged) {
+        if (!decoder.decode(result.timeOffset))
             return false;
     }
 
@@ -298,6 +354,32 @@ static void dumpProperty(StringBuilder& builder, String name, const Transformati
     ts << "    [" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "])";
 
     builder.append(ts.release());
+}
+
+static void dumpProperty(StringBuilder& builder, String name, const PlatformCALayer::FilterType filterType)
+{
+    builder.append('\n');
+    writeIndent(builder, 3);
+    builder.append('(');
+    builder.append(name);
+    builder.append(' ');
+
+    switch (filterType) {
+        case PlatformCALayer::Linear:
+            builder.append("linear");
+            break;
+        case PlatformCALayer::Nearest:
+            builder.append("nearest");
+            break;
+        case PlatformCALayer::Trilinear:
+            builder.append("trilinear");
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+    }
+
+    builder.append(")");
 }
 
 static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerTreeTransaction::LayerID, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
@@ -450,6 +532,58 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerT
             writeIndent(builder, 3);
             builder.append("(opaque ");
             builder.append(layerProperties.opaque ? "true" : "false");
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(maskLayer ");
+            builder.appendNumber(layerProperties.maskLayer);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(contentsRect ");
+            builder.appendNumber(layerProperties.contentsRect.x());
+            builder.append(' ');
+            builder.appendNumber(layerProperties.contentsRect.y());
+            builder.append(' ');
+            builder.appendNumber(layerProperties.contentsRect.width());
+            builder.append(' ');
+            builder.appendNumber(layerProperties.contentsRect.height());
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(contentsScale ");
+            builder.appendNumber(layerProperties.contentsScale);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
+            dumpProperty(builder, "minificationFilter", layerProperties.minificationFilter);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
+            dumpProperty(builder, "magnificationFilter", layerProperties.magnificationFilter);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(speed ");
+            builder.appendNumber(layerProperties.speed);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(timeOffset ");
+            builder.appendNumber(layerProperties.timeOffset);
             builder.append(')');
         }
 

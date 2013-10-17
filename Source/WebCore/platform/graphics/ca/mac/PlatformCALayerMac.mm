@@ -141,10 +141,10 @@ void PlatformCALayerMac::setOwner(PlatformCALayerClient* owner)
         [static_cast<WebAnimationDelegate*>(m_delegate.get()) setOwner:this];        
 }
 
-static NSDictionary* nullActionsDictionary()
+static NSDictionary *nullActionsDictionary()
 {
-    NSNull* nullValue = [NSNull null];
-    NSDictionary* actions = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSNull *nullValue = [NSNull null];
+    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
                              nullValue, @"anchorPoint",
                              nullValue, @"anchorPointZ",
                              nullValue, @"bounds",
@@ -161,7 +161,7 @@ static NSDictionary* nullActionsDictionary()
     return actions;
 }
 
-static NSString* toCAFilterType(PlatformCALayer::FilterType type)
+static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 {
     switch (type) {
     case PlatformCALayer::Linear: return kCAFilterLinear;
@@ -696,13 +696,6 @@ void PlatformCALayerMac::setName(const String& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerMac::setFrame(const FloatRect& value)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setFrame:value];
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
 void PlatformCALayerMac::setSpeed(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -743,7 +736,7 @@ void PlatformCALayerMac::synchronouslyDisplayTilesInRect(const FloatRect& rect)
     if (m_layerType != LayerTypeWebTiledLayer)
         return;
 
-    WebTiledLayer *tiledLayer = static_cast<WebTiledLayer*>(m_layer.get());
+    WebTiledLayer *tiledLayer = static_cast<WebTiledLayer *>(m_layer.get());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     BOOL oldCanDrawConcurrently = [tiledLayer canDrawConcurrently];
@@ -753,10 +746,10 @@ void PlatformCALayerMac::synchronouslyDisplayTilesInRect(const FloatRect& rect)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-AVPlayerLayer* PlatformCALayerMac::playerLayer() const
+AVPlayerLayer *PlatformCALayerMac::playerLayer() const
 {
     ASSERT([m_layer.get() isKindOfClass:getAVPlayerLayerClass()]);
-    return (AVPlayerLayer*)m_layer.get();
+    return (AVPlayerLayer *)m_layer.get();
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

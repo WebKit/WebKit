@@ -1,3 +1,47 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Complete support for simple layer properties
+        https://bugs.webkit.org/show_bug.cgi?id=122933
+
+        Reviewed by Anders Carlsson.
+
+        Add remote layer tree support for maskLayer, contentsRect, contentsScale,
+        minificationFilter, magnificationFilter, speed, and timeOffset.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpProperty):
+        (WebKit::dumpChangedLayers):
+        Add the new properties.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::toCAFilterType):
+        (WebKit::RemoteLayerTreeHost::commit):
+        Apply the new properties.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::setSublayers):
+        (PlatformCALayerRemote::appendSublayer):
+        (PlatformCALayerRemote::insertSublayer):
+        Ensure that passed-in sublayers are always also PlatformCALayerRemote instances.
+        These are ASSERT_WITH_SECURITY_IMPLICATION as we will later unconditionally static_cast
+        them to PlatformCALayerRemote.
+
+        (PlatformCALayerRemote::setMask):
+        (PlatformCALayerRemote::setContentsRect):
+        (PlatformCALayerRemote::setMinificationFilter):
+        (PlatformCALayerRemote::setMagnificationFilter):
+        (PlatformCALayerRemote::setSpeed):
+        (PlatformCALayerRemote::setTimeOffset):
+        (PlatformCALayerRemote::contentsScale):
+        (PlatformCALayerRemote::setContentsScale):
+        Remove setFrame, store the new properties.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Remove setFrame, add isRemote, fix pointer side on playerLayer.
+
 2013-10-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on EFL port after r157520 and r157523

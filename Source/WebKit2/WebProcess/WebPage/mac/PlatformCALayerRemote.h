@@ -45,6 +45,8 @@ public:
 
     RemoteLayerTreeTransaction::LayerID layerID() { return m_layerID; }
 
+    virtual bool isRemote() const OVERRIDE { return true; }
+
     virtual bool usesTiledBackingLayer() const OVERRIDE { return false; }
 
     virtual PlatformLayer* platformLayer() const OVERRIDE { return nullptr; }
@@ -129,8 +131,6 @@ public:
 
     virtual void setName(const String&) OVERRIDE;
 
-    virtual void setFrame(const WebCore::FloatRect&) OVERRIDE;
-
     virtual void setSpeed(float) OVERRIDE;
 
     virtual void setTimeOffset(CFTimeInterval) OVERRIDE;
@@ -147,7 +147,7 @@ public:
 private:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
-    virtual AVPlayerLayer* playerLayer() const OVERRIDE;
+    virtual AVPlayerLayer *playerLayer() const OVERRIDE;
 
     RemoteLayerTreeTransaction::LayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;

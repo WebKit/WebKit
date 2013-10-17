@@ -64,7 +64,14 @@ public:
         GeometryFlippedChanged = 1 << 13,
         DoubleSidedChanged = 1 << 14,
         MasksToBoundsChanged = 1 << 15,
-        OpaqueChanged = 1 << 16
+        OpaqueChanged = 1 << 16,
+        MaskLayerChanged = 1 << 17,
+        ContentsRectChanged = 1 << 18,
+        ContentsScaleChanged = 1 << 19,
+        MinificationFilterChanged = 1 << 20,
+        MagnificationFilterChanged = 1 << 21,
+        SpeedChanged = 1 << 22,
+        TimeOffsetChanged = 1 << 23
     };
 
     struct LayerCreationProperties {
@@ -103,6 +110,13 @@ public:
         bool doubleSided;
         bool masksToBounds;
         bool opaque;
+        LayerID maskLayer;
+        WebCore::FloatRect contentsRect;
+        float contentsScale;
+        WebCore::PlatformCALayer::FilterType minificationFilter;
+        WebCore::PlatformCALayer::FilterType magnificationFilter;
+        float speed;
+        double timeOffset;
     };
 
     explicit RemoteLayerTreeTransaction();

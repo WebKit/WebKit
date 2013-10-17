@@ -114,6 +114,12 @@ void PlatformCALayerRemote::removeFromSuperlayer()
 
 void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
 {
+#ifndef ASSERT_DISABLED
+    for (const auto& layer : list) {
+        ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+    }
+#endif
+
     m_children = list;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
@@ -126,12 +132,16 @@ void PlatformCALayerRemote::removeAllSublayers()
 
 void PlatformCALayerRemote::appendSublayer(PlatformCALayer* layer)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+
     m_children.append(layer);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::insertSublayer(PlatformCALayer* layer, size_t index)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+
     m_children.insert(index, layer);
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
@@ -161,6 +171,10 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const Str
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+
+    m_properties.maskLayer = static_cast<PlatformCALayerRemote*>(layer)->layerID();
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
 }
 
 bool PlatformCALayerRemote::isOpaque() const
@@ -283,14 +297,20 @@ void PlatformCALayerRemote::setContents(CFTypeRef value)
 
 void PlatformCALayerRemote::setContentsRect(const FloatRect& value)
 {
+    m_properties.contentsRect = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsRectChanged);
 }
 
 void PlatformCALayerRemote::setMinificationFilter(FilterType value)
 {
+    m_properties.minificationFilter = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MinificationFilterChanged);
 }
 
 void PlatformCALayerRemote::setMagnificationFilter(FilterType value)
 {
+    m_properties.magnificationFilter = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MagnificationFilterChanged);
 }
 
 Color PlatformCALayerRemote::backgroundColor() const
@@ -348,25 +368,27 @@ void PlatformCALayerRemote::setName(const String& value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::NameChanged);
 }
 
-void PlatformCALayerRemote::setFrame(const FloatRect& value)
-{
-}
-
 void PlatformCALayerRemote::setSpeed(float value)
 {
+    m_properties.speed = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SpeedChanged);
 }
 
 void PlatformCALayerRemote::setTimeOffset(CFTimeInterval value)
 {
+    m_properties.timeOffset = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::TimeOffsetChanged);
 }
 
 float PlatformCALayerRemote::contentsScale() const
 {
-    return 0;
+    return m_properties.contentsScale;
 }
 
 void PlatformCALayerRemote::setContentsScale(float value)
 {
+    m_properties.contentsScale = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
 }
 
 TiledBacking* PlatformCALayerRemote::tiledBacking()
