@@ -1,3 +1,12 @@
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Attempt to fix the Windows build after http://trac.webkit.org/changeset/157547.
+
+        Apparently some *more* Windows code uses setFrame and I missed it.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLayer):
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup

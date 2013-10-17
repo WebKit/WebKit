@@ -229,7 +229,8 @@ void FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLay
     FloatPoint videoOrigin;
     videoOrigin.setX((layerBounds.width() - videoSize.width()) * 0.5);
     videoOrigin.setY((layerBounds.height() - videoSize.height()) * 0.5);
-    videoLayer->setFrame(FloatRect(videoOrigin, videoSize));
+    videoLayer->setPosition(videoOrigin);
+    videoLayer->setBounds(FloatRect(FloatPoint(), videoSize));
 }
 #endif 
 
