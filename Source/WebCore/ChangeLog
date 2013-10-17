@@ -1,3 +1,15 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderMathMLOperator always has a MathMLElement.
+        <https://webkit.org/b/122988>
+
+        Reviewed by Antti Koivisto.
+
+        The renderer is never anonymous and always has a corresponding
+        MathMLElement. Overload element() with a tighter return type.
+
+        Also marked the class FINAL and made most methods private.
+
 2013-10-17  Nico Weber  <thakis@chromium.org>
 
         Fix three bugs in the equals() implementations for css gradients.

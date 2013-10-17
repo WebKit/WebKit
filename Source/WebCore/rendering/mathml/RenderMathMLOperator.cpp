@@ -62,7 +62,7 @@ static RenderMathMLOperator::StretchyCharacter stretchyCharacters[13] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-RenderMathMLOperator::RenderMathMLOperator(Element& element)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element)
     : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(0)
@@ -71,7 +71,7 @@ RenderMathMLOperator::RenderMathMLOperator(Element& element)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(Element& element, UChar operatorChar)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, UChar operatorChar)
     : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
@@ -163,20 +163,20 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 // dynamic DOM changes.
 void RenderMathMLOperator::updateFromElement()
 {
-    RenderObject* savedRenderer = element()->renderer();
+    RenderElement* savedRenderer = element().renderer();
 
     // Destroy our current children
     destroyLeftoverChildren();
 
     // Since we share a node with our children, destroying our children may set our node's
     // renderer to 0, so we need to restore it.
-    element()->setRenderer(savedRenderer);
+    element().setRenderer(savedRenderer);
     
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
     newStyle->setDisplay(FLEX);
 
-    RenderMathMLBlock* container = new RenderMathMLBlock(*element());
+    RenderMathMLBlock* container = new RenderMathMLBlock(element());
     // This container doesn't offer any useful information to accessibility.
     container->setIgnoreInAccessibilityTree(true);
     container->setStyle(newStyle.release());
@@ -186,7 +186,7 @@ void RenderMathMLOperator::updateFromElement()
     if (m_operator)
         text = new RenderText(document(), String(&m_operator, 1));
     else
-        text = new RenderText(document(), element()->textContent().replace(hyphenMinus, minusSign).impl());
+        text = new RenderText(document(), element().textContent().replace(hyphenMinus, minusSign).impl());
 
     // If we can't figure out the text, leave it blank.
     if (text)
@@ -198,8 +198,7 @@ void RenderMathMLOperator::updateFromElement()
 
 bool RenderMathMLOperator::shouldAllowStretching(UChar& stretchedCharacter)
 {
-    Element* mo = element();
-    if (equalIgnoringCase(mo->getAttribute(MathMLNames::stretchyAttr), "false"))
+    if (equalIgnoringCase(element().getAttribute(MathMLNames::stretchyAttr), "false"))
         return false;
 
     if (m_operator) {
@@ -208,7 +207,7 @@ bool RenderMathMLOperator::shouldAllowStretching(UChar& stretchedCharacter)
     }
 
     // FIXME: This does not handle surrogate pairs (http://wkbug.com/122296/).
-    String opText = mo->textContent();
+    String opText = element().textContent();
     stretchedCharacter = 0;
     for (unsigned i = 0; i < opText.length(); ++i) {
         // If there's more than one non-whitespace character in this node, then don't even try to stretch it.

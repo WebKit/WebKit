@@ -28,29 +28,22 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLElement.h"
 #include "RenderMathMLBlock.h"
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
     
-class RenderMathMLOperator : public RenderMathMLBlock {
+class RenderMathMLOperator FINAL : public RenderMathMLBlock {
 public:
-    RenderMathMLOperator(Element&);
-    RenderMathMLOperator(Element&, UChar operatorChar);
+    RenderMathMLOperator(MathMLElement&);
+    RenderMathMLOperator(MathMLElement&, UChar operatorChar);
 
-    virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
-    
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
-    virtual void updateFromElement() OVERRIDE;
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
-    
-    virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
+    MathMLElement& element() { return toMathMLElement(nodeForNonAnonymous()); }
+
     void stretchToHeight(int pixelHeight);
     int stretchHeight() { return m_stretchHeight; }
     float expandedStretchHeight() const;
-    
-    virtual int firstLineBoxBaseline() const OVERRIDE;
     
     enum OperatorType { Default, Separator, Fence };
     void setOperatorType(OperatorType type) { m_operatorType = type; }
@@ -67,10 +60,18 @@ public:
         UChar middleGlyph;
     };
 
+    virtual void updateFromElement() OVERRIDE;
+
 private:
     virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
+    virtual bool isRenderMathMLOperator() const OVERRIDE { return true; }
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
 
     bool shouldAllowStretching(UChar& characterForStretching);
     StretchyCharacter* findAcceptableStretchyCharacter(UChar);
