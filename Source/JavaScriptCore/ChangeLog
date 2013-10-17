@@ -1,5 +1,18 @@
 2013-10-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Change emit_op_catch to use another method to materialize VM
+        https://bugs.webkit.org/show_bug.cgi?id=122977
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch): Use a constant. It removes our dependency
+        on JITStackFrame. It is also faster and simpler.
+
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
         Eliminate emitGetJITStubArg() - dead code
         https://bugs.webkit.org/show_bug.cgi?id=122975
 

@@ -971,7 +971,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     move(regT0, callFrameRegister);
 
     // Now store the exception returned by operationThrow.
-    loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(struct JITStackFrame, vm)), regT3);
+    move(TrustedImmPtr(m_vm), regT3);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
     store32(TrustedImm32(JSValue().payload()), Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
