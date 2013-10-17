@@ -1,3 +1,10 @@
+2013-10-16  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r156527.
+
+        * platform/efl/compositing/contents-opaque/hidden-with-visible-text-expected.txt:
+        * platform/efl/svg/text/append-text-node-to-tspan-expected.txt:
+
 2013-10-16  Oliver Hunt  <oliver@apple.com>
 
         Implement spread
