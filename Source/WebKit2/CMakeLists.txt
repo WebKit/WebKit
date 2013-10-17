@@ -12,6 +12,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Authentication"
     "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
+    "${WEBKIT2_DIR}/Shared/Databases/IndexedDB"
     "${WEBKIT2_DIR}/Shared/Downloads"
     "${WEBKIT2_DIR}/Shared/FileAPI"
     "${WEBKIT2_DIR}/Shared/Network"
