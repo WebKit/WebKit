@@ -389,7 +389,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
 
         GstFlowReturn ret = gst_pad_chain(pad, channelBuffer);
         if (ret != GST_FLOW_OK)
-            GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s", GST_DEBUG_PAD_NAME(pad)));
+            GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to push buffer on %s:%s", GST_DEBUG_PAD_NAME(pad)));
     }
 
     g_slist_free(channelBufferList);
