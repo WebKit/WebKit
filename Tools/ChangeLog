@@ -1,3 +1,18 @@
+2013-10-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Support multiple repositories in submitting results to --results-server-host
+        https://bugs.webkit.org/show_bug.cgi?id=122935
+
+        Reviewed by Anders Carlsson.
+
+        Remoevd --got-revision and added the logic to extract revision information
+        from multiple repositories as done in run-perf-tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.upload_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2013-10-16  Darin Adler  <darin@apple.com>
 
         Add PassRef and createRefCounted so we can improve creation of RefCounted objects

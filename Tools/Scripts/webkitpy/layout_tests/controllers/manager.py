@@ -40,6 +40,7 @@ import random
 import sys
 import time
 
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
@@ -377,31 +378,37 @@ class Manager(object):
             self._filesystem.remove(results_json_path)
 
     def upload_results(self, results_json_path, start_time, end_time):
-        host = self._options.results_server_host
-        if not host:
+        hostname = self._options.results_server_host
+        if not hostname:
             return
         master_name = self._options.master_name
         builder_name = self._options.builder_name
         build_number = self._options.build_number
         build_slave = self._options.build_slave
-        got_revision = self._options.got_revision
-        if not master_name or not builder_name or not build_number or not build_slave or not got_revision:
-            _log.error("--results-dashboard-host was set, but --master-name, --builder-name, --build-number, --build-slave, or --got-revision was not. Not uploading JSON files.")
+        if not master_name or not builder_name or not build_number or not build_slave:
+            _log.error("--results-server-host was set, but --master-name, --builder-name, --build-number, or --build-slave was not. Not uploading JSON files.")
             return
 
-        _log.info("Uploading JSON files for master: %s builder: %s build: %s slave: %s to %s", master_name, builder_name, build_number, build_slave, host)
+        revisions = {}
+        # FIXME: This code is duplicated in PerfTestRunner._generate_results_dict
+        for (name, path) in self._port.repository_paths():
+            scm = SCMDetector(self._port.host.filesystem, self._port.host.executive).detect_scm_system(path) or self._port.host.scm()
+            revision = scm.svn_revision(path)
+            revisions[name] = {'revision': revision, 'timestamp': scm.timestamp_of_revision(path, revision)}
+
+        _log.info("Uploading JSON files for master: %s builder: %s build: %s slave: %s to %s", master_name, builder_name, build_number, build_slave, hostname)
 
         attrs = [
-            ('master', master_name),
+            ('master', 'build.webkit.org' if master_name == 'webkit.org' else master_name),  # FIXME: Pass in build.webkit.org.
             ('builder_name', builder_name),
             ('build_number', build_number),
             ('build_slave', build_slave),
-            ('revision', got_revision),
+            ('revisions', json.dumps(revisions)),
             ('start_time', str(start_time)),
             ('end_time', str(end_time)),
         ]
 
-        uploader = FileUploader("http://%s/api/report" % host, 360)
+        uploader = FileUploader("http://%s/api/report" % hostname, 360)
         try:
             response = uploader.upload_as_multipart_form_data(self._filesystem, [('results.json', results_json_path)], attrs)
             if not response:
