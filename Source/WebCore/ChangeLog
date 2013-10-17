@@ -1,3 +1,17 @@
+2013-10-17  Tim Horton  <timothy_horton@apple.com>
+
+        Remove PlatformCALayerMac workaround for <rdar://problem/7390716>
+        https://bugs.webkit.org/show_bug.cgi?id=122983
+
+        Reviewed by Simon Fraser.
+
+        Remove a workaround for a bug fixed in Lion.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::setSublayers):
+        (PlatformCALayerMac::removeAllSublayers):
+        (PlatformCALayerMac::adoptSublayers):
+
 2013-10-17  Robert Hogan  <robert@webkit.org>
 
         "border-collapse: collapse;" for table removes part of its border (was: Border disappears when close to some elements)

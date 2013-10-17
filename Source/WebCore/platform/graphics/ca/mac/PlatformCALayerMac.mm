@@ -326,17 +326,17 @@ void PlatformCALayerMac::removeFromSuperlayer()
 
 void PlatformCALayerMac::setSublayers(const PlatformCALayerList& list)
 {
-    // Short circuiting here not only avoids the allocation of sublayers, but avoids <rdar://problem/7390716> (see below)
+    // Short circuiting here avoids the allocation of the array below.
     if (list.size() == 0) {
         removeAllSublayers();
         return;
     }
-    
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSMutableArray* sublayers = [[NSMutableArray alloc] init];
     for (size_t i = 0; i < list.size(); ++i)
         [sublayers addObject:list[i]->m_layer.get()];
-        
+
     [m_layer.get() setSublayers:sublayers];
     [sublayers release];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -344,13 +344,8 @@ void PlatformCALayerMac::setSublayers(const PlatformCALayerList& list)
 
 void PlatformCALayerMac::removeAllSublayers()
 {
-    // Workaround for <rdar://problem/7390716>: -[CALayer setSublayers:] crashes if sublayers is an empty array, or nil, under GC.
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (objc_collectingEnabled())
-        while ([[m_layer.get() sublayers] count])
-            [[[m_layer.get() sublayers] objectAtIndex:0] removeFromSuperlayer];
-    else
-        [m_layer.get() setSublayers:nil];
+    [m_layer.get() setSublayers:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -380,19 +375,8 @@ void PlatformCALayerMac::replaceSublayer(PlatformCALayer* reference, PlatformCAL
 
 void PlatformCALayerMac::adoptSublayers(PlatformCALayer* source)
 {
-    // Workaround for <rdar://problem/7390716>: -[CALayer setSublayers:] crashes if sublayers is an empty array, or nil, under GC.
-    NSArray* sublayers = [source->m_layer.get() sublayers];
-    
-    if (objc_collectingEnabled() && ![sublayers count]) {
-        BEGIN_BLOCK_OBJC_EXCEPTIONS
-        while ([[m_layer.get() sublayers] count])
-            [[[m_layer.get() sublayers] objectAtIndex:0] removeFromSuperlayer];
-        END_BLOCK_OBJC_EXCEPTIONS
-        return;
-    }
-    
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setSublayers:sublayers];
+    [m_layer.get() setSublayers:[source->m_layer.get() sublayers]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
