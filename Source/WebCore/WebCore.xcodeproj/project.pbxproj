@@ -2791,6 +2791,8 @@
 		8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */; };
 		8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */; };
 		8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */; };
+		8AC822FC180FC03300FB64D5 /* RenderNamedFlowFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AC822FA180FC03300FB64D5 /* RenderNamedFlowFragment.cpp */; };
+		8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AC822FB180FC03300FB64D5 /* RenderNamedFlowFragment.h */; };
 		8AD0A59414C88336000D83C5 /* JSWebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */; };
 		8AD0A59514C88336000D83C5 /* JSWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */; };
 		8AD0A59614C88358000D83C5 /* DOMWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */; };
@@ -9375,6 +9377,8 @@
 		8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreDestructiveWriteCountIncrementer.h; sourceTree = "<group>"; };
+		8AC822FA180FC03300FB64D5 /* RenderNamedFlowFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderNamedFlowFragment.cpp; sourceTree = "<group>"; };
+		8AC822FB180FC03300FB64D5 /* RenderNamedFlowFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderNamedFlowFragment.h; sourceTree = "<group>"; };
 		8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSRegionRule.h; sourceTree = "<group>"; };
@@ -20629,6 +20633,8 @@
 				1A3586DE15264C450022A659 /* RenderMultiColumnFlowThread.h */,
 				BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */,
 				BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */,
+				8AC822FA180FC03300FB64D5 /* RenderNamedFlowFragment.cpp */,
+				8AC822FB180FC03300FB64D5 /* RenderNamedFlowFragment.h */,
 				BC85F23E1519187300BC17BE /* RenderNamedFlowThread.cpp */,
 				BC85F23C151915E000BC17BE /* RenderNamedFlowThread.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
@@ -22274,6 +22280,7 @@
 				316FE07F0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h in Headers */,
 				316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */,
 				078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */,
+				8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */,
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
 				498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */,
 				498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */,
@@ -27233,6 +27240,7 @@
 				71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */,
 				43F6FD9613BCD0B100224052 /* SVGAnimatedInteger.cpp in Sources */,
 				1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
+				8AC822FC180FC03300FB64D5 /* RenderNamedFlowFragment.cpp in Sources */,
 				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 				431A2FD713B7707A007791E4 /* SVGAnimatedLengthList.cpp in Sources */,
 				43A0F0B113AC7D6D00A5F0A7 /* SVGAnimatedNumber.cpp in Sources */,

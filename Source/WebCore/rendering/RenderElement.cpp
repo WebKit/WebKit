@@ -147,8 +147,6 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element.hasTagName(HTMLNames::rtTag) && style.display() == BLOCK)
         return new RenderRubyText(element);
-    if (document.cssRegionsEnabled() && style.isDisplayRegionType() && !style.regionThread().isEmpty())
-        return new RenderRegion(element, nullptr);
     switch (style.display()) {
     case NONE:
         return 0;

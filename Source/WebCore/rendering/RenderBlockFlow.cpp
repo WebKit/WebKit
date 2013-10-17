@@ -29,6 +29,7 @@
 #include "LayoutRepainter.h"
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 
@@ -93,11 +94,18 @@ RenderBlockFlow::~RenderBlockFlow()
 {
 }
 
+void RenderBlockFlow::insertedIntoTree()
+{
+    RenderBlock::insertedIntoTree();
+    createRenderNamedFlowFragmentIfNeeded();
+}
+
 void RenderBlockFlow::willBeDestroyed()
 {
     if (lineGridBox())
         lineGridBox()->destroy(renderArena());
-
+    if (renderNamedFlowFragment())
+        setRenderNamedFlowFragment(0);
     RenderBlock::willBeDestroyed();
 }
 
@@ -119,9 +127,8 @@ void RenderBlockFlow::clearFloats()
 
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrOutOfFlowPositioned() || isTableCell()) {
-        if (m_floatingObjects) {
+        if (m_floatingObjects)
             m_floatingObjects->clear();
-        }
         if (!oldIntrudingFloatSet.isEmpty())
             markAllDescendantsWithFloatsForLayout();
         return;
@@ -268,6 +275,8 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     if (logicalWidthChangedInRegions(flowThread))
         relayoutChildren = true;
     if (updateShapesBeforeBlockLayout())
+        relayoutChildren = true;
+    if (namedFlowFragmentNeedsUpdate())
         relayoutChildren = true;
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
@@ -1533,6 +1542,9 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markAllDescendantsWithFloatsForLayout();
         parentBlock->markSiblingsWithFloatsForLayout();
     }
+
+    if (renderNamedFlowFragment())
+        renderNamedFlowFragment()->setStyleForNamedFlowFragment(style());
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
@@ -2351,5 +2363,52 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
     }
 }
 
+void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
+{
+    if (renderNamedFlowFragment() || isRenderNamedFlowFragment())
+        return;
+
+    if (document().cssRegionsEnabled() && style()->isDisplayRegionType() && !style()->regionThread().isEmpty()) {
+        RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document());
+        flowFragment->setStyleForNamedFlowFragment(style());
+        setRenderNamedFlowFragment(flowFragment);
+        addChild(renderNamedFlowFragment());
+    }
+}
+
+bool RenderBlockFlow::canHaveChildren() const
+{
+    return !renderNamedFlowFragment() ? RenderBlock::canHaveChildren() : renderNamedFlowFragment()->canHaveChildren();
+}
+
+bool RenderBlockFlow::canHaveGeneratedChildren() const
+{
+    return !renderNamedFlowFragment() ? RenderBlock::canHaveGeneratedChildren() : renderNamedFlowFragment()->canHaveGeneratedChildren();
+}
+
+bool RenderBlockFlow::namedFlowFragmentNeedsUpdate() const
+{
+    if (!isRenderNamedFlowFragmentContainer())
+        return false;
+
+    return hasRelativeLogicalHeight() && !isRenderView();
+}
+
+void RenderBlockFlow::updateLogicalHeight()
+{
+    RenderBlock::updateLogicalHeight();
+
+    if (renderNamedFlowFragment())
+        renderNamedFlowFragment()->setLogicalHeight(max<LayoutUnit>(0, logicalHeight() - borderAndPaddingLogicalHeight()));
+}
+
+void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFragment)
+{
+    if (!m_rareData)
+        m_rareData = adoptPtr(new RenderBlockFlowRareData(this));
+    if (m_rareData->m_renderNamedFlowFragment)
+        m_rareData->m_renderNamedFlowFragment->destroy();
+    m_rareData->m_renderNamedFlowFragment = flowFragment;
+}
 
 } // namespace WebCore

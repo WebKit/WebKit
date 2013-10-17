@@ -166,7 +166,7 @@ static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNo
 #if ENABLE(CSS_REGIONS)
     const RenderObject* parentRenderer = renderingParentNode ? renderingParentNode->renderer() : 0;
 
-    bool parentIsRegion = parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderRegion();
+    bool parentIsRegion = parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderNamedFlowFragmentContainer();
     bool parentIsNonRenderedInsideRegion = !parentRenderer && element.parentElement() && element.parentElement()->isInsideRegion();
     if (!parentIsRegion && !parentIsNonRenderedInsideRegion)
         return false;

@@ -1,3 +1,100 @@
+2013-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Anonymous nested regions
+        https://bugs.webkit.org/show_bug.cgi?id=119135
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/table-caption-as-region.html
+               fast/regions/table-cell-as-region.html
+
+        This patch allows any non-replaced block to behave like a region. When an element is styled with the
+        -webkit-flow-from property, instead of making the renderer a RenderRegion, we let the original
+        renderer be created the same way and we add a region as an anonymous child for the renderer.
+        The anonymous block child, modeled by the new RenderNamedFlowFragment class, will be responsible
+        for the fragmentation of the named flow thread content.
+
+        A RenderBlockFlow object will keep a reference to a RenderNamedFlowFragment(RenderRegion) inside its
+        rare data structures.
+
+        Contains code contributed by Catalin Badea.
+ 
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Element.cpp: Changed to take the anonymous region into account.
+        (WebCore::Element::renderRegion):
+        (WebCore::Element::webkitGetRegionFlowRanges):
+        * dom/WebKitNamedFlow.cpp: Ditto.
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex):
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        * inspector/InspectorOverlay.cpp: Take into account the new model for regions, with an anonymous region inside a block.
+        (WebCore::buildObjectForRegionHighlight):
+        (WebCore::buildObjectForElementInfo):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeShapeSize): For a render named flow fragment, there is no need to recompute the shape inside
+        we can take it from the parent.
+        (WebCore::RenderBlock::renderName): Make the block that contains a render named flow fragment (region) report RenderRegion.
+        A future patch that will change this will need to rebase a lot of tests.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::insertedIntoTree): Create the anonymous region if needed (change of -webkit-flow-from determines Node reattach).
+        (WebCore::RenderBlockFlow::willBeDestroyed): Clean-up the anonymous region if necessary.
+        (WebCore::RenderBlockFlow::clearFloats): Small style change to make sure that check-webkit-style reports 0 failures on RenderBlockFlow.cpp.
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::styleDidChange): Update the style of the anonymous region too.
+        (WebCore::RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded): Helper function to create the anonymous region
+        and to add it as a child to the block.
+        (WebCore::RenderBlockFlow::canHaveChildren):
+        (WebCore::RenderBlockFlow::canHaveGeneratedChildren):
+        (WebCore::RenderBlockFlow::namedFlowFragmentNeedsUpdate): Force a layout of the anonymous region if the
+        parent block has percentage height (similar to RenderBlock::updateBlockChildDirtyBitsBeforeLayout)
+        (WebCore::RenderBlockFlow::updateLogicalHeight): Update the logical height of anonymous region when the height of parent is updated.
+        (WebCore::RenderBlockFlow::setRenderNamedFlowFragment):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::renderNamedFlowFragment):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor): Remove the direct creation of RenderRegion objects since they will be
+        created as anonymous children of block flow objects.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::generatingElement): Account for anonymous region if necessary.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent): Take anonymous region into account
+        and use the anonymous region parent offset/border.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly): Check for style instead of isRenderRegion since
+        the parent of the anonymous region will get the layer.
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertedIntoTree): Call RenderBlockFlow method instead.
+        * rendering/RenderNamedFlowFragment.cpp: Added. Model the behaviour of the anonymous region.
+        Has RenderRegion as a base class.
+        (WebCore::RenderNamedFlowFragment::RenderNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::~RenderNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::setStyleForNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::styleDidChange):
+        (WebCore::RenderNamedFlowFragment::shouldHaveAutoLogicalHeight):
+        (WebCore::RenderNamedFlowFragment::maxPageLogicalHeight):
+        * rendering/RenderNamedFlowFragment.h: Added.
+        (WebCore::RenderNamedFlowFragment::isPseudoElementRegion):
+        (WebCore::RenderNamedFlowFragment::renderName):
+        (WebCore::toRenderNamedFlowFragment):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isRenderNamedFlowFragmentContainer):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderNamedFlowFragment):
+        * rendering/RenderRegion.h:
+        * rendering/RenderTableCaption.cpp: Call RenderBlockFlow method instead.
+        (WebCore::RenderTableCaption::insertedIntoTree):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeRenderRegionList):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::shapeSize):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+
 2013-10-17  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Properly expose tables in accessibility

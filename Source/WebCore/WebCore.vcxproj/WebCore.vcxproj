@@ -10024,6 +10024,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderNamedFlowFragment.cpp" />
     <ClCompile Include="..\rendering\RenderNamedFlowThread.cpp" />
     <ClCompile Include="..\rendering\RenderObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -19471,6 +19472,7 @@
     <ClInclude Include="..\rendering\RenderMultiColumnBlock.h" />
     <ClInclude Include="..\rendering\RenderMultiColumnFlowThread.h" />
     <ClInclude Include="..\rendering\RenderMultiColumnSet.h" />
+    <ClInclude Include="..\rendering\RenderNamedFlowFragment.h" />
     <ClInclude Include="..\rendering\RenderNamedFlowThread.h" />
     <ClInclude Include="..\rendering\RenderObject.h" />
     <ClInclude Include="..\rendering\RenderProgress.h" />

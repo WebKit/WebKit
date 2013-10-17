@@ -81,7 +81,7 @@ void RenderListItem::willBeDestroyed()
 
 void RenderListItem::insertedIntoTree()
 {
-    RenderBlock::insertedIntoTree();
+    RenderBlockFlow::insertedIntoTree();
 
     updateListMarkerNumbers();
 }

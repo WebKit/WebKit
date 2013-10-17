@@ -74,6 +74,7 @@
 #include "PlatformWheelEvent.h"
 #include "PointerLockController.h"
 #include "PseudoElement.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -2705,8 +2706,8 @@ bool Element::isSpellCheckingEnabled() const
 
 RenderRegion* Element::renderRegion() const
 {
-    if (renderer() && renderer()->isRenderRegion())
-        return toRenderRegion(renderer());
+    if (renderer() && renderer()->isRenderNamedFlowFragmentContainer())
+        return toRenderBlockFlow(renderer())->renderNamedFlowFragment();
 
     return 0;
 }
@@ -2763,8 +2764,8 @@ Vector<RefPtr<Range> > Element::webkitGetRegionFlowRanges() const
     document().updateLayoutIgnorePendingStylesheets();
 
     Vector<RefPtr<Range> > rangeObjects;
-    if (document().cssRegionsEnabled() && renderer() && renderer()->isRenderRegion()) {
-        RenderRegion* region = toRenderRegion(renderer());
+    if (document().cssRegionsEnabled() && renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
+        RenderNamedFlowFragment* region = toRenderBlockFlow(renderer())->renderNamedFlowFragment();
         if (region->isValid())
             region->getRanges(rangeObjects);
     }

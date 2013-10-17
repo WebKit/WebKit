@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer.
+ * 2. Redistributions in binary form must reproduce the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer in the documentation and/or other materials
+ *    provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+ * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#ifndef RenderNamedFlowFragment_h
+#define RenderNamedFlowFragment_h
+
+#include "RenderRegion.h"
+
+namespace WebCore {
+
+class Element;
+class RenderStyle;
+
+class RenderNamedFlowFragment : public RenderRegion {
+public:
+    explicit RenderNamedFlowFragment(Document&);
+    virtual ~RenderNamedFlowFragment();
+
+    void setStyleForNamedFlowFragment(const RenderStyle*);
+
+    virtual bool isRenderNamedFlowFragment() const OVERRIDE FINAL { return true; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    virtual LayoutUnit maxPageLogicalHeight() const;
+
+    bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
+
+protected:
+    virtual bool shouldHaveAutoLogicalHeight() const;
+
+private:
+    virtual const char* renderName() const { return "RenderNamedFlowFragment"; }
+};
+
+inline RenderNamedFlowFragment* toRenderNamedFlowFragment(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderNamedFlowFragment());
+    return static_cast<RenderNamedFlowFragment*>(object);
+}
+
+inline const RenderNamedFlowFragment* toRenderNamedFlowFragment(const RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderNamedFlowFragment());
+    return static_cast<const RenderNamedFlowFragment*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderNamedFlowFragment(const RenderNamedFlowFragment*);
+
+} // namespace WebCore
+
+#endif // RenderNamedFlowFragment_h

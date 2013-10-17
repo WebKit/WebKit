@@ -103,6 +103,7 @@ public:
     void dirtyShapeSize() { m_shape.clear(); }
     bool shapeSizeDirty() { return !m_shape.get(); }
     const RenderType* owner() const { return m_renderer; }
+    LayoutSize shapeSize() const { return m_shapeLogicalSize; }
 
 protected:
     ShapeInfo(const RenderType* renderer): m_renderer(renderer) { }

@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class LineBreaker;
+class RenderNamedFlowFragment;
 
 class RenderBlockFlow : public RenderBlock {
 public:
@@ -38,6 +39,7 @@ public:
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
 protected:
+    virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeDestroyed() OVERRIDE;
     
     // This method is called at the start of layout to wipe away all of the floats in our floating objects list. It also
@@ -56,7 +58,7 @@ protected:
     virtual LayoutUnit collapsedMarginAfter() const OVERRIDE FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child) OVERRIDE FINAL { lineBoxes().dirtyLinesFromChangedChild(this, child); }
-
+    virtual void updateLogicalHeight() OVERRIDE;
 public:
     class MarginValues {
     public:
@@ -93,6 +95,7 @@ public:
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
             , m_lineGridBox(0)
+            , m_renderNamedFlowFragment(0)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
             , m_didBreakAtLineToAvoidWidow(false)
@@ -119,6 +122,7 @@ public:
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
         RootInlineBox* m_lineGridBox;
+        RenderNamedFlowFragment* m_renderNamedFlowFragment;
 
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
@@ -224,6 +228,8 @@ public:
     bool didBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_didBreakAtLineToAvoidWidow; }
     bool relayoutToAvoidWidows(LayoutStateMaintainer&);
 
+    virtual bool canHaveGeneratedChildren() const OVERRIDE;
+
     RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }
     void setLineGridBox(RootInlineBox* box)
     {
@@ -234,6 +240,9 @@ public:
         m_rareData->m_lineGridBox = box;
     }
     void layoutLineGridBox();
+
+    RenderNamedFlowFragment* renderNamedFlowFragment() const { return m_rareData ? m_rareData->m_renderNamedFlowFragment : 0; }
+    void setRenderNamedFlowFragment(RenderNamedFlowFragment*);
 
     bool containsFloats() const OVERRIDE { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox*) const;
@@ -402,11 +411,15 @@ private:
 
 
 // END METHODS DEFINED IN RenderBlockLineLayout
-    
+
+    bool namedFlowFragmentNeedsUpdate() const;
+    virtual bool canHaveChildren() const OVERRIDE;
+
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     void updateRegionForLine(RootInlineBox*) const;
+    void createRenderNamedFlowFragmentIfNeeded();
 
 protected:
     OwnPtr<FloatingObjects> m_floatingObjects;

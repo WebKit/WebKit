@@ -43,7 +43,7 @@ public:
     // This is null for anonymous renderers.
     Element* element() const { return toElement(RenderObject::node()); }
     Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
-    Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
+    Element* generatingElement() const;
 
     RenderObject* firstChild() const { return m_firstChild; }
     RenderObject* lastChild() const { return m_lastChild; }
@@ -256,6 +256,13 @@ inline const RenderElement* toRenderElement(const RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderElement());
     return static_cast<const RenderElement*>(object);
+}
+
+inline Element* RenderElement::generatingElement() const
+{
+    if (isRenderNamedFlowFragment() && parent())
+        return toRenderElement(parent())->generatingElement();
+    return toElement(RenderObject::generatingNode());
 }
 
 // This will catch anyone doing an unnecessary cast.

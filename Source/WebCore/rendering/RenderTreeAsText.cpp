@@ -575,10 +575,12 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
             writeTextRun(ts, text, *box);
         }
     } else {
-        for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {
-            if (child->hasLayer())
-                continue;
-            write(ts, *child, indent + 1, behavior);
+        if (!o.isRenderNamedFlowFragmentContainer()) {
+            for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {
+                if (child->hasLayer())
+                    continue;
+                write(ts, *child, indent + 1, behavior);
+            }
         }
     }
 
@@ -668,7 +670,7 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
         writeIndent(ts, indent + 2);
         ts << "RenderRegion";
         if (renderRegion->generatingElement()) {
-            String tagName = getTagName(renderRegion->element());
+            String tagName = getTagName(renderRegion->generatingElement());
             if (!tagName.isEmpty())
                 ts << " {" << tagName << "}";
             if (renderRegion->generatingElement()->hasID())

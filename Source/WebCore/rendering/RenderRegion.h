@@ -45,8 +45,6 @@ class RenderNamedFlowThread;
 
 class RenderRegion : public RenderBlockFlow {
 public:
-    RenderRegion(Element&, RenderFlowThread*);
-
     virtual bool isRenderRegion() const OVERRIDE FINAL { return true; }
 
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
@@ -91,7 +89,7 @@ public:
     // height of a single column or page in the set.
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
-    LayoutUnit maxPageLogicalHeight() const;
+    virtual LayoutUnit maxPageLogicalHeight() const;
 
     LayoutUnit logicalTopOfFlowThreadContentRect(const LayoutRect&) const;
     LayoutUnit logicalBottomOfFlowThreadContentRect(const LayoutRect&) const;
@@ -148,8 +146,13 @@ public:
 
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
 
+    virtual bool canHaveChildren() const OVERRIDE { return false; }
+    virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
+
 protected:
+    RenderRegion(Element&, RenderFlowThread*);
     RenderRegion(Document&, RenderFlowThread*);
+
     RenderOverflow* ensureOverflowForBox(const RenderBox*);
 
     void setRegionObjectsRegionStyle();
@@ -173,9 +176,6 @@ protected:
 
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
-
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-    virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
 
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;

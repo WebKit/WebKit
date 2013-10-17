@@ -329,6 +329,7 @@ public:
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
     virtual bool isRenderRegion() const { return false; }
+    virtual bool isRenderNamedFlowFragment() const { return false; }
     virtual bool isReplica() const { return false; }
 
     virtual bool isRuby() const { return false; }
@@ -361,6 +362,7 @@ public:
     virtual bool isRenderNamedFlowThread() const { return false; }
     bool isInFlowRenderFlowThread() const { return isRenderFlowThread() && !isOutOfFlowPositioned(); }
     bool isOutOfFlowRenderFlowThread() const { return isRenderFlowThread() && isOutOfFlowPositioned(); }
+    bool isRenderNamedFlowFragmentContainer() const;
 
     virtual bool isRenderMultiColumnBlock() const { return false; }
     virtual bool isRenderMultiColumnSet() const { return false; }

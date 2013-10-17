@@ -519,7 +519,8 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
     RenderRegion* startRegion = regionAtBlockOffset(objContainingBlock, referencePoint.y());
     if (startRegion) {
         // Take into account the offset coordinates of the region.
-        RenderBoxModelObject* currObject = startRegion;
+        RenderBoxModelObject* startRegionBox = startRegion->isRenderNamedFlowFragment() ? toRenderBoxModelObject(startRegion->parent()) : startRegion;
+        RenderBoxModelObject* currObject = startRegionBox;
         RenderBoxModelObject* currOffsetParent;
         while ((currOffsetParent = currObject->offsetParent())) {
             referencePoint.move(currObject->offsetLeft(), currObject->offsetTop());
@@ -573,7 +574,7 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
             // and compute the object's top, relative to the region's top.
             LayoutUnit regionLogicalTop = startRegion->pageLogicalTopForOffset(top);
             LayoutUnit topRelativeToRegion = top - regionLogicalTop;
-            referencePoint.setY(startRegion->offsetTop() + topRelativeToRegion);
+            referencePoint.setY(startRegionBox->offsetTop() + topRelativeToRegion);
             
             // Since the top has been overriden, check if the
             // relative/sticky positioning must be reconsidered.
@@ -585,7 +586,7 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
         
         // Since we're looking for the offset relative to the body, we must also
         // take into consideration the borders of the region.
-        referencePoint.move(startRegion->borderLeft(), startRegion->borderTop());
+        referencePoint.move(startRegionBox->borderLeft(), startRegionBox->borderTop());
     }
     
     return referencePoint;

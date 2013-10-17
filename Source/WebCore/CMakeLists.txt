@@ -2131,6 +2131,7 @@ set(WebCore_SOURCES
     rendering/RenderMultiColumnBlock.cpp
     rendering/RenderMultiColumnFlowThread.cpp
     rendering/RenderMultiColumnSet.cpp
+    rendering/RenderNamedFlowFragment.cpp
     rendering/RenderNamedFlowThread.cpp
     rendering/RenderObject.cpp
     rendering/RenderProgress.cpp
