@@ -56,7 +56,6 @@ namespace JSC {
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
 #define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
 #define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
-#define PROBE_JIT_STACK_FRAME_OFFSET (3 * PTR_SIZE)
 
 #define PROBE_FIRST_GPREG_OFFSET (4 * PTR_SIZE)
 
@@ -109,7 +108,6 @@ namespace JSC {
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(jitStackFrame) == PROBE_JIT_STACK_FRAME_OFFSET, ProbeContext_jitStackFrame_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r0) == PROBE_CPU_R0_OFFSET, ProbeContext_cpu_r0_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.r1) == PROBE_CPU_R1_OFFSET, ProbeContext_cpu_r1_offset_matches_ctiMasmProbeTrampoline);
@@ -257,7 +255,6 @@ SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
     "ldr       lr, [ip, #6 * " STRINGIZE_VALUE_OF(PTR_SIZE) "]" "\n"
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
-    "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_JIT_STACK_FRAME_OFFSET) "]" "\n"
 
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
 

@@ -33,8 +33,6 @@
 
 namespace JSC {
 
-struct JITStackFrame;
-
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 protected:
 #if CPU(X86_64)
@@ -1450,7 +1448,6 @@ public:
         ProbeFunction probeFunction;
         void* arg1;
         void* arg2;
-        JITStackFrame* jitStackFrame;
         CPUState cpu;
 
         void dump(const char* indentation = 0);

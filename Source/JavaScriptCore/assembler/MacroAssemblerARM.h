@@ -35,8 +35,6 @@
 
 namespace JSC {
 
-struct JITStackFrame;
-
 class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
     static const int DoubleConditionMask = 0x0f;
     static const int DoubleConditionBitSpecial = 0x10;
@@ -1345,7 +1343,6 @@ public:
         ProbeFunction probeFunction;
         void* arg1;
         void* arg2;
-        JITStackFrame* jitStackFrame;
         CPUState cpu;
 
         void dump(const char* indentation = 0);

@@ -49,7 +49,6 @@ namespace JSC {
 #define PROBE_PROBE_FUNCTION_OFFSET (0 * PTR_SIZE)
 #define PROBE_ARG1_OFFSET (1 * PTR_SIZE)
 #define PROBE_ARG2_OFFSET (2 * PTR_SIZE)
-#define PROBE_JIT_STACK_FRAME_OFFSET (3 * PTR_SIZE)
 
 #define PROBE_CPU_EAX_OFFSET (4 * PTR_SIZE)
 #define PROBE_CPU_EBX_OFFSET (5 * PTR_SIZE)
@@ -101,7 +100,6 @@ namespace JSC {
 COMPILE_ASSERT(PROBE_OFFSETOF(probeFunction) == PROBE_PROBE_FUNCTION_OFFSET, ProbeContext_probeFunction_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg1) == PROBE_ARG1_OFFSET, ProbeContext_arg1_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(arg2) == PROBE_ARG2_OFFSET, ProbeContext_arg2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(jitStackFrame) == PROBE_JIT_STACK_FRAME_OFFSET, ProbeContext_jitStackFrame_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.eax) == PROBE_CPU_EAX_OFFSET, ProbeContext_cpu_eax_offset_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(PROBE_OFFSETOF(cpu.ecx) == PROBE_CPU_ECX_OFFSET, ProbeContext_cpu_ecx_offset_matches_ctiMasmProbeTrampoline);

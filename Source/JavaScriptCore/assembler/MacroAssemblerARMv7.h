@@ -34,8 +34,6 @@
 
 namespace JSC {
 
-struct JITStackFrame;
-
 class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
     // FIXME: switch dataTempRegister & addressTempRegister, or possibly use r7?
     //        - dTR is likely used more than aTR, and we'll get better instruction
@@ -1813,7 +1811,6 @@ public:
         ProbeFunction probeFunction;
         void* arg1;
         void* arg2;
-        JITStackFrame* jitStackFrame;
         CPUState cpu;
 
         void dump(const char* indentation = 0);

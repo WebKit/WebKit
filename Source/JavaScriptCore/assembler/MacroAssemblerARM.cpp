@@ -130,7 +130,6 @@ void MacroAssemblerARM::ProbeContext::dump(const char* indentation)
     dataLogF("%s  probeFunction: %p\n", indentation, probeFunction);
     dataLogF("%s  arg1: %p %llu\n", indentation, arg1, reinterpret_cast<int64_t>(arg1));
     dataLogF("%s  arg2: %p %llu\n", indentation, arg2, reinterpret_cast<int64_t>(arg2));
-    dataLogF("%s  jitStackFrame: %p\n", indentation, jitStackFrame);
     dataLogF("%s  cpu: {\n", indentation);
 
     dumpCPURegisters(indentation);
