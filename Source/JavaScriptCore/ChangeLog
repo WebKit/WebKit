@@ -1,3 +1,22 @@
+2013-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Eliminate all ASSERT references to OBJECT_OFFSETOF(struct JITStackFrame,...) in JITStubsXXX.h.
+        https://bugs.webkit.org/show_bug.cgi?id=122979.
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARM64.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2013-10-17  Michael Saboff  <msaboff@apple.com>
 
         Remove saving callFrameRegister to JITStackFrame in JITCompiler::compileFunction()

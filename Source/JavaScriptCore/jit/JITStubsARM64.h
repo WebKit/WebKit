@@ -148,27 +148,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 
 #endif // COMPILER(GCC)
 
-static void performARM64JITAssertions()
-{
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == PRESERVED_RETURN_ADDRESS_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX19) == PRESERVED_X19_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX20) == PRESERVED_X20_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX21) == PRESERVED_X21_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX22) == PRESERVED_X22_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX23) == PRESERVED_X23_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX24) == PRESERVED_X24_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX25) == PRESERVED_X25_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX26) == PRESERVED_X26_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX27) == PRESERVED_X27_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedX28) == PRESERVED_X28_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, stack) == REGISTER_FILE_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == CALLFRAME_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == PROFILER_REFERENCE_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, vm) == VM_OFFSET);
-    ASSERT(sizeof(struct JITStackFrame) == SIZEOF_JITSTACKFRAME);
-}
-
 } // namespace JSC
 
 #endif // JITStubsARM64_h

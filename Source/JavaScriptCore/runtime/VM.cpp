@@ -253,7 +253,6 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(JIT)
     jitStubs = adoptPtr(new JITThunks());
-    performPlatformSpecificJITAssertions(this);
 #endif
 
 #if ENABLE(FTL_JIT)

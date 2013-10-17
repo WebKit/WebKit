@@ -141,12 +141,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 
-static void performSH4JITAssertions()
-{
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, savedR8) == SAVED_R8_OFFSET);
-}
-
 } // namespace JSC
 
 #endif // JITStubsSH4_h

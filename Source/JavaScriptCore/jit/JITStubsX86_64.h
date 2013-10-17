@@ -45,12 +45,6 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
-// need to change the assembly trampolines below to match.
-COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x58, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x48, JITStackFrame_code_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x78, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
-
 asm (
 ".text\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -280,15 +274,6 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 #endif // USE(MASM_PROBE)
 
 #endif // COMPILER(GCC)
-
-#if COMPILER(MSVC)
-
-// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
-// need to change the assembly trampolines in JITStubsMSVC64.asm to match.
-COMPILE_ASSERT(offsetof(struct JITStackFrame, code) % 16 == 0x0, JITStackFrame_maintains_16byte_stack_alignment);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x58, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
-
-#endif // COMPILER(MSVC)
 
 } // namespace JSC
 

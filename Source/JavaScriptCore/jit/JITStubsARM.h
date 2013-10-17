@@ -476,13 +476,6 @@ MSVC_END(    END)
 */
 #endif // COMPILER(MSVC)
 
-
-static void performARMJITAssertions()
-{
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == THUNK_RETURN_ADDRESS_OFFSET);
-    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR4) == PRESERVEDR4_OFFSET);
-}
-
 } // namespace JSC
 
 #endif // JITStubsARM_h

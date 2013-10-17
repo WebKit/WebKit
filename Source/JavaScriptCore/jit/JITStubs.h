@@ -351,8 +351,6 @@ inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
 extern "C" void ctiMasmProbeTrampoline();
 #endif
 
-void performPlatformSpecificJITAssertions(VM*);
-
 extern "C" {
 
 #if USE(JSVALUE32_64)

@@ -109,24 +109,6 @@ namespace JSC {
     #define CTI_SAMPLER 0
 #endif
 
-void performPlatformSpecificJITAssertions(VM* vm)
-{
-    if (!vm->canUseJIT())
-        return;
-
-#if CPU(ARM_THUMB2)
-    performARMv7JITAssertions();
-#elif CPU(ARM64)
-    performARM64JITAssertions();
-#elif CPU(ARM_TRADITIONAL)
-    performARMJITAssertions();
-#elif CPU(MIPS)
-    performMIPSJITAssertions();
-#elif CPU(SH4)
-    performSH4JITAssertions();
-#endif
-}
-
 #if USE(JSVALUE32_64)
 EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame* callFrame)
 {
