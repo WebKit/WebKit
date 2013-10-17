@@ -110,6 +110,8 @@ public:
     AffineTransform& skewX(double angle);
     AffineTransform& skewY(double angle);
 
+    // These functions get the length of an axis-aligned unit vector
+    // once it has been mapped through the transform
     double xScale() const;
     double yScale() const;
 
