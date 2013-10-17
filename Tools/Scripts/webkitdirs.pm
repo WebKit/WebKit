@@ -460,7 +460,7 @@ sub determineConfigurationForVisualStudio
     return if defined $configurationForVisualStudio;
     determineConfiguration();
     # FIXME: We should detect when Debug_All or Production has been chosen.
-    $configurationForVisualStudio = $configuration;
+    $configurationForVisualStudio = $configuration . (isWin64() ? "|x64" : "");
 }
 
 sub usesPerConfigurationBuildDirectory
@@ -477,9 +477,9 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isAppleWinWebKit()) {
+    if (isAppleWinWebKit() || isWinCairo()) {
         my $binDir = isWin64() ? "bin64" : "bin32";
-        $configurationProductDir = File::Spec->catdir($baseProductDir, configurationForVisualStudio(), $binDir);
+        $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration, $binDir);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
@@ -1213,7 +1213,7 @@ sub isAppleMacWebKit()
 
 sub isAppleWinWebKit()
 {
-    return isAppleWebKit() && (isCygwin() || isWindows());
+    return isAppleWebKit() && (isCygwin() || isWindows()) && !isWinCairo();
 }
 
 sub willUseIOSDeviceSDKWhenBuilding()
@@ -1650,7 +1650,7 @@ sub copyInspectorFrontendFiles
         } else {
             $inspectorResourcesDirPath = $productDir . "/WebCore.framework/Resources/inspector";
         }
-    } elsif (isAppleWinWebKit()) {
+    } elsif (isAppleWinWebKit() || isWinCairo()) {
         $inspectorResourcesDirPath = $productDir . "/WebKit.resources/inspector";
     } elsif (isGtk()) {
         my $prefix = $ENV{"WebKitInstallationPrefix"};
@@ -2151,6 +2151,9 @@ sub setPathForRunningWebKitApp
 
     if (isAppleWinWebKit()) {
         $env->{PATH} = join(':', productDir(), dirname(installedSafariPath()), appleApplicationSupportPath(), $env->{PATH} || "");
+    } elsif (isWinCairo()) {
+        my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
+        $env->{PATH} = join(':', productDir(), $winCairoBin , $env->{PATH} || "");
     }
 }
 

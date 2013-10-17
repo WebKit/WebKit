@@ -1,3 +1,13 @@
+2013-10-17  Alex Christensen  <achristensen@webkit.org>
+
+        Run JavaScriptCore tests again on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=122787
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln: Added.
+        * jit/JITStubsMSVC64.asm: Removed reference to cti_vm_throw unused since r157581.
+
 2013-10-17  Geoffrey Garen  <ggaren@apple.com>
 
         Removed restoreArgumentReference (another use of JITStackFrame)

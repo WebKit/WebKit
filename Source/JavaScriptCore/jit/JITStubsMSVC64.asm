@@ -23,7 +23,6 @@
 ; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;*/
 
-EXTERN cti_vm_throw : near
 EXTERN cti_vm_handle_exception : near
 EXTERN getHostCallReturnValueWithExecState : near
 

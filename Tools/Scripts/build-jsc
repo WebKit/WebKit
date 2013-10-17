@@ -84,8 +84,11 @@ sub buildMyProject
     chdir $projectDirectory or die "Can't find $projectName directory to build from";
     if (isAppleMacWebKit()) {
         $result = system "sh", "-c", ('xcodebuild -project ' . $projectName . '.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}'), "xcodebuild",  @options, @ARGV, @coverageSupportOptions;
-    } elsif (isAppleWinWebKit()) {
-        $result = buildVisualStudioProject("$projectName.vcxproj/$projectName.submit.sln");
+    } elsif (isAppleWinWebKit() || isWinCairo()) {
+        # WTF is a part of JavaScriptCore.sln because jsc.exe wouldn't start otherwise.
+        if ($projectName ne "WTF") {
+            $result = buildVisualStudioProject("$projectName.vcxproj/$projectName.sln");
+        }
     } elsif (isGtk()) {
         checkForArgumentAndRemoveFromARGV("--gtk");
         $result = buildGtkProject($projectName, 0);
