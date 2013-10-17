@@ -1,3 +1,12 @@
+2013-10-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on EFL port after r157520 and r157523
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        Removed ArgumentCoder<TransformationMatrix> which caused redefinition build error
+        in EFL port.
+
 2013-10-16  Anders Carlsson  <andersca@apple.com>
 
         Remove Qt sandbox process code

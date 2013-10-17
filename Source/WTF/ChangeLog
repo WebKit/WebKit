@@ -1,3 +1,9 @@
+2013-10-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on EFL port after r157520 and r157523
+
+        * wtf/PassRef.h: includes <utility>
+
 2013-10-16  Darin Adler  <darin@apple.com>
 
         Add PassRef and createRefCounted so we can improve creation of RefCounted objects

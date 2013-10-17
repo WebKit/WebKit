@@ -89,16 +89,6 @@ bool ArgumentCoder<Length>::decode(ArgumentDecoder& decoder, Length& length)
     return SimpleArgumentCoder<Length>::decode(decoder, length);
 }
 
-void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder& encoder, const TransformationMatrix& transformationMatrix)
-{
-    SimpleArgumentCoder<TransformationMatrix>::encode(encoder, transformationMatrix);
-}
-
-bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder& decoder, TransformationMatrix& transformationMatrix)
-{
-    return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
-}
-
 #if ENABLE(CSS_FILTERS)
 void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, const WebCore::FilterOperations& filters)
 {
