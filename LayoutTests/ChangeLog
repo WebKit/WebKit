@@ -1,3 +1,9 @@
+2013-10-17  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening of Apple Windows port.
+
+        * platform/win/TestExpectations:
+
 2013-10-17  Robert Hogan  <robert@webkit.org>
 
         "border-collapse: collapse;" for table removes part of its border (was: Border disappears when close to some elements)

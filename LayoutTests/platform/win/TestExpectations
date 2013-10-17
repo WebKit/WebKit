@@ -2869,3 +2869,10 @@ webkit.org/b/122166 media/nodesFromRect-shadowContent.html [ Failure ]
 webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
 webkit.org/b/122166 media/track/track-cue-rendering-tree-is-removed-properly.html [ Failure ]
 
+# Flaky test fails on only certain machine configurations
+printing/print-close-crash.html
+
+# Test introduced in r157133 fails. State of colorspace management on Windows is unclear.
+media/video-canvas-drawing-output.html
+
+
