@@ -1,3 +1,21 @@
+2013-10-17  Nico Weber  <thakis@chromium.org>
+
+        Fix three bugs in the equals() implementations for css gradients.
+        https://bugs.webkit.org/show_bug.cgi?id=122987
+
+        Reviewed by Andreas Kling.
+
+        1. Linear gradients were considered equal if the first gradient has no x and y
+           position and the second has no x but does have y.
+        2. Same as 1, for radial gradients. (This doesn't happen in practice as
+           CSSParser::parseRadialGradient rejects such input, so no test for this case.)
+        3. Radial gradients without x and y position weren't considered equal even if
+           they were.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::equals):
+        (WebCore::CSSRadialGradientValue::equals):
+
 2013-10-17  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: allow front-end to trigger the system beep sound to signal an error

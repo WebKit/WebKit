@@ -726,17 +726,17 @@ bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
     if (other.m_angle)
         return false;
 
-    bool equalXorY = false;
+    bool equalXandY = false;
     if (m_firstX && m_firstY)
-        equalXorY = compareCSSValuePtr(m_firstX, other.m_firstX) && compareCSSValuePtr(m_firstY, other.m_firstY);
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && compareCSSValuePtr(m_firstY, other.m_firstY);
     else if (m_firstX)
-        equalXorY =compareCSSValuePtr(m_firstX, other.m_firstX) && !other.m_firstY;
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && !other.m_firstY;
     else if (m_firstY)
-        equalXorY = compareCSSValuePtr(m_firstY, other.m_firstY) && !other.m_firstX;
+        equalXandY = compareCSSValuePtr(m_firstY, other.m_firstY) && !other.m_firstX;
     else
-        equalXorY = !other.m_firstX || !other.m_firstY;
+        equalXandY = !other.m_firstX && !other.m_firstY;
 
-    return equalXorY && m_stops == other.m_stops;
+    return equalXandY && m_stops == other.m_stops;
 }
 
 String CSSRadialGradientValue::customCSSText() const
@@ -1138,17 +1138,17 @@ bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
     if (m_repeating != other.m_repeating)
         return false;
 
-    bool equalXorY = false;
+    bool equalXandY = false;
     if (m_firstX && m_firstY)
-        equalXorY = compareCSSValuePtr(m_firstX, other.m_firstX) && compareCSSValuePtr(m_firstY, other.m_firstY);
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && compareCSSValuePtr(m_firstY, other.m_firstY);
     else if (m_firstX)
-        equalXorY = compareCSSValuePtr(m_firstX, other.m_firstX) && !other.m_firstY;
+        equalXandY = compareCSSValuePtr(m_firstX, other.m_firstX) && !other.m_firstY;
     else if (m_firstY)
-        equalXorY = compareCSSValuePtr(m_firstY, other.m_firstY) && !other.m_firstX;
+        equalXandY = compareCSSValuePtr(m_firstY, other.m_firstY) && !other.m_firstX;
     else
-        equalXorY == !other.m_firstX || !other.m_firstY;
+        equalXandY = !other.m_firstX && !other.m_firstY;
 
-    if (!equalXorY)
+    if (!equalXandY)
         return false;
 
     bool equalShape = true;

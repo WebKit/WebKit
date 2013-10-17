@@ -1,3 +1,22 @@
+2013-10-17  Nico Weber  <thakis@chromium.org>
+
+        Fix three bugs in the equals() implementations for css gradients.
+        https://bugs.webkit.org/show_bug.cgi?id=122987
+
+        Reviewed by Andreas Kling.
+
+        1. Linear gradients were considered equal if the first gradient has no x and y
+           position and the second has no x but does have y.
+        2. Same as 1, for radial gradients. (This doesn't happen in practice as
+           CSSParser::parseRadialGradient rejects such input, so no test for this case.)
+        3. Radial gradients without x and y position weren't considered equal even if
+           they were.
+
+        Merges https://codereview.chromium.org/26147006/
+
+        * cssom/cssvalue-comparison-expected.txt:
+        * cssom/cssvalue-comparison.html:
+
 2013-10-17  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening of Apple Windows port.
