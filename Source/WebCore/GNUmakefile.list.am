@@ -728,6 +728,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTreeWalker.h \
 	DerivedSources/WebCore/JSUIEvent.cpp \
 	DerivedSources/WebCore/JSUIEvent.h \
+	DerivedSources/WebCore/JSDOMURLMediaStream.cpp \
+	DerivedSources/WebCore/JSDOMURLMediaStream.h \
 	DerivedSources/WebCore/JSValidityState.cpp \
 	DerivedSources/WebCore/JSValidityState.h \
 	DerivedSources/WebCore/JSVoidCallback.cpp \
@@ -1234,6 +1236,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCStatsReport.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
 	$(WebCore)/Modules/mediastream/SourceInfo.idl \
+	$(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
 	$(WebCore)/Modules/mediastream/VideoStreamTrack.idl \
 	$(WebCore)/Modules/navigatorcontentutils/NavigatorContentUtils.idl \
 	$(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
@@ -1938,6 +1941,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCVoidRequestImpl.h \
 	Source/WebCore/Modules/mediastream/SourceInfo.cpp \
 	Source/WebCore/Modules/mediastream/SourceInfo.h \
+	Source/WebCore/Modules/mediastream/DOMURLMediaStream.cpp \
+	Source/WebCore/Modules/mediastream/DOMURLMediaStream.h \
 	Source/WebCore/Modules/mediastream/UserMediaClient.h \
 	Source/WebCore/Modules/mediastream/UserMediaController.h \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
@@ -3691,6 +3696,7 @@ webcore_sources += \
 	Source/WebCore/html/TypeAhead.h \
 	Source/WebCore/html/URLInputType.cpp \
 	Source/WebCore/html/URLInputType.h \
+	Source/WebCore/html/URLRegistry.h \
 	Source/WebCore/html/ValidationMessage.cpp \
 	Source/WebCore/html/ValidationMessage.h \
 	Source/WebCore/html/ValidityState.h \

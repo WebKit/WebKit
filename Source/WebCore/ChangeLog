@@ -1,3 +1,13 @@
+2013-10-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Add URLMediaStream in the build
+        https://bugs.webkit.org/show_bug.cgi?id=122833
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Add mediastream/gstreamer in include directories list.
+        * GNUmakefile.list.am: Add DOMURLMediaStream files in the build.
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         Use PassRef for constructing StylePropertySets.
