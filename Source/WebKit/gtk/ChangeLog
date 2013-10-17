@@ -1,3 +1,10 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        Massage the Gtk build.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldApplyStyle):
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup
