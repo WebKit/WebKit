@@ -1,5 +1,17 @@
 2013-10-17  Mark Lam  <mark.lam@apple.com>
 
+        Remove JITStackFrame references in the C Loop LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=122950.
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITStubs.h:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * offlineasm/cloop.rb:
+
+2013-10-17  Mark Lam  <mark.lam@apple.com>
+
         Remove JITStackFrame references in JIT probes.
         https://bugs.webkit.org/show_bug.cgi?id=122947.
 

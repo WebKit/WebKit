@@ -176,10 +176,7 @@ class Address
         end
     end
     def pointerExpr
-        if base.is_a? RegisterID and base.name == "sp" 
-            offsetValue = "#{offset.value}"
-            "(ASSERT(#{offsetValue} == offsetof(JITStackFrame, vm)), &sp->vm)"
-        elsif offset.value == 0
+        if  offset.value == 0
             "#{base.clValue(:int8Ptr)}"
         elsif offset.value > 0
             "#{base.clValue(:int8Ptr)} + #{offset.value}"
@@ -248,12 +245,7 @@ class BaseIndex
         end
     end
     def pointerExpr
-        if base.is_a? RegisterID and base.name == "sp"
-            offsetValue = "(#{index.clValue} << #{scaleShift}) + #{offset.clValue})"
-            "(ASSERT(#{offsetValue} == offsetof(JITStackFrame, vm)), &sp->vm)"
-        else
-            "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift}) + #{offset.clValue}"
-        end
+        "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift}) + #{offset.clValue}"
     end
     def int8MemRef
         "*CAST<int8_t*>(#{pointerExpr})"

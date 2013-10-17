@@ -367,13 +367,7 @@ ExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_AS
 
 } // extern "C"
 
-#elif ENABLE(LLINT_C_LOOP)
-
-struct JITStackFrame {
-    VM* vm;
-};
-
-#endif // ENABLE(LLINT_C_LOOP)
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 
