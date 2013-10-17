@@ -146,6 +146,10 @@ if (!window.InspectorFrontendHost) {
             return (navigator.platform.match(/mac|win|linux/i) || ["other"])[0].toLowerCase();
         },
 
+        beep: function()
+        {
+        },
+
         // Private
 
         _sendPendingMessagesToBackendIfNeeded: function()

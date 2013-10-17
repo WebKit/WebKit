@@ -90,6 +90,8 @@ public:
 
     bool isUnderTest();
 
+    void beep();
+
     bool canInspectWorkers();
     bool canSaveAs();
 

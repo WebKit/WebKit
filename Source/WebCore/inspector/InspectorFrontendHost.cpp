@@ -52,6 +52,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptFunctionCall.h"
+#include "Sound.h"
 #include "UserGestureIndicator.h"
 #include <wtf/StdLibExtras.h>
 
@@ -320,6 +321,11 @@ void InspectorFrontendHost::removeFileSystem(const String& fileSystemPath)
 bool InspectorFrontendHost::isUnderTest()
 {
     return m_client && m_client->isUnderTest();
+}
+
+void InspectorFrontendHost::beep()
+{
+    systemBeep();
 }
 
 bool InspectorFrontendHost::canSaveAs()

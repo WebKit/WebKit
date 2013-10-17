@@ -1,3 +1,15 @@
+2013-10-17  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: allow front-end to trigger the system beep sound to signal an error
+        https://bugs.webkit.org/show_bug.cgi?id=122955
+
+        Reviewed by Timothy Hatcher.
+
+        Provide a stub method for the new InspectorFrontendHost.beep() method.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (WebInspector.InspectorFrontendHostStub.prototype.beep):
+
 2013-10-15  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: can't select text inside a text node

@@ -1,3 +1,17 @@
+2013-10-17  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: allow front-end to trigger the system beep sound to signal an error
+        https://bugs.webkit.org/show_bug.cgi?id=122955
+
+        Reviewed by Timothy Hatcher.
+
+        New beep() method exposed on InspectorFrontendHost calling into WebCore's systemBeep().
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::beep):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2013-10-17  Anders Carlsson  <andersca@apple.com>
 
         Remove PlatformCAAnimation::supportsValueFunction()

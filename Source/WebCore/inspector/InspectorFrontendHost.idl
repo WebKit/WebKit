@@ -77,6 +77,8 @@
 
     boolean isUnderTest();
 
+    void beep();
+
     // Deprecated
     boolean canInspectWorkers();
     boolean canSaveAs();
