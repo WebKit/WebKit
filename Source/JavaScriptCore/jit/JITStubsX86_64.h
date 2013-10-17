@@ -90,15 +90,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm (
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "movq %rsp, %rdi" "\n"
-    "call " LOCAL_REFERENCE(cti_vm_throw) "\n"
-    "int3" "\n"
-);
-
-asm (
 ".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
 HIDE_SYMBOL(ctiVMHandleException) "\n"
 SYMBOL_STRING(ctiVMHandleException) ":" "\n"

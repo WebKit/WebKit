@@ -1615,6 +1615,17 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     }
 }
 
+JITHandlerEncoded JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExceptionValue)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    JSValue exceptionValue = JSValue::decode(encodedExceptionValue);
+    vm->throwException(exec, exceptionValue);
+    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue);
+    return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
+}
+
 JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState* exec)
 {
     VM* vm = &exec->vm();

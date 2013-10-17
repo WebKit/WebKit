@@ -174,14 +174,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm (
-".text" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-INLINE_ARM_FUNCTION(ctiVMThrowTrampoline)
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "mov r0, sp" "\n"
-    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
-
 // Both has the same return sequence
 ".text" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
@@ -393,18 +385,6 @@ __asm void ctiTrampolineEnd()
 {
 }
 
-__asm void ctiVMThrowTrampoline()
-{
-    ARM
-    PRESERVE8
-    mov r0, sp
-    bl cti_vm_throw
-    add sp, sp, # PRESERVEDR4_OFFSET
-    ldmia sp!, {r4-r6, r8-r11, lr}
-    add sp, sp, #12
-    bx lr
-}
-
 __asm void ctiOpThrowNotCaught()
 {
     ARM
@@ -454,7 +434,6 @@ MSVC_BEGIN(    AREA Trampoline, CODE)
 MSVC_BEGIN()
 MSVC_BEGIN(    EXPORT ctiTrampoline)
 MSVC_BEGIN(    EXPORT ctiTrampolineEnd)
-MSVC_BEGIN(    EXPORT ctiVMThrowTrampoline)
 MSVC_BEGIN(    EXPORT ctiOpThrowNotCaught)
 MSVC_BEGIN(    EXPORT ctiVMHandleException)
 MSVC_BEGIN(    IMPORT cti_vm_handle_exception)
@@ -474,16 +453,6 @@ MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
 MSVC_BEGIN(ctiTrampolineEnd)
 MSVC_BEGIN(ctiTrampoline ENDP)
-MSVC_BEGIN()
-MSVC_BEGIN(ctiVMThrowTrampoline PROC)
-MSVC_BEGIN(    mov r0, sp)
-MSVC_BEGIN(    bl cti_vm_throw)
-MSVC_BEGIN(ctiOpThrowNotCaught)
-MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    ldmia sp!, {r4-r6, r8-r11, lr})
-MSVC_BEGIN(    add sp, sp, #12)
-MSVC_BEGIN(    bx lr)
-MSVC_BEGIN(ctiVMThrowTrampoline ENDP)
 MSVC_BEGIN()
 MSVC_BEGIN(ctiVMHandleException PROC)
 MSVC_BEGIN(    mov r0, r5)

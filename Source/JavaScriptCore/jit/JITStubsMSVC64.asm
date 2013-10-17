@@ -28,7 +28,6 @@ EXTERN cti_vm_handle_exception : near
 EXTERN getHostCallReturnValueWithExecState : near
 
 PUBLIC ctiTrampoline
-PUBLIC ctiVMThrowTrampoline
 PUBLIC ctiOpThrowNotCaught
 PUBLIC getHostCallReturnValue
 
@@ -65,12 +64,6 @@ ctiTrampoline PROC
     pop rbp
     ret
 ctiTrampoline ENDP
-
-ctiVMThrowTrampoline PROC
-    mov rcx, rsp
-    call cti_vm_throw
-    int 3
-ctiVMThrowTrampoline ENDP
 
 ctiVMHandleException PROC
 	sub rsp, 16

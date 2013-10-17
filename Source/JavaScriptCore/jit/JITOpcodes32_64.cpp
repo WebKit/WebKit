@@ -812,16 +812,12 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
-    unsigned exception = currentInstruction[1].u.operand;
-    JITStubCall stubCall(this, cti_op_throw);
-    stubCall.addArgument(exception);
-    stubCall.call();
-
-#ifndef NDEBUG
-    // cti_op_throw always changes it's return address,
-    // this point in the code should never be reached.
-    breakpoint();
-#endif
+    ASSERT(regT0 == returnValueRegister);
+    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
+    callOperation(operationThrow, regT1, regT0);
+    // After operationThrow returns, returnValueRegister (regT0) has the handler's callFrame and
+    // returnValue2Register has the handler's entry address.
+    jump(returnValue2Register);
 }
 
 void JIT::emit_op_get_pnames(Instruction* currentInstruction)
@@ -971,10 +967,10 @@ void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    // cti_op_throw returns the callFrame for the handler.
+    // operationThrow returns the callFrame for the handler.
     move(regT0, callFrameRegister);
 
-    // Now store the exception returned by cti_op_throw.
+    // Now store the exception returned by operationThrow.
     loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(struct JITStackFrame, vm)), regT3);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
     load32(Address(regT3, VM::exceptionOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);

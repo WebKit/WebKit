@@ -245,29 +245,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 asm (
 ".text" "\n"
 ".align 2" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-".thumb" "\n"
-".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "mov r0, sp" "\n"
-    "bl " LOCAL_REFERENCE(cti_vm_throw) "\n"
-    "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
-    "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
-    "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
-    "ldr r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
-    "ldr r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
-    "ldr r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
-    "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
-    "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
-    "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
-    "bx lr" "\n"
-);
-
-asm (
-".text" "\n"
-".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
 HIDE_SYMBOL(ctiVMHandleException) "\n"
 ".thumb" "\n"
@@ -502,24 +479,6 @@ __asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*
     mov r5, r2
     mov r6, #512
     blx r0
-    ldr r11, [sp, # PRESERVED_R11_OFFSET ]
-    ldr r10, [sp, # PRESERVED_R10_OFFSET ]
-    ldr r9, [sp, # PRESERVED_R9_OFFSET ]
-    ldr r8, [sp, # PRESERVED_R8_OFFSET ]
-    ldr r7, [sp, # PRESERVED_R7_OFFSET ]
-    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
-    ldr r5, [sp, # PRESERVED_R5_OFFSET ]
-    ldr r4, [sp, # PRESERVED_R4_OFFSET ]
-    ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
-    add sp, sp, # FIRST_STACK_ARGUMENT
-    bx lr
-}
-
-__asm void ctiVMThrowTrampoline()
-{
-    PRESERVE8
-    mov r0, sp
-    bl cti_vm_throw
     ldr r11, [sp, # PRESERVED_R11_OFFSET ]
     ldr r10, [sp, # PRESERVED_R10_OFFSET ]
     ldr r9, [sp, # PRESERVED_R9_OFFSET ]

@@ -83,30 +83,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm volatile (
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "mov.l .L2" SYMBOL_STRING(cti_vm_throw) ",r0" "\n"
-    "mov r15, r4" "\n"
-    "mov.l @(r0,r12),r11" "\n"
-    "jsr @r11" "\n"
-    "nop" "\n"
-    "add #" STRINGIZE_VALUE_OF(SAVED_R8_OFFSET) ", r15" "\n"
-    "mov.l @r15+,r8" "\n"
-    "mov.l @r15+,r9" "\n"
-    "mov.l @r15+,r10" "\n"
-    "mov.l @r15+,r11" "\n"
-    "mov.l @r15+,r13" "\n"
-    "lds.l @r15+,pr" "\n"
-    "mov.l @r15+,r14" "\n"
-    "add #12, r15" "\n"
-    "rts" "\n"
-    "nop" "\n"
-    ".align 2" "\n"
-    ".L2" SYMBOL_STRING(cti_vm_throw) ":.long " SYMBOL_STRING(cti_vm_throw) "@GOT \n"
-);
-
-asm volatile (
 ".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
 HIDE_SYMBOL(ctiVMHandleException) "\n"
 SYMBOL_STRING(ctiVMHandleException) ":" "\n"

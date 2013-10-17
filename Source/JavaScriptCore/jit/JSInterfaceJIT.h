@@ -62,6 +62,7 @@ namespace JSC {
         // however the code will still function correctly.
 #if CPU(X86_64)
         static const RegisterID returnValueRegister = X86Registers::eax;
+        static const RegisterID returnValue2Register = X86Registers::edx;
         static const RegisterID cachedResultRegister = X86Registers::eax;
 #if !OS(WINDOWS)
         static const RegisterID firstArgumentRegister = X86Registers::edi;

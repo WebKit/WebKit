@@ -104,7 +104,7 @@ HIDE_SYMBOL(ctiVMHandleException) "\n"
 SYMBOL_STRING(ctiVMHandleException) ":" "\n"
     "mov x0, x25" "\n"
     "bl " LOCAL_REFERENCE(cti_vm_handle_exception) "\n"
-    // When cti_vm_throw_slowpath returns, x0 has callFrame and x1 has handler address
+    // When cti_vm_handle_exception returns, x0 has callFrame and x1 has handler address
     "mov x25, x0" "\n"
     "br x1" "\n"
 
@@ -127,17 +127,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 ".align 2" "\n"
 HIDE_SYMBOL(ctiTrampolineEnd) "\n"
 SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
-);
-
-asm (
-".section __TEXT,__text,regular,pure_instructions" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
-".align 2" "\n"
-HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
-SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "mov x0, sp" "\n"
-    "bl " LOCAL_REFERENCE(cti_vm_throw) "\n"
-    "hlt 0xdead" "\n" // Should not be reached!
 );
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \

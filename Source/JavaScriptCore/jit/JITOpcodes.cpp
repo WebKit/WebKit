@@ -483,15 +483,12 @@ void JIT::emit_op_bitor(Instruction* currentInstruction)
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_throw);
-    stubCall.addArgument(currentInstruction[1].u.operand, regT2);
-    stubCall.call();
     ASSERT(regT0 == returnValueRegister);
-#ifndef NDEBUG
-    // cti_op_throw always changes it's return address,
-    // this point in the code should never be reached.
-    breakpoint();
-#endif
+    emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
+    callOperation(operationThrow, regT0);
+    // After operationThrow returns, returnValueRegister (regT0) has the handler's callFrame and
+    // returnValue2Register has the handler's entry address.
+    jump(returnValue2Register);
 }
 
 void JIT::emit_op_get_pnames(Instruction* currentInstruction)

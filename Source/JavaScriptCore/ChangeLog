@@ -1,3 +1,37 @@
+2013-10-17  Michael Saboff  <msaboff@apple.com>
+
+        Transition cti_op_throw and cti_vm_throw to a JIT operation
+        https://bugs.webkit.org/show_bug.cgi?id=122931
+
+        Reviewed by Filip Pizlo.
+
+        Moved cti_op_throw to operationThrow.  Made the caller responsible for jumping to the
+        catch handler.  Eliminated cti_op_throw_static_error, cti_vm_throw, ctiVMThrowTrampoline()
+        and their callers as it is now dead code.  There is some work needed on the Microsoft X86
+        callOperation to handle the need to provide space for structure return value.
+
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARM64.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        * jit/JSInterfaceJIT.h:
+
 2013-10-17  Mark Lam  <mark.lam@apple.com>
 
         Remove JITStackFrame references in the C Loop LLINT.

@@ -334,7 +334,6 @@ struct JITStackFrame {
 #define JIT_STUB
 #endif
 
-extern "C" void ctiVMThrowTrampoline();
 extern "C" void ctiVMHandleException();
 extern "C" void ctiOpThrowNotCaught();
 extern "C" EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*);
@@ -355,9 +354,6 @@ extern "C" void ctiMasmProbeTrampoline();
 void performPlatformSpecificJITAssertions(VM*);
 
 extern "C" {
-void JIT_STUB cti_op_throw_static_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void* JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #if USE(JSVALUE32_64)
 EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;

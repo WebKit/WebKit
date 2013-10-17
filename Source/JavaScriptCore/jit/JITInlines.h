@@ -291,6 +291,34 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EZ operatio
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
+#if USE(JSVALUE64)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(Jhe_JITOperation_EJ operation, GPRReg arg1)
+{
+#if COMPILER(MSVC) && CPU(X86)
+    // Need to make space on stack for return value, use that address as first arg (in register),
+    // move callFrameRegister to second argument register and push the passed arg1.
+    updateTopCallFrame();
+    MacroAssembler::Call call = appendCall(operation);
+    // These may not be pops:
+    // pop(regT0); // Restore arg1 slot
+    // pop(regT0); // Get handler's call frame
+    // pop(regT1); // Get handler's address
+    return call;
+#else
+    setupArgumentsWithExecState(arg1);
+    updateTopCallFrame();
+    return appendCall(operation);
+#endif
+}
+#else
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(Jhe_JITOperation_EJ operation, GPRReg arg1Tag, GPRReg arg1Payload)
+{
+    setupArgumentsWithExecState(arg1Payload, arg1Tag);
+    updateTopCallFrame();
+    return appendCall(operation);
+}
+#endif
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(P_JITOperation_EZ operation, int32_t op)
 {
     setupArgumentsWithExecState(TrustedImm32(op));
