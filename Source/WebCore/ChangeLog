@@ -1,3 +1,20 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderMathMLSpace always has a MathMLTextElement.
+        <https://webkit.org/b/122992>
+
+        The renderer is never anonymous and always has a corresponding
+        MathMLTextElement. Overload element() with a tighter return type.
+
+        Also marked the class FINAL and made most methods private.
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::RenderMathMLSpace):
+        (WebCore::RenderMathMLSpace::updateFromElement):
+        * rendering/mathml/RenderMathMLSpace.h:
+
 2013-10-17  Tim Horton  <timothy_horton@apple.com>
 
         PlatformCALayer constructor should take layer type as an argument

@@ -28,28 +28,26 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLTextElement.h"
 #include "RenderMathMLBlock.h"
 
 namespace WebCore {
     
-class RenderMathMLSpace : public RenderMathMLBlock {
+class RenderMathMLSpace FINAL : public RenderMathMLBlock {
 public:
-    explicit RenderMathMLSpace(Element&);
+    explicit RenderMathMLSpace(MathMLTextElement&);
+    MathMLTextElement& element() { return static_cast<MathMLTextElement&>(nodeForNonAnonymous()); }
 
+private:
+    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
+    virtual bool isRenderMathMLSpace() const OVERRIDE { return true; }
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE { return false; }
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void updateFromElement() OVERRIDE;
     virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void updateLogicalHeight() OVERRIDE;
-
-private:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
-    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLSpace (anonymous)" : "RenderMathMLSpace"; }
-
-    virtual bool isRenderMathMLSpace() const OVERRIDE { return true; }
-
-    virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE { return false; }
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
-
-    virtual void updateFromElement() OVERRIDE;
 
     LayoutUnit m_width;
     LayoutUnit m_height;
