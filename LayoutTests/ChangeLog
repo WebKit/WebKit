@@ -1,3 +1,21 @@
+2013-10-17  Robert Hogan  <robert@webkit.org>
+
+        "border-collapse: collapse;" for table removes part of its border (was: Border disappears when close to some elements)
+        https://bugs.webkit.org/show_bug.cgi?id=8914
+
+        Reviewed by David Hyatt.
+
+        * fast/table/paint-section-borders-without-cells-expected.html: Added.
+        * fast/table/paint-section-borders-without-cells-rtl-expected.html: Added.
+        * fast/table/paint-section-borders-without-cells-rtl.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-lr-expected.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-lr-rtl-expected.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-lr-rtl.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-lr.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-rl-expected.html: Added.
+        * fast/table/paint-section-borders-without-cells-vertical-rl.html: Added.
+        * fast/table/paint-section-borders-without-cells.html: Added.
+
 2013-10-17  Andres Gomez  <agomez@igalia.com>
 
         certain http media tests doesn't receive the expected "Content-Length" header

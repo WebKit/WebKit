@@ -1,3 +1,31 @@
+2013-10-17  Robert Hogan  <robert@webkit.org>
+
+        "border-collapse: collapse;" for table removes part of its border (was: Border disappears when close to some elements)
+        https://bugs.webkit.org/show_bug.cgi?id=8914
+
+        Reviewed by David Hyatt.
+
+        The table section's side of a collapsed border won't get painted if there are no cells there to paint it. So instead
+        of relying solely on cells to paint the collapsed border paint the appropriate section of the border if there's no
+        cell to take care of it.
+
+        Tests: fast/table/paint-section-borders-without-cells-rtl.html
+               fast/table/paint-section-borders-without-cells-vertical-lr-rtl.html
+               fast/table/paint-section-borders-without-cells-vertical-lr.html
+               fast/table/paint-section-borders-without-cells-vertical-rl.html
+               fast/table/paint-section-borders-without-cells.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintRowGroupBorder):
+        (WebCore::RenderTableSection::offsetLeftForRowGroupBorder):
+        (WebCore::RenderTableSection::offsetTopForRowGroupBorder):
+        (WebCore::RenderTableSection::verticalRowGroupBorderHeight):
+        (WebCore::RenderTableSection::horizontalRowGroupBorderWidth):
+        (WebCore::RenderTableSection::paintRowGroupBorderIfRequired):
+        (WebCore::physicalBorderForDirection):
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/RenderTableSection.h:
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         StyleRuleFoo::mutableProperties() should return a reference.
