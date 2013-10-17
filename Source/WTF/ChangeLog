@@ -1,3 +1,13 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        Make it possible to assign a PassRef to a RefPtr.
+        <https://webkit.org/b/122943>
+
+        We have to use std::move when constructing a RefPtr from a PassRef
+        since there is no copy constructor for the latter.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on EFL port after r157520 and r157523

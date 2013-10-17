@@ -156,7 +156,7 @@ namespace WTF {
 
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(PassRef<U> reference)
     {
-        RefPtr ptr = reference;
+        RefPtr ptr = std::move(reference);
         swap(ptr);
         return *this;
     }

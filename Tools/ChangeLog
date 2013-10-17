@@ -1,3 +1,13 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        Make it possible to assign a PassRef to a RefPtr.
+        <https://webkit.org/b/122943>
+
+        Added a small API test for RefPtr=(PassRef) so we know this code
+        will compile (and work.)
+
+        Reviewed by Antti Koivisto.
+
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         We need test coverage for just the Baseline JIT

@@ -116,6 +116,19 @@ TEST(WTF_RefPtr, Basic)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
+TEST(WTF_RefPtr, AssignPassRefToRefPtr)
+{
+    DerivedRefLogger a("a");
+    {
+        PassRef<RefLogger> passRef(a);
+        RefPtr<RefLogger> ptr = std::move(passRef);
+        ASSERT_EQ(&a, ptr.get());
+        ptr.release();
+        ASSERT_EQ(nullptr, ptr.get());
+    }
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
 TEST(WTF_RefPtr, Adopt)
 {
     DerivedRefLogger a("a");
