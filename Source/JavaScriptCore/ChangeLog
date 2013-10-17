@@ -1,3 +1,19 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of JSGlobalObject to JSONObject constructor.
+        <https://webkit.org/b/122999>
+
+        JSONObject was only use the JSGlobalObject to grab at the VM.
+        Dodge a few loads by passing the VM directly instead.
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::JSONObject):
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create):
+
 2013-10-17  Geoffrey Garen  <ggaren@apple.com>
 
         Removed the JITStackFrame struct

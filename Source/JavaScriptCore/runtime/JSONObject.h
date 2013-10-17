@@ -36,10 +36,10 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        static JSONObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        static JSONObject* create(VM& vm, Structure* structure)
         {
-            JSONObject* object = new (NotNull, allocateCell<JSONObject>(*exec->heap())) JSONObject(globalObject, structure);
-            object->finishCreation(globalObject);
+            JSONObject* object = new (NotNull, allocateCell<JSONObject>(vm.heap)) JSONObject(vm, structure);
+            object->finishCreation(vm);
             return object;
         }
         
@@ -51,11 +51,11 @@ namespace JSC {
         DECLARE_INFO;
 
     protected:
-        void finishCreation(JSGlobalObject*);
+        void finishCreation(VM&);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
     private:
-        JSONObject(JSGlobalObject*, Structure*);
+        JSONObject(VM&, Structure*);
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
     };

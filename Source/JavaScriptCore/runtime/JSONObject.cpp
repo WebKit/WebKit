@@ -54,14 +54,14 @@ static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
 
 namespace JSC {
 
-JSONObject::JSONObject(JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalObject->vm(), structure)
+JSONObject::JSONObject(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
 {
 }
 
-void JSONObject::finishCreation(JSGlobalObject* globalObject)
+void JSONObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 }
 
