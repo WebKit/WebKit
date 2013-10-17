@@ -380,8 +380,6 @@ void JITCompiler::compileFunction()
     // we need to call out to a helper function to check whether more space is available.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     stackCheck.link(this);
-    move(stackPointerRegister, GPRInfo::argumentGPR0);
-    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
     emitStoreCodeOrigin(CodeOrigin(0));
     m_speculative->callOperationWithCallFrameRollbackOnException(operationStackCheck, m_codeBlock);
@@ -397,8 +395,6 @@ void JITCompiler::compileFunction()
 
     load32(AssemblyHelpers::payloadFor((VirtualRegister)JSStack::ArgumentCount), GPRInfo::regT1);
     branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
-    move(stackPointerRegister, GPRInfo::argumentGPR0);
-    poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     emitStoreCodeOrigin(CodeOrigin(0));
     m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
     branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);

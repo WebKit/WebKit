@@ -1,5 +1,17 @@
 2013-10-17  Michael Saboff  <msaboff@apple.com>
 
+        Remove saving callFrameRegister to JITStackFrame in JITCompiler::compileFunction()
+        https://bugs.webkit.org/show_bug.cgi?id=122974
+
+        Reviewed by Geoffrey Garen.
+
+        Eliminated unneeded storing to JITStackFrame.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+
+2013-10-17  Michael Saboff  <msaboff@apple.com>
+
         Transition cti_op_throw and cti_vm_throw to a JIT operation
         https://bugs.webkit.org/show_bug.cgi?id=122931
 
