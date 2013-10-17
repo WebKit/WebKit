@@ -23,7 +23,7 @@
     header("Etag: " . '"' . $fileSize . "-" . filemtime($fileName) . '"');
     header("Content-Type: " . $type);
     header("Accept-Ranges: bytes");
-    header("Content-Length: " . ($end - $start) + 1);
+    header("Content-Length: " . ($end - $start + 1));
     if ($contentRange)
 		header("Content-Range: bytes " . $start . "-" . $end . "/" . $fileSize); 
     header("Connection: close");

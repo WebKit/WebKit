@@ -1,3 +1,15 @@
+2013-10-17  Andres Gomez  <agomez@igalia.com>
+
+        certain http media tests doesn't receive the expected "Content-Length" header
+        https://bugs.webkit.org/show_bug.cgi?id=122965
+
+        Reviewed by Eric Carlson.
+
+        Fixed PHP syntax so "Content-Length" HTTP Header is included in
+        the response.
+
+        * http/tests/media/resources/serve-video.php:
+
 2013-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Anonymous nested regions
