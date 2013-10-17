@@ -57,10 +57,16 @@ public:
 private:
     int size() const { return m_intervalLists.size(); }
 
-    const IntShapeIntervals& getIntervals(int y) const
+    const IntShapeIntervals& intervalsAt(int y) const
     {
         ASSERT(y >= 0 && y < size());
         return m_intervalLists[y];
+    }
+
+    IntShapeInterval limitIntervalAt(int y) const
+    {
+        const IntShapeIntervals& intervals = intervalsAt(y);
+        return intervals.size() ? IntShapeInterval(intervals[0].x1(), intervals.last().x2()) : IntShapeInterval();
     }
 
     bool contains(const IntRect&) const;

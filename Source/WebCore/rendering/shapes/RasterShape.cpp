@@ -37,7 +37,7 @@ namespace WebCore {
 class MarginIntervalGenerator {
 public:
     MarginIntervalGenerator(unsigned radius);
-    void set(int y, int x1, int x2);
+    void set(int y, const IntShapeInterval&);
     IntShapeInterval intervalAt(int y) const;
 
 private:
@@ -58,12 +58,12 @@ MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
         m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));
 }
 
-void MarginIntervalGenerator::set(int y, int x1, int x2)
+void MarginIntervalGenerator::set(int y, const IntShapeInterval& interval)
 {
-    ASSERT(y >= 0 && x1 >= 0 && x2 > x1);
+    ASSERT(y >= 0 && interval.x1() >= 0);
     m_y = y;
-    m_x1 = x1;
-    m_x2 = x2;
+    m_x1 = interval.x1();
+    m_x2 = interval.x2();
 }
 
 IntShapeInterval MarginIntervalGenerator::intervalAt(int y) const
@@ -114,7 +114,7 @@ bool RasterShapeIntervals::contains(const IntRect& rect) const
 
     const IntShapeInterval& rectInterval = IntShapeInterval(rect.x(), rect.maxX());
     for (int y = rect.y(); y < rect.maxY(); y++) {
-        if (!shapeIntervalsContain(getIntervals(y), rectInterval))
+        if (!shapeIntervalsContain(intervalsAt(y), rectInterval))
             return false;
     }
 
@@ -133,14 +133,14 @@ bool RasterShapeIntervals::getIntervalX1Values(int y1, int y2, int minIntervalWi
     ASSERT(y1 >= 0 && y2 > y1);
 
     for (int y = y1; y < y2;  y++) {
-        if (getIntervals(y).isEmpty())
+        if (intervalsAt(y).isEmpty())
             return false;
     }
 
-    appendX1Values(getIntervals(y1), minIntervalWidth, result);
+    appendX1Values(intervalsAt(y1), minIntervalWidth, result);
     for (int y = y1 + 1; y < y2;  y++) {
-        if (getIntervals(y) != getIntervals(y - 1))
-            appendX1Values(getIntervals(y), minIntervalWidth, result);
+        if (intervalsAt(y) != intervalsAt(y - 1))
+            appendX1Values(intervalsAt(y), minIntervalWidth, result);
     }
 
     return true;
@@ -186,14 +186,14 @@ void RasterShapeIntervals::getIncludedIntervals(int y1, int y2, IntShapeInterval
         return;
 
     for (int y = y1; y < y2;  y++) {
-        if (getIntervals(y).isEmpty())
+        if (intervalsAt(y).isEmpty())
             return;
     }
 
-    result = getIntervals(y1);
+    result = intervalsAt(y1);
     for (int y = y1 + 1; y < y2 && !result.isEmpty();  y++) {
         IntShapeIntervals intervals;
-        IntShapeInterval::intersectShapeIntervals(result, getIntervals(y), intervals);
+        IntShapeInterval::intersectShapeIntervals(result, intervalsAt(y), intervals);
         result.swap(intervals);
     }
 }
@@ -206,33 +206,47 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
         return;
 
     for (int y = y1; y < y2;  y++) {
-        if (getIntervals(y).isEmpty())
+        if (intervalsAt(y).isEmpty())
             return;
     }
 
-    result = getIntervals(y1);
+    result = intervalsAt(y1);
     for (int y = y1 + 1; y < y2;  y++) {
         IntShapeIntervals intervals;
-        IntShapeInterval::uniteShapeIntervals(result, getIntervals(y), intervals);
+        IntShapeInterval::uniteShapeIntervals(result, intervalsAt(y), intervals);
         result.swap(intervals);
     }
 }
 
 // Currently limited to computing the margin boundary for shape-outside for floats, see https://bugs.webkit.org/show_bug.cgi?id=116348.
+
 PassOwnPtr<RasterShapeIntervals> RasterShapeIntervals::computeShapeMarginIntervals(unsigned margin) const
 {
     OwnPtr<RasterShapeIntervals> result = adoptPtr(new RasterShapeIntervals(size() + margin));
-    MarginIntervalGenerator intervalGenerator(margin);
+    MarginIntervalGenerator marginIntervalGenerator(margin);
 
     for (int y = bounds().y(); y < bounds().maxY(); ++y) {
-        const IntShapeIntervals& intervalsAtY = getIntervals(y);
-        if (intervalsAtY.isEmpty())
+        const IntShapeInterval& intervalAtY = limitIntervalAt(y);
+        if (intervalAtY.isEmpty())
             continue;
+
+        marginIntervalGenerator.set(y, intervalAtY);
         int marginY0 = std::max(0, clampToPositiveInteger(y - margin));
         int marginY1 = std::min(result->size() - 1, clampToPositiveInteger(y + margin));
-        intervalGenerator.set(y, intervalsAtY[0].x1(), intervalsAtY.last().x2());
-        for (int marginY = marginY0; marginY <= marginY1; ++marginY)
-            result->uniteMarginInterval(marginY, intervalGenerator.intervalAt(marginY));
+
+        for (int marginY = y - 1; marginY >= marginY0; --marginY) {
+            if (limitIntervalAt(marginY).contains(intervalAtY))
+                break;
+            result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
+        }
+
+        result->uniteMarginInterval(y, marginIntervalGenerator.intervalAt(y));
+
+        for (int marginY = y + 1; marginY <= marginY1; ++marginY) {
+            if (marginY < size() && limitIntervalAt(marginY).contains(intervalAtY))
+                break;
+            result->uniteMarginInterval(marginY, marginIntervalGenerator.intervalAt(marginY));
+        }
     }
 
     return result.release();

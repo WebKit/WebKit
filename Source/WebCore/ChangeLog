@@ -1,3 +1,36 @@
+2013-10-17  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Improve the performance of image valued shapes with large shape-margins
+        https://bugs.webkit.org/show_bug.cgi?id=122613
+
+        Reviewed by Andreas Kling.
+
+        The cost of computing the shape-margin boundary of an image-valued shape-outside
+        is now proportional to (2 * shape-margin + image.height) rather than
+        (2 * shape-margin * image.height). The performance improvement comes from skipping
+        sequences of rounded-rectangle intervals that will not contribute to the final
+        result. Each non-empty row in the original image contributes one rounded-rectangle
+        whose corner radius is shape-margin, height is 2 * shape-margin, and width is
+        2 * shape-margin plus the width of the limits of the intervals on the row.
+
+        Renamed private method RasterShape::getIntervals() to intervalsAt() to be a little
+        more consistent with WebKit naming conventions.
+
+        There are no new tests since is just an internal refactoring.
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::MarginIntervalGenerator::set): Changed the x1,x2 parameters to an IntShapeInterval.
+        (WebCore::RasterShapeIntervals::contains): Refactor for the getIntervals() => intervalsAt() rename.
+        (WebCore::RasterShapeIntervals::getIntervalX1Values): Ditto.
+        (WebCore::RasterShapeIntervals::getIncludedIntervals): Ditto.
+        (WebCore::RasterShapeIntervals::getExcludedIntervals): Ditto.
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals): Performance tuning.
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::intervalsAt): Renamed getIntervals().
+        (WebCore::RasterShapeIntervals::limitIntervalAt): Return the min/max limits of the intervals at Y.
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::isEmpty): Added.
+
 2013-10-15  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Add URLMediaStream in the build

@@ -48,6 +48,7 @@ public:
     T x1() const { return m_x1; }
     T x2() const { return m_x2; }
     T width() const { return m_x2 - m_x1; }
+    bool isEmpty() const { return m_x1 == m_x2; }
 
     void setX1(T x1)
     {
