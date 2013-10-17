@@ -570,7 +570,9 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
     }
     
-    if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching() || !slot.isCacheableValue())
+    if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()
+        || baseValue.asCell()->structure()->isDictionary()
+        || !slot.isCacheableValue())
         return false;
 
     PropertyOffset offset = slot.cachedOffset();

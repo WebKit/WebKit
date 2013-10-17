@@ -1,5 +1,17 @@
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Prototype chain repatching in the polymorphic case fails to check if the receiver is a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=122938
+
+        Reviewed by Sam Weinig.
+        
+        This fixes jsc-layout-tests.yaml/js/script-tests/dictionary-prototype-caching.js.layout-no-llint.
+
+        * jit/Repatch.cpp:
+        (JSC::tryBuildGetByIDList):
+
+2013-10-16  Filip Pizlo  <fpizlo@apple.com>
+
         JIT::appendCall() needs to killLastResultRegister() or equivalent since there's some really bad code that expects it
         https://bugs.webkit.org/show_bug.cgi?id=122937
 
