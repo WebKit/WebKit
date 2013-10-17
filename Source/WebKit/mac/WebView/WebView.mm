@@ -5815,10 +5815,11 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
     WebFrame *webFrame = [self _selectedOrMainFrame];
-    Frame* coreFrame = core(webFrame);
-    // FIXME: We shouldn't have to make a copy here.
-    if (coreFrame)
-        coreFrame->editor().applyStyle(core(style)->copyProperties().get());
+    if (Frame* coreFrame = core(webFrame)) {
+        // FIXME: We shouldn't have to make a copy here.
+        Ref<MutableStylePropertySet> properties(core(style)->copyProperties());
+        coreFrame->editor().applyStyle(&properties.get());
+    }
 }
 
 @end

@@ -94,16 +94,16 @@ public:
     String getPropertyShorthand(CSSPropertyID) const;
     bool isPropertyImplicit(CSSPropertyID) const;
 
-    PassRefPtr<MutableStylePropertySet> copyBlockProperties() const;
+    PassRef<MutableStylePropertySet> copyBlockProperties() const;
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, StyleSheetContents* contextStyleSheet) const;
 
-    PassRefPtr<MutableStylePropertySet> mutableCopy() const;
-    PassRefPtr<ImmutableStylePropertySet> immutableCopyIfNeeded() const;
+    PassRef<MutableStylePropertySet> mutableCopy() const;
+    PassRef<ImmutableStylePropertySet> immutableCopyIfNeeded() const;
 
-    PassRefPtr<MutableStylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
+    PassRef<MutableStylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
 
@@ -156,7 +156,7 @@ private:
 class ImmutableStylePropertySet : public StylePropertySet {
 public:
     ~ImmutableStylePropertySet();
-    static PassRefPtr<ImmutableStylePropertySet> create(const CSSProperty* properties, unsigned count, CSSParserMode);
+    static PassRef<ImmutableStylePropertySet> create(const CSSProperty* properties, unsigned count, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
 
@@ -181,8 +181,8 @@ inline const StylePropertyMetadata* ImmutableStylePropertySet::metadataArray() c
 
 class MutableStylePropertySet : public StylePropertySet {
 public:
-    static PassRefPtr<MutableStylePropertySet> create(CSSParserMode = CSSQuirksMode);
-    static PassRefPtr<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
+    static PassRef<MutableStylePropertySet> create(CSSParserMode = CSSQuirksMode);
+    static PassRef<MutableStylePropertySet> create(const CSSProperty* properties, unsigned count);
 
     ~MutableStylePropertySet();
 

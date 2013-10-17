@@ -1441,14 +1441,14 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
     m_selectorListForParseSelector = 0;
 }
 
-PassRefPtr<ImmutableStylePropertySet> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
+PassRef<ImmutableStylePropertySet> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
 {
     CSSParserContext context = element->document().elementSheet().contents()->parserContext();
     context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
     return CSSParser(context).parseDeclaration(string, element->document().elementSheet().contents());
 }
 
-PassRefPtr<ImmutableStylePropertySet> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
+PassRef<ImmutableStylePropertySet> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1459,9 +1459,9 @@ PassRefPtr<ImmutableStylePropertySet> CSSParser::parseDeclaration(const String& 
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
 
-    RefPtr<ImmutableStylePropertySet> style = createStylePropertySet();
+    PassRef<ImmutableStylePropertySet> style = createStylePropertySet();
     clearProperties();
-    return style.release();
+    return style;
 }
 
 
@@ -1552,7 +1552,7 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
     }
 }
 
-PassRefPtr<ImmutableStylePropertySet> CSSParser::createStylePropertySet()
+PassRef<ImmutableStylePropertySet> CSSParser::createStylePropertySet()
 {
     BitArray<numCSSProperties> seenProperties;
     size_t unusedEntries = m_parsedProperties.size();

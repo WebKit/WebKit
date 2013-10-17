@@ -38,9 +38,9 @@ class WebKitCSSKeyframesRule;
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleKeyframe> create(PassRefPtr<StylePropertySet> properties)
+    static PassRefPtr<StyleKeyframe> create(PassRef<StylePropertySet> properties)
     {
-        return adoptRef(new StyleKeyframe(properties));
+        return adoptRef(new StyleKeyframe(std::move(properties)));
     }
     ~StyleKeyframe();
 
@@ -49,17 +49,17 @@ public:
 
     void getKeys(Vector<double>& keys) const   { parseKeyString(m_key, keys); }
     
-    const StylePropertySet& properties() const { return *m_properties; }
+    const StylePropertySet& properties() const { return m_properties.get(); }
     MutableStylePropertySet* mutableProperties();
     
     String cssText() const;
 
 private:
-    StyleKeyframe(PassRefPtr<StylePropertySet>);
+    explicit StyleKeyframe(PassRef<StylePropertySet>);
     
     static void parseKeyString(const String&, Vector<double>& keys);
     
-    RefPtr<StylePropertySet> m_properties;
+    Ref<StylePropertySet> m_properties;
     // FIXME: This should be a parsed vector of floats.
     // comma separated list of keys
     String m_key;

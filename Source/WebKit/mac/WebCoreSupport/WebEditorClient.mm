@@ -246,7 +246,7 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
 
 bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)
 {
-    RefPtr<MutableStylePropertySet> mutableStyle = style->isMutable() ? static_cast<MutableStylePropertySet*>(style) : style->mutableCopy();
+    Ref<MutableStylePropertySet> mutableStyle(style->isMutable() ? static_cast<MutableStylePropertySet&>(*style) : style->mutableCopy());
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldApplyStyle:kit(mutableStyle->ensureCSSStyleDeclaration()) toElementsInDOMRange:kit(range)];
 }

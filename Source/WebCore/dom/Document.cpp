@@ -870,7 +870,8 @@ PassRefPtr<Text> Document::createEditingTextNode(const String& text)
 
 PassRefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
 {
-    return MutableStylePropertySet::create()->ensureCSSStyleDeclaration();
+    Ref<MutableStylePropertySet> propertySet(MutableStylePropertySet::create());
+    return propertySet->ensureCSSStyleDeclaration();
 }
 
 PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& ec)

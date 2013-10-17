@@ -1,5 +1,19 @@
 2013-10-17  Andreas Kling  <akling@apple.com>
 
+        Use PassRef for constructing StylePropertySets.
+        <https://webkit.org/b/122948>
+
+        Make functions that construct StylePropertySets return PassRef
+        instead of PassRefPtr. Since they never return null, this gets rid
+        of the extra branch in ~PassRefPtr everywhere.
+
+        Also StyleRule* classes now hold a Ref<StylePropertySet>, codifying
+        the fact that they always have a property set.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-17  Andreas Kling  <akling@apple.com>
+
         DataRef<T> should use Ref<T> internally.
         <https://webkit.org/b/122953>
 

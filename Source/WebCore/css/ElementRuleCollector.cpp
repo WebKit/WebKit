@@ -49,18 +49,18 @@ namespace WebCore {
 
 static const StylePropertySet& leftToRightDeclaration()
 {
-    static MutableStylePropertySet* leftToRightDecl = MutableStylePropertySet::create().leakRef();
-    if (leftToRightDecl->isEmpty())
-        leftToRightDecl->setProperty(CSSPropertyDirection, CSSValueLtr);
-    return *leftToRightDecl;
+    static NeverDestroyed<Ref<MutableStylePropertySet>> leftToRightDecl(MutableStylePropertySet::create());
+    if (leftToRightDecl.get()->isEmpty())
+        leftToRightDecl.get()->setProperty(CSSPropertyDirection, CSSValueLtr);
+    return leftToRightDecl.get().get();
 }
 
 static const StylePropertySet& rightToLeftDeclaration()
 {
-    static MutableStylePropertySet* rightToLeftDecl = MutableStylePropertySet::create().leakRef();
-    if (rightToLeftDecl->isEmpty())
-        rightToLeftDecl->setProperty(CSSPropertyDirection, CSSValueRtl);
-    return *rightToLeftDecl;
+    static NeverDestroyed<Ref<MutableStylePropertySet>> rightToLeftDecl(MutableStylePropertySet::create());
+    if (rightToLeftDecl.get()->isEmpty())
+        rightToLeftDecl.get()->setProperty(CSSPropertyDirection, CSSValueRtl);
+    return rightToLeftDecl.get().get();
 }
 
 class MatchRequest {

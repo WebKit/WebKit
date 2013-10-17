@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-StyleKeyframe::StyleKeyframe(PassRefPtr<StylePropertySet> properties)
-    : m_properties(properties)
+StyleKeyframe::StyleKeyframe(PassRef<StylePropertySet> properties)
+    : m_properties(std::move(properties))
 {
 }
 
@@ -46,7 +46,7 @@ MutableStylePropertySet* StyleKeyframe::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStylePropertySet*>(m_properties.get());
+    return &static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
 /* static */

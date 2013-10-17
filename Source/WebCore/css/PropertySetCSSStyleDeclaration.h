@@ -68,7 +68,7 @@ private:
     virtual String getPropertyValueInternal(CSSPropertyID) OVERRIDE;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) OVERRIDE;
     
-    virtual PassRefPtr<MutableStylePropertySet> copyProperties() const OVERRIDE;
+    virtual PassRef<MutableStylePropertySet> copyProperties() const OVERRIDE;
 
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     

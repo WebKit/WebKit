@@ -354,10 +354,11 @@ EditingStyle::EditingStyle(const Position& position, PropertiesToInclude propert
 }
 
 EditingStyle::EditingStyle(const StylePropertySet* style)
-    : m_mutableStyle(style ? style->mutableCopy() : 0)
-    , m_shouldUseFixedDefaultFontSize(false)
+    : m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
+    if (style)
+        m_mutableStyle = style->mutableCopy();
     extractFontSizeDelta();
 }
 

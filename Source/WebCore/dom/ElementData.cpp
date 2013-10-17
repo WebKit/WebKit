@@ -137,7 +137,8 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
     , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_attributeVector(other.m_attributeVector)
 {
-    m_inlineStyle = other.m_inlineStyle ? other.m_inlineStyle->mutableCopy() : 0;
+    if (other.m_inlineStyle)
+        m_inlineStyle = other.m_inlineStyle->mutableCopy();
 }
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)
