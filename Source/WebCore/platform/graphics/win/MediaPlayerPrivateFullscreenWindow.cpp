@@ -119,7 +119,8 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCA
     m_layerTreeHost->setRootChildLayer(m_rootChild.get());
     PlatformCALayer* rootLayer = m_rootChild->rootLayer();
     CGRect rootBounds = m_rootChild->rootLayer()->bounds();
-    m_rootChild->setFrame(rootBounds);
+    m_rootChild->setPosition(rootBounds.origin);
+    m_rootChild->setBounds(FloatRect(FloatPoint(), rootBounds.size));
     m_rootChild->setBackgroundColor(CGColorGetConstantColor(kCGColorBlack));
 #ifndef NDEBUG
     RetainPtr<CGColorRef> redColor = adoptCF(CGColorCreateGenericRGB(1, 0, 0, 1));
@@ -170,7 +171,8 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
                 m_layerTreeHost->resize();
                 PlatformCALayer* rootLayer = m_rootChild->rootLayer();
                 CGRect rootBounds = m_rootChild->rootLayer()->bounds();
-                m_rootChild->setFrame(rootBounds);
+                m_rootChild->setPosition(rootBounds.origin);
+                m_rootChild->setBounds(FloatRect(FloatPoint(), rootBounds.size));
                 m_rootChild->setNeedsLayout();
             }
 #endif

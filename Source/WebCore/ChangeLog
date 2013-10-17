@@ -1,5 +1,15 @@
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
+        Attempt to fix the Windows build after http://trac.webkit.org/changeset/157547.
+
+        Apparently some Windows code uses setFrame and I missed it.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        (WebCore::MediaPlayerPrivateFullscreenWindow::wndProc):
+
+2013-10-16  Tim Horton  <timothy_horton@apple.com>
+
         Remote Layer Tree: Complete support for simple layer properties
         https://bugs.webkit.org/show_bug.cgi?id=122933
 
