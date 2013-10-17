@@ -89,6 +89,7 @@ private:
 typedef OptionRange optionRange;
 
 #define JSC_OPTIONS(v) \
+    v(bool, useLLInt,  true) \
     v(bool, useJIT,    true) \
     v(bool, useDFGJIT, true) \
     v(bool, useRegExpJIT, true) \

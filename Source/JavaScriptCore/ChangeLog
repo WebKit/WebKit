@@ -1,3 +1,16 @@
+2013-10-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Add a useLLInt option to jsc
+        https://bugs.webkit.org/show_bug.cgi?id=122930
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/Executable.cpp:
+        (JSC::setupLLInt):
+        (JSC::setupJIT):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Options.h:
+
 2013-10-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Build fix.
