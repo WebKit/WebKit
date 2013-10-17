@@ -28,13 +28,16 @@
 #define WebToDatabaseProcessConnection_h
 
 #include "Connection.h"
+#include "MessageSender.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebKit {
 
-class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, CoreIPC::Connection::Client {
+class WebProcessIDBDatabaseBackend;
+
+class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
 public:
     static PassRefPtr<WebToDatabaseProcessConnection> create(CoreIPC::Connection::Identifier connectionIdentifier)
     {
@@ -54,7 +57,10 @@ private:
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
-    // The IPC connection from the web process to the database process.
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
+
     RefPtr<CoreIPC::Connection> m_connection;
 };
 

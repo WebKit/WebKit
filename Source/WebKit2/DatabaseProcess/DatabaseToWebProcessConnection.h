@@ -27,15 +27,22 @@
 #define DatabaseToWebProcessConnection_h
 
 #include "Connection.h"
+#include "MessageSender.h"
+
+#include <wtf/HashMap.h>
 
 #if ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
-class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, CoreIPC::Connection::Client {
+class DatabaseProcessIDBDatabaseBackend;
+
+class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
 public:
     static PassRefPtr<DatabaseToWebProcessConnection> create(CoreIPC::Connection::Identifier);
     ~DatabaseToWebProcessConnection();
+
+    CoreIPC::Connection* connection() const { return m_connection.get(); }
 
 private:
     DatabaseToWebProcessConnection(CoreIPC::Connection::Identifier);
@@ -44,6 +51,19 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
+    void didReceiveDatabaseToWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE { return m_connection.get(); }
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
+
+#if ENABLE(INDEXED_DATABASE)
+    // Messages handlers
+    void establishIDBDatabaseBackend(uint64_t backendIdentifier);
+
+    typedef HashMap<uint64_t, RefPtr<DatabaseProcessIDBDatabaseBackend>> IDBDatabaseBackendMap;
+    IDBDatabaseBackendMap m_idbDatabaseBackends;
+#endif // ENABLE(INDEXED_DATABASE)
 
     RefPtr<CoreIPC::Connection> m_connection;
 };

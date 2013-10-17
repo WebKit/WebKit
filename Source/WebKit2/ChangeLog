@@ -1,3 +1,78 @@
+2013-10-17  Brady Eidson  <beidson@apple.com>
+
+        Add scaffolding for IDBDatabaseBackends in Web and Database processes
+        https://bugs.webkit.org/show_bug.cgi?id=122971
+
+        Reviewed by Tim Horton.
+
+        This patch:
+        - Adds a WebProcessIDBDatabaseBackend
+        - Adds a DatabaseProcessIDBDatabaseBackend
+        - Establishes the basic messaging between them
+        - Actually creates those backends as the result of an indexedDB.open() call from javascript
+
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * Platform/Logging.h:
+
+        Hook up messaging so (Web/Database)ProcessIDBDatabaseBackends can message each other:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+        (WebKit::DatabaseToWebProcessConnection::establishIDBDatabaseBackend):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        (WebKit::DatabaseToWebProcessConnection::connection):
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in: Added.
+
+        DatabaseProcess side of an IDBDatabaseBackend:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.cpp:
+        (WebKit::DatabaseProcessIDBDatabaseBackend::DatabaseProcessIDBDatabaseBackend):
+        (WebKit::DatabaseProcessIDBDatabaseBackend::~DatabaseProcessIDBDatabaseBackend):
+        (WebKit::DatabaseProcessIDBDatabaseBackend::openConnection):
+        (WebKit::DatabaseProcessIDBDatabaseBackend::messageSenderConnection):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.h: Added.
+        (WebKit::DatabaseProcessIDBDatabaseBackend::create):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.messages.in: Added.
+
+        WebProcess side of an IDBDatabaseBackend:
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.cpp: Added.
+        (WebKit::generateBackendIdentifier):
+        (WebKit::WebProcessIDBDatabaseBackend::WebProcessIDBDatabaseBackend):
+        (WebKit::WebProcessIDBDatabaseBackend::~WebProcessIDBDatabaseBackend):
+        (WebKit::WebProcessIDBDatabaseBackend::openConnection):
+        (WebKit::WebProcessIDBDatabaseBackend::createObjectStore):
+        (WebKit::WebProcessIDBDatabaseBackend::deleteObjectStore):
+        (WebKit::WebProcessIDBDatabaseBackend::createTransaction):
+        (WebKit::WebProcessIDBDatabaseBackend::close):
+        (WebKit::WebProcessIDBDatabaseBackend::commit):
+        (WebKit::WebProcessIDBDatabaseBackend::abort):
+        (WebKit::WebProcessIDBDatabaseBackend::createIndex):
+        (WebKit::WebProcessIDBDatabaseBackend::deleteIndex):
+        (WebKit::WebProcessIDBDatabaseBackend::get):
+        (WebKit::WebProcessIDBDatabaseBackend::put):
+        (WebKit::WebProcessIDBDatabaseBackend::setIndexKeys):
+        (WebKit::WebProcessIDBDatabaseBackend::setIndexesReady):
+        (WebKit::WebProcessIDBDatabaseBackend::openCursor):
+        (WebKit::WebProcessIDBDatabaseBackend::count):
+        (WebKit::WebProcessIDBDatabaseBackend::deleteRange):
+        (WebKit::WebProcessIDBDatabaseBackend::clear):
+        (WebKit::WebProcessIDBDatabaseBackend::messageSenderConnection):
+        (WebKit::WebProcessIDBDatabaseBackend::establishDatabaseProcessBackend):
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h: Added.
+        (WebKit::WebProcessIDBDatabaseBackend::create):
+
+        Basic shared utilities that multiple processes will need going forward:
+        * Shared/Databases/IndexedDB/IDBUtilities.cpp:
+        (WebKit::uniqueDatabaseIdentifier):
+        * Shared/Databases/IndexedDB/IDBUtilities.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::sharedDatabaseBackendMap):
+        (WebKit::WebIDBFactoryBackend::open): Actually establish an IDBDatabaseBackend in the DatabaseProcess
+          when indexedDB.open() is called, even if it does nothing for now.
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+
 2013-10-17  Attila Dusnoki  <h047679@stud.u-szeged.hu>
 
         [WK2] REGRESSION(r156472): scrolling coordinator is always enabled incorrectly.

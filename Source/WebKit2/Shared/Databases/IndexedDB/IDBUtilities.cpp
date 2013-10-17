@@ -25,40 +25,17 @@
  */
 
 #include "config.h"
-#include "WebToDatabaseProcessConnection.h"
+#include "IDBUtilities.h"
 
-#include "DatabaseToWebProcessConnectionMessages.h"
-#include "WebProcess.h"
-#include "WebProcessIDBDatabaseBackend.h"
-#include <WebCore/RunLoop.h>
+#include <WebCore/SecurityOrigin.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
-using namespace WebCore;
-
 namespace WebKit {
 
-WebToDatabaseProcessConnection::WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+String uniqueDatabaseIdentifier(const String& databaseName, WebCore::SecurityOrigin* securityOrigin)
 {
-    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
-    m_connection->open();
-}
-
-WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
-{
-}
-
-void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
-{
-}
-
-void WebToDatabaseProcessConnection::didClose(CoreIPC::Connection*)
-{
-    WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
-}
-
-void WebToDatabaseProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
-{
+    return securityOrigin->databaseIdentifier() + databaseName;
 }
 
 } // namespace WebKit

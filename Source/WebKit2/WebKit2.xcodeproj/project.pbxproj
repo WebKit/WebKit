@@ -404,6 +404,10 @@
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
+		51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */; };
+		51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */; };
+		51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */; };
+		51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51032F1C180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h */; };
 		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
 		510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 510AFFB816542048001BA05E /* WebResourceLoader.h */; };
 		510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */; };
@@ -417,7 +421,6 @@
 		511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 511B24A9132E097200065A0C /* WebIconDatabase.h */; };
 		511F8A7B138B460900A95F44 /* SecItemShimLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F8A77138B460900A95F44 /* SecItemShimLibrary.h */; };
 		511F8A81138B485D00A95F44 /* SecItemShimLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */; };
-		511F8EDD180881850047DA96 /* WebIDBFactoryBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F8EDB1808817D0047DA96 /* WebIDBFactoryBackend.cpp */; };
 		51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5121745E164C20E30037A5C1 /* ShareableResource.cpp */; };
 		51217461164C20E30037A5C1 /* ShareableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5121745F164C20E30037A5C1 /* ShareableResource.h */; };
 		51217464164C21370037A5C1 /* WebResourceBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51217462164C21370037A5C1 /* WebResourceBuffer.cpp */; };
@@ -428,12 +431,8 @@
 		512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935D61288D19400A4B695 /* WebContextMenuItem.h */; };
 		512935E31288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */; };
 		512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */; };
-		512A975B180DFC880039A149 /* WebToDatabaseProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512A9759180DFC880039A149 /* WebToDatabaseProcessConnection.cpp */; };
-		512A975C180DFC880039A149 /* WebToDatabaseProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A975A180DFC880039A149 /* WebToDatabaseProcessConnection.h */; };
 		512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512A975E180E03160039A149 /* DatabaseProcessMessageReceiver.cpp */; };
 		512A9761180E031D0039A149 /* DatabaseProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A975F180E03160039A149 /* DatabaseProcessMessages.h */; };
-		512A9764180E04D50039A149 /* DatabaseToWebProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512A9762180E04D50039A149 /* DatabaseToWebProcessConnection.cpp */; };
-		512A9765180E04D50039A149 /* DatabaseToWebProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A9763180E04D50039A149 /* DatabaseToWebProcessConnection.h */; };
 		512A9769180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */; };
 		512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */; };
 		512C06881638F67E00ABB911 /* HostRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512C06861638F67E00ABB911 /* HostRecord.cpp */; };
@@ -467,7 +466,6 @@
 		512F58FA12A88A5400629530 /* WKCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F212A88A5400629530 /* WKCredential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512F58F312A88A5400629530 /* WKProtectionSpace.cpp */; };
 		512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F58F412A88A5400629530 /* WKProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5130F0E5180CCB9100602C18 /* DatabaseProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5130F0E3180CCB9100602C18 /* DatabaseProcessMain.mm */; };
 		5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5136183B163126DA00A99DDE /* ConnectionStack.cpp */; };
 		5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5136183C163126DA00A99DDE /* ConnectionStack.h */; };
 		513A163C163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513A163A163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp */; };
@@ -496,7 +494,6 @@
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
 		517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */; };
 		517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */; };
-		517DD5C2180DB7B70081660B /* DatabaseProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5C1180DB7B70081660B /* DatabaseProcessMac.mm */; };
 		517DD5C5180DC3E10081660B /* DatabaseProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */; };
 		5180C715180CCA3100FDA612 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
 		5180C717180CCA3100FDA612 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
@@ -556,13 +553,24 @@
 		51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D130571382F10500351EDD /* WebProcessProxyMac.mm */; };
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
+		51E351CA180F2CCC00E53BE9 /* IDBUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */; };
+		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
+		51E351F5180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351F1180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp */; };
+		51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351F2180F5C7500E53BE9 /* WebIDBFactoryBackend.h */; };
+		51E351F7180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351F3180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.cpp */; };
+		51E351F8180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351F4180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.h */; };
+		51E351FF180F5D0F00E53BE9 /* DatabaseProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351FA180F5D0B00E53BE9 /* DatabaseProcess.cpp */; };
+		51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E351FD180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.cpp */; };
+		51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */; };
+		51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */; };
+		51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */; };
+		51E3520D180F5DA000E53BE9 /* DatabaseProcessIDBDatabaseBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3520A180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.cpp */; };
+		51E35210180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3520E180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp */; };
+		51E35211180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3520F180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessages.h */; };
 		51E3B67F16F266B3009968DC /* NetworkResourceLoaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */; };
 		51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */; };
 		51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */; };
-		51F7DC14180CC4AD00212CA3 /* DatabaseProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F7DC12180CC4AD00212CA3 /* DatabaseProcess.cpp */; };
-		51F7DC15180CC4AD00212CA3 /* DatabaseProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F7DC13180CC4AD00212CA3 /* DatabaseProcess.h */; };
-		51F7DC16180CC4C700212CA3 /* DatabaseServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F7DC11180CC49700212CA3 /* DatabaseServiceEntryPoint.mm */; };
 		51F7DC41180CC93600212CA3 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		51F7DC43180CC93600212CA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		51F7DC44180CC93600212CA3 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
@@ -1838,6 +1846,11 @@
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
 		510031F61379CACB00C8DFE4 /* SecItemShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SecItemShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
+		51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebToDatabaseProcessConnection.cpp; sourceTree = "<group>"; };
+		51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebToDatabaseProcessConnection.h; sourceTree = "<group>"; };
+		51032F1A180F74F100961BB7 /* DatabaseToWebProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DatabaseToWebProcessConnection.messages.in; sourceTree = "<group>"; };
+		51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseToWebProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		51032F1C180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseToWebProcessConnectionMessages.h; sourceTree = "<group>"; };
 		5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnection.cpp; path = Network/NetworkProcessConnection.cpp; sourceTree = "<group>"; };
 		5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnection.h; path = Network/NetworkProcessConnection.h; sourceTree = "<group>"; };
 		5105B0F31630872E00E27709 /* NetworkProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessProxy.messages.in; sourceTree = "<group>"; };
@@ -1860,8 +1873,6 @@
 		511B24A9132E097200065A0C /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabase.h; sourceTree = "<group>"; };
 		511F8A77138B460900A95F44 /* SecItemShimLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecItemShimLibrary.h; path = ../../WebProcess/mac/SecItemShimLibrary.h; sourceTree = "<group>"; };
 		511F8A78138B460900A95F44 /* SecItemShimLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SecItemShimLibrary.mm; path = ../../WebProcess/mac/SecItemShimLibrary.mm; sourceTree = "<group>"; };
-		511F8EDB1808817D0047DA96 /* WebIDBFactoryBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebIDBFactoryBackend.cpp; path = Databases/IndexedDB/WebIDBFactoryBackend.cpp; sourceTree = "<group>"; };
-		511F8EDC1808817D0047DA96 /* WebIDBFactoryBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebIDBFactoryBackend.h; path = Databases/IndexedDB/WebIDBFactoryBackend.h; sourceTree = "<group>"; };
 		5121745E164C20E30037A5C1 /* ShareableResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableResource.cpp; sourceTree = "<group>"; };
 		5121745F164C20E30037A5C1 /* ShareableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableResource.h; sourceTree = "<group>"; };
 		51217462164C21370037A5C1 /* WebResourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceBuffer.cpp; sourceTree = "<group>"; };
@@ -1872,13 +1883,8 @@
 		512935D61288D19400A4B695 /* WebContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItem.h; sourceTree = "<group>"; };
 		512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageContextMenuClient.cpp; sourceTree = "<group>"; };
 		512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
-		512A9759180DFC880039A149 /* WebToDatabaseProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebToDatabaseProcessConnection.cpp; path = Databases/WebToDatabaseProcessConnection.cpp; sourceTree = "<group>"; };
-		512A975A180DFC880039A149 /* WebToDatabaseProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebToDatabaseProcessConnection.h; path = Databases/WebToDatabaseProcessConnection.h; sourceTree = "<group>"; };
-		512A975D180E02A00039A149 /* DatabaseProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = DatabaseProcess.messages.in; path = DatabaseProcess/DatabaseProcess.messages.in; sourceTree = "<group>"; };
 		512A975E180E03160039A149 /* DatabaseProcessMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		512A975F180E03160039A149 /* DatabaseProcessMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessMessages.h; sourceTree = "<group>"; };
-		512A9762180E04D50039A149 /* DatabaseToWebProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseToWebProcessConnection.cpp; path = DatabaseProcess/DatabaseToWebProcessConnection.cpp; sourceTree = "<group>"; };
-		512A9763180E04D50039A149 /* DatabaseToWebProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseToWebProcessConnection.h; path = DatabaseProcess/DatabaseToWebProcessConnection.h; sourceTree = "<group>"; };
 		512A9766180E05D20039A149 /* DatabaseProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = DatabaseProcessProxy.messages.in; path = Databases/DatabaseProcessProxy.messages.in; sourceTree = "<group>"; };
 		512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		512A9768180E09B80039A149 /* DatabaseProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessProxyMessages.h; sourceTree = "<group>"; };
@@ -1913,8 +1919,6 @@
 		512F58F212A88A5400629530 /* WKCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredential.h; sourceTree = "<group>"; };
 		512F58F312A88A5400629530 /* WKProtectionSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKProtectionSpace.cpp; sourceTree = "<group>"; };
 		512F58F412A88A5400629530 /* WKProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProtectionSpace.h; sourceTree = "<group>"; };
-		5130F0E3180CCB9100602C18 /* DatabaseProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseProcessMain.mm; path = DatabaseProcess/EntryPoint/mac/LegacyProcess/DatabaseProcessMain.mm; sourceTree = "<group>"; };
-		5130F0E4180CCB9100602C18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DatabaseProcess/EntryPoint/mac/LegacyProcess/Info.plist; sourceTree = "<group>"; };
 		5136183B163126DA00A99DDE /* ConnectionStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionStack.cpp; sourceTree = "<group>"; };
 		5136183C163126DA00A99DDE /* ConnectionStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionStack.h; sourceTree = "<group>"; };
 		513A163A163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -1937,7 +1941,6 @@
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessConnectionMessages.h; sourceTree = "<group>"; };
 		517DD5BC180DA7D30081660B /* DatabaseProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseProcessProxy.cpp; path = Databases/DatabaseProcessProxy.cpp; sourceTree = "<group>"; };
 		517DD5BD180DA7D30081660B /* DatabaseProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseProcessProxy.h; path = Databases/DatabaseProcessProxy.h; sourceTree = "<group>"; };
-		517DD5C1180DB7B70081660B /* DatabaseProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseProcessMac.mm; path = DatabaseProcess/mac/DatabaseProcessMac.mm; sourceTree = "<group>"; };
 		517DD5C4180DC3E10081660B /* DatabaseProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseProcessProxyMac.mm; path = Databases/mac/DatabaseProcessProxyMac.mm; sourceTree = "<group>"; };
 		5180C71D180CCA3100FDA612 /* com.apple.WebKit.Databases.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Databases.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadScheduler.cpp; path = NetworkProcess/NetworkResourceLoadScheduler.cpp; sourceTree = "<group>"; };
@@ -2008,14 +2011,31 @@
 		51D130571382F10500351EDD /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionToWebProcessMessages.h; sourceTree = "<group>"; };
+		51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBUtilities.cpp; sourceTree = "<group>"; };
+		51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBUtilities.h; sourceTree = "<group>"; };
+		51E351F1180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBFactoryBackend.cpp; sourceTree = "<group>"; };
+		51E351F2180F5C7500E53BE9 /* WebIDBFactoryBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIDBFactoryBackend.h; sourceTree = "<group>"; };
+		51E351F3180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessIDBDatabaseBackend.cpp; sourceTree = "<group>"; };
+		51E351F4180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessIDBDatabaseBackend.h; sourceTree = "<group>"; };
+		51E351FA180F5D0B00E53BE9 /* DatabaseProcess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcess.cpp; sourceTree = "<group>"; };
+		51E351FB180F5D0B00E53BE9 /* DatabaseProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseProcess.h; sourceTree = "<group>"; };
+		51E351FC180F5D0B00E53BE9 /* DatabaseProcess.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DatabaseProcess.messages.in; sourceTree = "<group>"; };
+		51E351FD180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseToWebProcessConnection.cpp; sourceTree = "<group>"; };
+		51E351FE180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseToWebProcessConnection.h; sourceTree = "<group>"; };
+		51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessMac.mm; sourceTree = "<group>"; };
+		51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseProcessMain.mm; sourceTree = "<group>"; };
+		51E35204180F5D4B00E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51E35206180F5D5900E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51E35207180F5D6100E53BE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseServiceEntryPoint.mm; sourceTree = "<group>"; };
+		51E3520A180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessIDBDatabaseBackend.cpp; sourceTree = "<group>"; };
+		51E3520B180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessIDBDatabaseBackend.h; sourceTree = "<group>"; };
+		51E3520C180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DatabaseProcessIDBDatabaseBackend.messages.in; sourceTree = "<group>"; };
+		51E3520E180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp; sourceTree = "<group>"; };
+		51E3520F180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessIDBDatabaseBackendMessages.h; sourceTree = "<group>"; };
 		51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoaderMac.mm; sourceTree = "<group>"; };
 		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
 		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
-		51F7DC0E180CC46C00212CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist; sourceTree = "<group>"; };
-		51F7DC10180CC48900212CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService.Development/Info.plist; sourceTree = "<group>"; };
-		51F7DC11180CC49700212CA3 /* DatabaseServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = DatabaseServiceEntryPoint.mm; path = DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm; sourceTree = "<group>"; };
-		51F7DC12180CC4AD00212CA3 /* DatabaseProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseProcess.cpp; path = DatabaseProcess/DatabaseProcess.cpp; sourceTree = "<group>"; };
-		51F7DC13180CC4AD00212CA3 /* DatabaseProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseProcess.h; path = DatabaseProcess/DatabaseProcess.h; sourceTree = "<group>"; };
 		51F7DC4A180CC93600212CA3 /* com.apple.WebKit.Databases.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Databases.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FA1E28180CCADE00C44BE9 /* DatabaseProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DatabaseProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleDOMWindowExtension.h; sourceTree = "<group>"; };
@@ -3168,6 +3188,7 @@
 		1AADDF4B10D82AF000D3D63D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				51E351C2180F2C8500E53BE9 /* Databases */,
 				BCDDB314124EBCEF0048D13C /* API */,
 				518E8EF116B208F000E91429 /* Authentication */,
 				1AAF0C4712B16328008E49E2 /* cf */,
@@ -3623,10 +3644,12 @@
 		511F8EDA180881660047DA96 /* IndexedDB */ = {
 			isa = PBXGroup;
 			children = (
-				511F8EDB1808817D0047DA96 /* WebIDBFactoryBackend.cpp */,
-				511F8EDC1808817D0047DA96 /* WebIDBFactoryBackend.h */,
+				51E351F1180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp */,
+				51E351F2180F5C7500E53BE9 /* WebIDBFactoryBackend.h */,
+				51E351F3180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.cpp */,
+				51E351F4180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.h */,
 			);
-			name = IndexedDB;
+			path = IndexedDB;
 			sourceTree = "<group>";
 		};
 		5123CF18133D25E60056F800 /* cg */ = {
@@ -3642,10 +3665,10 @@
 			isa = PBXGroup;
 			children = (
 				511F8EDA180881660047DA96 /* IndexedDB */,
-				512A9759180DFC880039A149 /* WebToDatabaseProcessConnection.cpp */,
-				512A975A180DFC880039A149 /* WebToDatabaseProcessConnection.h */,
+				51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */,
+				51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */,
 			);
-			name = Databases;
+			path = Databases;
 			sourceTree = "<group>";
 		};
 		512E352A130B559900ABD19A /* ApplicationCache */ = {
@@ -3676,10 +3699,11 @@
 		5130F0E2180CCB3B00602C18 /* LegacyProcess */ = {
 			isa = PBXGroup;
 			children = (
-				5130F0E4180CCB9100602C18 /* Info.plist */,
-				5130F0E3180CCB9100602C18 /* DatabaseProcessMain.mm */,
+				51E35203180F5D4B00E53BE9 /* DatabaseProcessMain.mm */,
+				51E35204180F5D4B00E53BE9 /* Info.plist */,
 			);
 			name = LegacyProcess;
+			path = mac/LegacyProcess;
 			sourceTree = "<group>";
 		};
 		516319931628980E00E22F00 /* mac */ = {
@@ -3704,9 +3728,9 @@
 		517DD5C0180DB7AA0081660B /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				517DD5C1180DB7B70081660B /* DatabaseProcessMac.mm */,
+				51E35201180F5D1E00E53BE9 /* DatabaseProcessMac.mm */,
 			);
-			name = mac;
+			path = mac;
 			sourceTree = "<group>";
 		};
 		517DD5C3180DC3D60081660B /* mac */ = {
@@ -3792,18 +3816,47 @@
 			name = cf;
 			sourceTree = "<group>";
 		};
+		51E351C2180F2C8500E53BE9 /* Databases */ = {
+			isa = PBXGroup;
+			children = (
+				51E351C3180F2C8A00E53BE9 /* IndexedDB */,
+			);
+			path = Databases;
+			sourceTree = "<group>";
+		};
+		51E351C3180F2C8A00E53BE9 /* IndexedDB */ = {
+			isa = PBXGroup;
+			children = (
+				51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */,
+				51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */,
+			);
+			path = IndexedDB;
+			sourceTree = "<group>";
+		};
+		51E351F9180F5CF600E53BE9 /* IndexedDB */ = {
+			isa = PBXGroup;
+			children = (
+				51E3520A180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.cpp */,
+				51E3520B180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.h */,
+				51E3520C180F5D9D00E53BE9 /* DatabaseProcessIDBDatabaseBackend.messages.in */,
+			);
+			path = IndexedDB;
+			sourceTree = "<group>";
+		};
 		51F7DC0A180CC41100212CA3 /* DatabaseProcess */ = {
 			isa = PBXGroup;
 			children = (
 				51F7DC0B180CC42200212CA3 /* EntryPoint */,
+				51E351F9180F5CF600E53BE9 /* IndexedDB */,
 				517DD5C0180DB7AA0081660B /* mac */,
-				51F7DC12180CC4AD00212CA3 /* DatabaseProcess.cpp */,
-				51F7DC13180CC4AD00212CA3 /* DatabaseProcess.h */,
-				512A975D180E02A00039A149 /* DatabaseProcess.messages.in */,
-				512A9762180E04D50039A149 /* DatabaseToWebProcessConnection.cpp */,
-				512A9763180E04D50039A149 /* DatabaseToWebProcessConnection.h */,
+				51E351FA180F5D0B00E53BE9 /* DatabaseProcess.cpp */,
+				51E351FB180F5D0B00E53BE9 /* DatabaseProcess.h */,
+				51E351FC180F5D0B00E53BE9 /* DatabaseProcess.messages.in */,
+				51E351FD180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.cpp */,
+				51E351FE180F5D0B00E53BE9 /* DatabaseToWebProcessConnection.h */,
+				51032F1A180F74F100961BB7 /* DatabaseToWebProcessConnection.messages.in */,
 			);
-			name = DatabaseProcess;
+			path = DatabaseProcess;
 			sourceTree = "<group>";
 		};
 		51F7DC0B180CC42200212CA3 /* EntryPoint */ = {
@@ -3812,7 +3865,7 @@
 				5130F0E2180CCB3B00602C18 /* LegacyProcess */,
 				51F7DC0C180CC43100212CA3 /* XPCService */,
 			);
-			name = EntryPoint;
+			path = EntryPoint;
 			sourceTree = "<group>";
 		};
 		51F7DC0C180CC43100212CA3 /* XPCService */ = {
@@ -3820,25 +3873,26 @@
 			children = (
 				51F7DC0F180CC46F00212CA3 /* DatabaseService.Development */,
 				51F7DC0D180CC43800212CA3 /* DatabaseService */,
-				51F7DC11180CC49700212CA3 /* DatabaseServiceEntryPoint.mm */,
+				51E35208180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm */,
 			);
 			name = XPCService;
+			path = mac/XPCService;
 			sourceTree = "<group>";
 		};
 		51F7DC0D180CC43800212CA3 /* DatabaseService */ = {
 			isa = PBXGroup;
 			children = (
-				51F7DC0E180CC46C00212CA3 /* Info.plist */,
+				51E35207180F5D6100E53BE9 /* Info.plist */,
 			);
-			name = DatabaseService;
+			path = DatabaseService;
 			sourceTree = "<group>";
 		};
 		51F7DC0F180CC46F00212CA3 /* DatabaseService.Development */ = {
 			isa = PBXGroup;
 			children = (
-				51F7DC10180CC48900212CA3 /* Info.plist */,
+				51E35206180F5D5900E53BE9 /* Info.plist */,
 			);
-			name = DatabaseService.Development;
+			path = DatabaseService.Development;
 			sourceTree = "<group>";
 		};
 		51FBB9C1132E079200F327B4 /* IconDatabase */ = {
@@ -4957,6 +5011,8 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				51032F1B180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp */,
+				51032F1C180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
@@ -4965,6 +5021,8 @@
 				2984F587164BA095004BC0C6 /* CustomProtocolManagerMessages.h */,
 				2984F57A164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp */,
 				2984F57B164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h */,
+				51E3520E180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp */,
+				51E3520F180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessages.h */,
 				512A975E180E03160039A149 /* DatabaseProcessMessageReceiver.cpp */,
 				512A975F180E03160039A149 /* DatabaseProcessMessages.h */,
 				512A9767180E09B80039A149 /* DatabaseProcessProxyMessageReceiver.cpp */,
@@ -5201,6 +5259,7 @@
 				E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */,
 				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
 				4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */,
+				51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */,
 				BC3065FA1259344E00E71278 /* CacheModel.h in Headers */,
 				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
@@ -5322,6 +5381,7 @@
 				1A2D843A127F65D5001EB962 /* NPObjectMessageReceiverMessages.h in Headers */,
 				1A2D82A7127F4EAB001EB962 /* NPObjectProxy.h in Headers */,
 				1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */,
+				51E351F8180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.h in Headers */,
 				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,
 				2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */,
@@ -5490,7 +5550,6 @@
 				511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */,
 				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
 				51D02F6A132EC73700BEAA96 /* WebIconDatabaseMessages.h in Headers */,
-				51F7DC15180CC4AD00212CA3 /* DatabaseProcess.h in Headers */,
 				511B24A7132E095700065A0C /* WebIconDatabaseProxy.h in Headers */,
 				51D02F6C132EC73700BEAA96 /* WebIconDatabaseProxyMessages.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
@@ -5500,6 +5559,7 @@
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
 				1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */,
 				1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */,
+				51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */,
 				51A9E1061315CCFC009E7031 /* WebKeyValueStorageManager.h in Headers */,
 				BC59548915C7868500FD1E3E /* WebKit2.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
@@ -5547,17 +5607,18 @@
 				BC306824125A6B9400E71278 /* WebProcessCreationParameters.h in Headers */,
 				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
+				51032F19180F73BB00961BB7 /* WebToDatabaseProcessConnection.h in Headers */,
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
 				37948404150C350600E52CE9 /* WebRenderLayer.h in Headers */,
+				51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */,
 				3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */,
 				51217465164C21370037A5C1 /* WebResourceBuffer.h in Headers */,
 				33367630130C9998006C9DE2 /* WebResourceCacheManager.h in Headers */,
 				33367656130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h in Headers */,
 				33367636130C99B2006C9DE2 /* WebResourceCacheManagerProxy.h in Headers */,
 				33367658130C9ECB006C9DE2 /* WebResourceCacheManagerProxyMessages.h in Headers */,
-				512A9765180E04D50039A149 /* DatabaseToWebProcessConnection.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
@@ -5595,6 +5656,7 @@
 				BCD25F1711D6BDE100169B0E /* WKBundleFrame.h in Headers */,
 				BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */,
 				BC49862F124D18C100D834E1 /* WKBundleHitTestResult.h in Headers */,
+				51E35211180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessages.h in Headers */,
 				BC204EF211C83EC8008F3375 /* WKBundleInitialize.h in Headers */,
 				65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */,
 				BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */,
@@ -5629,7 +5691,6 @@
 				BC4075FA124FF0270068F20A /* WKDictionary.h in Headers */,
 				BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */,
 				BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */,
-				512A975C180DFC880039A149 /* WebToDatabaseProcessConnection.h in Headers */,
 				BC017D0B16260FF4007054F5 /* WKDOMInternals.h in Headers */,
 				BC017D0D16260FF4007054F5 /* WKDOMNode.h in Headers */,
 				BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */,
@@ -6444,11 +6505,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */,
 				A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */,
 				5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */,
 				B63403F914910D57001070B5 /* APIObject.cpp in Sources */,
 				1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */,
-				511F8EDD180881850047DA96 /* WebIDBFactoryBackend.cpp in Sources */,
 				1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */,
 				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
 				BC032DA510F437D10058C15A /* ArgumentDecoder.cpp in Sources */,
@@ -6564,10 +6625,11 @@
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
 				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,
+				51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */,
-				512A9764180E04D50039A149 /* DatabaseToWebProcessConnection.cpp in Sources */,
 				5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */,
+				51E351F7180F5C7500E53BE9 /* WebProcessIDBDatabaseBackend.cpp in Sources */,
 				517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */,
 				51795570162877CF00FA43B6 /* NetworkProcessCreationParameters.cpp in Sources */,
 				51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */,
@@ -6599,6 +6661,7 @@
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
 				BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */,
 				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
+				51E351F5180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
 				BC111B51112F619200337BAB /* PageClientImpl.mm in Sources */,
@@ -6624,6 +6687,7 @@
 				1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
+				51E3520D180F5DA000E53BE9 /* DatabaseProcessIDBDatabaseBackend.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
@@ -6680,6 +6744,7 @@
 				1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
+				51E351FF180F5D0F00E53BE9 /* DatabaseProcess.cpp in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,
@@ -6688,6 +6753,7 @@
 				1A0F29CB120B37160053D1B9 /* VisitedLinkTable.cpp in Sources */,
 				CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */,
 				512E352E130B55AF00ABD19A /* WebApplicationCacheManager.cpp in Sources */,
+				51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */,
 				512E356A130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp in Sources */,
 				512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */,
 				512E35F8130B642E00ABD19A /* WebApplicationCacheManagerProxyMessageReceiver.cpp in Sources */,
@@ -6723,6 +6789,7 @@
 				51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */,
 				BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */,
 				3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */,
+				51E35210180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp in Sources */,
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
 				330934551315B9750097A7BC /* WebCookieManagerProxy.cpp in Sources */,
@@ -6734,6 +6801,7 @@
 				512F589A12A8838800629530 /* WebCredential.cpp in Sources */,
 				F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */,
 				F62A76B612B1B25F0005F1B6 /* WebDatabaseManagerMessageReceiver.cpp in Sources */,
+				51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */,
 				F62A765C12B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp in Sources */,
 				BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */,
 				F62A76B812B1B25F0005F1B6 /* WebDatabaseManagerProxyMessageReceiver.cpp in Sources */,
@@ -6816,7 +6884,6 @@
 				BC7B621612A4219A00D174A4 /* WebPageGroupProxy.cpp in Sources */,
 				29D55DF1161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp in Sources */,
 				BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */,
-				512A975B180DFC880039A149 /* WebToDatabaseProcessConnection.cpp in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
 				BC111B0F112F5E4F00337BAB /* WebPageProxy.cpp in Sources */,
 				51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */,
@@ -6842,6 +6909,7 @@
 				BC3065C412592F8900E71278 /* WebProcessMac.mm in Sources */,
 				BC3066BE125A442100E71278 /* WebProcessMessageReceiver.cpp in Sources */,
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
+				51032F18180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp in Sources */,
 				51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */,
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				512F589C12A8838800629530 /* WebProtectionSpace.cpp in Sources */,
@@ -6871,6 +6939,7 @@
 				512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */,
 				BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */,
 				512F58F512A88A5400629530 /* WKAuthenticationChallenge.cpp in Sources */,
+				51E351CA180F2CCC00E53BE9 /* IDBUtilities.cpp in Sources */,
 				512F58F712A88A5400629530 /* WKAuthenticationDecisionListener.cpp in Sources */,
 				BC646C1A11DD399F006455B0 /* WKBackForwardList.cpp in Sources */,
 				BC646C1C11DD399F006455B0 /* WKBackForwardListItem.cpp in Sources */,
@@ -6904,7 +6973,6 @@
 				512F58F912A88A5400629530 /* WKCredential.cpp in Sources */,
 				BC4075F7124FF0270068F20A /* WKData.cpp in Sources */,
 				F62A766112B1ABED0005F1B6 /* WKDatabaseManager.cpp in Sources */,
-				517DD5C2180DB7B70081660B /* DatabaseProcessMac.mm in Sources */,
 				BC4075F9124FF0270068F20A /* WKDictionary.cpp in Sources */,
 				BC017D0816260FF4007054F5 /* WKDOMDocument.mm in Sources */,
 				BC017D0A16260FF4007054F5 /* WKDOMElement.mm in Sources */,
@@ -6930,13 +6998,13 @@
 				B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */,
 				5110AE0C133C16CB0072717A /* WKIconDatabase.cpp in Sources */,
 				5123CF1B133D260A0056F800 /* WKIconDatabaseCG.cpp in Sources */,
+				51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */,
 				BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */,
 				BCCF6AC912C91F59008F9C35 /* WKImageCG.cpp in Sources */,
 				1C8E293A12761E5B00BC7BD0 /* WKInspector.cpp in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */,
 				BC4075FD124FF0270068F20A /* WKMutableArray.cpp in Sources */,
-				51F7DC16180CC4C700212CA3 /* DatabaseServiceEntryPoint.mm in Sources */,
 				BC4075FF124FF0270068F20A /* WKMutableDictionary.cpp in Sources */,
 				BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */,
 				318BE17714743E6000A8FBB2 /* WKNotification.cpp in Sources */,
@@ -6950,7 +7018,6 @@
 				51FCB18817BBFE0300394CD8 /* SynchronousNetworkLoaderClient.cpp in Sources */,
 				BCD597D6112B56DC00EC8C23 /* WKPage.cpp in Sources */,
 				BC7B633812A45ABA00D174A4 /* WKPageGroup.cpp in Sources */,
-				5130F0E5180CCB9100602C18 /* DatabaseProcessMain.mm in Sources */,
 				BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */,
 				7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */,
 				1AC86FF3130B46D3002C1257 /* WKPluginSiteDataManager.cpp in Sources */,
@@ -6959,7 +7026,6 @@
 				BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */,
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
-				51F7DC14180CC4AD00212CA3 /* DatabaseProcess.cpp in Sources */,
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
 				3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */,
 				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,

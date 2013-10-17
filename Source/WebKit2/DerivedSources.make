@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2) \
     $(WebKit2)/DatabaseProcess \
+    $(WebKit2)/DatabaseProcess/IndexedDB \
     $(WebKit2)/NetworkProcess \
     $(WebKit2)/NetworkProcess/mac \
     $(WebKit2)/PluginProcess \
@@ -62,7 +63,9 @@ MESSAGE_RECEIVERS = \
     CustomProtocolManager \
     CustomProtocolManagerProxy \
     DatabaseProcess \
+    DatabaseProcessIDBDatabaseBackend \
     DatabaseProcessProxy \
+    DatabaseToWebProcessConnection \
     DrawingArea \
     DrawingAreaProxy \
     DownloadProxy \

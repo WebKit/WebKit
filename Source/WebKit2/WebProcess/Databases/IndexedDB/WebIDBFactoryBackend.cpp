@@ -27,14 +27,31 @@
 #include "config.h"
 #include "WebIDBFactoryBackend.h"
 
+#include "IDBUtilities.h"
+#include "Logging.h"
 #include "WebProcess.h"
+#include "WebProcessIDBDatabaseBackend.h"
+#include "WebToDatabaseProcessConnection.h"
+#include <WebCore/IDBCallbacks.h>
+#include <WebCore/IDBDatabaseCallbacks.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SecurityOrigin.h>
+#include <wtf/MainThread.h>
 
 #if ENABLE(INDEXED_DATABASE)
+#if ENABLE(DATABASE_PROCESS)
 
 using namespace WebCore;
 
 namespace WebKit {
+
+typedef HashMap<String, RefPtr<WebProcessIDBDatabaseBackend>> IDBDatabaseBackendMap;
+
+static IDBDatabaseBackendMap& sharedDatabaseBackendMap()
+{
+    DEFINE_STATIC_LOCAL(IDBDatabaseBackendMap, databaseBackendMap, ());
+    return databaseBackendMap;
+}
 
 WebIDBFactoryBackend::WebIDBFactoryBackend()
 {
@@ -51,15 +68,25 @@ void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr
     notImplemented();
 }
 
-void WebIDBFactoryBackend::open(const String&, int64_t, int64_t, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
+void WebIDBFactoryBackend::open(const String& databaseName, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, ScriptExecutionContext*, const String&)
 {
-    // FIXME: Access the connection to the DatabaseProcess to make sure it has been created to assist
-    // with development of database process management.
-    // Later, we'll actually use that connection to accomplish databasey stuff.
+    ASSERT(isMainThread());
+    LOG(StorageAPI, "WebIDBFactoryBackend::open");
 
-#if ENABLE(DATABASE_PROCESS)
-    WebProcess::shared().webToDatabaseProcessConnection();
-#endif
+    RefPtr<SecurityOrigin> securityOrigin = prpSecurityOrigin;
+    String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, securityOrigin.get());
+    
+    RefPtr<WebProcessIDBDatabaseBackend> webProcessDatabaseBackend;
+    IDBDatabaseBackendMap::iterator it = sharedDatabaseBackendMap().find(databaseIdentifier);
+
+    if (it == sharedDatabaseBackendMap().end()) {
+        webProcessDatabaseBackend = WebProcessIDBDatabaseBackend::create(databaseName, securityOrigin.get());
+        webProcessDatabaseBackend->establishDatabaseProcessBackend();
+        sharedDatabaseBackendMap().set(databaseIdentifier, webProcessDatabaseBackend.get());
+    } else
+        webProcessDatabaseBackend = it->value;
+
+    webProcessDatabaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
 void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)
@@ -69,4 +96,5 @@ void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks
 
 } // namespace WebKit
 
+#endif // ENABLE(DATABASE_PROCESS)
 #endif // ENABLE(INDEXED_DATABASE)

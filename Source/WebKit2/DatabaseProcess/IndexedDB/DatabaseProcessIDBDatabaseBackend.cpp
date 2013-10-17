@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#include "config.h"
+#include "DatabaseProcessIDBDatabaseBackend.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include "DatabaseToWebProcessConnection.h"
 
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX WebKit2Log
-#endif
+#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
-#define WEBKIT2_LOG_CHANNELS(M) \
-    M(ContextMenu) \
-    M(IconDatabase) \
-    M(InspectorServer) \
-    M(KeyHandling) \
-    M(Network) \
-    M(NetworkScheduling) \
-    M(Plugins) \
-    M(SessionState) \
-    M(StorageAPI) \
-    M(TextInput) \
-    M(View) \
+DatabaseProcessIDBDatabaseBackend::DatabaseProcessIDBDatabaseBackend(uint64_t backendIdentifier)
+    : m_backendIdentifier(backendIdentifier)
+{
+}
 
-#define DECLARE_LOG_CHANNEL(name) \
-    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+DatabaseProcessIDBDatabaseBackend::~DatabaseProcessIDBDatabaseBackend()
+{
+}
 
-WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+void DatabaseProcessIDBDatabaseBackend::openConnection()
+{
+    // FIXME: This method is successfully called by messaging from the WebProcess.
+    // Now implement it.
+}
 
-#undef DECLARE_LOG_CHANNEL
-
-void initializeLogChannelsIfNecessary(void);
-String logLevelString();
-
-#if PLATFORM(GTK) || PLATFORM(EFL)
-WTFLogChannel* logChannelByName(const String&);
-#endif
+CoreIPC::Connection* DatabaseProcessIDBDatabaseBackend::messageSenderConnection()
+{
+    return m_connection->connection();
+}
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
-
-#endif // Logging_h
+#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

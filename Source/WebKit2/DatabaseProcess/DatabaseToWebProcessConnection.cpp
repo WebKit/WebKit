@@ -26,6 +26,9 @@
 #include "config.h"
 #include "DatabaseToWebProcessConnection.h"
 
+#include "DatabaseProcessIDBDatabaseBackend.h"
+#include "DatabaseProcessIDBDatabaseBackendMessages.h"
+#include "DatabaseToWebProcessConnectionMessages.h"
 #include <WebCore/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
@@ -51,9 +54,21 @@ DatabaseToWebProcessConnection::~DatabaseToWebProcessConnection()
 
 }
 
-void DatabaseToWebProcessConnection::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
+void DatabaseToWebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
+    if (decoder.messageReceiverName() == Messages::DatabaseToWebProcessConnection::messageReceiverName()) {
+        didReceiveDatabaseToWebProcessConnectionMessage(connection, decoder);
+        return;
+    }
 
+    if (decoder.messageReceiverName() == Messages::DatabaseProcessIDBDatabaseBackend::messageReceiverName()) {
+        IDBDatabaseBackendMap::iterator backendIterator = m_idbDatabaseBackends.find(decoder.destinationID());
+        if (backendIterator != m_idbDatabaseBackends.end())
+            backendIterator->value->didReceiveDatabaseProcessIDBDatabaseBackendMessage(connection, decoder);
+        return;
+    }
+    
+    ASSERT_NOT_REACHED();
 }
 
 void DatabaseToWebProcessConnection::didClose(CoreIPC::Connection*)
@@ -64,6 +79,12 @@ void DatabaseToWebProcessConnection::didClose(CoreIPC::Connection*)
 void DatabaseToWebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
 
+}
+
+void DatabaseToWebProcessConnection::establishIDBDatabaseBackend(uint64_t backendIdentifier)
+{
+    RefPtr<DatabaseProcessIDBDatabaseBackend> backend = DatabaseProcessIDBDatabaseBackend::create(backendIdentifier);
+    m_idbDatabaseBackends.set(backendIdentifier, backend.release());
 }
 
 } // namespace WebKit
