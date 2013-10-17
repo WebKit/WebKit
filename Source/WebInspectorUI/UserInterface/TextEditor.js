@@ -444,7 +444,7 @@ WebInspector.TextEditor.prototype = {
         return this._codeMirror.getLine(lineNumber);
     },
 
-    revealPosition: function(position, textRangeToSelect, forceUnformatted)
+    revealPosition: function(position, textRangeToSelect, forceUnformatted, noHighlight)
     {
         console.assert(position === undefined || position instanceof WebInspector.SourceCodePosition, "revealPosition called without a SourceCodePosition");
         if (!(position instanceof WebInspector.SourceCodePosition))
@@ -488,6 +488,9 @@ WebInspector.TextEditor.prototype = {
                 this._scrollIntoViewCentered(position.start);
 
             this.selectedTextRange = textRangeToSelect;
+
+            if (noHighlight)
+                return;
 
             this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);
 
@@ -577,6 +580,16 @@ WebInspector.TextEditor.prototype = {
             return;
 
         return this._codeMirror.toggleLineClass(lineHandle, "wrap", styleClassName);
+    },
+
+    get lineCount()
+    {
+        return this._codeMirror.lineCount();
+    },
+
+    focus: function()
+    {
+        this._codeMirror.focus();
     },
 
     // Private

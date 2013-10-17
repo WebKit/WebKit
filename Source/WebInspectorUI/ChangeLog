@@ -1,5 +1,102 @@
 2013-10-17  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: Go to line keyboard command and dialog
+        https://bugs.webkit.org/show_bug.cgi?id=122893
+
+        Reviewed by Timothy Hatcher.
+
+        Add a text input over source code text editors, centered within the width of the editor
+        and towards the top of the editor, upon pressing Command+L or Control+G to match the
+        behavior in Chrome.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New localized string "Line Number".
+
+        * UserInterface/GoToLineDialog.css: Added.
+        Styling for the go-to-line dialog.
+
+        * UserInterface/GoToLineDialog.js: Added.
+        (WebInspector.GoToLineDialog):
+        Generate the DOM structure for the dialog.
+
+        (WebInspector.GoToLineDialog.prototype.present):
+        Present the dialog as a child of a parent element. The dialog's text field automatically
+        gets focus and resets to be empty.
+
+        (WebInspector.GoToLineDialog.prototype.dismiss):
+        Dismiss the dialog if visible, this triggers the goToLineDialogWasDismissed delegate method.
+
+        (WebInspector.GoToLineDialog.prototype.handleEvent):
+        Route the various events registered in the dialog's DOM tree: input, keydown, blur, mousedown
+        and click.
+
+        (WebInspector.GoToLineDialog.prototype._handleInputEvent):
+        Update the "non-empty" class on the dialog's element depending on the content of the dialog's
+        text field. If there is content in the text field, this will make the clear icon visible.
+
+        (WebInspector.GoToLineDialog.prototype._handleKeydownEvent):
+        If the Esc. key is pressed when there is text in the dialog's input field, clear the input field.
+        If no text is in the input field, dismiss the input field. When the Enter key is pressed, we call
+        the isGoToLineDialogValueValid() method on the delegate to figure out if the text field value is
+        valid. If it's not, we select the text field value so that it may be easily replaced and play
+        en error sound. If it's valid, we call the goToLineDialogValueWasValidated() delegate method
+        and dismiss the dialog.
+
+        (WebInspector.GoToLineDialog.prototype._handleBlurEvent):
+        Dismiss the dialog when its text field loses focus. This ensures that clicking anywhere outside
+        of the dialog removes it from display.
+
+        (WebInspector.GoToLineDialog.prototype._handleMousedownEvent):
+        Upon pressing the mouse down on the clear icon, select the entire text field content (matches
+        the behavior of Xcode) and prevent the default event action that would blur the text field
+        which would dismiss the dialog.
+
+        (WebInspector.GoToLineDialog.prototype._handleClickEvent):
+        Clear the content of the dialog's text field upon clicking on its clear button.
+
+        (WebInspector.GoToLineDialog.prototype._clear):
+        Reset the dialog's text field's value to an empty string and remove the "non-empty" CSS class name
+        controlling the display of the clear button.
+
+        * UserInterface/Images/CloseWhite.svg: Added.
+        Variation of the Close.svg icon with a white cross.
+
+        * UserInterface/Main.html:
+        Link to the newly added resources for GoToLineDialog.
+
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        Register the Command+L and Control+G keyboard shortcuts to bring up the go-to-line dialog.
+
+        (WebInspector.SourceCodeTextEditor.prototype.showGoToLineDialog):
+        Method called upon pressing the Command+L and Control+G keyboard shorcuts creating an instance
+        of a GoToDialog if necessary, becoming its delegate and presenting it in the context of the
+        editor's root element.
+
+        (WebInspector.SourceCodeTextEditor.prototype.isGoToLineDialogValueValid):
+        Delegate method called to validate the line number presently set in the go-to-dialog's text field,
+        checking it's a number between 1 and the number of lines in the source code.
+
+        (WebInspector.SourceCodeTextEditor.prototype.goToLineDialogValueWasValidated):
+        Delegate method called when the line number set in the go-to-dialog's text field has been validated.
+        We reveal and select the line at the number provided.
+
+        (WebInspector.SourceCodeTextEditor.prototype.goToLineDialogWasDismissed):
+        Ensure the source code editor regains focus upon dismissing the go-to-dialog.
+
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.revealPosition):
+        Add a new opt-in option to not highlight the revealed position. The code in goToLineDialogValueWasValidated()
+        sets that new flag to true to avoid an unnecessary highlight on top of the selection.
+
+        (WebInspector.TextEditor.prototype.get lineCount):
+        Expose the lineCount() method on the private CodeMirror instance.
+
+        (WebInspector.TextEditor.prototype.focus):
+        Expose the focus() method on the private CodeMirror instance.
+
+2013-10-17  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: logged objects are highlighted in blue
         https://bugs.webkit.org/show_bug.cgi?id=122897
 

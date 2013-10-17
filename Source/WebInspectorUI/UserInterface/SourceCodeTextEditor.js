@@ -66,6 +66,10 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
         this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
 
     sourceCode.requestContent(this._contentAvailable.bind(this));
+
+    // FIXME: Cmd+L shorcut doesn't actually work.
+    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "L", this.showGoToLineDialog.bind(this), this.element);
+    new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Control, "G", this.showGoToLineDialog.bind(this), this.element);
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.SourceCodeTextEditor);
@@ -184,6 +188,33 @@ WebInspector.SourceCodeTextEditor.prototype = {
         else if (this._sourceCode instanceof WebInspector.Script)
             DebuggerAgent.searchInContent(this._sourceCode.id, query, false, false, searchResultCallback.bind(this));
         return true;
+    },
+
+    showGoToLineDialog: function()
+    {
+        if (!this._goToLineDialog) {
+            this._goToLineDialog = new WebInspector.GoToLineDialog;
+            this._goToLineDialog.delegate = this;
+        }
+
+        this._goToLineDialog.present(this.element);
+    },
+
+    isGoToLineDialogValueValid: function(goToLineDialog, lineNumber)
+    {
+        return !isNaN(lineNumber) && lineNumber > 0 && lineNumber <= this.lineCount;
+    },
+
+    goToLineDialogValueWasValidated: function(goToLineDialog, lineNumber)
+    {
+        var position = new WebInspector.SourceCodePosition(lineNumber - 1, 0);
+        var range = new WebInspector.TextRange(lineNumber - 1, 0, lineNumber, 0);
+        this.revealPosition(position, range, false, true);
+    },
+
+    goToLineDialogWasDismissed: function()
+    {
+        this.focus();
     },
 
     // Private
