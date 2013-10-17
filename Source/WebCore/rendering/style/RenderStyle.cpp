@@ -128,29 +128,16 @@ ALWAYS_INLINE RenderStyle::RenderStyle()
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(bool)
+    : m_box(StyleBoxData::create())
+    , visual(StyleVisualData::create())
+    , m_background(StyleBackgroundData::create())
+    , surround(StyleSurroundData::create())
+    , rareNonInheritedData(StyleRareNonInheritedData::create())
+    , rareInheritedData(StyleRareInheritedData::create())
+    , inherited(StyleInheritedData::create())
+    , m_svgStyle(SVGRenderStyle::create())
 {
     setBitDefaults();
-
-    m_box.init();
-    visual.init();
-    m_background.init();
-    surround.init();
-    rareNonInheritedData.init();
-    rareNonInheritedData.access()->m_deprecatedFlexibleBox.init();
-    rareNonInheritedData.access()->m_flexibleBox.init();
-    rareNonInheritedData.access()->m_marquee.init();
-    rareNonInheritedData.access()->m_multiCol.init();
-    rareNonInheritedData.access()->m_transform.init();
-#if ENABLE(CSS_FILTERS)
-    rareNonInheritedData.access()->m_filter.init();
-#endif
-    rareNonInheritedData.access()->m_grid.init();
-    rareNonInheritedData.access()->m_gridItem.init();
-    rareInheritedData.init();
-    inherited.init();
-#if ENABLE(SVG)
-    m_svgStyle.init();
-#endif
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)

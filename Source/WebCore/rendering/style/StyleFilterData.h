@@ -36,8 +36,8 @@ namespace WebCore {
 
 class StyleFilterData : public RefCounted<StyleFilterData> {
 public:
-    static PassRefPtr<StyleFilterData> create() { return adoptRef(new StyleFilterData); }
-    PassRefPtr<StyleFilterData> copy() const { return adoptRef(new StyleFilterData(*this)); }
+    static PassRef<StyleFilterData> create() { return adoptRef(*new StyleFilterData); }
+    PassRef<StyleFilterData> copy() const { return adoptRef(*new StyleFilterData(*this)); }
 
     bool operator==(const StyleFilterData&) const;
     bool operator!=(const StyleFilterData& o) const

@@ -35,55 +35,62 @@
 #include "IntRect.h"
 #include "NodeRenderStyle.h"
 #include "SVGElement.h"
+#include <wtf/NeverDestroyed.h>
 
 using namespace std;
 
 namespace WebCore {
 
-SVGRenderStyle::SVGRenderStyle()
+static const SVGRenderStyle& defaultSVGStyle()
 {
-    static SVGRenderStyle* defaultStyle = new SVGRenderStyle(CreateDefault);
+    static NeverDestroyed<DataRef<SVGRenderStyle>> style(SVGRenderStyle::createDefaultStyle());
+    return *style.get().get();
+}
 
-    fill = defaultStyle->fill;
-    stroke = defaultStyle->stroke;
-    text = defaultStyle->text;
-    stops = defaultStyle->stops;
-    misc = defaultStyle->misc;
-    shadowSVG = defaultStyle->shadowSVG;
-    inheritedResources = defaultStyle->inheritedResources;
-    resources = defaultStyle->resources;
+PassRef<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
+{
+    return adoptRef(*new SVGRenderStyle(CreateDefault));
+}
 
+SVGRenderStyle::SVGRenderStyle()
+    : fill(defaultSVGStyle().fill)
+    , stroke(defaultSVGStyle().stroke)
+    , text(defaultSVGStyle().text)
+    , inheritedResources(defaultSVGStyle().inheritedResources)
+    , stops(defaultSVGStyle().stops)
+    , misc(defaultSVGStyle().misc)
+    , shadowSVG(defaultSVGStyle().shadowSVG)
+    , resources(defaultSVGStyle().resources)
+{
     setBitDefaults();
 }
 
 SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
+    : fill(StyleFillData::create())
+    , stroke(StyleStrokeData::create())
+    , text(StyleTextData::create())
+    , inheritedResources(StyleInheritedResourceData::create())
+    , stops(StyleStopData::create())
+    , misc(StyleMiscData::create())
+    , shadowSVG(StyleShadowSVGData::create())
+    , resources(StyleResourceData::create())
 {
     setBitDefaults();
-
-    fill.init();
-    stroke.init();
-    text.init();
-    stops.init();
-    misc.init();
-    shadowSVG.init();
-    inheritedResources.init();
-    resources.init();
 }
 
 SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     : RefCounted<SVGRenderStyle>()
+    , svg_inherited_flags(other.svg_inherited_flags)
+    , svg_noninherited_flags(other.svg_noninherited_flags)
+    , fill(other.fill)
+    , stroke(other.stroke)
+    , text(other.text)
+    , inheritedResources(other.inheritedResources)
+    , stops(other.stops)
+    , misc(other.misc)
+    , shadowSVG(other.shadowSVG)
+    , resources(other.resources)
 {
-    fill = other.fill;
-    stroke = other.stroke;
-    text = other.text;
-    stops = other.stops;
-    misc = other.misc;
-    shadowSVG = other.shadowSVG;
-    inheritedResources = other.inheritedResources;
-    resources = other.resources;
-
-    svg_inherited_flags = other.svg_inherited_flags;
-    svg_noninherited_flags = other.svg_noninherited_flags;
 }
 
 SVGRenderStyle::~SVGRenderStyle()

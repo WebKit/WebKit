@@ -129,11 +129,11 @@ StyleRareInheritedData::StyleRareInheritedData()
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
-#endif    
-{
-#if ENABLE(CSS_VARIABLES)
-    m_variables.init();
 #endif
+#if ENABLE(CSS_VARIABLES)
+    , m_variables(StyleVariableData::create())
+#endif
+{
 }
 
 StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)

@@ -52,8 +52,8 @@ class StyleImage;
 // actually uses one of these properties.
 class StyleRareInheritedData : public RefCounted<StyleRareInheritedData> {
 public:
-    static PassRefPtr<StyleRareInheritedData> create() { return adoptRef(new StyleRareInheritedData); }
-    PassRefPtr<StyleRareInheritedData> copy() const { return adoptRef(new StyleRareInheritedData(*this)); }
+    static PassRef<StyleRareInheritedData> create() { return adoptRef(*new StyleRareInheritedData); }
+    PassRef<StyleRareInheritedData> copy() const { return adoptRef(*new StyleRareInheritedData(*this)); }
     ~StyleRareInheritedData();
 
     bool operator==(const StyleRareInheritedData& o) const;

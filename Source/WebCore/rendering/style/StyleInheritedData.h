@@ -36,8 +36,8 @@ namespace WebCore {
 
 class StyleInheritedData : public RefCounted<StyleInheritedData> {
 public:
-    static PassRefPtr<StyleInheritedData> create() { return adoptRef(new StyleInheritedData); }
-    PassRefPtr<StyleInheritedData> copy() const { return adoptRef(new StyleInheritedData(*this)); }
+    static PassRef<StyleInheritedData> create() { return adoptRef(*new StyleInheritedData); }
+    PassRef<StyleInheritedData> copy() const { return adoptRef(*new StyleInheritedData(*this)); }
     ~StyleInheritedData();
 
     bool operator==(const StyleInheritedData& o) const;

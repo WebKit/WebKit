@@ -41,8 +41,9 @@ class RenderObject;
 
 class SVGRenderStyle : public RefCounted<SVGRenderStyle> {    
 public:
-    static PassRefPtr<SVGRenderStyle> create() { return adoptRef(new SVGRenderStyle); }
-    PassRefPtr<SVGRenderStyle> copy() const { return adoptRef(new SVGRenderStyle(*this));}
+    static PassRef<SVGRenderStyle> createDefaultStyle();
+    static PassRef<SVGRenderStyle> create() { return adoptRef(*new SVGRenderStyle); }
+    PassRef<SVGRenderStyle> copy() const { return adoptRef(*new SVGRenderStyle(*this));}
     ~SVGRenderStyle();
 
     bool inheritedNotEqual(const SVGRenderStyle*) const;

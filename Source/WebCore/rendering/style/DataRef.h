@@ -24,13 +24,18 @@
 #ifndef DataRef_h
 #define DataRef_h
 
-#include <wtf/RefPtr.h>
+#include <wtf/PassRef.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
 template <typename T> class DataRef {
 public:
-    const T* get() const { return m_data.get(); }
+    DataRef(PassRef<T> data) : m_data(std::move(data)) { }
+    DataRef(const DataRef& other) : m_data(const_cast<T&>(other.m_data.get())) { }
+    DataRef& operator=(const DataRef& other) { m_data = const_cast<T&>(other.m_data.get()); return *this; }
+
+    const T* get() const { return &m_data.get(); }
 
     const T& operator*() const { return *get(); }
     const T* operator->() const { return get(); }
@@ -39,31 +44,21 @@ public:
     {
         if (!m_data->hasOneRef())
             m_data = m_data->copy();
-        return m_data.get();
-    }
-
-    void init()
-    {
-        ASSERT(!m_data);
-        m_data = T::create();
+        return &m_data.get();
     }
 
     bool operator==(const DataRef<T>& o) const
     {
-        ASSERT(m_data);
-        ASSERT(o.m_data);
-        return m_data == o.m_data || *m_data == *o.m_data;
+        return &m_data.get() == &o.m_data.get() || m_data.get() == o.m_data.get();
     }
     
     bool operator!=(const DataRef<T>& o) const
     {
-        ASSERT(m_data);
-        ASSERT(o.m_data);
-        return m_data != o.m_data && *m_data != *o.m_data;
+        return &m_data.get() != &o.m_data.get() && m_data.get() != o.m_data.get();
     }
 
 private:
-    RefPtr<T> m_data;
+    Ref<T> m_data;
 };
 
 } // namespace WebCore

@@ -35,8 +35,8 @@ namespace WebCore {
 
 class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
 public:
-    static PassRefPtr<StyleBackgroundData> create() { return adoptRef(new StyleBackgroundData); }
-    PassRefPtr<StyleBackgroundData> copy() const { return adoptRef(new StyleBackgroundData(*this)); }
+    static PassRef<StyleBackgroundData> create() { return adoptRef(*new StyleBackgroundData); }
+    PassRef<StyleBackgroundData> copy() const { return adoptRef(*new StyleBackgroundData(*this)); }
     ~StyleBackgroundData() { }
 
     bool operator==(const StyleBackgroundData& o) const;

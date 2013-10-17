@@ -1,3 +1,17 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        DataRef<T> should use Ref<T> internally.
+        <https://webkit.org/b/122953>
+
+        DataRef is used to hold RenderStyle substructures, and due to the
+        way style inheritance is implemented, DataRef will always point to
+        a live object.
+
+        Codify this by making DataRef::m_data a Ref, and making all methods
+        that create substructure objects return PassRef.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Anonymous nested regions

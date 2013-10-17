@@ -23,15 +23,14 @@
 
 #include "config.h"
 #include "NinePieceImage.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 static DataRef<NinePieceImageData>& defaultData()
 {
-    static DataRef<NinePieceImageData>* data = new DataRef<NinePieceImageData>;
-    if (!data->get())
-        data->init();
-    return *data;
+    static NeverDestroyed<DataRef<NinePieceImageData>> data(NinePieceImageData::create());
+    return data.get();
 }
 
 NinePieceImage::NinePieceImage()
@@ -40,8 +39,8 @@ NinePieceImage::NinePieceImage()
 }
 
 NinePieceImage::NinePieceImage(PassRefPtr<StyleImage> image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule)
+    : m_data(NinePieceImageData::create())
 {
-    m_data.init();
     m_data.access()->image = image;
     m_data.access()->imageSlices = std::move(imageSlices);
     m_data.access()->borderSlices = std::move(borderSlices);

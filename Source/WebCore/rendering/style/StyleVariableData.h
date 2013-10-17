@@ -46,8 +46,8 @@ class ShadowData;
 
 class StyleVariableData : public RefCounted<StyleVariableData> {
 public:
-    static PassRefPtr<StyleVariableData> create() { return adoptRef(new StyleVariableData()); }
-    PassRefPtr<StyleVariableData> copy() const { return adoptRef(new StyleVariableData(*this)); }
+    static PassRef<StyleVariableData> create() { return adoptRef(*new StyleVariableData()); }
+    PassRef<StyleVariableData> copy() const { return adoptRef(*new StyleVariableData(*this)); }
 
     bool operator==(const StyleVariableData& other) const { return other.m_data == m_data; }
     bool operator!=(const StyleVariableData& other) const { return !(*this == other); }
