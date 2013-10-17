@@ -1,3 +1,13 @@
+2013-10-17  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix build when NUMBER_OF_ARGUMENT_REGISTERS == 4.
+        https://bugs.webkit.org/show_bug.cgi?id=122949
+
+        Reviewed by Andreas Kling.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2013-10-16  Mark Lam  <mark.lam@apple.com>
 
         Transition remaining op_get* JITStubs to JIT operations.
