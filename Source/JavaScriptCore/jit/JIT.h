@@ -362,6 +362,11 @@ namespace JSC {
         {
             Call functionCall = call();
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
+#if USE(JSVALUE32_64)
+            unmap();
+#else
+            killLastResultRegister();
+#endif
             return functionCall;
         }
 

@@ -1,3 +1,17 @@
+2013-10-16  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT::appendCall() needs to killLastResultRegister() or equivalent since there's some really bad code that expects it
+        https://bugs.webkit.org/show_bug.cgi?id=122937
+
+        Reviewed by Geoffrey Garen.
+        
+        JITStubCall used to do it.
+        
+        This makes mozilla-tests.yaml/ecma/Statements/12.10-1.js.mozilla-baseline pass.
+
+        * jit/JIT.h:
+        (JSC::JIT::appendCall):
+
 2013-10-16  Michael Saboff  <msaboff@apple.com>
 
         transition void cti_op_put_by_val* stubs to JIT operations
