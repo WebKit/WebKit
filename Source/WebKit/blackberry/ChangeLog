@@ -1,3 +1,23 @@
+2013-10-17  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Improve the viewport of some websites like mobilesyrup.com/2013/08/25/moto-x-review/
+        https://bugs.webkit.org/show_bug.cgi?id=122995
+
+        Reviewed by George Staikos.
+        Internally reviewed by George Staikos and Eli Fidler.
+
+        JIRA 523949
+        Force to respect the viewport when there is viewport meta tag but width
+        is not specified even though the viewport is broken. By doing that, We
+        want to improve the user experience of some websites that use a reasonable
+        initial-scale, but have some overly-wide contents
+
+        The contents of those websites like mobilesyrup.com/2013/08/25/moto-x-review
+        should be improved by the contents provider eventually.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup

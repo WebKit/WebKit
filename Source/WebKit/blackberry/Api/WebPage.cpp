@@ -3385,6 +3385,11 @@ Platform::IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments(
     if (m_viewportArguments == defaultViewportArguments)
         return IntSize();
 
+    // We want to respect viewport when width is not specified in the viewport meta tag in order to improve the
+    // user experience of some websites that use a reasonable initial-scale, but have some overly-wide contents.
+    if (m_viewportArguments.width == ViewportArguments::ValueAuto)
+        m_forceRespectViewportArguments = true;
+
     int desktopWidth = DEFAULT_MAX_LAYOUT_WIDTH;
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
