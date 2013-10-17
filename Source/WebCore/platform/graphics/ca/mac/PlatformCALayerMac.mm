@@ -179,37 +179,36 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer
         if ([layer isKindOfClass:getAVPlayerLayerClass()])
             m_layerType = LayerTypeAVPlayerLayer;
         m_layer = layer;
-        return;
-    }
+    } else {
+        Class layerClass = Nil;
+        switch (layerType) {
+        case LayerTypeLayer:
+        case LayerTypeRootLayer:
+            layerClass = [CALayer class];
+            break;
+        case LayerTypeWebLayer:
+            layerClass = [WebLayer class];
+            break;
+        case LayerTypeTransformLayer:
+            layerClass = [CATransformLayer class];
+            break;
+        case LayerTypeWebTiledLayer:
+            layerClass = [WebTiledLayer class];
+            break;
+        case LayerTypeTiledBackingLayer:
+        case LayerTypePageTiledBackingLayer:
+            layerClass = [WebTiledBackingLayer class];
+            break;
+        case LayerTypeAVPlayerLayer:
+            layerClass = getAVPlayerLayerClass();
+            break;
+        case LayerTypeCustom:
+            break;
+        }
 
-    Class layerClass = Nil;
-    switch (layerType) {
-    case LayerTypeLayer:
-    case LayerTypeRootLayer:
-        layerClass = [CALayer class];
-        break;
-    case LayerTypeWebLayer:
-        layerClass = [WebLayer class];
-        break;
-    case LayerTypeTransformLayer:
-        layerClass = [CATransformLayer class];
-        break;
-    case LayerTypeWebTiledLayer:
-        layerClass = [WebTiledLayer class];
-        break;
-    case LayerTypeTiledBackingLayer:
-    case LayerTypePageTiledBackingLayer:
-        layerClass = [WebTiledBackingLayer class];
-        break;
-    case LayerTypeAVPlayerLayer:
-        layerClass = getAVPlayerLayerClass();
-        break;
-    case LayerTypeCustom:
-        break;
+        if (layerClass)
+            m_layer = adoptNS([[layerClass alloc] init]);
     }
-
-    if (layerClass)
-        m_layer = adoptNS([[layerClass alloc] init]);
     
     // Save a pointer to 'this' in the CALayer
     [m_layer.get() setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
