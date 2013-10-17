@@ -68,8 +68,6 @@ public:
 
     ~PlatformCAAnimation();
     
-    static bool supportsValueFunction();
-    
     PassRefPtr<PlatformCAAnimation> copy() const;
 
     PlatformAnimationRef platformAnimation() const;

@@ -214,12 +214,6 @@ PlatformCAAnimation::~PlatformCAAnimation()
 {
 }
 
-bool PlatformCAAnimation::supportsValueFunction()
-{
-    static bool sHaveValueFunction = [CAPropertyAnimation instancesRespondToSelector:@selector(setValueFunction:)];
-    return sHaveValueFunction;
-}
-
 PlatformAnimationRef PlatformCAAnimation::platformAnimation() const
 {
     return m_animation.get();

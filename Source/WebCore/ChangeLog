@@ -1,3 +1,18 @@
+2013-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove PlatformCAAnimation::supportsValueFunction()
+        https://bugs.webkit.org/show_bug.cgi?id=122990
+
+        Reviewed by Tim Horton.
+
+        PlatformCAAnimation::supportsValueFunction always returns true now, so there's no need for it to exist anymore.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderMathMLFenced always has a MathMLInlineContainerElement.

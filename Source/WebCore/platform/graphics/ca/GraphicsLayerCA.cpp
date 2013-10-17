@@ -2326,18 +2326,10 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     int listIndex = validateTransformOperations(valueList, hasBigRotation);
     const TransformOperations* operations = (listIndex >= 0) ? &static_cast<const TransformAnimationValue&>(valueList.at(listIndex)).value() : 0;
 
-    // We need to fall back to software animation if we don't have setValueFunction:, and
-    // we would need to animate each incoming transform function separately. This is the
-    // case if we have a rotation >= 180 or we have more than one transform function.
-    if ((hasBigRotation || (operations && operations->size() > 1)) && !PlatformCAAnimation::supportsValueFunction())
-        return false;
-
     bool validMatrices = true;
 
     // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
-    // Also, we can't do component animation unless we have valueFunction, so we need to do matrix animation
-    // if that's not true as well.
-    bool isMatrixAnimation = listIndex < 0 || !PlatformCAAnimation::supportsValueFunction();
+    bool isMatrixAnimation = listIndex < 0;
     int numAnimations = isMatrixAnimation ? 1 : operations->size();
 
     bool reverseAnimationList = true;

@@ -201,11 +201,6 @@ PlatformCAAnimation::~PlatformCAAnimation()
 {
 }
 
-bool PlatformCAAnimation::supportsValueFunction()
-{
-    return true;
-}
-
 PlatformAnimationRef PlatformCAAnimation::platformAnimation() const
 {
     return m_animation.get();
