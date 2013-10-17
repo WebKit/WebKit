@@ -1,3 +1,20 @@
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Eliminate uses of JITSTACKFRAME_ARGS_INDEX as scratch area for thunks
+        https://bugs.webkit.org/show_bug.cgi?id=122973
+
+        Reviewed by Michael Saboff.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator): This was all dead code,
+        so I removed it.
+
+        The code acted as if it needed to pass an argument to
+        lookupExceptionHandler, and as if it passed that argument to itself
+        through JITStackFrame. However, lookupExceptionHandler does not take
+        an argument (other than the default ExecState argument), and the code
+        did not initialize the thing that it thought it passed to itself!
+
 2013-10-17  Alex Christensen  <achristensen@webkit.org>
 
         Run JavaScriptCore tests again on Windows.
