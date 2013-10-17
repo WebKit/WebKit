@@ -33,6 +33,7 @@
     macro(void, Shutdown, ()) \
     macro(char *, CreateMessage, (const char *Message)) \
     macro(void, DisposeMessage, (char *Message)) \
+    macro(void, InstallFatalErrorHandler, (LLVMFatalErrorHandler Handler)) \
     macro(LLVMContextRef, ContextCreate, (void)) \
     macro(LLVMContextRef, GetGlobalContext, (void)) \
     macro(void, ContextDispose, (LLVMContextRef C)) \

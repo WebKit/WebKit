@@ -28,15 +28,29 @@
 
 #if HAVE(LLVM)
 
+#include "LLVMAPI.h"
 #include <pthread.h>
 
 namespace JSC {
 
 static pthread_once_t initializeLLVMOnceKey = PTHREAD_ONCE_INIT;
 
+static NO_RETURN_DUE_TO_CRASH void llvmCrash(const char* reason)
+{
+    WTFLogAlways("LLVM failure: %s", reason);
+    CRASH();
+}
+
+static void initializeLLVMOnce()
+{
+    initializeLLVMImpl();
+    
+    llvm->InstallFatalErrorHandler(llvmCrash);
+}
+
 void initializeLLVM()
 {
-    pthread_once(&initializeLLVMOnceKey, initializeLLVMImpl);
+    pthread_once(&initializeLLVMOnceKey, initializeLLVMOnce);
 }
 
 } // namespace JSC
