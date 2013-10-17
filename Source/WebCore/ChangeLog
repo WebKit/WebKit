@@ -1,3 +1,23 @@
+2013-10-17  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Remove unnecessary check for RenderLayer and rename ensureLayer to createLayer in RenderLayerModelObject.
+        https://bugs.webkit.org/show_bug.cgi?id=122928
+
+        Reviewed by Darin Adler.
+
+        No new tests due to code refactoring.
+
+        RenderLayerModelObject::styleDidChange invokes the ensureLayer() only in case of !layer().
+        Again checking for layer existence would be deemed redundant in ensureLayer.
+        Replacing it with an ASSERT(!m_layer) and also renaming it to createLayer.
+
+        Blink review URL: https://codereview.chromium.org/27246003/
+
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::createLayer):
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderLayerModelObject.h:
+
 2013-10-17  Tim Horton  <timothy_horton@apple.com>
 
         Remove PlatformCALayerMac workaround for <rdar://problem/7390716>

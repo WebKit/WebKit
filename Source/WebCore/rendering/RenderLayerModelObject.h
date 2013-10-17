@@ -53,7 +53,7 @@ protected:
     RenderLayerModelObject(Element&, unsigned baseTypeFlags);
     RenderLayerModelObject(Document&, unsigned baseTypeFlags);
 
-    void ensureLayer();
+    void createLayer();
 
     virtual void willBeDestroyed() OVERRIDE;
 

@@ -61,11 +61,9 @@ void RenderLayerModelObject::destroyLayer()
     m_layer = nullptr;
 }
 
-void RenderLayerModelObject::ensureLayer()
+void RenderLayerModelObject::createLayer()
 {
-    if (m_layer)
-        return;
-
+    ASSERT(!m_layer);
     m_layer = std::make_unique<RenderLayer>(*this);
     setHasLayer(true);
     m_layer->insertOnlyThisLayer();
@@ -146,7 +144,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         if (!layer() && layerCreationAllowedForSubtree()) {
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout();
-            ensureLayer();
+            createLayer();
             if (parent() && !needsLayout() && containingBlock()) {
                 layer()->setRepaintStatus(NeedsFullRepaint);
                 // There is only one layer to update, it is not worth using |cachedOffset| since
