@@ -249,11 +249,11 @@ StyleRule::~StyleRule()
 {
 }
 
-MutableStylePropertySet* StyleRule::mutableProperties()
+MutableStylePropertySet& StyleRule::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return &static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
 PassRefPtr<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, PassRef<StylePropertySet> properties)
@@ -310,11 +310,11 @@ StyleRulePage::~StyleRulePage()
 {
 }
 
-MutableStylePropertySet* StyleRulePage::mutableProperties()
+MutableStylePropertySet& StyleRulePage::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return &static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
 StyleRuleFontFace::StyleRuleFontFace(PassRef<StylePropertySet> properties)
@@ -333,11 +333,11 @@ StyleRuleFontFace::~StyleRuleFontFace()
 {
 }
 
-MutableStylePropertySet* StyleRuleFontFace::mutableProperties()
+MutableStylePropertySet& StyleRuleFontFace::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return &static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
 StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase> >& adoptRule)
@@ -425,11 +425,11 @@ StyleRuleViewport::~StyleRuleViewport()
 {
 }
 
-MutableStylePropertySet* StyleRuleViewport::mutableProperties()
+MutableStylePropertySet& StyleRuleViewport::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return &static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
@@ -452,11 +452,11 @@ StyleRuleFilter::~StyleRuleFilter()
 {
 }
 
-MutableStylePropertySet* StyleRuleFilter::mutableProperties()
+MutableStylePropertySet& StyleRuleFilter::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return &static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
 #endif // ENABLE(CSS_SHADERS)

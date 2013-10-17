@@ -55,7 +55,7 @@ WebKitCSSViewportRule::~WebKitCSSViewportRule()
 CSSStyleDeclaration* WebKitCSSViewportRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_viewportRule->mutableProperties(), this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_viewportRule->mutableProperties(), *this);
 
     return m_propertiesCSSOMWrapper.get();
 }

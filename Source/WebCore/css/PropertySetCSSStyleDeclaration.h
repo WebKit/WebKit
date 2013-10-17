@@ -84,7 +84,7 @@ protected:
 class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration
 {
 public:
-    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(MutableStylePropertySet* propertySet, CSSRule* parentRule)
+    static PassRefPtr<StyleRuleCSSStyleDeclaration> create(MutableStylePropertySet& propertySet, CSSRule& parentRule)
     {
         return adoptRef(new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
     }
@@ -95,10 +95,10 @@ public:
     virtual void ref() OVERRIDE;
     virtual void deref() OVERRIDE;
 
-    void reattach(MutableStylePropertySet*);
+    void reattach(MutableStylePropertySet&);
 
 private:
-    StyleRuleCSSStyleDeclaration(MutableStylePropertySet*, CSSRule*);
+    StyleRuleCSSStyleDeclaration(MutableStylePropertySet&, CSSRule&);
 
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
 

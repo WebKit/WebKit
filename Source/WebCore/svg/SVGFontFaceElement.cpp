@@ -65,7 +65,7 @@ void SVGFontFaceElement::parseAttribute(const QualifiedName& name, const AtomicS
 {    
     CSSPropertyID propId = cssPropertyIdForSVGAttributeName(name);
     if (propId > 0) {
-        m_fontFaceRule->mutableProperties()->setProperty(propId, value, false);
+        m_fontFaceRule->mutableProperties().setProperty(propId, value, false);
         rebuildFontFace();
         return;
     }
@@ -248,7 +248,7 @@ void SVGFontFaceElement::rebuildFontFace()
         return;
 
     // Parse in-memory CSS rules
-    m_fontFaceRule->mutableProperties()->addParsedProperty(CSSProperty(CSSPropertySrc, list));
+    m_fontFaceRule->mutableProperties().addParsedProperty(CSSProperty(CSSPropertySrc, list));
 
     if (describesParentFont) {    
         // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.
@@ -285,7 +285,7 @@ void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
     if (rootParent.inDocument()) {
         m_fontElement = 0;
         document().accessSVGExtensions()->unregisterSVGFontFaceElement(this);
-        m_fontFaceRule->mutableProperties()->clear();
+        m_fontFaceRule->mutableProperties().clear();
 
         document().styleResolverChanged(DeferRecalcStyle);
     } else

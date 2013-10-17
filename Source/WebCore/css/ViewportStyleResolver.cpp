@@ -54,18 +54,18 @@ ViewportStyleResolver::~ViewportStyleResolver()
 
 void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
 {
-    StylePropertySet* propertySet = viewportRule->mutableProperties();
+    StylePropertySet& propertySet = viewportRule->mutableProperties();
 
-    unsigned propertyCount = propertySet->propertyCount();
+    unsigned propertyCount = propertySet.propertyCount();
     if (!propertyCount)
         return;
 
     if (!m_propertySet) {
-        m_propertySet = propertySet->mutableCopy();
+        m_propertySet = propertySet.mutableCopy();
         return;
     }
 
-    m_propertySet->mergeAndOverrideOnConflict(*propertySet);
+    m_propertySet->mergeAndOverrideOnConflict(propertySet);
 }
 
 void ViewportStyleResolver::clearDocument()

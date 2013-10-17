@@ -1,3 +1,17 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        StyleRuleFoo::mutableProperties() should return a reference.
+        <https://webkit.org/b/122962>
+
+        The mutableProperties() functions always return objects, so make
+        them return MutableStylePropertySet&.
+
+        Also tweaked the StyleRuleCSSStyleDeclaration constructor to take
+        references to both the properties and the owner rule since both
+        are required.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-17  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Improve the performance of image valued shapes with large shape-margins

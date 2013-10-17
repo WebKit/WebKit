@@ -295,10 +295,10 @@ PassRef<MutableStylePropertySet> PropertySetCSSStyleDeclaration::copyProperties(
     return m_propertySet->mutableCopy();
 }
     
-StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStylePropertySet* propertySet, CSSRule* parentRule)
-    : PropertySetCSSStyleDeclaration(propertySet)
+StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStylePropertySet& propertySet, CSSRule& parentRule)
+    : PropertySetCSSStyleDeclaration(&propertySet)
     , m_refCount(1)
-    , m_parentRule(parentRule) 
+    , m_parentRule(&parentRule)
 {
     m_propertySet->ref();
 }
@@ -341,11 +341,10 @@ CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
-void StyleRuleCSSStyleDeclaration::reattach(MutableStylePropertySet* propertySet)
+void StyleRuleCSSStyleDeclaration::reattach(MutableStylePropertySet& propertySet)
 {
-    ASSERT(propertySet);
     m_propertySet->deref();
-    m_propertySet = propertySet;
+    m_propertySet = &propertySet;
     m_propertySet->ref();
 }
 

@@ -49,7 +49,7 @@ CSSPageRule::~CSSPageRule()
 CSSStyleDeclaration* CSSPageRule::style()
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->mutableProperties(), this);
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_pageRule->mutableProperties(), *this);
     return m_propertiesCSSOMWrapper.get();
 }
 

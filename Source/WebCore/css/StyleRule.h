@@ -127,7 +127,7 @@ public:
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet* mutableProperties();
+    MutableStylePropertySet& mutableProperties();
     
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -162,7 +162,7 @@ public:
     ~StyleRuleFontFace();
 
     const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet* mutableProperties();
+    MutableStylePropertySet& mutableProperties();
 
     PassRefPtr<StyleRuleFontFace> copy() const { return adoptRef(new StyleRuleFontFace(*this)); }
 
@@ -182,7 +182,7 @@ public:
 
     const CSSSelector* selector() const { return m_selectorList.first(); }    
     const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet* mutableProperties();
+    MutableStylePropertySet& mutableProperties();
 
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -293,7 +293,7 @@ public:
     ~StyleRuleViewport();
 
     const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet* mutableProperties();
+    MutableStylePropertySet& mutableProperties();
 
     PassRefPtr<StyleRuleViewport> copy() const { return adoptRef(new StyleRuleViewport(*this)); }
 
@@ -338,7 +338,7 @@ public:
     const String& filterName() const { return m_filterName; }
 
     const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet* mutableProperties();
+    MutableStylePropertySet& mutableProperties();
 
     PassRefPtr<StyleRuleFilter> copy() const { return adoptRef(new StyleRuleFilter(*this)); }
 
