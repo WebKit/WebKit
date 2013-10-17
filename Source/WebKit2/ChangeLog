@@ -1,5 +1,11 @@
 2013-10-17  Brady Eidson  <beidson@apple.com>
 
+        Blind attempt at gtk-wk2 build fix.
+
+        * GNUmakefile.am:
+
+2013-10-17  Brady Eidson  <beidson@apple.com>
+
         Add scaffolding for IDBDatabaseBackends in Web and Database processes
         https://bugs.webkit.org/show_bug.cgi?id=122971
 
