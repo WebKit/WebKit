@@ -1,3 +1,13 @@
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Eliminate emitGetJITStubArg() - dead code
+        https://bugs.webkit.org/show_bug.cgi?id=122975
+
+        Reviewed by Anders Carlsson.
+
+        * jit/JIT.h:
+        * jit/JITInlines.h: Removed unused, deprecated function.
+
 2013-10-17  Mark Lam  <mark.lam@apple.com>
 
         Eliminate all ASSERT references to OBJECT_OFFSETOF(struct JITStackFrame,...) in JITStubsXXX.h.

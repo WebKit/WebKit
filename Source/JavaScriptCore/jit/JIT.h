@@ -514,9 +514,6 @@ namespace JSC {
         void emitBinaryDoubleOp(OpcodeID, int dst, int op1, int op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
 #else // USE(JSVALUE32_64)
-        /* This function is deprecated. */
-        void emitGetJITStubArg(int argumentNumber, RegisterID dst);
-
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegister(VirtualRegister src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);

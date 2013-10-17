@@ -1093,14 +1093,6 @@ ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(int op1, int op2, int& op
 
 #else // USE(JSVALUE32_64)
 
-/* Deprecated: Please use JITStubCall instead. */
-
-ALWAYS_INLINE void JIT::emitGetJITStubArg(int argumentNumber, RegisterID dst)
-{
-    int argumentStackOffset = (argumentNumber * (sizeof(JSValue) / sizeof(void*))) + JITSTACKFRAME_ARGS_INDEX;
-    peek64(dst, argumentStackOffset);
-}
-
 ALWAYS_INLINE void JIT::killLastResultRegister()
 {
     m_lastResultBytecodeRegister = std::numeric_limits<int>::max();
