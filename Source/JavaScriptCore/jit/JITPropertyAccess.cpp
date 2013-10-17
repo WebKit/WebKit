@@ -230,10 +230,9 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     Label slowPath = label();
     
-    JITStubCall stubCall(this, cti_op_get_by_val);
-    stubCall.addArgument(base, regT2);
-    stubCall.addArgument(property, regT2);
-    Call call = stubCall.call(dst);
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(property, regT1);
+    Call call = callOperation(operationGetByValDefault, dst, regT0, regT1);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -307,10 +306,9 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
     linkSlowCase(iter);
     linkSlowCase(iter);
 
-    JITStubCall stubCall(this, cti_op_get_by_val_generic);
-    stubCall.addArgument(base, regT2);
-    stubCall.addArgument(property, regT2);
-    stubCall.call(dst);
+    emitGetVirtualRegister(base, regT0);
+    emitGetVirtualRegister(property, regT1);
+    callOperation(operationGetByValGeneric, dst, regT0, regT1);
 }
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
@@ -992,7 +990,7 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_val_generic));
+    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(operationGetByValGeneric));
 }
 
 void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)

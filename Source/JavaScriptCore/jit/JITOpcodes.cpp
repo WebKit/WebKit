@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1069,13 +1069,7 @@ void JIT::emitSlow_op_get_arguments_length(Instruction* currentInstruction, Vect
     linkSlowCase(iter);
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
-    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
-    
-    emitGetVirtualRegister(base, regT0);
-    JITStubCall stubCall(this, cti_op_get_by_id_generic);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(TrustedImmPtr(ident));
-    stubCall.call(dst);
+    callOperation(operationGetArgumentsLength, dst, base);
 }
 
 void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
@@ -1113,10 +1107,9 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)), returnValueRegister);
     
     skipArgumentsCreation.link(this);
-    JITStubCall stubCall(this, cti_op_get_by_val_generic);
-    stubCall.addArgument(arguments, regT2);
-    stubCall.addArgument(property, regT2);
-    stubCall.callWithValueProfiling(dst);
+    emitGetVirtualRegister(arguments, regT0);
+    emitGetVirtualRegister(property, regT1);
+    callOperation(WithProfile, operationGetByValGeneric, dst, regT0, regT1);
 }
 
 #endif // USE(JSVALUE64)

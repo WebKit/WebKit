@@ -699,18 +699,6 @@ void JIT_OPERATION operationTearOffInlinedArguments(
     jsCast<Arguments*>(argumentsCell)->tearOff(exec, inlineCallFrame);
 }
 
-EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    // Here we can assume that the argumernts were created. Because otherwise the JIT code would
-    // have not made this call.
-    Identifier ident(&vm, "length");
-    JSValue baseValue = exec->uncheckedR(argumentsRegister).jsValue();
-    PropertySlot slot(baseValue);
-    return JSValue::encode(baseValue.get(exec, ident, slot));
-}
-
 EncodedJSValue JIT_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t argumentsRegister, int32_t index)
 {
     VM& vm = exec->vm();

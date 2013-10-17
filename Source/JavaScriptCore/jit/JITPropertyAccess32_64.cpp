@@ -262,10 +262,9 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     Label slowPath = label();
     
-    JITStubCall stubCall(this, cti_op_get_by_val);
-    stubCall.addArgument(base);
-    stubCall.addArgument(property);
-    Call call = stubCall.call(dst);
+    emitLoad(base, regT1, regT0);
+    emitLoad(property, regT3, regT2);
+    Call call = callOperation(operationGetByValDefault, dst, regT1, regT0, regT3, regT2);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -702,10 +701,9 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
     linkSlowCase(iter);
     linkSlowCase(iter);
     
-    JITStubCall stubCall(this, cti_op_get_by_val_generic);
-    stubCall.addArgument(base);
-    stubCall.addArgument(property);
-    stubCall.call(dst);
+    emitLoad(base, regT1, regT0);
+    emitLoad(property, regT3, regT2);
+    callOperation(operationGetByValGeneric, dst, regT1, regT0, regT3, regT2);
 }
 
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)

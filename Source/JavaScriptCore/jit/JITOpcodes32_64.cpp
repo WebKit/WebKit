@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1192,12 +1192,7 @@ void JIT::emitSlow_op_get_arguments_length(Instruction* currentInstruction, Vect
     linkSlowCase(iter);
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
-    int ident = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_get_by_id_generic);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&(m_codeBlock->identifier(ident))));
-    stubCall.call(dst);
+    callOperation(operationGetArgumentsLength, dst, base);
 }
 
 void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
@@ -1236,10 +1231,9 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), returnValueRegister);
     
     skipArgumentsCreation.link(this);
-    JITStubCall stubCall(this, cti_op_get_by_val_generic);
-    stubCall.addArgument(arguments);
-    stubCall.addArgument(property);
-    stubCall.callWithValueProfiling(dst);
+    emitLoad(arguments, regT1, regT0);
+    emitLoad(property, regT3, regT2);
+    callOperation(WithProfile, operationGetByValGeneric, dst, regT1, regT0, regT3, regT2);
 }
 
 } // namespace JSC

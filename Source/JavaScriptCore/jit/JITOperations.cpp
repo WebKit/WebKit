@@ -1295,6 +1295,124 @@ JSCell* JIT_OPERATION operationCreateArguments(ExecState* exec)
     return result;
 }
 
+EncodedJSValue JIT_OPERATION operationGetArgumentsLength(ExecState* exec, int32_t argumentsRegister)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    // Here we can assume that the argumernts were created. Because otherwise the JIT code would
+    // have not made this call.
+    Identifier ident(&vm, "length");
+    JSValue baseValue = exec->uncheckedR(argumentsRegister).jsValue();
+    PropertySlot slot(baseValue);
+    return JSValue::encode(baseValue.get(exec, ident, slot));
+}
+
+static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
+{
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(exec, asString(subscript)->value(exec)))
+            return result;
+    }
+
+    if (subscript.isUInt32()) {
+        uint32_t i = subscript.asUInt32();
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
+            ctiPatchCallByReturnAddress(exec->codeBlock(), returnAddress, FunctionPtr(operationGetByValString));
+            return asString(baseValue)->getIndex(exec, i);
+        }
+        return baseValue.get(exec, i);
+    }
+
+    if (isName(subscript))
+        return baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
+
+    Identifier property(exec, subscript.toString(exec)->value(exec));
+    return baseValue.get(exec, property);
+}
+
+EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+
+    JSValue result = getByVal(exec, baseValue, subscript, ReturnAddressPtr(OUR_RETURN_ADDRESS));
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    
+    if (baseValue.isObject() && subscript.isInt32()) {
+        // See if it's worth optimizing this at all.
+        JSObject* object = asObject(baseValue);
+        bool didOptimize = false;
+
+        unsigned bytecodeOffset = exec->locationAsBytecodeOffset();
+        ASSERT(bytecodeOffset);
+        ByValInfo& byValInfo = exec->codeBlock()->getByValInfo(bytecodeOffset - 1);
+        ASSERT(!byValInfo.stubRoutine);
+        
+        if (hasOptimizableIndexing(object->structure())) {
+            // Attempt to optimize.
+            JITArrayMode arrayMode = jitArrayModeForStructure(object->structure());
+            if (arrayMode != byValInfo.arrayMode) {
+                JIT::compileGetByVal(&vm, exec->codeBlock(), &byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS), arrayMode);
+                didOptimize = true;
+            }
+        }
+        
+        if (!didOptimize) {
+            // If we take slow path more than 10 times without patching then make sure we
+            // never make that mistake again. Or, if we failed to patch and we have some object
+            // that intercepts indexed get, then don't even wait until 10 times. For cases
+            // where we see non-index-intercepting objects, this gives 10 iterations worth of
+            // opportunity for us to observe that the get_by_val may be polymorphic.
+            if (++byValInfo.slowPathCount >= 10
+                || object->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+                // Don't ever try to optimize.
+                RepatchBuffer repatchBuffer(exec->codeBlock());
+                repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValGeneric));
+            }
+        }
+    }
+    
+    JSValue result = getByVal(exec, baseValue, subscript, ReturnAddressPtr(OUR_RETURN_ADDRESS));
+    return JSValue::encode(result);
+}
+    
+EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    
+    JSValue result;
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
+            result = asString(baseValue)->getIndex(exec, i);
+        else {
+            result = baseValue.get(exec, i);
+            if (!isJSString(baseValue))
+                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValDefault));
+        }
+    } else if (isName(subscript))
+        result = baseValue.get(exec, jsCast<NameInstance*>(subscript.asCell())->privateName());
+    else {
+        Identifier property(exec, subscript.toString(exec)->value(exec));
+        result = baseValue.get(exec, property);
+    }
+
+    return JSValue::encode(result);
+}
+    
 void JIT_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activationCell)
 {
     VM& vm = exec->vm();

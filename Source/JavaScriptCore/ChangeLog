@@ -1,3 +1,43 @@
+2013-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Transition remaining op_get* JITStubs to JIT operations.
+        https://bugs.webkit.org/show_bug.cgi?id=122925.
+
+        Reviewed by Geoffrey Garen.
+
+        Transitioning:
+            cti_op_get_by_id_generic
+            cti_op_get_by_val
+            cti_op_get_by_val_generic
+            cti_op_get_by_val_string
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_pname):
+        (JSC::JIT::privateCompileGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_pname):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * runtime/Executable.cpp:
+        (JSC::setupLLInt): Added some UNUSED_PARAMs to fix the no LLINT build.
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         libllvmForJSC shouldn't call exit(1) on report_fatal_error()
