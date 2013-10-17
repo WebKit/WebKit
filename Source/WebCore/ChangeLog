@@ -1,3 +1,19 @@
+2013-10-17  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Crash when highlighting a node of a flow with no regions
+        https://bugs.webkit.org/show_bug.cgi?id=122993
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector-protocol/dom/highlight-flow-with-no-region.html
+
+        Even if a named flow has no regions the content of the flow will still have renderer objects created.
+        Removed the assumption that all renderers inside a RenderFlowThread will always have an enclosing RenderRegion.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRendererFragments):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderMathMLOperator always has a MathMLElement.

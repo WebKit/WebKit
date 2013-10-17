@@ -503,7 +503,7 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
         RenderRegion* endRegion = nullptr;
         containingFlowThread->getRegionRangeForBox(enclosingBox, startRegion, endRegion);
         if (!startRegion) {
-            ASSERT_NOT_REACHED();
+            // The flow has no visible regions. The renderer is not visible on screen.
             return nullptr;
         }
         const RenderRegionList& regionList = containingFlowThread->renderRegionList();
@@ -593,13 +593,17 @@ PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() co
     if (!renderer)
         return nullptr;
 
+    RefPtr<InspectorArray> highlightFragments = buildObjectForRendererFragments(renderer, m_nodeHighlightConfig);
+    if (!highlightFragments)
+        return nullptr;
+
     RefPtr<InspectorObject> highlightObject = InspectorObject::create();
 
     // The main view's scroll offset is shared across all quads.
     FrameView* mainView = m_page->mainFrame().view();
     highlightObject->setObject("scroll", buildObjectForPoint(!mainView->delegatesScrolling() ? mainView->visibleContentRect().location() : FloatPoint()));
 
-    highlightObject->setArray("fragments", buildObjectForRendererFragments(renderer, m_nodeHighlightConfig));
+    highlightObject->setArray("fragments", highlightFragments.release());
 
     if (m_nodeHighlightConfig.showInfo) {
         RefPtr<InspectorObject> elementInfo = buildObjectForElementInfo(node);

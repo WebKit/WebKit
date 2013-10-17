@@ -1,3 +1,16 @@
+2013-10-17  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Crash when highlighting a node of a flow with no regions
+        https://bugs.webkit.org/show_bug.cgi?id=122993
+
+        Reviewed by Joseph Pecoraro.
+
+        Added test to check that DOM.highlightNode is not crashing WebCore when the node is inside
+        a flow with no associated regions.
+
+        * inspector-protocol/dom/highlight-flow-with-no-region-expected.txt: Added.
+        * inspector-protocol/dom/highlight-flow-with-no-region.html: Added.
+
 2013-10-17  Nico Weber  <thakis@chromium.org>
 
         Fix three bugs in the equals() implementations for css gradients.
