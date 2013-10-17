@@ -122,8 +122,8 @@ public:
         bool changed = false;
         
         // Record which arguments are known to escape no matter what.
-        for (unsigned i = m_graph.m_inlineCallFrames->size(); i--;)
-            pruneObviousArgumentCreations(m_graph.m_inlineCallFrames->at(i));
+        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter)
+            pruneObviousArgumentCreations(*iter);
         pruneObviousArgumentCreations(0); // the machine call frame.
         
         // Create data for variable access datas that we will want to analyze.

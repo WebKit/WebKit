@@ -84,6 +84,30 @@
 
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Introduce WTF::Bag and start using it for InlineCallFrameSet
+        https://bugs.webkit.org/show_bug.cgi?id=122941
+
+        Reviewed by Geoffrey Garen.
+        
+        Use Bag for InlineCallFrameSet. If this works out then I'll make other
+        SegmentedVectors into Bags as well.
+
+        * bytecode/InlineCallFrameSet.cpp:
+        (JSC::InlineCallFrameSet::add):
+        * bytecode/InlineCallFrameSet.h:
+        (JSC::InlineCallFrameSet::begin):
+        (JSC::InlineCallFrameSet::end):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+
+2013-10-16  Filip Pizlo  <fpizlo@apple.com>
+
         libllvmForJSC shouldn't call exit(1) on report_fatal_error()
         https://bugs.webkit.org/show_bug.cgi?id=122905
         <rdar://problem/15237856>

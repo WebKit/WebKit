@@ -3,6 +3,7 @@ set(WTF_HEADERS
     AVLTree.h
     Assertions.h
     Atomics.h
+    Bag.h
     BitArray.h
     BitVector.h
     Bitmap.h

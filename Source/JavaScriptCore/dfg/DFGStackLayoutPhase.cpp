@@ -102,8 +102,8 @@ public:
         }
         if (codeBlock()->uncheckedActivationRegister().isValid())
             usedLocals.set(codeBlock()->activationRegister().toLocal());
-        for (unsigned i = m_graph.m_inlineCallFrames->size(); i--;) {
-            InlineCallFrame* inlineCallFrame = m_graph.m_inlineCallFrames->at(i);
+        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
+            InlineCallFrame* inlineCallFrame = *iter;
             if (!inlineCallFrame->executable->usesArguments())
                 continue;
             
@@ -166,8 +166,8 @@ public:
                 virtualRegisterForLocal(allocation[codeBlock()->activationRegister().toLocal()]));
         }
         
-        for (unsigned i = m_graph.m_inlineCallFrames->size(); i--;) {
-            InlineCallFrame* inlineCallFrame = m_graph.m_inlineCallFrames->at(i);
+        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
+            InlineCallFrame* inlineCallFrame = *iter;
             if (!inlineCallFrame->executable->usesArguments())
                 continue;
             inlineCallFrame->argumentsRegister = virtualRegisterForLocal(

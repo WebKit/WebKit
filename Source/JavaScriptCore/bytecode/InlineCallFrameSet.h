@@ -27,8 +27,8 @@
 #define InlineCallFrameSet_h
 
 #include "CodeOrigin.h"
+#include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
@@ -42,15 +42,12 @@ public:
     
     InlineCallFrame* add();
     
-    // The only users of these methods just want to iterate all inline call frames.
-    // There is no requirement for random access.
-    unsigned size() const { return m_frames.size(); }
-    InlineCallFrame* at(unsigned i) { return &m_frames[i]; }
-    
-    void shrinkToFit();
+    typedef Bag<InlineCallFrame>::iterator iterator;
+    iterator begin() { return m_frames.begin(); }
+    iterator end() { return m_frames.end(); }
     
 private:
-    SegmentedVector<InlineCallFrame, 4> m_frames;
+    Bag<InlineCallFrame> m_frames;
 };
 
 } // namespace JSC

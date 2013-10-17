@@ -158,10 +158,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
 #endif
     
-    if (!m_graph.m_inlineCallFrames->isEmpty()) {
-        m_graph.m_inlineCallFrames->shrinkToFit();
+    if (!m_graph.m_inlineCallFrames->isEmpty())
         m_jitCode->common.inlineCallFrames = m_graph.m_inlineCallFrames.release();
-    }
     
     m_jitCode->common.machineCaptureStart = m_graph.m_machineCaptureStart;
     m_jitCode->common.slowArguments = std::move(m_graph.m_slowArguments);

@@ -33,13 +33,7 @@ InlineCallFrameSet::~InlineCallFrameSet() { }
 
 InlineCallFrame* InlineCallFrameSet::add()
 {
-    m_frames.append(InlineCallFrame());
-    return &m_frames.last();
-}
-
-void InlineCallFrameSet::shrinkToFit()
-{
-    m_frames.shrinkToFit();
+    return m_frames.add();
 }
 
 } // namespace JSC
