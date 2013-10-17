@@ -1,3 +1,13 @@
+2013-10-17  Anthony Johnson  <anthony.johnson@flexsim.com>
+
+        Crash fix for Windows XP.
+        https://bugs.webkit.org/show_bug.cgi?id=122790
+
+        Reviewed by Geoffrey Garen.
+
+        * win/tools/vsprops/common.props:
+        Replaced stack and heap sizes of zero with blank stack and heap sizes.
+
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         libllvmForJSC shouldn't call exit(1) on report_fatal_error()

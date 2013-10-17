@@ -184,10 +184,14 @@ cmd /c
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <AssemblyDebug>false</AssemblyDebug>
       <SubSystem>Windows</SubSystem>
-      <HeapReserveSize>0</HeapReserveSize>
-      <HeapCommitSize>0</HeapCommitSize>
-      <StackReserveSize>0</StackReserveSize>
-      <StackCommitSize>0</StackCommitSize>
+      <HeapReserveSize>
+      </HeapReserveSize>
+      <HeapCommitSize>
+      </HeapCommitSize>
+      <StackReserveSize>
+      </StackReserveSize>
+      <StackCommitSize>
+      </StackCommitSize>
       <LargeAddressAware>
       </LargeAddressAware>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
