@@ -772,15 +772,13 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
-Vector<T, inlineCapacity, OverflowHandler>::Vector(Vector<T, inlineCapacity, OverflowHandler>&& other)
+inline Vector<T, inlineCapacity, OverflowHandler>::Vector(Vector<T, inlineCapacity, OverflowHandler>&& other)
 {
-    // It's a little weird to implement a move constructor using swap but this way we
-    // don't have to add a move constructor to VectorBuffer.
     swap(other);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
-Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHandler>::operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
+inline Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHandler>::operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
 {
     swap(other);
     return *this;

@@ -1,3 +1,17 @@
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Tidied up the Vector<T> move constructor
+        https://bugs.webkit.org/show_bug.cgi?id=122998
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Vector.h:
+        (WTF::::Vector): Don't call swap() "weird". It's the way most std types
+        implement move constructors.
+
+        Do inline this function, so the compiler can optimize away a logical
+        move into a physical no-op.
+
 2013-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         Introduce WTF::Bag and start using it for InlineCallFrameSet
