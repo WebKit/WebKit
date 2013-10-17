@@ -315,8 +315,6 @@ struct JITStackFrame {
 #error "JITStackFrame not defined for this platform."
 #endif
 
-#define JITSTACKFRAME_ARGS_INDEX (OBJECT_OFFSETOF(JITStackFrame, args) / sizeof(void*))
-
 #define STUB_ARGS_DECLARATION void** args
 #define STUB_ARGS (args)
 
