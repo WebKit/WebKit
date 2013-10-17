@@ -1,5 +1,15 @@
 2013-10-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Removed a use of JITSTACKFRAME_ARGS_INDEX
+        https://bugs.webkit.org/show_bug.cgi?id=122989
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JITStubCall.h: Removed an unused function. This is one step closer
+        to using the C stack.
+
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
         Change emit_op_catch to use another method to materialize VM
         https://bugs.webkit.org/show_bug.cgi?id=122977
 

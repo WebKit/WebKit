@@ -185,12 +185,6 @@ namespace JSC {
             addArgument(JIT::regT1, JIT::regT0);
         }
 
-        void getArgument(size_t argumentNumber, JIT::RegisterID tag, JIT::RegisterID payload)
-        {
-            size_t stackIndex = JITSTACKFRAME_ARGS_INDEX + (argumentNumber * stackIndexStep);
-            m_jit->peek(payload, stackIndex);
-            m_jit->peek(tag, stackIndex + 1);
-        }
 #else
         void addArgument(int src, JIT::RegisterID scratchRegister) // src is a virtual register.
         {
