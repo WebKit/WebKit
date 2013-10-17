@@ -29,7 +29,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 find_package(PkgConfig)
-pkg_check_modules(PC_CAIRO cairo) # FIXME: After we require CMake 2.8.2 we can pass QUIET to this call.
+pkg_check_modules(PC_CAIRO QUIET cairo)
 
 find_path(CAIRO_INCLUDE_DIRS
     NAMES cairo.h
@@ -61,21 +61,10 @@ if (CAIRO_INCLUDE_DIRS)
     endif ()
 endif ()
 
-# FIXME: Should not be needed anymore once we start depending on CMake 2.8.3
-set(VERSION_OK TRUE)
-if (Cairo_FIND_VERSION)
-    if (Cairo_FIND_VERSION_EXACT)
-        if ("${Cairo_FIND_VERSION}" VERSION_EQUAL "${CAIRO_VERSION}")
-            # FIXME: Use if (NOT ...) with CMake 2.8.2+ to get rid of the ELSE block
-        else ()
-            set(VERSION_OK FALSE)
-        endif ()
-    else ()
-        if ("${Cairo_FIND_VERSION}" VERSION_GREATER "${CAIRO_VERSION}")
-            set(VERSION_OK FALSE)
-        endif ()
-    endif ()
+if ("${Cairo_FIND_VERSION}" VERSION_GREATER "${CAIRO_VERSION}")
+    message(FATAL_ERROR "Required version ("${Cairo_FIND_VERSION}") is higher than found version ("${CAIRO_VERSION}")")
 endif ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Cairo DEFAULT_MSG CAIRO_INCLUDE_DIRS CAIRO_LIBRARIES VERSION_OK)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Cairo REQUIRED_VARS CAIRO_INCLUDE_DIRS CAIRO_LIBRARIES
+                                        VERSION_VAR CAIRO_VERSION)

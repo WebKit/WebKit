@@ -53,8 +53,7 @@ find_package(PkgConfig)
 #   _header is the component's header, relative to the gstreamer-1.0 directory (eg. "gst/gst.h").
 #   _library is the component's library name (eg. "gstreamer-1.0" or "gstvideo-1.0")
 macro(FIND_GSTREAMER_COMPONENT _component_prefix _pkgconfig_name _header _library)
-    # FIXME: The QUIET keyword can be used once we require CMake 2.8.2.
-    pkg_check_modules(PC_${_component_prefix} ${_pkgconfig_name})
+    pkg_check_modules(PC_${_component_prefix} QUIET ${_pkgconfig_name})
 
     find_path(${_component_prefix}_INCLUDE_DIRS
         NAMES ${_header}
@@ -94,17 +93,8 @@ if (GSTREAMER_INCLUDE_DIRS)
     endif ()
 endif ()
 
-# FIXME: With CMake 2.8.3 we can just pass GSTREAMER_VERSION to FIND_PACKAGE_HANDLE_STANDARD_ARGS as VERSION_VAR
-#        and remove the version check here (GSTREAMER_FIND_VERSION would be passed to FIND_PACKAGE).
-set(VERSION_OK TRUE)
-if (GSTREAMER_FIND_VERSION_EXACT)
-    if (NOT(("${GSTREAMER_FIND_VERSION}" VERSION_EQUAL "${GSTREAMER_VERSION}")))
-        set(VERSION_OK FALSE)
-    endif ()
-else ()
-    if ("${GSTREAMER_VERSION}" VERSION_LESS "${GSTREAMER_FIND_VERSION}")
-        set(VERSION_OK FALSE)
-    endif ()
+if ("${GStreamer_FIND_VERSION}" VERSION_GREATER "${GSTREAMER_VERSION}")
+    message(FATAL_ERROR "Required version ("${GStreamer_FIND_VERSION}") is higher than found version ("${GSTREAMER_VERSION}")")
 endif ()
 
 # -------------------------
@@ -120,7 +110,7 @@ FIND_GSTREAMER_COMPONENT(GSTREAMER_VIDEO gstreamer-video-1.0 gst/video/video.h g
 # ------------------------------------------------
 # 3. Process the COMPONENTS passed to FIND_PACKAGE
 # ------------------------------------------------
-set(_GSTREAMER_REQUIRED_VARS GSTREAMER_INCLUDE_DIRS GSTREAMER_LIBRARIES VERSION_OK GSTREAMER_BASE_INCLUDE_DIRS GSTREAMER_BASE_LIBRARIES)
+set(_GSTREAMER_REQUIRED_VARS GSTREAMER_INCLUDE_DIRS GSTREAMER_LIBRARIES GSTREAMER_VERSION GSTREAMER_BASE_INCLUDE_DIRS GSTREAMER_BASE_LIBRARIES)
 
 foreach (_component ${GStreamer_FIND_COMPONENTS})
     set(_gst_component "GSTREAMER_${_component}")
@@ -130,4 +120,5 @@ foreach (_component ${GStreamer_FIND_COMPONENTS})
 endforeach ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer DEFAULT_MSG ${_GSTREAMER_REQUIRED_VARS})
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(GStreamer REQUIRED_VARS _GSTREAMER_REQUIRED_VARS
+                                            VERSION_VAR   GSTREAMER_VERSION)
