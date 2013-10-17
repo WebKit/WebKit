@@ -1,3 +1,9 @@
+2013-10-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed. Add myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         Make it possible to assign a PassRef to a RefPtr.

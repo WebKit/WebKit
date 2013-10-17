@@ -1714,14 +1714,6 @@
             "michelangelo"
          ]
       },
-      "Mihnea Ovidenie" : {
-         "emails" : [
-            "mihnea@adobe.com"
-         ],
-         "nicks" : [
-            "mihnea"
-         ]
-      },
       "Mike Belshe" : {
          "emails" : [
             "mbelshe@chromium.org",
@@ -3975,6 +3967,15 @@
          "expertise" : "The Chromium Port, Layout tests, History",
          "nicks" : [
             "mihaip"
+         ]
+      },
+      "Mihnea Ovidenie" : {
+         "emails" : [
+            "mihnea@adobe.com"
+         ],
+         "expertise" : "CSS Regions, CSS Exclusions",
+         "nicks" : [
+            "mihnea"
          ]
       },
       "Nate Chapin" : {
