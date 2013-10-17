@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebKit Test Results</title>
+<link rel="stylesheet" href="/common.css">
+<script src="js/autocompleter.js"></script>
+<script src="js/build.js"></script>
+<script src="js/dom.js"></script>
+</head>
+<body>
+
+<header id="title">
+<h1><a href="/">WebKit Test Results</a></h1>
+<ul>
+    <li><a href="http://build.webkit.org/waterfall">Waterfall</a></li>
+</ul>
+</header>
+
+<form id="navigationBar" onsubmit="TestResultsView.fetchTest(this['testName'].value);
+    TestResultsView.updateLocationHash();
+    return false;">
+<input id="testName" type="text" size="150" onpaste="pasteHelper(this, event)"
+    placeholder="Type in a test name, or copy and paste test names on results.html or NRWT stdout (including junks)"></form>
+
+<div id="container"></div>
+<div id="tooltipContainer"></div>
+
+<style>
+
+#testName {
+    width: 99%;
+    font-size: 1em;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.testResults {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px 0px;
+    position: relative;
+}
+
+.closeButton {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 1em;
+    height: 1em;
+    stroke: #999;
+}
+
+.resultsTable {
+    font-size: small;
+    border-collapse: collapse;
+    border: 2px solid #fff;
+    padding: 0;
+    margin: 0;
+}
+
+.resultsTable caption {
+    font-size: large;
+    font-weight: normal;
+    text-align: left;
+    margin-bottom: 0.3em;
+    white-space: pre;
+}
+
+.resultsTable td,
+.resultsTable th {
+    border: 2px solid #fff;
+    padding: 0;
+    margin: 0;
+}
+
+.resultsTable th,
+.resultsTable .passingRate {
+    font-weight: normal;
+    padding-right: 10px;
+}
+
+.resultsTable th {
+    width: 15em;
+}
+
+.resultsTable .passingRate {
+    width: 3em;
+}
+
+.resultsTable .resultCell {
+    display: inline-block;
+    padding: 0.2em 0.2em;
+}
+
+.resultsTable a {
+    display: block;
+    width: 1em;
+    height: 1.5em;
+    border-radius: 3px;
+}
+
+.resultsTable .PASS a {
+    background-color: #0c3;
+}
+
+.resultsTable .TEXT a {
+    background-color: #c33;
+}
+
+.resultsTable .IMAGE a {
+    background-color: #3cf;
+}
+
+.resultsTable .TEXT.PASS a {
+    background-color: #cf3;
+}
+
+.resultsTable .CRASH a {
+    background-color: #f00;
+}
+
+.candidateWindow {
+    z-index: 999;
+    position: absolute;
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px 0 0 0;
+    padding: 5px;
+    font-size: 1em;
+    list-style: none;
+}
+
+.candidateWindow em {
+    background-color: #ccc;
+    font-style: normal;
+}
+
+.candidateWindow .selected {
+    background-color: #0cf;
+    color: white;
+}
+
+#tooltipContainer {
+    position: absolute;
+}
+
+.tooltip {
+    position: relative;
+    border-radius: 5px;
+    padding: 5px;
+    opacity: 0.9;
+    background: #333;
+    color: #eee;
+    font-size: small;
+    line-height: 130%;
+}
+
+.tooltip:after {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    margin-left: -9px;
+    bottom: -19px;
+    content: "";
+    display: block;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip ul,
+.tooltip li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.tooltip a {
+    color: white;
+    text-shadow: none;
+    text-decoration: underline;
+}
+
+</style>
+<script>
+
+var TestResultsView = new (function () {
+    var tooltipContainer = document.getElementById('tooltipContainer');
+
+    tooltipContainer.onclick = function (event) { event.insideTooltip = true; }
+    document.addEventListener('click', function (event) {
+        if (!event.insideTooltip)
+            tooltipContainer.style.display = 'none';
+    });
+
+    window.addEventListener('hashchange', function (event) {
+        TestResultsView.locationHashChanged();
+    });
+
+    this._tooltipContainer = tooltipContainer;
+    this._tests = [];
+    this._oldHash = null;
+    this._builders = [];
+    this._slaves = [];
+    this._repositories = [];
+});
+
+TestResultsView.setBuilders = function (builders) {
+    this._builders = builders;
+}
+
+TestResultsView.setSlaves = function (slaves) {
+    this._slaves = slaves;
+}
+
+TestResultsView.setRepositories = function (repositories) {
+    this._repositories = repositories;
+}
+
+TestResultsView.showTooltip = function (anchor, contentElement) {
+    var tooltipContainer = this._tooltipContainer;
+    tooltipContainer.style.display = null;
+
+    while (tooltipContainer.firstChild)
+        tooltipContainer.removeChild(tooltipContainer.firstChild);
+    tooltipContainer.appendChild(contentElement);
+
+    var rect = anchor.getBoundingClientRect();
+    tooltipContainer.style.left = (rect.left - contentElement.offsetWidth / 2 + anchor.offsetWidth / 2) + 'px';
+    tooltipContainer.style.top = (rect.top - contentElement.clientHeight - 5) + 'px';
+}
+
+TestResultsView._urlFromBuilder = function (urlType, master, builder, revision, build) {
+    // FIXME: We should probably make this configurable or fetch from buildbot configuraration.
+    return {
+        "build": "http://$master/builders/$builder/builds/$build",
+        "result": "http://$master/results/$builder/r$revision%20($build)/results.html"
+    }[urlType].replace(/\$master/g, master).replace(/\$builder/g, builder)
+        .replace(/\$revision/g, revision).replace(/\$build/g, build);
+}
+
+TestResultsView._createResultCell = function (master, builder, result, previousResult) {
+    var buildTime = result['buildTime'];
+    var revision = result['revision'];
+    var slave = result['slave'];
+    var build = result['buildNumber'];
+    var actual = result['actual'];
+    var expected = result['expected'];
+    var anchor = element('a', {'href': this._urlFromBuilder('result', master, builder, revision, build)});
+    anchor.onmouseenter = function () {
+        var repositoryById = TestResultsView._repositories;
+        var formattedRevisions = result.build.formattedRevisions(previousResult ? previousResult.build : null);
+        var revisionDescription = '';
+        for (var repositoryName in formattedRevisions) {
+            var revision = formattedRevisions[repositoryName];
+            if (revisionDescription)
+                revisionDescription += ', ';
+            if (revision.url)
+                revisionDescription += repositoryName + ': ' + revision.url;
+            else
+                revisionDescription += revision.label;
+        }
+
+        TestResultsView.showTooltip(anchor, element('div', {'class': 'tooltip'}, [
+            element('ul', [
+                element('li', ['Build Time: ' + result.build.formattedBuildTime()]),
+                element('li', ['Revision: ' +  revisionDescription]),
+                element('li', ['Build: ', element('a', {'href': TestResultsView._urlFromBuilder('build', master, builder, revision, build)}, [build])]),
+                element('li', ['Result: ' + actual]),
+            ])
+        ]));
+    }
+    var cell = element('span', {
+        'class': actual + ' resultCell',
+    }, [anchor]);
+    return cell;
+}
+
+TestResultsView._populatePane = function(testName, results, section) {
+    var table = element('table', {'class': 'resultsTable'}, [element('caption', [testName])]);
+    var resultsByBuilder = results['builders'];
+    for (var builderId in resultsByBuilder) {
+        var results = resultsByBuilder[builderId];
+        for (var i = 0; i < results.length; i++) {
+            results[i].build = new TestBuild(this._repositories, this._builders, results[i]);
+        }
+
+        var sortedResults = results.sort(function (result1, result2) { return result1.build.time() - result2.build.time(); });
+        var cells = new Array(sortedResults.length);
+        var builder = this._builders[builderId];
+        for (var i = 0; i < sortedResults.length; i++)
+            cells[i] = this._createResultCell(builder.master, builder.name, sortedResults[i], sortedResults[i - 1]);
+
+        var passCount = cells.filter(function (cell) { return cell.className == 'PASS'; }).length;
+        var passingRate = Math.round(passCount / cells.length * 100) + '%';
+        table.appendChild(element('tr', [element('th', [builder.name]), element('td', {'class': 'passingRate'}, [passingRate]),
+            element('td', cells)]));
+        // FIXME: Add a master name if there is more than one.
+    }
+    section.appendChild(table);
+}
+
+TestResultsView.fetchTest = function (testName) {
+    if (this._tests.indexOf(testName) >= 0)
+        return;
+
+    var self = this;
+
+    var closeButton = element('div', {'class': 'closeButton'});
+    closeButton.innerHTML = '<svg viewBox="0 0 100 100"><g stroke-width="10">'
+        + '<circle cx="50" cy="50" r="45" fill="transparent"></circle><polygon points="30,30 70,70"></polygon>'
+        + '<polygon points="30,70 70,30"></polygon></g></svg>';
+    closeButton.addEventListener('click', function (event) {
+            self._removeTest(testName);
+            section.parentNode.removeChild(section);
+            event.preventDefault();
+        });
+    var section = element('section', {'id': testName, 'class': 'testResults'}, [closeButton]);
+
+    document.getElementById('container').appendChild(section);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", 'api/results.php?test=' + testName, true);  
+    xhr.onload = function(event) {
+        var response = JSON.parse(xhr.response);
+        if (response['status'] != 'OK') {
+            section.appendChild(text('Failed to load results for ' + testName + ': ' + response['status']));
+            return;
+        }
+
+        self._populatePane(testName, response, section);
+    }
+    xhr.send();
+    this._tests.push(testName);
+}
+
+TestResultsView._removeTest = function (testName) {
+    var index = this._tests.indexOf(testName);
+    if (index < 0)
+        return;
+    this._tests.splice(index, 1);
+    this.updateLocationHash();
+}
+
+TestResultsView.fetchTests = function (testNames, doNotUpdateHash) {
+    for (var i = 0; i < testNames.length; i++)
+        this.fetchTest(testNames[i], doNotUpdateHash);
+    this.updateLocationHash();
+}
+
+TestResultsView.updateLocationHash = function () {
+    var params = {
+        'tests': this._tests.join(',')
+    };
+    var hash = '';
+    for (var key in params)
+        hash += decodeURIComponent(key) + '=' + decodeURIComponent(params[key]);
+    location.hash = hash;
+    this._oldHash = location.hash;
+}
+
+TestResultsView.locationHashChanged = function () {
+    var newHash = location.hash;
+    if (newHash == this._oldHash)
+        return;
+    this._oldHash = newHash;
+    this._tests = [];
+    document.getElementById('container').innerHTML = '';
+    this.loadTestsFromLocationHash();
+}
+
+TestResultsView.loadTestsFromLocationHash = function () {
+    var parsed = {};
+    location.hash.substr(1).split('&').forEach(function (component) {
+        var equalPosition = component.indexOf('=');
+        if (equalPosition < 0)
+            return;
+        var name = decodeURIComponent(component.substr(0, equalPosition));
+        parsed[name] = decodeURIComponent(component.substr(equalPosition + 1));
+    });
+    if (!parsed['tests'])
+        return;
+    var doNotUpdateHash = true;
+    this.fetchTests(parsed['tests'].split(','), doNotUpdateHash);
+}
+
+function fetchManifest(callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", 'api/manifest.php', true);  
+    xhr.onload = function(event) {
+        var response = JSON.parse(xhr.response);
+        if (response['status'] != 'OK') {
+            alert('Failed to load manifest:' + response['status']);
+            console.log(response);
+            return;
+        }
+        callback(response);
+    }  
+    xhr.send();
+}
+
+fetchManifest(function (response) {
+    var testNames = response['tests'].map(function (test) { return test['name']; })
+    var input = document.getElementById('testName');
+    input.autocompleter = new Autocompleter(input, testNames);
+
+    TestResultsView.setBuilders(response['builders']);
+    TestResultsView.setSlaves(response['slaves']);
+    TestResultsView.setRepositories(response['repositories']);
+    TestResultsView.loadTestsFromLocationHash();
+});
+
+function pasteHelper(input, event) {
+    function removeJunkFromNRWTStdout(input) {
+        return input.replace(/(\[[\w ]+\])|(.+\:.+)/g, '').replace(/^[ \t]+|[ \t]+$/gm, '');
+    }
+
+    function removeJunkFromResultsPage(input) {
+        return input.replace(/(^[^\/]+$)|(^\+)/gm, '').replace(/\([^)]+\)/g, '').replace(/\s+[A-Za-z]+(\s+[A-Za-z]+)*\s*$/gm, '');
+    }
+
+    var text = event.clipboardData.getData('text/plain');
+    if (text.indexOf('\n') < 0)
+        return;
+
+    var urls = removeJunkFromResultsPage(removeJunkFromNRWTStdout(text)).split('\n');
+    TestResultsView.fetchTests(urls.filter(function (url) { return url.length; }));
+    event.preventDefault();
+}
+
+</script>
+</body>
+</html>

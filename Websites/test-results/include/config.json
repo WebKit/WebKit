@@ -1,0 +1,14 @@
+{
+    "debug": true,
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "username": "safari-test-history",
+        "password": "password",
+        "name": "safari-test-history-db"
+    },
+    "masters": [
+        "build.webkit.org",
+        "build-safari.apple.com"
+    ]
+}

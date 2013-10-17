@@ -1,3 +1,32 @@
+2013-10-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a new flakiness dashboard clone
+        https://bugs.webkit.org/show_bug.cgi?id=122936
+
+        Reviewed by Anders Carlsson.
+
+        Added the initial prototype.
+
+        * Websites/test-results: Added.
+        * Websites/test-results/.htaccess: Added.
+        * Websites/test-results/admin: Added.
+        * Websites/test-results/admin/index.php: Added.
+        * Websites/test-results/api: Added.
+        * Websites/test-results/api/manifest.php: Added.
+        * Websites/test-results/api/report.php: Added.
+        * Websites/test-results/api/results.php: Added.
+        * Websites/test-results/include: Added.
+        * Websites/test-results/include/config.json: Added.
+        * Websites/test-results/include/db.php: Added.
+        * Websites/test-results/include/init-database.sql: Added.
+        * Websites/test-results/include/json-shared.php: Added.
+        * Websites/test-results/include/test-results.php: Added.
+        * Websites/test-results/index.html: Added.
+        * Websites/test-results/js: Added.
+        * Websites/test-results/js/autocompleter.js: Added.
+        * Websites/test-results/js/build.js: Added.
+        * Websites/test-results/js/dom.js: Added.
+
 2013-10-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2][Efl][CMake] Add support for ENABLE_NETWORK_PROCESS to the build system
