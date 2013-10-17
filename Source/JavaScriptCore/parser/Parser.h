@@ -754,7 +754,9 @@ private:
             return "/";
         case MOD: 
             return "%";
-        case RETURN: 
+        case DOTDOTDOT:
+            return "...";
+        case RETURN:
         case RESERVED_IF_STRICT:
         case RESERVED: 
         case NUMBER:
@@ -835,6 +837,9 @@ private:
             return;
         case RETURN:
             m_errorMessage = ASCIILiteral("Return statements are only valid inside functions");
+            return;
+        case DOTDOTDOT:
+            m_errorMessage = ASCIILiteral("Spread operator is not supported in this context");
             return;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -954,7 +959,8 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseArrayLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseObjectLiteral(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseStrictObjectLiteral(TreeBuilder&);
-    template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&);
+    enum SpreadMode { AllowSpread, DontAllowSpread };
+    template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&, SpreadMode);
     template <bool strict, class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);

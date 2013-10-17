@@ -157,6 +157,7 @@ public:
     void setFunctionStart(int, int) { }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }
+    ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return 1; }
     int createArgumentsList(const JSTokenLocation&, int) { return 1; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return 1; }
     template <bool complete> Property createProperty(const Identifier* name, int, PropertyNode::Type type)
