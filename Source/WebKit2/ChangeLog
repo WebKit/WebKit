@@ -1,3 +1,21 @@
+2013-10-17  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/15183901> WebKit2 XPC services load the wrong frameworks when running
+        from the staged frameworks location.
+
+        Build the XPC services with DYLD_VERSIONED_FRAMEWORK_PATH when USE_STAGING_INSTALL_PATH
+        is set to YES. This is necessary because there's no way to specify environment variables
+        to be used when an XPC service is launched.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/BaseTarget.xcconfig: Set OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH to contain the
+        DYLD_VERSIONED_FRAMEWORK_PATH value when USE_STAGING_INSTALL_PATH is YES.
+        * Configurations/BaseXPCService.xcconfig: Include OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH in the
+        value of OTHER_LDFLAGS.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Complete support for simple layer properties
