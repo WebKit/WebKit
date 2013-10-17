@@ -1,3 +1,29 @@
+2013-10-16  Michael Saboff  <msaboff@apple.com>
+
+        transition void cti_op_put_by_val* stubs to JIT operations
+        https://bugs.webkit.org/show_bug.cgi?id=122903
+
+        Reviewed by Geoffrey Garen.
+
+        Transitioned cti_op_put_by_val and cti_op_put_by_val_generic to operationPutByVal and
+        operationPutByValGeneric.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+
 2013-10-16  Oliver Hunt  <oliver@apple.com>
 
         Implement ES6 spread operator

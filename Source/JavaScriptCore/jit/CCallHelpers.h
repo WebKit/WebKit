@@ -401,7 +401,7 @@ public:
         addCallArgument(arg4);
     }
 
-ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5)
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5)
     {
         resetCallArguments();
         addCallArgument(GPRInfo::callFrameRegister);
@@ -454,6 +454,18 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
         addCallArgument(arg3);
         addCallArgument(arg4);
         addCallArgument(arg5);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5, GPRReg arg6)
+    {
+        resetCallArguments();
+        addCallArgument(GPRInfo::callFrameRegister);
+        addCallArgument(arg1);
+        addCallArgument(arg2);
+        addCallArgument(arg3);
+        addCallArgument(arg4);
+        addCallArgument(arg5);
+        addCallArgument(arg6);
     }
 
     ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
@@ -1231,6 +1243,14 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(GRPReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5 GPRReg arg6)
+    {
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4, GPRReg arg5, TrustedImm32 arg6)
     {
         poke(arg6, POKE_ARGUMENT_OFFSET + 2);
@@ -1254,6 +1274,23 @@ ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg 
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4, GPRReg arg5 GPRReg arg6, GRPReg arg7)
+    {
+        poke(arg7, POKE_ARGUMENT_OFFSET + 3);
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4, GPRReg arg5 GPRReg arg6, GRPReg arg7)
+    {
+        poke(arg7, POKE_ARGUMENT_OFFSET + 3);
+        poke(arg6, POKE_ARGUMENT_OFFSET + 2);
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
 #endif // NUMBER_OF_ARGUMENT_REGISTERS == 4
 
 #if NUMBER_OF_ARGUMENT_REGISTERS >= 5

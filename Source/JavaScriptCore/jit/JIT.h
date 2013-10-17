@@ -803,6 +803,7 @@ namespace JSC {
 #else
         MacroAssembler::Call callOperation(V_JITOperation_EJJI, RegisterID, RegisterID, RegisterID, RegisterID, StringImpl*);
 #endif
+        MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, int32_t, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EPc, Instruction*);
@@ -821,6 +822,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(S_JITOperation_EJJ, RegisterID, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EIdJZ, const Identifier*, RegisterID, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, RegisterID, int32_t, RegisterID, RegisterID);
 #endif

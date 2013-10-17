@@ -476,11 +476,9 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     Label slowPath = label();
 
-    JITStubCall stubPutByValCall(this, cti_op_put_by_val);
-    stubPutByValCall.addArgument(regT0);
-    stubPutByValCall.addArgument(property, regT2);
-    stubPutByValCall.addArgument(value, regT2);
-    Call call = stubPutByValCall.call();
+    emitGetVirtualRegister(property, regT1);
+    emitGetVirtualRegister(value, regT2);
+    Call call = callOperation(operationPutByVal, regT0, regT1, regT2);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;
@@ -1041,7 +1039,7 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_put_by_val_generic));
+    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(operationPutByValGeneric));
 }
 
 JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badType, TypedArrayType type)

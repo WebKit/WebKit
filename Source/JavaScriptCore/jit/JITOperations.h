@@ -232,6 +232,8 @@ void JIT_OPERATION operationPutByIdNonStrictBuildList(ExecState*, EncodedJSValue
 void JIT_OPERATION operationPutByIdDirectStrictBuildList(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, StringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByIdDirectNonStrictBuildList(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, StringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByVal(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationPutByValGeneric(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationVirtualCall(ExecState*) WTF_INTERNAL;
 char* JIT_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;

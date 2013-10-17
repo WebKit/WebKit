@@ -124,6 +124,7 @@ namespace JSC {
         static const RegisterID regT2 = ARMRegisters::r2;
         static const RegisterID regT3 = ARMRegisters::r4;
         static const RegisterID regT4 = ARMRegisters::r7;
+        static const RegisterID regT5 = ARMRegisters::r8;
 
         // Update ctiTrampoline in JITStubs.cpp if these values are changed!
         static const RegisterID callFrameRegister = ARMRegisters::r5;
@@ -178,6 +179,7 @@ namespace JSC {
         static const RegisterID regT3 = MIPSRegisters::s2;
         
         static const RegisterID regT4 = MIPSRegisters::s3;
+        static const RegisterID regT5 = MIPSRegisters::s4;
 
         static const RegisterID callFrameRegister = MIPSRegisters::s0;
         
