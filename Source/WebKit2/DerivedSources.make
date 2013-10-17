@@ -41,6 +41,7 @@ VPATH = \
     $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/Network \
     $(WebKit2)/WebProcess/Notifications \
+    $(WebKit2)/WebProcess/OriginData \
     $(WebKit2)/WebProcess/Plugins \
     $(WebKit2)/WebProcess/ResourceCache \
     $(WebKit2)/WebProcess/Storage \
@@ -106,6 +107,8 @@ MESSAGE_RECEIVERS = \
     WebMediaCacheManager \
     WebMediaCacheManagerProxy \
     WebNotificationManager \
+    WebOriginDataManager \
+    WebOriginDataManagerProxy \
     WebPage \
     WebPageGroupProxy \
     WebPageProxy \

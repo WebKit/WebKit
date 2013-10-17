@@ -41,6 +41,7 @@
 #include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebOriginDataManagerProxy.h"
 #include "WebResourceCacheManagerProxy.h"
 #if ENABLE(SQL_DATABASE)
 #include "WebDatabaseManagerProxy.h"
@@ -272,6 +273,11 @@ WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contex
 WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebResourceCacheManagerProxy>());
+}
+
+WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->supplement<WebOriginDataManagerProxy>());
 }
 
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)

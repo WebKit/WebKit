@@ -83,6 +83,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKNotificationProvider.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelParameters.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelResultListener.h \
+	$(WebKit2)/UIProcess/API/C/WKOriginDataManager.h \
 	$(WebKit2)/UIProcess/API/C/WKPageGroup.h \
 	$(WebKit2)/UIProcess/API/C/WKPage.h \
 	$(WebKit2)/UIProcess/API/C/WKPagePrivate.h \
@@ -223,6 +224,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebNetworkInfoManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebNotificationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebNotificationManagerMessages.h \
+	DerivedSources/WebKit2/WebOriginDataManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebOriginDataManagerMessages.h \
+	DerivedSources/WebKit2/WebOriginDataManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebOriginDataManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebPageGroupProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageGroupProxyMessages.h \
 	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
@@ -641,6 +646,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelParameters.h \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelResultListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelResultListener.h \
+	Source/WebKit2/UIProcess/API/C/WKOriginDataManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKOriginDataManager.h \
 	Source/WebKit2/UIProcess/API/C/WKPage.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPageGroup.cpp \
 	Source/WebKit2/UIProcess/API/C/WKPageGroup.h \
@@ -980,6 +987,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebNetworkInfoProvider.h \
 	Source/WebKit2/UIProcess/WebOpenPanelResultListenerProxy.cpp \
 	Source/WebKit2/UIProcess/WebOpenPanelResultListenerProxy.h \
+	Source/WebKit2/UIProcess/WebOriginDataManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebOriginDataManagerProxy.h \
+	Source/WebKit2/UIProcess/WebOriginDataManagerProxyChangeClient.cpp \
+	Source/WebKit2/UIProcess/WebOriginDataManagerProxyChangeClient.h \
 	Source/WebKit2/UIProcess/WebPageContextMenuClient.cpp \
 	Source/WebKit2/UIProcess/WebPageContextMenuClient.h \
 	Source/WebKit2/UIProcess/WebPageGroup.cpp \
@@ -1137,6 +1148,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.cpp \
 	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.h \
+	Source/WebKit2/WebProcess/OriginData/WebOriginDataManager.cpp \
+	Source/WebKit2/WebProcess/OriginData/WebOriginDataManager.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPObject.cpp \

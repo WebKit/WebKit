@@ -103,6 +103,7 @@ public:
         TypeNotificationPermissionRequest,
         TypeOpenPanelParameters,
         TypeOpenPanelResultListener,
+        TypeOriginDataManager,
         TypePage,
         TypePageGroup,
         TypePluginSiteDataManager,

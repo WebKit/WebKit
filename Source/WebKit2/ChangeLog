@@ -1,3 +1,74 @@
+2013-10-17  Martin Hock  <mhock@apple.com>
+
+        Refactor stored website data APIs
+        https://bugs.webkit.org/show_bug.cgi?id=122781
+
+        Reviewed by Brady Eidson.
+
+        Add WebOriginDataManager along with corresponding class
+        WebOriginDataManagerProxy and API WKOriginDataManager.
+
+        Currently, the new files are unused.
+
+        WKOriginDataManager should subsume the functionality of:
+        WKApplicationCacheManager, WKCookieManager, WKDatabaseManager,
+        WKKeyValueStorageManager, WKMediaCacheManager,
+        WKPluginSiteDataManager, and WKResourceCacheManager.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetOriginDataManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKOriginDataManager.cpp: Added.
+        (WKOriginDataManagerGetTypeID):
+        (WKOriginDataManagerGetOrigins):
+        (WKOriginDataManagerDeleteEntriesForOrigin):
+        (WKOriginDataManagerDeleteAllEntries):
+        (WKOriginDataManagerStartObservingChanges):
+        (WKOriginDataManagerStopObservingChanges):
+        (WKOriginDataManagerSetChangeClient):
+        * UIProcess/API/C/WKOriginDataManager.h: Added.
+        * UIProcess/WebOriginDataManagerProxy.cpp: Added.
+        (WebKit::WebOriginDataManagerProxy::supplementName):
+        (WebKit::WebOriginDataManagerProxy::create):
+        (WebKit::WebOriginDataManagerProxy::WebOriginDataManagerProxy):
+        (WebKit::WebOriginDataManagerProxy::~WebOriginDataManagerProxy):
+        (WebKit::WebOriginDataManagerProxy::contextDestroyed):
+        (WebKit::WebOriginDataManagerProxy::processDidClose):
+        (WebKit::WebOriginDataManagerProxy::shouldTerminate):
+        (WebKit::WebOriginDataManagerProxy::refWebContextSupplement):
+        (WebKit::WebOriginDataManagerProxy::derefWebContextSupplement):
+        (WebKit::WebOriginDataManagerProxy::getOrigins):
+        (WebKit::WebOriginDataManagerProxy::didGetOrigins):
+        (WebKit::WebOriginDataManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManagerProxy::deleteAllEntries):
+        (WebKit::WebOriginDataManagerProxy::startObservingChanges):
+        (WebKit::WebOriginDataManagerProxy::stopObservingChanges):
+        (WebKit::WebOriginDataManagerProxy::setChangeClient):
+        (WebKit::WebOriginDataManagerProxy::didChange):
+        * UIProcess/WebOriginDataManagerProxy.h: Added.
+        * UIProcess/WebOriginDataManagerProxy.messages.in: Added.
+        * UIProcess/WebOriginDataManagerProxyChangeClient.cpp: Added.
+        (WebKit::WebOriginDataManagerProxyChangeClient::didChange):
+        * UIProcess/WebOriginDataManagerProxyChangeClient.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/OriginData/WebOriginDataManager.cpp: Added.
+        (WebKit::WebOriginDataManager::supplementName):
+        (WebKit::WebOriginDataManager::WebOriginDataManager):
+        (WebKit::WebOriginDataManager::getOrigins):
+        (WebKit::WebOriginDataManager::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManager::deleteAllEntries):
+        (WebKit::WebOriginDataManager::startObservingChanges):
+        (WebKit::WebOriginDataManager::stopObservingChanges):
+        * WebProcess/OriginData/WebOriginDataManager.h: Added.
+        * WebProcess/OriginData/WebOriginDataManager.messages.in: Added.
+
 2013-10-17  Brady Eidson  <beidson@apple.com>
 
         Blind attempt at gtk-wk2 build fix.

@@ -52,6 +52,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/MediaCache"
     "${WEBKIT2_DIR}/WebProcess/Network"
     "${WEBKIT2_DIR}/WebProcess/Notifications"
+    "${WEBKIT2_DIR}/WebProcess/OriginData"
     "${WEBKIT2_DIR}/WebProcess/Plugins"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT2_DIR}/WebProcess/ResourceCache"
@@ -331,6 +332,8 @@ set(WebKit2_SOURCES
     UIProcess/WebNetworkInfoManagerProxy.cpp
     UIProcess/WebNetworkInfoProvider.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
+    UIProcess/WebOriginDataManagerProxy.cpp
+    UIProcess/WebOriginDataManagerProxyChangeClient.cpp
     UIProcess/WebPageContextMenuClient.cpp
     UIProcess/WebPageGroup.cpp
     UIProcess/WebPageProxy.cpp
@@ -378,6 +381,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKNotificationPermissionRequest.cpp
     UIProcess/API/C/WKOpenPanelParameters.cpp
     UIProcess/API/C/WKOpenPanelResultListener.cpp
+    UIProcess/API/C/WKOriginDataManager.cpp
     UIProcess/API/C/WKPage.cpp
     UIProcess/API/C/WKPageGroup.cpp
     UIProcess/API/C/WKPluginSiteDataManager.cpp
@@ -493,6 +497,8 @@ set(WebKit2_SOURCES
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp
 
+    WebProcess/OriginData/WebOriginDataManager.cpp
+
     WebProcess/Plugins/Plugin.cpp
     WebProcess/Plugins/PluginProcessConnection.cpp
     WebProcess/Plugins/PluginProcessConnectionManager.cpp
@@ -585,6 +591,7 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebMediaCacheManagerProxy.messages.in
     UIProcess/WebNetworkInfoManagerProxy.messages.in
+    UIProcess/WebOriginDataManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceCacheManagerProxy.messages.in
@@ -624,6 +631,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in
+
+    WebProcess/OriginData/WebOriginDataManager.messages.in
 
     WebProcess/Plugins/PluginProcessConnection.messages.in
     WebProcess/Plugins/PluginProcessConnectionManager.messages.in

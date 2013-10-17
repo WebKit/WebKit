@@ -157,6 +157,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/MediaCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/NetworkInfo \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Notifications \
+	-I$(srcdir)/Source/WebKit2/WebProcess/OriginData \
 	-I$(srcdir)/Source/WebKit2/WebProcess/ResourceCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Storage \
 	-I$(srcdir)/Source/WebKit2/WebProcess/soup \
@@ -385,6 +386,7 @@ vpath %.messages.in = \
 	$(WebKit2)/WebProcess/Network \
 	$(WebKit2)/WebProcess/NetworkInfo \
 	$(WebKit2)/WebProcess/Notifications \
+	$(WebKit2)/WebProcess/OriginData \
 	$(WebKit2)/WebProcess/Plugins \
 	$(WebKit2)/WebProcess/ResourceCache \
 	$(WebKit2)/WebProcess/Storage \
@@ -748,6 +750,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/Network/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/NetworkInfo/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Notifications/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/OriginData/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/ResourceCache/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Storage/*.in) \

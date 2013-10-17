@@ -195,7 +195,8 @@ WK_EXPORT WKNetworkInfoManagerRef WKContextGetNetworkInfoManager(WKContextRef co
 WK_EXPORT WKNotificationManagerRef WKContextGetNotificationManager(WKContextRef context);
 WK_EXPORT WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef context);
 WK_EXPORT WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef context);
-    
+WK_EXPORT WKOriginDataManagerRef WKContextGetOriginDataManager(WKContextRef context);
+
 typedef void (*WKContextGetStatisticsFunction)(WKDictionaryRef statistics, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKContextGetStatistics(WKContextRef context, void* functionContext, WKContextGetStatisticsFunction function);
 WK_EXPORT void WKContextGetStatisticsWithOptions(WKContextRef context, WKStatisticsOptions statisticsMask, void* functionContext, WKContextGetStatisticsFunction function);

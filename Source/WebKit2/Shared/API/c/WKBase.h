@@ -119,6 +119,7 @@ typedef const struct OpaqueWKNotificationPermissionRequest* WKNotificationPermis
 typedef const struct OpaqueWKNotificationProvider* WKNotificationProviderRef;
 typedef const struct OpaqueWKOpenPanelParameters* WKOpenPanelParametersRef;
 typedef const struct OpaqueWKOpenPanelResultListener* WKOpenPanelResultListenerRef;
+typedef const struct OpaqueWKOriginDataManager* WKOriginDataManagerRef;
 typedef const struct OpaqueWKPage* WKPageRef;
 typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
 typedef const struct OpaqueWKPluginSiteDataManager* WKPluginSiteDataManagerRef;
