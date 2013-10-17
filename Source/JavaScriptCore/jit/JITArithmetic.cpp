@@ -31,7 +31,6 @@
 #include "CodeBlock.h"
 #include "JITInlines.h"
 #include "JITOperations.h"
-#include "JITStubCall.h"
 #include "JITStubs.h"
 #include "JSArray.h"
 #include "JSFunction.h"

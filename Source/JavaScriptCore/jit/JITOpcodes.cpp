@@ -32,7 +32,6 @@
 #include "CopiedSpaceInlines.h"
 #include "Heap.h"
 #include "JITInlines.h"
-#include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSFunction.h"

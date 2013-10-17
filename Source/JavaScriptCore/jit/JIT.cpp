@@ -39,7 +39,6 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "Interpreter.h"
 #include "JITInlines.h"
 #include "JITOperations.h"
-#include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "LinkBuffer.h"

@@ -1427,9 +1427,6 @@
     <ClInclude Include="..\jit\JITInlines.h">
       <Filter>jit</Filter>
     </ClInclude>
-    <ClInclude Include="..\jit\JITStubCall.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\jit\JITStubRoutine.h">
       <Filter>jit</Filter>
     </ClInclude>
