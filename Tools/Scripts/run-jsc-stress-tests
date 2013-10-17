@@ -381,6 +381,10 @@ def runDefault
     run("default")
 end
 
+def runNoLLInt
+    run("no-llint", "--useLLInt=false")
+end
+
 def runNoCJIT
     run("no-cjit", "--enableConcurrentJIT=false")
 end
@@ -415,6 +419,7 @@ end
 
 def defaultRun
     runDefault
+    runNoLLInt
     runAlwaysTriggerCopyPhase
     runNoCJIT
     runDFGEager
@@ -457,6 +462,10 @@ def runLayoutTestDefault
     runLayoutTest(nil)
 end
 
+def runLayoutTestNoLLInt
+    runLayoutTest("no-llint", "--useLLInt=false")
+end
+
 def runLayoutTestNoCJIT
     runLayoutTest("no-cjit", "--enableConcurrentJIT=false")
 end
@@ -467,6 +476,7 @@ end
 
 def defaultRunLayoutTest
     runLayoutTestDefault
+    runLayoutTestNoLLInt
     runLayoutTestNoCJIT
     runLayoutTestDFGEagerNoCJIT
 end
@@ -501,6 +511,10 @@ def runMozillaTestLLInt(mode, *extraFiles)
     runMozillaTest("llint", mode, extraFiles, "--useJIT=false")
 end
 
+def runMozillaTestBaselineJIT(mode, *extraFiles)
+    runMozillaTest("baseline", mode, extraFiles, "--useLLInt=false", "--useDFGJIT=false")
+end
+
 def runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
     runMozillaTest("dfg-eager-no-cjit", mode, extraFiles, "--enableConcurrentJIT=false", *EAGER_OPTIONS)
 end
@@ -508,6 +522,7 @@ end
 def defaultRunMozillaTest(mode, *extraFiles)
     runMozillaTestDefault(mode, *extraFiles)
     runMozillaTestLLInt(mode, *extraFiles)
+    runMozillaTestBaselineJIT(mode, *extraFiles)
     runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
 end
 
@@ -703,6 +718,8 @@ toDelete.each {
     | filename |
     File.unlink(parallelDir + filename)
 }
+
+puts
 
 $runlist.each {
     | plan |
