@@ -1,3 +1,20 @@
+2013-10-17  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Properly expose tables in accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=122894
+
+        Reviewed by Chris Fleizach.
+
+        Added new accessibility expectations after r153432.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/accessibility/table-detection-expected.txt: Added.
+        * platform/efl-wk2/accessibility/table-one-cell-expected.txt: Added.
+        * platform/efl-wk2/accessibility/table-with-rules-expected.txt: Added.
+        * platform/efl/accessibility/table-detection-expected.txt: Added.
+        * platform/efl/accessibility/table-one-cell-expected.txt: Added.
+        * platform/efl/accessibility/table-with-rules-expected.txt: Added.
+
 2013-10-16  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r155607.
