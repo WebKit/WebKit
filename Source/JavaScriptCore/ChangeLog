@@ -1,3 +1,13 @@
+2013-10-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed restoreArgumentReference (another use of JITStackFrame)
+        https://bugs.webkit.org/show_bug.cgi?id=122997
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JSInterfaceJIT.h: Removed an unused function. This is a step
+        toward using the C stack.
+
 2013-10-17  Oliver Hunt  <oliver@apple.com>
 
         Remove JITStubCall.h

@@ -247,8 +247,6 @@ namespace JSC {
         void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
         void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
 
-        void restoreArgumentReference();
-
         inline Address payloadFor(int index, RegisterID base = callFrameRegister);
         inline Address intPayloadFor(int index, RegisterID base = callFrameRegister);
         inline Address intTagFor(int index, RegisterID base = callFrameRegister);
@@ -432,12 +430,6 @@ namespace JSC {
     {
         ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
         return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)));
-    }
-
-    ALWAYS_INLINE void JSInterfaceJIT::restoreArgumentReference()
-    {
-        move(stackPointerRegister, firstArgumentRegister);
-        poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     }
 
 } // namespace JSC
