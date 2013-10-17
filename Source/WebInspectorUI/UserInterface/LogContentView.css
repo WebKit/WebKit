@@ -57,19 +57,11 @@
 }
 
 .console-messages:focus .console-item.selected {
-    background-color: rgb(56, 121, 217);
-}
-
-.console-messages:focus .console-item.selected * {
-    color: white !important;
+    background-color: highlight;
 }
 
 .console-user-command-result.console-log-level::before {
     background-image: url(Images/UserInputResult.svg);
-}
-
-.console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
-    background-image: url(Images/UserInputResultSelected.svg);
 }
 
 .console-message, .console-user-command {
@@ -134,16 +126,8 @@
     left: 3px;
 }
 
-.console-messages:focus .console-item.selected .console-group-title::before {
-    background-image: -webkit-canvas(disclosure-triangle-small-open-selected);
-}
-
 .console-group.collapsed .console-group-title::before {
     background-image: -webkit-canvas(disclosure-triangle-small-closed-normal);
-}
-
-.console-messages:focus .console-group.collapsed .console-item.selected .console-group-title::before {
-    background-image: -webkit-canvas(disclosure-triangle-small-closed-selected);
 }
 
 .console-group.collapsed > .console-group-messages {
@@ -160,11 +144,6 @@
 
 .console-error-level .console-message-text, .console-error-level .section .header .title {
     color: red !important;
-}
-
-.console-messages:focus .console-item.selected .console-message-text,
-.console-messages:focus .console-item.selected .section .header .title {
-    color: white !important;
 }
 
 .console-debug-level .console-message-text {
@@ -192,10 +171,6 @@
 
 .console-user-command::before {
     background-image: url(Images/UserInputPromptPrevious.svg);
-}
-
-.console-messages:focus .console-item.selected .console-user-command::before {
-    background-image: url(Images/UserInputPromptPreviousSelected.svg);
 }
 
 .console-user-command > .console-message-text {
@@ -231,22 +206,6 @@
 .console-group-messages .section .header::before {
     top: 2px;
     left: 1px;
-}
-
-.console-messages:focus .console-item.selected .section .header::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
-}
-
-.console-messages:focus .console-item.selected .section.expanded .header::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
-}
-
-.console-messages:focus .console-item.selected .properties-tree li.parent::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
-}
-
-.console-messages:focus .console-item.selected .properties-tree li.parent.expanded::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
 }
 
 .console-group-messages .section .header .title {
@@ -402,22 +361,6 @@
     word-wrap: break-word;
 }
 
-.outline-disclosure ol:focus li.selected {
-    color: white;
-}
-
-.outline-disclosure ol.search-match-found li.selected {
-    color: white;
-}
-
-.outline-disclosure ol:focus li.selected * {
-    color: inherit;
-}
-
-.outline-disclosure ol.search-match-found li.selected * {
-    color: inherit;
-}
-
 .outline-disclosure li.parent {
     margin-left: -12px
 }
@@ -442,16 +385,8 @@
     padding-right: 2px;
 }
 
-.console-messages:focus .console-item.selected .outline-disclosure li.parent::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
-}
-
 .outline-disclosure li.parent.expanded::before {
     background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
-}
-
-.console-messages:focus .console-item.selected .outline-disclosure li.parent.expanded::before {
-    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
 }
 
 .outline-disclosure ol.children {

@@ -1695,13 +1695,7 @@
     <None Include="..\UserInterface\Images\UserInputPromptPrevious.svg">
       <Filter>Images</Filter>
     </None>
-    <None Include="..\UserInterface\Images\UserInputPromptPreviousSelected.svg">
-      <Filter>Images</Filter>
-    </None>
     <None Include="..\UserInterface\Images\UserInputResult.svg">
-      <Filter>Images</Filter>
-    </None>
-    <None Include="..\UserInterface\Images\UserInputResultSelected.svg">
       <Filter>Images</Filter>
     </None>
     <None Include="..\UserInterface\Images\Warning.svg">

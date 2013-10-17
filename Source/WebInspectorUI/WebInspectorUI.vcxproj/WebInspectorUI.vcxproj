@@ -536,9 +536,7 @@
     <None Include="..\UserInterface\Images\UpDownArrows.svg" />
     <None Include="..\UserInterface\Images\UserInputPrompt.svg" />
     <None Include="..\UserInterface\Images\UserInputPromptPrevious.svg" />
-    <None Include="..\UserInterface\Images\UserInputPromptPreviousSelected.svg" />
     <None Include="..\UserInterface\Images\UserInputResult.svg" />
-    <None Include="..\UserInterface\Images\UserInputResultSelected.svg" />
     <None Include="..\UserInterface\Images\Warning.svg" />
     <None Include="..\UserInterface\Images\Weight.svg" />
     <None Include="..\UserInterface\ImageUtilities.js" />

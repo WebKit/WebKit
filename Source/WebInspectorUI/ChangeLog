@@ -1,5 +1,23 @@
 2013-10-17  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: logged objects are highlighted in blue
+        https://bugs.webkit.org/show_bug.cgi?id=122897
+
+        Reviewed by Joseph Pecoraro.
+
+        Switch to using the system highlight color for the background selected messages.
+        Also removing SVG assets no longer needed since we won't be showing white prompt
+        and result icons anymore as well as a few generated canvas states.
+
+        * UserInterface/Images/UserInputPromptPreviousSelected.svg: Removed.
+        * UserInterface/Images/UserInputResultSelected.svg: Removed.
+        * UserInterface/LogContentView.css:
+        (.console-messages:focus .console-item.selected):
+        * UserInterface/Main.js:
+        (WebInspector._generateDisclosureTriangleImages):
+
+2013-10-17  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: allow front-end to trigger the system beep sound to signal an error
         https://bugs.webkit.org/show_bug.cgi?id=122955
 

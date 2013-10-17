@@ -1455,11 +1455,11 @@ WebInspector._generateDisclosureTriangleImages = function()
     var specifications = {};
     specifications["normal"] = {fillColor: [0, 0, 0, 0.5]};
     specifications["normal-active"] = {fillColor: [0, 0, 0, 0.7]};
-    specifications["selected"] = {fillColor: [255, 255, 255, 0.8]};
-    specifications["selected-active"] = {fillColor: [255, 255, 255, 1]};
 
     generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, "disclosure-triangle-small-open-");
     generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, "disclosure-triangle-small-closed-");
+
+    specifications["selected"] = {fillColor: [255, 255, 255, 0.8]};
 
     generateColoredImagesForCSS("Images/DisclosureTriangleTinyOpen.svg", specifications, 8, 8, "disclosure-triangle-tiny-open-");
     generateColoredImagesForCSS("Images/DisclosureTriangleTinyClosed.svg", specifications, 8, 8, "disclosure-triangle-tiny-closed-");
