@@ -28,25 +28,27 @@
 
 #if ENABLE(MATHML)
 
+#include "MathMLInlineContainerElement.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {
     
-class RenderMathMLFenced : public RenderMathMLRow {
+class RenderMathMLFenced FINAL : public RenderMathMLRow {
 public:
-    explicit RenderMathMLFenced(Element&);
-    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
-    virtual void updateFromElement();
+    explicit RenderMathMLFenced(MathMLInlineContainerElement&);
+    MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     
 private:
-    virtual bool isRenderMathMLFenced() const { return true; }
-    virtual const char* renderName() const { return "RenderMathMLFenced"; }
+    virtual bool isRenderMathMLFenced() const OVERRIDE { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderMathMLFenced"; }
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
+    virtual void updateFromElement() OVERRIDE;
 
     RenderMathMLOperator* createMathMLOperator(UChar, RenderMathMLOperator::OperatorType);
     void makeFences();
-    
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     UChar m_open;
     UChar m_close;

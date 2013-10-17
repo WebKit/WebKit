@@ -1,3 +1,16 @@
+2013-10-17  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderMathMLFenced always has a MathMLInlineContainerElement.
+        <https://webkit.org/b/122986>
+
+        This renderer is never anonymous and always has a corresponding
+        MathMLInlineContainerElement. Overload element() with a tighter
+        return type.
+
+        Also marked the class FINAL and made most methods private.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Comment AffineTransform::xScale() and yScale() to make their meanings clearer
