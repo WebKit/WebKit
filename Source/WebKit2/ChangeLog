@@ -1,3 +1,11 @@
+2013-10-18  Dan Bernstein  <mitz@apple.com>
+
+        Removed the __MAC_OS_X_VERSION_MIN_REQUIRED condition from the definition of WK_API_ENABLED.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
 2013-10-17  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Proxy layer contents to the UI process

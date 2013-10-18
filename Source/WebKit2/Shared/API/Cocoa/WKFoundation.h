@@ -28,5 +28,5 @@
 #if TARGET_OS_IPHONE
 #define WK_API_ENABLED 1
 #else
-#define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000 && !defined(__i386__))
+#define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
 #endif
