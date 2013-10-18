@@ -465,7 +465,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJJZ operat
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EAapJ operation, int dst, ArrayAllocationProfile* arg1, GPRReg arg2Tag, GPRReg arg2Payload)
 {
-    setupArgumentsWithExecState(TrustedImmPtr(arg1), EABI_32BIT_DUMMY_ARG arg2Payload, arg2Tag);
+    setupArgumentsWithExecState(TrustedImmPtr(arg1), arg2Payload, arg2Tag);
     return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
 }
 
