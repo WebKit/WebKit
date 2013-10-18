@@ -1,3 +1,12 @@
+2013-10-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't add an include for return type of a [Custom] function in generated bindings code
+        https://bugs.webkit.org/show_bug.cgi?id=122972
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/CodeGeneratorJS.pm: (GenerateImplementation): Don't.
+
 2013-10-17  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderMathMLSpace always has a MathMLTextElement.

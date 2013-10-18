@@ -2330,13 +2330,13 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$interface->functions}) {
-            AddIncludesForTypeInImpl($function->signature->type);
-
             my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
             my $raisesException = $function->signature->extendedAttributes->{"RaisesException"};
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
+
+            AddIncludesForTypeInImpl($function->signature->type) unless $isCustom;
 
             my $functionName = GetFunctionName($className, $function);
 
