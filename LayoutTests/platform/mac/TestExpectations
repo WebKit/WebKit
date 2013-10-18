@@ -1290,3 +1290,5 @@ webkit.org/b/114744 media/video-layer-crash.html [ Pass Failure Timeout ]
 webkit.org/b/122490 [ Debug ] mathml/very-large-stretchy-operators.html [ Skip ]
 
 webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
+
+webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
