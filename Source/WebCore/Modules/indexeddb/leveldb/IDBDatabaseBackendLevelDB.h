@@ -39,13 +39,13 @@ namespace WebCore {
 
 class IDBBackingStore;
 class IDBDatabase;
-class IDBFactoryBackendLevelDB;
-class IDBTransactionBackendLevelDB;
+class IDBFactoryBackendInterface;
+class IDBTransactionBackendInterface;
 class IDBTransactionCoordinatorLevelDB;
 
 class IDBDatabaseBackendLevelDB : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB*, const String& uniqueIdentifier);
+    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
     virtual ~IDBDatabaseBackendLevelDB();
 
     PassRefPtr<IDBBackingStore> backingStore() const;
@@ -75,10 +75,10 @@ public:
     virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
     IDBTransactionCoordinatorLevelDB* transactionCoordinator() const { return m_transactionCoordinator.get(); }
-    void transactionStarted(PassRefPtr<IDBTransactionBackendLevelDB>);
-    void transactionFinished(PassRefPtr<IDBTransactionBackendLevelDB>);
-    void transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendLevelDB>);
-    void transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendLevelDB>);
+    void transactionStarted(IDBTransactionBackendInterface*);
+    void transactionFinished(IDBTransactionBackendInterface*);
+    void transactionFinishedAndCompleteFired(IDBTransactionBackendInterface*);
+    void transactionFinishedAndAbortFired(IDBTransactionBackendInterface*);
 
     virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) OVERRIDE;
@@ -93,7 +93,7 @@ public:
     class VersionChangeAbortOperation;
 
 private:
-    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB*, const String& uniqueIdentifier);
+    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
 
     bool openInternal();
     void runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t requestedVersion);
@@ -108,12 +108,12 @@ private:
 
     String m_identifier;
     // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
-    RefPtr<IDBFactoryBackendLevelDB> m_factory;
+    RefPtr<IDBFactoryBackendInterface> m_factory;
 
     OwnPtr<IDBTransactionCoordinatorLevelDB> m_transactionCoordinator;
-    RefPtr<IDBTransactionBackendLevelDB> m_runningVersionChangeTransaction;
+    RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
 
-    typedef HashMap<int64_t, IDBTransactionBackendLevelDB*> TransactionMap;
+    typedef HashMap<int64_t, IDBTransactionBackendInterface*> TransactionMap;
     TransactionMap m_transactions;
 
     class PendingOpenCall {

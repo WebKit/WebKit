@@ -89,7 +89,7 @@ bool IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed(IDBBackingStore
     return true;
 }
 
-bool IDBObjectStoreBackendLevelDB::makeIndexWriters(PassRefPtr<IDBTransactionBackendLevelDB> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
+bool IDBObjectStoreBackendLevelDB::makeIndexWriters(PassRefPtr<IDBTransactionBackendInterface> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter>>* indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIds.size() == indexKeys.size());
     completed = false;

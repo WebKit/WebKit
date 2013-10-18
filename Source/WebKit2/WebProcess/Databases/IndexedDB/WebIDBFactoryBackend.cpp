@@ -94,6 +94,11 @@ void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks
     notImplemented();
 }
 
+void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)

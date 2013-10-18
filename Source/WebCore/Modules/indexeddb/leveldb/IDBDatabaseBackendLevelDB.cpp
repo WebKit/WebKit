@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
 {
     RefPtr<IDBDatabaseBackendLevelDB> backend = adoptRef(new IDBDatabaseBackendLevelDB(name, database, factory, uniqueIdentifier));
     if (!backend->openInternal())
@@ -50,7 +50,7 @@ PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const St
     return backend.release();
 }
 
-IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* backingStore, IDBFactoryBackendLevelDB* factory, const String& uniqueIdentifier)
+IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
@@ -126,7 +126,7 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendLevelDB::backingStore() const
 void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createObjectStore");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
@@ -141,7 +141,7 @@ void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t
 void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t objectStoreId)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteObjectStore");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
@@ -156,7 +156,7 @@ void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t
 void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createIndex");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
@@ -175,7 +175,7 @@ void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objec
 void IDBDatabaseBackendLevelDB::deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteIndex");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
@@ -215,7 +215,7 @@ void IDBDatabaseBackendLevelDB::abort(int64_t transactionId, PassRefPtr<IDBDatab
 void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::get");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
 
@@ -225,7 +225,7 @@ void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId
 void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::put");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
@@ -240,7 +240,7 @@ void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId
 void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexKeys");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
@@ -286,7 +286,7 @@ void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, 
 {
     LOG(StorageAPI, "IDBObjectStoreBackendLevelDB::setIndexesReady");
 
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
 
@@ -296,7 +296,7 @@ void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, 
 void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::openCursor");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
 
@@ -306,7 +306,7 @@ void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t object
 void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::count");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
 
@@ -318,7 +318,7 @@ void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStore
 void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteRange");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
@@ -329,7 +329,7 @@ void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objec
 void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::clear");
-    IDBTransactionBackendLevelDB* transaction = m_transactions.get(transactionId);
+    IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
     ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
@@ -337,18 +337,17 @@ void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStore
     transaction->scheduleClearOperation(objectStoreId, callbacks);
 }
 
-void IDBDatabaseBackendLevelDB::transactionStarted(PassRefPtr<IDBTransactionBackendLevelDB> prpTransaction)
+void IDBDatabaseBackendLevelDB::transactionStarted(IDBTransactionBackendInterface* transaction)
 {
-    RefPtr<IDBTransactionBackendLevelDB> transaction = prpTransaction;
     if (transaction->mode() == IndexedDB::TransactionVersionChange) {
         ASSERT(!m_runningVersionChangeTransaction);
         m_runningVersionChangeTransaction = transaction;
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinished(PassRefPtr<IDBTransactionBackendLevelDB> prpTransaction)
+void IDBDatabaseBackendLevelDB::transactionFinished(IDBTransactionBackendInterface* rawTransaction)
 {
-    RefPtr<IDBTransactionBackendLevelDB> transaction = prpTransaction;
+    RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     ASSERT(m_transactions.contains(transaction->id()));
     ASSERT(m_transactions.get(transaction->id()) == transaction.get());
     m_transactions.remove(transaction->id());
@@ -358,9 +357,9 @@ void IDBDatabaseBackendLevelDB::transactionFinished(PassRefPtr<IDBTransactionBac
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendLevelDB> prpTransaction)
+void IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired(IDBTransactionBackendInterface* rawTransaction)
 {
-    RefPtr<IDBTransactionBackendLevelDB> transaction = prpTransaction;
+    RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     if (transaction->mode() == IndexedDB::TransactionVersionChange) {
         // If this was an open-with-version call, there will be a "second
         // half" open call waiting for us in processPendingCalls.
@@ -373,9 +372,9 @@ void IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired(PassRefPtr<IDBT
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendLevelDB> prpTransaction)
+void IDBDatabaseBackendLevelDB::transactionFinishedAndCompleteFired(IDBTransactionBackendInterface* rawTransaction)
 {
-    RefPtr<IDBTransactionBackendLevelDB> transaction = prpTransaction;
+    RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     if (transaction->mode() == IndexedDB::TransactionVersionChange)
         processPendingCalls();
 }
@@ -526,7 +525,7 @@ void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCal
 
     Vector<int64_t> objectStoreIds;
     createTransaction(transactionId, databaseCallbacks, objectStoreIds, IndexedDB::TransactionVersionChange);
-    RefPtr<IDBTransactionBackendLevelDB> transaction = m_transactions.get(transactionId);
+    RefPtr<IDBTransactionBackendInterface> transaction = m_transactions.get(transactionId);
 
     transaction->scheduleVersionChangeOperation(transactionId, requestedVersion, callbacks, databaseCallbacks, m_metadata);
 

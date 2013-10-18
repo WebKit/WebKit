@@ -50,7 +50,7 @@ PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(ID
 }
 
 IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBBackingStore* backingStore, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendLevelDB* database)
-    : m_id(id)
+    : IDBTransactionBackendInterface(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
     , m_state(Unused)
@@ -136,7 +136,7 @@ void IDBTransactionBackendLevelDB::abort(PassRefPtr<IDBDatabaseError> error)
     m_database->transactionFinished(this);
 
     if (m_callbacks)
-        m_callbacks->onAbort(m_id, error);
+        m_callbacks->onAbort(id(), error);
 
     m_database->transactionFinishedAndAbortFired(this);
 
@@ -222,10 +222,10 @@ void IDBTransactionBackendLevelDB::commit()
     m_database->transactionFinished(this);
 
     if (committed) {
-        m_callbacks->onComplete(m_id);
+        m_callbacks->onComplete(id());
         m_database->transactionFinishedAndCompleteFired(this);
     } else {
-        m_callbacks->onAbort(m_id, IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error committing transaction."));
+        m_callbacks->onAbort(id(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error committing transaction."));
         m_database->transactionFinishedAndAbortFired(this);
     }
 

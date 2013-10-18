@@ -1,3 +1,51 @@
+2013-10-18  Brady Eidson  <beidson@apple.com>
+
+        Get rid of IDBFactoryBackendLevelDB and IDBTransactionBackendLevelDB in IDBDatabaseBackendLevelDB.
+        https://bugs.webkit.org/show_bug.cgi?id=123039
+
+        Reviewed by Anders Carlsson.
+
+        Add a few concepts to the interfaces to make this work:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        (WebCore::IDBTransactionBackendInterface::id):
+        (WebCore::IDBTransactionBackendInterface::IDBTransactionBackendInterface):
+
+        Adapt to using Interface ptr’s instead of LevelDB ptr’s:
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::create):
+        (WebCore::IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB):
+        (WebCore::IDBDatabaseBackendLevelDB::createObjectStore):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendLevelDB::createIndex):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteIndex):
+        (WebCore::IDBDatabaseBackendLevelDB::get):
+        (WebCore::IDBDatabaseBackendLevelDB::put):
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexKeys):
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexesReady):
+        (WebCore::IDBDatabaseBackendLevelDB::openCursor):
+        (WebCore::IDBDatabaseBackendLevelDB::count):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteRange):
+        (WebCore::IDBDatabaseBackendLevelDB::clear):
+        (WebCore::IDBDatabaseBackendLevelDB::transactionStarted):
+        (WebCore::IDBDatabaseBackendLevelDB::transactionFinished):
+        (WebCore::IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired):
+        (WebCore::IDBDatabaseBackendLevelDB::transactionFinishedAndCompleteFired):
+        (WebCore::IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp:
+        (WebCore::IDBObjectStoreBackendLevelDB::makeIndexWriters):
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        (WebCore::IDBTransactionBackendLevelDB::abort):
+        (WebCore::IDBTransactionBackendLevelDB::commit):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
 2013-10-18  Dean Jackson  <dino@apple.com>
 
         Unable to upload <img src="foo.svg"> as WebGL texture

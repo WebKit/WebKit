@@ -49,8 +49,9 @@ public:
     static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBBackingStore*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
     virtual ~IDBTransactionBackendLevelDB();
 
-    virtual void abort();
-    void commit();
+    virtual void commit() OVERRIDE FINAL;
+    virtual void abort() OVERRIDE FINAL;
+    virtual void abort(PassRefPtr<IDBDatabaseError>) OVERRIDE FINAL;
 
     class Operation {
     public:
@@ -58,9 +59,8 @@ public:
         virtual void perform() = 0;
     };
 
-    void abort(PassRefPtr<IDBDatabaseError>);
     void run();
-    IndexedDB::TransactionMode mode() const { return m_mode; }
+    virtual IndexedDB::TransactionMode mode() const OVERRIDE FINAL { return m_mode; }
     const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
     void scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
     void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
@@ -68,8 +68,7 @@ public:
     void unregisterOpenCursor(IDBCursorBackendLevelDB*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    IDBBackingStore::Transaction* backingStoreTransaction() { return &m_transaction; }
-    int64_t id() const { return m_id; }
+    virtual IDBBackingStore::Transaction* backingStoreTransaction() OVERRIDE FINAL { return &m_transaction; }
 
     IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
 
@@ -104,7 +103,6 @@ private:
     void taskTimerFired(Timer<IDBTransactionBackendLevelDB>*);
     void closeOpenCursors();
 
-    const int64_t m_id;
     const HashSet<int64_t> m_objectStoreIds;
     const IndexedDB::TransactionMode m_mode;
 

@@ -56,7 +56,7 @@ public:
     virtual ~IDBFactoryBackendLevelDB();
 
     // Notifications from weak pointers.
-    virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier);
+    virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) OVERRIDE FINAL;
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
     virtual void open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);

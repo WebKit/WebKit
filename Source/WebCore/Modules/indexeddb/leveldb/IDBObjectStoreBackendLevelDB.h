@@ -66,7 +66,7 @@ namespace IDBObjectStoreBackendLevelDB {
         IDBDatabaseBackendInterface::IndexKeys m_indexKeys;
     };
 
-    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendLevelDB>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
+    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendInterface>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter>>* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
 
     PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId);
     bool updateKeyGenerator(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);
