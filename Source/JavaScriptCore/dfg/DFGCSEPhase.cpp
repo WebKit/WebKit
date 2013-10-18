@@ -1412,13 +1412,13 @@ private:
 bool performCSE(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG CSE Phase");
-    return runPhase<CSEPhase<NormalCSE> >(graph);
+    return runPhase<CSEPhase<NormalCSE>>(graph);
 }
 
 bool performStoreElimination(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG Store Elimination Phase");
-    return runPhase<CSEPhase<StoreElimination> >(graph);
+    return runPhase<CSEPhase<StoreElimination>>(graph);
 }
 
 } } // namespace JSC::DFG

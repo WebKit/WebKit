@@ -154,7 +154,7 @@ public:
 private:
     friend class QueryableExitProfile;
     
-    OwnPtr<Vector<FrequentExitSite> > m_frequentExitSites;
+    OwnPtr<Vector<FrequentExitSite>> m_frequentExitSites;
 };
 
 class QueryableExitProfile {

@@ -2728,7 +2728,7 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
 bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, int internalFilterPropertyIndex, FilterOperation::OperationType filterOp)
 {
     Vector<float> keyTimes;
-    Vector<RefPtr<FilterOperation> > values;
+    Vector<RefPtr<FilterOperation>> values;
     Vector<const TimingFunction*> timingFunctions;
     RefPtr<DefaultFilterOperation> defaultOperation;
 
@@ -3125,7 +3125,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     }
 
     const Vector<GraphicsLayer*>& childLayers = children();
-    Vector<RefPtr<PlatformCALayer> > clonalSublayers;
+    Vector<RefPtr<PlatformCALayer>> clonalSublayers;
 
     RefPtr<PlatformCALayer> replicaLayer;
     

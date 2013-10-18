@@ -35,7 +35,7 @@ class SVGAnimatedListPropertyTearOff : public SVGAnimatedProperty {
 public:
     typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
     typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
-    typedef Vector<RefPtr<ListItemTearOff> > ListWrapperCache;
+    typedef Vector<RefPtr<ListItemTearOff>> ListWrapperCache;
     typedef SVGListProperty<PropertyType> ListProperty;
     typedef SVGListPropertyTearOff<PropertyType> ListPropertyTearOff;
     typedef PropertyType ContentType;
@@ -154,7 +154,7 @@ public:
         synchronizeWrappersIfNeeded();
     }
 
-    static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& values)
+    static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType>> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& values)
     {
         ASSERT(contextElement);
         return adoptRef(new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, values));

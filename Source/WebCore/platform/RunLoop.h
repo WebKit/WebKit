@@ -133,7 +133,7 @@ private:
     void performWork();
 
     Mutex m_functionQueueLock;
-    Deque<Function<void()> > m_functionQueue;
+    Deque<Function<void()>> m_functionQueue;
 
 #if PLATFORM(WIN)
     static bool registerRunLoopMessageWindowClass();
@@ -166,7 +166,7 @@ public:
     void popNestedMainLoop();
 private:
     GRefPtr<GMainContext> m_runLoopContext;
-    Vector<GRefPtr<GMainLoop> > m_runLoopMainLoops;
+    Vector<GRefPtr<GMainLoop>> m_runLoopMainLoops;
 #endif
 };
 

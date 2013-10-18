@@ -131,7 +131,7 @@ private:
 
     // Keep track of the versionchange events waiting to be fired on this
     // database so that we can cancel them if the database closes.
-    Vector<RefPtr<Event> > m_enqueuedEvents;
+    Vector<RefPtr<Event>> m_enqueuedEvents;
 
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };

@@ -36,8 +36,8 @@ namespace WebCore {
 
 class Page;
 
-typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
-typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
+typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
+typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public BackForwardClient {
 public: 

@@ -36,7 +36,7 @@ public:
     using Base::m_role;
     using Base::m_values;
 
-    static PassRefPtr<SVGStaticListPropertyTearOff<PropertyType> > create(SVGElement& contextElement, PropertyType& values)
+    static PassRefPtr<SVGStaticListPropertyTearOff<PropertyType>> create(SVGElement& contextElement, PropertyType& values)
     {
         return adoptRef(new SVGStaticListPropertyTearOff<PropertyType>(&contextElement, values));
     }

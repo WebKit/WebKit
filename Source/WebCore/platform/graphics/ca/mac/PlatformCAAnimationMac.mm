@@ -524,7 +524,7 @@ void PlatformCAAnimation::setValues(const Vector<WebCore::Color>& value)
 }
 
 #if ENABLE(CSS_FILTERS)
-void PlatformCAAnimation::setValues(const Vector<RefPtr<FilterOperation> >& values, int internalFilterPropertyIndex)
+void PlatformCAAnimation::setValues(const Vector<RefPtr<FilterOperation>>& values, int internalFilterPropertyIndex)
 {
     if (animationType() != Keyframe)
         return;

@@ -50,7 +50,7 @@ public:
     static const AtomicString& forcedOnlyKeyword();
     static const AtomicString& alwaysOnKeyword();
 
-    Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*);
+    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
     String displayNameForTrack(TextTrack*);
     TextTrack* captionMenuOffItem();
     TextTrack* captionMenuAutomaticItem();

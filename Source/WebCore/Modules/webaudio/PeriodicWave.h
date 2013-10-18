@@ -89,7 +89,7 @@ private:
 
     // Creates tables based on numberOfComponents Fourier coefficients.
     void createBandLimitedTables(const float* real, const float* imag, unsigned numberOfComponents);
-    Vector<OwnPtr<AudioFloatArray> > m_bandLimitedTables;
+    Vector<OwnPtr<AudioFloatArray>> m_bandLimitedTables;
 };
 
 } // namespace WebCore

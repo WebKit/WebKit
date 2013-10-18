@@ -67,7 +67,7 @@ bool DatabaseServer::hasEntryForOrigin(SecurityOrigin* origin)
     return DatabaseTracker::tracker().hasEntryForOrigin(origin);
 }
 
-void DatabaseServer::origins(Vector<RefPtr<SecurityOrigin> >& result)
+void DatabaseServer::origins(Vector<RefPtr<SecurityOrigin>>& result)
 {
     DatabaseTracker::tracker().origins(result);
 }

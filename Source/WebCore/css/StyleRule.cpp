@@ -267,11 +267,11 @@ PassRefPtr<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSe
     return rule.release();
 }
 
-Vector<RefPtr<StyleRule> > StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
+Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
 {
     ASSERT(selectorList().componentCount() > maxCount);
 
-    Vector<RefPtr<StyleRule> > rules;
+    Vector<RefPtr<StyleRule>> rules;
     Vector<const CSSSelector*> componentsSinceLastSplit;
 
     for (const CSSSelector* selector = selectorList().first(); selector; selector = CSSSelectorList::next(selector)) {
@@ -340,7 +340,7 @@ MutableStylePropertySet& StyleRuleFontFace::mutableProperties()
     return static_cast<MutableStylePropertySet&>(m_properties.get());
 }
 
-StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase> >& adoptRule)
+StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase>>& adoptRule)
     : StyleRuleBase(type, 0)
 {
     m_childRules.swap(adoptRule);
@@ -365,7 +365,7 @@ void StyleRuleGroup::wrapperRemoveRule(unsigned index)
 }
 
 
-StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Media, adoptRules)
     , m_mediaQueries(media)
 {
@@ -380,7 +380,7 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
 
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
-StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Supports, adoptRules)
     , m_conditionText(conditionText)
     , m_conditionIsSupported(conditionIsSupported)
@@ -395,7 +395,7 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
 }
 #endif
 
-StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Region, adoptRules)
 {
     m_selectorList.adoptSelectorVector(*selectors);

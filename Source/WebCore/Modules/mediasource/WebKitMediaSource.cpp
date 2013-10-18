@@ -166,9 +166,9 @@ void WebKitMediaSource::onReadyStateChange(const AtomicString& oldState, const A
     }
 }
 
-Vector<RefPtr<TimeRanges> > WebKitMediaSource::activeRanges() const
+Vector<RefPtr<TimeRanges>> WebKitMediaSource::activeRanges() const
 {
-    Vector<RefPtr<TimeRanges> > activeRanges(m_activeSourceBuffers->length());
+    Vector<RefPtr<TimeRanges>> activeRanges(m_activeSourceBuffers->length());
     for (size_t i = 0; i < m_activeSourceBuffers->length(); ++i)
         activeRanges[i] = m_activeSourceBuffers->item(i)->buffered(ASSERT_NO_EXCEPTION);
 

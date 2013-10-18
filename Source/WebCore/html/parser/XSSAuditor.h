@@ -113,7 +113,7 @@ private:
 
     String m_decodedURL;
     String m_decodedHTTPBody;
-    OwnPtr<SuffixTree<ASCIICodebook> > m_decodedHTTPBodySuffixTree;
+    OwnPtr<SuffixTree<ASCIICodebook>> m_decodedHTTPBodySuffixTree;
 
     State m_state;
     String m_cachedDecodedSnippet;

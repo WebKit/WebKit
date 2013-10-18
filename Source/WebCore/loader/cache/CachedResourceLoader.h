@@ -102,7 +102,7 @@ public:
     CachedResource* cachedResource(const String& url) const;
     CachedResource* cachedResource(const URL& url) const;
     
-    typedef HashMap<String, CachedResourceHandle<CachedResource> > DocumentResourceMap;
+    typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
 
     bool autoLoadImages() const { return m_autoLoadImages; }
@@ -167,7 +167,7 @@ private:
     
     int m_requestCount;
     
-    OwnPtr<ListHashSet<CachedResource*> > m_preloads;
+    OwnPtr<ListHashSet<CachedResource*>> m_preloads;
     struct PendingPreload {
         CachedResource::Type m_type;
         CachedResourceRequest m_request;

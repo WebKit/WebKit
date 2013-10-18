@@ -137,7 +137,7 @@ private:
         m_compressedData.clear();
     }
     mutable Vector<T> m_decompressedData;
-    mutable OwnPtr<CompressedVector<T> > m_compressedData;
+    mutable OwnPtr<CompressedVector<T>> m_compressedData;
 };
 
 }

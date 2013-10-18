@@ -949,8 +949,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
 
     RefPtr<WebKitCSSFilterValue> filterValue;
 
-    Vector<RefPtr<FilterOperation> >::const_iterator end = filterOperations.operations().end();
-    for (Vector<RefPtr<FilterOperation> >::const_iterator it = filterOperations.operations().begin(); it != end; ++it) {
+    Vector<RefPtr<FilterOperation>>::const_iterator end = filterOperations.operations().end();
+    for (Vector<RefPtr<FilterOperation>>::const_iterator it = filterOperations.operations().begin(); it != end; ++it) {
         FilterOperation* filterOperation = (*it).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {

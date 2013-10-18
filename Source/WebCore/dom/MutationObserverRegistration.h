@@ -66,7 +66,7 @@ private:
     RefPtr<MutationObserver> m_observer;
     Node* m_registrationNode;
     RefPtr<Node> m_registrationNodeKeepAlive;
-    typedef HashSet<RefPtr<Node> > NodeHashSet;
+    typedef HashSet<RefPtr<Node>> NodeHashSet;
     OwnPtr<NodeHashSet> m_transientRegistrationNodes;
 
     MutationObserverOptions m_options;

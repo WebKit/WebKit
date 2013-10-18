@@ -72,7 +72,7 @@ private:
 
     void scheduleTransaction();
 
-    Deque<RefPtr<SQLTransactionBackend> > m_transactionQueue;
+    Deque<RefPtr<SQLTransactionBackend>> m_transactionQueue;
     Mutex m_transactionInProgressMutex;
     bool m_transactionInProgress;
     bool m_isTransactionQueueEnabled;

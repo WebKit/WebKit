@@ -52,7 +52,7 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
 
 - (NSArray *)origins
 {
-    Vector<RefPtr<SecurityOrigin> > coreOrigins;
+    Vector<RefPtr<SecurityOrigin>> coreOrigins;
 
     StorageTracker::tracker().origins(coreOrigins);
 

@@ -41,12 +41,12 @@ void ArchiveResourceCollection::addAllResources(Archive* archive)
     if (!archive)
         return;
 
-    const Vector<RefPtr<ArchiveResource> >& subresources = archive->subresources();
-    for (Vector<RefPtr<ArchiveResource> >::const_iterator iterator = subresources.begin(); iterator != subresources.end(); ++iterator)
+    const Vector<RefPtr<ArchiveResource>>& subresources = archive->subresources();
+    for (Vector<RefPtr<ArchiveResource>>::const_iterator iterator = subresources.begin(); iterator != subresources.end(); ++iterator)
         m_subresources.set((*iterator)->url(), iterator->get());
 
-    const Vector<RefPtr<Archive> >& subframes = archive->subframeArchives();
-    for (Vector<RefPtr<Archive> >::const_iterator iterator = subframes.begin(); iterator != subframes.end(); ++iterator) {
+    const Vector<RefPtr<Archive>>& subframes = archive->subframeArchives();
+    for (Vector<RefPtr<Archive>>::const_iterator iterator = subframes.begin(); iterator != subframes.end(); ++iterator) {
         RefPtr<Archive> archive = *iterator;
         ASSERT(archive->mainResource());
 

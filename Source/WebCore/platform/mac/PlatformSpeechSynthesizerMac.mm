@@ -97,7 +97,7 @@
     // Find if we should use a specific voice based on the voiceURI in utterance.
     // Otherwise, find the voice that matches the language. The Mac doesn't have a default voice per language, so the first
     // one will have to do.
-    Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice> > voiceList = m_synthesizerObject->voiceList();
+    Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice>> voiceList = m_synthesizerObject->voiceList();
     size_t voiceListSize = voiceList.size();
     
     WebCore::PlatformSpeechSynthesisVoice* utteranceVoice = utterance->voice();

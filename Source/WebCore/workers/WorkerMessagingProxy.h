@@ -115,7 +115,7 @@ namespace WebCore {
 
         bool m_askedToTerminate;
 
-        Vector<OwnPtr<ScriptExecutionContext::Task> > m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
+        Vector<OwnPtr<ScriptExecutionContext::Task>> m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
 #if ENABLE(INSPECTOR)
         WorkerGlobalScopeProxy::PageInspector* m_pageInspector;
 #endif

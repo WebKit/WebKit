@@ -63,8 +63,8 @@ private:
     void addResourceToArchive(ArchiveResource*, MHTMLArchive*);
 
     SharedBufferChunkReader m_lineReader;
-    Vector<RefPtr<ArchiveResource> > m_resources;
-    Vector<RefPtr<MHTMLArchive> > m_frames;
+    Vector<RefPtr<ArchiveResource>> m_resources;
+    Vector<RefPtr<MHTMLArchive>> m_frames;
 };
 
 }

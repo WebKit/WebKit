@@ -1160,7 +1160,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         return context.createIfStatement(ifLocation, condition, trueBlock, 0, start, end);
 
     Vector<TreeExpression> exprStack;
-    Vector<pair<int, int> > posStack;
+    Vector<pair<int, int>> posStack;
     Vector<JSTokenLocation> tokenLocationStack;
     Vector<TreeStatement> statementStack;
     bool trailingElse = false;
@@ -1954,7 +1954,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
 }
 
 // Instantiate the two flavors of Parser we need instead of putting most of this file in Parser.h
-template class Parser< Lexer<LChar> >;
-template class Parser< Lexer<UChar> >;
+template class Parser<Lexer<LChar>>;
+template class Parser<Lexer<UChar>>;
 
 } // namespace JSC

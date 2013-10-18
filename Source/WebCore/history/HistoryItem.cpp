@@ -670,7 +670,7 @@ Vector<String>* HistoryItem::redirectURLs() const
     return m_redirectURLs.get();
 }
 
-void HistoryItem::setRedirectURLs(PassOwnPtr<Vector<String> > redirectURLs)
+void HistoryItem::setRedirectURLs(PassOwnPtr<Vector<String>> redirectURLs)
 {
     m_redirectURLs = redirectURLs;
 }

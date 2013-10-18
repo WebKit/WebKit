@@ -108,7 +108,7 @@ public:
 private:
     size_t m_size;
     size_t m_readOffset;
-    Deque<OwnPtr<Block> > m_buffer;
+    Deque<OwnPtr<Block>> m_buffer;
 };
 
 } // namespace WTF

@@ -110,7 +110,7 @@ void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& 
     *result = FunctionDetails::runtimeCast(resultValue);
 }
 
-void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<PropertyDescriptor> >* properties)
+void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ownProperties, RefPtr<Array<PropertyDescriptor>>* properties)
 {
     ScriptFunctionCall function(injectedScriptObject(), "getProperties");
     function.appendArgument(objectId);
@@ -125,7 +125,7 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
     *properties = Array<PropertyDescriptor>::runtimeCast(result);
 }
 
-void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<InternalPropertyDescriptor> >* properties)
+void InjectedScript::getInternalProperties(ErrorString* errorString, const String& objectId, RefPtr<Array<InternalPropertyDescriptor>>* properties)
 {
     ScriptFunctionCall function(injectedScriptObject(), "getInternalProperties");
     function.appendArgument(objectId);
@@ -136,7 +136,7 @@ void InjectedScript::getInternalProperties(ErrorString* errorString, const Strin
         *errorString = "Internal error";
         return;
     }
-    RefPtr<Array<InternalPropertyDescriptor> > array = Array<InternalPropertyDescriptor>::runtimeCast(result);
+    RefPtr<Array<InternalPropertyDescriptor>> array = Array<InternalPropertyDescriptor>::runtimeCast(result);
     if (array->length() > 0)
         *properties = array;
 }
@@ -165,7 +165,7 @@ void InjectedScript::releaseObject(const String& objectId)
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-PassRefPtr<Array<CallFrame> > InjectedScript::wrapCallFrames(const ScriptValue& callFrames)
+PassRefPtr<Array<CallFrame>> InjectedScript::wrapCallFrames(const ScriptValue& callFrames)
 {
     ASSERT(!hasNoValue());
     ScriptFunctionCall function(injectedScriptObject(), "wrapCallFrames");

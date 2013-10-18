@@ -823,8 +823,8 @@ void IconDatabase::notifyPendingLoadDecisions()
     ASSERT(m_iconURLImportComplete);
     LOG(IconDatabase, "Notifying all DocumentLoaders that were waiting on a load decision for their icons");
     
-    HashSet<RefPtr<DocumentLoader> >::iterator i = m_loadersPendingDecision.begin();
-    HashSet<RefPtr<DocumentLoader> >::iterator end = m_loadersPendingDecision.end();
+    HashSet<RefPtr<DocumentLoader>>::iterator i = m_loadersPendingDecision.begin();
+    HashSet<RefPtr<DocumentLoader>>::iterator end = m_loadersPendingDecision.end();
     
     for (; i != end; ++i)
         if ((*i)->refCount() > 1)

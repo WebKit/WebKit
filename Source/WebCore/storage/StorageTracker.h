@@ -55,7 +55,7 @@ public:
     void deleteAllOrigins();
     void deleteOrigin(SecurityOrigin*);
     void deleteOriginWithIdentifier(const String& originIdentifier);
-    void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    void origins(Vector<RefPtr<SecurityOrigin>>& result);
     long long diskUsageForOrigin(SecurityOrigin*);
     
     void cancelDeletingOrigin(const String& originIdentifier);

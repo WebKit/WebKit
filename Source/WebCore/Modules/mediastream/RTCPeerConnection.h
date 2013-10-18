@@ -152,12 +152,12 @@ private:
     MediaStreamVector m_localStreams;
     MediaStreamVector m_remoteStreams;
 
-    Vector<RefPtr<RTCDataChannel> > m_dataChannels;
+    Vector<RefPtr<RTCDataChannel>> m_dataChannels;
 
     OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
 
     Timer<RTCPeerConnection> m_scheduledEventTimer;
-    Vector<RefPtr<Event> > m_scheduledEvents;
+    Vector<RefPtr<Event>> m_scheduledEvents;
 
     bool m_stopped;
 };

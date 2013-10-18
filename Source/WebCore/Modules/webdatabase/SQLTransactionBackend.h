@@ -129,7 +129,7 @@ private:
     bool m_hasVersionMismatch;
 
     Mutex m_statementMutex;
-    Deque<RefPtr<SQLStatementBackend> > m_statementQueue;
+    Deque<RefPtr<SQLStatementBackend>> m_statementQueue;
 
     OwnPtr<SQLiteTransaction> m_sqliteTransaction;
     RefPtr<OriginLock> m_originLock;

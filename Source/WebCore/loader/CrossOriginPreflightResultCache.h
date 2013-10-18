@@ -78,7 +78,7 @@ namespace WebCore {
     private:
         CrossOriginPreflightResultCache() { }
 
-        typedef HashMap<std::pair<String, URL>, OwnPtr<CrossOriginPreflightResultCacheItem> > CrossOriginPreflightResultHashMap;
+        typedef HashMap<std::pair<String, URL>, OwnPtr<CrossOriginPreflightResultCacheItem>> CrossOriginPreflightResultHashMap;
 
         CrossOriginPreflightResultHashMap m_preflightHashMap;
     };

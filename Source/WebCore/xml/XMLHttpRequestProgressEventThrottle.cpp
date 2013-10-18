@@ -133,14 +133,14 @@ void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer<XMLHttpRe
     m_deferEvents = false;
 
     // Take over the deferred events before dispatching them which can potentially add more.
-    Vector<RefPtr<Event> > deferredEvents;
+    Vector<RefPtr<Event>> deferredEvents;
     m_deferredEvents.swap(deferredEvents);
 
     RefPtr<Event> deferredProgressEvent = m_deferredProgressEvent;
     m_deferredProgressEvent = 0;
 
-    Vector<RefPtr<Event> >::const_iterator it = deferredEvents.begin();
-    const Vector<RefPtr<Event> >::const_iterator end = deferredEvents.end();
+    Vector<RefPtr<Event>>::const_iterator it = deferredEvents.begin();
+    const Vector<RefPtr<Event>>::const_iterator end = deferredEvents.end();
     for (; it != end; ++it)
         dispatchEvent(*it);
 

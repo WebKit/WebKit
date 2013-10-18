@@ -148,11 +148,11 @@ template<class T> inline void swap(Strong<T>& a, Strong<T>& b)
 
 namespace WTF {
 
-template<typename T> struct VectorTraits<JSC::Strong<T> > : SimpleClassVectorTraits {
+template<typename T> struct VectorTraits<JSC::Strong<T>> : SimpleClassVectorTraits {
     static const bool canCompareWithMemcmp = false;
 };
 
-template<typename P> struct HashTraits<JSC::Strong<P> > : SimpleClassHashTraits<JSC::Strong<P> > { };
+template<typename P> struct HashTraits<JSC::Strong<P>> : SimpleClassHashTraits<JSC::Strong<P>> { };
 
 }
 

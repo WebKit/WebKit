@@ -550,8 +550,8 @@ WebPage* WebProcess::focusedWebPage() const
 #if PLATFORM(MAC)
 void WebProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
-    HashMap<uint64_t, RefPtr<WebPage> >::const_iterator end = m_pageMap.end();
-    for (HashMap<uint64_t, RefPtr<WebPage> >::const_iterator it = m_pageMap.begin(); it != end; ++it) {
+    HashMap<uint64_t, RefPtr<WebPage>>::const_iterator end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage>>::const_iterator it = m_pageMap.begin(); it != end; ++it) {
         WebPage* page = (*it).value.get();
         page->setThrottled(processSuppressionEnabled);
     }

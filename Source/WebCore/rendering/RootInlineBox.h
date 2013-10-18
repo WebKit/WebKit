@@ -253,7 +253,7 @@ private:
 
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.
-    OwnPtr<Vector<RenderBox*> > m_floats;
+    OwnPtr<Vector<RenderBox*>> m_floats;
 };
 
 } // namespace WebCore

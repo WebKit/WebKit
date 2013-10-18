@@ -301,7 +301,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendB
 
 void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
 {
-    Vector<RefPtr<DatabaseBackendBase> > openDatabases;
+    Vector<RefPtr<DatabaseBackendBase>> openDatabases;
     {
         MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
 
@@ -323,8 +323,8 @@ void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseBackendConte
         }
     }
 
-    Vector<RefPtr<DatabaseBackendBase> >::const_iterator openDatabasesEndIt = openDatabases.end();
-    for (Vector<RefPtr<DatabaseBackendBase> >::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
+    Vector<RefPtr<DatabaseBackendBase>>::const_iterator openDatabasesEndIt = openDatabases.end();
+    for (Vector<RefPtr<DatabaseBackendBase>>::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
         (*openDatabasesIt)->interrupt();
 }
 
@@ -385,7 +385,7 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     return fullPathForDatabaseNoLock(origin, name, createIfNotExists).isolatedCopy();
 }
 
-void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& originsResult)
+void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin>>& originsResult)
 {
     MutexLocker lockDatabase(m_databaseGuard);
 
@@ -625,7 +625,7 @@ void DatabaseTracker::removeOpenDatabase(DatabaseBackendBase* database)
     }
 }
 
-void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<DatabaseBackendBase> >* databases)
+void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<DatabaseBackendBase>>* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
@@ -810,7 +810,7 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
 
 void DatabaseTracker::deleteAllDatabases()
 {
-    Vector<RefPtr<SecurityOrigin> > originsCopy;
+    Vector<RefPtr<SecurityOrigin>> originsCopy;
     origins(originsCopy);
 
     for (unsigned i = 0; i < originsCopy.size(); ++i)
@@ -1089,7 +1089,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     }
 #endif
 
-    Vector<RefPtr<DatabaseBackendBase> > deletedDatabases;
+    Vector<RefPtr<DatabaseBackendBase>> deletedDatabases;
 
     // Make sure not to hold the any locks when calling
     // Database::markAsDeletedAndClose(), since that can cause a deadlock
@@ -1130,7 +1130,7 @@ static Mutex& notificationMutex()
     return mutex;
 }
 
-typedef Vector<pair<RefPtr<SecurityOrigin>, String> > NotificationQueue;
+typedef Vector<pair<RefPtr<SecurityOrigin>, String>> NotificationQueue;
 
 static NotificationQueue& notificationQueue()
 {

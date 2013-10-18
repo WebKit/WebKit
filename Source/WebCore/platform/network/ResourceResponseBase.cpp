@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-static void parseCacheHeader(const String& header, Vector<pair<String, String> >& result);
+static void parseCacheHeader(const String& header, Vector<pair<String, String>>& result);
 
 inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
 {
@@ -358,7 +358,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
 
     String cacheControlValue = m_httpHeaderFields.get(cacheControlString);
     if (!cacheControlValue.isEmpty()) {
-        Vector<pair<String, String> > directives;
+        Vector<pair<String, String>> directives;
         parseCacheHeader(cacheControlValue, directives);
 
         size_t directivesSize = directives.size();
@@ -638,7 +638,7 @@ static inline String trimToNextSeparator(const String& str)
     return str.substring(0, str.find(isCacheHeaderSeparator));
 }
 
-static void parseCacheHeader(const String& header, Vector<pair<String, String> >& result)
+static void parseCacheHeader(const String& header, Vector<pair<String, String>>& result)
 {
     const String safeHeader = header.removeCharacters(isControlCharacter);
     unsigned max = safeHeader.length();

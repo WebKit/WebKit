@@ -71,19 +71,19 @@ namespace WTF {
     // We know OwnPtr and RefPtr are simple enough that initializing to 0 and moving with memcpy
     // (and then not destructing the original) will totally work
     template<typename P>
-    struct VectorTraits<RefPtr<P> > : SimpleClassVectorTraits { };
+    struct VectorTraits<RefPtr<P>> : SimpleClassVectorTraits { };
 
     template<typename P>
-    struct VectorTraits<OwnPtr<P> > : SimpleClassVectorTraits { };
+    struct VectorTraits<OwnPtr<P>> : SimpleClassVectorTraits { };
 
     template<typename P>
-    struct VectorTraits<Ref<P> > : SimpleClassVectorTraits { };
+    struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
 
     template<>
     struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };
 
     template<typename First, typename Second>
-    struct VectorTraits<std::pair<First, Second> >
+    struct VectorTraits<std::pair<First, Second>>
     {
         typedef VectorTraits<First> FirstTraits;
         typedef VectorTraits<Second> SecondTraits;

@@ -67,7 +67,7 @@ public:
     // Seems wasteful. Would be nice to find a better way.
     virtual ~PlatformSpeechSynthesizer();
     
-    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const;
+    const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList() const;
     virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
     virtual void pause();
     virtual void resume();
@@ -78,7 +78,7 @@ public:
 protected:
     explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
 
-    Vector<RefPtr<PlatformSpeechSynthesisVoice> > m_voiceList;
+    Vector<RefPtr<PlatformSpeechSynthesisVoice>> m_voiceList;
 
 private:
     virtual void initializeVoiceList();

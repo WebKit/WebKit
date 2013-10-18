@@ -146,9 +146,9 @@ public:
     void parseBytes(const char* data, unsigned length);
 
     // Transfers ownership of last parsed cues to caller.
-    void getNewCues(Vector<RefPtr<WebVTTCueData> >&);
+    void getNewCues(Vector<RefPtr<WebVTTCueData>>&);
 #if ENABLE(WEBVTT_REGIONS)
-    void getNewRegions(Vector<RefPtr<TextTrackRegion> >&);
+    void getNewRegions(Vector<RefPtr<TextTrackRegion>>&);
 #endif
 
     PassRefPtr<DocumentFragment> createDocumentFragmentFromCueText(const String&);
@@ -199,10 +199,10 @@ private:
     WebVTTParserClient* m_client;
 
     Vector<AtomicString> m_languageStack;
-    Vector<RefPtr<WebVTTCueData> > m_cuelist;
+    Vector<RefPtr<WebVTTCueData>> m_cuelist;
 
 #if ENABLE(WEBVTT_REGIONS)
-    Vector<RefPtr<TextTrackRegion> > m_regionList;
+    Vector<RefPtr<TextTrackRegion>> m_regionList;
 #endif
 };
 

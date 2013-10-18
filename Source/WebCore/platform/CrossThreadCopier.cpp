@@ -75,12 +75,12 @@ class CopierThreadSafeRefCountedTest : public ThreadSafeRefCounted<CopierThreadS
 
 COMPILE_ASSERT((std::is_same<
                   PassRefPtr<CopierThreadSafeRefCountedTest>,
-                  CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest> >::Type
+                  CrossThreadCopier<PassRefPtr<CopierThreadSafeRefCountedTest>>::Type
                   >::value),
                PassRefPtrTest);
 COMPILE_ASSERT((std::is_same<
                   PassRefPtr<CopierThreadSafeRefCountedTest>,
-                  CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest> >::Type
+                  CrossThreadCopier<RefPtr<CopierThreadSafeRefCountedTest>>::Type
                   >::value),
                RefPtrTest);
 COMPILE_ASSERT((std::is_same<
@@ -101,13 +101,13 @@ class CopierRefCountedTest : public RefCounted<CopierRefCountedTest> {
 
 COMPILE_ASSERT((std::is_same<
                   int,
-                  CrossThreadCopier<PassRefPtr<CopierRefCountedTest> >::Type
+                  CrossThreadCopier<PassRefPtr<CopierRefCountedTest>>::Type
                   >::value),
                PassRefPtrRefCountedTest);
 
 COMPILE_ASSERT((std::is_same<
                   int,
-                  CrossThreadCopier<RefPtr<CopierRefCountedTest> >::Type
+                  CrossThreadCopier<RefPtr<CopierRefCountedTest>>::Type
                   >::value),
                RefPtrRefCountedTest);
 
@@ -120,14 +120,14 @@ COMPILE_ASSERT((std::is_same<
 // Verify that PassOwnPtr gets passed through.
 COMPILE_ASSERT((std::is_same<
                   PassOwnPtr<float>,
-                  CrossThreadCopier<PassOwnPtr<float> >::Type
+                  CrossThreadCopier<PassOwnPtr<float>>::Type
                   >::value),
                PassOwnPtrTest);
 
 // Verify that PassOwnPtr does not get passed through.
 COMPILE_ASSERT((std::is_same<
                   int,
-                  CrossThreadCopier<OwnPtr<float> >::Type
+                  CrossThreadCopier<OwnPtr<float>>::Type
                   >::value),
                OwnPtrTest);
 

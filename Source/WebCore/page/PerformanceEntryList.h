@@ -52,14 +52,14 @@ public:
     PerformanceEntry* item(unsigned index);
 
     void append(PassRefPtr<PerformanceEntry>);
-    void appendAll(const Vector<RefPtr<PerformanceEntry> >&);
+    void appendAll(const Vector<RefPtr<PerformanceEntry>>&);
 
     void sort();
 
 private:
     PerformanceEntryList();
 
-    Vector<RefPtr<PerformanceEntry> > m_entries;
+    Vector<RefPtr<PerformanceEntry>> m_entries;
 };
 
 } // namespace WebCore

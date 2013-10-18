@@ -451,7 +451,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
             m_enqueuedEvents.remove(i);
     }
 
-    Vector<RefPtr<EventTarget> > targets;
+    Vector<RefPtr<EventTarget>> targets;
     targets.append(this);
     if (m_transaction && !m_preventPropagation) {
         targets.append(m_transaction);

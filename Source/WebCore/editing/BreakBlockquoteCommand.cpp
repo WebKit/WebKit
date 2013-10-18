@@ -127,7 +127,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Build up list of ancestors in between the start node and the top blockquote.
-    Vector<RefPtr<Element> > ancestors;    
+    Vector<RefPtr<Element>> ancestors;    
     for (Element* node = startNode->parentElement(); node && node != topBlockquote; node = node->parentElement())
         ancestors.append(node);
     

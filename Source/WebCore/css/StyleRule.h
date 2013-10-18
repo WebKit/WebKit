@@ -129,13 +129,13 @@ public:
     const StylePropertySet& properties() const { return m_properties.get(); }
     MutableStylePropertySet& mutableProperties();
     
-    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void parserAdoptSelectorArray(CSSSelector* selectors) { m_selectorList.adoptSelectorArray(selectors); }
 
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
 
-    Vector<RefPtr<StyleRule> > splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
+    Vector<RefPtr<StyleRule>> splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
 
     static unsigned averageSizeInBytes();
 
@@ -184,7 +184,7 @@ public:
     const StylePropertySet& properties() const { return m_properties.get(); }
     MutableStylePropertySet& mutableProperties();
 
-    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
 
     PassRefPtr<StyleRulePage> copy() const { return adoptRef(new StyleRulePage(*this)); }
@@ -199,22 +199,22 @@ private:
 
 class StyleRuleGroup : public StyleRuleBase {
 public:
-    const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
+    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
     
     void wrapperInsertRule(unsigned, PassRefPtr<StyleRuleBase>);
     void wrapperRemoveRule(unsigned);
     
 protected:
-    StyleRuleGroup(Type, Vector<RefPtr<StyleRuleBase> >& adoptRule);
+    StyleRuleGroup(Type, Vector<RefPtr<StyleRuleBase>>& adoptRule);
     StyleRuleGroup(const StyleRuleGroup&);
     
 private:
-    Vector<RefPtr<StyleRuleBase> > m_childRules;
+    Vector<RefPtr<StyleRuleBase>> m_childRules;
 };
 
 class StyleRuleMedia : public StyleRuleGroup {
 public:
-    static PassRefPtr<StyleRuleMedia> create(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    static PassRefPtr<StyleRuleMedia> create(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
         return adoptRef(new StyleRuleMedia(media, adoptRules));
     }
@@ -224,7 +224,7 @@ public:
     PassRefPtr<StyleRuleMedia> copy() const { return adoptRef(new StyleRuleMedia(*this)); }
 
 private:
-    StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase>>& adoptRules);
     StyleRuleMedia(const StyleRuleMedia&);
 
     RefPtr<MediaQuerySet> m_mediaQueries;
@@ -233,7 +233,7 @@ private:
 #if ENABLE(CSS3_CONDITIONAL_RULES)
 class StyleRuleSupports : public StyleRuleGroup {
 public:
-    static PassRefPtr<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    static PassRefPtr<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
         return adoptRef(new StyleRuleSupports(conditionText, conditionIsSupported, adoptRules));
     }
@@ -243,7 +243,7 @@ public:
     PassRefPtr<StyleRuleSupports> copy() const { return adoptRef(new StyleRuleSupports(*this)); }
 
 private:
-    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules);
     StyleRuleSupports(const StyleRuleSupports&);
 
     String m_conditionText;
@@ -253,7 +253,7 @@ private:
 
 class StyleRuleRegion : public StyleRuleGroup {
 public:
-    static PassRefPtr<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    static PassRefPtr<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
         return adoptRef(new StyleRuleRegion(selectors, adoptRules));
     }
@@ -263,7 +263,7 @@ public:
     PassRefPtr<StyleRuleRegion> copy() const { return adoptRef(new StyleRuleRegion(*this)); }
 
 private:
-    StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleRegion(Vector<OwnPtr<CSSParserSelector>>*, Vector<RefPtr<StyleRuleBase>>& adoptRules);
     StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;
@@ -272,7 +272,7 @@ private:
 #if ENABLE(SHADOW_DOM)
 class StyleRuleHost : public StyleRuleGroup {
 public:
-    static PassRefPtr<StyleRuleHost> create(Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    static PassRefPtr<StyleRuleHost> create(Vector<RefPtr<StyleRuleBase>>& adoptRules)
     {
         return adoptRef(new StyleRuleHost(adoptRules));
     }
@@ -280,7 +280,7 @@ public:
     PassRefPtr<StyleRuleHost> copy() const { return adoptRef(new StyleRuleHost(*this)); }
 
 private:
-    StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleGroup(HostInternal, adoptRules) { }
+    StyleRuleHost(Vector<RefPtr<StyleRuleBase>>& adoptRules) : StyleRuleGroup(HostInternal, adoptRules) { }
     StyleRuleHost(const StyleRuleHost& o) : StyleRuleGroup(o) { }
 };
 #endif

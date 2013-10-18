@@ -617,7 +617,7 @@ public:
     const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }
 #endif
 
-    Vector<WriteBarrier<Unknown> >& constants() { return m_constantRegisters; }
+    Vector<WriteBarrier<Unknown>>& constants() { return m_constantRegisters; }
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v)
     {
@@ -927,7 +927,7 @@ private:
     void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
 
-    void setConstantRegisters(const Vector<WriteBarrier<Unknown> >& constants)
+    void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants)
     {
         size_t count = constants.size();
         m_constantRegisters.resize(count);
@@ -1026,7 +1026,7 @@ private:
 
 #if ENABLE(LLINT)
     Vector<LLIntCallLinkInfo> m_llintCallLinkInfos;
-    SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo> > m_incomingLLIntCalls;
+    SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
 #endif
     RefPtr<JITCode> m_jitCode;
     MacroAssemblerCodePtr m_jitCodeWithArityCheck;
@@ -1034,7 +1034,7 @@ private:
     Vector<StructureStubInfo> m_structureStubInfos;
     Vector<ByValInfo> m_byValInfos;
     Vector<CallLinkInfo> m_callLinkInfos;
-    SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;
+    SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
 #endif
     OwnPtr<CompactJITCodeMap> m_jitCodeMap;
 #if ENABLE(DFG_JIT)
@@ -1058,9 +1058,9 @@ private:
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
     // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.
-    Vector<WriteBarrier<Unknown> > m_constantRegisters;
-    Vector<WriteBarrier<FunctionExecutable> > m_functionDecls;
-    Vector<WriteBarrier<FunctionExecutable> > m_functionExprs;
+    Vector<WriteBarrier<Unknown>> m_constantRegisters;
+    Vector<WriteBarrier<FunctionExecutable>> m_functionDecls;
+    Vector<WriteBarrier<FunctionExecutable>> m_functionExprs;
 
     RefPtr<CodeBlock> m_alternative;
     
@@ -1080,7 +1080,7 @@ private:
         Vector<HandlerInfo> m_exceptionHandlers;
 
         // Buffers used for large array literals
-        Vector<Vector<JSValue> > m_constantBuffers;
+        Vector<Vector<JSValue>> m_constantBuffers;
 
         // Jump Tables
         Vector<SimpleJumpTable> m_switchJumpTables;

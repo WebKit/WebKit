@@ -160,7 +160,7 @@ void PageRuntimeAgent::unmuteConsole()
 
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
-    Vector<std::pair<JSC::ExecState*, SecurityOrigin*> > isolatedContexts;
+    Vector<std::pair<JSC::ExecState*, SecurityOrigin*>> isolatedContexts;
     for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;

@@ -134,11 +134,11 @@ private:
     };
     
     Vector<EventToDispatch> m_eventsToDispatch;
-    Vector<RefPtr<Node> > m_nodeChangesToDispatch;
+    Vector<RefPtr<Node>> m_nodeChangesToDispatch;
     
     double m_beginAnimationUpdateTime;
 
-    typedef HashSet<RefPtr<AnimationBase> > WaitingAnimationsSet;
+    typedef HashSet<RefPtr<AnimationBase>> WaitingAnimationsSet;
     WaitingAnimationsSet m_animationsWaitingForStyle;
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
     bool m_waitingForAsyncStartNotification;

@@ -111,7 +111,7 @@ private:
     Vector<RefPtr<Event>> m_scheduledEvents;
 };
 
-typedef Vector<RefPtr<MediaStream> > MediaStreamVector;
+typedef Vector<RefPtr<MediaStream>> MediaStreamVector;
 
 } // namespace WebCore
 

@@ -71,7 +71,7 @@ private:
     Page* m_page;
 
     RefPtr<GeolocationPosition> m_lastPosition;
-    typedef HashSet<RefPtr<Geolocation> > ObserversSet;
+    typedef HashSet<RefPtr<Geolocation>> ObserversSet;
     // All observers; both those requesting high accuracy and those not.
     ObserversSet m_observers;
     ObserversSet m_highAccuracyObservers;

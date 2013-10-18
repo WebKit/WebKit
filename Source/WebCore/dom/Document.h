@@ -1426,7 +1426,7 @@ private:
     bool m_annotatedRegionsDirty;
 #endif
 
-    HashMap<String, RefPtr<HTMLCanvasElement> > m_cssCanvasElements;
+    HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
     bool m_createRenderers;
     bool m_inPageCache;
@@ -1464,7 +1464,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;
-    Vector<RefPtr<Element> > m_fullScreenElementStack;
+    Vector<RefPtr<Element>> m_fullScreenElementStack;
     RenderFullScreen* m_fullScreenRenderer;
     Timer<Document> m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
@@ -1505,7 +1505,7 @@ private:
 #endif
 
     Timer<Document> m_pendingTasksTimer;
-    Vector<OwnPtr<Task> > m_pendingTasks;
+    Vector<OwnPtr<Task>> m_pendingTasks;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 public:
@@ -1542,7 +1542,7 @@ private:
     bool m_didDispatchViewportPropertiesChanged;
 #endif
 
-    typedef HashMap<AtomicString, OwnPtr<Locale> > LocaleIdentifierToLocaleMap;
+    typedef HashMap<AtomicString, OwnPtr<Locale>> LocaleIdentifierToLocaleMap;
     LocaleIdentifierToLocaleMap m_localeCache;
 
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -1555,7 +1555,7 @@ private:
 #endif
 
     Timer<Document> m_didAssociateFormControlsTimer;
-    HashSet<RefPtr<Element> > m_associatedFormControls;
+    HashSet<RefPtr<Element>> m_associatedFormControls;
 
     bool m_hasInjectedPlugInsScript;
     bool m_renderTreeBeingDestroyed;

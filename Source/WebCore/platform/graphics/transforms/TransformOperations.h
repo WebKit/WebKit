@@ -66,8 +66,8 @@ public:
         m_operations.clear();
     }
     
-    Vector<RefPtr<TransformOperation> >& operations() { return m_operations; }
-    const Vector<RefPtr<TransformOperation> >& operations() const { return m_operations; }
+    Vector<RefPtr<TransformOperation>>& operations() { return m_operations; }
+    const Vector<RefPtr<TransformOperation>>& operations() const { return m_operations; }
 
     size_t size() const { return m_operations.size(); }
     const TransformOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
@@ -77,7 +77,7 @@ public:
     TransformOperations blend(const TransformOperations& from, double progress, const LayoutSize&) const;
 
 private:
-    Vector<RefPtr<TransformOperation> > m_operations;
+    Vector<RefPtr<TransformOperation>> m_operations;
 };
 
 } // namespace WebCore

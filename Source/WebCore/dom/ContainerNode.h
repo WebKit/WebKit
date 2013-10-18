@@ -271,7 +271,7 @@ public:
                 m_currentNode = node->nextSibling();
             return node.release();
         }
-        Vector<RefPtr<Node> >& nodeVector = *m_childNodes;
+        Vector<RefPtr<Node>>& nodeVector = *m_childNodes;
         if (m_currentIndex >= nodeVector.size())
             return 0;
         return nodeVector[m_currentIndex++];
@@ -281,7 +281,7 @@ public:
     {
         if (hasSnapshot())
             return;
-        m_childNodes = adoptPtr(new Vector<RefPtr<Node> >());
+        m_childNodes = adoptPtr(new Vector<RefPtr<Node>>());
         Node* node = m_currentNode.get();
         while (node) {
             m_childNodes->append(node);
@@ -306,7 +306,7 @@ private:
 
     RefPtr<Node> m_currentNode;
     unsigned m_currentIndex;
-    OwnPtr<Vector<RefPtr<Node> > > m_childNodes; // Lazily instantiated.
+    OwnPtr<Vector<RefPtr<Node>>> m_childNodes; // Lazily instantiated.
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 

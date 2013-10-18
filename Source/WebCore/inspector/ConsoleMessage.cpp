@@ -205,7 +205,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
-            RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject> > jsonArgs = TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>::create();
+            RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>> jsonArgs = TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>::create();
             if (m_type == TableMessageType && generatePreview && m_arguments->argumentCount()) {
                 ScriptValue table = m_arguments->argumentAt(0);
                 ScriptValue columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : ScriptValue();

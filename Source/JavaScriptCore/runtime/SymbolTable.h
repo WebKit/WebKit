@@ -343,7 +343,7 @@ struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
 
 class SymbolTable {
 public:
-    typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> Map;
+    typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl>>, SymbolTableIndexHashTraits> Map;
 
     JS_EXPORT_PRIVATE SymbolTable();
     JS_EXPORT_PRIVATE ~SymbolTable();

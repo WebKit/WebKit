@@ -2479,7 +2479,7 @@ void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
         frame->animation().serviceAnimations();
     }
 
-    Vector<RefPtr<Document> > documents;
+    Vector<RefPtr<Document>> documents;
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext())
         documents.append(frame->document());
 

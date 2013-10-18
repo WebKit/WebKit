@@ -76,7 +76,7 @@ void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
 
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && !isLoading()) {
-        Vector<RefPtr<LoadFontCallback> > callbacks;
+        Vector<RefPtr<LoadFontCallback>> callbacks;
         m_callbacks.swap(callbacks);
         for (size_t index = 0; index < callbacks.size(); ++index) {
             if (checkFont())

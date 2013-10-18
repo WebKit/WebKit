@@ -44,7 +44,7 @@ class Page;
 class ScriptArguments;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
+typedef Vector<RefPtr<ScriptProfile>> ProfilesArray;
 #endif
 
 class Console : public ScriptWrappable, public RefCounted<Console>, public DOMWindowProperty {

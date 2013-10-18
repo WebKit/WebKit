@@ -63,7 +63,7 @@ private:
     void clear();
     void invalidateCueIndexes(size_t);
 
-    Vector<RefPtr<TextTrackCue> > m_list;
+    Vector<RefPtr<TextTrackCue>> m_list;
     RefPtr<TextTrackCueList> m_activeCues;
 
 };

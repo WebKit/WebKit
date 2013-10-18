@@ -90,7 +90,7 @@ public:
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
     bool hasEntryForOrigin(SecurityOrigin*);
-    void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    void origins(Vector<RefPtr<SecurityOrigin>>& result);
     bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
     DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
 

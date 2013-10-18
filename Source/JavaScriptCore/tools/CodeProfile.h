@@ -82,7 +82,7 @@ private:
     CString m_file;
     unsigned m_lineNo;
     CodeProfile* m_parent;
-    Vector< OwnPtr<CodeProfile> > m_children;
+    Vector< OwnPtr<CodeProfile>> m_children;
     TieredMMapArray<CodeRecord> m_samples;
 
     static const char* s_codeTypeNames[NumberOfCodeTypes];

@@ -49,11 +49,11 @@ template<typename T> struct MainThreadTaskTraits<T*> {
     typedef T* ParamType;
 };
 
-template<typename T> struct MainThreadTaskTraits<PassRefPtr<T> > {
+template<typename T> struct MainThreadTaskTraits<PassRefPtr<T>> {
     typedef PassRefPtr<T> ParamType;
 };
 
-template<typename T> struct MainThreadTaskTraits<PassOwnPtr<T> > {
+template<typename T> struct MainThreadTaskTraits<PassOwnPtr<T>> {
     typedef PassOwnPtr<T> ParamType;
 };
 

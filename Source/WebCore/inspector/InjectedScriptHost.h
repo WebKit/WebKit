@@ -128,7 +128,7 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_debuggerAgent;
 #endif
-    Vector<OwnPtr<InspectableObject> > m_inspectedObjects;
+    Vector<OwnPtr<InspectableObject>> m_inspectedObjects;
     OwnPtr<InspectableObject> m_defaultInspectableObject;
 };
 

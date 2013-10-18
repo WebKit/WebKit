@@ -57,7 +57,7 @@ class ScriptValue;
 class SecurityOrigin;
 class Widget;
 
-typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
+typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject>> RootObjectMap;
 
 enum ReasonForCallingCanExecuteScripts {
     AboutToExecuteScript,
@@ -146,7 +146,7 @@ public:
 
 #if ENABLE(INSPECTOR)
     static void setCaptureCallStackForUncaughtExceptions(bool);
-    void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >&);
+    void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>&);
 #endif
 
 #if PLATFORM(MAC)

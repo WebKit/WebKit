@@ -226,7 +226,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, WTF::IntHash<FontCache::FontFileKey>, WTF::UnsignedWithZeroKeyHashTraits<FontCache::FontFileKey> > FontVerticalDataCache;
+typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, WTF::IntHash<FontCache::FontFileKey>, WTF::UnsignedWithZeroKeyHashTraits<FontCache::FontFileKey>> FontVerticalDataCache;
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {
@@ -287,7 +287,7 @@ static FontDataCache* gFontDataCache = 0;
 
 const int cMaxInactiveFontData = 225;
 const int cTargetInactiveFontData = 200;
-static ListHashSet<RefPtr<SimpleFontData> >* gInactiveFontData = 0;
+static ListHashSet<RefPtr<SimpleFontData>>* gInactiveFontData = 0;
 
 PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
 {
@@ -310,7 +310,7 @@ PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontPlatformData* 
 
     if (!gFontDataCache) {
         gFontDataCache = new FontDataCache;
-        gInactiveFontData = new ListHashSet<RefPtr<SimpleFontData> >;
+        gInactiveFontData = new ListHashSet<RefPtr<SimpleFontData>>;
     }
 
     FontDataCache::iterator result = gFontDataCache->find(*platformData);
@@ -378,8 +378,8 @@ void FontCache::purgeInactiveFontData(int count)
     isPurging = true;
 
     Vector<RefPtr<SimpleFontData>, 20> fontDataToDelete;
-    ListHashSet<RefPtr<SimpleFontData> >::iterator end = gInactiveFontData->end();
-    ListHashSet<RefPtr<SimpleFontData> >::iterator it = gInactiveFontData->begin();
+    ListHashSet<RefPtr<SimpleFontData>>::iterator end = gInactiveFontData->end();
+    ListHashSet<RefPtr<SimpleFontData>>::iterator it = gInactiveFontData->begin();
     for (int i = 0; i < count && it != end; ++it, ++i) {
         RefPtr<SimpleFontData>& fontData = *it.get();
         gFontDataCache->remove(fontData->platformData());

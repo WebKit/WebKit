@@ -266,7 +266,7 @@ namespace JSC {
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > m_tempSortingVectors;
-        OwnPtr<HashSet<MarkedArgumentBuffer*> > m_markListSet;
+        OwnPtr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
 
         MachineThreads m_machineThreads;
         

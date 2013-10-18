@@ -51,8 +51,8 @@ public:
     PassRefPtr<Archive> popSubframeArchive(const String& frameName, const URL&);
     
 private:    
-    HashMap<String, RefPtr<ArchiveResource> > m_subresources;
-    HashMap<String, RefPtr<Archive> > m_subframes;
+    HashMap<String, RefPtr<ArchiveResource>> m_subresources;
+    HashMap<String, RefPtr<Archive>> m_subframes;
 };
 
 }

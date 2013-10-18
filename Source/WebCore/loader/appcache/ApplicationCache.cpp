@@ -101,7 +101,7 @@ void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource
 
 unsigned ApplicationCache::removeResource(const String& url)
 {
-    HashMap<String, RefPtr<ApplicationCacheResource> >::iterator it = m_resources.find(url);
+    HashMap<String, RefPtr<ApplicationCacheResource>>::iterator it = m_resources.find(url);
     if (it == m_resources.end())
         return 0;
 
@@ -223,9 +223,9 @@ int64_t ApplicationCache::diskUsageForOrigin(SecurityOrigin* origin)
 #ifndef NDEBUG
 void ApplicationCache::dump()
 {
-    HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator end = m_resources.end();
+    HashMap<String, RefPtr<ApplicationCacheResource>>::const_iterator end = m_resources.end();
     
-    for (HashMap<String, RefPtr<ApplicationCacheResource> >::const_iterator it = m_resources.begin(); it != end; ++it) {
+    for (HashMap<String, RefPtr<ApplicationCacheResource>>::const_iterator it = m_resources.begin(); it != end; ++it) {
         printf("%s ", it->key.ascii().data());
         ApplicationCacheResource::dumpType(it->value->type());
     }

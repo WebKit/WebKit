@@ -82,14 +82,14 @@ bool MediaStreamAudioSource::removeAudioConsumer(AudioDestinationConsumer* consu
 void MediaStreamAudioSource::setAudioFormat(size_t numberOfChannels, float sampleRate)
 {
     MutexLocker locker(m_audioConsumersLock);
-    for (Vector<RefPtr<AudioDestinationConsumer> >::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
+    for (Vector<RefPtr<AudioDestinationConsumer>>::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
         (*it)->setFormat(numberOfChannels, sampleRate);
 }
 
 void MediaStreamAudioSource::consumeAudio(AudioBus* bus, size_t numberOfFrames)
 {
     MutexLocker locker(m_audioConsumersLock);
-    for (Vector<RefPtr<AudioDestinationConsumer> >::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
+    for (Vector<RefPtr<AudioDestinationConsumer>>::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
         (*it)->consumeAudio(bus, numberOfFrames);
 }
 

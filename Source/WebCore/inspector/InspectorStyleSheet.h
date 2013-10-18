@@ -141,7 +141,7 @@ public:
 
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForStyle() const;
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> > buildArrayForComputedStyle() const;
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty>> buildArrayForComputedStyle() const;
     bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
     bool setPropertyText(unsigned index, const String& text, bool overwrite, String* oldText, ExceptionCode&);
     bool toggleProperty(unsigned index, bool disable, ExceptionCode&);
@@ -181,7 +181,7 @@ public:
         virtual void styleSheetChanged(InspectorStyleSheet*) = 0;
     };
 
-    typedef HashMap<CSSStyleDeclaration*, RefPtr<InspectorStyle> > InspectorStyleMap;
+    typedef HashMap<CSSStyleDeclaration*, RefPtr<InspectorStyle>> InspectorStyleMap;
     static PassRefPtr<InspectorStyleSheet> create(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::StyleSheetOrigin::Enum, const String& documentURL, Listener*);
     static String styleSheetURL(CSSStyleSheet* pageStyleSheet);
 
@@ -227,10 +227,10 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
-    virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
+    virtual PassOwnPtr<Vector<size_t>> lineEndings() const;
 
 private:
-    typedef Vector<RefPtr<CSSStyleRule> > CSSStyleRuleVector;
+    typedef Vector<RefPtr<CSSStyleRule>> CSSStyleRuleVector;
     friend class InspectorStyle;
 
     static void collectFlatRules(PassRefPtr<CSSRuleList>, CSSStyleRuleVector* result);
@@ -243,7 +243,7 @@ private:
     bool originalStyleSheetText(String* result) const;
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*);
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule>> buildArrayForRuleList(CSSRuleList*);
     PassRefPtr<TypeBuilder::CSS::SelectorList> buildObjectForSelectorList(CSSStyleRule*);
 
     InspectorPageAgent* m_pageAgent;
@@ -279,7 +279,7 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
-    virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
+    virtual PassOwnPtr<Vector<size_t>> lineEndings() const;
 
 private:
     CSSStyleDeclaration* inlineStyle() const;

@@ -44,7 +44,7 @@ class RTCStatsResponse : public RTCStatsResponseBase, public ScriptWrappable {
 public:
     static PassRefPtr<RTCStatsResponse> create();
 
-    const Vector<RefPtr<RTCStatsReport> >& result() const { return m_result; };
+    const Vector<RefPtr<RTCStatsReport>>& result() const { return m_result; };
 
     PassRefPtr<RTCStatsReport> namedItem(const AtomicString&);
     bool canGetItemsForName(const AtomicString&);
@@ -54,7 +54,7 @@ public:
 
 private:
     RTCStatsResponse();
-    Vector<RefPtr<RTCStatsReport> > m_result;
+    Vector<RefPtr<RTCStatsReport>> m_result;
     HashMap<String, int> m_idmap;
 };
 

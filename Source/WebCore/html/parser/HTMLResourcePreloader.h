@@ -75,7 +75,7 @@ private:
     bool m_crossOriginModeAllowsCookies;
 };
 
-typedef Vector<OwnPtr<PreloadRequest> > PreloadRequestStream;
+typedef Vector<OwnPtr<PreloadRequest>> PreloadRequestStream;
 
 class HTMLResourcePreloader {
     WTF_MAKE_NONCOPYABLE(HTMLResourcePreloader); WTF_MAKE_FAST_ALLOCATED;

@@ -91,7 +91,7 @@ public:
     virtual void onSuccess(int64_t);
     virtual void onSuccess();
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer>);
-    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SharedBuffer> >&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<IDBKey>>&, const Vector<RefPtr<SharedBuffer>>&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;
@@ -144,7 +144,7 @@ private:
     const IDBDatabaseBackendInterface::TaskType m_taskType;
 
     bool m_hasPendingActivity;
-    Vector<RefPtr<Event> > m_enqueuedEvents;
+    Vector<RefPtr<Event>> m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.
     IndexedDB::CursorType m_cursorType;

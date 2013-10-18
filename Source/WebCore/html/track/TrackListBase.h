@@ -74,7 +74,7 @@ protected:
     void scheduleAddTrackEvent(PassRefPtr<TrackBase>);
     void scheduleRemoveTrackEvent(PassRefPtr<TrackBase>);
 
-    Vector<RefPtr<TrackBase> > m_inbandTracks;
+    Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
 
@@ -87,7 +87,7 @@ private:
     ScriptExecutionContext* m_context;
     HTMLMediaElement* m_element;
 
-    Vector<RefPtr<Event> > m_pendingEvents;
+    Vector<RefPtr<Event>> m_pendingEvents;
     Timer<TrackListBase> m_pendingEventTimer;
 
     int m_dispatchingEvents;

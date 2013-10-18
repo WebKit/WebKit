@@ -42,7 +42,7 @@ class URL;
 class ResourceRequest;
 class SecurityOrigin;
 
-typedef Vector<std::pair<URL, URL> > FallbackURLVector;
+typedef Vector<std::pair<URL, URL>> FallbackURLVector;
 
 class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
@@ -80,7 +80,7 @@ public:
     void dump();
 #endif
 
-    typedef HashMap<String, RefPtr<ApplicationCacheResource> > ResourceMap;
+    typedef HashMap<String, RefPtr<ApplicationCacheResource>> ResourceMap;
     ResourceMap::const_iterator begin() const { return m_resources.begin(); }
     ResourceMap::const_iterator end() const { return m_resources.end(); }
     

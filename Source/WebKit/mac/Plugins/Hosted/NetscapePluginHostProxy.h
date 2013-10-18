@@ -83,7 +83,7 @@ private:
 
     static void deadNameNotificationCallback(CFMachPortRef, void *msg, CFIndex size, void *info);
 
-    typedef HashMap<uint32_t, RefPtr<NetscapePluginInstanceProxy> > PluginInstanceMap;
+    typedef HashMap<uint32_t, RefPtr<NetscapePluginInstanceProxy>> PluginInstanceMap;
     PluginInstanceMap m_instances;
     
     mach_port_t m_clientPort;

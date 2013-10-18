@@ -39,7 +39,7 @@
 using namespace WebCore;
 
 typedef int64_t WebHistoryDateKey;
-typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray> > DateToEntriesMap;
+typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray>> DateToEntriesMap;
 
 NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
@@ -351,7 +351,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 {
     // We clear all the values to present a consistent state when sending the notifications.
     // We keep a reference to the entries for rebuilding the history after the notification.
-    Vector <RetainPtr<NSMutableArray> > entryArrays;
+    Vector <RetainPtr<NSMutableArray>> entryArrays;
     copyValuesToVector(*_entriesByDate, entryArrays);
     _entriesByDate->clear();
     

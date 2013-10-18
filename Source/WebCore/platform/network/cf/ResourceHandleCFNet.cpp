@@ -85,9 +85,9 @@ static HashSet<String>& allowsAnyHTTPSCertificateHosts()
     return hosts;
 }
 
-static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
+static HashMap<String, RetainPtr<CFDataRef>>& clientCerts()
 {
-    typedef HashMap<String, RetainPtr<CFDataRef> > CertsMap;
+    typedef HashMap<String, RetainPtr<CFDataRef>> CertsMap;
     DEFINE_STATIC_LOCAL(CertsMap, certs, ());
     return certs;
 }
@@ -390,7 +390,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         CFDictionaryAddValue(sslProps.get(), kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
     }
 
-    HashMap<String, RetainPtr<CFDataRef> >::iterator clientCert = clientCerts().find(firstRequest().url().host().lower());
+    HashMap<String, RetainPtr<CFDataRef>>::iterator clientCert = clientCerts().find(firstRequest().url().host().lower());
     if (clientCert != clientCerts().end()) {
         if (!sslProps)
             sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

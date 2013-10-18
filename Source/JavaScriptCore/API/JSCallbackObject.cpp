@@ -43,7 +43,7 @@ template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = false
 template<>
 JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& vm, JSClassRef classRef, Structure* structure)
 {
-    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject> >(vm.heap)) JSCallbackObject(vm, classRef, structure);
+    JSCallbackObject<JSGlobalObject>* callbackObject = new (NotNull, allocateCell<JSCallbackObject<JSGlobalObject>>(vm.heap)) JSCallbackObject(vm, classRef, structure);
     callbackObject->finishCreation(vm);
     vm.heap.addFinalizer(callbackObject, destroy);
     return callbackObject;

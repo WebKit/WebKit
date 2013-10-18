@@ -95,7 +95,7 @@ typedef union PluginPort {
     int32_t specifiedHeight;
     int32_t specifiedWidth;
             
-    HashSet<RefPtr<WebNetscapePluginStream> > streams;
+    HashSet<RefPtr<WebNetscapePluginStream>> streams;
     RetainPtr<NSMapTable> _pendingFrameLoads;
     
     BOOL _isFlash;

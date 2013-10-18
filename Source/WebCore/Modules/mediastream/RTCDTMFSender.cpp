@@ -147,10 +147,10 @@ void RTCDTMFSender::scheduledEventTimerFired(Timer<RTCDTMFSender>*)
     if (m_stopped)
         return;
 
-    Vector<RefPtr<Event> > events;
+    Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);
 
-    Vector<RefPtr<Event> >::iterator it = events.begin();
+    Vector<RefPtr<Event>>::iterator it = events.begin();
     for (; it != events.end(); ++it)
         dispatchEvent((*it).release());
 }

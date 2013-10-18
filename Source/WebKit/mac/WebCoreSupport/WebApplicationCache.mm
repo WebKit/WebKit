@@ -73,13 +73,13 @@ using namespace WebCore;
 
 + (NSArray *)originsWithCache
 {
-    HashSet<RefPtr<SecurityOrigin> > coreOrigins;
+    HashSet<RefPtr<SecurityOrigin>> coreOrigins;
     cacheStorage().getOriginsWithCache(coreOrigins);
     
     NSMutableArray *webOrigins = [[[NSMutableArray alloc] initWithCapacity:coreOrigins.size()] autorelease];
     
-    HashSet<RefPtr<SecurityOrigin> >::const_iterator end = coreOrigins.end();
-    for (HashSet<RefPtr<SecurityOrigin> >::const_iterator it = coreOrigins.begin(); it != end; ++it) {
+    HashSet<RefPtr<SecurityOrigin>>::const_iterator end = coreOrigins.end();
+    for (HashSet<RefPtr<SecurityOrigin>>::const_iterator it = coreOrigins.begin(); it != end; ++it) {
         RetainPtr<WebSecurityOrigin> webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:(*it).get()]);
         [webOrigins addObject:webOrigin.get()];
     }

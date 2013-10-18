@@ -193,7 +193,7 @@ private:
     }
 
     typedef HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits> Map;
-    typedef HashMap<uint32_t, float, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t> > SingleCharMap;
+    typedef HashMap<uint32_t, float, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> SingleCharMap;
     static const int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static const int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
     static const int s_maxSize = 500000; // Just enough to guard against pathological growth.

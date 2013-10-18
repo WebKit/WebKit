@@ -78,7 +78,7 @@ protected:
     virtual void didMutate(MutationType) { }
 
     MutableStylePropertySet* m_propertySet;
-    OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue> > > m_cssomCSSValueClones;
+    OwnPtr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
 };
 
 class StyleRuleCSSStyleDeclaration : public PropertySetCSSStyleDeclaration

@@ -74,7 +74,7 @@ private:
     Mutex m_initializeRunLoopConditionMutex;
 
     Mutex m_functionsMutex;
-    Vector<Function<void()> > m_functions;
+    Vector<Function<void()>> m_functions;
 
 #if PLATFORM(MAC)
     // FIXME: We should use WebCore::RunLoop here.

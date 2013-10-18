@@ -152,12 +152,12 @@ private:
     RefPtr<DOMError> m_error;
     String m_errorMessage;
 
-    ListHashSet<RefPtr<IDBRequest> > m_requestList;
+    ListHashSet<RefPtr<IDBRequest>> m_requestList;
 
-    typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
+    typedef HashMap<String, RefPtr<IDBObjectStore>> IDBObjectStoreMap;
     IDBObjectStoreMap m_objectStoreMap;
 
-    typedef HashSet<RefPtr<IDBObjectStore> > IDBObjectStoreSet;
+    typedef HashSet<RefPtr<IDBObjectStore>> IDBObjectStoreSet;
     IDBObjectStoreSet m_deletedObjectStores;
 
     typedef HashMap<RefPtr<IDBObjectStore>, IDBObjectStoreMetadata> IDBObjectStoreMetadataMap;

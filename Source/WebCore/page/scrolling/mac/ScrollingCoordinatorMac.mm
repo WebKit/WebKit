@@ -358,7 +358,7 @@ void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    Vector<OwnPtr<ScrollingStateNode> >* children = m_scrollingStateTree->rootStateNode()->children();
+    Vector<OwnPtr<ScrollingStateNode>>* children = m_scrollingStateTree->rootStateNode()->children();
     if (!children)
         return;
 

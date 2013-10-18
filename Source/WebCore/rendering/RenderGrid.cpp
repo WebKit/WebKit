@@ -86,7 +86,7 @@ class RenderGrid::GridIterator {
 public:
     // |direction| is the direction that is fixed to |fixedTrackIndex| so e.g
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
-    GridIterator(const Vector<Vector<Vector<RenderBox*, 1> > >& grid, TrackSizingDirection direction, size_t fixedTrackIndex)
+    GridIterator(const Vector<Vector<Vector<RenderBox*, 1>>>& grid, TrackSizingDirection direction, size_t fixedTrackIndex)
         : m_grid(grid)
         , m_direction(direction)
         , m_rowIndex((direction == ForColumns) ? 0 : fixedTrackIndex)
@@ -134,7 +134,7 @@ public:
     }
 
 private:
-    const Vector<Vector<Vector<RenderBox*, 1> > >& m_grid;
+    const Vector<Vector<Vector<RenderBox*, 1>>>& m_grid;
     TrackSizingDirection m_direction;
     size_t m_rowIndex;
     size_t m_columnIndex;

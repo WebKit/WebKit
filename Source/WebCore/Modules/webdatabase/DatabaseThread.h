@@ -82,7 +82,7 @@ private:
     MessageQueue<DatabaseTask> m_queue;
 
     // This set keeps track of the open databases that have been used on this thread.
-    typedef HashSet<RefPtr<DatabaseBackend> > DatabaseSet;
+    typedef HashSet<RefPtr<DatabaseBackend>> DatabaseSet;
     DatabaseSet m_openDatabaseSet;
 
     OwnPtr<SQLTransactionClient> m_transactionClient;

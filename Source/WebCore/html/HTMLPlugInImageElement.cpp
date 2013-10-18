@@ -60,7 +60,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef Vector<RefPtr<HTMLPlugInImageElement> > HTMLPlugInImageElementList;
+typedef Vector<RefPtr<HTMLPlugInImageElement>> HTMLPlugInImageElementList;
 typedef HashMap<String, String> MimeTypeToLocalizedStringMap;
 
 static const int sizingTinyDimensionThreshold = 40;

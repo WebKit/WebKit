@@ -35,7 +35,7 @@ PassOwnPtr<PlatformSpeechSynthesizer> PlatformSpeechSynthesizer::create(Platform
     return adoptPtr(new PlatformSpeechSynthesizer(client));
 }
 
-const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& PlatformSpeechSynthesizer::voiceList() const
+const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& PlatformSpeechSynthesizer::voiceList() const
 {
     if (!m_voiceListIsInitialized) {
         ASSERT(m_voiceList.isEmpty());

@@ -380,7 +380,7 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
         (*it)->transactionFinished();
     m_deletedObjectStores.clear();
 
-    Vector<RefPtr<EventTarget> > targets;
+    Vector<RefPtr<EventTarget>> targets;
     targets.append(this);
     targets.append(db());
 

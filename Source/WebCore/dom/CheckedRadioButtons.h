@@ -44,7 +44,7 @@ public:
     bool isInRequiredGroup(HTMLInputElement*) const;
 
 private:
-    typedef HashMap<AtomicStringImpl*, OwnPtr<RadioButtonGroup> > NameToGroupMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<RadioButtonGroup>> NameToGroupMap;
     OwnPtr<NameToGroupMap> m_nameToGroupMap;
 };
 

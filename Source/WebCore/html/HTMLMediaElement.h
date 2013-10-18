@@ -266,7 +266,7 @@ public:
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) OVERRIDE;
-    virtual Vector<RefPtr<PlatformTextTrack> > platformTextTracks() OVERRIDE;
+    virtual Vector<RefPtr<PlatformTextTrack>> platformTextTracks() OVERRIDE;
     PlatformTextTrackMenuInterface* platformTextTrackMenu();
 #endif
 
@@ -281,7 +281,7 @@ public:
         {
         }
 
-        Vector<RefPtr<TextTrack> > tracks;
+        Vector<RefPtr<TextTrack>> tracks;
         RefPtr<TextTrack> visibleTrack;
         RefPtr<TextTrack> defaultTrack;
         GroupKind kind;
@@ -744,7 +744,7 @@ private:
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;
     RefPtr<VideoTrackList> m_videoTracks;
-    Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;
+    Vector<RefPtr<TextTrack>> m_textTracksWhenResourceSelectionBegan;
 
     CueIntervalTree m_cueTree;
 

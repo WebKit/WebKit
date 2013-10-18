@@ -97,8 +97,8 @@ private:
     Document* m_document;
     EventTargetData m_eventTargetData;
     unsigned m_loadingCount;
-    Vector<RefPtr<Event> > m_pendingEvents;
-    Vector<RefPtr<VoidCallback> > m_callbacks;
+    Vector<RefPtr<Event>> m_pendingEvents;
+    Vector<RefPtr<VoidCallback>> m_callbacks;
     RefPtr<Event> m_loadingDoneEvent;
 };
 

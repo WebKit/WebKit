@@ -111,8 +111,8 @@ static inline bool shouldIgnoreAttributeCase(const Element& element)
     return element.isHTMLElement() && element.document().isHTMLDocument();
 }
 
-typedef Vector<RefPtr<Attr> > AttrNodeList;
-typedef HashMap<Element*, OwnPtr<AttrNodeList> > AttrNodeListMap;
+typedef Vector<RefPtr<Attr>> AttrNodeList;
+typedef HashMap<Element*, OwnPtr<AttrNodeList>> AttrNodeListMap;
 
 static AttrNodeListMap& attrNodeListMap()
 {
@@ -1769,7 +1769,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 }
 #endif
 
-const Vector<RefPtr<Attr> >& Element::attrNodeList()
+const Vector<RefPtr<Attr>>& Element::attrNodeList()
 {
     ASSERT(hasSyntheticAttrChildNodes());
     return *attrNodeListForElement(this);
@@ -2759,11 +2759,11 @@ const AtomicString& Element::webkitRegionOverset() const
     return undefinedState;
 }
 
-Vector<RefPtr<Range> > Element::webkitGetRegionFlowRanges() const
+Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    Vector<RefPtr<Range> > rangeObjects;
+    Vector<RefPtr<Range>> rangeObjects;
     if (document().cssRegionsEnabled() && renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment* region = toRenderBlockFlow(renderer())->renderNamedFlowFragment();
         if (region->isValid())

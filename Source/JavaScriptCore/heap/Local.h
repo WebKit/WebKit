@@ -141,7 +141,7 @@ private:
 
 namespace WTF {
 
-template<typename T> struct VectorTraits<JSC::Local<T> > : SimpleClassVectorTraits {
+template<typename T> struct VectorTraits<JSC::Local<T>> : SimpleClassVectorTraits {
     static const bool needsDestruction = false;
     static const bool canInitializeWithMemset = false;
     static const bool canCompareWithMemcmp = false;

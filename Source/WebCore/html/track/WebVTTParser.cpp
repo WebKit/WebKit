@@ -126,14 +126,14 @@ WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* c
 {
 }
 
-void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData> >& outputCues)
+void WebVTTParser::getNewCues(Vector<RefPtr<WebVTTCueData>>& outputCues)
 {
     outputCues = m_cuelist;
     m_cuelist.clear();
 }
 
 #if ENABLE(WEBVTT_REGIONS)
-void WebVTTParser::getNewRegions(Vector<RefPtr<TextTrackRegion> >& outputRegions)
+void WebVTTParser::getNewRegions(Vector<RefPtr<TextTrackRegion>>& outputRegions)
 {
     outputRegions = m_regionList;
     m_regionList.clear();

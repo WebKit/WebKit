@@ -74,7 +74,7 @@ namespace WebCore {
     class SharedBuffer;
     class SubstituteResource;
 
-    typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
+    typedef HashSet<RefPtr<ResourceLoader>> ResourceLoaderSet;
     typedef Vector<ResourceResponse> ResponseVector;
 
     class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
@@ -156,7 +156,7 @@ namespace WebCore {
         // Return an ArchiveResource for the URL, either creating from live data or
         // pulling from the ArchiveResourceCollection
         PassRefPtr<ArchiveResource> subresource(const URL&) const;
-        void getSubresources(Vector<PassRefPtr<ArchiveResource> >&) const;
+        void getSubresources(Vector<PassRefPtr<ArchiveResource>>&) const;
 
 
 #ifndef NDEBUG
@@ -371,7 +371,7 @@ namespace WebCore {
         ResponseVector m_responses;
         bool m_stopRecordingResponses;
         
-        typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource> > SubstituteResourceMap;
+        typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
         SubstituteResourceMap m_pendingSubstituteResources;
         Timer<DocumentLoader> m_substituteResourceDeliveryTimer;
 

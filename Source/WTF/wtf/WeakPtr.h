@@ -39,12 +39,12 @@
 namespace WTF {
 
 template<typename T>
-class WeakReference : public ThreadSafeRefCounted<WeakReference<T> > {
+class WeakReference : public ThreadSafeRefCounted<WeakReference<T>> {
     WTF_MAKE_NONCOPYABLE(WeakReference<T>);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<WeakReference<T> > create(T* ptr) { return adoptRef(new WeakReference(ptr)); }
-    static PassRefPtr<WeakReference<T> > createUnbound() { return adoptRef(new WeakReference()); }
+    static PassRefPtr<WeakReference<T>> create(T* ptr) { return adoptRef(new WeakReference(ptr)); }
+    static PassRefPtr<WeakReference<T>> createUnbound() { return adoptRef(new WeakReference()); }
 
     T* get() const
     {
@@ -97,13 +97,13 @@ class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WeakPtr() { }
-    WeakPtr(PassRefPtr<WeakReference<T> > ref) : m_ref(ref) { }
+    WeakPtr(PassRefPtr<WeakReference<T>> ref) : m_ref(ref) { }
 
     T* get() const { return m_ref->get(); }
     bool operator!() const { return !m_ref->get(); }
 
 private:
-    RefPtr<WeakReference<T> > m_ref;
+    RefPtr<WeakReference<T>> m_ref;
 };
 
 template<typename T>
@@ -113,7 +113,7 @@ class WeakPtrFactory {
 public:
     explicit WeakPtrFactory(T* ptr) : m_ref(WeakReference<T>::create(ptr)) { }
 
-    WeakPtrFactory(PassRefPtr<WeakReference<T> > ref, T* ptr)
+    WeakPtrFactory(PassRefPtr<WeakReference<T>> ref, T* ptr)
         : m_ref(ref)
     {
         m_ref->bindTo(ptr);
@@ -133,7 +133,7 @@ public:
     }
 
 private:
-    RefPtr<WeakReference<T> > m_ref;
+    RefPtr<WeakReference<T>> m_ref;
 };
 
 } // namespace WTF

@@ -61,7 +61,7 @@ public:
 
     virtual void hasHeapProfiler(ErrorString*, bool*);
 
-    virtual void getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader> >&);
+    virtual void getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>>&);
     virtual void getHeapSnapshot(ErrorString*, int uid);
     virtual void removeProfile(ErrorString*, int uid);
 
@@ -77,7 +77,7 @@ public:
 private:
     InspectorHeapProfilerAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*);
 
-    typedef HashMap<unsigned, RefPtr<ScriptHeapSnapshot> > IdToHeapSnapshotMap;
+    typedef HashMap<unsigned, RefPtr<ScriptHeapSnapshot>> IdToHeapSnapshotMap;
 
     void resetFrontendProfiles();
 

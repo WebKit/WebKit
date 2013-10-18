@@ -95,10 +95,10 @@ void SVGDocumentExtensions::startAnimations()
     // starting animations for a document will do this "latching"
     // FIXME: We hold a ref pointers to prevent a shadow tree from getting removed out from underneath us.
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
-    Vector<RefPtr<SVGSVGElement> > timeContainers;
+    Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
-    Vector<RefPtr<SVGSVGElement> >::iterator end = timeContainers.end();
-    for (Vector<RefPtr<SVGSVGElement> >::iterator itr = timeContainers.begin(); itr != end; ++itr)
+    Vector<RefPtr<SVGSVGElement>>::iterator end = timeContainers.end();
+    for (Vector<RefPtr<SVGSVGElement>>::iterator itr = timeContainers.begin(); itr != end; ++itr)
         (*itr)->timeContainer()->begin();
 }
     
@@ -118,11 +118,11 @@ void SVGDocumentExtensions::unpauseAnimations()
 
 void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
 {
-    Vector<RefPtr<SVGSVGElement> > timeContainers;
+    Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
 
-    Vector<RefPtr<SVGSVGElement> >::iterator end = timeContainers.end();
-    for (Vector<RefPtr<SVGSVGElement> >::iterator it = timeContainers.begin(); it != end; ++it) {
+    Vector<RefPtr<SVGSVGElement>>::iterator end = timeContainers.end();
+    for (Vector<RefPtr<SVGSVGElement>>::iterator it = timeContainers.begin(); it != end; ++it) {
         SVGSVGElement* outerSVG = (*it).get();
         if (!outerSVG->isOutermostSVGSVGElement())
             continue;
@@ -153,7 +153,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* 
     if (id.isEmpty())
         return;
 
-    HashMap<AtomicString, OwnPtr<SVGPendingElements> >::AddResult result = m_pendingResources.add(id, nullptr);
+    HashMap<AtomicString, OwnPtr<SVGPendingElements>>::AddResult result = m_pendingResources.add(id, nullptr);
     if (result.isNewEntry)
         result.iterator->value = adoptPtr(new SVGPendingElements);
     result.iterator->value->add(element);
@@ -176,8 +176,8 @@ bool SVGDocumentExtensions::isElementPendingResources(Element* element) const
 
     ASSERT(element);
 
-    HashMap<AtomicString, OwnPtr<SVGPendingElements> >::const_iterator end = m_pendingResources.end();
-    for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
+    HashMap<AtomicString, OwnPtr<SVGPendingElements>>::const_iterator end = m_pendingResources.end();
+    for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
         SVGPendingElements* elements = it->value.get();
         ASSERT(elements);
 
@@ -210,8 +210,8 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources.
     if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator end = m_pendingResources.end();
-        for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator it = m_pendingResources.begin(); it != end; ++it) {
+        HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator end = m_pendingResources.end();
+        for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator it = m_pendingResources.begin(); it != end; ++it) {
             SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
@@ -232,8 +232,8 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources that were scheduled for removal.
     if (!m_pendingResourcesForRemoval.isEmpty()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator end = m_pendingResourcesForRemoval.end();
-        for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
+        HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator end = m_pendingResourcesForRemoval.end();
+        for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
             SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
@@ -297,7 +297,7 @@ Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(cons
 HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGElement* referencedElement) const
 {
     ASSERT(referencedElement);
-    const HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::const_iterator it = m_elementDependencies.find(referencedElement);
+    const HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*>>>::const_iterator it = m_elementDependencies.find(referencedElement);
     if (it == m_elementDependencies.end())
         return 0;
     return it->value.get();
@@ -313,7 +313,7 @@ void SVGDocumentExtensions::addElementReferencingTarget(SVGElement* referencingE
         return;
     }
 
-    OwnPtr<HashSet<SVGElement*> > elements = adoptPtr(new HashSet<SVGElement*>);
+    OwnPtr<HashSet<SVGElement*>> elements = adoptPtr(new HashSet<SVGElement*>);
     elements->add(referencingElement);
     m_elementDependencies.set(referencedElement, elements.release());
 }
@@ -339,7 +339,7 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
 void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement* referencedElement)
 {
     ASSERT(referencedElement);
-    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator it = m_elementDependencies.find(referencedElement);
+    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*>>>::iterator it = m_elementDependencies.find(referencedElement);
     if (it == m_elementDependencies.end())
         return;
     ASSERT(it->key == referencedElement);

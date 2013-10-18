@@ -69,7 +69,7 @@ public:
     bool hasAnyMatchingRules(RuleSet*);
 
     StyleResolver::MatchResult& matchedResult();
-    const Vector<RefPtr<StyleRuleBase> >& matchedRuleList() const;
+    const Vector<RefPtr<StyleRuleBase>>& matchedRuleList() const;
 
 private:
     Document& document() { return m_state.document(); }
@@ -104,10 +104,10 @@ private:
     SelectorChecker::Mode m_mode;
     bool m_canUseFastReject;
 
-    OwnPtr<Vector<const RuleData*, 32> > m_matchedRules;
+    OwnPtr<Vector<const RuleData*, 32>> m_matchedRules;
 
     // Output.
-    Vector<RefPtr<StyleRuleBase> > m_matchedRuleList;
+    Vector<RefPtr<StyleRuleBase>> m_matchedRuleList;
     StyleResolver::MatchResult m_result;
 };
 

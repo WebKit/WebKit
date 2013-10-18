@@ -68,7 +68,7 @@ public:
     virtual double latencyTime() const OVERRIDE;
 
 protected:
-    Vector<OwnPtr<AudioDSPKernel> > m_kernels;
+    Vector<OwnPtr<AudioDSPKernel>> m_kernels;
     bool m_hasJustReset;
 };
 

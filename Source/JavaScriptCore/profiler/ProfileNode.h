@@ -97,7 +97,7 @@ namespace JSC {
         void setNumberOfCalls(unsigned number) { m_numberOfCalls = number; }
 
         // Children members
-        const Vector<RefPtr<ProfileNode> >& children() const { return m_children; }
+        const Vector<RefPtr<ProfileNode>>& children() const { return m_children; }
         ProfileNode* firstChild() const { return m_children.size() ? m_children.first().get() : 0; }
         ProfileNode* lastChild() const { return m_children.size() ? m_children.last().get() : 0; }
         ProfileNode* findChild(ProfileNode*) const;
@@ -130,7 +130,7 @@ namespace JSC {
 #endif
 
     private:
-        typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
+        typedef Vector<RefPtr<ProfileNode>>::const_iterator StackIterator;
 
         ProfileNode(ExecState* callerCallFrame, const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
         ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, ProfileNode* nodeToCopy);
@@ -166,7 +166,7 @@ namespace JSC {
 
         bool m_visible;
 
-        Vector<RefPtr<ProfileNode> > m_children;
+        Vector<RefPtr<ProfileNode>> m_children;
     };
 
 } // namespace JSC

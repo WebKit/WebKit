@@ -319,7 +319,7 @@ namespace JSC {
         PrototypeMap prototypeMap;
 
         OwnPtr<ParserArena> parserArena;
-        typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache> > SourceProviderCacheMap;
+        typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
         SourceProviderCacheMap sourceProviderCacheMap;
         OwnPtr<Keywords> keywords;
         Interpreter* interpreter;
@@ -413,7 +413,7 @@ namespace JSC {
         BumpPointerAllocator m_regExpAllocator;
 
 #if ENABLE(REGEXP_TRACING)
-        typedef ListHashSet<RefPtr<RegExp> > RTTraceList;
+        typedef ListHashSet<RefPtr<RegExp>> RTTraceList;
         RTTraceList* m_rtTraceList;
 #endif
 

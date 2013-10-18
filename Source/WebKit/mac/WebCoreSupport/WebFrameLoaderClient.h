@@ -47,7 +47,7 @@ namespace WebCore {
     class ResourceRequest;
 }
 
-typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource> > ResourceMap;
+typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource>> ResourceMap;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:

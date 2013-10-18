@@ -80,13 +80,13 @@ TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEnd
     return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
 }
 
-static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
+static Vector<pair<int, String>> getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
 {
-    Vector<pair<int, String> > result;
+    Vector<pair<int, String>> result;
     if (text.isEmpty())
         return result;
 
-    OwnPtr<Vector<size_t> > endings(lineEndings(text));
+    OwnPtr<Vector<size_t>> endings(lineEndings(text));
     size_t size = endings->size();
     unsigned start = 0;
     for (size_t lineNumber = 0; lineNumber < size; ++lineNumber) {
@@ -104,9 +104,9 @@ static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const Regul
     return result;
 }
 
-PassOwnPtr<Vector<size_t> > lineEndings(const String& text)
+PassOwnPtr<Vector<size_t>> lineEndings(const String& text)
 {
-    OwnPtr<Vector<size_t> > result(adoptPtr(new Vector<size_t>()));
+    OwnPtr<Vector<size_t>> result(adoptPtr(new Vector<size_t>()));
 
     unsigned start = 0;
     while (start < text.length()) {
@@ -155,14 +155,14 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     return result;
 }
 
-PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > result = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch>> result = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
 
     RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
-    Vector<pair<int, String> > matches = getRegularExpressionMatchesByLines(regex, text);
+    Vector<pair<int, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
-    for (Vector<pair<int, String> >::const_iterator it = matches.begin(); it != matches.end(); ++it)
+    for (Vector<pair<int, String>>::const_iterator it = matches.begin(); it != matches.end(); ++it)
         result->addItem(buildObjectForSearchMatch(it->first, it->second));
 
     return result;

@@ -302,7 +302,7 @@ public:
         return result;
     }
     unsigned addOrFindConstant(JSValue);
-    const Vector<WriteBarrier<Unknown> >& constantRegisters() { return m_constantRegisters; }
+    const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     const WriteBarrier<Unknown>& constantRegister(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
     ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
@@ -500,8 +500,8 @@ private:
 
     // Constant Pools
     Vector<Identifier> m_identifiers;
-    Vector<WriteBarrier<Unknown> > m_constantRegisters;
-    typedef Vector<WriteBarrier<UnlinkedFunctionExecutable> > FunctionExpressionVector;
+    Vector<WriteBarrier<Unknown>> m_constantRegisters;
+    typedef Vector<WriteBarrier<UnlinkedFunctionExecutable>> FunctionExpressionVector;
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
 
@@ -527,7 +527,7 @@ public:
         Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
         // Rare Constants
-        Vector<WriteBarrier<RegExp> > m_regexps;
+        Vector<WriteBarrier<RegExp>> m_regexps;
 
         // Buffers used for large array literals
         Vector<ConstantBuffer> m_constantBuffers;
@@ -591,8 +591,8 @@ public:
         m_varDeclarations.append(std::make_pair(name, isConstant));
     }
 
-    typedef Vector<std::pair<Identifier, bool> > VariableDeclations;
-    typedef Vector<std::pair<Identifier, WriteBarrier<UnlinkedFunctionExecutable> > > FunctionDeclations;
+    typedef Vector<std::pair<Identifier, bool>> VariableDeclations;
+    typedef Vector<std::pair<Identifier, WriteBarrier<UnlinkedFunctionExecutable>> > FunctionDeclations;
 
     const VariableDeclations& variableDeclarations() const { return m_varDeclarations; }
     const FunctionDeclations& functionDeclarations() const { return m_functionDeclarations; }

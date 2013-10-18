@@ -55,7 +55,7 @@ public:
         OwnPtr<TokenPreloadScanner> preloadScanner;
     };
 
-    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, OwnPtr<Configuration> config)
+    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser>> reference, OwnPtr<Configuration> config)
     {
         new BackgroundHTMLParser(reference, config);
         // Caller must free by calling stop().
@@ -80,7 +80,7 @@ public:
     void forcePlaintextForTextDocument();
 
 private:
-    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, OwnPtr<Configuration>);
+    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser>>, OwnPtr<Configuration>);
 
     void markEndOfFile();
     void pumpTokenizer();

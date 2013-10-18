@@ -59,7 +59,7 @@ public:
 
 private:
     double m_rate;
-    Vector<OwnPtr<AudioResamplerKernel> > m_kernels;
+    Vector<OwnPtr<AudioResamplerKernel>> m_kernels;
     RefPtr<AudioBus> m_sourceBus;
 };
 

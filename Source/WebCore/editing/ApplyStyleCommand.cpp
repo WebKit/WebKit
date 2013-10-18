@@ -379,7 +379,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         startingFontSizes.set(node, computedFontSize(node));
 
     // These spans were added by us. If empty after font size changes, they can be removed.
-    Vector<RefPtr<HTMLElement> > unstyledSpans;
+    Vector<RefPtr<HTMLElement>> unstyledSpans;
     
     Node* lastStyledNode = 0;
     for (Node* node = startNode; node != beyondEnd; node = NodeTraversal::next(node)) {

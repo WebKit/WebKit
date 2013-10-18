@@ -76,7 +76,7 @@ enum DragApplicationFlags {
 };
 
 #if PLATFORM(WIN)
-typedef HashMap<UINT, Vector<String> > DragDataMap;
+typedef HashMap<UINT, Vector<String>> DragDataMap;
 #endif
 
 class DragData {

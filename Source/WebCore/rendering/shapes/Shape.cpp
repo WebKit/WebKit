@@ -63,7 +63,7 @@ static PassOwnPtr<Shape> createShapeEllipse(const FloatPoint& center, const Floa
     return adoptPtr(new RectangleShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
 }
 
-static PassOwnPtr<Shape> createPolygonShape(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
+static PassOwnPtr<Shape> createPolygonShape(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
 {
     return adoptPtr(new PolygonShape(vertices, fillRule));
 }
@@ -161,7 +161,7 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
         const Vector<Length>& values = polygon->values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
-        OwnPtr<Vector<FloatPoint> > vertices = adoptPtr(new Vector<FloatPoint>(valuesSize / 2));
+        OwnPtr<Vector<FloatPoint>> vertices = adoptPtr(new Vector<FloatPoint>(valuesSize / 2));
         for (unsigned i = 0; i < valuesSize; i += 2) {
             FloatPoint vertex(
                 floatValueForLength(values.at(i), boxWidth),

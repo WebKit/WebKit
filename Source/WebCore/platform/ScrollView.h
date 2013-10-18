@@ -348,7 +348,7 @@ private:
 
     bool m_prohibitsScrolling;
 
-    HashSet<RefPtr<Widget> > m_children;
+    HashSet<RefPtr<Widget>> m_children;
 
     // This bool is unused on Mac OS because we directly ask the platform widget
     // whether it is safe to blit on scroll.

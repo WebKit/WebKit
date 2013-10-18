@@ -65,7 +65,7 @@ private:
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
-    Vector<RefPtr<SimpleEditCommand> > m_commands;
+    Vector<RefPtr<SimpleEditCommand>> m_commands;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
     EditAction m_editAction;
@@ -167,7 +167,7 @@ protected:
     
     PassRefPtr<Node> splitTreeToNode(Node*, Node*, bool splitAncestor = false);
 
-    Vector<RefPtr<EditCommand> > m_commands;
+    Vector<RefPtr<EditCommand>> m_commands;
 
 private:
     virtual bool isCompositeEditCommand() const OVERRIDE { return true; }

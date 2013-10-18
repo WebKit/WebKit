@@ -62,7 +62,7 @@ private:
     void performTerminate();
 
     ThreadIdentifier m_threadID;
-    MessageQueue<Function<void ()> > m_queue;
+    MessageQueue<Function<void ()>> m_queue;
 };
 
 } // namespace WebCore

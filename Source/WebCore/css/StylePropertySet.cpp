@@ -360,7 +360,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
 
     const unsigned size = shorthand.length();
     // Begin by collecting the properties into an array.
-    Vector< RefPtr<CSSValue> > values(size);
+    Vector< RefPtr<CSSValue>> values(size);
     size_t numLayers = 0;
 
     for (unsigned i = 0; i < size; ++i) {

@@ -61,12 +61,12 @@ public:
 
 private:
     struct Digest;
-    typedef Vector<pair<Digest*, size_t> > ResultMap;
+    typedef Vector<pair<Digest*, size_t>> ResultMap;
     typedef HashMap<String, Digest*> UnusedNodesMap;
 
     bool innerPatchNode(Digest* oldNode, Digest* newNode, ExceptionCode&);
-    std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren);
-    bool innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest> >& oldChildren, const Vector<OwnPtr<Digest> >& newChildren, ExceptionCode&);
+    std::pair<ResultMap, ResultMap> diff(const Vector<OwnPtr<Digest>>& oldChildren, const Vector<OwnPtr<Digest>>& newChildren);
+    bool innerPatchChildren(ContainerNode*, const Vector<OwnPtr<Digest>>& oldChildren, const Vector<OwnPtr<Digest>>& newChildren, ExceptionCode&);
     PassOwnPtr<Digest> createDigest(Node*, UnusedNodesMap*);
     bool insertBeforeAndMarkAsUsed(ContainerNode*, Digest*, Node* anchor, ExceptionCode&);
     bool removeChildAndMoveToNew(Digest*, ExceptionCode&);

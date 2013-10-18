@@ -57,8 +57,8 @@ public:
 protected:
     void fireDeviceEvent(Timer<DeviceController>*);
 
-    HashCountedSet<RefPtr<DOMWindow> > m_listeners;
-    HashCountedSet<RefPtr<DOMWindow> > m_lastEventListeners;
+    HashCountedSet<RefPtr<DOMWindow>> m_listeners;
+    HashCountedSet<RefPtr<DOMWindow>> m_lastEventListeners;
     DeviceClient* m_client;
     Timer<DeviceController> m_timer;
 };

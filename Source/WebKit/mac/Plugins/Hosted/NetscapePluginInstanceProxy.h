@@ -297,9 +297,9 @@ private:
 
     void requestTimerFired(WebCore::Timer<NetscapePluginInstanceProxy>*);
     WebCore::Timer<NetscapePluginInstanceProxy> m_requestTimer;
-    Deque<RefPtr<PluginRequest> > m_pluginRequests;
+    Deque<RefPtr<PluginRequest>> m_pluginRequests;
     
-    HashMap<uint32_t, RefPtr<HostedNetscapePluginStream> > m_streams;
+    HashMap<uint32_t, RefPtr<HostedNetscapePluginStream>> m_streams;
 
     uint32_t m_currentURLRequestID;
     
@@ -331,10 +331,10 @@ private:
         JSC::JSObject* get(uint32_t) const;
 
     private:
-        HashMap<uint32_t, JSC::Strong<JSC::JSObject> > m_idToJSObjectMap;
+        HashMap<uint32_t, JSC::Strong<JSC::JSObject>> m_idToJSObjectMap;
         // The pair consists of object ID and a reference count. One reference belongs to remote plug-in,
         // and the proxy will add transient references for arguments that are being sent out.
-        HashMap<JSC::JSObject*, pair<uint32_t, uint32_t> > m_jsObjectToIDMap;
+        HashMap<JSC::JSObject*, pair<uint32_t, uint32_t>> m_jsObjectToIDMap;
         uint32_t m_objectIDCounter;
     };
 
@@ -344,7 +344,7 @@ private:
     ProxyInstanceSet m_instances;
 
     uint32_t m_urlCheckCounter;
-    typedef HashMap<uint32_t, RetainPtr<id> > URLCheckMap;
+    typedef HashMap<uint32_t, RetainPtr<id>> URLCheckMap;
     URLCheckMap m_urlChecks;
     
     unsigned m_pluginFunctionCallDepth;
@@ -367,7 +367,7 @@ private:
     
     RefPtr<HostedNetscapePluginStream> m_manualStream;
 
-    typedef HashMap<WebFrame*, RefPtr<PluginRequest> > FrameLoadMap;
+    typedef HashMap<WebFrame*, RefPtr<PluginRequest>> FrameLoadMap;
     FrameLoadMap m_pendingFrameLoads;
 };
     

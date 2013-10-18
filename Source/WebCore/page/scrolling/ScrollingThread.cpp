@@ -106,7 +106,7 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
 {
     ASSERT(isCurrentThread());
 
-    Vector<Function<void()> > functions;
+    Vector<Function<void()>> functions;
     
     {
         MutexLocker locker(m_functionsMutex);

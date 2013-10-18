@@ -51,7 +51,7 @@ private:
     double m_confidence;
 };
 
-typedef Vector<RefPtr<SpeechInputResult> > SpeechInputResultArray;
+typedef Vector<RefPtr<SpeechInputResult>> SpeechInputResultArray;
 
 } // namespace WebCore
 

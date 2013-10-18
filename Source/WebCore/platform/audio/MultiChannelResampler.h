@@ -49,7 +49,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=75118
     
     // Each channel will be resampled using a high-quality SincResampler.
-    Vector<OwnPtr<SincResampler> > m_kernels;
+    Vector<OwnPtr<SincResampler>> m_kernels;
     
     unsigned m_numberOfChannels;
 };

@@ -983,7 +983,7 @@ void RenderStyle::setContent(QuoteType quote, bool add)
     rareNonInheritedData.access()->m_content = std::make_unique<QuoteContentData>(quote);
 }
     
-inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation> >& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
+inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
 {
     // transform-origin brackets the transform with translate operations.
     // Optimize for the case where the only transform is a translation, since the transform-origin is irrelevant
@@ -1010,7 +1010,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSi
     // FIXME: when subpixel layout is supported (bug 71143) the body of this function could be replaced by
     // applyTransform(transform, FloatRect(FloatPoint(), borderBoxSize), applyOrigin);
     
-    const Vector<RefPtr<TransformOperation> >& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
+    const Vector<RefPtr<TransformOperation>>& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
     bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
 
     if (applyTransformOrigin)
@@ -1026,7 +1026,7 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSi
 
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
 {
-    const Vector<RefPtr<TransformOperation> >& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
+    const Vector<RefPtr<TransformOperation>>& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
     bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
     
     float offsetX = transformOriginX().type() == Percent ? boundingBox.x() : 0;

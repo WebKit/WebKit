@@ -122,7 +122,7 @@ private:
     bool m_remote;
 };
 
-typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;
+typedef Vector<RefPtr<MediaStreamSource>> MediaStreamSourceVector;
 
 } // namespace WebCore
 

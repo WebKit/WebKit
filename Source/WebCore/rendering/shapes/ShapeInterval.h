@@ -85,7 +85,7 @@ public:
         return ShapeInterval<T>(std::max<T>(x1(), interval.x1()), std::min<T>(x2(), interval.x2()));
     }
 
-    typedef Vector<ShapeInterval<T> > ShapeIntervals;
+    typedef Vector<ShapeInterval<T>> ShapeIntervals;
     typedef typename ShapeIntervals::const_iterator const_iterator;
     typedef typename ShapeIntervals::iterator iterator;
 

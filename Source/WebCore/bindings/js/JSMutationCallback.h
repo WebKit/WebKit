@@ -46,7 +46,7 @@ public:
 
     virtual ~JSMutationCallback();
 
-    virtual void call(const Vector<RefPtr<MutationRecord> >&, MutationObserver*) OVERRIDE;
+    virtual void call(const Vector<RefPtr<MutationRecord>>&, MutationObserver*) OVERRIDE;
 
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 

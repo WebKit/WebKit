@@ -63,7 +63,7 @@ private:
     virtual void unregisterBlobURL(const URL&) OVERRIDE;
     virtual bool isBlobRegistryImpl() const OVERRIDE { return true; }
 
-    HashMap<String, RefPtr<BlobStorageData> > m_blobs;
+    HashMap<String, RefPtr<BlobStorageData>> m_blobs;
 };
 
 } // namespace WebCore

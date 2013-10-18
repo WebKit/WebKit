@@ -116,7 +116,7 @@ public:
 
     static PassOwnPtr<RuleSet> create() { return adoptPtr(new RuleSet); }
 
-    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData>>> AtomRuleMap;
 
     void addRulesFromSheet(StyleSheetContents*, const MediaQueryEvaluator&, StyleResolver* = 0, const ContainerNode* = 0);
 
@@ -146,7 +146,7 @@ public:
     unsigned ruleCount() const { return m_ruleCount; }
 
 private:
-    void addChildRules(const Vector<RefPtr<StyleRuleBase> >&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
+    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
     bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);
 
     RuleSet();

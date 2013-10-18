@@ -47,7 +47,7 @@ struct RuleFeatureSet;
 
 class StyleScopeResolver {
 public:
-    typedef HashMap<const ContainerNode*, OwnPtr<RuleSet> > ScopedRuleSetMap;
+    typedef HashMap<const ContainerNode*, OwnPtr<RuleSet>> ScopedRuleSetMap;
 
     struct StackFrame {
         StackFrame() : m_scope(0), m_authorStyleBoundsIndex(0), m_ruleSet(0) { }

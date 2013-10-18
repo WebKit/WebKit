@@ -82,7 +82,7 @@ public:
     
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
-    Vector<WriteBarrier<JSCell> > weakReferences;
+    Vector<WriteBarrier<JSCell>> weakReferences;
     
     RefPtr<Profiler::Compilation> compilation;
     bool livenessHasBeenProved; // Initialized and used on every GC.

@@ -77,7 +77,7 @@ private:
     ScriptExecutionContext* m_scriptExecutionContext;
     GenericEventQueue m_asyncEventQueue;
 
-    Vector<RefPtr<SourceBuffer> > m_list;
+    Vector<RefPtr<SourceBuffer>> m_list;
 };
 
 } // namespace WebCore

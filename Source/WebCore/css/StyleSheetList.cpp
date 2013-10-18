@@ -41,7 +41,7 @@ StyleSheetList::~StyleSheetList()
 {
 }
 
-inline const Vector<RefPtr<StyleSheet> >& StyleSheetList::styleSheets() const
+inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
 {
     if (!m_document)
         return m_detachedStyleSheets;
@@ -61,7 +61,7 @@ unsigned StyleSheetList::length() const
 
 StyleSheet* StyleSheetList::item(unsigned index)
 {
-    const Vector<RefPtr<StyleSheet> >& sheets = styleSheets();
+    const Vector<RefPtr<StyleSheet>>& sheets = styleSheets();
     return index < sheets.size() ? sheets[index].get() : 0;
 }
 

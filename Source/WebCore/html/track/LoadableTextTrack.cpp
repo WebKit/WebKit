@@ -103,7 +103,7 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    Vector<RefPtr<TextTrackCue> > newCues;
+    Vector<RefPtr<TextTrackCue>> newCues;
     m_loader->getNewCues(newCues);
 
     if (!m_cues)
@@ -138,7 +138,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 {
     ASSERT_UNUSED(loader, m_loader == loader);
 
-    Vector<RefPtr<TextTrackRegion> > newRegions;
+    Vector<RefPtr<TextTrackRegion>> newRegions;
     m_loader->getNewRegions(newRegions);
 
     for (size_t i = 0; i < newRegions.size(); ++i) {

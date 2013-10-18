@@ -66,7 +66,7 @@ namespace WebCore {
 #endif
 
         JSC::Strong<JSC::Unknown> m_function;
-        Vector<JSC::Strong<JSC::Unknown> > m_args;
+        Vector<JSC::Strong<JSC::Unknown>> m_args;
         String m_code;
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };

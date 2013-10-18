@@ -685,10 +685,10 @@ public:
 private:
     HashSet<InlineCallFrame*,
             DefaultHash<InlineCallFrame*>::Hash,
-            NullableHashTraits<InlineCallFrame*> > m_createsArguments;
+            NullableHashTraits<InlineCallFrame*>> m_createsArguments;
     HashMap<VariableAccessData*, ArgumentsAliasingData,
             DefaultHash<VariableAccessData*>::Hash,
-            NullableHashTraits<VariableAccessData*> > m_argumentsAliasing;
+            NullableHashTraits<VariableAccessData*>> m_argumentsAliasing;
     HashSet<VariableAccessData*> m_isLive;
 
     void pruneObviousArgumentCreations(InlineCallFrame* inlineCallFrame)

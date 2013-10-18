@@ -316,10 +316,10 @@ private:
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
 
-    typedef Vector<RefPtr<Element> > TrackMenuItems;
+    typedef Vector<RefPtr<Element>> TrackMenuItems;
     TrackMenuItems m_menuItems;
 #if ENABLE(VIDEO_TRACK)
-    typedef HashMap<RefPtr<Element>, RefPtr<TextTrack> > MenuItemToTrackMap;
+    typedef HashMap<RefPtr<Element>, RefPtr<TextTrack>> MenuItemToTrackMap;
     MenuItemToTrackMap m_menuToTrackMap;
 #endif
     MediaControls* m_controls;

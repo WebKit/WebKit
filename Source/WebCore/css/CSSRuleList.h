@@ -57,7 +57,7 @@ public:
     virtual void ref() { ++m_refCount; }
     virtual void deref();
 
-    Vector<RefPtr<CSSRule> >& rules() { return m_rules; }
+    Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
     
     virtual CSSStyleSheet* styleSheet() const { return 0; }
 
@@ -68,7 +68,7 @@ private:
     virtual unsigned length() const { return m_rules.size(); }
     virtual CSSRule* item(unsigned index) const { return index < m_rules.size() ? m_rules[index].get() : 0; }
 
-    Vector<RefPtr<CSSRule> > m_rules;
+    Vector<RefPtr<CSSRule>> m_rules;
     unsigned m_refCount;
 };
 

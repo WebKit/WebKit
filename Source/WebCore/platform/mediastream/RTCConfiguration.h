@@ -78,7 +78,7 @@ public:
  private:
     RTCConfiguration() { }
 
-    Vector<RefPtr<RTCIceServer> > m_servers;
+    Vector<RefPtr<RTCIceServer>> m_servers;
 };
 
 } // namespace WebCore

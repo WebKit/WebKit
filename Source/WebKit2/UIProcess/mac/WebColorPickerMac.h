@@ -71,7 +71,7 @@ public:
 
 private:
     WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
-    RetainPtr<NSObject<WKColorPickerUIMac> > m_colorPickerUI;
+    RetainPtr<NSObject<WKColorPickerUIMac>> m_colorPickerUI;
 };
 
 } // namespace WebKit

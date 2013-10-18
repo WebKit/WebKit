@@ -60,7 +60,7 @@ public:
 private:
     StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 
-    typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl> > StorageAreaMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;
 
     StorageType m_storageType;

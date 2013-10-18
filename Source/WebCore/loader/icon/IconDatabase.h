@@ -133,7 +133,7 @@ private:
     ThreadIdentifier m_syncThread;
     bool m_syncThreadRunning;
     
-    HashSet<RefPtr<DocumentLoader> > m_loadersPendingDecision;
+    HashSet<RefPtr<DocumentLoader>> m_loadersPendingDecision;
 
     RefPtr<IconRecord> m_defaultIconRecord;
 

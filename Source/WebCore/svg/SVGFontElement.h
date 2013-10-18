@@ -53,8 +53,8 @@ struct SVGKerningPair : public SVGKerning {
 typedef Vector<SVGKerning> SVGKerningVector;
 
 struct SVGKerningMap {
-    HashMap<String, OwnPtr<SVGKerningVector> > unicodeMap;
-    HashMap<String, OwnPtr<SVGKerningVector> > glyphMap;
+    HashMap<String, OwnPtr<SVGKerningVector>> unicodeMap;
+    HashMap<String, OwnPtr<SVGKerningVector>> glyphMap;
     Vector<SVGKerningPair> kerningUnicodeRangeMap;
 
     bool isEmpty() const { return unicodeMap.isEmpty() && glyphMap.isEmpty() && kerningUnicodeRangeMap.isEmpty(); }

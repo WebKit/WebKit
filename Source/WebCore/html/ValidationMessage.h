@@ -66,7 +66,7 @@ private:
 
     HTMLFormControlElement* m_element;
     String m_message;
-    OwnPtr<Timer<ValidationMessage> > m_timer;
+    OwnPtr<Timer<ValidationMessage>> m_timer;
     RefPtr<HTMLElement> m_bubble;
     RefPtr<HTMLElement> m_messageHeading;
     RefPtr<HTMLElement> m_messageBody;

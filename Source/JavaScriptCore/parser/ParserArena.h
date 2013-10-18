@@ -186,7 +186,7 @@ namespace JSC {
         OwnPtr<IdentifierArena> m_identifierArena;
         Vector<void*> m_freeablePools;
         Vector<ParserArenaDeletable*> m_deletableObjects;
-        Vector<RefPtr<ParserArenaRefCounted> > m_refCountedObjects;
+        Vector<RefPtr<ParserArenaRefCounted>> m_refCountedObjects;
     };
 
 }

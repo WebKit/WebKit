@@ -385,7 +385,7 @@ void CompositeEditCommand::appendNode(PassRefPtr<Node> node, PassRefPtr<Containe
 
 void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned from, unsigned to)
 {
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     Node* child = node->childNode(from);
     for (unsigned i = from; child && i < to; i++, child = child->nextSibling())
         children.append(child);
@@ -816,7 +816,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
     if (comparePositions(start, end) >= 0)
         return;
 
-    Vector<RefPtr<Text> > nodes;
+    Vector<RefPtr<Text>> nodes;
     for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(node)) {
         if (node->isTextNode())
             nodes.append(toText(node));
@@ -999,7 +999,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(Position& start, Positi
     }
 
     if (start.deprecatedNode() != outerNode && lastNode->isElementNode()) {
-        Vector<RefPtr<Node> > ancestors;
+        Vector<RefPtr<Node>> ancestors;
         
         // Insert each node from innerNode to outerNode (excluded) in a list.
         for (Node* n = start.deprecatedNode(); n && n != outerNode; n = n->parentNode())

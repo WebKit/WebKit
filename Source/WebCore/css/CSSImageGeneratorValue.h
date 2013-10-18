@@ -89,7 +89,7 @@ private:
     void evictCachedGeneratedImage(IntSize);
 
     HashCountedSet<RenderElement*> m_clients;
-    HashMap<IntSize, OwnPtr<CachedGeneratedImage> > m_images;
+    HashMap<IntSize, OwnPtr<CachedGeneratedImage>> m_images;
 };
 
 } // namespace WebCore

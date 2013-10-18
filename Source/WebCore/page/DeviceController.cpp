@@ -74,7 +74,7 @@ void DeviceController::removeAllDeviceEventListeners(DOMWindow* window)
 void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event = prpEvent;
-    Vector<RefPtr<DOMWindow> > listenerVector;
+    Vector<RefPtr<DOMWindow>> listenerVector;
     copyToVector(m_listeners, listenerVector);
     for (size_t i = 0; i < listenerVector.size(); ++i) {
         if (listenerVector[i]->document()
@@ -90,7 +90,7 @@ void DeviceController::fireDeviceEvent(Timer<DeviceController>* timer)
     ASSERT(hasLastData());
 
     m_timer.stop();
-    Vector<RefPtr<DOMWindow> > listenerVector;
+    Vector<RefPtr<DOMWindow>> listenerVector;
     copyToVector(m_lastEventListeners, listenerVector);
     m_lastEventListeners.clear();
     for (size_t i = 0; i < listenerVector.size(); ++i) {

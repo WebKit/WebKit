@@ -45,9 +45,9 @@ NamedFlowCollection::NamedFlowCollection(Document* document)
 {
 }
 
-Vector<RefPtr<WebKitNamedFlow> > NamedFlowCollection::namedFlows()
+Vector<RefPtr<WebKitNamedFlow>> NamedFlowCollection::namedFlows()
 {
-    Vector<RefPtr<WebKitNamedFlow> > namedFlows;
+    Vector<RefPtr<WebKitNamedFlow>> namedFlows;
 
     for (NamedFlowSet::iterator it = m_namedFlows.begin(); it != m_namedFlows.end(); ++it) {
         if ((*it)->flowState() == WebKitNamedFlow::FlowStateNull)

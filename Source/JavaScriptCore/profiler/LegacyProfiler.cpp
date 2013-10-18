@@ -117,7 +117,7 @@ void LegacyProfiler::stopProfiling(JSGlobalObject* origin)
     }
 }
 
-static inline void dispatchFunctionToProfiles(ExecState* callerOrHandlerCallFrame, const Vector<RefPtr<ProfileGenerator> >& profiles, ProfileGenerator::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentProfileTargetGroup)
+static inline void dispatchFunctionToProfiles(ExecState* callerOrHandlerCallFrame, const Vector<RefPtr<ProfileGenerator>>& profiles, ProfileGenerator::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentProfileTargetGroup)
 {
     for (size_t i = 0; i < profiles.size(); ++i) {
         if (profiles[i]->profileGroup() == currentProfileTargetGroup || !profiles[i]->origin())

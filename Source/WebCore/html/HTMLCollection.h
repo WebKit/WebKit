@@ -71,7 +71,7 @@ protected:
 
     virtual void updateNameCache() const;
 
-    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*> > > NodeCacheMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*>>> NodeCacheMap;
     Vector<Element*>* idCache(const AtomicString& name) const { return m_idCache.get(name.impl()); }
     Vector<Element*>* nameCache(const AtomicString& name) const { return m_nameCache.get(name.impl()); }
     void appendIdCache(const AtomicString& name, Element* element) const { append(m_idCache, name, element); }

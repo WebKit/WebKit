@@ -101,7 +101,7 @@ namespace JSC {
         }
 
     private:
-        typedef HashSet<StringImpl*, PtrHash<StringImpl*> > IdentifierSet;
+        typedef HashSet<StringImpl*, PtrHash<StringImpl*>> IdentifierSet;
 
         RefPtr<PropertyNameArrayData> m_data;
         IdentifierSet m_set;

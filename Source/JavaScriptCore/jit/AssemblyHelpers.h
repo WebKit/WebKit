@@ -449,7 +449,7 @@ protected:
     CodeBlock* m_codeBlock;
     CodeBlock* m_baselineCodeBlock;
 
-    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> > m_decodedCodeMaps;
+    HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset>> m_decodedCodeMaps;
 };
 
 } // namespace JSC

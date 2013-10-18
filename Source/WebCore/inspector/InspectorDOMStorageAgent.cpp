@@ -100,7 +100,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, false);
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>>& items)
 {
     Frame* frame;
     RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
@@ -110,13 +110,13 @@ void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, cons
         return;
     }
 
-    RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > > storageItems = TypeBuilder::Array<TypeBuilder::Array<String> >::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>> storageItems = TypeBuilder::Array<TypeBuilder::Array<String>>::create();
 
     for (unsigned i = 0; i < storageArea->length(); ++i) {
         String key = storageArea->key(i);
         String value = storageArea->item(key);
 
-        RefPtr<TypeBuilder::Array<String> > entry = TypeBuilder::Array<String>::create();
+        RefPtr<TypeBuilder::Array<String>> entry = TypeBuilder::Array<String>::create();
         entry->addItem(key);
         entry->addItem(value);
         storageItems->addItem(entry.release());

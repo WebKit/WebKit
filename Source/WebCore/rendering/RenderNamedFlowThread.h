@@ -78,7 +78,7 @@ public:
     bool hasContentElement(Element&) const;
 
     bool isMarkedForDestruction() const;
-    void getRanges(Vector<RefPtr<Range> >&, const RenderRegion*) const;
+    void getRanges(Vector<RefPtr<Range>>&, const RenderRegion*) const;
 
 protected:
     void setMarkForDestruction();

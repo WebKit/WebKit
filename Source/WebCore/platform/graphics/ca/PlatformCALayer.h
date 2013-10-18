@@ -47,7 +47,7 @@ namespace WebCore {
 
 class PlatformCALayer;
 
-typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
+typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
 #if PLATFORM(MAC)

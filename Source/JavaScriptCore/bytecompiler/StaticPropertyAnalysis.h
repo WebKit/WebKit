@@ -58,7 +58,7 @@ private:
 
     Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* m_instructions;
     unsigned m_target;
-    typedef HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned> > PropertyIndexSet;
+    typedef HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> PropertyIndexSet;
     PropertyIndexSet m_propertyIndexes;
 };
 

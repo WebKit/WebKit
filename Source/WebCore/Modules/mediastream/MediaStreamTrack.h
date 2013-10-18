@@ -130,7 +130,7 @@ private:
     bool m_eventDispatchScheduled;
 };
 
-typedef Vector<RefPtr<MediaStreamTrack> > MediaStreamTrackVector;
+typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
 
 } // namespace WebCore
 

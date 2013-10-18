@@ -1,3 +1,867 @@
+2013-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove spaces between template angle brackets
+        https://bugs.webkit.org/show_bug.cgi?id=123040
+
+        Reviewed by Andreas Kling.
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::positionChanged):
+        (WebCore::GeolocationController::errorOccurred):
+        * Modules/geolocation/GeolocationController.h:
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        * Modules/indexeddb/IDBEventDispatcher.cpp:
+        (WebCore::IDBEventDispatcher::dispatch):
+        * Modules/indexeddb/IDBEventDispatcher.h:
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBPendingTransactionMonitor.cpp:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::onSuccessWithPrefetch):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::dispatchEvent):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::sortedTrackListForMenu):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::activeRanges):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/MediaSourceBase.cpp:
+        (WebCore::MediaSourceBase::buffered):
+        * Modules/mediasource/MediaSourceBase.h:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::unregisterURL):
+        * Modules/mediasource/MediaSourceRegistry.h:
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/mediasource/WebKitMediaSource.cpp:
+        (WebCore::WebKitMediaSource::activeRanges):
+        * Modules/mediasource/WebKitMediaSource.h:
+        * Modules/mediasource/WebKitSourceBufferList.h:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::scheduledEventTimerFired):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamRegistry.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::scheduledEventTimerFired):
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::scheduledEventTimerFired):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::stop):
+        (WebCore::RTCPeerConnection::scheduledEventTimerFired):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCStatsResponse.h:
+        (WebCore::RTCStatsResponse::result):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::getVoices):
+        * Modules/speech/SpeechSynthesis.h:
+        * Modules/webaudio/AudioBuffer.h:
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioNodeOutput.h:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        (WebCore::MediaStreamAudioSource::setAudioFormat):
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/DatabaseBackend.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::origins):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::origins):
+        * Modules/webdatabase/DatabaseServer.h:
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        (WebCore::DatabaseTracker::deleteAllDatabases):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        * Modules/webdatabase/SQLTransactionCoordinator.cpp:
+        (WebCore::SQLTransactionCoordinator::shutdown):
+        * Modules/webdatabase/SQLTransactionCoordinator.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryDataCallback):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didReceiveBinaryData):
+        * Modules/websockets/WebSocketExtensionDispatcher.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerGlobalScopeDidReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadSendArrayBuffer):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::~AXObjectCache):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::ariaLabeledByText):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityText::AccessibilityText):
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toRefPtrNativeArray):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSMutationCallback.h:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        * bindings/js/PageScriptDebugServer.h:
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::buildInspectorObjectFor):
+        * bindings/objc/ObjCNodeFilterCondition.h:
+        * bridge/objc/objc_class.h:
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate):
+        * bridge/runtime_root.h:
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::basicShapeForValue):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShapePolygon::values):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::getFontFace):
+        (WebCore::CSSFontSelector::beginLoadTimerFired):
+        * css/CSSFontSelector.h:
+        * css/CSSGroupingRule.h:
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/CSSParserValues.h:
+        * css/CSSPropertySourceData.h:
+        * css/CSSRuleList.h:
+        (WebCore::StaticCSSRuleList::rules):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontLoaded):
+        * css/CSSSegmentedFontFace.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        * css/CSSSelectorList.h:
+        * css/CSSStyleSheet.h:
+        * css/CSSValue.h:
+        (WebCore::compareCSSValueVector):
+        * css/CSSValuePool.h:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectRulesFromUserStyleSheets):
+        (WebCore::DocumentRuleSets::appendAuthorStyleSheets):
+        * css/DocumentRuleSets.h:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchedRuleList):
+        * css/ElementRuleCollector.h:
+        * css/FontLoader.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collectFromStyleSheetContents):
+        (WebCore::InspectorCSSOMWrappers::collectFromStyleSheets):
+        * css/InspectorCSSOMWrappers.h:
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::parse):
+        (WebCore::MediaList::item):
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaList.h:
+        (WebCore::MediaQuerySet::queryVector):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryMatcher.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addChildRules):
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/RuleSet.h:
+        * css/SelectorFilter.h:
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::analyzeStyleSheet):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        (WebCore::StyleResolver::styleRulesForElement):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::resolveVariables):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        (WebCore::StyleResolver::loadPendingShaders):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount):
+        (WebCore::StyleRuleGroup::StyleRuleGroup):
+        (WebCore::StyleRuleMedia::StyleRuleMedia):
+        (WebCore::StyleRuleSupports::StyleRuleSupports):
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::parserAdoptSelectorVector):
+        (WebCore::StyleRulePage::parserAdoptSelectorVector):
+        (WebCore::StyleRuleGroup::childRules):
+        (WebCore::StyleRuleMedia::create):
+        (WebCore::StyleRuleSupports::create):
+        (WebCore::StyleRuleRegion::create):
+        (WebCore::StyleRuleHost::create):
+        (WebCore::StyleRuleHost::StyleRuleHost):
+        * css/StyleScopeResolver.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * css/StyleSheetContents.h:
+        (WebCore::StyleSheetContents::childRules):
+        (WebCore::StyleSheetContents::importRules):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::styleSheets):
+        (WebCore::StyleSheetList::item):
+        * css/StyleSheetList.h:
+        * css/WebKitCSSKeyframesRule.h:
+        (WebCore::StyleRuleKeyframes::keyframes):
+        * dom/CheckedRadioButtons.h:
+        * dom/ClientRectList.h:
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::nextNode):
+        (WebCore::ChildNodesLazySnapshot::takeSnapshot):
+        * dom/CrossThreadTask.h:
+        * dom/Document.cpp:
+        (WebCore::Document::webkitCancelFullScreen):
+        (WebCore::Document::webkitExitFullscreen):
+        (WebCore::Document::fullScreenChangeDelayTimerFired):
+        (WebCore::Document::didAssociateFormControlsTimerFired):
+        * dom/Document.h:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::removeMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::injectedUserStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::injectedAuthorStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+        (WebCore::styleSheetsUseRemUnits):
+        (WebCore::filterEnabledNonemptyCSSStyleSheets):
+        (WebCore::collectActiveCSSStyleSheetsFromSeamlessParents):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/DocumentStyleSheetCollection.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attrNodeList):
+        (WebCore::Element::webkitGetRegionFlowRanges):
+        * dom/Element.h:
+        * dom/EventListenerMap.h:
+        * dom/EventSender.h:
+        (WebCore::EventSender::timerFired):
+        * dom/IdTargetObserverRegistry.h:
+        * dom/MutationCallback.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::takeRecords):
+        (WebCore::MutationObserver::deliver):
+        (WebCore::MutationObserver::deliverAllMutations):
+        * dom/MutationObserver.h:
+        * dom/MutationObserverRegistration.h:
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::namedFlows):
+        * dom/NamedFlowCollection.h:
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::Node::mutationObserverRegistry):
+        (WebCore::Node::registerMutationObserver):
+        (WebCore::Node::unregisterMutationObserver):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        (WebCore::Range::processNodes):
+        (WebCore::Range::processAncestorsAndTheirSiblings):
+        * dom/Range.h:
+        * dom/ScopedEventQueue.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportException):
+        * dom/ScriptExecutionContext.h:
+        * dom/ScriptedAnimationController.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        * editing/CompositeEditCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::htmlElementEquivalents):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement):
+        (WebCore::htmlAttributeEquivalents):
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::extractConflictingImplicitStyleOfAttributes):
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent):
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement):
+        (WebCore::styleFromMatchedRulesForElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::countMatchesForText):
+        * editing/Editor.h:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::getAncestorsInsideBlock):
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.h:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doApply):
+        (WebCore::MergeIdenticalElementsCommand::doUnapply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove):
+        * editing/SimplifyMarkupCommand.h:
+        * editing/SpellChecker.h:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply):
+        (WebCore::SplitElementCommand::doUnapply):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::executeApply):
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply):
+        * editing/mac/AlternativeTextUIController.h:
+        * fileapi/FileList.h:
+        * history/BackForwardList.h:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setRedirectURLs):
+        * history/HistoryItem.h:
+        * history/mac/HistoryItemMac.mm:
+        (WebCore::HistoryItem::setTransientProperty):
+        * html/FormController.h:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::append):
+        * html/HTMLCollection.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::checkValidity):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        (WebCore::HTMLFormElement::checkValidity):
+        (WebCore::HTMLFormElement::checkInvalidControlsAndCollectUnhandled):
+        * html/HTMLFormElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::platformTextTracks):
+        (WebCore::HTMLMediaElement::configureTextTrackGroup):
+        * html/HTMLMediaElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength):
+        * html/MediaController.cpp:
+        (MediaController::asyncEventTimerFired):
+        * html/MediaController.h:
+        * html/MediaFragmentURIParser.h:
+        * html/ValidationMessage.h:
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getAttachedShaders):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLTexture.h:
+        * html/parser/BackgroundHTMLParser.cpp:
+        (WebCore::BackgroundHTMLParser::BackgroundHTMLParser):
+        * html/parser/BackgroundHTMLParser.h:
+        (WebCore::BackgroundHTMLParser::create):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::startBackgroundParser):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLMetaCharsetParser.h:
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::scan):
+        (WebCore::TokenPreloadScanner::scanCommon):
+        * html/parser/HTMLResourcePreloader.h:
+        * html/parser/XSSAuditor.h:
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ensureInsertionPointList):
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::invalidate):
+        * html/shadow/ContentDistributor.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu):
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        * html/shadow/MediaControlElements.h:
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        (WebCore::LoadableTextTrack::newRegionsAvailable):
+        * html/track/TextTrackCueList.h:
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::invalidateTrackIndexesAfterTrack):
+        (TextTrackList::remove):
+        (TextTrackList::contains):
+        * html/track/TextTrackList.h:
+        * html/track/TrackListBase.cpp:
+        (TrackListBase::asyncEventTimerFired):
+        * html/track/TrackListBase.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::getNewCues):
+        (WebCore::WebVTTParser::getNewRegions):
+        * html/track/WebVTTParser.h:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::getRegularExpressionMatchesByLines):
+        (WebCore::ContentSearchUtils::lineEndings):
+        (WebCore::ContentSearchUtils::searchInTextByLines):
+        * inspector/ContentSearchUtils.h:
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchNode):
+        (WebCore::DOMPatchSupport::diff):
+        (WebCore::DOMPatchSupport::innerPatchChildren):
+        * inspector/DOMPatchSupport.h:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::getInternalProperties):
+        (WebCore::InjectedScript::wrapCallFrames):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::enable):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBaseAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::SelectorProfile::toInspectorObject):
+        (WebCore::UpdateRegionLayoutTask::onTimer):
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        (WebCore::InspectorCSSAgent::buildArrayForRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::RevalidateStyleAttributeTask::onTimer):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::getSearchResults):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::setScriptSource):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::getProfileHeaders):
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorHistory.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::layersForNode):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy):
+        (WebCore::InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::buildArrayForCookies):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getProfileHeaders):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorState.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::InspectorStyle::styleWithProperties):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::lineEndings):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::InspectorStyleSheetForInlineStyle::lineEndings):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorArrayBase::writeJSON):
+        * inspector/InspectorValues.h:
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::reportExecutionContextCreation):
+        * inspector/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::cancelAll):
+        (WebCore::setAllDefersLoading):
+        (WebCore::DocumentLoader::getSubresources):
+        * loader/DocumentLoader.h:
+        * loader/FormState.h:
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/ProgressTracker.h:
+        * loader/ResourceLoadScheduler.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::getNewCues):
+        (WebCore::TextTrackLoader::getNewRegions):
+        * loader/TextTrackLoader.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerGlobalScopeDidReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::removeResource):
+        (WebCore::ApplicationCache::dump):
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::getOriginsWithCache):
+        * loader/archive/Archive.cpp:
+        (WebCore::Archive::clearAllSubframeArchives):
+        (WebCore::Archive::clearAllSubframeArchivesImpl):
+        * loader/archive/Archive.h:
+        (WebCore::Archive::subresources):
+        (WebCore::Archive::subframeArchives):
+        * loader/archive/ArchiveResourceCollection.cpp:
+        (WebCore::ArchiveResourceCollection::addAllResources):
+        * loader/archive/ArchiveResourceCollection.h:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation):
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/archive/cf/LegacyWebArchive.h:
+        * loader/archive/mhtml/MHTMLParser.h:
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/MemoryCache.h:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::notifyPendingLoadDecisions):
+        * loader/icon/IconDatabase.h:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu):
+        * page/CaptionUserPreferencesMediaAF.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didAssociateFormControls):
+        * page/Console.h:
+        * page/ContentSecurityPolicy.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * page/DeviceController.cpp:
+        (WebCore::DeviceController::dispatchDeviceEvent):
+        (WebCore::DeviceController::fireDeviceEvent):
+        * page/DeviceController.h:
+        * page/EditorClient.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::serviceScriptedAnimations):
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges):
+        * page/Page.h:
+        * page/PageGroup.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::webkitGetEntriesByType):
+        (WebCore::Performance::webkitGetEntriesByName):
+        * page/Performance.h:
+        * page/PerformanceEntryList.cpp:
+        (WebCore::PerformanceEntryList::appendAll):
+        * page/PerformanceEntryList.h:
+        * page/SecurityOriginHash.h:
+        * page/SecurityPolicy.cpp:
+        * page/SpeechInputResult.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle):
+        * page/animation/AnimationControllerPrivate.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * page/animation/CompositeAnimation.h:
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::appendChild):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::children):
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::dispatchFunctionsFromScrollingThread):
+        * page/scrolling/ScrollingThread.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::appendChild):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::syncChildPositions):
+        * platform/CrossThreadCopier.cpp:
+        * platform/CrossThreadCopier.h:
+        * platform/DragData.h:
+        * platform/MainThreadTask.h:
+        * platform/PODFreeListArena.h:
+        (WebCore::PODFreeListArena::freeObject):
+        (WebCore::PODFreeListArena::allocate):
+        * platform/PODIntervalTree.h:
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::PODRedBlackTree):
+        * platform/PlatformSpeechSynthesizer.cpp:
+        (WebCore::PlatformSpeechSynthesizer::voiceList):
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/RunLoop.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::frameRectsChanged):
+        (WebCore::ScrollView::clipRectChanged):
+        (WebCore::ScrollView::setParentVisible):
+        (WebCore::ScrollView::show):
+        (WebCore::ScrollView::hide):
+        * platform/ScrollView.h:
+        * platform/SharedBuffer.h:
+        * platform/Supplementable.h:
+        (WebCore::Supplement::provideTo):
+        (WebCore::Supplementable::provideSupplement):
+        * platform/URL.cpp:
+        (WebCore::findHostnamesInMailToURL):
+        (WebCore::encodeHostnames):
+        * platform/audio/AudioBus.h:
+        * platform/audio/AudioDSPKernelProcessor.h:
+        * platform/audio/AudioResampler.h:
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/DynamicsCompressorKernel.h:
+        * platform/audio/HRTFDatabase.h:
+        * platform/audio/HRTFKernel.h:
+        * platform/audio/MultiChannelResampler.h:
+        * platform/audio/Reverb.h:
+        * platform/audio/ReverbConvolver.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::copyBufferAndClear):
+        (WebCore::SharedBuffer::copySomeDataFromDataArray):
+        * platform/graphics/FloatPolygon.cpp:
+        (WebCore::FloatPolygon::FloatPolygon):
+        * platform/graphics/FloatPolygon.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontData):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::::locatePageSlowCase):
+        * platform/graphics/GlyphPageTreeNode.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/PlatformTextTrackMenu.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/WidthCache.h:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/LayerPool.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (PlatformCAAnimation::setValues):
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+        * platform/graphics/filters/CustomFilterParameterList.h:
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/FilterOperations.h:
+        (WebCore::FilterOperations::operations):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::Texture):
+        (WebCore::Texture::create):
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/mac/ComplexTextController.h:
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::SimpleFontData::getCFStringAttributes):
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::operations):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::documentFragmentWithRTF):
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:WebCore::]):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        * platform/mediastream/MediaStreamSource.h:
+        * platform/mediastream/RTCConfiguration.h:
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        (WebCore::parseCacheHeader):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::clientCerts):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForNullKey):
+        (WebCore::::createValueForKey):
+        (WebCore::cfLocaleCache):
+        * plugins/PluginMainThreadScheduler.h:
+        * rendering/HitTestResult.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps):
+        * rendering/RenderBlock.h:
+        * rendering/RenderButton.h:
+        * rendering/RenderCounter.cpp:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridIterator::GridIterator):
+        * rendering/RenderGrid.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateDescendantsAreContiguousInStackingOrder):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderLayer.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::getRanges):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::getRanges):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds):
+        (WebCore::RenderView::setSelection):
+        * rendering/RootInlineBox.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::computeShapePaddingBounds):
+        (WebCore::computeShapeMarginBounds):
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::PolygonShape::PolygonShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createPolygonShape):
+        (WebCore::Shape::createShape):
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInterval.h:
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::create):
+        (WebCore::QuotesData::QuotesData):
+        * rendering/style/QuotesData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::requireTransformOrigin):
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/style/StyleGridData.h:
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourcePattern.h:
+        * rendering/svg/SVGResourcesCache.h:
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEvents):
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames):
+        * storage/StorageEventDispatcher.h:
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageThread.h:
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::origins):
+        * storage/StorageTracker.h:
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::startAnimValAnimation):
+        * svg/SVGAnimatedTypeAnimator.cpp:
+        (WebCore::SVGElementAnimatedProperties::SVGElementAnimatedProperties):
+        (WebCore::SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName):
+        * svg/SVGAnimatedTypeAnimator.h:
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements):
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementPendingResources):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::setOfElementsReferencingTarget):
+        (WebCore::SVGDocumentExtensions::addElementReferencingTarget):
+        (WebCore::SVGDocumentExtensions::rebuildAllElementReferencesForTarget):
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGGlyphMap.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orientTypeAnimated):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPathSegList.h:
+        * svg/animation/SMILTimeContainer.h:
+        * svg/graphics/SVGImageCache.h:
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::addBuiltinEffects):
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::create):
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::create):
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        (WebCore::SVGAnimatedPropertyTearOff::create):
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::create):
+        * svg/properties/SVGAttributeToPropertyMap.cpp:
+        (WebCore::SVGAttributeToPropertyMap::animatedPropertiesForAttribute):
+        * svg/properties/SVGAttributeToPropertyMap.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        (WebCore::SVGStaticListPropertyTearOff::create):
+        * svg/properties/SVGTransformListPropertyTearOff.h:
+        (WebCore::SVGTransformListPropertyTearOff::create):
+        (WebCore::SVGTransformListPropertyTearOff::createSVGTransformFromMatrix):
+        (WebCore::SVGTransformListPropertyTearOff::consolidate):
+        * workers/DefaultSharedWorkerRepository.h:
+        * workers/WorkerMessagingProxy.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents):
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::sort):
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XSLStyleSheet.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2013-10-18  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Cleaning warning messages from StyleResolveTree

@@ -419,14 +419,14 @@ template<typename T> struct ParamStorageTraits {
     static const T& unwrap(const StorageType& value) { return value; }
 };
 
-template<typename T> struct ParamStorageTraits<PassRefPtr<T> > {
+template<typename T> struct ParamStorageTraits<PassRefPtr<T>> {
     typedef RefPtr<T> StorageType;
 
     static StorageType wrap(PassRefPtr<T> value) { return value; }
     static T* unwrap(const StorageType& value) { return value.get(); }
 };
 
-template<typename T> struct ParamStorageTraits<RefPtr<T> > {
+template<typename T> struct ParamStorageTraits<RefPtr<T>> {
     typedef RefPtr<T> StorageType;
 
     static StorageType wrap(RefPtr<T> value) { return value.release(); }
@@ -435,7 +435,7 @@ template<typename T> struct ParamStorageTraits<RefPtr<T> > {
 
 template<typename> class RetainPtr;
 
-template<typename T> struct ParamStorageTraits<RetainPtr<T> > {
+template<typename T> struct ParamStorageTraits<RetainPtr<T>> {
     typedef RetainPtr<T> StorageType;
 
     static StorageType wrap(const RetainPtr<T>& value) { return value; }
@@ -692,7 +692,7 @@ public:
     {
     }
 
-    Function(PassRefPtr<FunctionImpl<R ()> > impl)
+    Function(PassRefPtr<FunctionImpl<R ()>> impl)
         : FunctionBase(impl)
     {
     }
@@ -710,7 +710,7 @@ public:
     {
         // Declare a RefPtr here so we'll be sure that the underlying FunctionImpl object's
         // lifecycle is managed correctly.
-        RefPtr<FunctionImpl<R ()> > functionImpl = impl<R ()>();
+        RefPtr<FunctionImpl<R ()>> functionImpl = impl<R ()>();
         BlockType block = ^{
            functionImpl->operator()();
         };

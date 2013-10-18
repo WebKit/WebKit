@@ -672,7 +672,7 @@ private:
 
     void trackForDebugging();
 
-    Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry();
+    Vector<OwnPtr<MutationObserverRegistration>>* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
     mutable uint32_t m_nodeFlags;

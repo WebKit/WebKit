@@ -62,7 +62,7 @@ private:
     void addResourcesFromRenderObject(RenderObject*, const RenderStyle*);
     void removeResourcesFromRenderObject(RenderObject*);
 
-    typedef HashMap<const RenderObject*, OwnPtr<SVGResources> > CacheMap;
+    typedef HashMap<const RenderObject*, OwnPtr<SVGResources>> CacheMap;
     CacheMap m_cache;
 };
 

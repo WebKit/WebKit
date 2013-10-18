@@ -44,7 +44,7 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
     if (!page)
         return;
 
-    Vector<RefPtr<Frame> > frames;
+    Vector<RefPtr<Frame>> frames;
 
     // Send events only to our page.
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -61,7 +61,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     if (!page)
         return;
 
-    Vector<RefPtr<Frame> > frames;
+    Vector<RefPtr<Frame>> frames;
 
     // Send events to every page.
     const HashSet<Page*>& pages = page->group().pages();
@@ -75,7 +75,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
 {
     InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, &page);
 
@@ -87,7 +87,7 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
     }
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame>>& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
 {
     const HashSet<Page*>& pages = pageGroup.pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it)

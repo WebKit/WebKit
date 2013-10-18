@@ -73,14 +73,14 @@ MediaControlsHost::~MediaControlsHost()
 {
 }
 
-Vector<RefPtr<TextTrack> > MediaControlsHost::sortedTrackListForMenu(TextTrackList* trackList)
+Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList* trackList)
 {
     if (!trackList)
-        return Vector<RefPtr<TextTrack> >();
+        return Vector<RefPtr<TextTrack>>();
 
     Page* page = m_mediaElement->document().page();
     if (!page)
-        return Vector<RefPtr<TextTrack> >();
+        return Vector<RefPtr<TextTrack>>();
 
     CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
     return captionPreferences->sortedTrackListForMenu(trackList);

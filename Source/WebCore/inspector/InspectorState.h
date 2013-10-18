@@ -102,7 +102,7 @@ public:
     void loadFromCookie(const String&);
 
 private:
-    typedef HashMap<String, OwnPtr<InspectorState> > InspectorStateMap;
+    typedef HashMap<String, OwnPtr<InspectorState>> InspectorStateMap;
 
     // From InspectorStateUpdateListener.
     virtual void inspectorStateUpdated();

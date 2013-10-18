@@ -56,7 +56,7 @@ private:
 
     size_t m_impulseResponseLength;
 
-    Vector<OwnPtr<ReverbConvolver> > m_convolvers;
+    Vector<OwnPtr<ReverbConvolver>> m_convolvers;
 
     // For "True" stereo processing
     RefPtr<AudioBus> m_tempBuffer;

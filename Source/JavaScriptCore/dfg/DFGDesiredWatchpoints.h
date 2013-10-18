@@ -126,7 +126,7 @@ public:
     }
 
 private:
-    Vector<WatchpointForGenericWatchpointSet<WatchpointSetType> > m_watchpoints;
+    Vector<WatchpointForGenericWatchpointSet<WatchpointSetType>> m_watchpoints;
 #if !ASSERT_DISABLED
     StateMap m_firstKnownState;
 #endif

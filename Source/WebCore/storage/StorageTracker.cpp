@@ -337,7 +337,7 @@ void StorageTracker::syncSetOriginDetails(const String& originIdentifier, const 
     }
 }
 
-void StorageTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
+void StorageTracker::origins(Vector<RefPtr<SecurityOrigin>>& result)
 {
     ASSERT(m_isActive);
     

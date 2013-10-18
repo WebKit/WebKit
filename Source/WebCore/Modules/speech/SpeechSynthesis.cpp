@@ -61,7 +61,7 @@ void SpeechSynthesis::voicesDidChange()
     m_voiceList.clear();
 }
     
-const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
+const Vector<RefPtr<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
 {
     if (m_voiceList.size())
         return m_voiceList;
@@ -70,7 +70,7 @@ const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
         m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(this);
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
-    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& platformVoices = m_platformSpeechSynthesizer->voiceList();
+    const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& platformVoices = m_platformSpeechSynthesizer->voiceList();
     size_t voiceCount = platformVoices.size();
     for (size_t k = 0; k < voiceCount; k++)
         m_voiceList.append(SpeechSynthesisVoice::create(platformVoices[k]));

@@ -133,7 +133,7 @@ public:
 
     // Constructs a new red-black tree, allocating temporary objects
     // from the given PODArena.
-    explicit PODRedBlackTree(PassRefPtr<PODFreeListArena<Node> > arena)
+    explicit PODRedBlackTree(PassRefPtr<PODFreeListArena<Node>> arena)
         : m_arena(arena)
         , m_root(0)
         , m_needsFullOrderingComparisons(false)
@@ -814,7 +814,7 @@ private:
     //----------------------------------------------------------------------
     // Data members
 
-    RefPtr<PODFreeListArena<Node> > m_arena;
+    RefPtr<PODFreeListArena<Node>> m_arena;
     Node* m_root;
     bool m_needsFullOrderingComparisons;
 #ifndef NDEBUG

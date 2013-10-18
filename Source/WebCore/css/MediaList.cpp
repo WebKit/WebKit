@@ -125,7 +125,7 @@ bool MediaQuerySet::parse(const String& mediaString)
 {
     CSSParser parser(CSSStrictMode);
     
-    Vector<OwnPtr<MediaQuery> > result;
+    Vector<OwnPtr<MediaQuery>> result;
     Vector<String> list;
     mediaString.split(',', list);
     for (unsigned i = 0; i < list.size(); ++i) {
@@ -249,7 +249,7 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
 
 String MediaList::item(unsigned index) const
 {
-    const Vector<OwnPtr<MediaQuery> >& queries = m_mediaQueries->queryVector();
+    const Vector<OwnPtr<MediaQuery>>& queries = m_mediaQueries->queryVector();
     if (index < queries.size())
         return queries[index]->cssText();
     return String();
@@ -318,7 +318,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
     if (!mediaQuerySet || !document)
         return;
 
-    const Vector<OwnPtr<MediaQuery> >& mediaQueries = mediaQuerySet->queryVector();
+    const Vector<OwnPtr<MediaQuery>>& mediaQueries = mediaQuerySet->queryVector();
     const size_t queryCount = mediaQueries.size();
 
     if (!queryCount)

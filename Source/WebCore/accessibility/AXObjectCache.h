@@ -224,7 +224,7 @@ protected:
 
 private:
     Document& m_document;
-    HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
+    HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
     HashMap<Node*, AXID> m_nodeObjectMapping;
@@ -236,7 +236,7 @@ private:
     HashSet<AXID> m_idsInUse;
     
     Timer<AXObjectCache> m_notificationPostTimer;
-    Vector<pair<RefPtr<AccessibilityObject>, AXNotification> > m_notificationsToPost;
+    Vector<pair<RefPtr<AccessibilityObject>, AXNotification>> m_notificationsToPost;
     void notificationPostTimerFired(Timer<AXObjectCache>*);
     
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);

@@ -93,7 +93,7 @@ private:
     void requestTimedOut(NotificationRequestCallback*);
 
     NotificationClient* m_client;
-    HashSet<RefPtr<NotificationRequestCallback> > m_callbacks;
+    HashSet<RefPtr<NotificationRequestCallback>> m_callbacks;
 };
 
 } // namespace WebCore

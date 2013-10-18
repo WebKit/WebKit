@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-    typedef Vector<std::pair<String, String> > CrossThreadHTTPHeaderMapData;
+    typedef Vector<std::pair<String, String>> CrossThreadHTTPHeaderMapData;
 
     // FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
     class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {

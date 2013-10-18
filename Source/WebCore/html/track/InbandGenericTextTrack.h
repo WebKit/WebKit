@@ -52,8 +52,8 @@ public:
     PassRefPtr<TextTrackCueGeneric> find(GenericCueData*);
 
 private:
-    typedef HashMap<RefPtr<TextTrackCue>, RefPtr<GenericCueData> > CueToDataMap;
-    typedef HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric> > CueDataToCueMap;
+    typedef HashMap<RefPtr<TextTrackCue>, RefPtr<GenericCueData>> CueToDataMap;
+    typedef HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric>> CueDataToCueMap;
 
     CueToDataMap m_cueToDataMap;
     CueDataToCueMap m_dataToCueMap;

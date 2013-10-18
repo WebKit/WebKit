@@ -310,7 +310,7 @@ struct Scope {
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
 
-    void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<StringImpl> >& vector)
+    void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<StringImpl>>& vector)
     {
         IdentifierSet::iterator end = capturedVariables.end();
         for (IdentifierSet::iterator it = capturedVariables.begin(); it != end; ++it) {
@@ -1126,10 +1126,10 @@ PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameter
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser< Lexer<LChar> > parser(vm, source, parameters, name, strictness, parserMode);
+        Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
         return parser.parse<ParsedNode>(error);
     }
-    Parser< Lexer<UChar> > parser(vm, source, parameters, name, strictness, parserMode);
+    Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
     return parser.parse<ParsedNode>(error);
 }
 

@@ -199,7 +199,7 @@ static const char* mediaSourceBlobProtocol = "blob";
 using namespace HTMLNames;
 using namespace std;
 
-typedef HashMap<Document*, HashSet<HTMLMediaElement*> > DocumentElementSetMap;
+typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
 static DocumentElementSetMap& documentToElementSetMap()
 {
     DEFINE_STATIC_LOCAL(DocumentElementSetMap, map, ());
@@ -1276,7 +1276,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // 8 - Let events be a list of tasks, initially empty. Each task in this
     // list will be associated with a text track, a text track cue, and a time,
     // which are used to sort the list before the tasks are queued.
-    Vector<std::pair<double, TextTrackCue*> > eventTasks;
+    Vector<std::pair<double, TextTrackCue*>> eventTasks;
 
     // 8 - Let affected tracks be a list of text tracks, initially empty.
     Vector<TextTrack*> affectedTracks;
@@ -2978,12 +2978,12 @@ void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platfo
     setSelectedTextTrack(textTrack);
 }
 
-Vector<RefPtr<PlatformTextTrack> > HTMLMediaElement::platformTextTracks()
+Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::platformTextTracks()
 {
     if (!m_textTracks || !m_textTracks->length())
-        return Vector<RefPtr<PlatformTextTrack> >();
+        return Vector<RefPtr<PlatformTextTrack>>();
     
-    Vector<RefPtr<PlatformTextTrack> > platformTracks;
+    Vector<RefPtr<PlatformTextTrack>> platformTracks;
     for (size_t i = 0; i < m_textTracks->length(); ++i)
         platformTracks.append(m_textTracks->item(i)->platformTextTrack());
     
@@ -3244,7 +3244,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
-    Vector<RefPtr<TextTrack> > currentlyEnabledTracks;
+    Vector<RefPtr<TextTrack>> currentlyEnabledTracks;
     RefPtr<TextTrack> trackToEnable;
     RefPtr<TextTrack> defaultTrack;
     RefPtr<TextTrack> fallbackTrack;

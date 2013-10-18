@@ -75,7 +75,7 @@ private:
     RenderTextFragment* m_buttonText;
     RenderBlock* m_inner;
 
-    OwnPtr<Timer<RenderButton> > m_timer;
+    OwnPtr<Timer<RenderButton>> m_timer;
     bool m_default;
 };
 

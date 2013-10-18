@@ -41,8 +41,8 @@ struct SourceProviderCacheItemCreationParameters {
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
-    Vector<RefPtr<StringImpl> > usedVariables;
-    Vector<RefPtr<StringImpl> > writtenVariables;
+    Vector<RefPtr<StringImpl>> usedVariables;
+    Vector<RefPtr<StringImpl>> writtenVariables;
 };
 
 #if COMPILER(MSVC)

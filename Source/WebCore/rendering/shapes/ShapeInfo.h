@@ -56,7 +56,7 @@ public:
     static void removeInfo(const KeyType* key) { infoMap().remove(key); }
     static InfoType* info(const KeyType* key) { return infoMap().get(key); }
 private:
-    typedef HashMap<const KeyType*, OwnPtr<InfoType> > InfoMap;
+    typedef HashMap<const KeyType*, OwnPtr<InfoType>> InfoMap;
     static InfoMap& infoMap()
     {
         DEFINE_STATIC_LOCAL(InfoMap, staticInfoMap, ());

@@ -359,7 +359,7 @@ bool DatabaseManager::hasEntryForOrigin(SecurityOrigin* origin)
     return m_server->hasEntryForOrigin(origin);
 }
 
-void DatabaseManager::origins(Vector<RefPtr<SecurityOrigin> >& result)
+void DatabaseManager::origins(Vector<RefPtr<SecurityOrigin>>& result)
 {
     m_server->origins(result);
 }

@@ -47,7 +47,7 @@ class FilterEffect;
 class ImageBuffer;
 class TextStream;
 
-typedef Vector<RefPtr<FilterEffect> > FilterEffectVector;
+typedef Vector<RefPtr<FilterEffect>> FilterEffectVector;
 
 enum FilterEffectType {
     FilterEffectTypeUnknown,

@@ -595,7 +595,7 @@ void RTCPeerConnection::stop()
     m_iceConnectionState = IceConnectionStateClosed;
     m_signalingState = SignalingStateClosed;
 
-    Vector<RefPtr<RTCDataChannel> >::iterator i = m_dataChannels.begin();
+    Vector<RefPtr<RTCDataChannel>>::iterator i = m_dataChannels.begin();
     for (; i != m_dataChannels.end(); ++i)
         (*i)->stop();
 }
@@ -634,10 +634,10 @@ void RTCPeerConnection::scheduledEventTimerFired(Timer<RTCPeerConnection>*)
     if (m_stopped)
         return;
 
-    Vector<RefPtr<Event> > events;
+    Vector<RefPtr<Event>> events;
     events.swap(m_scheduledEvents);
 
-    Vector<RefPtr<Event> >::iterator it = events.begin();
+    Vector<RefPtr<Event>>::iterator it = events.begin();
     for (; it != events.end(); ++it)
         dispatchEvent((*it).release());
 

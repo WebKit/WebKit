@@ -68,7 +68,7 @@ private:
 
     void assertNoActiveIterators();
 
-    Vector<std::pair<AtomicString, OwnPtr<EventListenerVector> >, 2> m_entries;
+    Vector<std::pair<AtomicString, OwnPtr<EventListenerVector>>, 2> m_entries;
 
 #ifndef NDEBUG
     int m_activeIteratorCount;

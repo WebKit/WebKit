@@ -130,7 +130,7 @@ private:
         return m_grid.size();
     }
 
-    Vector<Vector<Vector<RenderBox*, 1> > > m_grid;
+    Vector<Vector<Vector<RenderBox*, 1>>> m_grid;
     HashMap<const RenderBox*, GridCoordinate> m_gridItemCoordinate;
 };
 

@@ -47,7 +47,7 @@ public:
     
     bool areStillValid() const;
 private:
-    Vector<RefPtr<IntendedStructureChain> > m_vector;
+    Vector<RefPtr<IntendedStructureChain>> m_vector;
 };
 
 } } // namespace JSC::DFG

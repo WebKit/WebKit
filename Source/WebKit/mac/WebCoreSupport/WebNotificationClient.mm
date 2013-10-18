@@ -90,7 +90,7 @@ bool WebNotificationClient::show(Notification* notification)
     RetainPtr<WebNotification> webNotification = adoptNS([[WebNotification alloc] initWithCoreNotification:notification notificationID:notificationID]);
     m_notificationMap.set(notification, webNotification);
 
-    NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification> >()).iterator;
+    NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<RetainPtr<WebNotification>>()).iterator;
     it->value.append(webNotification);
 
     [[m_webView _notificationProvider] showNotification:webNotification.get() fromWebView:m_webView];
@@ -121,7 +121,7 @@ void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
     if (it == m_notificationContextMap.end())
         return;
     
-    Vector<RetainPtr<WebNotification> >& webNotifications = it->value;
+    Vector<RetainPtr<WebNotification>>& webNotifications = it->value;
     NSMutableArray *nsIDs = [NSMutableArray array];
     size_t count = webNotifications.size();
     for (size_t i = 0; i < count; ++i) {

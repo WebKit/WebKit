@@ -76,7 +76,7 @@ public:
     void discardAgents();
 
 private:
-    Vector<OwnPtr<InspectorBaseAgentInterface> > m_agents;
+    Vector<OwnPtr<InspectorBaseAgentInterface>> m_agents;
 };
 
 template<typename T>

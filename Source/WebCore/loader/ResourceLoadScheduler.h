@@ -88,12 +88,12 @@ private:
         bool hasRequests() const;
         bool limitRequests(ResourceLoadPriority) const;
 
-        typedef Deque<RefPtr<ResourceLoader> > RequestQueue;
+        typedef Deque<RefPtr<ResourceLoader>> RequestQueue;
         RequestQueue& requestsPending(ResourceLoadPriority priority) { return m_requestsPending[priority]; }
 
     private:                    
         RequestQueue m_requestsPending[ResourceLoadPriorityHighest + 1];
-        typedef HashSet<RefPtr<ResourceLoader> > RequestMap;
+        typedef HashSet<RefPtr<ResourceLoader>> RequestMap;
         RequestMap m_requestsLoading;
         const String m_name;
         const int m_maxRequestsInFlight;

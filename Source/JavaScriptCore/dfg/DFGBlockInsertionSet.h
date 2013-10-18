@@ -36,7 +36,7 @@
 
 namespace JSC { namespace DFG {
 
-typedef WTF::Insertion<RefPtr<BasicBlock> > BlockInsertion;
+typedef WTF::Insertion<RefPtr<BasicBlock>> BlockInsertion;
 
 class BlockInsertionSet {
 public:

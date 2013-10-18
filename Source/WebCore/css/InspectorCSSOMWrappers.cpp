@@ -88,7 +88,7 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
     }
 }
 
-void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents* styleSheet)
+void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet>>& sheetWrapperSet, StyleSheetContents* styleSheet)
 {
     if (!styleSheet)
         return;
@@ -97,7 +97,7 @@ void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSSty
     collect(styleSheetWrapper.get());
 }
 
-void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& sheets)
+void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i)
         collect(sheets[i].get());

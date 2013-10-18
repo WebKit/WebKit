@@ -57,7 +57,7 @@ private:
     static void initialize();
     void dispatchEvent(PassRefPtr<Event>) const;
 
-    Vector<RefPtr<Event> > m_queuedEvents;
+    Vector<RefPtr<Event>> m_queuedEvents;
     unsigned m_scopingLevel;
 
     static ScopedEventQueue* s_instance;

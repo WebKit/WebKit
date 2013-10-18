@@ -157,7 +157,7 @@ protected:
     virtual void didReachBreakpoint(JSC::CallFrame*) OVERRIDE;
 
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
-    typedef HashMap<int, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int> > LineToBreakpointsMap;
+    typedef HashMap<int, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
     typedef HashMap<intptr_t, LineToBreakpointsMap> SourceIdToBreakpointsMap;
 
     bool m_callingListeners;

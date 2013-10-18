@@ -66,9 +66,9 @@ public:
     
     bool load(const URL&, const String& crossOriginMode);
     void cancelLoad();
-    void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
+    void getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues);
 #if ENABLE(WEBVTT_REGIONS)
-    void getNewRegions(Vector<RefPtr<TextTrackRegion> >& outputRegions);
+    void getNewRegions(Vector<RefPtr<TextTrackRegion>>& outputRegions);
 #endif
 private:
 

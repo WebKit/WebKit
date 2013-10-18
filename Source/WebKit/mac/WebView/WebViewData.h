@@ -175,7 +175,7 @@ private:
     // WebKit has both a global plug-in database and a separate, per WebView plug-in database. Dashboard uses the per WebView database.
     WebPluginDatabase *pluginDatabase;
     
-    HashMap<unsigned long, RetainPtr<id> > identifierMap;
+    HashMap<unsigned long, RetainPtr<id>> identifierMap;
 
     BOOL _keyboardUIModeAccessed;
     WebCore::KeyboardUIMode _keyboardUIMode;

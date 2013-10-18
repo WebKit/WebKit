@@ -428,7 +428,7 @@ private:
     Vector<InRecord, 4> m_ins;
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
-    Vector<Vector<Label> > m_exitSiteLabels;
+    Vector<Vector<Label>> m_exitSiteLabels;
     
     Call m_callArityFixup;
     Label m_arityCheck;

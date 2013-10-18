@@ -98,8 +98,8 @@ public:
     bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
     String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
     // Rules other than @charset and @import.
-    const Vector<RefPtr<StyleRuleBase> >& childRules() const { return m_childRules; }
-    const Vector<RefPtr<StyleRuleImport> >& importRules() const { return m_importRules; }
+    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
+    const Vector<RefPtr<StyleRuleImport>>& importRules() const { return m_importRules; }
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
@@ -149,8 +149,8 @@ private:
     String m_originalURL;
 
     String m_encodingFromCharsetRule;
-    Vector<RefPtr<StyleRuleImport> > m_importRules;
-    Vector<RefPtr<StyleRuleBase> > m_childRules;
+    Vector<RefPtr<StyleRuleImport>> m_importRules;
+    Vector<RefPtr<StyleRuleBase>> m_childRules;
     typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
 

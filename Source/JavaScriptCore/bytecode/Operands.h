@@ -47,7 +47,7 @@ enum OperandKind { ArgumentOperand, LocalOperand };
 
 enum OperandsLikeTag { OperandsLike };
 
-template<typename T, typename Traits = OperandValueTraits<T> >
+template<typename T, typename Traits = OperandValueTraits<T>>
 class Operands {
 public:
     Operands() { }

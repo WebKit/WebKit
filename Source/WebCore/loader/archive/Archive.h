@@ -47,8 +47,8 @@ public:
     virtual ~Archive();
     virtual Type type() const = 0;
     ArchiveResource* mainResource() { return m_mainResource.get(); }
-    const Vector<RefPtr<ArchiveResource> >& subresources() const { return m_subresources; }
-    const Vector<RefPtr<Archive> >& subframeArchives() const { return m_subframeArchives; }
+    const Vector<RefPtr<ArchiveResource>>& subresources() const { return m_subresources; }
+    const Vector<RefPtr<Archive>>& subframeArchives() const { return m_subframeArchives; }
 
 protected:
     // These methods are meant for subclasses for different archive types to add resources in to the archive,
@@ -60,11 +60,11 @@ protected:
     void clearAllSubframeArchives();
 
 private:
-    void clearAllSubframeArchivesImpl(Vector<RefPtr<Archive> >* clearedArchives);
+    void clearAllSubframeArchivesImpl(Vector<RefPtr<Archive>>* clearedArchives);
 
     RefPtr<ArchiveResource> m_mainResource;
-    Vector<RefPtr<ArchiveResource> > m_subresources;
-    Vector<RefPtr<Archive> > m_subframeArchives;
+    Vector<RefPtr<ArchiveResource>> m_subresources;
+    Vector<RefPtr<Archive>> m_subframeArchives;
 };
 
 }

@@ -59,7 +59,7 @@ void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegist
 void MediaSourceRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
-    HashMap<String, RefPtr<MediaSourceBase> >::iterator iter = m_mediaSources.find(url.string());
+    HashMap<String, RefPtr<MediaSourceBase>>::iterator iter = m_mediaSources.find(url.string());
     if (iter == m_mediaSources.end())
         return;
 

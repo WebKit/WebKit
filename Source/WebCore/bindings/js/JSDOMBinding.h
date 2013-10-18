@@ -498,12 +498,12 @@ class DOMStringList;
     };
 
     template <class T, class JST>
-    Vector<RefPtr<T> > toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, T* (*toT)(JSC::JSValue value))
+    Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, T* (*toT)(JSC::JSValue value))
     {
         if (!isJSArray(value))
-            return Vector<RefPtr<T> >();
+            return Vector<RefPtr<T>>();
 
-        Vector<RefPtr<T> > result;
+        Vector<RefPtr<T>> result;
         JSC::JSArray* array = asArray(value);
         for (size_t i = 0; i < array->length(); ++i) {
             JSC::JSValue element = array->getIndex(exec, i);
@@ -511,7 +511,7 @@ class DOMStringList;
                 result.append((*toT)(element));
             else {
                 throwVMError(exec, createTypeError(exec, "Invalid Array element type"));
-                return Vector<RefPtr<T> >();
+                return Vector<RefPtr<T>>();
             }
         }
         return result;

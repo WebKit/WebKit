@@ -33,7 +33,7 @@ SVGElementAnimatedProperties::SVGElementAnimatedProperties()
     : element(0)
 { }
 
-SVGElementAnimatedProperties::SVGElementAnimatedProperties(SVGElement* element, Vector<RefPtr<SVGAnimatedProperty> >& properties)
+SVGElementAnimatedProperties::SVGElementAnimatedProperties(SVGElement* element, Vector<RefPtr<SVGAnimatedProperty>>& properties)
     : element(element)
     , properties(properties)
 { }
@@ -67,7 +67,7 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
 
     SVGElementAnimatedPropertyList propertiesByInstance;
 
-    Vector<RefPtr<SVGAnimatedProperty> > targetProperties;
+    Vector<RefPtr<SVGAnimatedProperty>> targetProperties;
     targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, targetProperties);
 
     if (!SVGAnimatedType::supportsAnimVal(m_type))
@@ -83,7 +83,7 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
         if (!shadowTreeElement)
             continue;
 
-        Vector<RefPtr<SVGAnimatedProperty> > instanceProperties;
+        Vector<RefPtr<SVGAnimatedProperty>> instanceProperties;
         targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(shadowTreeElement, attributeName, instanceProperties);
 
         SVGElementAnimatedProperties instancePropertiesPair(shadowTreeElement, instanceProperties);

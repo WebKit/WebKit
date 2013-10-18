@@ -41,7 +41,7 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRef
 
 void RemoveNodePreservingChildrenCommand::doApply()
 {
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     for (Node* child = m_node->firstChild(); child; child = child->nextSibling())
         children.append(child);
 

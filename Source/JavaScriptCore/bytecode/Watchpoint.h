@@ -98,7 +98,7 @@ private:
     
     friend class InlineWatchpointSet;
     
-    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint> > m_set;
+    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
     bool m_isWatched;
     bool m_isInvalidated;
 };

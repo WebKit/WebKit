@@ -179,8 +179,8 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     }
 
     // call setChanged on all the elements
-    Vector<RefPtr<Node> >::const_iterator nodeChangesToDispatchEnd = m_nodeChangesToDispatch.end();
-    for (Vector<RefPtr<Node> >::const_iterator it = m_nodeChangesToDispatch.begin(); it != nodeChangesToDispatchEnd; ++it)
+    Vector<RefPtr<Node>>::const_iterator nodeChangesToDispatchEnd = m_nodeChangesToDispatch.end();
+    for (Vector<RefPtr<Node>>::const_iterator it = m_nodeChangesToDispatch.begin(); it != nodeChangesToDispatchEnd; ++it)
         (*it)->setNeedsStyleRecalc(SyntheticStyleChange);
 
     m_nodeChangesToDispatch.clear();

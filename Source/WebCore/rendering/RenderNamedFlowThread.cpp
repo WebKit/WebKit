@@ -578,7 +578,7 @@ static Node* nextNodeInsideContentElement(const Node* currNode, const Element* c
     return NodeTraversal::next(currNode, contentElement);
 }
 
-void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, const RenderRegion* region) const
+void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const RenderRegion* region) const
 {
     LayoutUnit logicalTopForRegion;
     LayoutUnit logicalBottomForRegion;

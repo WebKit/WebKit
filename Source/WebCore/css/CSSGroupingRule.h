@@ -52,7 +52,7 @@ protected:
     void appendCssTextForItems(StringBuilder&) const;
 
     RefPtr<StyleRuleGroup> m_groupRule;
-    mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
+    mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
 

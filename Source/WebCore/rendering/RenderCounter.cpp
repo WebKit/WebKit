@@ -43,8 +43,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef HashMap<AtomicString, RefPtr<CounterNode> > CounterMap;
-typedef HashMap<const RenderObject*, OwnPtr<CounterMap> > CounterMaps;
+typedef HashMap<AtomicString, RefPtr<CounterNode>> CounterMap;
+typedef HashMap<const RenderObject*, OwnPtr<CounterMap>> CounterMaps;
 
 static CounterNode* makeCounterNode(RenderObject*, const AtomicString& identifier, bool alwaysCreateCounter);
 

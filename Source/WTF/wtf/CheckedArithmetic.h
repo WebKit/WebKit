@@ -112,7 +112,7 @@ private:
 
 template <typename T, class OverflowHandler = CrashOnOverflow> class Checked;
 template <typename T> struct RemoveChecked;
-template <typename T> struct RemoveChecked<Checked<T> >;
+template <typename T> struct RemoveChecked<Checked<T>>;
 
 template <typename Target, typename Source, bool targetSigned = std::numeric_limits<Target>::is_signed, bool sourceSigned = std::numeric_limits<Source>::is_signed> struct BoundsChecker;
 template <typename Target, typename Source> struct BoundsChecker<Target, Source, false, false> {
@@ -178,12 +178,12 @@ template <typename T> struct RemoveChecked {
     static const CleanType DefaultValue = 0;    
 };
 
-template <typename T> struct RemoveChecked<Checked<T, CrashOnOverflow> > {
+template <typename T> struct RemoveChecked<Checked<T, CrashOnOverflow>> {
     typedef typename RemoveChecked<T>::CleanType CleanType;
     static const CleanType DefaultValue = 0;
 };
 
-template <typename T> struct RemoveChecked<Checked<T, RecordOverflow> > {
+template <typename T> struct RemoveChecked<Checked<T, RecordOverflow>> {
     typedef typename RemoveChecked<T>::CleanType CleanType;
     static const CleanType DefaultValue = 0;
 };

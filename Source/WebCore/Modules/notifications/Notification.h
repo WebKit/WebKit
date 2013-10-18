@@ -181,7 +181,7 @@ private:
     RefPtr<NotificationCenter> m_notificationCenter;
 
 #if ENABLE(NOTIFICATIONS)
-    OwnPtr<Timer<Notification> > m_taskTimer;
+    OwnPtr<Timer<Notification>> m_taskTimer;
 #endif
 };
 

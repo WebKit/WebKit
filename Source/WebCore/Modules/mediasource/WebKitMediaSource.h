@@ -64,7 +64,7 @@ private:
 
     // MediaSourceBase interface
     virtual void onReadyStateChange(const AtomicString&, const AtomicString&) OVERRIDE;
-    virtual Vector<RefPtr<TimeRanges> > activeRanges() const OVERRIDE;
+    virtual Vector<RefPtr<TimeRanges>> activeRanges() const OVERRIDE;
 
     GenericEventQueue m_asyncEventQueue;
     RefPtr<WebKitSourceBufferList> m_sourceBuffers;

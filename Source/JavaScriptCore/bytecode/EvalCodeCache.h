@@ -74,7 +74,7 @@ namespace JSC {
         static const unsigned maxCacheableSourceLength = 256;
         static const int maxCacheEntries = 64;
 
-        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<EvalExecutable> > EvalCacheMap;
+        typedef HashMap<RefPtr<StringImpl>, WriteBarrier<EvalExecutable>> EvalCacheMap;
         EvalCacheMap m_cacheMap;
     };
 

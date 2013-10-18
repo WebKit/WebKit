@@ -83,7 +83,7 @@ public:
     virtual bool isRefCountedWrapper() const { return false; }
 #endif
 
-    static void provideTo(Supplementable<T>* host, const char* key, PassOwnPtr<Supplement<T> > supplement)
+    static void provideTo(Supplementable<T>* host, const char* key, PassOwnPtr<Supplement<T>> supplement)
     {
         host->provideSupplement(key, supplement);
     }
@@ -97,7 +97,7 @@ public:
 template<typename T>
 class Supplementable {
 public:
-    void provideSupplement(const char* key, PassOwnPtr<Supplement<T> > supplement)
+    void provideSupplement(const char* key, PassOwnPtr<Supplement<T>> supplement)
     {
         ASSERT(m_threadId == currentThread());
         ASSERT(!m_supplements.get(key));
@@ -122,7 +122,7 @@ protected:
 #endif
 
 private:
-    typedef HashMap<const char*, OwnPtr<Supplement<T> >, PtrHash<const char*> > SupplementMap;
+    typedef HashMap<const char*, OwnPtr<Supplement<T>>, PtrHash<const char*>> SupplementMap;
     SupplementMap m_supplements;
 #if !ASSERT_DISABLED
     ThreadIdentifier m_threadId;

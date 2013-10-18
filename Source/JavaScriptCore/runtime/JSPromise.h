@@ -84,8 +84,8 @@ private:
 
     WriteBarrier<JSPromiseResolver> m_resolver;
     WriteBarrier<Unknown> m_result;
-    Vector<WriteBarrier<InternalFunction> > m_fulfillCallbacks;
-    Vector<WriteBarrier<InternalFunction> > m_rejectCallbacks;
+    Vector<WriteBarrier<InternalFunction>> m_fulfillCallbacks;
+    Vector<WriteBarrier<InternalFunction>> m_rejectCallbacks;
     State m_state;
 };
 

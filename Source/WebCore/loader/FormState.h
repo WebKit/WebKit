@@ -42,7 +42,7 @@ namespace WebCore {
         NotSubmittedByJavaScript
     };
     
-    typedef Vector<std::pair<String, String> > StringPairVector;
+    typedef Vector<std::pair<String, String>> StringPairVector;
 
     class FormState : public RefCounted<FormState> {
     public:

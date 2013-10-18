@@ -101,7 +101,7 @@ private:
     mutable RefPtr<PerformanceTiming> m_timing;
     
 #if ENABLE(RESOURCE_TIMING)
-    Vector<RefPtr<PerformanceEntry> > m_resourceTimingBuffer;
+    Vector<RefPtr<PerformanceEntry>> m_resourceTimingBuffer;
     unsigned m_resourceTimingBufferSize;
 #endif
 

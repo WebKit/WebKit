@@ -58,7 +58,7 @@ public:
     bool isEqual(ScriptCallStack*) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame> > buildInspectorArray() const;
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::Console::CallFrame>> buildInspectorArray() const;
 #endif
 
 private:

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-typedef HashMap<String, Vector<size_t> > NamedGridLinesMap;
+typedef HashMap<String, Vector<size_t>> NamedGridLinesMap;
 
 class StyleGridData : public RefCounted<StyleGridData> {
 public:

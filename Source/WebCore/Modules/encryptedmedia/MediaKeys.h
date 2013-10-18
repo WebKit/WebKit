@@ -64,7 +64,7 @@ protected:
 
     MediaKeys(const String& keySystem, PassOwnPtr<CDM>);
 
-    Vector<RefPtr<MediaKeySession> > m_sessions;
+    Vector<RefPtr<MediaKeySession>> m_sessions;
 
     HTMLMediaElement* m_mediaElement;
     String m_keySystem;

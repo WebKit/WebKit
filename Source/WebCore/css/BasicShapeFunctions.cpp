@@ -173,7 +173,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
         RefPtr<BasicShapePolygon> polygon = BasicShapePolygon::create();
 
         polygon->setWindRule(polygonValue->windRule());
-        const Vector<RefPtr<CSSPrimitiveValue> >& values = polygonValue->values();
+        const Vector<RefPtr<CSSPrimitiveValue>>& values = polygonValue->values();
         for (unsigned i = 0; i < values.size(); i += 2)
             polygon->appendPoint(convertToLength(style, rootStyle, values.at(i).get()), convertToLength(style, rootStyle, values.at(i + 1).get()));
 

@@ -158,7 +158,7 @@ protected:
     void speakersSumFrom5_1_ToMono(const AudioBus&);
 
     size_t m_length;
-    Vector<OwnPtr<AudioChannel> > m_channels;
+    Vector<OwnPtr<AudioChannel>> m_channels;
     int m_layout;
     float m_busGain;
     OwnPtr<AudioFloatArray> m_dezipperGainValues;

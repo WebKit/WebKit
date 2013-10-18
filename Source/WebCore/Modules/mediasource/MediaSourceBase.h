@@ -95,7 +95,7 @@ protected:
     explicit MediaSourceBase(ScriptExecutionContext*);
 
     virtual void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState) = 0;
-    virtual Vector<RefPtr<TimeRanges> > activeRanges() const = 0;
+    virtual Vector<RefPtr<TimeRanges>> activeRanges() const = 0;
 
     PassOwnPtr<SourceBufferPrivate> createSourceBufferPrivate(const String& type, const MediaSourcePrivate::CodecsArray&, ExceptionCode&);
     void scheduleEvent(const AtomicString& eventName);

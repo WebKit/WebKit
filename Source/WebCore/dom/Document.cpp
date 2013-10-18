@@ -5087,7 +5087,7 @@ void Document::webkitCancelFullScreen()
 
     // To achieve that aim, remove all the elements from the top document's stack except for the first before
     // calling webkitExitFullscreen():
-    Vector<RefPtr<Element> > replacementFullscreenElementStack;
+    Vector<RefPtr<Element>> replacementFullscreenElementStack;
     replacementFullscreenElementStack.append(topDocument()->webkitFullscreenElement());
     topDocument()->m_fullScreenElementStack.swap(replacementFullscreenElementStack);
 
@@ -5108,7 +5108,7 @@ void Document::webkitExitFullscreen()
     // 3. Let descendants be all the doc's descendant browsing context's documents with a non-empty fullscreen
     // element stack (if any), ordered so that the child of the doc is last and the document furthest
     // away from the doc is first.
-    Deque<RefPtr<Document> > descendants;
+    Deque<RefPtr<Document>> descendants;
     for (Frame* descendant = frame() ? frame()->tree().traverseNext() : nullptr; descendant; descendant = descendant->tree().traverseNext()) {
         if (descendant->document()->webkitFullscreenElement())
             descendants.prepend(descendant->document());
@@ -5116,7 +5116,7 @@ void Document::webkitExitFullscreen()
         
     // 4. For each descendant in descendants, empty descendant's fullscreen element stack, and queue a
     // task to fire an event named fullscreenchange with its bubbles attribute set to true on descendant.
-    for (Deque<RefPtr<Document> >::iterator i = descendants.begin(); i != descendants.end(); ++i) {
+    for (Deque<RefPtr<Document>>::iterator i = descendants.begin(); i != descendants.end(); ++i) {
         (*i)->clearFullscreenElementStack();
         addDocumentToFullScreenChangeEventQueue(i->get());
     }
@@ -5304,9 +5304,9 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
     // document will be detached and GC'd. We protect it here to make sure we
     // can finish the function successfully.
     Ref<Document> protect(*this);
-    Deque<RefPtr<Node> > changeQueue;
+    Deque<RefPtr<Node>> changeQueue;
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
-    Deque<RefPtr<Node> > errorQueue;
+    Deque<RefPtr<Node>> errorQueue;
     m_fullScreenErrorEventTargetQueue.swap(errorQueue);
     dispatchFullScreenChangeOrErrorEvent(changeQueue, eventNames().webkitfullscreenchangeEvent, /* shouldNotifyMediaElement */ true);
     dispatchFullScreenChangeOrErrorEvent(errorQueue, eventNames().webkitfullscreenerrorEvent, /* shouldNotifyMediaElement */ false);
@@ -5940,7 +5940,7 @@ void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
     if (!frame() || !frame()->page())
         return;
 
-    Vector<RefPtr<Element> > associatedFormControls;
+    Vector<RefPtr<Element>> associatedFormControls;
     copyToVector(m_associatedFormControls, associatedFormControls);
 
     frame()->page()->chrome().client().didAssociateFormControls(associatedFormControls);

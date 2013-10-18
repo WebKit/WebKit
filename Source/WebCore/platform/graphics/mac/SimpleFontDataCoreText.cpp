@@ -34,7 +34,7 @@ namespace WebCore {
 CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typesettingFeatures, FontOrientation orientation) const
 {
     unsigned key = typesettingFeatures + 1;
-    HashMap<unsigned, RetainPtr<CFDictionaryRef> >::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
+    HashMap<unsigned, RetainPtr<CFDictionaryRef>>::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
     RetainPtr<CFDictionaryRef>& attributesDictionary = addResult.iterator->value;
     if (!addResult.isNewEntry)
         return attributesDictionary.get();

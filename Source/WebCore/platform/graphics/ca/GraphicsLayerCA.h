@@ -503,12 +503,12 @@ private:
     AnimationsToProcessMap m_animationsToProcess;
 
     // Map of animation names to their associated lists of property animations, so we can remove/pause them.
-    typedef HashMap<String, Vector<LayerPropertyAnimation> > AnimationsMap;
+    typedef HashMap<String, Vector<LayerPropertyAnimation>> AnimationsMap;
     AnimationsMap m_runningAnimations;
 
     // Map from animation key to TransformationMatrices for animations of transform. The vector contains a matrix for
     // the two endpoints, or each keyframe. Used for contentsScale adjustment.
-    typedef HashMap<String, Vector<TransformationMatrix> > TransformsMap;
+    typedef HashMap<String, Vector<TransformationMatrix>> TransformsMap;
     TransformsMap m_animationTransforms;
 
     Vector<FloatRect> m_dirtyRects;

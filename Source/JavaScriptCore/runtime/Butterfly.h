@@ -71,7 +71,7 @@ private:
 };
 
 typedef ContiguousData<double> ContiguousDoubles;
-typedef ContiguousData<WriteBarrier<Unknown> > ContiguousJSValues;
+typedef ContiguousData<WriteBarrier<Unknown>> ContiguousJSValues;
 
 class Butterfly {
     WTF_MAKE_NONCOPYABLE(Butterfly);
@@ -124,10 +124,10 @@ public:
     template<typename T>
     T* indexingPayload() { return reinterpret_cast_ptr<T*>(this); }
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
-    ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown> >(), vectorLength()); }
+    ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
 
     ContiguousDoubles contiguousDouble() { return ContiguousDoubles(indexingPayload<double>(), vectorLength()); }
-    ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown> >(), vectorLength()); }
+    ContiguousJSValues contiguous() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown>>(), vectorLength()); }
     
     static Butterfly* fromContiguous(WriteBarrier<Unknown>* contiguous)
     {

@@ -40,7 +40,7 @@ namespace JSC {
 
 class RegExpCache : private WeakHandleOwner {
 friend class RegExp;
-typedef HashMap<RegExpKey, Weak<RegExp> > RegExpCacheMap;
+typedef HashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
 
 public:
     RegExpCache(VM* vm);

@@ -189,7 +189,7 @@ namespace JSC {
 #else
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
 #endif
-        OwnPtr<WTF::Bitmap<atomsPerBlock> > m_newlyAllocated;
+        OwnPtr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
         DestructorType m_destructorType;
         MarkedAllocator* m_allocator;

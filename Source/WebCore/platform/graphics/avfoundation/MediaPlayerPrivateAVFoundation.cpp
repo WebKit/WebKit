@@ -919,7 +919,7 @@ void MediaPlayerPrivateAVFoundation::clearTextTracks()
     m_textTracks.clear();
 }
 
-void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >& removedTextTracks)
+void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>& removedTextTracks)
 {
     if (removedTextTracks.size()) {
         for (unsigned i = 0; i < m_textTracks.size(); ++i) {

@@ -105,8 +105,8 @@ void RootObject::invalidate()
         return;
 
     {
-        HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator end = m_runtimeObjects.end();
-        for (HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> >::iterator it = m_runtimeObjects.begin(); it != end; ++it) {
+        HashMap<RuntimeObject*, JSC::Weak<RuntimeObject>>::iterator end = m_runtimeObjects.end();
+        for (HashMap<RuntimeObject*, JSC::Weak<RuntimeObject>>::iterator it = m_runtimeObjects.begin(); it != end; ++it) {
             RuntimeObject* runtimeObject = it->value.get();
             if (!runtimeObject) // Skip zombies.
                 continue;

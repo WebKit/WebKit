@@ -103,7 +103,7 @@ PassRefPtr<TimeRanges> MediaSourceBase::buffered() const
 {
     // Implements MediaSource algorithm for HTMLMediaElement.buffered.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
-    Vector<RefPtr<TimeRanges> > ranges = activeRanges();
+    Vector<RefPtr<TimeRanges>> ranges = activeRanges();
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
     if (ranges.isEmpty())

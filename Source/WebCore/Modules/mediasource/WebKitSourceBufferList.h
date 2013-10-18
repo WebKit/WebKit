@@ -77,7 +77,7 @@ private:
     ScriptExecutionContext* m_scriptExecutionContext;
     GenericEventQueue m_asyncEventQueue;
 
-    Vector<RefPtr<WebKitSourceBuffer> > m_list;
+    Vector<RefPtr<WebKitSourceBuffer>> m_list;
 };
 
 } // namespace WebCore

@@ -82,7 +82,7 @@ public:
 
 #if ENABLE(CACHE_PARTITIONING)
     typedef HashMap<String, CachedResource*> CachedResourceItem;
-    typedef HashMap<String, OwnPtr<CachedResourceItem> > CachedResourceMap;
+    typedef HashMap<String, OwnPtr<CachedResourceItem>> CachedResourceMap;
 #else
     typedef HashMap<String, CachedResource*> CachedResourceMap;
 #endif
@@ -177,7 +177,7 @@ public:
     
     void resourceAccessed(CachedResource*);
 
-    typedef HashSet<RefPtr<SecurityOrigin> > SecurityOriginSet;
+    typedef HashSet<RefPtr<SecurityOrigin>> SecurityOriginSet;
     void removeResourcesWithOrigin(SecurityOrigin*);
     void getOriginsWithCache(SecurityOriginSet& origins);
 

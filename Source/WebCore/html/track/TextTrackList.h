@@ -59,8 +59,8 @@ private:
 
     void invalidateTrackIndexesAfterTrack(TextTrack*);
 
-    Vector<RefPtr<TrackBase> > m_addTrackTracks;
-    Vector<RefPtr<TrackBase> > m_elementTracks;
+    Vector<RefPtr<TrackBase>> m_addTrackTracks;
+    Vector<RefPtr<TrackBase>> m_elementTracks;
 };
 
 } // namespace WebCore

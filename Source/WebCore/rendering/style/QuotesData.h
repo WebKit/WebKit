@@ -36,7 +36,7 @@ namespace WebCore {
 
 class QuotesData : public RefCounted<QuotesData> {
 public:
-    static PassRefPtr<QuotesData> create(const Vector<std::pair<String, String> >& quotes);
+    static PassRefPtr<QuotesData> create(const Vector<std::pair<String, String>>& quotes);
     ~QuotesData();
 
     friend bool operator==(const QuotesData&, const QuotesData&);
@@ -45,7 +45,7 @@ public:
     const String& closeQuote(unsigned index) const;
 
 private:
-    explicit QuotesData(const Vector<std::pair<String, String> >& quotes);
+    explicit QuotesData(const Vector<std::pair<String, String>>& quotes);
 
     unsigned m_quoteCount;
     std::pair<String, String> m_quotePairs[0];

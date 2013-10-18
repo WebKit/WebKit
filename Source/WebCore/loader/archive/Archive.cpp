@@ -37,13 +37,13 @@ Archive::~Archive()
 
 void Archive::clearAllSubframeArchives()
 {
-    Vector<RefPtr<Archive> > clearedArchives;
+    Vector<RefPtr<Archive>> clearedArchives;
     clearAllSubframeArchivesImpl(&clearedArchives);
 }
 
-void Archive::clearAllSubframeArchivesImpl(Vector<RefPtr<Archive> >* clearedArchives)
+void Archive::clearAllSubframeArchivesImpl(Vector<RefPtr<Archive>>* clearedArchives)
 {
-    for (Vector<RefPtr<Archive> >::iterator it = m_subframeArchives.begin(); it != m_subframeArchives.end(); ++it) {
+    for (Vector<RefPtr<Archive>>::iterator it = m_subframeArchives.begin(); it != m_subframeArchives.end(); ++it) {
         if (!clearedArchives->contains(*it)) {
             clearedArchives->append(*it);
             (*it)->clearAllSubframeArchivesImpl(clearedArchives);

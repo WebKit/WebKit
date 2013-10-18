@@ -130,7 +130,7 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
     if (!querySet)
         return true;
 
-    const Vector<OwnPtr<MediaQuery> >& queries = querySet->queryVector();
+    const Vector<OwnPtr<MediaQuery>>& queries = querySet->queryVector();
     if (!queries.size())
         return true; // empty query list evaluates to true
 

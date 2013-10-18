@@ -44,7 +44,7 @@ SimplifyMarkupCommand::SimplifyMarkupCommand(Document& document, Node* firstNode
 void SimplifyMarkupCommand::doApply()
 {
     Node* rootNode = m_firstNode->parentNode();
-    Vector<RefPtr<Node> > nodesToRemove;
+    Vector<RefPtr<Node>> nodesToRemove;
     
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -100,7 +100,7 @@ void SimplifyMarkupCommand::doApply()
     }
 }
 
-int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node> >& nodesToRemove, size_t startNodeIndex)
+int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node>>& nodesToRemove, size_t startNodeIndex)
 {
     size_t pastLastNodeToRemove = startNodeIndex + 1;
     for (; pastLastNodeToRemove < nodesToRemove.size(); ++pastLastNodeToRemove) {

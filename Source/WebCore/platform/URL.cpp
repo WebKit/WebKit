@@ -1499,7 +1499,7 @@ static void appendEncodedHostname(UCharBuffer& buffer, const UChar* str, unsigne
 #endif
 }
 
-static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<pair<int, int> >& nameRanges)
+static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<pair<int, int>>& nameRanges)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
@@ -1615,7 +1615,7 @@ static void encodeHostnames(const String& str, UCharBuffer& output)
     output.clear();
 
     if (protocolIs(str, "mailto")) {
-        Vector<pair<int, int> > hostnameRanges;
+        Vector<pair<int, int>> hostnameRanges;
         findHostnamesInMailToURL(str.characters(), str.length(), hostnameRanges);
         int n = hostnameRanges.size();
         int p = 0;

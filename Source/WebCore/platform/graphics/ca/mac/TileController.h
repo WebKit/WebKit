@@ -48,7 +48,7 @@ class FloatRect;
 class IntPoint;
 class IntRect;
 
-typedef Vector<RetainPtr<WebTileLayer> > WebTileLayerList;
+typedef Vector<RetainPtr<WebTileLayer>> WebTileLayerList;
 
 class TileController : public TiledBacking {
     WTF_MAKE_NONCOPYABLE(TileController);

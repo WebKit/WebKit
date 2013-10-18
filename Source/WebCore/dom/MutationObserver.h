@@ -78,7 +78,7 @@ public:
     ~MutationObserver();
 
     void observe(Node*, const Dictionary&, ExceptionCode&);
-    Vector<RefPtr<MutationRecord> > takeRecords();
+    Vector<RefPtr<MutationRecord>> takeRecords();
     void disconnect();
     void observationStarted(MutationObserverRegistration*);
     void observationEnded(MutationObserverRegistration*);
@@ -97,7 +97,7 @@ private:
     static bool validateOptions(MutationObserverOptions);
 
     RefPtr<MutationCallback> m_callback;
-    Vector<RefPtr<MutationRecord> > m_records;
+    Vector<RefPtr<MutationRecord>> m_records;
     HashSet<MutationObserverRegistration*> m_registrations;
     unsigned m_priority;
 };

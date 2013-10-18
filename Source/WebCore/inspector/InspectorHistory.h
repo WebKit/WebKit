@@ -79,7 +79,7 @@ public:
     void reset();
 
 private:
-    Vector<OwnPtr<Action> > m_history;
+    Vector<OwnPtr<Action>> m_history;
     size_t m_afterLastActionIndex;
 };
 

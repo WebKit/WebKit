@@ -53,7 +53,7 @@ public:
 private:
     FileList();
 
-    Vector<RefPtr<File> > m_files;
+    Vector<RefPtr<File>> m_files;
 };
 
 } // namespace WebCore

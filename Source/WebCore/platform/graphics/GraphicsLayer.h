@@ -214,7 +214,7 @@ public:
     void insert(PassOwnPtr<const AnimationValue>);
     
 protected:
-    Vector<OwnPtr<const AnimationValue> > m_values;
+    Vector<OwnPtr<const AnimationValue>> m_values;
     AnimatedPropertyID m_property;
 };
 

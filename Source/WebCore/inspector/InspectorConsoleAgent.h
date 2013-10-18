@@ -105,7 +105,7 @@ protected:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Console* m_frontend;
     ConsoleMessage* m_previousMessage;
-    Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
+    Vector<OwnPtr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;

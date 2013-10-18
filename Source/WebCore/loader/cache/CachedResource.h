@@ -288,7 +288,7 @@ protected:
         CachedResourceClient* m_client;
         Timer<CachedResourceCallback> m_callbackTimer;
     };
-    HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback> > m_clientsAwaitingCallback;
+    HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback>> m_clientsAwaitingCallback;
 
     ResourceRequest m_resourceRequest;
     String m_accept;

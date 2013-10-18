@@ -61,7 +61,7 @@ private:
         void removeAlternativesForContext(uint64_t context);
         static const uint64_t invalidContext = 0;
     private:
-        typedef HashMap<uint64_t, RetainPtr<NSTextAlternatives> > HashMapType;
+        typedef HashMap<uint64_t, RetainPtr<NSTextAlternatives>> HashMapType;
         HashMapType m_alternativesObjectMap;
     };
 

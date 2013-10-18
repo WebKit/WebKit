@@ -55,7 +55,7 @@ public:
 private:
     LayerPool();
 
-    typedef Deque<RetainPtr<WebTileLayer> > LayerList;
+    typedef Deque<RetainPtr<WebTileLayer>> LayerList;
 
     unsigned decayedCapacity() const;
 

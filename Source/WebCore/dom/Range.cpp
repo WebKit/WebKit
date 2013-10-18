@@ -670,7 +670,7 @@ static inline unsigned lengthOfContentsInNode(Node* node)
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
-    typedef Vector<RefPtr<Node> > NodeVector;
+    typedef Vector<RefPtr<Node>> NodeVector;
 
     RefPtr<DocumentFragment> fragment;
     if (action == Extract || action == Clone)
@@ -851,7 +851,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
     return result.release();
 }
 
-void Range::processNodes(ActionType action, Vector<RefPtr<Node> >& nodes, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode& ec)
+void Range::processNodes(ActionType action, Vector<RefPtr<Node>>& nodes, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode& ec)
 {
     for (unsigned i = 0; i < nodes.size(); i++) {
         switch (action) {
@@ -870,15 +870,15 @@ void Range::processNodes(ActionType action, Vector<RefPtr<Node> >& nodes, PassRe
 
 PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* container, ContentsProcessDirection direction, PassRefPtr<Node> passedClonedContainer, Node* commonRoot, ExceptionCode& ec)
 {
-    typedef Vector<RefPtr<Node> > NodeVector;
+    typedef Vector<RefPtr<Node>> NodeVector;
 
     RefPtr<Node> clonedContainer = passedClonedContainer;
-    Vector<RefPtr<Node> > ancestors;
+    Vector<RefPtr<Node>> ancestors;
     for (ContainerNode* n = container->parentNode(); n && n != commonRoot; n = n->parentNode())
         ancestors.append(n);
 
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
-    for (Vector<RefPtr<Node> >::const_iterator it = ancestors.begin(); it != ancestors.end(); ++it) {
+    for (Vector<RefPtr<Node>>::const_iterator it = ancestors.begin(); it != ancestors.end(); ++it) {
         RefPtr<Node> ancestor = *it;
         if (action == Extract || action == Clone) {
             if (RefPtr<Node> clonedAncestor = ancestor->cloneNode(false)) { // Might have been removed already during mutation event.

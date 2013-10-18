@@ -221,14 +221,14 @@ enum AccessibilityTextSource {
 struct AccessibilityText {
     String text;
     AccessibilityTextSource textSource;
-    Vector<RefPtr<AccessibilityObject> > textElements;
+    Vector<RefPtr<AccessibilityObject>> textElements;
     
     AccessibilityText(const String& t, const AccessibilityTextSource& s)
     : text(t)
     , textSource(s)
     { }
 
-    AccessibilityText(const String& t, const AccessibilityTextSource& s, const Vector<RefPtr<AccessibilityObject> > elements)
+    AccessibilityText(const String& t, const AccessibilityTextSource& s, const Vector<RefPtr<AccessibilityObject>> elements)
     : text(t)
     , textSource(s)
     , textElements(elements)
@@ -395,7 +395,7 @@ public:
     virtual void detach();
     virtual bool isDetached() const;
 
-    typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
+    typedef Vector<RefPtr<AccessibilityObject>> AccessibilityChildrenVector;
     
     virtual bool isAccessibilityNodeObject() const { return false; }    
     virtual bool isAccessibilityRenderObject() const { return false; }
@@ -842,7 +842,7 @@ public:
     virtual int mathLineThickness() const { return 0; }
     
     // Multiscripts components.
-    typedef Vector<pair<AccessibilityObject*, AccessibilityObject*> > AccessibilityMathMultiscriptPairs;
+    typedef Vector<pair<AccessibilityObject*, AccessibilityObject*>> AccessibilityMathMultiscriptPairs;
     virtual void mathPrescripts(AccessibilityMathMultiscriptPairs&) { }
     virtual void mathPostscripts(AccessibilityMathMultiscriptPairs&) { }
     

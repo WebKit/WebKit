@@ -88,7 +88,7 @@ protected:
     unsigned m_lastPreDelayFrames;
     void setPreDelayTime(float);
 
-    Vector<OwnPtr<AudioFloatArray> > m_preDelayBuffers;
+    Vector<OwnPtr<AudioFloatArray>> m_preDelayBuffers;
     int m_preDelayReadIndex;
     int m_preDelayWriteIndex;
 

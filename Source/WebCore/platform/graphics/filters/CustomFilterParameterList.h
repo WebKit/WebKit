@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class CustomFilterParameter;
-typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterListBase;
+typedef Vector<RefPtr<CustomFilterParameter>> CustomFilterParameterListBase;
 
 class CustomFilterParameterList : public CustomFilterParameterListBase {
 public:

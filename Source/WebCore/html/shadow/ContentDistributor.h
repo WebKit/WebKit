@@ -71,7 +71,7 @@ public:
     bool needsDistribution() const;
 
 private:
-    const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
+    const Vector<RefPtr<InsertionPoint>>& ensureInsertionPointList(ShadowRoot*);
 
     bool invalidate(Element* host);
 
@@ -79,8 +79,8 @@ private:
     bool isValid() const { return m_validity == Valid; }
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
-    Vector<RefPtr<InsertionPoint> > m_insertionPointList;
-    HashMap<const Node*, RefPtr<InsertionPoint> > m_nodeToInsertionPoint;
+    Vector<RefPtr<InsertionPoint>> m_insertionPointList;
+    HashMap<const Node*, RefPtr<InsertionPoint>> m_nodeToInsertionPoint;
     bool m_insertionPointListIsValid;
     unsigned m_validity : 2;
 };

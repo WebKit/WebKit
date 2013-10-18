@@ -52,7 +52,7 @@ public:
     };
 
     struct SubimageCacheEntryTraits : WTF::GenericHashTraits<SubimageCacheEntry> {
-        typedef HashTraits<RetainPtr<CGImageRef> > ImageTraits;
+        typedef HashTraits<RetainPtr<CGImageRef>> ImageTraits;
 
         static const bool emptyValueIsZero = true;
 

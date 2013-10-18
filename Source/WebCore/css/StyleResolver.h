@@ -187,7 +187,7 @@ public:
 
     // FIXME: It could be better to call m_ruleSets.appendAuthorStyleSheets() directly after we factor StyleRsolver further.
     // https://bugs.webkit.org/show_bug.cgi?id=108890
-    void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >&);
+    void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>&);
 
     DocumentRuleSets& ruleSets() { return m_ruleSets; }
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
@@ -224,8 +224,8 @@ public:
         AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
         AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
     };
-    Vector<RefPtr<StyleRuleBase> > styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
-    Vector<RefPtr<StyleRuleBase> > pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRuleBase>> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+    Vector<RefPtr<StyleRuleBase>> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
 public:
     void applyPropertyToStyle(CSSPropertyID, CSSValue*, RenderStyle*);
@@ -364,7 +364,7 @@ private:
     template <StyleApplicationPass pass>
     void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, PropertyWhitelistType = PropertyWhitelistNone);
 #if ENABLE(CSS_VARIABLES)
-    void resolveVariables(CSSPropertyID, CSSValue*, Vector<std::pair<CSSPropertyID, String> >& knownExpressions);
+    void resolveVariables(CSSPropertyID, CSSValue*, Vector<std::pair<CSSPropertyID, String>>& knownExpressions);
 #endif
     static bool isValidRegionStyleProperty(CSSPropertyID);
 #if ENABLE(VIDEO_TRACK)
@@ -381,13 +381,13 @@ private:
 
     DocumentRuleSets m_ruleSets;
 
-    typedef HashMap<AtomicStringImpl*, RefPtr<StyleRuleKeyframes> > KeyframesRuleMap;
+    typedef HashMap<AtomicStringImpl*, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
 public:
-    typedef HashMap<CSSPropertyID, RefPtr<CSSValue> > PendingImagePropertyMap;
+    typedef HashMap<CSSPropertyID, RefPtr<CSSValue>> PendingImagePropertyMap;
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
-    typedef HashMap<FilterOperation*, RefPtr<WebKitCSSSVGDocumentValue> > PendingSVGDocumentMap;
+    typedef HashMap<FilterOperation*, RefPtr<WebKitCSSSVGDocumentValue>> PendingSVGDocumentMap;
 #endif
 
     class State {
@@ -585,7 +585,7 @@ private:
     bool m_matchAuthorAndUserStyles;
 
     RefPtr<CSSFontSelector> m_fontSelector;
-    Vector<OwnPtr<MediaQueryResult> > m_viewportDependentMediaQueryResults;
+    Vector<OwnPtr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;

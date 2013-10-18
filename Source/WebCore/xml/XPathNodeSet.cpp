@@ -153,7 +153,7 @@ void NodeSet::sort() const
 
     bool containsAttributeNodes = false;
     
-    Vector<Vector<Node*> > parentMatrix(nodeCount);
+    Vector<Vector<Node*>> parentMatrix(nodeCount);
     for (unsigned i = 0; i < nodeCount; ++i) {
         Vector<Node*>& parentsVector = parentMatrix[i];
         Node* n = m_nodes[i].get();
@@ -205,7 +205,7 @@ void NodeSet::traversalSort() const
             containsAttributeNodes = true;
     }
 
-    Vector<RefPtr<Node> > sortedNodes;
+    Vector<RefPtr<Node>> sortedNodes;
     sortedNodes.reserveInitialCapacity(nodeCount);
 
     for (Node* n = findRootNode(m_nodes.first().get()); n; n = NodeTraversal::next(n)) {

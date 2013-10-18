@@ -50,7 +50,7 @@ private:
     void kill(StaticPropertyAnalysis*);
 
     Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* m_instructions;
-    typedef HashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int> > AnalysisMap;
+    typedef HashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> AnalysisMap;
     AnalysisMap m_analyses;
 };
 

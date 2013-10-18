@@ -301,20 +301,20 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_checkpoints.clear();
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest>>& requests)
 {
     scanCommon(token, requests);
 }
 
 #if ENABLE(THREADED_HTML_PARSER)
-void TokenPreloadScanner::scan(const CompactHTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scan(const CompactHTMLToken& token, Vector<OwnPtr<PreloadRequest>>& requests)
 {
     scanCommon(token, requests);
 }
 #endif
 
 template<typename Token>
-void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRequest>>& requests)
 {
     switch (token.type()) {
     case HTMLToken::Character: {

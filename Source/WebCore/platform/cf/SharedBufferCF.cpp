@@ -126,8 +126,8 @@ void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) c
         return;
 
     CFIndex bytesLeft = bytesToCopy;
-    Vector<RetainPtr<CFDataRef> >::const_iterator end = m_dataArray.end();
-    for (Vector<RetainPtr<CFDataRef> >::const_iterator it = m_dataArray.begin(); it != end; ++it) {
+    Vector<RetainPtr<CFDataRef>>::const_iterator end = m_dataArray.end();
+    for (Vector<RetainPtr<CFDataRef>>::const_iterator it = m_dataArray.begin(); it != end; ++it) {
         CFIndex dataLen = CFDataGetLength(it->get());
         ASSERT(bytesLeft >= dataLen);
         memcpy(destination, CFDataGetBytePtr(it->get()), dataLen);
@@ -139,9 +139,9 @@ void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) c
 
 unsigned SharedBuffer::copySomeDataFromDataArray(const char*& someData, unsigned position) const
 {
-    Vector<RetainPtr<CFDataRef> >::const_iterator end = m_dataArray.end();
+    Vector<RetainPtr<CFDataRef>>::const_iterator end = m_dataArray.end();
     unsigned totalOffset = 0;
-    for (Vector<RetainPtr<CFDataRef> >::const_iterator it = m_dataArray.begin(); it != end; ++it) {
+    for (Vector<RetainPtr<CFDataRef>>::const_iterator it = m_dataArray.begin(); it != end; ++it) {
         unsigned dataLen = static_cast<unsigned>(CFDataGetLength(it->get()));
         ASSERT(totalOffset <= position);
         unsigned localOffset = position - totalOffset;

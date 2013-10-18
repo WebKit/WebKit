@@ -295,7 +295,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     appendAuthorStyleSheets(0, styleSheetCollection.activeAuthorStyleSheets());
 }
 
-void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >& styleSheets)
+void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
 {
     m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, document().isViewSource(), this);
     if (document().renderView() && document().renderView()->style())
@@ -922,7 +922,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     const StyleRuleKeyframes* keyframesRule = it->value.get();
 
     // Construct and populate the style for each keyframe
-    const Vector<RefPtr<StyleKeyframe> >& keyframes = keyframesRule->keyframes();
+    const Vector<RefPtr<StyleKeyframe>>& keyframes = keyframesRule->keyframes();
     for (unsigned i = 0; i < keyframes.size(); ++i) {
         // Apply the declaration to the style. This is a simplified version of the logic in styleForElement
         initElement(e);
@@ -1457,15 +1457,15 @@ void StyleResolver::updateFont()
     m_state.setFontDirty(false);
 }
 
-Vector<RefPtr<StyleRuleBase> > StyleResolver::styleRulesForElement(Element* e, unsigned rulesToInclude)
+Vector<RefPtr<StyleRuleBase>> StyleResolver::styleRulesForElement(Element* e, unsigned rulesToInclude)
 {
     return pseudoStyleRulesForElement(e, NOPSEUDO, rulesToInclude);
 }
 
-Vector<RefPtr<StyleRuleBase> > StyleResolver::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, unsigned rulesToInclude)
+Vector<RefPtr<StyleRuleBase>> StyleResolver::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, unsigned rulesToInclude)
 {
     if (!e || !e->document().haveStylesheetsLoaded())
-        return Vector<RefPtr<StyleRuleBase> >();
+        return Vector<RefPtr<StyleRuleBase>>();
 
     initElement(e);
     m_state.initForStyleResolve(document(), e, 0);
@@ -2053,7 +2053,7 @@ static bool hasVariableReference(CSSValue* value)
     return false;
 }
 
-void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<std::pair<CSSPropertyID, String> >& knownExpressions)
+void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<std::pair<CSSPropertyID, String>>& knownExpressions)
 {
     std::pair<CSSPropertyID, String> expression(id, value->serializeResolvingVariables(*m_state.style()->variables()));
 
@@ -2081,7 +2081,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
 #if ENABLE(CSS_VARIABLES)
     if (id != CSSPropertyVariable && hasVariableReference(value)) {
-        Vector<std::pair<CSSPropertyID, String> > knownExpressions;
+        Vector<std::pair<CSSPropertyID, String>> knownExpressions;
         resolveVariables(id, value, knownExpressions);
         return;
     }
@@ -2239,7 +2239,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         if (value->isValueList()) {
             CSSValueList* list = toCSSValueList(value);
-            Vector<std::pair<String, String> > quotes;
+            Vector<std::pair<String, String>> quotes;
             for (size_t i = 0; i < list->length(); i += 2) {
                 CSSValue* first = list->itemWithoutBoundsCheck(i);
                 // item() returns null if out of bounds so this is safe.
@@ -2257,7 +2257,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         if (primitiveValue) {
             if (primitiveValue->getValueID() == CSSValueNone)
-                state.style()->setQuotes(QuotesData::create(Vector<std::pair<String, String> >()));
+                state.style()->setQuotes(QuotesData::create(Vector<std::pair<String, String>>()));
         }
         return;
     // Shorthand properties.
@@ -3399,7 +3399,7 @@ void StyleResolver::loadPendingSVGDocuments()
         return;
 
     CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
-    Vector<RefPtr<FilterOperation> >& filterOperations = state.style()->mutableFilter().operations();
+    Vector<RefPtr<FilterOperation>>& filterOperations = state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
         if (filterOperation->getOperationType() == FilterOperation::REFERENCE) {
@@ -3462,7 +3462,7 @@ void StyleResolver::loadPendingShaders()
 
     CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
 
-    Vector<RefPtr<FilterOperation> >& filterOperations = m_state.style()->mutableFilter().operations();
+    Vector<RefPtr<FilterOperation>>& filterOperations = m_state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
         if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {

@@ -74,7 +74,7 @@ static const char* symbolName(void* address)
 static bool truncateTrace(const char* symbolName)
 {
     return !strcmp(symbolName, "JSC::BytecodeGenerator::generate()")
-        || !strcmp(symbolName, "JSC::Parser<JSC::Lexer<unsigned char> >::parseInner()")
+        || !strcmp(symbolName, "JSC::Parser<JSC::Lexer<unsigned char>>::parseInner()")
         || !strcmp(symbolName, "WTF::fastMalloc(unsigned long)")
         || !strcmp(symbolName, "WTF::calculateUTCOffset()")
         || !strcmp(symbolName, "JSC::DFG::ByteCodeParser::parseCodeBlock()");

@@ -197,7 +197,7 @@ namespace JSC {
         }
         
         MacroAssembler::JumpList m_failures;
-        Vector<std::pair<Call, FunctionPtr> > m_calls;
+        Vector<std::pair<Call, FunctionPtr>> m_calls;
     };
 
 }

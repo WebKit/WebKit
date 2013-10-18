@@ -49,7 +49,7 @@ typedef String ErrorString;
 class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, public InspectorBackendDispatcher::MemoryCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
 public:
-    typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
+    typedef Vector<OwnPtr<InspectorBaseAgentInterface>> InspectorAgents;
 
     static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state);
     virtual ~InspectorMemoryAgent();

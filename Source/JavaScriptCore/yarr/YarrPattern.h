@@ -275,7 +275,7 @@ public:
         return alternative;
     }
 
-    Vector<OwnPtr<PatternAlternative> > m_alternatives;
+    Vector<OwnPtr<PatternAlternative>> m_alternatives;
     PatternAlternative* m_parent;
     unsigned m_minimumSize;
     unsigned m_callFrameSize;
@@ -382,7 +382,7 @@ struct YarrPattern {
     unsigned m_maxBackReference;
     PatternDisjunction* m_body;
     Vector<OwnPtr<PatternDisjunction>, 4> m_disjunctions;
-    Vector<OwnPtr<CharacterClass> > m_userCharacterClasses;
+    Vector<OwnPtr<CharacterClass>> m_userCharacterClasses;
 
 private:
     const char* compile(const String& patternString);

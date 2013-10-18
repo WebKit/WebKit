@@ -170,7 +170,7 @@ void TrackListBase::scheduleChangeEvent()
 
 void TrackListBase::asyncEventTimerFired(Timer<TrackListBase>*)
 {
-    Vector<RefPtr<Event> > pendingEvents;
+    Vector<RefPtr<Event>> pendingEvents;
 
     ++m_dispatchingEvents;
     m_pendingEvents.swap(pendingEvents);

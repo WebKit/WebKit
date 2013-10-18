@@ -138,7 +138,7 @@ static inline void snapVerticesToLayoutUnitGrid(Vector<FloatPoint>& vertices)
 
 static inline PassOwnPtr<FloatPolygon> computeShapePaddingBounds(const FloatPolygon& polygon, float padding, WindRule fillRule)
 {
-    OwnPtr<Vector<FloatPoint> > paddedVertices = adoptPtr(new Vector<FloatPoint>());
+    OwnPtr<Vector<FloatPoint>> paddedVertices = adoptPtr(new Vector<FloatPoint>());
     FloatPoint intersection;
 
     for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
@@ -159,7 +159,7 @@ static inline PassOwnPtr<FloatPolygon> computeShapePaddingBounds(const FloatPoly
 
 static inline PassOwnPtr<FloatPolygon> computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
 {
-    OwnPtr<Vector<FloatPoint> > marginVertices = adoptPtr(new Vector<FloatPoint>());
+    OwnPtr<Vector<FloatPoint>> marginVertices = adoptPtr(new Vector<FloatPoint>());
     FloatPoint intersection;
 
     for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {

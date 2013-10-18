@@ -91,7 +91,7 @@ private:
     float m_sampleRate;
 };
 
-typedef Vector<RefPtr<HRTFKernel> > HRTFKernelList;
+typedef Vector<RefPtr<HRTFKernel>> HRTFKernelList;
 
 } // namespace WebCore
 

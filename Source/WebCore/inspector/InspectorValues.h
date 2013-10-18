@@ -135,7 +135,7 @@ private:
 
 class InspectorObjectBase : public InspectorValue {
 private:
-    typedef HashMap<String, RefPtr<InspectorValue> > Dictionary;
+    typedef HashMap<String, RefPtr<InspectorValue>> Dictionary;
 
 public:
     typedef Dictionary::iterator iterator;
@@ -222,8 +222,8 @@ public:
 
 class InspectorArrayBase : public InspectorValue {
 public:
-    typedef Vector<RefPtr<InspectorValue> >::iterator iterator;
-    typedef Vector<RefPtr<InspectorValue> >::const_iterator const_iterator;
+    typedef Vector<RefPtr<InspectorValue>>::iterator iterator;
+    typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
 
     virtual PassRefPtr<InspectorArray> asArray() OVERRIDE;
 
@@ -255,7 +255,7 @@ protected:
     InspectorArrayBase();
 
 private:
-    Vector<RefPtr<InspectorValue> > m_data;
+    Vector<RefPtr<InspectorValue>> m_data;
 };
 
 class InspectorArray : public InspectorArrayBase {

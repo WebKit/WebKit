@@ -61,10 +61,10 @@ public:
 
     void exceptionUnwind(ExecState* handlerCallFrame);
 
-    const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };
+    const Vector<RefPtr<ProfileGenerator>>& currentProfiles() { return m_currentProfiles; };
 
 private:
-    Vector<RefPtr<ProfileGenerator> > m_currentProfiles;
+    Vector<RefPtr<ProfileGenerator>> m_currentProfiles;
     static LegacyProfiler* s_sharedLegacyProfiler;
 };
 

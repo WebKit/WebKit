@@ -70,7 +70,7 @@ private:
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
 template<class T, class UserData = void*>
-class PODIntervalTree : public PODRedBlackTree<PODInterval<T, UserData> > {
+class PODIntervalTree : public PODRedBlackTree<PODInterval<T, UserData>> {
     WTF_MAKE_NONCOPYABLE(PODIntervalTree);
 public:
     // Typedef to reduce typing when declaring intervals to be stored in
@@ -253,7 +253,7 @@ private:
 #ifndef NDEBUG
 // Support for printing PODIntervals at the PODRedBlackTree level.
 template<class T, class UserData>
-struct ValueToString<PODInterval<T, UserData> > {
+struct ValueToString<PODInterval<T, UserData>> {
     static String string(const PODInterval<T, UserData>& interval)
     {
         return interval.toString();

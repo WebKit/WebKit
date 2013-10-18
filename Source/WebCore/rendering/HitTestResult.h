@@ -48,7 +48,7 @@ class Scrollbar;
 
 class HitTestResult {
 public:
-    typedef ListHashSet<RefPtr<Node> > NodeSet;
+    typedef ListHashSet<RefPtr<Node>> NodeSet;
 
     HitTestResult();
     explicit HitTestResult(const LayoutPoint&);

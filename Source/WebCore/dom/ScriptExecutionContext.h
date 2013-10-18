@@ -199,7 +199,7 @@ private:
 
     bool m_inDispatchErrorEvent;
     class PendingException;
-    OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
+    OwnPtr<Vector<OwnPtr<PendingException>>> m_pendingExceptions;
 
     bool m_activeDOMObjectsAreSuspended;
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;

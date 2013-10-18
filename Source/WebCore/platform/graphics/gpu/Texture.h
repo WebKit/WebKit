@@ -54,11 +54,11 @@ public:
     Format format() const { return m_format; }
     const TilingData& tiles() const { return m_tiles; }
 private:
-    Texture(GraphicsContext3D*, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize);
+    Texture(GraphicsContext3D*, PassOwnPtr<Vector<unsigned int>> tileTextureIds, Format format, int width, int height, int maxTextureSize);
     GraphicsContext3D* m_context;
     Format m_format;
     TilingData m_tiles;
-    OwnPtr<Vector<unsigned int> > m_tileTextureIds;
+    OwnPtr<Vector<unsigned int>> m_tileTextureIds;
 };
 
 }

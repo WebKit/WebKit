@@ -201,8 +201,8 @@ private:
     NodeType m_nodeType;
     RefPtr<AudioContext> m_context;
     float m_sampleRate;
-    Vector<OwnPtr<AudioNodeInput> > m_inputs;
-    Vector<OwnPtr<AudioNodeOutput> > m_outputs;
+    Vector<OwnPtr<AudioNodeInput>> m_inputs;
+    Vector<OwnPtr<AudioNodeOutput>> m_outputs;
 
     double m_lastProcessingTime;
     double m_lastNonSilentTime;

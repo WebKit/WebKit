@@ -50,7 +50,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const
     OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
     buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream.get(), UnalteredParsing);
 
-    Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff> > result;
+    Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
 
     SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
     for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it)

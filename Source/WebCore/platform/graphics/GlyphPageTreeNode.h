@@ -118,7 +118,7 @@ private:
     static HashMap<int, GlyphPageTreeNode*>* roots;
     static GlyphPageTreeNode* pageZeroRoot;
 
-    typedef HashMap<const FontData*, OwnPtr<GlyphPageTreeNode> > GlyphPageTreeNodeMap;
+    typedef HashMap<const FontData*, OwnPtr<GlyphPageTreeNode>> GlyphPageTreeNodeMap;
 
     GlyphPageTreeNodeMap m_children;
     GlyphPageTreeNode* m_parent;

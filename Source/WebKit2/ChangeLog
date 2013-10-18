@@ -1,3 +1,15 @@
+2013-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove spaces between template angle brackets
+        https://bugs.webkit.org/show_bug.cgi?id=123040
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/mac/WebColorPickerMac.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setProcessSuppressionEnabled):
+
 2013-10-18  Brady Eidson  <beidson@apple.com>
 
         Get rid of IDBFactoryBackendLevelDB and IDBTransactionBackendLevelDB in IDBDatabaseBackendLevelDB.

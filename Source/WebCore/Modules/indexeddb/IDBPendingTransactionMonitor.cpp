@@ -34,7 +34,7 @@ using WTF::ThreadSpecific;
 
 namespace WebCore {
 
-typedef Vector<RefPtr<IDBTransaction> > TransactionList;
+typedef Vector<RefPtr<IDBTransaction>> TransactionList;
 static ThreadSpecific<TransactionList>& transactions()
 {
     // FIXME: Move the Vector to ScriptExecutionContext to avoid dealing with

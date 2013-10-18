@@ -1446,7 +1446,7 @@ void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
     [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 #endif
 
-    Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
+    Vector<RefPtr<InbandTextTrackPrivateAVF>> removedTextTracks = m_textTracks;
     NSArray *tracks = [m_avPlayerItem.get() tracks];
     for (AVPlayerItemTrack *playerItemTrack in tracks) {
 
@@ -1502,7 +1502,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
     if (!m_textTracks.size())
         [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 
-    Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
+    Vector<RefPtr<InbandTextTrackPrivateAVF>> removedTextTracks = m_textTracks;
     NSArray *legibleOptions = [AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]];
     for (AVMediaSelectionOptionType *option in legibleOptions) {
         bool newTrack = true;

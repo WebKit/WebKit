@@ -79,7 +79,7 @@ static NSString *databasesDirectoryPath();
 
 - (NSArray *)origins
 {
-    Vector<RefPtr<SecurityOrigin> > coreOrigins;
+    Vector<RefPtr<SecurityOrigin>> coreOrigins;
     DatabaseManager::manager().origins(coreOrigins);
     NSMutableArray *webOrigins = [[NSMutableArray alloc] initWithCapacity:coreOrigins.size()];
 

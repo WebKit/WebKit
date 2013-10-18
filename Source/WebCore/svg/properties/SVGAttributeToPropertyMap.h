@@ -38,7 +38,7 @@ public:
 
     // FIXME: To match WebKit coding style either these functions should have return values instead of out parameters,
     // or the word "get" should be added as a prefix to their names.
-    void animatedPropertiesForAttribute(SVGElement* contextElement, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty> >&);
+    void animatedPropertiesForAttribute(SVGElement* contextElement, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty>>&);
     void animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>&);
 
     void synchronizeProperties(SVGElement* contextElement);
@@ -49,7 +49,7 @@ private:
     PassRefPtr<SVGAnimatedProperty> animatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, const SVGPropertyInfo*);
 
     typedef Vector<const SVGPropertyInfo*> PropertiesVector;
-    typedef HashMap<QualifiedName, OwnPtr<PropertiesVector> > AttributeToPropertiesMap;
+    typedef HashMap<QualifiedName, OwnPtr<PropertiesVector>> AttributeToPropertiesMap;
     AttributeToPropertiesMap m_map;
 };
 

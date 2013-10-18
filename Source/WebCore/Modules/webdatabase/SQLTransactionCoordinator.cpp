@@ -130,7 +130,7 @@ void SQLTransactionCoordinator::shutdown()
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         if (info.activeWriteTransaction)
             info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
-        for (HashSet<RefPtr<SQLTransactionBackend> >::iterator activeReadTransactionsIterator =
+        for (HashSet<RefPtr<SQLTransactionBackend>>::iterator activeReadTransactionsIterator =
                      info.activeReadTransactions.begin();
              activeReadTransactionsIterator != info.activeReadTransactions.end();
              ++activeReadTransactionsIterator) {

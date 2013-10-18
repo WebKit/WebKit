@@ -100,7 +100,7 @@ public:
         // WebSocketChannelClient functions.
         virtual void didConnect() OVERRIDE;
         virtual void didReceiveMessage(const String& message) OVERRIDE;
-        virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> >) OVERRIDE;
+        virtual void didReceiveBinaryData(PassOwnPtr<Vector<char>>) OVERRIDE;
         virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
         virtual void didStartClosingHandshake() OVERRIDE;
         virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
@@ -171,7 +171,7 @@ private:
 
     static void mainThreadConnect(ScriptExecutionContext*, Peer*, const URL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
-    static void mainThreadSendArrayBuffer(ScriptExecutionContext*, Peer*, PassOwnPtr<Vector<char> >);
+    static void mainThreadSendArrayBuffer(ScriptExecutionContext*, Peer*, PassOwnPtr<Vector<char>>);
     static void mainThreadSendBlob(ScriptExecutionContext*, Peer*, const URL&, const String& type, long long size);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);

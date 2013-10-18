@@ -82,8 +82,8 @@ private:
     void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
     unsigned m_doubleBufferIndex;
     unsigned m_doubleBufferIndexForEvent;
-    Vector<RefPtr<AudioBuffer> > m_inputBuffers;
-    Vector<RefPtr<AudioBuffer> > m_outputBuffers;
+    Vector<RefPtr<AudioBuffer>> m_inputBuffers;
+    Vector<RefPtr<AudioBuffer>> m_outputBuffers;
 
     size_t m_bufferSize;
     unsigned m_bufferReadWriteIndex;

@@ -66,7 +66,7 @@ private:
 
     RefPtr<CSSPrimitiveValue> m_identifierValueCache[numCSSValueKeywords];
 
-    typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue> > ColorValueCache;
+    typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue>> ColorValueCache;
     ColorValueCache m_colorValueCache;
     RefPtr<CSSPrimitiveValue> m_colorTransparent;
     RefPtr<CSSPrimitiveValue> m_colorWhite;
@@ -78,10 +78,10 @@ private:
     RefPtr<CSSPrimitiveValue> m_percentValueCache[maximumCacheableIntegerValue + 1];
     RefPtr<CSSPrimitiveValue> m_numberValueCache[maximumCacheableIntegerValue + 1];
 
-    typedef HashMap<AtomicString, RefPtr<CSSValueList> > FontFaceValueCache;
+    typedef HashMap<AtomicString, RefPtr<CSSValueList>> FontFaceValueCache;
     FontFaceValueCache m_fontFaceValueCache;
 
-    typedef HashMap<String, RefPtr<CSSPrimitiveValue> > FontFamilyValueCache;
+    typedef HashMap<String, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;
     FontFamilyValueCache m_fontFamilyValueCache;
 
     friend CSSValuePool& cssValuePool();

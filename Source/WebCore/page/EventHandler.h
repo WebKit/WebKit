@@ -458,7 +458,7 @@ private:
     int m_activationEventNumber;
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    typedef HashMap<int, RefPtr<EventTarget> > TouchTargetMap;
+    typedef HashMap<int, RefPtr<EventTarget>> TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
     RefPtr<Document> m_originatingTouchPointDocument;
     unsigned m_originatingTouchPointTargetKey;

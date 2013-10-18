@@ -354,7 +354,7 @@ private:
         OrdinalNumber columnNumber;
     };
 
-    Deque<OwnPtr<PendingCallback> > m_callbacks;
+    Deque<OwnPtr<PendingCallback>> m_callbacks;
 };
 // --------------------------------
 

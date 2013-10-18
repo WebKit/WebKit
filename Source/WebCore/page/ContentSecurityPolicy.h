@@ -46,7 +46,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 
 typedef int SandboxFlags;
-typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
+typedef Vector<OwnPtr<CSPDirectiveList>> CSPDirectiveListVector;
 
 class ContentSecurityPolicy {
     WTF_MAKE_FAST_ALLOCATED;

@@ -79,7 +79,7 @@ static unsigned findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned ve
     return vertexIndex2;
 }
 
-FloatPolygon::FloatPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
+FloatPolygon::FloatPolygon(PassOwnPtr<Vector<FloatPoint>> vertices, WindRule fillRule)
     : m_vertices(vertices)
     , m_fillRule(fillRule)
 {

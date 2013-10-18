@@ -78,7 +78,7 @@ protected:
     float m_sampleRate;
     size_t m_length;
 
-    Vector<RefPtr<Float32Array> > m_channels;
+    Vector<RefPtr<Float32Array>> m_channels;
 };
 
 } // namespace WebCore

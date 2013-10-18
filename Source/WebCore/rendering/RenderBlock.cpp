@@ -90,7 +90,7 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
 
-typedef WTF::HashMap<const RenderBox*, OwnPtr<ColumnInfo> > ColumnInfoMap;
+typedef WTF::HashMap<const RenderBox*, OwnPtr<ColumnInfo>> ColumnInfoMap;
 static ColumnInfoMap* gColumnInfoMap = 0;
 
 static TrackedDescendantsMap* gPositionedDescendantsMap = 0;
@@ -99,7 +99,7 @@ static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
 static TrackedContainerMap* gPositionedContainerMap = 0;
 static TrackedContainerMap* gPercentHeightContainerMap = 0;
     
-typedef WTF::HashMap<RenderBlock*, OwnPtr<ListHashSet<RenderInline*> > > ContinuationOutlineTableMap;
+typedef WTF::HashMap<RenderBlock*, OwnPtr<ListHashSet<RenderInline*>>> ContinuationOutlineTableMap;
 
 typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
 static int gDelayUpdateScrollInfo = 0;
@@ -2573,7 +2573,7 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
     if (table->isEmpty())
         return;
         
-    OwnPtr<ListHashSet<RenderInline*> > continuations = table->take(this);
+    OwnPtr<ListHashSet<RenderInline*>> continuations = table->take(this);
     if (!continuations)
         return;
 
@@ -3047,7 +3047,7 @@ void RenderBlock::removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDe
     if (!descendantsMap)
         return;
     
-    OwnPtr<HashSet<RenderBlock*> > containerSet = containerMap->take(descendant);
+    OwnPtr<HashSet<RenderBlock*>> containerSet = containerMap->take(descendant);
     if (!containerSet)
         return;
     

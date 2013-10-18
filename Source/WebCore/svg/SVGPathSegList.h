@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SVGElement;
 
-class SVGPathSegList : public Vector<RefPtr<SVGPathSeg> > {
+class SVGPathSegList : public Vector<RefPtr<SVGPathSeg>> {
 public:
     SVGPathSegList(SVGPathSegRole role)
         : m_role(role)

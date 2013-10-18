@@ -85,7 +85,7 @@ namespace WebCore {
         Mutex m_lock;
 
         // List of shared workers. Expectation is that there will be a limited number of shared workers, and so tracking them in a Vector is more efficient than nested HashMaps.
-        typedef Vector<RefPtr<SharedWorkerProxy> > SharedWorkerProxyRepository;
+        typedef Vector<RefPtr<SharedWorkerProxy>> SharedWorkerProxyRepository;
         SharedWorkerProxyRepository m_proxies;
     };
 

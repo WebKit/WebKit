@@ -76,10 +76,10 @@ double ScriptProfile::idleTime() const
 #if ENABLE(INSPECTOR)
 static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectFor(const JSC::ProfileNode* node)
 {
-    typedef Vector<RefPtr<JSC::ProfileNode> > ProfileNodesList;
+    typedef Vector<RefPtr<JSC::ProfileNode>> ProfileNodesList;
     const ProfileNodesList& nodeChildren = node->children();
     ProfileNodesList::const_iterator end = nodeChildren.end();
-    RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode> > children = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>::create();
+    RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>> children = TypeBuilder::Array<TypeBuilder::Profiler::CPUProfileNode>::create();
     for (ProfileNodesList::const_iterator iter = nodeChildren.begin(); iter != end; ++iter)
         children->addItem(buildInspectorObjectFor(iter->get()));
 

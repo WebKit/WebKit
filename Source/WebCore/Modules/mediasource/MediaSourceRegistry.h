@@ -55,7 +55,7 @@ public:
 
 private:
     MediaSourceRegistry();
-    HashMap<String, RefPtr<MediaSourceBase> > m_mediaSources;
+    HashMap<String, RefPtr<MediaSourceBase>> m_mediaSources;
 };
 
 } // namespace WebCore

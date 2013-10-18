@@ -53,7 +53,7 @@ class Image;
 class URL;
 class ResourceRequest;
 
-typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
+typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
 
 extern void (*notifyHistoryItemChanged)(HistoryItem*);
 
@@ -177,7 +177,7 @@ public:
 
     void addRedirectURL(const String&);
     Vector<String>* redirectURLs() const;
-    void setRedirectURLs(PassOwnPtr<Vector<String> >);
+    void setRedirectURLs(PassOwnPtr<Vector<String>>);
 
     bool isCurrentDocument(Document*) const;
     
@@ -249,7 +249,7 @@ private:
     Vector<int> m_dailyVisitCounts;
     Vector<int> m_weeklyVisitCounts;
 
-    OwnPtr<Vector<String> > m_redirectURLs;
+    OwnPtr<Vector<String>> m_redirectURLs;
 
     // If two HistoryItems have the same item sequence number, then they are
     // clones of one another.  Traversing history from one such HistoryItem to
@@ -276,7 +276,7 @@ private:
     
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;
-    OwnPtr<HashMap<String, RetainPtr<id> > > m_transientProperties;
+    OwnPtr<HashMap<String, RetainPtr<id>>> m_transientProperties;
 #endif
 
 #if PLATFORM(BLACKBERRY)

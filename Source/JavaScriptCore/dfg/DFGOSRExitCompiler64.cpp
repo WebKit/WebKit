@@ -386,7 +386,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     if (haveArguments) {
         HashSet<InlineCallFrame*, DefaultHash<InlineCallFrame*>::Hash,
-            NullableHashTraits<InlineCallFrame*> > didCreateArgumentsObject;
+            NullableHashTraits<InlineCallFrame*>> didCreateArgumentsObject;
 
         for (size_t index = 0; index < operands.size(); ++index) {
             const ValueRecovery& recovery = operands[index];

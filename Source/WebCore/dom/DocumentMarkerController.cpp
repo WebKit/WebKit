@@ -412,7 +412,7 @@ void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerT
         return;
     ASSERT(!m_markers.isEmpty());
 
-    Vector<RefPtr<Node> > nodesWithMarkers;
+    Vector<RefPtr<Node>> nodesWithMarkers;
     copyKeysToVector(m_markers, nodesWithMarkers);
     unsigned size = nodesWithMarkers.size();
     for (unsigned i = 0; i < size; ++i) {

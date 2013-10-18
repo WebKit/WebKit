@@ -64,7 +64,7 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDOMStorageItems(ErrorString*, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& items);
+    virtual void getDOMStorageItems(ErrorString*, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>>& items);
     virtual void setDOMStorageItem(ErrorString*, const RefPtr<InspectorObject>& storageId, const String& key, const String& value);
     virtual void removeDOMStorageItem(ErrorString*, const RefPtr<InspectorObject>& storageId, const String& key);
 

@@ -50,7 +50,7 @@ public:
     MediaStreamDescriptor* lookupMediaStreamDescriptor(const String& url);
 
 private:
-    HashMap<String, RefPtr<MediaStreamDescriptor> > m_streamDescriptors;
+    HashMap<String, RefPtr<MediaStreamDescriptor>> m_streamDescriptors;
 };
 
 } // namespace WebCore

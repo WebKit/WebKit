@@ -1924,7 +1924,7 @@ private:
     OwnPtr<ByteDisjunction> m_bodyDisjunction;
     unsigned m_currentAlternativeIndex;
     Vector<ParenthesesStackEntry> m_parenthesesStack;
-    Vector<OwnPtr<ByteDisjunction> > m_allParenthesesInfo;
+    Vector<OwnPtr<ByteDisjunction>> m_allParenthesesInfo;
 };
 
 PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)

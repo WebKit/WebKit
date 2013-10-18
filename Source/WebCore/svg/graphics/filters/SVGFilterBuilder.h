@@ -65,13 +65,13 @@ private:
 
     inline void addBuiltinEffects()
     {
-        HashMap<AtomicString, RefPtr<FilterEffect> >::iterator end = m_builtinEffects.end();
-        for (HashMap<AtomicString, RefPtr<FilterEffect> >::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
+        HashMap<AtomicString, RefPtr<FilterEffect>>::iterator end = m_builtinEffects.end();
+        for (HashMap<AtomicString, RefPtr<FilterEffect>>::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
              m_effectReferences.add(iterator->value, FilterEffectSet());
     }
 
-    HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;
-    HashMap<AtomicString, RefPtr<FilterEffect> > m_namedEffects;
+    HashMap<AtomicString, RefPtr<FilterEffect>> m_builtinEffects;
+    HashMap<AtomicString, RefPtr<FilterEffect>> m_namedEffects;
     // The value is a list, which contains those filter effects,
     // which depends on the key filter effect.
     HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;

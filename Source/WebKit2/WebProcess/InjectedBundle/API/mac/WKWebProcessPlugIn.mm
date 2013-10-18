@@ -42,7 +42,7 @@
 typedef HashMap<WKBundlePageRef, RetainPtr<WKWebProcessPlugInBrowserContextController *>> BundlePageWrapperCache;
 
 @interface WKWebProcessPlugInController () {
-    RetainPtr<id <WKWebProcessPlugIn> > _principalClassInstance;
+    RetainPtr<id <WKWebProcessPlugIn>> _principalClassInstance;
     WKRetainPtr<WKBundleRef> _bundleRef;
     BundlePageWrapperCache _bundlePageWrapperCache;
     RetainPtr<WKConnection *> _connectionWrapper;

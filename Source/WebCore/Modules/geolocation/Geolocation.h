@@ -109,8 +109,8 @@ private:
         bool m_useCachedPosition;
     };
 
-    typedef Vector<RefPtr<GeoNotifier> > GeoNotifierVector;
-    typedef HashSet<RefPtr<GeoNotifier> > GeoNotifierSet;
+    typedef Vector<RefPtr<GeoNotifier>> GeoNotifierVector;
+    typedef HashSet<RefPtr<GeoNotifier>> GeoNotifierSet;
 
     class Watchers {
     public:
@@ -123,7 +123,7 @@ private:
         bool isEmpty() const;
         void getNotifiersVector(GeoNotifierVector&) const;
     private:
-        typedef HashMap<int, RefPtr<GeoNotifier> > IdToNotifierMap;
+        typedef HashMap<int, RefPtr<GeoNotifier>> IdToNotifierMap;
         typedef HashMap<RefPtr<GeoNotifier>, int> NotifierToIdMap;
         IdToNotifierMap m_idToNotifierMap;
         NotifierToIdMap m_notifierToIdMap;

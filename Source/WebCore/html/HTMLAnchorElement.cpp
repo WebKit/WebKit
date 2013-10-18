@@ -614,7 +614,7 @@ bool HTMLAnchorElement::willRespondToMouseClickEvents()
     return isLink() || HTMLElement::willRespondToMouseClickEvents();
 }
 
-typedef HashMap<const HTMLAnchorElement*, RefPtr<Element> > RootEditableElementMap;
+typedef HashMap<const HTMLAnchorElement*, RefPtr<Element>> RootEditableElementMap;
 
 static RootEditableElementMap& rootEditableElementMap()
 {

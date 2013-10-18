@@ -35,7 +35,7 @@
 namespace WebCore {
 
 template<>
-RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey()
+RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::createValueForNullKey()
 {
     // CF hyphenation functions use locale (regional formats) language, which doesn't necessarily match primary UI language,
     // so we can't use default locale here. See <rdar://problem/14897664>.
@@ -45,16 +45,16 @@ RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::creat
 }
 
 template<>
-RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForKey(const AtomicString& localeIdentifier)
+RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>::createValueForKey(const AtomicString& localeIdentifier)
 {
     RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
 
     return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }
 
-static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >& cfLocaleCache()
+static AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>& cfLocaleCache()
 {
-    DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >, cache, ());
+    DEFINE_STATIC_LOCAL(AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef>>, cache, ());
     return cache;
 }
 

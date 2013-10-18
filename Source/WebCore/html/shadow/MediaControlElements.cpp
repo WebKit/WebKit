@@ -895,7 +895,7 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     if (!document().page())
         return;
     CaptionUserPreferences* captionPreferences = document().page()->group().captionPreferences();
-    Vector<RefPtr<TextTrack> > tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
+    Vector<RefPtr<TextTrack>> tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
 
     RefPtr<Element> captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
@@ -1242,7 +1242,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     HTMLVideoElement* video = toHTMLVideoElement(mediaElement);
 
     // 3. Let output be an empty list of absolutely positioned CSS block boxes.
-    Vector<RefPtr<HTMLDivElement> > output;
+    Vector<RefPtr<HTMLDivElement>> output;
 
     // 4. If the user agent is exposing a user interface for video, add to
     // output one or more completely transparent positioned CSS block boxes that

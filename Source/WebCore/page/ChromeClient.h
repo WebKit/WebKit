@@ -358,7 +358,7 @@ public:
     virtual String plugInExtraStyleSheet() const { return String(); }
     virtual String plugInExtraScript() const { return String(); }
 
-    virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { };
+    virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
     virtual void didAddHeaderLayer(GraphicsLayer*) { }

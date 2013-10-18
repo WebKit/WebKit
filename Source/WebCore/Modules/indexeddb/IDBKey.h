@@ -37,7 +37,7 @@ namespace WebCore {
 
 class IDBKey : public RefCounted<IDBKey> {
 public:
-    typedef Vector<RefPtr<IDBKey> > KeyArray;
+    typedef Vector<RefPtr<IDBKey>> KeyArray;
 
     static PassRefPtr<IDBKey> createInvalid()
     {

@@ -48,7 +48,7 @@ void ScrollingTreeNode::appendChild(PassOwnPtr<ScrollingTreeNode> childNode)
     childNode->setParent(this);
 
     if (!m_children)
-        m_children = adoptPtr(new Vector<OwnPtr<ScrollingTreeNode> >);
+        m_children = adoptPtr(new Vector<OwnPtr<ScrollingTreeNode>>);
 
     m_children->append(childNode);
 }

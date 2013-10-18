@@ -213,7 +213,7 @@ public:
 
     PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) const { return m_values.at(i * 2); }
     PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
-    const Vector<RefPtr<CSSPrimitiveValue> >& values() const { return m_values; }
+    const Vector<RefPtr<CSSPrimitiveValue>>& values() const { return m_values; }
 
     void setWindRule(WindRule w) { m_windRule = w; }
     WindRule windRule() const { return m_windRule; }
@@ -232,7 +232,7 @@ private:
     {
     }
 
-    Vector<RefPtr<CSSPrimitiveValue> > m_values;
+    Vector<RefPtr<CSSPrimitiveValue>> m_values;
     WindRule m_windRule;
 };
 

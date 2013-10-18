@@ -46,7 +46,7 @@ using namespace std;
 namespace WebCore {
 
 
-Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int> > tileTextureIds, Format format, int width, int height, int maxTextureSize)
+Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int>> tileTextureIds, Format format, int width, int height, int maxTextureSize)
     : m_context(context)
     , m_format(format)
     , m_tiles(IntSize(maxTextureSize, maxTextureSize), IntSize(width, height), true)
@@ -97,7 +97,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
         numTiles = 0;
     }
 
-    OwnPtr<Vector<unsigned int> > textureIds = adoptPtr(new Vector<unsigned int>(numTiles));
+    OwnPtr<Vector<unsigned int>> textureIds = adoptPtr(new Vector<unsigned int>(numTiles));
     textureIds->fill(0, numTiles);
 
     for (int i = 0; i < numTiles; i++) {

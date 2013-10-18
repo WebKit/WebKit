@@ -32,10 +32,10 @@ namespace WebCore {
 struct SVGElementAnimatedProperties {
     SVGElementAnimatedProperties();
 
-    SVGElementAnimatedProperties(SVGElement*, Vector<RefPtr<SVGAnimatedProperty> >&);
+    SVGElementAnimatedProperties(SVGElement*, Vector<RefPtr<SVGAnimatedProperty>>&);
 
     SVGElement* element;
-    Vector<RefPtr<SVGAnimatedProperty> > properties;
+    Vector<RefPtr<SVGAnimatedProperty>> properties;
 };
 typedef Vector<SVGElementAnimatedProperties> SVGElementAnimatedPropertyList;
 

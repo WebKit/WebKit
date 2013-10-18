@@ -70,7 +70,7 @@ public:
 
     void addOpenDatabase(DatabaseBackendBase*);
     void removeOpenDatabase(DatabaseBackendBase*);
-    void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<DatabaseBackendBase> >* databases);
+    void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<DatabaseBackendBase>>* databases);
 
     unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
 
@@ -85,7 +85,7 @@ public:
     void setDatabaseDirectoryPath(const String&);
     String databaseDirectoryPath() const;
 
-    void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    void origins(Vector<RefPtr<SecurityOrigin>>& result);
     bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
 
     DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
@@ -144,7 +144,7 @@ private:
     Mutex m_databaseGuard;
     SQLiteDatabase m_database;
 
-    typedef HashMap<String, RefPtr<OriginLock> > OriginLockMap;
+    typedef HashMap<String, RefPtr<OriginLock>> OriginLockMap;
     OriginLockMap m_originLockMap;
 
     String m_databaseDirectoryPath;
@@ -156,7 +156,7 @@ private:
     CreateSet m_beingCreated;
     typedef HashSet<String> NameSet;
     HashMap<RefPtr<SecurityOrigin>, NameSet*> m_beingDeleted;
-    HashSet<RefPtr<SecurityOrigin> > m_originsBeingDeleted;
+    HashSet<RefPtr<SecurityOrigin>> m_originsBeingDeleted;
     bool isDeletingDatabaseOrOriginFor(SecurityOrigin*, const String& name);
     void recordCreatingDatabase(SecurityOrigin*, const String& name);
     void doneCreatingDatabase(SecurityOrigin*, const String& name);

@@ -72,7 +72,7 @@ private:
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
-    HashMap<RenderObject*, OwnPtr<PatternData> > m_patternMap;
+    HashMap<RenderObject*, OwnPtr<PatternData>> m_patternMap;
 };
 
 }

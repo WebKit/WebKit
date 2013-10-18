@@ -215,7 +215,7 @@ private:
     unsigned short m_closeEventCode;
     String m_closeEventReason;
 
-    Deque<OwnPtr<QueuedFrame> > m_outgoingFrameQueue;
+    Deque<OwnPtr<QueuedFrame>> m_outgoingFrameQueue;
     OutgoingFrameQueueStatus m_outgoingFrameQueueStatus;
 
 #if ENABLE(BLOB)

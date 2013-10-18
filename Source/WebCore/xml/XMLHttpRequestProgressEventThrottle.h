@@ -74,7 +74,7 @@ private:
 
     bool m_deferEvents;
     RefPtr<Event> m_deferredProgressEvent;
-    Vector<RefPtr<Event> > m_deferredEvents;
+    Vector<RefPtr<Event>> m_deferredEvents;
     Timer<XMLHttpRequestProgressEventThrottle> m_dispatchDeferredEventsTimer;
 };
 

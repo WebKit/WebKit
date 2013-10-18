@@ -47,7 +47,7 @@ void MergeIdenticalElementsCommand::doApply()
 
     m_atChild = m_element2->firstChild();
 
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     for (Node* child = m_element1->firstChild(); child; child = child->nextSibling())
         children.append(child);
 
@@ -75,7 +75,7 @@ void MergeIdenticalElementsCommand::doUnapply()
     if (ec)
         return;
 
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     for (Node* child = m_element2->firstChild(); child && child != atChild; child = child->nextSibling())
         children.append(child);
 

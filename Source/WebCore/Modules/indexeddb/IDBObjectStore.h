@@ -102,7 +102,7 @@ public:
     IDBObjectStoreMetadata metadata() const { return m_metadata; }
     void setMetadata(const IDBObjectStoreMetadata& metadata) { m_metadata = metadata; }
 
-    typedef Vector<RefPtr<IDBKey> > IndexKeys;
+    typedef Vector<RefPtr<IDBKey>> IndexKeys;
     typedef HashMap<String, IndexKeys> IndexKeyMap;
 
     IDBDatabaseBackendInterface* backendDB() const;
@@ -120,7 +120,7 @@ private:
     RefPtr<IDBTransaction> m_transaction;
     bool m_deleted;
 
-    typedef HashMap<String, RefPtr<IDBIndex> > IDBIndexMap;
+    typedef HashMap<String, RefPtr<IDBIndex>> IDBIndexMap;
     IDBIndexMap m_indexMap;
 };
 

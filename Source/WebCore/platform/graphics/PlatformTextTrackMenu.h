@@ -41,7 +41,7 @@ public:
     virtual ~PlatformTextTrackMenuClient() { }
     
     virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) = 0;
-    virtual Vector<RefPtr<PlatformTextTrack> > platformTextTracks() = 0;
+    virtual Vector<RefPtr<PlatformTextTrack>> platformTextTracks() = 0;
 };
 
 class PlatformTextTrackMenuInterface  : public RefCounted<PlatformTextTrackMenuInterface> {

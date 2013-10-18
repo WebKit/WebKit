@@ -51,7 +51,7 @@ public:
 
     void freeObject(T* ptr)
     {
-        for (typename Vector<OwnPtr<FreeListChunk> >::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
+        for (typename Vector<OwnPtr<FreeListChunk>>::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
             FreeListChunk* chunk = static_cast<FreeListChunk*>(it->get());
             if (chunk->contains(ptr))
                 chunk->free(ptr);
@@ -79,7 +79,7 @@ private:
             ptr = m_current->allocate(size);
             if (!ptr) {
                 // Check if we can allocate from other chunks' free list.
-                for (typename Vector<OwnPtr<FreeListChunk> >::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
+                for (typename Vector<OwnPtr<FreeListChunk>>::const_iterator it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
                     FreeListChunk* chunk = static_cast<FreeListChunk*>(it->get());
                     if (chunk->hasFreeList()) {
                         ptr = chunk->allocate(size);
@@ -176,7 +176,7 @@ private:
 
     FreeListChunk* m_current;
     size_t m_currentChunkSize;
-    Vector<OwnPtr<FreeListChunk> > m_chunks;
+    Vector<OwnPtr<FreeListChunk>> m_chunks;
 };
 
 } // namespace WebCore

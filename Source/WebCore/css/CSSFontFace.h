@@ -107,7 +107,7 @@ private:
     FontTraitsMask m_traitsMask;
     Vector<UnicodeRange> m_ranges;
     HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;
-    Vector<OwnPtr<CSSFontFaceSource> > m_sources;
+    Vector<OwnPtr<CSSFontFaceSource>> m_sources;
     CSSFontFaceSource* m_activeSource;
     bool m_isLocalFallback;
 #if ENABLE(FONT_LOAD_EVENTS)

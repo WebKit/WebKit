@@ -58,7 +58,7 @@ private:
     void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);
     void fail(const String& reason);
 
-    Vector<OwnPtr<WebSocketExtensionProcessor> > m_processors;
+    Vector<OwnPtr<WebSocketExtensionProcessor>> m_processors;
     StringBuilder m_acceptedExtensionsBuilder;
     String m_failureReason;
 };

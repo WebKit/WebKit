@@ -2934,7 +2934,7 @@ static bool isFrameInRange(Frame* frame, Range* range)
     return inRange;
 }
 
-unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches, Vector<RefPtr<Range> >* matches)
+unsigned Editor::countMatchesForText(const String& target, Range* range, FindOptions options, unsigned limit, bool markMatches, Vector<RefPtr<Range>>* matches)
 {
     if (target.isEmpty())
         return 0;

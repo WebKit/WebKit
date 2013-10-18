@@ -80,7 +80,7 @@ StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
     return m_result;
 }
 
-const Vector<RefPtr<StyleRuleBase> >& ElementRuleCollector::matchedRuleList() const
+const Vector<RefPtr<StyleRuleBase>>& ElementRuleCollector::matchedRuleList() const
 {
     ASSERT(m_mode == SelectorChecker::CollectingRules);
     return m_matchedRuleList;

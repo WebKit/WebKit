@@ -110,9 +110,9 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
     node->registerMutationObserver(this, options, attributeFilter);
 }
 
-Vector<RefPtr<MutationRecord> > MutationObserver::takeRecords()
+Vector<RefPtr<MutationRecord>> MutationObserver::takeRecords()
 {
-    Vector<RefPtr<MutationRecord> > records;
+    Vector<RefPtr<MutationRecord>> records;
     records.swap(m_records);
     return records;
 }
@@ -137,7 +137,7 @@ void MutationObserver::observationEnded(MutationObserverRegistration* registrati
     m_registrations.remove(registration);
 }
 
-typedef HashSet<RefPtr<MutationObserver> > MutationObserverSet;
+typedef HashSet<RefPtr<MutationObserver>> MutationObserverSet;
 
 static MutationObserverSet& activeMutationObservers()
 {
@@ -194,7 +194,7 @@ void MutationObserver::deliver()
     if (m_records.isEmpty())
         return;
 
-    Vector<RefPtr<MutationRecord> > records;
+    Vector<RefPtr<MutationRecord>> records;
     records.swap(m_records);
 
     m_callback->call(records, this);
@@ -209,7 +209,7 @@ void MutationObserver::deliverAllMutations()
     deliveryInProgress = true;
 
     if (!suspendedMutationObservers().isEmpty()) {
-        Vector<RefPtr<MutationObserver> > suspended;
+        Vector<RefPtr<MutationObserver>> suspended;
         copyToVector(suspendedMutationObservers(), suspended);
         for (size_t i = 0; i < suspended.size(); ++i) {
             if (!suspended[i]->canDeliver())
@@ -221,7 +221,7 @@ void MutationObserver::deliverAllMutations()
     }
 
     while (!activeMutationObservers().isEmpty()) {
-        Vector<RefPtr<MutationObserver> > observers;
+        Vector<RefPtr<MutationObserver>> observers;
         copyToVector(activeMutationObservers(), observers);
         activeMutationObservers().clear();
         std::sort(observers.begin(), observers.end(), [](const RefPtr<MutationObserver>& lhs, const RefPtr<MutationObserver>& rhs) {

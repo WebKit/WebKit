@@ -60,7 +60,7 @@ public:
 protected:
     ScrollingTree* scrollingTree() const { return m_scrollingTree; }
 
-    typedef Vector<OwnPtr<ScrollingTreeNode> > ScrollingTreeChildrenVector;
+    typedef Vector<OwnPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
     OwnPtr<ScrollingTreeChildrenVector> m_children;
 
 private:

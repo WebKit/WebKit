@@ -63,7 +63,7 @@ public:
 
     virtual String captionsStyleSheetOverride() const OVERRIDE;
     virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const OVERRIDE;
-    virtual Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*) OVERRIDE;
+    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*) OVERRIDE;
     virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
 
 private:

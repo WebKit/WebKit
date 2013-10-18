@@ -181,7 +181,7 @@ private:
     mutable Vector<char> m_buffer;
     mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
+    mutable Vector<RetainPtr<CFDataRef>> m_dataArray;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;
 #else

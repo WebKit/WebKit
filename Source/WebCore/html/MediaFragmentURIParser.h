@@ -58,7 +58,7 @@ private:
     TimeFormat m_timeFormat;
     double m_startTime;
     double m_endTime;
-    Vector<std::pair<String, String> > m_fragments;
+    Vector<std::pair<String, String>> m_fragments;
 };
 
 } // namespace WebCore

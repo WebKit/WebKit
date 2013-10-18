@@ -98,7 +98,7 @@ private:
 
 template <typename T> void BasicRawSentinelNode<T>::remove()
 {
-    SentinelLinkedList<T, BasicRawSentinelNode<T> >::remove(static_cast<T*>(this));
+    SentinelLinkedList<T, BasicRawSentinelNode<T>>::remove(static_cast<T*>(this));
 }
 
 template <typename T, typename RawNode> inline SentinelLinkedList<T, RawNode>::SentinelLinkedList()

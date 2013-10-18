@@ -48,10 +48,10 @@ public:
 
 private:
     StyleSheetList(Document*);
-    const Vector<RefPtr<StyleSheet> >& styleSheets() const;
+    const Vector<RefPtr<StyleSheet>>& styleSheets() const;
 
     Document* m_document;
-    Vector<RefPtr<StyleSheet> > m_detachedStyleSheets;
+    Vector<RefPtr<StyleSheet>> m_detachedStyleSheets;
 };
 
 } // namespace WebCore

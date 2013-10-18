@@ -79,7 +79,7 @@ namespace WebCore {
 
 static void cancelAll(const ResourceLoaderSet& loaders)
 {
-    Vector<RefPtr<ResourceLoader> > loadersCopy;
+    Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyToVector(loaders, loadersCopy);
     size_t size = loadersCopy.size();
     for (size_t i = 0; i < size; ++i)
@@ -88,7 +88,7 @@ static void cancelAll(const ResourceLoaderSet& loaders)
 
 static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
 {
-    Vector<RefPtr<ResourceLoader> > loadersCopy;
+    Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyToVector(loaders, loadersCopy);
     size_t size = loadersCopy.size();
     for (size_t i = 0; i < size; ++i)
@@ -1075,7 +1075,7 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const URL& url) const
     return ArchiveResource::create(data->sharedBuffer(), url, resource->response());
 }
 
-void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource> >& subresources) const
+void DocumentLoader::getSubresources(Vector<PassRefPtr<ArchiveResource>>& subresources) const
 {
     if (!isCommitted())
         return;

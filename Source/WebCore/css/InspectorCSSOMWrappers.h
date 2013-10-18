@@ -48,12 +48,12 @@ private:
     template <class ListType>
     void collect(ListType*);
 
-    void collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet> >& sheetWrapperSet, StyleSheetContents*);
-    void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&);
+    void collectFromStyleSheetContents(HashSet<RefPtr<CSSStyleSheet>>& sheetWrapperSet, StyleSheetContents*);
+    void collectFromStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
     void collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection&);
 
-    HashMap<StyleRule*, RefPtr<CSSStyleRule> > m_styleRuleToCSSOMWrapperMap;
-    HashSet<RefPtr<CSSStyleSheet> > m_styleSheetCSSOMWrapperSet;
+    HashMap<StyleRule*, RefPtr<CSSStyleRule>> m_styleRuleToCSSOMWrapperMap;
+    HashSet<RefPtr<CSSStyleSheet>> m_styleSheetCSSOMWrapperSet;
 };
 
 } // namespace WebCore

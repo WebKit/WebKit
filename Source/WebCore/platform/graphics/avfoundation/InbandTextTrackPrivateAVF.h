@@ -72,7 +72,7 @@ protected:
     double m_currentCueStartTime;
     double m_currentCueEndTime;
 
-    Vector<RefPtr<GenericCueData> > m_cues;
+    Vector<RefPtr<GenericCueData>> m_cues;
     AVFInbandTrackParent* m_owner;
 
     enum PendingCueStatus {

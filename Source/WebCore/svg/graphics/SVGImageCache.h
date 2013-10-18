@@ -57,7 +57,7 @@ public:
 private:
     SVGImageCache(SVGImage*);
 
-    typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer> > ImageForContainerMap;
+    typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer>> ImageForContainerMap;
 
     SVGImage* m_svgImage;
     ImageForContainerMap m_imageForContainerMap;

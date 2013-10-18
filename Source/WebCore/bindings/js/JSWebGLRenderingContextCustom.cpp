@@ -249,7 +249,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
-    Vector<RefPtr<WebGLShader> > shaders;
+    Vector<RefPtr<WebGLShader>> shaders;
     bool succeed = context.getAttachedShaders(program, shaders, ec);
     if (ec) {
         setDOMException(exec, ec);

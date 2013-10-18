@@ -72,7 +72,7 @@ public:
 private:
     ScriptedAnimationController(Document*, PlatformDisplayID);
 
-    typedef Vector<RefPtr<RequestAnimationFrameCallback> > CallbackList;
+    typedef Vector<RefPtr<RequestAnimationFrameCallback>> CallbackList;
     CallbackList m_callbacks;
 
     Document* m_document;

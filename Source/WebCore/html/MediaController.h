@@ -144,7 +144,7 @@ private:
     bool m_muted;
     ReadyState m_readyState;
     PlaybackState m_playbackState;
-    Vector<RefPtr<Event> > m_pendingEvents;
+    Vector<RefPtr<Event>> m_pendingEvents;
     Timer<MediaController> m_asyncEventTimer;
     mutable Timer<MediaController> m_clearPositionTimer;
     String m_mediaGroup;

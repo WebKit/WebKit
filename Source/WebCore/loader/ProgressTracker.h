@@ -80,7 +80,7 @@ private:
     RefPtr<Frame> m_originatingProgressFrame;
     
     int m_numProgressTrackedFrames;
-    HashMap<unsigned long, OwnPtr<ProgressItem> > m_progressItems;
+    HashMap<unsigned long, OwnPtr<ProgressItem>> m_progressItems;
 
     Timer<ProgressTracker> m_progressHeartbeatTimer;
     unsigned m_heartbeatsWithNoProgress;

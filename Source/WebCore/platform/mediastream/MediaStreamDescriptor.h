@@ -83,12 +83,12 @@ private:
 
     MediaStreamDescriptorClient* m_client;
     String m_id;
-    Vector<RefPtr<MediaStreamSource> > m_audioStreamSources;
-    Vector<RefPtr<MediaStreamSource> > m_videoStreamSources;
+    Vector<RefPtr<MediaStreamSource>> m_audioStreamSources;
+    Vector<RefPtr<MediaStreamSource>> m_videoStreamSources;
     bool m_ended;
 };
 
-typedef Vector<RefPtr<MediaStreamDescriptor> > MediaStreamDescriptorVector;
+typedef Vector<RefPtr<MediaStreamDescriptor>> MediaStreamDescriptorVector;
 
 } // namespace WebCore
 

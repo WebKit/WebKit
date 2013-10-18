@@ -119,13 +119,13 @@ void DocumentStyleSheetCollection::updatePageUserSheet()
         m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
-const Vector<RefPtr<CSSStyleSheet> >& DocumentStyleSheetCollection::injectedUserStyleSheets() const
+const Vector<RefPtr<CSSStyleSheet>>& DocumentStyleSheetCollection::injectedUserStyleSheets() const
 {
     updateInjectedStyleSheetCache();
     return m_injectedUserStyleSheets;
 }
 
-const Vector<RefPtr<CSSStyleSheet> >& DocumentStyleSheetCollection::injectedAuthorStyleSheets() const
+const Vector<RefPtr<CSSStyleSheet>>& DocumentStyleSheetCollection::injectedAuthorStyleSheets() const
 {
     updateInjectedStyleSheetCache();
     return m_injectedAuthorStyleSheets;
@@ -255,7 +255,7 @@ void DocumentStyleSheetCollection::removeStyleSheetCandidateNode(Node& node)
     m_styleSheetCandidateNodes.remove(&node);
 }
 
-void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >& sheets)
+void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
 {
     if (m_document.settings() && !m_document.settings()->authorAndUserStylesEnabled())
         return;
@@ -348,7 +348,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
     }
 }
 
-void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet> >& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
+void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
 {
     styleResolverUpdateType = Reconstruct;
     requiresFullStyleRecalc = true;
@@ -407,7 +407,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     requiresFullStyleRecalc = false;
 }
 
-static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet> >& sheets)
+static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet>>& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i) {
         if (sheets[i]->contents()->usesRemUnits())
@@ -416,7 +416,7 @@ static bool styleSheetsUseRemUnits(const Vector<RefPtr<CSSStyleSheet> >& sheets)
     return false;
 }
 
-static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet> >& result, const Vector<RefPtr<StyleSheet> >& sheets)
+static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
 {
     for (unsigned i = 0; i < sheets.size(); ++i) {
         if (!sheets[i]->isCSSStyleSheet())
@@ -430,7 +430,7 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet> >& 
     }
 }
 
-static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyleSheet> >& sheets, Document& document)
+static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyleSheet>>& sheets, Document& document)
 {
     HTMLIFrameElement* seamlessParentIFrame = document.seamlessParentIFrame();
     if (!seamlessParentIFrame)
@@ -452,10 +452,10 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (!m_document.renderView() || !m_document.attached())
         return false;
 
-    Vector<RefPtr<StyleSheet> > activeStyleSheets;
+    Vector<RefPtr<StyleSheet>> activeStyleSheets;
     collectActiveStyleSheets(activeStyleSheets);
 
-    Vector<RefPtr<CSSStyleSheet> > activeCSSStyleSheets;
+    Vector<RefPtr<CSSStyleSheet>> activeCSSStyleSheets;
     activeCSSStyleSheets.appendVector(injectedAuthorStyleSheets());
     activeCSSStyleSheets.appendVector(documentAuthorStyleSheets());
     collectActiveCSSStyleSheetsFromSeamlessParents(activeCSSStyleSheets, m_document);

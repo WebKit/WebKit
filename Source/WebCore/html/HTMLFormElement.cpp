@@ -217,7 +217,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
             static_cast<HTMLFormControlElement*>(m_associatedElements[i])->hideVisibleValidationMessage();
     }
 
-    Vector<RefPtr<FormAssociatedElement> > unhandledInvalidControls;
+    Vector<RefPtr<FormAssociatedElement>> unhandledInvalidControls;
     if (!checkInvalidControlsAndCollectUnhandled(unhandledInvalidControls))
         return true;
     // Because the form has invalid controls, we abort the form submission and
@@ -592,16 +592,16 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
 
 bool HTMLFormElement::checkValidity()
 {
-    Vector<RefPtr<FormAssociatedElement> > controls;
+    Vector<RefPtr<FormAssociatedElement>> controls;
     return !checkInvalidControlsAndCollectUnhandled(controls);
 }
 
-bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement> >& unhandledInvalidControls)
+bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement>>& unhandledInvalidControls)
 {
     Ref<HTMLFormElement> protect(*this);
     // Copy m_associatedElements because event handlers called from
     // HTMLFormControlElement::checkValidity() might change m_associatedElements.
-    Vector<RefPtr<FormAssociatedElement> > elements;
+    Vector<RefPtr<FormAssociatedElement>> elements;
     elements.reserveCapacity(m_associatedElements.size());
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
         elements.append(m_associatedElements[i]);

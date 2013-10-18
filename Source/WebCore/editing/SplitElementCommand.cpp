@@ -47,7 +47,7 @@ void SplitElementCommand::executeApply()
     if (m_atChild->parentNode() != m_element2)
         return;
     
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     for (Node* node = m_element2->firstChild(); node != m_atChild; node = node->nextSibling())
         children.append(node);
     
@@ -80,7 +80,7 @@ void SplitElementCommand::doUnapply()
     if (!m_element1 || !m_element1->rendererIsEditable() || !m_element2->rendererIsEditable())
         return;
 
-    Vector<RefPtr<Node> > children;
+    Vector<RefPtr<Node>> children;
     for (Node* node = m_element1->firstChild(); node; node = node->nextSibling())
         children.append(node);
 

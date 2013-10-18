@@ -120,7 +120,7 @@ namespace WebCore {
 
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;
-        HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace> > m_transientLocalStorageMap;
+        HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 
         std::unique_ptr<UserScriptMap> m_userScripts;
         std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;

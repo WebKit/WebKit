@@ -696,7 +696,7 @@ public:
         if (m_pattern.m_numSubpatterns)
             return;
 
-        Vector<OwnPtr<PatternAlternative> >& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<OwnPtr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
         for (size_t i = 0; i < alternatives.size(); ++i) {
             Vector<PatternTerm>& terms = alternatives[i]->m_terms;
             if (terms.size()) {
@@ -766,7 +766,7 @@ public:
     // beginning and the end of the match.
     void optimizeDotStarWrappedExpressions()
     {
-        Vector<OwnPtr<PatternAlternative> >& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<OwnPtr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
         if (alternatives.size() != 1)
             return;
 

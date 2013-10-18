@@ -50,7 +50,7 @@ public:
         bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
 
     virtual bool hasEntryForOrigin(SecurityOrigin*);
-    virtual void origins(Vector<RefPtr<SecurityOrigin> >& result);
+    virtual void origins(Vector<RefPtr<SecurityOrigin>>& result);
     virtual bool databaseNamesForOrigin(SecurityOrigin*, Vector<String>& result);
     virtual DatabaseDetails detailsForNameAndOrigin(const String&, SecurityOrigin*);
 

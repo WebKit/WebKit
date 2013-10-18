@@ -569,7 +569,7 @@ template<typename ValueType, size_t inlineCapacity, typename U>
 template<typename T, typename HashTranslator>
 inline bool ListHashSet<ValueType, inlineCapacity, U>::contains(const T& value) const
 {
-    return m_impl.template contains<ListHashSetTranslatorAdapter<HashTranslator> >(value);
+    return m_impl.template contains<ListHashSetTranslatorAdapter<HashTranslator>>(value);
 }
 
 template<typename T, size_t inlineCapacity, typename U>

@@ -253,37 +253,37 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HandleBlock>()
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock>>()
 {
     return m_copiedRegionSet;
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedBlock> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedBlock>>()
 {
     return m_markedRegionSet;
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlock> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlock>>()
 {
     return m_fourKBBlockRegionSet;
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkStackSegment> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkStackSegment>>()
 {
     return m_fourKBBlockRegionSet;
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWorkListSegment> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWorkListSegment>>()
 {
     return m_workListRegionSet;
 }
 
 template <>
-inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<HandleBlock> >()
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<HandleBlock>>()
 {
     return m_fourKBBlockRegionSet;
 }

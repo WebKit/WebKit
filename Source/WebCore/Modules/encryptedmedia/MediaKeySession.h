@@ -95,7 +95,7 @@ protected:
     Deque<PendingKeyRequest> m_pendingKeyRequests;
     Timer<MediaKeySession> m_keyRequestTimer;
 
-    Deque<RefPtr<Uint8Array> > m_pendingKeys;
+    Deque<RefPtr<Uint8Array>> m_pendingKeys;
     Timer<MediaKeySession> m_addKeyTimer;
 
 private:

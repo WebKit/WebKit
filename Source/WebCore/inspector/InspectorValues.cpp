@@ -773,7 +773,7 @@ PassRefPtr<InspectorArray> InspectorArrayBase::asArray()
 void InspectorArrayBase::writeJSON(StringBuilder* output) const
 {
     output->append('[');
-    for (Vector<RefPtr<InspectorValue> >::const_iterator it = m_data.begin(); it != m_data.end(); ++it) {
+    for (Vector<RefPtr<InspectorValue>>::const_iterator it = m_data.begin(); it != m_data.end(); ++it) {
         if (it != m_data.begin())
             output->append(',');
         (*it)->writeJSON(output);

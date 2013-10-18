@@ -55,7 +55,7 @@ public:
     void pause();
     void resume();
     
-    const Vector<RefPtr<SpeechSynthesisVoice> >& getVoices();
+    const Vector<RefPtr<SpeechSynthesisVoice>>& getVoices();
     
     // Used in testing to use a mock platform synthesizer
     void setPlatformSynthesizer(PassOwnPtr<PlatformSpeechSynthesizer>);
@@ -77,9 +77,9 @@ private:
     void fireEvent(const AtomicString& type, SpeechSynthesisUtterance*, unsigned long charIndex, const String& name);
     
     OwnPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
-    Vector<RefPtr<SpeechSynthesisVoice> > m_voiceList;
+    Vector<RefPtr<SpeechSynthesisVoice>> m_voiceList;
     SpeechSynthesisUtterance* m_currentSpeechUtterance;
-    Deque<RefPtr<SpeechSynthesisUtterance> > m_utteranceQueue;
+    Deque<RefPtr<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
 };
     

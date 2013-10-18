@@ -75,10 +75,10 @@ private:
 #endif
 
     CSSFontSelector* m_fontSelector;
-    HashMap<unsigned, RefPtr<SegmentedFontData> > m_fontDataTable;
+    HashMap<unsigned, RefPtr<SegmentedFontData>> m_fontDataTable;
     Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
 #if ENABLE(FONT_LOAD_EVENTS)
-    Vector<RefPtr<LoadFontCallback> > m_callbacks;
+    Vector<RefPtr<LoadFontCallback>> m_callbacks;
 #endif
 };
 

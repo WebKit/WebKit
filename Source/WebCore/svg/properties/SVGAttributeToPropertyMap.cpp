@@ -59,7 +59,7 @@ void SVGAttributeToPropertyMap::addProperty(const SVGPropertyInfo* info)
     m_map.set(info->attributeName, vector.release());
 }
 
-void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty> >& properties)
+void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty>>& properties)
 {
     ASSERT(ownerType);
     PropertiesVector* vector = m_map.get(attributeName);

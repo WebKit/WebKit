@@ -80,7 +80,7 @@ namespace JSC {
 
     namespace DeclarationStacks {
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
-        typedef Vector<std::pair<Identifier, unsigned> > VarStack;
+        typedef Vector<std::pair<Identifier, unsigned>> VarStack;
         typedef Vector<FunctionBodyNode*> FunctionStack;
     }
 
