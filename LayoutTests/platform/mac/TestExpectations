@@ -680,6 +680,7 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 
 # --- Compositing ----
 css3/filters/composited-during-transition-layertree.html
+webkit.org/b/95622 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
 # --- Custom Filters ---
 # The following 5 tests are currently skipped on Mac for slight color differences,
