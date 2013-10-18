@@ -906,7 +906,8 @@ IncrementalSweeper* Heap::sweeper()
 
 void Heap::setGarbageCollectionTimerEnabled(bool enable)
 {
-    activityCallback()->setEnabled(enable);
+    if (m_activityCallback)
+        m_activityCallback->setEnabled(enable);
 }
 
 void Heap::didAllocate(size_t bytes)
