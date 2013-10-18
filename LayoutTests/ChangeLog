@@ -1,3 +1,10 @@
+2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r153852.
+
+        * platform/efl-wk2/loader/go-back-cached-main-resource-expected.txt:
+        * platform/efl/security/block-test-no-port-expected.txt:
+
 2013-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test media/W3C/audio/networkState/networkState_during_loadstart.html is flaky
