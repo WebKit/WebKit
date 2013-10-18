@@ -110,6 +110,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void setGarbageCollectionTimerEnabled(bool);
 
         JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
+        JS_EXPORT_PRIVATE void setIncrementalSweeper(PassOwnPtr<IncrementalSweeper>);
 
         // true if collection is in progress
         inline bool isCollecting();

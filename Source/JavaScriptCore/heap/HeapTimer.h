@@ -50,7 +50,7 @@ public:
     HeapTimer(VM*);
 #endif
     
-    virtual ~HeapTimer();
+    JS_EXPORT_PRIVATE virtual ~HeapTimer();
     virtual void doWork() = 0;
     
 protected:

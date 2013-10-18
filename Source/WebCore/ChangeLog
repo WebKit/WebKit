@@ -1,3 +1,14 @@
+2013-10-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebSafe{GCActivityCallback, IncrementalSweeper}IOS
+        https://bugs.webkit.org/show_bug.cgi?id=123049
+
+        Reviewed by Mark Hahnenberg.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/WebSafeGCActivityCallbackIOS.h: Added.
+        * platform/ios/WebSafeIncrementalSweeperIOS.h: Added.
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Remove spaces between template angle brackets

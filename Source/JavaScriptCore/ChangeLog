@@ -1,3 +1,21 @@
+2013-10-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebSafe{GCActivityCallback, IncrementalSweeper}IOS
+        https://bugs.webkit.org/show_bug.cgi?id=123049
+
+        Reviewed by Mark Hahnenberg.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::setIncrementalSweeper):
+        * heap/Heap.h:
+        * heap/HeapTimer.h:
+        * heap/IncrementalSweeper.h: Make protected and export CF-variant of constructor.
+        Removed unused include of header RetainPtr.h. Also forward declare class MarkedBlock
+        (we include its header in the .cpp file) and remove include for header wtf/HashSet.h
+        (duplicates the include in the .cpp).
+        * heap/MachineStackMarker.h: Export function makeUsableFromMultipleThreads(). We aren't
+        making use of this now, but we'll make use of it in a subsequent patch.
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Remove spaces between template angle brackets

@@ -899,6 +899,11 @@ GCActivityCallback* Heap::activityCallback()
     return m_activityCallback.get();
 }
 
+void Heap::setIncrementalSweeper(PassOwnPtr<IncrementalSweeper> sweeper)
+{
+    m_sweeper = sweeper;
+}
+
 IncrementalSweeper* Heap::sweeper()
 {
     return m_sweeper.get();
