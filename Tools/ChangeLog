@@ -1,3 +1,11 @@
+2013-10-18  Rik Cabanier <cabanier@adobe.com>
+        Add Rik Cabanier to list of committers
+        https://bugs.webkit.org/show_bug.cgi?id=123031
+
+        reviewed by Dirk Schulze.
+
+        * Tools/Scripts/webkitpy/common/config/contributors.json: Added name.
+
 2013-10-18  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [ATK] Fix invalid signal to set objects to an unknown state "layout-complete"
