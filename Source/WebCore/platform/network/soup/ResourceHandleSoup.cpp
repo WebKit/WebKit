@@ -200,13 +200,12 @@ public:
 private:
     static String computeCertificateHash(GTlsCertificate* certificate)
     {
-        GByteArray* data = 0;
-        g_object_get(G_OBJECT(certificate), "certificate", &data, NULL);
-        if (!data)
+        GRefPtr<GByteArray> certificateData;
+        g_object_get(G_OBJECT(certificate), "certificate", &certificateData.outPtr(), NULL);
+        if (!certificateData)
             return String();
 
         static const size_t sha1HashSize = 20;
-        GRefPtr<GByteArray> certificateData = adoptGRef(data);
         SHA1 sha1;
         sha1.addBytes(certificateData->data, certificateData->len);
 

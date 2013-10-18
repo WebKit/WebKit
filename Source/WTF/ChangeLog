@@ -1,3 +1,13 @@
+2013-10-18  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer][GTK] Add GRefPtr::outPtr()
+        https://bugs.webkit.org/show_bug.cgi?id=122996
+
+        Reviewed by Philippe Normand.
+
+        * wtf/gobject/GRefPtr.h:
+        (WTF::GRefPtr::outPtr): Added.
+
 2013-10-17  Geoffrey Garen  <ggaren@apple.com>
 
         Tidied up the Vector<T> move constructor

@@ -680,20 +680,18 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
         g_object_get(m_playBin.get(), "n-text", &numTracks, NULL);
 
     for (gint i = 0; i < numTracks; ++i) {
-        GstPad* pad;
-        g_signal_emit_by_name(m_playBin.get(), "get-text-pad", i, &pad, NULL);
+        GRefPtr<GstPad> pad;
+        g_signal_emit_by_name(m_playBin.get(), "get-text-pad", i, &pad.outPtr(), NULL);
         ASSERT(pad);
 
         if (i < static_cast<gint>(m_textTracks.size())) {
             RefPtr<InbandTextTrackPrivateGStreamer> existingTrack = m_textTracks[i];
             existingTrack->setIndex(i);
-            if (existingTrack->pad() == pad) {
-                gst_object_unref(pad);
+            if (existingTrack->pad() == pad)
                 continue;
-            }
         }
 
-        RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, adoptGRef(pad));
+        RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, pad);
         m_textTracks.insert(i, track);
         m_player->addTextTrack(track.release());
     }
@@ -714,8 +712,8 @@ void MediaPlayerPrivateGStreamer::newTextSample()
     GRefPtr<GstEvent> streamStartEvent = adoptGRef(
         gst_pad_get_sticky_event(m_textAppSinkPad.get(), GST_EVENT_STREAM_START, 0));
 
-    GstSample* sample;
-    g_signal_emit_by_name(m_textAppSink.get(), "pull-sample", &sample, NULL);
+    GRefPtr<GstSample> sample;
+    g_signal_emit_by_name(m_textAppSink.get(), "pull-sample", &sample.outPtr(), NULL);
     ASSERT(sample);
 
     if (streamStartEvent) {
@@ -734,7 +732,6 @@ void MediaPlayerPrivateGStreamer::newTextSample()
             WARN_MEDIA_MESSAGE("Got sample with unknown stream ID.");
     } else
         WARN_MEDIA_MESSAGE("Unable to handle sample with no stream start event.");
-    gst_sample_unref(sample);
 }
 #endif
 
@@ -1000,15 +997,13 @@ void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
     m_chaptersTrack = InbandMetadataTextTrackPrivateGStreamer::create(InbandTextTrackPrivate::Chapters);
     m_player->addTextTrack(m_chaptersTrack);
 
-    GstToc* toc;
+    GRefPtr<GstToc> toc;
     gboolean updated;
-    gst_message_parse_toc(message, &toc, &updated);
+    gst_message_parse_toc(message, &toc.outPtr(), &updated);
     ASSERT(toc);
 
-    for (GList* i = gst_toc_get_entries(toc); i; i = i->next)
+    for (GList* i = gst_toc_get_entries(toc.get()); i; i = i->next)
         processTableOfContentsEntry(static_cast<GstTocEntry*>(i->data), 0);
-
-    gst_toc_unref(toc);
 }
 
 void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry, GstTocEntry* parent)
@@ -1202,11 +1197,8 @@ void MediaPlayerPrivateGStreamer::updateAudioSink()
     if (!m_playBin)
         return;
 
-    GstElement* sinkPtr = 0;
-
-    g_object_get(m_playBin.get(), "audio-sink", &sinkPtr, NULL);
-    m_webkitAudioSink = adoptGRef(sinkPtr);
-
+    m_webkitAudioSink.clear();
+    g_object_get(m_playBin.get(), "audio-sink", &m_webkitAudioSink.outPtr(), NULL);
 }
 
 GstElement* MediaPlayerPrivateGStreamer::audioSink() const
@@ -1216,10 +1208,8 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
 
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
-    GstElement* srcPtr = 0;
-
-    g_object_get(m_playBin.get(), "source", &srcPtr, NULL);
-    m_source = adoptGRef(srcPtr);
+    m_source.clear();
+    g_object_get(m_playBin.get(), "source", &m_source.outPtr(), NULL);
 
     if (WEBKIT_IS_WEB_SRC(m_source.get()))
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);

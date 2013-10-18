@@ -515,9 +515,9 @@ GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
     if (!m_webkitVideoSink)
         return 0;
 
-    GstCaps* currentCaps = 0;
-    g_object_get(G_OBJECT(m_webkitVideoSink.get()), "current-caps", &currentCaps, NULL);
-    return adoptGRef(currentCaps);
+    GRefPtr<GstCaps> currentCaps;
+    g_object_get(G_OBJECT(m_webkitVideoSink.get()), "current-caps", &currentCaps.outPtr(), NULL);
+    return currentCaps;
 }
 
 // This function creates and initializes some internal variables, and returns a

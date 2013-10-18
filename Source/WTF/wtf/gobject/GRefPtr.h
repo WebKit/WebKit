@@ -85,6 +85,12 @@ public:
         return ptr;
     }
 
+    T*& outPtr()
+    {
+        ASSERT(!m_ptr);
+        return m_ptr;
+    }
+
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     GRefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }

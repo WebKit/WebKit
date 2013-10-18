@@ -22,7 +22,7 @@
 #include "GStreamerVersioning.h"
 
 #if USE(GSTREAMER)
-#include <gst/gstelement.h>
+#include <gst/gst.h>
 
 namespace WTF {
 
@@ -222,6 +222,25 @@ template<> void derefGPtr<GstEvent>(GstEvent* ptr)
 {
     if (ptr)
         gst_event_unref(ptr);
+}
+
+template<> GRefPtr<GstToc> adoptGRef(GstToc* ptr)
+{
+    return GRefPtr<GstToc>(ptr, GRefPtrAdopt);
+}
+
+template<> GstToc* refGPtr<GstToc>(GstToc* ptr)
+{
+    if (ptr)
+        gst_toc_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstToc>(GstToc* ptr)
+{
+    if (ptr)
+        gst_toc_unref(ptr);
 }
 }
 #endif // USE(GSTREAMER)

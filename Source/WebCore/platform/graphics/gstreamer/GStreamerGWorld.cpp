@@ -118,10 +118,7 @@ bool GStreamerGWorld::enterFullscreen()
 
     // Get video sink bin and the tee inside.
     GRefPtr<GstElement> videoSink;
-    GstElement* sinkPtr = 0;
-
-    g_object_get(m_pipeline, "video-sink", &sinkPtr, NULL);
-    videoSink = adoptGRef(sinkPtr);
+    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
 
     GRefPtr<GstElement> tee = adoptGRef(gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee"));
 
@@ -196,9 +193,8 @@ void GStreamerGWorld::exitFullscreen()
     if (!m_dynamicPadName)
         return;
 
-    GstElement* sinkPtr = 0;
-    g_object_get(m_pipeline, "video-sink", &sinkPtr, NULL);
-    GRefPtr<GstElement> videoSink = adoptGRef(sinkPtr);
+    GRefPtr<GstElement> videoSink;
+    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
 
     GRefPtr<GstElement> tee = adoptGRef(gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee"));
     GRefPtr<GstPad> srcPad = adoptGRef(gst_element_get_static_pad(tee.get(), m_dynamicPadName.get()));
@@ -225,9 +221,8 @@ void GStreamerGWorld::removePlatformVideoSink()
         return;
 
     // Get video sink bin and the elements to remove.
-    GstElement* sinkPtr = 0;
-    g_object_get(m_pipeline, "video-sink", &sinkPtr, NULL);
-    GRefPtr<GstElement> videoSink = adoptGRef(sinkPtr);
+    GRefPtr<GstElement> videoSink;
+    g_object_get(m_pipeline, "video-sink", &videoSink.outPtr(), NULL);
 
     GRefPtr<GstElement> tee = adoptGRef(gst_bin_get_by_name(GST_BIN(videoSink.get()), "videoTee"));
     GRefPtr<GstElement> platformVideoSink = adoptGRef(gst_bin_get_by_name(GST_BIN(videoSink.get()), "platformVideoSink"));

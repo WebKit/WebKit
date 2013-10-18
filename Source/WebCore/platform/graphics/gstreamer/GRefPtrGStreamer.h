@@ -35,6 +35,7 @@ typedef struct _GstBuffer GstBuffer;
 typedef struct _GstSample GstSample;
 #endif
 typedef struct _GstEvent GstEvent;
+typedef struct _GstToc GstToc;
 
 namespace WTF {
 
@@ -79,6 +80,10 @@ template<> void derefGPtr<GstSample>(GstSample* ptr);
 template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr);
 template<> GstEvent* refGPtr<GstEvent>(GstEvent* ptr);
 template<> void derefGPtr<GstEvent>(GstEvent* ptr);
+
+template<> GRefPtr<GstToc> adoptGRef(GstToc* ptr);
+template<> GstToc* refGPtr<GstToc>(GstToc* ptr);
+template<> void derefGPtr<GstToc>(GstToc* ptr);
 }
 
 #endif // USE(GSTREAMER)
