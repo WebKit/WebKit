@@ -1,5 +1,18 @@
 2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations: Remove passing testcase.
+        * platform/efl/TestExpectations: fast/backgrounds/background-opaque-images-over-color.html is failing.
+        * platform/efl/fast/dom/Range/getClientRects-expected.txt: Rebaseline after r152872.
+        * platform/efl/fast/lists/inlineBoxWrapperNullCheck-expected.txt: Rebaseline after r152793.
+        * platform/efl/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/efl/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Rebaseline after r152911.
+        * platform/efl/tables/mozilla/marvin/backgr_index-expected.png: Rebaseline after r152793.
+        * platform/efl/tables/mozilla/marvin/backgr_index-expected.txt: Rebaseline after r152793.
+
+2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening. Rebaselining after r153852.
 
         * platform/efl-wk2/loader/go-back-cached-main-resource-expected.txt:

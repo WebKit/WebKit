@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 190x25
         RenderBlock {UL} at (0,0) size 190x25
           RenderListItem {LI} at (40,0) size 150x25
-            RenderListMarker at (0,0) size 7x17: bullet
+            RenderListMarker at (-17,7) size 7x17: bullet
             RenderInline {A} at (0,0) size 201x17
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 201x21
