@@ -36,12 +36,7 @@ namespace WebKit {
 #if PLATFORM(MAC)
 typedef pid_t PlatformProcessIdentifier;
 #elif PLATFORM(GTK)
-#ifdef G_OS_WIN32
-typedef void* GPid;
-#else
-typedef int GPid;
-#endif
-typedef GPid PlatformProcessIdentifier;
+typedef int PlatformProcessIdentifier;
 #elif PLATFORM(EFL)
 typedef pid_t PlatformProcessIdentifier;
 #endif

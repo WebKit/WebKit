@@ -55,29 +55,6 @@ static const type& name() \
     return name##Value; \
 }
 
-#if defined(WIN32) || defined(_WIN32)
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0502
-#endif
-
-#ifndef WINVER
-#define WINVER 0x0502
-#endif
-
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ /* Prevent inclusion of winsock.h in windows.h */
-#endif
-
-#include <WebCore/config.h>
-#include <windows.h>
-
-#if USE(CG)
-#include <CoreGraphics/CoreGraphics.h>
-#endif
-
-#endif /* defined(WIN32) || defined(_WIN32) */
-
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebKit2Prefix.h for Mac OS X.
