@@ -455,7 +455,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_dispatchContextLostEventTimer(this, &WebGLRenderingContext::dispatchContextLostEvent)
     , m_restoreAllowed(false)
     , m_restoreTimer(this, &WebGLRenderingContext::maybeRestoreContext)
-    , m_videoCache(4)
+    , m_generatedImageCache(4)
     , m_contextLost(false)
     , m_contextLostMode(SyntheticLostContext)
     , m_attributes(attributes)
@@ -3815,17 +3815,37 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
+PassRefPtr<Image> WebGLRenderingContext::drawImageIntoBuffer(Image* image, int width, int height, int deviceScaleFactor)
+{
+    IntSize size(width, height);
+    size.scale(deviceScaleFactor);
+    ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);
+    if (!buf) {
+        synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "texImage2D", "out of memory");
+        return 0;
+    }
+
+    IntRect srcRect(IntPoint(), image->size());
+    IntRect destRect(IntPoint(), size);
+    buf->context()->drawImage(image, ColorSpaceDeviceRGB, destRect, srcRect);
+    return buf->copyImage(ImageBuffer::fastCopyImageMode());
+}
+
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                                        GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
 {
     ec = 0;
     if (isContextLost() || !validateHTMLImageElement("texImage2D", image, ec))
         return;
-    Image* imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+
+    RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (imageForRender->isSVGImage())
+        imageForRender = drawImageIntoBuffer(imageForRender.get(), image->width(), image->height(), canvas()->deviceScaleFactor());
+
     if (!imageForRender || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
         return;
 
-    texImage2DImpl(target, level, internalformat, format, type, imageForRender, GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
@@ -3862,7 +3882,7 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
 PassRefPtr<Image> WebGLRenderingContext::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy, ExceptionCode&)
 {
     IntSize size(video->videoWidth(), video->videoHeight());
-    ImageBuffer* buf = m_videoCache.imageBuffer(size);
+    ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);
     if (!buf) {
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "texImage2D", "out of memory");
         return 0;
@@ -4067,11 +4087,15 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     ec = 0;
     if (isContextLost() || !validateHTMLImageElement("texSubImage2D", image, ec))
         return;
-    Image* imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+
+    RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (imageForRender->isSVGImage())
+        imageForRender = drawImageIntoBuffer(imageForRender.get(), image->width(), image->height(), canvas()->deviceScaleFactor());
+
     if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceHTMLImageElement, target, level, format, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
         return;
 
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender, GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,

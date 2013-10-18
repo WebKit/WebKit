@@ -1,3 +1,19 @@
+2013-10-18  Dean Jackson  <dino@apple.com>
+
+        Unable to upload <img src="foo.svg"> as WebGL texture
+        https://bugs.webkit.org/show_bug.cgi?id=123035
+
+        Reviewed by Tim Horton.
+
+        Test that creates an HTMLImageElement, sets its source
+        to an SVG file, and then uploads as a WebGLTexture. Based
+        on the existing WebGL conformance tests.
+
+        * fast/canvas/webgl/resources/red-green.svg: Added.
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-svg-image.js: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image-expected.txt: Added.
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image.html: Added.
+
 2013-10-18  Nadav Rotem  <nrotem@apple.com>
 
         Fix a FlushLiveness problem.
