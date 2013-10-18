@@ -1,5 +1,20 @@
 2013-10-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, another ARM64 build fix.
+        
+        Get rid of andPtr(TrustedImmPtr, blah), since it would take Effort to get it to work
+        on ARM64 and none of its uses are legit - they should all be using
+        andPtr(TrustedImm32, blah) anyway.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+
+2013-10-17  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, speculative ARM64 build fix.
         
         move(ImmPtr, blah) is only available in MacroAssembler since that's where blinding is

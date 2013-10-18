@@ -697,11 +697,6 @@ public:
         and64(imm, srcDest);
     }
     
-    void andPtr(TrustedImmPtr imm, RegisterID srcDest)
-    {
-        and64(imm, srcDest);
-    }
-    
     void lshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         lshift64(trustedImm32ForShift(imm), srcDest);

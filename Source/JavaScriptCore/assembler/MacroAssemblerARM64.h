@@ -347,7 +347,7 @@ public:
         signExtend32ToPtr(imm, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.and_<64>(dest, dest, dataTempRegister);
     }
-
+    
     void countLeadingZeros32(RegisterID src, RegisterID dest)
     {
         m_assembler.clz<32>(dest, src);

@@ -850,7 +850,7 @@ void JIT::privateCompileExceptionHandlers()
         // Remove hostCallFlag from caller
         m_exceptionChecksWithCallFrameRollback.link(this);
         emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::argumentGPR0);
-        andPtr(TrustedImmPtr(reinterpret_cast<void *>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
+        andPtr(TrustedImm32(safeCast<int32_t>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
         doLookup = jump();
     }
 
