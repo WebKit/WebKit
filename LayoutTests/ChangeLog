@@ -1,3 +1,12 @@
+2013-10-17  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added.
+        * platform/efl-wk2/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Added.
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png: Rebaseline after r155408.
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt: Rebaseline after r155408.
+
 2013-10-17  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Crash when highlighting a node of a flow with no regions
