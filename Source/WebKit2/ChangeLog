@@ -1,5 +1,11 @@
 2013-10-17  Dan Bernstein  <mitz@apple.com>
 
+        Fixed a typo in the definition of WK_API_ENABLED.
+
+        * Shared/API/Cocoa/WKFoundation.h: It’s 101000, not 10100.
+
+2013-10-17  Dan Bernstein  <mitz@apple.com>
+
         Add and deploy WK_API_ENABLED guards
         https://bugs.webkit.org/show_bug.cgi?id=123008
 
