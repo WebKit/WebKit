@@ -43,6 +43,7 @@ unsigned activeDescendantChangedListenerId = 0;
 unsigned childrenChangedListenerId = 0;
 unsigned propertyChangedListenerId = 0;
 unsigned visibleDataChangedListenerId = 0;
+unsigned loadCompleteListenerId = 0;
 NotificationHandlersMap notificationHandlers;
 AccessibilityNotificationHandler* globalNotificationHandler = 0;
 bool loggingAccessibilityEvents = false;
@@ -93,8 +94,6 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
             notificationName = "CheckedStateChanged";
         else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "invalid-entry"))
             notificationName = "AXInvalidStatusChanged";
-        else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "layout-complete"))
-            notificationName = "AXLayoutComplete";
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
@@ -107,7 +106,9 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
         if (!g_strcmp0(g_quark_to_string(signalHint->detail), "accessible-value"))
             notificationName = "AXValueChanged";
-    } else
+    } else if (!g_strcmp0(signalQuery.signal_name, "load-complete"))
+        notificationName = "AXLoadComplete";
+    else
         signalName.set(g_strdup(signalQuery.signal_name));
 
     if (loggingAccessibilityEvents)
@@ -240,6 +241,7 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
     childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:children-changed");
     propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:property-change");
     visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:visible-data-changed");
+    loadCompleteListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkDocument:load-complete");
 }
 
 bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
@@ -273,7 +275,10 @@ bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
         atk_remove_global_event_listener(visibleDataChangedListenerId);
         visibleDataChangedListenerId = 0;
     }
-
+    if (loadCompleteListenerId) {
+        atk_remove_global_event_listener(loadCompleteListenerId);
+        loadCompleteListenerId = 0;
+    }
     return true;
 }
 

@@ -1,3 +1,26 @@
+2013-10-18  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [ATK] Fix invalid signal to set objects to an unknown state "layout-complete"
+        https://bugs.webkit.org/show_bug.cgi?id=122970
+
+        Reviewed by Mario Sanchez Prada.
+
+        Removed an invalid signal to set an object state to layout-complete
+        that does not exist. It was replaced by ATK:AtkDocument:load-complete.
+
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener): Replaced layout-complete with load-complete.
+        (connectAccessibilityCallbacks): Connect callback to new listener for
+        ATK:AtkDocument:load-complete.
+        (disconnectAccessibilityCallbacks): Disconnect callback to new listener
+        for ATK:AtkDocument:load-complete.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (axObjectEventListener): Replaced layout-complete with load-complete.
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks):
+        Connect callback to new listener for ATK:AtkDocument:load-complete.
+        (WTR::AccessibilityNotificationHandler::disconnectAccessibilityCallbacks):
+        Disconnect callback to new listener for ATK:AtkDocument:load-complete.
+
 2013-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Generate API documentation for GObject DOM bindings

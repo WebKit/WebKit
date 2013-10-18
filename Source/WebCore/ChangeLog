@@ -1,3 +1,23 @@
+2013-10-18  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [ATK] Fix invalid signal to set objects to an unknown state "layout-complete"
+        https://bugs.webkit.org/show_bug.cgi?id=122970
+
+        Reviewed by Mario Sanchez Prada.
+
+        Removed an invalid signal to set objects to an unknown state
+        layout-complete. This signal was originally generated to notify DRT
+        and WKTR in case of page load complete.
+        It was replaced by ATK:AtkDocument:load-complete, which is already sent
+        by AXObjectCache::frameLoadingEventPlatformNotification().
+
+        There is no new test since the changes are covered by existing ones
+        (e.g. accessibility/loading-iframe-sends-notification.html).
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification): Removed an invalid
+        signal to set objects to an unknown state layout-complete.
+
 2013-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Generate API documentation for GObject DOM bindings
