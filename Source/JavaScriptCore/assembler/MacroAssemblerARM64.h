@@ -1012,7 +1012,7 @@ public:
 
     void store8(RegisterID src, void* address)
     {
-        move(ImmPtr(address), getCachedMemoryTempRegisterIDAndInvalidate());
+        move(TrustedImmPtr(address), getCachedMemoryTempRegisterIDAndInvalidate());
         m_assembler.strb(src, memoryTempRegister, 0);
     }
 
@@ -1694,7 +1694,7 @@ public:
 
     Jump branchTest8(ResultCondition cond, ExtendedAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        move(ImmPtr(reinterpret_cast<void*>(address.offset)), getCachedDataTempRegisterIDAndInvalidate());
+        move(TrustedImmPtr(reinterpret_cast<void*>(address.offset)), getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.ldrb(dataTempRegister, address.base, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask);
     }

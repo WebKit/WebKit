@@ -1,5 +1,16 @@
 2013-10-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, speculative ARM64 build fix.
+        
+        move(ImmPtr, blah) is only available in MacroAssembler since that's where blinding is
+        implemented. So, you have to use TrustedImmPtr in the superclasses.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::store8):
+        (JSC::MacroAssemblerARM64::branchTest8):
+
+2013-10-17  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, speculative ARM build fix.
         https://bugs.webkit.org/show_bug.cgi?id=122890
         <rdar://problem/15258624>
