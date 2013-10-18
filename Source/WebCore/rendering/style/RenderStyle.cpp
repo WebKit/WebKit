@@ -135,7 +135,9 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
     , rareNonInheritedData(StyleRareNonInheritedData::create())
     , rareInheritedData(StyleRareInheritedData::create())
     , inherited(StyleInheritedData::create())
+#if ENABLE(SVG)
     , m_svgStyle(SVGRenderStyle::create())
+#endif
 {
     setBitDefaults();
 }

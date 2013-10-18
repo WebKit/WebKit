@@ -1,3 +1,11 @@
+2013-10-18  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix for --no-svg option.
+        m_svgStyle of RenderStyle is guarded with the ENABLE_SVG flag.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+
 2013-10-17  Brady Eidson  <beidson@apple.com>
 
         Cleanup the Modules group in the WebCore.xcodeproj
