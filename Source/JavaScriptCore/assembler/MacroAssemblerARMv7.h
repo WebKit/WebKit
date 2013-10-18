@@ -144,6 +144,7 @@ public:
     };
 
     static const RegisterID stackPointerRegister = ARMRegisters::sp;
+    static const RegisterID framePointerRegister = ARMRegisters::fp;
     static const RegisterID linkRegister = ARMRegisters::lr;
 
     // Integer arithmetic operations:

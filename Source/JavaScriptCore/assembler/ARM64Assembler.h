@@ -436,6 +436,12 @@ class ARM64Assembler {
 public:
     typedef ARM64Registers::RegisterID RegisterID;
     typedef ARM64Registers::FPRegisterID FPRegisterID;
+    
+    static RegisterID firstRegister() { return ARM64Registers::x0; }
+    static RegisterID lastRegister() { return ARM64Registers::x28; }
+    
+    static FPRegisterID firstFPRegister() { return ARM64Registers::q0; }
+    static FPRegisterID lastFPRegister() { return ARM64Registers::q31; }
 
 private:
     static bool isSp(RegisterID reg) { return ARM64Registers::isSp(reg); }

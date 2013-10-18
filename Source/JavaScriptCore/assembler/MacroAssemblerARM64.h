@@ -54,7 +54,6 @@ public:
     {
     }
 
-    typedef ARM64Registers::FPRegisterID FPRegisterID;
     typedef ARM64Assembler::LinkRecord LinkRecord;
     typedef ARM64Assembler::JumpType JumpType;
     typedef ARM64Assembler::JumpLinkType JumpLinkType;
@@ -125,6 +124,7 @@ public:
     };
 
     static const RegisterID stackPointerRegister = ARM64Registers::sp;
+    static const RegisterID framePointerRegister = ARM64Registers::fp;
     static const RegisterID linkRegister = ARM64Registers::lr;
 
 
