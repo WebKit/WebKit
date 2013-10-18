@@ -1,3 +1,46 @@
+2013-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Generate API documentation for GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=121538
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The .symbols file that is now generated for checking GObject DOM
+        bindings API compatibility while building can also be used to
+        generate the files needed to produce the gtk-doc
+        documentation. The new script generate-webkitdom-doc-files can
+        generate the docs.sgml and sections.txt files from the given list
+        of .symbols files.
+
+        * gtk/GNUmakefile.am: Add rules to generate webkitdomgtk-docs.sgml
+        and webkitdomgtk-sections.txt as well as rules to install the
+        generated WebKitDOMGTK documentation.
+        * gtk/generate-gtkdoc:
+        (webkitdom_docs_html_path): New helper function that returns the
+        path where the DOM API documentation has been generated.
+        (get_webkit2_options): Include DOM API docs to the list of xref
+        dependencies.
+        (get_webkit1_options): Ditto.
+        (get_webkitdom_options): Return the gtk-doc options to generate
+        the DOM API docs.
+        (get_webkitdom_options.derived_sources_path):
+        (get_webkitdom_options.src_path):
+        * gtk/generate-webkitdom-doc-files: Added.
+        (WebKitDOMDocGenerator):
+        (WebKitDOMDocGenerator.write_header):
+        (WebKitDOMDocGenerator.write_section):
+        (WebKitDOMDocGenerator.write_footer):
+        (WebKitDOMDocGeneratorDocs):
+        (WebKitDOMDocGeneratorDocs.write_header):
+        (write_section):
+        (write_footer):
+        (WebKitDOMDocGeneratorSections):
+        (WebKitDOMDocGeneratorSections.__init__):
+        (WebKitDOMDocGeneratorSections._dom_class):
+        (WebKitDOMDocGeneratorSections._dom_class_decamelize):
+        (WebKitDOMDocGeneratorSections._symbol_list):
+        (WebKitDOMDocGeneratorSections.write_section):
+
 2013-10-17  Alex Christensen  <achristensen@webkit.org>
 
         Run JavaScriptCore tests again on Windows.

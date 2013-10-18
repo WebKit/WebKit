@@ -2,6 +2,7 @@ EXTRA_DIST += \
 	Tools/gtk/common.py \
 	Tools/gtk/generate-feature-defines-files \
 	Tools/gtk/generate-gtkdoc \
+	Tools/gtk/generate-webkitdom-doc-files \
 	Tools/gtk/gtkdoc.py
 
 docs: docs-build.stamp
@@ -25,6 +26,23 @@ docs_build_stamp_list += \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
 endif
 
+$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml: $(gdom_symbol_files) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files
+	$(AM_V_GEN)mkdir -p $(top_builddir)/DerivedSources/webkitdom/docs \
+	&& echo $(gdom_symbol_files) | $(PYTHON) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files docs > $@
+
+$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt: $(gdom_symbol_files) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files
+	$(AM_V_GEN)mkdir -p $(top_builddir)/DerivedSources/webkitdom/docs \
+	&& echo $(gdom_symbol_files) | $(PYTHON) $(srcdir)/Tools/gtk/generate-webkitdom-doc-files sections > $@
+
+BUILT_SOURCES += \
+	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
+	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt
+
+docs_build_stamp_list += \
+	libGObjectDOMBindings.la \
+	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-docs.sgml \
+	$(top_builddir)/DerivedSources/webkitdom/docs/webkitdomgtk-sections.txt
+
 docs-build.stamp: $(docs_build_stamp_list)
 	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
@@ -33,12 +51,14 @@ clean-local: doc-clean-local
 doc-clean-local:
 	@rm -f Documentation/webkitgtk/*~ Documentation/webkitgtk*.bak
 	@rm -f Documentation/webkit2gtk/*~ Documentation/webkit2gtk*.bak
+	@rm -f Documentation/webkitdomgtk/*~ Documentation/webkitdomgtk*.bak
+
 distclean-local: doc-distclean-local
 doc-distclean-local:
 	@rm -rf Documentation
 maintainer-clean-local: doc-maintainer-clean-local
 doc-maintainer-clean-local: clean
-	@rm -rf Documentation/webkitgtk Documentation/webkit2gtk
+	@rm -rf Documentation/webkitgtk Documentation/webkit2gtk Documentation/webkitdomgtk
 	-@rmdir Documentation
 
 install-data-local:
@@ -86,6 +106,26 @@ if ENABLE_WEBKIT2
 	  fi; \
 	fi
 endif
+	@installfiles=`echo ./Documentation/webkitdomgtk/html/*`; \
+	if test "$$installfiles" = './Documentation/webkitdomgtk/html/*'; \
+	then echo 1>&2 'No documentation to install' ; \
+	else \
+	  DOC_MODULE_VERSION=`cat ./Documentation/webkitdomgtk/version.xml`; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkitdomgtk-$(DOC_MODULE_VERSION)"; \
+	  else \
+	    installdir="$(DESTDIR)$(HTML_DIR)/webkitdomgtk"; \
+	  fi; \
+	  $(mkinstalldirs) $${installdir} ; \
+	  for i in $$installfiles; do \
+	    echo ' $(INSTALL_DATA) '$$i ; \
+	    $(INSTALL_DATA) $$i $${installdir}; \
+	  done; \
+	  if test -n "$(DOC_MODULE_VERSION)"; then \
+	    mv -f $${installdir}/webkitdomgtk.devhelp2 \
+	      $${installdir}/webkitdomgtk-$(DOC_MODULE_VERSION).devhelp2; \
+	  fi; \
+	fi
 if ENABLE_GTK_DOC
 	@$(AM_V_GEN) PKG_CONFIG=$(PKG_CONFIG) $(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
 endif
@@ -109,7 +149,13 @@ if ENABLE_WEBKIT2
 	fi; \
 	rm -rf $${installdir}
 endif
-
+	@DOC_MODULE_VERSION=`cat ./Documentation/webkitdomgtk/version.xml`; \
+	if test -n "$(DOC_MODULE_VERSION)"; then \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkitdomgtk-$(DOC_MODULE_VERSION)"; \
+	else \
+	  installdir="$(DESTDIR)$(HTML_DIR)/webkitdomgtk"; \
+	fi; \
+	rm -rf $${installdir}
 if ENABLE_GTK_DOC
 noinst_DATA += docs-build.stamp
 endif

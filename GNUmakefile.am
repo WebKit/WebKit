@@ -122,6 +122,7 @@ DOMAIN :=
 DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
 pkgconfig_DATA :=
+gdom_symbol_files :=
 
 if ENABLE_INTROSPECTION
 gir_DATA :=
@@ -287,3 +288,7 @@ if ENABLE_WEBKIT2
 	@-cp ./Documentation/webkit2gtk/tmpl/*.sgml $(distdir)/Documentation/webkit2gtk/tmpl
 	@cp ./Documentation/webkit2gtk/html/* $(distdir)/Documentation/webkit2gtk/html
 endif
+	@mkdir -p $(distdir)/Documentation/webkitdomgtk/html
+	@mkdir -p $(distdir)/Documentation/webkitdomgtk/tmpl
+	@-cp ./Documentation/webkitdomgtk/tmpl/*.sgml $(distdir)/Documentation/webkitdomgtk/tmpl
+	@cp ./Documentation/webkitdomgtk/html/* $(distdir)/Documentation/webkitdomgtk/html

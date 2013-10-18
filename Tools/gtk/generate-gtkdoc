@@ -72,6 +72,9 @@ def get_common_xref_deps():
         'gdk-pixbuf-2.0': ['gdk-pixbuf']
     }
 
+def webkitdom_docs_html_path():
+    return common.build_path('Documentation', 'webkitdomgtk', 'html')
+
 def get_webkit2_options():
     def derived_sources_path(*args):
         return common.build_path(*(('DerivedSources', 'WebKit2') + args))
@@ -96,7 +99,7 @@ def get_webkit2_options():
                    ' -I' + derived_sources_path('include') + \
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + src_path(),
-        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
+        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps) + [webkitdom_docs_html_path()],
         'ignored_files': glob.glob(src_path('*Private.h')) + \
                          glob.glob(injected_bundle_src_path('*Private.h')) + \
                          glob.glob(src_path('*Client*')) + \
@@ -136,10 +139,32 @@ def get_webkit1_options(gtk_version):
                    ' -I' + src_path() + \
                    ' -I' + common.top_level_path('Source') + \
                    ' -I' + common.top_level_path('Source', 'JavaScriptCore', 'ForwardingHeaders'),
-        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
+        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps) + [webkitdom_docs_html_path()],
         'ignored_files': glob.glob(src_path('webkit', '*private.*')) + \
                          glob.glob(src_path('webkit', 'webkitauthenticationdialog.*')) + \
                          glob.glob(src_path('webkit', 'webkitspellcheckerenchant.*'))
+    })
+    return options
+
+def get_webkitdom_options():
+    def derived_sources_path(*args):
+        return common.build_path(*(('DerivedSources', 'webkitdom') + args))
+    def src_path(*args):
+        return common.top_level_path(*(('Source', 'WebCore', 'bindings', 'gobject') + args))
+
+    xref_deps = { 'glib-2.0' : ['glib', 'gobject', 'gio'] }
+
+    options = get_common_options().copy()
+    options.update({
+        'module_name' : 'webkitdomgtk',
+        'doc_dir' : derived_sources_path('docs'),
+        'output_dir' : common.build_path('Documentation', 'webkitdomgtk'),
+        'source_dirs' : [derived_sources_path()],
+        'cflags' : ' -I' + derived_sources_path() + \
+                   ' -I' + src_path() + \
+                   ' -I' + common.top_level_path('Source'),
+        'cross_reference_deps' : get_gtkdoc_module_paths(xref_deps),
+        'ignored_files': glob.glob(derived_sources_path('*Private.h'))
     })
     return options
 
@@ -178,10 +203,27 @@ if os.environ.get('CC') == "clang":
     os.environ['CFLAGS'] += ' -Qunused-arguments'
 
 saw_webkit1_warnings = saw_webkit2_warnings = False
+wk2_pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
+wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
+if not os.path.exists(wk1_pkg_config_path):
+    wk1_pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
 
-pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')
-if not os.path.exists(pkg_config_path):
-    pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkit-1.0.pc')
+if os.path.exists(wk2_pkg_config_path):
+    pkg_config_path = wk2_pkg_config_path
+elif os.path.exists(wk1_pkg_config_path):
+    pkg_config_path = wk1_pkg_config_path
+generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkitdom_options())
+if '--rebase' not in sys.argv:
+    print("\nGenerating WebKitDOM documentation...")
+    saw_webkitdom_warnings = generate_doc(generator)
+else:
+    print("\nRebasing WebKitDOM documentation...")
+    try:
+        generator.rebase_installed_docs()
+    except Exception:
+        print("Rebase did not happen, likely no documentation is present.")
+
+pkg_config_path = wk1_pkg_config_path
 if os.path.exists(pkg_config_path):
     options = get_webkit1_options(common.gtk_version_of_pkg_config_file(pkg_config_path))
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, options)
@@ -196,7 +238,7 @@ if os.path.exists(pkg_config_path):
             print("Rebase did not happen, likely no documentation is present.")
 
 # WebKit2 might not be enabled, so check for the pkg-config file before building documentation.
-pkg_config_path = common.build_path('Source', 'WebKit2', 'webkit2gtk-3.0.pc')
+pkg_config_path = wk2_pkg_config_path
 if os.path.exists(pkg_config_path):
     generator = gtkdoc.PkgConfigGTKDoc(pkg_config_path, get_webkit2_options())
     if '--rebase' not in sys.argv:
