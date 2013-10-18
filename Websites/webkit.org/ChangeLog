@@ -1,5 +1,18 @@
 2013-10-18  Tibor Meszaros  <tmeszaros@inf.u-szeged.hu>
 
+        Mixed content error when accessing webkit.org/team.html over https
+        https://bugs.webkit.org/show_bug.cgi?id=123020
+
+        Reviewed by Alexey Proskuryakov.
+
+        When the webkit.org/team.html page is accessed over https most browsers report
+        Mixed Content error, which is caused by the fact that the contributos.json file
+        is accessed over a plain http connection and not https.     
+
+        * team.html:
+
+2013-10-18  Tibor Meszaros  <tmeszaros@inf.u-szeged.hu>
+
         Cleanup webkit.org/team.html
         https://bugs.webkit.org/show_bug.cgi?id=123022
 
