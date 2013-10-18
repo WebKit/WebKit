@@ -1,3 +1,17 @@
+2013-10-18  Julien Brianceau  <jbriance@cisco.com>
+
+        Group 64-bit specific and 32-bit specific callOperation implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=123024
+
+        Reviewed by Michael Saboff.
+
+        This is not a big deal, but could be less confusing when reading the code.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::callOperationWithCallFrameRollbackOnException):
+        (JSC::JIT::callOperationNoExceptionCheck):
+
 2013-10-18  Nadav Rotem  <nrotem@apple.com>
 
         Fix a FlushLiveness problem.
