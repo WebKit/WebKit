@@ -28,6 +28,7 @@
 
 #import "RemoteLayerTreeHostMessages.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/PlatformLayer.h>
@@ -183,7 +184,7 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
             layer.contentsRect = properties.contentsRect;
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
-            layer.contentsRect = properties.contentsRect;
+            layer.contentsScale = properties.contentsScale;
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
             layer.minificationFilter = toCAFilterType(properties.minificationFilter);
@@ -196,6 +197,12 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged)
             layer.timeOffset = properties.timeOffset;
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+            // FIXME: Do we need Copy?
+            RetainPtr<CGImageRef> image = properties.backingStore.bitmap()->makeCGImageCopy();
+            layer.contents = (id)image.get();
+        }
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())

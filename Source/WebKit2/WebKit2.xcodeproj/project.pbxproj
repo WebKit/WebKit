@@ -312,6 +312,8 @@
 		2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */; };
 		2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */; };
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
+		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
+		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
 		2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */; };
 		2DA049B3180CCCD300AAFA9E /* PlatformCALayerRemote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */; };
 		2DA049B4180CCCD300AAFA9E /* PlatformCALayerRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */; };
@@ -1762,6 +1764,8 @@
 		2D2ADF0E16364D8200197E47 /* PDFPluginChoiceAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginChoiceAnnotation.mm; path = PDF/PDFPluginChoiceAnnotation.mm; sourceTree = "<group>"; };
 		2D429BFA1721E2BA00EC681F /* PDFPluginPasswordField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginPasswordField.h; path = PDF/PDFPluginPasswordField.h; sourceTree = "<group>"; };
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
+		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
+		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
 		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
 		2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemote.cpp; sourceTree = "<group>"; };
@@ -4823,6 +4827,8 @@
 				2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */,
 				2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */,
 				2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */,
+				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
+				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
 				1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */,
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
@@ -5711,6 +5717,7 @@
 				BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */,
 				3788A05C14743C90006319E5 /* WKBrowsingContextControllerPrivate.h in Headers */,
 				BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */,
+				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				BCBAACF61452324F0053F82F /* WKBrowsingContextGroupPrivate.h in Headers */,
 				BCBAAD0B14560A430053F82F /* WKBrowsingContextLoadDelegate.h in Headers */,
 				BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */,
@@ -6617,6 +6624,7 @@
 				BCE81D98131AE02100241910 /* DictionaryPopupInfo.cpp in Sources */,
 				5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */,
 				518E8F0716B2093700E91429 /* Download.cpp in Sources */,
+				2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */,
 				518E8F0916B2093700E91429 /* DownloadAuthenticationClient.cpp in Sources */,
 				518E8F0D16B2093700E91429 /* DownloadMac.mm in Sources */,
 				518E8F0B16B2093700E91429 /* DownloadManager.cpp in Sources */,

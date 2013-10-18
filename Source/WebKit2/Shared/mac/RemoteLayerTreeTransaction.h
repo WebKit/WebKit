@@ -26,6 +26,7 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include "RemoteLayerBackingStore.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
@@ -71,7 +72,8 @@ public:
         MinificationFilterChanged = 1 << 20,
         MagnificationFilterChanged = 1 << 21,
         SpeedChanged = 1 << 22,
-        TimeOffsetChanged = 1 << 23
+        TimeOffsetChanged = 1 << 23,
+        BackingStoreChanged = 1 << 24
     };
 
     struct LayerCreationProperties {
@@ -117,6 +119,7 @@ public:
         WebCore::PlatformCALayer::FilterType magnificationFilter;
         float speed;
         double timeOffset;
+        RemoteLayerBackingStore backingStore;
     };
 
     explicit RemoteLayerTreeTransaction();

@@ -137,6 +137,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & TimeOffsetChanged)
         encoder << timeOffset;
+
+    if (changedProperties & BackingStoreChanged)
+        encoder << backingStore;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -261,6 +264,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
 
     if (result.changedProperties & TimeOffsetChanged) {
         if (!decoder.decode(result.timeOffset))
+            return false;
+    }
+
+    if (result.changedProperties & BackingStoreChanged) {
+        if (!decoder.decode(result.backingStore))
             return false;
     }
 
@@ -584,6 +592,16 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerT
             writeIndent(builder, 3);
             builder.append("(timeOffset ");
             builder.appendNumber(layerProperties.timeOffset);
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(backingStore ");
+            builder.appendNumber(layerProperties.backingStore.bitmap()->size().width());
+            builder.append(" ");
+            builder.appendNumber(layerProperties.backingStore.bitmap()->size().height());
             builder.append(')');
         }
 

@@ -29,7 +29,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "RemoteLayerTreeTransaction.h"
-
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformLayer.h>
 
@@ -148,6 +147,8 @@ private:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
     virtual AVPlayerLayer *playerLayer() const OVERRIDE;
+
+    void ensureBackingStore();
 
     RemoteLayerTreeTransaction::LayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;

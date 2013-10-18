@@ -1,3 +1,55 @@
+2013-10-17  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Proxy layer contents to the UI process
+        http://bugs.webkit.org/show_bug.cgi?id=123003
+
+        Reviewed by Anders Carlsson.
+
+        Proxy layer contents to the UI process. Contents are painted into ShareableBitmaps
+        for now, and are fully repainted on any invalidation. Also, contents do not respect
+        any kind of scale or use of contentsRect/etc.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        Store/encode/decode/dump the new RemoteLayerBackingStore.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        Fix a mistake where contentsRect was getting reset when contentsScale changed.
+        Set the layer contents when the backing store changes.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add RemoteLayerBackingStore.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Paint while building our transaction, and mark the backing store as changed
+        if we did any painting.
+
+        (PlatformCALayerRemote::ensureBackingStore):
+        Keep the backing store's properties up-to-date with our layer.
+
+        (PlatformCALayerRemote::setNeedsDisplay):
+        Inform the backing store that it needs to paint.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.h: Added.
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm: Added.
+        (RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (RemoteLayerBackingStore::encode):
+        (RemoteLayerBackingStore::decode):
+        Encode/decode our ShareableBitmap (via its handle) and size.
+
+        (RemoteLayerBackingStore::setNeedsDisplay):
+        For now, repaint the world.
+
+        (RemoteLayerBackingStore::display):
+        Create a new bitmap if needed, and paint into it.
+
 2013-10-17  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo in the definition of WK_API_ENABLED.

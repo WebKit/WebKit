@@ -29,6 +29,7 @@
 
 #import "PlatformCALayerRemote.h"
 
+#import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 #import <WebCore/AnimationUtilities.h>
 #import <WebCore/GraphicsContext.h>
@@ -73,6 +74,9 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
 
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction& transaction)
 {
+    if (m_properties.backingStore.display())
+        m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+
     if (m_properties.changedProperties != RemoteLayerTreeTransaction::NoChange) {
         if (m_properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
             m_properties.children.clear();
@@ -94,8 +98,25 @@ void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
 {
 }
 
+void PlatformCALayerRemote::ensureBackingStore()
+{
+    if (m_properties.backingStore.layer() == this
+        && m_properties.backingStore.size() == m_properties.size
+        && m_properties.backingStore.isOpaque() == m_properties.opaque)
+        return;
+
+    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size), m_properties.opaque);
+}
+
 void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* dirtyRect)
 {
+    ensureBackingStore();
+
+    // FIXME: Need to map this through contentsRect/contentsScale/etc.
+    if (dirtyRect)
+        m_properties.backingStore.setNeedsDisplay(enclosingIntRect(*dirtyRect));
+    else
+        m_properties.backingStore.setNeedsDisplay();
 }
 
 void PlatformCALayerRemote::setContentsChanged()
