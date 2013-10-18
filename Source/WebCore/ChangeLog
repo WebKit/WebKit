@@ -1,3 +1,12 @@
+2013-10-17  Brady Eidson  <beidson@apple.com>
+
+        Cleanup the Modules group in the WebCore.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=123009
+
+        Rubberstamped by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-10-18  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [ATK] Fix invalid signal to set objects to an unknown state "layout-complete"
