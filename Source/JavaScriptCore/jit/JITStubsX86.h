@@ -55,10 +55,16 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %esi" "\n"
     "pushl %edi" "\n"
     "pushl %ebx" "\n"
-    "subl $0x3c, %esp" "\n"
-    "movl 0x58(%esp), %edi" "\n"
-    "call *0x50(%esp)" "\n"
-    "addl $0x3c, %esp" "\n"
+
+    // JIT Operation can use up to 6 arguments right now. So, we need to
+    // reserve space in this stack frame for the out-going args. To ensure that
+    // the stack remains aligned on an 16 byte boundary, we round the padding up
+    // by 0x1c bytes.
+    "subl $0x1c, %esp" "\n"
+    "movl 0x38(%esp), %edi" "\n"
+    "call *0x30(%esp)" "\n"
+    "addl $0x1c, %esp" "\n"
+
     "popl %ebx" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
@@ -73,7 +79,7 @@ asm (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "addl $0x3c, %esp" "\n"
+    "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
@@ -248,11 +254,11 @@ extern "C" {
             push esi;
             push edi;
             push ebx;
-            sub esp, 0x3c;
+            sub esp, 0x1c;
             mov ecx, esp;
-            mov edi, [esp + 0x58];
-            call [esp + 0x50];
-            add esp, 0x3c;
+            mov edi, [esp + 0x38];
+            call [esp + 0x30];
+            add esp, 0x1c;
             pop ebx;
             pop edi;
             pop esi;
@@ -264,7 +270,7 @@ extern "C" {
     __declspec(naked) void ctiOpThrowNotCaught()
     {
         __asm {
-            add esp, 0x3c;
+            add esp, 0x1c;
             pop ebx;
             pop edi;
             pop esi;

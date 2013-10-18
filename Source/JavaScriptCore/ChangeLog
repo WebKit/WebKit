@@ -1,3 +1,14 @@
+2013-10-18  Mark Lam  <mark.lam@apple.com>
+
+        Remove excess reserved space in ctiTrampoline frames for X86 and X86_64.
+        https://bugs.webkit.org/show_bug.cgi?id=123037.
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+
 2013-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         Frequent RELEASE_ASSERT crashes in Structure::checkOffsetConsistency on WebGL swizzler tests

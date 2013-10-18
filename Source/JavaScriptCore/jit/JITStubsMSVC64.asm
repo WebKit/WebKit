@@ -46,14 +46,17 @@ ctiTrampoline PROC
     push r15
     push rbx
 
-    ; Decrease rsp to point to the start of our JITStackFrame
-    sub rsp, 58h
+    ; JIT operations can use up to 6 args (4 in registers and 2 on the stack).
+    ; In addition, X86_64 ABI specifies that the worse case stack alignment
+    ; requirement is 32 bytes. Based on these factors, we need to pad the stack
+    ; and additional 28h bytes.
+    sub rsp, 28h
     mov r12, 512
     mov r14, 0FFFF000000000000h
     mov r15, 0FFFF000000000002h
     mov r13, r8
     call rcx
-    add rsp, 58h
+    add rsp, 28h
     pop rbx
     pop r15
     pop r14
@@ -64,7 +67,7 @@ ctiTrampoline PROC
 ctiTrampoline ENDP
 
 ctiOpThrowNotCaught PROC
-    add rsp, 58h
+    add rsp, 28h
     pop rbx
     pop r15
     pop r14
