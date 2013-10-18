@@ -1,3 +1,13 @@
+2013-10-18  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKBrowsingController accessors crash instead of returning nil
+        https://bugs.webkit.org/show_bug.cgi?id=123036
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (autoreleased): Return nil if the object is NULL.
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Remove some Windows specific code from WebKit2

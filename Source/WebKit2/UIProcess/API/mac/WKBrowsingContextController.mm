@@ -49,12 +49,12 @@ using namespace WebKit;
 
 static inline NSString *autoreleased(WKStringRef string)
 {
-    return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, adoptWK(string).get()));
+    return string ? CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, adoptWK(string).get())) : nil;
 }
 
 static inline NSURL *autoreleased(WKURLRef url)
 {
-    return CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(url).get()));
+    return url ? CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(url).get())) : nil;
 }
 
 @interface WKBrowsingContextControllerData : NSObject {
