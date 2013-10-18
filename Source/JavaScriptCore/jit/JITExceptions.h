@@ -27,7 +27,6 @@
 #define JITExceptions_h
 
 #include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
 
 #if ENABLE(JIT) || ENABLE(LLINT)
 
@@ -36,29 +35,7 @@ namespace JSC {
 class ExecState;
 class VM;
 
-// This header gives other parts of the system access to the JIT's prototocol
-// for the throwing and handling exceptions.
-
-struct ExceptionHandler {
-    ExecState* callFrame;
-    void* catchRoutine;
-};
-
-#if USE(JSVALUE32_64)
-// EncodedExceptionHandler is used to convince the compiler to return an ExceptionHander
-// struct in two registers for 32 bit builds.
-typedef int64_t EncodedExceptionHandler;
-
-union ExceptionHandlerUnion {
-    ExceptionHandler handler;
-    EncodedExceptionHandler encodedHandler;
-};
-
-EncodedExceptionHandler encode(ExceptionHandler);
-#endif
-
-ExceptionHandler uncaughtExceptionHandler();
-ExceptionHandler genericUnwind(VM*, ExecState*, JSValue exceptionValue);
+void genericUnwind(VM*, ExecState*, JSValue exceptionValue);
 
 } // namespace JSC
 

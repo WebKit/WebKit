@@ -792,11 +792,6 @@ namespace JSC {
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EPc, int, Instruction*);
         MacroAssembler::Call callOperation(J_JITOperation_EZ, int, int32_t);
-#if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(Jhe_JITOperation_EJ, RegisterID);
-#else
-        MacroAssembler::Call callOperation(Jhe_JITOperation_EJ, RegisterID, RegisterID);
-#endif
         MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, size_t);
         MacroAssembler::Call callOperation(P_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperation(S_JITOperation_ECC, RegisterID, RegisterID);
@@ -809,6 +804,11 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_ECICC, RegisterID, const Identifier*, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EIdJZ, const Identifier*, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
+#if USE(JSVALUE64)
+        MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID);
+#else
+        MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID, RegisterID);
+#endif
         MacroAssembler::Call callOperation(V_JITOperation_EJIdJJ, RegisterID, const Identifier*, RegisterID, RegisterID);
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperation(V_JITOperation_EJJI, RegisterID, RegisterID, StringImpl*);

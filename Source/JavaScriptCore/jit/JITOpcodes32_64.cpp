@@ -30,6 +30,7 @@
 #if USE(JSVALUE32_64)
 #include "JIT.h"
 
+#include "CCallHelpers.h"
 #include "JITInlines.h"
 #include "JSArray.h"
 #include "JSCell.h"
@@ -170,8 +171,20 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     storePtr(regT1, regT2);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
-    move(TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), regT1);
-    jump(regT1);
+#if CPU(X86)
+    addPtr(TrustedImm32(-12), stackPointerRegister);
+    push(callFrameRegister);
+#else
+    move(callFrameRegister, firstArgumentRegister);
+#endif
+    move(TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), regT3);
+    call(regT3);
+
+#if CPU(X86)
+    addPtr(TrustedImm32(16), stackPointerRegister);
+#endif
+
+    jumpToExceptionHandler();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
     LinkBuffer patchBuffer(*m_vm, this, GLOBAL_THUNK_ID);
@@ -813,10 +826,8 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     ASSERT(regT0 == returnValueRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
-    callOperation(operationThrow, regT1, regT0);
-    // After operationThrow returns, returnValueRegister (regT0) has the handler's callFrame and
-    // returnValue2Register has the handler's entry address.
-    jump(returnValue2Register);
+    callOperationNoExceptionCheck(operationThrow, regT1, regT0);
+    jumpToExceptionHandler();
 }
 
 void JIT::emit_op_get_pnames(Instruction* currentInstruction)

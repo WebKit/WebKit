@@ -109,34 +109,6 @@ namespace JSC {
     #define CTI_SAMPLER 0
 #endif
 
-#if USE(JSVALUE32_64)
-EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame* callFrame)
-{
-    ASSERT(!callFrame->hasHostCallFrameFlag());
-    if (!callFrame) {
-        // The entire stack has already been unwound. Nothing more to handle.
-        return encode(uncaughtExceptionHandler());
-    }
-
-    VM* vm = callFrame->codeBlock()->vm();
-    vm->topCallFrame = callFrame;
-    return encode(genericUnwind(vm, callFrame, vm->exception()));
-}
-#else
-ExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame* callFrame)
-{
-    ASSERT(!callFrame->hasHostCallFrameFlag());
-    if (!callFrame) {
-        // The entire stack has already been unwound. Nothing more to handle.
-        return uncaughtExceptionHandler();
-    }
-
-    VM* vm = callFrame->codeBlock()->vm();
-    vm->topCallFrame = callFrame;
-    return genericUnwind(vm, callFrame, vm->exception());
-}
-#endif
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

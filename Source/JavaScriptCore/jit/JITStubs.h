@@ -96,16 +96,6 @@ inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
 extern "C" void ctiMasmProbeTrampoline();
 #endif
 
-extern "C" {
-
-#if USE(JSVALUE32_64)
-EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
-#else
-ExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
-#endif
-
-} // extern "C"
-
 #endif // ENABLE(JIT)
 
 } // namespace JSC

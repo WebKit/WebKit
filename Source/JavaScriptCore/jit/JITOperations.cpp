@@ -1615,18 +1615,19 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     }
 }
 
-JITHandlerEncoded JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExceptionValue)
+void JIT_OPERATION operationThrow(ExecState* exec, EncodedJSValue encodedExceptionValue)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
     JSValue exceptionValue = JSValue::decode(encodedExceptionValue);
     vm->throwException(exec, exceptionValue);
-    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue);
-    return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
+
+    // Results stored out-of-band in vm.targetMachinePCForThrow & vm.callFrameForThrow
+    genericUnwind(vm, exec, exceptionValue);
 }
 
-JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState* exec)
+void JIT_OPERATION lookupExceptionHandler(ExecState* exec)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
@@ -1634,9 +1635,17 @@ JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState* exec)
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
     
-    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue);
-    ASSERT(handler.catchRoutine);
-    return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
+    genericUnwind(vm, exec, exceptionValue);
+    ASSERT(vm->targetMachinePCForThrow);
+}
+
+void JIT_OPERATION operationVMHandleException(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    ASSERT(!exec->hasHostCallFrameFlag());
+    genericUnwind(vm, exec, vm->exception());
 }
 
 } // extern "C"

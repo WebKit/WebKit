@@ -146,9 +146,7 @@ void JITCompiler::compileExceptionHandlers()
     poke(GPRInfo::argumentGPR0);
 #endif
     m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
-    // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
-    // and the address of the handler in returnValueGPR2.
-    jump(GPRInfo::returnValueGPR2);
+    jumpToExceptionHandler();
 }
 
 void JITCompiler::link(LinkBuffer& linkBuffer)

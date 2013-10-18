@@ -47,45 +47,6 @@ class ArrayAllocationProfile;
 
 extern "C" {
 
-// This method is used to lookup an exception hander, keyed by faultLocation, which is
-// the return location from one of the calls out to one of the helper operations above.
-
-// According to C++ rules, a type used for the return signature of function with C linkage (i.e.
-// 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
-// warnings, or worse, a change in the ABI used to return these types.
-struct JITHandler {
-    union Union {
-        struct Struct {
-            ExecState* exec;
-            void* handler;
-        } s;
-        uint64_t encoded;
-    } u;
-};
-
-inline JITHandler createJITHandler(ExecState* exec, void* handler)
-{
-    JITHandler result;
-    result.u.s.exec = exec;
-    result.u.s.handler = handler;
-    return result;
-}
-
-#if CPU(X86_64)
-typedef JITHandler JITHandlerEncoded;
-inline JITHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
-{
-    return createJITHandler(exec, handler);
-}
-#else
-typedef uint64_t JITHandlerEncoded;
-inline JITHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
-{
-    COMPILE_ASSERT(sizeof(JITHandler::Union) == sizeof(uint64_t), JITHandler_Union_is_64bit);
-    return createJITHandler(exec, handler).u.encoded;
-}
-#endif
-
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
 /*
@@ -102,7 +63,6 @@ inline JITHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
     Idc: const Identifier*
     J: EncodedJSValue
     Jcp: const JSValue*
-    Jhe: JITHandlerEncoded
     Jsa: JSActivation*
     Jss: JSString*
     O: JSObject*
@@ -112,6 +72,7 @@ inline JITHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
     S: size_t
     St: Structure*
     V: void
+    Vm: VM*
     W: WatchpointSet*
     Z: int32_t
 */
@@ -142,7 +103,6 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESS)(ExecState*, size_t, s
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZ)(ExecState*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
-typedef JITHandlerEncoded JIT_OPERATION (*Jhe_JITOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_E)(ExecState*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EZ)(ExecState*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EC)(ExecState*, JSCell*);
@@ -191,6 +151,7 @@ typedef void JIT_OPERATION (*V_JITOperation_EPc)(ExecState*, Instruction*);
 typedef void JIT_OPERATION (*V_JITOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_W)(WatchpointSet*);
 typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
+typedef void JIT_OPERATION (*V_JITOperation_EVm)(ExecState*, VM*);
 typedef char* JIT_OPERATION (*P_JITOperation_E)(ExecState*);
 typedef char* JIT_OPERATION (*P_JITOperation_EC)(ExecState*, JSCell*);
 typedef char* JIT_OPERATION (*P_JITOperation_EJS)(ExecState*, EncodedJSValue, size_t);
@@ -210,7 +171,11 @@ typedef char* JIT_OPERATION (*P_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef StringImpl* JIT_OPERATION (*I_JITOperation_EJss)(ExecState*, JSString*);
 typedef JSString* JIT_OPERATION (*Jss_JITOperation_EZ)(ExecState*, int32_t);
 
-JITHandlerEncoded JIT_OPERATION lookupExceptionHandler(ExecState*) WTF_INTERNAL;
+// This method is used to lookup an exception hander, keyed by faultLocation, which is
+// the return location from one of the calls out to one of the helper operations above.
+    
+void JIT_OPERATION lookupExceptionHandler(ExecState*) WTF_INTERNAL;
+void JIT_OPERATION operationVMHandleException(ExecState*) WTF_INTERNAL;
 
 void JIT_OPERATION operationStackCheck(ExecState*, CodeBlock*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationCallArityCheck(ExecState*) WTF_INTERNAL;
@@ -264,7 +229,7 @@ JSCell* JIT_OPERATION operationNewObject(ExecState*, Structure*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationNewRegexp(ExecState*, void*) WTF_INTERNAL;
 void JIT_OPERATION operationHandleWatchdogTimer(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrowStaticError(ExecState*, EncodedJSValue, int32_t) WTF_INTERNAL;
-JITHandlerEncoded JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationThrow(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationDebug(ExecState*, int32_t) WTF_INTERNAL;
 #if ENABLE(DFG_JIT)
 char* JIT_OPERATION operationOptimize(ExecState*, int32_t) WTF_INTERNAL;

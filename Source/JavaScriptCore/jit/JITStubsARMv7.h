@@ -245,21 +245,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 asm (
 ".text" "\n"
 ".align 2" "\n"
-".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
-HIDE_SYMBOL(ctiVMHandleException) "\n"
-".thumb" "\n"
-".thumb_func " THUMB_FUNC_PARAM(ctiVMHandleException) "\n"
-SYMBOL_STRING(ctiVMHandleException) ":" "\n"
-    "mov r0, r5" "\n"
-    "bl " LOCAL_REFERENCE(cti_vm_handle_exception) "\n"
-    // When cti_vm_handle_exception returns, r0 has callFrame and r1 has handler address
-    "mov r5, r0" "\n"
-    "bx r1" "\n"
-);
-
-asm (
-".text" "\n"
-".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 ".thumb" "\n"

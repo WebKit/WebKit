@@ -517,7 +517,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             
             stubJit.setupArgumentsExecState();
             handlerCall = stubJit.call();
-            stubJit.jump(GPRInfo::returnValueGPR2);
+            stubJit.jumpToExceptionHandler();
         } else {
             if (isInlineOffset(slot.cachedOffset())) {
 #if USE(JSVALUE64)

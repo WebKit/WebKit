@@ -77,9 +77,8 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(lookupExceptionHandler)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0);
     jit.call(GPRInfo::nonArgGPR0);
-    emitPointerValidation(jit, GPRInfo::returnValueGPR2);
-    jit.jump(GPRInfo::returnValueGPR2);
-    
+    jit.jumpToExceptionHandler();
+
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("Throw exception from call slow path thunk"));
 }
@@ -462,8 +461,19 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
-    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), JSInterfaceJIT::regT1);
-    jit.jump(JSInterfaceJIT::regT1);
+#if CPU(X86) && USE(JSVALUE32_64)
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(-12), JSInterfaceJIT::stackPointerRegister);
+    jit.push(JSInterfaceJIT::callFrameRegister);
+#else
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::firstArgumentRegister);
+#endif
+    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), JSInterfaceJIT::regT3);
+    jit.call(JSInterfaceJIT::regT3);
+#if CPU(X86) && USE(JSVALUE32_64)
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);
+#endif
+
+    jit.jumpToExceptionHandler();
 
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("native %s trampoline", toCString(kind).data()));

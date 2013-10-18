@@ -340,7 +340,17 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(VM, m_exception);
         }
-        
+
+        static ptrdiff_t callFrameForThrowOffset()
+        {
+            return OBJECT_OFFSETOF(VM, callFrameForThrow);
+        }
+
+        static ptrdiff_t targetMachinePCForThrowOffset()
+        {
+            return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
+        }
+
         JS_EXPORT_PRIVATE void clearException();
         JS_EXPORT_PRIVATE void clearExceptionStack();
         void getExceptionInfo(JSValue& exception, RefCountedArray<StackFrame>& exceptionStack);

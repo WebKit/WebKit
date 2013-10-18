@@ -100,14 +100,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "add sp, sp, #" STRINGIZE_VALUE_OF(SIZEOF_JITSTACKFRAME) "\n"
     "ret" "\n"
 
-HIDE_SYMBOL(ctiVMHandleException) "\n"
-SYMBOL_STRING(ctiVMHandleException) ":" "\n"
-    "mov x0, x25" "\n"
-    "bl " LOCAL_REFERENCE(cti_vm_handle_exception) "\n"
-    // When cti_vm_handle_exception returns, x0 has callFrame and x1 has handler address
-    "mov x25, x0" "\n"
-    "br x1" "\n"
-
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ldr x28, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_X28_OFFSET) "]" "\n"

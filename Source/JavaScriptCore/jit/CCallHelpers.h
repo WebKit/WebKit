@@ -1335,6 +1335,17 @@ public:
         } else
             swap(destA, destB);
     }
+    
+    void jumpToExceptionHandler()
+    {
+        // genericUnwind() leaves the handler CallFrame* in vm->callFrameForThrow,
+        // and the address of the handler in vm->targetMachinePCForThrow.
+        // The exception handler expects the CallFrame* in regT0.
+        move(TrustedImmPtr(vm()), GPRInfo::regT0);
+        loadPtr(Address(GPRInfo::regT0, VM::targetMachinePCForThrowOffset()), GPRInfo::regT1);
+        loadPtr(Address(GPRInfo::regT0, VM::callFrameForThrowOffset()), GPRInfo::regT0);
+        jump(GPRInfo::regT1);
+    }
 };
 
 } // namespace JSC

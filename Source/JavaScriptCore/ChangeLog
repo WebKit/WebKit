@@ -1,3 +1,55 @@
+2013-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Change native function call stubs to use JIT operations instead of ctiVMHandleException
+        https://bugs.webkit.org/show_bug.cgi?id=122982
+
+        Reviewed by Geoffrey Garen.
+
+        Change ctiVMHandleException to operationVMHandleException.  Change all exception operations to
+        return the catch callFrame and entryPC via vm.callFrameForThrow and vm.targetMachinePCForThrow.
+        This removed calling convention headaches, fixing https://bugs.webkit.org/show_bug.cgi?id=122980
+        in the process.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::jumpToExceptionHandler):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperationNoExceptionCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_throw):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARM64.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        * jit/Repatch.cpp:
+        (JSC::tryBuildGetByIDList):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::nativeForGenerator):
+        * runtime/VM.h:
+        (JSC::VM::callFrameForThrowOffset):
+        (JSC::VM::targetMachinePCForThrowOffset):
+
 2013-10-18  Julien Brianceau  <jbriance@cisco.com>
 
         Fix J_JITOperation_EAapJ call for MIPS and ARM EABI.

@@ -70,16 +70,6 @@ SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm (
-".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
-HIDE_SYMBOL(ctiVMHandleException) "\n"
-SYMBOL_STRING(ctiVMHandleException) ":" "\n"
-    "movl %edi, %ecx" "\n"
-    "call " LOCAL_REFERENCE(cti_vm_handle_exception) "\n"
-    // When cti_vm_handle_exception returns, eax has callFrame and edx has handler address
-    "jmp *%edx" "\n"
-);
-
-asm (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
@@ -268,16 +258,6 @@ extern "C" {
             pop esi;
             pop ebp;
             ret;
-        }
-    }
-
-    __declspec(naked) void ctiVMHandleException()
-    {
-        __asm {
-            mov ecx, edi;
-            call cti_vm_handle_exception;
-            // When cti_vm_handle_exception returns, eax has callFrame and edx has handler address
-            jmp edx
         }
     }
 

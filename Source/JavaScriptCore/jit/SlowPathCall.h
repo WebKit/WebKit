@@ -81,18 +81,8 @@ public:
         m_jit->unmap();
 #else
         m_jit->killLastResultRegister();
-#endif
-        
-#if USE(JSVALUE32_64)
-        JIT::Jump noException = m_jit->branch32(JIT::Equal, JIT::AbsoluteAddress(reinterpret_cast<char*>(m_jit->m_codeBlock->vm()->addressOfException()) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), JIT::TrustedImm32(JSValue::EmptyValueTag));
-#else
-        JIT::Jump noException = m_jit->branchTest64(JIT::Zero, JIT::AbsoluteAddress(m_jit->m_codeBlock->vm()->addressOfException()));
-#endif
-        m_jit->updateTopCallFrame();
-        m_jit->move(JIT::TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), JIT::regT1);
-        m_jit->jump(JIT::regT1);
-        noException.link(m_jit);
-        
+#endif   
+        m_jit->exceptionCheck();
         return call;
     }
 
