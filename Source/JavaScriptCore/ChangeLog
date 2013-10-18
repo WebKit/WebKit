@@ -1,3 +1,13 @@
+2013-10-18  Nadav Rotem  <nrotem@apple.com>
+
+        Fix a FlushLiveness problem.
+        https://bugs.webkit.org/show_bug.cgi?id=122984
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        (JSC::DFG::FlushLivenessAnalysisPhase::process):
+
 2013-10-18  Michael Saboff  <msaboff@apple.com>
 
         Change native function call stubs to use JIT operations instead of ctiVMHandleException

@@ -150,20 +150,23 @@ private:
                 
                 // Three possibilities:
                 // 1) Predecessor format is Dead, in which case it acquires our format.
-                // 2) Predecessor format is identical to our format, in which case we
+                // 2) Predecessor format is not Dead but our format is dead, in which
+                //    case we acquire the predecessor format.
+                // 3) Predecessor format is identical to our format, in which case we
                 //    do nothing.
-                // 3) Predecessor format is different from our format and it's not Dead,
+                // 4) Predecessor format is different from our format and it's not Dead,
                 //    in which case we have an erroneous set of Flushes and SetLocals.
-                
-                // FIXME: What if the predecessor was already processed by the fixpoint
-                // and says "not Dead" and the current block says "Dead"? We may want to
-                // revisit this, and say that this is is acceptable.
-                
+
                 if (!predecessorFlush) {
                     predecessorFlush = myFlush;
                     continue;
                 }
-                
+
+                if (!myFlush) {
+                    m_live[j] = predecessorFlush;
+                    continue;
+                }
+
                 if (predecessorFlush == myFlush)
                     continue;
                 
