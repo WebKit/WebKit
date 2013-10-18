@@ -1,3 +1,30 @@
+2013-10-18  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Simplify implementation of atk_text_get_text
+        https://bugs.webkit.org/show_bug.cgi?id=122644
+
+        Reviewed by Chris Fleizach.
+
+        Simplified code so we only call textUnderElement() directly once
+        and only when needed. Also, moved the specific code for ColorWell
+        objects up to the beginning of that function, so we don't do any
+        additional efforts like computing text ranges in those cases.
+
+        No new tests are needed, just to make sure that the current layout
+        and unit tests are still passing, which they are.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (textForObject): Fixed a issue that got detected while working on
+        this patch, which was causing a '\n' to be artificially appended
+        at the end of text controls all the time.
+        (webkitAccessibleTextGetText): Simplified function.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::doAXStringForRange): Removed
+        the check that prevents from pass ranges exceeding the limits of
+        the element's text, since those will be checked anyway when
+        calling String::substring().
+
 2013-10-18  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer][GTK] Add GRefPtr::outPtr()

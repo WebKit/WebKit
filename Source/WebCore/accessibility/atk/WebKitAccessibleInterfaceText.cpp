@@ -148,12 +148,14 @@ static gchar* textForObject(const AccessibilityObject* coreObject)
         int lineNumber = 0;
         PlainTextRange range = coreObject->doAXRangeForLine(lineNumber);
         while (range.length) {
-            // When a line of text wraps in a text area, the final space is removed.
-            if (range.start + range.length < textLength)
-                range.length -= 1;
             String lineText = coreObject->doAXStringForRange(range);
             g_string_append(str, lineText.utf8().data());
-            g_string_append(str, "\n");
+
+            // When a line of text wraps in a text area, the final space
+            // after each non-final line must be replaced with a line break.
+            if (range.start + range.length < textLength)
+                g_string_overwrite_len(str, str->len - 1, "\n", 1);
+
             range = coreObject->doAXRangeForLine(++lineNumber);
         }
     } else if (coreObject->isAccessibilityRenderObject()) {
@@ -569,12 +571,13 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
     AccessibilityObject* coreObject = core(text);
 
-    int end = endOffset;
-    if (endOffset == -1) {
-        end = coreObject->stringValue().length();
-        if (!end)
-            end = coreObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren)).length();
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (coreObject->roleValue() == ColorWellRole) {
+        int r, g, b;
+        coreObject->colorValue(r, g, b);
+        return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.);
     }
+#endif
 
     String ret;
     if (coreObject->isTextControl())
@@ -591,30 +594,21 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
         // is something ATs want included and we have to account for the fact that it is multibyte.
         GOwnPtr<char> objectText(textForObject(coreObject));
         ret = String::fromUTF8(objectText.get());
-        if (!end)
-            end = ret.length();
     }
 
     // Prefix a item number/bullet if needed
+    int actualEndOffset = endOffset == -1 ? ret.length() : endOffset;
     if (coreObject->roleValue() == ListItemRole) {
         RenderObject* objRenderer = coreObject->renderer();
         if (objRenderer && objRenderer->isListItem()) {
             String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
             ret = objRenderer->style()->direction() == LTR ? markerText + ret : ret + markerText;
             if (endOffset == -1)
-                end += markerText.length();
+                actualEndOffset = ret.length() + markerText.length();
         }
     }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    if (coreObject->roleValue() == ColorWellRole) {
-        int r, g, b;
-        coreObject->colorValue(r, g, b);
-        return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.);
-    }
-#endif
-
-    ret = ret.substring(startOffset, end - startOffset);
+    ret = ret.substring(startOffset, actualEndOffset - startOffset);
     return g_strdup(ret.utf8().data());
 }
 

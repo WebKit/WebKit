@@ -2094,9 +2094,6 @@ String AccessibilityRenderObject::doAXStringForRange(const PlainTextRange& range
         return String();
     
     String elementText = isPasswordField() ? passwordFieldValue() : text();
-    if (range.start + range.length > elementText.length())
-        return String();
-    
     return elementText.substring(range.start, range.length);
 }
 
