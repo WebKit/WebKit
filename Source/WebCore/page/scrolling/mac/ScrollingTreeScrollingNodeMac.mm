@@ -270,6 +270,9 @@ void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
 
     scrollingTree()->setMainFrameIsRubberBanding(false);
 
+    // Since the rubberband timer has stopped, totalContentsSizeForRubberBand can be synchronized with totalContentsSize.
+    setTotalContentsSizeForRubberBand(totalContentsSize());
+
     CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
     m_snapRubberbandTimer = nullptr;
 }
@@ -379,8 +382,8 @@ IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 
 IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
 {
-    IntPoint position(totalContentsSize().width() - viewportRect().width(),
-                      totalContentsSize().height() - viewportRect().height());
+    IntPoint position(totalContentsSizeForRubberBand().width() - viewportRect().width(),
+                      totalContentsSizeForRubberBand().height() - viewportRect().height());
 
     position.clampNegativeToZero();
 

@@ -1,3 +1,29 @@
+2013-10-18  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-banding is often not smooth on infinitely scrolling websites
+        https://bugs.webkit.org/show_bug.cgi?id=122985
+
+        Reviewed by Simon Fraser.
+
+        totalContentsSize is an important part of the calculation for 
+        maximumScrollPosition(). This function is called repeatedly throughout the curve 
+        of a rubber-band to determine the stretch amount. To keep the rubber-band 
+        animation smooth, it should be allowed to finish its animation using the old 
+        totalContentsSize. This patch does that by adding a new variable, 
+        m_totalContentsSizeForRubberBand. This value should almost always be equivalent to 
+        m_totalContentsSize. It will only vary if m_totalContentsSize has changed in the 
+        middle of a rubber-band, and in that case, it will stay equivalent to the old 
+        totalContentSize value until the rubber band animation finishes.
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSizeForRubberBand):
+        (WebCore::ScrollingTreeScrollingNode::setTotalContentsSizeForRubberBand):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer):
+        (WebCore::ScrollingTreeScrollingNodeMac::maximumScrollPosition):
+
 2013-10-18  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix for --no-svg option.

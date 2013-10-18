@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_SCROLLING)
 
 #include "ScrollingStateTree.h"
+#include "ScrollingTree.h"
 
 namespace WebCore {
 
@@ -58,8 +59,13 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
     if (state->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
         m_viewportRect = state->viewportRect();
 
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
+        if (scrollingTree()->isRubberBandInProgress())
+            m_totalContentsSizeForRubberBand = m_totalContentsSize;
+        else
+            m_totalContentsSizeForRubberBand = state->totalContentsSize();
         m_totalContentsSize = state->totalContentsSize();
+    }
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();
