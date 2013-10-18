@@ -1,3 +1,131 @@
+2013-10-18  Brady Eidson  <beidson@apple.com>
+
+        Move IDBTransactionBackend operations to the IDBTransactionBackend itself..
+        https://bugs.webkit.org/show_bug.cgi?id=123028
+
+        Reviewed by Alexey Proskuryakov.
+
+        This gets rid of a big blob of LevelDB specific code from IDBDatabaseBackendLevelDB.cpp,
+        bringing us much closer to having it be cross platform.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h: Added.
+        (WebCore::IDBTransactionBackendInterface::~IDBTransactionBackendInterface):
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        (WebCore::IDBCursorBackendLevelDB::CursorAdvanceOperation::perform): Update for new method signature.
+        (WebCore::IDBCursorBackendLevelDB::CursorIterationOperation::perform): Ditto.
+        (WebCore::IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::perform): Ditto.
+
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp: Move all operations into
+          IDBTransactionBackendLevelDBOperations, then start scheduling them using the new
+          IDBTransactionBackendInterface scheduling methods.
+        (WebCore::IDBDatabaseBackendLevelDB::createObjectStore):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendLevelDB::createIndex):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteIndex):
+        (WebCore::IDBDatabaseBackendLevelDB::get):
+        (WebCore::IDBDatabaseBackendLevelDB::put):
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexesReady):
+        (WebCore::IDBDatabaseBackendLevelDB::openCursor):
+        (WebCore::IDBDatabaseBackendLevelDB::count):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteRange):
+        (WebCore::IDBDatabaseBackendLevelDB::clear):
+        (WebCore::IDBDatabaseBackendLevelDB::createTransaction):
+        (WebCore::IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h: Move definitions of PendingOpenCall and
+          PendingDeleteCall to the header.
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::create):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::callbacks):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::databaseCallbacks):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::version):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::transactionId):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingOpenCall::PendingOpenCall):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingDeleteCall::create):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingDeleteCall::callbacks):
+        (WebCore::IDBDatabaseBackendLevelDB::PendingDeleteCall::PendingDeleteCall):
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp: Add a newly required include.
+        * Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.cpp: Ditto.
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp: Implement the new interface to
+          handle scheduling of operations in a cross platform manner, then rely on the new
+          IDBTransactionBackendLevelDBOperations classes for the actual operations.
+        (WebCore::IDBTransactionBackendLevelDB::create):
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        (WebCore::IDBTransactionBackendLevelDB::abort):
+        (WebCore::IDBTransactionBackendLevelDB::taskTimerFired):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleCreateObjectStoreOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleDeleteObjectStoreOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleVersionChangeOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleCreateIndexOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleDeleteIndexOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleGetOperation):
+        (WebCore::IDBTransactionBackendLevelDB::schedulePutOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleSetIndexesReadyOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleOpenCursorOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleCountOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleDeleteRangeOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleClearOperation):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp: Added.
+          Move all the LevelDB transaction operations from IDBDatabaseBackendLevelDB to here.
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::CreateIndexAbortOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::DeleteIndexAbortOperation::perform):
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        (WebCore::SetIndexesReadyOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        (WebCore::ClearOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeOperation::perform):
+        (WebCore::CreateObjectStoreAbortOperation::perform):
+        (WebCore::DeleteObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::perform):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h: Added.
+        (WebCore::CreateObjectStoreOperation::create):
+        (WebCore::CreateObjectStoreOperation::CreateObjectStoreOperation):
+        (WebCore::DeleteObjectStoreOperation::create):
+        (WebCore::DeleteObjectStoreOperation::DeleteObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeOperation::create):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeOperation::VersionChangeOperation):
+        (WebCore::CreateObjectStoreAbortOperation::create):
+        (WebCore::CreateObjectStoreAbortOperation::CreateObjectStoreAbortOperation):
+        (WebCore::DeleteObjectStoreAbortOperation::create):
+        (WebCore::DeleteObjectStoreAbortOperation::DeleteObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::create):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::VersionChangeAbortOperation):
+        (WebCore::CreateIndexOperation::create):
+        (WebCore::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::CreateIndexAbortOperation::create):
+        (WebCore::CreateIndexAbortOperation::CreateIndexAbortOperation):
+        (WebCore::DeleteIndexOperation::create):
+        (WebCore::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::DeleteIndexAbortOperation::create):
+        (WebCore::DeleteIndexAbortOperation::DeleteIndexAbortOperation):
+        (WebCore::GetOperation::create):
+        (WebCore::GetOperation::GetOperation):
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::PutOperation):
+        (WebCore::SetIndexesReadyOperation::create):
+        (WebCore::SetIndexesReadyOperation::SetIndexesReadyOperation):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::OpenCursorOperation::OpenCursorOperation):
+        (WebCore::CountOperation::create):
+        (WebCore::CountOperation::CountOperation):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::DeleteRangeOperation::DeleteRangeOperation):
+        (WebCore::ClearOperation::create):
+        (WebCore::ClearOperation::ClearOperation):
+
 2013-10-18  Beth Dakin  <bdakin@apple.com>
 
         Rubber-banding is often not smooth on infinitely scrolling websites

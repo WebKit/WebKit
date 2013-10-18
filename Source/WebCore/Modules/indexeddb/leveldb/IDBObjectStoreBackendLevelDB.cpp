@@ -33,6 +33,7 @@
 #include "IDBCallbacks.h"
 #include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"

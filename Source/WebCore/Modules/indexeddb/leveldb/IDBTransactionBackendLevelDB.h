@@ -32,6 +32,7 @@
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseError.h"
+#include "IDBTransactionBackendInterface.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -39,12 +40,13 @@
 
 namespace WebCore {
 
+class IDBBackingStore;
 class IDBCursorBackendLevelDB;
 class IDBDatabaseCallbacks;
 
-class IDBTransactionBackendLevelDB : public RefCounted<IDBTransactionBackendLevelDB> {
+class IDBTransactionBackendLevelDB : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBBackingStore*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
     virtual ~IDBTransactionBackendLevelDB();
 
     virtual void abort();
@@ -53,7 +55,7 @@ public:
     class Operation {
     public:
         virtual ~Operation() { }
-        virtual void perform(IDBTransactionBackendLevelDB*) = 0;
+        virtual void perform() = 0;
     };
 
     void abort(PassRefPtr<IDBDatabaseError>);
@@ -71,8 +73,21 @@ public:
 
     IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
 
+    virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
+    virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
+    virtual void scheduleVersionChangeOperation(int64_t transactionId, int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, const IDBDatabaseMetadata&) OVERRIDE FINAL;
+    virtual void scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&) OVERRIDE FINAL;
+    virtual void scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&) OVERRIDE FINAL;
+    virtual void scheduleGetOperation(const IDBDatabaseMetadata&, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorType, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
+    virtual void schedulePutOperation(const IDBObjectStoreMetadata&, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&) OVERRIDE FINAL;
+    virtual void scheduleSetIndexesReadyOperation(size_t indexCount) OVERRIDE FINAL;
+    virtual void scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
+    virtual void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
+    virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
+    virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
+    
 private:
-    IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    IDBTransactionBackendLevelDB(IDBBackingStore*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -98,7 +113,7 @@ private:
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackendLevelDB> m_database;
 
-    typedef Deque<OwnPtr<Operation> > TaskQueue;
+    typedef Deque<OwnPtr<Operation>> TaskQueue;
     TaskQueue m_taskQueue;
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
@@ -110,6 +125,8 @@ private:
     int m_pendingPreemptiveEvents;
 
     HashSet<IDBCursorBackendLevelDB*> m_openCursors;
+    
+    RefPtr<IDBBackingStore> m_backingStore;
 };
 
 } // namespace WebCore

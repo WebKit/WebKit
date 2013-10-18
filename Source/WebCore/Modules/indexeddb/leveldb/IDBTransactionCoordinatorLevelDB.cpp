@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBTransactionBackendLevelDB.h"
 
 namespace WebCore {

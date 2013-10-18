@@ -789,6 +789,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
     Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp
     Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.cpp
 
     Modules/mediasource/MediaSource.cpp

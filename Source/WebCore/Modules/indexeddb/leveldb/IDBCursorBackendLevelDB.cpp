@@ -31,6 +31,7 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCallbacks.h"
 #include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
@@ -46,7 +47,7 @@ public:
     {
         return adoptPtr(new CursorIterationOperation(cursor, key, callbacks));
     }
-    virtual void perform(IDBTransactionBackendLevelDB*);
+    virtual void perform() OVERRIDE FINAL;
 private:
     CursorIterationOperation(PassRefPtr<IDBCursorBackendLevelDB> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -66,7 +67,7 @@ public:
     {
         return adoptPtr(new CursorAdvanceOperation(cursor, count, callbacks));
     }
-    virtual void perform(IDBTransactionBackendLevelDB*);
+    virtual void perform() OVERRIDE FINAL;
 private:
     CursorAdvanceOperation(PassRefPtr<IDBCursorBackendLevelDB> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -86,7 +87,7 @@ public:
     {
         return adoptPtr(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
-    virtual void perform(IDBTransactionBackendLevelDB*);
+    virtual void perform() OVERRIDE FINAL;
 private:
     CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackendLevelDB> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -132,7 +133,7 @@ void IDBCursorBackendLevelDB::advance(unsigned long count, PassRefPtr<IDBCallbac
     m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
-void IDBCursorBackendLevelDB::CursorAdvanceOperation::perform(IDBTransactionBackendLevelDB*)
+void IDBCursorBackendLevelDB::CursorAdvanceOperation::perform()
 {
     LOG(StorageAPI, "CursorAdvanceOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
@@ -144,7 +145,7 @@ void IDBCursorBackendLevelDB::CursorAdvanceOperation::perform(IDBTransactionBack
     m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
 }
 
-void IDBCursorBackendLevelDB::CursorIterationOperation::perform(IDBTransactionBackendLevelDB*)
+void IDBCursorBackendLevelDB::CursorIterationOperation::perform()
 {
     LOG(StorageAPI, "CursorIterationOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
@@ -171,13 +172,13 @@ void IDBCursorBackendLevelDB::prefetchContinue(int numberToFetch, PassRefPtr<IDB
     m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
 }
 
-void IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::perform(IDBTransactionBackendLevelDB*)
+void IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::perform()
 {
     LOG(StorageAPI, "CursorPrefetchIterationOperation");
 
-    Vector<RefPtr<IDBKey> > foundKeys;
-    Vector<RefPtr<IDBKey> > foundPrimaryKeys;
-    Vector<RefPtr<SharedBuffer> > foundValues;
+    Vector<RefPtr<IDBKey>> foundKeys;
+    Vector<RefPtr<IDBKey>> foundPrimaryKeys;
+    Vector<RefPtr<SharedBuffer>> foundValues;
 
     if (m_cursor->m_cursor)
         m_cursor->m_savedCursor = m_cursor->m_cursor->clone();

@@ -89,6 +89,9 @@ public:
     virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE;
 
+    class VersionChangeOperation;
+    class VersionChangeAbortOperation;
+
 private:
     IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB*, const String& uniqueIdentifier);
 
@@ -99,11 +102,6 @@ private:
 
     bool isDeleteDatabaseBlocked();
     void deleteDatabaseFinal(PassRefPtr<IDBCallbacks>);
-
-    class VersionChangeOperation;
-
-    // When a "versionchange" transaction aborts, these restore the back-end object hierarchy.
-    class VersionChangeAbortOperation;
 
     RefPtr<IDBBackingStore> m_backingStore;
     IDBDatabaseMetadata m_metadata;
@@ -118,14 +116,53 @@ private:
     typedef HashMap<int64_t, IDBTransactionBackendLevelDB*> TransactionMap;
     TransactionMap m_transactions;
 
-    class PendingOpenCall;
-    Deque<OwnPtr<PendingOpenCall> > m_pendingOpenCalls;
+    class PendingOpenCall {
+    public:
+        static PassOwnPtr<PendingOpenCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
+        {
+            return adoptPtr(new PendingOpenCall(callbacks, databaseCallbacks, transactionId, version));
+        }
+        IDBCallbacks* callbacks() { return m_callbacks.get(); }
+        IDBDatabaseCallbacks* databaseCallbacks() { return m_databaseCallbacks.get(); }
+        int64_t version() { return m_version; }
+        int64_t transactionId() const { return m_transactionId; }
+
+    private:
+        PendingOpenCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
+            : m_callbacks(callbacks)
+            , m_databaseCallbacks(databaseCallbacks)
+            , m_version(version)
+            , m_transactionId(transactionId)
+        {
+        }
+        RefPtr<IDBCallbacks> m_callbacks;
+        RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
+        int64_t m_version;
+        const int64_t m_transactionId;
+    };
+
+    Deque<OwnPtr<PendingOpenCall>> m_pendingOpenCalls;
     OwnPtr<PendingOpenCall> m_pendingSecondHalfOpen;
 
-    class PendingDeleteCall;
-    Deque<OwnPtr<PendingDeleteCall> > m_pendingDeleteCalls;
+    class PendingDeleteCall {
+    public:
+        static PassOwnPtr<PendingDeleteCall> create(PassRefPtr<IDBCallbacks> callbacks)
+        {
+            return adoptPtr(new PendingDeleteCall(callbacks));
+        }
+        IDBCallbacks* callbacks() { return m_callbacks.get(); }
 
-    typedef ListHashSet<RefPtr<IDBDatabaseCallbacks> > DatabaseCallbacksSet;
+    private:
+        PendingDeleteCall(PassRefPtr<IDBCallbacks> callbacks)
+            : m_callbacks(callbacks)
+        {
+        }
+        RefPtr<IDBCallbacks> m_callbacks;
+    };
+
+    Deque<OwnPtr<PendingDeleteCall>> m_pendingDeleteCalls;
+
+    typedef ListHashSet<RefPtr<IDBDatabaseCallbacks>> DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
 
     bool m_closingConnection;
