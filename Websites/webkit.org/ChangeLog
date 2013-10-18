@@ -1,3 +1,14 @@
+2013-10-18  Tibor Meszaros  <tmeszaros@inf.u-szeged.hu>
+
+        Cleanup webkit.org/team.html
+        https://bugs.webkit.org/show_bug.cgi?id=123022
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed the annoteWithWikiData function, because data it tries to fetch does not exists.
+
+        * team.html:
+
 2013-10-16  Geoffrey Garen  <ggaren@apple.com>
 
         Publish SunSpider 1.0.2

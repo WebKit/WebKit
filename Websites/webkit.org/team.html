@@ -157,58 +157,6 @@ function findListChildForContributor(contributor) {
     return null;
 }
 
-function annotateWithWikiData() {
-    function annotateForContributor(contributor) {
-        var listItem = findListChildForContributor(contributor);
-        if (!listItem) {
-            var listElement = document.getElementById(contributor.kind + 's');
-            var listItem = document.createElement('li');
-            listElement.appendChild(listItem);
-            listItem.style.backgroundColor = 'red';
-            populateContributorListItem(listItem, contributor);
-        } else {
-            var affiliationContainer = listItem.querySelector('.affiliation');
-            var affiliation = formatAffiliation(contributor);
-            if (affiliation && (!affiliationContainer || affiliationContainer.textContent != affiliation)) {
-                addText(listItem, ' ');
-                addWrappedText(listItem, 'em', {'style': 'background-color:red'}, affiliation);
-            }
-        }
-    }
-
-    var webkitTeamWikiUrl = 'http://trac.webkit.org/wiki/WebKit%20Team';
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        if (this.status !== 200)
-            return this.onerror();
-
-        var lines = this.responseText.split('\n');
-        // Match lines like * '''Ryosuke Niwa''' (rniwa) ''Google''
-        var teamWikiContributorEntryPattern = /^\s+\*\s+'''([^']+)'''\s*(\(([^']+)\)\s*)?(''([^']+)'')?\s*$/;
-        for (var i = 0; i < lines.length; i++) {
-            var match = lines[i].match(/\=\s+(Reviewer|Committer|Contributor)s\s+=/i);
-            if (match) {
-                var currentKind = match[1].toLowerCase();
-                continue;
-            }
-
-            // Strip special HTML characters
-            match = lines[i].replace(/[{}<>"%;&+/]/g, '').match(teamWikiContributorEntryPattern);
-            if (currentKind && match) {
-                annotateForContributor({
-                    kind: currentKind,
-                    name: match[1],
-                    nicks: match[3] ? match[3].split(/,\s*/) : null,
-                    affiliation: match[5]
-                });
-            }
-        }
-    }
-    xhr.onerror = function () { alert('Could not obtain http://trac.webkit.org/wiki/WebKit%20Team'); };
-    xhr.open('GET', webkitTeamWikiUrl + '?format=txt');
-    xhr.send();
-}
-
 var xhr = new XMLHttpRequest();
 xhr.onload = function () {
     if (this.status !== 200)
@@ -218,9 +166,6 @@ xhr.onload = function () {
     populateContributorList(contributors, 'reviewer');
     populateContributorList(contributors, 'committer');
     populateContributorList(contributors, 'contributor');
-
-    if (location.search.indexOf('annotate') >= 0)
-        annotateWithWikiData();
 };
 xhr.onerror = function () { document.getElementById('container').textContent = 'Could not obtain contributors.json'; };
 xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/contributors.json');
