@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import "WKDOMNode.h"
 #import "WKDOMRange.h"
 #import <WebCore/Node.h>
 #import <WebCore/Range.h>
 #import <wtf/HashMap.h>
+
+#if WK_API_ENABLED
 
 namespace WebCore {
 class Element;
@@ -117,4 +117,4 @@ NSArray *toNSArray(const Vector<WebCore::IntRect>&);
 
 } // namespace WebKit
 
-#endif // defined(__LP64__) && defined(__clang__)
+#endif // WK_API_ENABLED

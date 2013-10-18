@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
 
 @class WKConnection;
 @class WKWebProcessPlugInController;
@@ -49,4 +50,4 @@ WK_EXPORT
 
 @end
 
-#endif // defined(__LP64__) && defined(__clang__)
+#endif // WK_API_ENABLED

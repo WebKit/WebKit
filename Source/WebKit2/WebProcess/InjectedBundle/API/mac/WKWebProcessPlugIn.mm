@@ -25,11 +25,11 @@
 
 #import "config.h"
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import "WKWebProcessPlugIn.h"
 #import "WKWebProcessPlugInPrivate.h"
 #import "WKWebProcessPlugInInternal.h"
+
+#if WK_API_ENABLED
 
 #import "InjectedBundle.h"
 #import "WKConnectionInternal.h"
@@ -150,4 +150,4 @@ static WKWebProcessPlugInController *sharedInstance;
 
 @end
 
-#endif // defined(__LP64__) && defined(__clang__)
+#endif // WK_API_ENABLED

@@ -25,9 +25,9 @@
 
 #import "config.h"
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import "WKDOMInternals.h"
+
+#if WK_API_ENABLED
 
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
@@ -176,4 +176,4 @@ NSArray *toNSArray(const Vector<WebCore::IntRect>& rects)
 
 } // namespace WebKit
 
-#endif // defined(__LP64__) && defined(__clang__)
+#endif // WK_API_ENABLED

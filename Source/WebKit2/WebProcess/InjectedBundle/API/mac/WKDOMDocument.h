@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import <WebKit2/WKDOMNode.h>
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
 
 @class WKDOMElement;
 @class WKDOMText;
@@ -40,5 +41,5 @@ WK_EXPORT
 
 @end
 
-#endif // defined(__LP64__) && defined(__clang__)
+#endif // WK_API_ENABLED
 

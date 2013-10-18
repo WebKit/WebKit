@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__clang__)
-
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
 
 WK_EXPORT
 @interface WKTypeRefWrapper : NSObject
@@ -37,4 +38,4 @@ WK_EXPORT
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

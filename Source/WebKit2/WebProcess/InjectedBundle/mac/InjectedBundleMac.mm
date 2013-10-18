@@ -85,7 +85,7 @@ bool InjectedBundle::load(APIObject* initializationUserData)
         return true;
     }
     
-#if defined(__LP64__) && defined(__clang__)
+#if WK_API_ENABLED
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {

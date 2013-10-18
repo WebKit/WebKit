@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
-#import <WebKit2/WKFoundation.h>
+#import <TargetConditionals.h>
 
-#if WK_API_ENABLED
-
-@class WKDOMDocument;
-@class WKDOMRange;
-
-WK_EXPORT
-@interface WKWebProcessPlugInBrowserContextController : NSObject
-
-@property(readonly) WKDOMDocument *mainFrameDocument;
-
-@property(readonly) WKDOMRange *selectedRange;
-
-@end
-
-#endif // WK_API_ENABLED
+#if TARGET_OS_IPHONE
+#define WK_API_ENABLED 1
+#else
+#define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100 && !defined(__i386__))
+#endif

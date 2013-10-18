@@ -1,3 +1,51 @@
+2013-10-17  Dan Bernstein  <mitz@apple.com>
+
+        Add and deploy WK_API_ENABLED guards
+        https://bugs.webkit.org/show_bug.cgi?id=123008
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa: Added.
+        * Shared/API/Cocoa/WKFoundation.h: Added. Defined WK_API_ENABLED based on whether the
+        Objective-C API should be enabled in the current configuration.
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::typeFromObject): Changed to use WK_API_ENABLED.
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::encode): Ditto.
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::decode): Ditto.
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::encode): Ditto.
+        (WebKit::InjectedBundleObjCObjectGraphDecoderImpl::decode): Ditto.
+        * UIProcess/API/mac/WKTypeRefWrapper.h: Ditto.
+        * UIProcess/API/mac/WKTypeRefWrapper.mm: Ditto.
+        * UIProcess/API/mac/WebKit2.h: Imported WKFoundation.h.
+        * WebKit2.xcodeproj/project.pbxproj: Added new Cocoa group in Shared/API. Added
+        WKFoundation.h as a public header.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNodePrivate.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMRangePrivate.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInPrivate.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::load):
+
 2013-10-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Speculative buildfixes for GTK and EFL after r157582.
