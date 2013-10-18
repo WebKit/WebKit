@@ -39,6 +39,7 @@ WebInspector.DOMTreeManager = function() {
     this._idToDOMNode = {};
     this._document = null;
     this._attributeLoadNodeIds = {};
+    this._flows = {};
 }
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeManager);
@@ -52,7 +53,18 @@ WebInspector.DOMTreeManager.Event = {
     DocumentUpdated: "dom-tree-manager-document-updated",
     ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
     DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",
-    InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed"
+    InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed",
+    ContentFlowListWasUpdated: "dom-tree-manager-content-flow-list-was-updated",
+    ContentFlowWasAdded: "dom-tree-manager-content-flow-was-added",
+    ContentFlowWasRemoved: "dom-tree-manager-content-flow-was-removed",
+    RegionLayoutUpdated: "dom-tree-manager-region-layout-updated",
+    RegionOversetChanged: "dom-tree-manager-region-overset-changed"
+};
+
+WebInspector.DOMTreeManager._flowPayloadHashKey = function(flowPayload)
+{
+    // Use the flow node id, to avoid collisions when we change main document id.
+    return flowPayload.documentNodeId + ":" + flowPayload.name;
 };
 
 WebInspector.DOMTreeManager.prototype = {
@@ -519,6 +531,79 @@ WebInspector.DOMTreeManager.prototype = {
             highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
 
         return highlightConfig;
+    },
+
+    _createContentFlowFromPayload: function(flowPayload)
+    {
+        // FIXME: Collect the content and regions from the payload.
+        return new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset);
+    },
+
+    _updateContentFlowFromPayload: function(contentFlow, flowPayload)
+    {
+        // FIXME: Collect the content and regions from the payload.
+        contentFlow.overset = flowPayload.overset;
+    },
+
+    getNamedFlowCollection: function(documentNodeIdentifier)
+    {
+        function onNamedFlowCollectionAvailable(error, flows)
+        {
+            if (error) {
+                console.error("Error while getting the named flows for document " + documentNodeIdentifier + ": " + error);
+                return;
+            }
+            var contentFlows = [];
+            for (var i = 0; i < flows.length; ++i) {
+                var flowPayload = flows[i];
+                var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
+                var contentFlow = this._flows[flowKey];
+                if (contentFlow)
+                    this._updateContentFlowFromPayload(contentFlow, flowPayload);
+                else {
+                    contentFlow = this._createContentFlowFromPayload(flowPayload);
+                    this._flows[flowKey] = contentFlow;
+                }
+                contentFlows.push(contentFlow);
+            }
+            this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, {documentNodeIdentifier: documentNodeIdentifier, flows: contentFlows});
+        }
+        CSSAgent.getNamedFlowCollection(documentNodeIdentifier, onNamedFlowCollectionAvailable.bind(this));
+    },
+
+    namedFlowCreated: function(flowPayload)
+    {
+        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
+        console.assert(!this._flows.hasOwnProperty(flowKey));
+        var contentFlow = this._createContentFlowFromPayload(flowPayload);
+        this._flows[flowKey] = contentFlow;
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowWasAdded, {flow: contentFlow});
+    },
+
+    namedFlowRemoved: function(documentNodeIdentifier, flowName)
+    {
+        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
+        var contentFlow = this._flows[flowKey];
+        console.assert(contentFlow);
+        delete this._flows[flowKey];
+        this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowWasRemoved, {flow: contentFlow});
+    },
+
+    _sendNamedFlowUpdateEvents: function(flowPayload)
+    {
+        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey(flowPayload);
+        console.assert(this._flows.hasOwnProperty(flowKey));
+        this._updateContentFlowFromPayload(this._flows[flowKey], flowPayload);
+    },
+
+    regionLayoutUpdated: function(flowPayload)
+    {
+        this._sendNamedFlowUpdateEvents(flowPayload);
+    },
+
+    regionOversetChanged: function(flowPayload)
+    {
+        this._sendNamedFlowUpdateEvents(flowPayload);
     }
 }
 

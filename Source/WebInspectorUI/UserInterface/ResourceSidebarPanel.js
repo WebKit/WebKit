@@ -610,6 +610,13 @@ WebInspector.ResourceSidebarPanel.prototype = {
 
     _treeElementSelected: function(treeElement, selectedByUser)
     {
+        if (treeElement instanceof WebInspector.ContentFlowTreeElement) {
+            // FIXME: Implement DOM tree inspector for content flow tree elements.
+            // https://bugs.webkit.org/show_bug.cgi?id=122927
+            console.log("Content Flow view not implemented");
+            return;
+        }
+
         if (treeElement instanceof WebInspector.FolderTreeElement)
             return;
 

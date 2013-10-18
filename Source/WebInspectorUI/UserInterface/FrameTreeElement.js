@@ -40,6 +40,10 @@ WebInspector.FrameTreeElement = function(frame, representedObject)
     frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
     frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
+    frame.domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, this._childContentFlowWasAdded, this);
+    frame.domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, this._childContentFlowWasRemoved, this);
+    frame.domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
+
     if (this._frame.isMainFrame()) {
         this._downloadingPage = false;
         WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
@@ -176,11 +180,16 @@ WebInspector.FrameTreeElement.prototype = {
             for (var j = 0; j < sourceMap.resources.length; ++j)
             this._addTreeElementForRepresentedObject(sourceMap.resources[j]);
         }
+
+        var flowMap = this._frame.domTree.flowMap;
+        for (var flowKey in flowMap)
+            this._addTreeElementForRepresentedObject(flowMap[flowKey]);
     },
 
     onexpand: function()
     {
         this._expandedSetting.value = true;
+        this._frame.domTree.requestContentFlowList();
     },
 
     oncollapse: function()
@@ -264,6 +273,21 @@ WebInspector.FrameTreeElement.prototype = {
         this._removeChildForRepresentedObject(event.data.childFrame);
     },
 
+    _childContentFlowWasAdded: function(event)
+    {
+        this._addRepresentedObjectToNewChildQueue(event.data.flow);
+    },
+
+    _childContentFlowWasRemoved: function(event)
+    {
+        this._removeChildForRepresentedObject(event.data.flow);
+    },
+
+    _rootDOMNodeInvalidated: function() {
+        if (this.expanded)
+            this._frame.domTree.requestContentFlowList();
+    },
+
     _addRepresentedObjectToNewChildQueue: function(representedObject)
     {
         // This queue reduces flashing as resources load and change folders when their type becomes known.
@@ -298,8 +322,8 @@ WebInspector.FrameTreeElement.prototype = {
 
     _addChildForRepresentedObject: function(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame);
-        if (!(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame))
+        console.assert(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.ContentFlow);
+        if (!(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.ContentFlow))
             return;
 
         this._updateParentStatus();
@@ -322,8 +346,8 @@ WebInspector.FrameTreeElement.prototype = {
 
     _removeChildForRepresentedObject: function(representedObject)
     {
-        console.assert(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame);
-        if (!(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame))
+        console.assert(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.ContentFlow);
+        if (!(representedObject instanceof WebInspector.Resource || representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.ContentFlow))
             return;
 
         this._removeRepresentedObjectFromNewChildQueue(representedObject);
@@ -355,6 +379,8 @@ WebInspector.FrameTreeElement.prototype = {
                 childTreeElement = new WebInspector.ResourceTreeElement(representedObject);
             else if (representedObject instanceof WebInspector.Frame)
                 childTreeElement = new WebInspector.FrameTreeElement(representedObject);
+            else if (representedObject instanceof WebInspector.ContentFlow)
+                childTreeElement = new WebInspector.ContentFlowTreeElement(representedObject);
         }
 
         this._addTreeElement(childTreeElement);
@@ -392,10 +418,31 @@ WebInspector.FrameTreeElement.prototype = {
         this.insertChild(folderTreeElement, insertionIndexForObjectInListSortedByFunction(folderTreeElement, this.children, this._compareTreeElementsByMainTitle));
     },
 
+    _compareResourceTreeElements: function(a, b)
+    {
+        if (a === b)
+            return 0;
+
+        var aIsResource = a instanceof WebInspector.ResourceTreeElement;
+        var bIsResource = b instanceof WebInspector.ResourceTreeElement;
+
+        if (aIsResource && bIsResource)
+            return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
+
+        if (!aIsResource && !bIsResource) {
+            // When both components are not resources then just compare the titles.
+            return a.mainTitle.localeCompare(b.mainTitle);
+        }
+        
+        // Non-resources should appear before the resources.
+        // FIXME: There should be a better way to group the elements by their type.
+        return aIsResource ? 1 : -1;
+    },
+
     _insertResourceTreeElement: function(parentTreeElement, childTreeElement)
     {
         console.assert(!childTreeElement.parent);
-        parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, WebInspector.ResourceTreeElement.compareResourceTreeElements));
+        parentTreeElement.insertChild(childTreeElement, insertionIndexForObjectInListSortedByFunction(childTreeElement, parentTreeElement.children, this._compareResourceTreeElements));
     },
 
     _removeTreeElement: function(childTreeElement, suppressOnDeselect, suppressSelectSibling)
@@ -445,6 +492,12 @@ WebInspector.FrameTreeElement.prototype = {
             return this._framesFolderTreeElement;
         }
 
+        if (representedObject instanceof WebInspector.ContentFlow) {
+            if (!this._flowsFolderTreeElement)
+                this._flowsFolderTreeElement = createFolderTreeElement.call(this, "flows", WebInspector.UIString("Flows"));
+            return this._flowsFolderTreeElement;
+        }
+
         if (representedObject instanceof WebInspector.Resource) {
             var folderName = this._folderNameForResourceType(representedObject.type);
             if (!folderName)
@@ -483,6 +536,9 @@ WebInspector.FrameTreeElement.prototype = {
         var numberOfSmallCategories = 0;
         var numberOfMediumCategories = 0;
         var foundLargeCategory = false;
+
+        // FIXME: Use this._frame.domTree.flowsCount to count the number of flows in a frame.
+        // https://bugs.webkit.org/show_bug.cgi?id=122926
 
         if (this._frame.childFrames.length >= WebInspector.FrameTreeElement.LargeChildCountThreshold)
             foundLargeCategory = true;

@@ -55,17 +55,22 @@ WebInspector.CSSObserver.prototype = {
 
     namedFlowCreated: function(namedFlow)
     {
-        // FIXME: Not implemented.
+        WebInspector.domTreeManager.namedFlowCreated(namedFlow);
     },
 
     namedFlowRemoved: function(documentNodeId, flowName)
     {
-        // FIXME: Not implemented.
+        WebInspector.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
     },
 
     regionLayoutUpdated: function(namedFlow)
     {
-        // FIXME: Not implemented.
+        WebInspector.domTreeManager.regionLayoutUpdated(namedFlow);
+    },
+
+    regionOversetChanged: function(namedFlow)
+    {
+        WebInspector.domTreeManager.regionOversetChanged(namedFlow);
     }
 };
 

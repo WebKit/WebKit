@@ -1,3 +1,73 @@
+2013-10-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: Add the list of flows in the FrameTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=122924
+
+        Reviewed by Timothy Hatcher.
+
+        Added code to collect the flows from the backend into the DOMTree object
+        on the frontend. Added ContentFlow to represent the flows on the frontend
+        side and created ContentFlowTreeElement to display the flows in the FrameTreeElement.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * Scripts/copy-user-interface-resources.sh:
+        * UserInterface/CSSObserver.js:
+        (WebInspector.CSSObserver.prototype.namedFlowCreated):
+        (WebInspector.CSSObserver.prototype.namedFlowRemoved):
+        (WebInspector.CSSObserver.prototype.regionLayoutUpdated):
+        (WebInspector.CSSObserver.prototype.regionOversetChanged):
+        * UserInterface/ContentFlow.js: Added.
+        (WebInspector.ContentFlow):
+        (WebInspector.ContentFlow.prototype.get id):
+        (WebInspector.ContentFlow.prototype.get documentNodeIdentifier):
+        (WebInspector.ContentFlow.prototype.get name):
+        (WebInspector.ContentFlow.prototype.get overset):
+        (WebInspector.ContentFlow.prototype.set overset):
+        * UserInterface/ContentFlowIcon.css: Added.
+        (.content-flow-icon .icon):
+        * UserInterface/ContentFlowTreeElement.js: Added.
+        (WebInspector.ContentFlowTreeElement):
+        * UserInterface/DOMTree.js:
+        (WebInspector.DOMTree):
+        (WebInspector.DOMTree.prototype.get flowMap):
+        (WebInspector.DOMTree.prototype.get flowsCount):
+        (WebInspector.DOMTree.prototype._framePageExecutionContextChanged):
+        (WebInspector.DOMTree.prototype.requestContentFlowList):
+        (WebInspector.DOMTree.prototype._isContentFlowInCurrentDocument):
+        (WebInspector.DOMTree.prototype._contentFlowListWasUpdated):
+        (WebInspector.DOMTree.prototype._contentFlowWasAdded):
+        (WebInspector.DOMTree.prototype._contentFlowWasRemoved):
+        * UserInterface/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager):
+        (WebInspector.DOMTreeManager._flowPayloadHashKey):
+        (WebInspector.DOMTreeManager.prototype._buildHighlightConfig):
+        (WebInspector.DOMTreeManager.prototype._createContentFlowFromPayload):
+        (WebInspector.DOMTreeManager.prototype._updateContentFlowFromPayload):
+        (WebInspector.DOMTreeManager.prototype.getNamedFlowCollection):
+        (WebInspector.DOMTreeManager.prototype.namedFlowCreated):
+        (WebInspector.DOMTreeManager.prototype.namedFlowRemoved):
+        (WebInspector.DOMTreeManager.prototype._sendNamedFlowUpdateEvents):
+        (WebInspector.DOMTreeManager.prototype.regionLayoutUpdated):
+        (WebInspector.DOMTreeManager.prototype.regionOversetChanged):
+        * UserInterface/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype.onexpand):
+        (WebInspector.FrameTreeElement.prototype._childContentFlowWasAdded):
+        (WebInspector.FrameTreeElement.prototype._childContentFlowWasRemoved):
+        (WebInspector.FrameTreeElement.prototype._rootDOMNodeInvalidated):
+        (WebInspector.FrameTreeElement.prototype._addChildForRepresentedObject):
+        (WebInspector.FrameTreeElement.prototype._removeChildForRepresentedObject):
+        (WebInspector.FrameTreeElement.prototype._addTreeElementForRepresentedObject):
+        (WebInspector.FrameTreeElement.prototype._compareResourceTreeElements):
+        (WebInspector.FrameTreeElement.prototype._insertResourceTreeElement):
+        (WebInspector.FrameTreeElement.prototype._parentTreeElementForRepresentedObject):
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders):
+        * UserInterface/Images/ContentFlow.svg: Added.
+        * UserInterface/Main.html:
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+
 2013-10-17  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Go to line keyboard command and dialog

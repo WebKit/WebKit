@@ -31,6 +31,7 @@ WebInspector.DOMTree = function(frame)
 
     this._rootDOMNode = null;
     this._requestIdentifier = 0;
+    this._flowMap = {};
 
     this._frame.addEventListener(WebInspector.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
 
@@ -41,12 +42,18 @@ WebInspector.DOMTree = function(frame)
         WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
         this._frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._frameMainResourceDidChange, this);
     }
+
+    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.ContentFlowListWasUpdated, this._contentFlowListWasUpdated, this);
+    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.ContentFlowWasAdded, this._contentFlowWasAdded, this);
+    WebInspector.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.ContentFlowWasRemoved, this._contentFlowWasRemoved, this);
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTree);
 
 WebInspector.DOMTree.Event = {
-    RootDOMNodeInvalidated: "dom-tree-root-dom-node-invalidated"
+    RootDOMNodeInvalidated: "dom-tree-root-dom-node-invalidated",
+    ContentFlowWasAdded: "dom-tree-content-flow-was-added",
+    ContentFlowWasRemoved: "dom-tree-content-flow-was-removed"
 };
 
 WebInspector.DOMTree.prototype = {
@@ -57,6 +64,16 @@ WebInspector.DOMTree.prototype = {
     get frame()
     {
         return this._frame;
+    },
+
+    get flowMap()
+    {
+        return this._flowMap;
+    },
+
+    get flowsCount()
+    {
+        return Object.keys(this._flowMap).length;
     },
 
     invalidate: function()
@@ -230,6 +247,87 @@ WebInspector.DOMTree.prototype = {
 
             this._requestRootDOMNode();
         }
+    },
+
+    requestContentFlowList: function()
+    {
+        this.requestRootDOMNode(function(rootNode) {
+            // Let the backend know we are interested about the named flow events for this document.
+            WebInspector.domTreeManager.getNamedFlowCollection(rootNode.id);
+        });
+    },
+
+    _isContentFlowInCurrentDocument: function(flow)
+    {
+        return this._rootDOMNode && this._rootDOMNode.id === flow.documentNodeIdentifier;
+    },
+
+    _contentFlowListWasUpdated: function(event)
+    {
+        if (!this._rootDOMNode || this._rootDOMNode.id !== event.data.documentNodeIdentifier)
+            return;
+
+        // Assume that all the flows have been removed.
+        var deletedFlows = {};
+        for (var flowId in this._flowMap)
+            deletedFlows[flowId] = this._flowMap[flowId];
+
+        var newFlows = [];
+
+        var flows = event.data.flows;
+        for (var i = 0; i < flows.length; ++i) {
+            var flow = flows[i];
+            // All the flows received from WebKit are part of the same document.
+            console.assert(this._isContentFlowInCurrentDocument(flow));
+
+            var flowId = flow.id;
+            if (this._flowMap.hasOwnProperty(flowId)) {
+                // Remove the flow name from the deleted list.
+                console.assert(deletedFlows.hasOwnProperty(flowKey));
+                delete deletedFlows[flowId];
+            } else {
+                this._flowMap[flowId] = flow;
+                newFlows.push(flow);
+            }
+        }
+
+        for (var flowId in deletedFlows) {
+            delete this._flowMap[flowId];
+        }
+
+        // Send update events to listeners.
+
+        for (var flowId in deletedFlows)
+            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow: deletedFlows[flowId]});
+
+        for (var i = 0; i < newFlows.length; ++i)
+            this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow: newFlows[i]});
+    },
+
+    _contentFlowWasAdded: function(event)
+    {
+        var flow = event.data.flow;
+        if (!this._isContentFlowInCurrentDocument(flow))
+            return;
+
+        var flowId = flow.id;
+        console.assert(!this._flowMap.hasOwnProperty(flowId));
+        this._flowMap[flowId] = flow;
+
+        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasAdded, {flow: flow});
+    },
+
+    _contentFlowWasRemoved: function(event)
+    {
+        var flow = event.data.flow;
+        if (!this._isContentFlowInCurrentDocument(flow))
+            return;
+
+        var flowId = flow.id;
+        console.assert(this._flowMap.hasOwnProperty(flowId));
+        delete this._flowMap[flowId];
+
+        this.dispatchEventToListeners(WebInspector.DOMTree.Event.ContentFlowWasRemoved, {flow: flow});
     }
 };
 
