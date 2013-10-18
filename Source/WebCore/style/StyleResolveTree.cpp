@@ -59,7 +59,7 @@ namespace Style {
 
 enum DetachType { NormalDetach, ReattachDetach };
 
-static void attachRenderTree(Element&, PassRefPtr<RenderStyle> resolvedStyle);
+static void attachRenderTree(Element&, PassRefPtr<RenderStyle>);
 static void detachRenderTree(Element&, DetachType);
 
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* settings)
@@ -180,6 +180,10 @@ static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNo
 
     if (element.shouldMoveToFlowThread(*style))
         return true;
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(renderingParentNode);
+    UNUSED_PARAM(style);
 #endif
     return false;
 }
@@ -200,7 +204,6 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
 {
     ASSERT(!element.renderer());
 
-    Document& document = element.document();
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&element);
 
     RefPtr<RenderStyle> style = resolvedStyle;
@@ -248,6 +251,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
     newRenderer->setAnimatableStyle(style.release()); // setAnimatableStyle() can depend on renderer() already being set.
 
 #if ENABLE(FULLSCREEN_API)
+    Document& document = element.document();
     if (document.webkitIsFullScreen() && document.webkitCurrentFullScreenElement() == &element) {
         newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
         if (!newRenderer)

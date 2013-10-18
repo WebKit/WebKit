@@ -1,3 +1,16 @@
+2013-10-18  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Cleaning warning messages from StyleResolveTree
+        https://bugs.webkit.org/show_bug.cgi?id=123030
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+        (WebCore::Style::createRendererIfNeeded):
+
 2013-10-18  Brady Eidson  <beidson@apple.com>
 
         Get rid of IDBFactoryBackendLevelDB and IDBTransactionBackendLevelDB in IDBDatabaseBackendLevelDB.
