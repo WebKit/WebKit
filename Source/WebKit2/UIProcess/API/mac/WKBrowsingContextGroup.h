@@ -25,13 +25,15 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
-#import <WebKit2/WKFoundation.h>
 #import <WebKit2/WKUserScriptInjectionTime.h>
 
-#if WK_API_ENABLED
+@class WKBrowsingContextGroupData;
 
 WK_EXPORT
-@interface WKBrowsingContextGroup : NSObject
+@interface WKBrowsingContextGroup : NSObject {
+@private
+    WKBrowsingContextGroupData *_data;
+}
 
 - (id)initWithIdentifier:(NSString *)identifier;
 
@@ -57,5 +59,3 @@ WK_EXPORT
 @property BOOL allowsPlugIns;
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,11 +25,8 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
-#import <WebKit2/WKFoundation.h>
 
-#if WK_API_ENABLED
-
-@class WKConnection;
+@class WKConnection, WKConnectionData;
 
 @protocol WKConnectionDelegate <NSObject>
 
@@ -39,7 +36,10 @@
 @end
 
 WK_EXPORT
-@interface WKConnection : NSObject
+@interface WKConnection : NSObject {
+@private
+    WKConnectionData *_data;
+}
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
 
@@ -48,5 +48,3 @@ WK_EXPORT
 @property(assign) id<WKConnectionDelegate> delegate;
 
 @end
-
-#endif // WK_API_ENABLED

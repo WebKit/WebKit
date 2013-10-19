@@ -26,8 +26,6 @@
 #import <WebKit2/WKBrowsingContextController.h>
 #import <WebKit2/WKBase.h>
 
-#if WK_API_ENABLED
-
 enum {
     WKPaginationModeUnpaginated,
     WKPaginationModeLeftToRight,
@@ -52,5 +50,3 @@ typedef NSUInteger WKBrowsingContextPaginationMode;
 @property(readonly) NSUInteger pageCount;
 
 @end
-
-#endif // WK_API_ENABLED

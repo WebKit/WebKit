@@ -27,8 +27,6 @@
 #import "WKBrowsingContextGroup.h"
 #import "WKBrowsingContextGroupPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKArray.h"
 #import "WKPageGroup.h"
 #import "WKPreferences.h"
@@ -38,9 +36,16 @@
 #import "WKURLCF.h"
 #import <wtf/Vector.h>
 
-@implementation WKBrowsingContextGroup {
+@interface WKBrowsingContextGroupData : NSObject {
+@public
     WKRetainPtr<WKPageGroupRef> _pageGroupRef;
 }
+@end
+
+@implementation WKBrowsingContextGroupData
+@end
+
+@implementation WKBrowsingContextGroup
 
 - (id)initWithIdentifier:(NSString *)identifier
 {
@@ -48,15 +53,22 @@
     if (!self)
         return nil;
 
-    _pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
+    _data = [[WKBrowsingContextGroupData alloc] init];
+    _data->_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
 
     // Give the WKBrowsingContextGroup a identifier-less preferences, so that they
     // don't get automatically written to the disk. The automatic writing has proven
     // confusing to users of the API.
     WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPageGroupSetPreferences(_pageGroupRef.get(), preferences.get());
+    WKPageGroupSetPreferences(_data->_pageGroupRef.get(), preferences.get());
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_data release];
+    [super dealloc];
 }
 
 - (BOOL)allowsJavaScript
@@ -151,9 +163,7 @@ static WKArrayRef createWKArray(NSArray *array)
 
 - (WKPageGroupRef)_pageGroupRef
 {
-    return _pageGroupRef.get();
+    return _data->_pageGroupRef.get();
 }
 
 @end
-
-#endif // WK_API_ENABLED

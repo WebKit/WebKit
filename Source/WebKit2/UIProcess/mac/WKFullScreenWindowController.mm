@@ -29,8 +29,6 @@
 
 #import "WKFullScreenWindowController.h"
 
-#if WK_API_ENABLED
-
 #import "LayerTreeContext.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
@@ -661,6 +659,4 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 }
 @end
 
-#endif // WK_API_ENABLED
-
-#endif // ENABLE(FULLSCREEN_API)
+#endif

@@ -26,8 +26,6 @@
 #import <WebKit2/WKView.h>
 #import <WebKit2/WKBase.h>
 
-#if WK_API_ENABLED
-
 typedef enum {
     WKContentAnchorTopLeft,
     WKContentAnchorTopRight,
@@ -84,5 +82,3 @@ typedef enum {
 - (void)waitForAsyncDrawingAreaSizeUpdate;
 
 @end
-
-#endif // WK_API_ENABLED

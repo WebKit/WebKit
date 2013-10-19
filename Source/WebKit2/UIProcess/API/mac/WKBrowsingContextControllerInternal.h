@@ -25,8 +25,6 @@
 
 #import <WebKit2/WKBrowsingContextController.h>
 
-#if WK_API_ENABLED
-
 @interface WKBrowsingContextController (Internal)
 
 /* This should only be called from associate view. */
@@ -38,5 +36,3 @@
 + (NSMutableSet *)customSchemes;
 
 @end
-
-#endif // WK_API_ENABLED

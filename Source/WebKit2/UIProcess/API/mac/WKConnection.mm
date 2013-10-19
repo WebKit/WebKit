@@ -27,8 +27,6 @@
 #import "WKConnection.h"
 #import "WKConnectionInternal.h"
 
-#if WK_API_ENABLED
-
 #import "ObjCObjectGraph.h"
 #import "WKConnectionRef.h"
 #import "WKData.h"
@@ -39,15 +37,26 @@
 
 using namespace WebKit;
 
-@implementation WKConnection {
+@interface WKConnectionData : NSObject {
+@public
     // Underlying connection object.
     WKRetainPtr<WKConnectionRef> _connectionRef;
+
+    // Delegate for callbacks.
+    id<WKConnectionDelegate> _delegate;
 }
+@end
+
+@implementation WKConnectionData
+@end
+
+@implementation WKConnection
 
 - (void)dealloc
 {
-    WKConnectionSetConnectionClient(_connectionRef.get(), 0);
+    WKConnectionSetConnectionClient(_data->_connectionRef.get(), 0);
 
+    [_data release];
     [super dealloc];
 }
 
@@ -56,7 +65,19 @@ using namespace WebKit;
     WKRetainPtr<WKStringRef> wkMessageName = adoptWK(WKStringCreateWithCFString((CFStringRef)messageName));
     RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
 
-    WKConnectionPostMessage(_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
+    WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
+}
+
+#pragma mark Delegates
+
+- (id<WKConnectionDelegate>)delegate
+{
+    return _data->_delegate;
+}
+
+- (void)setDelegate:(id<WKConnectionDelegate>)delegate
+{
+    _data->_delegate = delegate;
 }
 
 @end
@@ -101,13 +122,12 @@ static void setUpClient(WKConnection *connection, WKConnectionRef connectionRef)
     if (!self)
         return nil;
 
-    _connectionRef = connectionRef;
+    _data = [[WKConnectionData alloc] init];
+    _data->_connectionRef = connectionRef;
 
-    setUpClient(self, _connectionRef.get());
+    setUpClient(self, _data->_connectionRef.get());
 
     return self;
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,11 +25,8 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#import "WKFoundation.h"
 #import <wtf/OwnPtr.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED
 
 namespace WebKit { 
 class LayerTreeContext;
@@ -79,6 +76,4 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
 @end
 
-#endif // WK_API_ENABLED
-
-#endif // ENABLE(FULLSCREEN_API)
+#endif

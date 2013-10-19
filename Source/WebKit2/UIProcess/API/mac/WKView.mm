@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKView.h"
 
-#if WK_API_ENABLED
-
 #if USE(DICTATION_ALTERNATIVES)
 #import <AppKit/NSTextAlternatives.h>
 #import <AppKit/NSAttributedString.h>
@@ -3391,5 +3389,3 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 
 @end
-
-#endif // WK_API_ENABLED

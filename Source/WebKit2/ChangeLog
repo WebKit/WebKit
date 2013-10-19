@@ -1,5 +1,9 @@
 2013-10-19  Dan Bernstein  <mitz@apple.com>
 
+        Fix the Mac 32-bit build by reverting r157676, r157678, and r157679.
+
+2013-10-19  Dan Bernstein  <mitz@apple.com>
+
         Try to fix the Mac 32-bit build.
 
         * UIProcess/mac/WKFullScreenWindowController.h:
