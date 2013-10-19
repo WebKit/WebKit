@@ -1,3 +1,124 @@
+2013-10-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r155373): Mac WK2 EWS bots is actually Mac WK1 debug
+        https://bugs.webkit.org/show_bug.cgi?id=123064
+
+        Reviewed by Ryosuke Niwa.
+
+        Revert r155373 as it is causing incorrect port/platform deduction for the Mac EWS systems.
+
+        * Scripts/webkitpy/common/config/ports.py: Added.
+        (DeprecatedPort):
+        (DeprecatedPort.name):
+        (DeprecatedPort.flag):
+        (DeprecatedPort.script_path):
+        (DeprecatedPort.script_shell_command):
+        (DeprecatedPort.port):
+        (DeprecatedPort.makeArgs):
+        (DeprecatedPort.update_webkit_command):
+        (DeprecatedPort.check_webkit_style_command):
+        (DeprecatedPort.prepare_changelog_command):
+        (DeprecatedPort.build_webkit_command):
+        (DeprecatedPort.run_javascriptcore_tests_command):
+        (DeprecatedPort.run_webkit_unit_tests_command):
+        (DeprecatedPort.run_webkit_tests_command):
+        (DeprecatedPort.run_python_unittests_command):
+        (DeprecatedPort.run_perl_unittests_command):
+        (DeprecatedPort.run_bindings_tests_command):
+        (MacPort):
+        (MacWK2Port):
+        (MacWK2Port.run_webkit_tests_command):
+        (WinPort):
+        (WinPort.run_bindings_tests_command):
+        (GtkPort):
+        (GtkPort.build_webkit_command):
+        (GtkPort.run_webkit_tests_command):
+        (GtkWK2Port):
+        (GtkWK2Port.build_webkit_command):
+        (GtkWK2Port.run_webkit_tests_command):
+        (QtPort):
+        (QtPort.build_webkit_command):
+        (QtPort.run_webkit_tests_command):
+        (QtWK2Port):
+        (QtWK2Port.build_webkit_command):
+        (QtWK2Port.run_webkit_tests_command):
+        (EflPort):
+        (EflPort.build_webkit_command):
+        (EflWK2Port):
+        (EflWK2Port.build_webkit_command):
+        * Scripts/webkitpy/common/config/ports_mock.py: Added.
+        (MockPort):
+        (MockPort.name):
+        (MockPort.check_webkit_style_command):
+        (MockPort.update_webkit_command):
+        (MockPort.build_webkit_command):
+        (MockPort.prepare_changelog_command):
+        (MockPort.run_python_unittests_command):
+        (MockPort.run_perl_unittests_command):
+        (MockPort.run_javascriptcore_tests_command):
+        (MockPort.run_webkit_unit_tests_command):
+        (MockPort.run_webkit_tests_command):
+        (MockPort.run_bindings_tests_command):
+        * Scripts/webkitpy/common/config/ports_unittest.py: Added.
+        (DeprecatedPortTest):
+        (DeprecatedPortTest.test_mac_port):
+        (DeprecatedPortTest.test_gtk_port):
+        (DeprecatedPortTest.test_gtk_wk2_port):
+        (DeprecatedPortTest.test_efl_port):
+        (DeprecatedPortTest.test_qt_port):
+        (DeprecatedPortTest.test_qt_wk2_port):
+        * Scripts/webkitpy/port/base.py:
+        (Port._port_flag_for_scripts):
+        (Port._wk2_port_name):
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_build_path):
+        * Scripts/webkitpy/port/efl_unittest.py:
+        (EflPortTest.test_show_results_html_file):
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_get_crash_log):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (test_64bit):
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.virtual_test_suites):
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter.__init__):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout._update_working_copy):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.run_command):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue.begin_work_queue):
+        (CommitQueue.run_command):
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch.__init__):
+        (WebKitPatch.deprecated_port):
+        (WebKitPatch.handle_global_options):
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.__init__):
+        (MockTool.deprecated_port):
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.build):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle.run):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations):
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert.run):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+        * Scripts/webkitpy/tool/steps/update.py:
+        (Update._update_command):
+        * Scripts/webkitpy/tool/steps/update_unittest.py:
+        (UpdateTest.test_update_command_non_interactive):
+        (UpdateTest.test_update_command_interactive):
+
 2013-10-19  Andreas Kling  <akling@apple.com>
 
         RefPtr::releaseNonNull() incorrectly increments the refcount.

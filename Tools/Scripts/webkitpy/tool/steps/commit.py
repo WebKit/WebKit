@@ -60,7 +60,7 @@ class Commit(AbstractStep):
         args = ["--diff-files"]
         args.extend(test_expectations_files)
         try:
-            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
+            self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
             if self._options.non_interactive:
                 raise

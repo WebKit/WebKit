@@ -48,7 +48,7 @@ class PrepareChangeLogForRevert(AbstractStep):
 
     def run(self, state):
         # This could move to prepare-ChangeLog by adding a --revert= option.
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().prepare_changelog_command(), cwd=self._tool.scm().checkout_root)
+        self._tool.executive.run_and_throw_if_fail(self._tool.deprecated_port().prepare_changelog_command(), cwd=self._tool.scm().checkout_root)
         changelog_paths = self._tool.checkout().modified_changelogs(git_commit=None)
         bug_url = self._tool.bugs.bug_url_for_bug_id(state["bug_id"]) if state["bug_id"] else None
         message = self._message_for_revert(state["revision_list"], state["reason"], bug_url)

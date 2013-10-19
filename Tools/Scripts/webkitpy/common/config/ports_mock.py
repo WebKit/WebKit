@@ -1,19 +1,19 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+# Copyright (C) 2011 Google Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
-#     * Redistributions of source code must retain the above copyright
+#
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,29 +26,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 
-from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.tool.steps.options import Options
+class MockPort(object):
+    def name(self):
+        return "MockPort"
 
-_log = logging.getLogger(__name__)
+    def check_webkit_style_command(self):
+        return ["mock-check-webkit-style"]
 
+    def update_webkit_command(self, non_interactive=False):
+        return ["mock-update-webkit"]
 
-class Update(AbstractStep):
-    @classmethod
-    def options(cls):
-        return AbstractStep.options() + [
-            Options.non_interactive,
-            Options.update,
-            Options.quiet,
-        ]
+    def build_webkit_command(self, build_style=None):
+        return ["mock-build-webkit"]
 
-    def run(self, state):
-        if not self._options.update:
-            return
-        _log.info("Updating working directory")
-        self._tool.executive.run_and_throw_if_fail(self._update_command(), quiet=self._options.quiet, cwd=self._tool.scm().checkout_root)
+    def prepare_changelog_command(self):
+        return ['mock-prepare-ChangeLog']
 
-    def _update_command(self):
-        update_command = self._tool.deprecated_port().update_webkit_command(self._options.non_interactive)
-        return update_command
+    def run_python_unittests_command(self):
+        return ['mock-test-webkitpy']
+
+    def run_perl_unittests_command(self):
+        return ['mock-test-webkitperl']
+
+    def run_javascriptcore_tests_command(self):
+        return ['mock-run-javacriptcore-tests']
+
+    def run_webkit_unit_tests_command(self):
+        return ['mock-run-webkit-unit-tests']
+
+    def run_webkit_tests_command(self):
+        return ['mock-run-webkit-tests']
+
+    def run_bindings_tests_command(self):
+        return ['mock-run-bindings-tests']
