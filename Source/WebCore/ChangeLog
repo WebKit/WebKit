@@ -1,3 +1,15 @@
+2013-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        libWebCoreTestSupport should have explicit exports
+        https://bugs.webkit.org/show_bug.cgi?id=123053
+
+        Reviewed by Oliver Hunt.
+
+        No new tests because there is no change in behavior.
+
+        * Configurations/WebCoreTestSupport.xcconfig:
+        * testing/js/WebCoreTestSupport.h:
+
 2013-10-18  Andreas Kling  <akling@apple.com>
 
         Start passing RenderStyle around with PassRef.

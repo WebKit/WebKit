@@ -28,10 +28,16 @@
 
 typedef const struct OpaqueJSContext* JSContextRef;
 
+#if PLATFORM(MAC)
+#define TEST_SUPPORT_EXPORT WTF_EXPORT_PRIVATE
+#else
+#define TEST_SUPPORT_EXPORT
+#endif
+
 namespace WebCoreTestSupport {
 
-void injectInternalsObject(JSContextRef);
-void resetInternalsObject(JSContextRef);
+void injectInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
+void resetInternalsObject(JSContextRef) TEST_SUPPORT_EXPORT;
 
 } // namespace WebCore
 
