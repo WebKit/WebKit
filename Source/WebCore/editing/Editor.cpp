@@ -585,7 +585,7 @@ bool Editor::hasBidiSelection() const
         startNode = m_frame.selection().selection().visibleStart().deepEquivalent().deprecatedNode();
 
     auto renderer = startNode->renderer();
-    while (renderer && !renderer->isRenderBlock())
+    while (renderer && !renderer->isRenderBlockFlow())
         renderer = renderer->parent();
 
     if (!renderer)
@@ -595,7 +595,7 @@ bool Editor::hasBidiSelection() const
     if (!style->isLeftToRightDirection())
         return true;
 
-    return toRenderBlock(renderer)->containsNonZeroBidiLevel();
+    return toRenderBlockFlow(renderer)->containsNonZeroBidiLevel();
 }
 
 TriState Editor::selectionUnorderedListState() const

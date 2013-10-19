@@ -1,3 +1,20 @@
+2013-10-19  Sam Weinig  <sam@webkit.org>
+
+        Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=122969
+
+        Reviewed by Andreas Kling.
+
+        - Move containsNonZeroBidiLevel to RenderBlockFlow.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasBidiSelection):
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::containsNonZeroBidiLevel):
+        * rendering/RenderBlockFlow.h:
+
 2013-10-18  Sam Weinig  <sam@webkit.org>
 
         Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 2)

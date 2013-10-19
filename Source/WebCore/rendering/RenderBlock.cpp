@@ -4912,17 +4912,6 @@ int RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
     return -1;
 }
 
-bool RenderBlock::containsNonZeroBidiLevel() const
-{
-    for (RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox()) {
-        for (InlineBox* box = root->firstLeafChild(); box; box = box->nextLeafChild()) {
-            if (box->bidiLevel())
-                return true;
-        }
-    }
-    return false;
-}
-
 RenderBlock* RenderBlock::firstLineBlock() const
 {
     RenderBlock* firstLineBlock = const_cast<RenderBlock*>(this);

@@ -2523,4 +2523,15 @@ void RenderBlockFlow::clearTruncation()
     }
 }
 
+bool RenderBlockFlow::containsNonZeroBidiLevel() const
+{
+    for (auto root = firstRootBox(); root; root = root->nextRootBox()) {
+        for (auto box = root->firstLeafChild(); box; box = box->nextLeafChild()) {
+            if (box->bidiLevel())
+                return true;
+        }
+    }
+    return false;
+}
+
 } // namespace WebCore
