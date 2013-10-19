@@ -29,20 +29,24 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/FloatRect.h>
+#import <wtf/Vector.h>
+
+const unsigned webLayerMaxRectsToPaint = 5;
+const float webLayerWastedSpaceThreshold = 0.75f;
+
+@interface WebLayer : CALayer
+@end
 
 namespace WebCore {
-    class GraphicsLayer;
-    class PlatformCALayer;
-    class PlatformCALayerClient;
-}
-
-@interface WebLayer : CALayer 
-{
-}
-@end
+class GraphicsLayer;
+class PlatformCALayer;
+class PlatformCALayerClient;
 
 // Functions allows us to share implementation across WebTiledLayer and WebLayer
 void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayer*);
+void drawLayerContents(CGContextRef, WebCore::PlatformCALayer*, WebCore::FloatRect layerBounds, Vector<WebCore::FloatRect, webLayerMaxRectsToPaint> dirtyRects, bool isTiledLayer);
+}
 
 #endif // USE(ACCELERATED_COMPOSITING)
 

@@ -29,7 +29,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ShareableBitmap.h"
-#include <WebCore/IntRect.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/Region.h>
 
 namespace WebKit {
 
@@ -38,16 +39,15 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStore {
 public:
     RemoteLayerBackingStore();
-    RemoteLayerBackingStore(PlatformCALayerRemote*, WebCore::IntSize, bool isOpaque);
+    RemoteLayerBackingStore(PlatformCALayerRemote*, WebCore::IntSize);
 
     void setNeedsDisplay(WebCore::IntRect);
     void setNeedsDisplay();
 
     bool display();
 
-    ShareableBitmap* bitmap() const { return m_bitmap.get(); }
+    ShareableBitmap* bitmap() const { return m_frontBuffer.get(); }
     WebCore::IntSize size() const { return m_size; }
-    bool isOpaque() const { return m_isOpaque; }
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
@@ -58,11 +58,11 @@ private:
     PlatformCALayerRemote* m_layer;
 
     WebCore::IntSize m_size;
-    bool m_isOpaque;
 
-    bool m_needsFullRepaint;
+    WebCore::Region m_dirtyRegion;
 
-    RefPtr<ShareableBitmap> m_bitmap;
+    RefPtr<ShareableBitmap> m_frontBuffer;
+    RefPtr<ShareableBitmap> m_backBuffer;
 };
 
 } // namespace WebKit

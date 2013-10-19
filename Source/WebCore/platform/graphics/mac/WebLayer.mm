@@ -43,9 +43,35 @@
 
 using namespace WebCore;
 
-@implementation WebLayer
+namespace WebCore {
 
 void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCALayer* platformLayer)
+{
+    CGRect layerBounds = [layer bounds];
+
+    __block double totalRectArea = 0;
+    __block unsigned rectCount = 0;
+    __block Vector<FloatRect, webLayerMaxRectsToPaint> dirtyRects;
+
+    wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect) {
+        if (++rectCount > webLayerMaxRectsToPaint)
+            return;
+
+        totalRectArea += rect.size.width * rect.size.height;
+        dirtyRects.append(rect);
+    });
+
+    FloatRect clipBounds = CGContextGetClipBoundingBox(context);
+    double clipArea = clipBounds.width() * clipBounds.height();
+
+    if (rectCount >= webLayerMaxRectsToPaint || totalRectArea >= clipArea * webLayerWastedSpaceThreshold)
+        dirtyRects.clear();
+
+    bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
+    drawLayerContents(context, platformLayer, layerBounds, dirtyRects, isTiledLayer);
+}
+
+void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformLayer, FloatRect layerBounds, Vector<FloatRect, webLayerMaxRectsToPaint> dirtyRects, bool isTiledLayer)
 {
     WebCore::PlatformCALayerClient* layerContents = platformLayer->owner();
     if (!layerContents)
@@ -53,10 +79,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 
     CGContextSaveGState(context);
 
-    CGRect layerBounds = [layer bounds];
     if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp) {
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -layerBounds.size.height);
+        CGContextTranslateCTM(context, 0, -layerBounds.height());
     }
 
     [NSGraphicsContext saveGraphicsState];
@@ -87,24 +112,13 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 #endif
     ThemeMac::setFocusRingClipRect(focusRingClipRect);
 
-    const float wastedSpaceThreshold = 0.75f;
-    const unsigned maxRectsToPaint = 5;
-
-    double clipArea = clipBounds.width() * clipBounds.height();
-    __block double totalRectArea = 0;
-    __block unsigned rectCount = 0;
-    __block Vector<FloatRect, maxRectsToPaint> dirtyRects;
-    
-    wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect) {
-        if (++rectCount > maxRectsToPaint)
-            return;
-
-        totalRectArea += rect.size.width * rect.size.height;
-        dirtyRects.append(rect);
-    });
-
-    if (rectCount < maxRectsToPaint && totalRectArea < clipArea * wastedSpaceThreshold) {
-        for (unsigned i = 0; i < rectCount; ++i) {
+    // If we have no dirty rects, repaint the whole layer.
+    if (dirtyRects.isEmpty()) {
+        // CGContextGetClipBoundingBox() gives us the bounds of the dirty region, so clipBounds
+        // encompasses all the dirty rects.
+        layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(clipBounds));
+    } else {
+        for (unsigned i = 0; i < dirtyRects.size(); ++i) {
             const FloatRect& currentRect = dirtyRects[i];
             
             GraphicsContextStateSaver stateSaver(graphicsContext);
@@ -112,10 +126,6 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
             
             layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(currentRect));
         }
-    } else {
-        // CGContextGetClipBoundingBox() gives us the bounds of the dirty region, so clipBounds
-        // encompasses all the dirty rects.
-        layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(clipBounds));
     }
 
     ThemeMac::setFocusRingClipRect(FloatRect());
@@ -128,13 +138,11 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 
     CGContextRestoreGState(context);
 
-    // Always update the repain count so that it's accurate even if the count itself is not shown. This will be useful
+    // Always update the repaint count so that it's accurate even if the count itself is not shown. This will be useful
     // for the Web Inspector feeding this information through the LayerTreeAgent. 
     int repaintCount = layerContents->platformCALayerIncrementRepaintCount();
 
     if (!platformLayer->usesTiledBackingLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformLayer)) {
-        bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
-
         char text[16]; // that's a lot of repaints
         snprintf(text, sizeof(text), "%d", repaintCount);
 
@@ -170,6 +178,9 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     }
 }
 
+}
+
+@implementation WebLayer
 
 - (id<CAAction>)actionForKey:(NSString *)key
 {

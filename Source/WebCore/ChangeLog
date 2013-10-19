@@ -1,3 +1,26 @@
+2013-10-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Double-buffering and minimization of repaints
+        https://bugs.webkit.org/show_bug.cgi?id=123043
+
+        Reviewed by Simon Fraser.
+
+        No new tests, not yet testable.
+
+        * WebCore.exp.in:
+        Export one version of drawLayerContents and Region::contains.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Expose WebLayer.h as a private header.
+
+        * platform/graphics/mac/WebLayer.h:
+        Clean up this header, and add a new drawLayerContents that can operate without a CALayer.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (WebCore::drawLayerContents):
+        Split drawLayerContents into one method that acquires properties CALayer,
+        and one that just does the painting.
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Lion build.

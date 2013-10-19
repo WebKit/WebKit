@@ -1,3 +1,36 @@
+2013-10-18  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Double-buffering and minimization of repaints
+        https://bugs.webkit.org/show_bug.cgi?id=123043
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::ensureBackingStore):
+        Don't worry about isOpaque with RemoteLayerBackingStore; this is a
+        optimization that is causing trouble; we can re-add it later.
+
+        (PlatformCALayerRemote::setBounds):
+        Make sure that we will repaint if our bounds change.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::bitmap):
+        Keep a front and back buffer; return the front buffer when being asked for the bitmap.
+        Keep a Region of repaint areas.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (RemoteLayerBackingStore::encode):
+        (RemoteLayerBackingStore::decode):
+        Serialize only the front buffer, since the UI process only needs that.
+
+        (RemoteLayerBackingStore::setNeedsDisplay):
+        Store repaint rects instead of always setting the whole layer to be dirty.
+
+        (RemoteLayerBackingStore::display):
+        Paint into the back buffer (copying valid parts over from the front buffer),
+        then swap it to the front buffer. Use drawLayerContents so we get repaint counters, etc.
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Lion build.

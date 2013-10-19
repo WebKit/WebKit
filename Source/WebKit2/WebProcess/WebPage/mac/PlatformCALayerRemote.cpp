@@ -101,11 +101,10 @@ void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
 void PlatformCALayerRemote::ensureBackingStore()
 {
     if (m_properties.backingStore.layer() == this
-        && m_properties.backingStore.size() == m_properties.size
-        && m_properties.backingStore.isOpaque() == m_properties.opaque)
+        && m_properties.backingStore.size() == m_properties.size)
         return;
 
-    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size), m_properties.opaque);
+    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size));
 }
 
 void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* dirtyRect)
@@ -218,6 +217,8 @@ void PlatformCALayerRemote::setBounds(const FloatRect& value)
 {
     m_properties.size = value.size();
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::SizeChanged);
+
+    ensureBackingStore();
 }
 
 FloatPoint3D PlatformCALayerRemote::position() const
