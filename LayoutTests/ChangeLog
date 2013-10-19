@@ -1,3 +1,16 @@
+2013-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        WebAudio Mac expected results were misplaced - they apply equally to WK1 and WK2.
+        We didn't notice before because all these tests are disabled on WK1.
+
+        * platform/mac-wk2/webaudio: Removed.
+        * platform/mac/webaudio: Added.
+        * platform/mac/webaudio/audiobuffersource-playbackrate-expected.wav: Copied from LayoutTests/platform/mac-wk2/webaudio/audiobuffersource-playbackrate-expected.wav.
+        * platform/mac/webaudio/codec-tests: Copied from LayoutTests/platform/mac-wk2/webaudio/codec-tests.
+
+        * platform/mac-wk2/webaudio/audiobuffersource-loop-points-expected.wav: Removed.
+        This test is skipped, because it times out.
+
 2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening.
