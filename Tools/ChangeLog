@@ -1,3 +1,16 @@
+2013-10-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-webkit-tests should submit time and modifiers to the new flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=123070
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results): Added include_time_and_modifiers. Report test_run_time and modifiers
+        in the test expectations when this argument is set to true.
+
 2013-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         Mac DumpRenderTree builds without NDEBUG even in release mode

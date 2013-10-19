@@ -228,7 +228,7 @@ class Manager(object):
         summarized_results = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
         results_including_passes = None
         if self._options.results_server_host:
-            results_including_passes = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=True)
+            results_including_passes = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=True, include_time_and_modifiers=True)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
 
         if not self._options.dry_run:
