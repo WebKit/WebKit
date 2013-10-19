@@ -106,6 +106,18 @@ private:
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
 };
 
+inline RenderSVGText& toRenderSVGText(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isSVGText());
+    return static_cast<RenderSVGText&>(object);
+}
+
+inline const RenderSVGText& toRenderSVGText(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isSVGText());
+    return static_cast<const RenderSVGText&>(object);
+}
+
 inline RenderSVGText* toRenderSVGText(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGText());
@@ -119,6 +131,7 @@ inline const RenderSVGText* toRenderSVGText(const RenderObject* object)
 }
 
 // This will catch anyone doing an unnecessary cast.
+void toRenderSVGText(const RenderSVGText&);
 void toRenderSVGText(const RenderSVGText*);
 
 }

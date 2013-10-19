@@ -409,7 +409,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
                     // Our offset that we cache needs to be from the edge of the right border box and
                     // not the left border box.  We have to subtract |x| from the width of the block
                     // (which can be obtained from the root line box).
-                    curr->setLogicalLeft(root().block().logicalWidth() - logicalLeft);
+                    curr->setLogicalLeft(root().blockFlow().logicalWidth() - logicalLeft);
                 continue; // The positioned object has no effect on the width.
             }
             if (curr->renderer().isRenderInline()) {

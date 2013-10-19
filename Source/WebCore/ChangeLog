@@ -1,3 +1,66 @@
+2013-10-18  Sam Weinig  <sam@webkit.org>
+
+        Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=122969
+
+        Reviewed by Dan Bernstein.
+
+        - Make the RootInlineBox constructor take a RenderBlockFlow.
+        - Move createRootInlineBox, and createAndAppendRootInlineBox to RenderBlockFlow.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::locationIncludingFlipping):
+        (WebCore::InlineBox::flipForWritingMode):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createRootInlineBox):
+        (WebCore::RenderBlockFlow::createAndAppendRootInlineBox):
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::RenderBlockFlow::createLineBoxes):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::localSelectionRect):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::localSelectionRect):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::rendererLineBoxes):
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore::RootInlineBox::setContainingRegion):
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment):
+        (WebCore::RootInlineBox::lineSnapAdjustment):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::computeCaretRect):
+        (WebCore::RootInlineBox::selectionTop):
+        (WebCore::RootInlineBox::selectionTopAdjustedForPrecedingBlock):
+        (WebCore::RootInlineBox::selectionBottom):
+        (WebCore::RootInlineBox::blockDirectionPointInLine):
+        (WebCore::RootInlineBox::blockFlow):
+        (WebCore::RootInlineBox::closestLeafChildForPoint):
+        (WebCore::RootInlineBox::removeLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::extractLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::attachLineBoxToRenderObject):
+        * rendering/RootInlineBox.h:
+        * rendering/TrailingFloatsRootInlineBox.h:
+        * rendering/svg/RenderSVGText.h:
+        (WebCore::toRenderSVGText):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::SVGRootInlineBox):
+        (WebCore::SVGRootInlineBox::renderSVGText):
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        * rendering/svg/SVGRootInlineBox.h:
+
 2013-10-18  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Double-buffering and minimization of repaints

@@ -52,7 +52,7 @@ COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInl
 typedef WTF::HashMap<const RootInlineBox*, EllipsisBox*> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
-RootInlineBox::RootInlineBox(RenderBlock& block)
+RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
     , m_lineBreakObj(0)
@@ -83,7 +83,7 @@ void RootInlineBox::detachEllipsisBox(RenderArena& arena)
 
 RenderLineBoxList& RootInlineBox::rendererLineBoxes() const
 {
-    return block().lineBoxes();
+    return blockFlow().lineBoxes();
 }
 
 void RootInlineBox::clearTruncation()
@@ -132,7 +132,7 @@ float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, f
                                   InlineBox* markupBox)
 {
     // Create an ellipsis box.
-    EllipsisBox* ellipsisBox = new (renderer().renderArena()) EllipsisBox(block(), ellipsisStr, this,
+    EllipsisBox* ellipsisBox = new (renderer().renderArena()) EllipsisBox(blockFlow(), ellipsisStr, this,
                                                               ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(),
                                                               y(), !prevRootBox(), isHorizontal(), markupBox);
     
@@ -257,7 +257,7 @@ RenderRegion* RootInlineBox::containingRegion() const
 
 #ifndef NDEBUG
     if (region) {
-        RenderFlowThread* flowThread = block().flowThreadContainingBlock();
+        RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
         ASSERT(regionList.contains(region));
     }
@@ -269,7 +269,7 @@ RenderRegion* RootInlineBox::containingRegion() const
 void RootInlineBox::setContainingRegion(RenderRegion* region)
 {
     ASSERT(!isDirty());
-    ASSERT(block().flowThreadContainingBlock());
+    ASSERT(blockFlow().flowThreadContainingBlock());
     LineFragmentationData* fragmentationData  = ensureLineFragmentationData();
     fragmentationData->m_containingRegion = region;
 }
@@ -316,7 +316,7 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
     maxHeight = max<LayoutUnit>(0, maxHeight); // FIXME: Is this really necessary?
 
     setLineTopBottomPositions(lineTop, lineBottom, heightOfBlock, heightOfBlock + maxHeight);
-    setPaginatedLineWidth(block().availableLogicalWidthForContent(heightOfBlock));
+    setPaginatedLineWidth(blockFlow().availableLogicalWidthForContent(heightOfBlock));
 
     LayoutUnit annotationsAdjustment = beforeAnnotationsAdjustment();
     if (annotationsAdjustment) {
@@ -357,12 +357,12 @@ LayoutUnit RootInlineBox::beforeAnnotationsAdjustment() const
             return result;
 
         // Annotations over this line may push us further down.
-        LayoutUnit highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : static_cast<LayoutUnit>(block().borderBefore());
+        LayoutUnit highestAllowedPosition = prevRootBox() ? min(prevRootBox()->lineBottom(), lineTop()) + result : static_cast<LayoutUnit>(blockFlow().borderBefore());
         result = computeOverAnnotationAdjustment(highestAllowedPosition);
     } else {
         // Annotations under this line may push us up.
         if (hasAnnotationsBefore())
-            result = computeUnderAnnotationAdjustment(prevRootBox() ? prevRootBox()->lineBottom() : static_cast<LayoutUnit>(block().borderBefore()));
+            result = computeUnderAnnotationAdjustment(prevRootBox() ? prevRootBox()->lineBottom() : static_cast<LayoutUnit>(blockFlow().borderBefore()));
 
         if (!prevRootBox() || !prevRootBox()->hasAnnotationsAfter())
             return result;
@@ -379,14 +379,14 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
 {
     // If our block doesn't have snapping turned on, do nothing.
     // FIXME: Implement bounds snapping.
-    if (block().style()->lineSnap() == LineSnapNone)
+    if (blockFlow().style()->lineSnap() == LineSnapNone)
         return 0;
 
     // Get the current line grid and offset.
-    LayoutState* layoutState = block().view().layoutState();
+    LayoutState* layoutState = blockFlow().view().layoutState();
     RenderBlockFlow* lineGrid = layoutState->lineGrid();
     LayoutSize lineGridOffset = layoutState->lineGridOffset();
-    if (!lineGrid || lineGrid->style()->writingMode() != block().style()->writingMode())
+    if (!lineGrid || lineGrid->style()->writingMode() != blockFlow().style()->writingMode())
         return 0;
 
     // Get the hypothetical line box used to establish the grid.
@@ -395,7 +395,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
         return 0;
     
     LayoutUnit lineGridBlockOffset = lineGrid->isHorizontalWritingMode() ? lineGridOffset.height() : lineGridOffset.width();
-    LayoutUnit blockOffset = block().isHorizontalWritingMode() ? layoutState->layoutOffset().height() : layoutState->layoutOffset().width();
+    LayoutUnit blockOffset = blockFlow().isHorizontalWritingMode() ? layoutState->layoutOffset().height() : layoutState->layoutOffset().width();
 
     // Now determine our position on the grid. Our baseline needs to be adjusted to the nearest baseline multiple
     // as established by the line box.
@@ -412,7 +412,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     LayoutUnit firstBaselinePosition = firstTextTop + lineGridFontAscent;
 
     LayoutUnit currentTextTop = blockOffset + logicalTop() + delta;
-    LayoutUnit currentFontAscent = block().style()->fontMetrics().ascent(baselineType());
+    LayoutUnit currentFontAscent = blockFlow().style()->fontMetrics().ascent(baselineType());
     LayoutUnit currentBaselinePosition = currentTextTop + currentFontAscent;
 
     LayoutUnit lineGridPaginationOrigin = isHorizontal() ? layoutState->lineGridPaginationOrigin().height() : layoutState->lineGridPaginationOrigin().width();
@@ -421,12 +421,12 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     // FIXME: If the grid is an ancestor of the pagination establisher, then this is incorrect.
     LayoutUnit pageLogicalTop = 0;
     if (layoutState->isPaginated() && layoutState->pageLogicalHeight()) {
-        pageLogicalTop = block().pageLogicalTopForOffset(lineTopWithLeading() + delta);
+        pageLogicalTop = blockFlow().pageLogicalTopForOffset(lineTopWithLeading() + delta);
         if (pageLogicalTop > firstLineTopWithLeading)
             firstTextTop = pageLogicalTop + lineGridBox->logicalTop() - lineGrid->borderAndPaddingBefore() + lineGridPaginationOrigin;
     }
 
-    if (block().style()->lineSnap() == LineSnapContain) {
+    if (blockFlow().style()->lineSnap() == LineSnapContain) {
         // Compute the desired offset from the text-top of a grid line.
         // Look at our height (logicalHeight()).
         // Look at the total available height. It's going to be (textBottom - textTop) + (n-1)*(multiple with leading)
@@ -458,7 +458,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
         return result;
     
     // We may end up shifted to a new page. We need to do a re-snap when that happens.
-    LayoutUnit newPageLogicalTop = block().pageLogicalTopForOffset(lineBottomWithLeading() + result);
+    LayoutUnit newPageLogicalTop = blockFlow().pageLogicalTopForOffset(lineBottomWithLeading() + result);
     if (newPageLogicalTop == pageLogicalTop)
         return result;
     
@@ -472,18 +472,18 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoi
     RenderObject::SelectionState lineState = selectionState();
 
     bool leftGap, rightGap;
-    block().getSelectionGapInfo(lineState, leftGap, rightGap);
+    blockFlow().getSelectionGapInfo(lineState, leftGap, rightGap);
 
     GapRects result;
 
     InlineBox* firstBox = firstSelectedBox();
     InlineBox* lastBox = lastSelectedBox();
     if (leftGap) {
-        result.uniteLeft(block().logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &firstBox->parent()->renderer(), firstBox->logicalLeft(),
+        result.uniteLeft(blockFlow().logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &firstBox->parent()->renderer(), firstBox->logicalLeft(),
             selTop, selHeight, cache, paintInfo));
     }
     if (rightGap) {
-        result.uniteRight(block().logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &lastBox->parent()->renderer(), lastBox->logicalRight(),
+        result.uniteRight(blockFlow().logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &lastBox->parent()->renderer(), lastBox->logicalRight(),
             selTop, selHeight, cache, paintInfo));
     }
 
@@ -538,7 +538,7 @@ IntRect RootInlineBox::computeCaretRect(float logicalLeftPosition, unsigned care
     if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = (logicalWidth() + rootLeft) - (left + caretWidth);
 
-    RenderStyle* blockStyle = block().style();
+    RenderStyle* blockStyle = blockFlow().style();
 
     bool rightAligned = false;
     switch (blockStyle->textAlign()) {
@@ -561,7 +561,7 @@ IntRect RootInlineBox::computeCaretRect(float logicalLeftPosition, unsigned care
     }
 
     float leftEdge = std::min<float>(0, rootLeft);
-    float rightEdge = std::max<float>(block().logicalWidth(), rootRight);
+    float rightEdge = std::max<float>(blockFlow().logicalWidth(), rootRight);
 
     if (rightAligned) {
         left = std::max(left, leftEdge);
@@ -627,15 +627,15 @@ LayoutUnit RootInlineBox::selectionTop() const
     if (renderer().style()->isFlippedLinesWritingMode())
         return selectionTop;
 
-    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : block().borderAndPaddingBefore();
-    if (prevBottom < selectionTop && block().containsFloats()) {
+    LayoutUnit prevBottom = prevRootBox() ? prevRootBox()->selectionBottom() : blockFlow().borderAndPaddingBefore();
+    if (prevBottom < selectionTop && blockFlow().containsFloats()) {
         // This line has actually been moved further down, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the previous
         // line's bottom if the offsets are greater on both sides.
-        LayoutUnit prevLeft = block().logicalLeftOffsetForLine(prevBottom, false);
-        LayoutUnit prevRight = block().logicalRightOffsetForLine(prevBottom, false);
-        LayoutUnit newLeft = block().logicalLeftOffsetForLine(selectionTop, false);
-        LayoutUnit newRight = block().logicalRightOffsetForLine(selectionTop, false);
+        LayoutUnit prevLeft = blockFlow().logicalLeftOffsetForLine(prevBottom, false);
+        LayoutUnit prevRight = blockFlow().logicalRightOffsetForLine(prevBottom, false);
+        LayoutUnit newLeft = blockFlow().logicalLeftOffsetForLine(selectionTop, false);
+        LayoutUnit newRight = blockFlow().logicalRightOffsetForLine(selectionTop, false);
         if (prevLeft > newLeft || prevRight < newRight)
             return selectionTop;
     }
@@ -648,12 +648,12 @@ LayoutUnit RootInlineBox::selectionTopAdjustedForPrecedingBlock() const
     const RootInlineBox& rootBox = root();
     LayoutUnit top = selectionTop();
 
-    RenderObject::SelectionState blockSelectionState = rootBox.block().selectionState();
+    RenderObject::SelectionState blockSelectionState = rootBox.blockFlow().selectionState();
     if (blockSelectionState != RenderObject::SelectionInside && blockSelectionState != RenderObject::SelectionEnd)
         return top;
 
     LayoutSize offsetToBlockBefore;
-    if (RenderBlock* block = rootBox.block().blockBeforeWithinSelectionRoot(offsetToBlockBefore)) {
+    if (RenderBlock* block = rootBox.blockFlow().blockBeforeWithinSelectionRoot(offsetToBlockBefore)) {
         if (RootInlineBox* lastLine = block->lastRootBox()) {
             RenderObject::SelectionState lastLineSelectionState = lastLine->selectionState();
             if (lastLineSelectionState != RenderObject::SelectionInside && lastLineSelectionState != RenderObject::SelectionStart)
@@ -678,14 +678,14 @@ LayoutUnit RootInlineBox::selectionBottom() const
         return selectionBottom;
 
     LayoutUnit nextTop = nextRootBox()->selectionTop();
-    if (nextTop > selectionBottom && block().containsFloats()) {
+    if (nextTop > selectionBottom && blockFlow().containsFloats()) {
         // The next line has actually been moved further over, probably from a large line-height, but possibly because the
         // line was forced to clear floats.  If so, let's check the offsets, and only be willing to use the next
         // line's top if the offsets are greater on both sides.
-        LayoutUnit nextLeft = block().logicalLeftOffsetForLine(nextTop, false);
-        LayoutUnit nextRight = block().logicalRightOffsetForLine(nextTop, false);
-        LayoutUnit newLeft = block().logicalLeftOffsetForLine(selectionBottom, false);
-        LayoutUnit newRight = block().logicalRightOffsetForLine(selectionBottom, false);
+        LayoutUnit nextLeft = blockFlow().logicalLeftOffsetForLine(nextTop, false);
+        LayoutUnit nextRight = blockFlow().logicalRightOffsetForLine(nextTop, false);
+        LayoutUnit newLeft = blockFlow().logicalLeftOffsetForLine(selectionBottom, false);
+        LayoutUnit newRight = blockFlow().logicalRightOffsetForLine(selectionBottom, false);
         if (nextLeft > newLeft || nextRight < newRight)
             return selectionBottom;
     }
@@ -695,12 +695,12 @@ LayoutUnit RootInlineBox::selectionBottom() const
 
 int RootInlineBox::blockDirectionPointInLine() const
 {
-    return !block().style()->isFlippedBlocksWritingMode() ? max(lineTop(), selectionTop()) : min(lineBottom(), selectionBottom());
+    return !blockFlow().style()->isFlippedBlocksWritingMode() ? max(lineTop(), selectionTop()) : min(lineBottom(), selectionBottom());
 }
 
-RenderBlock& RootInlineBox::block() const
+RenderBlockFlow& RootInlineBox::blockFlow() const
 {
-    return toRenderBlock(renderer());
+    return toRenderBlockFlow(renderer());
 }
 
 static bool isEditableLeaf(InlineBox* leaf)
@@ -710,7 +710,7 @@ static bool isEditableLeaf(InlineBox* leaf)
 
 InlineBox* RootInlineBox::closestLeafChildForPoint(const IntPoint& pointInContents, bool onlyEditableLeaves)
 {
-    return closestLeafChildForLogicalLeftPosition(block().isHorizontalWritingMode() ? pointInContents.x() : pointInContents.y(), onlyEditableLeaves);
+    return closestLeafChildForLogicalLeftPosition(blockFlow().isHorizontalWritingMode() ? pointInContents.x() : pointInContents.y(), onlyEditableLeaves);
 }
 
 InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPosition, bool onlyEditableLeaves)
@@ -777,17 +777,17 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 
 void RootInlineBox::removeLineBoxFromRenderObject()
 {
-    block().lineBoxes().removeLineBox(this);
+    blockFlow().lineBoxes().removeLineBox(this);
 }
 
 void RootInlineBox::extractLineBoxFromRenderObject()
 {
-    block().lineBoxes().extractLineBox(this);
+    blockFlow().lineBoxes().extractLineBox(this);
 }
 
 void RootInlineBox::attachLineBoxToRenderObject()
 {
-    block().lineBoxes().attachLineBox(this);
+    blockFlow().lineBoxes().attachLineBox(this);
 }
 
 LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const

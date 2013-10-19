@@ -23,6 +23,7 @@
 
 #include "config.h"
 
+#include "AXObjectCache.h"
 #include "BidiResolver.h"
 #include "FloatingObjects.h"
 #include "Hyphenation.h"
@@ -280,10 +281,29 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
     }
 }
 
+RootInlineBox* RenderBlockFlow::createRootInlineBox()
+{
+    return new (renderArena()) RootInlineBox(*this);
+}
+
+RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
+{
+    RootInlineBox* rootBox = createRootInlineBox();
+    m_lineBoxes.appendLineBox(rootBox);
+
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox) {
+        if (AXObjectCache* cache = document().existingAXObjectCache())
+            cache->recomputeIsIgnored(this);
+    }
+
+    return rootBox;
+}
+
+
 static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRootLineBox, bool isOnlyRun = false)
 {
     if (isRootLineBox)
-        return toRenderBlock(obj)->createAndAppendRootInlineBox();
+        return toRenderBlockFlow(obj)->createAndAppendRootInlineBox();
 
     if (obj->isText())
         return toRenderText(obj)->createInlineTextBox();
@@ -347,7 +367,7 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
         RenderInline* inlineFlow = (obj != this) ? toRenderInline(obj) : 0;
 
         // Get the last box we made for this render object.
-        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlock(obj)->lastLineBox();
+        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlockFlow(obj)->lastLineBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box or its ancestor is unconstructed but it has

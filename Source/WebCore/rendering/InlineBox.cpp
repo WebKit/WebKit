@@ -27,7 +27,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
 #include "RootInlineBox.h"
 
@@ -366,7 +366,7 @@ FloatPoint InlineBox::locationIncludingFlipping()
 {
     if (!m_renderer.style()->isFlippedBlocksWritingMode())
         return FloatPoint(x(), y());
-    RenderBlock& block = root().block();
+    RenderBlockFlow& block = root().blockFlow();
     if (block.style()->isHorizontalWritingMode())
         return FloatPoint(x(), block.height() - height() - y());
     else
@@ -377,28 +377,28 @@ void InlineBox::flipForWritingMode(FloatRect& rect)
 {
     if (!m_renderer.style()->isFlippedBlocksWritingMode())
         return;
-    root().block().flipForWritingMode(rect);
+    root().blockFlow().flipForWritingMode(rect);
 }
 
 FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point)
 {
     if (!m_renderer.style()->isFlippedBlocksWritingMode())
         return point;
-    return root().block().flipForWritingMode(point);
+    return root().blockFlow().flipForWritingMode(point);
 }
 
 void InlineBox::flipForWritingMode(LayoutRect& rect)
 {
     if (!m_renderer.style()->isFlippedBlocksWritingMode())
         return;
-    root().block().flipForWritingMode(rect);
+    root().blockFlow().flipForWritingMode(rect);
 }
 
 LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 {
     if (!m_renderer.style()->isFlippedBlocksWritingMode())
         return point;
-    return root().block().flipForWritingMode(point);
+    return root().blockFlow().flipForWritingMode(point);
 }
 
 } // namespace WebCore

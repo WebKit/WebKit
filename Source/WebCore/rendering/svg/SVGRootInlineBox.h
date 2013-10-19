@@ -30,17 +30,15 @@
 
 namespace WebCore {
 
+class RenderSVGText;
 class SVGInlineTextBox;
 
 class SVGRootInlineBox FINAL : public RootInlineBox {
 public:
-    SVGRootInlineBox(RenderBlock& block)
-        : RootInlineBox(block)
-        , m_logicalHeight(0)
-    {
-    }
+    SVGRootInlineBox(RenderSVGText&);
 
     virtual bool isSVGRootInlineBox() const { return true; }
+    RenderSVGText& renderSVGText();
 
     virtual float virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
@@ -60,7 +58,6 @@ private:
     void layoutChildBoxes(InlineFlowBox*, FloatRect* = 0);
     void layoutRootBox(const FloatRect&);
 
-private:
     float m_logicalHeight;
 };
 

@@ -155,8 +155,6 @@ public:
     bool hasMarginBeforeQuirk(const RenderBox* child) const;
     bool hasMarginAfterQuirk(const RenderBox* child) const;
 
-    RootInlineBox* createAndAppendRootInlineBox();
-
     bool generatesLineBoxesForInlineChild(RenderObject*);
 
     void markPositionedObjectsForLayout();
@@ -563,8 +561,6 @@ private:
 
     void insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
     static void removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
-
-    virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run.
     virtual RenderObject* layoutSpecialExcludedChild(bool /*relayoutChildren*/) { return 0; }

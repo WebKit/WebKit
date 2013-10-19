@@ -375,8 +375,10 @@ private:
 // START METHODS DEFINED IN RenderBlockLineLayout
 public:
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
+    RootInlineBox* createAndAppendRootInlineBox();
 
 private:
+    virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox, bool startsNewSegment);
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     void setMarginsForRubyRun(BidiRun*, RenderRubyRun*, RenderObject*, const LineInfo&);
