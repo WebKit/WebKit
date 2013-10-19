@@ -173,6 +173,7 @@ namespace JSC {
         MacroAssembler::DataLabel32 putDisplacementLabel1;
         MacroAssembler::DataLabel32 putDisplacementLabel2;
 #endif
+        StructureStubInfo* stubInfo;
 
 #if !ASSERT_DISABLED
         PropertyStubCompilationInfo()
@@ -236,10 +237,11 @@ namespace JSC {
         {
         }
 
-        void slowCaseInfo(MacroAssembler::Label coldPathBegin, MacroAssembler::Call call)
+        void slowCaseInfo(MacroAssembler::Label coldPathBegin, MacroAssembler::Call call, StructureStubInfo* info)
         {
             callReturnLocation = call;
             this->coldPathBegin = coldPathBegin;
+            stubInfo = info;
         }
 
         void slowCaseInfo(MacroAssembler::Call call)
@@ -247,7 +249,7 @@ namespace JSC {
             callReturnLocation = call;
         }
 
-        void copyToStubInfo(StructureStubInfo& info, LinkBuffer &patchBuffer);
+        void copyToStubInfo(LinkBuffer &patchBuffer);
     };
 
     struct ByValCompilationInfo {
@@ -785,9 +787,9 @@ namespace JSC {
         MacroAssembler::Call callOperation(J_JITOperation_EC, int, JSCell*);
         MacroAssembler::Call callOperation(J_JITOperation_EJ, int, GPRReg);
 #if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJI, int, GPRReg, StringImpl*);
+        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, StringImpl*);
 #else
-        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EJI, int, GPRReg, GPRReg, StringImpl*);
+        MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_ESsiJI, int, StructureStubInfo*, GPRReg, GPRReg, StringImpl*);
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EJIdc, int, GPRReg, const Identifier*);
         MacroAssembler::Call callOperation(J_JITOperation_EJJ, int, GPRReg, GPRReg);
@@ -818,9 +820,9 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(V_JITOperation_EJIdJJ, RegisterID, const Identifier*, RegisterID, RegisterID);
 #if USE(JSVALUE64)
-        MacroAssembler::Call callOperation(V_JITOperation_EJJI, RegisterID, RegisterID, StringImpl*);
+        MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, StringImpl*);
 #else
-        MacroAssembler::Call callOperation(V_JITOperation_EJJI, RegisterID, RegisterID, RegisterID, RegisterID, StringImpl*);
+        MacroAssembler::Call callOperation(V_JITOperation_ESsiJJI, StructureStubInfo*, RegisterID, RegisterID, RegisterID, RegisterID, StringImpl*);
 #endif
         MacroAssembler::Call callOperation(V_JITOperation_EJJJ, RegisterID, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, int32_t, RegisterID);

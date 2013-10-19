@@ -29,6 +29,7 @@
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
+#include "StructureStubInfo.h"
 
 namespace JSC {
 
@@ -70,7 +71,7 @@ public:
         ASSERT((state == Simple) == (offset != invalidOffset));
     }
     
-    static GetByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
+    static GetByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
     static GetByIdStatus computeFor(VM&, Structure*, StringImpl* uid);
     
     State state() const { return m_state; }

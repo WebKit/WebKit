@@ -78,39 +78,20 @@ struct CallLinkRecord {
 };
 
 struct PropertyAccessRecord {
-    enum RegisterMode { RegistersFlushed, RegistersInUse };
-    
+    PropertyAccessRecord(
+        MacroAssembler::DataLabelPtr structureImm,
+        MacroAssembler::PatchableJump structureCheck,
+        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
 #if USE(JSVALUE64)
-    PropertyAccessRecord(
-        CodeOrigin codeOrigin,
-        MacroAssembler::DataLabelPtr structureImm,
-        MacroAssembler::PatchableJump structureCheck,
-        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
         MacroAssembler::DataLabelCompact loadOrStore,
-        SlowPathGenerator* slowPathGenerator,
-        MacroAssembler::Label done,
-        int8_t baseGPR,
-        int8_t valueGPR,
-        const RegisterSet& usedRegisters,
-        RegisterMode registerMode = RegistersInUse)
 #elif USE(JSVALUE32_64)
-    PropertyAccessRecord(
-        CodeOrigin codeOrigin,
-        MacroAssembler::DataLabelPtr structureImm,
-        MacroAssembler::PatchableJump structureCheck,
-        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
         MacroAssembler::DataLabelCompact tagLoadOrStore,
         MacroAssembler::DataLabelCompact payloadLoadOrStore,
+#endif
         SlowPathGenerator* slowPathGenerator,
         MacroAssembler::Label done,
-        int8_t baseGPR,
-        int8_t valueTagGPR,
-        int8_t valueGPR,
-        const RegisterSet& usedRegisters,
-        RegisterMode registerMode = RegistersInUse)
-#endif
-        : m_codeOrigin(codeOrigin)
-        , m_structureImm(structureImm)
+        StructureStubInfo* stubInfo)
+        : m_structureImm(structureImm)
         , m_structureCheck(structureCheck)
         , m_propertyStorageLoad(propertyStorageLoad)
 #if USE(JSVALUE64)
@@ -121,17 +102,10 @@ struct PropertyAccessRecord {
 #endif
         , m_slowPathGenerator(slowPathGenerator)
         , m_done(done)
-        , m_baseGPR(baseGPR)
-#if USE(JSVALUE32_64)
-        , m_valueTagGPR(valueTagGPR)
-#endif
-        , m_valueGPR(valueGPR)
-        , m_usedRegisters(usedRegisters)
-        , m_registerMode(registerMode)
+        , m_stubInfo(stubInfo)
     {
     }
 
-    CodeOrigin m_codeOrigin;
     MacroAssembler::DataLabelPtr m_structureImm;
     MacroAssembler::PatchableJump m_structureCheck;
     MacroAssembler::ConvertibleLoadLabel m_propertyStorageLoad;
@@ -143,35 +117,22 @@ struct PropertyAccessRecord {
 #endif
     SlowPathGenerator* m_slowPathGenerator;
     MacroAssembler::Label m_done;
-    int8_t m_baseGPR;
-#if USE(JSVALUE32_64)
-    int8_t m_valueTagGPR;
-#endif
-    int8_t m_valueGPR;
-    RegisterSet m_usedRegisters;
-    RegisterMode m_registerMode;
+    StructureStubInfo* m_stubInfo;
 };
 
 struct InRecord {
     InRecord(
-        CodeOrigin codeOrigin, MacroAssembler::PatchableJump jump,
-        SlowPathGenerator* slowPathGenerator, int8_t baseGPR, int8_t resultGPR,
-        const RegisterSet& usedRegisters)
-        : m_codeOrigin(codeOrigin)
-        , m_jump(jump)
+        MacroAssembler::PatchableJump jump, SlowPathGenerator* slowPathGenerator,
+        StructureStubInfo* stubInfo)
+        : m_jump(jump)
         , m_slowPathGenerator(slowPathGenerator)
-        , m_baseGPR(baseGPR)
-        , m_resultGPR(resultGPR)
-        , m_usedRegisters(usedRegisters)
+        , m_stubInfo(stubInfo)
     {
     }
     
-    CodeOrigin m_codeOrigin;
     MacroAssembler::PatchableJump m_jump;
     SlowPathGenerator* m_slowPathGenerator;
-    int8_t m_baseGPR;
-    int8_t m_resultGPR;
-    RegisterSet m_usedRegisters;
+    StructureStubInfo* m_stubInfo;
 };
 
 // === JITCompiler ===

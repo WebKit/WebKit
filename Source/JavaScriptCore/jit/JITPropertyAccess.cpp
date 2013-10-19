@@ -565,9 +565,11 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
 
     Label coldPathBegin = label();
     
-    Call call = callOperation(WithProfile, operationGetByIdOptimize, resultVReg, regT0, ident->impl());
+    StructureStubInfo* stubInfo = m_codeBlock->addStubInfo();
+    
+    Call call = callOperation(WithProfile, operationGetByIdOptimize, resultVReg, stubInfo, regT0, ident->impl());
 
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call);
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call, stubInfo);
 }
 
 void JIT::emit_op_put_by_id(Instruction* currentInstruction)
@@ -618,7 +620,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
 
     Label coldPathBegin(this);
     
-    V_JITOperation_EJJI optimizedCall;
+    V_JITOperation_ESsiJJI optimizedCall;
     if (m_codeBlock->isStrictMode()) {
         if (direct)
             optimizedCall = operationPutByIdDirectStrictOptimize;
@@ -631,10 +633,12 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
             optimizedCall = operationPutByIdNonStrictOptimize;
     }
     
-    Call call = callOperation(optimizedCall, regT1, regT0, ident->impl());
+    StructureStubInfo* stubInfo = m_codeBlock->addStubInfo();
+
+    Call call = callOperation(optimizedCall, stubInfo, regT1, regT0, ident->impl());
 
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call);
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].slowCaseInfo(coldPathBegin, call, stubInfo);
 }
 
 // Compile a store into an object's property storage.  May overwrite the

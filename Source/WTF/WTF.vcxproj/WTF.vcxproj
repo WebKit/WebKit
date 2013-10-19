@@ -123,6 +123,7 @@
     <ClInclude Include="..\wtf\AutodrainedPool.h" />
     <ClInclude Include="..\wtf\AVLTree.h" />
     <ClInclude Include="..\wtf\Bag.h" />
+    <ClInclude Include="..\wtf\BagToHashMap.h" />
     <ClInclude Include="..\wtf\BitArray.h" />
     <ClInclude Include="..\wtf\Bitmap.h" />
     <ClInclude Include="..\wtf\BitVector.h" />

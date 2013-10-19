@@ -105,7 +105,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
 #endif
 }
 
-GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
+GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, StringImpl* uid)
 {
     ConcurrentJITLocker locker(profiledBlock->m_lock);
     
@@ -113,28 +113,23 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    if (!profiledBlock->hasBaselineJITProfiling())
+    StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
+    if (!stubInfo || !stubInfo->seen)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
-    // First check if it makes either calls, in which case we want to be super careful, or
-    // if it's not set at all, in which case we punt.
-    StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
-    if (!stubInfo.seen)
-        return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
-    
-    if (stubInfo.resetByGC)
+    if (stubInfo->resetByGC)
         return GetByIdStatus(TakesSlowPath, true);
 
     PolymorphicAccessStructureList* list;
     int listSize;
-    switch (stubInfo.accessType) {
+    switch (stubInfo->accessType) {
     case access_get_by_id_self_list:
-        list = stubInfo.u.getByIdSelfList.structureList;
-        listSize = stubInfo.u.getByIdSelfList.listSize;
+        list = stubInfo->u.getByIdSelfList.structureList;
+        listSize = stubInfo->u.getByIdSelfList.listSize;
         break;
     case access_get_by_id_proto_list:
-        list = stubInfo.u.getByIdProtoList.structureList;
-        listSize = stubInfo.u.getByIdProtoList.listSize;
+        list = stubInfo->u.getByIdProtoList.structureList;
+        listSize = stubInfo->u.getByIdProtoList.listSize;
         break;
     default:
         list = 0;
@@ -153,12 +148,12 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;
     result.m_wasSeenInJIT = true; // This is interesting for bytecode dumping only.
-    switch (stubInfo.accessType) {
+    switch (stubInfo->accessType) {
     case access_unset:
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
         
     case access_get_by_id_self: {
-        Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
+        Structure* structure = stubInfo->u.getByIdSelf.baseObjectStructure.get();
         unsigned attributesIgnored;
         JSCell* specificValue;
         result.m_offset = structure->getConcurrently(
@@ -214,24 +209,24 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
         
     case access_get_by_id_proto: {
-        if (!stubInfo.u.getByIdProto.isDirect)
+        if (!stubInfo->u.getByIdProto.isDirect)
             return GetByIdStatus(MakesCalls, true);
         result.m_chain = adoptRef(new IntendedStructureChain(
             profiledBlock,
-            stubInfo.u.getByIdProto.baseObjectStructure.get(),
-            stubInfo.u.getByIdProto.prototypeStructure.get()));
+            stubInfo->u.getByIdProto.baseObjectStructure.get(),
+            stubInfo->u.getByIdProto.prototypeStructure.get()));
         computeForChain(result, profiledBlock, uid);
         break;
     }
         
     case access_get_by_id_chain: {
-        if (!stubInfo.u.getByIdChain.isDirect)
+        if (!stubInfo->u.getByIdChain.isDirect)
             return GetByIdStatus(MakesCalls, true);
         result.m_chain = adoptRef(new IntendedStructureChain(
             profiledBlock,
-            stubInfo.u.getByIdChain.baseObjectStructure.get(),
-            stubInfo.u.getByIdChain.chain.get(),
-            stubInfo.u.getByIdChain.count));
+            stubInfo->u.getByIdChain.baseObjectStructure.get(),
+            stubInfo->u.getByIdChain.chain.get(),
+            stubInfo->u.getByIdChain.count));
         computeForChain(result, profiledBlock, uid);
         break;
     }

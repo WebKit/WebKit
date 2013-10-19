@@ -52,6 +52,7 @@
 #include "RepatchBuffer.h"
 #include "SlotVisitorInlines.h"
 #include <stdio.h>
+#include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/StringExtras.h>
 #include <wtf/StringPrintStream.h>
@@ -331,7 +332,7 @@ static void dumpChain(PrintStream& out, ExecState* exec, StructureChain* chain, 
 }
 #endif
 
-void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int location)
+void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int location, const StubInfoMap& map)
 {
     Instruction* instruction = instructions().begin() + location;
 
@@ -350,8 +351,8 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #endif
 
 #if ENABLE(JIT)
-    if (numberOfStructureStubInfos()) {
-        StructureStubInfo& stubInfo = getStubInfo(location);
+    if (StructureStubInfo* stubPtr = map.get(CodeOrigin(location))) {
+        StructureStubInfo& stubInfo = *stubPtr;
         if (stubInfo.seen) {
             out.printf(" jit(");
             
@@ -520,11 +521,17 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         out.printf("; activation in r%d", activationRegister().offset());
     out.printf("\n");
     
+    StubInfoMap stubInfos;
+    {
+        ConcurrentJITLocker locker(m_lock);
+        getStubInfoMap(locker, stubInfos);
+    }
+    
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();
     for (const Instruction* it = begin; it != end; ++it)
-        dumpBytecode(out, exec, begin, it);
-
+        dumpBytecode(out, exec, begin, it, stubInfos);
+    
     if (numberOfIdentifiers()) {
         out.printf("\nIdentifiers:\n");
         size_t i = 0;
@@ -551,11 +558,6 @@ void CodeBlock::dumpBytecode(PrintStream& out)
             ++i;
         } while (i < count);
     }
-
-#if ENABLE(JIT)
-    if (!m_structureStubInfos.isEmpty())
-        out.printf("\nStructures:\n");
-#endif
 
     if (m_rareData && !m_rareData->m_exceptionHandlers.isEmpty()) {
         out.printf("\nException Handlers:\n");
@@ -657,7 +659,7 @@ void CodeBlock::dumpRareCaseProfile(PrintStream& out, const char* name, RareCase
 }
 #endif
 
-void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instruction* begin, const Instruction*& it)
+void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instruction* begin, const Instruction*& it, const StubInfoMap& map)
 {
     int location = it - begin;
     bool hasPrintedProfiling = false;
@@ -947,7 +949,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_get_array_length:
         case op_get_string_length: {
             printGetByIdOp(out, exec, location, it);
-            printGetByIdCacheStatus(out, exec, location);
+            printGetByIdCacheStatus(out, exec, location, map);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
@@ -1422,7 +1424,6 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
 
 #define FOR_EACH_MEMBER_VECTOR(macro) \
     macro(instructions) \
-    macro(structureStubInfos) \
     macro(callLinkInfos) \
     macro(linkedCallerList) \
     macro(identifiers) \
@@ -1945,8 +1946,8 @@ CodeBlock::~CodeBlock()
     // m_incomingCalls linked lists through the execution of the ~CallLinkInfo
     // destructors.
 
-    for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
-        m_structureStubInfos[i].deref();
+    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter)
+        (*iter)->deref();
 #endif // ENABLE(JIT)
 
 #if DUMP_CODE_BLOCK_STATISTICS
@@ -2101,8 +2102,8 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (unsigned i = 0; i < m_structureStubInfos.size(); ++i) {
-            StructureStubInfo& stubInfo = m_structureStubInfos[i];
+        for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+            StructureStubInfo& stubInfo = **iter;
             switch (stubInfo.accessType) {
             case access_put_by_id_transition_normal:
             case access_put_by_id_transition_direct: {
@@ -2358,8 +2359,8 @@ void CodeBlock::finalizeUnconditionally()
                 && !Heap::isMarked(callLinkInfo(i).lastSeenCallee.get()))
                 callLinkInfo(i).lastSeenCallee.clear();
         }
-        for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i) {
-            StructureStubInfo& stubInfo = m_structureStubInfos[i];
+        for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+            StructureStubInfo& stubInfo = **iter;
             
             if (stubInfo.visitWeakReferences())
                 continue;
@@ -2371,6 +2372,17 @@ void CodeBlock::finalizeUnconditionally()
 }
 
 #if ENABLE(JIT)
+StructureStubInfo* CodeBlock::addStubInfo()
+{
+    ConcurrentJITLocker locker(m_lock);
+    return m_stubInfos.add();
+}
+
+void CodeBlock::getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result)
+{
+    toHashMap(m_stubInfos, getStructureStubInfoCodeOrigin, result);
+}
+
 void CodeBlock::resetStub(StructureStubInfo& stubInfo)
 {
     if (stubInfo.accessType == access_unset)
@@ -2593,7 +2605,6 @@ void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& d
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
 #if ENABLE(JIT)
-    m_structureStubInfos.shrinkToFit();
     m_callLinkInfos.shrinkToFit();
 #endif
 #if ENABLE(VALUE_PROFILER)
@@ -3111,16 +3122,6 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
 
 #endif
     
-static bool structureStubInfoLessThan(const StructureStubInfo& a, const StructureStubInfo& b)
-{
-    return a.callReturnLocation.executableAddress() < b.callReturnLocation.executableAddress();
-}
-
-void CodeBlock::sortStructureStubInfos()
-{
-    std::sort(m_structureStubInfos.begin(), m_structureStubInfos.end(), structureStubInfoLessThan);
-}
-
 uint32_t CodeBlock::adjustedExitCountThreshold(uint32_t desiredThreshold)
 {
     ASSERT(JITCode::isOptimizingJIT(jitType()));

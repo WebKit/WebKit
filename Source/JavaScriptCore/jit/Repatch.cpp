@@ -610,7 +610,7 @@ void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& prop
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static V_JITOperation_EJJI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+static V_JITOperation_ESsiJJI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
     if (slot.isStrictMode()) {
         if (putKind == Direct)
@@ -622,7 +622,7 @@ static V_JITOperation_EJJI appropriateGenericPutByIdFunction(const PutPropertySl
     return operationPutByIdNonStrict;
 }
 
-static V_JITOperation_EJJI appropriateListBuildingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+static V_JITOperation_ESsiJJI appropriateListBuildingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
     if (slot.isStrictMode()) {
         if (putKind == Direct)
@@ -1388,8 +1388,8 @@ void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 
 void resetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
-    V_JITOperation_EJJI unoptimizedFunction = bitwise_cast<V_JITOperation_EJJI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
-    V_JITOperation_EJJI optimizedFunction;
+    V_JITOperation_ESsiJJI unoptimizedFunction = bitwise_cast<V_JITOperation_ESsiJJI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
+    V_JITOperation_ESsiJJI optimizedFunction;
     if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictBuildList)
         optimizedFunction = operationPutByIdStrictOptimize;
     else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictBuildList)

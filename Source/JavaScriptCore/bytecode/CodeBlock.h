@@ -73,6 +73,7 @@
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
+#include <wtf/Bag.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedArray.h>
@@ -170,18 +171,13 @@ public:
                                           int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
 #if ENABLE(JIT)
-
-    StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)
-    {
-        return *(binarySearch<StructureStubInfo, void*>(m_structureStubInfos, m_structureStubInfos.size(), returnAddress.value(), getStructureStubInfoReturnLocation));
-    }
-
-    StructureStubInfo& getStubInfo(unsigned bytecodeIndex)
-    {
-        return *(binarySearch<StructureStubInfo, unsigned>(m_structureStubInfos, m_structureStubInfos.size(), bytecodeIndex, getStructureStubInfoBytecodeIndex));
-    }
+    StructureStubInfo* addStubInfo();
+    Bag<StructureStubInfo>::iterator begin() { return m_stubInfos.begin(); }
+    Bag<StructureStubInfo>::iterator end() { return m_stubInfos.end(); }
 
     void resetStub(StructureStubInfo&);
+    
+    void getStubInfoMap(const ConcurrentJITLocker&, StubInfoMap& result);
 
     ByValInfo& getByValInfo(unsigned bytecodeIndex)
     {
@@ -377,11 +373,6 @@ public:
     String nameForRegister(VirtualRegister);
 
 #if ENABLE(JIT)
-    void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
-    void sortStructureStubInfos();
-    size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
-    StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
-
     void setNumberOfByValInfos(size_t size) { m_byValInfos.grow(size); }
     size_t numberOfByValInfos() const { return m_byValInfos.size(); }
     ByValInfo& byValInfo(size_t index) { return m_byValInfos[index]; }
@@ -445,8 +436,8 @@ public:
     RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset)
     {
         return tryBinarySearch<RareCaseProfile, int>(
-                                                     m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
-                                                     getRareCaseProfileBytecodeOffset);
+            m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
+            getRareCaseProfileBytecodeOffset);
     }
 
     bool likelyToTakeSlowCase(int bytecodeOffset)
@@ -935,14 +926,14 @@ private:
             m_constantRegisters[i].set(*m_vm, ownerExecutable(), constants[i].get());
     }
 
-    void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&);
+    void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&, const StubInfoMap& = StubInfoMap());
 
     CString registerName(int r) const;
     void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printBinaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
     void printConditionalJump(PrintStream&, ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
     void printGetByIdOp(PrintStream&, ExecState*, int location, const Instruction*&);
-    void printGetByIdCacheStatus(PrintStream&, ExecState*, int location);
+    void printGetByIdCacheStatus(PrintStream&, ExecState*, int location, const StubInfoMap&);
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
     void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling);
     void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
@@ -1031,7 +1022,7 @@ private:
     RefPtr<JITCode> m_jitCode;
     MacroAssemblerCodePtr m_jitCodeWithArityCheck;
 #if ENABLE(JIT)
-    Vector<StructureStubInfo> m_structureStubInfos;
+    Bag<StructureStubInfo> m_stubInfos;
     Vector<ByValInfo> m_byValInfos;
     Vector<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;

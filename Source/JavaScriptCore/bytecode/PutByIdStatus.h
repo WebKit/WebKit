@@ -28,6 +28,7 @@
 
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
+#include "StructureStubInfo.h"
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
@@ -90,7 +91,7 @@ public:
         ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == (m_offset == invalidOffset));
     }
     
-    static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, StringImpl* uid);
+    static PutByIdStatus computeFor(CodeBlock*, StubInfoMap&, unsigned bytecodeIndex, StringImpl* uid);
     static PutByIdStatus computeFor(VM&, JSGlobalObject*, Structure*, StringImpl* uid, bool isDirect);
     
     State state() const { return m_state; }

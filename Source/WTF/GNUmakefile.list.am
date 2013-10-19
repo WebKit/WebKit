@@ -9,6 +9,7 @@ wtf_sources += \
     Source/WTF/wtf/Atomics.h \
     Source/WTF/wtf/AutodrainedPool.h \
     Source/WTF/wtf/Bag.h \
+    Source/WTF/wtf/BagToHashMap.h \
     Source/WTF/wtf/BitArray.h \
     Source/WTF/wtf/BitVector.cpp \
     Source/WTF/wtf/BitVector.h \

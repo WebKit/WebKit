@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,15 +294,12 @@ struct StructureStubInfo {
     RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
 };
 
-inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
+inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)
 {
-    return structureStubInfo->callReturnLocation.executableAddress();
+    return structureStubInfo.codeOrigin;
 }
 
-inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
-{
-    return structureStubInfo->codeOrigin.bytecodeIndex;
-}
+typedef HashMap<CodeOrigin, StructureStubInfo*> StubInfoMap;
 
 } // namespace JSC
 

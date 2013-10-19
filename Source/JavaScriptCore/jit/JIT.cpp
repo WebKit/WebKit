@@ -487,20 +487,20 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
-ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo& info, LinkBuffer &linkBuffer)
+ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(LinkBuffer &linkBuffer)
 {
     ASSERT(bytecodeIndex != std::numeric_limits<unsigned>::max());
-    info.codeOrigin = CodeOrigin(bytecodeIndex);
-    info.callReturnLocation = linkBuffer.locationOf(callReturnLocation);
+    stubInfo->codeOrigin = CodeOrigin(bytecodeIndex);
+    stubInfo->callReturnLocation = linkBuffer.locationOf(callReturnLocation);
 
-    info.patch.deltaCheckImmToCall = MacroAssembler::differenceBetweenCodePtr(linkBuffer.locationOf(structureToCompare), info.callReturnLocation);
-    info.patch.deltaCallToStructCheck = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(structureCheck));
+    stubInfo->patch.deltaCheckImmToCall = MacroAssembler::differenceBetweenCodePtr(linkBuffer.locationOf(structureToCompare), stubInfo->callReturnLocation);
+    stubInfo->patch.deltaCallToStructCheck = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(structureCheck));
     
-    info.patch.deltaCallToSlowCase = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(coldPathBegin));
-    info.patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(done));
-    info.patch.deltaCallToStorageLoad = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(propertyStorageLoad));
+    stubInfo->patch.deltaCallToSlowCase = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(coldPathBegin));
+    stubInfo->patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(done));
+    stubInfo->patch.deltaCallToStorageLoad = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(propertyStorageLoad));
     
-    info.patch.baseGPR = GPRInfo::regT0;
+    stubInfo->patch.baseGPR = GPRInfo::regT0;
 
     RegisterSet usedRegisters;
     usedRegisters.set(GPRInfo::regT0);
@@ -508,37 +508,37 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
 #if USE(JSVALUE64) // JSVALUE cases
     switch (m_type) {
     case GetById:
-        info.patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(getDisplacementLabel));
-        info.patch.valueGPR = GPRInfo::regT0;
+        stubInfo->patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(getDisplacementLabel));
+        stubInfo->patch.valueGPR = GPRInfo::regT0;
         break;
     case PutById:
-        info.patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(putDisplacementLabel));
-        info.patch.valueGPR = GPRInfo::regT1;
+        stubInfo->patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(putDisplacementLabel));
+        stubInfo->patch.valueGPR = GPRInfo::regT1;
         usedRegisters.set(GPRInfo::regT1);
         break;
     }
 #else // JSVALUE cases
     switch (m_type) {
     case GetById:
-        info.patch.deltaCallToTagLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(getDisplacementLabel2));
-        info.patch.deltaCallToPayloadLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(getDisplacementLabel1));
-        info.patch.valueGPR = GPRInfo::regT0;
-        info.patch.valueTagGPR = GPRInfo::regT1;
+        stubInfo->patch.deltaCallToTagLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(getDisplacementLabel2));
+        stubInfo->patch.deltaCallToPayloadLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(getDisplacementLabel1));
+        stubInfo->patch.valueGPR = GPRInfo::regT0;
+        stubInfo->patch.valueTagGPR = GPRInfo::regT1;
         usedRegisters.set(GPRInfo::regT1);
         break;
     case PutById:
-        info.patch.deltaCallToTagLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(putDisplacementLabel2));
-        info.patch.deltaCallToPayloadLoadOrStore = MacroAssembler::differenceBetweenCodePtr(info.callReturnLocation, linkBuffer.locationOf(putDisplacementLabel1));
-        info.patch.valueGPR = GPRInfo::regT2;
-        info.patch.valueTagGPR = GPRInfo::regT3;
+        stubInfo->patch.deltaCallToTagLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(putDisplacementLabel2));
+        stubInfo->patch.deltaCallToPayloadLoadOrStore = MacroAssembler::differenceBetweenCodePtr(stubInfo->callReturnLocation, linkBuffer.locationOf(putDisplacementLabel1));
+        stubInfo->patch.valueGPR = GPRInfo::regT2;
+        stubInfo->patch.valueTagGPR = GPRInfo::regT3;
         usedRegisters.set(GPRInfo::regT2);
         usedRegisters.set(GPRInfo::regT3);
         break;
     }
 #endif // JSVALUE cases
     
-    info.patch.usedRegisters = usedRegisters;
-    info.patch.registersFlushed = true;
+    stubInfo->patch.usedRegisters = usedRegisters;
+    stubInfo->patch.registersFlushed = true;
 }
 
 CompilationResult JIT::privateCompile(JITCompilationEffort effort)
@@ -733,9 +733,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
             patchBuffer.link(iter->from, FunctionPtr(iter->to));
     }
 
-    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i)
-        m_propertyAccessCompilationInfo[i].copyToStubInfo(m_codeBlock->structureStubInfo(i), patchBuffer);
+        m_propertyAccessCompilationInfo[i].copyToStubInfo(patchBuffer);
     m_codeBlock->setNumberOfByValInfos(m_byValCompilationInfo.size());
     for (unsigned i = 0; i < m_byValCompilationInfo.size(); ++i) {
         CodeLocationJump badTypeJump = CodeLocationJump(patchBuffer.locationOf(m_byValCompilationInfo[i].badTypeJump));

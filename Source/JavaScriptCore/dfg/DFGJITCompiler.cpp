@@ -222,11 +222,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size() + m_ins.size());
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
-        StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
+        StructureStubInfo& info = *m_propertyAccesses[i].m_stubInfo;
         CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->call());
-        info.codeOrigin = m_propertyAccesses[i].m_codeOrigin;
         info.callReturnLocation = callReturnLocation;
         info.patch.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_structureImm), callReturnLocation);
         info.patch.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_structureCheck));
@@ -239,30 +237,15 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->label()));
         info.patch.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_done));
         info.patch.deltaCallToStorageLoad = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_propertyStorageLoad));
-        info.patch.baseGPR = m_propertyAccesses[i].m_baseGPR;
-#if USE(JSVALUE64)
-        info.patch.valueGPR = m_propertyAccesses[i].m_valueGPR;
-#else
-        info.patch.valueTagGPR = m_propertyAccesses[i].m_valueTagGPR;
-        info.patch.valueGPR = m_propertyAccesses[i].m_valueGPR;
-#endif
-        info.patch.usedRegisters = m_propertyAccesses[i].m_usedRegisters;
-        info.patch.registersFlushed = m_propertyAccesses[i].m_registerMode == PropertyAccessRecord::RegistersFlushed;
     }
     for (unsigned i = 0; i < m_ins.size(); ++i) {
-        StructureStubInfo& info = m_codeBlock->structureStubInfo(m_propertyAccesses.size() + i);
+        StructureStubInfo& info = *m_ins[i].m_stubInfo;
         CodeLocationLabel jump = linkBuffer.locationOf(m_ins[i].m_jump);
         CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->call());
-        info.codeOrigin = m_ins[i].m_codeOrigin;
         info.hotPathBegin = jump;
         info.callReturnLocation = callReturnLocation;
         info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
-        info.patch.baseGPR = m_ins[i].m_baseGPR;
-        info.patch.valueGPR = m_ins[i].m_resultGPR;
-        info.patch.usedRegisters = m_ins[i].m_usedRegisters;
-        info.patch.registersFlushed = false;
     }
-    m_codeBlock->sortStructureStubInfos();
     
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {

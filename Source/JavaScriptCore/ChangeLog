@@ -1,3 +1,87 @@
+2013-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        A CodeBlock's StructureStubInfos shouldn't be in a Vector that we search using code origins and machine code PCs
+        https://bugs.webkit.org/show_bug.cgi?id=122940
+
+        Reviewed by Oliver Hunt.
+        
+        This accomplishes a number of simplifications. StructureStubInfo is now non-moving,
+        whereas previously it was in a Vector, so it moved. This allows you to use pointers to
+        StructureStubInfo. This also eliminates the use of return PC as a way of finding the
+        StructureStubInfo's. It removes some of the need for the compile-time property access
+        records; for example the DFG no longer has to save information about registers in a
+        property access record only to later save it to the stub info.
+        
+        The main thing is accomplishes is that it makes it easier to add StructureStubInfo's
+        at any stage of compilation.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::addStubInfo):
+        (JSC::CodeBlock::getStubInfoMap):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::begin):
+        (JSC::CodeBlock::end):
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isHashTableDeletedValue):
+        (JSC::CodeOrigin::hash):
+        (JSC::CodeOriginHash::hash):
+        (JSC::CodeOriginHash::equal):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/StructureStubInfo.h:
+        (JSC::getStructureStubInfoCodeOrigin):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (JSC::DFG::InRecord::InRecord):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.cpp:
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::PropertyStubCompilationInfo::slowCaseInfo):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/Repatch.cpp:
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateListBuildingPutByIdFunction):
+        (JSC::resetPutByID):
+
 2013-10-18  Oliver Hunt  <oliver@apple.com>
 
         Spread operator should be performing direct "puts" and not triggering setters

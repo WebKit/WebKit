@@ -4,6 +4,7 @@ set(WTF_HEADERS
     Assertions.h
     Atomics.h
     Bag.h
+    BagToHashMap.h
     BitArray.h
     BitVector.h
     Bitmap.h

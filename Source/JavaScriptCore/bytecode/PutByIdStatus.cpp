@@ -81,7 +81,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 #endif
 }
 
-PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
+PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, StringImpl* uid)
 {
     ConcurrentJITLocker locker(profiledBlock->m_lock);
     
@@ -89,32 +89,29 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    if (!profiledBlock->hasBaselineJITProfiling())
-        return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
-    
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     
-    StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
-    if (!stubInfo.seen)
+    StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
+    if (!stubInfo || !stubInfo->seen)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
-    if (stubInfo.resetByGC)
+    if (stubInfo->resetByGC)
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
 
-    switch (stubInfo.accessType) {
+    switch (stubInfo->accessType) {
     case access_unset:
         // If the JIT saw it but didn't optimize it, then assume that this takes slow path.
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
         
     case access_put_by_id_replace: {
         PropertyOffset offset =
-            stubInfo.u.putByIdReplace.baseObjectStructure->getConcurrently(
+            stubInfo->u.putByIdReplace.baseObjectStructure->getConcurrently(
                 *profiledBlock->vm(), uid);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleReplace,
-                stubInfo.u.putByIdReplace.baseObjectStructure.get(),
+                stubInfo->u.putByIdReplace.baseObjectStructure.get(),
                 0, 0,
                 offset);
         }
@@ -123,18 +120,18 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct: {
-        ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
+        ASSERT(stubInfo->u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
         PropertyOffset offset = 
-            stubInfo.u.putByIdTransition.structure->getConcurrently(
+            stubInfo->u.putByIdTransition.structure->getConcurrently(
                 *profiledBlock->vm(), uid);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleTransition,
-                stubInfo.u.putByIdTransition.previousStructure.get(),
-                stubInfo.u.putByIdTransition.structure.get(),
-                stubInfo.u.putByIdTransition.chain ? adoptRef(new IntendedStructureChain(
-                    profiledBlock, stubInfo.u.putByIdTransition.previousStructure.get(),
-                    stubInfo.u.putByIdTransition.chain.get())) : 0,
+                stubInfo->u.putByIdTransition.previousStructure.get(),
+                stubInfo->u.putByIdTransition.structure.get(),
+                stubInfo->u.putByIdTransition.chain ? adoptRef(new IntendedStructureChain(
+                    profiledBlock, stubInfo->u.putByIdTransition.previousStructure.get(),
+                    stubInfo->u.putByIdTransition.chain.get())) : 0,
                 offset);
         }
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);

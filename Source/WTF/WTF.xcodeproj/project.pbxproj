@@ -33,6 +33,7 @@
 		0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D335D165DBA73005AD387 /* PrintStream.cpp */; };
 		0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D335E165DBA73005AD387 /* PrintStream.h */; };
 		0FB14E19180FA218009B6B4D /* Bag.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E18180FA218009B6B4D /* Bag.h */; };
+		0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */; };
 		0FC4488316FE9FE100844BE9 /* ProcessID.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4488216FE9FE100844BE9 /* ProcessID.h */; };
 		0FC4EDE61696149600F65041 /* CommaPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4EDE51696149600F65041 /* CommaPrinter.h */; };
 		0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD81AC4154FB22E00983E72 /* FastBitVector.h */; settings = {ATTRIBUTES = (); }; };
@@ -289,6 +290,7 @@
 		0F9D335D165DBA73005AD387 /* PrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintStream.cpp; sourceTree = "<group>"; };
 		0F9D335E165DBA73005AD387 /* PrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintStream.h; sourceTree = "<group>"; };
 		0FB14E18180FA218009B6B4D /* Bag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bag.h; sourceTree = "<group>"; };
+		0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BagToHashMap.h; sourceTree = "<group>"; };
 		0FC4488216FE9FE100844BE9 /* ProcessID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessID.h; sourceTree = "<group>"; };
 		0FC4EDE51696149600F65041 /* CommaPrinter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommaPrinter.h; sourceTree = "<group>"; };
 		0FD81AC4154FB22E00983E72 /* FastBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastBitVector.h; sourceTree = "<group>"; };
@@ -608,6 +610,7 @@
 				1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */,
 				A8A4725E151A825A004123FF /* AVLTree.h */,
 				0FB14E18180FA218009B6B4D /* Bag.h */,
+				0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */,
 				4F0321BB156AA8D1006EBAF6 /* BitArray.h */,
 				A8A4725F151A825A004123FF /* Bitmap.h */,
 				A8A47260151A825A004123FF /* BitVector.cpp */,
@@ -996,6 +999,7 @@
 				A8A473FA151A825B004123FF /* OSRandomSource.h in Headers */,
 				A8A473FC151A825B004123FF /* OwnPtr.h in Headers */,
 				A8A473FD151A825B004123FF /* OwnPtrCommon.h in Headers */,
+				0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */,
 				A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */,
 				A8A473FF151A825B004123FF /* PageAllocation.h in Headers */,
 				A8A47401151A825B004123FF /* PageAllocationAligned.h in Headers */,

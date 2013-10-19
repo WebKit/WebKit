@@ -32,6 +32,7 @@
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
+#include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -60,6 +61,12 @@ struct CodeOrigin {
     {
     }
     
+    CodeOrigin(WTF::HashTableDeletedValueType)
+        : bytecodeIndex(invalidBytecodeIndex)
+        , inlineCallFrame(bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(1)))
+    {
+    }
+    
     explicit CodeOrigin(unsigned bytecodeIndex, InlineCallFrame* inlineCallFrame = 0)
         : bytecodeIndex(bytecodeIndex)
         , inlineCallFrame(inlineCallFrame)
@@ -68,6 +75,11 @@ struct CodeOrigin {
     }
     
     bool isSet() const { return bytecodeIndex != invalidBytecodeIndex; }
+    
+    bool isHashTableDeletedValue() const
+    {
+        return bytecodeIndex == invalidBytecodeIndex && !!inlineCallFrame;
+    }
     
     // The inline depth is the depth of the inline stack, so 1 = not inlined,
     // 2 = inlined one deep, etc.
@@ -81,8 +93,8 @@ struct CodeOrigin {
     
     static unsigned inlineDepthForCallFrame(InlineCallFrame*);
     
+    unsigned hash() const;
     bool operator==(const CodeOrigin& other) const;
-    
     bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
     
     // Get the inline stack. This is slow, and is intended for debugging only.
@@ -145,6 +157,12 @@ inline int CodeOrigin::stackOffset() const
     return inlineCallFrame->stackOffset;
 }
 
+inline unsigned CodeOrigin::hash() const
+{
+    return WTF::IntHash<unsigned>::hash(bytecodeIndex) +
+        WTF::PtrHash<InlineCallFrame*>::hash(inlineCallFrame);
+}
+
 inline bool CodeOrigin::operator==(const CodeOrigin& other) const
 {
     return bytecodeIndex == other.bytecodeIndex
@@ -158,7 +176,27 @@ inline ScriptExecutable* CodeOrigin::codeOriginOwner() const
     return inlineCallFrame->executable.get();
 }
 
+struct CodeOriginHash {
+    static unsigned hash(const CodeOrigin& key) { return key.hash(); }
+    static bool equal(const CodeOrigin& a, const CodeOrigin& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::CodeOrigin> {
+    typedef JSC::CodeOriginHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::CodeOrigin> : SimpleClassHashTraits<JSC::CodeOrigin> {
+    static const bool emptyValueIsZero = false;
+};
+
+} // namespace WTF
 
 #endif // CodeOrigin_h
 
