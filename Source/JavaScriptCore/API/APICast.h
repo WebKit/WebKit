@@ -28,6 +28,7 @@
 
 #include "JSAPIValueWrapper.h"
 #include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {

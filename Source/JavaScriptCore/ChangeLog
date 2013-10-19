@@ -1,3 +1,12 @@
+2013-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        APICast.h uses functions from JSCJSValueInlines.h, but doesn't include it
+        https://bugs.webkit.org/show_bug.cgi?id=123067
+
+        Reviewed by Geoffrey Garen.
+
+        * API/APICast.h: Include it.
+
 2013-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         FTL::Location should treat the offset as an addend in the case of a Register location
