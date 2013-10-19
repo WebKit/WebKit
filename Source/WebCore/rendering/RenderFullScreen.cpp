@@ -54,7 +54,7 @@ private:
 void RenderFullScreenPlaceholder::willBeDestroyed()
 {
     m_owner.setPlaceholder(0);
-    RenderBlock::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed();
 }
 
 RenderFullScreen::RenderFullScreen(Document& document)

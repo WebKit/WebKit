@@ -46,7 +46,7 @@ RenderTextTrackCue::RenderTextTrackCue(TextTrackCueBox& element)
 void RenderTextTrackCue::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    RenderBlock::layout();
+    RenderBlockFlow::layout();
 
     LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
     

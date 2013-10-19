@@ -411,28 +411,28 @@ int RenderTextControlSingleLine::scrollWidth() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollWidth();
-    return RenderBlock::scrollWidth();
+    return RenderBlockFlow::scrollWidth();
 }
 
 int RenderTextControlSingleLine::scrollHeight() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollHeight();
-    return RenderBlock::scrollHeight();
+    return RenderBlockFlow::scrollHeight();
 }
 
 int RenderTextControlSingleLine::scrollLeft() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollLeft();
-    return RenderBlock::scrollLeft();
+    return RenderBlockFlow::scrollLeft();
 }
 
 int RenderTextControlSingleLine::scrollTop() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollTop();
-    return RenderBlock::scrollTop();
+    return RenderBlockFlow::scrollTop();
 }
 
 void RenderTextControlSingleLine::setScrollLeft(int newLeft)
@@ -455,7 +455,7 @@ bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranul
     RenderLayer* layer = renderer->layer();
     if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
-    return RenderBlock::scroll(direction, granularity, multiplier, stopElement);
+    return RenderBlockFlow::scroll(direction, granularity, multiplier, stopElement);
 }
 
 bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
@@ -463,7 +463,7 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
     RenderLayer* layer = innerTextElement()->renderBox()->layer();
     if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
         return true;
-    return RenderBlock::logicalScroll(direction, granularity, multiplier, stopElement);
+    return RenderBlockFlow::logicalScroll(direction, granularity, multiplier, stopElement);
 }
 
 HTMLInputElement& RenderTextControlSingleLine::inputElement() const

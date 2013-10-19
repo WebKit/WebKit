@@ -23,7 +23,7 @@
 #if ENABLE(SVG)
 #include "FloatConversion.h"
 #include "InlineFlowBox.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderSVGInlineText.h"
 #include "SVGInlineTextBox.h"
@@ -55,24 +55,24 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
     if (!renderer)
         return 0;
 
-    if (renderer->isRenderBlock()) {
+    if (renderer->isRenderBlockFlow()) {
         // If we're given a block element, it has to be a RenderSVGText.
         ASSERT(renderer->isSVGText());
-        RenderBlock* renderBlock = toRenderBlock(renderer);
+        RenderBlockFlow& renderBlock = toRenderBlockFlow(*renderer);
 
         // RenderSVGText only ever contains a single line box.
-        InlineFlowBox* flowBox = renderBlock->firstLineBox();
-        ASSERT(flowBox == renderBlock->lastLineBox());
+        InlineFlowBox* flowBox = renderBlock.firstLineBox();
+        ASSERT(flowBox == renderBlock.lastLineBox());
         return flowBox;
     }
 
     if (renderer->isRenderInline()) {
         // We're given a RenderSVGInline or objects that derive from it (RenderSVGTSpan / RenderSVGTextPath)
-        RenderInline* renderInline = toRenderInline(renderer);
+        RenderInline& renderInline = toRenderInline(*renderer);
 
         // RenderSVGInline only ever contains a single line box.
-        InlineFlowBox* flowBox = renderInline->firstLineBox();
-        ASSERT(flowBox == renderInline->lastLineBox());
+        InlineFlowBox* flowBox = renderInline.firstLineBox();
+        ASSERT(flowBox == renderInline.lastLineBox());
         return flowBox;
     }
 

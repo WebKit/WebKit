@@ -49,7 +49,7 @@ LayoutRect RenderSVGBlock::visualOverflowRect() const
 void RenderSVGBlock::setStyle(PassRef<RenderStyle> style)
 {
     if (!style.get().isDisplayInlineType()) {
-        RenderBlock::setStyle(std::move(style));
+        RenderBlockFlow::setStyle(std::move(style));
         return;
     }
 
@@ -60,12 +60,12 @@ void RenderSVGBlock::setStyle(PassRef<RenderStyle> style)
     newStyle.get().inheritFrom(&styleToInheritFrom.get());
     newStyle.get().setDisplay(BLOCK);
 
-    RenderBlock::setStyle(std::move(newStyle));
+    RenderBlockFlow::setStyle(std::move(newStyle));
 }
 
 void RenderSVGBlock::updateFromStyle()
 {
-    RenderBlock::updateFromStyle();
+    RenderBlockFlow::updateFromStyle();
 
     // RenderSVGlock, used by Render(SVGText|ForeignObject), is not allowed to call setHasOverflowClip(true).
     // RenderBlock assumes a layer to be present when the overflow clip functionality is requested. Both
@@ -91,19 +91,19 @@ void RenderSVGBlock::absoluteRects(Vector<IntRect>&, const LayoutPoint&) const
 void RenderSVGBlock::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(this);
-    RenderBlock::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed();
 }
 
 void RenderSVGBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
-    RenderBlock::styleWillChange(diff, newStyle);
+    RenderBlockFlow::styleWillChange(diff, newStyle);
 }
 
 void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }
 

@@ -44,7 +44,7 @@ RenderFieldset::RenderFieldset(HTMLFieldSetElement& element)
 
 void RenderFieldset::computePreferredLogicalWidths()
 {
-    RenderBlock::computePreferredLogicalWidths();
+    RenderBlockFlow::computePreferredLogicalWidths();
     if (RenderBox* legend = findLegend()) {
         int legendMinWidth = legend->minPreferredLogicalWidth();
 
@@ -144,7 +144,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     LayoutRect paintRect(paintOffset, size());
     RenderBox* legend = findLegend();
     if (!legend)
-        return RenderBlock::paintBoxDecorations(paintInfo, paintOffset);
+        return RenderBlockFlow::paintBoxDecorations(paintInfo, paintOffset);
 
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
@@ -195,7 +195,7 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOff
     LayoutRect paintRect = LayoutRect(paintOffset, size());
     RenderBox* legend = findLegend();
     if (!legend)
-        return RenderBlock::paintMask(paintInfo, paintOffset);
+        return RenderBlockFlow::paintMask(paintInfo, paintOffset);
 
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.

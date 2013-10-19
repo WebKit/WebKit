@@ -57,7 +57,7 @@ void RenderProgress::updateFromElement()
 
     updateAnimationState();
     repaint();
-    RenderBlock::updateFromElement();
+    RenderBlockFlow::updateFromElement();
 }
 
 void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const

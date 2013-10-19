@@ -226,7 +226,7 @@ RenderRubyAsBlock::~RenderRubyAsBlock()
 
 void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
@@ -236,13 +236,13 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     if (child->isBeforeContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderBlock::addChild(child, firstChild());
+            RenderBlockFlow::addChild(child, firstChild());
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* beforeBlock = rubyBeforeBlock(this);
             if (!beforeBlock) {
                 beforeBlock = createAnonymousRubyInlineBlock(*this);
-                RenderBlock::addChild(beforeBlock, firstChild());
+                RenderBlockFlow::addChild(beforeBlock, firstChild());
             }
             beforeBlock->addChild(child);
         }
@@ -251,13 +251,13 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     if (child->isAfterContent()) {
         if (child->isInline()) {
             // Add generated inline content normally
-            RenderBlock::addChild(child);
+            RenderBlockFlow::addChild(child);
         } else {
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* afterBlock = rubyAfterBlock(this);
             if (!afterBlock) {
                 afterBlock = createAnonymousRubyInlineBlock(*this);
-                RenderBlock::addChild(afterBlock);
+                RenderBlockFlow::addChild(afterBlock);
             }
             afterBlock->addChild(child);
         }
@@ -266,7 +266,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
 
     // If the child is a ruby run, just add it normally.
     if (child->isRubyRun()) {
-        RenderBlock::addChild(child, beforeChild);
+        RenderBlockFlow::addChild(child, beforeChild);
         return;
     }
 
@@ -290,7 +290,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     RenderRubyRun* lastRun = lastRubyRun(this);
     if (!lastRun || lastRun->hasRubyText()) {
         lastRun = RenderRubyRun::staticCreateRubyRun(this);
-        RenderBlock::addChild(lastRun, beforeChild);
+        RenderBlockFlow::addChild(lastRun, beforeChild);
     }
     lastRun->addChild(child);
 }
@@ -301,7 +301,7 @@ void RenderRubyAsBlock::removeChild(RenderObject& child)
     // just use the normal remove method.
     if (child.parent() == this) {
         ASSERT(child.isRubyRun() || child.isBeforeContent() || child.isAfterContent() || isAnonymousRubyInlineBlock(&child));
-        RenderBlock::removeChild(child);
+        RenderBlockFlow::removeChild(child);
         return;
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)

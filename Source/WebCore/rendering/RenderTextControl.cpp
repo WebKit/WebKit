@@ -57,7 +57,7 @@ HTMLElement* RenderTextControl::innerTextElement() const
 
 void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
     Element* innerText = innerTextElement();
     if (!innerText)
         return;

@@ -1,5 +1,92 @@
 2013-10-19  Sam Weinig  <sam@webkit.org>
 
+        Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 4)
+        https://bugs.webkit.org/show_bug.cgi?id=122969
+
+        Reviewed by Andreas Kling.
+
+        - Fix classes derived from RenderBlockFlow that were still calling
+          up to RenderBlock rather than RenderBlockFlow.
+
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::computePreferredLogicalWidths):
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::styleDidChange):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::nodeAtPoint):
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreenPlaceholder::willBeDestroyed):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::styleDidChange):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::styleDidChange):
+        (WebCore::RenderMultiColumnBlock::updateLogicalWidthAndColumnWidth):
+        (WebCore::RenderMultiColumnBlock::addChild):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updateFromElement):
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsBlock::styleDidChange):
+        (WebCore::RenderRubyAsBlock::addChild):
+        (WebCore::RenderRubyAsBlock::removeChild):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::rubyBaseSafe):
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::removeChild):
+        (WebCore::RenderRubyRun::layout):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::textAlignmentForLine):
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds):
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::willBeRemovedFromTree):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::willBeRemovedFromTree):
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        (WebCore::RenderTableCell::offsetFromContainer):
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        (WebCore::RenderTableCell::styleDidChange):
+        (WebCore::RenderTableCell::borderLeft):
+        (WebCore::RenderTableCell::borderRight):
+        (WebCore::RenderTableCell::borderTop):
+        (WebCore::RenderTableCell::borderBottom):
+        (WebCore::RenderTableCell::borderStart):
+        (WebCore::RenderTableCell::borderEnd):
+        (WebCore::RenderTableCell::borderBefore):
+        (WebCore::RenderTableCell::borderAfter):
+        (WebCore::RenderTableCell::paint):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::scrollWidth):
+        (WebCore::RenderTextControlSingleLine::scrollHeight):
+        (WebCore::RenderTextControlSingleLine::scrollLeft):
+        (WebCore::RenderTextControlSingleLine::scrollTop):
+        (WebCore::RenderTextControlSingleLine::scroll):
+        (WebCore::RenderTextControlSingleLine::logicalScroll):
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::layout):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layoutContent):
+        (WebCore::RenderView::addChild):
+        (WebCore::RenderView::visualOverflowRect):
+        (WebCore::RenderView::styleDidChange):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::setStyle):
+        (WebCore::RenderSVGBlock::updateFromStyle):
+        (WebCore::RenderSVGBlock::willBeDestroyed):
+        (WebCore::RenderSVGBlock::styleWillChange):
+        (WebCore::RenderSVGBlock::styleDidChange):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::flowBoxForRenderer):
+
+2013-10-19  Sam Weinig  <sam@webkit.org>
+
         Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 3)
         https://bugs.webkit.org/show_bug.cgi?id=122969
 

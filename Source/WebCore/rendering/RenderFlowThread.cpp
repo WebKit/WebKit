@@ -87,7 +87,7 @@ PassRef<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parent
 
 void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     if (oldStyle && oldStyle->writingMode() != style()->writingMode())
         invalidateRegions();
@@ -221,7 +221,7 @@ void RenderFlowThread::layout()
     validateRegions();
 
     CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
-    RenderBlock::layout();
+    RenderBlockFlow::layout();
 
     m_pageLogicalSizeChanged = false;
 
@@ -425,7 +425,7 @@ bool RenderFlowThread::nodeAtPoint(const HitTestRequest& request, HitTestResult&
 {
     if (hitTestAction == HitTestBlockBackground)
         return false;
-    return RenderBlock::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 bool RenderFlowThread::hitTestFlowThreadPortionInRegion(RenderRegion* region, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const

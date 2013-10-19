@@ -47,7 +47,7 @@ RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element)
 
 void RenderMultiColumnBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox())
         child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
 }
@@ -80,7 +80,7 @@ void RenderMultiColumnBlock::computeColumnCountAndWidth()
 
 bool RenderMultiColumnBlock::updateLogicalWidthAndColumnWidth()
 {
-    bool relayoutChildren = RenderBlock::updateLogicalWidthAndColumnWidth();
+    bool relayoutChildren = RenderBlockFlow::updateLogicalWidthAndColumnWidth();
     LayoutUnit oldColumnWidth = m_columnWidth;
     computeColumnCountAndWidth();
     if (m_columnWidth != oldColumnWidth)
@@ -141,7 +141,7 @@ void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* befo
     if (!m_flowThread) {
         m_flowThread = new RenderMultiColumnFlowThread(document());
         m_flowThread->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-        RenderBlock::addChild(m_flowThread);
+        RenderBlockFlow::addChild(m_flowThread);
     }
     m_flowThread->addChild(newChild, beforeChild);
 }

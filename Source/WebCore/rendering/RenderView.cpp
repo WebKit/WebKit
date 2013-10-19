@@ -148,7 +148,7 @@ void RenderView::layoutContent(const LayoutState& state)
     UNUSED_PARAM(state);
     ASSERT(needsLayout());
 
-    RenderBlock::layout();
+    RenderBlockFlow::layout();
     if (hasRenderNamedFlowThreads())
         flowThreadController().layoutRenderNamedFlowThreads();
 #ifndef NDEBUG
@@ -182,7 +182,7 @@ void RenderView::addChild(RenderObject* newChild, RenderObject* beforeChild)
         if (seamlessBox && seamlessBox->flowThreadContainingBlock())
             newChild->setFlowThreadState(seamlessBox->flowThreadState());
     }
-    RenderBlock::addChild(newChild, beforeChild);
+    RenderBlockFlow::addChild(newChild, beforeChild);
 }
 
 bool RenderView::initializeLayoutState(LayoutState& state)
@@ -608,7 +608,7 @@ LayoutRect RenderView::visualOverflowRect() const
     if (frameView().paintsEntireContents())
         return layoutOverflowRect();
 
-    return RenderBlock::visualOverflowRect();
+    return RenderBlockFlow::visualOverflowRect();
 }
 
 void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
@@ -1128,7 +1128,7 @@ CustomFilterGlobalContext* RenderView::customFilterGlobalContext()
 
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
     if (hasRenderNamedFlowThreads())
         flowThreadController().styleDidChange();
 }

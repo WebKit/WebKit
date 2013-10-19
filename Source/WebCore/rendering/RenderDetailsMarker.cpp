@@ -116,7 +116,7 @@ Path RenderDetailsMarker::getPath(const LayoutPoint& origin) const
 void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE) {
-        RenderBlock::paint(paintInfo, paintOffset);
+        RenderBlockFlow::paint(paintInfo, paintOffset);
         return;
     }
 

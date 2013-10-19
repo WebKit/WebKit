@@ -48,7 +48,7 @@ void RenderTableCaption::insertedIntoTree()
 
 void RenderTableCaption::willBeRemovedFromTree()
 {
-    RenderBlock::willBeRemovedFromTree();
+    RenderBlockFlow::willBeRemovedFromTree();
 
     table()->removeCaption(this);
 }
