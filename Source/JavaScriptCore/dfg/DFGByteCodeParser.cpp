@@ -2411,6 +2411,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_by_val);
         }
 
+        case op_put_by_val_direct:
         case op_put_by_val: {
             Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
 
@@ -2423,7 +2424,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(property);
             addVarArgChild(value);
             addVarArgChild(0); // Leave room for property storage.
-            addToGraph(Node::VarArg, PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
+            addToGraph(Node::VarArg, opcodeID == op_put_by_val_direct ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val);
         }

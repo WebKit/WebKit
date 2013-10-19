@@ -498,6 +498,22 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
     }
 }
 
+static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue subscript, JSValue value)
+{
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
+        baseObject->putDirectIndex(callFrame, i, value);
+    } else if (isName(subscript)) {
+        PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+        baseObject->putDirect(callFrame->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
+    } else {
+        Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
+        if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
+            PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+            baseObject->putDirect(callFrame->vm(), property, value, slot);
+        }
+    }
+}
 void JIT_OPERATION operationPutByVal(ExecState* exec, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
@@ -544,6 +560,51 @@ void JIT_OPERATION operationPutByVal(ExecState* exec, EncodedJSValue encodedBase
     putByVal(exec, baseValue, subscript, value);
 }
 
+void JIT_OPERATION operationDirectPutByVal(ExecState* callFrame, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+{
+    VM& vm = callFrame->vm();
+    NativeCallFrameTracer tracer(&vm, callFrame);
+    
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue value = JSValue::decode(encodedValue);
+    RELEASE_ASSERT(baseValue.isObject());
+    JSObject* object = asObject(baseValue);
+    if (subscript.isInt32()) {
+        // See if it's worth optimizing at all.
+        bool didOptimize = false;
+        
+        unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
+        ASSERT(bytecodeOffset);
+        ByValInfo& byValInfo = callFrame->codeBlock()->getByValInfo(bytecodeOffset - 1);
+        ASSERT(!byValInfo.stubRoutine);
+        
+        if (hasOptimizableIndexing(object->structure())) {
+            // Attempt to optimize.
+            JITArrayMode arrayMode = jitArrayModeForStructure(object->structure());
+            if (arrayMode != byValInfo.arrayMode) {
+                JIT::compileDirectPutByVal(&vm, callFrame->codeBlock(), &byValInfo, ReturnAddressPtr(OUR_RETURN_ADDRESS), arrayMode);
+                didOptimize = true;
+            }
+        }
+        
+        if (!didOptimize) {
+            // If we take slow path more than 10 times without patching then make sure we
+            // never make that mistake again. Or, if we failed to patch and we have some object
+            // that intercepts indexed get, then don't even wait until 10 times. For cases
+            // where we see non-index-intercepting objects, this gives 10 iterations worth of
+            // opportunity for us to observe that the get_by_val may be polymorphic.
+            if (++byValInfo.slowPathCount >= 10
+                || object->structure()->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
+                // Don't ever try to optimize.
+                RepatchBuffer repatchBuffer(callFrame->codeBlock());
+                repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
+            }
+        }
+    }
+    directPutByVal(callFrame, object, subscript, value);
+}
+
 void JIT_OPERATION operationPutByValGeneric(ExecState* exec, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
 {
     VM& vm = exec->vm();
@@ -554,6 +615,19 @@ void JIT_OPERATION operationPutByValGeneric(ExecState* exec, EncodedJSValue enco
     JSValue value = JSValue::decode(encodedValue);
 
     putByVal(exec, baseValue, subscript, value);
+}
+
+
+void JIT_OPERATION operationDirectPutByValGeneric(ExecState* exec, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSValue value = JSValue::decode(encodedValue);
+    RELEASE_ASSERT(baseValue.isObject());
+    directPutByVal(exec, asObject(baseValue), subscript, value);
 }
 
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState* execCallee)

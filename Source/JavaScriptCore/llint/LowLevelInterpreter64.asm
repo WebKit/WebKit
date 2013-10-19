@@ -1163,7 +1163,7 @@ macro contiguousPutByVal(storeCallback)
     jmp .storeResult
 end
 
-_llint_op_put_by_val:
+macro putByVal(holeCheck, slowPath)
     traceExecution()
     loadisFromInstruction(1, t0)
     loadConstantOrVariableCell(t0, t1, .opPutByValSlow)
@@ -1211,7 +1211,7 @@ _llint_op_put_by_val:
 .opPutByValNotContiguous:
     bineq t2, ArrayStorageShape, .opPutByValSlow
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    btqz ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty
+    holeCheck(ArrayStorage::m_vector[t0, t3, 8], .opPutByValArrayStorageEmpty)
 .opPutByValArrayStorageStoreResult:
     loadisFromInstruction(3, t2)
     loadConstantOrVariable(t2, t1)
@@ -1236,8 +1236,18 @@ _llint_op_put_by_val:
         storeb 1, ArrayProfile::m_outOfBounds[t0]
     end
 .opPutByValSlow:
-    callSlowPath(_llint_slow_path_put_by_val)
+    callSlowPath(slowPath)
     dispatch(5)
+end
+
+_llint_op_put_by_val:
+    putByVal(macro(slot, slowPath)
+        btqz slot, slowPath
+    end, _llint_slow_path_put_by_val)
+
+_llint_op_put_by_val_direct:
+    putByVal(macro(slot, slowPath)
+    end, _llint_slow_path_put_by_val_direct)
 
 
 _llint_op_jmp:

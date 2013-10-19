@@ -311,7 +311,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
-        
+
+    case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
         ArrayMode mode = node->arrayMode();

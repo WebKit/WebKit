@@ -883,6 +883,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
+    case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
         node->setCanExit(true);

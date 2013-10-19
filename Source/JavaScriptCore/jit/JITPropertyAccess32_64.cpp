@@ -435,6 +435,8 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     skipProfiling.link(this);
 
     Label slowPath = label();
+    
+    bool isDirect = m_interpreter->getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
 
 #if CPU(X86)
     // FIXME: We only have 5 temp registers, but need 6 to make this call, therefore we materialize
@@ -451,14 +453,14 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     emitLoad(value, regT0, regT1);
     addCallArgument(regT1);
     addCallArgument(regT0);
-    Call call = appendCallWithExceptionCheck(operationPutByVal);
+    Call call = appendCallWithExceptionCheck(isDirect ? operationDirectPutByVal : operationPutByVal);
 #else
     // The register selection below is chosen to reduce register swapping on ARM.
     // Swapping shouldn't happen on other platforms.
     emitLoad(base, regT2, regT1);
     emitLoad(property, regT3, regT0);
     emitLoad(value, regT5, regT4);
-    Call call = callOperation(operationPutByVal, regT2, regT1, regT3, regT0, regT5, regT4);
+    Call call = callOperation(isDirect ? operationDirectPutByVal : operationPutByVal, regT2, regT1, regT3, regT0, regT5, regT4);
 #endif
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;

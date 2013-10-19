@@ -545,6 +545,7 @@ private:
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
+        case PutByValDirect:
         case PutByVal:
         case PutClosureVar:
         case Return:
@@ -726,7 +727,8 @@ private:
                 node->variableAccessData()->vote(VoteValue);
             break;
         }
-                
+
+        case PutByValDirect:
         case PutByVal:
         case PutByValAlias: {
             Edge child1 = m_graph.varArgChild(node, 0);

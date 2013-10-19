@@ -1300,7 +1300,7 @@ macro contiguousPutByVal(storeCallback)
     jmp .storeResult
 end
 
-_llint_op_put_by_val:
+macro putByVal(holeCheck, slowPath)
     traceExecution()
     loadi 4[PC], t0
     loadConstantOrVariablePayload(t0, CellTag, t1, .opPutByValSlow)
@@ -1351,7 +1351,7 @@ _llint_op_put_by_val:
 .opPutByValNotContiguous:
     bineq t2, ArrayStorageShape, .opPutByValSlow
     biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-    bieq ArrayStorage::m_vector + TagOffset[t0, t3, 8], EmptyValueTag, .opPutByValArrayStorageEmpty
+    holeCheck(ArrayStorage::m_vector + TagOffset[t0, t3, 8], .opPutByValArrayStorageEmpty)
 .opPutByValArrayStorageStoreResult:
     loadi 12[PC], t2
     loadConstantOrVariable2Reg(t2, t1, t2)
@@ -1377,9 +1377,18 @@ _llint_op_put_by_val:
         storeb 1, ArrayProfile::m_outOfBounds[t0]
     end
 .opPutByValSlow:
-    callSlowPath(_llint_slow_path_put_by_val)
+    callSlowPath(slowPath)
     dispatch(5)
+end
 
+_llint_op_put_by_val:
+    putByVal(macro(addr, slowPath)
+        bieq addr, EmptyValueTag, slowPath
+    end, _llint_slow_path_put_by_val)
+
+_llint_op_put_by_val_direct:
+    putByVal(macro(addr, slowPath)
+    end, _llint_slow_path_put_by_val_direct)
 
 _llint_op_jmp:
     traceExecution()

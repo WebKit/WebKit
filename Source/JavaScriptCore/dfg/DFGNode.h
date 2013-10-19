@@ -1071,6 +1071,7 @@ struct Node {
         switch (op()) {
         case GetIndexedPropertyStorage:
         case GetArrayLength:
+        case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
         case GetByVal:

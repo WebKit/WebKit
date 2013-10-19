@@ -253,7 +253,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         
     case GetTypedArrayByteOffset:
         return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
-        
+            
+    case PutByValDirect:
     case PutByVal:
     case PutByValAlias:
         return node->arrayMode().modeForPut().alreadyChecked(

@@ -1049,6 +1049,15 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             dumpArrayProfiling(out, it, hasPrintedProfiling);
             break;
         }
+        case op_put_by_val_direct: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "put_by_val_direct");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            dumpArrayProfiling(out, it, hasPrintedProfiling);
+            break;
+        }
         case op_del_by_val: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1742,6 +1751,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
         case op_put_by_val: {
+            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
+            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
+            break;
+        }
+        case op_put_by_val_direct: {
             int arrayProfileIndex = pc[i + opLength - 1].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];

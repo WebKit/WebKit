@@ -2915,6 +2915,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
         Edge child1 = m_jit.graph().varArgChild(node, 0);
@@ -2942,8 +2943,10 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg arg2GPR = arg2.gpr();
             GPRReg arg3GPR = arg3.gpr();
             flushRegisters();
-            
-            callOperation(m_jit.strictModeFor(node->codeOrigin) ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+            if (node->op() == PutByValDirect)
+                callOperation(m_jit.strictModeFor(node->codeOrigin) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, arg1GPR, arg2GPR, arg3GPR);
+            else
+                callOperation(m_jit.strictModeFor(node->codeOrigin) ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
             
             noResult(node);
             alreadyHandled = true;
@@ -3031,11 +3034,17 @@ void SpeculativeJIT::compile(Node* node)
             storage.use();
             
             if (arrayMode.isOutOfBounds()) {
-                addSlowPathGenerator(
-                    slowPathCall(
+                if (node->op() == PutByValDirect) {
+                    addSlowPathGenerator(slowPathCall(
+                        slowCase, this,
+                        m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                        NoResult, baseReg, propertyReg, valueReg));
+                } else {
+                    addSlowPathGenerator(slowPathCall(
                         slowCase, this,
                         m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                         NoResult, baseReg, propertyReg, valueReg));
+                }
             }
 
             noResult(node, UseChildrenCalledExplicitly);
@@ -3119,11 +3128,17 @@ void SpeculativeJIT::compile(Node* node)
             storage.use();
             
             if (!slowCases.empty()) {
-                addSlowPathGenerator(
-                    slowPathCall(
+                if (node->op() == PutByValDirect) {
+                    addSlowPathGenerator(slowPathCall(
+                        slowCases, this,
+                        m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                        NoResult, baseReg, propertyReg, valueReg));
+                } else {
+                    addSlowPathGenerator(slowPathCall(
                         slowCases, this,
                         m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                         NoResult, baseReg, propertyReg, valueReg));
+                }
             }
 
             noResult(node, UseChildrenCalledExplicitly);

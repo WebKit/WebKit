@@ -126,6 +126,7 @@ namespace JSC {
     macro(op_get_argument_by_val, 6) /* must be the same size as op_get_by_val */ \
     macro(op_get_by_pname, 7) \
     macro(op_put_by_val, 5) \
+    macro(op_put_by_val_direct, 5) \
     macro(op_del_by_val, 4) \
     macro(op_put_by_index, 4) \
     macro(op_put_getter_setter, 5) \

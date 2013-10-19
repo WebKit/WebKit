@@ -197,7 +197,7 @@ handleSpread:
     RefPtr<RegisterID> index = generator.emitLoad(generator.newTemporary(), jsNumber(length));
     auto spreader = [this, array, index](BytecodeGenerator& generator, RegisterID* value)
     {
-        generator.emitPutByVal(array.get(), index.get(), value);
+        generator.emitDirectPutByVal(array.get(), index.get(), value);
         generator.emitInc(index.get());
     };
     for (; n; n = n->next()) {
@@ -207,7 +207,7 @@ handleSpread:
             SpreadExpressionNode* spread = static_cast<SpreadExpressionNode*>(n->value());
             generator.emitEnumeration(spread, spread->expression(), spreader);
         } else {
-            generator.emitPutByVal(array.get(), index.get(), generator.emitNode(n->value()));
+            generator.emitDirectPutByVal(array.get(), index.get(), generator.emitNode(n->value()));
             generator.emitInc(index.get());
         }
     }

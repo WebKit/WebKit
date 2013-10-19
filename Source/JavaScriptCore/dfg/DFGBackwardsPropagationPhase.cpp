@@ -347,7 +347,8 @@ private:
             node->child1()->mergeFlags(flags);
             break;
         }
-            
+
+        case PutByValDirect:
         case PutByVal: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt);

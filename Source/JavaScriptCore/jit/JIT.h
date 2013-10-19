@@ -323,6 +323,13 @@ namespace JSC {
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
             jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
         }
+        
+        static void compileDirectPutByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        {
+            JIT jit(vm, codeBlock);
+            jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
+            jit.privateCompilePutByVal(byValInfo, returnAddress, arrayMode);
+        }
 
         static CodeRef compileCTINativeCall(VM* vm, NativeFunction func)
         {

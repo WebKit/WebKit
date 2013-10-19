@@ -1413,6 +1413,17 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* proper
     return value;
 }
 
+RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
+{
+    UnlinkedArrayProfile arrayProfile = newArrayProfile();
+    emitOpcode(op_put_by_val_direct);
+    instructions().append(base->index());
+    instructions().append(property->index());
+    instructions().append(value->index());
+    instructions().append(arrayProfile);
+    return value;
+}
+
 RegisterID* BytecodeGenerator::emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
     emitOpcode(op_del_by_val);

@@ -293,6 +293,7 @@ void JIT::privateCompileMainPass()
         case op_put_by_id_transition_normal_out_of_line:
         DEFINE_OP(op_put_by_id)
         DEFINE_OP(op_put_by_index)
+        case op_put_by_val_direct:
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_setter)
         case op_init_global_const_nop:
@@ -446,6 +447,7 @@ void JIT::privateCompileSlowCases()
         case op_put_by_id_transition_direct_out_of_line:
         case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
+        case op_put_by_val_direct:
         DEFINE_SLOWCASE_OP(op_put_by_val)
         DEFINE_SLOWCASE_OP(op_rshift)
         DEFINE_SLOWCASE_OP(op_urshift)

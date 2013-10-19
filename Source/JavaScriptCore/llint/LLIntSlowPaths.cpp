@@ -745,6 +745,31 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
+{
+    LLINT_BEGIN();
+    
+    JSValue baseValue = LLINT_OP_C(1).jsValue();
+    JSValue subscript = LLINT_OP_C(2).jsValue();
+    JSValue value = LLINT_OP_C(3).jsValue();
+    RELEASE_ASSERT(baseValue.isObject());
+    JSObject* baseObject = asObject(baseValue);
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
+        baseObject->putDirectIndex(exec, i, value);
+    } else if (isName(subscript)) {
+        PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+        baseObject->putDirect(exec->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
+    } else {
+        Identifier property(exec, subscript.toString(exec)->value(exec));
+        if (!exec->vm().exception()) { // Don't put to an object if toString threw an exception.
+            PutPropertySlot slot(exec->codeBlock()->isStrictMode());
+            baseObject->putDirect(exec->vm(), property, value, slot);
+        }
+    }
+    LLINT_END();
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
 {
     LLINT_BEGIN();

@@ -1,3 +1,17 @@
+2013-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Spread operator should be performing direct "puts" and not triggering setters
+        https://bugs.webkit.org/show_bug.cgi?id=123047
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new testcase for the setter case.  run-javascriptcore-tests hits this with
+        the llint, baseline, and dfg.
+
+        * js/basic-spread-expected.txt:
+        * js/script-tests/basic-spread.js:
+        (Array):
+
 2013-10-18  Dean Jackson  <dino@apple.com>
 
         Unable to upload <img src="foo.svg"> as WebGL texture

@@ -140,6 +140,7 @@ namespace JSC { namespace DFG {
     /* this must be the directly subsequent property put. Note that PutByVal */\
     /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \

@@ -93,6 +93,7 @@ PASS [,...a,4] is [,1,2,3,4]
 PASS [,...a,,5] is [,1,2,3,,5]
 PASS [...a.keys()] is [0,1,2]
 PASS [...a.entries()].join('|') is [[0,1],[1,2],[2,3]].join('|')
+PASS [...a] is [1,2,3]
 PASS successfullyParsed is true
 
 TEST COMPLETE

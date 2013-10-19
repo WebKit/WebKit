@@ -249,6 +249,7 @@ private:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
                 case GetByVal:
+                case PutByValDirect:
                 case PutByVal:
                 case PutByValAlias:
                 case GetArrayLength:
@@ -350,6 +351,7 @@ private:
                 case ReallocatePropertyStorage:
                 case GetButterfly:
                 case GetByVal:
+                case PutByValDirect:
                 case PutByVal:
                 case PutByValAlias:
                 case GetArrayLength:

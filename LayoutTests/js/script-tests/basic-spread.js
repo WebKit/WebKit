@@ -58,4 +58,10 @@ shouldBe("[,...a,4]", "[,1,2,3,4]")
 shouldBe("[,...a,,5]", "[,1,2,3,,5]")
 shouldBe("[...a.keys()]", "[0,1,2]")
 shouldBe("[...a.entries()].join('|')", "[[0,1],[1,2],[2,3]].join('|')")
+Array.prototype.__defineSetter__(0, function(){ fail() });
+Array.prototype.__defineSetter__(1, function(){ fail() });
+Array.prototype.__defineSetter__(2, function(){ fail() });
+shouldBe("[...a]", "[1,2,3]")
+
+
 

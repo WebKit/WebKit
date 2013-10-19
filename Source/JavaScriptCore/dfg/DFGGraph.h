@@ -631,6 +631,7 @@ public:
         case CompareEq:
             return !isPredictedNumerical(node);
         case GetByVal:
+        case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
             return !byValIsPure(node);

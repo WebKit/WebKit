@@ -473,7 +473,8 @@ private:
             
             break;
         }
-            
+
+        case PutByValDirect:
         case PutByVal:
         case PutByValAlias: {
             Edge& child1 = m_graph.varArgChild(node, 0);

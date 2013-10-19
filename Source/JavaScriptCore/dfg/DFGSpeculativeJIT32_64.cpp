@@ -1866,11 +1866,17 @@ void SpeculativeJIT::compileContiguousPutByVal(Node* node, BaseOperandType& base
     storage.use();
     
     if (arrayMode.isOutOfBounds()) {
-        addSlowPathGenerator(
-            slowPathCall(
+        if (node->op() == PutByValDirect) {
+            addSlowPathGenerator(slowPathCall(
+                slowCase, this,
+                m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                NoResult, baseReg, propertyReg, valueTag, valuePayloadReg));
+        } else {
+            addSlowPathGenerator(slowPathCall(
                 slowCase, this,
                 m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                 NoResult, baseReg, propertyReg, valueTag, valuePayloadReg));
+        }
     }
 
     noResult(node, UseChildrenCalledExplicitly);    
@@ -2624,6 +2630,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case PutByValDirect:
     case PutByVal:
     case PutByValAlias: {
         Edge child1 = m_jit.graph().varArgChild(node, 0);
@@ -2642,7 +2649,7 @@ void SpeculativeJIT::compile(Node* node)
             alreadyHandled = true;
             break;
         case Array::Generic: {
-            ASSERT(node->op() == PutByVal);
+            ASSERT(node->op() == PutByVal || node->op() == PutByValDirect);
             
             SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, child2);
@@ -2654,7 +2661,10 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg valuePayloadGPR = value.payloadGPR();
             
             flushRegisters();
-            callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValCellStrict : operationPutByValCellNonStrict, baseGPR, propertyTagGPR, propertyPayloadGPR, valueTagGPR, valuePayloadGPR);
+            if (node->op() == PutByValDirect)
+                callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, baseGPR, propertyTagGPR, propertyPayloadGPR, valueTagGPR, valuePayloadGPR);
+            else
+                callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValCellStrict : operationPutByValCellNonStrict, baseGPR, propertyTagGPR, propertyPayloadGPR, valueTagGPR, valuePayloadGPR);
             
             noResult(node);
             alreadyHandled = true;
@@ -2779,11 +2789,17 @@ void SpeculativeJIT::compile(Node* node)
             storage.use();
             
             if (!slowCases.empty()) {
-                addSlowPathGenerator(
-                    slowPathCall(
+                if (node->op() == PutByValDirect) {
+                    addSlowPathGenerator(slowPathCall(
+                        slowCases, this,
+                        m_jit.codeBlock()->isStrictMode() ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValDirectBeyondArrayBoundsNonStrict,
+                        NoResult, baseReg, propertyReg, valueTagReg, valuePayloadReg));
+                } else {
+                    addSlowPathGenerator(slowPathCall(
                         slowCases, this,
                         m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
                         NoResult, baseReg, propertyReg, valueTagReg, valuePayloadReg));
+                }
             }
 
             noResult(node, UseChildrenCalledExplicitly);
