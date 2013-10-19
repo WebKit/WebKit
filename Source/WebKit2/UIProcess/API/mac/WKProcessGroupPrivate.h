@@ -26,8 +26,12 @@
 #import <WebKit2/WKProcessGroup.h>
 #import <WebKit2/WKBase.h>
 
+#if WK_API_ENABLED
+
 @interface WKProcessGroup (Private)
 
 @property(readonly) WKContextRef _contextRef;
 
 @end
+
+#endif // WK_API_ENABLED

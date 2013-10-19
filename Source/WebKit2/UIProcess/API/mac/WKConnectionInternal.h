@@ -26,8 +26,12 @@
 #import <WebKit2/WKConnection.h>
 #import <WebKit2/WKBase.h>
 
+#if WK_API_ENABLED
+
 @interface WKConnection (Internal)
 
 - (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
 
 @end
+
+#endif // WK_API_ENABLED

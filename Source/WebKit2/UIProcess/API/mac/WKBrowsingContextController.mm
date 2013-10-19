@@ -28,6 +28,8 @@
 #import "WKBrowsingContextControllerPrivate.h"
 #import "WKBrowsingContextControllerInternal.h"
 
+#if WK_API_ENABLED
+
 #import "ObjCObjectGraph.h"
 #import "WKErrorCF.h"
 #import "WKFrame.h"
@@ -57,45 +59,21 @@ static inline NSURL *autoreleased(WKURLRef url)
     return url ? CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(url).get())) : nil;
 }
 
-@interface WKBrowsingContextControllerData : NSObject {
-@public
+@implementation WKBrowsingContextController {
     // Underlying WKPageRef.
     WKRetainPtr<WKPageRef> _pageRef;
-    
-    // Delegate for load callbacks.
-    id<WKBrowsingContextLoadDelegate> _loadDelegate;
 }
-@end
-
-@implementation WKBrowsingContextControllerData
-@end
-
-
-@implementation WKBrowsingContextController
 
 - (void)dealloc
 {
-    WKPageSetPageLoaderClient(_data->_pageRef.get(), 0);
+    WKPageSetPageLoaderClient(_pageRef.get(), 0);
 
-    [_data release];
     [super dealloc];
 }
 
 - (WKPageRef)_pageRef
 {
-    return _data->_pageRef.get();
-}
-
-#pragma mark Delegates
-
-- (id<WKBrowsingContextLoadDelegate>)loadDelegate
-{
-    return _data->_loadDelegate;
-}
-
-- (void)setLoadDelegate:(id<WKBrowsingContextLoadDelegate>)loadDelegate
-{
-    _data->_loadDelegate = loadDelegate;
+    return _pageRef.get();
 }
 
 #pragma mark Loading
@@ -133,7 +111,7 @@ static inline NSURL *autoreleased(WKURLRef url)
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    WKPageLoadURLRequestWithUserData(self._pageRef, wkRequest.get(), (WKTypeRef)wkUserData.get());
+    WKPageLoadURLRequestWithUserData(_pageRef.get(), wkRequest.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory
@@ -153,7 +131,7 @@ static inline NSURL *autoreleased(WKURLRef url)
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    WKPageLoadFileWithUserData(self._pageRef, wkURL.get(), wkAllowedDirectory.get(), (WKTypeRef)wkUserData.get());
+    WKPageLoadFileWithUserData(_pageRef.get(), wkURL.get(), wkAllowedDirectory.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL
@@ -175,7 +153,7 @@ static inline NSURL *autoreleased(WKURLRef url)
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    WKPageLoadHTMLStringWithUserData(self._pageRef, wkHTMLString.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
+    WKPageLoadHTMLStringWithUserData(_pageRef.get(), wkHTMLString.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
@@ -212,44 +190,44 @@ static void releaseNSData(unsigned char*, const void* data)
     if (userData)
         wkUserData = ObjCObjectGraph::create(userData);
 
-    WKPageLoadDataWithUserData(self._pageRef, toAPI(wkData.get()), wkMIMEType.get(), wkEncodingName.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
+    WKPageLoadDataWithUserData(_pageRef.get(), toAPI(wkData.get()), wkMIMEType.get(), wkEncodingName.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
 }
 
 - (void)stopLoading
 {
-    WKPageStopLoading(self._pageRef);
+    WKPageStopLoading(_pageRef.get());
 }
 
 - (void)reload
 {
-    WKPageReload(self._pageRef);
+    WKPageReload(_pageRef.get());
 }
 
 - (void)reloadFromOrigin
 {
-    WKPageReloadFromOrigin(self._pageRef);
+    WKPageReloadFromOrigin(_pageRef.get());
 }
 
 #pragma mark Back/Forward
 
 - (void)goForward
 {
-    WKPageGoForward(self._pageRef);
+    WKPageGoForward(_pageRef.get());
 }
 
 - (BOOL)canGoForward
 {
-    return WKPageCanGoForward(self._pageRef);
+    return WKPageCanGoForward(_pageRef.get());
 }
 
 - (void)goBack
 {
-    WKPageGoBack(self._pageRef);
+    WKPageGoBack(_pageRef.get());
 }
 
 - (BOOL)canGoBack
 {
-    return WKPageCanGoBack(self._pageRef);
+    return WKPageCanGoBack(_pageRef.get());
 }
 
 
@@ -257,46 +235,46 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (NSURL *)activeURL
 {
-    return autoreleased(WKPageCopyActiveURL(self._pageRef));
+    return autoreleased(WKPageCopyActiveURL(_pageRef.get()));
 }
 
 - (NSURL *)provisionalURL
 {
-    return autoreleased(WKPageCopyProvisionalURL(self._pageRef));
+    return autoreleased(WKPageCopyProvisionalURL(_pageRef.get()));
 }
 
 - (NSURL *)committedURL
 {
-    return autoreleased(WKPageCopyCommittedURL(self._pageRef));
+    return autoreleased(WKPageCopyCommittedURL(_pageRef.get()));
 }
 
 #pragma mark Active Document Introspection
 
 - (NSString *)title
 {
-    return autoreleased(WKPageCopyTitle(self._pageRef));
+    return autoreleased(WKPageCopyTitle(_pageRef.get()));
 }
 
 #pragma mark Zoom
 
 - (CGFloat)textZoom
 {
-    return WKPageGetTextZoomFactor(self._pageRef);
+    return WKPageGetTextZoomFactor(_pageRef.get());
 }
 
 - (void)setTextZoom:(CGFloat)textZoom
 {
-    return WKPageSetTextZoomFactor(self._pageRef, textZoom);
+    return WKPageSetTextZoomFactor(_pageRef.get(), textZoom);
 }
 
 - (CGFloat)pageZoom
 {
-    return WKPageGetPageZoomFactor(self._pageRef);
+    return WKPageGetPageZoomFactor(_pageRef.get());
 }
 
 - (void)setPageZoom:(CGFloat)pageZoom
 {
-    return WKPageSetPageZoomFactor(self._pageRef, pageZoom);
+    return WKPageSetPageZoomFactor(_pageRef.get(), pageZoom);
 }
 
 @end
@@ -326,12 +304,12 @@ static void releaseNSData(unsigned char*, const void* data)
         return;
     }
 
-    WKPageSetPaginationMode(self._pageRef, mode);
+    WKPageSetPaginationMode(_pageRef.get(), mode);
 }
 
 - (WKBrowsingContextPaginationMode)paginationMode
 {
-    switch (WKPageGetPaginationMode(self._pageRef)) {
+    switch (WKPageGetPaginationMode(_pageRef.get())) {
     case kWKPaginationModeUnpaginated:
         return WKPaginationModeUnpaginated;
     case kWKPaginationModeLeftToRight:
@@ -350,37 +328,37 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (void)setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
 {
-    WKPageSetPaginationBehavesLikeColumns(self._pageRef, behavesLikeColumns);
+    WKPageSetPaginationBehavesLikeColumns(_pageRef.get(), behavesLikeColumns);
 }
 
 - (BOOL)paginationBehavesLikeColumns
 {
-    return WKPageGetPaginationBehavesLikeColumns(self._pageRef);
+    return WKPageGetPaginationBehavesLikeColumns(_pageRef.get());
 }
 
 - (void)setPageLength:(CGFloat)pageLength
 {
-    WKPageSetPageLength(self._pageRef, pageLength);
+    WKPageSetPageLength(_pageRef.get(), pageLength);
 }
 
 - (CGFloat)pageLength
 {
-    return WKPageGetPageLength(self._pageRef);
+    return WKPageGetPageLength(_pageRef.get());
 }
 
 - (void)setGapBetweenPages:(CGFloat)gapBetweenPages
 {
-    WKPageSetGapBetweenPages(self._pageRef, gapBetweenPages);
+    WKPageSetGapBetweenPages(_pageRef.get(), gapBetweenPages);
 }
 
 - (CGFloat)gapBetweenPages
 {
-    return WKPageGetGapBetweenPages(self._pageRef);
+    return WKPageGetGapBetweenPages(_pageRef.get());
 }
 
 - (NSUInteger)pageCount
 {
-    return WKPageGetPageCount(self._pageRef);
+    return WKPageGetPageCount(_pageRef.get());
 }
 
 @end
@@ -477,8 +455,7 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     if (!self)
         return nil;
 
-    _data = [[WKBrowsingContextControllerData alloc] init];
-    _data->_pageRef = pageRef;
+    _pageRef = pageRef;
 
     setUpPageLoaderClient(self, pageRef);
 
@@ -497,3 +474,5 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
 }
  
 @end
+
+#endif // WK_API_ENABLED

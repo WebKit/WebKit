@@ -27,6 +27,8 @@
 #import "WKProcessGroup.h"
 #import "WKProcessGroupPrivate.h"
 
+#if WK_API_ENABLED
+
 #import "ObjCObjectGraph.h"
 #import "WKConnectionInternal.h"
 #import "WKContext.h"
@@ -34,20 +36,10 @@
 #import "WKStringCF.h"
 #import <wtf/RetainPtr.h>
 
-@interface WKProcessGroupData : NSObject {
-@public
+@implementation WKProcessGroup {
     // Underlying context object.
     WKRetainPtr<WKContextRef> _contextRef;
-
-    // Delegate for callbacks.
-    id<WKProcessGroupDelegate> _delegate;
 }
-@end
-
-@implementation WKProcessGroupData
-@end
-
-@implementation WKProcessGroup
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
@@ -105,36 +97,23 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
     if (!self)
         return nil;
 
-    _data = [[WKProcessGroupData alloc] init];
-    
     if (bundleURL)
-        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
+        _contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
     else
-        _data->_contextRef = adoptWK(WKContextCreate());
+        _contextRef = adoptWK(WKContextCreate());
 
-    setUpConnectionClient(self, _data->_contextRef.get());
-    setUpInectedBundleClient(self, _data->_contextRef.get());
+    setUpConnectionClient(self, _contextRef.get());
+    setUpInectedBundleClient(self, _contextRef.get());
 
     return self;
 }
 
 - (void)dealloc
 {
-    WKContextSetConnectionClient(_data->_contextRef.get(), 0);
-    WKContextSetInjectedBundleClient(_data->_contextRef.get(), 0);
+    WKContextSetConnectionClient(_contextRef.get(), 0);
+    WKContextSetInjectedBundleClient(_contextRef.get(), 0);
 
-    [_data release];
     [super dealloc];
-}
-
-- (id<WKProcessGroupDelegate>)delegate
-{
-    return _data->_delegate;
-}
-
-- (void)setDelegate:(id<WKProcessGroupDelegate>)delegate
-{
-    _data->_delegate = delegate;
 }
 
 @end
@@ -143,7 +122,9 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
 
 - (WKContextRef)_contextRef
 {
-    return _data->_contextRef.get();
+    return _contextRef.get();
 }
 
 @end
+
+#endif // WK_API_ENABLED

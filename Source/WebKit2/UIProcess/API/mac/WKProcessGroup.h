@@ -24,9 +24,13 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit2/WKConnection.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKFoundation.h>
 
-@class WKProcessGroup, WKProcessGroupData, WKConnection;
+#if WK_API_ENABLED
+
+@class WKProcessGroup;
 
 @protocol WKProcessGroupDelegate <NSObject>
 @optional
@@ -40,16 +44,14 @@
 @end
 
 WK_EXPORT
-@interface WKProcessGroup : NSObject {
-@private
-    WKProcessGroupData *_data;
-}
+@interface WKProcessGroup : NSObject
 
 - (id)initWithInjectedBundleURL:(NSURL *)bundleURL;
-
 
 #pragma mark Delegates
 
 @property(assign) id<WKProcessGroupDelegate> delegate;
 
 @end
+
+#endif // WK_API_ENABLED

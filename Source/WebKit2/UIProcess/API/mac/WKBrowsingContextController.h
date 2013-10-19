@@ -25,15 +25,14 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKFoundation.h>
 
-@class WKBrowsingContextControllerData;
+#if WK_API_ENABLED
+
 @protocol WKBrowsingContextLoadDelegate;
 
 WK_EXPORT
-@interface WKBrowsingContextController : NSObject {
-@private
-    WKBrowsingContextControllerData *_data;
-}
+@interface WKBrowsingContextController : NSObject
 
 #pragma mark Delegates
 
@@ -118,3 +117,5 @@ WK_EXPORT
 @property CGFloat pageZoom;
 
 @end
+
+#endif // WK_API_ENABLED

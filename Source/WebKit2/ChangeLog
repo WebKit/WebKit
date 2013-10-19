@@ -1,3 +1,83 @@
+2013-10-19  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove some indirection that was only necessary for supporting the legacy Objective-C runtime
+        https://bugs.webkit.org/show_bug.cgi?id=123065
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Added WK_API_ENABLED guard. Removed _data
+        ivar and WKBrowsingContextControllerData class declaration.
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Added WK_API_ENABLED guard. Removed
+        WKBrowsingContextControllerData class and moved _pageRef ivar directly into
+        WKBrowsingContextController, declaring it in the @implementation. Removed ivar and accessors
+        for the loadDelegate property, letting the compiler synthesize them.
+        (-[WKBrowsingContextController dealloc]): Removed indirection via _data.
+        (-[WKBrowsingContextController _pageRef]): Ditto.
+        (-[WKBrowsingContextController loadRequest:userData:]): Removed indirection via -_pageRef.
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:userData:]): Ditto.
+        (-[WKBrowsingContextController loadHTMLString:baseURL:userData:]): Ditto.
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        Ditto.
+        (-[WKBrowsingContextController stopLoading]): Ditto.
+        (-[WKBrowsingContextController reload]): Ditto.
+        (-[WKBrowsingContextController reloadFromOrigin]): Ditto.
+        (-[WKBrowsingContextController goForward]): Ditto.
+        (-[WKBrowsingContextController canGoForward]): Ditto.
+        (-[WKBrowsingContextController goBack]): Ditto.
+        (-[WKBrowsingContextController canGoBack]): Ditto.
+        (-[WKBrowsingContextController activeURL]): Ditto.
+        (-[WKBrowsingContextController provisionalURL]): Ditto.
+        (-[WKBrowsingContextController committedURL]): Ditto.
+        (-[WKBrowsingContextController title]): Ditto.
+        (-[WKBrowsingContextController textZoom]): Ditto.
+        (-[WKBrowsingContextController setTextZoom:]): Ditto.
+        (-[WKBrowsingContextController pageZoom]): Ditto.
+        (-[WKBrowsingContextController setPageZoom:]): Ditto.
+        (-[WKBrowsingContextController setPaginationMode:]): Ditto.
+        (-[WKBrowsingContextController paginationMode]): Ditto.
+        (-[WKBrowsingContextController setPaginationBehavesLikeColumns:]): Ditto.
+        (-[WKBrowsingContextController paginationBehavesLikeColumns]): Ditto.
+        (-[WKBrowsingContextController setPageLength:]): Ditto.
+        (-[WKBrowsingContextController pageLength]): Ditto.
+        (-[WKBrowsingContextController setGapBetweenPages:]): Ditto.
+        (-[WKBrowsingContextController gapBetweenPages]): Ditto.
+        (-[WKBrowsingContextController pageCount]): Ditto.
+        (-[WKBrowsingContextController _initWithPageRef:]): Removed indirection via _data.
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h: Added WK_API_ENABLED guard.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Ditto.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Added WK_API_ENABLED guard. Removed _data ivar
+        and WKBrowsingContextGroupData class declaration.
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm: Added WK_API_ENABLED guard. Removed
+        WKBrowsingContextGroupData class and moved _pageGroupRef ivar directly info
+        WKBrowsingContextGroup, declaring it in the @implementation.
+        (-[WKBrowsingContextGroup initWithIdentifier:]): Removed indirection via _data.
+        (-[WKBrowsingContextGroup _pageGroupRef]): Ditto.
+        * UIProcess/API/mac/WKBrowsingContextGroupPrivate.h: Added WK_API_ENABLED guard.
+
+        * UIProcess/API/mac/WKConnection.h: Added WK_API_ENABLED guard. Removed _data ivar and
+        WKConnectionData class declaration.
+        * UIProcess/API/mac/WKConnection.mm: Added WK_API_ENABLED guard. Removed WKConnectionData
+        class and moved _connectionRef ivar directly into WKConnection, declaring it in the
+        @implementation. Removed ivar and accessors for the delegate property, letting the compiler
+        synthesize them.
+        (-[WKConnection dealloc]): Removed indirection via _data.
+        (-[WKConnection sendMessageWithName:body:]): Ditto.
+        (-[WKConnection _initWithConnectionRef:]): Ditto.
+        * UIProcess/API/mac/WKConnectionInternal.h: Added WK_API_ENABLED guard.
+
+        * UIProcess/API/mac/WKProcessGroup.h: Added WK_API_ENABLED guard. Replaced forward
+        declaration of WKConnection with an import. Removed _data ivar and WKProcessGroupData class
+        declaration.
+        * UIProcess/API/mac/WKProcessGroup.mm: Added WK_API_ENABLED guard. Removed
+        WKProcessGroupData class and moved _contextRef ivar directly into WKProcessGroup, declaring
+        it in the @implementation. Removed ivar and accessors for the delegate property, letting the
+        compiler synthesize them.
+        (-[WKProcessGroup initWithInjectedBundleURL:]): Removed indirection via _data.
+        (-[WKProcessGroup dealloc]): Ditto.
+        (-[WKProcessGroup _contextRef]): Ditto.
+        * UIProcess/API/mac/WKProcessGroupPrivate.h: Added WK_API_ENABLED guard.
+
 2013-10-19  Andreas Kling  <akling@apple.com>
 
         Attempt to get Lion building.
