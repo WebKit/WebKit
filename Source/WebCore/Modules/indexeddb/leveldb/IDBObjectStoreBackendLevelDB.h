@@ -55,21 +55,21 @@ namespace IDBObjectStoreBackendLevelDB {
             , m_indexKeys(indexKeys)
         { }
 
-        bool verifyIndexKeys(IDBBackingStore&, IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
+        bool verifyIndexKeys(IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
 
-        void writeIndexKeys(const IDBBackingStore::RecordIdentifier&, IDBBackingStore&, IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
+        void writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier&, IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
 
     private:
-        bool addingKeyAllowed(IDBBackingStore&, IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
+        bool addingKeyAllowed(IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
         const IDBIndexMetadata m_indexMetadata;
         IDBDatabaseBackendInterface::IndexKeys m_indexKeys;
     };
 
-    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendInterface>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter>>* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
+    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendInterface>, IDBBackingStoreLevelDB*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter>>* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
 
-    PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId);
-    bool updateKeyGenerator(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);
+    PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStoreLevelDB>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId);
+    bool updateKeyGenerator(PassRefPtr<IDBBackingStoreLevelDB>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);
 };
 
 } // namespace WebCore

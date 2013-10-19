@@ -83,7 +83,7 @@ void IDBFactoryBackendLevelDB::removeIDBDatabaseBackend(const String& uniqueIden
 void IDBFactoryBackendLevelDB::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
     LOG(StorageAPI, "IDBFactoryBackendLevelDB::getDatabaseNames");
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
+    RefPtr<IDBBackingStoreLevelDB> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening backing store for indexedDB.webkitGetDatabaseNames."));
         return;
@@ -112,7 +112,7 @@ void IDBFactoryBackendLevelDB::deleteDatabase(const String& name, PassRefPtr<IDB
     }
 
     // FIXME: Everything from now on should be done on another thread.
-    RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
+    RefPtr<IDBBackingStoreLevelDB> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening backing store for indexedDB.deleteDatabase."));
         return;
@@ -127,20 +127,20 @@ void IDBFactoryBackendLevelDB::deleteDatabase(const String& name, PassRefPtr<IDB
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error creating database backend for indexedDB.deleteDatabase."));
 }
 
-PassRefPtr<IDBBackingStore> IDBFactoryBackendLevelDB::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
+PassRefPtr<IDBBackingStoreLevelDB> IDBFactoryBackendLevelDB::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
 {
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get());
     const bool openInMemory = dataDirectory.isEmpty();
 
-    IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
+    IDBBackingStoreLevelDBMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
     if (it2 != m_backingStoreMap.end() && it2->value.get())
         return it2->value.get();
 
-    RefPtr<IDBBackingStore> backingStore;
+    RefPtr<IDBBackingStoreLevelDB> backingStore;
     if (openInMemory)
-        backingStore = IDBBackingStore::openInMemory(securityOrigin.get(), fileIdentifier);
+        backingStore = IDBBackingStoreLevelDB::openInMemory(securityOrigin.get(), fileIdentifier);
     else
-        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier);
+        backingStore = IDBBackingStoreLevelDB::open(securityOrigin.get(), dataDirectory, fileIdentifier);
 
     if (backingStore) {
         cleanWeakMap(m_backingStoreMap);
@@ -167,7 +167,7 @@ void IDBFactoryBackendLevelDB::open(const String& name, int64_t version, int64_t
     RefPtr<IDBDatabaseBackendLevelDB> databaseBackend;
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it == m_databaseBackendMap.end()) {
-        RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
+        RefPtr<IDBBackingStoreLevelDB> backingStore = openBackingStore(securityOrigin, dataDirectory);
         if (!backingStore) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error opening backing store for indexedDB.open."));
             return;

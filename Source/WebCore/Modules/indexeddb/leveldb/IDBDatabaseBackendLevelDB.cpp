@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStoreLevelDB* database, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
 {
     RefPtr<IDBDatabaseBackendLevelDB> backend = adoptRef(new IDBDatabaseBackendLevelDB(name, database, factory, uniqueIdentifier));
     if (!backend->openInternal())
@@ -50,7 +50,7 @@ PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const St
     return backend.release();
 }
 
-IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreLevelDB* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
@@ -118,7 +118,7 @@ IDBDatabaseBackendLevelDB::~IDBDatabaseBackendLevelDB()
 {
 }
 
-PassRefPtr<IDBBackingStore> IDBDatabaseBackendLevelDB::backingStore() const
+PassRefPtr<IDBBackingStoreLevelDB> IDBDatabaseBackendLevelDB::backingStore() const
 {
     return m_backingStore;
 }
@@ -246,9 +246,9 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
-    RefPtr<IDBBackingStore> store = backingStore();
+    RefPtr<IDBBackingStoreLevelDB> store = backingStore();
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
-    IDBBackingStore::RecordIdentifier recordIdentifier;
+    IDBBackingStoreLevelDB::RecordIdentifier recordIdentifier;
     bool found = false;
     bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, &recordIdentifier, found);
     if (!ok) {

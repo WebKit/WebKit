@@ -87,7 +87,7 @@ void GetOperation::perform()
     if (m_keyRange->isOnlyKey())
         key = m_keyRange->lower();
     else {
-        RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
+        RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
         if (m_indexId == IDBIndexMetadata::InvalidId) {
             ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
             // ObjectStore Retrieval Operation
@@ -193,7 +193,7 @@ void PutOperation::perform()
     ASSERT(key);
     ASSERT(key->isValid());
 
-    IDBBackingStore::RecordIdentifier recordIdentifier;
+    IDBBackingStoreLevelDB::RecordIdentifier recordIdentifier;
     if (m_putMode == IDBDatabaseBackendInterface::AddOnly) {
         bool found = false;
         bool ok = m_backingStore->keyExistsInObjectStore(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStore.id, *key, &recordIdentifier, found);
@@ -261,7 +261,7 @@ void OpenCursorOperation::perform()
     if (m_taskType == IDBDatabaseBackendInterface::PreemptiveTask)
         m_transaction->addPreemptiveEvent();
 
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
+    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
     if (m_indexId == IDBIndexMetadata::InvalidId) {
         ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
         backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), m_direction);
@@ -287,7 +287,7 @@ void CountOperation::perform()
 {
     LOG(StorageAPI, "CountOperation");
     uint32_t count = 0;
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor;
+    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
 
     if (m_indexId == IDBIndexMetadata::InvalidId)
         backingStoreCursor = m_backingStore->openObjectStoreKeyCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
@@ -308,7 +308,7 @@ void CountOperation::perform()
 void DeleteRangeOperation::perform()
 {
     LOG(StorageAPI, "DeleteRangeOperation");
-    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
+    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
     if (backingStoreCursor) {
         do {
             if (!m_backingStore->deleteRecord(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, backingStoreCursor->recordIdentifier())) {

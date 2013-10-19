@@ -44,7 +44,7 @@ namespace WebCore {
 
 class DOMStringList;
 
-class IDBBackingStore;
+class IDBBackingStoreLevelDB;
 class IDBDatabaseBackendLevelDB;
 
 class IDBFactoryBackendLevelDB : public IDBFactoryBackendInterface {
@@ -65,16 +65,16 @@ public:
 
 protected:
     IDBFactoryBackendLevelDB();
-    virtual PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
+    virtual PassRefPtr<IDBBackingStoreLevelDB> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
 
 private:
     typedef HashMap<String, RefPtr<IDBDatabaseBackendLevelDB> > IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
 
-    typedef HashMap<String, WeakPtr<IDBBackingStore> > IDBBackingStoreMap;
-    IDBBackingStoreMap m_backingStoreMap;
+    typedef HashMap<String, WeakPtr<IDBBackingStoreLevelDB> > IDBBackingStoreLevelDBMap;
+    IDBBackingStoreLevelDBMap m_backingStoreMap;
 
-    HashSet<RefPtr<IDBBackingStore> > m_sessionOnlyBackingStores;
+    HashSet<RefPtr<IDBBackingStoreLevelDB> > m_sessionOnlyBackingStores;
 
     // Only one instance of the factory should exist at any given time.
     static IDBFactoryBackendLevelDB* idbFactoryBackendImpl;

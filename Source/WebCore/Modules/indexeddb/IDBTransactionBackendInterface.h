@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class IDBBackingStore; // FIXME: IDBBackingStore is actually a LevelDB type doesn't belong in the cross-platform directory.
+class IDBBackingStoreLevelDB; // FIXME: IDBBackingStoreLevelDB is actually a LevelDB type doesn't belong in the cross-platform directory.
 class IDBCallbacks;
 class IDBDatabaseCallbacks;
 class IDBDatabaseError;
@@ -69,9 +69,9 @@ public:
     virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) = 0;
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) = 0;
 
-    // FIXME: IDBBackingStore is actually a LevelDB type, but probably doesn't warrant abstraction.
+    // FIXME: IDBBackingStoreLevelDB is actually a LevelDB type, but probably doesn't warrant abstraction.
     // This is to keep the build working until this requirement can be removed.
-    virtual IDBBackingStore::Transaction* backingStoreTransaction() = 0;
+    virtual IDBBackingStoreLevelDB::Transaction* backingStoreTransaction() = 0;
 
     int64_t id() const { return m_id; }
 

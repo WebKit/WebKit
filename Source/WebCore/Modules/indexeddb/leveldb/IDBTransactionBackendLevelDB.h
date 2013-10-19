@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-class IDBBackingStore;
+class IDBBackingStoreLevelDB;
 class IDBCursorBackendLevelDB;
 class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendLevelDB : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBBackingStore*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBBackingStoreLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
     virtual ~IDBTransactionBackendLevelDB();
 
     virtual void commit() OVERRIDE FINAL;
@@ -68,7 +68,7 @@ public:
     void unregisterOpenCursor(IDBCursorBackendLevelDB*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    virtual IDBBackingStore::Transaction* backingStoreTransaction() OVERRIDE FINAL { return &m_transaction; }
+    virtual IDBBackingStoreLevelDB::Transaction* backingStoreTransaction() { return &m_transaction; }
 
     IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
 
@@ -86,7 +86,7 @@ public:
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     
 private:
-    IDBTransactionBackendLevelDB(IDBBackingStore*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    IDBTransactionBackendLevelDB(IDBBackingStoreLevelDB*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -116,7 +116,7 @@ private:
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
-    IDBBackingStore::Transaction m_transaction;
+    IDBBackingStoreLevelDB::Transaction m_transaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendLevelDB> m_taskTimer;
@@ -124,7 +124,7 @@ private:
 
     HashSet<IDBCursorBackendLevelDB*> m_openCursors;
     
-    RefPtr<IDBBackingStore> m_backingStore;
+    RefPtr<IDBBackingStoreLevelDB> m_backingStore;
 };
 
 } // namespace WebCore

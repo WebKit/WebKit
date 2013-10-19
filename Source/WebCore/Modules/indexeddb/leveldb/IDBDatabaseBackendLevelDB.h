@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class IDBBackingStore;
+class IDBBackingStoreLevelDB;
 class IDBDatabase;
 class IDBFactoryBackendInterface;
 class IDBTransactionBackendInterface;
@@ -45,10 +45,10 @@ class IDBTransactionCoordinatorLevelDB;
 
 class IDBDatabaseBackendLevelDB : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStoreLevelDB* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
     virtual ~IDBDatabaseBackendLevelDB();
 
-    PassRefPtr<IDBBackingStore> backingStore() const;
+    PassRefPtr<IDBBackingStoreLevelDB> backingStore() const;
 
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_metadata.id; }
@@ -93,7 +93,7 @@ public:
     class VersionChangeAbortOperation;
 
 private:
-    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreLevelDB* database, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
 
     bool openInternal();
     void runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t requestedVersion);
@@ -103,7 +103,7 @@ private:
     bool isDeleteDatabaseBlocked();
     void deleteDatabaseFinal(PassRefPtr<IDBCallbacks>);
 
-    RefPtr<IDBBackingStore> m_backingStore;
+    RefPtr<IDBBackingStoreLevelDB> m_backingStore;
     IDBDatabaseMetadata m_metadata;
 
     String m_identifier;
