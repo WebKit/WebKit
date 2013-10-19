@@ -186,7 +186,7 @@ namespace JSC {
 
         bool isSharedInstance() { return vmType == APIShared; }
         bool usingAPI() { return vmType != Default; }
-        static bool sharedInstanceExists();
+        JS_EXPORT_PRIVATE static bool sharedInstanceExists();
         JS_EXPORT_PRIVATE static VM& sharedInstance();
 
         JS_EXPORT_PRIVATE static PassRefPtr<VM> create(HeapType = SmallHeap);
