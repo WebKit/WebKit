@@ -1237,7 +1237,7 @@ private:
         }
         
         StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
-        setJSValue(vmCall(m_out.operation(operationGetById), m_callFrame, base, m_out.constIntPtr(uid)));
+        setJSValue(vmCall(m_out.operation(operationGetById), m_callFrame, m_out.intPtrZero, base, m_out.constIntPtr(uid)));
     }
     
     void compileGetButterfly()
