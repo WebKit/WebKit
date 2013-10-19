@@ -1,3 +1,18 @@
+2013-10-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Link fails.
+        https://bugs.webkit.org/show_bug.cgi?id=123019
+
+        Reviewed by Darin Adler.
+
+        Added empty CertificateInfo implementation for Curl.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/curl/CertificateInfoCurl.cpp: Added.
+        (WebCore::CertificateInfo::CertificateInfo):
+        (WebCore::CertificateInfo::~CertificateInfo):
+
 2013-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         libWebCoreTestSupport should have explicit exports

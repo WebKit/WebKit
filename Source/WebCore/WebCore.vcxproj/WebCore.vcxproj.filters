@@ -6913,6 +6913,9 @@
     <ClCompile Include="..\platform\graphics\ca\PlatformCALayer.cpp">
       <Filter>platform\graphics\ca</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\curl\CertificateInfoCurl.cpp">
+      <Filter>platform\network\curl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
