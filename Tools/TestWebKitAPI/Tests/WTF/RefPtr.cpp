@@ -306,6 +306,18 @@ TEST(WTF_RefPtr, Swap)
     ASSERT_STREQ("ref(a) ref(b) | deref(a) deref(b) ", takeLogStr().c_str());
 }
 
+TEST(WTF_RefPtr, ReleaseNonNull)
+{
+    RefLogger a("a");
+
+    {
+        RefPtr<RefLogger> refPtr = &a;
+        RefPtr<RefLogger> ref = refPtr.releaseNonNull();
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+}
+
 TEST(WTF_RefPtr, Release)
 {
     DerivedRefLogger a("a");

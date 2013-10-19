@@ -1,3 +1,12 @@
+2013-10-19  Andreas Kling  <akling@apple.com>
+
+        RefPtr::releaseNonNull() incorrectly increments the refcount.
+        <https://webkit.org/b/123063>
+
+        Make releaseNonNull() use adoptRef(T&), mirroring release().
+
+        Reviewed by Anders Carlsson.
+
 2013-10-18  Andreas Kling  <akling@apple.com>
 
         Start passing RenderStyle around with PassRef.
