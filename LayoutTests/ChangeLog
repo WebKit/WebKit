@@ -1,3 +1,9 @@
+2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Update EFL test expectations.
+
+        * platform/efl/TestExpectations:
+
 2013-10-18  Oliver Hunt  <oliver@apple.com>
 
         Spread operator should be performing direct "puts" and not triggering setters

@@ -633,6 +633,10 @@ webkit.org/b/105280 http/tests/xmlhttprequest/simple-cross-origin-denied-events-
 webkit.org/b/105280 http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html [ Failure Pass ]
 
 webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
+webkit.org/b/105296 webaudio/delaynode-max-nondefault-delay.html [ Failure Pass ]
+webkit.org/b/105296 webaudio/delaynode-scheduling.html [ Failure Pass ]
+
+webkit.org/b/120148 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Failure Pass ]
 
 webkit.org/b/106551 media/video-src-source.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
