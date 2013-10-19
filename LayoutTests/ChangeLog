@@ -1,5 +1,20 @@
 2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening.
+
+        Remove EFL-specific test expectations that were identical to generic expectations
+        and rebaseline test cases.
+
+        * platform/efl-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Removed.
+        * platform/efl-wk2/compositing/overflow/content-loses-scrollbars-expected.txt: Removed.
+        * platform/efl/compositing/backing/no-backing-for-clip-overhang-expected.txt: Removed.
+        * platform/efl/compositing/contents-opaque/hidden-with-visible-child-expected.txt: Removed.
+        * platform/efl/compositing/contents-opaque/overflow-hidden-child-layers-expected.txt: Removed.
+        * platform/efl/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Rebaselined after r154896.
+        * platform/efl/svg/batik/paints/gradientLimit-expected.txt: Updating baselines after enabling the subpixel layout.
+
+2013-10-18  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Update EFL test expectations.
 
         * platform/efl/TestExpectations:
