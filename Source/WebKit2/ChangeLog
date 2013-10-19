@@ -1,5 +1,11 @@
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Lion build.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+
+2013-10-18  Anders Carlsson  <andersca@apple.com>
+
         Remove spaces between template angle brackets
         https://bugs.webkit.org/show_bug.cgi?id=123040
 

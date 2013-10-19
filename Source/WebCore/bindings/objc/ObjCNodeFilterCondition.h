@@ -52,7 +52,7 @@ namespace WebCore {
         {
         }
 
-        RetainPtr<id <DOMNodeFilter>> m_filter;
+        RetainPtr<id <DOMNodeFilter> > m_filter;
     };
 
 } // namespace WebCore
