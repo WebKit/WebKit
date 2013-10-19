@@ -58,11 +58,12 @@ public:
         u.constant = 1;
     }
     
-    static Location forRegister(int16_t dwarfRegNum)
+    static Location forRegister(int16_t dwarfRegNum, int32_t addend)
     {
         Location result;
         result.m_kind = Register;
         result.u.variable.dwarfRegNum = dwarfRegNum;
+        result.u.variable.offset = addend;
         return result;
     }
     
@@ -98,6 +99,13 @@ public:
     int32_t offset() const
     {
         ASSERT(hasOffset());
+        return u.variable.offset;
+    }
+    
+    bool hasAddend() const { return kind() == Register; }
+    int32_t addend() const
+    {
+        ASSERT(hasAddend());
         return u.variable.offset;
     }
     

@@ -42,7 +42,7 @@ Location Location::forStackmaps(const StackMaps& stackmaps, const StackMaps::Loc
         return Location();
         
     case StackMaps::Location::Register:
-        return forRegister(location.dwarfRegNum);
+        return forRegister(location.dwarfRegNum, location.offset);
         
     case StackMaps::Location::Indirect:
         return forIndirect(location.dwarfRegNum, location.offset);
@@ -64,6 +64,8 @@ void Location::dump(PrintStream& out) const
         out.print(", reg", dwarfRegNum());
     if (hasOffset())
         out.print(", ", offset());
+    if (hasAddend())
+        out.print(", ", addend());
     if (hasConstant())
         out.print(", ", constant());
     out.print(")");
@@ -130,15 +132,17 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
         if (MacroAssembler::isStackRelated(gpr())) {
             // These don't get saved.
             jit.move(gpr(), result);
-            return;
-        }
+        } else
+            jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
         
-        jit.load64(savedRegisters + offsetOfGPR(gpr()), result);
+        if (addend())
+            jit.add64(MacroAssembler::TrustedImm32(addend()), result);
         return;
     }
     
     if (isFPR()) {
         jit.load64(savedRegisters + offsetOfFPR(fpr()), result);
+        ASSERT(!addend());
         return;
     }
     
