@@ -143,9 +143,6 @@ public:
     static void clearPercentHeightDescendantsFrom(RenderBox*);
     static void removePercentHeightDescendantIfNeeded(RenderBox*);
 
-    void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
-    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
-
     void setHasMarginBeforeQuirk(bool b) { m_hasMarginBeforeQuirk = b; }
     void setHasMarginAfterQuirk(bool b) { m_hasMarginAfterQuirk = b; }
 
@@ -249,12 +246,6 @@ public:
     RenderBlock* blockBeforeWithinSelectionRoot(LayoutSize& offset) const;
 
     LayoutRect logicalRectToPhysicalRect(const LayoutPoint& physicalPosition, const LayoutRect& logicalRect);
-
-    // Helper methods for computing line counts and heights for line counts.
-    RootInlineBox* lineAtIndex(int) const;
-    int lineCount(const RootInlineBox* = 0, bool* = 0) const;
-    int heightForLineCount(int);
-    void clearTruncation();
 
     void adjustRectForColumns(LayoutRect&) const;
     virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const OVERRIDE FINAL;

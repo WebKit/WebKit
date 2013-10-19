@@ -296,6 +296,15 @@ public:
             floatingObject->setHeight(logicalWidth);
     }
 
+    // Helper methods for computing line counts and heights for line counts.
+    RootInlineBox* lineAtIndex(int) const;
+    int lineCount(const RootInlineBox* = nullptr, bool* = nullptr) const;
+    int heightForLineCount(int);
+    void clearTruncation();
+
+    void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
+    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
+
 protected:
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(this); }
     LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockFlowRareData::negativeMarginBeforeDefault(this); }

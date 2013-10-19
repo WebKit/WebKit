@@ -1,3 +1,36 @@
+2013-10-18  Sam Weinig  <sam@webkit.org>
+
+        Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=122969
+
+        Reviewed by Antti Koivisto.
+
+        - Move truncation (e.g. line clamp and ellipse) support to RenderBlockFlow.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::EllipsisBox):
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::markupBox):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::shouldCheckLines):
+        (WebCore::RenderBlockFlow::lineAtIndex):
+        (WebCore::RenderBlockFlow::lineCount):
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlockFlow::heightForLineCount):
+        (WebCore::RenderBlockFlow::clearTruncation):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+
 2013-10-19  Andreas Kling  <akling@apple.com>
 
         StyleResolver should deal in PassRef<RenderStyle> where possible.

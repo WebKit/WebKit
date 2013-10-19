@@ -5181,100 +5181,6 @@ void RenderBlock::updateFirstLetter()
     createFirstLetterRenderer(firstLetterBlock, toRenderText(descendant));
 }
 
-// Helper methods for obtaining the last line, computing line counts and heights for line counts
-// (crawling into blocks).
-static bool shouldCheckLines(RenderObject* obj)
-{
-    return !obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn()
-            && obj->isRenderBlock() && obj->style()->height().isAuto()
-            && (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
-}
-
-static int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, int& count)
-{
-    if (block->style()->visibility() == VISIBLE) {
-        if (block->childrenInline()) {
-            for (RootInlineBox* box = block->firstRootBox(); box; box = box->nextRootBox()) {
-                if (++count == l)
-                    return box->lineBottom() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : LayoutUnit());
-            }
-        }
-        else {
-            RenderBox* normalFlowChildWithoutLines = 0;
-            for (RenderBox* obj = block->firstChildBox(); obj; obj = obj->nextSiblingBox()) {
-                if (shouldCheckLines(obj)) {
-                    int result = getHeightForLineCount(toRenderBlock(obj), l, false, count);
-                    if (result != -1)
-                        return result + obj->y() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : LayoutUnit());
-                } else if (!obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn())
-                    normalFlowChildWithoutLines = obj;
-            }
-            if (normalFlowChildWithoutLines && l == 0)
-                return normalFlowChildWithoutLines->y() + normalFlowChildWithoutLines->height();
-        }
-    }
-    
-    return -1;
-}
-
-RootInlineBox* RenderBlock::lineAtIndex(int i) const
-{
-    ASSERT(i >= 0);
-
-    if (style()->visibility() != VISIBLE)
-        return 0;
-
-    if (childrenInline()) {
-        for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
-            if (!i--)
-                return box;
-    } else {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (!shouldCheckLines(child))
-                continue;
-            if (RootInlineBox* box = toRenderBlock(child)->lineAtIndex(i))
-                return box;
-        }
-    }
-
-    return 0;
-}
-
-int RenderBlock::lineCount(const RootInlineBox* stopRootInlineBox, bool* found) const
-{
-    int count = 0;
-
-    if (style()->visibility() == VISIBLE) {
-        if (childrenInline())
-            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox()) {
-                count++;
-                if (box == stopRootInlineBox) {
-                    if (found)
-                        *found = true;
-                    break;
-                }
-            }
-        else
-            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
-                if (shouldCheckLines(obj)) {
-                    bool recursiveFound = false;
-                    count += toRenderBlock(obj)->lineCount(stopRootInlineBox, &recursiveFound);
-                    if (recursiveFound) {
-                        if (found)
-                            *found = true;
-                        break;
-                    }
-                }
-    }
-    return count;
-}
-
-int RenderBlock::heightForLineCount(int l)
-{
-    int count = 0;
-    return getHeightForLineCount(this, l, true, count);
-}
-
 void RenderBlock::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
 {
     // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
@@ -5328,22 +5234,6 @@ void RenderBlock::fitBorderToLinesIfNeeded()
     setOverrideLogicalContentWidth(newContentWidth);
     layoutBlock(false);
     clearOverrideLogicalContentWidth();
-}
-
-void RenderBlock::clearTruncation()
-{
-    if (style()->visibility() == VISIBLE) {
-        if (childrenInline() && hasMarkupTruncation()) {
-            setHasMarkupTruncation(false);
-            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
-                box->clearTruncation();
-        } else {
-            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling()) {
-                if (shouldCheckLines(obj))
-                    toRenderBlock(obj)->clearTruncation();
-            }
-        }
-    }
 }
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)

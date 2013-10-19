@@ -2411,4 +2411,116 @@ void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFr
     m_rareData->m_renderNamedFlowFragment = flowFragment;
 }
 
+static bool shouldCheckLines(RenderObject& obj)
+{
+    return !obj.isFloatingOrOutOfFlowPositioned() && !obj.isRunIn() && obj.isRenderBlockFlow() && obj.style()->height().isAuto() && (!obj.isDeprecatedFlexibleBox() || obj.style()->boxOrient() == VERTICAL);
+}
+
+RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
+{
+    ASSERT(i >= 0);
+
+    if (style()->visibility() != VISIBLE)
+        return nullptr;
+
+    if (childrenInline()) {
+        for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
+            if (!i--)
+                return box;
+        }
+    } else {
+        for (auto child = firstChild(); child; child = child->nextSibling()) {
+            if (!shouldCheckLines(*child))
+                continue;
+            if (RootInlineBox* box = toRenderBlockFlow(child)->lineAtIndex(i))
+                return box;
+        }
+    }
+
+    return nullptr;
+}
+
+int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* found) const
+{
+    if (style()->visibility() != VISIBLE)
+        return 0;
+
+    int count = 0;
+
+    if (childrenInline()) {
+        for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
+            count++;
+            if (box == stopRootInlineBox) {
+                if (found)
+                    *found = true;
+                break;
+            }
+        }
+    } else {
+        for (auto child = firstChild(); child; child = child->nextSibling()) {
+            if (shouldCheckLines(*child)) {
+                bool recursiveFound = false;
+                count += toRenderBlockFlow(child)->lineCount(stopRootInlineBox, &recursiveFound);
+                if (recursiveFound) {
+                    if (found)
+                        *found = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeBottom, int& count)
+{
+    if (block.style()->visibility() != VISIBLE)
+        return -1;
+
+    if (block.childrenInline()) {
+        for (auto box = block.firstRootBox(); box; box = box->nextRootBox()) {
+            if (++count == lineCount)
+                return box->lineBottom() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
+        }
+    } else {
+        RenderBox* normalFlowChildWithoutLines = 0;
+        for (auto obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
+            if (shouldCheckLines(*obj)) {
+                int result = getHeightForLineCount(toRenderBlockFlow(*obj), lineCount, false, count);
+                if (result != -1)
+                    return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
+            } else if (!obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn())
+                normalFlowChildWithoutLines = obj;
+        }
+        if (normalFlowChildWithoutLines && !lineCount)
+            return normalFlowChildWithoutLines->y() + normalFlowChildWithoutLines->height();
+    }
+    
+    return -1;
+}
+
+int RenderBlockFlow::heightForLineCount(int lineCount)
+{
+    int count = 0;
+    return getHeightForLineCount(*this, lineCount, true, count);
+}
+
+void RenderBlockFlow::clearTruncation()
+{
+    if (style()->visibility() != VISIBLE)
+        return;
+
+    if (childrenInline() && hasMarkupTruncation()) {
+        setHasMarkupTruncation(false);
+        for (auto box = firstRootBox(); box; box = box->nextRootBox())
+            box->clearTruncation();
+    } else {
+        for (auto child = firstChild(); child; child = child->nextSibling()) {
+            if (shouldCheckLines(*child))
+                toRenderBlockFlow(child)->clearTruncation();
+        }
+    }
+}
+
 } // namespace WebCore

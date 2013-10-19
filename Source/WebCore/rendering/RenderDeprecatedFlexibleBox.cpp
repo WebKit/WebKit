@@ -954,18 +954,18 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
 
         child->clearOverrideSize();
         if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
-            || (child->style()->height().isAuto() && child->isRenderBlock())) {
+            || (child->style()->height().isAuto() && child->isRenderBlockFlow())) {
             child->setChildNeedsLayout(MarkOnlyThis);
 
             // Dirty all the positioned objects.
-            if (child->isRenderBlock()) {
-                toRenderBlock(child)->markPositionedObjectsForLayout();
-                toRenderBlock(child)->clearTruncation();
+            if (child->isRenderBlockFlow()) {
+                toRenderBlockFlow(child)->markPositionedObjectsForLayout();
+                toRenderBlockFlow(child)->clearTruncation();
             }
         }
         child->layoutIfNeeded();
-        if (child->style()->height().isAuto() && child->isRenderBlock())
-            maxLineCount = max(maxLineCount, toRenderBlock(child)->lineCount());
+        if (child->style()->height().isAuto() && child->isRenderBlockFlow())
+            maxLineCount = max(maxLineCount, toRenderBlockFlow(child)->lineCount());
     }
 
     // Get the number of lines and then alter all block flow children with auto height to use the
@@ -976,10 +976,10 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         return;
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (childDoesNotAffectWidthOrFlexing(child) || !child->style()->height().isAuto() || !child->isRenderBlock())
+        if (childDoesNotAffectWidthOrFlexing(child) || !child->style()->height().isAuto() || !child->isRenderBlockFlow())
             continue;
 
-        RenderBlock* blockChild = toRenderBlock(child);
+        RenderBlockFlow* blockChild = toRenderBlockFlow(child);
         int lineCount = blockChild->lineCount();
         if (lineCount <= numVisibleLines)
             continue;
@@ -1022,8 +1022,8 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         }
 
         // See if this width can be accommodated on the last visible line
-        RenderBlock& destBlock = toRenderBlock(lastVisibleLine->renderer());
-        RenderBlock& srcBlock = toRenderBlock(lastLine->renderer());
+        RenderBlockFlow& destBlock = lastVisibleLine->blockFlow();
+        RenderBlockFlow& srcBlock = lastLine->blockFlow();
 
         // FIXME: Directions of src/destBlock could be different from our direction and from one another.
         if (!srcBlock.style()->isLeftToRightDirection())
@@ -1057,9 +1057,9 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
             || (child->style()->height().isAuto() && child->isRenderBlock())) {
             child->setChildNeedsLayout();
 
-            if (child->isRenderBlock()) {
-                toRenderBlock(child)->markPositionedObjectsForLayout();
-                toRenderBlock(child)->clearTruncation();
+            if (child->isRenderBlockFlow()) {
+                toRenderBlockFlow(child)->markPositionedObjectsForLayout();
+                toRenderBlockFlow(child)->clearTruncation();
             }
         }
     }
