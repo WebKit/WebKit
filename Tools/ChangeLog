@@ -1,3 +1,14 @@
+2013-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac DumpRenderTree builds without NDEBUG even in release mode
+        https://bugs.webkit.org/show_bug.cgi?id=123066
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        Use the same pattern as WebCore and WebKitTestRunner.
+
 2013-10-19  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r155373): Mac WK2 EWS bots is actually Mac WK1 debug
