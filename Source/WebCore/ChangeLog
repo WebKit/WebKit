@@ -1,3 +1,13 @@
+2013-10-19  Andreas Kling  <akling@apple.com>
+
+        StyleResolver should deal in PassRef<RenderStyle> where possible.
+        <https://webkit.org/b/123061>
+
+        Make StyleResolver functions that returned or took RenderStyles
+        by PassRefPtr use PassRef instead where possible.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-19  Brady Eidson  <beidson@apple.com>
 
         Global rename of the class "IDBBackingStore" to "IDBBackingStoreLevelDB"

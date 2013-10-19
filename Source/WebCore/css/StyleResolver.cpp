@@ -783,7 +783,7 @@ static inline bool isAtShadowBoundary(const Element* element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
+PassRef<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* defaultParent,
     StyleSharingBehavior sharingBehavior, RuleMatchingBehavior matchingBehavior, RenderRegion* regionForStyling)
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
@@ -795,17 +795,16 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
             s_styleNotYetAvailable->font().update(m_fontSelector);
         }
         element->document().setHasNodesWithPlaceholderStyle();
-        return s_styleNotYetAvailable;
+        return *s_styleNotYetAvailable;
     }
 
     State& state = m_state;
     initElement(element);
     state.initForStyleResolve(document(), element, defaultParent, regionForStyling);
     if (sharingBehavior == AllowStyleSharing) {
-        RenderStyle* sharedStyle = locateSharedStyle();
-        if (sharedStyle) {
+        if (RenderStyle* sharedStyle = locateSharedStyle()) {
             state.clear();
-            return sharedStyle;
+            return *sharedStyle;
         }
     }
 
@@ -855,7 +854,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     return state.takeStyle();
 }
 
-PassRefPtr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
+PassRef<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     MatchResult result;
     result.addMatchedProperties(keyframe->properties());
@@ -1021,7 +1020,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
     return state.takeStyle();
 }
 
-PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
+PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
     m_state.initForStyleResolve(document(), document().documentElement()); // m_rootElementStyle will be set to the document style.
 
@@ -1057,7 +1056,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     return m_state.takeStyle();
 }
 
-PassRefPtr<RenderStyle> StyleResolver::defaultStyleForElement()
+PassRef<RenderStyle> StyleResolver::defaultStyleForElement()
 {
     m_state.setStyle(RenderStyle::create());
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
@@ -1778,7 +1777,7 @@ void StyleResolver::applyPropertyToStyle(CSSPropertyID id, CSSValue* value, Rend
 {
     initElement(0);
     m_state.initForStyleResolve(document(), 0, style);
-    m_state.setStyle(style);
+    m_state.setStyle(*style);
     applyPropertyToCurrentStyle(id, value);
 }
 
