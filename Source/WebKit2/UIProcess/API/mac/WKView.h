@@ -25,6 +25,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
 
 @class WKBrowsingContextController;
 @class WKBrowsingContextGroup;
@@ -47,3 +50,5 @@ WK_EXPORT
 @property BOOL drawsTransparentBackground;
 
 @end
+
+#endif // WK_API_ENABLED

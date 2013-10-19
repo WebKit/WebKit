@@ -1,5 +1,14 @@
 2013-10-19  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the Mac 32-bit build.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/mac/WKViewPrivate.h:
+
+2013-10-19  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Remove some indirection that was only necessary for supporting the legacy Objective-C runtime
         https://bugs.webkit.org/show_bug.cgi?id=123065
 

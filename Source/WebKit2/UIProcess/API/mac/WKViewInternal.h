@@ -29,6 +29,8 @@
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 
+#if WK_API_ENABLED
+
 namespace CoreIPC {
     class DataReference;
 }
@@ -99,3 +101,5 @@ namespace WebKit {
 - (BOOL)_isWindowOccluded;
 
 @end
+
+#endif // WK_API_ENABLED
