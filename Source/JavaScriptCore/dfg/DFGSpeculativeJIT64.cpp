@@ -209,103 +209,43 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
 
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
-    StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo();
+    JITGetByIdGenerator gen(
+        m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
+        JSValueRegs(resultGPR), spillMode != NeedToSpill);
+    gen.generateFastPath(m_jit);
     
-    JITCompiler::DataLabelPtr structureToCompare;
-    JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(unusedPointer)));
-    
-    JITCompiler::ConvertibleLoadLabel propertyStorageLoad =
-        m_jit.convertibleLoadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
-    JITCompiler::DataLabelCompact loadWithPatch = m_jit.load64WithCompactAddressOffsetPatch(JITCompiler::Address(resultGPR, 0), resultGPR);
-    
-    JITCompiler::Label doneLabel = m_jit.label();
-
-    OwnPtr<SlowPathGenerator> slowPath;
-    if (!slowPathTarget.isSet()) {
-        slowPath = slowPathCall(
-            structureCheck.m_jump, this, operationGetByIdOptimize, resultGPR, stubInfo, baseGPR,
-            identifierUID(identifierNumber), spillMode);
-    } else {
-        JITCompiler::JumpList slowCases;
-        slowCases.append(structureCheck.m_jump);
+    JITCompiler::JumpList slowCases;
+    if (slowPathTarget.isSet())
         slowCases.append(slowPathTarget);
-        slowPath = slowPathCall(
-            slowCases, this, operationGetByIdOptimize, resultGPR, stubInfo, baseGPR,
-            identifierUID(identifierNumber), spillMode);
-    }
-    RegisterSet currentlyUsedRegisters = usedRegisters();
-    ASSERT(currentlyUsedRegisters.get(baseGPR));
-    ASSERT(currentlyUsedRegisters.get(resultGPR));
+    slowCases.append(gen.slowPathJump());
     
-    stubInfo->codeOrigin = codeOrigin;
-    stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
-    stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
-    stubInfo->patch.usedRegisters = currentlyUsedRegisters;
-    stubInfo->patch.registersFlushed = spillMode != NeedToSpill;
-
-    m_jit.addPropertyAccess(
-        PropertyAccessRecord(
-            structureToCompare, structureCheck, propertyStorageLoad, loadWithPatch,
-            slowPath.get(), doneLabel, stubInfo));
+    OwnPtr<SlowPathGenerator> slowPath = slowPathCall(
+        slowCases, this, operationGetByIdOptimize, resultGPR, gen.stubInfo(), baseGPR,
+        identifierUID(identifierNumber), spillMode);
+    
+    m_jit.addGetById(gen, slowPath.get());
     addSlowPathGenerator(slowPath.release());
 }
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
-    StructureStubInfo* stubInfo = m_jit.codeBlock()->addStubInfo();
-    
-    JITCompiler::DataLabelPtr structureToCompare;
-    JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(unusedPointer)));
-
     writeBarrier(baseGPR, valueGPR, valueUse, WriteBarrierForPropertyAccess, scratchGPR);
 
-    JITCompiler::ConvertibleLoadLabel propertyStorageLoad =
-        m_jit.convertibleLoadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-    JITCompiler::DataLabel32 storeWithPatch = m_jit.store64WithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
-
-    JITCompiler::Label doneLabel = m_jit.label();
+    JITPutByIdGenerator gen(
+        m_jit.codeBlock(), codeOrigin, usedRegisters(), JSValueRegs(baseGPR),
+        JSValueRegs(valueGPR), scratchGPR, false, m_jit.ecmaModeFor(codeOrigin), putKind);
+    gen.generateFastPath(m_jit);
     
-    V_JITOperation_ESsiJJI optimizedCall;
-    if (m_jit.strictModeFor(m_currentNode->codeOrigin)) {
-        if (putKind == Direct)
-            optimizedCall = operationPutByIdDirectStrictOptimize;
-        else
-            optimizedCall = operationPutByIdStrictOptimize;
-    } else {
-        if (putKind == Direct)
-            optimizedCall = operationPutByIdDirectNonStrictOptimize;
-        else
-            optimizedCall = operationPutByIdNonStrictOptimize;
-    }
-    OwnPtr<SlowPathGenerator> slowPath;
-    if (!slowPathTarget.isSet()) {
-        slowPath = slowPathCall(
-            structureCheck.m_jump, this, optimizedCall, NoResult, stubInfo, valueGPR, baseGPR,
-            identifierUID(identifierNumber));
-    } else {
-        JITCompiler::JumpList slowCases;
-        slowCases.append(structureCheck.m_jump);
+    JITCompiler::JumpList slowCases;
+    if (slowPathTarget.isSet())
         slowCases.append(slowPathTarget);
-        slowPath = slowPathCall(
-            slowCases, this, optimizedCall, NoResult, stubInfo, valueGPR, baseGPR,
-            identifierUID(identifierNumber));
-    }
-    RegisterSet currentlyUsedRegisters = usedRegisters();
-    currentlyUsedRegisters.clear(scratchGPR);
-    ASSERT(currentlyUsedRegisters.get(baseGPR));
-    ASSERT(currentlyUsedRegisters.get(valueGPR));
+    slowCases.append(gen.slowPathJump());
     
-    stubInfo->codeOrigin = codeOrigin;
-    stubInfo->patch.baseGPR = static_cast<int8_t>(baseGPR);
-    stubInfo->patch.valueGPR = static_cast<int8_t>(valueGPR);
-    stubInfo->patch.usedRegisters = currentlyUsedRegisters;
-    stubInfo->patch.registersFlushed = false;
-    
-    m_jit.addPropertyAccess(
-        PropertyAccessRecord(
-            structureToCompare, structureCheck, propertyStorageLoad,
-            JITCompiler::DataLabelCompact(storeWithPatch.label()), slowPath.get(), doneLabel,
-            stubInfo));
+    OwnPtr<SlowPathGenerator> slowPath = slowPathCall(
+        slowCases, this, gen.slowPathFunction(), NoResult, gen.stubInfo(), valueGPR, baseGPR,
+        identifierUID(identifierNumber));
+
+    m_jit.addPutById(gen, slowPath.get());
     addSlowPathGenerator(slowPath.release());
 }
 
@@ -2962,9 +2902,9 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg arg3GPR = arg3.gpr();
             flushRegisters();
             if (node->op() == PutByValDirect)
-                callOperation(m_jit.strictModeFor(node->codeOrigin) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, arg1GPR, arg2GPR, arg3GPR);
+                callOperation(m_jit.isStrictModeFor(node->codeOrigin) ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, arg1GPR, arg2GPR, arg3GPR);
             else
-                callOperation(m_jit.strictModeFor(node->codeOrigin) ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+                callOperation(m_jit.isStrictModeFor(node->codeOrigin) ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
             
             noResult(node);
             alreadyHandled = true;

@@ -147,6 +147,7 @@ public:
     void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
 
     bool isStrictMode() const { return m_isStrictMode; }
+    ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
 
     inline bool isKnownNotImmediate(int index)
     {

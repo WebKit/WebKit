@@ -359,11 +359,16 @@ public:
         return codeBlock()->globalObjectFor(codeOrigin);
     }
     
-    bool strictModeFor(CodeOrigin codeOrigin)
+    bool isStrictModeFor(CodeOrigin codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)
             return codeBlock()->isStrictMode();
         return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->isStrictMode();
+    }
+    
+    ECMAMode ecmaModeFor(CodeOrigin codeOrigin)
+    {
+        return isStrictModeFor(codeOrigin) ? StrictMode : NotStrictMode;
     }
     
     ExecutableBase* executableFor(const CodeOrigin& codeOrigin);

@@ -334,6 +334,10 @@
 		0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */; };
 		0FB1058E1675483A00F8AB6E /* ProfilerOSRExitSite.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB14E1E18124ACE009B6B4D /* JITInlineCacheGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB14E1C18124ACE009B6B4D /* JITInlineCacheGenerator.cpp */; };
+		0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E1D18124ACE009B6B4D /* JITInlineCacheGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB14E211812570B009B6B4D /* DFGInlineCacheWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E201812570B009B6B4D /* DFGInlineCacheWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB14E2318130955009B6B4D /* DFGInlineCacheWrapperInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB14E2218130955009B6B4D /* DFGInlineCacheWrapperInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB5467914F5C46B002C2989 /* LazyOperandValueProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */; };
 		0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1580,6 +1584,10 @@
 		0FB105881675482E00F8AB6E /* ProfilerOSRExit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExit.h; path = profiler/ProfilerOSRExit.h; sourceTree = "<group>"; };
 		0FB105891675482E00F8AB6E /* ProfilerOSRExitSite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOSRExitSite.cpp; path = profiler/ProfilerOSRExitSite.cpp; sourceTree = "<group>"; };
 		0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOSRExitSite.h; path = profiler/ProfilerOSRExitSite.h; sourceTree = "<group>"; };
+		0FB14E1C18124ACE009B6B4D /* JITInlineCacheGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITInlineCacheGenerator.cpp; sourceTree = "<group>"; };
+		0FB14E1D18124ACE009B6B4D /* JITInlineCacheGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITInlineCacheGenerator.h; sourceTree = "<group>"; };
+		0FB14E201812570B009B6B4D /* DFGInlineCacheWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGInlineCacheWrapper.h; path = dfg/DFGInlineCacheWrapper.h; sourceTree = "<group>"; };
+		0FB14E2218130955009B6B4D /* DFGInlineCacheWrapperInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGInlineCacheWrapperInlines.h; path = dfg/DFGInlineCacheWrapperInlines.h; sourceTree = "<group>"; };
 		0FB4B51016B3A964003F696B /* DFGMinifiedID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedID.h; path = dfg/DFGMinifiedID.h; sourceTree = "<group>"; };
 		0FB4B51916B62772003F696B /* DFGAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAllocator.h; path = dfg/DFGAllocator.h; sourceTree = "<group>"; };
 		0FB4B51A16B62772003F696B /* DFGCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCommon.cpp; path = dfg/DFGCommon.cpp; sourceTree = "<group>"; };
@@ -2870,6 +2878,8 @@
 				0FAF7EFB165BA919000C8455 /* JITDisassembler.h */,
 				0F46807F14BA572700BFE272 /* JITExceptions.cpp */,
 				0F46808014BA572700BFE272 /* JITExceptions.h */,
+				0FB14E1C18124ACE009B6B4D /* JITInlineCacheGenerator.cpp */,
+				0FB14E1D18124ACE009B6B4D /* JITInlineCacheGenerator.h */,
 				86CC85A00EE79A4700288682 /* JITInlines.h */,
 				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
 				A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */,
@@ -3616,8 +3626,6 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
-				0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */,
-				0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */,
 				A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */,
 				A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */,
 				A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */,
@@ -3706,6 +3714,8 @@
 				A78A976F179738B8009DF744 /* DFGFinalizer.h */,
 				0F2BDC12151C5D4A00CD8910 /* DFGFixupPhase.cpp */,
 				0F2BDC13151C5D4A00CD8910 /* DFGFixupPhase.h */,
+				0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */,
+				0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */,
 				A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */,
 				A7D89CE917A0B8CC00773AD8 /* DFGFlushFormat.h */,
 				A7D89CEA17A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp */,
@@ -3713,6 +3723,8 @@
 				86EC9DB61328DF82002B2AD7 /* DFGGenerationInfo.h */,
 				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
 				86EC9DB81328DF82002B2AD7 /* DFGGraph.h */,
+				0FB14E201812570B009B6B4D /* DFGInlineCacheWrapper.h */,
+				0FB14E2218130955009B6B4D /* DFGInlineCacheWrapperInlines.h */,
 				A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */,
 				A704D90117A0BAA8006BA554 /* DFGInPlaceAbstractState.h */,
 				0F2BDC1F151E803800CD8910 /* DFGInsertionSet.h */,
@@ -4417,6 +4429,7 @@
 				BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 				7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */,
+				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
 				7C15F65E17C199CE00794D40 /* JSPromiseCallback.h in Headers */,
 				7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */,
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
@@ -4449,8 +4462,10 @@
 				0F2B670217B6B5AB00A7AE3F /* JSUint16Array.h in Headers */,
 				0F2B670317B6B5AB00A7AE3F /* JSUint32Array.h in Headers */,
 				0F2B670017B6B5AB00A7AE3F /* JSUint8Array.h in Headers */,
+				0FB14E2318130955009B6B4D /* DFGInlineCacheWrapperInlines.h in Headers */,
 				0F2B670117B6B5AB00A7AE3F /* JSUint8ClampedArray.h in Headers */,
 				86E3C612167BABD7006D760A /* JSValue.h in Headers */,
+				0FB14E211812570B009B6B4D /* DFGInlineCacheWrapper.h in Headers */,
 				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */,
@@ -5269,6 +5284,7 @@
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,
 				0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */,
 				0F235BD817178E1C00690C7F /* FTLExitThunkGenerator.cpp in Sources */,
+				0FB14E1E18124ACE009B6B4D /* JITInlineCacheGenerator.cpp in Sources */,
 				0F235BDA17178E1C00690C7F /* FTLExitValue.cpp in Sources */,
 				A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */,
 				0FEA0A281709623B00BB722C /* FTLIntrinsicRepository.cpp in Sources */,

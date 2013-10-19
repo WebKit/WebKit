@@ -464,6 +464,8 @@ public:
         {
         }
 
+        AssemblerLabel label() const { return m_label; }
+
     private:
         AssemblerLabel m_label;
     };

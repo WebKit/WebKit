@@ -1,3 +1,81 @@
+2013-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT and DFG IC code generation should be unified and rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=122939
+
+        Reviewed by Geoffrey Garen.
+        
+        Introduce the JITInlineCacheGenerator, which takes a CodeBlock and a CodeOrigin plus
+        some register info and creates JIT inline caches for you. Used this to even furhter
+        unify the baseline and DFG ICs. In the future we can use this for FTL ICs. And my hope
+        is that we'll be able to use it for cascading ICs: an IC for some instruction may realize
+        that it needs to do the equivalent of get_by_id, so with this generator it will be able
+        to create an IC even though it wasn't associated with a get_by_id bytecode instruction.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::DataLabelCompact::label):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ecmaMode):
+        * dfg/DFGInlineCacheWrapper.h: Added.
+        (JSC::DFG::InlineCacheWrapper::InlineCacheWrapper):
+        * dfg/DFGInlineCacheWrapperInlines.h: Added.
+        (JSC::DFG::::finalize):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addGetById):
+        (JSC::DFG::JITCompiler::addPutById):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::isStrictModeFor):
+        (JSC::AssemblyHelpers::strictModeFor):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::tagGPR):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp: Added.
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITByIdGenerator::finalize):
+        (JSC::JITByIdGenerator::generateFastPathChecks):
+        (JSC::JITGetByIdGenerator::generateFastPath):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITPutByIdGenerator::generateFastPath):
+        (JSC::JITPutByIdGenerator::slowPathFunction):
+        * jit/JITInlineCacheGenerator.h: Added.
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITInlineCacheGenerator::stubInfo):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITByIdGenerator::reportSlowPathCall):
+        (JSC::JITByIdGenerator::slowPathJump):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::set):
+
 2013-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         APICast.h uses functions from JSCJSValueInlines.h, but doesn't include it

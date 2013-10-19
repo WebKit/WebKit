@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGFailedFinalizer.h"
+#include "DFGInlineCacheWrapperInlines.h"
 #include "DFGJITCode.h"
 #include "DFGJITFinalizer.h"
 #include "DFGOSRExitCompiler.h"
@@ -222,22 +223,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-    for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
-        StructureStubInfo& info = *m_propertyAccesses[i].m_stubInfo;
-        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->call());
-        info.callReturnLocation = callReturnLocation;
-        info.patch.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_structureImm), callReturnLocation);
-        info.patch.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_structureCheck));
-#if USE(JSVALUE64)
-        info.patch.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_loadOrStore));
-#else
-        info.patch.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_tagLoadOrStore));
-        info.patch.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_payloadLoadOrStore));
-#endif
-        info.patch.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->label()));
-        info.patch.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_done));
-        info.patch.deltaCallToStorageLoad = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_propertyStorageLoad));
-    }
+    for (unsigned i = m_getByIds.size(); i--;)
+        m_getByIds[i].finalize(linkBuffer);
+    for (unsigned i = m_putByIds.size(); i--;)
+        m_putByIds[i].finalize(linkBuffer);
+
     for (unsigned i = 0; i < m_ins.size(); ++i) {
         StructureStubInfo& info = *m_ins[i].m_stubInfo;
         CodeLocationLabel jump = linkBuffer.locationOf(m_ins[i].m_jump);

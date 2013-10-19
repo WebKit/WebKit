@@ -280,6 +280,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.h \
+	Source/JavaScriptCore/dfg/DFGInlineCacheWrapper.h \
+	Source/JavaScriptCore/dfg/DFGInlineCacheWrapperInlines.h \
 	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCode.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCode.h \
@@ -630,6 +632,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JIT.h \
 	Source/JavaScriptCore/jit/JITExceptions.cpp \
 	Source/JavaScriptCore/jit/JITExceptions.h \
+	Source/JavaScriptCore/jit/JITInlineCacheGenerator.cpp \
+	Source/JavaScriptCore/jit/JITInlineCacheGenerator.h \
 	Source/JavaScriptCore/jit/JITInlines.h \
 	Source/JavaScriptCore/jit/JITOpcodes32_64.cpp \
 	Source/JavaScriptCore/jit/JITOpcodes.cpp \

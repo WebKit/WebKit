@@ -71,6 +71,13 @@ public:
         setBit(GPRInfo::toIndex(reg));
     }
     
+    void set(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            set(regs.tagGPR());
+        set(regs.payloadGPR());
+    }
+    
     void setGPRByIndex(unsigned index)
     {
         ASSERT(index < GPRInfo::numberOfRegisters);

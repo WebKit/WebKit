@@ -33,12 +33,14 @@
 #include "CodeBlock.h"
 #include "DFGDisassembler.h"
 #include "DFGGraph.h"
+#include "DFGInlineCacheWrapper.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "JITCode.h"
+#include "JITInlineCacheGenerator.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
@@ -75,49 +77,6 @@ struct CallLinkRecord {
 
     MacroAssembler::Call m_call;
     FunctionPtr m_function;
-};
-
-struct PropertyAccessRecord {
-    PropertyAccessRecord(
-        MacroAssembler::DataLabelPtr structureImm,
-        MacroAssembler::PatchableJump structureCheck,
-        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
-#if USE(JSVALUE64)
-        MacroAssembler::DataLabelCompact loadOrStore,
-#elif USE(JSVALUE32_64)
-        MacroAssembler::DataLabelCompact tagLoadOrStore,
-        MacroAssembler::DataLabelCompact payloadLoadOrStore,
-#endif
-        SlowPathGenerator* slowPathGenerator,
-        MacroAssembler::Label done,
-        StructureStubInfo* stubInfo)
-        : m_structureImm(structureImm)
-        , m_structureCheck(structureCheck)
-        , m_propertyStorageLoad(propertyStorageLoad)
-#if USE(JSVALUE64)
-        , m_loadOrStore(loadOrStore)
-#elif USE(JSVALUE32_64)
-        , m_tagLoadOrStore(tagLoadOrStore)
-        , m_payloadLoadOrStore(payloadLoadOrStore)
-#endif
-        , m_slowPathGenerator(slowPathGenerator)
-        , m_done(done)
-        , m_stubInfo(stubInfo)
-    {
-    }
-
-    MacroAssembler::DataLabelPtr m_structureImm;
-    MacroAssembler::PatchableJump m_structureCheck;
-    MacroAssembler::ConvertibleLoadLabel m_propertyStorageLoad;
-#if USE(JSVALUE64)
-    MacroAssembler::DataLabelCompact m_loadOrStore;
-#elif USE(JSVALUE32_64)
-    MacroAssembler::DataLabelCompact m_tagLoadOrStore;
-    MacroAssembler::DataLabelCompact m_payloadLoadOrStore;
-#endif
-    SlowPathGenerator* m_slowPathGenerator;
-    MacroAssembler::Label m_done;
-    StructureStubInfo* m_stubInfo;
 };
 
 struct InRecord {
@@ -254,11 +213,16 @@ public:
     }
 #endif
 
-    void addPropertyAccess(const PropertyAccessRecord& record)
+    void addGetById(const JITGetByIdGenerator& gen, SlowPathGenerator* slowPath)
     {
-        m_propertyAccesses.append(record);
+        m_getByIds.append(InlineCacheWrapper<JITGetByIdGenerator>(gen, slowPath));
     }
     
+    void addPutById(const JITPutByIdGenerator& gen, SlowPathGenerator* slowPath)
+    {
+        m_putByIds.append(InlineCacheWrapper<JITPutByIdGenerator>(gen, slowPath));
+    }
+
     void addIn(const InRecord& record)
     {
         m_ins.append(record);
@@ -385,7 +349,8 @@ private:
         CodeOrigin m_codeOrigin;
     };
     
-    Vector<PropertyAccessRecord, 4> m_propertyAccesses;
+    Vector<InlineCacheWrapper<JITGetByIdGenerator>, 4> m_getByIds;
+    Vector<InlineCacheWrapper<JITPutByIdGenerator>, 4> m_putByIds;
     Vector<InRecord, 4> m_ins;
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
