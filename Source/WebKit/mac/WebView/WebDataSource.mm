@@ -87,7 +87,7 @@ public:
     }
 
     RefPtr<WebDocumentLoaderMac> loader;
-    RetainPtr<id<WebDocumentRepresentation>> representation;
+    RetainPtr<id<WebDocumentRepresentation> > representation;
     BOOL representationFinishedLoading;
     BOOL includedInWebKitStatistics;
 };

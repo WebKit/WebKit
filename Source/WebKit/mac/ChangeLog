@@ -1,3 +1,9 @@
+2013-10-19  Andreas Kling  <akling@apple.com>
+
+        Attempt to get Lion building.
+
+        * WebView/WebDataSource.mm:
+
 2013-10-18  Anders Carlsson  <andersca@apple.com>
 
         Remove spaces between template angle brackets
