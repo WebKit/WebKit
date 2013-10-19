@@ -1,0 +1,163 @@
+#testName {
+    width: 99%;
+    font-size: 1em;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.actionBar {
+
+}
+
+.testResults {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 10px 0px;
+    position: relative;
+}
+
+.closeButton {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 1em;
+    height: 1em;
+    stroke: #999;
+}
+
+.resultsTable {
+    font-size: small;
+    border-collapse: collapse;
+    border: 2px solid #fff;
+    padding: 0;
+    margin: 0;
+}
+
+.resultsTable caption {
+    font-size: large;
+    font-weight: normal;
+    text-align: left;
+    margin-bottom: 0.3em;
+    white-space: pre;
+}
+
+.resultsTable td,
+.resultsTable th {
+    border: 2px solid #fff;
+    padding: 0;
+    margin: 0;
+}
+
+.resultsTable th,
+.resultsTable .passingRate {
+    font-weight: normal;
+    padding-right: 10px;
+}
+
+.resultsTable th {
+    width: 15em;
+}
+
+.resultsTable .passingRate {
+    width: 3em;
+}
+
+.resultsTable .resultCell {
+    display: inline-block;
+    padding: 0.2em 0.2em;
+}
+
+.resultsTable a {
+    display: block;
+    width: 1em;
+    height: 1.5em;
+    border-radius: 3px;
+}
+
+.resultsTable .PASS a {
+    background-color: #0c3;
+}
+
+.resultsTable .TEXT a {
+    background-color: #c33;
+}
+
+.resultsTable .IMAGE a {
+    background-color: #3cf;
+}
+
+.resultsTable .TEXT.PASS a {
+    background-color: #cf3;
+}
+
+.resultsTable .CRASH a {
+    background-color: #f00;
+}
+
+.candidateWindow {
+    z-index: 999;
+    position: absolute;
+    background: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px 0 0 0;
+    padding: 5px;
+    font-size: 1em;
+    list-style: none;
+}
+
+.candidateWindow em {
+    background-color: #ccc;
+    font-style: normal;
+}
+
+.candidateWindow .selected {
+    background-color: #0cf;
+    color: white;
+}
+
+#tooltipContainer {
+    position: absolute;
+}
+
+.tooltip {
+    position: relative;
+    border-radius: 5px;
+    padding: 5px;
+    opacity: 0.9;
+    background: #333;
+    color: #eee;
+    font-size: small;
+    line-height: 130%;
+}
+
+.tooltip:after {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    margin-left: -9px;
+    bottom: -19px;
+    content: "";
+    display: block;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tooltip ul,
+.tooltip li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.tooltip a {
+    color: white;
+    text-shadow: none;
+    text-decoration: underline;
+}

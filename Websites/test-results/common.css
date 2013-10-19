@@ -1,0 +1,65 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-repeat: repeat-x;
+    font-family: sans-serif;
+    padding: 10px;
+}
+
+#title {
+    background-image: linear-gradient(bottom, rgb(240,240,240) 31%, rgb(255,255,255) 90%);
+    background-image: -o-linear-gradient(bottom, rgb(240,240,240) 31%, rgb(255,255,255) 90%);
+    background-image: -moz-linear-gradient(bottom, rgb(240,240,240) 31%, rgb(255,255,255) 90%);
+    background-image: -webkit-linear-gradient(bottom, rgb(240,240,240) 31%, rgb(255,255,255) 90%);
+    background-image: -ms-linear-gradient(bottom, rgb(240,240,240) 31%, rgb(255,255,255) 90%);
+    -moz-box-shadow:    1px 1px 3px 1px #ccc;
+    -webkit-box-shadow: 1px 1px 3px 1px #ccc;
+    box-shadow:         1px 1px 3px 1px #ccc;
+    padding: 5px 10px;
+    margin: 0 0 20px 0;
+    border-radius: 5px;
+    position: relative;
+}
+
+#title h1 {
+    font-weight: normal;
+    text-shadow: #bbb 1px 1px 2px;
+    margin: 0;
+    padding: 0;
+    font-size: 2em;
+}
+#title li, #title ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#title li {
+    display: inline;
+}
+
+#title li:after {
+    content: ' | ';
+}
+
+#title li:last-child:after {
+    content: '';
+}
+
+#title ul {
+    position: absolute;
+    vertical-align: middle;
+    top: 5px;
+    right: 20px;
+    padding-top: 0.6em;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    text-shadow: #bbb 1px 1px 2px;
+}

@@ -1,0 +1,31 @@
+2013-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New flakiness dashboard should support showing the failing tests per builder
+        https://bugs.webkit.org/show_bug.cgi?id=123011
+
+        Reviewed by Timothy Hatcher.
+
+        Added the feature. Also did some refactoring to add this feature.
+
+        * ChangeLog: Added.
+        * api/failing-tests.php: Added.
+        * api/manifest.php: Removed the code to make maps by id. The work is now done in index.html.
+        * api/results.php:
+        * common.css: Added. Extracted from index.html.
+        * include/test-results.php: Extracted parse_revisions_array and format_result_rows from results.php.
+        * index.html:
+        * main.css: Added.
+        (TestResultsView.setAvailableTests): Added.
+        (TestResultsView.showTooltip): Fixed the code to compute x and y coordinates of the tooltip to take
+        scrolled positions into account.
+        (TestResultsView._createTestResultRow): Extracted from _populateTestPane.
+        (TestResultsView.fetchTest): Added the code to show "Loading..." in the pane while loading the JSON.
+        (TestResultsView.fetchTests): Respect the doNotUpdateHash flag.
+        (TestResultsView._populateBuilderPane): Added.
+        (TestResultsView.fetchFailingTestsForBuilder): Added.
+        (TestResultsView.updateLocationHash): Serialize builder & builderDays.
+        (TestResultsView.locationHashChanged): Don't delete existing test panes since that's now done in
+        loadTestsFromLocationHash.
+        (TestResultsView.loadTestsFromLocationHash): Take care of both 'tests' and 'builder' components.
+        (fetchManifest): Setup the UI to select a builder.
+

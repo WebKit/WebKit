@@ -66,4 +66,31 @@ function recursively_add_test_results($db, $build_id, $tests, $full_name) {
         'expected' => $tests['expected'], 'actual' => $tests['actual']));
 }
 
+date_default_timezone_set('UTC');
+function parse_revisions_array($postgres_array) {
+    // e.g. {"(WebKit,131456,\"2012-10-16 14:53:00\")","(Safari,162004,)"}
+    $outer_array = json_decode('[' . trim($postgres_array, '{}') . ']');
+    $revisions = array();
+    foreach ($outer_array as $item) {
+        $name_and_revision = explode(',', trim($item, '()'));
+        $time = strtotime(trim($name_and_revision[2], '"')) * 1000;
+        $revisions[trim($name_and_revision[0], '"')] = array(trim($name_and_revision[1], '"'), $time);
+    }
+    return $revisions;
+}
+
+function format_result_rows($result_rows) {
+    $builders = array();
+    foreach ($result_rows as $result) {
+        array_push(array_ensure_item_has_array(array_ensure_item_has_array($builders, $result['builder']), $result['test']),
+            array('buildTime' => strtotime($result['start_time']) * 1000,
+            'revisions' => parse_revisions_array($result['revisions']),
+            'slave' => $result['slave'],
+            'buildNumber' => $result['number'],
+            'actual' => $result['actual'],
+            'expected' => $result['expected']));
+    }
+    return array('builders' => $builders);
+}
+
 ?>
