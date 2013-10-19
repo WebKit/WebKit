@@ -522,12 +522,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EIdJZ opera
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ESsiJJI operation, StructureStubInfo* stubInfo, RegisterID regOp1Tag, RegisterID regOp1Payload, RegisterID regOp2Tag, RegisterID regOp2Payload, StringImpl* uid)
 {
-#if CPU(SH4)
-    // We have to put uid in the 4th argument register (r7) as 64-bit value regOp2 will be put on stack for sh4 architecure.
-    setupArgumentsWithExecState(TrustedImmPtr(stubInfo), regOp1Payload, regOp1Tag, TrustedImmPtr(uid), regOp2Payload, regOp2Tag);
-#else
     setupArgumentsWithExecState(TrustedImmPtr(stubInfo), regOp1Payload, regOp1Tag, regOp2Payload, regOp2Tag, TrustedImmPtr(uid));
-#endif
     return appendCallWithExceptionCheck(operation);
 }
 

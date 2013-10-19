@@ -1,3 +1,20 @@
+2013-10-19  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix build failure for architectures with 4 argument registers.
+        https://bugs.webkit.org/show_bug.cgi?id=123060
+
+        Reviewed by Michael Saboff.
+
+        Add missing setupArgumentsWithExecState() prototypes for architecture with 4 argument registers.
+        Remove SH4 specific code no longer needed since callOperation prototype change in r157660.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+
 2013-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix FTL build.

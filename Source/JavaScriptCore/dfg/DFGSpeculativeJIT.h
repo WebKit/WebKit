@@ -1623,12 +1623,7 @@ public:
     }
     JITCompiler::Call callOperation(V_JITOperation_ESsiJJI operation, StructureStubInfo* stubInfo, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Payload, StringImpl* uid)
     {
-#if CPU(SH4)
-        // We have to put uid in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1Payload, arg1Tag, TrustedImmPtr(uid), arg2Payload, TrustedImm32(JSValue::CellTag));
-#else
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(stubInfo), arg1Payload, arg1Tag, arg2Payload, TrustedImm32(JSValue::CellTag), TrustedImmPtr(uid));
-#endif
         return appendCallWithExceptionCheck(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_ECJJ operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, GPRReg arg3Tag, GPRReg arg3Payload)
