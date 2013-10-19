@@ -262,8 +262,7 @@ void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
 RenderTableRow* RenderTableRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RenderTableRow* newRow = new RenderTableRow(parent->document());
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW);
-    newRow->setStyle(newStyle.release());
+    newRow->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW));
     return newRow;
 }
 

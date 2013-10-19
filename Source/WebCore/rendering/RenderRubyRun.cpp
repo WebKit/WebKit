@@ -201,9 +201,9 @@ void RenderRubyRun::removeChild(RenderObject& child)
 RenderRubyBase* RenderRubyRun::createRubyBase() const
 {
     RenderRubyBase* renderer = new RenderRubyBase(document());
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
-    newStyle->setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
-    renderer->setStyle(newStyle.release());
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
+    newStyle.get().setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
+    renderer->setStyle(std::move(newStyle));
     return renderer;
 }
 
@@ -211,8 +211,7 @@ RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby
 {
     ASSERT(parentRuby && parentRuby->isRuby());
     RenderRubyRun* rr = new RenderRubyRun(parentRuby->document());
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentRuby->style(), INLINE_BLOCK);
-    rr->setStyle(newStyle.release());
+    rr->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentRuby->style(), INLINE_BLOCK));
     return rr;
 }
 

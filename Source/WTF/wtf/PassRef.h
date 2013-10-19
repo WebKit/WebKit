@@ -42,6 +42,12 @@ public:
     PassRef(PassRef&&);
     template<typename U> PassRef(PassRef<U>);
 
+    const T& get() const;
+    T& get();
+
+    void dropRef();
+    T& leakRef() WARN_UNUSED_RETURN;
+
 #ifndef NDEBUG
     ~PassRef();
 #endif
@@ -56,8 +62,6 @@ private:
 
     enum AdoptTag { Adopt };
     PassRef(T&, AdoptTag);
-
-    T& takeReference();
 
     T& m_reference;
 
@@ -76,7 +80,7 @@ template<typename T> inline PassRef<T>::PassRef(T& reference)
 }
 
 template<typename T> inline PassRef<T>::PassRef(PassRef&& other)
-    : m_reference(other.takeReference())
+    : m_reference(other.leakRef())
 #ifndef NDEBUG
     , m_gaveUpReference(false)
 #endif
@@ -84,7 +88,7 @@ template<typename T> inline PassRef<T>::PassRef(PassRef&& other)
 }
 
 template<typename T> template<typename U> inline PassRef<T>::PassRef(PassRef<U> other)
-    : m_reference(other.takeReference())
+    : m_reference(other.leakRef())
 #ifndef NDEBUG
     , m_gaveUpReference(false)
 #endif
@@ -100,7 +104,28 @@ template<typename T> PassRef<T>::~PassRef()
 
 #endif
 
-template<typename T> inline T& PassRef<T>::takeReference()
+template<typename T> inline void PassRef<T>::dropRef()
+{
+    ASSERT(!m_gaveUpReference);
+    m_reference.deref();
+#ifndef NDEBUG
+    m_gaveUpReference = true;
+#endif
+}
+
+template<typename T> inline const T& PassRef<T>::get() const
+{
+    ASSERT(!m_gaveUpReference);
+    return m_reference;
+}
+
+template<typename T> inline T& PassRef<T>::get()
+{
+    ASSERT(!m_gaveUpReference);
+    return m_reference;
+}
+
+template<typename T> inline T& PassRef<T>::leakRef()
 {
 #ifndef NDEBUG
     ASSERT(!m_gaveUpReference);

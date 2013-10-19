@@ -181,9 +181,9 @@ void RenderSearchField::updateCancelButtonVisibility() const
     if (curStyle->visibility() == buttonVisibility)
         return;
 
-    RefPtr<RenderStyle> cancelButtonStyle = RenderStyle::clone(curStyle);
-    cancelButtonStyle->setVisibility(buttonVisibility);
-    cancelButtonRenderer->setStyle(cancelButtonStyle);
+    auto cancelButtonStyle = RenderStyle::clone(curStyle);
+    cancelButtonStyle.get().setVisibility(buttonVisibility);
+    cancelButtonRenderer->setStyle(std::move(cancelButtonStyle));
 }
 
 EVisibility RenderSearchField::visibilityForCancelButton() const

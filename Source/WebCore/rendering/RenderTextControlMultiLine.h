@@ -48,7 +48,7 @@ private:
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     virtual RenderStyle* textBaseStyle() const;
-    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
+    virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 };
 

@@ -351,28 +351,29 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 }
 #endif
 
-void RenderElement::setStyle(PassRefPtr<RenderStyle> style)
+void RenderElement::setStyle(PassRef<RenderStyle> style)
 {
-    if (m_style == style) {
+    if (m_style == &style.get()) {
 #if USE(ACCELERATED_COMPOSITING)
         // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
         ASSERT(!isRenderIFrame() && !isEmbeddedObject() && !isCanvas());
 #endif
+        style.dropRef();
         return;
     }
 
     StyleDifference diff = StyleDifferenceEqual;
     unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
     if (m_style)
-        diff = m_style->diff(style.get(), contextSensitiveProperties);
+        diff = m_style->diff(&style.get(), contextSensitiveProperties);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
-    styleWillChange(diff, style.get());
+    styleWillChange(diff, &style.get());
     
     RefPtr<RenderStyle> oldStyle = m_style.release();
-    setStyleInternal(style);
+    m_style = std::move(style);
 
     updateFillImages(oldStyle ? oldStyle->backgroundLayers() : 0, m_style ? m_style->backgroundLayers() : 0);
     updateFillImages(oldStyle ? oldStyle->maskLayers() : 0, m_style ? m_style->maskLayers() : 0);
@@ -430,9 +431,9 @@ void RenderElement::setStyle(PassRefPtr<RenderStyle> style)
     }
 }
 
-void RenderElement::setAnimatableStyle(PassRefPtr<RenderStyle> style)
+void RenderElement::setAnimatableStyle(PassRef<RenderStyle> style)
 {
-    setStyle(animation().updateAnimations(this, style.get()));
+    setStyle(animation().updateAnimations(*this, std::move(style)));
 }
 
 void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -754,20 +755,20 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
             continue;
 #endif
 
-        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
         if (style()->specifiesColumns()) {
             if (child->style()->specifiesColumns())
-                newStyle->inheritColumnPropertiesFrom(style());
+                newStyle.get().inheritColumnPropertiesFrom(style());
             if (child->style()->columnSpan())
-                newStyle->setColumnSpan(ColumnSpanAll);
+                newStyle.get().setColumnSpan(ColumnSpanAll);
         }
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
         if (child->isInFlowPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
-            newStyle->setPosition(child->style()->position());
+            newStyle.get().setPosition(child->style()->position());
 
-        toRenderElement(child)->setStyle(newStyle.release());
+        toRenderElement(child)->setStyle(std::move(newStyle));
     }
 }
 

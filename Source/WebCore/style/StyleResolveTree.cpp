@@ -248,7 +248,7 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
     newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
 
     element.setRenderer(newRenderer);
-    newRenderer->setAnimatableStyle(style.release()); // setAnimatableStyle() can depend on renderer() already being set.
+    newRenderer->setAnimatableStyle(style.releaseNonNull()); // setAnimatableStyle() can depend on renderer() already being set.
 
 #if ENABLE(FULLSCREEN_API)
     Document& document = element.document();
@@ -605,7 +605,7 @@ static Change resolveLocal(Element& current, Change inheritedChange)
 
     if (RenderElement* renderer = current.renderer()) {
         if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (inheritedChange == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
-            renderer->setAnimatableStyle(newStyle.get());
+            renderer->setAnimatableStyle(*newStyle.get());
         else if (current.needsStyleRecalc()) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.
@@ -793,19 +793,21 @@ void resolveTree(Document& document, Change change)
 {
     bool resolveRootStyle = change == Force || (document.shouldDisplaySeamlesslyWithParent() && change >= Inherit);
     if (resolveRootStyle) {
-        RefPtr<RenderStyle> documentStyle = resolveForDocument(document);
+        auto documentStyle = resolveForDocument(document);
 
         // Inserting the pictograph font at the end of the font fallback list is done by the
         // font selector, so set a font selector if needed.
         if (Settings* settings = document.settings()) {
             StyleResolver* styleResolver = document.styleResolverIfExists();
             if (settings->fontFallbackPrefersPictographs() && styleResolver)
-                documentStyle->font().update(styleResolver->fontSelector());
+                documentStyle.get().font().update(styleResolver->fontSelector());
         }
 
-        Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style(), document.settings());
+        Style::Change documentChange = determineChange(&documentStyle.get(), document.renderView()->style(), document.settings());
         if (documentChange != NoChange)
-            document.renderView()->setStyle(documentStyle.release());
+            document.renderView()->setStyle(std::move(documentStyle));
+        else
+            documentStyle.dropRef();
     }
 
     Element* documentElement = document.documentElement();

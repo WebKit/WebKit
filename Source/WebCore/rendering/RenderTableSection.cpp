@@ -1569,9 +1569,8 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
 
 RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP);
     RenderTableSection* newSection = new RenderTableSection(parent->document());
-    newSection->setStyle(newStyle.release());
+    newSection->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP));
     return newSection;
 }
 

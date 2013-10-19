@@ -53,16 +53,16 @@ RenderNamedFlowFragment::~RenderNamedFlowFragment()
 
 void RenderNamedFlowFragment::setStyleForNamedFlowFragment(const RenderStyle* parentStyle)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, BLOCK);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, BLOCK);
 
-    newStyle->setFlowThread(parentStyle->flowThread());
-    newStyle->setRegionThread(parentStyle->regionThread());
-    newStyle->setRegionFragment(parentStyle->regionFragment());
+    newStyle.get().setFlowThread(parentStyle->flowThread());
+    newStyle.get().setRegionThread(parentStyle->regionThread());
+    newStyle.get().setRegionFragment(parentStyle->regionFragment());
 #if ENABLE(CSS_SHAPES)
-    newStyle->setShapeInside(parentStyle->shapeInside());
+    newStyle.get().setShapeInside(parentStyle->shapeInside());
 #endif
 
-    setStyle(newStyle.release());
+    setStyle(std::move(newStyle));
 }
 
 void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

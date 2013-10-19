@@ -84,14 +84,14 @@ void RenderMathMLFenced::updateFromElement()
 
 RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
-    newStyle->setFlexDirection(FlowColumn);
-    newStyle->setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    newStyle.get().setFlexDirection(FlowColumn);
+    newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
-        newStyle->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
+        newStyle.get().setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
     RenderMathMLOperator* newOperator = new RenderMathMLOperator(element(), uChar);
     newOperator->setOperatorType(operatorType);
-    newOperator->setStyle(newStyle.release());
+    newOperator->setStyle(std::move(newStyle));
     return newOperator;
 }
 

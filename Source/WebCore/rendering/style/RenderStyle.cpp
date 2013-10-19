@@ -80,46 +80,46 @@ struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
 
 COMPILE_ASSERT(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), RenderStyle_should_stay_small);
 
-inline RenderStyle* defaultStyle()
+inline RenderStyle& defaultStyle()
 {
-    static RenderStyle* s_defaultStyle = RenderStyle::createDefaultStyle().leakRef();
-    return s_defaultStyle;
+    static RenderStyle& style = RenderStyle::createDefaultStyle().leakRef();
+    return style;
 }
 
-PassRefPtr<RenderStyle> RenderStyle::create()
+PassRef<RenderStyle> RenderStyle::create()
 {
-    return adoptRef(new RenderStyle());
+    return adoptRef(*new RenderStyle());
 }
 
-PassRefPtr<RenderStyle> RenderStyle::createDefaultStyle()
+PassRef<RenderStyle> RenderStyle::createDefaultStyle()
 {
-    return adoptRef(new RenderStyle(true));
+    return adoptRef(*new RenderStyle(true));
 }
 
-PassRefPtr<RenderStyle> RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay display)
+PassRef<RenderStyle> RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay display)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(parentStyle);
-    newStyle->inheritUnicodeBidiFrom(parentStyle);
-    newStyle->setDisplay(display);
+    auto newStyle = RenderStyle::create();
+    newStyle.get().inheritFrom(parentStyle);
+    newStyle.get().inheritUnicodeBidiFrom(parentStyle);
+    newStyle.get().setDisplay(display);
     return newStyle;
 }
 
-PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
+PassRef<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 {
-    return adoptRef(new RenderStyle(*other));
+    return adoptRef(*new RenderStyle(*other));
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle()
-    : m_box(defaultStyle()->m_box)
-    , visual(defaultStyle()->visual)
-    , m_background(defaultStyle()->m_background)
-    , surround(defaultStyle()->surround)
-    , rareNonInheritedData(defaultStyle()->rareNonInheritedData)
-    , rareInheritedData(defaultStyle()->rareInheritedData)
-    , inherited(defaultStyle()->inherited)
+    : m_box(defaultStyle().m_box)
+    , visual(defaultStyle().visual)
+    , m_background(defaultStyle().m_background)
+    , surround(defaultStyle().surround)
+    , rareNonInheritedData(defaultStyle().rareNonInheritedData)
+    , rareInheritedData(defaultStyle().rareInheritedData)
+    , inherited(defaultStyle().inherited)
 #if ENABLE(SVG)
-    , m_svgStyle(defaultStyle()->m_svgStyle)
+    , m_svgStyle(defaultStyle().m_svgStyle)
 #endif
 {
     setBitDefaults(); // Would it be faster to copy this from the default style?

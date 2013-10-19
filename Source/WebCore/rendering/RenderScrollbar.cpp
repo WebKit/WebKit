@@ -263,7 +263,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
     }
     
     if (partRenderer)
-        partRenderer->setStyle(partStyle.release());
+        partRenderer->setStyle(partStyle.releaseNonNull());
 }
 
 void RenderScrollbar::paintPart(GraphicsContext* graphicsContext, ScrollbarPart partType, const IntRect& rect)

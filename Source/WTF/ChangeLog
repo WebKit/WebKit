@@ -1,3 +1,38 @@
+2013-10-18  Andreas Kling  <akling@apple.com>
+
+        Start passing RenderStyle around with PassRef.
+        <https://webkit.org/b/123051>
+
+        Added some new PassRef tricks to make this patch possible.
+
+        Reviewed by Darin Adler.
+
+        * wtf/PassRef.h:
+        (WTF::PassRef::get):
+
+            Added a get() helper to facilitate writing functions that
+            construct a new object and call some functions on it before
+            returning it.
+
+        (WTF::PassRef::dropRef):
+
+            This will deref() the referenced object and mark the PassRef
+            as "passed." This is used in code paths where the PassRef is
+            going to go out of scope with nobody to take it over.
+
+        (WTF::PassRef::leakRef):
+
+            Renamed takeReference() to leakRef() and made it public so
+            we don't have to awkwardly sink the PassRef into a Ref for
+            e.g static locals.
+
+        * wtf/RefPtr.h:
+        (WTF::RefPtr::releaseNonNull):
+
+            Added RefPtr::releaseNonNull() for a convenient way of creating
+            a PassRef<T> from a RefPtr<T>. This function may only be called
+            if the RefPtr is known to be non-null.
+
 2013-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         A CodeBlock's StructureStubInfos shouldn't be in a Vector that we search using code origins and machine code PCs

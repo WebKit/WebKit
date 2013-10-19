@@ -46,19 +46,21 @@ LayoutRect RenderSVGBlock::visualOverflowRect() const
     return borderRect;
 }
 
-void RenderSVGBlock::setStyle(PassRefPtr<RenderStyle> style) 
+void RenderSVGBlock::setStyle(PassRef<RenderStyle> style)
 {
-    RefPtr<RenderStyle> useStyle = style;
-
-    // SVG text layout code expects us to be a block-level style element.   
-    if (useStyle->isDisplayInlineType()) {
-        RefPtr<RenderStyle> newStyle = RenderStyle::create();
-        newStyle->inheritFrom(useStyle.get());
-        newStyle->setDisplay(BLOCK);
-        useStyle = newStyle.release();
+    if (!style.get().isDisplayInlineType()) {
+        RenderBlock::setStyle(std::move(style));
+        return;
     }
 
-    RenderBlock::setStyle(useStyle.release());
+    Ref<RenderStyle> styleToInheritFrom(std::move(style));
+
+    // SVG text layout code expects us to be a block-level style element.   
+    auto newStyle = RenderStyle::create();
+    newStyle.get().inheritFrom(&styleToInheritFrom.get());
+    newStyle.get().setDisplay(BLOCK);
+
+    RenderBlock::setStyle(std::move(newStyle));
 }
 
 void RenderSVGBlock::updateFromStyle()

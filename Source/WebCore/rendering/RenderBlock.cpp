@@ -318,7 +318,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         for (RenderBlock* currCont = blockElementContinuation(); currCont; currCont = currCont->blockElementContinuation()) {
             RenderBoxModelObject* nextCont = currCont->continuation();
             currCont->setContinuation(0);
-            currCont->setStyle(newStyle);
+            currCont->setStyle(*newStyle);
             currCont->setContinuation(nextCont);
         }
     }
@@ -499,7 +499,7 @@ RenderBlock* RenderBlock::clone() const
     } else {
         auto cloneRenderer = element()->createRenderer(*style());
         cloneBlock = toRenderBlock(cloneRenderer);
-        cloneBlock->setStyle(style());
+        cloneBlock->setStyle(*style());
 
         // This takes care of setting the right value of childrenInline in case
         // generated content is added to cloneBlock and 'this' does not have
@@ -1108,10 +1108,9 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             // to clear out inherited column properties by just making a new style, and to also clear the
             // column span flag if it is set.
             ASSERT(!inlineChildrenBlock->continuation());
-            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
             // Cache this value as it might get changed in setStyle() call.
             bool inlineChildrenBlockHasLayer = inlineChildrenBlock->hasLayer();
-            inlineChildrenBlock->setStyle(newStyle);
+            inlineChildrenBlock->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
             removeChildInternal(*inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
@@ -1687,7 +1686,7 @@ RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* 
         newRunIn = new RenderInline(*runIn->element());
 
     runIn->element()->setRenderer(newRunIn);
-    newRunIn->setStyle(runIn->style());
+    newRunIn->setStyle(*runIn->style());
 
     runIn->moveAllChildrenTo(newRunIn, true);
 
@@ -5014,7 +5013,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
             newFirstLetter = new RenderInline(document());
         else
             newFirstLetter = new RenderBlockFlow(document());
-        newFirstLetter->setStyle(pseudoStyle);
+        newFirstLetter->setStyle(*pseudoStyle);
 
         // Move the first letter into the new renderer.
         LayoutStateDisabler layoutStateDisabler(&view());
@@ -5039,7 +5038,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);
     } else
-        firstLetter->setStyle(pseudoStyle);
+        firstLetter->setStyle(*pseudoStyle);
 }
 
 void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderText* currentTextChild)
@@ -5051,7 +5050,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         firstLetter = new RenderInline(document());
     else
         firstLetter = new RenderBlockFlow(document());
-    firstLetter->setStyle(pseudoStyle);
+    firstLetter->setStyle(*pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
@@ -5975,28 +5974,27 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
         newDisplay = BLOCK;
     }
 
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), newDisplay);
-    newBox->setStyle(newStyle.release());
+    newBox->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), newDisplay));
     return newBox;
 }
 
 RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
-    newStyle->inheritColumnPropertiesFrom(parent->style());
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
+    newStyle.get().inheritColumnPropertiesFrom(parent->style());
 
     RenderBlock* newBox = new RenderBlockFlow(parent->document());
-    newBox->setStyle(newStyle.release());
+    newBox->setStyle(std::move(newStyle));
     return newBox;
 }
 
 RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
-    newStyle->setColumnSpan(ColumnSpanAll);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
+    newStyle.get().setColumnSpan(ColumnSpanAll);
 
     RenderBlock* newBox = new RenderBlockFlow(parent->document());
-    newBox->setStyle(newStyle.release());
+    newBox->setStyle(std::move(newStyle));
     return newBox;
 }
 

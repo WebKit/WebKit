@@ -36,7 +36,7 @@ template<typename T> class Ref {
     WTF_MAKE_NONCOPYABLE(Ref)
 public:
     Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
-    template<typename U> Ref(PassRef<U> reference) : m_ptr(&reference.takeReference()) { }
+    template<typename U> Ref(PassRef<U> reference) : m_ptr(&reference.leakRef()) { }
 
     ~Ref() { m_ptr->deref(); }
 
@@ -50,7 +50,7 @@ public:
     template<typename U> Ref& operator=(PassRef<U> reference)
     {
         m_ptr->deref();
-        m_ptr = &reference.takeReference();
+        m_ptr = &reference.leakRef();
         return *this;
     }
 

@@ -85,14 +85,13 @@ int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
+PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
-    RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();
-    textBlockStyle->inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, textBlockStyle.get());
-    textBlockStyle->setDisplay(BLOCK);
-
-    return textBlockStyle.release();
+    auto textBlockStyle = RenderStyle::create();
+    textBlockStyle.get().inheritFrom(startStyle);
+    adjustInnerTextStyle(startStyle, &textBlockStyle.get());
+    textBlockStyle.get().setDisplay(BLOCK);
+    return textBlockStyle;
 }
 
 RenderStyle* RenderTextControlMultiLine::textBaseStyle() const

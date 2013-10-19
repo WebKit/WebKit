@@ -70,20 +70,19 @@ RenderFlowThread::RenderFlowThread(Document& document)
     setFlowThreadState(InsideOutOfFlowThread);
 }
 
-PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
+PassRef<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
 {
-    RefPtr<RenderStyle> newStyle(RenderStyle::create());
-    newStyle->inheritFrom(parentStyle);
-    newStyle->setDisplay(BLOCK);
-    newStyle->setPosition(AbsolutePosition);
-    newStyle->setZIndex(0);
-    newStyle->setLeft(Length(0, Fixed));
-    newStyle->setTop(Length(0, Fixed));
-    newStyle->setWidth(Length(100, Percent));
-    newStyle->setHeight(Length(100, Percent));
-    newStyle->font().update(0);
-    
-    return newStyle.release();
+    auto newStyle = RenderStyle::create();
+    newStyle.get().inheritFrom(parentStyle);
+    newStyle.get().setDisplay(BLOCK);
+    newStyle.get().setPosition(AbsolutePosition);
+    newStyle.get().setZIndex(0);
+    newStyle.get().setLeft(Length(0, Fixed));
+    newStyle.get().setTop(Length(0, Fixed));
+    newStyle.get().setWidth(Length(100, Percent));
+    newStyle.get().setHeight(Length(100, Percent));
+    newStyle.get().font().update(0);
+    return newStyle;
 }
 
 void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

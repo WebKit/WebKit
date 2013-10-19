@@ -172,14 +172,14 @@ void RenderMathMLOperator::updateFromElement()
     // renderer to 0, so we need to restore it.
     element().setRenderer(savedRenderer);
     
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
-    newStyle->setDisplay(FLEX);
+    auto newStyle = RenderStyle::create();
+    newStyle.get().inheritFrom(style());
+    newStyle.get().setDisplay(FLEX);
 
     RenderMathMLBlock* container = new RenderMathMLBlock(element());
     // This container doesn't offer any useful information to accessibility.
     container->setIgnoreInAccessibilityTree(true);
-    container->setStyle(newStyle.release());
+    container->setStyle(std::move(newStyle));
 
     addChild(container);
     RenderText* text;

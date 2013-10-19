@@ -351,45 +351,45 @@ LayoutUnit RenderTextControlSingleLine::computeControlLogicalHeight(LayoutUnit l
     return lineHeight + nonContentHeight;
 }
 
-PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
+PassRef<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
-    RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();   
-    textBlockStyle->inheritFrom(startStyle);
-    adjustInnerTextStyle(startStyle, textBlockStyle.get());
+    auto textBlockStyle = RenderStyle::create();
+    textBlockStyle.get().inheritFrom(startStyle);
+    adjustInnerTextStyle(startStyle, &textBlockStyle.get());
 
-    textBlockStyle->setWhiteSpace(PRE);
-    textBlockStyle->setOverflowWrap(NormalOverflowWrap);
-    textBlockStyle->setOverflowX(OHIDDEN);
-    textBlockStyle->setOverflowY(OHIDDEN);
-    textBlockStyle->setTextOverflow(textShouldBeTruncated() ? TextOverflowEllipsis : TextOverflowClip);
+    textBlockStyle.get().setWhiteSpace(PRE);
+    textBlockStyle.get().setOverflowWrap(NormalOverflowWrap);
+    textBlockStyle.get().setOverflowX(OHIDDEN);
+    textBlockStyle.get().setOverflowY(OHIDDEN);
+    textBlockStyle.get().setTextOverflow(textShouldBeTruncated() ? TextOverflowEllipsis : TextOverflowClip);
 
     if (m_desiredInnerTextLogicalHeight >= 0)
-        textBlockStyle->setLogicalHeight(Length(m_desiredInnerTextLogicalHeight, Fixed));
+        textBlockStyle.get().setLogicalHeight(Length(m_desiredInnerTextLogicalHeight, Fixed));
     // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle->fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
-        textBlockStyle->setLineHeight(RenderStyle::initialLineHeight());
+    if (textBlockStyle.get().fontMetrics().lineSpacing() > lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes))
+        textBlockStyle.get().setLineHeight(RenderStyle::initialLineHeight());
 
-    textBlockStyle->setDisplay(BLOCK);
+    textBlockStyle.get().setDisplay(BLOCK);
 
-    return textBlockStyle.release();
+    return textBlockStyle;
 }
 
-PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
+PassRef<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const RenderStyle* startStyle) const
 {
-    RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
-    innerBlockStyle->inheritFrom(startStyle);
+    auto innerBlockStyle = RenderStyle::create();
+    innerBlockStyle.get().inheritFrom(startStyle);
 
-    innerBlockStyle->setFlexGrow(1);
+    innerBlockStyle.get().setFlexGrow(1);
     // min-width: 0; is needed for correct shrinking.
     // FIXME: Remove this line when https://bugs.webkit.org/show_bug.cgi?id=111790 is fixed.
-    innerBlockStyle->setMinWidth(Length(0, Fixed));
-    innerBlockStyle->setDisplay(BLOCK);
-    innerBlockStyle->setDirection(LTR);
+    innerBlockStyle.get().setMinWidth(Length(0, Fixed));
+    innerBlockStyle.get().setDisplay(BLOCK);
+    innerBlockStyle.get().setDirection(LTR);
 
     // We don't want the shadow dom to be editable, so we set this block to read-only in case the input itself is editable.
-    innerBlockStyle->setUserModify(READ_ONLY);
+    innerBlockStyle.get().setUserModify(READ_ONLY);
 
-    return innerBlockStyle.release();
+    return innerBlockStyle;
 }
 
 bool RenderTextControlSingleLine::textShouldBeTruncated() const

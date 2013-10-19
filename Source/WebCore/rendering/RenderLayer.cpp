@@ -6280,7 +6280,7 @@ void RenderLayer::updateScrollCornerStyle()
             m_scrollCorner = new RenderScrollbarPart(renderer().document());
             m_scrollCorner->setParent(&renderer());
         }
-        m_scrollCorner->setStyle(corner.release());
+        m_scrollCorner->setStyle(corner.releaseNonNull());
     } else if (m_scrollCorner) {
         m_scrollCorner->destroy();
         m_scrollCorner = 0;
@@ -6296,7 +6296,7 @@ void RenderLayer::updateResizerStyle()
             m_resizer = new RenderScrollbarPart(renderer().document());
             m_resizer->setParent(&renderer());
         }
-        m_resizer->setStyle(resizer.release());
+        m_resizer->setStyle(resizer.releaseNonNull());
     } else if (m_resizer) {
         m_resizer->destroy();
         m_resizer = 0;
@@ -6327,8 +6327,8 @@ void RenderLayer::removeReflection()
 
 void RenderLayer::updateReflectionStyle()
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(renderer().style());
+    auto newStyle = RenderStyle::create();
+    newStyle.get().inheritFrom(renderer().style());
     
     // Map in our transform.
     TransformOperations transform;
@@ -6354,12 +6354,12 @@ void RenderLayer::updateReflectionStyle()
             transform.operations().append(TranslateTransformOperation::create(renderer().style()->boxReflect()->offset(), Length(0, Fixed), TransformOperation::TRANSLATE));
             break;
     }
-    newStyle->setTransform(transform);
+    newStyle.get().setTransform(transform);
 
     // Map in our mask.
-    newStyle->setMaskBoxImage(renderer().style()->boxReflect()->mask());
+    newStyle.get().setMaskBoxImage(renderer().style()->boxReflect()->mask());
     
-    m_reflection->setStyle(newStyle.release());
+    m_reflection->setStyle(std::move(newStyle));
 }
 
 #if ENABLE(CSS_SHADERS)

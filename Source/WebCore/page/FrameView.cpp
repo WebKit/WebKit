@@ -3218,7 +3218,7 @@ void FrameView::updateScrollCorner()
     if (cornerStyle) {
         if (!m_scrollCorner)
             m_scrollCorner = new RenderScrollbarPart(renderer->document());
-        m_scrollCorner->setStyle(cornerStyle.release());
+        m_scrollCorner->setStyle(cornerStyle.releaseNonNull());
         invalidateScrollCorner(cornerRect);
     } else if (m_scrollCorner) {
         m_scrollCorner->destroy();

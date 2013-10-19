@@ -1378,8 +1378,7 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
 RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
     RenderTableCell* newCell = new RenderTableCell(parent->document());
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL);
-    newCell->setStyle(newStyle.release());
+    newCell->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL));
     return newCell;
 }
 

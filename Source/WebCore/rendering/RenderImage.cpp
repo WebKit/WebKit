@@ -84,9 +84,9 @@ void RenderImage::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
     // Images are special and must inherit the pseudoStyle so the width and height of
     // the pseudo element doesn't change the size of the image. In all other cases we
     // can just share the style.
-    RefPtr<RenderStyle> style = RenderStyle::create();
-    style->inheritFrom(pseudoStyle.get());
-    setStyle(style.release());
+    auto style = RenderStyle::create();
+    style.get().inheritFrom(pseudoStyle.get());
+    setStyle(std::move(style));
 }
 
 void RenderImage::setImageResource(PassOwnPtr<RenderImageResource> imageResource)

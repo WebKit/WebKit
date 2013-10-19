@@ -81,30 +81,30 @@ void RenderFullScreen::willBeDestroyed()
     RenderFlexibleBox::willBeDestroyed();
 }
 
-static PassRefPtr<RenderStyle> createFullScreenStyle()
+static PassRef<RenderStyle> createFullScreenStyle()
 {
-    RefPtr<RenderStyle> fullscreenStyle = RenderStyle::createDefaultStyle();
+    auto fullscreenStyle = RenderStyle::createDefaultStyle();
 
     // Create a stacking context:
-    fullscreenStyle->setZIndex(INT_MAX);
+    fullscreenStyle.get().setZIndex(INT_MAX);
 
-    fullscreenStyle->setFontDescription(FontDescription());
-    fullscreenStyle->font().update(0);
+    fullscreenStyle.get().setFontDescription(FontDescription());
+    fullscreenStyle.get().font().update(0);
 
-    fullscreenStyle->setDisplay(FLEX);
-    fullscreenStyle->setJustifyContent(JustifyCenter);
-    fullscreenStyle->setAlignItems(AlignCenter);
-    fullscreenStyle->setFlexDirection(FlowColumn);
+    fullscreenStyle.get().setDisplay(FLEX);
+    fullscreenStyle.get().setJustifyContent(JustifyCenter);
+    fullscreenStyle.get().setAlignItems(AlignCenter);
+    fullscreenStyle.get().setFlexDirection(FlowColumn);
     
-    fullscreenStyle->setPosition(FixedPosition);
-    fullscreenStyle->setWidth(Length(100.0, Percent));
-    fullscreenStyle->setHeight(Length(100.0, Percent));
-    fullscreenStyle->setLeft(Length(0, WebCore::Fixed));
-    fullscreenStyle->setTop(Length(0, WebCore::Fixed));
+    fullscreenStyle.get().setPosition(FixedPosition);
+    fullscreenStyle.get().setWidth(Length(100.0, Percent));
+    fullscreenStyle.get().setHeight(Length(100.0, Percent));
+    fullscreenStyle.get().setLeft(Length(0, WebCore::Fixed));
+    fullscreenStyle.get().setTop(Length(0, WebCore::Fixed));
     
-    fullscreenStyle->setBackgroundColor(Color::black);
-    
-    return fullscreenStyle.release();
+    fullscreenStyle.get().setBackgroundColor(Color::black);
+
+    return fullscreenStyle;
 }
 
 RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
@@ -176,13 +176,13 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const La
 
     if (!m_placeholder) {
         m_placeholder = new RenderFullScreenPlaceholder(*this);
-        m_placeholder->setStyle(style);
+        m_placeholder->setStyle(*style);
         if (parent()) {
             parent()->addChild(m_placeholder, this);
             parent()->setNeedsLayoutAndPrefWidthsRecalc();
         }
     } else
-        m_placeholder->setStyle(style);
+        m_placeholder->setStyle(*style);
 }
 
 #endif

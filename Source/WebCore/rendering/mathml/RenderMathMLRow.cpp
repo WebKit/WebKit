@@ -49,9 +49,8 @@ RenderMathMLRow::RenderMathMLRow(Document& document)
 // FIXME: Change all these createAnonymous... routines to return a PassOwnPtr<>.
 RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX);
     RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document());
-    newMRow->setStyle(newStyle.release());
+    newMRow->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
     return newMRow;
 }
 

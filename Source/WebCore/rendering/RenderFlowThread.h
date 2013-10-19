@@ -94,7 +94,7 @@ public:
     void invalidateRegions();
     bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
 
-    static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
+    static PassRef<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 

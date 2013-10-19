@@ -36,9 +36,9 @@ public:
     RenderStyle* style() const { return m_style.get(); }
     RenderStyle* firstLineStyle() const;
 
-    virtual void setStyle(PassRefPtr<RenderStyle>);
+    virtual void setStyle(PassRef<RenderStyle>);
     // Called to update a style that is allowed to trigger animations.
-    void setAnimatableStyle(PassRefPtr<RenderStyle>);
+    void setAnimatableStyle(PassRef<RenderStyle>);
 
     // This is null for anonymous renderers.
     Element* element() const { return toElement(RenderObject::node()); }

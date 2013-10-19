@@ -349,10 +349,10 @@ private:
     ALWAYS_INLINE RenderStyle(const RenderStyle&);
 
 public:
-    static PassRefPtr<RenderStyle> create();
-    static PassRefPtr<RenderStyle> createDefaultStyle();
-    static PassRefPtr<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
-    static PassRefPtr<RenderStyle> clone(const RenderStyle*);
+    static PassRef<RenderStyle> create();
+    static PassRef<RenderStyle> createDefaultStyle();
+    static PassRef<RenderStyle> createAnonymousStyleWithDisplay(const RenderStyle* parentStyle, EDisplay);
+    static PassRef<RenderStyle> clone(const RenderStyle*);
 
     enum IsAtShadowBoundary {
         AtShadowBoundary,

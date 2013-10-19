@@ -495,19 +495,19 @@ void AnimationController::cancelAnimations(RenderElement* renderer)
     }
 }
 
-PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderElement* renderer, RenderStyle* newStyle)
+PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& renderer, PassRef<RenderStyle> newStyle)
 {
     // Don't do anything if we're in the cache
-    if (renderer->document().inPageCache())
+    if (renderer.document().inPageCache())
         return newStyle;
 
-    RenderStyle* oldStyle = renderer->style();
+    RenderStyle* oldStyle = renderer.style();
 
-    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle->animations() && !newStyle->transitions()))
+    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.get().animations() && !newStyle.get().transitions()))
         return newStyle;
 
     // Don't run transitions when printing.
-    if (renderer->view().printing())
+    if (renderer.view().printing())
         return newStyle;
 
     // Fetch our current set of implicit animations from a hashtable.  We then compare them
@@ -516,26 +516,30 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderElement* ren
     // a new style.
 
     // We don't support anonymous pseudo elements like :first-line or :first-letter.
-    ASSERT(renderer->element());
+    ASSERT(renderer.element());
 
-    CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(renderer);
-    RefPtr<RenderStyle> blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyle);
+    Ref<RenderStyle> newStyleBeforeAnimation(std::move(newStyle));
 
-    if (renderer->parent() || newStyle->animations() || (oldStyle && oldStyle->animations())) {
-        m_data->updateAnimationTimerForRenderer(renderer);
+    CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(&renderer);
+
+    // FIXME: This could be a PassRef<RenderStyle>.
+    RefPtr<RenderStyle> blendedStyle = rendererAnimations.animate(&renderer, oldStyle, &newStyleBeforeAnimation.get());
+
+    if (renderer.parent() || newStyleBeforeAnimation->animations() || (oldStyle && oldStyle->animations())) {
+        m_data->updateAnimationTimerForRenderer(&renderer);
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-        renderer->view().frameView().scheduleAnimation();
+        renderer.view().frameView().scheduleAnimation();
 #endif
     }
 
-    if (blendedStyle != newStyle) {
+    if (blendedStyle != &newStyleBeforeAnimation.get()) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
         // done in StyleResolver::adjustRenderStyle().
         if (blendedStyle->hasAutoZIndex() && (blendedStyle->opacity() < 1.0f || blendedStyle->hasTransform()))
             blendedStyle->setZIndex(0);
     }
-    return blendedStyle.release();
+    return blendedStyle.releaseNonNull();
 }
 
 PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement* renderer)

@@ -52,7 +52,7 @@ namespace WTF {
         ALWAYS_INLINE ~PassRefPtr() { derefIfNotNull(m_ptr); }
 
         template<typename U> PassRefPtr(const RefPtr<U>&);
-        template<typename U> PassRefPtr(PassRef<U> reference) : m_ptr(&reference.takeReference()) { }
+        template<typename U> PassRefPtr(PassRef<U> reference) : m_ptr(&reference.leakRef()) { }
 
         T* get() const { return m_ptr; }
 
