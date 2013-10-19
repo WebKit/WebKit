@@ -1,3 +1,17 @@
+2013-10-19  Nadav Rotem  <nrotem@apple.com>
+
+        DFG dominators: document and rename stuff.
+        https://bugs.webkit.org/show_bug.cgi?id=123056
+
+        Reviewed by Filip Pizlo.
+
+        Documented the code and renamed some variables.
+
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::compute):
+        (JSC::DFG::Dominators::pruneDominators):
+        * dfg/DFGDominators.h:
+
 2013-10-19  Julien Brianceau  <jbriance@cisco.com>
 
         Fix build failure for architectures with 4 argument registers.
