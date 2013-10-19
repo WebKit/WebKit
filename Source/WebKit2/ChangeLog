@@ -2,6 +2,13 @@
 
         Try to fix the Mac 32-bit build.
 
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+
+2013-10-19  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Mac 32-bit build.
+
         * UIProcess/API/mac/WKView.h:
         * UIProcess/API/mac/WKView.mm:
         * UIProcess/API/mac/WKViewInternal.h:
