@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-bool IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreLevelDB::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
+bool IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
     canAddKeys = false;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -61,7 +61,7 @@ bool IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys(IDBBackingStoreL
     return true;
 }
 
-void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier& recordIdentifier, IDBBackingStoreLevelDB& backingStore, IDBBackingStoreLevelDB::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier& recordIdentifier, IDBBackingStoreLevelDB& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
 {
     int64_t indexId = m_indexMetadata.id;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -71,7 +71,7 @@ void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBBackingS
     }
 }
 
-bool IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreLevelDB::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
+bool IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
 {
     allowed = false;
     if (!m_indexMetadata.unique) {

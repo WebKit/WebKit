@@ -1,3 +1,57 @@
+2013-10-19  Brady Eidson  <beidson@apple.com>
+
+        Add abstract IDBBackingStoreInterface, use it to get IDBDatabaseBackendLevelDB closer to going cross-platform
+        https://bugs.webkit.org/show_bug.cgi?id=123074
+
+        Reviewed by Andreas Kling.
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h: Added.
+        (WebCore::IDBBackingStoreInterface::~IDBBackingStoreInterface):
+        (WebCore::IDBBackingStoreInterface::Transaction::~Transaction):
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseIntVersion):
+        (WebCore::IDBBackingStoreLevelDB::createObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::getRecord):
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::clearObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::createIndex):
+        (WebCore::IDBBackingStoreLevelDB::deleteIndex):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::IDBBackingStoreLevelDB::findKeyInIndex):
+        (WebCore::IDBBackingStoreLevelDB::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInIndex):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+        (WebCore::IDBBackingStoreLevelDB::Transaction::reset):
+        (WebCore::IDBBackingStoreLevelDB::Transaction::levelDBTransactionFrom):
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        (WebCore::IDBCursorBackendLevelDB::deleteFunction):
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp:
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys):
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys):
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed):
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+        (WebCore::IDBTransactionBackendLevelDB::backingStoreTransaction):
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.list.am:
+
 2013-10-20  Andreas Kling  <akling@apple.com>
 
         Use PassRef for StyleSheetContents.

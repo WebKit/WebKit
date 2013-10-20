@@ -68,7 +68,7 @@ public:
     void unregisterOpenCursor(IDBCursorBackendLevelDB*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    virtual IDBBackingStoreLevelDB::Transaction* backingStoreTransaction() { return &m_transaction; }
+    virtual IDBBackingStoreInterface::Transaction* backingStoreTransaction() { return &m_transaction; }
 
     IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
 

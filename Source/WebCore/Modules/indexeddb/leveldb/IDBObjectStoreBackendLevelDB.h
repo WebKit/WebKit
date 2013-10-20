@@ -55,12 +55,12 @@ namespace IDBObjectStoreBackendLevelDB {
             , m_indexKeys(indexKeys)
         { }
 
-        bool verifyIndexKeys(IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
+        bool verifyIndexKeys(IDBBackingStoreLevelDB&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
 
-        void writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier&, IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
+        void writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier&, IDBBackingStoreLevelDB&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
 
     private:
-        bool addingKeyAllowed(IDBBackingStoreLevelDB&, IDBBackingStoreLevelDB::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
+        bool addingKeyAllowed(IDBBackingStoreLevelDB&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
         const IDBIndexMetadata m_indexMetadata;
         IDBDatabaseBackendInterface::IndexKeys m_indexKeys;

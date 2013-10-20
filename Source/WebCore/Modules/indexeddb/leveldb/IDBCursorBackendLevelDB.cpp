@@ -162,7 +162,7 @@ void IDBCursorBackendLevelDB::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbac
     LOG(StorageAPI, "IDBCursorBackendLevelDB::delete");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
-    m_database->deleteRange(m_transaction->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
+    m_database->deleteRange(m_transaction.get()->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
 }
 
 void IDBCursorBackendLevelDB::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)

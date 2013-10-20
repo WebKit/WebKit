@@ -77,7 +77,7 @@ private:
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
     const RefPtr<IDBDatabaseBackendLevelDB> m_database;
-    const RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
     const int64_t m_objectStoreId;
 
     RefPtr<IDBBackingStoreLevelDB::Cursor> m_cursor; // Must be destroyed before m_transaction.
