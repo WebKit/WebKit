@@ -195,12 +195,6 @@ public:
         putIntegralUnchecked(value.low);
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-    {
-        flushConstantPool(false);
-        return AssemblerBuffer::executableCopy(vm, ownerUID, effort);
-    }
-
     void putShortWithConstantInt(uint16_t insn, uint32_t constant, bool isReusable = false)
     {
         putIntegralWithConstantInt(insn, constant, isReusable);

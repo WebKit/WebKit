@@ -345,6 +345,8 @@ public:
     {
     }
 
+    AssemblerBuffer& buffer() { return m_buffer; }
+
     // SH4 condition codes
     typedef enum {
         EQ = 0x0, // Equal
@@ -1651,11 +1653,6 @@ public:
         uint16_t* instructionPtr = static_cast<uint16_t*>(from);
         instructionPtr -= 3;
         return reinterpret_cast<void*>(readPCrelativeAddress((*instructionPtr & 0xff), instructionPtr));
-    }
-
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-    {
-        return m_buffer.executableCopy(vm, ownerUID, effort);
     }
 
     static void cacheFlush(void* code, size_t size)

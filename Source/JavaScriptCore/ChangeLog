@@ -1,3 +1,15 @@
+2013-10-20  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Fix build (broken since r157690).
+        https://bugs.webkit.org/show_bug.cgi?id=123081
+
+        Reviewed by Andreas Kling.
+
+        * assembler/AssemblerBufferWithConstantPool.h:
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::buffer):
+        (JSC::SH4Assembler::readCallTarget):
+
 2013-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         Simplify TempRegisterSet - it no longer needs to be convertible to a POD since it's no longer going to be a member of a union
