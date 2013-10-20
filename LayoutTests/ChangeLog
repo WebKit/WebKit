@@ -1,3 +1,9 @@
+2013-10-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed roll out of r157695; broke Mac builds.
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Removed.
+
 2013-10-07  Jer Noble  <jer.noble@apple.com>
 
         [MSE] [Mac] Enable MediaSource on the Mac
