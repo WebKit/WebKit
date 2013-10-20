@@ -89,7 +89,7 @@ unsigned CSSGroupingRule::insertRule(const String& ruleString, unsigned index, E
     }
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_groupRule->wrapperInsertRule(index, newRule);
+    m_groupRule->wrapperInsertRule(index, newRule.releaseNonNull());
 
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;

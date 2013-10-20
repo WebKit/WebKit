@@ -39,7 +39,7 @@ class WebKitCSSKeyframeRule;
 
 class StyleRuleKeyframes : public StyleRuleBase {
 public:
-    static PassRefPtr<StyleRuleKeyframes> create() { return adoptRef(new StyleRuleKeyframes()); }
+    static PassRef<StyleRuleKeyframes> create() { return adoptRef(*new StyleRuleKeyframes()); }
     
     ~StyleRuleKeyframes();
     
@@ -54,7 +54,7 @@ public:
     
     int findKeyframeIndex(const String& key) const;
 
-    PassRefPtr<StyleRuleKeyframes> copy() const { return adoptRef(new StyleRuleKeyframes(*this)); }
+    PassRef<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
 private:
     StyleRuleKeyframes();

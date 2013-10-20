@@ -1,3 +1,17 @@
+2013-10-19  Andreas Kling  <akling@apple.com>
+
+        Use PassRef for constructing StyleRules.
+        <https://webkit.org/b/123072>
+
+        Let functions that return newly-constructed StyleRuleFoo objects
+        vend PassRef<StyleRuleFoo> instead of PassRefPtr.
+
+        Since StyleRuleBase::copy() has to return something, we can't rely
+        on ASSERT_NOT_REACHED() + return nullptr anymore, so I've replaced
+        those with CRASH(). No call sites actually handled null anyway.
+
+        Reviewed by Sam Weinig.
+
 2013-10-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed roll out of r157695; broke Mac builds.
