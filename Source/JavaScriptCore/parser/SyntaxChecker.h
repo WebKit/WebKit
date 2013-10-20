@@ -27,7 +27,7 @@
 #define SyntaxChecker_h
 
 #include "Lexer.h"
-#include <yarr/YarrSyntaxChecker.h>
+#include "YarrSyntaxChecker.h"
 
 namespace JSC {
     

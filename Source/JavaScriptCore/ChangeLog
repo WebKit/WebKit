@@ -1,3 +1,20 @@
+2013-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Some includes in JSC seem to use an incorrect style
+        https://bugs.webkit.org/show_bug.cgi?id=123057
+
+        Reviewed by Geoffrey Garen.
+
+        Changed pseudo-system includes to user ones.
+
+        * API/JSContextRef.cpp:
+        * API/JSStringRefCF.cpp:
+        * API/JSValueRef.cpp:
+        * API/OpaqueJSString.cpp:
+        * jit/JIT.h:
+        * parser/SyntaxChecker.h:
+        * runtime/WeakGCMap.h:
+
 2013-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT and DFG IC code generation should be unified and rationalized

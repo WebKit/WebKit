@@ -29,15 +29,14 @@
 #include "APICast.h"
 #include "APIShims.h"
 #include "JSAPIWrapperObject.h"
+#include "JSCJSValue.h"
 #include "JSCallbackObject.h"
-
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSONObject.h>
-#include <runtime/JSString.h>
-#include <runtime/LiteralParser.h>
-#include <runtime/Operations.h>
-#include <runtime/Protect.h>
+#include "JSGlobalObject.h"
+#include "JSONObject.h"
+#include "JSString.h"
+#include "LiteralParser.h"
+#include "Operations.h"
+#include "Protect.h"
 
 #include <wtf/Assertions.h>
 #include <wtf/text/StringHash.h>

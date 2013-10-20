@@ -28,9 +28,9 @@
 
 #include "APICast.h"
 #include "InitializeThreading.h"
+#include "JSCJSValue.h"
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
-#include <runtime/JSCJSValue.h>
 #include <wtf/StdLibExtras.h>
 
 JSStringRef JSStringCreateWithCFString(CFStringRef string)

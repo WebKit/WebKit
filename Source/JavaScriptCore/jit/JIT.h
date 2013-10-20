@@ -47,8 +47,8 @@
 #include "LegacyProfiler.h"
 #include "Opcode.h"
 #include "ResultType.h"
+#include "SamplingTool.h"
 #include "UnusedPointer.h"
-#include <bytecode/SamplingTool.h>
 
 namespace JSC {
 

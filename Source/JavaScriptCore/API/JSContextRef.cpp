@@ -28,9 +28,9 @@
 #include "JSContextRefPrivate.h"
 
 #include "APICast.h"
+#include "CallFrame.h"
 #include "CallFrameInlines.h"
 #include "InitializeThreading.h"
-#include <interpreter/CallFrame.h>
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
