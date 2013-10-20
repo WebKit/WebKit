@@ -1,3 +1,16 @@
+2013-10-19  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Adding test case for text-decoration property state change on applying different command
+        https://bugs.webkit.org/show_bug.cgi?id=123073
+
+        Reviewed by Ryosuke Niwa.
+
+        This test case verify text-decoration property state on element after
+        applying editing commands related to text-decoration.
+
+        * editing/style/text-decoration-state-change-expected.txt: Added.
+        * editing/style/text-decoration-state-change.html: Added.
+
 2013-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         WebAudio Mac expected results were misplaced - they apply equally to WK1 and WK2.
