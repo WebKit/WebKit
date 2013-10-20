@@ -318,6 +318,8 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vect
         plugins.append(PDFPlugin::pluginInfo());
         applicationPlugins.append(PDFPlugin::pluginInfo());
     }
+#else
+    UNUSED_PARAM(applicationPlugins);
 #endif
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

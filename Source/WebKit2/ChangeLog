@@ -1,3 +1,41 @@
+2013-10-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Removing "unused parameter" compiling warnings from WebKit2 and WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=123075
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::loadResourceSynchronously):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetPluginSiteDataManager):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInspectorUsesWebKitUserInterface):
+        (WKPreferencesGetInspectorUsesWebKitUserInterface):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetFullScreenClient):
+        (WKBundlePageWillEnterFullScreen):
+        (WKBundlePageDidEnterFullScreen):
+        (WKBundlePageWillExitFullScreen):
+        (WKBundlePageDidExitFullScreen):
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::clearCacheForHostname):
+        * WebProcess/OriginData/WebOriginDataManager.cpp:
+        (WebKit::WebOriginDataManager::getOrigins):
+        (WebKit::WebOriginDataManager::deleteEntriesForOrigin):
+        (WebKit::WebOriginDataManager::deleteAllEntries):
+        (WebKit::WebOriginDataManager::startObservingChanges):
+        (WebKit::WebOriginDataManager::stopObservingChanges):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        (WebKit::WebFrameLoaderClient::recreatePlugin):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canPluginHandleResponse):
+
 2013-10-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed roll out of r157695; broke Mac builds.

@@ -1008,6 +1008,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContents(GstMessage* message)
 
 void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry, GstTocEntry* parent)
 {
+    UNUSED_PARAM(parent);
     ASSERT(entry);
 
     RefPtr<GenericCueData> cue = GenericCueData::create();

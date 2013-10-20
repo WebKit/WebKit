@@ -104,6 +104,11 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
             return;
         }
     }
+#else
+    UNUSED_PARAM(canRubberBandsAtLeft);
+    UNUSED_PARAM(canRubberBandsAtRight);
+    UNUSED_PARAM(canRubberBandsAtTop);
+    UNUSED_PARAM(canRubberBandsAtBottom);
 #endif
 
     RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));

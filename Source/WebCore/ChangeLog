@@ -1,3 +1,19 @@
+2013-10-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Removing "unused parameter" compiling warnings from WebKit2 and WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=123075
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        (WebCore::RTCDTMFToneChangeEvent::create):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (lineAtPositionForAtkBoundary):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+
 2013-10-19  Andreas Kling  <akling@apple.com>
 
         Use PassRef for constructing StyleRules.

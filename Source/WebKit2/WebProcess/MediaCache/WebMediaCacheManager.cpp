@@ -61,6 +61,8 @@ void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCacheForSite(hostname);
+#else
+    UNUSED_PARAM(hostname);
 #endif
 }
 

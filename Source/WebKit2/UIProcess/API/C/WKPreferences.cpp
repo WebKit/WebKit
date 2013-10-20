@@ -798,12 +798,12 @@ bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->applicationChromeMode();
 }
 
-void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef, bool enabled)
+void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
 {
     // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
 }
 
-bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef)
 {
     // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
     return false;

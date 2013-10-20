@@ -1316,6 +1316,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 
     return PluginView::create(pluginElement, plugin.release(), parameters);
 #else
+    UNUSED_PARAM(pluginElement);
     return 0;
 #endif
 }
@@ -1330,6 +1331,8 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
     String newMIMEType;
     RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginView->pluginElement(), pluginView->initialParameters(), newMIMEType);
     pluginView->recreateAndInitialize(plugin.release());
+#else
+    UNUSED_PARAM(widget);
 #endif
 }
 

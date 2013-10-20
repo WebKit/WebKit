@@ -3631,6 +3631,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 
     return pluginLoadPolicy != PluginModuleBlocked && pluginProcessToken;
 #else
+    UNUSED_PARAM(response);
     return false;
 #endif
 }

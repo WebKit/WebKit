@@ -84,7 +84,7 @@ ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
     return 0;
 }
 
-void NetworkProcessPlatformStrategies::loadResourceSynchronously(NetworkingContext*, unsigned long resourceLoadIdentifier, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data)
+void NetworkProcessPlatformStrategies::loadResourceSynchronously(NetworkingContext*, unsigned long, const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>&)
 {
     ASSERT_NOT_REACHED();
 }

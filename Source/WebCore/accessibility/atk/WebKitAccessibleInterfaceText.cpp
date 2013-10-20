@@ -950,6 +950,7 @@ static char* webkitAccessibleTextSentenceForBoundary(AtkText* text, int offset, 
 
 static VisibleSelection lineAtPositionForAtkBoundary(const AccessibilityObject* coreObject, const VisiblePosition& position, AtkTextBoundary boundaryType)
 {
+    UNUSED_PARAM(coreObject);
     VisiblePosition startPosition;
     VisiblePosition endPosition;
 

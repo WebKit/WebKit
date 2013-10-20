@@ -266,6 +266,7 @@ WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contex
 #if ENABLE(NETSCAPE_PLUGIN_API)
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());
 #else
+    UNUSED_PARAM(contextRef);
     return 0;
 #endif
 }

@@ -51,7 +51,7 @@ WebOriginDataManager::WebOriginDataManager(ChildProcess* childProcess)
     m_childProcess->addMessageReceiver(Messages::WebOriginDataManager::messageReceiverName(), this);
 }
 
-void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callbackID)
+void WebOriginDataManager::getOrigins(WKOriginDataTypes, uint64_t callbackID)
 {
     HashSet<RefPtr<SecurityOrigin>> origins;
 
@@ -76,7 +76,7 @@ void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callback
     m_childProcess->send(Messages::WebOriginDataManagerProxy::DidGetOrigins(identifiers, callbackID), 0);
 }
 
-void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& originData)
+void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData& originData)
 {
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
@@ -85,17 +85,17 @@ void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const
     // FIXME: delete entries for origin
 }
 
-void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes types)
+void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes)
 {
     // FIXME: delete entries
 }
 
-void WebOriginDataManager::startObservingChanges(WKOriginDataTypes types)
+void WebOriginDataManager::startObservingChanges(WKOriginDataTypes)
 {
     // FIXME: start observing changes
 }
 
-void WebOriginDataManager::stopObservingChanges(WKOriginDataTypes types)
+void WebOriginDataManager::stopObservingChanges(WKOriginDataTypes)
 {
     // FIXME: stop observing changes
 }
