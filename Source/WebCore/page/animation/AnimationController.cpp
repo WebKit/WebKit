@@ -167,8 +167,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_nodeChangesToDispatch.isEmpty();
 
     // fire all the events
-    Vector<EventToDispatch> eventsToDispatch = m_eventsToDispatch;
-    m_eventsToDispatch.clear();
+    Vector<EventToDispatch> eventsToDispatch = std::move(m_eventsToDispatch);
     Vector<EventToDispatch>::const_iterator eventsToDispatchEnd = eventsToDispatch.end();
     for (Vector<EventToDispatch>::const_iterator it = eventsToDispatch.begin(); it != eventsToDispatchEnd; ++it) {
         Element* element = it->element.get();

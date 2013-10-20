@@ -1,3 +1,13 @@
+2013-10-20  Andreas Kling  <akling@apple.com>
+
+        Avoid unnecessary vector copy in AnimationController event dispatch.
+        <https://webkit.org/b/122994>
+
+        Use Vector's move constructor instead of making a copy of the pending
+        events queue and then clearing it.
+
+        Reviewed by Simon Fraser.
+
 2013-10-19  Brady Eidson  <beidson@apple.com>
 
         Add abstract IDBBackingStoreInterface, use it to get IDBDatabaseBackendLevelDB closer to going cross-platform
