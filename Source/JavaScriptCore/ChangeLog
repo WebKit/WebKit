@@ -1,5 +1,37 @@
 2013-10-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename RegisterSet to TempRegisterSet
+        https://bugs.webkit.org/show_bug.cgi?id=123077
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::usedRegisters):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/RegisterSet.h: Removed.
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        * jit/TempRegisterSet.h: Copied from Source/JavaScriptCore/jit/RegisterSet.h.
+        (JSC::TempRegisterSet::TempRegisterSet):
+        (JSC::TempRegisterSet::asPOD):
+        (JSC::TempRegisterSet::copyInfo):
+
+2013-10-19  Filip Pizlo  <fpizlo@apple.com>
+
         Restructure LinkBuffer to allow for alternate allocation strategies
         https://bugs.webkit.org/show_bug.cgi?id=123071
 

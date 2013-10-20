@@ -278,9 +278,9 @@ public:
         use(nodeUse.node());
     }
     
-    RegisterSet usedRegisters()
+    TempRegisterSet usedRegisters()
     {
-        RegisterSet result;
+        TempRegisterSet result;
         for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
             GPRReg gpr = GPRInfo::toRegister(i);
             if (m_gprs.isInUse(gpr))

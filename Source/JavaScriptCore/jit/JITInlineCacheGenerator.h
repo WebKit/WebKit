@@ -55,7 +55,7 @@ protected:
     JITByIdGenerator() { }
 
     JITByIdGenerator(
-        CodeBlock*, CodeOrigin, const RegisterSet&, JSValueRegs base, JSValueRegs value,
+        CodeBlock*, CodeOrigin, const TempRegisterSet&, JSValueRegs base, JSValueRegs value,
         bool registersFlushed);
     
 public:
@@ -92,7 +92,7 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
+        CodeBlock* codeBlock, CodeOrigin codeOrigin, const TempRegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs value, bool registersFlushed)
         : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, registersFlushed)
     {
@@ -106,7 +106,7 @@ public:
     JITPutByIdGenerator() { }
 
     JITPutByIdGenerator(
-        CodeBlock*, CodeOrigin, const RegisterSet& usedRegisters, JSValueRegs base,
+        CodeBlock*, CodeOrigin, const TempRegisterSet& usedRegisters, JSValueRegs base,
         JSValueRegs value, GPRReg scratch, bool registersFlushed, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);

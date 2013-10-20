@@ -523,7 +523,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     }
 
     JITGetByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet(),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), TempRegisterSet(),
         JSValueRegs(regT0), JSValueRegs(regT0), true);
     gen.generateFastPath(*this);
     addSlowCase(gen.slowPathJump());
@@ -569,7 +569,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     emitWriteBarrier(regT0, regT1, regT2, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 
     JITPutByIdGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeOffset), RegisterSet(), JSValueRegs(regT0),
+        m_codeBlock, CodeOrigin(m_bytecodeOffset), TempRegisterSet(), JSValueRegs(regT0),
         JSValueRegs(regT1), regT2, true, m_codeBlock->ecmaMode(), direct ? Direct : NotDirect);
     
     gen.generateFastPath(*this);

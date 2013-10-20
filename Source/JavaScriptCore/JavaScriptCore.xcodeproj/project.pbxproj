@@ -121,7 +121,7 @@
 		0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54517EE274900ABB217 /* JITOperations.cpp */; };
 		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; };
 		0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54717EE274900ABB217 /* JITOperationWrappers.h */; };
-		0F24E54F17EE274900ABB217 /* RegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* RegisterSet.h */; };
+		0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* TempRegisterSet.h */; };
 		0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54917EE274900ABB217 /* Repatch.cpp */; };
 		0F24E55117EE274900ABB217 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54A17EE274900ABB217 /* Repatch.h */; };
 		0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */; };
@@ -1373,7 +1373,7 @@
 		0F24E54517EE274900ABB217 /* JITOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOperations.cpp; sourceTree = "<group>"; };
 		0F24E54617EE274900ABB217 /* JITOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperations.h; sourceTree = "<group>"; };
 		0F24E54717EE274900ABB217 /* JITOperationWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperationWrappers.h; sourceTree = "<group>"; };
-		0F24E54817EE274900ABB217 /* RegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterSet.h; sourceTree = "<group>"; };
+		0F24E54817EE274900ABB217 /* TempRegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempRegisterSet.h; sourceTree = "<group>"; };
 		0F24E54917EE274900ABB217 /* Repatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Repatch.cpp; sourceTree = "<group>"; };
 		0F24E54A17EE274900ABB217 /* Repatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Repatch.h; sourceTree = "<group>"; };
 		0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScratchRegisterAllocator.h; sourceTree = "<group>"; };
@@ -2908,12 +2908,12 @@
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 				0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */,
 				0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */,
-				0F24E54817EE274900ABB217 /* RegisterSet.h */,
 				0F24E54917EE274900ABB217 /* Repatch.cpp */,
 				0F24E54A17EE274900ABB217 /* Repatch.h */,
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
+				0F24E54817EE274900ABB217 /* TempRegisterSet.h */,
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
 				A7386553118697B400540279 /* ThunkGenerators.h */,
@@ -4673,7 +4673,7 @@
 				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
-				0F24E54F17EE274900ABB217 /* RegisterSet.h in Headers */,
+				0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,

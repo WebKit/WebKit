@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegisterSet_h
-#define RegisterSet_h
+#ifndef TempRegisterSet_h
+#define TempRegisterSet_h
 
 #include <wtf/Platform.h>
 
@@ -39,30 +39,30 @@ namespace JSC {
 static const unsigned totalNumberOfRegisters =
     GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters;
 
-static const unsigned numberOfBytesInRegisterSet =
+static const unsigned numberOfBytesInTempRegisterSet =
     (totalNumberOfRegisters + 7) >> 3;
 
-typedef uint8_t RegisterSetPOD[numberOfBytesInRegisterSet];
+typedef uint8_t TempRegisterSetPOD[numberOfBytesInTempRegisterSet];
 
-class RegisterSet {
+class TempRegisterSet {
 public:
-    RegisterSet()
+    TempRegisterSet()
     {
-        for (unsigned i = numberOfBytesInRegisterSet; i--;)
+        for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
             m_set[i] = 0;
     }
     
-    RegisterSet(const RegisterSetPOD& other)
+    TempRegisterSet(const TempRegisterSetPOD& other)
     {
-        for (unsigned i = numberOfBytesInRegisterSet; i--;)
+        for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
             m_set[i] = other[i];
     }
     
-    const RegisterSetPOD& asPOD() const { return m_set; }
+    const TempRegisterSetPOD& asPOD() const { return m_set; }
     
-    void copyInfo(RegisterSetPOD& other) const
+    void copyInfo(TempRegisterSetPOD& other) const
     {
-        for (unsigned i = numberOfBytesInRegisterSet; i--;)
+        for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
             other[i] = m_set[i];
     }
     
@@ -201,7 +201,7 @@ private:
         return !!(m_set[i >> 3] & (1 << (i & 7)));
     }
     
-    RegisterSetPOD m_set;
+    TempRegisterSetPOD m_set;
 };
 
 } // namespace JSC
@@ -210,15 +210,15 @@ private:
 
 namespace JSC {
 
-// Define RegisterSetPOD to something that is a POD, but is otherwise useless,
+// Define TempRegisterSetPOD to something that is a POD, but is otherwise useless,
 // to make it easier to refer to this type in code that may be compiled when
 // the DFG is disabled.
 
-struct RegisterSetPOD { };
+struct TempRegisterSetPOD { };
 
 } // namespace JSC
 
 #endif // ENABLE(JIT)
 
-#endif // RegisterSet_h
+#endif // TempRegisterSet_h
 

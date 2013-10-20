@@ -31,7 +31,7 @@
 #if ENABLE(JIT)
 
 #include "MacroAssembler.h"
-#include "RegisterSet.h"
+#include "TempRegisterSet.h"
 
 namespace JSC {
 
@@ -39,7 +39,7 @@ namespace JSC {
 
 class ScratchRegisterAllocator {
 public:
-    ScratchRegisterAllocator(const RegisterSet& usedRegisters)
+    ScratchRegisterAllocator(const TempRegisterSet& usedRegisters)
         : m_usedRegisters(usedRegisters)
         , m_didReuseRegisters(false)
     {
@@ -184,9 +184,9 @@ public:
     }
     
 private:
-    RegisterSet m_usedRegisters;
-    RegisterSet m_lockedRegisters;
-    RegisterSet m_scratchRegisters;
+    TempRegisterSet m_usedRegisters;
+    TempRegisterSet m_lockedRegisters;
+    TempRegisterSet m_scratchRegisters;
     bool m_didReuseRegisters;
 };
 

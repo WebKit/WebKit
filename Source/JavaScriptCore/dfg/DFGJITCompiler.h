@@ -43,7 +43,7 @@
 #include "JITInlineCacheGenerator.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
-#include "RegisterSet.h"
+#include "TempRegisterSet.h"
 
 namespace JSC {
 

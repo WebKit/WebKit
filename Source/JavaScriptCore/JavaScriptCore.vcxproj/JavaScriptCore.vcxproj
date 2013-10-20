@@ -790,10 +790,10 @@
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
     <ClInclude Include="..\jit\JumpReplacementWatchpoint.h" />
-    <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />
     <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
     <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
+    <ClInclude Include="..\jit\TempRegisterSet.h" />
     <ClInclude Include="..\jit\ThunkGenerator.h" />
     <ClInclude Include="..\jit\ThunkGenerators.h" />
     <ClInclude Include="..\jit\UnusedPointer.h" />
