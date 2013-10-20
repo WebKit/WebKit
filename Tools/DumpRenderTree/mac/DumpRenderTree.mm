@@ -1222,7 +1222,7 @@ void dump()
         printf("DumpMalloc: %li\n", mallocStats.committedVMBytes);
 
         if (gTestRunner->dumpAsAudio())
-            printf("Content-Length: %lu\n", [resultData length]);
+            printf("Content-Length: %lu\n", static_cast<unsigned long>([resultData length]));
 
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);
