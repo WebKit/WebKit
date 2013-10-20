@@ -453,6 +453,8 @@ public:
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
+    
+    AssemblerBuffer& buffer() { return m_buffer; }
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)

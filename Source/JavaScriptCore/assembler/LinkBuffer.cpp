@@ -64,12 +64,7 @@ template <typename InstructionType>
 void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort effort)
 {
     m_initialSize = m_assembler->m_assembler.codeSize();
-    m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, m_initialSize, ownerUID, effort);
-    if (!m_executableMemory)
-        return;
-    m_code = (uint8_t*)m_executableMemory->start();
-    ASSERT(m_code);
-    ExecutableAllocator::makeWritable(m_code, m_initialSize);
+    allocate(m_initialSize, ownerUID, effort);
     uint8_t* inData = (uint8_t*)m_assembler->unlinkedCode();
     uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
     int readPtr = 0;
@@ -125,8 +120,7 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
     }
 
     jumpsToLink.clear();
-    m_size = writePtr + m_initialSize - readPtr;
-    m_executableMemory->shrink(m_size);
+    shrink(writePtr + m_initialSize - readPtr);
 
 #if DUMP_LINK_STATISTICS
     dumpLinkStatistics(m_code, m_initialSize, m_size);
@@ -142,17 +136,34 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 {
     ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
-    m_executableMemory = m_assembler->m_assembler.executableCopy(*m_vm, ownerUID, effort);
-    if (!m_executableMemory)
+    AssemblerBuffer& buffer = m_assembler->m_assembler.buffer();
+    allocate(buffer.codeSize(), ownerUID, effort);
+    if (!m_didAllocate)
         return;
-    m_code = m_executableMemory->start();
-    m_size = m_assembler->m_assembler.codeSize();
     ASSERT(m_code);
+    memcpy(m_code, buffer.data(), buffer.codeSize());
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(ownerUID, effort);
 #elif CPU(ARM64)
     copyCompactAndLinkCode<uint32_t>(ownerUID, effort);
 #endif
+}
+
+void LinkBuffer::allocate(size_t initialSize, void* ownerUID, JITCompilationEffort effort)
+{
+    m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, initialSize, ownerUID, effort);
+    if (!m_executableMemory)
+        return;
+    ExecutableAllocator::makeWritable(m_executableMemory->start(), m_executableMemory->sizeInBytes());
+    m_code = m_executableMemory->start();
+    m_size = initialSize;
+    m_didAllocate = true;
+}
+
+void LinkBuffer::shrink(size_t newSize)
+{
+    m_size = newSize;
+    m_executableMemory->shrink(m_size);
 }
 
 void LinkBuffer::performFinalization()

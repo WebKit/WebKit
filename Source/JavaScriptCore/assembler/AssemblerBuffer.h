@@ -130,23 +130,6 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-        {
-            if (!m_index)
-                return 0;
-
-            RefPtr<ExecutableMemoryHandle> result = vm.executableAllocator.allocate(vm, m_index, ownerUID, effort);
-
-            if (!result)
-                return 0;
-
-            ExecutableAllocator::makeWritable(result->start(), result->sizeInBytes());
-
-            memcpy(result->start(), m_buffer, m_index);
-            
-            return result.release();
-        }
-
         unsigned debugOffset() { return m_index; }
 
     protected:

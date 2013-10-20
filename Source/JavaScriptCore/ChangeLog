@@ -1,3 +1,29 @@
+2013-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Restructure LinkBuffer to allow for alternate allocation strategies
+        https://bugs.webkit.org/show_bug.cgi?id=123071
+
+        Reviewed by Oliver Hunt.
+        
+        The idea is to eventually allow a LinkBuffer to place the code into an already
+        allocated region of memory.  That region of memory could be the nop-slide left behind
+        by a llvm.webkit.patchpoint.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::buffer):
+        * assembler/AssemblerBuffer.h:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::allocate):
+        (JSC::LinkBuffer::shrink):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::didFailToAllocate):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::buffer):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+
 2013-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         Some includes in JSC seem to use an incorrect style

@@ -333,6 +333,8 @@ public:
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
+    
+    AssemblerBuffer& buffer() { return m_formatter.m_buffer; }
 
     // Stack operations:
 
@@ -2122,11 +2124,6 @@ public:
         return b.m_offset - a.m_offset;
     }
     
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-    {
-        return m_formatter.executableCopy(vm, ownerUID, effort);
-    }
-
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 
     void nop()
@@ -2480,11 +2477,6 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-        {
-            return m_buffer.executableCopy(vm, ownerUID, effort);
-        }
-
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 
     private:
@@ -2658,6 +2650,7 @@ private:
         }
 #endif
 
+    public:
         AssemblerBuffer m_buffer;
     } m_formatter;
     int m_indexOfLastWatchpoint;

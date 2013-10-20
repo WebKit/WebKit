@@ -83,6 +83,7 @@ public:
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
 #endif
+        , m_didAllocate(false)
         , m_code(0)
         , m_assembler(masm)
         , m_vm(&vm)
@@ -99,7 +100,7 @@ public:
     
     bool didFailToAllocate() const
     {
-        return !m_executableMemory;
+        return !m_didAllocate;
     }
 
     bool isValid() const
@@ -241,6 +242,9 @@ private:
     {
         return m_code;
     }
+    
+    void allocate(size_t initialSize, void* ownerUID, JITCompilationEffort);
+    void shrink(size_t newSize);
 
     void linkCode(void* ownerUID, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
@@ -263,6 +267,7 @@ private:
 #if ENABLE(BRANCH_COMPACTION)
     size_t m_initialSize;
 #endif
+    bool m_didAllocate;
     void* m_code;
     MacroAssembler* m_assembler;
     VM* m_vm;
