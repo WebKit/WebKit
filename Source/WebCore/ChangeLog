@@ -1,3 +1,14 @@
+2013-10-07  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] [Mac] Enable MediaSource on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=122484
+
+        Reviewed by Darin Adler.
+
+        Enable ENABLE_MEDIA_SOURCE.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-10-19  Sam Weinig  <sam@webkit.org>
 
         CTTE: Tighten up type usage around InputType::innerTextElement()

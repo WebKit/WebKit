@@ -216,6 +216,10 @@
 #define ENABLE_INPUT_TYPE_COLOR_POPOVER 1
 #endif
 
+#if !defined(ENABLE_MEDIA_SOURCE)
+#define ENABLE_MEDIA_SOURCE 1
+#endif
+
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 /* --------- Apple Windows port --------- */
