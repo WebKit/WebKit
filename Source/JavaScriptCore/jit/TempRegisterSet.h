@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,17 +32,8 @@
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
-#include <wtf/Bitmap.h>
 
 namespace JSC {
-
-static const unsigned totalNumberOfRegisters =
-    GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters;
-
-static const unsigned numberOfBytesInTempRegisterSet =
-    (totalNumberOfRegisters + 7) >> 3;
-
-typedef uint8_t TempRegisterSetPOD[numberOfBytesInTempRegisterSet];
 
 class TempRegisterSet {
 public:
@@ -50,20 +41,6 @@ public:
     {
         for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
             m_set[i] = 0;
-    }
-    
-    TempRegisterSet(const TempRegisterSetPOD& other)
-    {
-        for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
-            m_set[i] = other[i];
-    }
-    
-    const TempRegisterSetPOD& asPOD() const { return m_set; }
-    
-    void copyInfo(TempRegisterSetPOD& other) const
-    {
-        for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
-            other[i] = m_set[i];
     }
     
     void set(GPRReg reg)
@@ -201,7 +178,13 @@ private:
         return !!(m_set[i >> 3] & (1 << (i & 7)));
     }
     
-    TempRegisterSetPOD m_set;
+    static const unsigned totalNumberOfRegisters =
+        GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters;
+    
+    static const unsigned numberOfBytesInTempRegisterSet =
+        (totalNumberOfRegisters + 7) >> 3;
+
+    uint8_t m_set[numberOfBytesInTempRegisterSet];
 };
 
 } // namespace JSC
@@ -210,11 +193,10 @@ private:
 
 namespace JSC {
 
-// Define TempRegisterSetPOD to something that is a POD, but is otherwise useless,
-// to make it easier to refer to this type in code that may be compiled when
-// the DFG is disabled.
+// Define TempRegisterSet to something, to make it easier to refer to this type in code that
+// make be compiled when the JIT is disabled.
 
-struct TempRegisterSetPOD { };
+struct TempRegisterSet { };
 
 } // namespace JSC
 
