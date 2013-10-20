@@ -102,6 +102,7 @@ WK_EXPORT
 /* URL for a request that has been recieved, and is now being used. */
 @property(readonly) NSURL *committedURL;
 
+@property(readonly) double estimatedProgress;
 
 #pragma mark Active Document Introspection
 

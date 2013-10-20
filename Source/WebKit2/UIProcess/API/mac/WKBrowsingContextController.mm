@@ -270,6 +270,11 @@ static void releaseNSData(unsigned char*, const void* data)
     return autoreleased(WKPageCopyCommittedURL(self._pageRef));
 }
 
+- (double)estimatedProgress
+{
+    return toImpl(self._pageRef)->estimatedProgress();
+}
+
 #pragma mark Active Document Introspection
 
 - (NSString *)title
@@ -451,6 +456,27 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
     }
 }
 
+static void didStartProgress(WKPageRef page, const void* clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidStartProgress:)])
+        [browsingContext.loadDelegate browsingContextControllerDidStartProgress:browsingContext];
+}
+
+static void didChangeProgress(WKPageRef page, const void* clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextController:estimatedProgressChangedTo:)])
+        [browsingContext.loadDelegate browsingContextController:browsingContext estimatedProgressChangedTo:toImpl(page)->estimatedProgress()];
+}
+
+static void didFinishProgress(WKPageRef page, const void* clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFinishProgress:)])
+        [browsingContext.loadDelegate browsingContextControllerDidFinishProgress:browsingContext];
+}
+
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WKPageRef pageRef)
 {
     WKPageLoaderClient loaderClient;
@@ -464,6 +490,10 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     loaderClient.didCommitLoadForFrame = didCommitLoadForFrame;
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     loaderClient.didFailLoadWithErrorForFrame = didFailLoadWithErrorForFrame;
+
+    loaderClient.didStartProgress = didStartProgress;
+    loaderClient.didChangeProgress = didChangeProgress;
+    loaderClient.didFinishProgress = didFinishProgress;
 
     WKPageSetPageLoaderClient(pageRef, &loaderClient);
 }

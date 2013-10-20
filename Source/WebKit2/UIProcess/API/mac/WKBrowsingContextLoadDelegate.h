@@ -48,4 +48,8 @@
 /* Sent if the commited load fails. */
 - (void)browsingContextControllerDidFailLoad:(WKBrowsingContextController *)sender withError:(NSError *)error;
 
+- (void)browsingContextControllerDidStartProgress:(WKBrowsingContextController *)sender;
+- (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress;
+- (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender;
+
 @end

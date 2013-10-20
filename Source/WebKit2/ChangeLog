@@ -1,3 +1,22 @@
+2013-10-20  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Loading progress API
+        https://bugs.webkit.org/show_bug.cgi?id=123069
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Declared estimatedProgress property.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController estimatedProgress]): Added.
+        (didStartProgress): Added. Calls new delegate method
+        -browsingContextControllerDidStartProgress:.
+        (didChangeProgress): Added. Calls new delegate method
+        -browsingContextController:estimatedProgressChangedTo:.
+        (didFinishProgress): Added. Calls new delegate method
+        -browsingContextControllerDidFinishProgress:.
+        (setUpPageLoaderClient): Hook up new client functions.
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h: Declared new delegate methods.
+
 2013-10-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing "unused parameter" compiling warnings from WebKit2 and WebCore
