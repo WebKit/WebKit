@@ -39,10 +39,12 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include "Text.h"
+#include "TextControlInnerElements.h"
 #include "htmlediting.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -203,7 +205,7 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-static inline bool hasVisibleTextArea(RenderElement& textControl, HTMLElement* innerText)
+static inline bool hasVisibleTextArea(RenderElement& textControl, TextControlInnerTextElement* innerText)
 {
     return textControl.style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
@@ -428,7 +430,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     int end = m_cachedSelectionEnd;
 
     ASSERT(start <= end);
-    HTMLElement* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     if (!innerText)
         return 0;
 
@@ -526,8 +528,11 @@ static String finishText(StringBuilder& result)
 
 String HTMLTextFormControlElement::innerTextValue() const
 {
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText || !isTextFormControl())
+    if (!isTextFormControl())
+        return emptyString();
+
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!innerText)
         return emptyString();
 
     StringBuilder result;
@@ -561,11 +566,14 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 {
     // FIXME: It's not acceptable to ignore the HardWrap setting when there is no renderer.
     // While we have no evidence this has ever been a practical problem, it would be best to fix it some day.
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText || !isTextFormControl())
+    if (!isTextFormControl())
         return value();
 
-    RenderBlock* renderer = toRenderBlock(innerText->renderer());
+    TextControlInnerTextElement* innerText = innerTextElement();
+    if (!innerText)
+        return value();
+
+    RenderTextControlInnerBlock* renderer = innerText->renderer();
     if (!renderer)
         return value();
 

@@ -60,6 +60,7 @@ class Node;
 class RenderArena;
 class RenderStyle;
 class TouchEvent;
+class TextControlInnerTextElement;
 
 struct InputElementClickState;
 
@@ -217,7 +218,7 @@ public:
 
     virtual HTMLElement* containerElement() const { return nullptr; }
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
-    virtual HTMLElement* innerTextElement() const { return nullptr; }
+    virtual TextControlInnerTextElement* innerTextElement() const { return nullptr; }
     virtual HTMLElement* innerSpinButtonElement() const { return nullptr; }
     virtual HTMLElement* resultsButtonElement() const { return nullptr; }
     virtual HTMLElement* cancelButtonElement() const { return nullptr; }

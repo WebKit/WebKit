@@ -109,7 +109,7 @@ void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
 // ----------------------------
 
-class RenderTextControlInnerBlock : public RenderBlockFlow {
+class RenderTextControlInnerBlock FINAL : public RenderBlockFlow {
 public:
     RenderTextControlInnerBlock(Element& element)
         : RenderBlockFlow(element)
@@ -118,7 +118,17 @@ public:
 
 private:
     virtual bool hasLineIfEmpty() const OVERRIDE { return true; }
+    virtual bool isTextControlInnerBlock() const OVERRIDE { return true; }
 };
+
+inline RenderTextControlInnerBlock* toRenderTextControlInnerBlock(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTextControlInnerBlock());
+    return static_cast<RenderTextControlInnerBlock*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderTextControlInnerBlock(const RenderTextControlInnerBlock*);
 
 }
 

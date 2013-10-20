@@ -31,6 +31,7 @@ namespace WebCore {
 
 class Position;
 class RenderTextControl;
+class TextControlInnerTextElement;
 class VisiblePosition;
 
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
@@ -75,7 +76,7 @@ public:
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
 
-    virtual HTMLElement* innerTextElement() const = 0;
+    virtual TextControlInnerTextElement* innerTextElement() const = 0;
 
     void selectionChanged(bool userTriggered);
     bool lastChangeWasUserEdit() const;

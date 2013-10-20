@@ -25,9 +25,11 @@
 #include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
 #include "RenderText.h"
+#include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "StyleInheritedData.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include <wtf/unicode/CharacterNames.h>
@@ -50,7 +52,7 @@ HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
     return toHTMLTextFormControlElement(nodeForNonAnonymous());
 }
 
-HTMLElement* RenderTextControl::innerTextElement() const
+TextControlInnerTextElement* RenderTextControl::innerTextElement() const
 {
     return textFormControlElement().innerTextElement();
 }
@@ -58,10 +60,10 @@ HTMLElement* RenderTextControl::innerTextElement() const
 void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
-    Element* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     if (!innerText)
         return;
-    RenderBlock* innerTextRenderer = toRenderBlock(innerText->renderer());
+    RenderTextControlInnerBlock* innerTextRenderer = innerText->renderer();
     if (innerTextRenderer) {
         // We may have set the width and the height in the old style in layout().
         // Reset them now to avoid getting a spurious layout hint.
@@ -101,7 +103,7 @@ int RenderTextControl::textBlockLogicalHeight() const
 
 int RenderTextControl::textBlockLogicalWidth() const
 {
-    Element* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     ASSERT(innerText);
 
     LayoutUnit unitWidth = logicalWidth() - borderAndPaddingLogicalWidth();
@@ -113,7 +115,7 @@ int RenderTextControl::textBlockLogicalWidth() const
 
 void RenderTextControl::updateFromElement()
 {
-    Element* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     if (innerText && innerText->renderer())
         updateUserModifyProperty(textFormControlElement(), innerText->renderer()->style());
 }
@@ -126,7 +128,7 @@ int RenderTextControl::scrollbarThickness() const
 
 void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    HTMLElement* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     ASSERT(innerText);
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
@@ -143,7 +145,7 @@ void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUni
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    HTMLElement* innerText = innerTextElement();
+    TextControlInnerTextElement* innerText = innerTextElement();
     if (!innerText->renderer())
         return;
 

@@ -90,6 +90,7 @@ public:
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
     virtual bool isHTMLUnknownElement() const { return false; }
+    virtual bool isTextControlInnerTextElement() const { return false; }
 
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem() { return 0; }

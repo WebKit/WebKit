@@ -53,7 +53,7 @@ public:
     virtual bool tooLong() const OVERRIDE;
     bool isValidValue(const String&) const;
     
-    virtual HTMLElement* innerTextElement() const OVERRIDE;
+    virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
 
     void rendererWillBeDestroyed();
 

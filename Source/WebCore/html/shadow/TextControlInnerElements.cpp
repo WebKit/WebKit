@@ -117,6 +117,11 @@ RenderElement* TextControlInnerTextElement::createRenderer(RenderStyle&)
     return new RenderTextControlInnerBlock(*this);
 }
 
+RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
+{
+    return toRenderTextControlInnerBlock(HTMLDivElement::renderer());
+}
+
 PassRefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer()
 {
     RenderTextControl* parentRenderer = toRenderTextControl(shadowHost()->renderer());

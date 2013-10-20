@@ -39,8 +39,9 @@ class HTMLImageLoader;
 class HTMLOptionElement;
 class Icon;
 class InputType;
-class URL;
 class ListAttributeTargetObserver;
+class TextControlInnerTextElement;
+class URL;
 struct DateTimeChooserParameters;
 
 struct InputElementClickState {
@@ -138,7 +139,7 @@ public:
 #endif
 
     HTMLElement* containerElement() const;
-    virtual HTMLElement* innerTextElement() const OVERRIDE;
+    virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;

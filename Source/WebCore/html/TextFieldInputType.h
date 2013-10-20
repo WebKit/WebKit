@@ -36,7 +36,8 @@
 
 namespace WebCore {
 
-class FormDataList; 
+class FormDataList;
+class TextControlInnerTextElement;
 
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
@@ -50,7 +51,7 @@ protected:
 
     virtual HTMLElement* containerElement() const OVERRIDE;
     virtual HTMLElement* innerBlockElement() const OVERRIDE;
-    virtual HTMLElement* innerTextElement() const OVERRIDE;
+    virtual TextControlInnerTextElement* innerTextElement() const OVERRIDE;
     virtual HTMLElement* innerSpinButtonElement() const OVERRIDE;
 #if ENABLE(INPUT_SPEECH)
     virtual HTMLElement* speechButtonElement() const OVERRIDE;
@@ -102,7 +103,7 @@ private:
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;
-    RefPtr<HTMLElement> m_innerText;
+    RefPtr<TextControlInnerTextElement> m_innerText;
     RefPtr<HTMLElement> m_placeholder;
     RefPtr<SpinButtonElement> m_innerSpinButton;
 #if ENABLE(INPUT_SPEECH)

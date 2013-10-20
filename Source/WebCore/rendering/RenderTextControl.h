@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class TextControlInnerTextElement;
 class HTMLTextFormControlElement;
 
 class RenderTextControl : public RenderBlockFlow {
@@ -40,7 +41,7 @@ protected:
     explicit RenderTextControl(HTMLTextFormControlElement&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
-    HTMLElement* innerTextElement() const;
+    TextControlInnerTextElement* innerTextElement() const;
 
     int scrollbarThickness() const;
     void adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const;

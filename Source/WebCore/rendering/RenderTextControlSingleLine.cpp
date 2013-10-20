@@ -121,7 +121,7 @@ void RenderTextControlSingleLine::layout()
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 
-    RenderBox* innerTextRenderer = innerTextElement()->renderBox();
+    RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer();
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
 
     // To ensure consistency between layouts, we need to reset any conditionally overriden height.
@@ -261,7 +261,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
         containerRenderer->style()->setHeight(Length());
         containerRenderer->style()->setWidth(Length());
     }
-    RenderObject* innerTextRenderer = innerTextElement()->renderer();
+    RenderTextControlInnerBlock* innerTextRenderer = innerTextElement()->renderer();
     if (innerTextRenderer && diff == StyleDifferenceLayout)
         innerTextRenderer->setNeedsLayout(MarkContainingBlockChain);
     if (HTMLElement* placeholder = inputElement().placeholderElement())
@@ -399,7 +399,7 @@ bool RenderTextControlSingleLine::textShouldBeTruncated() const
 
 void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
 {
-    RenderBox* renderer = innerTextElement()->renderBox();
+    RenderTextControlInnerBlock* renderer = innerTextElement()->renderer();
     if (!renderer)
         return;
     RenderLayer* layer = renderer->layer();
@@ -449,7 +449,7 @@ void RenderTextControlSingleLine::setScrollTop(int newTop)
 
 bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderBox* renderer = innerTextElement()->renderBox();
+    RenderTextControlInnerBlock* renderer = innerTextElement()->renderer();
     if (!renderer)
         return false;
     RenderLayer* layer = renderer->layer();
@@ -460,7 +460,7 @@ bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranul
 
 bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    RenderLayer* layer = innerTextElement()->renderer()->layer();
     if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
         return true;
     return RenderBlockFlow::logicalScroll(direction, granularity, multiplier, stopElement);

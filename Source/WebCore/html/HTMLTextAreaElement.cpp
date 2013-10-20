@@ -322,11 +322,10 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
     return proposedValue.left(numCharactersInGraphemeClusters(proposedValue, maxLength));
 }
 
-HTMLElement* HTMLTextAreaElement::innerTextElement() const
+TextControlInnerTextElement* HTMLTextAreaElement::innerTextElement() const
 {
     Node* node = userAgentShadowRoot()->firstChild();
-    ASSERT(!node || node->hasTagName(divTag));
-    return toHTMLElement(node);
+    return toTextControlInnerTextElement(node);
 }
 
 void HTMLTextAreaElement::rendererWillBeDestroyed()

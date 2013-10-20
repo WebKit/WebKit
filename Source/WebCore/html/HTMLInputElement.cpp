@@ -190,7 +190,7 @@ HTMLElement* HTMLInputElement::containerElement() const
     return m_inputType->containerElement();
 }
 
-HTMLElement* HTMLInputElement::innerTextElement() const
+TextControlInnerTextElement* HTMLInputElement::innerTextElement() const
 {
     return m_inputType->innerTextElement();
 }

@@ -32,9 +32,8 @@
 #include "Font.h"
 #include "Frame.h"
 #include "HTMLElement.h"
-#include "HTMLTextFormControlElement.h"
 #include "HTMLNames.h"
-#include "htmlediting.h"
+#include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"
@@ -46,8 +45,10 @@
 #include "ShadowRoot.h"
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
+#include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include "htmlediting.h"
 #include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -681,7 +682,7 @@ bool TextIterator::handleReplacedElement()
     }
 
     if (m_entersTextControls && renderer->isTextControl()) {
-        if (HTMLElement* innerTextElement = toRenderTextControl(renderer)->textFormControlElement().innerTextElement()) {
+        if (TextControlInnerTextElement* innerTextElement = toRenderTextControl(renderer)->textFormControlElement().innerTextElement()) {
             m_node = innerTextElement->containingShadowRoot();
             pushFullyClippedState(m_fullyClippedStack, m_node);
             m_offset = 0;
