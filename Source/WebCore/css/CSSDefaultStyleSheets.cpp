@@ -80,9 +80,9 @@ static const MediaQueryEvaluator& printEval()
 
 static StyleSheetContents* parseUASheet(const String& str)
 {
-    StyleSheetContents* sheet = StyleSheetContents::create().leakRef(); // leak the sheet on purpose
-    sheet->parseString(str);
-    return sheet;
+    StyleSheetContents& sheet = StyleSheetContents::create().leakRef(); // leak the sheet on purpose
+    sheet.parseString(str);
+    return &sheet;
 }
 
 static StyleSheetContents* parseUASheet(const char* characters, unsigned size)

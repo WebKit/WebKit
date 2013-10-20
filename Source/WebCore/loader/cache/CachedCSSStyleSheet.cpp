@@ -178,13 +178,13 @@ PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
     return m_parsedStyleSheetCache;
 }
 
-void CachedCSSStyleSheet::saveParsedStyleSheet(PassRefPtr<StyleSheetContents> sheet)
+void CachedCSSStyleSheet::saveParsedStyleSheet(PassRef<StyleSheetContents> sheet)
 {
-    ASSERT(sheet && sheet->isCacheable());
+    ASSERT(sheet.get().isCacheable());
 
     if (m_parsedStyleSheetCache)
         m_parsedStyleSheetCache->removedFromMemoryCache();
-    m_parsedStyleSheetCache = sheet;
+    m_parsedStyleSheetCache = std::move(sheet);
     m_parsedStyleSheetCache->addedToMemoryCache();
 
     setDecodedSize(m_parsedStyleSheetCache->estimatedSizeInBytes());

@@ -66,8 +66,8 @@ public:
     void invalidateInjectedStyleSheetCache();
     void updateInjectedStyleSheetCache() const;
 
-    void addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet);
-    void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
+    void addAuthorSheet(PassRef<StyleSheetContents> authorSheet);
+    void addUserSheet(PassRef<StyleSheetContents> userSheet);
 
     enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
 

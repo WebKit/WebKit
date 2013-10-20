@@ -41,17 +41,17 @@ class StyleRuleImport;
 
 class StyleSheetContents : public RefCounted<StyleSheetContents> {
 public:
-    static PassRefPtr<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
+    static PassRef<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(CSSStrictMode))
     {
-        return adoptRef(new StyleSheetContents(0, String(), context));
+        return adoptRef(*new StyleSheetContents(0, String(), context));
     }
-    static PassRefPtr<StyleSheetContents> create(const String& originalURL, const CSSParserContext& context)
+    static PassRef<StyleSheetContents> create(const String& originalURL, const CSSParserContext& context)
     {
-        return adoptRef(new StyleSheetContents(0, originalURL, context));
+        return adoptRef(*new StyleSheetContents(0, originalURL, context));
     }
-    static PassRefPtr<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
+    static PassRef<StyleSheetContents> create(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
     {
-        return adoptRef(new StyleSheetContents(ownerRule, originalURL, context));
+        return adoptRef(*new StyleSheetContents(ownerRule, originalURL, context));
     }
 
     ~StyleSheetContents();
@@ -123,7 +123,7 @@ public:
     bool wrapperInsertRule(PassRefPtr<StyleRuleBase>, unsigned index);
     void wrapperDeleteRule(unsigned index);
 
-    PassRefPtr<StyleSheetContents> copy() const { return adoptRef(new StyleSheetContents(*this)); }
+    PassRef<StyleSheetContents> copy() const { return adoptRef(*new StyleSheetContents(*this)); }
 
     void registerClient(CSSStyleSheet*);
     void unregisterClient(CSSStyleSheet*);

@@ -398,7 +398,7 @@ rule_list:
     | rule_list rule maybe_sgml {
         if (RefPtr<StyleRuleBase> rule = adoptRef($2)) {
             if (parser->m_styleSheet)
-                parser->m_styleSheet->parserAppendRule(rule.release());
+                parser->m_styleSheet->parserAppendRule(rule.releaseNonNull());
         }
     }
     ;

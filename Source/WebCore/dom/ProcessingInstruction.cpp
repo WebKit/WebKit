@@ -198,9 +198,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& base
     ASSERT(m_isCSS);
     CSSParserContext parserContext(document(), baseURL, charset);
 
-    RefPtr<StyleSheetContents> newSheet = StyleSheetContents::create(href, parserContext);
-
-    RefPtr<CSSStyleSheet> cssSheet = CSSStyleSheet::create(newSheet, this);
+    RefPtr<CSSStyleSheet> cssSheet = CSSStyleSheet::create(StyleSheetContents::create(href, parserContext), this);
     cssSheet->setDisabled(m_alternate);
     cssSheet->setTitle(m_title);
     cssSheet->setMediaQueries(MediaQuerySet::create(m_media));

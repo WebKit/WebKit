@@ -1,3 +1,16 @@
+2013-10-20  Andreas Kling  <akling@apple.com>
+
+        Use PassRef for StyleSheetContents.
+        <https://webkit.org/b/123083>
+
+        Let functions that return newly-constructed StyleSheetContents
+        objects vend PassRef<StyleSheetContents> instead of PassRefPtr.
+
+        Updated functions that take StyleSheetContents in arguments
+        accordingly. And CSSStyleSheet now has a Ref internally. Woo!
+
+        Reviewed by Antti Koivisto.
+
 2013-10-20  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing "unused parameter" compiling warnings from WebKit2 and WebCore

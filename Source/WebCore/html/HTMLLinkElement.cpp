@@ -308,7 +308,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
 
-        m_sheet = CSSStyleSheet::create(restoredSheet.release(), this);
+        m_sheet = CSSStyleSheet::create(restoredSheet.releaseNonNull(), this);
         m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
         m_sheet->setTitle(title());
 
@@ -318,20 +318,19 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
         return;
     }
 
-    RefPtr<StyleSheetContents> styleSheet = StyleSheetContents::create(href, parserContext);
-
-    m_sheet = CSSStyleSheet::create(styleSheet, this);
+    Ref<StyleSheetContents> styleSheet(StyleSheetContents::create(href, parserContext));
+    m_sheet = CSSStyleSheet::create(styleSheet.get(), this);
     m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
     m_sheet->setTitle(title());
 
-    styleSheet->parseAuthorStyleSheet(cachedStyleSheet, document().securityOrigin());
+    styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, document().securityOrigin());
 
     m_loading = false;
-    styleSheet->notifyLoadedSheet(cachedStyleSheet);
-    styleSheet->checkLoaded();
+    styleSheet.get().notifyLoadedSheet(cachedStyleSheet);
+    styleSheet.get().checkLoaded();
 
-    if (styleSheet->isCacheable())
-        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet.release());
+    if (styleSheet.get().isCacheable())
+        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(styleSheet.get());
 }
 
 bool HTMLLinkElement::styleSheetIsLoading() const

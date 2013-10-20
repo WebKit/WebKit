@@ -92,7 +92,7 @@ void InspectorCSSOMWrappers::collectFromStyleSheetContents(HashSet<RefPtr<CSSSty
 {
     if (!styleSheet)
         return;
-    RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(styleSheet);
+    RefPtr<CSSStyleSheet> styleSheetWrapper = CSSStyleSheet::create(*styleSheet);
     sheetWrapperSet.add(styleSheetWrapper);
     collect(styleSheetWrapper.get());
 }

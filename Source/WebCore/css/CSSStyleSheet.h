@@ -47,8 +47,8 @@ typedef int ExceptionCode;
 
 class CSSStyleSheet FINAL : public StyleSheet {
 public:
-    static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule = 0);
-    static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, Node* ownerNode);
+    static PassRefPtr<CSSStyleSheet> create(PassRef<StyleSheetContents>, CSSImportRule* ownerRule = 0);
+    static PassRefPtr<CSSStyleSheet> create(PassRef<StyleSheetContents>, Node* ownerNode);
     static PassRefPtr<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
@@ -111,20 +111,20 @@ public:
     void clearChildRuleCSSOMWrappers();
     void reattachChildRuleCSSOMWrappers();
 
-    StyleSheetContents* contents() const { return m_contents.get(); }
+    StyleSheetContents* contents() { return &m_contents.get(); }
 
     void detachFromDocument() { m_ownerNode = nullptr; }
 
 private:
-    CSSStyleSheet(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule);
-    CSSStyleSheet(PassRefPtr<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
+    CSSStyleSheet(PassRef<StyleSheetContents>, CSSImportRule* ownerRule);
+    CSSStyleSheet(PassRef<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
 
     virtual bool isCSSStyleSheet() const OVERRIDE { return true; }
     virtual String type() const OVERRIDE { return ASCIILiteral("text/css"); }
 
     bool canAccessRules() const;
     
-    RefPtr<StyleSheetContents> m_contents;
+    Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet;
     bool m_isDisabled;
     String m_title;

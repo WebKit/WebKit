@@ -179,17 +179,17 @@ void DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache()
     m_document.styleResolverChanged(DeferRecalcStyle);
 }
 
-void DocumentStyleSheetCollection::addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet)
+void DocumentStyleSheetCollection::addAuthorSheet(PassRef<StyleSheetContents> authorSheet)
 {
-    ASSERT(!authorSheet->isUserStyleSheet());
-    m_authorStyleSheets.append(CSSStyleSheet::create(authorSheet, &m_document));
+    ASSERT(!authorSheet.get().isUserStyleSheet());
+    m_authorStyleSheets.append(CSSStyleSheet::create(std::move(authorSheet), &m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
-void DocumentStyleSheetCollection::addUserSheet(PassRefPtr<StyleSheetContents> userSheet)
+void DocumentStyleSheetCollection::addUserSheet(PassRef<StyleSheetContents> userSheet)
 {
-    ASSERT(userSheet->isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(userSheet, &m_document));
+    ASSERT(userSheet.get().isUserStyleSheet());
+    m_userStyleSheets.append(CSSStyleSheet::create(std::move(userSheet), &m_document));
     m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 

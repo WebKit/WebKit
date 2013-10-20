@@ -76,25 +76,24 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRefPtr<StyleSheetContents> sheet, CSSImportRule* ownerRule)
+PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, CSSImportRule* ownerRule)
 { 
-    return adoptRef(new CSSStyleSheet(sheet, ownerRule));
+    return adoptRef(new CSSStyleSheet(std::move(sheet), ownerRule));
 }
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRefPtr<StyleSheetContents> sheet, Node* ownerNode)
+PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, Node* ownerNode)
 { 
-    return adoptRef(new CSSStyleSheet(sheet, ownerNode, false));
+    return adoptRef(new CSSStyleSheet(std::move(sheet), ownerNode, false));
 }
 
 PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const String& encoding)
 {
     CSSParserContext parserContext(ownerNode.document(), baseURL, encoding);
-    RefPtr<StyleSheetContents> sheet = StyleSheetContents::create(baseURL.string(), parserContext);
-    return adoptRef(new CSSStyleSheet(sheet.release(), &ownerNode, true));
+    return adoptRef(new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), &ownerNode, true));
 }
 
-CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetContents> contents, CSSImportRule* ownerRule)
-    : m_contents(contents)
+CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, CSSImportRule* ownerRule)
+    : m_contents(std::move(contents))
     , m_isInlineStylesheet(false)
     , m_isDisabled(false)
     , m_ownerNode(0)
@@ -103,8 +102,8 @@ CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetContents> contents, CSSImportR
     m_contents->registerClient(this);
 }
 
-CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetContents> contents, Node* ownerNode, bool isInlineStylesheet)
-    : m_contents(contents)
+CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, Node* ownerNode, bool isInlineStylesheet)
+    : m_contents(std::move(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isDisabled(false)
     , m_ownerNode(ownerNode)
@@ -294,8 +293,8 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    CSSParser p(m_contents->parserContext());
-    RefPtr<StyleRuleBase> rule = p.parseRule(m_contents.get(), ruleString);
+    CSSParser p(m_contents.get().parserContext());
+    RefPtr<StyleRuleBase> rule = p.parseRule(&m_contents.get(), ruleString);
 
     if (!rule) {
         ec = SYNTAX_ERR;
@@ -304,7 +303,7 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
 
     RuleMutationScope mutationScope(this, RuleInsertion, rule->type() == StyleRuleBase::Keyframes ? static_cast<StyleRuleKeyframes*>(rule.get()) : 0);
 
-    bool success = m_contents->wrapperInsertRule(rule, index);
+    bool success = m_contents.get().wrapperInsertRule(rule, index);
     if (!success) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
