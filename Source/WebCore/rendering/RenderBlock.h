@@ -28,7 +28,6 @@
 #include "GapRects.h"
 #include "PODIntervalTree.h"
 #include "RenderBox.h"
-#include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
 #include "TextBreakIterator.h"
 #include "TextRun.h"
@@ -109,12 +108,6 @@ public:
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
 
     LayoutUnit minLineHeightForReplacedRenderer(bool isFirstLine, LayoutUnit replacedHeight) const;
-
-    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
-    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
-
-    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void deleteLineBoxTree();
@@ -231,9 +224,6 @@ public:
 
     LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
     void adjustStartEdgeForWritingModeIncludingColumns(LayoutRect&) const;
-
-    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
-    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
     GapRects selectionGapRectsForRepaint(const RenderLayerModelObject* repaintContainer);
     LayoutRect logicalLeftSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
@@ -387,7 +377,7 @@ public:
 
 #ifndef NDEBUG
     void checkPositionedObjectsNeedLayout();
-    void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
+    virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const;
 #endif
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -470,7 +460,6 @@ protected:
 
     virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
-    int lastLineBoxBaseline(LineDirectionMode) const;
 
     // Delay update scrollbar until finishDelayRepaint() will be
     // called. This function is used when a flexbox is laying out its
@@ -481,6 +470,7 @@ protected:
     static void finishDelayUpdateScrollInfo();
 
     void updateScrollInfoAfterLayout();
+    void removeFromDelayedUpdateScrollInfoSet();
 
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
@@ -497,12 +487,14 @@ public:
     void clearLayoutOverflow();
 protected:
     virtual void addOverflowFromChildren();
-    void addOverflowFromPositionedObjects();
+    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    virtual void addOverflowFromInlineChildren() { }
     void addOverflowFromBlockChildren();
-    void addOverflowFromInlineChildren();
+    void addOverflowFromPositionedObjects();
     void addVisualOverflowFromTheme();
 
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
+    virtual void addFocusRingRectsForInlineChildren(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer);
 
     bool updateShapesBeforeBlockLayout();
     void updateShapesAfterBlockLayout(bool heightChanged = false);
@@ -547,6 +539,8 @@ private:
     void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
     
     virtual bool isSelfCollapsingBlock() const OVERRIDE FINAL;
+    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    virtual bool hasInlineBoxChildren() const { return false; }
 
     void insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
     static void removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
@@ -592,6 +586,7 @@ private:
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool) { }
+    virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) { }
     void paintContents(PaintInfo&, const LayoutPoint&);
     void paintColumnContents(PaintInfo&, const LayoutPoint&, bool paintFloats = false);
     void paintColumnRules(PaintInfo&, const LayoutPoint&);
@@ -604,6 +599,7 @@ private:
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&) { return false; }
+    virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) { return false; }
 
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -630,7 +626,8 @@ private:
     bool isSelectionRoot() const;
     GapRects selectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo* = 0);
-    GapRects inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    virtual GapRects inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
     GapRects blockSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
@@ -655,13 +652,8 @@ private:
 
     void adjustPointToColumnContents(LayoutPoint&) const;
     
-    void fitBorderToLinesIfNeeded(); // Shrink the box in which the border paints if border-fit is set.
-    virtual void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const; // Helper function for borderFitAdjust
-
-    void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest = 0);
-
-    Position positionForBox(InlineBox*, bool start = true) const;
-    VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&);
+    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint&);
 
     virtual void calcColumnWidth();
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
@@ -685,9 +677,6 @@ protected:
     void dirtyForLayoutFromPercentageHeightDescendants();
     
     void determineLogicalLeftPositionForChild(RenderBox* child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
-
-    // Pagination routines.
-    virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
     
     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
     // then nextPageLogicalTop with ExcludePageBoundary will still move to the top of the next page. nextPageLogicalTop with
@@ -764,10 +753,7 @@ public:
      };
 
 protected:
-
     OwnPtr<RenderBlockRareData> m_rareData;
-
-    RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
     mutable signed m_lineHeight : 27;
     unsigned m_hasMarginBeforeQuirk : 1; // Note these quirk values can't be put in RenderBlockRareData since they are set too frequently.
@@ -817,6 +803,10 @@ inline const RenderBlock* toRenderBlock(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderBlock(const RenderBlock*);
 void toRenderBlock(const RenderBlock&);
+
+LayoutUnit blockDirectionOffset(RenderBlock* rootBlock, const LayoutSize& offsetFromRootBlock);
+LayoutUnit inlineDirectionOffset(RenderBlock* rootBlock, const LayoutSize& offsetFromRootBlock);
+VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock*, RenderBox*, const LayoutPoint&);
 
 } // namespace WebCore
 

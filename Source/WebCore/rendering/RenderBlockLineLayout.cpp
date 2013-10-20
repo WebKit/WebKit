@@ -3341,7 +3341,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
     return lBreak;
 }
 
-void RenderBlock::addOverflowFromInlineChildren()
+void RenderBlockFlow::addOverflowFromInlineChildren()
 {
     LayoutUnit endPadding = hasOverflowClip() ? paddingEnd() : LayoutUnit();
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.

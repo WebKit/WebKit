@@ -41,7 +41,7 @@
 #include "HTMLVideoElement.h"
 #include "HitTestLocation.h"
 #include "PseudoElement.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "Scrollbar.h"
@@ -244,8 +244,8 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
             continue;
 
         if (auto renderer = toElement(truncatedNode)->renderer()) {
-            if (renderer->isRenderBlock()) {
-                RenderBlock* block = toRenderBlock(renderer);
+            if (renderer->isRenderBlockFlow()) {
+                RenderBlockFlow* block = toRenderBlockFlow(renderer);
                 if (block->style()->textOverflow()) {
                     for (RootInlineBox* line = block->firstRootBox(); line; line = line->nextRootBox()) {
                         if (line->hasEllipsisBox()) {

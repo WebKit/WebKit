@@ -1,3 +1,67 @@
+2013-10-20  Sam Weinig  <sam@webkit.org>
+
+        Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 5)
+        https://bugs.webkit.org/show_bug.cgi?id=122969
+
+        Reviewed by Antti Koivisto.
+
+        - Move m_lineBoxes to RenderBlockFlow.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::innerTextIfTruncated):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::removeFromDelayedUpdateScrollInfoSet):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::blockDirectionOffset):
+        (WebCore::inlineDirectionOffset):
+        (WebCore::RenderBlock::inlineSelectionGaps):
+        (WebCore::RenderBlock::hitTestContents):
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::inlineBlockBaseline):
+        (WebCore::RenderBlock::addFocusRingRectsForInlineChildren):
+        (WebCore::RenderBlock::addFocusRingRects):
+        (WebCore::RenderBlock::showLineTreeAndMark):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        (WebCore::RenderBlock::hasInlineBoxChildren):
+        (WebCore::RenderBlock::paintInlineChildren):
+        (WebCore::RenderBlock::hitTestInlineChildren):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::deleteLineBoxTree):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        (WebCore::RenderBlockFlow::fitBorderToLinesIfNeeded):
+        (WebCore::RenderBlockFlow::markLinesDirtyInBlockRange):
+        (WebCore::RenderBlockFlow::firstLineBoxBaseline):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::positionForBox):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        (WebCore::RenderBlockFlow::showLineTreeAndMark):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::lineBoxes):
+        (WebCore::RenderBlockFlow::firstLineBox):
+        (WebCore::RenderBlockFlow::lastLineBox):
+        (WebCore::RenderBlockFlow::firstRootBox):
+        (WebCore::RenderBlockFlow::lastRootBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionTopAdjustedForPrecedingBlock):
+
 2013-10-20  Andreas Kling  <akling@apple.com>
 
         Avoid unnecessary vector copy in AnimationController event dispatch.

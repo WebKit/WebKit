@@ -24,6 +24,7 @@
 #define RenderBlockFlow_h
 
 #include "RenderBlock.h"
+#include "RenderLineBoxList.h"
 
 namespace WebCore {
 
@@ -59,6 +60,7 @@ protected:
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child) OVERRIDE FINAL { lineBoxes().dirtyLinesFromChangedChild(this, child); }
     virtual void updateLogicalHeight() OVERRIDE;
+
 public:
     class MarginValues {
     public:
@@ -296,6 +298,17 @@ public:
             floatingObject->setHeight(logicalWidth);
     }
 
+    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
+    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
+
+    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
+    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+
+    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
+    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
+
+    virtual bool hasInlineBoxChildren() const OVERRIDE FINAL { return firstLineBox(); }
+
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
     int lineCount(const RootInlineBox* = nullptr, bool* = nullptr) const;
@@ -306,6 +319,10 @@ public:
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
 
     bool containsNonZeroBidiLevel() const;
+
+#ifndef NDEBUG
+    virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const OVERRIDE;
+#endif
 
 protected:
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(this); }
@@ -347,10 +364,15 @@ protected:
 
     void createFloatingObjects();
 
+    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
+
 private:
+    virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) OVERRIDE;
+
     virtual void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert) OVERRIDE;
     virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE FINAL;
-    virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) OVERRIDE;
     virtual void clipOutFloatingObjects(RenderBlock*, const PaintInfo*, const LayoutPoint&, const LayoutSize&) OVERRIDE;
 
     FloatingObject* insertFloatingObject(RenderBox*);
@@ -376,9 +398,23 @@ private:
     LayoutUnit getClearDelta(RenderBox* child, LayoutUnit yPos);
 
     virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) OVERRIDE;
-    void addOverflowFromFloats();
-    virtual void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const OVERRIDE;
+    virtual bool hitTestInlineChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
+    void addOverflowFromFloats();
+    virtual void addOverflowFromInlineChildren();
+    
+    void fitBorderToLinesIfNeeded(); // Shrink the box in which the border paints if border-fit is set.
+    void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const;
+
+    void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest = 0);
+
+    virtual GapRects inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+        LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) OVERRIDE;
+    
+    Position positionForBox(InlineBox*, bool start = true) const;
+    virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents) OVERRIDE;
+
+    virtual void addFocusRingRectsForInlineChildren(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) OVERRIDE;
 
 // FIXME-BLOCKFLOW: These methods have implementations in
 // RenderBlockLineLayout. They should be moved to the proper header once the
@@ -434,9 +470,13 @@ public:
     void updateRegionForLine(RootInlineBox*) const;
     void createRenderNamedFlowFragmentIfNeeded();
 
+    // Pagination routines.
+    virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
+
 protected:
     OwnPtr<FloatingObjects> m_floatingObjects;
     OwnPtr<RenderBlockFlowRareData> m_rareData;
+    RenderLineBoxList m_lineBoxes;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
