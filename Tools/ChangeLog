@@ -1,3 +1,38 @@
+2013-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable webaudio/ tests on DRT/Mac
+        https://bugs.webkit.org/show_bug.cgi?id=86914
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/ForwardingHeaders/runtime/ArrayBufferView.h: Copied from Source/WebCore/ForwardingHeaders/runtime/ArrayBufferView.h.
+        * DumpRenderTree/ForwardingHeaders/runtime/JSArrayBufferView.h: Copied from Source/WebCore/ForwardingHeaders/runtime/JSArrayBufferView.h.
+        * DumpRenderTree/ForwardingHeaders/runtime/TypedArrayInlines.h: Copied from Source/WebCore/ForwardingHeaders/runtime/TypedArrayInlines.h.
+        There is no way to efficiently get TypedArray buffer using API, so we need some internal headers.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setAudioResultCallback): 
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::audioResult):
+        (TestRunner::setAudioResult):
+        The function has a different name and argument type now, updated accordingly.
+        Changed buffer from std::string to std::vector<char>, because it's more idiomatic.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpAudio): Updated for the new name of audioResult accessor.
+        (dump): Print the result in the format webkitpy currently expects.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpAudio): fwrite the whole block at once, splitting into
+        chunks made no sense.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAudioResult): Added a FIXME about getting off WKBundle SPI.
+
+        * DumpRenderTree/CMakeLists.txt: Added JavaScriptCore/parser to include search list,
+        so that "SourceProvider.h" can be found.
+
 2013-10-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-webkit-tests should submit time and modifiers to the new flakiness dashboard

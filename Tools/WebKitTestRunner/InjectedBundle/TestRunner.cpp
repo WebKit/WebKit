@@ -378,6 +378,7 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStr
 
 void TestRunner::setAudioResult(JSContextRef context, JSValueRef data)
 {
+    // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
     WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(InjectedBundle::shared().bundle(), context, data));
     InjectedBundle::shared().setAudioResult(audioData.get());
     m_whatToDump = Audio;

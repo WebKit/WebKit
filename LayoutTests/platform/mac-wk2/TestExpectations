@@ -330,11 +330,6 @@ webkit.org/b/118925 [ Debug ] svg/repaint/buffered-rendering-static-image.html  
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
 
-# Flakily fails in release build, asserts in debug.
-webkit.org/b/120148 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash Failure ]
-
-webkit.org/b/120161 [ Lion ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
-
 webkit.org/b/121581 [ Lion ] media/video-object-fit.html [ ImageOnlyFailure ]
 
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
@@ -454,14 +449,6 @@ plugins/snapshotting [ Skip ]
 
 # This test fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Pass ]
-
-# WebAudio tests are supported in WK2
-webaudio/ [ Pass ]
-# Except for these
-webaudio/mediastreamaudiodestinationnode.html
-webaudio/mediastreamaudiosourcenode.html
-webaudio/codec-tests/vorbis/
-webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
 
 # Asserts in WebKit1-debug only, so reenabling.
 compositing/geometry/fixed-position-flipped-writing-mode.html [ Pass ]

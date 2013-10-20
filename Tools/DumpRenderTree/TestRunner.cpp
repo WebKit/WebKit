@@ -32,12 +32,16 @@
 
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
+#include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <cstring>
 #include <locale.h>
+#include <runtime/ArrayBufferView.h>
+#include <runtime/JSArrayBufferView.h>
+#include <runtime/TypedArrayInlines.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
@@ -328,22 +332,22 @@ static JSValueRef setCloseRemainingWindowsWhenCompleteCallback(JSContextRef cont
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef setEncodedAudioDataCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef setAudioResultCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    JSRetainPtr<JSStringRef> encodedAudioData(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-    ASSERT(!*exception);
-    
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(encodedAudioData.get());
-    auto encodedAudioDataBuffer = std::make_unique<char[]>(maxLength + 1);
-    JSStringGetUTF8CString(encodedAudioData.get(), encodedAudioDataBuffer.get(), maxLength + 1);
+    // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
+    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(toJS(toJS(context), arguments[0]));
+    ASSERT(jsBufferView);
+    RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->impl();
+    const char* buffer = static_cast<const char*>(bufferView->baseAddress());
+    std::vector<char> audioData(buffer, buffer + bufferView->byteLength());
 
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setEncodedAudioData(encodedAudioDataBuffer.get());
+    controller->setAudioResult(audioData);
     controller->setDumpAsAudio(true);
-    
+
     return JSValueMakeUndefined(context);
 }
 
@@ -2126,7 +2130,7 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setAlwaysAcceptCookies", setAlwaysAcceptCookiesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAppCacheMaximumSize", setAppCacheMaximumSizeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setApplicationCacheOriginQuota", setApplicationCacheOriginQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "setEncodedAudioData", setEncodedAudioDataCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setAudioResult", setAudioResultCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationPassword", setAuthenticationPasswordCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationUsername", setAuthenticationUsernameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthorAndUserStylesEnabled", setAuthorAndUserStylesEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

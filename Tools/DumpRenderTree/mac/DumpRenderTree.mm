@@ -971,9 +971,9 @@ static NSInteger compareHistoryItems(id item1, id item2, void *context)
 
 static NSData *dumpAudio()
 {
-    const char *encodedAudioData = gTestRunner->encodedAudioData().c_str();
+    const vector<char>& dataVector = gTestRunner->audioResult();
     
-    NSData *data = [NSData dataWithBytes:encodedAudioData length:gTestRunner->encodedAudioData().length()];
+    NSData *data = [NSData dataWithBytes:dataVector.data() length:dataVector.size()];
     return data;
 }
 
@@ -1218,16 +1218,16 @@ void dump()
 
         printf("Content-Type: %s\n", [resultMimeType UTF8String]);
 
-        if (gTestRunner->dumpAsAudio())
-            printf("Content-Transfer-Encoding: base64\n");
-
         WTF::FastMallocStatistics mallocStats = WTF::fastMallocStatistics();
         printf("DumpMalloc: %li\n", mallocStats.committedVMBytes);
+
+        if (gTestRunner->dumpAsAudio())
+            printf("Content-Length: %lu\n", [resultData length]);
 
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);
 
-            if (!gTestRunner->dumpAsText() && !gTestRunner->dumpDOMAsWebArchive() && !gTestRunner->dumpSourceAsWebArchive())
+            if (!gTestRunner->dumpAsText() && !gTestRunner->dumpDOMAsWebArchive() && !gTestRunner->dumpSourceAsWebArchive() && !gTestRunner->dumpAsAudio())
                 dumpFrameScrollPosition(mainFrame);
 
             if (gTestRunner->dumpBackForwardList())
