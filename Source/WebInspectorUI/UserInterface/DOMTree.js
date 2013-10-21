@@ -283,7 +283,7 @@ WebInspector.DOMTree.prototype = {
             var flowId = flow.id;
             if (this._flowMap.hasOwnProperty(flowId)) {
                 // Remove the flow name from the deleted list.
-                console.assert(deletedFlows.hasOwnProperty(flowKey));
+                console.assert(deletedFlows.hasOwnProperty(flowId));
                 delete deletedFlows[flowId];
             } else {
                 this._flowMap[flowId] = flow;
