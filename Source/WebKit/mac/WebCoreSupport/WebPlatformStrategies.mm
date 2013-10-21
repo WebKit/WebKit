@@ -126,9 +126,13 @@ void WebPlatformStrategies::refreshPlugins()
     [[WebPluginDatabase sharedDatabase] refresh];
 }
 
-void WebPlatformStrategies::getPluginInfo(const Page*, Vector<PluginInfo>& plugins)
+void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& plugins)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    // WebKit1 has no application plug-ins, so we don't need to add them here.
+    if (!page->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        return;
 
     NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];
     for (unsigned int i = 0; i < [pluginsArray count]; ++i) {

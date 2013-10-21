@@ -390,7 +390,11 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
 {
+    if (m_arePluginsEnabled == arePluginsEnabled)
+        return;
+
     m_arePluginsEnabled = arePluginsEnabled;
+    Page::refreshPlugins(false);
 }
 
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)

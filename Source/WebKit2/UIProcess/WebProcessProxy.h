@@ -144,7 +144,7 @@ private:
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins);
+    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins, Vector<WebCore::PluginInfo>& applicationPlugins);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(uint64_t pluginProcessToken, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
