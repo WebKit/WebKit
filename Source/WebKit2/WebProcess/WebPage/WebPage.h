@@ -865,6 +865,7 @@ private:
     OwnPtr<DrawingArea> m_drawingArea;
 
     HashSet<PluginView*> m_pluginViews;
+    bool m_hasSeenPlugin;
 
     HashMap<uint64_t, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
 
@@ -891,6 +892,7 @@ private:
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin;
     bool m_didFindPrimarySnapshottedPlugin;
+    unsigned m_numberOfPrimarySnapshotDetectionAttempts;
     String m_primaryPlugInPageOrigin;
     String m_primaryPlugInOrigin;
     String m_primaryPlugInMimeType;
