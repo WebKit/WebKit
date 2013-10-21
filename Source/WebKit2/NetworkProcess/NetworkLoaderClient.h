@@ -23,39 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SyncNetworkResourceLoader_h
-#define SyncNetworkResourceLoader_h
+#ifndef NetworkLoaderClient_h
+#define NetworkLoaderClient_h
 
-#include "NetworkConnectionToWebProcessMessages.h"
-#include "SchedulableLoader.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
+namespace WebCore {
+class ProtectionSpace;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+class SharedBuffer;
+}
+
 namespace WebKit {
 
-class SyncNetworkResourceLoader : public SchedulableLoader {
+class NetworkResourceLoader;
+
+class NetworkLoaderClient {
 public:
-    static PassRefPtr<SyncNetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
-    {
-        return adoptRef(new SyncNetworkResourceLoader(parameters, connection, reply));
-    }
+    virtual ~NetworkLoaderClient() { }
 
-    virtual void start() OVERRIDE;
-    virtual void abort() OVERRIDE;
+    virtual void willSendRequest(NetworkResourceLoader*, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse) = 0;
+    virtual void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader*, const WebCore::ProtectionSpace&) = 0;
+    virtual void didReceiveResponse(NetworkResourceLoader*, const WebCore::ResourceResponse&) = 0;
+    virtual void didReceiveBuffer(NetworkResourceLoader*, WebCore::SharedBuffer*, int encodedDataLength) = 0;
+    virtual void didSendData(NetworkResourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
+    virtual void didFinishLoading(NetworkResourceLoader*, double finishTime) = 0;
+    virtual void didFail(NetworkResourceLoader*, const WebCore::ResourceError&) = 0;
 
-    virtual bool isSynchronous() OVERRIDE { return true; }
+    virtual bool isSynchronous() { return false; }
 
-private:
-    SyncNetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
-    
-    void cleanup();
-    
-    RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
+protected:
+    NetworkLoaderClient() { }
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
 
-#endif // SyncNetworkResourceLoader_h
+#endif // NetworkLoaderClient_h

@@ -28,11 +28,15 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "HostRecord.h"
 #include "MessageSender.h"
-#include "SchedulableLoader.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
+#include <wtf/MainThread.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 
@@ -45,22 +49,34 @@ class ResourceRequest;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
+class NetworkLoaderClient;
+class NetworkResourceLoadParameters;
 class RemoteNetworkingContext;
+class SandboxExtension;
 
-class NetworkResourceLoader : public SchedulableLoader, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender {
+class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender {
 public:
     static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection)
     {
-        return adoptRef(new NetworkResourceLoader(parameters, connection));
+        return adoptRef(new NetworkResourceLoader(parameters, connection, nullptr));
     }
     
+    static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+    {
+        return adoptRef(new NetworkResourceLoader(parameters, connection, reply));
+    }    
     ~NetworkResourceLoader();
+
+    NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
+
+    WebCore::ResourceLoadPriority priority() { return m_priority; }
+    WebCore::ResourceRequest& request() { return m_request; }
 
     WebCore::ResourceHandle* handle() const { return m_handle.get(); }
     void didConvertHandleToDownload();
 
-    virtual void start() OVERRIDE;
-    virtual void abort() OVERRIDE;
+    void start();
+    void abort();
 
     // ResourceHandleClient methods
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
@@ -100,24 +116,45 @@ public:
     static void tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle&, CFCachedURLResponseRef);
 #endif
 
-private:
-    NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
+    bool isSynchronous() const;
+    bool isLoadingMainResource() const { return m_isLoadingMainResource; }
+    
+    void setHostRecord(HostRecord* hostRecord) { ASSERT(isMainThread()); m_hostRecord = hostRecord; }
+    HostRecord* hostRecord() const { ASSERT(isMainThread()); return m_hostRecord.get(); }
 
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE;
+    template<typename U> bool sendAbortingOnFailure(const U& message, unsigned messageSendFlags = 0)
+    {
+        bool result = messageSenderConnection()->send(message, messageSenderDestinationID(), messageSendFlags);
+        if (!result)
+            abort();
+        return result;
+    }
 
-    void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
-    void continueDidReceiveResponse();
+
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
+    void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer*);
+#endif
+
+private:
+    NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_identifier; }
+
+    void continueDidReceiveResponse();
 
     void cleanup();
     
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
-    template<typename U> bool sendAbortingOnFailure(const U& message, unsigned messageSendFlags = 0);
+    void consumeSandboxExtensions();
+    void invalidateSandboxExtensions();
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;
@@ -128,10 +165,27 @@ private:
     uint64_t m_bytesReceived;
 
     bool m_handleConvertedToDownload;
+    OwnPtr<NetworkLoaderClient> m_networkLoaderClient;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer*);
-#endif
+    ResourceLoadIdentifier m_identifier;
+    uint64_t m_webPageID;
+    uint64_t m_webFrameID;
+    WebCore::ResourceRequest m_request;
+    WebCore::ResourceLoadPriority m_priority;
+    WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
+    WebCore::StoredCredentials m_allowStoredCredentials;
+    WebCore::ClientCredentialPolicy m_clientCredentialPolicy;
+    bool m_inPrivateBrowsingMode;
+    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
+    bool m_isLoadingMainResource;
+
+    Vector<RefPtr<SandboxExtension>> m_requestBodySandboxExtensions;
+    Vector<RefPtr<SandboxExtension>> m_resourceSandboxExtensions;
+    bool m_sandboxExtensionsAreConsumed;
+
+    RefPtr<NetworkConnectionToWebProcess> m_connection;
+    
+    RefPtr<HostRecord> m_hostRecord;
 };
 
 } // namespace WebKit

@@ -93,7 +93,6 @@ private:
     RefPtr<CoreIPC::Connection> m_connection;
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>> m_networkResourceLoaders;
-    HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader>> m_syncNetworkResourceLoaders;
 
     bool m_serialLoadingEnabled;
 };

@@ -47,6 +47,8 @@ public:
     const ResourceError& error() const { return m_error; }
     bool isDone() { return m_isDone; }
 
+    static ResourceError platformBadResponseError();
+
 private:
     SynchronousLoaderClient()
         : m_allowStoredCredentials(false)
@@ -64,8 +66,6 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&) OVERRIDE;
 #endif
-
-    ResourceError platformBadResponseError();
 
     bool m_allowStoredCredentials;
     ResourceResponse m_response;
