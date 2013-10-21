@@ -271,8 +271,14 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     
     // Fast case: this loop just handles regular value properties.
     PropertyListNode* p = this;
-    for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next)
-        generator.emitDirectPutById(newObj.get(), p->m_node->name(), generator.emitNode(p->m_node->m_assign));
+    for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next) {
+        if (p->m_node->m_name) {
+            generator.emitDirectPutById(newObj.get(), *p->m_node->name(), generator.emitNode(p->m_node->m_assign));
+            continue;
+        }
+        RefPtr<RegisterID> propertyName = generator.emitNode(p->m_node->m_expression);
+        generator.emitDirectPutByVal(newObj.get(), propertyName.get(), generator.emitNode(p->m_node->m_assign));
+    }
 
     // Were there any get/set properties?
     if (p) {
@@ -287,7 +293,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 continue;
 
             GetterSetterPair pair(node, static_cast<PropertyNode*>(0));
-            GetterSetterMap::AddResult result = map.add(node->name().impl(), pair);
+            GetterSetterMap::AddResult result = map.add(node->name()->impl(), pair);
             if (!result.isNewEntry)
                 result.iterator->value.second = node;
         }
@@ -295,17 +301,23 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         // Iterate over the remaining properties in the list.
         for (; p; p = p->m_next) {
             PropertyNode* node = p->m_node;
-            RegisterID* value = generator.emitNode(node->m_assign);
 
             // Handle regular values.
             if (node->m_type == PropertyNode::Constant) {
-                generator.emitDirectPutById(newObj.get(), node->name(), value);
+                if (node->name()) {
+                    generator.emitDirectPutById(newObj.get(), *node->name(), generator.emitNode(node->m_assign));
+                    continue;
+                }
+                RefPtr<RegisterID> propertyName = generator.emitNode(p->m_node->m_expression);
+                generator.emitDirectPutByVal(newObj.get(), propertyName.get(), generator.emitNode(p->m_node->m_assign));
                 continue;
             }
+            
+            RegisterID* value = generator.emitNode(node->m_assign);
 
             // This is a get/set property, find its entry in the map.
             ASSERT(node->m_type == PropertyNode::Getter || node->m_type == PropertyNode::Setter);
-            GetterSetterMap::iterator it = map.find(node->name().impl());
+            GetterSetterMap::iterator it = map.find(node->name()->impl());
             ASSERT(it != map.end());
             GetterSetterPair& pair = it->value;
 
@@ -338,7 +350,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 }
             }
 
-            generator.emitPutGetterSetter(newObj.get(), node->name(), getterReg.get(), setterReg.get());
+            generator.emitPutGetterSetter(newObj.get(), *node->name(), getterReg.get(), setterReg.get());
         }
     }
 

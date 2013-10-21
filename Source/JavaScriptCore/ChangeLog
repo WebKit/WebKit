@@ -1,3 +1,30 @@
+2013-10-21  Oliver Hunt  <oliver@apple.com>
+
+        Support computed property names in object literals
+        https://bugs.webkit.org/show_bug.cgi?id=123112
+
+        Reviewed by Michael Saboff.
+
+        Add support for computed property names to the parser.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::getName):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        * parser/Nodes.h:
+        (JSC::PropertyNode::expressionName):
+        (JSC::PropertyNode::name):
+        * parser/Parser.cpp:
+        (JSC::::parseProperty):
+        (JSC::::parseStrictObjectLiteral):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::Property::Property):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2013-10-21  Michael Saboff  <msaboff@apple.com>
 
         Add option so that JSC will crash if it can't allocate executable memory for the JITs

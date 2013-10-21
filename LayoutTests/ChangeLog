@@ -1,3 +1,19 @@
+2013-10-21  Oliver Hunt  <oliver@apple.com>
+
+        Support expression property names in object literals
+        https://bugs.webkit.org/show_bug.cgi?id=123112
+
+        Reviewed by Michael Saboff.
+
+        Add tests
+
+        * js/basic-computed-property-name-expected.txt: Added.
+        * js/basic-computed-property-name.html: Added.
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/basic-computed-property-name.js: Added.
+        (a.string_appeared_here.runTest):
+        * js/script-tests/parser-syntax-check.js:
+
 2013-10-21  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test media/media-controller-time-clamp.html is flaky

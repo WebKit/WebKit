@@ -1446,6 +1446,16 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
         failIfFalse(node);
         return context.template createProperty<complete>(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant);
     }
+    case OPENBRACKET: {
+        next();
+        auto propertyName = parseExpression(context);
+        failIfFalse(propertyName);
+        consumeOrFail(CLOSEBRACKET);
+        consumeOrFail(COLON);
+        TreeExpression node = parseAssignmentExpression(context);
+        failIfFalse(node);
+        return context.template createProperty<complete>(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant);
+    }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag);
         goto namedProperty;
@@ -1525,8 +1535,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     typedef HashMap<RefPtr<StringImpl>, unsigned, IdentifierRepHash> ObjectValidationMap;
     ObjectValidationMap objectValidator;
     // Add the first property
-    if (!m_syntaxAlreadyValidated)
-        objectValidator.add(context.getName(property).impl(), context.getType(property));
+    if (!m_syntaxAlreadyValidated && context.getName(property))
+        objectValidator.add(context.getName(property)->impl(), context.getType(property));
     
     TreePropertyList propertyList = context.createPropertyList(location, property);
     TreePropertyList tail = propertyList;
@@ -1538,8 +1548,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
         JSTokenLocation propertyLocation(tokenLocation());
         property = parseProperty<true>(context);
         failIfFalse(property);
-        if (!m_syntaxAlreadyValidated) {
-            ObjectValidationMap::AddResult propertyEntry = objectValidator.add(context.getName(property).impl(), context.getType(property));
+        if (!m_syntaxAlreadyValidated && context.getName(property)) {
+            ObjectValidationMap::AddResult propertyEntry = objectValidator.add(context.getName(property)->impl(), context.getType(property));
             if (!propertyEntry.isNewEntry) {
                 failIfTrue(propertyEntry.iterator->value == PropertyNode::Constant);
                 failIfTrue(context.getType(property) == PropertyNode::Constant);

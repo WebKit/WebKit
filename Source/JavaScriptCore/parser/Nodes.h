@@ -480,13 +480,17 @@ namespace JSC {
 
         PropertyNode(VM*, const Identifier&, ExpressionNode*, Type);
         PropertyNode(VM*, double, ExpressionNode*, Type);
+        PropertyNode(VM*, ExpressionNode* propertyName, ExpressionNode*, Type);
+        
+        ExpressionNode* expressionName() const { return m_expression; }
+        const Identifier* name() const { return m_name; }
 
-        const Identifier& name() const { return m_name; }
         Type type() const { return m_type; }
 
     private:
         friend class PropertyListNode;
-        const Identifier& m_name;
+        const Identifier* m_name;
+        ExpressionNode* m_expression;
         ExpressionNode* m_assign;
         Type m_type;
     };

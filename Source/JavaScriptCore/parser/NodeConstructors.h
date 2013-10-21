@@ -148,14 +148,22 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     }
 
     inline PropertyNode::PropertyNode(VM*, const Identifier& name, ExpressionNode* assign, Type type)
-        : m_name(name)
+        : m_name(&name)
         , m_assign(assign)
         , m_type(type)
     {
     }
 
     inline PropertyNode::PropertyNode(VM* vm, double name, ExpressionNode* assign, Type type)
-        : m_name(vm->parserArena->identifierArena().makeNumericIdentifier(vm, name))
+        : m_name(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name))
+        , m_assign(assign)
+        , m_type(type)
+    {
+    }
+    
+    inline PropertyNode::PropertyNode(VM*, ExpressionNode* name, ExpressionNode* assign, Type type)
+        : m_name(0)
+        , m_expression(name)
         , m_assign(assign)
         , m_type(type)
     {

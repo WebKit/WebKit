@@ -678,6 +678,16 @@ PASS Valid:   "[...bar,,,,]"
 PASS Valid:   "function f() { [...bar,,,,] }"
 PASS Valid:   "[,,,,...bar]"
 PASS Valid:   "function f() { [,,,,...bar] }"
+PASS Valid:   "({x: 1})"
+PASS Valid:   "function f() { ({x: 1}) }"
+PASS Valid:   "({[x]: 1})"
+PASS Valid:   "function f() { ({[x]: 1}) }"
+PASS Invalid: "({get [x](){}})"
+PASS Invalid: "function f() { ({get [x](){}}) }"
+PASS Invalid: "({set [x](){}})"
+PASS Invalid: "function f() { ({set [x](){}}) }"
+PASS Invalid: "({[...x]: 1})"
+PASS Invalid: "function f() { ({[...x]: 1}) }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

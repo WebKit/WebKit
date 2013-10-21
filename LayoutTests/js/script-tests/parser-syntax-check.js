@@ -422,7 +422,11 @@ valid("[a, ...bar]")
 valid("[...bar, a]")
 valid("[...bar,,,,]")
 valid("[,,,,...bar]")
-
+valid("({x: 1})")
+valid("({[x]: 1})")
+invalid("({get [x](){}})")
+invalid("({set [x](){}})")
+invalid("({[...x]: 1})")
 
 
 

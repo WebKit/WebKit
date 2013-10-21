@@ -88,8 +88,8 @@ public:
         {
         }
         ALWAYS_INLINE Property(const Identifier* ident, PropertyNode::Type ty)
-        : name(ident)
-        , type(ty)
+            : name(ident)
+            , type(ty)
         {
         }
         ALWAYS_INLINE Property(PropertyNode::Type ty)
@@ -173,6 +173,10 @@ public:
             return Property(type);
         return Property(&vm->parserArena->identifierArena().makeNumericIdentifier(vm, name), type);
     }
+    template <bool complete> Property createProperty(VM*, ExpressionNode*, int, PropertyNode::Type type)
+    {
+        return Property(type);
+    }
     int createPropertyList(const JSTokenLocation&, Property) { return 1; }
     int createPropertyList(const JSTokenLocation&, Property, int) { return 1; }
     int createElementList(int, int) { return 1; }
@@ -251,7 +255,7 @@ public:
     
     void assignmentStackAppend(int, int, int, int, int, Operator) { }
     int createAssignment(const JSTokenLocation&, int, int, int, int, int) { RELEASE_ASSERT_NOT_REACHED(); return 1; }
-    const Identifier& getName(const Property& property) const { ASSERT(property.name); return *property.name; }
+    const Identifier* getName(const Property& property) const { ASSERT(property.name); return property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }
     ExpressionType createDeconstructingAssignment(const JSTokenLocation&, int, ExpressionType)
