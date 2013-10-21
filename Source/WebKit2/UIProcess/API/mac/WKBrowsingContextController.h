@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKFoundation.h>
 
 @class WKBrowsingContextControllerData;
 @class WKBackForwardList;
@@ -91,7 +92,9 @@ WK_EXPORT
 /* Whether there is a previous page in the back/forward list. */
 @property(readonly) BOOL canGoBack;
 
+#if WK_API_ENABLED
 @property(readonly) WKBackForwardList *backForwardList;
+#endif
 
 #pragma mark Active Load Introspection
 

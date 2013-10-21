@@ -253,6 +253,7 @@ static void releaseNSData(unsigned char*, const void* data)
     return WKPageCanGoBack(self._pageRef);
 }
 
+#if WK_API_ENABLED
 - (WKBackForwardList *)backForwardList
 {
     WebBackForwardList* list = toImpl(self._pageRef)->backForwardList();
@@ -261,6 +262,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
     return [[[WKBackForwardList alloc] _initWithList:*list] autorelease];
 }
+#endif // WK_API_ENABLED
 
 #pragma mark Active Load Introspection
 

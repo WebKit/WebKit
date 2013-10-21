@@ -1,3 +1,10 @@
+2013-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Mac 32-bit build.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Give up on building RemoteLayerTreeTransaction::dump on Lion, it just won't work.
