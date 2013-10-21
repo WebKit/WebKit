@@ -514,7 +514,7 @@ bool HTMLAnchorElement::isLiveLink() const
 
 void HTMLAnchorElement::sendPings(const KURL& destinationURL)
 {
-    if (!hasAttribute(pingAttr) || !document()->settings()->hyperlinkAuditingEnabled())
+    if (!hasAttribute(pingAttr) || !document()->settings() || !document()->settings()->hyperlinkAuditingEnabled())
         return;
 
     SpaceSplitString pingURLs(getAttribute(pingAttr), false);

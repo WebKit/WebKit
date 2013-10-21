@@ -1,5 +1,23 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153975
+
+    2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Fix NULL de-refernce in HTMLAnchorElement::sendPings when settings doesn't exist
+            https://bugs.webkit.org/show_bug.cgi?id=119716
+
+            Reviewed by Darin Adler.
+
+            Merge https://chromium.googlesource.com/chromium/blink/+/d5783da353ab783e9994b8fbecd91880be5192a1
+
+            No new tests since the test in the Blink change doesn't reproduce crash on WebKit.
+
+            * html/HTMLAnchorElement.cpp:
+            (WebCore::HTMLAnchorElement::sendPings):
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153920
 
     2013-08-09  Jer Noble  <jer.noble@apple.com>
