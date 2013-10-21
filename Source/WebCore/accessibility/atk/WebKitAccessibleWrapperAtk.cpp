@@ -1125,7 +1125,7 @@ void webkitAccessibleDetach(WebKitAccessible* accessible)
     ASSERT(accessible->m_object);
 
     if (accessible->m_object->roleValue() == WebAreaRole)
-        g_signal_emit_by_name(accessible, "state-change", "defunct", true);
+        atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, true);
 
     // We replace the WebCore AccessibilityObject with a fallback object that
     // provides default implementations to avoid repetitive null-checking after

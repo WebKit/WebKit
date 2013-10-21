@@ -70,11 +70,11 @@ static void maybeEmitTextFocusChange(PassRefPtr<AccessibilityObject> prpObject)
     if (axObject != oldAxObject) {
         if (oldAxObject && ATK_IS_TEXT(oldAxObject)) {
             g_signal_emit_by_name(oldAxObject, "focus-event", false);
-            g_signal_emit_by_name(oldAxObject, "state-change", "focused", false);
+            atk_object_notify_state_change(oldAxObject, ATK_STATE_FOCUSED, false);
         }
         if (axObject && ATK_IS_TEXT(axObject)) {
             g_signal_emit_by_name(axObject, "focus-event", true);
-            g_signal_emit_by_name(axObject, "state-change", "focused", true);
+            atk_object_notify_state_change(axObject, ATK_STATE_FOCUSED, true);
         }
     }
 

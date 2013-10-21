@@ -1,3 +1,23 @@
+2013-10-21  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [ATK] Use atk_object_notify_state_change instead of manually emitting signals
+        https://bugs.webkit.org/show_bug.cgi?id=122968
+
+        Reviewed by Mario Sanchez Prada.
+
+        Refactor emitting "state-change" event to use atk_object_notify_state_change
+        instead of using g_signal_emit_by_name.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::notifyChildrenSelectionChange):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleDetach):
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::maybeEmitTextFocusChange):
+
 2013-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Make TYPE_CASTS_BASE more flexible
