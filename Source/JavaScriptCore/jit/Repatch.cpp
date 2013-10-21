@@ -42,6 +42,19 @@
 
 namespace JSC {
 
+// Beware: in this code, it is not safe to assume anything about the following registers
+// that would ordinarily have well-known values:
+// - tagTypeNumberRegister
+// - tagMaskRegister
+// - callFrameRegister **
+//
+// The callFrameRegister is a double-FIXME:
+// - https://bugs.webkit.org/show_bug.cgi?id=123085
+//   We're not yet done getting rid of past uses of callFrameRegister.
+// - https://bugs.webkit.org/show_bug.cgi?id=113621
+//   Once the calling convention work is done, we won't need the callFrameRegister anymore
+//   since we'll just use framePointerRegister.
+
 static void repatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
     RepatchBuffer repatchBuffer(codeblock);
@@ -181,7 +194,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
 #endif
     GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-    GPRReg scratchGPR = stubInfo.patch.usedRegisters.getFreeGPR();
+    GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = false;
     
     if (scratchGPR == InvalidGPRReg) {
@@ -255,7 +268,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
 #endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-        GPRReg scratchGPR = stubInfo.patch.usedRegisters.getFreeGPR();
+        GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
         bool needToRestoreScratch = false;
         
         MacroAssembler stubJit;
@@ -281,10 +294,10 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         stubJit.load32(MacroAssembler::Address(scratchGPR, ArrayStorage::lengthOffset()), scratchGPR);
         failureCases.append(stubJit.branch32(MacroAssembler::LessThan, scratchGPR, MacroAssembler::TrustedImm32(0)));
 
-#if USE(JSVALUE64)
-        stubJit.or64(GPRInfo::tagTypeNumberRegister, scratchGPR, resultGPR);
-#elif USE(JSVALUE32_64)
         stubJit.move(scratchGPR, resultGPR);
+#if USE(JSVALUE64)
+        stubJit.or64(AssemblyHelpers::TrustedImm64(TagTypeNumber), resultGPR);
+#elif USE(JSVALUE32_64)
         stubJit.move(AssemblyHelpers::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
 #endif
 
@@ -455,7 +468,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
 #endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-        GPRReg scratchGPR = stubInfo.patch.usedRegisters.getFreeGPR();
+        GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
         
         CCallHelpers stubJit(vm, codeBlock);
         
@@ -651,7 +664,7 @@ static void emitPutReplaceStub(
     GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.valueTagGPR);
 #endif
     GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-    GPRReg scratchGPR = stubInfo.patch.usedRegisters.getFreeGPR();
+    GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = false;
 #if ENABLE(WRITE_BARRIER_PROFILING)
     GPRReg scratchGPR2;
@@ -1159,7 +1172,7 @@ static bool tryRepatchIn(
     {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.valueGPR);
-        GPRReg scratchGPR = stubInfo.patch.usedRegisters.getFreeGPR();
+        GPRReg scratchGPR = TempRegisterSet(stubInfo.patch.usedRegisters).getFreeGPR();
         
         CCallHelpers stubJit(vm);
         
@@ -1290,9 +1303,11 @@ void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* cal
     CCallHelpers::JumpList slowPath;
     
 #if USE(JSVALUE64)
-    slowPath.append(
-        stubJit.branchTest64(
-            CCallHelpers::NonZero, calleeGPR, GPRInfo::tagMaskRegister));
+    // We can safely clobber everything except the calleeGPR. We can't rely on tagMaskRegister
+    // being set. So we do this the hard way.
+    GPRReg scratch = AssemblyHelpers::selectScratchGPR(calleeGPR);
+    stubJit.move(MacroAssembler::TrustedImm64(TagMask), scratch);
+    slowPath.append(stubJit.branchTest64(CCallHelpers::NonZero, calleeGPR, scratch));
 #else
     // We would have already checked that the callee is a cell.
 #endif

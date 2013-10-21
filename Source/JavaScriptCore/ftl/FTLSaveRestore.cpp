@@ -36,7 +36,7 @@ namespace JSC { namespace FTL {
 
 static size_t bytesForGPRs()
 {
-    return (MacroAssembler::lastRegister() - MacroAssembler::firstRegister() + 1) * sizeof(int64_t);
+    return MacroAssembler::numberOfRegisters() * sizeof(int64_t);
 }
 
 static size_t bytesForFPRs()
@@ -44,7 +44,7 @@ static size_t bytesForFPRs()
     // FIXME: It might be worthwhile saving the full state of the FP registers, at some point.
     // Right now we don't need this since we only do the save/restore just prior to OSR exit, and
     // OSR exit will be guaranteed to only need the double portion of the FP registers.
-    return (MacroAssembler::lastFPRegister() - MacroAssembler::firstFPRegister() + 1) * sizeof(double);
+    return MacroAssembler::numberOfFPRegisters() * sizeof(double);
 }
 
 size_t requiredScratchMemorySizeInBytes()
@@ -54,12 +54,12 @@ size_t requiredScratchMemorySizeInBytes()
 
 size_t offsetOfGPR(GPRReg reg)
 {
-    return (reg - MacroAssembler::firstRegister()) * sizeof(int64_t);
+    return MacroAssembler::registerIndex(reg) * sizeof(int64_t);
 }
 
 size_t offsetOfFPR(FPRReg reg)
 {
-    return bytesForGPRs() + (reg - MacroAssembler::firstFPRegister()) * sizeof(double);
+    return bytesForGPRs() + MacroAssembler::fpRegisterIndex(reg) * sizeof(double);
 }
 
 void saveAllRegisters(MacroAssembler& jit, char* scratchMemory)

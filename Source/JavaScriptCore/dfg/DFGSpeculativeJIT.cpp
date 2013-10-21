@@ -281,6 +281,26 @@ void SpeculativeJIT::forwardTypeCheck(JSValueSource source, Edge edge, Speculate
     convertLastOSRExitToForward(valueRecovery);
 }
 
+RegisterSet SpeculativeJIT::usedRegisters()
+{
+    RegisterSet result;
+    
+    for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
+        GPRReg gpr = GPRInfo::toRegister(i);
+        if (m_gprs.isInUse(gpr))
+            result.set(gpr);
+    }
+    for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
+        FPRReg fpr = FPRInfo::toRegister(i);
+        if (m_fprs.isInUse(fpr))
+            result.set(fpr);
+    }
+    
+    result.merge(RegisterSet::specialRegisters());
+    
+    return result;
+}
+
 void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
 {
     m_slowPathGenerators.append(slowPathGenerator);

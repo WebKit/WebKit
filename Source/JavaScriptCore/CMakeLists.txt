@@ -237,7 +237,9 @@ set(JavaScriptCore_SOURCES
     jit/JITThunks.cpp
     jit/JITToDFGDeferredCompilationCallback.cpp
     jit/JumpReplacementWatchpoint.cpp
+    jit/RegisterSet.cpp
     jit/Repatch.cpp
+    jit/TempRegisterSet.cpp
     jit/ThunkGenerators.cpp
 
     parser/Lexer.cpp

@@ -369,6 +369,9 @@
 		0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */; };
 		0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0979F146B28C700CF2442 /* DFGThunks.cpp */; };
 		0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC097A0146B28C700CF2442 /* DFGThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC314121814559100033232 /* RegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC314101814559100033232 /* RegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FC314131814559100033232 /* TempRegisterSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC314111814559100033232 /* TempRegisterSet.cpp */; };
+		0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC3141418146D7000033232 /* RegisterSet.cpp */; };
 		0FC712DE17CD8779008CC93C /* DeferredCompilationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC712DC17CD8778008CC93C /* DeferredCompilationCallback.cpp */; };
 		0FC712DF17CD877C008CC93C /* DeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC712DD17CD8778008CC93C /* DeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC712E217CD8791008CC93C /* JITToDFGDeferredCompilationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC712E017CD878F008CC93C /* JITToDFGDeferredCompilationCallback.cpp */; };
@@ -1630,6 +1633,9 @@
 		0FC0978F146A6F6300CF2442 /* DFGOSRExitCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitCompiler.cpp; path = dfg/DFGOSRExitCompiler.cpp; sourceTree = "<group>"; };
 		0FC0979F146B28C700CF2442 /* DFGThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGThunks.cpp; path = dfg/DFGThunks.cpp; sourceTree = "<group>"; };
 		0FC097A0146B28C700CF2442 /* DFGThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGThunks.h; path = dfg/DFGThunks.h; sourceTree = "<group>"; };
+		0FC314101814559100033232 /* RegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterSet.h; sourceTree = "<group>"; };
+		0FC314111814559100033232 /* TempRegisterSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TempRegisterSet.cpp; sourceTree = "<group>"; };
+		0FC3141418146D7000033232 /* RegisterSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterSet.cpp; sourceTree = "<group>"; };
 		0FC712DC17CD8778008CC93C /* DeferredCompilationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredCompilationCallback.cpp; sourceTree = "<group>"; };
 		0FC712DD17CD8778008CC93C /* DeferredCompilationCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredCompilationCallback.h; sourceTree = "<group>"; };
 		0FC712E017CD878F008CC93C /* JITToDFGDeferredCompilationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JITToDFGDeferredCompilationCallback.cpp; sourceTree = "<group>"; };
@@ -2908,11 +2914,14 @@
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 				0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */,
 				0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */,
+				0FC3141418146D7000033232 /* RegisterSet.cpp */,
+				0FC314101814559100033232 /* RegisterSet.h */,
 				0F24E54917EE274900ABB217 /* Repatch.cpp */,
 				0F24E54A17EE274900ABB217 /* Repatch.h */,
 				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
+				0FC314111814559100033232 /* TempRegisterSet.cpp */,
 				0F24E54817EE274900ABB217 /* TempRegisterSet.h */,
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
@@ -4510,6 +4519,7 @@
 				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
+				0FC314121814559100033232 /* RegisterSet.h in Headers */,
 				86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */,
 				86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */,
 				860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */,
@@ -5124,6 +5134,7 @@
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
 				147F39BE107EC37600427A48 /* Arguments.cpp in Sources */,
 				0F743BAA16B88249009F9277 /* ARM64Disassembler.cpp in Sources */,
+				0FC314131814559100033232 /* TempRegisterSet.cpp in Sources */,
 				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 				A74DE1D0120B875600D40D5B /* ARMv7Assembler.cpp in Sources */,
 				65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */,
@@ -5311,6 +5322,7 @@
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
 				0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,
+				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
 				142E3135134FF0A600AFADB5 /* HandleSet.cpp in Sources */,
 				142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */,
 				14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */,

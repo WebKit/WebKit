@@ -278,21 +278,7 @@ public:
         use(nodeUse.node());
     }
     
-    TempRegisterSet usedRegisters()
-    {
-        TempRegisterSet result;
-        for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
-            GPRReg gpr = GPRInfo::toRegister(i);
-            if (m_gprs.isInUse(gpr))
-                result.set(gpr);
-        }
-        for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
-            FPRReg fpr = FPRInfo::toRegister(i);
-            if (m_fprs.isInUse(fpr))
-                result.set(fpr);
-        }
-        return result;
-    }
+    RegisterSet usedRegisters();
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {

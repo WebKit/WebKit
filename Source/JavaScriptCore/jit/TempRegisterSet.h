@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+class RegisterSet;
+
 class TempRegisterSet {
 public:
     TempRegisterSet()
@@ -42,6 +44,8 @@ public:
         for (unsigned i = numberOfBytesInTempRegisterSet; i--;)
             m_set[i] = 0;
     }
+    
+    TempRegisterSet(const RegisterSet&);
     
     void set(GPRReg reg)
     {

@@ -101,6 +101,36 @@ public:
     {
         return static_cast<FPRegisterID>(reg + 1);
     }
+    
+    static unsigned numberOfRegisters()
+    {
+        return lastRegister() - firstRegister() + 1;
+    }
+    
+    static unsigned registerIndex(RegisterID reg)
+    {
+        return reg - firstRegister();
+    }
+    
+    static unsigned numberOfFPRegisters()
+    {
+        return lastFPRegister() - firstFPRegister() + 1;
+    }
+    
+    static unsigned fpRegisterIndex(FPRegisterID reg)
+    {
+        return reg - firstFPRegister();
+    }
+    
+    static unsigned registerIndex(FPRegisterID reg)
+    {
+        return fpRegisterIndex(reg) + numberOfRegisters();
+    }
+    
+    static unsigned totalNumberOfRegisters()
+    {
+        return numberOfRegisters() + numberOfFPRegisters();
+    }
 
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;

@@ -106,6 +106,24 @@ void BitVector::resizeOutOfLine(size_t numBits)
     m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
 }
 
+void BitVector::mergeSlow(const BitVector& other)
+{
+    if (other.isInline()) {
+        ASSERT(!isInline());
+        *bits() |= cleanseInlineBits(other.m_bitsOrPointer);
+        return;
+    }
+    
+    ensureSize(other.size());
+    ASSERT(!isInline());
+    ASSERT(!other.isInline());
+    
+    OutOfLineBits* a = outOfLineBits();
+    const OutOfLineBits* b = other.outOfLineBits();
+    for (unsigned i = a->numWords(); i--;)
+        a->bits()[i] |= b->bits()[i];
+}
+
 void BitVector::dump(PrintStream& out)
 {
     for (size_t i = 0; i < size(); ++i) {

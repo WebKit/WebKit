@@ -42,7 +42,7 @@ JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock* codeBlock, CodeOrigi
 }
 
 JITByIdGenerator::JITByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const TempRegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
     JSValueRegs base, JSValueRegs value, bool registersFlushed)
     : JITInlineCacheGenerator(codeBlock, codeOrigin)
     , m_base(base)
@@ -52,7 +52,7 @@ JITByIdGenerator::JITByIdGenerator(
     m_stubInfo->patch.usedRegisters = usedRegisters;
     
     // This is a convenience - in cases where the only registers you're using are base/value,
-    // it allows you to pass TempRegisterSet() as the usedRegisters argument.
+    // it allows you to pass RegisterSet() as the usedRegisters argument.
     m_stubInfo->patch.usedRegisters.set(base);
     m_stubInfo->patch.usedRegisters.set(value);
     
@@ -117,7 +117,7 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 }
 
 JITPutByIdGenerator::JITPutByIdGenerator(
-    CodeBlock* codeBlock, CodeOrigin codeOrigin, const TempRegisterSet& usedRegisters,
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
     JSValueRegs base, JSValueRegs value, GPRReg scratch, bool registersFlushed,
     ECMAMode ecmaMode, PutKind putKind)
     : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, registersFlushed)

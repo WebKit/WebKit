@@ -32,6 +32,7 @@
 #include "JITOperations.h"
 #include "JSCJSValue.h"
 #include "PutKind.h"
+#include "RegisterSet.h"
 
 namespace JSC {
 
@@ -55,7 +56,7 @@ protected:
     JITByIdGenerator() { }
 
     JITByIdGenerator(
-        CodeBlock*, CodeOrigin, const TempRegisterSet&, JSValueRegs base, JSValueRegs value,
+        CodeBlock*, CodeOrigin, const RegisterSet&, JSValueRegs base, JSValueRegs value,
         bool registersFlushed);
     
 public:
@@ -92,7 +93,7 @@ public:
     JITGetByIdGenerator() { }
 
     JITGetByIdGenerator(
-        CodeBlock* codeBlock, CodeOrigin codeOrigin, const TempRegisterSet& usedRegisters,
+        CodeBlock* codeBlock, CodeOrigin codeOrigin, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs value, bool registersFlushed)
         : JITByIdGenerator(codeBlock, codeOrigin, usedRegisters, base, value, registersFlushed)
     {
@@ -106,7 +107,7 @@ public:
     JITPutByIdGenerator() { }
 
     JITPutByIdGenerator(
-        CodeBlock*, CodeOrigin, const TempRegisterSet& usedRegisters, JSValueRegs base,
+        CodeBlock*, CodeOrigin, const RegisterSet& usedRegisters, JSValueRegs base,
         JSValueRegs value, GPRReg scratch, bool registersFlushed, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);

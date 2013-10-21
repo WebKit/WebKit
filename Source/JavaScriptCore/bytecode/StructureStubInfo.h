@@ -36,9 +36,9 @@
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PolymorphicAccessStructureList.h"
+#include "RegisterSet.h"
 #include "Structure.h"
 #include "StructureStubClearingWatchpoint.h"
-#include "TempRegisterSet.h"
 #include <wtf/OwnPtr.h>
 
 namespace JSC {
@@ -230,7 +230,7 @@ struct StructureStubInfo {
         int8_t valueTagGPR;
 #endif
         int8_t valueGPR;
-        TempRegisterSet usedRegisters;
+        RegisterSet usedRegisters;
         int32_t deltaCallToDone;
         int32_t deltaCallToStorageLoad;
         int32_t deltaCallToStructCheck;

@@ -1,3 +1,18 @@
+2013-10-20  Filip Pizlo  <fpizlo@apple.com>
+
+        StructureStubInfo's usedRegisters set should be able to track all registers, not just the ones that our JIT's view as temporaries
+        https://bugs.webkit.org/show_bug.cgi?id=123076
+
+        Reviewed by Sam Weinig.
+        
+        Teach BitVector how to efficiently merge (i.e. bitvector |=).
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::mergeSlow):
+        * wtf/BitVector.h:
+        (WTF::BitVector::merge):
+        (WTF::BitVector::cleanseInlineBits):
+
 2013-10-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed roll out of r157695; broke Mac builds.

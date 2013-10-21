@@ -169,6 +169,15 @@ public:
             clear(bit);
     }
     
+    void merge(const BitVector& other)
+    {
+        if (!isInline() || !other.isInline()) {
+            mergeSlow(other);
+            return;
+        }
+        m_bitsOrPointer |= other.m_bitsOrPointer;
+    }
+    
     void dump(PrintStream& out);
     
 private:
@@ -191,6 +200,11 @@ private:
     {
         ASSERT(!(bits & (static_cast<uintptr_t>(1) << maxInlineBits())));
         return bits | (static_cast<uintptr_t>(1) << maxInlineBits());
+    }
+    
+    static uintptr_t cleanseInlineBits(uintptr_t bits)
+    {
+        return bits & ~(static_cast<uintptr_t>(1) << maxInlineBits());
     }
     
     class OutOfLineBits {
@@ -220,6 +234,8 @@ private:
     
     WTF_EXPORT_PRIVATE void resizeOutOfLine(size_t numBits);
     WTF_EXPORT_PRIVATE void setSlow(const BitVector& other);
+    
+    WTF_EXPORT_PRIVATE void mergeSlow(const BitVector& other);
     
     uintptr_t* bits()
     {
