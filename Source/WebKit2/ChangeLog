@@ -1,3 +1,14 @@
+2013-10-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] g-ir-scanner should use the configured C compiler
+        https://bugs.webkit.org/show_bug.cgi?id=123088
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Pass the C compiler that was detected at configuration to the g-ir-scanner command
+        via the CC environment variable. This solves the issue of the scanner running the GCC compiler with
+        the Clang-specific CFLAGS.
+
 2013-10-20  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Loading progress API

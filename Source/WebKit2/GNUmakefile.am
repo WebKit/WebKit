@@ -292,6 +292,7 @@ if ENABLE_INTROSPECTION
 
 WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 	$(AM_V_GEN) \
+	     CC="$(CC)" \
 	     CFLAGS="$(CFLAGS) -Wno-deprecated-declarations" \
 	     $(G_IR_SCANNER) \
 	     --quiet \
