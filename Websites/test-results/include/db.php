@@ -161,6 +161,16 @@ class Database
         return pg_fetch_all($result);
     }
 
+    function query($query, $params = array()) {
+        if (!$this->connection)
+            return FALSE;
+        return pg_query_params($this->connection, $query, $params);
+    }
+
+    function fetch_next_row($result) {
+        return pg_fetch_assoc($result);
+    }
+
     function fetch_table($table_name, $column_to_be_ordered_by = null) {
         if (!$this->connection || !ctype_alnum_underscore($table_name) || ($column_to_be_ordered_by && !ctype_alnum_underscore($column_to_be_ordered_by)))
             return false;

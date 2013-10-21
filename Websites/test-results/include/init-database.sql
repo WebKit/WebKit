@@ -1,9 +1,9 @@
 DROP TABLE results CASCADE;
 DROP TABLE tests CASCADE;
-DROP TABLE build_revision_map CASCADE;
-DROP TABLE revisions CASCADE;
+DROP TABLE build_revisions CASCADE;
 DROP TABLE builds CASCADE;
 DROP TABLE slaves CASCADE;
+DROP TABLE repositories CASCADE;
 DROP TABLE builders CASCADE;
 
 CREATE TABLE builders (
@@ -28,7 +28,6 @@ CREATE TABLE builds (
     start_time timestamp,
     end_time timestamp,
     slave integer REFERENCES slaves ON DELETE CASCADE,
-    fetched bool NOT NULL DEFAULT FALSE,
     CONSTRAINT builder_and_build_number_must_be_unique UNIQUE(builder, number));
 CREATE INDEX build_builder_index ON builds(builder);
 CREATE INDEX build_slave_index ON builds(slave);
@@ -52,6 +51,8 @@ CREATE TABLE results (
     test integer REFERENCES tests ON DELETE CASCADE,
     build integer REFERENCES builds ON DELETE CASCADE,
     expected varchar(64) NOT NULL,
-    actual varchar(64) NOT NULL);
+    actual varchar(64) NOT NULL,
+    modifiers varchar(64) NOT NULL,
+    time integer);
 CREATE INDEX results_test ON results(test);
 CREATE INDEX results_build ON results(build);

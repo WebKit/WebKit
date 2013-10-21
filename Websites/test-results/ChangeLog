@@ -1,3 +1,37 @@
+2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New flakiness dashboard show test time, modifiers, and flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=123119
+
+        Reviewed by Tim Horton.
+
+        * api/failing-tests.php: Manually serialize each row in the results to avoid hitting the memory limit.
+        * include/db.php:
+        (Database::query): Added.
+        (Database::fetch_next_row): Added.
+        * include/init-database.sql: Added modifiers and time columns to results table.
+        * include/test-results.php:
+        (store_test_results): Update start_time and end_time to the union of the new interval and the existing interval.
+        (recursively_add_test_results): Handle empty $full_name to eliminate the loop over tests in store_test_results.
+        Also verify that each test name, expected and actual results conform to the specific format to prevent XSS.
+        Also use insert_row instead of select_or_insert_row to avoid issuing an unnecessary SQL query.
+        (format_result): Extracted from format_result_rows. Used in failing-tests.php.
+        * index.html:
+        (TestResultsView): Added _currentBuilderFailureType and _currentBuilderDays.
+        (TestResultsView._createResultCell): Show the test time and the expected result.
+        (TestResultsView._createTestResultRow): Compute the slowest run and also round time to tenth of second for time
+        less than 10s or second if it's more than 10s so that the test time will always be shown in two digits.
+        Also show the bug number and the latest expected result on the left columns after linkifying the bug numbers. 
+        (TestResultsView._matchesFailureType): Added. Determines whether results is of a particular failure type.
+        (TestResultsView._populateBuilderPane):
+        (TestResultsView.fetchFailingTestsForBuilder): Store the failure type such as flaky, wrongtestexpectations.
+        (TestResultsView.updateLocationHash):
+        (TestResultsView.loadTestsFromLocationHash):
+        (fetchManifest):
+        * js/dom.js:
+        (element): appendChild if an item is a Node. Otherwise, e.g. integer, create a text node out of toString() call.
+        * main.css: Updated styles.
+
 2013-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         New flakiness dashboard should support showing the failing tests per builder

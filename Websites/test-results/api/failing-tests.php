@@ -19,15 +19,32 @@ if (!$builder_row)
     exit_with_error('BuilderNotFound');
 $builder_id = $builder_row['id'];
 
-$result_rows = $db->query_and_fetch_all(
-'SELECT results.*, builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions
+$all_results = $db->query(
+"SELECT results.*, builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions
     FROM results, builds, build_revisions
     WHERE build_revisions.build = builds.id AND results.build = builds.id AND builds.builder = $1
-    AND results.actual != $2 AND builds.start_time > now() - interval \'' . $number_of_days . ' days\'
-    GROUP BY results.id, builds.id', array($builder_id, 'PASS'));
-if (!$result_rows)
+    AND builds.start_time > now() - interval '$number_of_days days'
+    GROUP BY results.id, builds.id ORDER BY results.test, max(build_revisions.time) DESC", array($builder_id));
+
+if (!$all_results)
     exit_with_error('ResultsNotFound');
 
-exit_with_success(format_result_rows($result_rows));
+// To conserve memory, we serialize tests at a time.
+echo "{\"status\": \"OK\", \"builders\": {\"$builder_id\":{";
+$currentTest = NULL;
+$i = 0;
+while ($result = $db->fetch_next_row($all_results)) {
+    if ($result['test'] != $currentTest) {
+        if ($currentTest)
+            echo '],';
+        $currentTest = $result['test'];
+        echo "\"$currentTest\": [";
+    } else
+        echo ',';
+    echo json_encode(format_result($result), true);
+}
+if ($currentTest)
+    echo ']';
+echo '}}}';
 
 ?>

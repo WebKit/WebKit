@@ -14,10 +14,10 @@ function element(elementName, attributesOrChildNodes, childNodes) {
 
     if (childNodes) {
         for (var i = 0; i < childNodes.length; i++) {
-            if (typeof(childNodes[i]) === 'string')
-                element.appendChild(document.createTextNode(childNodes[i]));
-            else
+            if (childNodes[i] instanceof Node)
                 element.appendChild(childNodes[i]);
+            else
+                element.appendChild(document.createTextNode(childNodes[i]));
         }
     }
     return element;

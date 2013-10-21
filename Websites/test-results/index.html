@@ -25,9 +25,10 @@
 <div id="testView"></div>
 
 <form>
-<label>Show failing tests for</label>
-<select id="builderListView"><option value="">Select builder</option></select>
-<select id="builderDaysView"><option>5</option><option>15</option><option>30</option></select>
+Show
+<label>tests <select id="builderFailureTypeView"><option>failing</option><option>flaky</option><option value="wrongexpectations">has wrong expectations</option></select></label>
+<label>on <select id="builderListView"><option value="">Select builder</option></select></label>
+<label for="builderDaysView">in the last <select id="builderDaysView"><option>5</option><option>15</option><option>30</option></select> days</label>
 </form>
 <div id="builderFailingTestsView"></div>
 
@@ -51,6 +52,8 @@ var TestResultsView = new (function () {
     this._tooltipContainer = tooltipContainer;
     this._tests = [];
     this._currentBuilder = null;
+    this._currentBuilderFailureType = null;
+    this._currentBuilderDays = null;
     this._oldHash = null;
     this._builders = [];
     this._slaves = [];
@@ -108,7 +111,8 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
     var build = result['buildNumber'];
     var actual = result['actual'];
     var expected = result['expected'];
-    var anchor = element('a', {'href': this._urlFromBuilder('result', master, builder, revision, build)});
+    var timeIfSlow = result.isSlow ? result.roundedTime : '-';
+    var anchor = element('a', {'href': this._urlFromBuilder('result', master, builder, revision, build)}, [timeIfSlow]);
     anchor.onmouseenter = function () {
         var repositoryById = TestResultsView._repositories;
         var formattedRevisions = result.build.formattedRevisions(previousResult ? previousResult.build : null);
@@ -128,7 +132,8 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
                 element('li', ['Build Time: ' + result.build.formattedBuildTime()]),
                 element('li', ['Revision: ' +  revisionDescription]),
                 element('li', ['Build: ', element('a', {'href': TestResultsView._urlFromBuilder('build', master, builder, revision, build)}, [build])]),
-                element('li', ['Result: ' + actual]),
+                element('li', ['Actual: ' + actual]),
+                element('li', ['Expected: ' + expected]),
             ])
         ]));
     }
@@ -157,17 +162,37 @@ TestResultsView._populateTestPane = function(testName, results, section) {
 }
 
 TestResultsView._createTestResultRow = function (title, results, builder) {
-    for (var i = 0; i < results.length; i++)
-        results[i].build = new TestBuild(this._repositories, this._builders, results[i]);
+    var slowestTime = 0;
+    for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        result.build = new TestBuild(this._repositories, this._builders, result);
+        result.roundedTime = result.time > 10000 ? Math.round(result.time / 1000) : Math.round(result.time / 100) / 10;
+        result.isSlow = result.time > 1000;
+        if (result.isSlow)
+            slowestTime = Math.max(slowestTime, result.roundedTime);
+    }
+    if (slowestTime)
+        slowestTime += 's';
+    else
+        slowestTime = '';
 
-    var sortedResults = results.sort(function (result1, result2) { return result1.build.time() - result2.build.time(); });
+    var sortedResults = results.sort(function (result1, result2) { return result2.build.time() - result1.build.time(); });
     var cells = new Array(sortedResults.length);
     for (var i = 0; i < sortedResults.length; i++)
         cells[i] = this._createResultCell(builder.master, builder.name, sortedResults[i], sortedResults[i - 1]);
 
-    var passCount = cells.filter(function (cell) { return cell.className == 'PASS'; }).length;
-    var passingRate = Math.round(passCount / cells.length * 100) + '%';
-    return element('tr', [element('th', ['' + title]), element('td', {'class': 'passingRate'}, [passingRate]), element('td', cells)]);
+    var formattedModifiers = sortedResults[0].modifiers.split(' ').map(function (modifier) {
+        if (modifier.indexOf('/') > 0)
+            return element('a', {'href': (modifier.indexOf('http') == 0 ? '' : 'http://') + modifier}, [modifier]);
+        return modifier;
+    });
+
+    return element('tr', [
+        element('th', ['' + title]),
+        element('td', {'class': 'modifiers'}, formattedModifiers),
+        element('td', {'class': 'expected'}, [sortedResults[0].expected]),
+        element('td', {'class': 'slowestTime'}, [slowestTime]),
+        element('td', cells)]);
 }
 
 TestResultsView.fetchTest = function (testName) {
@@ -219,7 +244,38 @@ TestResultsView.fetchTests = function (testNames, doNotUpdateHash) {
         this.updateLocationHash();
 }
 
-TestResultsView._populateBuilderPane = function(builderName, results, section) {
+TestResultsView._matchesFailureType = function (results, failureType, tn) {
+    if (!results.length)
+        return false;
+    var latestActualResult = results[0].actual;
+    var latestExpectedResult = results[0].expected;
+    switch (failureType) {
+    case 'failing':
+        return results[0].actual != 'PASS';
+    case 'flaky':
+        var offOneChangeCount = 0;
+        for (var i = 1; i + 1 < results.length; i++) {
+            var previousActual = results[i - 1].actual;
+            var nextActual = results[i + 1].actual;
+            if (previousActual == nextActual && results[i].actual != previousActual)
+                offOneChangeCount++;
+        }
+        return offOneChangeCount; // Heuristics.
+    case 'wrongexpectations':
+        if (latestExpectedResult == latestActualResult)
+            return false;
+        var expectedTokens = latestExpectedResult.split(' ');
+        if (expectedTokens.indexOf(latestActualResult) >= 0)
+            return false;
+        if (latestActualResult == 'TEXT' || latestActualResult == 'TEXT+IMAGE' && expectedTokens.indexOf('FAIL') >= 0)
+            return false;
+        return true;
+    }
+
+    return false;
+}
+
+TestResultsView._populateBuilderPane = function(builderName, failureType, results, section) {
     var table = element('table', {'class': 'resultsTable'}, [element('caption', [builderName])]);
     var resultsByBuilder = results['builders'];
     var resultsByTests;
@@ -232,12 +288,16 @@ TestResultsView._populateBuilderPane = function(builderName, results, section) {
         return;
 
     var builder = this._builders[builderId];
-    for (var testId in resultsByTests)
+    for (var testId in resultsByTests) {
+        var results = resultsByTests[testId];
+        if (!results.length || !this._matchesFailureType(results, failureType, this._availableTests[testId].name))
+            continue;
         table.appendChild(this._createTestResultRow(this._availableTests[testId].name, resultsByTests[testId], builder));
+    }
     section.appendChild(table);
 }
 
-TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDays, doNotUpdateHash) {
+TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDays, failureType, doNotUpdateHash) {
     var section = element('section', {'class': 'testResults'}, ['Loading...']);
 
     var container = document.getElementById('builderFailingTestsView');
@@ -246,7 +306,7 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
 
     var self = this;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&' + 'days=' + numberOfDays, true);  
+    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays, true);  
     xhr.onload = function(event) {
         var response = JSON.parse(xhr.response);
         section.innerHTML = '';
@@ -254,9 +314,11 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
             section.appendChild(text('Failed to load results for ' + builderName + ': ' + response['status']));
             return;
         }
+        // FIXME: Normalize failureType.
         self._currentBuilder = builderName;
+        self._currentBuilderFailureType = failureType;
         self._currentBuilderDays = numberOfDays;
-        self._populateBuilderPane(builderName, response, section);
+        self._populateBuilderPane(builderName, failureType, response, section);
         if (!doNotUpdateHash)
             self.updateLocationHash();
     }
@@ -267,6 +329,7 @@ TestResultsView.updateLocationHash = function () {
     var params = {
         'tests': this._tests.join(','),
         'builder': this._currentBuilder,
+        'builderFailureType': this._currentBuilderFailureType,
         'builderDays': this._currentBuilderDays,
     };
     var hash = '';
@@ -303,8 +366,13 @@ TestResultsView.loadTestsFromLocationHash = function () {
         document.getElementById('testView').innerHTML = '';
         this.fetchTests(parsed['tests'].split(','), doNotUpdateHash);
     }
-    if (parsed['builder'])
-        this.fetchFailingTestsForBuilder(parsed['builder'], parsed['builderDays'] || 5, doNotUpdateHash);
+    if (parsed['builder']) {
+        this.fetchFailingTestsForBuilder(
+            parsed['builder'],
+            parseInt(parsed['builderDays']) || 5,
+            parsed['builderFailureType'] || 'failing', doNotUpdateHash);
+    }
+    return parsed;
 }
 
 function fetchManifest(callback) {
@@ -332,14 +400,16 @@ fetchManifest(function (response) {
         builderListView.appendChild(element('option', [text(response['builders'][builderId].name)]));
 
     var builderDaysView = document.getElementById('builderDaysView');
+    var builderFailureTypeView = document.getElementById('builderFailureTypeView');
 
     function updateBuilderView() {
         if (builderListView.value)
-            TestResultsView.fetchFailingTestsForBuilder(builderListView.value, builderDaysView.value);
+            TestResultsView.fetchFailingTestsForBuilder(builderListView.value, builderDaysView.value, builderFailureTypeView.value);
     }
 
     builderListView.addEventListener('change', updateBuilderView);
     builderDaysView.addEventListener('change', updateBuilderView);
+    builderFailureTypeView.addEventListener('change', updateBuilderView);
 
     function mapById(items) {
         var results = {};
@@ -352,7 +422,13 @@ fetchManifest(function (response) {
     TestResultsView.setBuilders(mapById(response['builders']));
     TestResultsView.setSlaves(mapById(response['slaves']));
     TestResultsView.setRepositories(mapById(response['repositories']));
-    TestResultsView.loadTestsFromLocationHash();
+    // FIXME: Updating location.href shouldn't be TestResultsView's responsibility.
+    var parsedStates = TestResultsView.loadTestsFromLocationHash();
+    if (parsedStates['builder']) {
+        builderListView.value = parsedStates['builder'];
+        builderDaysView.value = parsedStates['builderDays'];
+        builderFailureTypeView.value = parsedStates['builderFailureType'];
+    }
 });
 
 function pasteHelper(input, event) {

@@ -31,9 +31,10 @@
 .resultsTable {
     font-size: small;
     border-collapse: collapse;
-    border: 2px solid #fff;
+    border: 0px solid #fff;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .resultsTable caption {
@@ -46,13 +47,15 @@
 
 .resultsTable td,
 .resultsTable th {
-    border: 2px solid #fff;
-    padding: 0;
+    white-space: pre;
+    border: 0px solid #fff;
+    padding: 0 0.5em;
     margin: 0;
 }
 
 .resultsTable th,
 .resultsTable .passingRate {
+    text-align: left;
     font-weight: normal;
     padding-right: 10px;
 }
@@ -70,11 +73,30 @@
     padding: 0.2em 0.2em;
 }
 
+.resultsTable tr:hover,
+.resultsTable tr:hover {
+    background-color: #eee;
+}
+
 .resultsTable a {
+    color: #00f;
+    text-shadow: none;
+}
+
+.resultsTable a:visited {
+    color: #006;
+}
+
+.resultsTable span a {
     display: block;
-    width: 1em;
-    height: 1.5em;
+    width: 1.4em;
+    height: 2em;
     border-radius: 3px;
+    font-size: 0.5em;
+    padding: 0.3em;
+    text-align: center;
+    line-height: 1.9em;
+    color: inherit;
 }
 
 .resultsTable .PASS a {
@@ -86,7 +108,7 @@
 }
 
 .resultsTable .IMAGE a {
-    background-color: #3cf;
+    background-color: #fc3;
 }
 
 .resultsTable .TEXT.PASS a {
@@ -95,6 +117,11 @@
 
 .resultsTable .CRASH a {
     background-color: #f00;
+}
+
+.resultsTable .TIMEOUT a {
+    background-color: #000;
+    color: #fff;
 }
 
 .candidateWindow {
