@@ -39,15 +39,16 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStore {
 public:
     RemoteLayerBackingStore();
-    RemoteLayerBackingStore(PlatformCALayerRemote*, WebCore::IntSize);
+    RemoteLayerBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale);
 
-    void setNeedsDisplay(WebCore::IntRect);
+    void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
     bool display();
 
     ShareableBitmap* bitmap() const { return m_frontBuffer.get(); }
     WebCore::IntSize size() const { return m_size; }
+    float scale() const { return m_scale; }
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
@@ -55,9 +56,12 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder&, RemoteLayerBackingStore&);
 
 private:
+    WebCore::IntRect mapToContentCoordinates(const WebCore::IntRect) const;
+
     PlatformCALayerRemote* m_layer;
 
     WebCore::IntSize m_size;
+    float m_scale;
 
     WebCore::Region m_dirtyRegion;
 

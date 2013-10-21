@@ -1,3 +1,13 @@
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Backing store should take contentsScale into account
+        https://bugs.webkit.org/show_bug.cgi?id=123106
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Export FloatRect::scale.
+
 2013-10-21  Andreas Kling  <akling@apple.com>
 
         RenderScrollbarPart doesn't need styleWillChange().

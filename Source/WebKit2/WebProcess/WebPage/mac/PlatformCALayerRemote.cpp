@@ -101,21 +101,24 @@ void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
 void PlatformCALayerRemote::ensureBackingStore()
 {
     if (m_properties.backingStore.layer() == this
-        && m_properties.backingStore.size() == m_properties.size)
+        && m_properties.backingStore.size() == m_properties.size
+        && m_properties.backingStore.scale() == m_properties.contentsScale)
         return;
 
-    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size));
+    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size), m_properties.contentsScale);
 }
 
-void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* dirtyRect)
+void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
 {
     ensureBackingStore();
 
-    // FIXME: Need to map this through contentsRect/contentsScale/etc.
-    if (dirtyRect)
-        m_properties.backingStore.setNeedsDisplay(enclosingIntRect(*dirtyRect));
-    else
+    if (!rect) {
         m_properties.backingStore.setNeedsDisplay();
+        return;
+    }
+
+    // FIXME: Need to map this through contentsRect/etc.
+    m_properties.backingStore.setNeedsDisplay(enclosingIntRect(*rect));
 }
 
 void PlatformCALayerRemote::setContentsChanged()
@@ -411,6 +414,8 @@ void PlatformCALayerRemote::setContentsScale(float value)
 {
     m_properties.contentsScale = value;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ContentsScaleChanged);
+
+    ensureBackingStore();
 }
 
 TiledBacking* PlatformCALayerRemote::tiledBacking()

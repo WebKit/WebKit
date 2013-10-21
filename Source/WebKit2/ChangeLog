@@ -1,3 +1,32 @@
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Backing store should take contentsScale into account
+        https://bugs.webkit.org/show_bug.cgi?id=123106
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::ensureBackingStore):
+        (PlatformCALayerRemote::setNeedsDisplay):
+        (PlatformCALayerRemote::setContentsScale):
+        Inform the backing store of the contentsScale, and when it changes.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::scale): Added.
+        (WebKit::RemoteLayerBackingStore::mapToContentCoordinates): Added.
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (RemoteLayerBackingStore::encode):
+        (RemoteLayerBackingStore::decode):
+        (RemoteLayerBackingStore::mapToContentCoordinates):
+        Factor out flipping so we can use it for repaints in multiple places.
+
+        (RemoteLayerBackingStore::setNeedsDisplay):
+        (RemoteLayerBackingStore::display):
+        Create a buffer scaled up by contentsScale, take the scale into account
+        when copying clean bits from the front buffer, and apply the scale before
+        painting into the back buffer.
+
 2013-10-21  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         Remove qt from generate-forwarding-headers.pl

@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,10 @@
 using namespace WebCore;
 using namespace WebKit;
 
-RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer, IntSize size)
+RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale)
     : m_layer(layer)
     , m_size(size)
+    , m_scale(scale)
 {
     ASSERT(layer);
 }
@@ -56,6 +57,7 @@ void RemoteLayerBackingStore::encode(CoreIPC::ArgumentEncoder& encoder) const
 
     encoder << handle;
     encoder << m_size;
+    encoder << m_scale;
 }
 
 bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLayerBackingStore& result)
@@ -68,12 +70,24 @@ bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLa
     if (!decoder.decode(result.m_size))
         return false;
 
+    if (!decoder.decode(result.m_scale))
+        return false;
+
     return true;
 }
 
-void RemoteLayerBackingStore::setNeedsDisplay(IntRect rect)
+IntRect RemoteLayerBackingStore::mapToContentCoordinates(const IntRect rect) const
 {
-    m_dirtyRegion.unite(rect);
+    IntRect flippedRect = rect;
+    if (m_layer->owner()->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
+        flippedRect.setY(m_size.height() - rect.y() - rect.height());
+    return flippedRect;
+}
+
+void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
+{
+    IntRect flippedRect = mapToContentCoordinates(rect);
+    m_dirtyRegion.unite(flippedRect);
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
@@ -94,17 +108,17 @@ bool RemoteLayerBackingStore::display()
     if (m_dirtyRegion.isEmpty())
         return false;
 
-    m_backBuffer = ShareableBitmap::createShareable(m_size, ShareableBitmap::SupportsAlpha);
-    if (!m_frontBuffer)
-        m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
+    FloatSize scaledSize = m_size;
+    scaledSize.scale(m_scale);
 
     IntRect layerBounds(IntPoint(), m_size);
 
-    if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
-        IntRect indicatorRect = IntRect(0, 0, 52, 27);
-        if (m_layer->owner()->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
-            indicatorRect.setY(layerBounds.height() - indicatorRect.y() - indicatorRect.height());
+    m_backBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
+    if (!m_frontBuffer)
+        m_dirtyRegion.unite(layerBounds);
 
+    if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
+        IntRect indicatorRect = mapToContentCoordinates(IntRect(0, 0, 52, 27));
         m_dirtyRegion.unite(indicatorRect);
     }
 
@@ -123,15 +137,19 @@ bool RemoteLayerBackingStore::display()
 
             RetainPtr<CGImageRef> frontImage = m_frontBuffer->makeCGImage();
 
-            for (const auto& rect : cleanRegion.rects())
-                context->drawNativeImage(frontImage.get(), m_frontBuffer->size(), ColorSpaceDeviceRGB, rect, rect);
+            for (const auto& rect : cleanRegion.rects()) {
+                FloatRect scaledRect = rect;
+                scaledRect.scale(m_scale);
+                context->drawNativeImage(frontImage.get(), m_frontBuffer->size(), ColorSpaceDeviceRGB, scaledRect, scaledRect);
+            }
         }
 
         for (const auto& rect : dirtyRects)
             rectsToPaint.append(rect);
     }
 
-    drawLayerContents(context->platformContext(), m_layer, layerBounds, rectsToPaint, false);
+    context->scale(FloatSize(m_scale, m_scale));
+    drawLayerContents(context->platformContext(), m_layer, FloatRect(FloatPoint(), scaledSize), rectsToPaint, false);
     m_dirtyRegion = Region();
 
     m_frontBuffer = m_backBuffer;
