@@ -2,6 +2,12 @@
 
         Unreviewed EFL gardening. Update EFL test expectations.
 
+        * platform/efl/TestExpectations: Skip authentication tests that are failing.
+
+2013-10-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Update EFL test expectations.
+
         * platform/efl/TestExpectations: Mark fast/workers/worker-call.html as failure.
 
 2013-10-19  Jer Noble  <jer.noble@apple.com>
