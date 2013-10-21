@@ -1625,7 +1625,8 @@ void isDocument(const Document&); // Catch unnecessary runtime check of type kno
 
 NODE_TYPE_CASTS(Document)
 
-#define DOCUMENT_TYPE_CASTS(ToClassName) TYPE_CASTS_BASE(ToClassName, Document)
+#define DOCUMENT_TYPE_CASTS(ToClassName) \
+    TYPE_CASTS_BASE(ToClassName, Document, document, WebCore::is##ToClassName(*document), WebCore::is##ToClassName(document))
 
 } // namespace WebCore
 
