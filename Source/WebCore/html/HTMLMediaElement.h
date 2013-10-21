@@ -624,8 +624,8 @@ private:
     virtual bool isLiveStream() const OVERRIDE { return movieLoadType() == MediaPlayer::LiveStream; }
     bool isAutoplaying() const { return m_autoplaying; }
 
-#if PLATFORM(MAC)
     void updateSleepDisabling();
+#if PLATFORM(MAC)
     bool shouldDisableSleep() const;
 #endif
 
