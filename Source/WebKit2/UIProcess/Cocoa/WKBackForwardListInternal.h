@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKBackForwardListItem.h"
+#import "WKBackForwardList.h"
 
-#include "WKAPICast.h"
-#include "WebBackForwardListItem.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
-
-WKTypeID WKBackForwardListItemGetTypeID()
-{
-    return toAPI(WebBackForwardListItem::APIType);
+namespace WebKit {
+class WebBackForwardList;
 }
 
-WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef itemRef)
-{
-    return toCopiedURLAPI(toImpl(itemRef)->url());
-}
+@interface WKBackForwardList (Internal)
 
-WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
-{
-    return toCopiedAPI(toImpl(itemRef)->title());
-}
+- (id)_initWithList:(WebKit::WebBackForwardList&)list;
 
-WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
-{
-    return toCopiedURLAPI(toImpl(itemRef)->originalURL());
-}
+@end
+
+#endif // WK_API_ENABLED

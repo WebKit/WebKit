@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBackForwardListItem_h
-#define WKBackForwardListItem_h
+#import "WKBackForwardListItem.h"
 
-#include <WebKit2/WKBase.h>
+#if WK_API_ENABLED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID();
-
-WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
-WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);
-WK_EXPORT WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef item);
-
-#ifdef __cplusplus
+namespace WebKit {
+class WebBackForwardListItem;
 }
-#endif
 
-#endif /* WKBackForwardListItem_h */
+@interface WKBackForwardListItem (Internal)
+
+- (id)_initWithItem:(WebKit::WebBackForwardListItem&)item;
+
+@end
+
+#endif // WK_API_ENABLED

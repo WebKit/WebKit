@@ -28,7 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WKArray.h"
-#include "WKBackForwardList.h"
+#include "WKBackForwardListRef.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_object.h"
 #include <wtf/text/CString.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBackForwardList_h
-#define WKBackForwardList_h
+#include <WebKit2/WKBackForwardListRef.h>
 
-#include <WebKit2/WKBase.h>
+#ifdef __OBJC__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import <WebKit2/WKBackForwardListItem.h>
+#import <WebKit2/WKFoundation.h>
 
-WK_EXPORT WKTypeID WKBackForwardListGetTypeID();
+#if WK_API_ENABLED
 
-WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetCurrentItem(WKBackForwardListRef list);
-WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetBackItem(WKBackForwardListRef list);
-WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetForwardItem(WKBackForwardListRef list);
-WK_EXPORT WKBackForwardListItemRef WKBackForwardListGetItemAtIndex(WKBackForwardListRef list, int index);
+@interface WKBackForwardList : NSObject
 
-WK_EXPORT unsigned WKBackForwardListGetBackListCount(WKBackForwardListRef list);
-WK_EXPORT unsigned WKBackForwardListGetForwardListCount(WKBackForwardListRef list);
+@property (readonly) WKBackForwardListItem *currentItem;
+@property (readonly) WKBackForwardListItem *backItem;
+@property (readonly) WKBackForwardListItem *forwardItem;
 
-WK_EXPORT WKArrayRef WKBackForwardListCopyBackListWithLimit(WKBackForwardListRef list, unsigned limit);
-WK_EXPORT WKArrayRef WKBackForwardListCopyForwardListWithLimit(WKBackForwardListRef list, unsigned limit);
+- (WKBackForwardListItem *)itemAtIndex:(NSInteger)index;
 
-#ifdef __cplusplus
-}
-#endif
+@property (readonly) NSUInteger backListCount;
+@property (readonly) NSUInteger forwardListCount;
 
-#endif // WKBackForwardList_h
+- (NSArray *)backListWithLimit:(NSUInteger)limit;
+- (NSArray *)forwardListWithLimit:(NSUInteger)limit;
+
+@end
+
+#endif // WK_API_ENABLED
+
+#endif // defined(__OBJC__)

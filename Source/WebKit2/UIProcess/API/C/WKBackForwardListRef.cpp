@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WKBackForwardList.h"
+#include "WKBackForwardListRef.h"
 
 #include "WebBackForwardList.h"
 #include "WKAPICast.h"

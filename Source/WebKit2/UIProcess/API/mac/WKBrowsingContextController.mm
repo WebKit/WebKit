@@ -29,6 +29,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 
 #import "ObjCObjectGraph.h"
+#import "WKBackForwardListInternal.h"
 #import "WKErrorCF.h"
 #import "WKFrame.h"
 #import "WKPagePrivate.h"
@@ -252,6 +253,14 @@ static void releaseNSData(unsigned char*, const void* data)
     return WKPageCanGoBack(self._pageRef);
 }
 
+- (WKBackForwardList *)backForwardList
+{
+    WebBackForwardList* list = toImpl(self._pageRef)->backForwardList();
+    if (!list)
+        return nil;
+
+    return [[[WKBackForwardList alloc] _initWithList:*list] autorelease];
+}
 
 #pragma mark Active Load Introspection
 

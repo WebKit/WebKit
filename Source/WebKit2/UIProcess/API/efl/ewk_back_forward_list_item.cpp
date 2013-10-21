@@ -27,7 +27,7 @@
 #include "ewk_back_forward_list_item.h"
 
 #include "WKAPICast.h"
-#include "WKBackForwardListItem.h"
+#include "WKBackForwardListItemRef.h"
 #include "ewk_back_forward_list_item_private.h"
 
 using namespace WebKit;

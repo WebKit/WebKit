@@ -1,3 +1,79 @@
+2013-10-21  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Back/forward list UI process API
+        https://bugs.webkit.org/show_bug.cgi?id=123109
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt: Updated for renames.
+        * GNUmakefile.list.am: Ditto.
+
+        * Shared/Cocoa: Added.
+        * Shared/Cocoa/WKNSArray.h: Added. WKNSArray is an internal NSArray subclass backed by
+        a WebKit::ImmutableArray.
+        * Shared/Cocoa/WKNSArray.mm: Added.
+        (+[WKNSArray web_arrayWithImmutableArray:]): Added.
+        (-[WKNSArray web_initWithImmutableArray:]): Added.
+        (-[WKNSArray count]): Added.
+        (-[WKNSArray objectAtIndex:]): Added.
+        (-[WKNSArray copyWithZone:]): Added.
+
+        * Shared/Cocoa/WKNSObjectExtras.h: Added. Declares a category on NSObject that allows us to
+        vend WebKit API objects as Objective-C objects.
+        * Shared/Cocoa/WKNSObjectExtras.mm: Added.
+        (-[WKObject initWithAPIObject:]): WKObject is the generic Cocoa wrapper for API objects.
+        (-[WKObject isEqual:]): Check for equality of the underlying object.
+        (-[WKObject hash]): Return a pointer to the underlying object.
+        (-[WKObject description]): Added.
+        (+[NSObject _web_objectWithAPIObject:]): Added. Returns an appropriate Objective-C object
+        for the given API object. Currently returns a WKBackForwardListItem for a back/forward list
+        item and a generic WKObject for all other types.
+
+        * UIProcess/API/C/WKBackForwardList.cpp: Renamed.
+        * UIProcess/API/C/WKBackForwardList.h: Renamed.
+        * UIProcess/API/C/WKBackForwardListItem.cpp: Renamed.
+        * UIProcess/API/C/WKBackForwardListItem.h: Renamed.
+        * UIProcess/API/C/WKBackForwardListItemRef.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.cpp.
+        * UIProcess/API/C/WKBackForwardListItemRef.h: Copied from Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.h.
+        * UIProcess/API/C/WKBackForwardListRef.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKBackForwardList.cpp.
+        * UIProcess/API/C/WKBackForwardListRef.h: Copied from Source/WebKit2/UIProcess/API/C/WKBackForwardList.h.
+
+        * UIProcess/API/C/WebKit2_C.h: Updated for header renames.
+
+        * UIProcess/API/efl/ewk_back_forward_list.cpp: Updated for rename.
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp: Ditto.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Declared backForwardList property.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController backForwardList]): Added this accessor.
+
+        * UIProcess/Cocoa: Added.
+        * UIProcess/Cocoa/WKBackForwardList.h: Added.
+        * UIProcess/Cocoa/WKBackForwardList.mm: Added.
+        (toWKBackForwardListItem): Added this helper.
+        (-[WKBackForwardList currentItem]): Added.
+        (-[WKBackForwardList backItem]): Added.
+        (-[WKBackForwardList forwardItem]): Added.
+        (-[WKBackForwardList itemAtIndex:]): Added.
+        (-[WKBackForwardList backListCount]): Added.
+        (-[WKBackForwardList forwardListCount]): Added.
+        (-[WKBackForwardList backListWithLimit:]): Added.
+        (-[WKBackForwardList forwardListWithLimit:]): Added.
+        (-[WKBackForwardList _initWithList:]): Added.
+        * UIProcess/Cocoa/WKBackForwardListInternal.h: Added.
+
+        * UIProcess/Cocoa/WKBackForwardListItem.h: Added.
+        * UIProcess/Cocoa/WKBackForwardListItem.mm: Added.
+        (-[WKBackForwardListItem URL]): Added.
+        (-[WKBackForwardListItem title]): Added.
+        (-[WKBackForwardListItem originalURL]): Added.
+        (-[WKBackForwardListItem isEqual:]): Check for equality of the underlying object.
+        (-[WKBackForwardListItem hash]): Return a pointer to the underlying object
+        (-[WKBackForwardListItem _initWithItem:]): Added.
+        * UIProcess/Cocoa/WKBackForwardListItemInternal.h: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for renames and additions.
+
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Maybe a Lion build fix after r157731.

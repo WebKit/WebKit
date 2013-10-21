@@ -352,8 +352,8 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp
-    UIProcess/API/C/WKBackForwardList.cpp
-    UIProcess/API/C/WKBackForwardListItem.cpp
+    UIProcess/API/C/WKBackForwardListRef.cpp
+    UIProcess/API/C/WKBackForwardListItemRef.cpp
     UIProcess/API/C/WKBatteryManager.cpp
     UIProcess/API/C/WKBatteryStatus.cpp
     UIProcess/API/C/WKColorPickerResultListener.cpp

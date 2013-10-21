@@ -1,0 +1,115 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WKBackForwardListInternal.h"
+
+#if WK_API_ENABLED
+
+#import "WKBackForwardListItemInternal.h"
+#import "WKNSArray.h"
+#import "WebBackForwardList.h"
+
+using namespace WebKit;
+
+@implementation WKBackForwardList {
+    RefPtr<WebBackForwardList> _list;
+}
+
+static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* item)
+{
+    if (!item)
+        return nil;
+
+    return [[[WKBackForwardListItem alloc] _initWithItem:*item] autorelease];
+}
+
+- (WKBackForwardListItem *)currentItem
+{
+    return toWKBackForwardListItem(_list->currentItem());
+}
+
+- (WKBackForwardListItem *)backItem
+{
+    return toWKBackForwardListItem(_list->backItem());
+}
+
+- (WKBackForwardListItem *)forwardItem
+{
+    return toWKBackForwardListItem(_list->backItem());
+}
+
+- (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
+{
+    return toWKBackForwardListItem(_list->itemAtIndex(index));
+}
+
+- (NSUInteger)backListCount
+{
+    return _list->backListCount();
+}
+
+- (NSUInteger)forwardListCount
+{
+    return _list->forwardListCount();
+}
+
+- (NSArray *)backListWithLimit:(NSUInteger)limit
+{
+    RefPtr<ImmutableArray> list = _list->backListAsImmutableArrayWithLimit(limit);
+    if (!list)
+        return nil;
+
+    return [WKNSArray web_arrayWithImmutableArray:*list];
+}
+
+- (NSArray *)forwardListWithLimit:(NSUInteger)limit
+{
+    RefPtr<ImmutableArray> list = _list->forwardListAsImmutableArrayWithLimit(limit);
+    if (!list)
+        return nil;
+
+    return [WKNSArray web_arrayWithImmutableArray:*list];
+}
+
+@end
+
+#pragma mark -
+
+@implementation WKBackForwardList (Internal)
+
+- (id)_initWithList:(WebBackForwardList&)list
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _list = &list;
+
+    return self;
+}
+
+@end
+
+#endif // WK_API_ENABLED

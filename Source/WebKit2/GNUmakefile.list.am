@@ -50,8 +50,8 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKApplicationCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationChallenge.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationDecisionListener.h \
-	$(WebKit2)/UIProcess/API/C/WKBackForwardList.h \
-	$(WebKit2)/UIProcess/API/C/WKBackForwardListItem.h \
+	$(WebKit2)/UIProcess/API/C/WKBackForwardListRef.h \
+	$(WebKit2)/UIProcess/API/C/WKBackForwardListItemRef.h \
 	$(WebKit2)/UIProcess/API/C/WKBatteryManager.h \
 	$(WebKit2)/UIProcess/API/C/WKBatteryStatus.h \
 	$(WebKit2)/UIProcess/API/C/WKColorPickerResultListener.h \
@@ -582,10 +582,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationChallenge.h \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKAuthenticationDecisionListener.h \
-	Source/WebKit2/UIProcess/API/C/WKBackForwardList.cpp \
-	Source/WebKit2/UIProcess/API/C/WKBackForwardList.h \
-	Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.cpp \
-	Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.h \
+	Source/WebKit2/UIProcess/API/C/WKBackForwardListRef.cpp \
+	Source/WebKit2/UIProcess/API/C/WKBackForwardListRef.h \
+	Source/WebKit2/UIProcess/API/C/WKBackForwardListItemRef.cpp \
+	Source/WebKit2/UIProcess/API/C/WKBackForwardListItemRef.h \
 	Source/WebKit2/UIProcess/API/C/WKBatteryManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKBatteryManager.h \
 	Source/WebKit2/UIProcess/API/C/WKBatteryStatus.cpp \
