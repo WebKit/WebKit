@@ -3464,9 +3464,10 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
         windowRect.setX(features.x);
     if (features.ySet)
         windowRect.setY(features.y);
-    if (features.widthSet)
+    // Zero width and height mean using default size, not minumum one.
+    if (features.widthSet && features.width)
         windowRect.setWidth(features.width + (windowRect.width() - viewportSize.width()));
-    if (features.heightSet)
+    if (features.heightSet && features.height)
         windowRect.setHeight(features.height + (windowRect.height() - viewportSize.height()));
 
     // Ensure non-NaN values, minimum size as well as being within valid screen area.

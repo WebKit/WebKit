@@ -1,3 +1,17 @@
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153913
+
+    2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r142755): window.open creates an invisible window when width and height are 0
+            https://bugs.webkit.org/show_bug.cgi?id=119633
+
+            Reviewed by Darin Adler.
+
+            * WebCoreSupport/ChromeClientGtk.cpp: (WebKit::ChromeClient::setWindowRect):
+            Once again, the passed rect cannot be empty.
+
 2013-06-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r151832

@@ -1,5 +1,19 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153913
+
+    2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (r142755): window.open creates an invisible window when width and height are 0
+            https://bugs.webkit.org/show_bug.cgi?id=119633
+
+            Reviewed by Darin Adler.
+
+            * fast/dom/Window/open-zero-size-as-default-expected.txt: Added.
+            * fast/dom/Window/open-zero-size-as-default.html: Added.
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153877
 
     2013-08-08  Tim Horton  <timothy_horton@apple.com>
