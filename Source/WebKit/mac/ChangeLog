@@ -1,3 +1,20 @@
+2013-10-21  Daniel Bates  <dabates@apple.com>
+
+        Remove platform #ifdefs from WebDataSourcePrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=123120
+        <rdar://problem/15275533>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _setAllowToBeMemoryMapped]): Define empty implementation when building without
+        disk image cache enabled.
+        (-[WebDataSource setDataSourceDelegate:]): Ditto.
+        (-[WebDataSource dataSourceDelegate]): Return nullptr when building without disk image cache
+        enabled on iOS.
+        * WebView/WebDataSourcePrivate.h: Removed platform #ifdefs added in
+        <http://trac.webkit.org/changeset/156918> (https://bugs.webkit.org/show_bug.cgi?id=121985)
+
 2013-10-20  Mark Lam  <mark.lam@apple.com>
 
         Avoid JSC debugger overhead unless needed.

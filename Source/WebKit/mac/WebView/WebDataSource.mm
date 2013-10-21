@@ -208,9 +208,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     toPrivate(_private)->loader->setDeferMainResourceDataLoad(flag);
 }
 
-#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
 - (void)_setAllowToBeMemoryMapped
 {
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
     RefPtr<ResourceBuffer> mainResourceBuffer = toPrivate(_private)->loader->mainResourceData();
     if (!mainResourceBuffer)
         return;
@@ -236,19 +236,25 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         return;
     }
     ASSERT_NOT_REACHED();
+#endif
 }
 
 - (void)setDataSourceDelegate:(NSObject<WebDataSourcePrivateDelegate> *)delegate
 {
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
     ASSERT(!toPrivate(_private)->_dataSourceDelegate);
     toPrivate(_private)->_dataSourceDelegate = delegate;
+#endif
 }
 
 - (NSObject<WebDataSourcePrivateDelegate> *)dataSourceDelegate
 {
+#if ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
     return toPrivate(_private)->_dataSourceDelegate;
+#else
+    return nullptr;
+#endif
 }
-#endif // ENABLE(DISK_IMAGE_CACHE) && PLATFORM(IOS)
 
 @end
 
