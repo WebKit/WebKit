@@ -1,3 +1,14 @@
+2013-10-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Jhbuild] Bump the required Jhbuild revision
+        https://bugs.webkit.org/show_bug.cgi?id=123089
+
+        Reviewed by Carlos Garcia Campos.
+
+        * jhbuild/jhbuild-wrapper: Latest versions of the gnome-common tools produce failures when configuring Jhbuild
+        due to the configure.ac script using both IT_PROG_INTLTOOL and AM_GNU_GETTEXT macros. This is already fixed
+        in the Jhbuild source so a more recent revision of it should be used.
+
 2013-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         Mac build fix.
