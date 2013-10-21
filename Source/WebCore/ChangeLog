@@ -1,3 +1,14 @@
+2013-10-21  Andreas Kling  <akling@apple.com>
+
+        Merge RenderListMarker::styleWillChange() into styleDidChange().
+        <https://webkit.org/b/123098>
+
+        If the marker's list-style-type or list-style-position changed, we
+        need to dirty the layout. Move this logic to styleDidChange() so we
+        can get rid of one styleWillChange() overload.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-21  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Fix WHITESPACE issues in the CSS grammar.
