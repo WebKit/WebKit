@@ -72,6 +72,11 @@ static WebPluginDatabase *sharedDatabase = nil;
     return sharedDatabase;
 }
 
++ (WebPluginDatabase *)sharedDatabaseIfExists
+{
+    return sharedDatabase;
+}
+
 + (void)closeSharedDatabase 
 {
     [sharedDatabase close];

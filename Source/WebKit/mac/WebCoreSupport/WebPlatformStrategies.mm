@@ -123,7 +123,7 @@ void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, c
 
 void WebPlatformStrategies::refreshPlugins()
 {
-    [[WebPluginDatabase sharedDatabase] refresh];
+    [[WebPluginDatabase sharedDatabaseIfExists] refresh];
 }
 
 void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& plugins)

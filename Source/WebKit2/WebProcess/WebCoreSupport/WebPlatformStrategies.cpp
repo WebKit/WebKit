@@ -275,8 +275,6 @@ void WebPlatformStrategies::refreshPlugins()
     m_cachedPlugins.clear();
     m_pluginCacheIsPopulated = false;
     m_shouldRefreshPlugins = true;
-
-    populatePluginCache();
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 

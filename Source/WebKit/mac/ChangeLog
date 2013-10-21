@@ -1,5 +1,25 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154067
+
+    2013-08-14  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r153877): Plugin scanning slows creation of WebViews
+            https://bugs.webkit.org/show_bug.cgi?id=119665
+            <rdar://problem/14716549>
+
+            Reviewed by Darin Adler.
+
+            * Plugins/WebPluginDatabase.h:
+            * Plugins/WebPluginDatabase.mm:
+            (+[WebPluginDatabase sharedDatabaseIfExists]): Added.
+
+            * WebCoreSupport/WebPlatformStrategies.mm:
+            (WebPlatformStrategies::refreshPlugins):
+            Only refresh the plugin database if it's already been loaded.
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153877
 
     2013-08-08  Tim Horton  <timothy_horton@apple.com>
