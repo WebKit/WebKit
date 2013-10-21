@@ -1,3 +1,15 @@
+2013-10-21  Dan Bernstein  <mitz@apple.com>
+
+        Style checker should allow a space after the @property keyword
+        https://bugs.webkit.org/show_bug.cgi?id=123117
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing_for_function_call): Allow a space between @property and the following (
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_spacing_for_fncall): Added a test case.
+
 2013-10-21  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Build does not start.
