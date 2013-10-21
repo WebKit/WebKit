@@ -961,6 +961,11 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     setStrokeStyle(oldStyle);
 }
 
+void GraphicsContext::updateDocumentMarkerResources()
+{
+    notImplemented();
+}
+
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle style)
 {
     notImplemented();

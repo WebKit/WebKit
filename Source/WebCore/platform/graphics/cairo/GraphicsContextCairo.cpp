@@ -636,6 +636,11 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     cairo_restore(cairoContext);
 }
 
+void GraphicsContext::updateDocumentMarkerResources()
+{
+    // Unnecessary, since our document markers don't use resources.
+}
+
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& origin, float width, DocumentMarkerLineStyle style)
 {
     if (paintingDisabled())

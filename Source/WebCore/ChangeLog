@@ -1,3 +1,30 @@
+2013-10-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Grammar markers are not updated when switching between 1x and 2x
+        https://bugs.webkit.org/show_bug.cgi?id=122146
+
+        Reviewed by Dean Jackson.
+
+        When running editing/spelling/grammar-markers-hidpi.html, the 2x
+        grammar/spelling dot resources are cached. If you then run
+        editing/spelling/grammar-markers.html without tearing down WebKit,
+        it re-uses the 2x dots. The difference between the two tests is a call
+        to testRunner.setBackingScaleFactor().
+
+        We create a NSColor from an NSImage, and remember it in a static
+        variable. However, NSColor inspects the current graphics context to
+        determine which resolution to use, and then remembers that decision.
+        Therefore, we want to recreate the NSColor whenever the device pixel
+        ratio changes. This patch adds a new static function to GraphicsContext
+        which recreates this NSColor every time the ratio changes.
+
+        Tests: editing/spelling/grammar-markers.html
+               editing/spelling/inline_spelling_markers.html
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::makePattern):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+
 2013-10-21  Simon Fraser  <simon.fraser@apple.com>
 
         Use pink layer borders for compositing layers with a contents layer

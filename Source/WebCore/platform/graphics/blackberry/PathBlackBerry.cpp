@@ -246,6 +246,10 @@ void GraphicsContext::drawLine(const IntPoint& from, const IntPoint& to)
     platformContext()->addDrawLine(from, to);
 }
 
+void GraphicsContext::updateDocumentMarkerResources()
+{
+}
+
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float width, DocumentMarkerLineStyle style)
 {
     platformContext()->addDrawLineForDocumentMarker(pt, width, (BlackBerry::Platform::Graphics::DocumentMarkerLineStyle)style);

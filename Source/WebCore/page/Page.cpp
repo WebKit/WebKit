@@ -797,6 +797,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
         frame->editor().deviceScaleFactorChanged();
 
     pageCache()->markPagesForFullStyleRecalc(this);
+    GraphicsContext::updateDocumentMarkerResources();
 }
 
 void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)

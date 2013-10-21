@@ -337,6 +337,7 @@ namespace WebCore {
             DocumentMarkerAutocorrectionReplacementLineStyle,
             DocumentMarkerDictationAlternativesLineStyle
         };
+        static void updateDocumentMarkerResources();
         void drawLineForDocumentMarker(const FloatPoint&, float width, DocumentMarkerLineStyle);
 
         bool paintingDisabled() const;
