@@ -1,3 +1,19 @@
+2013-10-21  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Fix WHITESPACE issues in the CSS grammar.
+        https://bugs.webkit.org/show_bug.cgi?id=123082
+
+        Reviewed by Andreas Kling.
+
+        This is a port of Rune Lillesveen's patch from https://codereview.chromium.org/25607005
+
+        * css3/filters/custom-with-at-rule-syntax/parsing-at-rule-valid-expected.txt:
+        * css3/filters/custom-with-at-rule-syntax/script-tests/parsing-at-rule-valid.js:
+        * fast/css/calc-comments-allowed-expected.html: Added.
+        * fast/css/calc-comments-allowed.html: Added.
+        * fast/regions/webkit-region-syntax-space-expected.txt: Added.
+        * fast/regions/webkit-region-syntax-space.html: Added.
+
 2013-10-21  Santosh Mahto  <santosh.ma@samsung.com>
 
         ASSERTION FAILED: !style->propertyIsImportant(propertyID) in WebCore::setTextDecorationProperty

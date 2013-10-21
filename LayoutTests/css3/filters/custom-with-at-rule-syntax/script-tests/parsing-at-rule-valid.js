@@ -70,6 +70,18 @@ testFilterAtRule("Rule with arbitrary properties.",
     "@-webkit-filter my-filter { width: 100px; height: 100px; }", 
     "@-webkit-filter my-filter { width: 100px; height: 100px; }",
     {width: "100px", height: "100px"});
+testFilterAtRule("Empty rule, comment separators",
+    "@-webkit-filter/**/my-filter/**/{ }",
+    "@-webkit-filter my-filter { }");
+testFilterAtRule("Empty rule, comment+space separators",
+    "@-webkit-filter/**/ my-filter/**/ { }",
+    "@-webkit-filter my-filter { }");
+testFilterAtRule("Empty rule, space+comment separators",
+    "@-webkit-filter /**/my-filter /**/{ }",
+    "@-webkit-filter my-filter { }");
+testFilterAtRule("Empty rule, space+comment+space separators",
+    "@-webkit-filter /**/ my-filter /**/ { }",
+    "@-webkit-filter my-filter { }");
 
 heading("Nested filter at-rule tests.");
 testNestedRules("Nested rule.",

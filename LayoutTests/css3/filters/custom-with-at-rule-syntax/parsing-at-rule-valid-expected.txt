@@ -46,6 +46,42 @@ PASS declaration.getPropertyValue('width') is "100px"
 PASS declaration.getPropertyValue('height') is "100px"
 PASS declaration.length is 2
 
+Empty rule, comment separators
+@-webkit-filter/**/my-filter/**/{ }
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS cssRule instanceof WebKitCSSFilterRule is true
+PASS cssRule.constructor === WebKitCSSFilterRule is true
+PASS cssRule.__proto__ === WebKitCSSFilterRule.prototype is true
+PASS declaration.length is 0
+
+Empty rule, comment+space separators
+@-webkit-filter/**/ my-filter/**/ { }
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS cssRule instanceof WebKitCSSFilterRule is true
+PASS cssRule.constructor === WebKitCSSFilterRule is true
+PASS cssRule.__proto__ === WebKitCSSFilterRule.prototype is true
+PASS declaration.length is 0
+
+Empty rule, space+comment separators
+@-webkit-filter /**/my-filter /**/{ }
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS cssRule instanceof WebKitCSSFilterRule is true
+PASS cssRule.constructor === WebKitCSSFilterRule is true
+PASS cssRule.__proto__ === WebKitCSSFilterRule.prototype is true
+PASS declaration.length is 0
+
+Empty rule, space+comment+space separators
+@-webkit-filter /**/ my-filter /**/ { }
+PASS cssRule.cssText is "@-webkit-filter my-filter { }"
+PASS cssRule.type is CSSRule.WEBKIT_FILTER_RULE
+PASS cssRule instanceof WebKitCSSFilterRule is true
+PASS cssRule.constructor === WebKitCSSFilterRule is true
+PASS cssRule.__proto__ === WebKitCSSFilterRule.prototype is true
+PASS declaration.length is 0
+
 ========================================
 Nested filter at-rule tests.
 ========================================

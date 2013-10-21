@@ -369,6 +369,9 @@ webkit_supports_condition: WEBKIT_SUPPORTS_CONDITION_SYM '{' maybe_space support
 
 #endif
 
+/* for expressions that require at least one whitespace to be present, like the + and - operators in calc expressions */
+space: WHITESPACE | space WHITESPACE ;
+
 maybe_space: /* empty */ %prec UNIMPORTANT_TOK | maybe_space WHITESPACE ;
 
 maybe_sgml: /* empty */ | maybe_sgml SGML_CD | maybe_sgml WHITESPACE ;
@@ -954,7 +957,7 @@ before_region_rule:
     ;
 
 region:
-    before_region_rule WEBKIT_REGION_RULE_SYM WHITESPACE selector_list at_rule_header_end '{' at_rule_body_start maybe_space block_valid_rule_list save_block {
+    before_region_rule WEBKIT_REGION_RULE_SYM maybe_space selector_list at_rule_header_end '{' at_rule_body_start maybe_space block_valid_rule_list save_block {
         OwnPtr<Vector<RefPtr<StyleRuleBase>>> ruleList = adoptPtr($9);
         if ($4)
             $$ = parser->createRegionRule(adoptPtr($4).get(), ruleList.get()).leakRef();
@@ -975,7 +978,7 @@ before_filter_rule:
     ;
 
 filter:
-    before_filter_rule WEBKIT_FILTER_RULE_SYM WHITESPACE IDENT at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
+    before_filter_rule WEBKIT_FILTER_RULE_SYM maybe_space IDENT at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
         parser->m_inFilterRule = false;
         $$ = parser->createFilterRule($4).leakRef();
     }
@@ -1583,11 +1586,16 @@ calc_func_term:
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   ;
 
+/*
+ * The grammar requires spaces around binary ‘+’ and ‘-’ operators.
+ * The '*' and '/' operators do not require spaces.
+ * http://www.w3.org/TR/css3-values/#calc-syntax
+ */
 calc_func_operator:
-    WHITESPACE '+' WHITESPACE {
+    space '+' space {
         $$ = '+';
     }
-    | WHITESPACE '-' WHITESPACE {
+    | space '-' space {
         $$ = '-';
     }
     | calc_maybe_space '*' maybe_space {
