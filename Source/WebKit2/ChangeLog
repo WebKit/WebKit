@@ -1,5 +1,21 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154077
+
+    2013-08-14  Dean Jackson  <dino@apple.com>
+
+            <https://webkit.org/b/119820> Add pluginView-related logging to WebPage
+
+            Reviewed by Tim Horton.
+
+            Add some more diagnostic output to help track down bugs.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::addPluginView): More logging.
+            (WebKit::WebPage::removePluginView): Ditto.
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153848
 
     2013-08-08  Dean Jackson  <dino@apple.com>
