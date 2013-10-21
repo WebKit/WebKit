@@ -1,5 +1,12 @@
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
+        Maybe a Lion build fix after r157731.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
         Remote Layer Tree: Clean up transaction logging
         https://bugs.webkit.org/show_bug.cgi?id=123116
 

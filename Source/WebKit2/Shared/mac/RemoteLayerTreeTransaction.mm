@@ -355,6 +355,7 @@ public:
     RemoteLayerTreeTextStream& operator<<(FloatSize);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers);
+    RemoteLayerTreeTextStream& operator<<(const char*);
 
     void increaseIndent() { ++m_indent; }
     void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
@@ -364,6 +365,12 @@ public:
 private:
     int m_indent;
 };
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const char* string)
+{
+    TextStream::operator<<(string);
+    return *this;
+}
 
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const TransformationMatrix& transform)
 {
