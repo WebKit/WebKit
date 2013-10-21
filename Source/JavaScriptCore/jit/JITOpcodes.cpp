@@ -30,6 +30,7 @@
 
 #include "Arguments.h"
 #include "CopiedSpaceInlines.h"
+#include "Debugger.h"
 #include "Heap.h"
 #include "JITInlines.h"
 #include "JSArray.h"
@@ -727,7 +728,15 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     UNUSED_PARAM(currentInstruction);
     breakpoint();
 #else
+    JSGlobalObject* globalObject = codeBlock()->globalObject();
+    Debugger* debugger = globalObject->debugger();
+    char* debuggerAddress = reinterpret_cast<char*>(globalObject) + JSGlobalObject::debuggerOffset();
+    Jump noDebugger = branchTestPtr(Zero, AbsoluteAddress(debuggerAddress));
+    char* flagAddress = reinterpret_cast<char*>(debugger) + Debugger::needsOpDebugCallbacksOffset();
+    Jump skipDebugHook = branchTest8(Zero, AbsoluteAddress(flagAddress));
     callOperation(operationDebug, currentInstruction[1].u.operand);
+    skipDebugHook.link(this);
+    noDebugger.link(this);
 #endif
 }
 

@@ -650,7 +650,8 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     ASSERT(callFrame->vm().exceptionStack().size());
     ASSERT(!exceptionValue.isObject() || asObject(exceptionValue)->hasProperty(callFrame, callFrame->vm().propertyNames->stack));
 
-    if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
+    Debugger* debugger = callFrame->dynamicGlobalObject()->debugger();
+    if (debugger && debugger->needsExceptionCallbacks()) {
         // We need to clear the exception and the exception stack here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
         ClearExceptionScope scope(&callFrame->vm());
@@ -1251,7 +1252,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID)
 {
     Debugger* debugger = callFrame->dynamicGlobalObject()->debugger();
-    if (!debugger)
+    if (!debugger || !debugger->needsOpDebugCallbacks())
         return;
 
     switch (debugHookID) {

@@ -1,3 +1,13 @@
+2013-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Avoid JSC debugger overhead unless needed.
+        https://bugs.webkit.org/show_bug.cgi?id=123084.
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::WebScriptDebugger):
+
 2013-10-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed roll out of r157695; broke Mac builds.

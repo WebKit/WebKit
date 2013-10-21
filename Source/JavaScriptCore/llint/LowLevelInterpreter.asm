@@ -797,7 +797,15 @@ _llint_op_profile_did_call:
 
 _llint_op_debug:
     traceExecution()
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadp JSGlobalObject::m_debugger[t0], t0
+    btiz t0, .opDebugDone
+    loadb Debugger::m_needsOpDebugCallbacks[t0], t0
+    btbz t0, .opDebugDone
+
     callSlowPath(_llint_slow_path_debug)
+.opDebugDone:                    
     dispatch(2)
 
 

@@ -823,6 +823,7 @@ void InspectorDebuggerAgent::clearBreakDetails()
 
 void InspectorDebuggerAgent::reset()
 {
+    scriptDebugServer().clearBreakpoints();
     m_scripts.clear();
     m_breakpointIdToDebugServerBreakpointIds.clear();
     if (m_frontend)

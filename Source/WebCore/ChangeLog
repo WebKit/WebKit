@@ -1,3 +1,34 @@
+2013-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Avoid JSC debugger overhead unless needed.
+        https://bugs.webkit.org/show_bug.cgi?id=123084.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        - If no breakpoints are set, we now avoid calling the debug hook callbacks.
+        - If no break on exception is set, we also avoid exception event debug callbacks.
+        - When we return from the ScriptDebugServer to the JSC::Debugger, we may no
+          longer call the debug hook callbacks if not needed. Hence, the m_currentCallFrame
+          pointer in the ScriptDebugServer may become stale. To avoid this issue, before
+          returning, the ScriptDebugServer will clear its m_currentCallFrame if
+          needsOpDebugCallbacks() is false.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::setPauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::setPauseOnNextStatement):
+        (WebCore::ScriptDebugServer::breakProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::dispatchDidContinue):
+        (WebCore::ScriptDebugServer::exception):
+        (WebCore::ScriptDebugServer::didReachBreakpoint):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::reset):
+
 2013-10-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Grammar markers are not updated when switching between 1x and 2x

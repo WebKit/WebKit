@@ -1,3 +1,35 @@
+2013-10-20  Mark Lam  <mark.lam@apple.com>
+
+        Avoid JSC debugger overhead unless needed.
+        https://bugs.webkit.org/show_bug.cgi?id=123084.
+
+        Reviewed by Geoffrey Garen.
+
+        - If no breakpoints are set, we now avoid calling the debug hook callbacks.
+        - If no break on exception is set, we also avoid exception event debug callbacks.
+        - When we return from the ScriptDebugServer to the JSC::Debugger, we may no
+          longer call the debug hook callbacks if not needed. Hence, the m_currentCallFrame
+          pointer in the ScriptDebugServer may become stale. To avoid this issue, before
+          returning, the ScriptDebugServer will clear its m_currentCallFrame if
+          needsOpDebugCallbacks() is false.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::setNeedsExceptionCallbacks):
+        (JSC::Debugger::setShouldPause):
+        (JSC::Debugger::updateNumberOfBreakpoints):
+        (JSC::Debugger::updateNeedForOpDebugCallbacks):
+        * debugger/Debugger.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::debug):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+
 2013-10-21  Brent Fulgham  <bfulgham@apple.com>
 
         [WIN] Unreviewed build correction.

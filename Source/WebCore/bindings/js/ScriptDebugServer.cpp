@@ -115,6 +115,7 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
             return "";
     }
     breaksVector.append(scriptBreakpoint);
+    incNumberOfBreakpoints();
 
     *actualLineNumber = scriptBreakpoint.lineNumber;
     *actualColumnNumber = scriptBreakpoint.columnNumber;
@@ -150,6 +151,7 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     for (unsigned i = 0; i < breaksCount; i++) {
         if (breaksVector.at(i).columnNumber == static_cast<int>(columnNumber)) {
             breaksVector.remove(i);
+            decNumberOfBreakpoints();
             break;
         }
     }
@@ -245,6 +247,7 @@ bool ScriptDebugServer::evaluateBreakpointActions(const ScriptBreakpoint& breakp
 void ScriptDebugServer::clearBreakpoints()
 {
     m_sourceIdToBreakpoints.clear();
+    updateNumberOfBreakpoints(0);
 }
 
 void ScriptDebugServer::setBreakpointsActivated(bool activated)
@@ -255,11 +258,14 @@ void ScriptDebugServer::setBreakpointsActivated(bool activated)
 void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pause)
 {
     m_pauseOnExceptionsState = pause;
+    setNeedsExceptionCallbacks(pause != DontPauseOnExceptions);
 }
 
 void ScriptDebugServer::setPauseOnNextStatement(bool pause)
 {
     m_pauseOnNextStatement = pause;
+    if (pause)
+        setShouldPause(true);
 }
 
 void ScriptDebugServer::breakProgram()
@@ -268,6 +274,7 @@ void ScriptDebugServer::breakProgram()
         return;
 
     m_pauseOnNextStatement = true;
+    setShouldPause(true);
     pauseIfNeeded(m_currentCallFrame);
 }
 
@@ -286,6 +293,7 @@ void ScriptDebugServer::stepIntoStatement()
         return;
 
     m_pauseOnNextStatement = true;
+    setShouldPause(true);
     m_doneProcessingDebuggerEvents = true;
 }
 
@@ -353,6 +361,11 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
 {
     listener->didContinue();
+    if (!m_pauseOnNextStatement && !m_pauseOnCallFrame) {
+        setShouldPause(false);
+        if (!needsOpDebugCallbacks())
+            m_currentCallFrame = 0;
+    }
 }
 
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
@@ -476,6 +489,8 @@ void ScriptDebugServer::updateCallFrameAndPauseIfNeeded(CallFrame* callFrame)
 {
     updateCallFrame(callFrame);
     pauseIfNeeded(callFrame);
+    if (!needsOpDebugCallbacks())
+        m_currentCallFrame = 0;
 }
 
 void ScriptDebugServer::pauseIfNeeded(CallFrame* callFrame)
@@ -529,10 +544,8 @@ void ScriptDebugServer::pauseIfNeeded(CallFrame* callFrame)
 
 void ScriptDebugServer::callEvent(CallFrame* callFrame)
 {
-    if (!m_paused) {
-        updateCallFrame(callFrame);
-        pauseIfNeeded(callFrame);
-    }
+    if (!m_paused)
+        updateCallFrameAndPauseIfNeeded(callFrame);
 }
 
 void ScriptDebugServer::atStatement(CallFrame* callFrame)
@@ -564,18 +577,18 @@ void ScriptDebugServer::exception(CallFrame* callFrame, JSValue, bool hasHandler
     if (m_paused)
         return;
 
-    if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasHandler))
+    if (m_pauseOnExceptionsState == PauseOnAllExceptions || (m_pauseOnExceptionsState == PauseOnUncaughtExceptions && !hasHandler)) {
         m_pauseOnNextStatement = true;
+        setShouldPause(true);
+    }
 
     updateCallFrameAndPauseIfNeeded(callFrame);
 }
 
 void ScriptDebugServer::willExecuteProgram(CallFrame* callFrame)
 {
-    if (!m_paused) {
-        updateCallFrame(callFrame);
-        pauseIfNeeded(callFrame);
-    }
+    if (!m_paused)
+        updateCallFrameAndPauseIfNeeded(callFrame);
 }
 
 void ScriptDebugServer::didExecuteProgram(CallFrame* callFrame)
@@ -602,6 +615,7 @@ void ScriptDebugServer::didReachBreakpoint(CallFrame* callFrame)
         return;
 
     m_pauseOnNextStatement = true;
+    setShouldPause(true);
     updateCallFrameAndPauseIfNeeded(callFrame);
 }
 

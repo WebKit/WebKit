@@ -37,7 +37,21 @@ typedef ExecState CallFrame;
 
 class JS_EXPORT_PRIVATE Debugger {
 public:
+    Debugger();
     virtual ~Debugger();
+
+    bool needsOpDebugCallbacks() const { return m_needsOpDebugCallbacks; }
+    static ptrdiff_t needsOpDebugCallbacksOffset() { return OBJECT_OFFSETOF(Debugger, m_needsOpDebugCallbacks); }
+
+    bool shouldPause() const { return m_shouldPause; }
+    void setShouldPause(bool);
+
+    bool needsExceptionCallbacks() const { return m_needsExceptionCallbacks; }
+    void setNeedsExceptionCallbacks(bool);
+
+    void incNumberOfBreakpoints() { updateNumberOfBreakpoints(m_numberOfBreakpoints + 1); }
+    void decNumberOfBreakpoints()  { updateNumberOfBreakpoints(m_numberOfBreakpoints - 1); }
+    void updateNumberOfBreakpoints(int);
 
     void attach(JSGlobalObject*);
     virtual void detach(JSGlobalObject*);
@@ -56,7 +70,16 @@ public:
     void recompileAllJSFunctions(VM*);
 
 private:
+    void updateNeedForOpDebugCallbacks();
+
     HashSet<JSGlobalObject*> m_globalObjects;
+
+    bool m_needsExceptionCallbacks;
+    bool m_needsOpDebugCallbacks;
+    bool m_shouldPause;
+    int m_numberOfBreakpoints;
+
+    friend class LLIntOffsetsExtractor;
 };
 
 } // namespace JSC

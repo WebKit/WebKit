@@ -76,6 +76,7 @@ WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     , m_globalObject(globalObject->vm(), globalObject)
 {
     attach(globalObject);
+    setNeedsExceptionCallbacks(true);
 }
 
 // callbacks - relay to delegate
