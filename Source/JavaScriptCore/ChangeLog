@@ -1,3 +1,20 @@
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r154217
+
+    2013-08-16  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG optimizes out strict mode arguments tear off
+            https://bugs.webkit.org/show_bug.cgi?id=119504
+
+            Reviewed by Mark Hahnenberg and Oliver Hunt.
+
+            Don't do the optimization for strict mode.
+
+            * dfg/DFGArgumentsSimplificationPhase.cpp:
+            (JSC::DFG::ArgumentsSimplificationPhase::run):
+            (JSC::DFG::ArgumentsSimplificationPhase::pruneObviousArgumentCreations):
+
 2013-09-04  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/14910916> Disable CSS_SHAPES on safari-537-branch

@@ -86,6 +86,7 @@ fast/js/dfg-arguments-osr-exit
 fast/js/dfg-arguments-osr-exit-multiple-blocks
 fast/js/dfg-arguments-osr-exit-multiple-blocks-before-exit
 fast/js/dfg-arguments-out-of-bounds
+fast/js/dfg-arguments-strict-mode
 fast/js/dfg-arguments-unexpected-escape
 fast/js/dfg-arith-add-overflow-check-elimination-predicted-but-not-proven-int
 fast/js/dfg-arith-add-overflow-check-elimination-tower-of-large-numbers

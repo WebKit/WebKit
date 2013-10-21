@@ -123,12 +123,9 @@ public:
         bool changed = false;
         
         // Record which arguments are known to escape no matter what.
-        for (unsigned i = codeBlock()->inlineCallFrames().size(); i--;) {
-            InlineCallFrame* inlineCallFrame = &codeBlock()->inlineCallFrames()[i];
-            if (m_graph.m_executablesWhoseArgumentsEscaped.contains(
-                    m_graph.executableFor(inlineCallFrame)))
-                m_createsArguments.add(inlineCallFrame);
-        }
+        for (unsigned i = codeBlock()->inlineCallFrames().size(); i--;)
+            pruneObviousArgumentCreations(&codeBlock()->inlineCallFrames()[i]);
+        pruneObviousArgumentCreations(0); // the machine call frame.
         
         // Create data for variable access datas that we will want to analyze.
         for (unsigned i = m_graph.m_variableAccessData.size(); i--;) {
@@ -700,6 +697,14 @@ private:
             NullableHashTraits<VariableAccessData*> > m_argumentsAliasing;
     HashSet<VariableAccessData*> m_isLive;
 
+    void pruneObviousArgumentCreations(InlineCallFrame* inlineCallFrame)
+    {
+        ScriptExecutable* executable = jsCast<ScriptExecutable*>(m_graph.executableFor(inlineCallFrame));
+        if (m_graph.m_executablesWhoseArgumentsEscaped.contains(executable)
+            || executable->isStrictMode())
+            m_createsArguments.add(inlineCallFrame);
+    }
+    
     void observeBadArgumentsUse(Node* node)
     {
         if (!node)

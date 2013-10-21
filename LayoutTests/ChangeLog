@@ -1,5 +1,22 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154217
+
+    2013-08-16  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG optimizes out strict mode arguments tear off
+            https://bugs.webkit.org/show_bug.cgi?id=119504
+
+            Reviewed by Mark Hahnenberg and Oliver Hunt.
+
+            * fast/js/dfg-arguments-strict-mode-expected.txt: Added.
+            * fast/js/dfg-arguments-strict-mode.html: Added.
+            * fast/js/jsc-test-list:
+            * fast/js/script-tests/dfg-arguments-strict-mode.js: Added.
+            (f):
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153982
 
     2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
