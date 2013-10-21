@@ -47,7 +47,7 @@ namespace WebCore {
 
 const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSWorkerGlobalScopeBase) };
 
-const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop };
+const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout };
 
 JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerGlobalScope> impl)
     : JSDOMGlobalObject(vm, structure, &normalWorld(vm), &s_globalObjectMethodTable)
@@ -89,6 +89,11 @@ bool JSWorkerGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* objec
 bool JSWorkerGlobalScopeBase::shouldInterruptScript(const JSGlobalObject* object)
 {
     return JSGlobalObject::shouldInterruptScript(object);
+}
+
+bool JSWorkerGlobalScopeBase::shouldInterruptScriptBeforeTimeout(const JSGlobalObject* object)
+{
+    return JSGlobalObject::shouldInterruptScriptBeforeTimeout(object);
 }
 
 bool JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)

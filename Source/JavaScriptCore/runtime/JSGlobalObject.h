@@ -120,6 +120,9 @@ struct GlobalObjectMethodTable {
     typedef void (*QueueTaskToEventLoopCallbackFunctionPtr)(ExecState*, TaskContext*);
     typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<TaskContext>);
     QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
+
+    typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
+    ShouldInterruptScriptBeforeTimeoutPtr shouldInterruptScriptBeforeTimeout;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -478,6 +481,7 @@ public:
     JS_EXPORT_PRIVATE ExecState* globalExec();
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
+    static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
     static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return false; }
 
     bool evalEnabled() const { return m_evalEnabled; }

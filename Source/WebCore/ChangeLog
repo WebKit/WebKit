@@ -1,3 +1,24 @@
+2013-10-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream JSGlobalObject::shouldInterruptScriptBeforeTimeout()
+        https://bugs.webkit.org/show_bug.cgi?id=123045
+
+        Reviewed by Joseph Pecoraro.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage): Added.
+        (WebCore::JSDOMWindowBase::shouldInterruptScript): Extracted comment and assertion
+        about null Page object into WebCore::shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage()
+        so that it can be shared by both this function and JSDOMWindowBase::shouldInterruptScriptBeforeTimeout().
+        (WebCore::JSDOMWindowBase::shouldInterruptScriptBeforeTimeout):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::shouldInterruptScriptBeforeTimeout): Added.
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        * loader/EmptyClients.h: Added isStopping(). We'll land the iOS chrome client implementation
+        in a subsequent patch.
+        * page/ChromeClient.h: Added isStopping().
+
 2013-10-21  Anders Carlsson  <andersca@apple.com>
 
         Navigation policy callback not called when performing the same fragment navigation twice

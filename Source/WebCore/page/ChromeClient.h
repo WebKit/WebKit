@@ -304,6 +304,11 @@ public:
     virtual void makeFirstResponder() { }
 #endif
 
+#if PLATFORM(IOS)
+    // FIXME: Come up with a more descriptive name for this function and make it platform independent (if possible).
+    virtual bool isStopping() = 0;
+#endif
+
     virtual void enableSuddenTermination() { }
     virtual void disableSuddenTermination() { }
 

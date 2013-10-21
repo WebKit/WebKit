@@ -190,6 +190,11 @@ public:
     virtual void AXStartFrameLoad() OVERRIDE { }
     virtual void AXFinishFrameLoad() OVERRIDE { }
 #endif
+
+#if PLATFORM(IOS)
+    virtual bool isStopping() OVERRIDE { return false; }
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE { }
 #endif
