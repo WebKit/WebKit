@@ -1,3 +1,28 @@
+2013-10-21  Oliver Hunt  <oliver@apple.com>
+
+        Restore accidentally removed files.
+
+        * UserInterface/GoToLineDialog.css: Added.
+        (.go-to-line-dialog):
+        (.go-to-line-dialog > div):
+        (.go-to-line-dialog > div > input):
+        (.go-to-line-dialog > div > input::-webkit-input-placeholder):
+        (.go-to-line-dialog > div > img):
+        (.go-to-line-dialog > div > img:active):
+        (.go-to-line-dialog.non-empty > div > img):
+        * UserInterface/GoToLineDialog.js: Added.
+        (WebInspector.GoToLineDialog):
+        (WebInspector.GoToLineDialog.prototype.present):
+        (WebInspector.GoToLineDialog.prototype.dismiss):
+        (WebInspector.GoToLineDialog.prototype.handleEvent):
+        (WebInspector.GoToLineDialog.prototype._handleInputEvent):
+        (WebInspector.GoToLineDialog.prototype._handleKeydownEvent):
+        (WebInspector.GoToLineDialog.prototype._handleBlurEvent):
+        (WebInspector.GoToLineDialog.prototype._handleMousedownEvent):
+        (WebInspector.GoToLineDialog.prototype._handleClickEvent):
+        (WebInspector.GoToLineDialog.prototype._clear):
+        * UserInterface/Images/CloseWhite.svg: Added.
+
 2013-10-18  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Add the list of flows in the FrameTreeElement
