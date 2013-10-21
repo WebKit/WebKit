@@ -921,6 +921,15 @@
     <ClCompile Include="..\bytecode\ValueRecovery.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\RegisterSet.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\TempRegisterSet.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -2372,6 +2381,12 @@
     </ClInclude>
     <ClInclude Include="..\runtime\TestRunnerUtils.h">
       <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\TempRegisterSet.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITInlineCacheGenerator.h">
+      <Filter>jit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

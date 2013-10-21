@@ -1,3 +1,11 @@
+2013-10-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [WIN] Unreviewed build correction.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Handle new JIT files as C++ implementation
+          sources, not header files.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+
 2013-10-21  Oliver Hunt  <oliver@apple.com>
 
         Support computed property names in object literals
