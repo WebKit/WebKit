@@ -1,3 +1,15 @@
+2013-10-21  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Fixing mediastream debug build
+        https://bugs.webkit.org/show_bug.cgi?id=123104
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * Modules/mediastream/RTCDTMFToneChangeEvent.cpp:
+        (WebCore::RTCDTMFToneChangeEvent::create):
+
 2013-10-21  Andreas Kling  <akling@apple.com>
 
         Merge RenderListMarker::styleWillChange() into styleDidChange().
