@@ -42,7 +42,7 @@
 // will be deallocated unless it has been previously retained.
 
 #ifndef JSC_OBJC_API_AVAILABLE_MAC_OS_X_1080
-NS_CLASS_AVAILABLE(10_9, NA)
+NS_CLASS_AVAILABLE(10_9, 7_0)
 #else
 OBJC_VISIBLE
 #endif
