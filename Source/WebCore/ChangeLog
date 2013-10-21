@@ -1,3 +1,13 @@
+2013-10-21  Andreas Kling  <akling@apple.com>
+
+        RenderScrollbarPart doesn't need styleWillChange().
+        <https://webkit.org/b/123113>
+
+        We will call setInline(false) in styleDidChange(), there's no need
+        to override styleWillChange() just to do it twice.
+
+        Reviewed by Darin Adler.
+
 2013-10-21  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] The layers from the flow thread should be collected under the regions' layers.
