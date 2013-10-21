@@ -1508,7 +1508,69 @@ private:
     PageHeapAllocator<TCMalloc_ThreadCache>* m_pageHeapAllocator;
 };
 
+// This method declaration, and the constants below, are taken from Libc/gen/malloc.c.
+extern "C" void (*malloc_logger)(uint32_t typeFlags, uintptr_t zone, uintptr_t size, uintptr_t pointer, uintptr_t returnValue, uint32_t numberOfFramesToSkip);
+
 #endif
+
+class MallocHook {
+    static bool stackLoggingEnabled;
+
+#if OS(DARWIN)
+    
+    enum StackLoggingType {
+        StackLoggingTypeAlloc = 2,
+        StackLoggingTypeDealloc = 4,
+    };
+
+    static void record(uint32_t typeFlags, uintptr_t zone, uintptr_t size, void* pointer, void* returnValue, uint32_t numberOfFramesToSkip)
+    {
+        malloc_logger(typeFlags, zone, size, reinterpret_cast<uintptr_t>(pointer), reinterpret_cast<uintptr_t>(returnValue), numberOfFramesToSkip);
+    }
+
+    static NEVER_INLINE void recordAllocation(void* pointer, size_t size)
+    {
+        // StackLoggingTypeAlloc takes the newly-allocated address in the returnValue argument, the size of the allocation
+        // in the size argument and ignores all other arguments.
+        record(StackLoggingTypeAlloc, 0, size, 0, pointer, 0);
+    }
+
+    static NEVER_INLINE void recordDeallocation(void* pointer)
+    {
+        // StackLoggingTypeDealloc takes the pointer in the size argument and ignores all other arguments.
+        record(StackLoggingTypeDealloc, 0, reinterpret_cast<uintptr_t>(pointer), 0, 0, 0);
+    }
+
+#endif
+
+public:
+    static void init()
+    {
+#if OS(DARWIN)
+        // If the system allocator's malloc_logger has been set up then stack logging is enabled.
+        stackLoggingEnabled = malloc_logger;
+#endif
+    }
+
+#if OS(DARWIN)
+    static ALWAYS_INLINE void InvokeNewHook(void* pointer, size_t size)
+    {
+        if (UNLIKELY(stackLoggingEnabled))
+            recordAllocation(pointer, size);
+    }
+
+    static ALWAYS_INLINE void InvokeDeleteHook(void* pointer)
+    {
+
+        if (UNLIKELY(stackLoggingEnabled))
+            recordDeallocation(pointer);
+    }
+#else
+    static ALWAYS_INLINE void InvokeNewHook(void*, size_t) { }
+    static ALWAYS_INLINE void InvokeDeleteHook(void*) { }
+#endif
+};
+bool MallocHook::stackLoggingEnabled = false;
 
 #endif
 
@@ -3401,6 +3463,7 @@ void TCMalloc_ThreadCache::InitModule() {
     pageheap->init();
     phinited = 1;
 #if defined(WTF_CHANGES) && OS(DARWIN)
+    MallocHook::init();
     FastMallocZone::init();
 #endif
   }
@@ -4206,9 +4269,7 @@ void* malloc(size_t size) {
     void* result = do_malloc(size);
 #endif
 
-#ifndef WTF_CHANGES
   MallocHook::InvokeNewHook(result, size);
-#endif
   return result;
 }
 
@@ -4216,9 +4277,7 @@ void* malloc(size_t size) {
 extern "C" 
 #endif
 void free(void* ptr) {
-#ifndef WTF_CHANGES
   MallocHook::InvokeDeleteHook(ptr);
-#endif
 
 #if ENABLE(WTF_MALLOC_VALIDATION)
     if (!ptr)
@@ -4281,9 +4340,7 @@ void* calloc(size_t n, size_t elem_size) {
     }
 #endif
 
-#ifndef WTF_CHANGES
   MallocHook::InvokeNewHook(result, totalBytes);
-#endif
   return result;
 }
 
@@ -4339,16 +4396,12 @@ void* realloc(void* old_ptr, size_t new_size) {
     void* result = malloc<crashOnFailure>(new_size);
 #else
     void* result = do_malloc(new_size);
-#ifndef WTF_CHANGES
     MallocHook::InvokeNewHook(result, new_size);
-#endif
 #endif
     return result;
   }
   if (new_size == 0) {
-#ifndef WTF_CHANGES
     MallocHook::InvokeDeleteHook(old_ptr);
-#endif
     free(old_ptr);
     return NULL;
   }
@@ -4388,13 +4441,9 @@ void* realloc(void* old_ptr, size_t new_size) {
     if (new_ptr == NULL) {
       return NULL;
     }
-#ifndef WTF_CHANGES
     MallocHook::InvokeNewHook(new_ptr, new_size);
-#endif
     memcpy(new_ptr, old_ptr, ((old_size < new_size) ? old_size : new_size));
-#ifndef WTF_CHANGES
     MallocHook::InvokeDeleteHook(old_ptr);
-#endif
     // We could use a variant of do_free() that leverages the fact
     // that we already know the sizeclass of old_ptr.  The benefit
     // would be small, so don't bother.
