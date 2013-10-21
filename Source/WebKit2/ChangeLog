@@ -1,5 +1,16 @@
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
+        Give up on building RemoteLayerTreeTransaction::dump on Lion, it just won't work.
+
+        This definitely ought to fix the build.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
         Maybe a Lion build fix after r157731, part 2.
 
         * Shared/mac/RemoteLayerTreeTransaction.mm:

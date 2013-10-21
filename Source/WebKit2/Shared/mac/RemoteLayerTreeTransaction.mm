@@ -336,7 +336,7 @@ void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<LayerID> destroyedL
     m_destroyedLayerIDs = std::move(destroyedLayerIDs);
 }
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 class RemoteLayerTreeTextStream : public TextStream
 {
@@ -355,7 +355,6 @@ public:
     RemoteLayerTreeTextStream& operator<<(FloatSize);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers);
-    RemoteLayerTreeTextStream& operator<<(const char[]);
 
     void increaseIndent() { ++m_indent; }
     void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
@@ -365,12 +364,6 @@ public:
 private:
     int m_indent;
 };
-
-RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const char string[])
-{
-    TextStream::operator<<(string);
-    return *this;
-}
 
 RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const TransformationMatrix& transform)
 {
