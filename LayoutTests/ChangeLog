@@ -1,5 +1,21 @@
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153982
+
+    2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Fix null dereference in HTMLAnchorElement::sendPings when frame is not attached to a page
+            https://bugs.webkit.org/show_bug.cgi?id=119716
+
+            Reviewed by Darin Adler.
+
+            Add a regression test for r153975.
+
+            * fast/html/detach-frame-while-clicking-on-anchor-with-ping-expected.txt: Added.
+            * fast/html/detach-frame-while-clicking-on-anchor-with-ping.html: Added.
+
+2013-10-21  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153913
 
     2013-08-09  Alexey Proskuryakov  <ap@apple.com>
