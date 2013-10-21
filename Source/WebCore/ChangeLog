@@ -1,3 +1,19 @@
+2013-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Navigation policy callback not called when performing the same fragment navigation twice
+        https://bugs.webkit.org/show_bug.cgi?id=123121
+        <rdar://problem/15230466>
+
+        Reviewed by Beth Dakin.
+
+        There's code in PolicyChecker::checkNavigationPolicy that will call the decision function right away 
+        if the requests are equal, without consulting any policy client. Because of this, make sure to empty out
+        the last checked request of the document loader when doing a fragment navigation.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+
 2013-10-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; unprotect the declaration of updateSleepDisabling();

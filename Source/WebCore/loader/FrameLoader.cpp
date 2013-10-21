@@ -1252,6 +1252,7 @@ void FrameLoader::loadURL(const URL& newURL, const String& referrer, const Strin
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
+        oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
         policyChecker().checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
@@ -1394,6 +1395,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         NavigationAction action(loader->request(), policyChecker().loadType(), isFormSubmission);
 
         oldDocumentLoader->setTriggeringAction(action);
+        oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState,
             callContinueFragmentScrollAfterNavigationPolicy, this);

@@ -1,3 +1,23 @@
+2013-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Navigation policy callback not called when performing the same fragment navigation twice
+        https://bugs.webkit.org/show_bug.cgi?id=123121
+        <rdar://problem/15230466>
+
+        Reviewed by Beth Dakin.
+
+        Add a test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/FragmentNavigation.html: Added.
+        * TestWebKitAPI/Tests/mac/FragmentNavigation.mm: Added.
+        (+[WebKit1FragmentNavigationTestDelegate shared]):
+        (-[WebKit1FragmentNavigationTestDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        (-[WebKit1FragmentNavigationTestDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (-[WebKit1FragmentNavigationTestDelegate webView:didFinishLoadForFrame:]):
+        (-[WebKit1FragmentNavigationTestDelegate _runNextTestWithWebView:]):
+        (TestWebKitAPI::TEST):
+
 2013-10-21  Dan Bernstein  <mitz@apple.com>
 
         Style checker should allow a space after the @property keyword
