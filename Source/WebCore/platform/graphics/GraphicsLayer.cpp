@@ -367,13 +367,19 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
         width = 2;
         return;
     }
+
+    if (hasContentsLayer()) {
+        color = Color(255, 150, 255, 200); // non-painting layer with contents: pink
+        width = 2;
+        return;
+    }
     
     if (masksToBounds()) {
         color = Color(128, 255, 255, 48); // masking layer: pale blue
         width = 20;
         return;
     }
-        
+
     color = Color(255, 255, 0, 192); // container: yellow
     width = 2;
 }

@@ -1,3 +1,17 @@
+2013-10-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Use pink layer borders for compositing layers with a contents layer
+        https://bugs.webkit.org/show_bug.cgi?id=123118
+
+        Reviewed by Dean Jackson.
+
+        With the existing layer border colors, it's not possible to distinguish an empty
+        layer from one with solid color, image or video contents. So use a pink color
+        for those. This makes it easier to diagnose bugs like 122784.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo):
+
 2013-10-21  Jer Noble  <jer.noble@apple.com>
 
         Limit use of display sleep assertion when <video> element is off-screen.
