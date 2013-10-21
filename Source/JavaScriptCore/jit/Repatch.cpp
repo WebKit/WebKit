@@ -48,12 +48,9 @@ namespace JSC {
 // - tagMaskRegister
 // - callFrameRegister **
 //
-// The callFrameRegister is a double-FIXME:
-// - https://bugs.webkit.org/show_bug.cgi?id=123085
-//   We're not yet done getting rid of past uses of callFrameRegister.
-// - https://bugs.webkit.org/show_bug.cgi?id=113621
-//   Once the calling convention work is done, we won't need the callFrameRegister anymore
-//   since we'll just use framePointerRegister.
+// We currently only use the callFrameRegister for closure call patching, and we're not going to
+// give the FTL closure call patching support until we switch to the C stack - but when we do that,
+// callFrameRegister will disappear.
 
 static void repatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
