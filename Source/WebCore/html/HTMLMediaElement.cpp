@@ -317,6 +317,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
     , m_parsingInProgress(createdByParser)
+#if ENABLE(PAGE_VISIBILITY_API)
+    , m_isDisplaySleepDisablingSuspended(document.hidden())
+#endif
 #if ENABLE(VIDEO_TRACK)
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
@@ -341,6 +344,10 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 
     document.registerForMediaVolumeCallbacks(this);
     document.registerForPrivateBrowsingStateChangedCallbacks(this);
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    document.registerForVisibilityStateChangedCallbacks(this);
+#endif
 
     if (document.settings() && document.settings()->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
@@ -367,6 +374,11 @@ HTMLMediaElement::~HTMLMediaElement()
     setShouldDelayLoadEvent(false);
     document().unregisterForMediaVolumeCallbacks(this);
     document().unregisterForPrivateBrowsingStateChangedCallbacks(this);
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    document().unregisterForVisibilityStateChangedCallbacks(this);
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     document().unregisterForCaptionPreferencesChangedCallbacks(this);
     if (m_audioTracks) {
@@ -459,10 +471,8 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
         }
     } else if (name == controlsAttr)
         configureMediaControls();
-#if PLATFORM(MAC)
     else if (name == loopAttr)
-        updateDisableSleep();
-#endif
+        updateSleepDisabling();
     else if (name == preloadAttr) {
         if (equalIgnoringCase(value, "none"))
             m_preload = MediaPlayer::None;
@@ -3754,9 +3764,7 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     if (m_playing)
         invalidateCachedTime();
 
-#if PLATFORM(MAC)
-    updateDisableSleep();
-#endif
+    updateSleepDisabling();
 
     endProcessingMediaPlayerCallback();
 }
@@ -4171,9 +4179,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
         configureTextTrackDisplay();
 #endif
 
-#if PLATFORM(MAC)
-    updateDisableSleep();
-#endif
+    updateSleepDisabling();
 }
 
 bool HTMLMediaElement::canSuspend() const
@@ -4207,9 +4213,7 @@ void HTMLMediaElement::stop()
     // if the media was not fully loaded. This handles all other cases.
     m_player.clear();
 
-#if PLATFORM(MAC)
-    updateDisableSleep();
-#endif
+    updateSleepDisabling();
 }
 
 void HTMLMediaElement::suspend(ReasonForSuspension why)
@@ -4267,6 +4271,15 @@ void HTMLMediaElement::mediaVolumeDidChange()
     LOG(Media, "HTMLMediaElement::mediaVolumeDidChange");
     updateVolume();
 }
+
+#if ENABLE(PAGE_VISIBILITY_API)
+void HTMLMediaElement::visibilityStateChanged()
+{
+    LOG(Media, "HTMLMediaElement::visibilityStateChanged");
+    m_isDisplaySleepDisablingSuspended = document().hidden();
+    updateSleepDisabling();
+}
+#endif
 
 void HTMLMediaElement::defaultEventHandler(Event* event)
 {
@@ -5025,17 +5038,24 @@ void HTMLMediaElement::applyMediaFragmentURI()
     }
 }
 
-#if PLATFORM(MAC)
-void HTMLMediaElement::updateDisableSleep()
+void HTMLMediaElement::updateSleepDisabling()
 {
+#if PLATFORM(MAC)
     if (!shouldDisableSleep() && m_sleepDisabler)
         m_sleepDisabler = nullptr;
     else if (shouldDisableSleep() && !m_sleepDisabler)
         m_sleepDisabler = DisplaySleepDisabler::create("com.apple.WebCore: HTMLMediaElement playback");
+#endif
 }
 
+#if PLATFORM(MAC)
 bool HTMLMediaElement::shouldDisableSleep() const
 {
+#if ENABLE(PAGE_VISIBILITY_API)
+    if (m_isDisplaySleepDisablingSuspended)
+        return false;
+#endif
+
     return m_player && !m_player->paused() && hasVideo() && hasAudio() && !loop();
 }
 #endif

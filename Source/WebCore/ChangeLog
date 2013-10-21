@@ -1,3 +1,49 @@
+2013-10-21  Jer Noble  <jer.noble@apple.com>
+
+        Limit use of display sleep assertion when <video> element is off-screen.
+        https://bugs.webkit.org/show_bug.cgi?id=123041
+
+        Reviewed by Darin Adler.
+
+        Use page visibility changes to suspend and resume the use of sleep assertions in
+        HTMLMediaElement.
+
+        Page will propogate the page visibility change notifications to its Documents, which
+        will further propogate those notifications to registered elements.  Upon receiving
+        these notifications, HTMLMediaElement will release or take a DisplaySleepDisabler
+        token if necessary.
+
+        Also, rename HTMLMediaElement's updateDisableSleep() to updateSleepDisabling() and wrap
+        the implementation in a PLATFORM(MAC) guard rather than at each call site.
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerForVisibilityStateCallbacks): Added registration method.
+        (WebCore::Document::unregisterForVisibilityStateCallbacks): Added unregistration method.
+        (WebCore::Document::visibilityStateChanged): Call all registered clients.
+        * dom/Document.h:
+        * dom/Element.h:
+        (WebCore::Element::visibilityStateChanged): Added default virtual method to be overridden
+            by subclasses.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Register for the notification, and check the
+            current status of Document::hidden().
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Unregister for the notification.
+        (WebCore::HTMLMediaElement::visibilityStateChanged): Set m_displaySleepDisablingSuspended
+            and call updateSleepDisabling().
+        (WebCore::HTMLMediaElement::shouldDisableSleep): Add a check for m_displaySleepDisablingSuspended.
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::setVisibilityState): Pass to every child document.
+
+        Rename updateDisableSleep() -> updateSleepDisabling():
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::stop):
+
 2013-10-21  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         MediaStreamTrack now tracks its own state

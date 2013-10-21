@@ -417,6 +417,7 @@ public:
     virtual URL baseURI() const OVERRIDE;
 
 #if ENABLE(PAGE_VISIBILITY_API)
+    void visibilityStateChanged();
     String visibilityState() const;
     bool hidden() const;
 #endif
@@ -967,6 +968,11 @@ public:
     void captionPreferencesChanged();
 #endif
 
+#if ENABLE(PAGE_VISIBILITY_API)
+    void registerForVisibilityStateChangedCallbacks(Element*);
+    void unregisterForVisibilityStateChangedCallbacks(Element*);
+#endif
+
     void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
 
@@ -1437,6 +1443,10 @@ private:
     HashSet<Element*> m_privateBrowsingStateChangedElements;
 #if ENABLE(VIDEO_TRACK)
     HashSet<Element*> m_captionPreferencesChangedElements;
+#endif
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    HashSet<Element*> m_visibilityStateCallbackElements;
 #endif
 
     HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;

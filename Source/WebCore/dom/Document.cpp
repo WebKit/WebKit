@@ -1528,6 +1528,23 @@ void Document::removeTitle(Element* titleElement)
 }
 
 #if ENABLE(PAGE_VISIBILITY_API)
+void Document::registerForVisibilityStateChangedCallbacks(Element* element)
+{
+    m_visibilityStateCallbackElements.add(element);
+}
+
+void Document::unregisterForVisibilityStateChangedCallbacks(Element* element)
+{
+    m_visibilityStateCallbackElements.remove(element);
+}
+
+void Document::visibilityStateChanged()
+{
+    dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
+    for (auto it = m_visibilityStateCallbackElements.begin(); it != m_visibilityStateCallbackElements.end(); ++it)
+        (*it)->visibilityStateChanged();
+}
+
 PageVisibilityState Document::pageVisibilityState() const
 {
     // The visibility of the document is inherited from the visibility of the
