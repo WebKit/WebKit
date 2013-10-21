@@ -123,8 +123,14 @@ extern const HashTable promiseResolverPrototypeTable;
 #if ENABLE(ASSEMBLER)
 static bool enableAssembler(ExecutableAllocator& executableAllocator)
 {
-    if (!executableAllocator.isValid() || (!Options::useJIT() && !Options::useRegExpJIT()))
+    if (!Options::useJIT() && !Options::useRegExpJIT())
         return false;
+
+    if (!executableAllocator.isValid()) {
+        if (Options::crashIfCantAllocateJITMemory())
+            CRASH();
+        return false;
+    }
 
 #if USE(CF)
 #if COMPILER(GCC) && !COMPILER(CLANG)

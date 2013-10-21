@@ -94,6 +94,8 @@ typedef OptionRange optionRange;
     v(bool, useDFGJIT, true) \
     v(bool, useRegExpJIT, true) \
     \
+    v(bool, crashIfCantAllocateJITMemory, false) \
+    \
     v(bool, forceDFGCodeBlockLiveness, false) \
     \
     v(bool, dumpGeneratedBytecodes, false) \

@@ -592,6 +592,10 @@ int main(int argc, char** argv)
     }
 #endif
 
+#if PLATFORM(IOS)
+    Options::crashIfCantAllocateJITMemory() = true;
+#endif
+
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = 0;
