@@ -338,65 +338,136 @@ void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<LayerID> destroyedL
 
 #ifndef NDEBUG
 
-static void writeIndent(StringBuilder& builder, int indent)
+class RemoteLayerTreeTextStream : public TextStream
 {
-    for (int i = 0; i < indent; ++i)
-        builder.append(' ');
-}
+public:
+    using TextStream::operator<<;
 
-static void dumpProperty(StringBuilder& builder, String name, const TransformationMatrix& transform)
-{
-    if (transform.isIdentity())
-        return;
-
-    builder.append('\n');
-    writeIndent(builder, 3);
-    builder.append("(");
-    builder.append(name);
-    builder.append("\n");
-
-    TextStream ts;
-    ts << "    [" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
-    ts << "    [" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
-    ts << "    [" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
-    ts << "    [" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "])";
-
-    builder.append(ts.release());
-}
-
-static void dumpProperty(StringBuilder& builder, String name, const PlatformCALayer::FilterType filterType)
-{
-    builder.append('\n');
-    writeIndent(builder, 3);
-    builder.append('(');
-    builder.append(name);
-    builder.append(' ');
-
-    switch (filterType) {
-        case PlatformCALayer::Linear:
-            builder.append("linear");
-            break;
-        case PlatformCALayer::Nearest:
-            builder.append("nearest");
-            break;
-        case PlatformCALayer::Trilinear:
-            builder.append("trilinear");
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
+    RemoteLayerTreeTextStream()
+        : m_indent(0)
+    {
     }
 
-    builder.append(")");
+    RemoteLayerTreeTextStream& operator<<(const TransformationMatrix&);
+    RemoteLayerTreeTextStream& operator<<(PlatformCALayer::FilterType);
+    RemoteLayerTreeTextStream& operator<<(FloatPoint3D);
+    RemoteLayerTreeTextStream& operator<<(Color);
+    RemoteLayerTreeTextStream& operator<<(FloatSize);
+    RemoteLayerTreeTextStream& operator<<(FloatRect);
+    RemoteLayerTreeTextStream& operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers);
+
+    void increaseIndent() { ++m_indent; }
+    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
+
+    void writeIndent();
+
+private:
+    int m_indent;
+};
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const TransformationMatrix& transform)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "[" << transform.m11() << " " << transform.m12() << " " << transform.m13() << " " << transform.m14() << "]\n";
+    ts.writeIndent();
+    ts << "[" << transform.m21() << " " << transform.m22() << " " << transform.m23() << " " << transform.m24() << "]\n";
+    ts.writeIndent();
+    ts << "[" << transform.m31() << " " << transform.m32() << " " << transform.m33() << " " << transform.m34() << "]\n";
+    ts.writeIndent();
+    ts << "[" << transform.m41() << " " << transform.m42() << " " << transform.m43() << " " << transform.m44() << "]";
+    ts.decreaseIndent();
+    return ts;
 }
 
-static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerTreeTransaction::LayerID, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCALayer::FilterType filterType)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    switch (filterType) {
+    case PlatformCALayer::Linear:
+        ts << "linear";
+        break;
+    case PlatformCALayer::Nearest:
+        ts << "nearest";
+        break;
+    case PlatformCALayer::Trilinear:
+        ts << "trilinear";
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatPoint3D point)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << point.x() << " " << point.y() << " " << point.z();
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(Color color)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << color.serialized();
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatSize size)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << size.width() << " " << size.height();
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatRect rect)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    ts << rect.x() << " " << rect.y() << " " << rect.width() << " " << rect.height();
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+
+    for (size_t i = 0; i < layers.size(); ++i) {
+        if (i)
+            ts << " ";
+        ts << layers[i];
+    }
+
+    return ts;
+}
+
+void RemoteLayerTreeTextStream::writeIndent()
+{
+    for (int i = 0; i < m_indent; ++i)
+        *this << "  ";
+}
+
+template <class T>
+static void dumpProperty(RemoteLayerTreeTextStream& ts, String name, T value)
+{
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << name << " ";
+    ts << value << ")";
+    ts.decreaseIndent();
+}
+
+static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<RemoteLayerTreeTransaction::LayerID, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
 {
     if (changedLayerProperties.isEmpty())
         return;
 
-    writeIndent(builder, 1);
-    builder.append("(changed-layers\n");
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(changed-layers";
 
     // Dump the layer properties sorted by layer ID.
     Vector<RemoteLayerTreeTransaction::LayerID> layerIDs;
@@ -406,275 +477,149 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<RemoteLayerT
     for (auto layerID : layerIDs) {
         const RemoteLayerTreeTransaction::LayerProperties& layerProperties = changedLayerProperties.get(layerID);
 
-        writeIndent(builder, 2);
-        builder.append("(layer ");
-        builder.appendNumber(layerID);
+        ts << "\n";
+        ts.increaseIndent();
+        ts.writeIndent();
+        ts << "(layer " << layerID;
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::NameChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(name \"");
-            builder.append(layerProperties.name);
-            builder.append("\")");
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
+            dumpProperty<String>(ts, "name", layerProperties.name);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(children (");
-            for (size_t i = 0; i < layerProperties.children.size(); ++i) {
-                if (i)
-                    builder.append(' ');
-                builder.appendNumber(layerProperties.children[i]);
-            }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged)
+            dumpProperty<Vector<RemoteLayerTreeTransaction::LayerID>>(ts, "children", layerProperties.children);
 
-            builder.append(")");
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged)
+            dumpProperty<FloatPoint3D>(ts, "position", layerProperties.position);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(position ");
-            builder.appendNumber(layerProperties.position.x());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.position.y());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.position.z());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SizeChanged)
+            dumpProperty<FloatSize>(ts, "size", layerProperties.size);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SizeChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(size ");
-            builder.appendNumber(layerProperties.size.width());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.size.height());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged)
+            dumpProperty<FloatPoint3D>(ts, "anchorPoint", layerProperties.anchorPoint);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::AnchorPointChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(anchorPoint ");
-            builder.appendNumber(layerProperties.anchorPoint.x());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.anchorPoint.y());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.anchorPoint.z());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged)
+            dumpProperty<Color>(ts, "backgroundColor", layerProperties.backgroundColor);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackgroundColorChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(backgroundColor ");
-            builder.append(layerProperties.backgroundColor.serialized());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged)
+            dumpProperty<Color>(ts, "borderColor", layerProperties.borderColor);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderColorChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(borderColor ");
-            builder.append(layerProperties.borderColor.serialized());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
+            dumpProperty<float>(ts, "borderWidth", layerProperties.borderWidth);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(borderWidth ");
-            builder.appendNumber(layerProperties.borderWidth);
-            builder.append(')');
-        }
-
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpacityChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(opacity ");
-            builder.appendNumber(layerProperties.opacity);
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpacityChanged)
+            dumpProperty<float>(ts, "opacity", layerProperties.opacity);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TransformChanged)
-            dumpProperty(builder, "transform", layerProperties.transform);
+            dumpProperty<TransformationMatrix>(ts, "transform", layerProperties.transform);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SublayerTransformChanged)
-            dumpProperty(builder, "sublayerTransform", layerProperties.sublayerTransform);
+            dumpProperty<TransformationMatrix>(ts, "sublayerTransform", layerProperties.sublayerTransform);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(hidden ");
-            builder.append(layerProperties.hidden ? "true" : "false");
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::HiddenChanged)
+            dumpProperty<bool>(ts, "hidden", layerProperties.hidden);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::GeometryFlippedChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(geometryFlipped ");
-            builder.append(layerProperties.geometryFlipped ? "true" : "false");
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::GeometryFlippedChanged)
+            dumpProperty<bool>(ts, "geometryFlipped", layerProperties.geometryFlipped);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DoubleSidedChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(doubleSided ");
-            builder.append(layerProperties.doubleSided ? "true" : "false");
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DoubleSidedChanged)
+            dumpProperty<bool>(ts, "doubleSided", layerProperties.doubleSided);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MasksToBoundsChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(masksToBounds ");
-            builder.append(layerProperties.masksToBounds ? "true" : "false");
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MasksToBoundsChanged)
+            dumpProperty<bool>(ts, "masksToBounds", layerProperties.masksToBounds);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(opaque ");
-            builder.append(layerProperties.opaque ? "true" : "false");
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::OpaqueChanged)
+            dumpProperty<bool>(ts, "opaque", layerProperties.opaque);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(maskLayer ");
-            builder.appendNumber(layerProperties.maskLayer);
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
+            dumpProperty<RemoteLayerTreeTransaction::LayerID>(ts, "maskLayer", layerProperties.maskLayer);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(contentsRect ");
-            builder.appendNumber(layerProperties.contentsRect.x());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.contentsRect.y());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.contentsRect.width());
-            builder.append(' ');
-            builder.appendNumber(layerProperties.contentsRect.height());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
+            dumpProperty<FloatRect>(ts, "contentsRect", layerProperties.contentsRect);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(contentsScale ");
-            builder.appendNumber(layerProperties.contentsScale);
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsScaleChanged)
+            dumpProperty<float>(ts, "contentsScale", layerProperties.contentsScale);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MinificationFilterChanged)
-            dumpProperty(builder, "minificationFilter", layerProperties.minificationFilter);
+            dumpProperty<PlatformCALayer::FilterType>(ts, "minificationFilter", layerProperties.minificationFilter);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MagnificationFilterChanged)
-            dumpProperty(builder, "magnificationFilter", layerProperties.magnificationFilter);
+            dumpProperty<PlatformCALayer::FilterType>(ts, "magnificationFilter", layerProperties.magnificationFilter);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(speed ");
-            builder.appendNumber(layerProperties.speed);
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SpeedChanged)
+            dumpProperty<float>(ts, "speed", layerProperties.speed);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(timeOffset ");
-            builder.appendNumber(layerProperties.timeOffset);
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::TimeOffsetChanged)
+            dumpProperty<double>(ts, "timeOffset", layerProperties.timeOffset);
 
-        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
-            builder.append('\n');
-            writeIndent(builder, 3);
-            builder.append("(backingStore ");
-            builder.appendNumber(layerProperties.backingStore.bitmap()->size().width());
-            builder.append(" ");
-            builder.appendNumber(layerProperties.backingStore.bitmap()->size().height());
-            builder.append(')');
-        }
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
+            dumpProperty<ShareableBitmap*>(ts, "backingStore", layerProperties.backingStore.bitmap());
 
-        builder.append(")\n");
+        ts << ")";
+
+        ts.decreaseIndent();
     }
+
+    ts.decreaseIndent();
 }
 
 void RemoteLayerTreeTransaction::dump() const
 {
-    StringBuilder builder;
+    RemoteLayerTreeTextStream ts;
 
-    builder.append("(\n");
-
-    writeIndent(builder, 1);
-    builder.append("(root-layer ");
-    builder.appendNumber(m_rootLayerID);
-    builder.append(")\n");
+    ts << "(\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(root-layer " << m_rootLayerID << ")";
 
     if (!m_createdLayers.isEmpty()) {
-        writeIndent(builder, 1);
-        builder.append("(created-layers\n");
+        ts << "\n";
+        ts.writeIndent();
+        ts << "(created-layers\n";
+        ts.increaseIndent();
         for (const auto& createdLayer : m_createdLayers) {
-            writeIndent(builder, 2);
-            builder.append("(");
+            ts.writeIndent();
+            ts << "(";
             switch (createdLayer.type) {
             case PlatformCALayer::LayerTypeLayer:
             case PlatformCALayer::LayerTypeWebLayer:
-                builder.append("layer");
+                ts << "layer";
                 break;
             case PlatformCALayer::LayerTypeTransformLayer:
-                builder.append("transform-layer");
+                ts << "transform-layer";
                 break;
             case PlatformCALayer::LayerTypeWebTiledLayer:
-                builder.append("tiled-layer");
+                ts << "tiled-layer";
                 break;
             case PlatformCALayer::LayerTypeTiledBackingLayer:
-                builder.append("tiled-backing-layer");
+                ts << "tiled-backing-layer";
                 break;
             case PlatformCALayer::LayerTypePageTiledBackingLayer:
-                builder.append("page-tiled-backing-layer");
+                ts << "page-tiled-backing-layer";
                 break;
             case PlatformCALayer::LayerTypeRootLayer:
-                builder.append("root-layer");
+                ts << "root-layer";
                 break;
             case PlatformCALayer::LayerTypeAVPlayerLayer:
-                builder.append("av-player-layer");
+                ts << "av-player-layer";
                 break;
             case PlatformCALayer::LayerTypeCustom:
-                builder.append("custom-layer");
+                ts << "custom-layer";
                 break;
             }
-            builder.append(' ');
-            builder.appendNumber(createdLayer.layerID);
-            builder.append(")\n");
+            ts << " " << createdLayer.layerID << ")";
         }
-        builder.append(")\n");
+        ts << ")";
+        ts.decreaseIndent();
     }
 
-    dumpChangedLayers(builder, m_changedLayerProperties);
+    dumpChangedLayers(ts, m_changedLayerProperties);
 
-    if (!m_destroyedLayerIDs.isEmpty()) {
-        writeIndent(builder, 1);
-        builder.append("(destroyed-layers ");
-        for (size_t i = 0; i < m_destroyedLayerIDs.size(); ++i) {
-            if (i)
-                builder.append(' ');
-            builder.appendNumber(m_destroyedLayerIDs[i]);
-        }
-        builder.append(")\n");
-    }
-    builder.append(")\n");
+    if (!m_destroyedLayerIDs.isEmpty())
+        dumpProperty<Vector<RemoteLayerTreeTransaction::LayerID>>(ts, "destroyed-layers", m_destroyedLayerIDs);
 
-    fprintf(stderr, "%s", builder.toString().utf8().data());
+    ts << ")\n";
+
+    fprintf(stderr, "%s", ts.release().utf8().data());
 }
 
 #endif // NDEBUG

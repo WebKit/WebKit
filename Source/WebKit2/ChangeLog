@@ -1,3 +1,27 @@
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Clean up transaction logging
+        https://bugs.webkit.org/show_bug.cgi?id=123116
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::RemoteLayerTreeTextStream):
+        (WebKit::RemoteLayerTreeTextStream::increaseIndent):
+        (WebKit::RemoteLayerTreeTextStream::decreaseIndent):
+        (WebKit::RemoteLayerTreeTextStream::writeIndent):
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        Add some stream operator overrides for various types we need to dump.
+        Add a notion of current indent to our TextStream subclass to make it
+        easy to keep track of where we are.
+
+        (WebKit::dumpProperty):
+        Added, hand any arbitrary type to RemoteLayerTreeTransaction.
+
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        Make use of TextStream.
+
 2013-10-21  Brady Eidson  <beidson@apple.com>
 
         Transition most use of IDBBackingStoreLevelDB to IDBBackingStoreInterface

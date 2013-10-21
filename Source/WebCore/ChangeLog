@@ -1,3 +1,13 @@
+2013-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Clean up transaction logging
+        https://bugs.webkit.org/show_bug.cgi?id=123116
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Export some TextStream functions.
+
 2013-10-21  Brady Eidson  <beidson@apple.com>
 
         Transition most use of IDBBackingStoreLevelDB to IDBBackingStoreInterface
