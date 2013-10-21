@@ -481,7 +481,10 @@ void testObjectiveCAPI()
         [array setValue:value2 atIndex:(maxLength + 1)];
         checkResult(@"array.length after put to maxLength + 1", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
 
-        checkResult(@"valueAtIndex:0 is undefined", [[array valueAtIndex:0] isUndefined]);
+        if (sizeof(NSUInteger) == 8)
+            checkResult(@"valueAtIndex:0 is undefined", [[array valueAtIndex:0] isUndefined]);
+        else
+            checkResult(@"valueAtIndex:0", [[array valueAtIndex:0] toInt32] == 24);
         checkResult(@"valueAtIndex:lowIndex", [[array valueAtIndex:lowIndex] toInt32] == 42);
         checkResult(@"valueAtIndex:maxLength - 1", [[array valueAtIndex:(maxLength - 1)] toInt32] == 42);
         checkResult(@"valueAtIndex:maxLength", [[array valueAtIndex:maxLength] toInt32] == 24);

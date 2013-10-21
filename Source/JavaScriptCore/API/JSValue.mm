@@ -452,8 +452,8 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 - (CGPoint)toPoint
 {
     return (CGPoint){
-        [self[@"x"] toDouble],
-        [self[@"y"] toDouble]
+        static_cast<CGFloat>([self[@"x"] toDouble]),
+        static_cast<CGFloat>([self[@"y"] toDouble])
     };
 }
 
@@ -476,8 +476,8 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 - (CGSize)toSize
 {
     return (CGSize){
-        [self[@"width"] toDouble],
-        [self[@"height"] toDouble]
+        static_cast<CGFloat>([self[@"width"] toDouble]),
+        static_cast<CGFloat>([self[@"height"] toDouble])
     };
 }
 

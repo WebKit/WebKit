@@ -1,5 +1,19 @@
 2013-10-21  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Upstream JSC Objective-C API compiler warning fixes
+        https://bugs.webkit.org/show_bug.cgi?id=123125
+
+        Reviewed by Mark Hahnenberg.
+
+        Based on a patch by Mark Hahnenberg.
+
+        * API/JSValue.mm:
+        (-[JSValue toPoint]): Cast to CGFloat to fix some compiler warnings about double narrowing to float.
+        (-[JSValue toSize]): Ditto.
+        * API/tests/testapi.mm: Changed a test that was failing due to overflow of 32-bit NSUInteger on armv7.
+
+2013-10-21  Daniel Bates  <dabates@apple.com>
+
         [iOS] Mark classes JS{Context, ManagedValue, Value, VirtualMachine} as
         available since iOS 7.0
         https://bugs.webkit.org/show_bug.cgi?id=123122
