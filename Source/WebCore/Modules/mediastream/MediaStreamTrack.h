@@ -63,6 +63,7 @@ public:
     bool remote() const;
 
     const AtomicString& readyState() const;
+    void setState(MediaStreamSource::ReadyState);
 
     static void getSources(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>, ExceptionCode&);
 

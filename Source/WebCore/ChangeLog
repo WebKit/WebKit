@@ -1,3 +1,29 @@
+2013-10-21  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        MediaStreamTrack now tracks its own state
+        https://bugs.webkit.org/show_bug.cgi?id=123025
+
+        Reviewed by Jer Noble.
+
+        The spec says that a MediaStreamSource can be shared by different tracks,
+        so a track must have its own state tracking, synchronizing with its MediaStreamSource when
+        the underlying MediaStreamSource changes the readyState.
+        In the old implementation if a user invoked the stop method, its readyState method was still
+        returning the MediaStreamSource state, which was wrong.
+        This also adds a setEnabled method, which can be used to set the state of a track when a
+        remote peer ends it, for instance.
+
+        No new tests needed.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::readyState):
+        (WebCore::MediaStreamTrack::setState):
+        (WebCore::MediaStreamTrack::stopProducingData):
+        (WebCore::MediaStreamTrack::ended):
+        (WebCore::MediaStreamTrack::sourceStateChanged):
+        (WebCore::MediaStreamTrack::trackDidEnd):
+        * Modules/mediastream/MediaStreamTrack.h:
+
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Clean up transaction logging
