@@ -1,3 +1,12 @@
+2013-10-21  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Remove .qmake.conf files
+        https://bugs.webkit.org/show_bug.cgi?id=123091
+
+        Reviewed by Csaba Osztrogonác.
+
+        * .qmake.conf: Removed.
+
 2013-10-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Generate API documentation for GObject DOM bindings
