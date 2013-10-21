@@ -34,6 +34,7 @@
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBCallbacks.h>
 #include <WebCore/IDBDatabaseCallbacks.h>
+#include <WebCore/IDBTransactionBackendInterface.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/MainThread.h>
@@ -97,6 +98,12 @@ void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks
 void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String&)
 {
     notImplemented();
+}
+
+PassRefPtr<IDBTransactionBackendInterface> WebIDBFactoryBackend::createTransactionBackend(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode)
+{
+    notImplemented();
+    return 0;
 }
 
 } // namespace WebKit

@@ -87,7 +87,7 @@ void GetOperation::perform()
     if (m_keyRange->isOnlyKey())
         key = m_keyRange->lower();
     else {
-        RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
+        RefPtr<IDBBackingStoreInterface::Cursor> backingStoreCursor;
         if (m_indexId == IDBIndexMetadata::InvalidId) {
             ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
             // ObjectStore Retrieval Operation
@@ -261,7 +261,7 @@ void OpenCursorOperation::perform()
     if (m_taskType == IDBDatabaseBackendInterface::PreemptiveTask)
         m_transaction->addPreemptiveEvent();
 
-    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
+    RefPtr<IDBBackingStoreInterface::Cursor> backingStoreCursor;
     if (m_indexId == IDBIndexMetadata::InvalidId) {
         ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
         backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), m_direction);
@@ -287,7 +287,7 @@ void CountOperation::perform()
 {
     LOG(StorageAPI, "CountOperation");
     uint32_t count = 0;
-    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor;
+    RefPtr<IDBBackingStoreInterface::Cursor> backingStoreCursor;
 
     if (m_indexId == IDBIndexMetadata::InvalidId)
         backingStoreCursor = m_backingStore->openObjectStoreKeyCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
@@ -308,7 +308,7 @@ void CountOperation::perform()
 void DeleteRangeOperation::perform()
 {
     LOG(StorageAPI, "DeleteRangeOperation");
-    RefPtr<IDBBackingStoreLevelDB::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
+    RefPtr<IDBBackingStoreInterface::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
     if (backingStoreCursor) {
         do {
             if (!m_backingStore->deleteRecord(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, backingStoreCursor->recordIdentifier())) {

@@ -28,6 +28,8 @@
 #ifndef IDBFactoryBackendInterface_h
 #define IDBFactoryBackendInterface_h
 
+#include "IndexedDB.h"
+
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,9 +38,12 @@
 
 namespace WebCore {
 
+class IDBBackingStoreInterface;
 class IDBCallbacks;
 class IDBDatabase;
+class IDBDatabaseBackendLevelDB; // FIXME: This is a LevelDB specific type for now. http://webkit.org/b/123027 will fix that.
 class IDBDatabaseCallbacks;
+class IDBTransactionBackendInterface;
 class SecurityOrigin;
 class ScriptExecutionContext;
 
@@ -58,6 +63,8 @@ public:
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir) = 0;
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) = 0;
+
+    virtual PassRefPtr<IDBTransactionBackendInterface> createTransactionBackend(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
 };
 
 } // namespace WebCore

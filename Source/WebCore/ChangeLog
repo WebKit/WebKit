@@ -1,3 +1,102 @@
+2013-10-21  Brady Eidson  <beidson@apple.com>
+
+        Transition most use of IDBBackingStoreLevelDB to IDBBackingStoreInterface
+        https://bugs.webkit.org/show_bug.cgi?id=123105
+
+        Reviewed by Anders Carlsson.
+
+        Export more required headers:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Flesh out many of the pure virtual methods on IDBBackingStoreInterface, as well as
+        the RecordIdentifier and Cursor classes:
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        (WebCore::IDBBackingStoreInterface::RecordIdentifier::~RecordIdentifier):
+        (WebCore::IDBBackingStoreInterface::Cursor::~Cursor):
+
+        Use IDBBackingStoreInterface, IDBBackingStoreInterface::RecordIdentifier, and
+        IDBBackingStoreInterface::Cursor wherever possible:
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.cpp:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::ObjectStoreKeyCursorImpl::clone):
+        (WebCore::ObjectStoreCursorImpl::clone):
+        (WebCore::IndexKeyCursorImpl::clone):
+        (WebCore::IndexCursorImpl::clone):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        (WebCore::IDBBackingStoreLevelDB::Transaction::Transaction):
+        (WebCore::IDBBackingStoreLevelDB::Transaction::begin):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+        (WebCore::IDBBackingStoreLevelDB::RecordIdentifier::RecordIdentifier):
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        (WebCore::IDBCursorBackendLevelDB::IDBCursorBackendLevelDB):
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+
+        (WebCore::IDBCursorBackendLevelDB::create):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::create):
+        (WebCore::IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB):
+        (WebCore::IDBDatabaseBackendLevelDB::backingStore):
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexKeys):
+        (WebCore::IDBDatabaseBackendLevelDB::createTransaction):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::createTransactionBackend):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp:
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys):
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys):
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed):
+        (WebCore::IDBObjectStoreBackendLevelDB::makeIndexWriters):
+        (WebCore::IDBObjectStoreBackendLevelDB::generateKey):
+        (WebCore::IDBObjectStoreBackendLevelDB::updateKeyGenerator):
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::create):
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp:
+        (WebCore::GetOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h:
+        (WebCore::CreateObjectStoreOperation::create):
+        (WebCore::CreateObjectStoreOperation::CreateObjectStoreOperation):
+        (WebCore::DeleteObjectStoreOperation::create):
+        (WebCore::DeleteObjectStoreOperation::DeleteObjectStoreOperation):
+        (WebCore::CreateIndexOperation::create):
+        (WebCore::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::DeleteIndexOperation::create):
+        (WebCore::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::GetOperation::create):
+        (WebCore::GetOperation::GetOperation):
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::PutOperation):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::OpenCursorOperation::OpenCursorOperation):
+        (WebCore::CountOperation::create):
+        (WebCore::CountOperation::CountOperation):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::DeleteRangeOperation::DeleteRangeOperation):
+        (WebCore::ClearOperation::create):
+        (WebCore::ClearOperation::ClearOperation):
+
 2013-10-21  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes][CSS Regions] Don't apply shape-inside when we have multiple auto-height regions and the height is not resolved

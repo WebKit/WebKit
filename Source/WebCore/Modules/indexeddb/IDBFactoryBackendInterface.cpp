@@ -33,10 +33,6 @@
 #include "DatabaseStrategy.h"
 #include "PlatformStrategies.h"
 
-#if USE(LEVELDB)
-#include "IDBFactoryBackendLevelDB.h"
-#endif
-
 namespace WebCore {
 
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()

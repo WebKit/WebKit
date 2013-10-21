@@ -1774,7 +1774,7 @@
 		51D719DE181106E00016DC51 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71994181106E00016DC51 /* IDBKeyPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719DF181106E00016DC51 /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71995181106E00016DC51 /* IDBKeyRange.cpp */; };
 		51D719E0181106E00016DC51 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71996181106E00016DC51 /* IDBKeyRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719E2181106E00016DC51 /* IDBMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71998181106E00016DC51 /* IDBMetadata.h */; };
+		51D719E2181106E00016DC51 /* IDBMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71998181106E00016DC51 /* IDBMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719E3181106E00016DC51 /* IDBObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71999181106E00016DC51 /* IDBObjectStore.cpp */; };
 		51D719E4181106E00016DC51 /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7199A181106E00016DC51 /* IDBObjectStore.h */; };
 		51D719E6181106E00016DC51 /* IDBOpenDBRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7199C181106E00016DC51 /* IDBOpenDBRequest.cpp */; };
@@ -1806,13 +1806,13 @@
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
 		51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */; };
 		51E1ECC30C91C90400DC255B /* PageURLRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBD0C91C90400DC255B /* PageURLRecord.h */; };
-		51E337F418125AE30007A246 /* IDBBackingStoreInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E337F318125AE30007A246 /* IDBBackingStoreInterface.h */; };
+		51E337F418125AE30007A246 /* IDBBackingStoreInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E337F318125AE30007A246 /* IDBBackingStoreInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E3F9C70DA059DC00250911 /* Storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9C50DA059DC00250911 /* Storage.cpp */; };
 		51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9D40DA05E1D00250911 /* JSStorage.cpp */; };
 		51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4143216A6595100C633C7 /* ResourceHandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E6820F16387302003BBF3C /* LoaderStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
-		51F6E0A31811D2520058A00A /* IDBTransactionBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */; };
+		51F6E0A31811D2520058A00A /* IDBTransactionBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 517FBA18151AA71B00B57959 /* DOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB5502113E3E9100821176 /* JSCloseEvent.h */; };
 		51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB5503113E3E9100821176 /* JSCloseEvent.cpp */; };

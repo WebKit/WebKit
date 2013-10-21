@@ -40,27 +40,27 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(IDBBackingStoreLevelDB* backingStore, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendLevelDB* database)
+PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(IDBDatabaseBackendLevelDB* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
         objectStoreHashSet.add(objectStoreIds[i]);
 
-    return adoptRef(new IDBTransactionBackendLevelDB(backingStore, id, callbacks, objectStoreHashSet, mode, database));
+    return adoptRef(new IDBTransactionBackendLevelDB(databaseBackend, id, callbacks, objectStoreHashSet, mode));
 }
 
-IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBBackingStoreLevelDB* backingStore, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendLevelDB* database)
+IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBDatabaseBackendLevelDB* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
     : IDBTransactionBackendInterface(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
     , m_state(Unused)
     , m_commitPending(false)
     , m_callbacks(callbacks)
-    , m_database(database)
-    , m_transaction(database->backingStore().get())
+    , m_database(databaseBackend)
+    , m_transaction(databaseBackend->backingStore())
     , m_taskTimer(this, &IDBTransactionBackendLevelDB::taskTimerFired)
     , m_pendingPreemptiveEvents(0)
-    , m_backingStore(backingStore)
+    , m_backingStore(databaseBackend->backingStore())
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();

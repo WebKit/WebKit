@@ -33,6 +33,7 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseException.h"
+#include "IDBTransactionBackendLevelDB.h"
 #include "IDBTransactionCoordinatorLevelDB.h"
 #include "Logging.h"
 #include "SecurityOrigin.h"
@@ -184,6 +185,11 @@ void IDBFactoryBackendLevelDB::open(const String& name, int64_t version, int64_t
         databaseBackend = it->value;
 
     databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
+}
+
+PassRefPtr<IDBTransactionBackendInterface> IDBFactoryBackendLevelDB::createTransactionBackend(IDBDatabaseBackendLevelDB* backend, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+{
+    return IDBTransactionBackendLevelDB::create(backend, transactionId, databaseCallbacks, objectStoreIds, mode);
 }
 
 } // namespace WebCore

@@ -46,7 +46,7 @@ class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendLevelDB : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBBackingStoreLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     virtual ~IDBTransactionBackendLevelDB();
 
     virtual void commit() OVERRIDE FINAL;
@@ -86,7 +86,7 @@ public:
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     
 private:
-    IDBTransactionBackendLevelDB(IDBBackingStoreLevelDB*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
+    IDBTransactionBackendLevelDB(IDBDatabaseBackendLevelDB*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -124,7 +124,7 @@ private:
 
     HashSet<IDBCursorBackendLevelDB*> m_openCursors;
     
-    RefPtr<IDBBackingStoreLevelDB> m_backingStore;
+    RefPtr<IDBBackingStoreInterface> m_backingStore;
 };
 
 } // namespace WebCore

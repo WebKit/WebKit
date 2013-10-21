@@ -44,11 +44,11 @@ class IDBKeyRange;
 
 class IDBCursorBackendLevelDB : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreLevelDB::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreLevelDB::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -68,7 +68,7 @@ public:
     void close();
 
 private:
-    IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStoreLevelDB::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendLevelDB*, int64_t objectStoreId);
+    IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStoreInterface::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendLevelDB*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
@@ -80,8 +80,8 @@ private:
     RefPtr<IDBTransactionBackendLevelDB> m_transaction;
     const int64_t m_objectStoreId;
 
-    RefPtr<IDBBackingStoreLevelDB::Cursor> m_cursor; // Must be destroyed before m_transaction.
-    RefPtr<IDBBackingStoreLevelDB::Cursor> m_savedCursor; // Must be destroyed before m_transaction.
+    RefPtr<IDBBackingStoreInterface::Cursor> m_cursor; // Must be destroyed before m_transaction.
+    RefPtr<IDBBackingStoreInterface::Cursor> m_savedCursor; // Must be destroyed before m_transaction.
 
     bool m_closed;
 };

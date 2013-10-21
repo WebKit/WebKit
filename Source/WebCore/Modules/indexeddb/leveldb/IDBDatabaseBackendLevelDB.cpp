@@ -42,15 +42,15 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStoreLevelDB* database, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
 {
-    RefPtr<IDBDatabaseBackendLevelDB> backend = adoptRef(new IDBDatabaseBackendLevelDB(name, database, factory, uniqueIdentifier));
+    RefPtr<IDBDatabaseBackendLevelDB> backend = adoptRef(new IDBDatabaseBackendLevelDB(name, backingStore, factory, uniqueIdentifier));
     if (!backend->openInternal())
         return 0;
     return backend.release();
 }
 
-IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreLevelDB* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
@@ -118,9 +118,9 @@ IDBDatabaseBackendLevelDB::~IDBDatabaseBackendLevelDB()
 {
 }
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBDatabaseBackendLevelDB::backingStore() const
+IDBBackingStoreInterface* IDBDatabaseBackendLevelDB::backingStore() const
 {
-    return m_backingStore;
+    return m_backingStore.get();
 }
 
 void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
@@ -246,7 +246,7 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
-    RefPtr<IDBBackingStoreLevelDB> store = backingStore();
+    RefPtr<IDBBackingStoreInterface> store = backingStore();
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     IDBBackingStoreLevelDB::RecordIdentifier recordIdentifier;
     bool found = false;
@@ -426,7 +426,8 @@ void IDBDatabaseBackendLevelDB::processPendingCalls()
 
 void IDBDatabaseBackendLevelDB::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
-    RefPtr<IDBTransactionBackendLevelDB> transaction = IDBTransactionBackendLevelDB::create(m_backingStore.get(), transactionId, callbacks, objectStoreIds, static_cast<IndexedDB::TransactionMode>(mode), this);
+    RefPtr<IDBTransactionBackendInterface> transaction = m_factory->createTransactionBackend(this, transactionId, callbacks, objectStoreIds, static_cast<IndexedDB::TransactionMode>(mode));
+
     ASSERT(!m_transactions.contains(transactionId));
     m_transactions.add(transactionId, transaction.get());
 }
