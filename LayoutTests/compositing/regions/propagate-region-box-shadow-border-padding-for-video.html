@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<title>Bug 120457: [CSS Regions] The layers from the flow thread should be collected under the regions' layers.</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+				background-color: #f8f8f8;
+			}
+
+			#content {
+				-webkit-flow-into: flow;
+				width: 150px;
+				background-color: Yellow;
+				padding: 2px 3px 4px 5px;
+				margin: 3px 4px 5px 6px;
+			}
+
+			#region {
+				-webkit-flow-from: flow;
+				width: 90%;
+				border: double 3px Green;
+				border-width: 3px 4px 5px 6px;
+				outline: double 5px Blue;
+				padding: 6px 7px 8px 9px;
+				margin: 7px 8px 9px 10px;
+			}
+		</style>
+		<script src="../resources/media-testing.js"></script>
+		<script src="../../media/media-file.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			function testDone() {
+				if (window.testRunner)
+					testRunner.notifyDone();
+			}
+
+			window.onload = function() {
+				var video = document.getElementsByTagName('video')[0];
+				setupVideo(video, '../../media/content/counting', null, testDone);
+			};
+		</script>
+	</head>
+	<body>
+		some text 1.
+		<div id="content">
+			some text 2.
+			<video height="270" width="480" id="video" controls></video>
+			some text 4.
+		</div>
+		<div id="region"></div>
+		some text 5.
+		<p>Make sure that the region propagates its borders, paddings, outlines or box-shadows to video layers inside it.</p>
+	</body>
+</html>

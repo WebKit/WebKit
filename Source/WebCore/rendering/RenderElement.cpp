@@ -755,6 +755,10 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
             continue;
 #endif
 
+        // RenderFlowThreads are updated through the RenderView::styleDidChange function.
+        if (child->isRenderFlowThread())
+            continue;
+
         auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
         if (style()->specifiesColumns()) {
             if (child->style()->specifiesColumns())

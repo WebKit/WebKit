@@ -46,10 +46,12 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIFrame.h"
 #include "RenderLayerBacking.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderReplica.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -931,8 +933,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     layer.updateDescendantDependentFlags();
     layer.updateLayerListsIfNeeded();
 
-    if (layer.isOutOfFlowRenderFlowThread())
+    if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
+        RenderFlowThread& flowThread = toRenderFlowThread(layer.renderer());
+        layer.setHasCompositingDescendant(flowThread.hasCompositingRegionDescendant());
         return;
+    }
 
     if (overlapMap)
         overlapMap->geometryMap().pushMappingsToAncestor(&layer, ancestorLayer);
@@ -1013,6 +1018,15 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             }
         }
     }
+
+    if (layer.renderer().isRenderNamedFlowFragmentContainer()) {
+        // We are going to collect layers from the RenderFlowThread into the GraphicsLayer of the parent of the
+        // anonymous RenderRegion, but first we need to make sure that the parent itself of the region is going to
+        // have a composited layer. We only want to make regions composited when there's an actual layer that we
+        // need to move to that region.
+        computeRegionCompositingRequirements(toRenderBlockFlow(layer.renderer()).renderNamedFlowFragment(), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+    }
+
     
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
@@ -1116,6 +1130,28 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         overlapMap->geometryMap().popMappingsToAncestor(ancestorLayer);
 }
 
+void RenderLayerCompositor::computeRegionCompositingRequirements(RenderNamedFlowFragment* region, OverlapMap* overlapMap, CompositingState& childState, bool& layersChanged, bool& anyDescendantHas3DTransform)
+{
+    if (!region->isValid())
+        return;
+
+    RenderFlowThread* flowThread = region->flowThread();
+    
+    if (overlapMap)
+        overlapMap->geometryMap().pushRenderFlowThread(flowThread);
+
+    if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
+        for (size_t i = 0, listSize = layerList->size(); i < listSize; ++i) {
+            RenderLayer& curLayer = *layerList->at(i);
+            ASSERT(flowThread->regionForCompositedLayer(curLayer) == region);
+            computeCompositingRequirements(flowThread->layer(), curLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
+        }
+    }
+
+    if (overlapMap)
+        overlapMap->geometryMap().popMappingsToAncestor(region->layerOwner());
+}
+
 void RenderLayerCompositor::setCompositingParent(RenderLayer& childLayer, RenderLayer* parentLayer)
 {
     ASSERT(!parentLayer || childLayer.ancestorCompositingLayer() == parentLayer);
@@ -1159,7 +1195,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     // Note that we can only do work here that is independent of whether the descendant layers
     // have been processed. computeCompositingRequirements() will already have done the repaint if necessary.
 
-    if (layer.isOutOfFlowRenderFlowThread())
+    // Do not iterate the RenderFlowThread directly. We are going to collect composited layers as part of regions.
+    if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions())
         return;
     
     RenderLayerBacking* layerBacking = layer.backing();
@@ -1210,6 +1247,9 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
             childList.append(layerBacking->foregroundLayer());
     }
 
+    if (layer.renderer().isRenderNamedFlowFragmentContainer())
+        rebuildRegionCompositingLayerTree(toRenderBlockFlow(layer.renderer()).renderNamedFlowFragment(), layerChildren, depth + 1);
+
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         for (size_t i = 0, size = normalFlowList->size(); i < size; ++i)
             rebuildCompositingLayerTree(*normalFlowList->at(i), childList, depth + 1);
@@ -1250,6 +1290,22 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
         }
 
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
+    }
+}
+
+void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFragment* region, Vector<GraphicsLayer*>& childList, int depth)
+{
+    if (!region->isValid())
+        return;
+
+    RenderFlowThread* flowThread = region->flowThread();
+    ASSERT(flowThread->collectsGraphicsLayersUnderRegions());
+    if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
+        for (size_t i = 0, listSize = layerList->size(); i < listSize; ++i) {
+            RenderLayer& curLayer = *layerList->at(i);
+            ASSERT(flowThread->regionForCompositedLayer(curLayer) == region);
+            rebuildCompositingLayerTree(curLayer, childList, depth + 1);
+        }
     }
 }
 
@@ -1771,9 +1827,19 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
 {
-    // FIXME: We disable accelerated compositing for elements in a RenderFlowThread as it doesn't work properly.
-    // See http://webkit.org/b/84900 to re-enable it.
-    return m_hasAcceleratedCompositing && layer.isSelfPaintingLayer() && layer.renderer().flowThreadState() == RenderElement::NotInsideFlowThread;
+    if (m_hasAcceleratedCompositing && layer.isSelfPaintingLayer()) {
+        if (!layer.isInsideFlowThread())
+            return true;
+
+        // CSS Regions flow threads do not need to be composited as we use composited RenderRegions
+        // to render the background of the RenderFlowThread.
+        if (layer.isRenderFlowThread())
+            return false;
+
+        // A faster way of saying layer.enclosingFlowThreadLayer()->isFlowThreadCollectingGraphicsLayersUnderRegions()
+        return layer.isInsideOutOfFlowThread();
+    }
+    return false;
 }
 
 bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, const RenderLayer* compositingAncestorLayer, const IntRect& layerCompositedBoundsInAncestor, const IntRect& ancestorCompositedBounds) const
@@ -2154,8 +2220,8 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
     RenderLayer& layer = *toRenderBoxModelObject(renderer).layer();
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
-    // via compositing so that they also apply to those composited descdendants.
-    if (hasCompositedDescendants && (layer.transform() || renderer.createsGroup() || renderer.hasReflection())) {
+    // via compositing so that they also apply to those composited descendants.
+    if (hasCompositedDescendants && (layer.transform() || renderer.createsGroup() || renderer.hasReflection() || renderer.isRenderNamedFlowFragmentContainer())) {
         reason = RenderLayer::IndirectCompositingForGraphicalEffect;
         return true;
     }

@@ -84,6 +84,7 @@
 #include "RenderInline.h"
 #include "RenderMarquee.h"
 #include "RenderNamedFlowThread.h"
+#include "RenderRegion.h"
 #include "RenderReplica.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
@@ -4031,7 +4032,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
 
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
-        if (childLayer->isOutOfFlowRenderFlowThread())
+        if (childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
             continue;
 
         if (!childLayer->isPaginated())
@@ -4443,6 +4444,23 @@ Element* RenderLayer::enclosingElement() const
     }
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+RenderLayer* RenderLayer::enclosingFlowThreadAncestor() const
+{
+    RenderLayer* curr = parent();
+    for (; curr && !curr->isRenderFlowThread(); curr = curr->parent()) {
+        if (curr->isStackingContainer() && curr->isComposited()) {
+            // We only adjust the position of the first level of layers.
+            return 0;
+        }
+    }
+    return curr;
+}
+
+bool RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions() const
+{
+    return renderer().isRenderFlowThread() && toRenderFlowThread(renderer()).collectsGraphicsLayersUnderRegions();
 }
 
 // Compute the z-offset of the point in the transformState.
@@ -4890,7 +4908,7 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
     RenderLayer* resultLayer = 0;
     for (int i = list->size() - 1; i >= 0; --i) {
         RenderLayer* childLayer = list->at(i);
-        if (childLayer->isOutOfFlowRenderFlowThread())
+        if (childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
             continue;
         RenderLayer* hitLayer = 0;
         HitTestResult tempResult(result.hitTestLocation());
@@ -5497,7 +5515,8 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         size_t listSize = posZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
-            if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
+            // The RenderNamedFlowThread is ignored when we calculate the bounds of the RenderView.
+            if ((flags & IncludeCompositedDescendants || !curLayer->isComposited()) && !curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions()) {
                 LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }
@@ -5510,7 +5529,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
             RenderLayer* curLayer = normalFlowList->at(i);
             // RenderView will always return the size of the document, before reaching this point,
             // so there's no way we could hit a RenderNamedFlowThread here.
-            ASSERT(!curLayer->isOutOfFlowRenderFlowThread());
+            ASSERT(!curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions());
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
                 LayoutRect curAbsBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(curAbsBounds);
@@ -5733,7 +5752,7 @@ void RenderLayer::dirtyZOrderLists()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer().documentBeingDestroyed()) {
-        if (renderer().isOutOfFlowRenderFlowThread())
+        if (isFlowThreadCollectingGraphicsLayersUnderRegions())
             toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
@@ -5759,7 +5778,7 @@ void RenderLayer::dirtyNormalFlowList()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer().documentBeingDestroyed()) {
-        if (renderer().isOutOfFlowRenderFlowThread())
+        if (isFlowThreadCollectingGraphicsLayersUnderRegions())
             toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())

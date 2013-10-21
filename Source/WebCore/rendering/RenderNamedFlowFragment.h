@@ -51,6 +51,13 @@ public:
 
     bool isPseudoElementRegion() const { return parent() && parent()->isPseudoElement(); }
 
+    // When the content inside the region requires the region to have a layer, the layer will be created on the region's
+    // parent renderer instead.
+    // This method returns that renderer holding the layer.
+    // The return value may be null.
+    RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ?
+        toRenderLayerModelObject(parent()) : nullptr; }
+
 protected:
     virtual bool shouldHaveAutoLogicalHeight() const;
 

@@ -46,6 +46,7 @@ namespace WebCore {
 
 RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRefPtr<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(document)
+    , m_flowThreadChildList(adoptPtr(new FlowThreadChildList()))
     , m_overset(true)
     , m_namedFlow(namedFlow)
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
@@ -99,8 +100,8 @@ void RenderNamedFlowThread::updateWritingMode()
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
-    FlowThreadChildList::const_iterator it = m_flowThreadChildList.begin();
-    FlowThreadChildList::const_iterator end = m_flowThreadChildList.end();
+    FlowThreadChildList::const_iterator it = m_flowThreadChildList->begin();
+    FlowThreadChildList::const_iterator end = m_flowThreadChildList->end();
 
     for (; it != end; ++it) {
         RenderObject* child = *it;
@@ -115,11 +116,11 @@ RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 
 RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
 {
-    if (m_flowThreadChildList.isEmpty())
+    if (m_flowThreadChildList->isEmpty())
         return 0;
 
-    FlowThreadChildList::const_iterator begin = m_flowThreadChildList.begin();
-    FlowThreadChildList::const_iterator end = m_flowThreadChildList.end();
+    FlowThreadChildList::const_iterator begin = m_flowThreadChildList->begin();
+    FlowThreadChildList::const_iterator end = m_flowThreadChildList->end();
     FlowThreadChildList::const_iterator it = end;
 
     do {
@@ -149,14 +150,14 @@ void RenderNamedFlowThread::addFlowChild(RenderObject* newChild)
 
     RenderObject* beforeChild = nextRendererForNode(childNode);
     if (beforeChild)
-        m_flowThreadChildList.insertBefore(beforeChild, newChild);
+        m_flowThreadChildList->insertBefore(beforeChild, newChild);
     else
-        m_flowThreadChildList.add(newChild);
+        m_flowThreadChildList->add(newChild);
 }
 
 void RenderNamedFlowThread::removeFlowChild(RenderObject* child)
 {
-    m_flowThreadChildList.remove(child);
+    m_flowThreadChildList->remove(child);
 }
 
 bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const
@@ -726,5 +727,16 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
             rangeObjects.append(range);
     }
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
+{
+    // We only need to map layers to regions for named flow threads.
+    // Multi-column threads are displayed on top of the regions and do not require
+    // distributing the layers.
+
+    return true;
+}
+#endif
 
 }

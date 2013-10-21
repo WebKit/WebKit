@@ -12,10 +12,13 @@
     background-color: green;
     position: relative; z-index: 1; /*create Stacking Context*/
 }
+#region1 {
+    -webkit-transform: translate3d(0,0,0); /*activate accelerated compositing*/
+}
 </style>
 </head>
 <body>
-    <div id="region1"></div><br />
+    <div id="region1">region</div><br />
     <div id="region2"></div>
 </body>
 </html>

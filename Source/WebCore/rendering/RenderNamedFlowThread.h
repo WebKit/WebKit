@@ -57,9 +57,9 @@ public:
 
     void addFlowChild(RenderObject* newChild);
     void removeFlowChild(RenderObject*);
-    bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
+    bool hasChildren() const { return !m_flowThreadChildList->isEmpty(); }
 #ifndef NDEBUG
-    bool hasChild(RenderObject* child) const { return m_flowThreadChildList.contains(child); }
+    bool hasChild(RenderObject* child) const { return m_flowThreadChildList->contains(child); }
 #endif
 
     void pushDependencies(RenderNamedFlowThreadList&);
@@ -79,6 +79,10 @@ public:
 
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range>>&, const RenderRegion*) const;
+
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool collectsGraphicsLayersUnderRegions() const OVERRIDE;
+#endif
 
 protected:
     void setMarkForDestruction();
@@ -119,7 +123,7 @@ private:
 
     // Holds the sorted children of a named flow. This is the only way we can get the ordering right.
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
-    FlowThreadChildList m_flowThreadChildList;
+    OwnPtr<FlowThreadChildList> m_flowThreadChildList;
 
     NamedFlowContentElements m_contentElements;
 

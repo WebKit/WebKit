@@ -750,6 +750,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     bool isComposited() const { return m_backing != 0; }
+    bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     bool hasCompositedMask() const;
     RenderLayerBacking* backing() const { return m_backing.get(); }
     RenderLayerBacking* ensureBacking();
@@ -813,7 +814,19 @@ public:
     ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason() const { return static_cast<ViewportConstrainedNotCompositedReason>(m_viewportConstrainedNotCompositedReason); }
 #endif
     
+    bool isRenderFlowThread() const { return renderer().isRenderFlowThread(); }
     bool isOutOfFlowRenderFlowThread() const { return renderer().isOutOfFlowRenderFlowThread(); }
+    bool isInsideFlowThread() const { return renderer().flowThreadState() != RenderObject::NotInsideFlowThread; }
+    bool isInsideOutOfFlowThread() const { return renderer().flowThreadState() == RenderObject::InsideOutOfFlowThread; }
+    bool isDirtyRenderFlowThread() const
+    {
+        ASSERT(isRenderFlowThread());
+        return m_zOrderListsDirty || m_normalFlowListDirty;
+    }
+
+    bool isFlowThreadCollectingGraphicsLayersUnderRegions() const;
+
+    RenderLayer* enclosingFlowThreadAncestor() const;
 
 private:
     enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
@@ -1082,7 +1095,6 @@ private:
     bool useRegionBasedColumns() const;
     
 #if USE(ACCELERATED_COMPOSITING)    
-    bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
     
     enum IndirectCompositingReason {

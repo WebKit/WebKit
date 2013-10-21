@@ -41,13 +41,16 @@ namespace WebCore {
 struct LayerFragment;
 typedef Vector<LayerFragment, 1> LayerFragments;
 class RenderFlowThread;
+class RenderNamedFlowFragment;
 class RenderStyle;
 class RenderRegion;
 
+#if USE(ACCELERATED_COMPOSITING)
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<RenderRegion*, RenderLayerList> RegionToLayerListMap;
-typedef HashMap<RenderLayer*, RenderRegion*> LayerToRegionMap;
+typedef HashMap<RenderNamedFlowFragment*, RenderLayerList> RegionToLayerListMap;
+typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
+#endif
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -117,8 +120,6 @@ public:
 
     RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
 
-    const RenderLayerList* getLayerListForRegion(RenderRegion*) const;
-
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
 
@@ -181,13 +182,23 @@ public:
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
 
 #if USE(ACCELERATED_COMPOSITING)
+    // Whether any of the regions has a compositing descendant.
+    bool hasCompositingRegionDescendant() const;
+
     void setNeedsLayerToRegionMappingsUpdate() { m_layersToRegionMappingsDirty = true; }
-    void updateLayerToRegionMappingsIfNeeded()
+    void updateAllLayerToRegionMappingsIfNeeded()
     {
         if (m_layersToRegionMappingsDirty)
-            updateLayerToRegionMappings();
+            updateAllLayerToRegionMappings();
     }
+
+    const RenderLayerList* getLayerListForRegion(RenderNamedFlowFragment*);
+
+    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&); // By means of getRegionRangeForBox or regionAtBlockOffset.
+    RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&);
+
 #endif
+    virtual bool collectsGraphicsLayersUnderRegions() const;
 
     void pushFlowThreadLayoutState(const RenderObject*);
     void popFlowThreadLayoutState();
@@ -222,7 +233,11 @@ protected:
     LayoutRect computeRegionClippingRect(const LayoutPoint&, const LayoutRect&, const LayoutRect&) const;
 
 #if USE(ACCELERATED_COMPOSITING)
-    RenderRegion* regionForCompositedLayer(RenderLayer*);
+    bool updateAllLayerToRegionMappings();
+
+    // Triggers a layers' update if a layer has moved from a region to another since the last update.
+    void updateLayerToRegionMappings(RenderLayer&, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
+    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer*);
     bool updateLayerToRegionMappings();
     void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
 #endif
@@ -304,7 +319,11 @@ protected:
     };
 
 #if USE(ACCELERATED_COMPOSITING)
+    // To easily find the region where a layer should be painted.
     OwnPtr<LayerToRegionMap> m_layerToRegionMap;
+
+    // To easily find the list of layers that paint in a region.
+    OwnPtr<RegionToLayerListMap> m_regionToLayerListMap;
 #endif
 
     // A maps from RenderBox

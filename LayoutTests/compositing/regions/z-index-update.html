@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<title>Bug 120457: [CSS Regions] The layers from the flow thread should be collected under the regions' layers.</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+			}
+
+			#content {
+				-webkit-flow-into: flow;
+				background-color: Yellow;
+				padding: 2px 3px 4px 5px;
+				margin: 3px 4px 5px 6px;
+			}
+
+			.causesTheRegionToBeComposited {
+				-webkit-transform: translateZ(-30px) translateX(-35px);
+				background-color: Lime;
+				padding: 4px 5px 6px 7px;
+				margin: 5px 6px 7px 8px;
+				border: solid 1px Black;
+			}
+
+			.second {
+				-webkit-transform: translateZ(-30px) translateX(-25px);
+				background-color:Cyan;
+				margin-top:-1em;
+			}
+
+			.z1, .z2 {
+				position: relative;
+			}
+
+			.z1 {
+				z-index: 1;
+			}
+
+			.z2 {
+				z-index: 2;
+			}
+
+			#region {
+				-webkit-flow-from: flow;
+				box-shadow: 2px 2px 15px Black;
+				border: double 3px Green;
+				border-width: 3px 4px 5px 6px;
+				outline: double 5px Blue;
+				padding: 6px 7px 8px 9px;
+				margin: 7px 8px 9px 10px;
+			}
+		</style>
+	</head>
+	<body>
+		some text 1.
+		<div id="content">
+			some text 2.
+			<div class="causesTheRegionToBeComposited z1">some text 3.</div>
+			<div class="causesTheRegionToBeComposited second z2">some text 4.</div>
+			some text 5.
+		</div>
+		<div id="region"></div>
+		some text 6.
+		<p>z-index should work as expected.</p>
+		<script>
+			document.offsetTop;
+			document.querySelector(".causesTheRegionToBeComposited").className = "causesTheRegionToBeComposited z2";
+			document.querySelector(".second").className = "causesTheRegionToBeComposited second z1";
+		</script>
+	</body>
+</html>

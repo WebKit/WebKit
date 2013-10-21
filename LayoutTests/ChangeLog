@@ -1,3 +1,38 @@
+2013-10-21  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] The layers from the flow thread should be collected under the regions' layers.
+        https://bugs.webkit.org/show_bug.cgi?id=120457
+
+        Reviewed by David Hyatt.
+
+        * compositing/regions/crash-transform-inside-region-expected.html: Added.
+        * compositing/regions/crash-transform-inside-region.html: Added.
+        * compositing/regions/floated-region-with-transformed-child-expected.html: Added.
+        * compositing/regions/floated-region-with-transformed-child.html: Added.
+        * compositing/regions/move-layer-from-one-region-to-another-expected.html: Added.
+        * compositing/regions/move-layer-from-one-region-to-another.html: Added.
+        * compositing/regions/propagate-region-box-shadow-border-padding-expected.html: Added.
+        * compositing/regions/propagate-region-box-shadow-border-padding-for-video-expected.html: Added.
+        * compositing/regions/propagate-region-box-shadow-border-padding-for-video.html: Added.
+        * compositing/regions/propagate-region-box-shadow-border-padding.html: Added.
+        * compositing/regions/region-as-layer-in-another-flowthread-expected.html: Added.
+        * compositing/regions/region-as-layer-in-another-flowthread.html: Added.
+        * compositing/regions/transform-transparent-positioned-video-inside-region-expected.html: Added.
+        * compositing/regions/transform-transparent-positioned-video-inside-region.html: Added.
+        * compositing/regions/transformed-layer-inside-transformed-layer-expected.html: Added.
+        * compositing/regions/transformed-layer-inside-transformed-layer.html: Added.
+        * compositing/regions/webkit-flow-renderer-layer-compositing-expected.html:
+        * compositing/regions/webkit-flow-renderer-layer-compositing.html:
+        * compositing/regions/z-index-expected.html: Added.
+        * compositing/regions/z-index-update-expected.html: Added.
+        * compositing/regions/z-index-update.html: Added.
+        * compositing/regions/z-index.html: Added.
+        * fast/multicol/mixed-positioning-stacking-order-expected.html:
+        * fast/multicol/mixed-positioning-stacking-order.html:
+        * fast/repaint/region-painting-composited-element-expected.html:
+        * fast/repaint/region-painting-composited-element.html:
+        * platform/mac-wk2/TestExpectations:
+
 2013-10-21  Oliver Hunt  <oliver@apple.com>
 
         Support expression property names in object literals
