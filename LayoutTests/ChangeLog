@@ -1,3 +1,18 @@
+2013-10-21  Santosh Mahto  <santosh.ma@samsung.com>
+
+        ASSERTION FAILED: !style->propertyIsImportant(propertyID) in WebCore::setTextDecorationProperty
+        https://bugs.webkit.org/show_bug.cgi?id=122097
+
+        Reviewed by Ryosuke Niwa.
+
+        Added Test cases to verify that crash does not happen in scenario when
+        remove format command is executed on selection containing the iframe
+        element and when textdecoration style is defined as !important and
+        need to pushDown to iframe.
+
+        * editing/execCommand/remove-format-textdecoration-in-iframe-expected.txt: Added.
+        * editing/execCommand/remove-format-textdecoration-in-iframe.html: Added.
+
 2013-10-20  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Update EFL test expectations.

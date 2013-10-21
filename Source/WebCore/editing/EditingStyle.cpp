@@ -1408,7 +1408,6 @@ static void setTextDecorationProperty(MutableStylePropertySet* style, const CSSV
         style->setProperty(propertyID, newTextDecoration->cssText(), style->propertyIsImportant(propertyID));
     else {
         // text-decoration: none is redundant since it does not remove any text decorations.
-        ASSERT(!style->propertyIsImportant(propertyID));
         style->removeProperty(propertyID);
     }
 }

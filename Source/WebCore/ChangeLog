@@ -1,3 +1,29 @@
+2013-10-21  Santosh Mahto  <santosh.ma@samsung.com>
+
+        ASSERTION FAILED: !style->propertyIsImportant(propertyID) in WebCore::setTextDecorationProperty
+        https://bugs.webkit.org/show_bug.cgi?id=122097
+
+        Reviewed by Ryosuke Niwa.
+
+        When remove format command is called we pushdown the ancestor style
+        down to its children. Currently applying inline style to iframe
+        while pushing down style which causes iframe to be reinserted in tree and
+        triggres again subframe loading which repeats everytime and finally
+        crash happens. So we should avoid applying inline style to iframe
+        element as it doesnot reflect in its content while pushing down style
+        on it.
+
+        And ASSERT call has been removed from setTextDecoration property as
+        the scenario is perfectly valid case.
+
+        Test: editing/execCommand/remove-format-textdecoration-in-iframe.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Return if
+        element is iframe.
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::setTextDecorationProperty): Remove ASSERT.
+
 2013-10-20  Sam Weinig  <sam@webkit.org>
 
         Move m_lineBoxes from RenderBlock to RenderBlockFlow (Part 5)
