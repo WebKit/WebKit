@@ -1,3 +1,20 @@
+2013-10-21  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes][CSS Regions] Don't apply shape-inside when we have multiple auto-height regions and the height is not resolved
+        https://bugs.webkit.org/show_bug.cgi?id=123103
+
+        Reviewed by David Hyatt.
+
+        When we have multiple regions with auto-height, the region's height is not resolved from other elements we can't apply the
+        the shape on the region. This patch prevents to apply the shape and fixes the behavior for these cases.
+
+        Test: fast/regions/shape-inside/shape-inside-on-multiple-autoheight-regions.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread):
+
 2013-10-21  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Backing store should take contentsScale into account

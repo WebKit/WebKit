@@ -1,3 +1,16 @@
+2013-10-21  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes][CSS Regions] Don't apply shape-inside when we have multiple auto-height regions and the height is not resolved
+        https://bugs.webkit.org/show_bug.cgi?id=123103
+
+        Reviewed by David Hyatt.
+
+        When we have multiple regions with auto-height, the region's height is not resolved from other elements we can't apply the
+        the shape on the region. This patch prevents to apply the shape and fixes the behavior for these cases.
+
+        * fast/regions/shape-inside/shape-inside-on-multiple-autoheight-regions-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-multiple-autoheight-regions.html: Added.
+
 2013-10-21  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] The layers from the flow thread should be collected under the regions' layers.

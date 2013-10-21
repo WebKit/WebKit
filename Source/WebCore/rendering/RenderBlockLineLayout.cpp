@@ -1389,7 +1389,7 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
     LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 
     RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight());
-    if (!currentRegion)
+    if (!currentRegion || !currentRegion->logicalHeight())
         return;
 
     shapeInsideInfo = currentRegion->shapeInsideInfo();
