@@ -234,7 +234,9 @@ simpleroutine PHBooleanAndDataReply(pluginHostPort :mach_port_t;
                                     requestID :uint32_t;
                                     returnValue :boolean_t;
                                     result :data_t);
-             
+
+// New Routines (must be added at the bottom of the file)
+
 simpleroutine PHPluginInstanceDidDraw(pluginHostPort :mach_port_t;
                                       pluginID :uint32_t);
 simpleroutine PHPluginInstancePrivateBrowsingModeDidChange(pluginHostPort :mach_port_t;
@@ -248,3 +250,7 @@ simpleroutine PHPluginInstanceSnapshot(pluginHostPort :mach_port_t;
                                     height :uint32_t);
 
 routine PHCreatePluginMIMETypesPreferences(pluginHostPort :mach_port_t);
+
+simpleroutine PHPluginShouldHostLayersInWindowServerChanged(pluginHostPort :mach_port_t;
+                                                            pluginID :uint32_t;
+                                                            shouldHostLayersInWindowServer :boolean_t);

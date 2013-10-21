@@ -231,8 +231,15 @@ simpleroutine PCBooleanAndDataReply(clientPort :mach_port_t;
                                     returnValue :boolean_t;
                                     result :data_t);  
 
+// New Routines (must be added at the bottom of the file)
+
 simpleroutine PCSetFullscreenWindowIsShowing(clientPort :mach_port_t;
                                              isShowing :boolean_t);
 
 simpleroutine PCSetException(clientPort :mach_port_t;
                              message :data_t);
+
+simpleroutine PCLayerHostingModeChanged(clientPort :mach_port_t;
+                                        pluginID :uint32_t;
+                                        hostsLayersInWindowServer :boolean_t;
+                                        renderContextID :uint32_t);

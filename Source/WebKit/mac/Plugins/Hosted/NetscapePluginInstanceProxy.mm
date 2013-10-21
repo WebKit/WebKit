@@ -277,6 +277,19 @@ void NetscapePluginInstanceProxy::resize(NSRect size, NSRect clipRect)
     waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
 }
 
+
+void NetscapePluginInstanceProxy::setShouldHostLayersInWindowServer(bool shouldHostLayersInWindowServer)
+{
+    _WKPHPluginShouldHostLayersInWindowServerChanged(m_pluginHostProxy->port(), m_pluginID, shouldHostLayersInWindowServer);
+}
+
+void NetscapePluginInstanceProxy::layerHostingModeChanged(bool hostsLayersInWindowServer, uint32_t renderContextID)
+{
+    setRenderContextID(renderContextID);
+
+    [m_pluginView setHostsLayersInWindowServer:hostsLayersInWindowServer];
+}
+
 void NetscapePluginInstanceProxy::stopAllStreams()
 {
     Vector<RefPtr<HostedNetscapePluginStream> > streamsCopy;
