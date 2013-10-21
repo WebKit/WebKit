@@ -1,3 +1,14 @@
+2013-10-21  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Build does not start.
+        https://bugs.webkit.org/show_bug.cgi?id=123059
+
+        Reviewed by Csaba Osztrogonác.
+
+        The function isAppleWinWebKit() does no longer return true for WinCairo, need to add isWinCairo() checks instead.
+
+        * Scripts/build-webkit:
+
 2013-10-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [Jhbuild] Bump the required Jhbuild revision

@@ -162,7 +162,7 @@ sub unlinkZeroFiles()
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isAppleMacWebKit() or isAppleWinWebKit();
+splice @projects, 0, 0, "Source/WTF" if isAppleMacWebKit() or isAppleWinWebKit() or isWinCairo();
 
 for my $dir (@projects) {
     if (! -d $dir) {
@@ -277,7 +277,7 @@ for my $dir (@projects) {
         push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
         my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
-    } elsif (isAppleWinWebKit()) {
+    } elsif (isAppleWinWebKit() || isWinCairo()) {
         if ($project eq "WebKit") {
             my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
@@ -295,7 +295,7 @@ for my $dir (@projects) {
 
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
-        if (isAppleWinWebKit()) {
+        if (isAppleWinWebKit() || isWinCairo()) {
             print "\n\n===== BUILD FAILED ======\n\n";
             print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
             print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
