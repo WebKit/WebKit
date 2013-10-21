@@ -152,6 +152,7 @@ bool CDMSessionAVFoundation::update(Uint8Array* key, RefPtr<Uint8Array>& nextMes
     errorCode = 0;
     systemCode = 0;
     nextMessage = nullptr;
+    m_request = nullptr;
 
     return true;
 }
