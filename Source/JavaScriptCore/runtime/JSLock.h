@@ -95,17 +95,20 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
-        unsigned dropAllLocks();
-        unsigned dropAllLocksUnconditionally();
-        void grabAllLocks(unsigned lockCount);
+        unsigned dropAllLocks(SpinLock&);
+        unsigned dropAllLocksUnconditionally(SpinLock&);
+        void grabAllLocks(unsigned lockCount, SpinLock&);
 
         void willDestroyVM(VM*);
 
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
-            JS_EXPORT_PRIVATE DropAllLocks(ExecState* exec);
-            JS_EXPORT_PRIVATE DropAllLocks(VM*);
+            // By default, we release all locks conditionally. Some clients, such as Mobile Safari,
+            // may require that we release all locks unconditionally.
+            enum AlwaysDropLocksTag { DontAlwaysDropLocks = 0, AlwaysDropLocks };
+            JS_EXPORT_PRIVATE DropAllLocks(ExecState*, AlwaysDropLocksTag = DontAlwaysDropLocks);
+            JS_EXPORT_PRIVATE DropAllLocks(VM*, AlwaysDropLocksTag = DontAlwaysDropLocks);
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
         private:

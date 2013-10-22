@@ -1,3 +1,24 @@
+2013-10-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream JSLock changes
+        https://bugs.webkit.org/show_bug.cgi?id=123107
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::dropAllLocks): Modified to take a SpinLock, used only on iOS.
+        (JSC::JSLock::dropAllLocksUnconditionally): Modified to take a SpinLock, used only on iOS. Also
+        use pre-increment instead of post-increment when we're not using the return value of the instruction.
+        (JSC::JSLock::grabAllLocks): Modified to take a SpinLock, used only on iOS. Also change
+        places where we were using post-increment/post-decrement to use pre-increment/pre-decrement,
+        since we don't use the return value of such instructions.
+        (JSC::JSLock::DropAllLocks::DropAllLocks): Modified to support releasing all locks unconditionally.
+        Take a spin lock before releasing all locks on iOS. Also, use nullptr instead of 0.
+        (JSC::JSLock::DropAllLocks::~DropAllLocks): Take a spin lock before acquiring all locks on iOS.
+        * runtime/JSLock.h: Remove extraneous argument name "exec" from DropAllLocks as the data type of
+        the argument is sufficiently descriptive of its purpose.
+
 2013-10-22  Julien Brianceau  <jbriance@cisco.com>
 
         [arm] Add missing setupArgumentsWithExecState() prototypes to fix build.

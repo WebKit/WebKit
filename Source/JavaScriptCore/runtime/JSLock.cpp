@@ -126,9 +126,9 @@ void JSLock::lock()
 
 void JSLock::unlock()
 {
+    SpinLockHolder holder(&m_spinLock);
     ASSERT(currentThreadIsHoldingLock());
 
-    SpinLockHolder holder(&m_spinLock);
     m_lockCount--;
 
     if (!m_lockCount)
@@ -192,51 +192,135 @@ bool JSLock::currentThreadIsHoldingLock()
 //
 
 // This function returns the number of locks that were dropped.
-unsigned JSLock::dropAllLocks()
+unsigned JSLock::dropAllLocks(SpinLock& spinLock)
 {
+#if PLATFORM(IOS)
+    ASSERT_UNUSED(spinLock, spinLock.IsHeld());
+    // Check if this thread is currently holding the lock.
+    // FIXME: Maybe we want to require this, guard with an ASSERT?
+    unsigned lockCount = m_lockCount;
+    if (!lockCount || m_ownerThread != WTF::currentThread())
+        return 0;
+
+    // Don't drop the locks if they've already been dropped once.
+    // (If the prior drop came from another thread, and it resumed first,
+    // it could trash our register file).
+    if (m_lockDropDepth)
+        return 0;
+
+    // m_lockDropDepth is only incremented if any locks were dropped.
+    ++m_lockDropDepth;
+    m_lockCount = 0;
+    m_lock.unlock();
+    return lockCount;
+#else
     if (m_lockDropDepth++)
         return 0;
 
-    return dropAllLocksUnconditionally();
+    return dropAllLocksUnconditionally(spinLock);
+#endif
 }
 
-unsigned JSLock::dropAllLocksUnconditionally()
+unsigned JSLock::dropAllLocksUnconditionally(SpinLock& spinLock)
 {
+#if PLATFORM(IOS)
+    ASSERT_UNUSED(spinLock, spinLock.IsHeld());
+    // Check if this thread is currently holding the lock.
+    // FIXME: Maybe we want to require this, guard with an ASSERT?
     unsigned lockCount = m_lockCount;
-    for (unsigned i = 0; i < lockCount; i++)
+    if (!lockCount || m_ownerThread != WTF::currentThread())
+        return 0;
+
+    // m_lockDropDepth is only incremented if any locks were dropped.
+    ++m_lockDropDepth;
+    m_lockCount = 0;
+    m_lock.unlock();
+    return lockCount;
+#else
+    UNUSED_PARAM(spinLock);
+    unsigned lockCount = m_lockCount;
+    for (unsigned i = 0; i < lockCount; ++i)
         unlock();
 
     return lockCount;
+#endif
 }
 
-void JSLock::grabAllLocks(unsigned lockCount)
+void JSLock::grabAllLocks(unsigned lockCount, SpinLock& spinLock)
 {
-    for (unsigned i = 0; i < lockCount; i++)
+#if PLATFORM(IOS)
+    ASSERT(spinLock.IsHeld());
+    // If no locks were dropped, nothing to do!
+    if (!lockCount)
+        return;
+
+    ThreadIdentifier currentThread = WTF::currentThread();
+    // Check if this thread is currently holding the lock.
+    // FIXME: Maybe we want to prohibit this, guard against with an ASSERT?
+    if (m_ownerThread == currentThread && m_lockCount) {
+        m_lockCount += lockCount;
+        --m_lockDropDepth;
+        return;
+    }
+
+    spinLock.Unlock();
+    m_lock.lock();
+    spinLock.Lock();
+
+    m_ownerThread = currentThread;
+    ASSERT(!m_lockCount);
+    m_lockCount = lockCount;
+    --m_lockDropDepth;
+#else
+    UNUSED_PARAM(spinLock);
+    for (unsigned i = 0; i < lockCount; ++i)
         lock();
 
-    m_lockDropDepth--;
+    --m_lockDropDepth;
+#endif
 }
 
-JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
+JSLock::DropAllLocks::DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDropLocks)
     : m_lockCount(0)
-    , m_vm(exec ? &exec->vm() : 0)
+    , m_vm(exec ? &exec->vm() : nullptr)
 {
-    if (m_vm)
-        m_lockCount = m_vm->apiLock().dropAllLocks();
+    if (!m_vm)
+        return;
+    SpinLock& spinLock = m_vm->apiLock().m_spinLock;
+#if PLATFORM(IOS)
+    SpinLockHolder holder(&spinLock);
+#endif
+    if (alwaysDropLocks)
+        m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
+    else
+        m_lockCount = m_vm->apiLock().dropAllLocks(spinLock);
 }
 
-JSLock::DropAllLocks::DropAllLocks(VM* vm)
+JSLock::DropAllLocks::DropAllLocks(VM* vm, AlwaysDropLocksTag alwaysDropLocks)
     : m_lockCount(0)
     , m_vm(vm)
 {
-    if (m_vm)
-        m_lockCount = m_vm->apiLock().dropAllLocks();
+    if (!m_vm)
+        return;
+    SpinLock& spinLock = m_vm->apiLock().m_spinLock;
+#if PLATFORM(IOS)
+    SpinLockHolder holder(&spinLock);
+#endif
+    if (alwaysDropLocks)
+        m_lockCount = m_vm->apiLock().dropAllLocksUnconditionally(spinLock);
+    else
+        m_lockCount = m_vm->apiLock().dropAllLocks(spinLock);
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
 {
-    if (m_vm)
-        m_vm->apiLock().grabAllLocks(m_lockCount);
+    if (!m_vm)
+        return;
+    SpinLock& spinLock = m_vm->apiLock().m_spinLock;
+#if PLATFORM(IOS)
+    SpinLockHolder holder(&spinLock);
+#endif
+    m_vm->apiLock().grabAllLocks(m_lockCount, spinLock);
 }
 
 } // namespace JSC
