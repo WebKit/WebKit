@@ -490,6 +490,7 @@ static void didFinishProgress(WKPageRef page, const void* clientInfo)
         [browsingContext.loadDelegate browsingContextControllerDidFinishProgress:browsingContext];
 }
 
+#if WK_API_ENABLED
 static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
 {
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
@@ -502,6 +503,7 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
     [added release];
     [removed release];
 }
+#endif // WK_API_ENABLED
 
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WKPageRef pageRef)
 {
@@ -521,7 +523,9 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     loaderClient.didChangeProgress = didChangeProgress;
     loaderClient.didFinishProgress = didFinishProgress;
 
+#if WK_API_ENABLED
     loaderClient.didChangeBackForwardList = didChangeBackForwardList;
+#endif
 
     WKPageSetPageLoaderClient(pageRef, &loaderClient);
 }

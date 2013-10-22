@@ -1,5 +1,12 @@
 2013-10-21  Dan Bernstein  <mitz@apple.com>
 
+        Try to make the 32-bit Mac build happy.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (setUpPageLoaderClient):
+
+2013-10-21  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add load delegate method for didChangeBackForwardList
         https://bugs.webkit.org/show_bug.cgi?id=123136
 
