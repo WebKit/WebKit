@@ -1,3 +1,52 @@
+2013-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use TYPE_CASTS_BASE for CSS_VALUE_TYPE_CASTS
+        https://bugs.webkit.org/show_bug.cgi?id=123126
+
+        Reviewed by Andreas Kling.
+
+        TYPE_CASTS_BASE was moved to common place to be used by all toFoo().
+        CSS_VALUE_TYPE_CASTS starts to use it for CSS child value. This change
+        generates plenty more helper functions for toCSSFooValue().
+
+        Additionally, this use support that toWebKitCSSFooValue, which couldn't
+        use CSS_VALUE_TYPE_CASTS macro.
+
+        No new tests, no behavior change.
+
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSCalculationValue.h:
+        * css/CSSCanvasValue.h:
+        * css/CSSCrossfadeValue.h:
+        * css/CSSCursorImageValue.h:
+        * css/CSSFilterImageValue.h:
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFontFeatureValue.h:
+        * css/CSSFontValue.h:
+        * css/CSSFunctionValue.h:
+        * css/CSSGradientValue.h:
+        * css/CSSGridTemplateValue.h:
+        * css/CSSImageSetValue.h:
+        * css/CSSImageValue.h:
+        * css/CSSInheritedValue.h:
+        * css/CSSInitialValue.h:
+        * css/CSSLineBoxContainValue.h:
+        * css/CSSPrimitiveValue.h:
+        * css/CSSReflectValue.h:
+        * css/CSSShadowValue.h:
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSUnicodeRangeValue.h:
+        * css/CSSValue.h:
+        * css/CSSValueList.h:
+        * css/CSSVariableValue.h:
+        * css/WebKitCSSArrayFunctionValue.h:
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSMatFunctionValue.h:
+        * css/WebKitCSSMixFunctionValue.h:
+        * css/WebKitCSSSVGDocumentValue.h:
+        * css/WebKitCSSShaderValue.h:
+
 2013-10-21  Joone Hur  <joone.hur@intel.com>
 
         Bad cast with toRenderBoxModelObject in RenderBlock::updateFirstLetter()

@@ -70,7 +70,7 @@ private:
     RefPtr<CSSValue> m_mask;
 };
 
-CSS_VALUE_TYPE_CASTS(ReflectValue)
+CSS_VALUE_TYPE_CASTS(CSSReflectValue, isReflectValue())
 
 } // namespace WebCore
 

@@ -145,7 +145,7 @@ private:
     const bool m_nonNegative;
 };
 
-CSS_VALUE_TYPE_CASTS(CalcValue)
+CSS_VALUE_TYPE_CASTS(CSSCalcValue, isCalcValue())
 
 } // namespace WebCore
 

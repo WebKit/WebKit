@@ -56,7 +56,7 @@ private:
     CSSBorderImageSliceValue(PassRefPtr<CSSPrimitiveValue> slices, bool fill);
 };
 
-CSS_VALUE_TYPE_CASTS(BorderImageSliceValue)
+CSS_VALUE_TYPE_CASTS(CSSBorderImageSliceValue, isBorderImageSliceValue())
 
 } // namespace WebCore
 

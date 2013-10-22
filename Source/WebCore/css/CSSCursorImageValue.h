@@ -82,7 +82,7 @@ private:
 #endif
 };
 
-CSS_VALUE_TYPE_CASTS(CursorImageValue)
+CSS_VALUE_TYPE_CASTS(CSSCursorImageValue, isCursorImageValue())
 
 } // namespace WebCore
 

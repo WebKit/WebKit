@@ -63,7 +63,7 @@ private:
     double m_y2;
 };
 
-CSS_VALUE_TYPE_CASTS(CubicBezierTimingFunctionValue)
+CSS_VALUE_TYPE_CASTS(CSSCubicBezierTimingFunctionValue, isCubicBezierTimingFunctionValue())
 
 class CSSStepsTimingFunctionValue : public CSSValue {
 public:
@@ -91,7 +91,7 @@ private:
     bool m_stepAtStart;
 };
 
-CSS_VALUE_TYPE_CASTS(StepsTimingFunctionValue)
+CSS_VALUE_TYPE_CASTS(CSSStepsTimingFunctionValue, isStepsTimingFunctionValue())
 
 } // namespace
 

@@ -55,17 +55,7 @@ private:
     WebKitCSSArrayFunctionValue(const WebKitCSSArrayFunctionValue& cloneFrom);
 };
 
-inline WebKitCSSArrayFunctionValue* toWebKitCSSArrayFunctionValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSArrayFunctionValue());
-    return static_cast<WebKitCSSArrayFunctionValue*>(value);
-}
-
-inline const WebKitCSSArrayFunctionValue* toWebKitCSSArrayFunctionValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSArrayFunctionValue());
-    return static_cast<const WebKitCSSArrayFunctionValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(WebKitCSSArrayFunctionValue, isWebKitCSSArrayFunctionValue())
 
 } // namespace WebCore
 

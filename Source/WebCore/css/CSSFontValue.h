@@ -55,7 +55,7 @@ private:
     }
 };
 
-CSS_VALUE_TYPE_CASTS(FontValue)
+CSS_VALUE_TYPE_CASTS(CSSFontValue, isFontValue())
 
 } // namespace
 

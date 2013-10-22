@@ -55,17 +55,7 @@ private:
     WebKitCSSMixFunctionValue(const WebKitCSSMixFunctionValue& cloneFrom);
 };
 
-inline WebKitCSSMixFunctionValue* toWebKitCSSMixFunctionValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSMixFunctionValue());
-    return static_cast<WebKitCSSMixFunctionValue*>(value);
-}
-
-inline const WebKitCSSMixFunctionValue* toWebKitCSSMixFunctionValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSMixFunctionValue());
-    return static_cast<const WebKitCSSMixFunctionValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(WebKitCSSMixFunctionValue, isWebKitCSSMixFunctionValue())
 
 } // namespace WebCore
 

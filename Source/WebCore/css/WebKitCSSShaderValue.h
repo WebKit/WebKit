@@ -66,20 +66,7 @@ private:
     bool m_accessedShader;
 };
 
-// This will catch anyone doing an unnecessary cast.
-WebKitCSSShaderValue* toWebKitCSSShaderValue(const WebKitCSSShaderValue*);
-
-inline WebKitCSSShaderValue* toWebKitCSSShaderValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSShaderValue());
-    return static_cast<WebKitCSSShaderValue*>(value);
-}
-
-inline const WebKitCSSShaderValue* toWebKitCSSShaderValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSShaderValue());
-    return static_cast<const WebKitCSSShaderValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(WebKitCSSShaderValue, isWebKitCSSShaderValue())
 
 } // namespace WebCore
 

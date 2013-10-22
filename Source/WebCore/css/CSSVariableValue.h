@@ -61,7 +61,7 @@ private:
     const String m_value;
 };
 
-CSS_VALUE_TYPE_CASTS(VariableValue)
+CSS_VALUE_TYPE_CASTS(CSSVariableValue, isVariableValue())
 
 }
 

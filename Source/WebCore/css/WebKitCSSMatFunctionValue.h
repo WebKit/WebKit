@@ -55,17 +55,7 @@ private:
     WebKitCSSMatFunctionValue(const WebKitCSSMatFunctionValue& cloneFrom);
 };
 
-inline WebKitCSSMatFunctionValue* toWebKitCSSMatFunctionValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSMatFunctionValue());
-    return static_cast<WebKitCSSMatFunctionValue*>(value);
-}
-
-inline const WebKitCSSMatFunctionValue* toWebKitCSSMatFunctionValue(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSMatFunctionValue());
-    return static_cast<const WebKitCSSMatFunctionValue*>(value);
-}
+CSS_VALUE_TYPE_CASTS(WebKitCSSMatFunctionValue, isWebKitCSSMatFunctionValue())
 
 } // namespace WebCore
 

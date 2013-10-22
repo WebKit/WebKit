@@ -83,7 +83,7 @@ private:
     Vector<RefPtr<CSSValue>, 4> m_values;
 };
 
-CSS_VALUE_TYPE_CASTS(ValueList)
+CSS_VALUE_TYPE_CASTS(CSSValueList, isValueList())
 
 // Objects of this class are intended to be stack-allocated and scoped to a single function.
 // Please take care not to pass these around as they do hold onto a raw pointer.

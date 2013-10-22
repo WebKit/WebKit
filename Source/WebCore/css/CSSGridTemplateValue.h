@@ -56,7 +56,7 @@ private:
     size_t m_columnCount;
 };
 
-CSS_VALUE_TYPE_CASTS(GridTemplateValue)
+CSS_VALUE_TYPE_CASTS(CSSGridTemplateValue, isGridTemplateValue())
 
 } // namespace WebCore
 
