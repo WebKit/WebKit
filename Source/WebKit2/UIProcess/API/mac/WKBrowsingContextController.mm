@@ -30,8 +30,10 @@
 
 #import "ObjCObjectGraph.h"
 #import "WKBackForwardListInternal.h"
+#import "WKBackForwardListItemInternal.h"
 #import "WKErrorCF.h"
 #import "WKFrame.h"
+#import "WKNSArray.h"
 #import "WKPagePrivate.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
@@ -488,6 +490,19 @@ static void didFinishProgress(WKPageRef page, const void* clientInfo)
         [browsingContext.loadDelegate browsingContextControllerDidFinishProgress:browsingContext];
 }
 
+static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void *clientInfo)
+{
+    WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+    if (![browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidChangedBackForwardList:addedItem:removedItems:)])
+        return;
+
+    WKBackForwardListItem *added = addedItem ? [[WKBackForwardListItem alloc] _initWithItem:*toImpl(addedItem)] : nil;
+    NSArray *removed = removedItems ? [[WKNSArray alloc] web_initWithImmutableArray:*toImpl(removedItems)] : nil;
+    [browsingContext.loadDelegate browsingContextControllerDidChangedBackForwardList:browsingContext addedItem:added removedItems:removed];
+    [added release];
+    [removed release];
+}
+
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WKPageRef pageRef)
 {
     WKPageLoaderClient loaderClient;
@@ -505,6 +520,8 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     loaderClient.didStartProgress = didStartProgress;
     loaderClient.didChangeProgress = didChangeProgress;
     loaderClient.didFinishProgress = didFinishProgress;
+
+    loaderClient.didChangeBackForwardList = didChangeBackForwardList;
 
     WKPageSetPageLoaderClient(pageRef, &loaderClient);
 }
