@@ -1,3 +1,12 @@
+2013-10-22  Stephanie Lewis  <slewis@apple.com>
+
+        Update the build trigger list for Mavericks.
+
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+
 2013-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Add Mavericks bots to the dashboard.
