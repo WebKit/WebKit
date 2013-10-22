@@ -1477,11 +1477,11 @@ void Element::lazyAttach(ShouldSetAttached shouldSetAttached)
     markAncestorsWithChildNeedsStyleRecalc();
 }
 
-PassRefPtr<RenderStyle> Element::styleForRenderer()
+PassRef<RenderStyle> Element::styleForRenderer()
 {
     if (hasCustomStyleResolveCallbacks()) {
         if (RefPtr<RenderStyle> style = customStyleForRenderer())
-            return style.release();
+            return style.releaseNonNull();
     }
 
     return document().ensureStyleResolver().styleForElement(this);

@@ -55,7 +55,7 @@ public:
     
     void clearRenderer();
 
-    PassRefPtr<RenderStyle> animate(RenderElement*, RenderStyle* currentStyle, RenderStyle* targetStyle);
+    PassRef<RenderStyle> animate(RenderElement&, RenderStyle* currentStyle, RenderStyle& targetStyle);
     PassRefPtr<RenderStyle> getAnimatedStyle() const;
 
     double timeToNextService() const;

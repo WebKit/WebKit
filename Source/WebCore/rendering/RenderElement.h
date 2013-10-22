@@ -103,7 +103,8 @@ public:
 
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(PassRefPtr<RenderStyle> style) { m_style = style; }
+    void setStyleInternal(PassRef<RenderStyle> style) { m_style = std::move(style); }
+    void clearStyleInternal() { m_style = nullptr; }
 
 protected:
     enum BaseTypeFlags {

@@ -520,9 +520,7 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
     Ref<RenderStyle> newStyleBeforeAnimation(std::move(newStyle));
 
     CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(&renderer);
-
-    // FIXME: This could be a PassRef<RenderStyle>.
-    RefPtr<RenderStyle> blendedStyle = rendererAnimations.animate(&renderer, oldStyle, &newStyleBeforeAnimation.get());
+    auto blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyleBeforeAnimation.get());
 
     if (renderer.parent() || newStyleBeforeAnimation->animations() || (oldStyle && oldStyle->animations())) {
         m_data->updateAnimationTimerForRenderer(&renderer);
@@ -531,14 +529,14 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
 #endif
     }
 
-    if (blendedStyle != &newStyleBeforeAnimation.get()) {
+    if (&blendedStyle.get() != &newStyleBeforeAnimation.get()) {
         // If the animations/transitions change opacity or transform, we need to update
         // the style to impose the stacking rules. Note that this is also
         // done in StyleResolver::adjustRenderStyle().
-        if (blendedStyle->hasAutoZIndex() && (blendedStyle->opacity() < 1.0f || blendedStyle->hasTransform()))
-            blendedStyle->setZIndex(0);
+        if (blendedStyle.get().hasAutoZIndex() && (blendedStyle.get().opacity() < 1.0f || blendedStyle.get().hasTransform()))
+            blendedStyle.get().setZIndex(0);
     }
-    return blendedStyle.releaseNonNull();
+    return blendedStyle;
 }
 
 PassRefPtr<RenderStyle> AnimationController::getAnimatedStyleForRenderer(RenderElement* renderer)
