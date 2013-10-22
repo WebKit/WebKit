@@ -465,7 +465,7 @@ bool InlineTextBox::getEmphasisMarkPosition(const RenderStyle& style, TextEmphas
     RenderRubyText* rubyText = toRenderRubyRun(containingBlock->parent())->rubyText();
 
     // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
-    return !rubyText || !rubyText->firstLineBox();
+    return !rubyText || !rubyText->hasLines();
 }
 
 enum RotationDirection { Counterclockwise, Clockwise };

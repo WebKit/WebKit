@@ -102,7 +102,7 @@ public:
     virtual void removeChild(RenderObject&) OVERRIDE;
     
     virtual RenderMathMLOperator* unembellishedOperator();
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
 
 protected:
     virtual void layout();

@@ -265,11 +265,11 @@ void RenderMathMLOperator::updateStyle()
         m_isStretched = false;
 }
 
-int RenderMathMLOperator::firstLineBoxBaseline() const
+int RenderMathMLOperator::firstLineBaseline() const
 {
     if (m_isStretched)
         return expandedStretchHeight() * 2 / 3 - (expandedStretchHeight() - m_stretchHeight) / 2;
-    return RenderMathMLBlock::firstLineBoxBaseline();
+    return RenderMathMLBlock::firstLineBaseline();
 }
 
 void RenderMathMLOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const

@@ -74,7 +74,7 @@ int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLin
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
     
-    LayoutUnit baseline = firstLineBoxBaseline(); // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
+    LayoutUnit baseline = firstLineBaseline(); // FIXME: This may be unnecessary after flex baselines are implemented (https://bugs.webkit.org/show_bug.cgi?id=96188).
     if (baseline != -1)
         return baseline;
     
@@ -301,9 +301,9 @@ bool parseMathMLNamedSpace(const String& string, LayoutUnit& lengthValue, const 
     return false;
 }
 
-int RenderMathMLTable::firstLineBoxBaseline() const
+int RenderMathMLTable::firstLineBaseline() const
 {
-    // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBoxBaseline() for baseline alignment, per
+    // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBaseline() for baseline alignment, per
     // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a
     // single line, whose baseline gives this centering. This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
     return (logicalHeight() + style()->fontMetrics().xHeight()) / 2;

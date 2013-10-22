@@ -47,7 +47,7 @@ private:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild) OVERRIDE;
     virtual void updateFromElement() OVERRIDE;
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE;
     virtual void layout() OVERRIDE;

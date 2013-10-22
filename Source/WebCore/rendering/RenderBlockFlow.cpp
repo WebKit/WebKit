@@ -2488,13 +2488,13 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
     }
 }
 
-int RenderBlockFlow::firstLineBoxBaseline() const
+int RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun())
         return -1;
 
     if (!childrenInline())
-        return RenderBlock::firstLineBoxBaseline();
+        return RenderBlock::firstLineBaseline();
 
     if (firstLineBox())
         return firstLineBox()->logicalTop() + firstLineStyle()->fontMetrics().ascent(firstRootBox()->baselineType());
@@ -2510,19 +2510,18 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
     if (!childrenInline())
         return RenderBlock::inlineBlockBaseline(lineDirection);
 
-    if (!firstLineBox() && hasLineIfEmpty()) {
+    if (!hasLines()) {
+        if (!hasLineIfEmpty())
+            return -1;
         const FontMetrics& fontMetrics = firstLineStyle()->fontMetrics();
         return fontMetrics.ascent()
              + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
     }
 
-    if (lastLineBox()) {
-        bool isFirstLine = lastLineBox() == firstLineBox();
-        RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
-        return lastLineBox()->logicalTop() + style->fontMetrics().ascent(lastRootBox()->baselineType());
-    }
-    return -1;
+    bool isFirstLine = lastLineBox() == firstLineBox();
+    RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
+    return lastLineBox()->logicalTop() + style->fontMetrics().ascent(lastRootBox()->baselineType());
 }
 
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
@@ -2532,7 +2531,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock* rootBlock, const Layo
 
     bool containsStart = selectionState() == SelectionStart || selectionState() == SelectionBoth;
 
-    if (!firstLineBox()) {
+    if (!hasLines()) {
         if (containsStart) {
             // Go ahead and update our lastLogicalTop to be the bottom of the block.  <hr>s or empty blocks with height can trip this
             // case.

@@ -284,7 +284,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE FINAL;
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE FINAL;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;

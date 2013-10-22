@@ -107,7 +107,7 @@ public:
     {
     }
     
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     
 private:
     virtual const char* renderName() const OVERRIDE { return "RenderMathMLTable"; }

@@ -73,7 +73,7 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
 
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 

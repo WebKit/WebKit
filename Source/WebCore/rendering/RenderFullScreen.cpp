@@ -35,7 +35,7 @@
 #include "RenderLayerCompositor.h"
 #endif
 
-using namespace WebCore;
+namespace WebCore {
 
 class RenderFullScreenPlaceholder FINAL : public RenderBlockFlow {
 public:
@@ -183,6 +183,8 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const La
         }
     } else
         m_placeholder->setStyle(*style);
+}
+
 }
 
 #endif

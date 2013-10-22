@@ -241,7 +241,7 @@ static int synthesizedBaselineFromContentBox(const RenderBox* box, LineDirection
 
 int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
-    int baseline = firstLineBoxBaseline();
+    int baseline = firstLineBaseline();
     if (baseline == -1)
         baseline = synthesizedBaselineFromContentBox(this, direction);
 
@@ -249,7 +249,7 @@ int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode di
     return baseline + marginAscent;
 }
 
-int RenderFlexibleBox::firstLineBoxBaseline() const
+int RenderFlexibleBox::firstLineBaseline() const
 {
     if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0)
         return -1;
@@ -278,7 +278,7 @@ int RenderFlexibleBox::firstLineBoxBaseline() const
     if (isColumnFlow() && !hasOrthogonalFlow(baselineChild))
         return mainAxisExtentForChild(baselineChild) + baselineChild->logicalTop();
 
-    int baseline = baselineChild->firstLineBoxBaseline();
+    int baseline = baselineChild->firstLineBaseline();
     if (baseline == -1) {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
@@ -291,7 +291,7 @@ int RenderFlexibleBox::firstLineBoxBaseline() const
 
 int RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
 {
-    int baseline = firstLineBoxBaseline();
+    int baseline = firstLineBaseline();
     if (baseline != -1)
         return baseline;
 
@@ -894,7 +894,7 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUni
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
 {
-    LayoutUnit ascent = child->firstLineBoxBaseline();
+    LayoutUnit ascent = child->firstLineBaseline();
     if (ascent == -1)
         ascent = crossAxisExtentForChild(child);
     return ascent + flowAwareMarginBeforeForChild(child);

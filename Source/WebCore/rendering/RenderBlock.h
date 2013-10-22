@@ -458,7 +458,7 @@ protected:
     virtual void computePreferredLogicalWidths() OVERRIDE;
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
     // Delay update scrollbar until finishDelayRepaint() will be
@@ -541,7 +541,7 @@ private:
     
     virtual bool isSelfCollapsingBlock() const OVERRIDE FINAL;
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
-    virtual bool hasInlineBoxChildren() const { return false; }
+    virtual bool hasLines() const { return false; }
 
     void insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
     static void removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);

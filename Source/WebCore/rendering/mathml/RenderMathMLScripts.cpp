@@ -279,7 +279,7 @@ void RenderMathMLScripts::layout()
     // below the base's top edge, or the subscript's bottom edge above the base's bottom edge.
 
     LayoutUnit baseHeight = base->logicalHeight();
-    LayoutUnit baseBaseline = base->firstLineBoxBaseline();
+    LayoutUnit baseBaseline = base->firstLineBaseline();
     if (baseBaseline == -1)
         baseBaseline = baseHeight;
     LayoutUnit axis = style()->fontMetrics().xHeight() / 2;
@@ -313,7 +313,7 @@ void RenderMathMLScripts::layout()
 
         if (RenderBox* superscript = m_kind == Sub ? 0 : subSupPair->lastChildBox()) {
             LayoutUnit superscriptHeight = superscript->logicalHeight();
-            LayoutUnit superscriptBaseline = superscript->firstLineBoxBaseline();
+            LayoutUnit superscriptBaseline = superscript->firstLineBaseline();
             if (superscriptBaseline == -1)
                 superscriptBaseline = superscriptHeight;
             LayoutUnit minBaseline = max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis + superscriptShiftValue);
@@ -323,7 +323,7 @@ void RenderMathMLScripts::layout()
 
         if (RenderBox* subscript = m_kind == Super ? 0 : subSupPair->firstChildBox()) {
             LayoutUnit subscriptHeight = subscript->logicalHeight();
-            LayoutUnit subscriptBaseline = subscript->firstLineBoxBaseline();
+            LayoutUnit subscriptBaseline = subscript->firstLineBaseline();
             if (subscriptBaseline == -1)
                 subscriptBaseline = subscriptHeight;
             LayoutUnit baseExtendUnderBaseline = baseHeight - baseBaseline;
@@ -355,14 +355,14 @@ void RenderMathMLScripts::layout()
     RenderMathMLBlock::layout();
 }
 
-int RenderMathMLScripts::firstLineBoxBaseline() const
+int RenderMathMLScripts::firstLineBaseline() const
 {
     if (m_baseWrapper) {
-        LayoutUnit baseline = m_baseWrapper->firstLineBoxBaseline();
+        LayoutUnit baseline = m_baseWrapper->firstLineBaseline();
         if (baseline != -1)
             return baseline;
     }
-    return RenderMathMLBlock::firstLineBoxBaseline();
+    return RenderMathMLBlock::firstLineBaseline();
 }
 
 RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType type)

@@ -70,7 +70,7 @@ private:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
 
     bool shouldAllowStretching(UChar& characterForStretching);

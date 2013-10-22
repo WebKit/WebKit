@@ -307,7 +307,7 @@ public:
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
-    virtual bool hasInlineBoxChildren() const OVERRIDE FINAL { return firstLineBox(); }
+    virtual bool hasLines() const OVERRIDE FINAL { return firstLineBox(); }
 
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
@@ -364,7 +364,7 @@ protected:
 
     void createFloatingObjects();
 
-    virtual int firstLineBoxBaseline() const OVERRIDE;
+    virtual int firstLineBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
 private:

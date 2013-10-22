@@ -91,7 +91,7 @@ void RenderMathMLSpace::styleDidChange(StyleDifference diff, const RenderStyle* 
     updateFromElement();
 }
 
-int RenderMathMLSpace::firstLineBoxBaseline() const
+int RenderMathMLSpace::firstLineBaseline() const
 {
     return m_height;
 }

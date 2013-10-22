@@ -1195,7 +1195,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
         // If the block has inline children, see if we generated any line boxes.  If we have any
         // line boxes, then we can't be self-collapsing, since we have content.
         if (childrenInline())
-            return !hasInlineBoxChildren();
+            return !hasLines();
         
         // Whether or not we collapse is dependent on whether all our normal flow children
         // are also self-collapsing.
@@ -4617,14 +4617,14 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
     return std::max<LayoutUnit>(replacedHeight, lineHeight(isFirstLine, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 }
 
-int RenderBlock::firstLineBoxBaseline() const
+int RenderBlock::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun())
         return -1;
 
     for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
         if (!curr->isFloatingOrOutOfFlowPositioned()) {
-            int result = curr->firstLineBoxBaseline();
+            int result = curr->firstLineBaseline();
             if (result != -1)
                 return curr->logicalTop() + result; // Translate to our coordinate space.
         }
@@ -4639,17 +4639,17 @@ int RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
         return -1;
 
     bool haveNormalFlowChild = false;
-    for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
-        if (!curr->isFloatingOrOutOfFlowPositioned()) {
-            haveNormalFlowChild = true;
-            int result = curr->inlineBlockBaseline(lineDirection);
-            if (result != -1)
-                return curr->logicalTop() + result; // Translate to our coordinate space.
-        }
+    for (auto box = lastChildBox(); box; box = box->previousSiblingBox()) {
+        if (box->isFloatingOrOutOfFlowPositioned())
+            continue;
+        haveNormalFlowChild = true;
+        int result = box->inlineBlockBaseline(lineDirection);
+        if (result != -1)
+            return box->logicalTop() + result; // Translate to our coordinate space.
     }
 
     if (!haveNormalFlowChild && hasLineIfEmpty()) {
-        const FontMetrics& fontMetrics = firstLineStyle()->fontMetrics();
+        auto& fontMetrics = firstLineStyle()->fontMetrics();
         return fontMetrics.ascent()
              + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());

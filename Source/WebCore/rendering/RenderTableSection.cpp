@@ -915,7 +915,7 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderEnd = calcOuterBorderEnd();
 }
 
-int RenderTableSection::firstLineBoxBaseline() const
+int RenderTableSection::firstLineBaseline() const
 {
     if (!m_grid.size())
         return -1;

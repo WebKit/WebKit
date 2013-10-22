@@ -159,11 +159,11 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + denominatorWrapper->pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
 }
 
-int RenderMathMLFraction::firstLineBoxBaseline() const
+int RenderMathMLFraction::firstLineBaseline() const
 {
     if (RenderBox* denominatorWrapper = lastChildBox())
         return denominatorWrapper->logicalTop() + static_cast<int>(lroundf((m_lineThickness + style()->fontMetrics().xHeight()) / 2));
-    return RenderMathMLBlock::firstLineBoxBaseline();
+    return RenderMathMLBlock::firstLineBaseline();
 }
 
 }

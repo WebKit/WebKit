@@ -1166,8 +1166,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         AccessibilityObject* parent = parentObjectUnignored();
         if (parent && (parent->isMenuItem() || parent->ariaRoleAttribute() == MenuButtonRole))
             return true;
-        RenderText* renderText = toRenderText(m_renderer);
-        if (!renderText->firstTextBox())
+        auto& renderText = toRenderText(*m_renderer);
+        if (!renderText.hasRenderedText())
             return true;
 
         // static text beneath TextControls is reported along with the text control text so it's ignored.
@@ -1177,7 +1177,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         }
 
         // text elements that are just empty whitespace should not be returned
-        return renderText->text()->containsOnlyWhitespace();
+        return renderText.text()->containsOnlyWhitespace();
     }
     
     if (isHeading())
@@ -1231,7 +1231,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return true;
     
     if (m_renderer->isRenderBlockFlow() && m_renderer->childrenInline() && !canSetFocusAttribute())
-        return !toRenderBlockFlow(m_renderer)->firstLineBox() && !mouseButtonListener();
+        return !toRenderBlockFlow(m_renderer)->hasLines() && !mouseButtonListener();
     
     // ignore images seemingly used as spacers
     if (isImage()) {
