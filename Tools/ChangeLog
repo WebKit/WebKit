@@ -1,3 +1,13 @@
+2013-10-21  Mark Rowe  <mrowe@apple.com>
+
+        Add a version of WebKitSystemInterface for Mavericks.
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+
 2013-10-21  Anders Carlsson  <andersca@apple.com>
 
         Navigation policy callback not called when performing the same fragment navigation twice

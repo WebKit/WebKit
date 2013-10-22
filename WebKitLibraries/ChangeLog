@@ -1,3 +1,11 @@
+2013-10-21  Mark Rowe  <mrowe@apple.com>
+
+        Add a version of WebKitSystemInterface for Mavericks.
+
+        Reviewed by Ryosuke Niwa.
+
+        * libWebKitSystemInterfaceMavericks.a: Added.
+
 2013-10-17  Anthony Johnson  <anthony.johnson@flexsim.com>
 
         Crash fix for Windows XP.

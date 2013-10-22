@@ -36,6 +36,7 @@ chdirWebKit();
 my @librariesToCopy = (
     "libWebKitSystemInterfaceLion.a",
     "libWebKitSystemInterfaceMountainLion.a",
+    "libWebKitSystemInterfaceMavericks.a",
 );
 
 my $ranlib = `xcrun -find ranlib`;
