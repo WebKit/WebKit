@@ -89,7 +89,8 @@ inline EventTarget* EventRetargeter::eventTargetRespectingTargetRules(Node* refe
 
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
-    Element* shadowHostElement = toShadowRoot(referenceNode->treeScope()->rootNode())->host();
+    Node* rootNode = referenceNode->treeScope()->rootNode();
+    Element* shadowHostElement = rootNode->isShadowRoot() ? toShadowRoot(rootNode)->host() : 0;
     // At this time, SVG nodes are not supported in non-<use> shadow trees.
     if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
         return referenceNode;
