@@ -1,3 +1,20 @@
+2013-10-21  Joone Hur  <joone.hur@intel.com>
+
+        Bad cast with toRenderBoxModelObject in RenderBlock::updateFirstLetter()
+        https://bugs.webkit.org/show_bug.cgi?id=123013
+
+        Reviewed by Andreas Kling.
+
+        No new tests because this was reported by Google ClusterFuzz.
+        https://codereview.chromium.org/25713009/
+
+        There is a case that toRenderBoxModelObject causes a crash in RenderBlock::updateFirstLetter() 
+        due to bad cast, so we need to check whether the RenderObject is a RenderBoxModelObject 
+        by running isBoxModelObject() before calling toRenderBoxModelObject.  
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+
 2013-10-21  Brady Eidson  <beidson@apple.com>
 
         Make IDBTransactionCoordinatorLevelDB cross platform

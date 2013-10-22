@@ -4883,12 +4883,15 @@ void RenderBlock::updateFirstLetter()
             if (!remainingText->isText() || remainingText->isBR())
                 return;
 
-            LayoutStateDisabler layoutStateDisabler(&view());
+            if (auto oldFirstLetter = descendant->parent()->isBoxModelObject() ?  toRenderBoxModelObject(descendant->parent()) : nullptr) { 
+                if (auto oldRemainingText = oldFirstLetter->firstLetterRemainingText()) {
+                    LayoutStateDisabler layoutStateDisabler(&view());
+                    // Destroy the text fragment for the old first-letter and update oldRemainingText with its DOM text.
+                    oldRemainingText->setText(oldRemainingText->textNode()->data());
+                    createFirstLetterRenderer(firstLetterBlock, toRenderText(remainingText));
+                }    
+            }    
 
-            if (RenderObject* oldRemainingText = toRenderBoxModelObject(descendant->parent())->firstLetterRemainingText())
-                toRenderText(oldRemainingText)->setText(toText(oldRemainingText->node())->data().impl());
-
-            createFirstLetterRenderer(firstLetterBlock, toRenderText(remainingText));
             return;
         }    
 
