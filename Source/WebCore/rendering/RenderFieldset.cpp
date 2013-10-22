@@ -63,65 +63,68 @@ void RenderFieldset::computePreferredLogicalWidths()
 
 RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    RenderBox* legend = findLegend();
-    if (legend) {
-        if (relayoutChildren)
-            legend->setNeedsLayout();
-        legend->layoutIfNeeded();
+    RenderBox* box = findLegend();
+    if (!box)
+        return nullptr;
 
-        LayoutUnit logicalLeft;
-        if (style()->isLeftToRightDirection()) {
-            switch (legend->style()->textAlign()) {
-            case CENTER:
-                logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
-                break;
-            case RIGHT:
-                logicalLeft = logicalWidth() - borderEnd() - paddingEnd() - logicalWidthForChild(legend);
-                break;
-            default:
-                logicalLeft = borderStart() + paddingStart() + marginStartForChild(legend);
-                break;
-            }
-        } else {
-            switch (legend->style()->textAlign()) {
-            case LEFT:
-                logicalLeft = borderStart() + paddingStart();
-                break;
-            case CENTER: {
-                // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
-                // in LTR).
-                LayoutUnit centeredWidth = logicalWidth() - logicalWidthForChild(legend);
-                logicalLeft = centeredWidth - centeredWidth / 2;
-                break;
-            }
-            default:
-                logicalLeft = logicalWidth() - borderStart() - paddingStart() - marginStartForChild(legend) - logicalWidthForChild(legend);
-                break;
-            }
+    RenderBox& legend = *box;
+    if (relayoutChildren)
+        legend.setNeedsLayout();
+    legend.layoutIfNeeded();
+
+    LayoutUnit logicalLeft;
+    if (style()->isLeftToRightDirection()) {
+        switch (legend.style()->textAlign()) {
+        case CENTER:
+            logicalLeft = (logicalWidth() - logicalWidthForChild(legend)) / 2;
+            break;
+        case RIGHT:
+            logicalLeft = logicalWidth() - borderEnd() - paddingEnd() - logicalWidthForChild(legend);
+            break;
+        default:
+            logicalLeft = borderStart() + paddingStart() + marginStartForChild(legend);
+            break;
         }
-
-        setLogicalLeftForChild(legend, logicalLeft);
-
-        LayoutUnit fieldsetBorderBefore = borderBefore();
-        LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
-
-        LayoutUnit legendLogicalTop;
-        LayoutUnit collapsedLegendExtent;
-        // FIXME: We need to account for the legend's margin before too.
-        if (fieldsetBorderBefore > legendLogicalHeight) {
-            // The <legend> is smaller than the associated fieldset before border
-            // so the latter determines positioning of the <legend>. The sizing depends
-            // on the legend's margins as we want to still follow the author's cues.
-            // Firefox completely ignores the margins in this case which seems wrong.
-            legendLogicalTop = (fieldsetBorderBefore - legendLogicalHeight) / 2;
-            collapsedLegendExtent = max<LayoutUnit>(fieldsetBorderBefore, legendLogicalTop + legendLogicalHeight + marginAfterForChild(legend));
-        } else
-            collapsedLegendExtent = legendLogicalHeight + marginAfterForChild(legend);
-
-        setLogicalTopForChild(legend, legendLogicalTop);
-        setLogicalHeight(paddingBefore() + collapsedLegendExtent);
+    } else {
+        switch (legend.style()->textAlign()) {
+        case LEFT:
+            logicalLeft = borderStart() + paddingStart();
+            break;
+        case CENTER: {
+            // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
+            // in LTR).
+            LayoutUnit centeredWidth = logicalWidth() - logicalWidthForChild(legend);
+            logicalLeft = centeredWidth - centeredWidth / 2;
+            break;
+        }
+        default:
+            logicalLeft = logicalWidth() - borderStart() - paddingStart() - marginStartForChild(legend) - logicalWidthForChild(legend);
+            break;
+        }
     }
-    return legend;
+
+    setLogicalLeftForChild(legend, logicalLeft);
+
+    LayoutUnit fieldsetBorderBefore = borderBefore();
+    LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
+
+    LayoutUnit legendLogicalTop;
+    LayoutUnit collapsedLegendExtent;
+    // FIXME: We need to account for the legend's margin before too.
+    if (fieldsetBorderBefore > legendLogicalHeight) {
+        // The <legend> is smaller than the associated fieldset before border
+        // so the latter determines positioning of the <legend>. The sizing depends
+        // on the legend's margins as we want to still follow the author's cues.
+        // Firefox completely ignores the margins in this case which seems wrong.
+        legendLogicalTop = (fieldsetBorderBefore - legendLogicalHeight) / 2;
+        collapsedLegendExtent = max<LayoutUnit>(fieldsetBorderBefore, legendLogicalTop + legendLogicalHeight + marginAfterForChild(legend));
+    } else
+        collapsedLegendExtent = legendLogicalHeight + marginAfterForChild(legend);
+
+    setLogicalTopForChild(legend, legendLogicalTop);
+    setLogicalHeight(paddingBefore() + collapsedLegendExtent);
+
+    return &legend;
 }
 
 RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
@@ -133,7 +136,7 @@ RenderBox* RenderFieldset::findLegend(FindLegendOption option) const
         if (legend->node() && (legend->node()->hasTagName(legendTag)))
             return toRenderBox(legend);
     }
-    return 0;
+    return nullptr;
 }
 
 void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

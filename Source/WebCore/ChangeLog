@@ -1,3 +1,13 @@
+2013-10-22  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Modernize RenderBlock a bit
+        https://bugs.webkit.org/show_bug.cgi?id=123162
+
+        Reviewed by Andreas Kling.
+
+        Start threading references through RenderBlock. While we 
+        are here, do some selective modernization as well.
+
 2013-10-22  Andreas Kling  <akling@apple.com>
 
         Even more PassRef<RenderStyle>!

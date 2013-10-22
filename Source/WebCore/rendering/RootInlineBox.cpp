@@ -463,7 +463,7 @@ LayoutUnit RootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineTopWithLeading()));
 }
 
-GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
     RenderObject::SelectionState lineState = selectionState();
@@ -499,7 +499,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoi
             if (box->selectionState() != RenderObject::SelectionNone) {
                 LayoutRect logicalRect(lastLogicalLeft, selTop, box->logicalLeft() - lastLogicalLeft, selHeight);
                 logicalRect.move(renderer().isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
-                LayoutRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
+                LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                 if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                     if (paintInfo && box->parent()->renderer().style()->visibility() == VISIBLE)
                         paintInfo->context->fillRect(gapRect, box->parent()->renderer().selectionBackgroundColor(), box->parent()->renderer().style()->colorSpace());

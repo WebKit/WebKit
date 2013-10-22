@@ -25,19 +25,19 @@
 
 namespace WebCore {
 
-static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderElement* object)
+static inline bool isContainingBlockCandidateForAbsolutelyPositionedObject(RenderElement& object)
 {
-    return object->style()->position() != StaticPosition
-        || (object->hasTransform() && object->isRenderBlock())
+    return object.style()->position() != StaticPosition
+        || (object.hasTransform() && object.isRenderBlock())
 #if ENABLE(SVG)
-        || object->isSVGForeignObject()
+        || object.isSVGForeignObject()
 #endif
-        || object->isRenderView();
+        || object.isRenderView();
 }
 
-static inline bool isNonRenderBlockInline(RenderElement* object)
+static inline bool isNonRenderBlockInline(RenderElement& object)
 {
-    return (object->isInline() && !object->isReplaced()) || !object->isRenderBlock();
+    return (object.isInline() && !object.isReplaced()) || !object.isRenderBlock();
 }
 
 static inline RenderElement* containingBlockForFixedPosition(RenderElement* parent)
@@ -52,7 +52,7 @@ static inline RenderElement* containingBlockForFixedPosition(RenderElement* pare
 static inline RenderElement* containingBlockForAbsolutePosition(RenderElement* parent)
 {
     RenderElement* object = parent;
-    while (object && !isContainingBlockCandidateForAbsolutelyPositionedObject(object))
+    while (object && !isContainingBlockCandidateForAbsolutelyPositionedObject(*object))
         object = object->parent();
 
     // For a relatively positioned inline, return its nearest non-anonymous containing block,
@@ -71,7 +71,7 @@ static inline RenderElement* containingBlockForAbsolutePosition(RenderElement* p
 static inline RenderElement* containingBlockForObjectInFlow(RenderElement* parent)
 {
     RenderElement* object = parent;
-    while (object && isNonRenderBlockInline(object))
+    while (object && isNonRenderBlockInline(*object))
         object = object->parent();
     return object;
 }
@@ -100,7 +100,7 @@ public:
         RenderBlock* block() const { return m_block; }
         const LogicalSelectionOffsetCaches* cache() const { return m_cache; }
 
-        LayoutUnit logicalLeftSelectionOffset(RenderBlock* rootBlock, LayoutUnit position) const
+        LayoutUnit logicalLeftSelectionOffset(RenderBlock& rootBlock, LayoutUnit position) const
         {
             ASSERT(m_cache);
             if (m_hasFloatsOrFlowThreads || !m_cachedLogicalLeftSelectionOffset) {
@@ -111,7 +111,7 @@ public:
             return m_logicalLeftSelectionOffset;
         }
 
-        LayoutUnit logicalRightSelectionOffset(RenderBlock* rootBlock, LayoutUnit position) const
+        LayoutUnit logicalRightSelectionOffset(RenderBlock& rootBlock, LayoutUnit position) const
         {
             ASSERT(m_cache);
             if (m_hasFloatsOrFlowThreads || !m_cachedLogicalRightSelectionOffset) {
@@ -133,10 +133,10 @@ public:
         
     };
 
-    explicit LogicalSelectionOffsetCaches(RenderBlock* rootBlock)
+    explicit LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
     {
-        ASSERT(rootBlock->isSelectionRoot());
-        auto parent = rootBlock->parent();
+        ASSERT(rootBlock.isSelectionRoot());
+        auto parent = rootBlock.parent();
 
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.
         m_containingBlockForFixedPosition.setBlock(toRenderBlock(containingBlockForFixedPosition(parent)), 0);
@@ -144,31 +144,31 @@ public:
         m_containingBlockForInflowPosition.setBlock(toRenderBlock(containingBlockForObjectInFlow(parent)), 0);
     }
 
-    LogicalSelectionOffsetCaches(RenderBlock* block, const LogicalSelectionOffsetCaches& cache)
+    LogicalSelectionOffsetCaches(RenderBlock& block, const LogicalSelectionOffsetCaches& cache)
         : m_containingBlockForFixedPosition(cache.m_containingBlockForFixedPosition)
         , m_containingBlockForAbsolutePosition(cache.m_containingBlockForAbsolutePosition)
     {
-        if (block->canContainFixedPositionObjects())
-            m_containingBlockForFixedPosition.setBlock(block, &cache);
+        if (block.canContainFixedPositionObjects())
+            m_containingBlockForFixedPosition.setBlock(&block, &cache);
 
-        if (isContainingBlockCandidateForAbsolutelyPositionedObject(block) && !block->isRenderInline() && !block->isAnonymousBlock())
-            m_containingBlockForFixedPosition.setBlock(block, &cache);
+        if (isContainingBlockCandidateForAbsolutelyPositionedObject(block) && !block.isRenderInline() && !block.isAnonymousBlock())
+            m_containingBlockForFixedPosition.setBlock(&block, &cache);
 
-        m_containingBlockForInflowPosition.setBlock(block, &cache);
+        m_containingBlockForInflowPosition.setBlock(&block, &cache);
     }
 
-    const ContainingBlockInfo& containingBlockInfo(RenderBlock* block) const
+    const ContainingBlockInfo& containingBlockInfo(RenderBlock& block) const
     {
-        EPosition position = block->style()->position();
+        EPosition position = block.style()->position();
         if (position == FixedPosition) {
-            ASSERT(block->containingBlock() == m_containingBlockForFixedPosition.block());
+            ASSERT(block.containingBlock() == m_containingBlockForFixedPosition.block());
             return m_containingBlockForFixedPosition;
         }
         if (position == AbsolutePosition) {
-            ASSERT(block->containingBlock() == m_containingBlockForAbsolutePosition.block());
+            ASSERT(block.containingBlock() == m_containingBlockForAbsolutePosition.block());
             return m_containingBlockForAbsolutePosition;
         }
-        ASSERT(block->containingBlock() == m_containingBlockForInflowPosition.block());
+        ASSERT(block.containingBlock() == m_containingBlockForInflowPosition.block());
         return m_containingBlockForInflowPosition;
     }
 

@@ -478,7 +478,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         m_stretchingChildren = (style()->boxAlign() == BSTRETCH);
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             if (child->isOutOfFlowPositioned()) {
-                child->containingBlock()->insertPositionedObject(child);
+                child->containingBlock()->insertPositionedObject(*child);
                 RenderLayer* childLayer = child->layer();
                 childLayer->setStaticInlinePosition(xPos); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != yPos) {
@@ -725,7 +725,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 child->setChildNeedsLayout(MarkOnlyThis);
 
             if (child->isOutOfFlowPositioned()) {
-                child->containingBlock()->insertPositionedObject(child);
+                child->containingBlock()->insertPositionedObject(*child);
                 RenderLayer* childLayer = child->layer();
                 childLayer->setStaticInlinePosition(borderStart() + paddingStart()); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != height()) {

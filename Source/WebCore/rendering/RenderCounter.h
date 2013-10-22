@@ -62,6 +62,12 @@ private:
     friend class CounterNode;
 };
 
+inline RenderCounter& toRenderCounter(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isCounter());
+    return static_cast<RenderCounter&>(object);
+}
+
 inline RenderCounter* toRenderCounter(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCounter());
@@ -69,6 +75,7 @@ inline RenderCounter* toRenderCounter(RenderObject* object)
 }
 
 // This will catch anyone doing an unnecessary cast.
+void toRenderCounter(const RenderCounter&);
 void toRenderCounter(const RenderCounter*);
 
 } // namespace WebCore

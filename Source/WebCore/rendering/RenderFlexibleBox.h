@@ -102,19 +102,19 @@ private:
     // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
     typedef Vector<LayoutRect, 8> ChildFrameRects;
 
-    bool hasOrthogonalFlow(RenderBox* child) const;
+    bool hasOrthogonalFlow(RenderBox& child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;
     bool isMultiline() const;
-    Length flexBasisForChild(RenderBox* child) const;
+    Length flexBasisForChild(RenderBox& child) const;
     void setCrossAxisExtent(LayoutUnit);
-    LayoutUnit crossAxisExtentForChild(RenderBox* child) const;
-    LayoutUnit mainAxisExtentForChild(RenderBox* child) const;
+    LayoutUnit crossAxisExtentForChild(RenderBox& child) const;
+    LayoutUnit mainAxisExtentForChild(RenderBox& child) const;
     LayoutUnit crossAxisExtent() const;
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent(LayoutUnit contentLogicalHeight);
-    LayoutUnit computeMainAxisExtentForChild(RenderBox* child, SizeType, const Length& size);
+    LayoutUnit computeMainAxisExtentForChild(RenderBox& child, SizeType, const Length& size);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;
@@ -124,52 +124,52 @@ private:
     LayoutUnit flowAwarePaddingEnd() const;
     LayoutUnit flowAwarePaddingBefore() const;
     LayoutUnit flowAwarePaddingAfter() const;
-    LayoutUnit flowAwareMarginStartForChild(RenderBox* child) const;
-    LayoutUnit flowAwareMarginEndForChild(RenderBox* child) const;
-    LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;
-    LayoutUnit flowAwareMarginAfterForChild(RenderBox* child) const;
-    LayoutUnit crossAxisMarginExtentForChild(RenderBox* child) const;
+    LayoutUnit flowAwareMarginStartForChild(RenderBox& child) const;
+    LayoutUnit flowAwareMarginEndForChild(RenderBox& child) const;
+    LayoutUnit flowAwareMarginBeforeForChild(RenderBox& child) const;
+    LayoutUnit flowAwareMarginAfterForChild(RenderBox& child) const;
+    LayoutUnit crossAxisMarginExtentForChild(RenderBox& child) const;
     LayoutUnit crossAxisScrollbarExtent() const;
-    LayoutPoint flowAwareLocationForChild(RenderBox* child) const;
+    LayoutPoint flowAwareLocationForChild(RenderBox& child) const;
     // FIXME: Supporting layout deltas.
-    void setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint&);
-    void adjustAlignmentForChild(RenderBox* child, LayoutUnit);
-    EAlignItems alignmentForChild(RenderBox* child) const;
-    LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const;
-    LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
-    LayoutUnit preferredMainAxisContentExtentForChild(RenderBox* child, bool hasInfiniteLineLength);
+    void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);
+    void adjustAlignmentForChild(RenderBox& child, LayoutUnit);
+    EAlignItems alignmentForChild(RenderBox& child) const;
+    LayoutUnit mainAxisBorderAndPaddingExtentForChild(RenderBox& child) const;
+    LayoutUnit mainAxisScrollbarExtentForChild(RenderBox& child) const;
+    LayoutUnit preferredMainAxisContentExtentForChild(RenderBox& child, bool hasInfiniteLineLength);
 
     void layoutFlexItems(bool relayoutChildren, Vector<LineContext>&);
     LayoutUnit autoMarginOffsetInMainAxis(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace);
-    void updateAutoMarginsInMainAxis(RenderBox* child, LayoutUnit autoMarginOffset);
-    bool hasAutoMarginsInCrossAxis(RenderBox* child) const;
-    bool updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace);
+    void updateAutoMarginsInMainAxis(RenderBox& child, LayoutUnit autoMarginOffset);
+    bool hasAutoMarginsInCrossAxis(RenderBox& child) const;
+    bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&);
     LayoutUnit clientLogicalBottomAfterRepositioning();
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
 
-    LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
-    LayoutUnit marginBoxAscentForChild(RenderBox*);
+    LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox&);
+    LayoutUnit marginBoxAscentForChild(RenderBox&);
 
     LayoutUnit computeChildMarginValue(const Length& margin);
     void computeMainAxisPreferredSizes(OrderHashSet&);
-    LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize);
+    LayoutUnit adjustChildSizeForMinAndMax(RenderBox&, LayoutUnit childSize);
     bool computeNextFlexLine(OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, double& totalFlexGrow, double& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent, bool& hasInfiniteLineLength);
 
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&, Vector<LayoutUnit>& childSizes, bool hasInfiniteLineLength);
     void freezeViolations(const Vector<Violation>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&, bool hasInfiniteLineLength);
 
-    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox*);
-    bool needToStretchChild(RenderBox*);
-    void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
-    void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode);
+    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox&);
+    bool needToStretchChild(RenderBox&);
+    void setLogicalOverrideSize(RenderBox& child, LayoutUnit childPreferredSize);
+    void prepareChildForPositionedLayout(RenderBox& child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode);
     size_t numberOfInFlowPositionedChildren(const OrderedFlexItemList&) const;
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>&);
     void layoutColumnReverse(const OrderedFlexItemList&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
     void alignFlexLines(Vector<LineContext>&);
     void alignChildren(const Vector<LineContext>&);
-    void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
+    void applyStretchAlignmentToChild(RenderBox&, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn();
     void flipForWrapReverse(const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
 

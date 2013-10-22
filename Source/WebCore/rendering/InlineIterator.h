@@ -196,7 +196,7 @@ static bool isEmptyInline(const RenderInline& renderer)
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
 template <class Observer>
-static inline RenderObject* bidiNextShared(RenderElement* root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* current, Observer* observer = 0, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = 0)
 {
     RenderObject* next = 0;
     // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
@@ -219,7 +219,7 @@ static inline RenderObject* bidiNextShared(RenderElement* root, RenderObject* cu
                 break;
             }
 
-            while (current && current != root) {
+            while (current && current != &root) {
                 notifyObserverWillExitObject(observer, current);
 
                 next = current->nextSibling();
@@ -229,7 +229,7 @@ static inline RenderObject* bidiNextShared(RenderElement* root, RenderObject* cu
                 }
 
                 current = current->parent();
-                if (emptyInlineBehavior == IncludeEmptyInlines && current && current != root && current->isRenderInline()) {
+                if (emptyInlineBehavior == IncludeEmptyInlines && current && current != &root && current->isRenderInline()) {
                     next = current;
                     endOfInline = true;
                     break;
@@ -253,30 +253,30 @@ static inline RenderObject* bidiNextShared(RenderElement* root, RenderObject* cu
 }
 
 template <class Observer>
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement* root, RenderObject* current, Observer* observer)
+static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current, Observer* observer)
 {
     // The SkipEmptyInlines callers never care about endOfInlinePtr.
     return bidiNextShared(root, current, observer, SkipEmptyInlines);
 }
 
 // This makes callers cleaner as they don't have to specify a type for the observer when not providing one.
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement* root, RenderObject* current)
+static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current)
 {
     InlineBidiResolver* observer = 0;
     return bidiNextSkippingEmptyInlines(root, current, observer);
 }
 
-static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement* root, RenderObject* current, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement& root, RenderObject* current, bool* endOfInlinePtr = 0)
 {
     InlineBidiResolver* observer = 0; // Callers who include empty inlines, never use an observer.
     return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
 }
 
-static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement* root, InlineBidiResolver* resolver = 0)
+static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, InlineBidiResolver* resolver = 0)
 {
-    RenderObject* o = root->firstChild();
+    RenderObject* o = root.firstChild();
     if (!o)
-        return 0;
+        return nullptr;
 
     if (o->isRenderInline()) {
         notifyObserverEnteredObject(resolver, o);
@@ -300,9 +300,9 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement* root, I
 }
 
 // FIXME: This method needs to be renamed when bidiNext finds a good name.
-static inline RenderObject* bidiFirstIncludingEmptyInlines(RenderElement* root)
+static inline RenderObject* bidiFirstIncludingEmptyInlines(RenderElement& root)
 {
-    RenderObject* o = root->firstChild();
+    RenderObject* o = root.firstChild();
     // If either there are no children to walk, or the first one is correct
     // then just return it.
     if (!o || o->isRenderInline() || isIteratorTarget(o))
@@ -323,7 +323,7 @@ inline void InlineIterator::fastIncrementInTextNode()
 // it shouldn't use functions called bidiFirst and bidiNext.
 class InlineWalker {
 public:
-    InlineWalker(RenderElement* root)
+    InlineWalker(RenderElement& root)
         : m_root(root)
         , m_current(0)
         , m_atEndOfInline(false)
@@ -332,7 +332,7 @@ public:
         m_current = bidiFirstIncludingEmptyInlines(m_root);
     }
 
-    RenderElement* root() { return m_root; }
+    RenderElement& root() { return m_root; }
     RenderObject* current() { return m_current; }
 
     bool atEndOfInline() { return m_atEndOfInline; }
@@ -345,7 +345,7 @@ public:
         return m_current;
     }
 private:
-    RenderElement* m_root;
+    RenderElement& m_root;
     RenderObject* m_current;
     bool m_atEndOfInline;
 };
@@ -360,7 +360,7 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
             return;
     }
     // bidiNext can return 0, so use moveTo instead of moveToStartOf
-    moveTo(bidiNextSkippingEmptyInlines(m_root, m_obj, resolver), 0);
+    moveTo(bidiNextSkippingEmptyInlines(*m_root, m_obj, resolver), 0);
 }
 
 inline bool InlineIterator::atEnd() const
@@ -524,7 +524,7 @@ inline void InlineBidiResolver::appendRun()
                 RenderBlockFlow::appendRunsForObject(m_runs, start, obj->length(), obj, *this);
             // FIXME: start/obj should be an InlineIterator instead of two separate variables.
             start = 0;
-            obj = bidiNextSkippingEmptyInlines(m_sor.root(), obj, &isolateTracker);
+            obj = bidiNextSkippingEmptyInlines(*m_sor.root(), obj, &isolateTracker);
         }
         if (obj) {
             unsigned pos = obj == m_eor.m_obj ? m_eor.m_pos : UINT_MAX;

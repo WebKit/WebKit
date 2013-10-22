@@ -223,7 +223,7 @@ void RenderBox::willBeDestroyed()
     clearOverrideSize();
     clearContainingBlockOverrideSize();
 
-    RenderBlock::removePercentHeightDescendantIfNeeded(this);
+    RenderBlock::removePercentHeightDescendantIfNeeded(*this);
 
 #if ENABLE(CSS_SHAPES)
     ShapeOutsideInfo::removeInfo(this);
@@ -239,7 +239,7 @@ RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
     for (auto curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
         if (curr->isRenderBlockFlow()) {
             RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
-            if (!parentBlock || currBlock->containsFloat(this))
+            if (!parentBlock || currBlock->containsFloat(*this))
                 parentBlock = currBlock;
         }
     }
@@ -261,7 +261,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
     }
 
     if (isOutOfFlowPositioned())
-        RenderBlock::removePositionedObject(this);
+        RenderBlock::removePositionedObject(*this);
 }
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
@@ -308,7 +308,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     RenderStyle* newStyle = style();
     if (needsLayout() && oldStyle) {
-        RenderBlock::removePercentHeightDescendantIfNeeded(this);
+        RenderBlock::removePercentHeightDescendantIfNeeded(*this);
 
         // Normally we can do optimized positioning layout for absolute/fixed positioned objects. There is one special case, however, which is
         // when the positioned object's margin-before is changed. In this case the parent has to get a layout in order to run margin collapsing
@@ -320,7 +320,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     if (RenderBlock::hasPercentHeightContainerMap() && firstChild()
         && oldHorizontalWritingMode != isHorizontalWritingMode())
-        RenderBlock::clearPercentHeightDescendantsFrom(this);
+        RenderBlock::clearPercentHeightDescendantsFrom(*this);
 
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
@@ -1966,7 +1966,7 @@ void RenderBox::positionLineBox(InlineBox* box)
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
             RootInlineBox& rootBox = box->root();
-            rootBox.blockFlow().setStaticInlinePositionForChild(this, rootBox.lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
+            rootBox.blockFlow().setStaticInlinePositionForChild(*this, rootBox.lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
             if (style()->hasStaticInlinePosition(box->isHorizontal()))
                 setChildNeedsLayout(MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         } else {
@@ -2228,7 +2228,7 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (computedValues.m_extent + computedValues.m_margins.m_start + computedValues.m_margins.m_end)
         && !isFloating() && !isInline() && !cb->isFlexibleBoxIncludingDeprecated() && !cb->isRenderGrid()) {
-        LayoutUnit newMargin = containerLogicalWidth - computedValues.m_extent - cb->marginStartForChild(this);
+        LayoutUnit newMargin = containerLogicalWidth - computedValues.m_extent - cb->marginStartForChild(*this);
         bool hasInvertedDirection = cb->style()->isLeftToRightDirection() != style()->isLeftToRightDirection();
         if (hasInvertedDirection)
             computedValues.m_margins.m_start = newMargin;
@@ -2461,7 +2461,7 @@ RenderBoxRegionInfo* RenderBox::renderBoxRegionInfo(RenderRegion* region, Render
     LayoutUnit logicalLeftOffset = 0;
     
     if (!isOutOfFlowPositioned() && avoidsFloats() && cb->containsFloats()) {
-        LayoutUnit startPositionDelta = cb->computeStartPositionDeltaForChildAvoidingFloats(this, marginStartInRegion, region);
+        LayoutUnit startPositionDelta = cb->computeStartPositionDeltaForChildAvoidingFloats(*this, marginStartInRegion, region);
         if (cb->style()->isLeftToRightDirection())
             logicalLeftDelta += startPositionDelta;
         else
@@ -2676,7 +2676,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
         skippedAutoHeightContainingBlock = true;
         containingBlockChild = cb;
         cb = cb->containingBlock();
-        cb->addPercentHeightDescendant(const_cast<RenderBox*>(this));
+        cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
     }
 
     RenderStyle* cbstyle = cb->style();
@@ -2833,7 +2833,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
             auto cb = isOutOfFlowPositioned() ? container() : containingBlock();
             while (cb->isAnonymous() && !cb->isRenderView()) {
                 cb = cb->containingBlock();
-                toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
+                toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
             }
 
             // FIXME: This calculation is not patched for block-flow yet.
@@ -2868,7 +2868,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
                         availableHeight = max(availableHeight, intrinsicLogicalHeight());
                         return valueForLength(logicalHeight, availableHeight - borderAndPaddingLogicalHeight());
                     }
-                    toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
+                    toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
                     cb = cb->containingBlock();
                 }
             }
@@ -2952,8 +2952,8 @@ void RenderBox::computeAndSetBlockDirectionMargins(const RenderBlock* containing
     LayoutUnit marginBefore;
     LayoutUnit marginAfter;
     computeBlockDirectionMargins(containingBlock, marginBefore, marginAfter);
-    containingBlock->setMarginBeforeForChild(this, marginBefore);
-    containingBlock->setMarginAfterForChild(this, marginAfter);
+    containingBlock->setMarginBeforeForChild(*this, marginBefore);
+    containingBlock->setMarginAfterForChild(*this, marginAfter);
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, RenderRegion* region, bool checkForPerpendicularWritingMode) const

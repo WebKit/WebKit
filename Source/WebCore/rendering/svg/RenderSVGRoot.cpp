@@ -178,10 +178,10 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
             ASSERT(cb);
             while (cb->isAnonymous() && !cb->isRenderView()) {
                 cb = cb->containingBlock();
-                cb->addPercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+                cb->addPercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
             }
         } else
-            RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+            RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
 
         return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding), &view());
     }
@@ -307,7 +307,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
 void RenderSVGRoot::willBeDestroyed()
 {
-    RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+    RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
 
     SVGResourcesCache::clientDestroyed(this);
     RenderReplaced::willBeDestroyed();

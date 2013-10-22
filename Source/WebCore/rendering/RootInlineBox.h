@@ -134,7 +134,7 @@ public:
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
-    GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
+    GapRects lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
 
     IntRect computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const;
@@ -142,13 +142,13 @@ public:
     InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);
     InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);
 
-    void appendFloat(RenderBox* floatingBox)
+    void appendFloat(RenderBox& floatingBox)
     {
         ASSERT(!isDirty());
         if (m_floats)
-            m_floats->append(floatingBox);
+            m_floats->append(&floatingBox);
         else
-            m_floats= adoptPtr(new Vector<RenderBox*>(1, floatingBox));
+            m_floats = adoptPtr(new Vector<RenderBox*>(1, &floatingBox));
     }
 
     Vector<RenderBox*>* floatsPtr() { ASSERT(!isDirty()); return m_floats.get(); }
