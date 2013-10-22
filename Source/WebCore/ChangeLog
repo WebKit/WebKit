@@ -1,3 +1,17 @@
+2013-10-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Simplify HRTFDatabaseLoader's load map
+        https://bugs.webkit.org/show_bug.cgi?id=122944
+
+        Reviewed by Eric Carlson.
+
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::loaderMap): Return a reference to a NeverDestroyed HashMap that maps sample rates to loaders.
+        (WebCore::HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary):
+        (WebCore::HRTFDatabaseLoader::~HRTFDatabaseLoader):
+        * platform/audio/HRTFDatabaseLoader.h: Remove the LoaderMap type definition, the private singleton of that type
+        and the singleton's unused getter.
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Support hardware accelerated filters

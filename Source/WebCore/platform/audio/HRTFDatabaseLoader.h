@@ -72,13 +72,6 @@ private:
     // This must be called from the main thread.
     void loadAsynchronously();
 
-    // Map from sample-rate to loader.
-    typedef HashMap<double, HRTFDatabaseLoader*> LoaderMap;
-
-    // Keeps track of loaders on a per-sample-rate basis.
-    static LoaderMap* s_loaderMap; // singleton
-    static HRTFDatabaseLoader::LoaderMap* loaderMap() { return s_loaderMap; }
-
     OwnPtr<HRTFDatabase> m_hrtfDatabase;
 
     // Holding a m_threadLock is required when accessing m_databaseLoaderThread.
