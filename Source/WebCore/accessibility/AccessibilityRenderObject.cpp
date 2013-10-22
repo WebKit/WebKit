@@ -1676,13 +1676,6 @@ Document* AccessibilityRenderObject::document() const
     return &m_renderer->document();
 }
 
-Document* AccessibilityRenderObject::topDocument() const
-{
-    if (!document())
-        return 0;
-    return document()->topDocument();
-}
-
 Widget* AccessibilityRenderObject::widget() const
 {
     if (!m_renderer->isBoxModelObject() || !toRenderBoxModelObject(m_renderer)->isWidget())

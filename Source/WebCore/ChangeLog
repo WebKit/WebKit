@@ -1,3 +1,27 @@
+2013-10-22  Samuel White  <samuel_white@apple.com>
+
+        AX: Add paramAttrs to fetch start and end text markers in a given rect.
+        https://bugs.webkit.org/show_bug.cgi?id=122164
+
+        Reviewed by Chris Fleizach.
+
+        Added ability to fetch end and start text markers inside a given bounds. This gives ScreenReaders
+        like VoiceOver a way to retrieve the text markers for a specified column of page text.
+
+        Test: platform/mac/accessibility/text-marker-for-bounds.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::mainFrame):
+        (WebCore::AccessibilityObject::topDocument):
+        (WebCore::AccessibilityObject::visiblePositionForBounds):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper screenToContents:]):
+        (-[WebAccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Match adjustLogicalLineTopAndLogicalHeightIfNeeded's implementation with Blink's

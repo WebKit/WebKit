@@ -221,6 +221,8 @@ public:
     PassRefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
     PassRefPtr<AccessibilityTextMarker> startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
     PassRefPtr<AccessibilityTextMarker> endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
+    PassRefPtr<AccessibilityTextMarker> endTextMarkerForBounds(int x, int y, int width, int height);
+    PassRefPtr<AccessibilityTextMarker> startTextMarkerForBounds(int x, int y, int width, int height);
     PassRefPtr<AccessibilityTextMarker> textMarkerForPoint(int x, int y);
     PassRefPtr<AccessibilityTextMarker> previousTextMarker(AccessibilityTextMarker*);
     PassRefPtr<AccessibilityTextMarker> nextTextMarker(AccessibilityTextMarker*);

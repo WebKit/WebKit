@@ -664,6 +664,38 @@ static JSValueRef stringForTextMarkerRangeCallback(JSContextRef context, JSObjec
     return JSValueMakeString(context, markerRangeString.get());    
 }
 
+static JSValueRef endTextMarkerForBoundsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+    if (argumentCount == 4) {
+        x = JSValueToNumber(context, arguments[0], exception);
+        y = JSValueToNumber(context, arguments[1], exception);
+        width = JSValueToNumber(context, arguments[2], exception);
+        height = JSValueToNumber(context, arguments[3], exception);
+    }
+    
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->endTextMarkerForBounds(x, y, width, height));
+}
+
+static JSValueRef startTextMarkerForBoundsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+    if (argumentCount == 4) {
+        x = JSValueToNumber(context, arguments[0], exception);
+        y = JSValueToNumber(context, arguments[1], exception);
+        width = JSValueToNumber(context, arguments[2], exception);
+        height = JSValueToNumber(context, arguments[3], exception);
+    }
+    
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->startTextMarkerForBounds(x, y, width, height));
+}
+
 static JSValueRef textMarkerForPointCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int x = 0;
@@ -1160,6 +1192,16 @@ AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker
     return 0;
 }
 
+AccessibilityTextMarker AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
+{
+    return 0;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
+{
+    return 0;
+}
+
 AccessibilityTextMarker AccessibilityUIElement::textMarkerForPoint(int x, int y)
 {
     return 0;
@@ -1358,6 +1400,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "endTextMarkerForTextMarkerRange", endTextMarkerForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "accessibilityElementForTextMarker", accessibilityElementForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeLength", textMarkerRangeLengthCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "endTextMarkerForBounds", endTextMarkerForBoundsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "startTextMarkerForBounds", startTextMarkerForBoundsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerForPoint", textMarkerForPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "nextTextMarker", nextTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "previousTextMarker", previousTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

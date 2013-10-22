@@ -80,6 +80,7 @@ class HTMLAnchorElement;
 class HTMLAreaElement;
 class IntPoint;
 class IntSize;
+class MainFrame;
 class Node;
 class Page;
 class RenderObject;
@@ -325,6 +326,11 @@ enum AccessibilitySearchKey {
     UnderlineSearchKey,
     UnvisitedLinkSearchKey,
     VisitedLinkSearchKey
+};
+
+enum AccessibilityVisiblePositionForBounds {
+    FirstVisiblePositionForBounds,
+    LastVisiblePositionForBounds
 };
 
 struct AccessibilitySearchCriteria {
@@ -653,6 +659,8 @@ public:
     Page* page() const;
     virtual Document* document() const;
     virtual FrameView* documentFrameView() const;
+    MainFrame* mainFrame() const;
+    Document* topDocument() const;
     String language() const;
     // 1-based, to match the aria-level spec.
     virtual unsigned hierarchicalLevel() const { return 0; }
@@ -725,6 +733,7 @@ public:
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const { }
 
+    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const;
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const { return VisiblePosition(); }
     VisiblePosition nextVisiblePosition(const VisiblePosition& visiblePos) const { return visiblePos.next(); }
     VisiblePosition previousVisiblePosition(const VisiblePosition& visiblePos) const { return visiblePos.previous(); }

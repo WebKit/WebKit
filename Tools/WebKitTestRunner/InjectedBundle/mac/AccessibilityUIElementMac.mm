@@ -57,6 +57,15 @@
 #define NSAccessibilityPathAttribute @"AXPath"
 #endif
 
+// Text
+#ifndef NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute @"AXEndTextMarkerForBounds"
+#endif
+
+#ifndef NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute
+#define NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute @"AXStartTextMarkerForBounds"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -1447,6 +1456,26 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForText
     END_AX_OBJC_EXCEPTIONS
     
     return 0;    
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarkerForBounds(int x, int y, int width, int height)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute forParameter:[NSValue valueWithRect:NSMakeRect(x, y, width, height)]];
+    return AccessibilityTextMarker::create(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds(int x, int y, int width, int height)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute forParameter:[NSValue valueWithRect:NSMakeRect(x, y, width, height)]];
+    return AccessibilityTextMarker::create(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
 }
 
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)

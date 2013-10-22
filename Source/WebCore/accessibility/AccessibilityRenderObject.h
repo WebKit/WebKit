@@ -134,7 +134,6 @@ public:
 
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
-    Document* topDocument() const;
     HTMLLabelElement* labelElementContainer() const;
     
     virtual URL url() const OVERRIDE;

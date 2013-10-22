@@ -223,6 +223,8 @@ public:
     AccessibilityTextMarkerRange textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange*);
+    AccessibilityTextMarker endTextMarkerForBounds(int x, int y, int width, int height);
+    AccessibilityTextMarker startTextMarkerForBounds(int x, int y, int width, int height);
     AccessibilityTextMarker textMarkerForPoint(int x, int y);
     AccessibilityTextMarker previousTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker*);
