@@ -183,8 +183,9 @@ struct FontGlyphsCacheKey {
 struct FontGlyphsCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    FontGlyphsCacheEntry(FontGlyphsCacheKey&& k, PassRef<FontGlyphs> g) : key(k), glyphs(std::move(g)) { }
     FontGlyphsCacheKey key;
-    RefPtr<FontGlyphs> glyphs;
+    Ref<FontGlyphs> glyphs;
 };
 
 typedef HashMap<unsigned, OwnPtr<FontGlyphsCacheEntry>, AlreadyHashed> FontGlyphsCache;
@@ -250,14 +251,14 @@ void pruneUnreferencedEntriesFromFontGlyphsCache()
     Vector<unsigned, 50> toRemove;
     FontGlyphsCache::iterator end = fontGlyphsCache().end();
     for (FontGlyphsCache::iterator it = fontGlyphsCache().begin(); it != end; ++it) {
-        if (it->value->glyphs->hasOneRef())
+        if (it->value->glyphs.get().hasOneRef())
             toRemove.append(it->key);
     }
     for (unsigned i = 0; i < toRemove.size(); ++i)
         fontGlyphsCache().remove(toRemove[i]);
 }
 
-static PassRefPtr<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)
+static PassRef<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)
 {
     FontGlyphsCacheKey key;
     makeFontGlyphsCacheKey(key, fontDescription, fontSelector.get());
@@ -265,13 +266,11 @@ static PassRefPtr<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescriptio
     unsigned hash = computeFontGlyphsCacheHash(key);
     FontGlyphsCache::AddResult addResult = fontGlyphsCache().add(hash, PassOwnPtr<FontGlyphsCacheEntry>());
     if (!addResult.isNewEntry && addResult.iterator->value->key == key)
-        return addResult.iterator->value->glyphs;
+        return addResult.iterator->value->glyphs.get();
 
     OwnPtr<FontGlyphsCacheEntry>& newEntry = addResult.iterator->value;
-    newEntry = adoptPtr(new FontGlyphsCacheEntry);
-    newEntry->glyphs = FontGlyphs::create(fontSelector);
-    newEntry->key = key;
-    RefPtr<FontGlyphs> glyphs = newEntry->glyphs;
+    newEntry = adoptPtr(new FontGlyphsCacheEntry(std::move(key), FontGlyphs::create(fontSelector)));
+    PassRef<FontGlyphs> glyphs = newEntry->glyphs.get();
 
     static const unsigned unreferencedPruneInterval = 50;
     static const int maximumEntries = 400;

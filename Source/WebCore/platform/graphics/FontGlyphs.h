@@ -64,8 +64,8 @@ public:
         GlyphPageTreeNode* m_pageZero;
     };
 
-    static PassRefPtr<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(new FontGlyphs(fontSelector)); }
-    static PassRefPtr<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(new FontGlyphs(platformData)); }
+    static PassRef<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontGlyphs(fontSelector)); }
+    static PassRef<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontGlyphs(platformData)); }
 
     ~FontGlyphs() { releaseFontData(); }
 

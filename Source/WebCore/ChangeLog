@@ -1,5 +1,15 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        FontGlyphs constructor functions should return PassRef.
+        <https://webkit.org/b/123159>
+
+        Made the two FontGlyphs creator functions return PassRef and tweaked
+        the FontGlyphsCache in Font.cpp to make more efficient use of it.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         Fix some more code to use RenderElement instead of RenderObject.
         <https://webkit.org/b/123149>
 
