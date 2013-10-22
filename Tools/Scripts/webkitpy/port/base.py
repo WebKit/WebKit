@@ -1090,7 +1090,10 @@ class Port(object):
 
         # We use LayoutTest directory here because webkit_base isn't a part of WebKit repository in Chromium port
         # where turnk isn't checked out as a whole.
-        return [('WebKit', self.layout_tests_dir())]
+        repository_paths = [('WebKit', self.layout_tests_dir())]
+        if self.get_option('additional_repository_name') and self.get_option('additional_repository_path'):
+            repository_paths += [(self._options.additional_repository_name, self.path_from_webkit_base(self._options.additional_repository_path))]
+        return repository_paths
 
     _WDIFF_DEL = '##WDIFF_DEL##'
     _WDIFF_ADD = '##WDIFF_ADD##'

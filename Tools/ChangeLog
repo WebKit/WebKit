@@ -1,3 +1,19 @@
+2013-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There should be a way to specify additional repository paths in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=123135
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added --additional-repository-name and --additional-repository-path options to NRWT.
+        These options allow us to submit addtional repository information, such as of Safari's
+        to the new flakiness dashboard.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/base.py:
+        (Port.repository_paths):
+
 2013-10-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157774.

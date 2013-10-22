@@ -295,6 +295,10 @@ def parse_args(args):
             help=("If specified, upload results json files to this appengine server.")),
         optparse.make_option("--results-server-host", default="",
             help=("If specified, upload results JSON file to this results server.")),
+        optparse.make_option("--additional-repository-name",
+            help=("The name of an additional subversion or git checkout")),
+        optparse.make_option("--additional-repository-path",
+            help=("The path to an additional subversion or git checkout (requires --additional-repository-name)")),
     ]))
 
     option_parser = optparse.OptionParser()
