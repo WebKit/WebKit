@@ -1,3 +1,18 @@
+2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        {ClipPathOperation, FilterOperation}::getOperationType() should not include 'get'
+        https://bugs.webkit.org/show_bug.cgi?id=123172
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a rename.
+
+        "get" in WebCore tends to mean that the function has out arguments; these have no arguments.
+        Rename FilterOperation::getOperationType() to FilterOperation::type().
+        I noticed that ClipPathOperation had the same mistake, so I fixed it there too.
+
+        Removed long and useless list of files.
+
 2013-10-22  Samuel White  <samuel_white@apple.com>
 
         AX: Add paramAttrs to fetch start and end text markers in a given rect.

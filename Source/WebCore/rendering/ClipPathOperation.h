@@ -51,8 +51,8 @@ public:
     virtual bool operator==(const ClipPathOperation&) const = 0;
     bool operator!=(const ClipPathOperation& o) const { return !(*this == o); }
 
-    virtual OperationType getOperationType() const { return m_type; }
-    virtual bool isSameType(const ClipPathOperation& o) const { return o.getOperationType() == m_type; }
+    virtual OperationType type() const { return m_type; }
+    virtual bool isSameType(const ClipPathOperation& o) const { return o.type() == m_type; }
 
 protected:
     explicit ClipPathOperation(OperationType type)

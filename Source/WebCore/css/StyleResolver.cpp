@@ -3401,7 +3401,7 @@ void StyleResolver::loadPendingSVGDocuments()
     Vector<RefPtr<FilterOperation>>& filterOperations = state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
-        if (filterOperation->getOperationType() == FilterOperation::REFERENCE) {
+        if (filterOperation->type() == FilterOperation::REFERENCE) {
             ReferenceFilterOperation* referenceFilter = static_cast<ReferenceFilterOperation*>(filterOperation.get());
 
             WebKitCSSSVGDocumentValue* value = state.pendingSVGDocuments().get(referenceFilter);
@@ -3464,7 +3464,7 @@ void StyleResolver::loadPendingShaders()
     Vector<RefPtr<FilterOperation>>& filterOperations = m_state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
-        if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
+        if (filterOperation->type() == FilterOperation::CUSTOM) {
             CustomFilterOperation* customFilter = static_cast<CustomFilterOperation*>(filterOperation.get());
             ASSERT(customFilter->program());
             StyleCustomFilterProgram* program = static_cast<StyleCustomFilterProgram*>(customFilter->program());

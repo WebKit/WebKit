@@ -512,7 +512,7 @@ int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueLis
     double maxRotAngle = -1.0;
         
     for (size_t j = 0; j < firstVal.operations().size(); ++j) {
-        TransformOperation::OperationType type = firstVal.operations().at(j)->getOperationType();
+        TransformOperation::OperationType type = firstVal.operations().at(j)->type();
         
         // if this is a rotation entry, we need to see if any angle differences are >= 180 deg
         if (type == TransformOperation::ROTATE_X ||

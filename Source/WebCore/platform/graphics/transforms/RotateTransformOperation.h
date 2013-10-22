@@ -49,8 +49,8 @@ public:
 private:
     virtual bool isIdentity() const { return m_angle == 0; }
 
-    virtual OperationType getOperationType() const { return m_type; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
+    virtual OperationType type() const { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.type() == m_type; }
 
     virtual bool operator==(const TransformOperation& o) const
     {

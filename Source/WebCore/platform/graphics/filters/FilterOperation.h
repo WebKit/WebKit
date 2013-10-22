@@ -97,8 +97,8 @@ public:
         return 0; 
     }
 
-    virtual OperationType getOperationType() const { return m_type; }
-    virtual bool isSameType(const FilterOperation& o) const { return o.getOperationType() == m_type; }
+    virtual OperationType type() const { return m_type; }
+    virtual bool isSameType(const FilterOperation& o) const { return o.type() == m_type; }
     
     virtual bool isDefault() const { return false; }
 

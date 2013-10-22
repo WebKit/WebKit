@@ -1,3 +1,16 @@
+2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        {ClipPathOperation, FilterOperation}::getOperationType() should not include 'get'
+        https://bugs.webkit.org/show_bug.cgi?id=123172
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::encodeFilterOperation):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+        Adopt the new name.
+
 2013-10-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r157803 for !ENABLE(CSS_FILTERS) platforms.

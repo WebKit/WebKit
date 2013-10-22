@@ -91,7 +91,7 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
 bool FilterOperations::hasCustomFilter() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        FilterOperation::OperationType type = m_operations.at(i)->getOperationType();
+        FilterOperation::OperationType type = m_operations.at(i)->type();
         if (type == FilterOperation::CUSTOM || type == FilterOperation::VALIDATED_CUSTOM)
             return true;
     }
@@ -102,7 +102,7 @@ bool FilterOperations::hasCustomFilter() const
 bool FilterOperations::hasReferenceFilter() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        if (m_operations.at(i)->getOperationType() == FilterOperation::REFERENCE)
+        if (m_operations.at(i)->type() == FilterOperation::REFERENCE)
             return true;
     }
     return false;
@@ -111,7 +111,7 @@ bool FilterOperations::hasReferenceFilter() const
 bool FilterOperations::hasOutsets() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        FilterOperation::OperationType operationType = m_operations.at(i).get()->getOperationType();
+        FilterOperation::OperationType operationType = m_operations.at(i).get()->type();
         if (operationType == FilterOperation::BLUR || operationType == FilterOperation::DROP_SHADOW)
             return true;
     }
@@ -123,7 +123,7 @@ FilterOutsets FilterOperations::outsets() const
     FilterOutsets totalOutsets;
     for (size_t i = 0; i < m_operations.size(); ++i) {
         FilterOperation* filterOperation = m_operations.at(i).get();
-        switch (filterOperation->getOperationType()) {
+        switch (filterOperation->type()) {
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);

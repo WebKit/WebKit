@@ -1184,9 +1184,9 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
 #if ENABLE(CSS_FILTERS)
 static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperation& filter)
 {
-    encoder.encodeEnum(filter.getOperationType());
+    encoder.encodeEnum(filter.type());
 
-    switch (filter.getOperationType()) {
+    switch (filter.type()) {
     case FilterOperation::REFERENCE: {
         const auto& referenceFilter = static_cast<const ReferenceFilterOperation&>(filter);
         encoder << referenceFilter.url();

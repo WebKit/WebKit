@@ -105,7 +105,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     for (unsigned i = 0; i < filters.size(); ++i) {
         String filterName = String::format("filter_%d", i);
         const FilterOperation* filterOperation = filters.at(i);
-        switch (filterOperation->getOperationType()) {
+        switch (filterOperation->type()) {
         case FilterOperation::DROP_SHADOW: {
             // FIXME: For now assume drop shadow is the last filter, put it on the layer.
             // <rdar://problem/10959969> Handle case where drop-shadow is not the last filter.
@@ -334,7 +334,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
 #if USE_CA_FILTERS
     UNUSED_PARAM(internalFilterPropertyIndex);
 #endif
-    FilterOperation::OperationType type = operation->getOperationType();
+    FilterOperation::OperationType type = operation->type();
     RetainPtr<id> value;
     
     switch (type) {
@@ -513,7 +513,7 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
 #if USE_CA_FILTERS
 RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(const FilterOperation& filterOperation)
 {
-    switch (filterOperation.getOperationType()) {
+    switch (filterOperation.type()) {
     case FilterOperation::SEPIA: {
         const BasicColorMatrixFilterOperation& op = static_cast<const BasicColorMatrixFilterOperation&>(filterOperation);
         double t = op.amount();

@@ -111,7 +111,7 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
     removeReferenceFilterClients();
     for (size_t i = 0, size = operations.size(); i < size; ++i) {
         FilterOperation* filterOperation = operations.operations()[i].get();
-        if (filterOperation->getOperationType() != FilterOperation::REFERENCE)
+        if (filterOperation->type() != FilterOperation::REFERENCE)
             continue;
         ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
         CachedSVGDocumentReference* documentReference = referenceFilterOperation->cachedSVGDocumentReference();
@@ -166,7 +166,7 @@ void RenderLayer::FilterInfo::updateCustomFilterClients(const FilterOperations& 
     Vector<RefPtr<CustomFilterProgram>> cachedCustomFilterPrograms;
     for (size_t i = 0, size = operations.size(); i < size; ++i) {
         const FilterOperation* filterOperation = operations.operations()[i].get();
-        if (filterOperation->getOperationType() != FilterOperation::CUSTOM)
+        if (filterOperation->type() != FilterOperation::CUSTOM)
             continue;
         const CustomFilterOperation* customFilterOperation = static_cast<const CustomFilterOperation*>(filterOperation);
         CustomFilterProgram* program = customFilterOperation->program();

@@ -993,7 +993,7 @@ inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& tra
 
     unsigned size = transformOperations.size();
     for (unsigned i = 0; i < size; ++i) {
-        TransformOperation::OperationType type = transformOperations[i]->getOperationType();
+        TransformOperation::OperationType type = transformOperations[i]->type();
         if (type != TransformOperation::TRANSLATE_X
             && type != TransformOperation::TRANSLATE_Y
             && type != TransformOperation::TRANSLATE 

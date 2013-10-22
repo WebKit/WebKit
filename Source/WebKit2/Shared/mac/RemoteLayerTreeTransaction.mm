@@ -416,7 +416,7 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOpe
     RemoteLayerTreeTextStream& ts = *this;
     for (size_t i = 0; i < filters.size(); ++i) {
         const auto filter = filters.at(i);
-        switch (filter->getOperationType()) {
+        switch (filter->type()) {
         case FilterOperation::REFERENCE:
             ts << "reference";
             break;

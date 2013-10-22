@@ -42,8 +42,8 @@ public:
 private:    
     virtual bool isIdentity() const { return m_matrix.isIdentity(); }
 
-    virtual OperationType getOperationType() const { return MATRIX_3D; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == MATRIX_3D; }
+    virtual OperationType type() const { return MATRIX_3D; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.type() == MATRIX_3D; }
 
     virtual bool operator==(const TransformOperation& o) const
     {

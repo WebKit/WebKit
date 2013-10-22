@@ -952,7 +952,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
     Vector<RefPtr<FilterOperation>>::const_iterator end = filterOperations.operations().end();
     for (Vector<RefPtr<FilterOperation>>::const_iterator it = filterOperations.operations().begin(); it != end; ++it) {
         FilterOperation* filterOperation = (*it).get();
-        switch (filterOperation->getOperationType()) {
+        switch (filterOperation->type()) {
         case FilterOperation::REFERENCE: {
             ReferenceFilterOperation* referenceOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ReferenceFilterOperation);
@@ -2828,10 +2828,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return counterToCSSValue(style.get(), propertyID);
         case CSSPropertyWebkitClipPath:
             if (ClipPathOperation* operation = style->clipPath()) {
-                if (operation->getOperationType() == ClipPathOperation::SHAPE)
+                if (operation->type() == ClipPathOperation::SHAPE)
                     return valueForBasicShape(style.get(), static_cast<ShapeClipPathOperation*>(operation)->basicShape());
 #if ENABLE(SVG)
-                else if (operation->getOperationType() == ClipPathOperation::REFERENCE) {
+                if (operation->type() == ClipPathOperation::REFERENCE) {
                     ReferenceClipPathOperation* referenceOperation = static_cast<ReferenceClipPathOperation*>(operation);
                     return CSSPrimitiveValue::create(referenceOperation->url(), CSSPrimitiveValue::CSS_URI);
                 }

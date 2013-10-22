@@ -3705,7 +3705,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     RenderStyle* style = renderer().style();
 
     ASSERT(style->clipPath());
-    if (style->clipPath()->getOperationType() == ClipPathOperation::SHAPE) {
+    if (style->clipPath()->type() == ClipPathOperation::SHAPE) {
         ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(style->clipPath());
 
         if (!rootRelativeBoundsComputed) {
@@ -3719,7 +3719,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
     }
 
 #if ENABLE(SVG)
-    if (style->clipPath()->getOperationType() == ClipPathOperation::REFERENCE) {
+    if (style->clipPath()->type() == ClipPathOperation::REFERENCE) {
         ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style->clipPath());
         Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
         if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {
@@ -6413,7 +6413,7 @@ FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
     FilterOperations outputFilters;
     for (size_t i = 0; i < filters.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filters.operations().at(i);
-        if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
+        if (filterOperation->type() == FilterOperation::CUSTOM) {
             // We have to wait until the program of CSS Shaders is loaded before setting it on the layer.
             // Note that we will handle the loading of the shaders and repainting of the layer in updateOrRemoveFilterClients.
             const CustomFilterOperation* customOperation = static_cast<const CustomFilterOperation*>(filterOperation.get());

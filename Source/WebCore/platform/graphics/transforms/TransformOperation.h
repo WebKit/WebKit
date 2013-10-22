@@ -63,12 +63,12 @@ public:
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) = 0;
 
-    virtual OperationType getOperationType() const = 0;
+    virtual OperationType type() const = 0;
     virtual bool isSameType(const TransformOperation&) const { return false; }
     
     bool is3DOperation() const
     {
-        OperationType opType = getOperationType();
+        OperationType opType = type();
         return opType == SCALE_Z ||
                opType == SCALE_3D ||
                opType == TRANSLATE_Z ||

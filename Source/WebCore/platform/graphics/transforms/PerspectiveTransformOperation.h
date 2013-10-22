@@ -43,8 +43,8 @@ public:
     
 private:
     virtual bool isIdentity() const { return !floatValueForLength(m_p, 1); }
-    virtual OperationType getOperationType() const { return PERSPECTIVE; }
-    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == PERSPECTIVE; }
+    virtual OperationType type() const { return PERSPECTIVE; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.type() == PERSPECTIVE; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
