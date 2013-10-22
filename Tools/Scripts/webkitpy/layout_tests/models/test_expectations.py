@@ -833,7 +833,7 @@ class TestExpectations(object):
     # FIXME: This constructor does too much work. We should move the actual parsing of
     # the expectations into separate routines so that linting and handling overrides
     # can be controlled separately, and the constructor can be more of a no-op.
-    def __init__(self, port, tests=None, include_generic=True, include_overrides=True, expectations_to_lint=None, force_expectations_pass=False):
+    def __init__(self, port, tests=None, include_generic=True, include_overrides=True, expectations_to_lint=None):
         self._full_test_list = tests
         self._test_config = port.test_configuration()
         self._is_lint_mode = expectations_to_lint is not None
@@ -842,7 +842,6 @@ class TestExpectations(object):
         self._port = port
         self._skipped_tests_warnings = []
         self._expectations = []
-        self._force_expectations_pass = force_expectations_pass
 
         expectations_dict = expectations_to_lint or port.expectations_dict()
 
@@ -991,11 +990,7 @@ class TestExpectations(object):
 
     def _add_expectations(self, expectation_list):
         for expectation_line in expectation_list:
-            if self._force_expectations_pass:
-                expectation_line.expectations = ['PASS']
-                expectation_line.parsed_expectations = set([PASS])
-
-            elif not expectation_line.expectations:
+            if not expectation_line.expectations:
                 continue
 
             if self._is_lint_mode or self._test_config in expectation_line.matching_configurations:

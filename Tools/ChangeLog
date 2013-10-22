@@ -1,3 +1,20 @@
+2013-10-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r157774.
+        http://trac.webkit.org/changeset/157774
+        https://bugs.webkit.org/show_bug.cgi?id=123167
+
+        causes python test to fail (Requested by smfr on #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        (TestExpectations._add_expectations):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+
 2013-10-22  Lucas Forschler  <lforschler@apple.com>
 
         Prepare WebKit Buildbot master for Mavericks.

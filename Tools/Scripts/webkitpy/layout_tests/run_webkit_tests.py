@@ -226,8 +226,8 @@ def parse_args(args):
                  "'ignore' == Run them anyway, "
                  "'only' == only run the SKIP tests, "
                  "'always' == always skip, even if listed on the command line.")),
-        optparse.make_option("--force", action="store_true", default=False,
-            help="Run all tests with PASS as expected result, even those marked SKIP in the test list (implies --skipped=ignore)"),
+        optparse.make_option("--force", dest="skipped", action="store_const", const='ignore',
+            help="Run all tests, even those marked SKIP in the test list (same as --skipped=ignore)"),
         optparse.make_option("--time-out-ms",
             help="Set the timeout for each test"),
         optparse.make_option("--order", action="store", default="natural",
@@ -332,10 +332,6 @@ def _set_up_derived_options(port, options):
         for path in options.additional_platform_directory:
             additional_platform_directories.append(port.host.filesystem.abspath(path))
         options.additional_platform_directory = additional_platform_directories
-
-    if options.force and options.skipped not in ('ignore', 'default'):
-        _log.warning("--force overrides --skipped=%s" % (options.skipped))
-        options.skipped = 'ignore'
 
     if not options.http and options.skipped in ('ignore', 'only'):
         _log.warning("--force/--skipped=%s overrides --no-http." % (options.skipped))
