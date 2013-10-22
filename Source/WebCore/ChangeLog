@@ -1,3 +1,13 @@
+2013-10-22  Andreas Kling  <akling@apple.com>
+
+        Remove some unnecessary null checks in RenderElement::setStyle().
+        <https://webkit.org/b/123146>
+
+        After assigning the new style to RenderElement::m_style, we know that
+        it'll be non-null, so remove all the checking for this.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce ACCESSIBILITY_OBJECT_TYPE_CASTS to replace manual toFoo() in accessibility child class

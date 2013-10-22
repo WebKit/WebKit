@@ -375,15 +375,15 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
     RefPtr<RenderStyle> oldStyle = m_style.release();
     m_style = std::move(style);
 
-    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : 0, m_style ? m_style->backgroundLayers() : 0);
-    updateFillImages(oldStyle ? oldStyle->maskLayers() : 0, m_style ? m_style->maskLayers() : 0);
+    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : nullptr, m_style->backgroundLayers());
+    updateFillImages(oldStyle ? oldStyle->maskLayers() : nullptr, m_style->maskLayers());
 
-    updateImage(oldStyle ? oldStyle->borderImage().image() : 0, m_style ? m_style->borderImage().image() : 0);
-    updateImage(oldStyle ? oldStyle->maskBoxImage().image() : 0, m_style ? m_style->maskBoxImage().image() : 0);
+    updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style->borderImage().image());
+    updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style->maskBoxImage().image());
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeImage(oldStyle ? oldStyle->shapeInside() : 0, m_style ? m_style->shapeInside() : 0);
-    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : 0, m_style ? m_style->shapeOutside() : 0);
+    updateShapeImage(oldStyle ? oldStyle->shapeInside() : nullptr, m_style->shapeInside());
+    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style->shapeOutside());
 #endif
 
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
