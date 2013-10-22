@@ -1,5 +1,16 @@
 2013-10-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        WebCore::fillWithEmptyClients adopts new empty clients before leaking their pointers
+        https://bugs.webkit.org/show_bug.cgi?id=122945
+
+        Reviewed by Anders Carlsson.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients): Store the static empty clients as NeverDestroyed, rather than
+        adopting the pointer of each heap-allocated object and then immediately leaking that pointer.
+
+2013-10-22  Zan Dobersek  <zdobersek@igalia.com>
+
         Simplify HRTFDatabaseLoader's load map
         https://bugs.webkit.org/show_bug.cgi?id=122944
 
