@@ -1,3 +1,9 @@
+2013-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix Mavericks build; use <> for framework include.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         GammaFilterOperation seems to be dead code

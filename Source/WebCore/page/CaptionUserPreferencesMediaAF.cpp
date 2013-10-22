@@ -51,7 +51,7 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include "MediaAccessibility/MediaAccessibility.h"
+#include <MediaAccessibility/MediaAccessibility.h>
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
