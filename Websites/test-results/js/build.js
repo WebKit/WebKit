@@ -18,10 +18,16 @@ function TestBuild(repositories, builders, rawRun) {
     this.builder = function () { return builders[rawRun.builder].name; }
     this.buildNumber = function () { return rawRun.buildNumber; }
     this.buildUrl = function () {
-        var template = builders[rawRun.builder].buildUrl;
-        return template ? template.replace(/\$buildNumber/g, this.buildNumber()) : null;
+        var builderData = builders[rawRun.builder];
+        var template = builderData.buildUrl;
+        if (!template)
+            return null;
+        return template.replace(/\$builderName/g, builderData.name).replace(/\$buildNumber/g, this.buildNumber());
     }
-    this.revision = function(repositoryId) { return revisions[repositoryId][0]; }
+    this.revision = function(repositoryId) {
+        var repository = revisions[repositoryId];
+        return repository ? repository[0] : null;
+    }
     this.formattedRevisions = function (previousBuild) {
         var result = {};
         for (var repositoryId in revisions) {

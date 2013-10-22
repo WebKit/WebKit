@@ -9,7 +9,8 @@ DROP TABLE builders CASCADE;
 CREATE TABLE builders (
     id serial PRIMARY KEY,
     master varchar(64) NOT NULL,
-    name varchar(64) NOT NULL UNIQUE);
+    name varchar(64) NOT NULL UNIQUE,
+    build_url varchar(1024));
 
 CREATE TABLE repositories (
     id serial PRIMARY KEY,
@@ -44,6 +45,7 @@ CREATE INDEX revision_repository_index ON build_revisions(repository);
 CREATE TABLE tests (
     id serial PRIMARY KEY,
     name varchar(1024) NOT NULL UNIQUE,
+    category varchar(64) NOT NULL,
     reftest_type varchar(64));
 
 CREATE TABLE results (

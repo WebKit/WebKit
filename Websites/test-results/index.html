@@ -55,9 +55,10 @@ var TestResultsView = new (function () {
     this._currentBuilderFailureType = null;
     this._currentBuilderDays = null;
     this._oldHash = null;
-    this._builders = [];
-    this._slaves = [];
-    this._repositories = [];
+    this._builders = {};
+    this._slaves = {};
+    this._repositories = {};
+    this._testCategories = {};
 });
 
 TestResultsView.setAvailableTests = function (availableTests) {
@@ -74,6 +75,10 @@ TestResultsView.setSlaves = function (slaves) {
 
 TestResultsView.setRepositories = function (repositories) {
     this._repositories = repositories;
+}
+
+TestResultsView.setTestCategories = function (testCategories) {
+    this._testCategories = testCategories;
 }
 
 TestResultsView.showTooltip = function (anchor, contentElement) {
@@ -95,43 +100,44 @@ TestResultsView.showTooltip = function (anchor, contentElement) {
     tooltipContainer.style.top = (position.y - contentElement.clientHeight - 5) + 'px';
 }
 
-TestResultsView._urlFromBuilder = function (urlType, master, builder, revision, build) {
-    // FIXME: We should probably make this configurable or fetch from buildbot configuraration.
-    return {
-        "build": "http://$master/builders/$builder/builds/$build",
-        "result": "http://$master/results/$builder/r$revision%20($build)/results.html"
-    }[urlType].replace(/\$master/g, master).replace(/\$builder/g, builder)
-        .replace(/\$revision/g, revision).replace(/\$build/g, build);
-}
-
 TestResultsView._createResultCell = function (master, builder, result, previousResult) {
     var buildTime = result['buildTime'];
-    var revision = result['revision'];
+    var revisions = result['revisions'];
     var slave = result['slave'];
-    var build = result['buildNumber'];
+    var buildNumber = result['buildNumber'];
     var actual = result['actual'];
     var expected = result['expected'];
     var timeIfSlow = result.isSlow ? result.roundedTime : '';
-    var anchor = element('a', {'href': this._urlFromBuilder('result', master, builder, revision, build)}, [timeIfSlow]);
+
+    // FIXME: We shouldn't be hard-coding WebKit revisions here.
+    var webkitRepositoryId;
+    for (var repositoryId in TestResultsView._repositories) {
+        if (TestResultsView._repositories[repositoryId].name == 'WebKit')
+            webkitRepositoryId = repositoryId;
+    }
+    var webkitRevision = result.build.revision(webkitRepositoryId);
+    var resultsPage = webkitRevision ? "http://" + master + "/results/" + builder + "/r" + webkitRevision + "%20(" + buildNumber + ")/results.html"
+        : 'javascript:alert("Could no resolve WebKit revision")';
+
+    var anchor = element('a', {'href': resultsPage }, [timeIfSlow]);
     anchor.onmouseenter = function () {
-        var repositoryById = TestResultsView._repositories;
         var formattedRevisions = result.build.formattedRevisions(previousResult ? previousResult.build : null);
-        var revisionDescription = '';
+        var revisionDescription = [];
         for (var repositoryName in formattedRevisions) {
             var revision = formattedRevisions[repositoryName];
-            if (revisionDescription)
-                revisionDescription += ', ';
+            if (revisionDescription.length)
+                revisionDescription.push(', ');
             if (revision.url)
-                revisionDescription += repositoryName + ': ' + revision.url;
+                revisionDescription.push(element('a', {'href': revision.url}, [revision.label]));
             else
-                revisionDescription += revision.label;
+                revisionDescription.push(revision.label);
         }
 
         TestResultsView.showTooltip(anchor, element('div', {'class': 'tooltip'}, [
             element('ul', [
                 element('li', ['Build Time: ' + result.build.formattedBuildTime()]),
-                element('li', ['Revision: ' +  revisionDescription]),
-                element('li', ['Build: ', element('a', {'href': TestResultsView._urlFromBuilder('build', master, builder, revision, build)}, [build])]),
+                element('li', ['Revision: '].concat(revisionDescription)),
+                element('li', ['Build: ', element('a', {'href': result.build.buildUrl()}, [buildNumber])]),
                 element('li', ['Actual: ' + actual]),
                 element('li', ['Expected: ' + expected]),
             ])
@@ -144,14 +150,15 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
 }
 
 TestResultsView._populateTestPane = function(testName, results, section) {
-    var table = element('table', {'class': 'resultsTable'}, [element('caption', [testName])]);
+    var test = {name: testName, category: 'LayoutTest'}; // FIXME: Use the real test object.
+    var table = element('table', {'class': 'resultsTable'}, [element('caption', [this._linkifiedTestName(test)])]);
     table.appendChild(this._createTestResultHeader('Builder'));
 
     var resultsByBuilder = results['builders'];
     var buildTimes = new Array();
     for (var builderId in resultsByBuilder) {
         var results = resultsByBuilder[builderId];
-        this._createBuildsAndComputeSlownessOfResults(results);
+        this._createBuildsAndComputeSlownessOfResults(builderId, results);
         for (var i = 0; i < results.length; i++) {
             var time = results[i].build.time();
             if (buildTimes.indexOf(time) < 0)
@@ -168,6 +175,14 @@ TestResultsView._populateTestPane = function(testName, results, section) {
     section.appendChild(table);
 }
 
+TestResultsView._linkifiedTestName = function (test) {
+    var category = this._testCategories[test.category];
+    if (!category)
+        return test.name;
+
+    return element('a', {'href': category.url.replace(/\$testName/g, test.name)}, [test.name]);
+}
+
 TestResultsView._createTestResultHeader = function (labelForFirstColumn) {
     return element('thead', [element('tr', [
         element('th', [labelForFirstColumn]),
@@ -176,9 +191,10 @@ TestResultsView._createTestResultHeader = function (labelForFirstColumn) {
         element('th', ['Slowest'])])]);
 }
 
-TestResultsView._createBuildsAndComputeSlownessOfResults = function (results) {
+TestResultsView._createBuildsAndComputeSlownessOfResults = function (builderId, results) {
     for (var i = 0; i < results.length; i++) {
         var result = results[i];
+        result.builder = builderId;
         result.build = new TestBuild(this._repositories, this._builders, result);
         result.roundedTime = result.time > 10000 ? Math.round(result.time / 1000) : Math.round(result.time / 100) / 10;
         result.isSlow = result.time > 1000;
@@ -224,7 +240,7 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
         slowestTime = '';
 
     return element('tr', [
-        element('th', ['' + title]),
+        element('th', [title]),
         element('td', {'class': 'modifiers'}, formattedModifiers),
         element('td', {'class': 'expected'}, [sortedResults[0].expected]),
         element('td', {'class': 'slowestTime'}, [slowestTime]),
@@ -330,8 +346,8 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
         var results = resultsByTests[testId];
         if (!results.length || !this._matchesFailureType(results, failureType, this._availableTests[testId].name))
             continue;
-        this._createBuildsAndComputeSlownessOfResults(resultsByTests[testId]);
-        table.appendChild(this._createTestResultRow(this._availableTests[testId].name, resultsByTests[testId], builder));
+        this._createBuildsAndComputeSlownessOfResults(builderId, resultsByTests[testId]);
+        table.appendChild(this._createTestResultRow(this._linkifiedTestName(this._availableTests[testId]), resultsByTests[testId], builder));
     }
     section.appendChild(table);
 }
@@ -461,6 +477,7 @@ fetchManifest(function (response) {
     TestResultsView.setBuilders(mapById(response['builders']));
     TestResultsView.setSlaves(mapById(response['slaves']));
     TestResultsView.setRepositories(mapById(response['repositories']));
+    TestResultsView.setTestCategories(response['testCategories']);
     // FIXME: Updating location.href shouldn't be TestResultsView's responsibility.
     var parsedStates = TestResultsView.loadTestsFromLocationHash();
     if (parsedStates['builder']) {

@@ -11,5 +11,10 @@
     "masters": [
         "build.webkit.org",
         "build-safari.apple.com"
-    ]
+    ],
+    "testCategories": {
+        "LayoutTest": {
+            "url": "https://trac.webkit.org/browser/trunk/LayoutTests/$testName"
+        }
+    }
 }

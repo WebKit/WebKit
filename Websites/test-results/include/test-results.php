@@ -70,9 +70,11 @@ function recursively_add_test_results($db, $build_id, $tests, $full_name) {
         require_format('test_modifiers', $modifiers, '/^[A-Za-z0-9 \.\/]+$/');
     else
         $modifiers = NULL;
+    $category = 'LayoutTest'; // FIXME: Support other test categories.
 
     $test_id = $db->select_or_insert_row('tests', NULL,
-        array('name' => $full_name), array('name' => $full_name, 'reftest_type' => json_encode(array_get($tests, 'reftest_type'))));
+        array('name' => $full_name),
+        array('name' => $full_name, 'reftest_type' => json_encode(array_get($tests, 'reftest_type')), 'category' => $category));
 
     $db->insert_row('results', NULL, array('test' => $test_id, 'build' => $build_id,
         'expected' => $tests['expected'], 'actual' => $tests['actual'],

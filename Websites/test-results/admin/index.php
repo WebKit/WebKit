@@ -1,34 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>WebKit Test Results</title>
-<link rel="stylesheet" href="/common.css">
-<style type="text/css">
-
-.unfetched {
-    color: gray;
-}
-
-</style>
-</head>
-<body>
-<header id="title">
-<h1><a href="/">WebKit Test Results</a></h1>
-<ul>
-    <li><a href="/admin/update-master">Update Master</a></li>
-</ul>
-</header>
-
-<div id="mainContents">
-<p><strong>FIXME: This page is broken!</strong></p>
 <?php
 
-require_once('../include/db.php');
-require_once('../include/test-results.php');
+include('../include/admin-header.php');
+include('../include/test-results.php');
 
-function notice($message) {
-    echo "<p class='notice'>$message</p>";
-}
+notice("FIXME: This page is broken!");
 
 define('MAX_FETCH_COUNT', 10);
 

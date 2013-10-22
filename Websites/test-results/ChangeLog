@@ -1,5 +1,45 @@
 2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New flakiness dashboard should hyperlink test names, WebKit revisions, and bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=123134
+
+        Reviewed by Stephanie Lewis.
+
+        Copied admin.css, admin-header.php, admin-footer.php, builders.php, repositories.php from WebKit Perf Monitor.
+        (Unfortunately WebKit Perf Monitor hasn't been committed into WebKit repository just yet.)
+
+        Updated various parts of index.html to linkify test names, build numbers, and bubbles (to results page).
+
+        * admin/admin.css: Added.
+        * admin/builders.php: Added.
+        * admin/index.php: Removed the duplicated code now that it uses admin-header.php.
+        * admin/repositories.php: Added.
+        * api/manifest.php: Use camelCase for blame_url and build_url to be consistent with other JSON properties.
+        Also exported testCategories from config so that we can linkify test names in the dashboard.
+        * include/admin-footer.php: Added.
+        * include/admin-header.php: Added.
+        * include/config.json: Added test categories. This avoids hard-coding the URL to trac in php/js.
+        * include/init-database.sql: Added name and build_url to builders table and category to tests.
+        * include/test-results.php: Assume the test category to be LayoutTest for now.
+
+        * index.html:
+        (TestResultsView): Initialize _builders, _slaves, _repositories, _testCategories as dictionaries as intended.
+        (TestResultsView.setTestCategories): Added.
+        (TestResultsView._createResultCell): Dynamically resolve URLs of results page and and build page.
+        (TestResultsView._populateTestPane): Linkify the test name. Unfortunately we don't have a test object anywhere.
+        We need to figure out a way to find the test object here eventually. For now, hard-coding "LayoutTest" works.
+        (TestResultsView._linkifiedTestName): Added.
+        (TestResultsView._createBuildsAndComputeSlownessOfResults): Takes builderId to set "builder" property on each
+        result object as it's used by Build class.
+        (TestResultsView._populateBuilderPane):
+        (fetchManigest):
+
+        * js/build.js:
+        (Build.buildUrl): Support $builderName so that we don't have to keep repeating builder names in the database.
+        (Build.revision): Don't access [0] if revisions[repositoryId] was undefined.
+
+2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         New flakiness dashboard should align results by revision numbers
         https://bugs.webkit.org/show_bug.cgi?id=123129
 
