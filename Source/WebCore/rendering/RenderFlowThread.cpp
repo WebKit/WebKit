@@ -727,18 +727,23 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
     m_regionRangeMap.remove(box);
 }
 
-bool RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* block)
+void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* block, bool& relayoutChildren)
 {
-    if (!hasRegions())
-        return false;
+    if (!hasValidRegionInfo())
+        return;
 
     RenderRegionRangeMap::iterator it = m_regionRangeMap.find(block);
     if (it == m_regionRangeMap.end())
-        return false;
+        return;
 
     RenderRegionRange& range = it->value;
     bool rangeInvalidated = range.rangeInvalidated();
     range.clearRangeInvalidated();
+
+    // If there will be a relayout anyway skip the next steps because they only verify
+    // the state of the ranges.
+    if (relayoutChildren)
+        return;
 
     RenderRegion* startRegion;
     RenderRegion* endRegion;
@@ -746,8 +751,10 @@ bool RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
 
     // Not necessary for the flow thread, since we already computed the correct info for it.
     // If the regions have changed invalidate the children.
-    if (block == this)
-        return m_pageLogicalSizeChanged;
+    if (block == this) {
+        relayoutChildren = m_pageLogicalSizeChanged;
+        return;
+    }
 
     for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -755,19 +762,21 @@ bool RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
 
         // We have no information computed for this region so we need to do it.
         OwnPtr<RenderBoxRegionInfo> oldInfo = region->takeRenderBoxRegionInfo(block);
-        if (!oldInfo)
-            return rangeInvalidated;
+        if (!oldInfo) {
+            relayoutChildren = rangeInvalidated;
+            return;
+        }
 
         LayoutUnit oldLogicalWidth = oldInfo->logicalWidth();
         RenderBoxRegionInfo* newInfo = block->renderBoxRegionInfo(region);
-        if (!newInfo || newInfo->logicalWidth() != oldLogicalWidth)
-            return true;
+        if (!newInfo || newInfo->logicalWidth() != oldLogicalWidth) {
+            relayoutChildren = true;
+            return;
+        }
 
         if (region == endRegion)
             break;
     }
-
-    return false;
 }
 
 LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstRegion() const

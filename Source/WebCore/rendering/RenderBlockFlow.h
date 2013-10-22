@@ -96,8 +96,8 @@ public:
         RenderBlockFlowRareData(const RenderBlockFlow* block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
-            , m_lineGridBox(0)
-            , m_renderNamedFlowFragment(0)
+            , m_lineGridBox(nullptr)
+            , m_renderNamedFlowFragment(nullptr)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
             , m_didBreakAtLineToAvoidWidow(false)
@@ -413,7 +413,7 @@ private:
     
     Position positionForBox(InlineBox*, bool start = true) const;
     virtual VisiblePosition positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents) OVERRIDE;
-
+    RenderBlockFlowRareData& ensureRareData();
     virtual void addFocusRingRectsForInlineChildren(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*) OVERRIDE;
 
 // FIXME-BLOCKFLOW: These methods have implementations in
@@ -504,6 +504,11 @@ inline const RenderBlockFlow* toRenderBlockFlow(const RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderBlockFlow());
     return static_cast<const RenderBlockFlow*>(object);
+}
+
+inline bool RenderElement::isRenderNamedFlowFragmentContainer() const
+{
+    return isRenderBlockFlow() && toRenderBlockFlow(this)->renderNamedFlowFragment();
 }
 
 // This will catch anyone doing an unnecessary cast.

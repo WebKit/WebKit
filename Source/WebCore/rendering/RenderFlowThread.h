@@ -126,7 +126,7 @@ public:
     RenderRegion* mapFromFlowToRegion(TransformState&) const;
 
     void removeRenderBoxRegionInfo(RenderBox*);
-    bool logicalWidthChangedInRegionsForBlock(const RenderBlock*);
+    void logicalWidthChangedInRegionsForBlock(const RenderBlock*, bool&);
 
     LayoutUnit contentLogicalWidthOfFirstRegion() const;
     LayoutUnit contentLogicalHeightOfFirstRegion() const;

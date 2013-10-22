@@ -506,6 +506,7 @@ protected:
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox*);
 
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
+    void prepareShapesAndPaginationBeforeBlockLayout(bool&);
 
 private:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
@@ -714,8 +715,6 @@ protected:
     // region/page/column that has a different available line width than the old one. Used to know when you have to dirty a
     // line, i.e., that it can't be re-used.
     bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFlowThread*) const;
-
-    bool logicalWidthChangedInRegions(RenderFlowThread*) const;
 
     virtual bool requiresColumns(int desiredColumnCount) const;
 

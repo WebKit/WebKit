@@ -339,12 +339,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
-    // Regions changing widths can force us to relayout our children.
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (logicalWidthChangedInRegions(flowThread))
-        relayoutChildren = true;
-    if (updateShapesBeforeBlockLayout())
-        relayoutChildren = true;
+    prepareShapesAndPaginationBeforeBlockLayout(relayoutChildren);
 
     m_numberOfInFlowChildrenOnFirstLine = -1;
 

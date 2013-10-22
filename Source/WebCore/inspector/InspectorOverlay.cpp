@@ -554,7 +554,7 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
         elementInfo->setString("className", classNames.toString());
     }
 
-    RenderObject* renderer = node->renderer();
+    RenderElement* renderer = element->renderer();
     Frame* containingFrame = node->document().frame();
     FrameView* containingView = containingFrame->view();
     IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));

@@ -363,7 +363,6 @@ public:
     virtual bool isRenderNamedFlowThread() const { return false; }
     bool isInFlowRenderFlowThread() const { return isRenderFlowThread() && !isOutOfFlowPositioned(); }
     bool isOutOfFlowRenderFlowThread() const { return isRenderFlowThread() && isOutOfFlowPositioned(); }
-    bool isRenderNamedFlowFragmentContainer() const;
 
     virtual bool isRenderMultiColumnBlock() const { return false; }
     virtual bool isRenderMultiColumnSet() const { return false; }

@@ -1,3 +1,61 @@
+2013-10-22  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Possible performance regression after r157567
+        https://bugs.webkit.org/show_bug.cgi?id=123016
+
+        Reviewed by Andreas Kling.
+
+        The revision 157567 http://trac.webkit.org/changeset/157567 may have regressed
+        Parser/html5-full-render by ~1.1% and Parser/html-parser by ~2%. These changes
+        try to optimize the initial patch, based on Andreas Kling's review.
+
+        The patch also adds a couple of refactorings that should make the code easier to read:
+        - the CSS Shapes functions are now wrapped in a single #if clause
+        - the CSS Shapes and CSS Regions pre-layout preparations are wrapped in a helper function
+
+        The RenderFlowThread::logicalWidthChangedInRegionsForBlock function is optimized by passing
+        it information about the state of the relayout children flag. If the flag is true already,
+        some of the steps are skipped.
+
+        Tests: no new tests.
+
+        * dom/Element.cpp:
+        (WebCore::Element::webkitGetRegionFlowRanges):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * rendering/RenderBlock.cpp:
+        (WebCore::shapeInfoRequiresRelayout):
+        (WebCore::RenderBlock::updateShapesBeforeBlockLayout):
+        (WebCore::RenderBlock::computeShapeSize):
+        (WebCore::RenderBlock::prepareShapesAndPaginationBeforeBlockLayout):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded):
+        (WebCore::RenderBlockFlow::setRenderNamedFlowFragment):
+        (WebCore::RenderBlockFlow::ensureRareData):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderElement::isRenderNamedFlowFragmentContainer):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::generatingElement):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+
 2013-10-22  Andreas Kling  <akling@apple.com>
 
         CSSStyleSheet constructor functions should return PassRef.

@@ -575,7 +575,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
             writeTextRun(ts, text, *box);
         }
     } else {
-        if (!o.isRenderNamedFlowFragmentContainer()) {
+        if (!toRenderElement(o).isRenderNamedFlowFragmentContainer()) {
             for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {
                 if (child->hasLayer())
                     continue;

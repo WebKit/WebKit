@@ -326,14 +326,9 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     RenderStyle* styleToUse = style();
     LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || styleToUse->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, columnInfo());
 
-    // Regions changing widths can force us to relayout our children.
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (logicalWidthChangedInRegions(flowThread))
-        relayoutChildren = true;
-    if (updateShapesBeforeBlockLayout())
-        relayoutChildren = true;
-    if (namedFlowFragmentNeedsUpdate())
-        relayoutChildren = true;
+    prepareShapesAndPaginationBeforeBlockLayout(relayoutChildren);
+    if (!relayoutChildren)
+        relayoutChildren = namedFlowFragmentNeedsUpdate();
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins. These values are used when we
@@ -2586,10 +2581,10 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock* rootBlock, const Layo
 
 void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
 {
-    if (renderNamedFlowFragment() || isRenderNamedFlowFragment())
+    if (!document().cssRegionsEnabled() || renderNamedFlowFragment() || isRenderNamedFlowFragment())
         return;
 
-    if (document().cssRegionsEnabled() && style()->isDisplayRegionType() && style()->hasFlowFrom()) {
+    if (style()->isDisplayRegionType() && style()->hasFlowFrom()) {
         RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document());
         flowFragment->setStyleForNamedFlowFragment(style());
         setRenderNamedFlowFragment(flowFragment);
@@ -2625,11 +2620,20 @@ void RenderBlockFlow::updateLogicalHeight()
 
 void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFragment)
 {
-    if (!m_rareData)
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(this));
-    if (m_rareData->m_renderNamedFlowFragment)
-        m_rareData->m_renderNamedFlowFragment->destroy();
-    m_rareData->m_renderNamedFlowFragment = flowFragment;
+    RenderBlockFlowRareData& rareData = ensureRareData();
+    if (rareData.m_renderNamedFlowFragment)
+        rareData.m_renderNamedFlowFragment->destroy();
+    rareData.m_renderNamedFlowFragment = flowFragment;
+}
+
+// FIXME: Use this function in more places.
+RenderBlockFlow::RenderBlockFlowRareData& RenderBlockFlow::ensureRareData()
+{
+    if (m_rareData)
+        return *m_rareData;
+
+    m_rareData = adoptPtr(new RenderBlockFlowRareData(this));
+    return *m_rareData;
 }
 
 static bool shouldCheckLines(RenderObject& obj)

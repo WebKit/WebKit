@@ -1405,6 +1405,22 @@ static inline bool shapeInfoRequiresRelayout(const RenderBlock* block)
         info = block->layoutShapeInsideInfo();
     return info && info->needsLayout();
 }
+
+void RenderBlock::computeShapeSize()
+{
+    ShapeInsideInfo* shapeInsideInfo = this->shapeInsideInfo();
+    if (!shapeInsideInfo)
+        return;
+
+    if (isRenderNamedFlowFragment()) {
+        ShapeInsideInfo* parentShapeInsideInfo = toRenderBlock(parent())->shapeInsideInfo();
+        ASSERT(parentShapeInsideInfo);
+        shapeInsideInfo->setShapeSize(parentShapeInsideInfo->shapeSize().width(), parentShapeInsideInfo->shapeSize().height());
+    } else {
+        bool percentageLogicalHeightResolvable = percentageLogicalHeightIsResolvableFromBlock(this, false);
+        shapeInsideInfo->setShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : LayoutUnit());
+    }
+}
 #endif
 
 bool RenderBlock::updateShapesBeforeBlockLayout()
@@ -1432,24 +1448,6 @@ bool RenderBlock::updateShapesBeforeBlockLayout()
 #endif
 }
 
-#if ENABLE(CSS_SHAPES)
-void RenderBlock::computeShapeSize()
-{
-    ShapeInsideInfo* shapeInsideInfo = this->shapeInsideInfo();
-    if (!shapeInsideInfo)
-        return;
-
-    if (isRenderNamedFlowFragment()) {
-        ShapeInsideInfo* parentShapeInsideInfo = toRenderBlock(parent())->shapeInsideInfo();
-        ASSERT(parentShapeInsideInfo);
-        shapeInsideInfo->setShapeSize(parentShapeInsideInfo->shapeSize().width(), parentShapeInsideInfo->shapeSize().height());
-    } else {
-        bool percentageLogicalHeightResolvable = percentageLogicalHeightIsResolvableFromBlock(this, false);
-        shapeInsideInfo->setShapeSize(logicalWidth(), percentageLogicalHeightResolvable ? logicalHeight() : LayoutUnit());
-    }
-}
-#endif
-
 void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
 {
 #if ENABLE(CSS_SHAPES)
@@ -1460,6 +1458,16 @@ void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
 #else
     UNUSED_PARAM(heightChanged);
 #endif
+}
+
+void RenderBlock::prepareShapesAndPaginationBeforeBlockLayout(bool& relayoutChildren)
+{
+    // Regions changing widths can force us to relayout our children.
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (updateShapesBeforeBlockLayout())
+        relayoutChildren = true;
+    if (flowThread)
+        flowThread->logicalWidthChangedInRegionsForBlock(this, relayoutChildren);
 }
 
 bool RenderBlock::updateLogicalWidthAndColumnWidth()
@@ -5273,14 +5281,6 @@ void RenderBlock::setStaticInlinePositionForChild(RenderBox* child, LayoutUnit b
         inlinePosition += startOffsetForContent() - startOffsetForContent(blockOffset);
     }
     child->layer()->setStaticInlinePosition(inlinePosition);
-}
-
-bool RenderBlock::logicalWidthChangedInRegions(RenderFlowThread* flowThread) const
-{
-    if (!flowThread || !flowThread->hasValidRegionInfo())
-        return false;
-    
-    return flowThread->logicalWidthChangedInRegionsForBlock(this);
 }
 
 void RenderBlock::computeRegionRangeForBoxChild(const RenderBox* box) const

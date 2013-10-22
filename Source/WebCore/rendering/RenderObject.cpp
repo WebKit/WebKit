@@ -2558,14 +2558,6 @@ bool RenderObject::canBeReplacedWithInlineRunIn() const
     return true;
 }
 
-bool RenderObject::isRenderNamedFlowFragmentContainer() const
-{
-    if (!isRenderBlockFlow())
-        return false;
-
-    return toRenderBlockFlow(this)->renderNamedFlowFragment();
-}
-
 #if ENABLE(SVG)
 
 RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()

@@ -2761,10 +2761,12 @@ const AtomicString& Element::webkitRegionOverset() const
 
 Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
 {
-    document().updateLayoutIgnorePendingStylesheets();
-
     Vector<RefPtr<Range>> rangeObjects;
-    if (document().cssRegionsEnabled() && renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
+    if (!document().cssRegionsEnabled())
+        return rangeObjects;
+
+    document().updateLayoutIgnorePendingStylesheets();
+    if (renderer() && renderer()->isRenderNamedFlowFragmentContainer()) {
         RenderNamedFlowFragment* region = toRenderBlockFlow(renderer())->renderNamedFlowFragment();
         if (region->isValid())
             region->getRanges(rangeObjects);

@@ -164,7 +164,8 @@ static bool shouldCreateRenderer(const Element& element, const ContainerNode* re
 static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNode* renderingParentNode, RefPtr<RenderStyle>& style)
 {
 #if ENABLE(CSS_REGIONS)
-    const RenderObject* parentRenderer = renderingParentNode ? renderingParentNode->renderer() : 0;
+    // The parent of a region should always be an element.
+    const RenderElement* parentRenderer = renderingParentNode ? renderingParentNode->renderer() : 0;
 
     bool parentIsRegion = parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderNamedFlowFragmentContainer();
     bool parentIsNonRenderedInsideRegion = !parentRenderer && element.parentElement() && element.parentElement()->isInsideRegion();

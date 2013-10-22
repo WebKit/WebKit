@@ -55,6 +55,7 @@ public:
     bool isRenderBlockFlow() const;
     bool isRenderReplaced() const;
     bool isRenderInline() const;
+    bool isRenderNamedFlowFragmentContainer() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
@@ -260,7 +261,7 @@ inline const RenderElement* toRenderElement(const RenderObject* object)
 
 inline Element* RenderElement::generatingElement() const
 {
-    if (isRenderNamedFlowFragment() && parent())
+    if (parent() && isRenderNamedFlowFragment())
         return toRenderElement(parent())->generatingElement();
     return toElement(RenderObject::generatingNode());
 }
