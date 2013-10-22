@@ -57,7 +57,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # wkbuild._should_file_trigger_build is implemented for them.
-            for platform in ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]:
+            for platform in ["mac-leopard", "mac-lion",  "mac-mavericks", "mac-mountainlion", "mac-snowleopard", "win"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 
