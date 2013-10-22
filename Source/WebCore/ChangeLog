@@ -1,3 +1,39 @@
+2013-10-22  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Adding Mock class to test RTCPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=122848
+
+        Reviewed by Eric Carlson.
+
+        The following tests can be run:
+
+            RTCPeerConnection-createAnswer.html
+            RTCPeerConnection-createOffer.html
+            RTCPeerConnection-ice.html
+            RTCPeerConnection-localDescription.html
+            RTCPeerConnection-remoteDescription.html
+            RTCPeerConnection-state.html
+
+        Tests that require a MediaStream object, by invoking getUserMedia,
+        are not ready to run yet.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        (WebCore::createHandler):
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        * platform/mock/RTCNotifiersMock.cpp: Added.
+        * platform/mock/RTCNotifiersMock.h: Added.
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp: Added.
+        * platform/mock/RTCPeerConnectionHandlerMock.h: Copied from Source/WebCore/platform/mediastream/RTCPeerConnectionHandler.h.
+        * platform/mock/TimerEventBasedMock.h: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::enableMockRTCPeerConnectionHandler):
+        * testing/Internals.h:
+
 2013-10-22  Zan Dobersek  <zdobersek@igalia.com>
 
         WebCore::fillWithEmptyClients adopts new empty clients before leaking their pointers

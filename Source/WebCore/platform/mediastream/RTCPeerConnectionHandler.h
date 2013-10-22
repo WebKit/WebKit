@@ -45,6 +45,7 @@ class RTCConfiguration;
 class RTCDTMFSenderHandler;
 class RTCDataChannelHandler;
 class RTCIceCandidateDescriptor;
+class RTCPeerConnectionHandler;
 class RTCPeerConnectionHandlerClient;
 class RTCSessionDescriptionDescriptor;
 class RTCSessionDescriptionRequest;
@@ -67,9 +68,11 @@ public:
     int id;
 };
 
+typedef PassOwnPtr<RTCPeerConnectionHandler> (*CreatePeerConnectionHandler)(RTCPeerConnectionHandlerClient*);
+
 class RTCPeerConnectionHandler {
 public:
-    static PassOwnPtr<RTCPeerConnectionHandler> create(RTCPeerConnectionHandlerClient*);
+    static CreatePeerConnectionHandler create;
     virtual ~RTCPeerConnectionHandler() { }
 
     virtual bool initialize(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;

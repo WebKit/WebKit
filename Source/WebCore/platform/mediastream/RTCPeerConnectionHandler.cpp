@@ -39,10 +39,12 @@
 namespace WebCore {
 class RTCPeerConnectionHandlerClient;
 
-PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandler::create(RTCPeerConnectionHandlerClient*)
+static PassOwnPtr<RTCPeerConnectionHandler> createHandler(RTCPeerConnectionHandlerClient*)
 {
     return nullptr;
 }
+
+CreatePeerConnectionHandler RTCPeerConnectionHandler::create = createHandler;
 
 } // namespace WebCore
 

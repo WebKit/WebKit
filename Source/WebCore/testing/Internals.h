@@ -293,6 +293,10 @@ public:
     void enableMockSpeechSynthesizer();
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    void enableMockRTCPeerConnectionHandler();
+#endif
+
     String getImageSourceURL(Element*, ExceptionCode&);
 
 #if ENABLE(VIDEO)
