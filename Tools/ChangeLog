@@ -1,3 +1,15 @@
+2013-10-22  Lucas Forschler  <lforschler@apple.com>
+
+        Prepare WebKit Buildbot master for Mavericks.
+        This adds the following bot configurations:
+            Mavericks Release/Debug builders
+            Mavericks Release/Debug WK1 Testers
+            Mavericks Release/Debug WK2 Testers
+
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-10-21  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         Run tests as if they are expected to pass when --force is given.
