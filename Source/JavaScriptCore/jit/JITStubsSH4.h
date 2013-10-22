@@ -77,9 +77,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "add #12, r15" "\n"
     "rts" "\n"
     "nop" "\n"
-".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
-HIDE_SYMBOL(ctiTrampolineEnd) "\n"
-SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm volatile (

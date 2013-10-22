@@ -168,9 +168,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
     "add sp, sp, #12" "\n"
     "bx lr" "\n"
-".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
-HIDE_SYMBOL(ctiTrampolineEnd) "\n"
-SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm (
@@ -367,9 +364,6 @@ __asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*
     ldmia sp!, {r4-r6, r8-r11, lr}
     add sp, sp, #12
     bx lr
-}
-__asm void ctiTrampolineEnd()
-{
 }
 
 __asm void ctiOpThrowNotCaught()

@@ -79,18 +79,8 @@ class Structure;
 #define JIT_STUB
 #endif
 
-extern "C" void ctiVMHandleException();
 extern "C" void ctiOpThrowNotCaught();
 extern "C" EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*);
-#if ENABLE(DFG_JIT)
-extern "C" void ctiTrampolineEnd();
-
-inline bool returnAddressIsInCtiTrampoline(ReturnAddressPtr returnAddress)
-{
-    return returnAddress.value() >= bitwise_cast<void*>(&ctiTrampoline)
-        && returnAddress.value() < bitwise_cast<void*>(&ctiTrampolineEnd);
-}
-#endif
 
 #if USE(MASM_PROBE)
 extern "C" void ctiMasmProbeTrampoline();

@@ -115,10 +115,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
     "add sp, sp, #" STRINGIZE_VALUE_OF(SIZEOF_JITSTACKFRAME) "\n"
     "ret" "\n"
-".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
-".align 2" "\n"
-HIDE_SYMBOL(ctiTrampolineEnd) "\n"
-SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \
