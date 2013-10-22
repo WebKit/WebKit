@@ -110,7 +110,7 @@ public:
     LayoutUnit minLineHeightForReplacedRenderer(bool isFirstLine, LayoutUnit replacedHeight) const;
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
-    virtual void deleteLineBoxTree();
+    virtual void deleteLines();
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject&) OVERRIDE;

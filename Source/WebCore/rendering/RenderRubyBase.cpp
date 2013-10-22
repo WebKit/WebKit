@@ -117,7 +117,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* bef
         RenderBlock* anonBlockHere = toRenderBlock(firstChildHere);
         RenderBlock* anonBlockThere = toRenderBlock(lastChildThere);
         anonBlockHere->moveAllChildrenTo(anonBlockThere, true);
-        anonBlockHere->deleteLineBoxTree();
+        anonBlockHere->deleteLines();
         anonBlockHere->destroy();
     }
     // Move all remaining children normally.

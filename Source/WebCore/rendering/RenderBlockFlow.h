@@ -249,7 +249,7 @@ public:
     bool containsFloats() const OVERRIDE { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox*) const;
 
-    virtual void deleteLineBoxTree() OVERRIDE;
+    virtual void deleteLines() OVERRIDE;
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) OVERRIDE;
 
     void removeFloatingObjects();

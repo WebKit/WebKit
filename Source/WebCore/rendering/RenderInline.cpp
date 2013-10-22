@@ -441,7 +441,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     RenderBlock* block = containingBlock();
     
     // Delete our line boxes before we do the inline split into continuations.
-    block->deleteLineBoxTree();
+    block->deleteLines();
     
     bool madeNewBeforeBlock = false;
     if (block->isAnonymousBlock() && (!block->parent() || !block->parent()->createsAnonymousWrapper())) {
@@ -1339,7 +1339,7 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
         m_lineBoxes.dirtyLineBoxes();
 }
 
-void RenderInline::deleteLineBoxTree()
+void RenderInline::deleteLines()
 {
     m_lineBoxes.deleteLineBoxTree(renderArena());
 }

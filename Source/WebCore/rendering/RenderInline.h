@@ -58,7 +58,7 @@ public:
     InlineFlowBox* createAndAppendInlineFlowBox();
 
     void dirtyLineBoxes(bool fullLayout);
-    void deleteLineBoxTree();
+    void deleteLines();
 
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }

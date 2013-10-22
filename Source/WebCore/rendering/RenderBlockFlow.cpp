@@ -1611,14 +1611,14 @@ void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle* n
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
-void RenderBlockFlow::deleteLineBoxTree()
+void RenderBlockFlow::deleteLines()
 {
     if (containsFloats())
         m_floatingObjects->clearLineBoxTreePointers();
 
     m_lineBoxes.deleteLineBoxTree(renderArena());
 
-    RenderBlock::deleteLineBoxTree();
+    RenderBlock::deleteLines();
 }
 
 void RenderBlockFlow::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert)

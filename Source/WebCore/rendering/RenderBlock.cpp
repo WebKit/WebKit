@@ -502,7 +502,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     // If we are moving inline children from |this| to cloneBlock, then we need
     // to clear our line box tree.
     if (beforeChild && childrenInline())
-        deleteLineBoxTree();
+        deleteLines();
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
@@ -566,7 +566,7 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
     RenderBlock* block = containingColumnsBlock();
     
     // Delete our line boxes before we do the inline split into continuations.
-    block->deleteLineBoxTree();
+    block->deleteLines();
     
     bool madeNewBeforeBlock = false;
     if (block->isAnonymousColumnsBlock()) {
@@ -624,7 +624,7 @@ void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, R
                                // so that we don't have to patch all of the rest of the code later on.
     
     // Delete the block's line boxes before we do the split.
-    block->deleteLineBoxTree();
+    block->deleteLines();
 
     if (beforeChild && beforeChild->parent() != this)
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
@@ -886,7 +886,7 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
     } while (!sawInline);
 }
 
-void RenderBlock::deleteLineBoxTree()
+void RenderBlock::deleteLines()
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->recomputeIsIgnored(this);
@@ -910,7 +910,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
     if (!child)
         return;
 
-    deleteLineBoxTree();
+    deleteLines();
 
     // Since we are going to have block children, we have to move
     // back the run-in to its original place.
@@ -1045,7 +1045,7 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
     parent->removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
     child->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
     // Delete the now-empty block's lines and nuke it.
-    child->deleteLineBoxTree();
+    child->deleteLines();
     if (childFlowThread && childFlowThread->isRenderNamedFlowThread())
         toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
     child->destroy();
@@ -1106,7 +1106,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             nextBlock->moveAllChildrenIncludingFloatsTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());
             
             // Delete the now-empty block's lines and nuke it.
-            nextBlock->deleteLineBoxTree();
+            nextBlock->deleteLines();
             nextBlock->destroy();
             next = 0;
         }
@@ -1135,7 +1135,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
     if (!firstChild()) {
         // If this was our last child be sure to clear out our line boxes.
         if (childrenInline())
-            deleteLineBoxTree();
+            deleteLines();
 
         // If we are an empty anonymous block in the continuation chain,
         // we need to remove ourself and fix the continuation chain.
@@ -1644,9 +1644,9 @@ static void destroyRunIn(RenderBoxModelObject* runIn)
     // Delete our line box tree. This is needed as our children got moved
     // and our line box tree is no longer valid.
     if (runIn->isRenderBlock())
-        toRenderBlock(runIn)->deleteLineBoxTree();
+        toRenderBlock(runIn)->deleteLines();
     else if (runIn->isRenderInline())
-        toRenderInline(runIn)->deleteLineBoxTree();
+        toRenderInline(runIn)->deleteLines();
     else
         ASSERT_NOT_REACHED();
 

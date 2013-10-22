@@ -123,7 +123,7 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
             ASSERT(containingBlock);
             // Since we are moving the |object| to a new parent |fullscreenRenderer|,
             // the line box tree underneath our |containingBlock| is not longer valid.
-            containingBlock->deleteLineBoxTree();
+            containingBlock->deleteLines();
 
             parent->addChild(fullscreenRenderer, object);
             object->removeFromParent();

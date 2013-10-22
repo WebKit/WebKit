@@ -185,14 +185,14 @@ void RenderRubyRun::removeChild(RenderObject& child)
         RenderBlock* base = rubyBase();
         if (base && !base->firstChild()) {
             RenderBlockFlow::removeChild(*base);
-            base->deleteLineBoxTree();
+            base->deleteLines();
             base->destroy();
         }
 
         // If any of the above leaves the run empty, destroy it as well.
         if (isEmpty()) {
             parent()->removeChild(*this);
-            deleteLineBoxTree();
+            deleteLines();
             destroy();
         }
     }

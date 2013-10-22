@@ -1,3 +1,13 @@
+2013-10-22  Antti Koivisto  <antti@apple.com>
+
+        Rename deleteLineBoxTree to deleteLines
+        https://bugs.webkit.org/show_bug.cgi?id=123176
+
+        Reviewed by Andreas Kling.
+
+        RenderBlock::deleteLineBoxTree -> RenderBlock::deleteLines
+        RenderInline::deleteLineBoxTree -> RenderInline::deleteLines
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         {ClipPathOperation, FilterOperation}::getOperationType() should not include 'get'
