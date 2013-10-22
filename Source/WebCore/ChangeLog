@@ -1,3 +1,26 @@
+2013-10-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce ACCESSIBILITY_OBJECT_TYPE_CASTS to replace manual toFoo() in accessibility child class
+        https://bugs.webkit.org/show_bug.cgi?id=123140
+
+        Reviewed by Andreas Kling.
+
+        As a step to let toFoo use TYPE_CASTS_BASE, DEFINE_TYPE_CASTS can be used for toFoo() in accessibility
+        child class. The DEFINE_TYPE_CASTS will generate plenty more helper functions for accessibility type cast.
+
+        No new tests, no behavior changes.
+
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMockObject.h:
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGRoot.h:
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/AccessibilityTable.h:
+
 2013-10-22  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Add WebKit2 API for TLS errors

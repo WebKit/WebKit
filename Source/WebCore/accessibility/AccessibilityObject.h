@@ -932,6 +932,9 @@ inline int AccessibilityObject::lineForPosition(const VisiblePosition&) const { 
 inline void AccessibilityObject::updateBackingStore() { }
 #endif
 
+#define ACCESSIBILITY_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, AccessibilityObject, object, object->predicate, object.predicate)
+
 } // namespace WebCore
 
 #endif // AccessibilityObject_h

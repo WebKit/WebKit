@@ -96,12 +96,8 @@ protected:
 private:
     virtual void titleElementText(Vector<AccessibilityText>&) const OVERRIDE;
 };
-    
-inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
-    return static_cast<AccessibilityTable*>(object);
-}
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())
     
 } // namespace WebCore 
 

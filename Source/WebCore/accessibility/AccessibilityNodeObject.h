@@ -202,20 +202,7 @@ private:
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
 
-inline AccessibilityNodeObject* toAccessibilityNodeObject(AccessibilityObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityNodeObject());
-    return static_cast<AccessibilityNodeObject*>(object);
-}
-
-inline const AccessibilityNodeObject* toAccessibilityNodeObject(const AccessibilityObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityNodeObject());
-    return static_cast<const AccessibilityNodeObject*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toAccessibilityNodeObject(const AccessibilityNodeObject*);
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityNodeObject, isAccessibilityNodeObject())
 
 } // namespace WebCore
 

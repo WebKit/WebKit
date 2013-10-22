@@ -50,11 +50,7 @@ private:
     virtual bool isAccessibilitySVGRoot() const OVERRIDE { return true; }
 };
 
-inline AccessibilitySVGRoot* toAccessibilitySVGRoot(AccessibilityObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilitySVGRoot());
-    return static_cast<AccessibilitySVGRoot*>(object);
-}
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySVGRoot, isAccessibilitySVGRoot())
     
 } // namespace WebCore 
 

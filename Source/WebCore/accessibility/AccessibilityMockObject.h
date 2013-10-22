@@ -52,12 +52,8 @@ private:
 
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 }; 
-    
-inline AccessibilityMockObject* toAccessibilityMockObject(AccessibilityObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMockObject());
-    return static_cast<AccessibilityMockObject*>(object);
-}
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityMockObject, isMockObject())
     
 } // namespace WebCore 
 

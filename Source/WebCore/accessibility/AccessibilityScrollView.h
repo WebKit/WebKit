@@ -84,14 +84,7 @@ private:
     bool m_childrenDirty;
 };
 
-inline AccessibilityScrollView* toAccessibilityScrollView(AccessibilityObject* object)
-{
-    ASSERT(!object || object->isAccessibilityScrollView());
-    if (!object->isAccessibilityScrollView())
-        return 0;
-    
-    return static_cast<AccessibilityScrollView*>(object);
-}
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityScrollView, isAccessibilityScrollView())
     
 } // namespace WebCore
 
