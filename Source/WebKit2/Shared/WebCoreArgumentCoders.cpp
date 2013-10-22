@@ -42,6 +42,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/Image.h>
+#include <WebCore/Length.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
@@ -1180,6 +1181,7 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
     return true;
 }
 
+#if ENABLE(CSS_FILTERS)
 static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperation& filter)
 {
     encoder.encodeEnum(filter.getOperationType());
@@ -1320,5 +1322,6 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 
     return true;
 }
+#endif // ENABLE(CSS_FILTERS)
 
 } // namespace CoreIPC

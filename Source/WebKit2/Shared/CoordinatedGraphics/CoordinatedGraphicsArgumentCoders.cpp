@@ -79,16 +79,6 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
-void ArgumentCoder<Length>::encode(ArgumentEncoder& encoder, const Length& length)
-{
-    SimpleArgumentCoder<Length>::encode(encoder, length);
-}
-
-bool ArgumentCoder<Length>::decode(ArgumentDecoder& decoder, Length& length)
-{
-    return SimpleArgumentCoder<Length>::decode(decoder, length);
-}
-
 #if ENABLE(CSS_FILTERS)
 void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, const WebCore::FilterOperations& filters)
 {

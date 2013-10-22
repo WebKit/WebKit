@@ -1,3 +1,11 @@
+2013-10-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r157803 for !ENABLE(CSS_FILTERS) platforms.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Support hardware accelerated filters

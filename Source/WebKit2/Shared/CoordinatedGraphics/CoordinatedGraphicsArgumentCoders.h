@@ -59,11 +59,6 @@ struct GraphicsSurfaceToken;
 
 namespace CoreIPC {
 
-template<> struct ArgumentCoder<WebCore::Length> {
-    static void encode(ArgumentEncoder&, const WebCore::Length&);
-    static bool decode(ArgumentDecoder&, WebCore::Length&);
-};
-
 #if ENABLE(CSS_FILTERS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
