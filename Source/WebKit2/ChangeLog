@@ -1,3 +1,10 @@
+2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on EFL port after r157823
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode): renamed getOperationType() to type().
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         {ClipPathOperation, FilterOperation}::getOperationType() should not include 'get'
