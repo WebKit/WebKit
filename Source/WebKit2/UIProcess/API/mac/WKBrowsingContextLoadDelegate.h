@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @class WKBrowsingContextController;
+@class WKBackForwardListItem;
 
 @protocol WKBrowsingContextLoadDelegate <NSObject>
 @optional
