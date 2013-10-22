@@ -2589,7 +2589,7 @@ void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
     if (renderNamedFlowFragment() || isRenderNamedFlowFragment())
         return;
 
-    if (document().cssRegionsEnabled() && style()->isDisplayRegionType() && !style()->regionThread().isEmpty()) {
+    if (document().cssRegionsEnabled() && style()->isDisplayRegionType() && style()->hasFlowFrom()) {
         RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document());
         flowFragment->setStyleForNamedFlowFragment(style());
         setRenderNamedFlowFragment(flowFragment);

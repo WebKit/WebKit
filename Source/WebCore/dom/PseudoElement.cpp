@@ -80,7 +80,7 @@ PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
 void PseudoElement::didAttachRenderers()
 {
     RenderElement* renderer = this->renderer();
-    if (!renderer || !renderer->style()->regionThread().isEmpty())
+    if (!renderer || renderer->style()->hasFlowFrom())
         return;
 
     RenderStyle* style = renderer->style();
