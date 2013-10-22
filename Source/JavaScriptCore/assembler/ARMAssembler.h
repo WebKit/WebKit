@@ -151,6 +151,8 @@ namespace JSC {
         {
         }
 
+        ARMBuffer& buffer() { return m_buffer; }
+
         // ARM conditional constants
         typedef enum {
             EQ = 0x00000000, // Zero / Equal.

@@ -1,5 +1,23 @@
 2013-10-22  Julien Brianceau  <jbriance@cisco.com>
 
+        REGRESSION(r157690, r157699) Fix architectures using AssemblerBufferWithConstantPool.
+        https://bugs.webkit.org/show_bug.cgi?id=123092
+
+        Reviewed by Michael Saboff.
+
+        Impacted architectures are SH4 and ARM_TRADITIONAL.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::buffer):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::flushConstantPool):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::buffer):
+
+2013-10-22  Julien Brianceau  <jbriance@cisco.com>
+
         Remove unused stuff in JIT stubs.
         https://bugs.webkit.org/show_bug.cgi?id=123155
 

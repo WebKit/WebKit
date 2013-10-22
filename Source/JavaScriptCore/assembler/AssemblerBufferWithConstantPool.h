@@ -223,6 +223,41 @@ public:
         return m_numConsts;
     }
 
+    void flushConstantPool(bool useBarrier = true)
+    {
+        if (!m_numConsts)
+            return;
+        int alignPool = (codeSize() + (useBarrier ? barrierSize : 0)) & (sizeof(uint64_t) - 1);
+
+        if (alignPool)
+            alignPool = sizeof(uint64_t) - alignPool;
+
+        // Callback to protect the constant pool from execution
+        if (useBarrier)
+            putIntegral(AssemblerType::placeConstantPoolBarrier(m_numConsts * sizeof(uint32_t) + alignPool));
+
+        if (alignPool) {
+            if (alignPool & 1)
+                AssemblerBuffer::putByte(AssemblerType::padForAlign8);
+            if (alignPool & 2)
+                AssemblerBuffer::putShort(AssemblerType::padForAlign16);
+            if (alignPool & 4)
+                AssemblerBuffer::putInt(AssemblerType::padForAlign32);
+        }
+
+        int constPoolOffset = codeSize();
+        append(reinterpret_cast<char*>(m_pool), m_numConsts * sizeof(uint32_t));
+
+        // Patch each PC relative load
+        for (LoadOffsets::Iterator iter = m_loadOffsets.begin(); iter != m_loadOffsets.end(); ++iter) {
+            void* loadAddr = reinterpret_cast<char*>(data()) + *iter;
+            AssemblerType::patchConstantPoolLoad(loadAddr, reinterpret_cast<char*>(data()) + constPoolOffset);
+        }
+
+        m_loadOffsets.clear();
+        m_numConsts = 0;
+    }
+
 private:
     void correctDeltas(int insnSize)
     {
@@ -265,41 +300,6 @@ private:
         ++m_numConsts;
 
         correctDeltas(sizeof(IntegralType), 4);
-    }
-
-    void flushConstantPool(bool useBarrier = true)
-    {
-        if (m_numConsts == 0)
-            return;
-        int alignPool = (codeSize() + (useBarrier ? barrierSize : 0)) & (sizeof(uint64_t) - 1);
-
-        if (alignPool)
-            alignPool = sizeof(uint64_t) - alignPool;
-
-        // Callback to protect the constant pool from execution
-        if (useBarrier)
-            putIntegral(AssemblerType::placeConstantPoolBarrier(m_numConsts * sizeof(uint32_t) + alignPool));
-
-        if (alignPool) {
-            if (alignPool & 1)
-                AssemblerBuffer::putByte(AssemblerType::padForAlign8);
-            if (alignPool & 2)
-                AssemblerBuffer::putShort(AssemblerType::padForAlign16);
-            if (alignPool & 4)
-                AssemblerBuffer::putInt(AssemblerType::padForAlign32);
-        }
-
-        int constPoolOffset = codeSize();
-        append(reinterpret_cast<char*>(m_pool), m_numConsts * sizeof(uint32_t));
-
-        // Patch each PC relative load
-        for (LoadOffsets::Iterator iter = m_loadOffsets.begin(); iter != m_loadOffsets.end(); ++iter) {
-            void* loadAddr = reinterpret_cast<char*>(data()) + *iter;
-            AssemblerType::patchConstantPoolLoad(loadAddr, reinterpret_cast<char*>(data()) + constPoolOffset);
-        }
-
-        m_loadOffsets.clear();
-        m_numConsts = 0;
     }
 
     void flushIfNoSpaceFor(int nextInsnSize)

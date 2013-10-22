@@ -349,7 +349,7 @@ public:
     {
     }
 
-    AssemblerBuffer& buffer() { return m_buffer; }
+    SH4Buffer& buffer() { return m_buffer; }
 
     // SH4 condition codes
     typedef enum {

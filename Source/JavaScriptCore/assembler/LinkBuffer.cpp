@@ -136,6 +136,9 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 {
     ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
+#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+    m_assembler->m_assembler.buffer().flushConstantPool(false);
+#endif
     AssemblerBuffer& buffer = m_assembler->m_assembler.buffer();
     allocate(buffer.codeSize(), ownerUID, effort);
     if (!m_didAllocate)
