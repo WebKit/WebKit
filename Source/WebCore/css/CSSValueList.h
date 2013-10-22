@@ -31,21 +31,21 @@ class CSSParserValueList;
 
 class CSSValueList : public CSSValue {
 public:
-    static PassRefPtr<CSSValueList> createCommaSeparated()
+    static PassRef<CSSValueList> createCommaSeparated()
     {
-        return adoptRef(new CSSValueList(CommaSeparator));
+        return adoptRef(*new CSSValueList(CommaSeparator));
     }
-    static PassRefPtr<CSSValueList> createSpaceSeparated()
+    static PassRef<CSSValueList> createSpaceSeparated()
     {
-        return adoptRef(new CSSValueList(SpaceSeparator));
+        return adoptRef(*new CSSValueList(SpaceSeparator));
     }
-    static PassRefPtr<CSSValueList> createSlashSeparated()
+    static PassRef<CSSValueList> createSlashSeparated()
     {
-        return adoptRef(new CSSValueList(SlashSeparator));
+        return adoptRef(*new CSSValueList(SlashSeparator));
     }
-    static PassRefPtr<CSSValueList> createFromParserValueList(CSSParserValueList* list)
+    static PassRef<CSSValueList> createFromParserValueList(CSSParserValueList& list)
     {
-        return adoptRef(new CSSValueList(list));
+        return adoptRef(*new CSSValueList(list));
     }
 
     size_t length() const { return m_values.size(); }
@@ -78,7 +78,7 @@ protected:
 
 private:
     explicit CSSValueList(ValueListSeparator);
-    explicit CSSValueList(CSSParserValueList*);
+    explicit CSSValueList(CSSParserValueList&);
 
     Vector<RefPtr<CSSValue>, 4> m_values;
 };

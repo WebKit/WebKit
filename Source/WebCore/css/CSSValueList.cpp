@@ -39,15 +39,13 @@ CSSValueList::CSSValueList(ValueListSeparator listSeparator)
     m_valueListSeparator = listSeparator;
 }
 
-CSSValueList::CSSValueList(CSSParserValueList* parserValues)
+CSSValueList::CSSValueList(CSSParserValueList& parserValues)
     : CSSValue(ValueListClass)
 {
     m_valueListSeparator = SpaceSeparator;
-    if (parserValues) {
-        m_values.reserveInitialCapacity(parserValues->size());
-        for (unsigned i = 0; i < parserValues->size(); ++i)
-            m_values.uncheckedAppend(parserValues->valueAt(i)->createCSSValue());
-    }
+    m_values.reserveInitialCapacity(parserValues.size());
+    for (unsigned i = 0, size = parserValues.size(); i < size; ++i)
+        m_values.uncheckedAppend(parserValues.valueAt(i)->createCSSValue());
 }
 
 bool CSSValueList::removeAll(CSSValue* val)
