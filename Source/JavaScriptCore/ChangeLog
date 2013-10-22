@@ -1,3 +1,15 @@
+2013-10-22  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Add missing lastRegister(), firstFPRegister() and lastFPRegister(). 
+        https://bugs.webkit.org/show_bug.cgi?id=123157
+
+        Reviewed by Andreas Kling.
+
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::lastRegister):
+        (JSC::SH4Assembler::firstFPRegister):
+        (JSC::SH4Assembler::lastFPRegister):
+
 2013-10-22  Brian Holt  <brian.holt@samsung.com>
 
         Build break on ARMv7 after r157209
