@@ -1,3 +1,12 @@
+2013-10-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream more ARMv7s bits
+        https://bugs.webkit.org/show_bug.cgi?id=123052
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/WebCore.xcconfig:
+
 2013-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Try to fix Mavericks build; use <> for framework include.

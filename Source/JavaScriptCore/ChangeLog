@@ -1,5 +1,16 @@
 2013-10-22  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Upstream more ARMv7s bits
+        https://bugs.webkit.org/show_bug.cgi?id=123052
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * Configurations/ToolExecutable.xcconfig: Enable CLANG_ENABLE_OBJC_ARC for i386 as I'm
+        modifying a file in JavaScriptCore/Configurations.
+
+2013-10-22  Daniel Bates  <dabates@apple.com>
+
         [iOS] Upstream JSLock changes
         https://bugs.webkit.org/show_bug.cgi?id=123107
 
