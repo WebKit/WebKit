@@ -41,7 +41,7 @@ class IDBBackingStoreInterface;
 class IDBDatabase;
 class IDBFactoryBackendInterface;
 class IDBTransactionBackendInterface;
-class IDBTransactionCoordinatorLevelDB;
+class IDBTransactionCoordinator;
 
 class IDBDatabaseBackendLevelDB : public IDBDatabaseBackendInterface {
 public:
@@ -74,7 +74,7 @@ public:
     virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
     virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
-    IDBTransactionCoordinatorLevelDB* transactionCoordinator() const { return m_transactionCoordinator.get(); }
+    IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
     void transactionStarted(IDBTransactionBackendInterface*);
     void transactionFinished(IDBTransactionBackendInterface*);
     void transactionFinishedAndCompleteFired(IDBTransactionBackendInterface*);
@@ -110,7 +110,7 @@ private:
     // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
     RefPtr<IDBFactoryBackendInterface> m_factory;
 
-    OwnPtr<IDBTransactionCoordinatorLevelDB> m_transactionCoordinator;
+    OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
     RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
 
     typedef HashMap<int64_t, IDBTransactionBackendInterface*> TransactionMap;

@@ -1,3 +1,40 @@
+2013-10-21  Brady Eidson  <beidson@apple.com>
+
+        Make IDBTransactionCoordinatorLevelDB cross platform
+        https://bugs.webkit.org/show_bug.cgi?id=123124
+
+        Enthusiastically reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Make more methods pure virtual in the interface:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        Update the name of the class, and use IDBTransactionBackendInterface instead of IDBTransactionBackendLeveDB:
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.cpp.
+        (WebCore::IDBTransactionCoordinator::create):
+        (WebCore::IDBTransactionCoordinator::IDBTransactionCoordinator):
+        (WebCore::IDBTransactionCoordinator::~IDBTransactionCoordinator):
+        (WebCore::IDBTransactionCoordinator::didCreateTransaction):
+        (WebCore::IDBTransactionCoordinator::didStartTransaction):
+        (WebCore::IDBTransactionCoordinator::didFinishTransaction):
+        (WebCore::IDBTransactionCoordinator::isActive):
+        (WebCore::IDBTransactionCoordinator::processStartedTransactions):
+        (WebCore::doScopesOverlap):
+        (WebCore::IDBTransactionCoordinator::canRunTransaction):
+        * Modules/indexeddb/IDBTransactionCoordinator.h: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.h.
+
+        Update the name of the class elsewhere:
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h:
+        (WebCore::IDBDatabaseBackendLevelDB::transactionCoordinator):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+
 2013-10-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream JSGlobalObject::shouldInterruptScriptBeforeTimeout()

@@ -1811,6 +1811,8 @@
 		51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E3F9D40DA05E1D00250911 /* JSStorage.cpp */; };
 		51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E4143216A6595100C633C7 /* ResourceHandleTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E6820F16387302003BBF3C /* LoaderStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51EAC5671815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */; };
+		51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
 		51F6E0A31811D2520058A00A /* IDBTransactionBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 517FBA18151AA71B00B57959 /* DOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8409,6 +8411,8 @@
 		51E3F9D50DA05E1D00250911 /* JSStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorage.h; sourceTree = "<group>"; };
 		51E4143216A6595100C633C7 /* ResourceHandleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceHandleTypes.h; sourceTree = "<group>"; };
 		51E6820F16387302003BBF3C /* LoaderStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderStrategy.h; sourceTree = "<group>"; };
+		51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionCoordinator.cpp; sourceTree = "<group>"; };
+		51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionCoordinator.h; sourceTree = "<group>"; };
 		51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -16756,6 +16760,8 @@
 				51D719A5181106E00016DC51 /* IDBTransaction.h */,
 				51D719A6181106E00016DC51 /* IDBTransaction.idl */,
 				51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */,
+				51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */,
+				51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */,
 				51D719AB181106E00016DC51 /* IDBVersionChangeEvent.cpp */,
 				51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */,
 				51D719AD181106E00016DC51 /* IDBVersionChangeEvent.idl */,
@@ -22828,6 +22834,7 @@
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
+				51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
 				65DF323C09D1DE65001BE325 /* JSCanvasProxy.h in Headers */,
 				E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */,
@@ -26357,6 +26364,7 @@
 				1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */,
 				1AFE11990CBFFCC4003017FA /* JSSQLResultSetRowList.cpp in Sources */,
 				51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */,
+				51EAC5671815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
 				B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */,
 				514C76380CE9225E007EF3CD /* JSSQLTransaction.cpp in Sources */,

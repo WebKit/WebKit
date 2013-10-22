@@ -44,7 +44,7 @@ class IDBBackingStoreLevelDB;
 class IDBCursorBackendLevelDB;
 class IDBDatabaseCallbacks;
 
-class IDBTransactionBackendLevelDB : public IDBTransactionBackendInterface {
+class IDBTransactionBackendLevelDB FINAL : public IDBTransactionBackendInterface {
 public:
     static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     virtual ~IDBTransactionBackendLevelDB();
@@ -59,9 +59,9 @@ public:
         virtual void perform() = 0;
     };
 
-    void run();
+    virtual void run() OVERRIDE;
     virtual IndexedDB::TransactionMode mode() const OVERRIDE FINAL { return m_mode; }
-    const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
+    const HashSet<int64_t>& scope() const OVERRIDE { return m_objectStoreIds; }
     void scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
     void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendLevelDB*);

@@ -35,7 +35,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
 #include "IDBTransactionBackendLevelDBOperations.h"
-#include "IDBTransactionCoordinatorLevelDB.h"
+#include "IDBTransactionCoordinator.h"
 #include "Logging.h"
 
 namespace WebCore {

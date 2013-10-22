@@ -34,7 +34,7 @@
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionBackendLevelDB.h"
-#include "IDBTransactionCoordinatorLevelDB.h"
+#include "IDBTransactionCoordinator.h"
 #include "Logging.h"
 #include "SecurityOrigin.h"
 

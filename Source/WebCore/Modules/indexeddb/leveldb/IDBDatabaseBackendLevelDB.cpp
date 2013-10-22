@@ -35,7 +35,7 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendLevelDB.h"
 #include "IDBTransactionBackendLevelDB.h"
-#include "IDBTransactionCoordinatorLevelDB.h"
+#include "IDBTransactionCoordinator.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 #include <wtf/TemporaryChange.h>
@@ -55,7 +55,7 @@ IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBack
     , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
-    , m_transactionCoordinator(IDBTransactionCoordinatorLevelDB::create())
+    , m_transactionCoordinator(IDBTransactionCoordinator::create())
     , m_closingConnection(false)
 {
     ASSERT(!m_metadata.name.isNull());

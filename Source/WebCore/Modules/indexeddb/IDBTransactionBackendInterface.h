@@ -52,9 +52,11 @@ public:
 
     virtual IndexedDB::TransactionMode mode() const = 0;
 
+    virtual void run() = 0;
     virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void abort(PassRefPtr<IDBDatabaseError>) = 0;
+    virtual const HashSet<int64_t>& scope() const = 0;
 
     virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;
     virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;
