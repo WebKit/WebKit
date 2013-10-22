@@ -35,6 +35,7 @@
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -168,6 +169,10 @@ public:
     void nonVisibleProcessCleanupTimerFired(WebCore::Timer<WebProcess>*);
 
     void updateActivePages();
+
+#if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
+#endif
 
 private:
     WebProcess();

@@ -25,6 +25,7 @@
 #define WebKitWebContext_h
 
 #include <glib-object.h>
+#include <webkit2/WebKitCertificateInfo.h>
 #include <webkit2/WebKitCookieManager.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
@@ -64,7 +65,10 @@ typedef enum {
 /**
  * WebKitTLSErrorsPolicy:
  * @WEBKIT_TLS_ERRORS_POLICY_IGNORE: Ignore TLS errors.
- * @WEBKIT_TLS_ERRORS_POLICY_FAIL: TLS errors make the load to finish with an error.
+ * @WEBKIT_TLS_ERRORS_POLICY_FAIL: TLS errors will emit
+ *   #WebKitWebView::load-failed-with-tls-errors and, if the signal is handled,
+ *   finish the load. In case the signal is not handled,
+ *   #WebKitWebView::load-failed is emitted before the load finishes.
  *
  * Enum values used to denote the TLS errors policy.
  */
@@ -198,6 +202,11 @@ webkit_web_context_prefetch_dns                     (WebKitWebContext           
 WEBKIT_API void
 webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
                                                      const gchar                   *directory);
+
+WEBKIT_API void
+webkit_web_context_allow_tls_certificate_for_host   (WebKitWebContext              *context,
+                                                     WebKitCertificateInfo         *info,
+                                                     const gchar                   *host);
 
 G_END_DECLS
 

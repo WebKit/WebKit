@@ -200,58 +200,60 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    void       (* load_changed)              (WebKitWebView               *web_view,
-                                              WebKitLoadEvent              load_event);
-    gboolean   (* load_failed)               (WebKitWebView               *web_view,
-                                              WebKitLoadEvent              load_event,
-                                              const gchar                 *failing_uri,
-                                              GError                      *error);
+    void       (* load_changed)                (WebKitWebView               *web_view,
+                                                WebKitLoadEvent              load_event);
+    gboolean   (* load_failed)                 (WebKitWebView               *web_view,
+                                                WebKitLoadEvent              load_event,
+                                                const gchar                 *failing_uri,
+                                                GError                      *error);
 
-    GtkWidget *(* create)                    (WebKitWebView               *web_view);
-    void       (* ready_to_show)             (WebKitWebView               *web_view);
-    void       (* run_as_modal)              (WebKitWebView               *web_view);
-    void       (* close)                     (WebKitWebView               *web_view);
+    GtkWidget *(* create)                      (WebKitWebView               *web_view);
+    void       (* ready_to_show)               (WebKitWebView               *web_view);
+    void       (* run_as_modal)                (WebKitWebView               *web_view);
+    void       (* close)                       (WebKitWebView               *web_view);
 
-    gboolean   (* script_dialog)             (WebKitWebView               *web_view,
-                                              WebKitScriptDialog          *dialog)  ;
+    gboolean   (* script_dialog)               (WebKitWebView               *web_view,
+                                                WebKitScriptDialog          *dialog)  ;
 
-    gboolean   (* decide_policy)             (WebKitWebView               *web_view,
-                                              WebKitPolicyDecision        *decision,
-                                              WebKitPolicyDecisionType     type);
-    gboolean   (* permission_request)        (WebKitWebView               *web_view,
-                                              WebKitPermissionRequest     *permission_request);
-    void       (* mouse_target_changed)      (WebKitWebView               *web_view,
-                                              WebKitHitTestResult         *hit_test_result,
-                                              guint                        modifiers);
-    gboolean   (* print)                     (WebKitWebView               *web_view,
-                                              WebKitPrintOperation        *print_operation);
-    void       (* resource_load_started)     (WebKitWebView               *web_view,
-                                              WebKitWebResource           *resource,
-                                              WebKitURIRequest            *request);
-    gboolean   (* enter_fullscreen)          (WebKitWebView               *web_view);
-    gboolean   (* leave_fullscreen)          (WebKitWebView               *web_view);
-    gboolean   (* run_file_chooser)          (WebKitWebView               *web_view,
-                                              WebKitFileChooserRequest    *request);
-    gboolean   (* context_menu)              (WebKitWebView               *web_view,
-                                              WebKitContextMenu           *context_menu,
-                                              GdkEvent                    *event,
-                                              WebKitHitTestResult         *hit_test_result);
-    void       (* context_menu_dismissed)    (WebKitWebView               *web_view);
-    void       (* submit_form)               (WebKitWebView               *web_view,
-                                              WebKitFormSubmissionRequest *request);
-    void       (* insecure_content_detected) (WebKitWebView               *web_view,
-                                              WebKitInsecureContentEvent   event);
-    gboolean   (* web_process_crashed)       (WebKitWebView               *web_view);
+    gboolean   (* decide_policy)               (WebKitWebView               *web_view,
+                                                WebKitPolicyDecision        *decision,
+                                                WebKitPolicyDecisionType     type);
+    gboolean   (* permission_request)          (WebKitWebView               *web_view,
+                                                WebKitPermissionRequest     *permission_request);
+    void       (* mouse_target_changed)        (WebKitWebView               *web_view,
+                                                WebKitHitTestResult         *hit_test_result,
+                                                guint                        modifiers);
+    gboolean   (* print)                       (WebKitWebView               *web_view,
+                                                WebKitPrintOperation        *print_operation);
+    void       (* resource_load_started)       (WebKitWebView               *web_view,
+                                                WebKitWebResource           *resource,
+                                                WebKitURIRequest            *request);
+    gboolean   (* enter_fullscreen)            (WebKitWebView               *web_view);
+    gboolean   (* leave_fullscreen)            (WebKitWebView               *web_view);
+    gboolean   (* run_file_chooser)            (WebKitWebView               *web_view,
+                                                WebKitFileChooserRequest    *request);
+    gboolean   (* context_menu)                (WebKitWebView               *web_view,
+                                                WebKitContextMenu           *context_menu,
+                                                GdkEvent                    *event,
+                                                WebKitHitTestResult         *hit_test_result);
+    void       (* context_menu_dismissed)      (WebKitWebView               *web_view);
+    void       (* submit_form)                 (WebKitWebView               *web_view,
+                                                WebKitFormSubmissionRequest *request);
+    void       (* insecure_content_detected)   (WebKitWebView               *web_view,
+                                                WebKitInsecureContentEvent   event);
+    gboolean   (* web_process_crashed)         (WebKitWebView               *web_view);
 
-    gboolean   (* authenticate)              (WebKitWebView               *web_view,
-                                              WebKitAuthenticationRequest *request);
+    gboolean   (* authenticate)                (WebKitWebView               *web_view,
+                                                WebKitAuthenticationRequest *request);
+    gboolean   (* load_failed_with_tls_errors) (WebKitWebView               *web_view,
+                                                WebKitCertificateInfo       *info,
+                                                const gchar                 *host);
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
-    void (*_webkit_reserved6) (void);
 };
 
 WEBKIT_API GType

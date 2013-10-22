@@ -48,6 +48,7 @@ webkit_web_context_get_tls_errors_policy
 webkit_web_context_set_web_extensions_directory
 webkit_web_context_prefetch_dns
 webkit_web_context_set_disk_cache_directory
+webkit_web_context_allow_tls_certificate_for_host
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback
@@ -1096,4 +1097,19 @@ WEBKIT_SCRIPT_WORLD_GET_CLASS
 <SUBSECTION Private>
 WebKitScriptWorldPrivate
 webkit_script_world_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitCertificateInfo</FILE>
+WebKitCertificateInfo
+webkit_certificate_info_copy
+webkit_certificate_info_free
+webkit_certificate_info_get_tls_certificate
+webkit_certificate_info_get_tls_errors
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_CERTIFICATE_INFO
+
+<SUBSECTION Private>
+webkit_certificate_info_get_type
 </SECTION>

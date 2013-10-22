@@ -82,4 +82,8 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(MAC)
     SetProcessSuppressionEnabled(bool flag);
 #endif
+
+#if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
+    AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, WTF::String host)
+#endif
 }

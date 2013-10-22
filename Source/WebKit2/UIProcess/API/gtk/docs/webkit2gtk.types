@@ -27,3 +27,4 @@ webkit_web_page_get_type
 webkit_authentication_request_get_type
 webkit_credential_get_type
 webkit_frame_get_type
+webkit_certificate_info_get_type

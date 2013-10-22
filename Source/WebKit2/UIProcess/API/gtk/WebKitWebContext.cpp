@@ -20,8 +20,10 @@
 #include "config.h"
 #include "WebKitWebContext.h"
 
+#include "WebCertificateInfo.h"
 #include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebKitCertificateInfoPrivate.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
@@ -805,6 +807,24 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     ImmutableDictionary::MapType message;
     message.set(String::fromUTF8("Hostname"), WebString::create(String::fromUTF8(hostname)));
     context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), ImmutableDictionary::adopt(message).get());
+}
+
+/**
+ * webkit_web_context_allow_tls_certificate_for_host:
+ * @context: a #WebKitWebContext
+ * @info: a #WebKitCertificateInfo
+ * @host: the host for which a certificate is to be allowed
+ *
+ * Ignore further TLS errors on the @host for the certificate present in @info.
+ */
+void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context, WebKitCertificateInfo* info, const gchar* host)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(info);
+    g_return_if_fail(host);
+
+    RefPtr<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(webkitCertificateInfoGetCertificateInfo(info));
+    context->priv->context->allowSpecificHTTPSCertificateForHost(webCertificateInfo.get(), String::fromUTF8(host));
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

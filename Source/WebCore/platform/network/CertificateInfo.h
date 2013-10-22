@@ -43,6 +43,8 @@ public:
 
 #if PLATFORM(MAC)
     explicit CertificateInfo(CFArrayRef certificateChain);
+#elif USE(SOUP)
+    explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
 #endif
 
     ~CertificateInfo();

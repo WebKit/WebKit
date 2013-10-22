@@ -29,6 +29,7 @@
 #include "WebKitAuthenticationDialog.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitCertificateInfoPrivate.h"
 #include "WebKitContextMenuClient.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
@@ -89,6 +90,7 @@ using namespace WebCore;
 enum {
     LOAD_CHANGED,
     LOAD_FAILED,
+    LOAD_FAILED_WITH_TLS_ERRORS,
 
     CREATE,
     READY_TO_SHOW,
@@ -847,6 +849,39 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      G_TYPE_POINTER);
 
     /**
+     * WebKitWebView::load-failed-with-tls-errors:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @info: a #WebKitCertificateInfo
+     * @host: the host on which the error occurred
+     *
+     * Emitted when a TLS error occurs during a load operation. The @info
+     * object contains information about the error such as the #GTlsCertificate
+     * and the #GTlsCertificateFlags. To allow an exception for this certificate
+     * and this host use webkit_web_context_allow_tls_certificate_for_host().
+     *
+     * To handle this signal asynchronously you should copy the #WebKitCertificateInfo
+     * with webkit_certificate_info_copy() and return %TRUE.
+     *
+     * If %FALSE is returned, #WebKitWebView::load-failed will be emitted. The load
+     * will finish regardless of the returned value.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     * Since: 2.4
+     */
+    signals[LOAD_FAILED_WITH_TLS_ERRORS] =
+        g_signal_new("load-failed-with-tls-errors",
+            G_TYPE_FROM_CLASS(webViewClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebViewClass, load_failed_with_tls_errors),
+            g_signal_accumulator_true_handled, 0 /* accumulator data */,
+            webkit_marshal_BOOLEAN__BOXED_STRING,
+            G_TYPE_BOOLEAN, 2, /* number of parameters */
+            WEBKIT_TYPE_CERTIFICATE_INFO  | G_SIGNAL_TYPE_STATIC_SCOPE,
+            G_TYPE_STRING);
+
+    /**
      * WebKitWebView::create:
      * @web_view: the #WebKitWebView on which the signal is emitted
      *
@@ -1509,15 +1544,19 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
 }
 
-void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError *error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
+void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError* error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
 {
     webkitWebViewSetIsLoading(webView, false);
     webkitWebViewCancelAuthenticationRequest(webView);
 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context);
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
-        webkitWebViewLoadFailed(webView, WEBKIT_LOAD_STARTED, failingURI, error);
-        return;
+        GOwnPtr<SoupURI> soupURI(soup_uri_new(failingURI));
+        WebKitCertificateInfo info(certificate, tlsErrors);
+        gboolean returnValue;
+        g_signal_emit(webView, signals[LOAD_FAILED_WITH_TLS_ERRORS], 0, &info, soupURI->host, &returnValue);
+        if (!returnValue)
+            g_signal_emit(webView, signals[LOAD_FAILED], 0, WEBKIT_LOAD_STARTED, failingURI, error, &returnValue);
     }
 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);

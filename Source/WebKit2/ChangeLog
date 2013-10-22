@@ -1,3 +1,55 @@
+2013-10-22  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Add WebKit2 API for TLS errors
+        https://bugs.webkit.org/show_bug.cgi?id=120160
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new signal load-failed-with-tls-errors that is emitted with
+        a WebKitCertificateInfo boxed type to allow users to deal with TLS
+        errors. A new API is exposed in WebKitWebContext to allow
+        exceptions for TLS errors on a given host.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitCertificateInfo.cpp: Added.
+        (webkitCertificateInfoGetCertificateInfo):
+        (webkit_certificate_info_copy):
+        (webkit_certificate_info_free):
+        (webkit_certificate_info_get_tls_certificate):
+        (webkit_certificate_info_get_tls_errors):
+        * UIProcess/API/gtk/WebKitCertificateInfo.h: Added.
+        * UIProcess/API/gtk/WebKitCertificateInfoPrivate.h: Added.
+        (_WebKitCertificateInfo::_WebKitCertificateInfo):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_allow_tls_certificate_for_host): Support TLS
+        exceptions for a given host.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Added new signal.
+        (webkitWebViewLoadFailedWithTLSErrors): Emit new signal with
+        WebKitCertificateInfo and host.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk.types:
+        * UIProcess/API/gtk/tests/TestSSL.cpp:
+        (testLoadFailedWithTLSErrors):
+        (httpsServerCallback):
+        (beforeAll): Added new test.
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/gtk/webkit2marshal.list:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::allowSpecificHTTPSCertificateForHost): Send
+        message to WebProcess to allow a certificate and host pair.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: New message to tell
+        WebProcess to allow a specific TLS certificate for a given host.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost): Allow
+        certificate and host pair.
+
 2013-10-22  Dan Bernstein  <mitz@apple.com>
 
         Try to make the 32-bit Mac build happy.

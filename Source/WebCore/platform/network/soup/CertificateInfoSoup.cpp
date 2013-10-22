@@ -34,6 +34,12 @@ CertificateInfo::CertificateInfo()
 {
 }
 
+CertificateInfo::CertificateInfo(GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
+    : m_certificate(certificate)
+    , m_tlsErrors(tlsErrors)
+{
+}
+
 CertificateInfo::~CertificateInfo()
 {
 }

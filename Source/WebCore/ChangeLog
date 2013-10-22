@@ -1,3 +1,17 @@
+2013-10-22  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Add WebKit2 API for TLS errors
+        https://bugs.webkit.org/show_bug.cgi?id=120160
+
+        Reviewed by Carlos Garcia Campos.
+
+        Added a new constructor for CertificateInfo under Soup.
+
+        * platform/network/CertificateInfo.h:
+        * platform/network/soup/CertificateInfoSoup.cpp:
+        (WebCore::CertificateInfo::CertificateInfo): New constructor using
+        GTlsCertificateFlags and GTlsCertificate.
+
 2013-10-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Use RenderStyle::hasFlowFrom when needed
