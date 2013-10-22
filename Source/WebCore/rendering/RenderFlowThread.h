@@ -45,9 +45,9 @@ class RenderNamedFlowFragment;
 class RenderStyle;
 class RenderRegion;
 
-#if USE(ACCELERATED_COMPOSITING)
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 typedef Vector<RenderLayer*> RenderLayerList;
+#if USE(ACCELERATED_COMPOSITING)
 typedef HashMap<RenderNamedFlowFragment*, RenderLayerList> RegionToLayerListMap;
 typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
 #endif
