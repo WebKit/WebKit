@@ -432,7 +432,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJZJ operat
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(V_JITOperation_EJ operation, GPRReg arg1Tag, GPRReg arg1Payload)
 {
-    setupArgumentsWithExecState(arg1Payload, arg1Tag);
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag);
     updateTopCallFrame();
     return appendCall(operation);
 }
@@ -441,7 +441,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(F_JITOperation_EJJZ operat
 {
 #if CPU(SH4)
     // We have to put arg3 in the 4th argument register (r7) as 64-bit value arg2 will be put on stack for sh4 architecure.
-    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg3), arg2Payload, arg2Tag, TrustedImm32(arg3));
+    setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImm32(arg3), arg2Payload, arg2Tag);
 #else
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1Payload, arg1Tag, arg2Payload, arg2Tag, TrustedImm32(arg3));
 #endif
@@ -510,7 +510,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ECICC opera
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJ operation, RegisterID regOp1Tag, RegisterID regOp1Payload)
 {
-    setupArgumentsWithExecState(regOp1Payload, regOp1Tag);
+    setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG regOp1Payload, regOp1Tag);
     return appendCallWithExceptionCheck(operation);
 }
 
@@ -526,7 +526,7 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_ESsiJJI ope
     return appendCallWithExceptionCheck(operation);
 }
 
-ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJJJ operation, RegisterID regOp1Payload, RegisterID regOp1Tag, RegisterID regOp2Payload, RegisterID regOp2Tag, RegisterID regOp3Payload, RegisterID regOp3Tag)
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EJJJ operation, RegisterID regOp1Tag, RegisterID regOp1Payload, RegisterID regOp2Tag, RegisterID regOp2Payload, RegisterID regOp3Tag, RegisterID regOp3Payload)
 {
     setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG regOp1Payload, regOp1Tag, SH4_32BIT_DUMMY_ARG regOp2Payload, regOp2Tag, regOp3Payload, regOp3Tag);
     return appendCallWithExceptionCheck(operation);

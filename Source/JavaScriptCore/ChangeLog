@@ -1,5 +1,18 @@
 2013-10-22  Julien Brianceau  <jbriance@cisco.com>
 
+        [sh4][mips][arm] Fix crashes in JSC (32-bit only).
+        https://bugs.webkit.org/show_bug.cgi?id=123165
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperationNoExceptionCheck): Add missing EABI_32BIT_DUMMY_ARG.
+        (JSC::JIT::callOperation): The last TrustedImm32(arg3) is a bit overkill for SH4 :)
+        (JSC::JIT::callOperation): Add missing EABI_32BIT_DUMMY_ARG.
+        (JSC::JIT::callOperation): Fix tag and payload order for V_JITOperation_EJJJ prototype.
+
+2013-10-22  Julien Brianceau  <jbriance@cisco.com>
+
         REGRESSION(r157690, r157699) Fix architectures using AssemblerBufferWithConstantPool.
         https://bugs.webkit.org/show_bug.cgi?id=123092
 
