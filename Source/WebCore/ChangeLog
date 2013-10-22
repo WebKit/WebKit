@@ -1,3 +1,25 @@
+2013-10-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [WIN] Properly support reverse animations without needing software fallback.
+        https://bugs.webkit.org/show_bug.cgi?id=85121
+
+        Reviewed by Dean Jackson.
+
+        Testing is provided by existing animation tests.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::CubicBezierTimingFunction::createReversed): Added.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addAnimation): The early return when performing a reverse or
+        autoreverse animation is no longer needed.
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/mac/PlatformCAAnimationMac.mm:
+        (toCAMediaTimingFunction): Use new reversed function.
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (toCACFTimingFunction): Ditto.
+        (PlatformCAAnimation::setTimingFunction): Pass 'reverse' flag.
+        (PlatformCAAnimation::setTimingFunctions): Ditto.
+
 2013-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Use TYPE_CASTS_BASE for CSS_VALUE_TYPE_CASTS

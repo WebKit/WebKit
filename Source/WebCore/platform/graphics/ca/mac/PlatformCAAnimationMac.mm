@@ -133,15 +133,19 @@ static CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction* timi
 {
     ASSERT(timingFunction);
     if (timingFunction->isCubicBezierTimingFunction()) {
+        RefPtr<CubicBezierTimingFunction> reversed;
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+
+        if (reverse) {
+            reversed = ctf->createReversed();
+            ctf = reversed.get();
+        }
+
         float x1 = static_cast<float>(ctf->x1());
         float y1 = static_cast<float>(ctf->y1());
         float x2 = static_cast<float>(ctf->x2());
         float y2 = static_cast<float>(ctf->y2());
-        return [CAMediaTimingFunction functionWithControlPoints:(reverse ? 1 - x2 : x1)
-                                                               :(reverse ? 1 - y2 : y1)
-                                                               :(reverse ? 1 - x1 : x2)
-                                                               :(reverse ? 1 - y1 : y2)];
+        return [CAMediaTimingFunction functionWithControlPoints: x1 : y1 : x2 : y2];
     }
     
     return [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];

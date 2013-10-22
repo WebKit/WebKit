@@ -139,6 +139,11 @@ public:
         static const CubicBezierTimingFunction* dtf = create().leakRef();
         return dtf;
     }
+
+    PassRefPtr<CubicBezierTimingFunction> createReversed() const
+    {
+        return create(1.0 - m_x2, 1.0 - m_y2, 1.0 - m_x1, 1.0 - m_y1);
+    }
     
 private:
     explicit CubicBezierTimingFunction(TimingFunctionPreset preset = Ease, double x1 = 0.25, double y1 = 0.1, double x2 = 0.25, double y2 = 1.0)
