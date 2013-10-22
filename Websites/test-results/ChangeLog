@@ -1,5 +1,32 @@
 2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New flakiness dashboard should align results by revision numbers
+        https://bugs.webkit.org/show_bug.cgi?id=123129
+
+        Reviewed by Tim Horton.
+
+        * include/config.json: Specify the default cache time to be 10 minutes.
+        * include/json-shared.php: Added Expires and Cache-Control headers. It's configurable via config.json.
+        * index.html:
+        (TestResultsView._createResultCell): Don't put '-' in a result cell without time.
+        (TestResultsView._populateTestPane): Create an array of build times ordered from the newest to the oldest.
+        Not that build.time() is the newest commit time among all repository for each result. e.g. if we had
+        both WebKit and Safari repository information in a given result, the newer of the two will be used.
+        (TestResultsView._createTestResultHeader): Added.
+        (TestResultsView._createBuildsAndComputeSlownessOfResults): Extracted from _createTestResultRow so
+        that _populateTestPane could use Build object before calling _createTestResultRow.
+        (TestResultsView._createTestResultRow): Takes buildTimes. Insert an empty cell for a build time if
+        the current row doesn't contain that a result for that build time.
+        (TestResultsView._populateBuilderPane):
+        * main.css: Tweaked the style so that bubbles are aligned vertically without '-'.
+        (.resultsTable):
+        (.resultsTable thead th):
+        (.resultsTable .resultCell):
+        (.resultsTable a):
+        (.resultsTable span a):
+
+2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         New flakiness dashboard show test time, modifiers, and flaky tests
         https://bugs.webkit.org/show_bug.cgi?id=123119
 

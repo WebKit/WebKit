@@ -3,6 +3,9 @@
 require_once('../include/db.php');
 
 header('Content-type: application/json');
+$maxage = config('jsonCacheMaxAge');
+header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $maxage) . ' GMT');
+header("Cache-Control: maxage=$maxage");
 
 function exit_with_error($status, $details = array()) {
     $details['status'] = $status;
