@@ -76,20 +76,20 @@ static bool isAcceptableCSSStyleSheetParent(Node* parentNode)
 }
 #endif
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, CSSImportRule* ownerRule)
+PassRef<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, CSSImportRule* ownerRule)
 { 
-    return adoptRef(new CSSStyleSheet(std::move(sheet), ownerRule));
+    return adoptRef(*new CSSStyleSheet(std::move(sheet), ownerRule));
 }
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, Node* ownerNode)
+PassRef<CSSStyleSheet> CSSStyleSheet::create(PassRef<StyleSheetContents> sheet, Node* ownerNode)
 { 
-    return adoptRef(new CSSStyleSheet(std::move(sheet), ownerNode, false));
+    return adoptRef(*new CSSStyleSheet(std::move(sheet), ownerNode, false));
 }
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const String& encoding)
+PassRef<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const URL& baseURL, const String& encoding)
 {
     CSSParserContext parserContext(ownerNode.document(), baseURL, encoding);
-    return adoptRef(new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), &ownerNode, true));
+    return adoptRef(*new CSSStyleSheet(StyleSheetContents::create(baseURL.string(), parserContext), &ownerNode, true));
 }
 
 CSSStyleSheet::CSSStyleSheet(PassRef<StyleSheetContents> contents, CSSImportRule* ownerRule)

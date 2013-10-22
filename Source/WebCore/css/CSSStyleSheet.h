@@ -47,9 +47,9 @@ typedef int ExceptionCode;
 
 class CSSStyleSheet FINAL : public StyleSheet {
 public:
-    static PassRefPtr<CSSStyleSheet> create(PassRef<StyleSheetContents>, CSSImportRule* ownerRule = 0);
-    static PassRefPtr<CSSStyleSheet> create(PassRef<StyleSheetContents>, Node* ownerNode);
-    static PassRefPtr<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
+    static PassRef<CSSStyleSheet> create(PassRef<StyleSheetContents>, CSSImportRule* ownerRule = 0);
+    static PassRef<CSSStyleSheet> create(PassRef<StyleSheetContents>, Node* ownerNode);
+    static PassRef<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 

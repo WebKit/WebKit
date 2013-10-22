@@ -1,5 +1,16 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        CSSStyleSheet constructor functions should return PassRef.
+        <https://webkit.org/b/123156>
+
+        Make CSSStyleSheet::create*() return PassRef and tighten some call
+        sites that were using them. Most callers didn't need any tweaks to
+        take advantage of PassRef.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderMathMLFraction always has a MathMLInlineContainerElement.
         <https://webkit.org/b/123154>
 
