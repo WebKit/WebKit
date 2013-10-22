@@ -1,5 +1,15 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        Fix some more code to use RenderElement instead of RenderObject.
+        <https://webkit.org/b/123149>
+
+        Using RenderElement where possible lets us skip the isRenderElement()
+        branch in RenderObject::style() and generates much tighter code.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         Merge SVG renderers' styleWillChange() into styleDidChange().
         <https://webkit.org/b/123108>
 
