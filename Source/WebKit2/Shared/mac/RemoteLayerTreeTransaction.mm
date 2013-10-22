@@ -140,6 +140,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & BackingStoreChanged)
         encoder << backingStore;
+
+    if (changedProperties & FiltersChanged)
+        encoder << filters;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -272,6 +275,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
             return false;
     }
 
+    if (result.changedProperties & FiltersChanged) {
+        if (!decoder.decode(result.filters))
+            return false;
+    }
+
     return true;
 }
 
@@ -355,6 +363,7 @@ public:
     RemoteLayerTreeTextStream& operator<<(FloatSize);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers);
+    RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
 
     void increaseIndent() { ++m_indent; }
     void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
@@ -398,6 +407,67 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(PlatformCALayer
     default:
         ASSERT_NOT_REACHED();
         break;
+    }
+    return ts;
+}
+
+RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(const FilterOperations& filters)
+{
+    RemoteLayerTreeTextStream& ts = *this;
+    for (size_t i = 0; i < filters.size(); ++i) {
+        const auto filter = filters.at(i);
+        switch (filter->getOperationType()) {
+        case FilterOperation::REFERENCE:
+            ts << "reference";
+            break;
+        case FilterOperation::GRAYSCALE:
+            ts << "grayscale";
+            break;
+        case FilterOperation::SEPIA:
+            ts << "sepia";
+            break;
+        case FilterOperation::SATURATE:
+            ts << "saturate";
+            break;
+        case FilterOperation::HUE_ROTATE:
+            ts << "hue rotate";
+            break;
+        case FilterOperation::INVERT:
+            ts << "invert";
+            break;
+        case FilterOperation::OPACITY:
+            ts << "opacity";
+            break;
+        case FilterOperation::BRIGHTNESS:
+            ts << "brightness";
+            break;
+        case FilterOperation::CONTRAST:
+            ts << "contrast";
+            break;
+        case FilterOperation::BLUR:
+            ts << "blur";
+            break;
+        case FilterOperation::DROP_SHADOW:
+            ts << "drop shadow";
+            break;
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM:
+            ts << "custom";
+            break;
+        case FilterOperation::VALIDATED_CUSTOM:
+            ts << "custom (validated)";
+            break;
+#endif
+        case FilterOperation::PASSTHROUGH:
+            ts << "passthrough";
+            break;
+        case FilterOperation::NONE:
+            ts << "none";
+            break;
+        }
+
+        if (i < filters.size() - 1)
+            ts << " ";
     }
     return ts;
 }
@@ -553,6 +623,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
             dumpProperty<ShareableBitmap*>(ts, "backingStore", layerProperties.backingStore.bitmap());
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
+            dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters);
 
         ts << ")";
 

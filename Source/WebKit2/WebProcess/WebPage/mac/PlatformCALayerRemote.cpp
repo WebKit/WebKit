@@ -36,6 +36,7 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/LengthFunctions.h>
 #import <WebCore/PlatformCAFilters.h>
+#import <WebCore/PlatformCALayerMac.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -375,15 +376,18 @@ void PlatformCALayerRemote::setOpacity(float value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCALayerRemote::setFilters(const FilterOperations& filters)
 {
+    m_properties.filters = filters;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::FiltersChanged);
 }
 
 void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer* sourceLayer)
 {
+    ASSERT_NOT_REACHED();
 }
 
 bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filters)
 {
-    return false; // This will probably work the same as Mac eventually?
+    return PlatformCALayerMac::filtersCanBeComposited(filters);
 }
 #endif
 

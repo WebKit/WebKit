@@ -81,10 +81,8 @@ static double sepiaNoneConstants[3][3] = {
     { 0, 0, 1 }
 };
 
-void PlatformCAFilters::setFiltersOnLayer(PlatformCALayer* platformCALayer, const FilterOperations& filters)
+void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
 {
-    CALayer* layer = platformCALayer->platformLayer();
-
     if (!filters.size()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setFilters:nil];

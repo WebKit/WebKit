@@ -28,6 +28,7 @@
 
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/Color.h>
+#include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/PlatformCALayer.h>
@@ -73,7 +74,8 @@ public:
         MagnificationFilterChanged = 1 << 21,
         SpeedChanged = 1 << 22,
         TimeOffsetChanged = 1 << 23,
-        BackingStoreChanged = 1 << 24
+        BackingStoreChanged = 1 << 24,
+        FiltersChanged = 1 << 25
     };
 
     struct LayerCreationProperties {
@@ -120,6 +122,7 @@ public:
         float speed;
         double timeOffset;
         RemoteLayerBackingStore backingStore;
+        WebCore::FilterOperations filters;
     };
 
     explicit RemoteLayerTreeTransaction();

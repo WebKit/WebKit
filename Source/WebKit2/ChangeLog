@@ -1,3 +1,53 @@
+2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Support hardware accelerated filters
+        https://bugs.webkit.org/show_bug.cgi?id=123139
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::ArgumentCoder<Length>::encode):
+        (CoreIPC::ArgumentCoder<Length>::decode):
+        Add simple coders for Length.
+
+        (CoreIPC::encodeFilterOperation):
+        (CoreIPC::decodeFilterOperation):
+        Serialize and deserialize FilterOperations, except for CUSTOM and VALIDATED_CUSTOM.
+
+        (CoreIPC::ArgumentCoder<Length>::encode):
+        (CoreIPC::ArgumentCoder<Length>::decode):
+        Add coders for FilterOperations that delegate to {en,de}codeFilterOperation
+        for each operation in the list.
+
+        * Shared/WebCoreArgumentCoders.h:
+        Drive-by fix indentation.
+        Expose the Length and FilterOperations coders.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        Add FiltersChanged and LayerProperties::filters.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        Encode and decode our FilterOperations.
+
+        (WebKit::dumpChangedLayers):
+        Dump information about the layers' filters.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        Use PlatformCAFilters code to apply a FilterOperations object to our CALayer.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::setFilters):
+        Replace existing filters with our new set, and note that they've changed.
+
+        (PlatformCALayerRemote::copyFiltersFrom):
+        Not yet implemented. Not critical for this feature, either.
+
+        (PlatformCALayerRemote::filtersCanBeComposited):
+        For now, this is the same as the Mac version.
+
 2013-10-22  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Add WebKit2 API for TLS errors

@@ -32,7 +32,7 @@
 
 using namespace WebCore;
 
-void PlatformCAFilters::setFiltersOnLayer(PlatformCALayer* platformCALayer, const FilterOperations& filters)
+void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
 {
     // Hardware filter animation not implemented on Windows.
 }

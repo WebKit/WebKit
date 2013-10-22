@@ -29,50 +29,52 @@
 #include "ArgumentCoders.h"
 
 namespace WebCore {
-    class AffineTransform;
-    class AuthenticationChallenge;
-    class Color;
-    class Credential;
-    class Cursor;
-    class DatabaseDetails;
-    class FloatPoint;
-    class FloatPoint3D;
-    class FloatRect;
-    class FloatSize;
-    class HTTPHeaderMap;
-    class IntPoint;
-    class IntRect;
-    class IntSize;
-    class KeyframeValueList;
-    class URL;
-    class Notification;
-    class CertificateInfo;
-    class ProtectionSpace;
-    class ResourceError;
-    class ResourceRequest;
-    class ResourceResponse;
-    class TextCheckingRequestData;
-    class TransformationMatrix;
-    class UserStyleSheet;
-    class UserScript;
-    struct CompositionUnderline;
-    struct Cookie;
-    struct DictationAlternative;
-    struct DragSession;
-    struct FileChooserSettings;
-    struct GrammarDetail;
-    struct MimeClassInfo;
-    struct PasteboardImage;
-    struct PasteboardWebContent;
-    struct PluginInfo;
-    struct TextCheckingResult;
-    struct ViewportAttributes;
-    struct WindowFeatures;
+class AffineTransform;
+class AuthenticationChallenge;
+class Color;
+class Credential;
+class Cursor;
+class DatabaseDetails;
+class FilterOperations;
+class FloatPoint;
+class FloatPoint3D;
+class FloatRect;
+class FloatSize;
+class HTTPHeaderMap;
+class IntPoint;
+class IntRect;
+class IntSize;
+class KeyframeValueList;
+class URL;
+class Notification;
+class CertificateInfo;
+class ProtectionSpace;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+class TextCheckingRequestData;
+class TransformationMatrix;
+class UserStyleSheet;
+class UserScript;
+struct CompositionUnderline;
+struct Cookie;
+struct DictationAlternative;
+struct DragSession;
+struct FileChooserSettings;
+struct Length;
+struct GrammarDetail;
+struct MimeClassInfo;
+struct PasteboardImage;
+struct PasteboardWebContent;
+struct PluginInfo;
+struct TextCheckingResult;
+struct ViewportAttributes;
+struct WindowFeatures;
 }
 
 #if PLATFORM(MAC)
 namespace WebCore {
-    struct KeypressCommand;
+struct KeypressCommand;
 }
 #endif
 
@@ -121,6 +123,11 @@ template<> struct ArgumentCoder<WebCore::IntRect> {
 template<> struct ArgumentCoder<WebCore::IntSize> {
     static void encode(ArgumentEncoder&, const WebCore::IntSize&);
     static bool decode(ArgumentDecoder&, WebCore::IntSize&);
+};
+
+template<> struct ArgumentCoder<WebCore::Length> {
+    static void encode(ArgumentEncoder&, const WebCore::Length&);
+    static bool decode(ArgumentDecoder&, WebCore::Length&);
 };
 
 template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
@@ -291,6 +298,12 @@ template<> struct ArgumentCoder<WebCore::UserScript> {
     static void encode(ArgumentEncoder&, const WebCore::UserScript&);
     static bool decode(ArgumentDecoder&, WebCore::UserScript&);
 };
+
+template<> struct ArgumentCoder<WebCore::FilterOperations> {
+    static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
+    static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
+};
+
 
 } // namespace CoreIPC
 

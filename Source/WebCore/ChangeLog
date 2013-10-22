@@ -1,3 +1,24 @@
+2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Support hardware accelerated filters
+        https://bugs.webkit.org/show_bug.cgi?id=123139
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Export a variety of filter-related things.
+
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::setFilters):
+        * platform/graphics/ca/win/PlatformCAFiltersWin.cpp:
+        (PlatformCAFilters::setFiltersOnLayer):
+        setFiltersOnLayer should take a PlatformLayer instead of a PlatformCALayer
+        as its argument, because it doesn't need a PlatformCALayer, and this way
+        we can share code with the RemoteLayerTreeHost, which only has PlatformLayers
+        and not PlatformCALayers.
+
 2013-10-22  Brendan Long  <b.long@cablelabs.com>
 
         cue.text fails for some track element cues

@@ -948,7 +948,7 @@
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; };
 		2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */; };
-		2D70BA1318074DDF0001908A /* PlatformCALayerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D70BA1218074DDF0001908A /* PlatformCALayerMac.h */; };
+		2D70BA1318074DDF0001908A /* PlatformCALayerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D70BA1218074DDF0001908A /* PlatformCALayerMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D70BA1418074F850001908A /* PlatformCALayer.cpp */; };
 		2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */; };
 		2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8287F516E4A0380086BD00 /* HitTestLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };

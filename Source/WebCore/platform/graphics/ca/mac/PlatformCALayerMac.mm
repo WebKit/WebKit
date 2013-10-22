@@ -633,7 +633,7 @@ void PlatformCALayerMac::setOpacity(float value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCALayerMac::setFilters(const FilterOperations& filters)
 {
-    PlatformCAFilters::setFiltersOnLayer(this, filters);
+    PlatformCAFilters::setFiltersOnLayer(this->platformLayer(), filters);
 }
 
 void PlatformCALayerMac::copyFiltersFrom(const PlatformCALayer* sourceLayer)

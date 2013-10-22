@@ -31,6 +31,7 @@
 #import "ShareableBitmap.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/PlatformCAFilters.h>
 #import <WebCore/PlatformLayer.h>
 
 #import <QuartzCore/QuartzCore.h>
@@ -203,6 +204,9 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
             RetainPtr<CGImageRef> image = properties.backingStore.bitmap()->makeCGImageCopy();
             layer.contents = (id)image.get();
         }
+
+        if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
+            PlatformCAFilters::setFiltersOnLayer(layer, properties.filters);
     }
 
     for (auto destroyedLayer : transaction.destroyedLayers())
