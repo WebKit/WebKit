@@ -370,14 +370,14 @@ static void createTextRendererIfNeeded(Text& textNode)
     if (!renderingParentNode->childShouldCreateRenderer(&textNode))
         return;
 
-    RefPtr<RenderStyle> style = parentRenderer->style();
+    RenderStyle& style = *parentRenderer->style();
 
-    if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
+    if (!textRendererIsNeeded(textNode, *parentRenderer, style))
         return;
-    RenderText* newRenderer = textNode.createTextRenderer(*style);
+    RenderText* newRenderer = textNode.createTextRenderer(style);
     if (!newRenderer)
         return;
-    if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {
+    if (!parentRenderer->isChildAllowed(*newRenderer, style)) {
         newRenderer->destroy();
         return;
     }

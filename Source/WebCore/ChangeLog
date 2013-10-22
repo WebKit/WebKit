@@ -1,5 +1,16 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        Avoid parent style ref churn in createTextRendererIfNeeded().
+        <https://webkit.org/b/123148>
+
+        There's no need to take a temporary ref on the parent's RenderStyle
+        while creating a text renderer. It's not going away, and the text
+        renderer is not going to participate in ownership afterwards.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         Remove some unnecessary null checks in RenderElement::setStyle().
         <https://webkit.org/b/123146>
 
