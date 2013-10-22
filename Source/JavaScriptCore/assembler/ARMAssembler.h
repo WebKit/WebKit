@@ -43,7 +43,7 @@ namespace JSC {
             r2,
             r3, S0 = r3, /* Same as thumb assembler. */
             r4,
-            r5,
+            r5, fp = r5, // frame pointer
             r6,
             r7,
             r8,
