@@ -1841,6 +1841,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.h \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.cpp \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.h \
+	Source/WebCore/Modules/indexeddb/IDBRecordIdentifier.h \
 	Source/WebCore/Modules/indexeddb/IDBRequest.cpp \
 	Source/WebCore/Modules/indexeddb/IDBRequest.h \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp \

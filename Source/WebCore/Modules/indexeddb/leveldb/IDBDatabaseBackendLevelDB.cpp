@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStoreLevelDB.h"
+#include "IDBBackingStoreInterface.h"
 #include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendLevelDB.h"
@@ -248,14 +248,13 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
     RefPtr<IDBBackingStoreInterface> store = backingStore();
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
-    IDBBackingStoreLevelDB::RecordIdentifier recordIdentifier;
-    bool found = false;
-    bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, &recordIdentifier, found);
+    RefPtr<IDBRecordIdentifier> recordIdentifier;
+    bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, recordIdentifier);
     if (!ok) {
         transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error setting index keys."));
         return;
     }
-    if (!found) {
+    if (!recordIdentifier) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error setting index keys for object store."));
         transaction->abort(error.release());
         return;
@@ -278,7 +277,7 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
         IDBObjectStoreBackendLevelDB::IndexWriter* indexWriter = indexWriters[i].get();
-        indexWriter->writeIndexKeys(recordIdentifier, *store.get(), transaction->backingStoreTransaction(), id(), objectStoreId);
+        indexWriter->writeIndexKeys(recordIdentifier.get(), *store.get(), transaction->backingStoreTransaction(), id(), objectStoreId);
     }
 }
 

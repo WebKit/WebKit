@@ -61,8 +61,9 @@ bool IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys(IDBBackingStoreI
     return true;
 }
 
-void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier& recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
 {
+    ASSERT(recordIdentifier);
     int64_t indexId = m_indexMetadata.id;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
         bool ok = backingStore.putIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier);

@@ -57,7 +57,7 @@ namespace IDBObjectStoreBackendLevelDB {
 
         bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
 
-        void writeIndexKeys(const IDBBackingStoreLevelDB::RecordIdentifier&, IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
+        void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
 
     private:
         bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;

@@ -1,3 +1,43 @@
+2013-10-21  Brady Eidson  <beidson@apple.com>
+
+        Add a cross-platform IDBRecordIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=123138
+
+        Reviewed by Andreas Kling.
+
+        Add the cross-platform header:
+        * Modules/indexeddb/IDBRecordIdentifier.h: Added.
+        (WebCore::IDBRecordIdentifier::create):
+        (WebCore::IDBRecordIdentifier::encodedPrimaryKey):
+        (WebCore::IDBRecordIdentifier::version):
+        (WebCore::IDBRecordIdentifier::reset):
+        (WebCore::IDBRecordIdentifier::IDBRecordIdentifier):
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.list.am:
+
+        Remove the old abstract and LevelDB classes:
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        Use the cross-platform one everywhere:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::ObjectStoreKeyCursorImpl::loadCurrentRow):
+        (WebCore::ObjectStoreCursorImpl::loadCurrentRow):
+
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexKeys):
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp:
+        (WebCore::IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys):
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h:
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp:
+        (WebCore::PutOperation::perform):
+
 2013-10-22  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Possible performance regression after r157567
