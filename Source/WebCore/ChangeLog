@@ -1,5 +1,18 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderMathMLFraction always has a MathMLInlineContainerElement.
+        <https://webkit.org/b/123154>
+
+        This renderer is never anonymous and always has a corresponding
+        MathMLInlineContainerElement. Overload element() with a tighter
+        return type.
+
+        Also marked the class FINAL and made most member functions private.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         FontGlyphs constructor functions should return PassRef.
         <https://webkit.org/b/123159>
 
