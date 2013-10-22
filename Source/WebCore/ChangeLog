@@ -1,3 +1,18 @@
+2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Match adjustLogicalLineTopAndLogicalHeightIfNeeded's implementation with Blink's
+        https://bugs.webkit.org/show_bug.cgi?id=123033
+
+        Reviewed by David Hyatt.
+
+        In Blink I made this function in a bit different way. This change modifies it
+        to be identical, which helps a lot in the future cross-merging patches.
+
+        No new tests, covered by existing texts.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::adjustLogicalLineTopAndLogicalHeightIfNeeded):
+
 2013-10-22  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream more ARMv7s bits
