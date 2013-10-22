@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Cable Television Labs, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -47,7 +48,8 @@ const double secondsPerHour = 3600;
 const double secondsPerMinute = 60;
 const double secondsPerMillisecond = 0.001;
 const double malformedTime = -1;
-const unsigned bomLength = 3;
+const UChar bom = 0xFEFF;
+const char* fileIdentifier = "WEBVTT";
 const unsigned fileIdentifierLength = 6;
 
 String WebVTTParser::collectDigits(const String& input, unsigned* position)
@@ -148,23 +150,22 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
 
     while (position < length) {
         String line = collectNextLine(data, length, &position);
+        if (line.isNull()) {
+            m_buffer.append(data + position, length - position);
+            return;
+        }
 
         switch (m_state) {
         case Initial:
-            // Buffer up at least 9 bytes or a full line before proceeding with checking for the file identifier.
-            m_identifierData.append(data, length);
-            if (position == line.sizeInBytes() && m_identifierData.size() < bomLength + fileIdentifierLength)
-                return;
 
             // 4-12 - Collect the first line and check for "WEBVTT".
-            if (!hasRequiredFileIdentifier()) {
+            if (!hasRequiredFileIdentifier(line)) {
                 if (m_client)
                     m_client->fileFailedToParse();
                 return;
             }
 
             m_state = Header;
-            m_identifierData.clear();
             break;
 
         case Header:
@@ -204,34 +205,51 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
 
         case CueText:
             // 41-53 - Collect the cue text, create a cue, and add it to the output.
-            m_state = collectCueText(line, length, position);
+            m_state = collectCueText(line);
             break;
 
         case BadCue:
             // 54-62 - Collect and discard the remaining cue.
             m_state = ignoreBadCue(line);
             break;
+
+        case Finished:
+            ASSERT_NOT_REACHED();
+            break;
         }
     }
 }
 
-bool WebVTTParser::hasRequiredFileIdentifier()
+void WebVTTParser::fileFinished()
+{
+    ASSERT(m_state != Finished);
+    parseBytes("\n\n", 2);
+    m_state = Finished;
+}
+
+bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
 {
     // A WebVTT file identifier consists of an optional BOM character,
     // the string "WEBVTT" followed by an optional space or tab character,
     // and any number of characters that are not line terminators ...
-    unsigned position = 0;
-    if (m_identifierData.size() >= bomLength && m_identifierData[0] == '\xEF' && m_identifierData[1] == '\xBB' && m_identifierData[2] == '\xBF')
-        position += bomLength;
-    String line = collectNextLine(m_identifierData.data(), m_identifierData.size(), &position);
+    unsigned linePos = 0;
 
-    if (line.length() < fileIdentifierLength)
-        return false;
-    if (line.substring(0, fileIdentifierLength) != "WEBVTT")
-        return false;
-    if (line.length() > fileIdentifierLength && line[fileIdentifierLength] != ' ' && line[fileIdentifierLength] != '\t')
+    if (line.isEmpty())
         return false;
 
+    if (line[0] == bom)
+        ++linePos;
+
+    if (line.length() < fileIdentifierLength + linePos)
+        return false;
+
+    for (unsigned i = 0; i < fileIdentifierLength; ++i, ++linePos) {
+        if (line[linePos] != fileIdentifier[i])
+            return false;
+    }
+
+    if (linePos < line.length() && line[linePos] != ' ' && line[linePos] != '\t')
+        return false;
     return true;
 }
 
@@ -307,7 +325,7 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
     return CueText;
 }
 
-WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line, unsigned length, unsigned position)
+WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
 {
     if (line.isEmpty()) {
         createNewCue();
@@ -316,9 +334,6 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line, unsign
     if (!m_currentContent.isEmpty())
         m_currentContent.append("\n");
     m_currentContent.append(line);
-
-    if (position >= length)
-        createNewCue();
                 
     return CueText;
 }
@@ -556,26 +571,26 @@ void WebVTTParser::skipWhiteSpace(const String& line, unsigned* position)
         (*position)++;
 }
 
-void WebVTTParser::skipLineTerminator(const char* data, unsigned length, unsigned* position)
-{
-    if (*position >= length)
-        return;
-    if (data[*position] == '\r')
-        (*position)++;
-    if (*position >= length)
-        return;
-    if (data[*position] == '\n')
-        (*position)++;
-}
-
 String WebVTTParser::collectNextLine(const char* data, unsigned length, unsigned* position)
 {
-    unsigned oldPosition = *position;
-    while (*position < length && data[*position] != '\r' && data[*position] != '\n')
-        (*position)++;
-    String line = String::fromUTF8(data + oldPosition, *position - oldPosition);
-    skipLineTerminator(data, length, position);
-    return line;
+    unsigned currentPosition = *position;
+    while (currentPosition < length && data[currentPosition] != '\r' && data[currentPosition] != '\n')
+        currentPosition++;
+    if (currentPosition >= length)
+        return String();
+    String line = String::fromUTF8(data + *position , currentPosition - *position);
+    if (data[currentPosition] == '\r')
+        currentPosition++;
+    if (currentPosition < length && data[currentPosition] == '\n')
+        currentPosition++;
+    *position = currentPosition;
+    if (m_buffer.isEmpty())
+        return line;
+
+    String lineWithBuffer = String::fromUTF8(m_buffer.data(), m_buffer.size());
+    lineWithBuffer.append(line);
+    m_buffer.clear();
+    return lineWithBuffer;
 }
 
 }

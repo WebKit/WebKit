@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Cable Television Labs, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -105,7 +106,8 @@ public:
         Id,
         TimingsAndSettings,
         CueText,
-        BadCue
+        BadCue,
+        Finished
     };
 
     static OwnPtr<WebVTTParser> create(WebVTTParserClient* client, ScriptExecutionContext* context)
@@ -144,6 +146,7 @@ public:
 
     // Input data to the parser to parse.
     void parseBytes(const char* data, unsigned length);
+    void fileFinished();
 
     // Transfers ownership of last parsed cues to caller.
     void getNewCues(Vector<RefPtr<WebVTTCueData>>&);
@@ -161,10 +164,10 @@ protected:
     ParseState m_state;
 
 private:
-    bool hasRequiredFileIdentifier();
+    bool hasRequiredFileIdentifier(const String&);
     ParseState collectCueId(const String&);
     ParseState collectTimingsAndSettings(const String&);
-    ParseState collectCueText(const String&, unsigned length, unsigned);
+    ParseState collectCueText(const String&);
     ParseState ignoreBadCue(const String&);
 
     void createNewCue();
@@ -176,15 +179,14 @@ private:
 #endif
 
     void skipWhiteSpace(const String&, unsigned*);
-    static void skipLineTerminator(const char* data, unsigned length, unsigned*);
-    static String collectNextLine(const char* data, unsigned length, unsigned*);
+    String collectNextLine(const char* data, unsigned length, unsigned*);
 
     void constructTreeFromToken(Document*);
 
     String m_currentHeaderName;
     String m_currentHeaderValue;
 
-    Vector<char> m_identifierData;
+    Vector<char> m_buffer;
     String m_currentId;
     double m_currentStartTime;
     double m_currentEndTime;

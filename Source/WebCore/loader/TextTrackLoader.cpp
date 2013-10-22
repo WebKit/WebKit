@@ -136,6 +136,8 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
 
     if (m_state != Failed) {
         processNewCueData(resource);
+        if (m_cueParser)
+            m_cueParser->fileFinished();
         if (m_state != Failed)
             m_state = resource->errorOccurred() ? Failed : Finished;
     }
