@@ -98,18 +98,13 @@ void RenderSVGModelObject::willBeDestroyed()
     RenderElement::willBeDestroyed();
 }
 
-void RenderSVGModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifferenceLayout) {
         setNeedsBoundariesUpdate();
-        if (newStyle->hasTransform())
+        if (style()->hasTransform())
             setNeedsTransformUpdate();
     }
-    RenderElement::styleWillChange(diff, newStyle);
-}
-
-void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
     RenderElement::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }

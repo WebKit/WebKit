@@ -58,7 +58,6 @@ private:
     virtual InlineFlowBox* createInlineFlowBox() OVERRIDE FINAL;
 
     virtual void willBeDestroyed() OVERRIDE FINAL;
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE FINAL;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE FINAL;

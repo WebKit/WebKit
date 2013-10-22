@@ -313,15 +313,10 @@ void RenderSVGRoot::willBeDestroyed()
     RenderReplaced::willBeDestroyed();
 }
 
-void RenderSVGRoot::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
-    RenderReplaced::styleWillChange(diff, newStyle);
-}
-
-void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
     RenderReplaced::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }

@@ -106,15 +106,10 @@ void RenderSVGInline::willBeDestroyed()
     RenderInline::willBeDestroyed();
 }
 
-void RenderSVGInline::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
-    RenderInline::styleWillChange(diff, newStyle);
-}
-
-void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
     RenderInline::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }

@@ -1,5 +1,15 @@
 2013-10-22  Andreas Kling  <akling@apple.com>
 
+        Merge SVG renderers' styleWillChange() into styleDidChange().
+        <https://webkit.org/b/123108>
+
+        This work can just as well be done after setting the style.
+        Three more styleWillChange() overloads gone.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-22  Andreas Kling  <akling@apple.com>
+
         CSSValueList constructor functions should return PassRef.
         <https://webkit.org/b/123151>
 

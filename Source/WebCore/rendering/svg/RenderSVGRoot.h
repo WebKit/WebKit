@@ -80,7 +80,6 @@ private:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     virtual void willBeDestroyed() OVERRIDE;
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject&) OVERRIDE;
