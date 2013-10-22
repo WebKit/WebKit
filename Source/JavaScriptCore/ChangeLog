@@ -1,3 +1,17 @@
+2013-10-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream OS-version-specific install paths for JavaScriptCore.framework
+        https://bugs.webkit.org/show_bug.cgi?id=123115
+        <rdar://problem/13696872>
+
+        Reviewed by Andy Estes.
+
+        Based on a patch by Mark Hahnenberg.
+
+        Add support for running JavaScriptCore-based apps, built against the iOS 7 SDK, on older versions of iOS.
+
+        * API/JSBase.cpp:
+
 2013-10-22  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Add missing lastRegister(), firstFPRegister() and lastFPRegister(). 
