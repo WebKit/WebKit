@@ -523,7 +523,7 @@ void RenderRegion::setRegionObjectsRegionStyle()
         } else
             objectStyleInRegion = computeStyleInRegion(object);
 
-        setObjectStyleInRegion(object, *objectStyleInRegion, objectRegionStyleCached);
+        setObjectStyleInRegion(object, objectStyleInRegion, objectRegionStyleCached);
 
         computeChildrenStyleInRegion(object);
     }
@@ -540,7 +540,7 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
         RefPtr<RenderStyle> objectRegionStyle = object->style();
         RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
         if (object->isRenderElement())
-            toRenderElement(object)->setStyleInternal(*objectOriginalStyle);
+            toRenderElement(object)->setStyleInternal(objectOriginalStyle);
 
         bool shouldCacheRegionStyle = iter->value.cached;
         if (!shouldCacheRegionStyle) {
@@ -575,7 +575,7 @@ void RenderRegion::willBeRemovedFromTree()
     detachRegion();
 }
 
-PassRef<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
+PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
     ASSERT(!object->isAnonymous());
@@ -583,7 +583,9 @@ PassRef<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* obje
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
     Element* element = toElement(object->node());
-    return object->view().document().ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
+    RefPtr<RenderStyle> renderObjectRegionStyle = object->view().document().ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
+
+    return renderObjectRegionStyle.release();
 }
 
 void RenderRegion::computeChildrenStyleInRegion(const RenderElement* object)
@@ -606,20 +608,20 @@ void RenderRegion::computeChildrenStyleInRegion(const RenderElement* object)
                 childStyleInRegion = computeStyleInRegion(child);
         }
 
-        setObjectStyleInRegion(child, childStyleInRegion.releaseNonNull(), objectRegionStyleCached);
+        setObjectStyleInRegion(child, childStyleInRegion, objectRegionStyleCached);
 
         if (child->isRenderElement())
             computeChildrenStyleInRegion(toRenderElement(child));
     }
 }
 
-void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRef<RenderStyle> styleInRegion, bool objectRegionStyleCached)
+void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<RenderStyle> styleInRegion, bool objectRegionStyleCached)
 {
     ASSERT(object->flowThreadContainingBlock());
 
     RefPtr<RenderStyle> objectOriginalStyle = object->style();
     if (object->isRenderElement())
-        toRenderElement(object)->setStyleInternal(std::move(styleInRegion));
+        toRenderElement(object)->setStyleInternal(styleInRegion);
 
     if (object->isBoxModelObject() && !object->hasBoxDecorations()) {
         bool hasBoxDecorations = object->isTableCell()

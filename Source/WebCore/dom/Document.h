@@ -527,7 +527,7 @@ public:
     void updateStyleIfNeeded();
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
-    PassRef<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
+    PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     bool isPageBoxVisible(int pageIndex);

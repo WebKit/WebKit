@@ -187,9 +187,9 @@ private:
 
     virtual void installFlowThread();
 
-    PassRef<RenderStyle> computeStyleInRegion(const RenderObject*);
+    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderElement*);
-    void setObjectStyleInRegion(RenderObject*, PassRef<RenderStyle>, bool objectRegionStyleCached);
+    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
 
     void checkRegionStyle();
     void updateRegionHasAutoLogicalHeightFlag();

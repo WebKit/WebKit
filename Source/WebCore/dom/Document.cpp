@@ -1856,12 +1856,15 @@ void Document::updateLayoutIgnorePendingStylesheets()
     m_ignorePendingStylesheets = oldIgnore;
 }
 
-PassRef<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
+PassRefPtr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
 {
     ASSERT_ARG(element, &element->document() == this);
 
-    TemporaryChange<bool> change(m_ignorePendingStylesheets, true);
-    return ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);
+    bool oldIgnore = m_ignorePendingStylesheets;
+    m_ignorePendingStylesheets = true;
+    RefPtr<RenderStyle> style = ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);
+    m_ignorePendingStylesheets = oldIgnore;
+    return style.release();
 }
 
 bool Document::isPageBoxVisible(int pageIndex)

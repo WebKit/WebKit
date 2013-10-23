@@ -295,13 +295,13 @@ void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, Rende
         m_keyframeAnimations.remove(animsToBeRemoved[j]);
 }
 
-PassRef<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, RenderStyle* currentStyle, RenderStyle& targetStyle)
+PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderElement* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     RefPtr<RenderStyle> resultStyle;
 
     // We don't do any transitions if we don't have a currentStyle (on startup).
-    updateTransitions(&renderer, currentStyle, &targetStyle);
-    updateKeyframeAnimations(&renderer, currentStyle, &targetStyle);
+    updateTransitions(renderer, currentStyle, targetStyle);
+    updateKeyframeAnimations(renderer, currentStyle, targetStyle);
     m_keyframeAnimations.checkConsistency();
 
     if (currentStyle) {
@@ -311,7 +311,7 @@ PassRef<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, Render
             CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
             for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
                 if (ImplicitAnimation* anim = it->value.get())
-                    anim->animate(this, &renderer, currentStyle, &targetStyle, resultStyle);
+                    anim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
             }
         }
     }
@@ -321,10 +321,10 @@ PassRef<RenderStyle> CompositeAnimation::animate(RenderElement& renderer, Render
     for (Vector<AtomicStringImpl*>::const_iterator it = m_keyframeAnimationOrderMap.begin(); it != m_keyframeAnimationOrderMap.end(); ++it) {
         RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(*it);
         if (keyframeAnim)
-            keyframeAnim->animate(this, &renderer, currentStyle, &targetStyle, resultStyle);
+            keyframeAnim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
     }
 
-    return resultStyle ? resultStyle.releaseNonNull() : targetStyle;
+    return resultStyle ? resultStyle.release() : targetStyle;
 }
 
 PassRefPtr<RenderStyle> CompositeAnimation::getAnimatedStyle() const
