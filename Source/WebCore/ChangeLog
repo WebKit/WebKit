@@ -1,3 +1,48 @@
+2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        Refactor LineBreaker::nextSegmentBreak, add BreakingContext that holds all its state
+        https://bugs.webkit.org/show_bug.cgi?id=123038
+
+        Reviewed by David Hyatt.
+
+        I followed Levi's logic on Blink's nextSegmentBreak refactoring (https://chromiumcodereview.appspot.com/25054004). 
+        I mostly did the same changes, but the code is too diverged at this point to just apply that patch on our trunk. The patch
+        introduces BreakingContext as a separate class. I added new methods for each condition, which were originally located in
+        nextSegmentBreak. I also removed the goto-s from the code. All the new methods are inline in order to avoid introducing any
+        performance regression. The change makes the code so much cleaner and understandable.
+
+        This change would be the first step of the nextSegmentBreak refactoring, I wanted to keep things in place in RenderBlockLineLayout.cpp
+        for now, but I'm planning to separate BreakingContext into a new file and do additional changes to make things nicer. I'm tracking
+        the entire progress under http://webkit.org/b/121261 meta bug.
+
+        No new tests, covered by existing tests.
+        - I updated 1 expected result, because there was a 1 pixel difference on the result, which I believe comes from a rounding situation.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::currentObject):
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::lineBreakRef):
+        (WebCore::BreakingContext::lineWidth):
+        (WebCore::BreakingContext::atEnd):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::initializeForCurrentObject):
+        (WebCore::BreakingContext::increment):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::nextCharacter):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::textBeginsWithBreakablePosition):
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        (WebCore::BreakingContext::handleEndOfLine):
+        (WebCore::LineBreaker::nextSegmentBreak):
+
 2013-10-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157826.

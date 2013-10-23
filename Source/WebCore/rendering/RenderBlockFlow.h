@@ -480,6 +480,7 @@ protected:
     OwnPtr<RenderBlockFlowRareData> m_rareData;
     RenderLineBoxList m_lineBoxes;
 
+    friend class BreakingContext;
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
 };

@@ -1,3 +1,14 @@
+2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        Refactor LineBreaker::nextSegmentBreak, add BreakingContext that holds all its state
+        https://bugs.webkit.org/show_bug.cgi?id=123038
+
+        Reviewed by David Hyatt.
+
+        * platform/mac/editing/selection/after-line-wrap-expected.png:
+        * platform/mac/editing/selection/after-line-wrap-expected.txt: I updated the test, there was 1 pixel difference on the
+        output I think I run into a rounding error.
+
 2013-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Mark compositing/regions/region-as-layer-in-another-flowthread.html  as an image failure.
