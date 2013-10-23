@@ -1423,7 +1423,6 @@ webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
 webkit.org/b/121684 accessibility/aria-describedby-on-input.html [ Failure ]
 webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
 webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
-webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failure ]
 
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]

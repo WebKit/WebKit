@@ -1,3 +1,15 @@
+2013-10-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [GTK] accessibility/self-referencing-aria-labelledby.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=121594
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/efl/TestExpectations:
+        accessibility/self-referencing-aria-labelledby.html is now passing
+        * platform/gtk/TestExpectations:
+        accessibility/self-referencing-aria-labelledby.html is now passing
+
 2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
 
         Refactor LineBreaker::nextSegmentBreak, add BreakingContext that holds all its state

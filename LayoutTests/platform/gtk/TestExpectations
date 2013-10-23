@@ -1418,8 +1418,6 @@ webkit.org/b/120846 svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
 
 webkit.org/b/121593 accessibility/radio-button-title-label.html  [ Failure ]
 
-webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failure ]
-
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
 webkit.org/b/122147 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure ]
