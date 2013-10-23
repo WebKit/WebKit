@@ -338,7 +338,6 @@ TestResultsView.fetchTests = function (testNames, doNotUpdateHash) {
 }
 
 TestResultsView._matchesFailureType = function (results, failureType, tn) {
-    return true;
     if (!results.length)
         return false;
     var latestActualResult = results[0].actual;
@@ -417,7 +416,7 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
 
     var self = this;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays + '&failureType=' + failureType, true);  
+    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays, true);  
     xhr.onload = function(event) {
         var response = JSON.parse(xhr.response);
         section.innerHTML = '';
