@@ -1015,11 +1015,11 @@ bool MediaPlayerPrivateQuickTimeVisualContext::isAvailable()
 #endif
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const String& type, const String& codecs, const URL&)
+MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const MediaEngineSupportParameters& parameters)
 {
     // only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     //  extended MIME type
-    return mimeTypeCache().contains(type) ? (codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported) : MediaPlayer::IsNotSupported;
+    return mimeTypeCache().contains(parameters.type) ? (parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported) : MediaPlayer::IsNotSupported;
 }
 
 void MediaPlayerPrivateQuickTimeVisualContext::MovieClient::movieEnded(QTMovie* movie)

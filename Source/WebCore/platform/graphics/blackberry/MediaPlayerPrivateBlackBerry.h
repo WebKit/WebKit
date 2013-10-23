@@ -49,7 +49,7 @@ public:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void registerMediaEngine(MediaEngineRegistrar);
     static void getSupportedTypes(HashSet<WTF::String>&);
-    static MediaPlayer::SupportsType supportsType(const WTF::String&, const WTF::String&, const URL&);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static void notifyAppActivatedEvent(bool);
     static void setCertificatePath(const WTF::String&);
 

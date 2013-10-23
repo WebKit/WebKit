@@ -67,9 +67,10 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<WTF::String>& types)
         types.add(*i);
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const WTF::String& type, const WTF::String& codecs, const URL& url)
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    bool isRTSP = url.protocolIs("rtsp");
+    bool isRTSP = parameters.url.protocolIs("rtsp");
+    const String& type = parameters.type;
 
     if (!isRTSP && (type.isNull() || type.isEmpty())) {
         LOG(Media, "MediaPlayer does not support type; type is null or empty.");
@@ -79,7 +80,7 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const WTF::String& ty
     // spec says we should not return "probably" if the codecs string is empty
     if (isRTSP || PlatformPlayer::mimeTypeSupported(type.ascii().data())) {
         LOG(Media, "MediaPlayer supports type %s.", isRTSP ? "rtsp" : type.ascii().data());
-        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
+        return parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
     }
     LOG(Media, "MediaPlayer does not support type %s.", type.ascii().data());
     return MediaPlayer::IsNotSupported;

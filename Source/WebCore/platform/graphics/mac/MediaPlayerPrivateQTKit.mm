@@ -189,11 +189,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateQTKit::create(MediaPla
 void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
-        registrar(create, getSupportedTypes, extendedSupportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite);
-#else
         registrar(create, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite);
-#endif
 }
 
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
@@ -1462,33 +1458,28 @@ void MediaPlayerPrivateQTKit::getSupportedTypes(HashSet<String>& supportedTypes)
     concatenateHashSets(supportedTypes, mimeCommonTypesCache());
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& type, const String& codecs, const URL&)
+MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const MediaEngineSupportParameters& parameters)
 {
+#if ENABLE(ENCRYPTED_MEDIA)
+    // QTKit does not support any encrytped media, so return IsNotSupported if the keySystem is non-NULL:
+    if (!parameters.keySystem.isNull() && !parameters.keySystem.isEmpty())
+        return MediaPlayer::IsNotSupported;
+#endif
+
     // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     // extended MIME type yet.
 
     // Due to <rdar://problem/10777059>, avoid calling the mime types cache functions if at
     // all possible:
-    if (shouldRejectMIMEType(type))
+    if (shouldRejectMIMEType(parameters.type))
         return MediaPlayer::IsNotSupported;
 
     // We check the "modern" type cache first, as it doesn't require QTKitServer to start.
-    if (mimeModernTypesCache().contains(type) || mimeCommonTypesCache().contains(type))
-        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
+    if (mimeModernTypesCache().contains(parameters.type) || mimeCommonTypesCache().contains(parameters.type))
+        return parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
 
     return MediaPlayer::IsNotSupported;
 }
-
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
-MediaPlayer::SupportsType MediaPlayerPrivateQTKit::extendedSupportsType(const String& type, const String& codecs, const String& keySystem, const URL& url)
-{
-    // QTKit does not support any encrytped media, so return IsNotSupported if the keySystem is non-NULL:
-    if (!keySystem.isNull() || !keySystem.isEmpty())
-        return MediaPlayer::IsNotSupported;
-
-    return supportsType(type, codecs, url);;
-}
-#endif
 
 bool MediaPlayerPrivateQTKit::isAvailable()
 {

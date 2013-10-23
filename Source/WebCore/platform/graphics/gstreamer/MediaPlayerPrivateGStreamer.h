@@ -115,7 +115,7 @@ private:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
 
     static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const URL&);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     static bool isAvailable();
 
