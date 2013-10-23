@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-Keywords::Keywords(VM* vm)
+Keywords::Keywords(VM& vm)
     : m_vm(vm)
     , m_keywordTable(JSC::mainTable)
 {

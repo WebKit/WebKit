@@ -54,9 +54,9 @@ public:
 private:
     friend class VM;
     
-    Keywords(VM*);
+    explicit Keywords(VM&);
     
-    VM* m_vm;
+    VM& m_vm;
     const HashTable m_keywordTable;
 };
 

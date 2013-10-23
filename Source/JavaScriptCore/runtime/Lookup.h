@@ -121,7 +121,7 @@ namespace JSC {
             return result;
         }
 
-        ALWAYS_INLINE void initializeIfNeeded(VM* vm) const
+        ALWAYS_INLINE void initializeIfNeeded(VM& vm) const
         {
             if (!table)
                 createTable(vm);
@@ -130,13 +130,13 @@ namespace JSC {
         ALWAYS_INLINE void initializeIfNeeded(ExecState* exec) const
         {
             if (!table)
-                createTable(&exec->vm());
+                createTable(exec->vm());
         }
 
         JS_EXPORT_PRIVATE void deleteTable() const;
 
         // Find an entry in the table, and return the entry.
-        ALWAYS_INLINE const HashEntry* entry(VM* vm, PropertyName identifier) const
+        ALWAYS_INLINE const HashEntry* entry(VM& vm, PropertyName identifier) const
         {
             initializeIfNeeded(vm);
             return entry(identifier);
@@ -196,12 +196,12 @@ namespace JSC {
 
         ConstIterator begin(VM& vm) const
         {
-            initializeIfNeeded(&vm);
+            initializeIfNeeded(vm);
             return ConstIterator(this, 0);
         }
         ConstIterator end(VM& vm) const
         {
-            initializeIfNeeded(&vm);
+            initializeIfNeeded(vm);
             return ConstIterator(this, compactSize);
         }
 
@@ -229,7 +229,7 @@ namespace JSC {
         }
 
         // Convert the hash table keys to identifiers.
-        JS_EXPORT_PRIVATE void createTable(VM*) const;
+        JS_EXPORT_PRIVATE void createTable(VM&) const;
     };
 
     JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, PropertyName, PropertySlot&);

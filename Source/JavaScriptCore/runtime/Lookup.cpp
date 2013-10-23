@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-void HashTable::createTable(VM* vm) const
+void HashTable::createTable(VM& vm) const
 {
     ASSERT(!table);
     int linkIndex = compactHashSizeMask + 1;
@@ -34,7 +34,7 @@ void HashTable::createTable(VM* vm) const
     for (int i = 0; i < compactSize; ++i)
         entries[i].setKey(0);
     for (int i = 0; values[i].key; ++i) {
-        StringImpl* identifier = Identifier::add(vm, values[i].key).leakRef();
+        StringImpl* identifier = Identifier::add(&vm, values[i].key).leakRef();
         int hashIndex = identifier->existingHash() & compactHashSizeMask;
         HashEntry* entry = &entries[hashIndex];
 
