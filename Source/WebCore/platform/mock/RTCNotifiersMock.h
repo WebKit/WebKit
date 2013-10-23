@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "RTCDataChannelHandlerClient.h"
 #include "RTCPeerConnectionHandlerClient.h"
 #include "TimerEventBasedMock.h"
 #include <wtf/PassRefPtr.h>
@@ -71,6 +72,27 @@ private:
     RTCPeerConnectionHandlerClient* m_client;
     RTCPeerConnectionHandlerClient::IceConnectionState m_connectionState;
     RTCPeerConnectionHandlerClient::IceGatheringState m_gatheringState;
+};
+
+class RemoteDataChannelNotifier : public MockNotifier {
+public:
+    RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient*);
+
+    void fire() OVERRIDE;
+
+private:
+    RTCPeerConnectionHandlerClient* m_client;
+};
+
+class DataChannelStateNotifier : public MockNotifier {
+public:
+    DataChannelStateNotifier(RTCDataChannelHandlerClient*, RTCDataChannelHandlerClient::ReadyState);
+
+    void fire() OVERRIDE;
+
+private:
+    RTCDataChannelHandlerClient* m_client;
+    RTCDataChannelHandlerClient::ReadyState m_state;
 };
 
 } // namespace WebCore

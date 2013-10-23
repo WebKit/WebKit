@@ -32,6 +32,7 @@
 #include "NotImplemented.h"
 #include "RTCDTMFSenderHandler.h"
 #include "RTCDataChannelHandler.h"
+#include "RTCDataChannelHandlerMock.h"
 #include "RTCNotifiersMock.h"
 #include "RTCSessionDescriptionRequest.h"
 #include "RTCVoidRequest.h"
@@ -152,12 +153,11 @@ void RTCPeerConnectionHandlerMock::getStats(PassRefPtr<RTCStatsRequest>)
     notImplemented();
 }
 
-PassOwnPtr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataChannel(const String&, const RTCDataChannelInit&)
+PassOwnPtr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataChannel(const String& label, const RTCDataChannelInit& init)
 {
-    // Requires a mock implementation of RTCDataChannelHandler.
-    // This must be implemented once the mock implementation of RTCDataChannelHandler is ready.
-    notImplemented();
-    return 0;
+    RefPtr<RemoteDataChannelNotifier> notifier = adoptRef(new RemoteDataChannelNotifier(m_client));
+    m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
+    return adoptPtr(new RTCDataChannelHandlerMock(label, init));
 }
 
 PassOwnPtr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<MediaStreamSource>)

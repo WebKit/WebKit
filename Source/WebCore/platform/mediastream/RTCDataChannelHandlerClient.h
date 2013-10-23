@@ -27,6 +27,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 class RTCDataChannelHandlerClient {

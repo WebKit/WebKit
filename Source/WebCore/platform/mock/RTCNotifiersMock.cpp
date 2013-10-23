@@ -29,6 +29,7 @@
 
 #include "RTCNotifiersMock.h"
 
+#include "RTCDataChannelHandlerMock.h"
 #include "RTCSessionDescriptionDescriptor.h"
 #include "RTCSessionDescriptionRequest.h"
 #include "RTCVoidRequest.h"
@@ -74,6 +75,27 @@ void IceConnectionNotifier::fire()
 {
     m_client->didChangeIceGatheringState(m_gatheringState);
     m_client->didChangeIceConnectionState(m_connectionState);
+}
+
+RemoteDataChannelNotifier::RemoteDataChannelNotifier(RTCPeerConnectionHandlerClient* client)
+    : m_client(client)
+{
+}
+
+void RemoteDataChannelNotifier::fire()
+{
+    m_client->didAddRemoteDataChannel(adoptPtr(new RTCDataChannelHandlerMock("RTCDataChannelHandlerMock", RTCDataChannelInit())));
+}
+
+DataChannelStateNotifier::DataChannelStateNotifier(RTCDataChannelHandlerClient* client, RTCDataChannelHandlerClient::ReadyState state)
+    : m_client(client)
+    , m_state(state)
+{
+}
+
+void DataChannelStateNotifier::fire()
+{
+    m_client->didChangeReadyState(m_state);
 }
 
 } // namespace WebCore
