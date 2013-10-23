@@ -82,15 +82,15 @@ public:
 
     DefaultGCActivityCallback(Heap*);
 
-    virtual void didAllocate(size_t) OVERRIDE;
-    virtual void willCollect() OVERRIDE;
-    virtual void cancel() OVERRIDE;
-    
-    virtual void doWork() OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void didAllocate(size_t) OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void willCollect() OVERRIDE;
+    JS_EXPORT_PRIVATE virtual void cancel() OVERRIDE;
+
+    JS_EXPORT_PRIVATE virtual void doWork() OVERRIDE;
 
 #if USE(CF)
 protected:
-    DefaultGCActivityCallback(Heap*, CFRunLoopRef);
+    JS_EXPORT_PRIVATE DefaultGCActivityCallback(Heap*, CFRunLoopRef);
 #endif
 #if USE(CF) || PLATFORM(EFL)
 protected:
