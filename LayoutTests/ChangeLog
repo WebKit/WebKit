@@ -1,3 +1,19 @@
+2013-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Antialias underlines if they're not axis-aligned
+        https://bugs.webkit.org/show_bug.cgi?id=123004
+
+        Reviewed by Simon Fraser.
+
+        Updating tests that draw underlines in a non-axis-aligned
+        GraphicsContext. The expected .png's should show an antialiased
+        underline. However, underlines which are axis-aligned should still
+        be unchanged.
+
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/mac/svg/zoom/text/zoom-foreignObject-expected.png:
+
 2013-10-23  Mark Lam  <mark.lam@apple.com>
 
         Re-instate ProposedDatabases needed by detailsForNameAndOrigin().

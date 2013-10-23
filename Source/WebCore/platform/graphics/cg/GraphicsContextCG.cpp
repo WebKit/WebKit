@@ -1253,7 +1253,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
 
     bool restoreAntialiasMode = false;
 
-    if (!printing) {
+    if (!printing && getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment()) {
         // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
         float adjustedThickness = max(thickness, 1.0f);
 

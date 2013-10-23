@@ -1,3 +1,29 @@
+2013-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Antialias underlines if they're not axis-aligned
+        https://bugs.webkit.org/show_bug.cgi?id=123004
+
+        Reviewed by Simon Fraser.
+
+        In order to make underlines crisp, GraphicsContext:drawLineForText
+        modifies the bounds of the underline rect in order to make the rect
+        device-pixel-aligned, and then turns off antialiasing when drawing
+        the line. This makes sense when the underline is axis-aligned, but
+        doesn't when the rect is rotated or skewed. Therefore, we should
+        only opt-in to this behavior if the underline we're about to draw
+        is axis-aligned. This requires figuring out whether or not the
+        current transformation is axis-aligned every time
+        GraphicsContext::drawLineForText is called, which will incur a small
+        performance hit. However, this is justified by underlines looking
+        much better (antialiased) when the context is rotated or skewed.
+
+        Tests: svg/custom/foreign-object-skew.html
+               svg/zoom/page/zoom-foreignObject.html
+               svg/zoom/text/zoom-foreignObject.html:
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText):
+
 2013-10-23  Mark Lam  <mark.lam@apple.com>
 
         Re-instate ProposedDatabases needed by detailsForNameAndOrigin().
