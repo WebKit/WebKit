@@ -1,0 +1,14 @@
+--min-version 1.0.2 get-extension.html
+oes-standard-derivatives.html
+oes-texture-float-with-canvas.html
+oes-texture-float-with-image-data.html
+oes-texture-float-with-image.html
+oes-texture-float-with-video.html
+oes-texture-float.html
+oes-vertex-array-object.html
+--min-version 1.0.2 oes-element-index-uint.html
+webgl-debug-renderer-info.html
+webgl-debug-shaders.html
+--min-version 1.0.2 webgl-compressed-texture-s3tc.html
+--min-version 1.0.2 webgl-depth-texture.html
+--min-version 1.0.2 ext-texture-filter-anisotropic.html

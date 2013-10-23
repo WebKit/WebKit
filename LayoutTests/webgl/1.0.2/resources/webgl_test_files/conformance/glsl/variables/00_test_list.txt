@@ -1,0 +1,4 @@
+gl-fragcoord.html
+gl-frontfacing.html
+gl-pointcoord.html
+--min-version 1.0.2 glsl-built-ins.html
