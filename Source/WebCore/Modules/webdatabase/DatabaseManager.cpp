@@ -394,7 +394,7 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
 {
     ProposedDatabase* db = m_proposedDatabase;
     if (db && db->details().name() == name && db->origin()->equal(origin)) {
-        ASSERT(db->details().thread() == currentThread());
+        ASSERT(db->details().thread() == currentThread() || isMainThread());
         return db->details();
     }
     return m_server->detailsForNameAndOrigin(name, origin);
