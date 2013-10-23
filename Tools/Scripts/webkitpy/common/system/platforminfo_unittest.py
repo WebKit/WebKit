@@ -135,7 +135,8 @@ class TestPlatformInfo(unittest.TestCase):
         self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.6.1')).os_version, 'snowleopard')
         self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.7.1')).os_version, 'lion')
         self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.8.1')).os_version, 'mountainlion')
-        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.9.0')).os_version, 'future')
+        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.9.0')).os_version, 'mavericks')
+        self.assertEqual(self.make_info(fake_sys('darwin'), fake_platform('10.10.0')).os_version, 'future')
 
         self.assertEqual(self.make_info(fake_sys('linux2')).os_version, 'lucid')
 

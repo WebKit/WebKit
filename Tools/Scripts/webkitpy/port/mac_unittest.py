@@ -100,16 +100,14 @@ java/
         self.assert_name('mac', 'snowleopard', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'leopard', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', 'lion', 'mac-snowleopard')
-
         self.assert_name('mac', 'lion', 'mac-lion')
         self.assert_name('mac-lion', 'lion', 'mac-lion')
-
         self.assert_name('mac', 'mountainlion', 'mac-mountainlion')
         self.assert_name('mac-mountainlion', 'lion', 'mac-mountainlion')
-
+        self.assert_name('mac', 'mavericks', 'mac-mavericks')
+        self.assert_name('mac-mavericks', 'mountainlion', 'mac-mavericks')
         self.assert_name('mac', 'future', 'mac-future')
         self.assert_name('mac-future', 'future', 'mac-future')
-
         self.assertRaises(AssertionError, self.assert_name, 'mac-tiger', 'leopard', 'mac-leopard')
 
     def test_setup_environ_for_server(self):
@@ -126,13 +124,15 @@ java/
 
     def test_baseline_search_path(self):
         # Note that we don't need total coverage here, just path coverage, since this is all data driven.
-        self._assert_search_path('mac-snowleopard', 'mac-snowleopard', ['mac-snowleopard', 'mac-lion', 'mac'])
-        self._assert_search_path('mac-lion', 'mac-lion', ['mac-lion', 'mac'])
-        self._assert_search_path('mac-mountainlion', 'mac', ['mac'])
+        self._assert_search_path('mac-snowleopard', 'mac-snowleopard', ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac'])
+        self._assert_search_path('mac-lion', 'mac-lion', ['mac-lion', 'mac-mountainlion', 'mac'])
+        self._assert_search_path('mac-mountainlion', 'mac-mountainlion', ['mac-mountainlion', 'mac'])
+        self._assert_search_path('mac-mavericks', 'mac', ['mac'])
         self._assert_search_path('mac-future', 'mac', ['mac'])
-        self._assert_search_path('mac-snowleopard', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-snowleopard', 'mac-lion', 'mac'], use_webkit2=True)
-        self._assert_search_path('mac-lion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-lion', 'mac'], use_webkit2=True)
-        self._assert_search_path('mac-mountainlion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac'], use_webkit2=True)
+        self._assert_search_path('mac-snowleopard', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac'], use_webkit2=True)
+        self._assert_search_path('mac-lion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-lion', 'mac-mountainlion', 'mac'], use_webkit2=True)
+        self._assert_search_path('mac-mountainlion', 'mac-wk2', ['mac-wk2', 'wk2', 'mac-mountainlion', 'mac'], use_webkit2=True)
+        self._assert_search_path('mac-mavericks', 'mac-wk2', ['mac-wk2', 'wk2', 'mac'], use_webkit2=True)
         self._assert_search_path('mac-future', 'mac-wk2', ['mac-wk2', 'wk2', 'mac'], use_webkit2=True)
 
     def test_show_results_html_file(self):

@@ -47,10 +47,17 @@ from webkitpy.common.memoized import memoized
 
 _exact_matches = {
     # These builders are on build.webkit.org.
-    "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": False, "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": True, "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Release WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": False, "rebaseline_override_dir": "mac"},
-    "Apple MountainLion Debug WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": True, "rebaseline_override_dir": "mac"},
+
+    "Apple Mavericks Release WK1 (Tests)": {"port_name": "mac-mavericks", "is_debug": False},
+    "Apple Mavericks Debug WK1 (Tests)": {"port_name": "mac-mavericks", "is_debug": True},
+    "Apple Mavericks Release WK2 (Tests)": {"port_name": "mac-mavericks-wk2", "is_debug": False},
+    "Apple Mavericks Debug WK2 (Tests)": {"port_name": "mac-mavericks-wk2", "is_debug": True},
+
+    "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": False},
+    "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": True},
+    "Apple MountainLion Release WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": False},
+    "Apple MountainLion Debug WK2 (Tests)": {"port_name": "mac-mountainlion-wk2", "is_debug": True},
+
     "Apple Lion Release WK1 (Tests)": {"port_name": "mac-lion", "is_debug": False},
     "Apple Lion Debug WK1 (Tests)": {"port_name": "mac-lion", "is_debug": True},
     "Apple Lion Release WK2 (Tests)": {"port_name": "mac-lion-wk2", "is_debug": False},
