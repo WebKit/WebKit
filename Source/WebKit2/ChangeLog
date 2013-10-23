@@ -1,3 +1,19 @@
+2013-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Disable threaded scrolling for RemoteLayerTreeDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=123187
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::supportsThreadedScrolling):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Threaded scrolling doesn't work with remote layer trees yet.
+        Let the DrawingArea subclass tell WebPage if it supports threaded
+        scrolling, and make TiledCoreAnimationDrawingArea say that it does.
+
 2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on EFL port after r157823

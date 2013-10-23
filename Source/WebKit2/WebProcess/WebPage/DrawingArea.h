@@ -86,6 +86,8 @@ public:
     virtual void setClipsToExposedRect(bool) { }
     virtual void mainFrameScrollabilityChanged(bool) { }
 
+    virtual bool supportsThreadedScrolling() { return false; }
+
     virtual void didChangeScrollOffsetForAnyFrame() { }
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) { return false; }

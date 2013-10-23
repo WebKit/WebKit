@@ -307,13 +307,15 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_page = adoptPtr(new Page(pageClients));
 
-#if ENABLE(THREADED_SCROLLING)
-    m_useThreadedScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
-    m_page->settings().setScrollingCoordinatorEnabled(m_useThreadedScrolling);
-#endif
-
     m_drawingArea = DrawingArea::create(this, parameters);
     m_drawingArea->setPaintingEnabled(false);
+
+#if ENABLE(THREADED_SCROLLING)
+    m_useThreadedScrolling = parameters.store.getBoolValueForKey(WebPreferencesKey::threadedScrollingEnabledKey());
+    if (!m_drawingArea->supportsThreadedScrolling())
+        m_useThreadedScrolling = false;
+    m_page->settings().setScrollingCoordinatorEnabled(m_useThreadedScrolling);
+#endif
 
     m_mainFrame = WebFrame::createWithCoreMainFrame(this, &m_page->mainFrame());
 
