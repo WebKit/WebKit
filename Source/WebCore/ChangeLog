@@ -1,3 +1,15 @@
+2013-10-22  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix broken build on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=123174.
+
+        Not reviewed.
+
+        No new tests.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2013-10-22  Brady Eidson  <beidson@apple.com>
 
         Get rid of IDBObjectStoreBackendLevelDB

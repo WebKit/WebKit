@@ -6553,7 +6553,6 @@
     <ClCompile Include="..\Modules\indexeddb\IDBKey.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKeyRange.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBObjectStore.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBObjectStoreBackendLevelDB.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBRequest.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBTransaction.cpp" />
     <ClCompile Include="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp" />

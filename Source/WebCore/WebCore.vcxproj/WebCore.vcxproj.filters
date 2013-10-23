@@ -6892,9 +6892,6 @@
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBObjectStoreBackendLevelDB.cpp">
-      <Filter>Modules\indexeddb\leveldb</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\LineWidth.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
