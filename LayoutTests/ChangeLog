@@ -1,3 +1,9 @@
+2013-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark compositing/regions/region-as-layer-in-another-flowthread.html  as an image failure.
+
+        * platform/mac/TestExpectations:
+
 2013-10-22  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION: `if (false === (true && undefined)) console.log("wrong!");` logs "wrong!", shouldn't!

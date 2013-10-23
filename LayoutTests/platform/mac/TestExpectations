@@ -1292,3 +1292,5 @@ webkit.org/b/122508 compositing/video/video-reflection.html [ Pass Timeout ]
 webkit.org/b/123010 media/W3C/audio/networkState/networkState_during_loadstart.html [ Pass Failure ]
 
 webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Failure Timeout ]
+
+webkit.org/b/123193 compositing/regions/region-as-layer-in-another-flowthread.html [ Image ]
