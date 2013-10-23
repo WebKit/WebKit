@@ -1,3 +1,10 @@
+2013-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Lion bots from the Dashboard.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+
 2013-10-23  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Expose image links properly

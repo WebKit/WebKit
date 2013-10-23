@@ -26,15 +26,9 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
-        "Apple Lion Release (Build)": {platform: Buildbot.Platform.MacOSXLion, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Lion Debug (Build)": {platform: Buildbot.Platform.MacOSXLion, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple MountainLion Release (Build)": {platform: Buildbot.Platform.MacOSXMountainLion, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple MountainLion Release (32-bit Build)": {platform: Buildbot.Platform.MacOSXMountainLion, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
         "Apple MountainLion Debug (Build)": {platform: Buildbot.Platform.MacOSXMountainLion, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
-        "Apple Lion Release WK1 (Tests)": {platform: Buildbot.Platform.MacOSXLion, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Lion Debug WK1 (Tests)": {platform: Buildbot.Platform.MacOSXLion, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
-        "Apple Lion Release WK2 (Tests)": {platform: Buildbot.Platform.MacOSXLion, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "Apple Lion Debug WK2 (Tests)": {platform: Buildbot.Platform.MacOSXLion, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple MountainLion Release WK1 (Tests)": {platform: Buildbot.Platform.MacOSXMountainLion, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple MountainLion Debug WK1 (Tests)": {platform: Buildbot.Platform.MacOSXMountainLion, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple MountainLion Release WK2 (Tests)": {platform: Buildbot.Platform.MacOSXMountainLion, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
