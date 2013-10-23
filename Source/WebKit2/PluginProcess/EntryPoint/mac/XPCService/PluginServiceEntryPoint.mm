@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(XPC)
-
 #import "EnvironmentUtilities.h"
 #import "PluginProcess.h"
 #import "WKBase.h"
@@ -76,5 +74,3 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
 
     XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(connection, initializerMessage);
 }
-
-#endif // HAVE(XPC)

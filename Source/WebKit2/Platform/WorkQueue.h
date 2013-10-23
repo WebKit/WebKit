@@ -28,9 +28,7 @@
 #define WorkQueue_h
 
 #if OS(DARWIN)
-#if HAVE(DISPATCH_H)
 #include <dispatch/dispatch.h>
-#endif
 #endif
 
 #include <wtf/Forward.h>

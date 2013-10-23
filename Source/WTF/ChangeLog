@@ -1,3 +1,14 @@
+2013-10-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove HAVE_XPC
+        https://bugs.webkit.org/show_bug.cgi?id=123226
+
+        Reviewed by Dan Bernstein.
+
+        HAVE_XPC has been true on Mac since Lion, so remove it.
+
+        * wtf/Platform.h:
+
 2013-10-23  Andreas Kling  <akling@apple.com>
 
         Make more StringImpl construction functions return PassRef.

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(XPC)
-
 #import "EnvironmentUtilities.h"
 #import "WKBase.h"
 #import "WebProcess.h"
@@ -46,5 +44,3 @@ void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t init
 
     XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
-
-#endif // HAVE(XPC)

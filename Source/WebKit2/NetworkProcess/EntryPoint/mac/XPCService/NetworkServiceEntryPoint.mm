@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(XPC)
-
 #import "EnvironmentUtilities.h"
 #import "NetworkProcess.h"
 #import "WKBase.h"
@@ -44,5 +42,3 @@ void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initial
 
     XPCServiceInitializer<NetworkProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
-
-#endif // HAVE(XPC)

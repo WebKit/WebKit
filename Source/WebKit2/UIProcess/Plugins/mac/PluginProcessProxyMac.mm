@@ -123,7 +123,6 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
     return true;
 }
 
-#if HAVE(XPC)
 static bool shouldUseXPC()
 {
     if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
@@ -139,7 +138,6 @@ static bool shouldUseXPC()
     return false;
 #endif
 }
-#endif
 
 void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
@@ -151,9 +149,7 @@ void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions
     if (pluginProcessAttributes.sandboxPolicy == PluginProcessSandboxPolicyUnsandboxed)
         launchOptions.extraInitializationData.add("disable-sandbox", "1");
 
-#if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
-#endif
 }
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)

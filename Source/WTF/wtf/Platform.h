@@ -510,9 +510,6 @@
 #if CPU(X86_64)
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-#define HAVE_XPC 1
-#endif
 #define WTF_USE_CF 1
 #define HAVE_READLINE 1
 #define HAVE_RUNLOOP_TIMER 1

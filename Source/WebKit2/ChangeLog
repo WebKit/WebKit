@@ -1,3 +1,47 @@
+2013-10-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove HAVE_XPC
+        https://bugs.webkit.org/show_bug.cgi?id=123226
+
+        Reviewed by Dan Bernstein.
+
+        HAVE_XPC has been true on Mac since Lion, so remove it.
+
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm:
+        (DatabaseServiceInitializer):
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Identifier::Identifier):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::platformInitialize):
+        * Platform/WorkQueue.h:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        * UIProcess/Databases/mac/DatabaseProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::DatabaseProcessProxy::platformGetLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::setUpTerminationNotificationHandler):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::NetworkProcessProxy::platformGetLaunchOptions):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+
 2013-10-23  Tim Horton  <timothy_horton@apple.com>
 
         Remove the ifdef to exclude remote layer tree transaction logging

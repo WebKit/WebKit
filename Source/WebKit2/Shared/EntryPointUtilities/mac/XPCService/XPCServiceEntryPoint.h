@@ -26,8 +26,6 @@
 #ifndef XPCServiceEntryPoint_h
 #define XPCServiceEntryPoint_h
 
-#if HAVE(XPC)
-
 #import "ChildProcess.h"
 #import "WebKit2Initialize.h"
 #import <xpc/xpc.h>
@@ -82,7 +80,5 @@ void XPCServiceInitializer(xpc_connection_t connection, xpc_object_t initializer
 }
 
 } // namespace WebKit
-
-#endif // HAVE(XPC)
 
 #endif // XPCServiceEntryPoint_h

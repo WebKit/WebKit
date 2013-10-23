@@ -42,9 +42,7 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
-#if HAVE(XPC)
 #include <xpc/xpc.h>
-#endif
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -94,32 +92,24 @@ public:
     struct Identifier {
         Identifier()
             : port(MACH_PORT_NULL)
-#if HAVE(XPC)
             , xpcConnection(0)
-#endif
         {
         }
 
         Identifier(mach_port_t port)
             : port(port)
-#if HAVE(XPC)
             , xpcConnection(0)
-#endif
         {
         }
 
-#if HAVE(XPC)
         Identifier(mach_port_t port, xpc_connection_t xpcConnection)
             : port(port)
             , xpcConnection(xpcConnection)
         {
         }
-#endif
 
         mach_port_t port;
-#if HAVE(XPC)
         xpc_connection_t xpcConnection;
-#endif
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
 #elif USE(UNIX_DOMAIN_SOCKETS)
@@ -298,9 +288,7 @@ private:
     mach_port_t m_exceptionPort;
     dispatch_source_t m_exceptionPortDataAvailableSource;
 
-#if HAVE(XPC)
     xpc_connection_t m_xpcConnection;
-#endif
 
 #elif USE(UNIX_DOMAIN_SOCKETS)
     // Called on the connection queue.

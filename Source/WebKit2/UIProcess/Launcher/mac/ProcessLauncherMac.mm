@@ -43,20 +43,15 @@
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-
-#if HAVE(XPC)
 #import <xpc/xpc.h>
-#endif
 
 using namespace WebCore;
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
-#if HAVE(XPC)
 extern "C" void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 extern "C" void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
-#endif
 
 namespace WebKit {
 
@@ -80,7 +75,6 @@ struct UUIDHolder : public RefCounted<UUIDHolder> {
 
 static void setUpTerminationNotificationHandler(pid_t pid)
 {
-#if HAVE(DISPATCH_H)
     dispatch_source_t processDiedSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_PROC, pid, DISPATCH_PROC_EXIT, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     dispatch_source_set_event_handler(processDiedSource, ^{
         int status;
@@ -91,7 +85,6 @@ static void setUpTerminationNotificationHandler(pid_t pid)
         dispatch_release(processDiedSource);
     });
     dispatch_resume(processDiedSource);
-#endif
 }
 
 static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, EnvironmentVariables& environmentVariables)
@@ -140,8 +133,6 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 }
 
 typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
-
-#if HAVE(XPC)
 
 static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptions, bool forDevelopment)
 {
@@ -323,8 +314,6 @@ static void createService(const ProcessLauncher::LaunchOptions& launchOptions, b
     RefPtr<UUIDHolder> instanceUUID = UUIDHolder::create();
     connectToService(launchOptions, false, that, didFinishLaunchingProcessFunction, instanceUUID.get());
 }
-
-#endif
 
 static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
@@ -518,12 +507,10 @@ void ProcessLauncher::launchProcess()
 
     bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:@"/System/"];
 
-#if HAVE(XPC)
     if (m_launchOptions.useXPC) {
         createService(m_launchOptions, isWebKitDevelopmentBuild, this, &ProcessLauncher::didFinishLaunchingProcess);
         return;
     }
-#endif
 
     createProcess(m_launchOptions, isWebKitDevelopmentBuild, this, &ProcessLauncher::didFinishLaunchingProcess);
 }

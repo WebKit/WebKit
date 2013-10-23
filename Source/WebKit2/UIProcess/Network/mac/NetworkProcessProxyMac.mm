@@ -42,7 +42,6 @@ void NetworkProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEn
     connection()->send(Messages::NetworkProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 }
 
-#if HAVE(XPC)
 static bool shouldUseXPC()
 {
     if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
@@ -54,16 +53,13 @@ static bool shouldUseXPC()
     return false;
 #endif
 }
-#endif
 
 void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
     launchOptions.executableHeap = false;
 
-#if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
-#endif
 }
 
 } // namespace WebKit

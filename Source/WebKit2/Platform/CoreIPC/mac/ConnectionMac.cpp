@@ -33,10 +33,7 @@
 #include <WebCore/RunLoop.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
-
-#if HAVE(XPC)
 #include <xpc/xpc.h>
-#endif
 
 using namespace WebCore;
 
@@ -77,12 +74,10 @@ void Connection::platformInvalidate()
         m_exceptionPort = MACH_PORT_NULL;
     }
 
-#if HAVE(XPC)
     if (m_xpcConnection) {
         xpc_release(m_xpcConnection);
         m_xpcConnection = 0;
     }
-#endif
 }
 
 void Connection::platformInitialize(Identifier identifier)
@@ -101,13 +96,11 @@ void Connection::platformInitialize(Identifier identifier)
     m_receivePortDataAvailableSource = nullptr;
     m_exceptionPortDataAvailableSource = nullptr;
 
-#if HAVE(XPC)
     m_xpcConnection = identifier.xpcConnection;
     // FIXME: Instead of explicitly retaining the connection here, Identifier::xpcConnection
     // should just be a smart pointer.
     if (m_xpcConnection)
         xpc_retain(m_xpcConnection);
-#endif
 }
 
 static dispatch_source_t createDataAvailableSource(mach_port_t receivePort, WorkQueue* workQueue, const Function<void()>& function)

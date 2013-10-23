@@ -32,7 +32,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if HAVE(XPC)
 static bool shouldUseXPC()
 {
     if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
@@ -44,16 +43,12 @@ static bool shouldUseXPC()
     return false;
 #endif
 }
-#endif
 
 void DatabaseProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
     launchOptions.executableHeap = false;
-
-#if HAVE(XPC)
     launchOptions.useXPC = shouldUseXPC();
-#endif
 }
 
 } // namespace WebKit

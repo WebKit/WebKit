@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(XPC)
-
 #import "XPCServiceEntryPoint.h"
 
 extern "C" mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
@@ -65,5 +63,3 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 }
 
 } // namespace WebKit
-
-#endif // HAVE(XPC)

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(XPC)
-
 #import "EnvironmentUtilities.h"
 #import "DatabaseProcess.h"
 #import "WKBase.h"
@@ -40,5 +38,3 @@ void DatabaseServiceInitializer(xpc_connection_t connection, xpc_object_t initia
 {
     XPCServiceInitializer<DatabaseProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }
-
-#endif // HAVE(XPC)
