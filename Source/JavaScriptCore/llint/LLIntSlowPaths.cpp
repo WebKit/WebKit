@@ -278,7 +278,7 @@ inline bool shouldJIT(ExecState* exec)
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
     VM& vm = exec->vm();
-    DeferGC deferGC(vm.heap);
+    DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
     
     codeBlock->updateAllValueProfilePredictions();
     
