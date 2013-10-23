@@ -1,3 +1,11 @@
+2013-10-23  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERT d->m_defersLoading != defers on detik.com and drive.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=111902
+
+        * platform/mac/TestExpectations: Remove stale test expectations associated with this
+        bug, it's been fixed for a long time. Flakiness dashboard concurs.
+
 2013-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate existing platform/mac layout test results to mac-mountainlion, and add new platform/mac results for Mavericks.
