@@ -1,3 +1,12 @@
+2013-10-23  Daniel Bates  <dabates@apple.com>
+
+        Fix JavaScriptCore build targets following <http://trac.webkit.org/changeset/157864>
+        (https://bugs.webkit.org/show_bug.cgi?id=123169)
+
+        Tell Xcode that the supported platforms for all JavaScriptCore targets are iOS and OS X.
+
+        * Configurations/Base.xcconfig:
+
 2013-10-23  Michael Saboff  <msaboff@apple.com>
 
         LLInt arity check exception processing should start unwinding from caller
