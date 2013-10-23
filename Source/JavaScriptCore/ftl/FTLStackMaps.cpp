@@ -73,6 +73,11 @@ void StackMaps::Location::dump(PrintStream& out) const
     out.print("(", kind, ", reg", dwarfRegNum, ", ", offset, ")");
 }
 
+GPRReg StackMaps::Location::directGPR(StackMaps& stackmaps) const
+{
+    return FTL::Location::forStackmaps(stackmaps, *this).directGPR();
+}
+
 void StackMaps::Location::restoreInto(
     MacroAssembler& jit, StackMaps& stackmaps, char* savedRegisters, GPRReg result) const
 {

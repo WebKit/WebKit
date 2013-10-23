@@ -23,51 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "FTLInlineCacheSize.h"
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLInlineCacheDescriptor.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLStackMaps.h"
-#include <wtf/Noncopyable.h>
+#include "JITInlineCacheGenerator.h"
+#include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
+static size_t s_sizeOfGetById;
+static size_t s_sizeOfPutById;
+
+size_t sizeOfGetById()
+{
+    if (s_sizeOfGetById)
+        return s_sizeOfGetById;
     
-public:
-    State(DFG::Graph& graph);
-    ~State();
+    MacroAssembler jit;
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LContext context;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
-    SegmentedVector<GetByIdDescriptor> getByIds;
-    Vector<CString> codeSectionNames;
-    Vector<CString> dataSectionNames;
-    RefCountedArray<LSectionWord> stackmapsSection;
+    JITGetByIdGenerator generator(
+        0, CodeOrigin(), RegisterSet(), JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7),
+        false);
+    generator.generateFastPath(jit);
     
-    void dumpState(const char* when);
-};
+    return s_sizeOfGetById = jit.m_assembler.codeSize();
+}
+
+size_t sizeOfPutById()
+{
+    if (s_sizeOfPutById)
+        return s_sizeOfPutById;
+    
+    MacroAssembler jit;
+    
+    JITPutByIdGenerator generator(
+        0, CodeOrigin(), RegisterSet(), JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7),
+        GPRInfo::regT8, false, NotStrictMode, NotDirect);
+    generator.generateFastPath(jit);
+    
+    return s_sizeOfPutById = jit.m_assembler.codeSize();
+}
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLState_h
 

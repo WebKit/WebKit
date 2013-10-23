@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,11 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()
 {
     performFinalization();
     
-    return CodeRef(m_executableMemory);
+    ASSERT(m_didAllocate);
+    if (m_executableMemory)
+        return CodeRef(m_executableMemory);
+    
+    return CodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(m_code));
 }
 
 LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, ...)
@@ -134,7 +138,6 @@ void LinkBuffer::copyCompactAndLinkCode(void* ownerUID, JITCompilationEffort eff
 
 void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 {
-    ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
     m_assembler->m_assembler.buffer().flushConstantPool(false);
@@ -154,6 +157,15 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
 
 void LinkBuffer::allocate(size_t initialSize, void* ownerUID, JITCompilationEffort effort)
 {
+    if (m_code) {
+        if (initialSize > m_size)
+            return;
+        
+        m_didAllocate = true;
+        m_size = initialSize;
+        return;
+    }
+    
     m_executableMemory = m_vm->executableAllocator.allocate(*m_vm, initialSize, ownerUID, effort);
     if (!m_executableMemory)
         return;

@@ -34,10 +34,16 @@
 
 namespace JSC {
 
+static StructureStubInfo* garbageStubInfo()
+{
+    static StructureStubInfo* stubInfo = new StructureStubInfo();
+    return stubInfo;
+}
+
 JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin)
     : m_codeBlock(codeBlock)
 {
-    m_stubInfo = m_codeBlock->addStubInfo();
+    m_stubInfo = m_codeBlock ? m_codeBlock->addStubInfo() : garbageStubInfo();
     m_stubInfo->codeOrigin = codeOrigin;
 }
 
@@ -63,29 +69,34 @@ JITByIdGenerator::JITByIdGenerator(
 #endif
 }
 
-void JITByIdGenerator::finalize(LinkBuffer& linkBuffer)
+void JITByIdGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath)
 {
-    CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_call);
+    CodeLocationCall callReturnLocation = slowPath.locationOf(m_call);
     m_stubInfo->callReturnLocation = callReturnLocation;
     m_stubInfo->patch.deltaCheckImmToCall = MacroAssembler::differenceBetweenCodePtr(
-        linkBuffer.locationOf(m_structureImm), callReturnLocation);
+        fastPath.locationOf(m_structureImm), callReturnLocation);
     m_stubInfo->patch.deltaCallToStructCheck = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_structureCheck));
+        callReturnLocation, fastPath.locationOf(m_structureCheck));
 #if USE(JSVALUE64)
     m_stubInfo->patch.deltaCallToLoadOrStore = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_loadOrStore));
+        callReturnLocation, fastPath.locationOf(m_loadOrStore));
 #else
     m_stubInfo->patch.deltaCallToTagLoadOrStore = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_tagLoadOrStore));
+        callReturnLocation, fastPath.locationOf(m_tagLoadOrStore));
     m_stubInfo->patch.deltaCallToPayloadLoadOrStore = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_loadOrStore));
+        callReturnLocation, fastPath.locationOf(m_loadOrStore));
 #endif
     m_stubInfo->patch.deltaCallToSlowCase = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_slowPathBegin));
+        callReturnLocation, slowPath.locationOf(m_slowPathBegin));
     m_stubInfo->patch.deltaCallToDone = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_done));
+        callReturnLocation, fastPath.locationOf(m_done));
     m_stubInfo->patch.deltaCallToStorageLoad = MacroAssembler::differenceBetweenCodePtr(
-        callReturnLocation, linkBuffer.locationOf(m_propertyStorageLoad));
+        callReturnLocation, fastPath.locationOf(m_propertyStorageLoad));
+}
+
+void JITByIdGenerator::finalize(LinkBuffer& linkBuffer)
+{
+    finalize(linkBuffer, linkBuffer);
 }
 
 void JITByIdGenerator::generateFastPathChecks(MacroAssembler& jit, GPRReg butterfly)

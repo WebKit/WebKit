@@ -33,17 +33,70 @@
 
 namespace JSC {
 
+RegisterSet RegisterSet::stackRegisters()
+{
+    RegisterSet result;
+    result.set(MacroAssembler::stackPointerRegister);
+    result.set(MacroAssembler::framePointerRegister);
+    return result;
+}
+
 RegisterSet RegisterSet::specialRegisters()
 {
     RegisterSet result;
+    result.merge(stackRegisters());
     result.set(GPRInfo::callFrameRegister);
-    result.set(MacroAssembler::stackPointerRegister);
-    result.set(MacroAssembler::framePointerRegister);
 #if USE(JSVALUE64)
     result.set(GPRInfo::tagTypeNumberRegister);
     result.set(GPRInfo::tagMaskRegister);
 #endif
     return result;
+}
+
+RegisterSet RegisterSet::calleeSaveRegisters()
+{
+    RegisterSet result;
+#if CPU(X86_64)
+    result.set(X86Registers::ebx);
+    result.set(X86Registers::ebp);
+    result.set(X86Registers::r10);
+    result.set(X86Registers::r12);
+    result.set(X86Registers::r13);
+    result.set(X86Registers::r14);
+    result.set(X86Registers::r15);
+#else
+    UNREACHABLE_FOR_PLATFORM();
+#endif
+    return result;
+}
+
+RegisterSet RegisterSet::allGPRs()
+{
+    RegisterSet result;
+    for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1))
+        result.set(reg);
+    return result;
+}
+
+RegisterSet RegisterSet::allFPRs()
+{
+    RegisterSet result;
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1))
+        result.set(reg);
+    return result;
+}
+
+RegisterSet RegisterSet::allRegisters()
+{
+    RegisterSet result;
+    result.merge(allGPRs());
+    result.merge(allFPRs());
+    return result;
+}
+
+void RegisterSet::dump(PrintStream& out) const
+{
+    m_vector.dump(out);
 }
 
 } // namespace JSC

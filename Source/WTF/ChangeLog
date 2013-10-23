@@ -1,3 +1,40 @@
+2013-10-22  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should be able to do some simple inline caches using LLVM patchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=123164
+
+        Reviewed by Mark Hahnenberg.
+        
+        This needed some better bitvector support, like merging (|=), excluding (&=~),
+        hashing, and bit counting.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::excludeSlow):
+        (WTF::BitVector::bitCountSlow):
+        (WTF::BitVector::equalsSlowCase):
+        (WTF::BitVector::hashSlowCase):
+        (WTF::BitVector::dump):
+        * wtf/BitVector.h:
+        (WTF::BitVector::merge):
+        (WTF::BitVector::exclude):
+        (WTF::BitVector::bitCount):
+        (WTF::BitVector::BitVector):
+        (WTF::BitVector::isEmptyValue):
+        (WTF::BitVector::isDeletedValue):
+        (WTF::BitVector::isEmptyOrDeletedValue):
+        (WTF::BitVector::operator==):
+        (WTF::BitVector::hash):
+        (WTF::BitVectorHash::hash):
+        (WTF::BitVectorHash::equal):
+        * wtf/HashTraits.h:
+        (WTF::CustomHashTraits::constructDeletedValue):
+        (WTF::CustomHashTraits::isDeletedValue):
+        (WTF::CustomHashTraits::emptyValue):
+        (WTF::CustomHashTraits::isEmptyValue):
+        * wtf/StdLibExtras.h:
+        (WTF::bitCount):
+
 2013-10-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Clean-up in Atomics.h

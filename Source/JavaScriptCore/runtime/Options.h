@@ -127,6 +127,7 @@ typedef OptionRange optionRange;
     v(bool, ftlTrapsOnOSRExit, false) \
     v(bool, ftlOSRExitOmitsMarshalling, false) \
     v(bool, ftlOSRExitUsesStackmap, false) \
+    v(bool, ftlICUsesPatchpoint, false) \
     v(bool, useLLVMOSRExitIntrinsic, false) \
     v(bool, dumpLLVMIR, false) \
     v(bool, llvmAlwaysFailsBeforeCompile, false) \

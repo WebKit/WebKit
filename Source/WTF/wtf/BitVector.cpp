@@ -37,14 +37,14 @@ namespace WTF {
 void BitVector::setSlow(const BitVector& other)
 {
     uintptr_t newBitsOrPointer;
-    if (other.isInline())
+    if (other.isInline() || other.isEmptyOrDeletedValue())
         newBitsOrPointer = other.m_bitsOrPointer;
     else {
         OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
         memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
         newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
     }
-    if (!isInline())
+    if (!isInline() && !isEmptyOrDeletedValue())
         OutOfLineBits::destroy(outOfLineBits());
     m_bitsOrPointer = newBitsOrPointer;
 }
@@ -124,7 +124,59 @@ void BitVector::mergeSlow(const BitVector& other)
         a->bits()[i] |= b->bits()[i];
 }
 
-void BitVector::dump(PrintStream& out)
+void BitVector::excludeSlow(const BitVector& other)
+{
+    if (other.isInline()) {
+        ASSERT(!isInline());
+        *bits() &= ~cleanseInlineBits(other.m_bitsOrPointer);
+        return;
+    }
+    
+    if (isInline()) {
+        ASSERT(!other.isInline());
+        m_bitsOrPointer &= ~*other.outOfLineBits()->bits();
+        m_bitsOrPointer |= (static_cast<uintptr_t>(1) << maxInlineBits());
+        ASSERT(isInline());
+        return;
+    }
+    
+    OutOfLineBits* a = outOfLineBits();
+    const OutOfLineBits* b = other.outOfLineBits();
+    for (unsigned i = std::min(a->numWords(), b->numWords()); i--;)
+        a->bits()[i] &= ~b->bits()[i];
+}
+
+size_t BitVector::bitCountSlow() const
+{
+    ASSERT(!isInline());
+    const OutOfLineBits* bits = outOfLineBits();
+    size_t result = 0;
+    for (unsigned i = bits->numWords(); i--;)
+        result += bitCount(bits->bits()[i]);
+    return result;
+}
+
+bool BitVector::equalsSlowCase(const BitVector& other) const
+{
+    // This is really cheesy, but probably good enough for now.
+    for (unsigned i = std::max(size(), other.size()); i--;) {
+        if (get(i) != other.get(i))
+            return false;
+    }
+    return true;
+}
+
+uintptr_t BitVector::hashSlowCase() const
+{
+    ASSERT(!isInline());
+    const OutOfLineBits* bits = outOfLineBits();
+    uintptr_t result = 0;
+    for (unsigned i = bits->numWords(); i--;)
+        result ^= bits->bits()[i];
+    return result;
+}
+
+void BitVector::dump(PrintStream& out) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (get(i))

@@ -1,5 +1,113 @@
 2013-10-22  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should be able to do some simple inline caches using LLVM patchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=123164
+
+        Reviewed by Mark Hahnenberg.
+        
+        This implements GetById inline caches in the FTL using llvm.webkit.patchpoint.
+        
+        The idea is that we ask LLVM for a nop slide the size of a GetById inline
+        cache and then fill in the code after LLVM compilation is complete. For now, we
+        just use the system calling convention for the arguments and return. We also
+        still make some assumptions about registers that aren't correct. But, most of
+        the scaffolding is there and this will successfully patch an inline cache.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::allocate):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::LinkBuffer):
+        (JSC::LinkBuffer::link):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::constNull):
+        (JSC::FTL::buildCall):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLInlineCacheDescriptor.h: Added.
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::GetByIdDescriptor::GetByIdDescriptor):
+        (JSC::FTL::GetByIdDescriptor::stackmapID):
+        (JSC::FTL::GetByIdDescriptor::codeOrigin):
+        (JSC::FTL::GetByIdDescriptor::uid):
+        * ftl/FTLInlineCacheSize.cpp: Added.
+        (JSC::FTL::sizeOfGetById):
+        (JSC::FTL::sizeOfPutById):
+        * ftl/FTLInlineCacheSize.h: Added.
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::directGPR):
+        * ftl/FTLLocation.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::call):
+        * ftl/FTLSlowPathCall.cpp: Added.
+        (JSC::FTL::callOperation):
+        * ftl/FTLSlowPathCall.h: Added.
+        (JSC::FTL::SlowPathCall::SlowPathCall):
+        (JSC::FTL::SlowPathCall::call):
+        (JSC::FTL::SlowPathCall::key):
+        * ftl/FTLSlowPathCallKey.cpp: Added.
+        (JSC::FTL::SlowPathCallKey::dump):
+        * ftl/FTLSlowPathCallKey.h: Added.
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        (JSC::FTL::SlowPathCallKey::usedRegisters):
+        (JSC::FTL::SlowPathCallKey::callTarget):
+        (JSC::FTL::SlowPathCallKey::offset):
+        (JSC::FTL::SlowPathCallKey::isEmptyValue):
+        (JSC::FTL::SlowPathCallKey::isDeletedValue):
+        (JSC::FTL::SlowPathCallKey::operator==):
+        (JSC::FTL::SlowPathCallKey::hash):
+        (JSC::FTL::SlowPathCallKeyHash::hash):
+        (JSC::FTL::SlowPathCallKeyHash::equal):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Location::directGPR):
+        * ftl/FTLStackMaps.h:
+        * ftl/FTLState.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::Thunks::getSlowPathCallThunk):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+        * jit/GPRInfo.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::garbageStubInfo):
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITByIdGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITByIdGenerator::slowPathBegin):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::stackRegisters):
+        (JSC::RegisterSet::specialRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        (JSC::RegisterSet::allGPRs):
+        (JSC::RegisterSet::allFPRs):
+        (JSC::RegisterSet::allRegisters):
+        (JSC::RegisterSet::dump):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::exclude):
+        (JSC::RegisterSet::numberOfSetRegisters):
+        (JSC::RegisterSet::RegisterSet):
+        (JSC::RegisterSet::isEmptyValue):
+        (JSC::RegisterSet::isDeletedValue):
+        (JSC::RegisterSet::operator==):
+        (JSC::RegisterSet::hash):
+        (JSC::RegisterSetHash::hash):
+        (JSC::RegisterSetHash::equal):
+        * runtime/Options.h:
+
+2013-10-22  Filip Pizlo  <fpizlo@apple.com>
+
         jitCompileAndSetHeuristics should DeferGCForAWhile
         https://bugs.webkit.org/show_bug.cgi?id=123196
 

@@ -42,7 +42,12 @@ class RegisterSet {
 public:
     RegisterSet() { }
     
+    static RegisterSet stackRegisters();
     static RegisterSet specialRegisters();
+    static RegisterSet calleeSaveRegisters();
+    static RegisterSet allGPRs();
+    static RegisterSet allFPRs();
+    static RegisterSet allRegisters();
 
     void set(GPRReg reg, bool value = true)
     {
@@ -76,12 +81,54 @@ public:
     bool get(FPRReg reg) const { return m_vector.get(MacroAssembler::registerIndex(reg)); }
     
     void merge(const RegisterSet& other) { m_vector.merge(other.m_vector); }
+    void exclude(const RegisterSet& other) { m_vector.exclude(other.m_vector); }
+    
+    size_t numberOfSetRegisters() const { return m_vector.bitCount(); }
+    
+    void dump(PrintStream&) const;
+    
+    enum EmptyValueTag { EmptyValue };
+    enum DeletedValueTag { DeletedValue };
+    
+    RegisterSet(EmptyValueTag)
+        : m_vector(BitVector::EmptyValue)
+    {
+    }
+    
+    RegisterSet(DeletedValueTag)
+        : m_vector(BitVector::DeletedValue)
+    {
+    }
+    
+    bool isEmptyValue() const { return m_vector.isEmptyValue(); }
+    bool isDeletedValue() const { return m_vector.isDeletedValue(); }
+    
+    bool operator==(const RegisterSet& other) const { return m_vector == other.m_vector; }
+    unsigned hash() const { return m_vector.hash(); }
     
 private:
     BitVector m_vector;
 };
 
+struct RegisterSetHash {
+    static unsigned hash(const RegisterSet& set) { return set.hash(); }
+    static bool equal(const RegisterSet& a, const RegisterSet& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::RegisterSet> {
+    typedef JSC::RegisterSetHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::RegisterSet> : public CustomHashTraits<JSC::RegisterSet> { };
+
+} // namespace WTF
 
 #endif // ENABLE(JIT)
 

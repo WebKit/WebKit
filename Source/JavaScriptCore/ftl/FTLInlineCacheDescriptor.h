@@ -23,51 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
-
-#include <wtf/Platform.h>
+#ifndef FTLInlineCacheDescriptor_h
+#define FTLInlineCacheDescriptor_h
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLInlineCacheDescriptor.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLStackMaps.h"
-#include <wtf/Noncopyable.h>
+#include "CodeOrigin.h"
+#include "JITInlineCacheGenerator.h"
+#include "MacroAssembler.h"
+#include <wtf/text/StringImpl.h>
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
+class InlineCacheDescriptor {
 public:
-    State(DFG::Graph& graph);
-    ~State();
+    InlineCacheDescriptor() { }
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LContext context;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
-    SegmentedVector<GetByIdDescriptor> getByIds;
-    Vector<CString> codeSectionNames;
-    Vector<CString> dataSectionNames;
-    RefCountedArray<LSectionWord> stackmapsSection;
+    MacroAssembler::Jump m_slowPathDone;
+};
+
+class GetByIdDescriptor : public InlineCacheDescriptor {
+public:
+    GetByIdDescriptor() { }
     
-    void dumpState(const char* when);
+    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
+        : m_stackmapID(stackmapID)
+        , m_codeOrigin(codeOrigin)
+        , m_uid(uid)
+    {
+    }
+    
+    unsigned stackmapID() const { return m_stackmapID; }
+    CodeOrigin codeOrigin() const { return m_codeOrigin; }
+    StringImpl* uid() const { return m_uid; }
+    
+private:
+    unsigned m_stackmapID;
+    CodeOrigin m_codeOrigin;
+    StringImpl* m_uid;
+
+public:
+    JITGetByIdGenerator m_generator;
 };
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLState_h
+#endif // FTLInlineCacheDescriptor_h
 

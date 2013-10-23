@@ -23,51 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
-
-#include <wtf/Platform.h>
+#ifndef FTLInlineCacheSize_h
+#define FTLInlineCacheSize_h
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLInlineCacheDescriptor.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLStackMaps.h"
-#include <wtf/Noncopyable.h>
-
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
-public:
-    State(DFG::Graph& graph);
-    ~State();
-    
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LContext context;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
-    SegmentedVector<GetByIdDescriptor> getByIds;
-    Vector<CString> codeSectionNames;
-    Vector<CString> dataSectionNames;
-    RefCountedArray<LSectionWord> stackmapsSection;
-    
-    void dumpState(const char* when);
-};
+size_t sizeOfGetById();
+size_t sizeOfPutById();
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLState_h
+#endif // FTLInlineCacheSize_h
 

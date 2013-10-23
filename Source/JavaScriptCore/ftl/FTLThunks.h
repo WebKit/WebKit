@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLLocation.h"
+#include "FTLSlowPathCallKey.h"
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/HashMap.h>
 
@@ -43,6 +44,7 @@ namespace FTL {
 MacroAssemblerCodeRef osrExitGenerationWithoutStackMapThunkGenerator(VM*);
 
 MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(VM&, const Location&);
+MacroAssemblerCodeRef slowPathCallThunkGenerator(VM&, const SlowPathCallKey&);
 
 template<typename MapType, typename KeyType, typename GeneratorType>
 MacroAssemblerCodeRef generateIfNecessary(
@@ -65,8 +67,15 @@ public:
             vm, m_osrExitThunks, location, osrExitGenerationWithStackMapThunkGenerator);
     }
     
+    MacroAssemblerCodeRef getSlowPathCallThunk(VM& vm, const SlowPathCallKey& key)
+    {
+        return generateIfNecessary(
+            vm, m_slowPathCallThunks, key, slowPathCallThunkGenerator);
+    }
+    
 private:
     HashMap<Location, MacroAssemblerCodeRef> m_osrExitThunks;
+    HashMap<SlowPathCallKey, MacroAssemblerCodeRef> m_slowPathCallThunks;
 };
 
 } } // namespace JSC::FTL

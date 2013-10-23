@@ -279,7 +279,7 @@ private:
 #endif
 
 #if CPU(X86)
-#define NUMBER_OF_ARGUMENT_REGISTERS 0
+#define NUMBER_OF_ARGUMENT_REGISTERS 0u
 
 class GPRInfo {
 public:
@@ -342,7 +342,7 @@ private:
 #endif
 
 #if CPU(X86_64)
-#define NUMBER_OF_ARGUMENT_REGISTERS 6
+#define NUMBER_OF_ARGUMENT_REGISTERS 6u
 
 class GPRInfo {
 public:
@@ -423,7 +423,7 @@ private:
 #endif
 
 #if CPU(ARM)
-#define NUMBER_OF_ARGUMENT_REGISTERS 4
+#define NUMBER_OF_ARGUMENT_REGISTERS 4u
 
 class GPRInfo {
 public:
@@ -497,7 +497,7 @@ private:
 #endif
 
 #if CPU(ARM64)
-#define NUMBER_OF_ARGUMENT_REGISTERS 8
+#define NUMBER_OF_ARGUMENT_REGISTERS 8u
 
 class GPRInfo {
 public:
@@ -590,7 +590,7 @@ private:
 #endif
 
 #if CPU(MIPS)
-#define NUMBER_OF_ARGUMENT_REGISTERS 4
+#define NUMBER_OF_ARGUMENT_REGISTERS 4u
 
 class GPRInfo {
 public:
@@ -658,7 +658,7 @@ private:
 #endif
 
 #if CPU(SH4)
-#define NUMBER_OF_ARGUMENT_REGISTERS 4
+#define NUMBER_OF_ARGUMENT_REGISTERS 4u
 
 class GPRInfo {
 public:

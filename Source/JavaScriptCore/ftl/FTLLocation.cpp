@@ -180,6 +180,12 @@ void Location::restoreInto(MacroAssembler& jit, char* savedRegisters, GPRReg res
 #error "CPU architecture not supported."
 #endif // CPU cases for Location methods
 
+GPRReg Location::directGPR() const
+{
+    ASSERT(!addend());
+    return gpr();
+}
+
 } } // namespace JSC::FTL
 
 namespace WTF {

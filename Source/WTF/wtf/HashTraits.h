@@ -216,6 +216,34 @@ struct NullableHashTraits : public HashTraits<T> {
     static T emptyValue() { return reinterpret_cast<T>(1); }
 };
 
+// Useful for classes that want complete control over what is empty and what is deleted,
+// and how to construct both.
+template<typename T>
+struct CustomHashTraits : public GenericHashTraits<T> {
+    static const bool emptyValueIsZero = false;
+    static const bool hasIsEmptyValueFunction = true;
+    
+    static void constructDeletedValue(T& slot)
+    {
+        new (NotNull, &slot) T(T::DeletedValue);
+    }
+    
+    static bool isDeletedValue(const T& value)
+    {
+        return value.isDeletedValue();
+    }
+    
+    static T emptyValue()
+    {
+        return T(T::EmptyValue);
+    }
+    
+    static bool isEmptyValue(const T& value)
+    {
+        return value.isEmptyValue();
+    }
+};
+
 } // namespace WTF
 
 using WTF::HashTraits;

@@ -23,51 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLState_h
-#define FTLState_h
-
-#include <wtf/Platform.h>
+#ifndef FTLSlowPathCall_h
+#define FTLSlowPathCall_h
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-#include "FTLAbbreviations.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLInlineCacheDescriptor.h"
-#include "FTLJITCode.h"
-#include "FTLJITFinalizer.h"
-#include "FTLStackMaps.h"
-#include <wtf/Noncopyable.h>
+#include "CCallHelpers.h"
+#include "FTLSlowPathCallKey.h"
+#include "JITOperations.h"
+#include "StructureStubInfo.h"
 
 namespace JSC { namespace FTL {
 
-class State {
-    WTF_MAKE_NONCOPYABLE(State);
-    
+class State;
+
+class SlowPathCall {
 public:
-    State(DFG::Graph& graph);
-    ~State();
+    SlowPathCall() { }
     
-    // None of these things is owned by State. It is the responsibility of
-    // FTL phases to properly manage the lifecycle of the module and function.
-    DFG::Graph& graph;
-    LContext context;
-    LModule module;
-    LValue function;
-    RefPtr<JITCode> jitCode;
-    GeneratedFunction generatedFunction;
-    JITFinalizer* finalizer;
-    SegmentedVector<GetByIdDescriptor> getByIds;
-    Vector<CString> codeSectionNames;
-    Vector<CString> dataSectionNames;
-    RefCountedArray<LSectionWord> stackmapsSection;
+    SlowPathCall(MacroAssembler::Call call, const SlowPathCallKey& key)
+        : m_call(call)
+        , m_key(key)
+    {
+    }
     
-    void dumpState(const char* when);
+    MacroAssembler::Call call() const { return m_call; }
+    SlowPathCallKey key() const { return m_key; }
+    
+private:
+    MacroAssembler::Call m_call;
+    SlowPathCallKey m_key;
 };
+
+MacroAssembler::Call callOperation(
+    State&, const RegisterSet&, CCallHelpers&, J_JITOperation_ESsiJI,
+    GPRReg result, GPRReg callFrameRegister, StructureStubInfo*, GPRReg object,
+    StringImpl* uid);
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLState_h
+#endif // FTLSlowPathCall_h
 

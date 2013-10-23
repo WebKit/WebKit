@@ -818,14 +818,15 @@ public:
     {
         AssemblerType::cacheFlush(code, size);
     }
+
+    AssemblerType m_assembler;
+    
 protected:
     AbstractMacroAssembler()
         : m_randomSource(cryptographicallyRandomNumber())
     {
     }
 
-    AssemblerType m_assembler;
-    
     uint32_t random()
     {
         return m_randomSource.getUint32();

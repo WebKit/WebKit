@@ -84,6 +84,24 @@ bool JITFinalizer::finalizeFunction()
                 ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data())));
     } // else this function had no OSR exits, so no exit thunks.
     
+    if (sideCodeLinkBuffer) {
+        // Side code is for special slow paths that we generate ourselves, like for inline
+        // caches.
+        
+        for (unsigned i = slowPathCalls.size(); i--;) {
+            SlowPathCall& call = slowPathCalls[i];
+            sideCodeLinkBuffer->link(
+                call.call(),
+                CodeLocationLabel(m_plan.vm.ftlThunks->getSlowPathCallThunk(m_plan.vm, call.key()).code()));
+        }
+        
+        jitCode->addHandle(FINALIZE_DFG_CODE(
+            *sideCodeLinkBuffer,
+            ("FTL side code for %s",
+                toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data()))
+            .executableMemory());
+    }
+    
     MacroAssemblerCodePtr withArityCheck;
     if (arityCheck.isSet())
         withArityCheck = entrypointLinkBuffer->locationOf(arityCheck);

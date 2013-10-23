@@ -157,6 +157,7 @@ public:
     bool isGPR() const;
     bool involvesGPR() const;
     GPRReg gpr() const;
+    GPRReg directGPR() const; // Get the GPR and assert that there is no addend.
     
     bool isFPR() const;
     FPRReg fpr() const;

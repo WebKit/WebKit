@@ -145,6 +145,7 @@ enum BitExtension { ZeroExtend, SignExtend };
 static inline LValue constInt(LType type, unsigned long long value, BitExtension extension = ZeroExtend) { return llvm->ConstInt(type, value, extension == SignExtend); }
 static inline LValue constReal(LType type, double value) { return llvm->ConstReal(type, value); }
 static inline LValue constIntToPtr(LValue value, LType type) { return llvm->ConstIntToPtr(value, type); }
+static inline LValue constNull(LType type) { return llvm->ConstNull(type); }
 static inline LValue constBitCast(LValue value, LType type) { return llvm->ConstBitCast(value, type); }
 
 static inline LBasicBlock appendBasicBlock(LContext context, LValue function, const char* name = "") { return llvm->AppendBasicBlockInContext(context, function, name); }
@@ -247,6 +248,16 @@ static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, L
 {
     LValue args[] = { arg1, arg2, arg3, arg4 };
     return buildCall(builder, function, args, 4);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4, arg5 };
+    return buildCall(builder, function, args, 5);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4, arg5, arg6 };
+    return buildCall(builder, function, args, 6);
 }
 enum TailCallMode { IsNotTailCall, IsTailCall };
 static inline void setTailCall(LValue call, TailCallMode mode) { llvm->SetTailCall(call, mode == IsTailCall); }

@@ -34,6 +34,7 @@
 #include "DataView.h"
 #include "Disassembler.h"
 #include "FTLExitThunkGenerator.h"
+#include "FTLInlineCacheSize.h"
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
 #include "JITStubs.h"
@@ -110,6 +111,7 @@ static void fixFunctionBasedOnStackMaps(
     StackMaps::RecordMap& recordMap)
 {
     VM& vm = state.graph.m_vm;
+    StackMaps stackmaps = jitCode->stackmaps;
 
     ExitThunkGenerator exitThunkGenerator(state);
     exitThunkGenerator.emitThunks();
@@ -136,6 +138,82 @@ static void fixFunctionBasedOnStackMaps(
         state.finalizer->exitThunksLinkBuffer = linkBuffer.release();
     }
 
+    if (!state.getByIds.isEmpty()) {
+        CCallHelpers slowPathJIT(&vm, codeBlock);
+        
+        for (unsigned i = state.getByIds.size(); i--;) {
+            GetByIdDescriptor& getById = state.getByIds[i];
+            
+            StackMaps::RecordMap::iterator iter = recordMap.find(getById.stackmapID());
+            if (iter == recordMap.end()) {
+                // It was optimized out.
+                continue;
+            }
+            
+            StackMaps::Record& record = iter->value;
+            
+            UNUSED_PARAM(record); // FIXME: use AnyRegs.
+
+            // FIXME: LLVM should tell us which registers are live.
+            RegisterSet usedRegisters = RegisterSet::allRegisters();
+            
+            GPRReg callFrameRegister = GPRInfo::argumentGPR0;
+            GPRReg base = GPRInfo::argumentGPR1;
+            GPRReg result = GPRInfo::returnValueGPR;
+            
+            JITGetByIdGenerator gen(
+                codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                JSValueRegs(result), false);
+            
+            MacroAssembler::Label begin = slowPathJIT.label();
+            
+            MacroAssembler::Call call = callOperation(
+                state, usedRegisters, slowPathJIT, operationGetByIdOptimize, result,
+                callFrameRegister, gen.stubInfo(), base, getById.uid());
+            
+            gen.reportSlowPathCall(begin, call);
+            
+            getById.m_slowPathDone = slowPathJIT.jump();
+            getById.m_generator = gen;
+        }
+        
+        state.finalizer->sideCodeLinkBuffer = adoptPtr(
+            new LinkBuffer(vm, &slowPathJIT, codeBlock, JITCompilationMustSucceed));
+        
+        for (unsigned i = state.getByIds.size(); i--;) {
+            GetByIdDescriptor& getById = state.getByIds[i];
+            
+            StackMaps::RecordMap::iterator iter = recordMap.find(getById.stackmapID());
+            if (iter == recordMap.end()) {
+                // It was optimized out.
+                continue;
+            }
+            
+            StackMaps::Record& record = iter->value;
+
+            CCallHelpers fastPathJIT(&vm, codeBlock);
+            getById.m_generator.generateFastPath(fastPathJIT);
+
+            char* startOfIC =
+                bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+            size_t sizeOfIC = sizeOfGetById();
+            
+            LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
+            // Note: we could handle the !isValid() case. We just don't appear to have a
+            // reason to do so, yet.
+            RELEASE_ASSERT(linkBuffer.isValid());
+            
+            state.finalizer->sideCodeLinkBuffer->link(
+                getById.m_slowPathDone, CodeLocationLabel(startOfIC + sizeOfIC));
+            
+            linkBuffer.link(
+                getById.m_generator.slowPathJump(),
+                state.finalizer->sideCodeLinkBuffer->locationOf(getById.m_generator.slowPathBegin()));
+            
+            getById.m_generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+        }
+    }
+    
     RepatchBuffer repatchBuffer(codeBlock);
     
     for (unsigned exitIndex = jitCode->osrExit.size(); exitIndex--;) {

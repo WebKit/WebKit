@@ -34,6 +34,7 @@
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
 #include "FTLOSRExitCompilationInfo.h"
+#include "FTLSlowPathCall.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
@@ -50,6 +51,8 @@ public:
 
     OwnPtr<LinkBuffer> exitThunksLinkBuffer;
     OwnPtr<LinkBuffer> entrypointLinkBuffer;
+    OwnPtr<LinkBuffer> sideCodeLinkBuffer;
+    Vector<SlowPathCall> slowPathCalls; // Calls inside the side code.
     Vector<OSRExitCompilationInfo> osrExit;
     MacroAssembler::Label arityCheck;
     GeneratedFunction function;

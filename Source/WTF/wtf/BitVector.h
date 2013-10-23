@@ -28,6 +28,8 @@
 
 #include <stdio.h>
 #include <wtf/Assertions.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
@@ -176,9 +178,66 @@ public:
             return;
         }
         m_bitsOrPointer |= other.m_bitsOrPointer;
+        ASSERT(isInline());
     }
     
-    void dump(PrintStream& out);
+    void exclude(const BitVector& other)
+    {
+        if (!isInline() || !other.isInline()) {
+            excludeSlow(other);
+            return;
+        }
+        m_bitsOrPointer &= ~other.m_bitsOrPointer;
+        m_bitsOrPointer |= (static_cast<uintptr_t>(1) << maxInlineBits());
+        ASSERT(isInline());
+    }
+    
+    size_t bitCount() const
+    {
+        if (isInline())
+            return bitCount(cleanseInlineBits(m_bitsOrPointer));
+        return bitCountSlow();
+    }
+    
+    WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
+    
+    enum EmptyValueTag { EmptyValue };
+    enum DeletedValueTag { DeletedValue };
+    
+    BitVector(EmptyValueTag)
+        : m_bitsOrPointer(0)
+    {
+    }
+    
+    BitVector(DeletedValueTag)
+        : m_bitsOrPointer(1)
+    {
+    }
+    
+    bool isEmptyValue() const { return !m_bitsOrPointer; }
+    bool isDeletedValue() const { return m_bitsOrPointer == 1; }
+    
+    bool isEmptyOrDeletedValue() const { return m_bitsOrPointer <= 1; }
+    
+    bool operator==(const BitVector& other) const
+    {
+        if (isInline() && other.isInline())
+            return m_bitsOrPointer == other.m_bitsOrPointer;
+        return equalsSlowCase(other);
+    }
+    
+    unsigned hash() const
+    {
+        // This is a very simple hash. Just xor together the words that hold the various
+        // bits and then compute the hash. This makes it very easy to deal with bitvectors
+        // that have a lot of trailing zero's.
+        uintptr_t value;
+        if (isInline())
+            value = cleanseInlineBits(m_bitsOrPointer);
+        else
+            value = hashSlowCase();
+        return IntHash<uintptr_t>::hash(value);
+    }
     
 private:
     static unsigned bitsInPointer()
@@ -205,6 +264,13 @@ private:
     static uintptr_t cleanseInlineBits(uintptr_t bits)
     {
         return bits & ~(static_cast<uintptr_t>(1) << maxInlineBits());
+    }
+    
+    static size_t bitCount(uintptr_t bits)
+    {
+        if (sizeof(uintptr_t) == 4)
+            return WTF::bitCount(static_cast<unsigned>(bits));
+        return WTF::bitCount(static_cast<uint64_t>(bits));
     }
     
     class OutOfLineBits {
@@ -236,6 +302,12 @@ private:
     WTF_EXPORT_PRIVATE void setSlow(const BitVector& other);
     
     WTF_EXPORT_PRIVATE void mergeSlow(const BitVector& other);
+    WTF_EXPORT_PRIVATE void excludeSlow(const BitVector& other);
+    
+    WTF_EXPORT_PRIVATE size_t bitCountSlow() const;
+    
+    WTF_EXPORT_PRIVATE bool equalsSlowCase(const BitVector& other) const;
+    WTF_EXPORT_PRIVATE uintptr_t hashSlowCase() const;
     
     uintptr_t* bits()
     {
@@ -253,6 +325,20 @@ private:
     
     uintptr_t m_bitsOrPointer;
 };
+
+struct BitVectorHash {
+    static unsigned hash(const BitVector& vector) { return vector.hash(); }
+    static bool equal(const BitVector& a, const BitVector& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<BitVector> {
+    typedef BitVectorHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<BitVector> : public CustomHashTraits<BitVector> { };
 
 } // namespace WTF
 

@@ -66,8 +66,10 @@ public:
         m_call = call;
     }
     
+    MacroAssembler::Label slowPathBegin() const { return m_slowPathBegin; }
     MacroAssembler::Jump slowPathJump() const { return m_structureCheck.m_jump; }
 
+    void finalize(LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
     void finalize(LinkBuffer&);
     
 protected:

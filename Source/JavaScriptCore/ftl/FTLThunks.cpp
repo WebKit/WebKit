@@ -144,6 +144,67 @@ MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(
     return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk for callFrame at %s", toCString(location).data()));
 }
 
+MacroAssemblerCodeRef slowPathCallThunkGenerator(VM& vm, const SlowPathCallKey& key)
+{
+    AssemblyHelpers jit(&vm, 0);
+    
+    // We want to save the given registers at the given offset, then we want to save the
+    // old return address somewhere past that offset, and then finally we want to make the
+    // call.
+    
+    size_t currentOffset = key.offset() + sizeof(void*);
+    
+#if CPU(X86) || CPU(X86_64)
+    currentOffset += sizeof(void*);
+#endif
+    
+    for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
+        if (!key.usedRegisters().get(reg))
+            continue;
+        jit.storePtr(reg, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset));
+        currentOffset += sizeof(void*);
+    }
+    
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
+        if (!key.usedRegisters().get(reg))
+            continue;
+        jit.storeDouble(reg, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset));
+        currentOffset += sizeof(double);
+    }
+    
+    jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR0);
+    jit.storePtr(GPRInfo::nonArgGPR0, AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()));
+    
+    JITCompiler::Call call = jit.call();
+    
+    jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, key.offset()), GPRInfo::nonPreservedNonReturnGPR);
+    jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
+    
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
+        if (key.usedRegisters().get(reg)) {
+            currentOffset -= sizeof(double);
+            jit.loadDouble(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset), reg);
+        }
+        if (reg == MacroAssembler::firstFPRegister())
+            break;
+    }
+    
+    for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
+        if (key.usedRegisters().get(reg)) {
+            currentOffset -= sizeof(void*);
+            jit.loadPtr(AssemblyHelpers::Address(MacroAssembler::stackPointerRegister, currentOffset), reg);
+        }
+        if (reg == MacroAssembler::firstRegister())
+            break;
+    }
+    
+    jit.ret();
+
+    LinkBuffer patchBuffer(vm, &jit, GLOBAL_THUNK_ID);
+    patchBuffer.link(call, FunctionPtr(key.callTarget()));
+    return FINALIZE_CODE(patchBuffer, ("FTL slow path call thunk for %s", toCString(key).data()));
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

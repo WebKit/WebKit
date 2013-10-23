@@ -129,6 +129,13 @@
 		0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */; };
 		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F25F1AE181635F300522F39 /* FTLInlineCacheDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F25F1AF181635F300522F39 /* FTLInlineCacheSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */; };
+		0F25F1B0181635F300522F39 /* FTLInlineCacheSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */; };
+		0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */; };
+		0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AC17B6B53F00A7AE3F /* GCIncomingRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AD17B6B54500A7AE3F /* GCIncomingRefCountedInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AE17B6B54500A7AE3F /* GCIncomingRefCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66AA17B6B53D00A7AE3F /* GCIncomingRefCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1384,6 +1391,13 @@
 		0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineCallFrameSet.h; sourceTree = "<group>"; };
 		0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRecovery.cpp; sourceTree = "<group>"; };
 		0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCallArrayAllocatorSlowPathGenerator.h; path = dfg/DFGCallArrayAllocatorSlowPathGenerator.h; sourceTree = "<group>"; };
+		0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLInlineCacheDescriptor.h; path = ftl/FTLInlineCacheDescriptor.h; sourceTree = "<group>"; };
+		0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLInlineCacheSize.cpp; path = ftl/FTLInlineCacheSize.cpp; sourceTree = "<group>"; };
+		0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLInlineCacheSize.h; path = ftl/FTLInlineCacheSize.h; sourceTree = "<group>"; };
+		0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSlowPathCall.cpp; path = ftl/FTLSlowPathCall.cpp; sourceTree = "<group>"; };
+		0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSlowPathCall.h; path = ftl/FTLSlowPathCall.h; sourceTree = "<group>"; };
+		0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSlowPathCallKey.cpp; path = ftl/FTLSlowPathCallKey.cpp; sourceTree = "<group>"; };
+		0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSlowPathCallKey.h; path = ftl/FTLSlowPathCallKey.h; sourceTree = "<group>"; };
 		0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCountedInlines.h; sourceTree = "<group>"; };
 		0F2B66AA17B6B53D00A7AE3F /* GCIncomingRefCountedSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCountedSet.h; sourceTree = "<group>"; };
@@ -2734,6 +2748,9 @@
 				0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */,
 				0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */,
 				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
+				0F25F1A7181635F300522F39 /* FTLInlineCacheDescriptor.h */,
+				0F25F1A8181635F300522F39 /* FTLInlineCacheSize.cpp */,
+				0F25F1A9181635F300522F39 /* FTLInlineCacheSize.h */,
 				0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */,
 				0FEA0A221709606900BB722C /* FTLIntrinsicRepository.h */,
 				0FEA0A02170513DB00BB722C /* FTLJITCode.cpp */,
@@ -2758,6 +2775,10 @@
 				0FEA0A06170513DB00BB722C /* FTLOutput.h */,
 				0FCEFAA91804C13E00472CE4 /* FTLSaveRestore.cpp */,
 				0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */,
+				0F25F1AA181635F300522F39 /* FTLSlowPathCall.cpp */,
+				0F25F1AB181635F300522F39 /* FTLSlowPathCall.h */,
+				0F25F1AC181635F300522F39 /* FTLSlowPathCallKey.cpp */,
+				0F25F1AD181635F300522F39 /* FTLSlowPathCallKey.h */,
 				0F9D33981803ADB70073C2BC /* FTLStackMaps.cpp */,
 				0F9D33991803ADB70073C2BC /* FTLStackMaps.h */,
 				0FEA0A151706BB9000BB722C /* FTLState.cpp */,
@@ -4392,6 +4413,7 @@
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
 				86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */,
 				BC18C4190E16F5CD00B34460 /* JSCallbackConstructor.h in Headers */,
+				0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */,
 				BC18C41A0E16F5CD00B34460 /* JSCallbackFunction.h in Headers */,
 				BC18C41B0E16F5CD00B34460 /* JSCallbackObject.h in Headers */,
 				BC18C41C0E16F5CD00B34460 /* JSCallbackObjectFunctions.h in Headers */,
@@ -4509,6 +4531,7 @@
 				0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */,
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
 				0F4680A514BA7F8D00BFE272 /* LLIntSlowPaths.h in Headers */,
+				0F25F1AE181635F300522F39 /* FTLInlineCacheDescriptor.h in Headers */,
 				A7BDAECB17F4EA1400F6140C /* JSArrayIterator.h in Headers */,
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
 				A7E5AB381799E4B200D2833D /* LLVMDisassembler.h in Headers */,
@@ -4654,6 +4677,7 @@
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
+				0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
@@ -4702,6 +4726,7 @@
 				BC18C4200E16F5CD00B34460 /* VM.h in Headers */,
 				FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */,
 				FE6617281774E03500495B00 /* VMStackBounds.h in Headers */,
+				0F25F1B0181635F300522F39 /* FTLInlineCacheSize.h in Headers */,
 				0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */,
 				FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */,
 				0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */,
@@ -5170,6 +5195,7 @@
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
 				A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */,
 				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
+				0F25F1B3181635F300522F39 /* FTLSlowPathCallKey.cpp in Sources */,
 				A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */,
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
@@ -5183,6 +5209,7 @@
 				0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */,
 				147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */,
 				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
+				0F25F1B1181635F300522F39 /* FTLSlowPathCall.cpp in Sources */,
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
@@ -5547,6 +5574,7 @@
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
+				0F25F1AF181635F300522F39 /* FTLInlineCacheSize.cpp in Sources */,
 				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,
 				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,
 				0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */,
