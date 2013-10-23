@@ -28,8 +28,8 @@
 
 #include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseCallbacks.h"
+#include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
-#include "IDBObjectStoreBackendLevelDB.h"
 #include "Logging.h"
 #include <wtf/text/CString.h>
 
@@ -180,7 +180,7 @@ void PutOperation::perform()
 
     RefPtr<IDBKey> key;
     if (m_putMode != IDBDatabaseBackendInterface::CursorUpdate && m_objectStore.autoIncrement && !m_key) {
-        RefPtr<IDBKey> autoIncKey = IDBObjectStoreBackendLevelDB::generateKey(m_backingStore, m_transaction, m_databaseId, m_objectStore.id);
+        RefPtr<IDBKey> autoIncKey = m_backingStore->generateKey(*m_transaction, m_databaseId, m_objectStore.id);
         keyWasGenerated = true;
         if (!autoIncKey->isValid()) {
             m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Maximum key generator value reached."));
@@ -206,10 +206,10 @@ void PutOperation::perform()
         }
     }
 
-    Vector<OwnPtr<IDBObjectStoreBackendLevelDB::IndexWriter>> indexWriters;
+    Vector<RefPtr<IDBIndexWriter>> indexWriters;
     String errorMessage;
     bool obeysConstraints = false;
-    bool backingStoreSuccess = IDBObjectStoreBackendLevelDB::makeIndexWriters(m_transaction, m_backingStore.get(), m_databaseId, m_objectStore, key, keyWasGenerated, m_indexIds, m_indexKeys, &indexWriters, &errorMessage, obeysConstraints);
+    bool backingStoreSuccess = m_backingStore->makeIndexWriters(*m_transaction, m_databaseId, m_objectStore, *key, keyWasGenerated, m_indexIds, m_indexKeys, indexWriters, &errorMessage, obeysConstraints);
     if (!backingStoreSuccess) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
         return;
@@ -227,12 +227,12 @@ void PutOperation::perform()
     }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
-        IDBObjectStoreBackendLevelDB::IndexWriter* indexWriter = indexWriters[i].get();
+        IDBIndexWriter* indexWriter = indexWriters[i].get();
         indexWriter->writeIndexKeys(recordIdentifier.get(), *m_backingStore, m_transaction->backingStoreTransaction(), m_databaseId, m_objectStore.id);
     }
 
     if (m_objectStore.autoIncrement && m_putMode != IDBDatabaseBackendInterface::CursorUpdate && key->type() == IDBKey::NumberType) {
-        bool ok = IDBObjectStoreBackendLevelDB::updateKeyGenerator(m_backingStore, m_transaction, m_databaseId, m_objectStore.id, key.get(), !keyWasGenerated);
+        bool ok = m_backingStore->updateKeyGenerator(*m_transaction, m_databaseId, m_objectStore.id, *key, !keyWasGenerated);
         if (!ok) {
             m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error updating key generator."));
             return;

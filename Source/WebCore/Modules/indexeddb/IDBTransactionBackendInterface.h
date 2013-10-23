@@ -64,7 +64,7 @@ public:
     virtual void scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&) = 0;
     virtual void scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&) = 0;
     virtual void scheduleGetOperation(const IDBDatabaseMetadata&, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorType, PassRefPtr<IDBCallbacks>) = 0;
-    virtual void schedulePutOperation(const IDBObjectStoreMetadata&, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&) = 0;
+    virtual void schedulePutOperation(const IDBObjectStoreMetadata&, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) = 0;
     virtual void scheduleSetIndexesReadyOperation(size_t indexCount) = 0;
     virtual void scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, PassRefPtr<IDBCallbacks>) = 0;
     virtual void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) = 0;

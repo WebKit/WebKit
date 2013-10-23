@@ -26,15 +26,17 @@
 #include "config.h"
 #include "IDBDatabaseBackendLevelDB.h"
 
-#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStoreInterface.h"
-#include "IDBCursorBackendLevelDB.h"
+#include "IDBCursorBackendInterface.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
-#include "IDBFactoryBackendLevelDB.h"
+#include "IDBFactoryBackendInterface.h"
+#include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
-#include "IDBObjectStoreBackendLevelDB.h"
-#include "IDBTransactionBackendLevelDB.h"
+#include "IDBRecordIdentifier.h"
+#include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCoordinator.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
@@ -240,6 +242,8 @@ void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId
 void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexKeys");
+    ASSERT(prpPrimaryKey);
+
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -260,12 +264,12 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
         return;
     }
 
-    Vector<OwnPtr<IDBObjectStoreBackendLevelDB::IndexWriter>> indexWriters;
+    Vector<RefPtr<IDBIndexWriter>> indexWriters;
     String errorMessage;
     bool obeysConstraints = false;
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     const IDBObjectStoreMetadata& objectStoreMetadata = m_metadata.objectStores.get(objectStoreId);
-    bool backingStoreSuccess = IDBObjectStoreBackendLevelDB::makeIndexWriters(transaction, store.get(), id(), objectStoreMetadata, primaryKey, false, indexIds, indexKeys, &indexWriters, &errorMessage, obeysConstraints);
+    bool backingStoreSuccess = store->makeIndexWriters(*transaction, id(), objectStoreMetadata, *primaryKey, false, indexIds, indexKeys, indexWriters, &errorMessage, obeysConstraints);
     if (!backingStoreSuccess) {
         transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
         return;
@@ -276,14 +280,14 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
     }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
-        IDBObjectStoreBackendLevelDB::IndexWriter* indexWriter = indexWriters[i].get();
+        IDBIndexWriter* indexWriter = indexWriters[i].get();
         indexWriter->writeIndexKeys(recordIdentifier.get(), *store.get(), transaction->backingStoreTransaction(), id(), objectStoreId);
     }
 }
 
 void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
 {
-    LOG(StorageAPI, "IDBObjectStoreBackendLevelDB::setIndexesReady");
+    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexesReady");
 
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
@@ -614,4 +618,4 @@ void IDBDatabaseBackendLevelDB::close(PassRefPtr<IDBDatabaseCallbacks> prpCallba
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#endif // ENABLE(INDEXED_DATABASE)

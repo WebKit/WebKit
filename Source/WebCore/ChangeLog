@@ -1,3 +1,57 @@
+2013-10-22  Brady Eidson  <beidson@apple.com>
+
+        Get rid of IDBObjectStoreBackendLevelDB
+        https://bugs.webkit.org/show_bug.cgi?id=123174
+
+        Reviewed by Tim Horton.
+
+        This file was kind of a dumping ground.
+        Its contents can be merged into IDBBackingStoreInterface and a new IDBIndexWriter class.
+
+        Also took the opportunity to do a little bit of RefPtr<> and pointer-vs-reference cleanup.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp: Removed.
+        * Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h: Removed.
+
+        * Modules/indexeddb/IDBIndexWriter.cpp: Added.
+        (WebCore::IDBIndexWriter::IDBIndexWriter):
+        (WebCore::IDBIndexWriter::writeIndexKeys):
+        (WebCore::IDBIndexWriter::verifyIndexKeys):
+        (WebCore::IDBIndexWriter::addingKeyAllowed):
+        * Modules/indexeddb/IDBIndexWriter.h: Added.
+        (WebCore::IDBIndexWriter::create):
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+
+        * Modules/indexeddb/IDBMetadata.h:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::makeIndexWriters):
+        (WebCore::IDBBackingStoreLevelDB::generateKey):
+        (WebCore::IDBBackingStoreLevelDB::updateKeyGenerator):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexKeys):
+        (WebCore::IDBDatabaseBackendLevelDB::setIndexesReady):
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::schedulePutOperation):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp:
+        (WebCore::PutOperation::perform):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h:
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::PutOperation):
+
 2013-10-22  Dean Jackson  <dino@apple.com>
 
         [WebGL] Implement a software rendering option on Mac

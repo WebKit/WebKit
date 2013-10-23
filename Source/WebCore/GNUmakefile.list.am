@@ -1824,6 +1824,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBHistograms.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
+	Source/WebCore/Modules/indexeddb/IDBIndexWriter.cpp \
+	Source/WebCore/Modules/indexeddb/IDBIndexWriter.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKey.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyPath.cpp \
@@ -1833,8 +1835,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBLevelDBCoding.h \
 	Source/WebCore/Modules/indexeddb/IDBMetadata.h \
-	Source/WebCore/Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp \
-	Source/WebCore/Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.cpp \

@@ -60,8 +60,8 @@ public:
 
     virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, bool keyOnly, PassRefPtr<WebCore::IDBCallbacks>);
     // Note that 'value' may be consumed/adopted by this call.
-    virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::SharedBuffer> value, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
-    virtual void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
+    virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::SharedBuffer> value, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&);
+    virtual void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&);
     virtual void setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds);
     virtual void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, WebCore::IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<WebCore::IDBCallbacks>);
     virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>);

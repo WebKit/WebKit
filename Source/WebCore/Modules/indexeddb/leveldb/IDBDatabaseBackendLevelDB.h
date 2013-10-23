@@ -27,13 +27,14 @@
 #define IDBDatabaseBackendLevelDB_h
 
 #include "IDBCallbacks.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBMetadata.h"
 #include <stdint.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 
-#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -170,6 +171,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#endif // ENABLE(INDEXED_DATABASE)
 
 #endif // IDBDatabaseBackendLevelDB_h

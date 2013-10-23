@@ -274,13 +274,13 @@ private:
 
 class PutOperation : public IDBTransactionBackendLevelDB::Operation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
+    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
     {
         return adoptPtr(new PutOperation(transaction, backingStore, databaseId, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    PutOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
+    PutOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -303,7 +303,7 @@ private:
     const IDBDatabaseBackendInterface::PutMode m_putMode;
     const RefPtr<IDBCallbacks> m_callbacks;
     const Vector<int64_t> m_indexIds;
-    const Vector<IDBDatabaseBackendInterface::IndexKeys> m_indexKeys;
+    const Vector<IndexKeys> m_indexKeys;
 };
 
 class SetIndexesReadyOperation : public IDBTransactionBackendLevelDB::Operation {

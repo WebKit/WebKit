@@ -81,7 +81,6 @@ struct IDBObjectStoreMetadata {
 
 struct IDBDatabaseMetadata {
 
-#if USE(LEVELDB)
     // FIXME: These are only here to support the LevelDB backend which incorrectly handles versioning.
     // Once LevelDB supports a single, uint64_t version and throws out the old string version, these
     // should be gotten rid of.
@@ -97,7 +96,6 @@ struct IDBDatabaseMetadata {
         NoIntVersion = INT64_MAX,
         DefaultIntVersion = 0
     };
-#endif // USE(LEVELDB)
 
     typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
 

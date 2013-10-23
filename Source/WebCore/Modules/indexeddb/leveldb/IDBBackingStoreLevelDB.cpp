@@ -30,11 +30,13 @@
 
 #include "FileSystem.h"
 #include "HistogramSupport.h"
+#include "IDBIndexWriter.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
 #include "IDBMetadata.h"
+#include "IDBTransactionBackendInterface.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"
 #include "LevelDBIterator.h"
@@ -1332,6 +1334,61 @@ bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreInterface::Transact
 
     decodeIDBKey(foundEncodedPrimaryKey.begin(), foundEncodedPrimaryKey.end(), foundPrimaryKey);
     return true;
+}
+
+
+bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackendInterface& transaction, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
+{
+    ASSERT(indexIds.size() == indexKeys.size());
+    completed = false;
+
+    HashMap<int64_t, IndexKeys> indexKeyMap;
+    for (size_t i = 0; i < indexIds.size(); ++i)
+        indexKeyMap.add(indexIds[i], indexKeys[i]);
+
+    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = objectStore.indexes.begin(); it != objectStore.indexes.end(); ++it) {
+        const IDBIndexMetadata& index = it->value;
+
+        IndexKeys keys = indexKeyMap.get(it->key);
+        // If the objectStore is using autoIncrement, then any indexes with an identical keyPath need to also use the primary (generated) key as a key.
+        if (keyWasGenerated && (index.keyPath == objectStore.keyPath))
+            keys.append(&primaryKey);
+
+        RefPtr<IDBIndexWriter> indexWriter = IDBIndexWriter::create(index, keys);
+        bool canAddKeys = false;
+        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, transaction.backingStoreTransaction(), databaseId, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);
+        if (!backingStoreSuccess)
+            return false;
+        if (!canAddKeys)
+            return true;
+
+        indexWriters.append(indexWriter.release());
+    }
+
+    completed = true;
+    return true;
+}
+
+PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackendInterface& transaction, int64_t databaseId, int64_t objectStoreId)
+{
+    const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
+    int64_t currentNumber;
+    bool ok = getKeyGeneratorCurrentNumber(transaction.backingStoreTransaction(), databaseId, objectStoreId, currentNumber);
+    if (!ok) {
+        LOG_ERROR("Failed to getKeyGeneratorCurrentNumber");
+        return IDBKey::createInvalid();
+    }
+    if (currentNumber < 0 || currentNumber > maxGeneratorValue)
+        return IDBKey::createInvalid();
+
+    return IDBKey::createNumber(currentNumber);
+}
+
+
+bool IDBBackingStoreLevelDB::updateKeyGenerator(IDBTransactionBackendInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, bool checkCurrent)
+{
+    ASSERT(key.type() == IDBKey::NumberType);
+    return maybeUpdateKeyGeneratorCurrentNumber(transaction.backingStoreTransaction(), databaseId, objectStoreId, static_cast<int64_t>(floor(key.number())) + 1, checkCurrent);
 }
 
 IDBBackingStoreLevelDB::Cursor::Cursor(const IDBBackingStoreLevelDB::Cursor* other)

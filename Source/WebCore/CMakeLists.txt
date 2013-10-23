@@ -771,6 +771,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBFactory.cpp
     Modules/indexeddb/IDBFactoryBackendInterface.cpp
     Modules/indexeddb/IDBIndex.cpp
+    Modules/indexeddb/IDBIndexWriter.cpp
     Modules/indexeddb/IDBKey.cpp
     Modules/indexeddb/IDBKeyPath.cpp
     Modules/indexeddb/IDBKeyRange.cpp
@@ -788,7 +789,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
-    Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp
 

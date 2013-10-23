@@ -166,6 +166,11 @@ public:
         RefPtr<LevelDBTransaction> m_transaction;
     };
 
+    virtual bool makeIndexWriters(IDBTransactionBackendInterface&, int64_t databaseId, const IDBObjectStoreMetadata&, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed) OVERRIDE WARN_UNUSED_RETURN;
+
+    virtual PassRefPtr<IDBKey> generateKey(IDBTransactionBackendInterface&, int64_t databaseId, int64_t objectStoreId) OVERRIDE;
+    virtual bool updateKeyGenerator(IDBTransactionBackendInterface&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, bool checkCurrent) OVERRIDE;
+
 protected:
     IDBBackingStoreLevelDB(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
 

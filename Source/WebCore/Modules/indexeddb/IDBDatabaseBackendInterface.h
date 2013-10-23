@@ -44,6 +44,7 @@ class IDBKeyRange;
 struct IDBDatabaseMetadata;
 class SharedBuffer;
 
+typedef Vector<RefPtr<IDBKey>> IndexKeys;
 typedef int ExceptionCode;
 
 // This is implemented by IDBDatabaseBackendImpl and optionally others (in order to proxy
@@ -78,8 +79,6 @@ public:
     };
 
     static const int64_t MinimumIndexId = 30;
-
-    typedef Vector<RefPtr<IDBKey>> IndexKeys;
 
     virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>) = 0;
     // Note that 'value' may be consumed/adopted by this call.

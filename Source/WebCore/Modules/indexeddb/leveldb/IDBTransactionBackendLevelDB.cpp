@@ -300,7 +300,7 @@ void IDBTransactionBackendLevelDB::scheduleGetOperation(const IDBDatabaseMetadat
     scheduleTask(GetOperation::create(this, m_backingStore.get(), metadata, objectStoreId, indexId, keyRange, cursorType, callbacks));
 }
 
-void IDBTransactionBackendLevelDB::schedulePutOperation(const IDBObjectStoreMetadata& objectStoreMetadata, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
+void IDBTransactionBackendLevelDB::schedulePutOperation(const IDBObjectStoreMetadata& objectStoreMetadata, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     scheduleTask(PutOperation::create(this, m_backingStore.get(), database()->id(), objectStoreMetadata, value, key, putMode, callbacks, indexIds, indexKeys));
 }
