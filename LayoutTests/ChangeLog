@@ -1,3 +1,35 @@
+2013-10-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: Padding
+        https://bugs.webkit.org/show_bug.cgi?id=118823
+
+        Reviewed by Dirk Schulze.
+
+        Tests for floats with shape-outside and padding.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-000-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-000.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-001-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-001.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-002-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-002.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-003-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-003.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-004-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-004.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-005-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-005.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-006-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-006.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-007-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-007.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-008-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-008.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-009-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-009.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+
 2013-10-23  Roger Fong  <roger_fong@apple.com>
 
         Add 1.0.1 and 1.0.2 WebGL conformance suites to layout tests.
