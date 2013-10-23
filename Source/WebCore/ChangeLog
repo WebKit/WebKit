@@ -1,3 +1,26 @@
+2013-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Include misspelling dot gap width when centering misspelling dots
+        https://bugs.webkit.org/show_bug.cgi?id=122365
+
+        Reviewed by Simon Fraser.
+
+        When calculating where to place the misspelling dots, we find the
+        maximum number of full dots that can fit under the misspelled word,
+        and then center a run of that many dots. However, when we're
+        centering the run, we are only considering the size of the extra
+        fractional dot that we cut off. However, the dot image has a "gap"
+        of transparent pixels (which visually provide tracking for the dots)
+        which visually appears to be empty space. We should take this gap
+        space into consideration when centering the run of dots. We also
+        should make sure that our dots start on integral pixel boundaries
+        because otherwise we can't set the phase of the dot run properly.
+
+        Test: editing/spelling/centering-misspelling-dots.html
+
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+
 2013-10-23  Andreas Kling  <akling@apple.com>
 
         SVGFilterBuilder should not be ref-counted.

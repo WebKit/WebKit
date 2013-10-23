@@ -164,15 +164,14 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     FloatPoint offsetPoint = point;
 
     // Make sure to draw only complete dots.
-    // NOTE: Code here used to shift the underline to the left and increase the width
-    // to make sure everything gets underlined, but that results in drawing out of
-    // bounds (e.g. when at the edge of a view) and could make it appear that the
-    // space between adjacent misspelled words was underlined.
     if (usingDot) {
         // allow slightly more considering that the pattern ends with a transparent pixel
         float widthMod = fmodf(width, patternWidth);
         if (patternWidth - widthMod > cMisspellingLinePatternGapWidth) {
-            offsetPoint.move(widthMod / 2, 0);
+            float gapIncludeWidth = 0;
+            if (width > patternWidth)
+                gapIncludeWidth = cMisspellingLinePatternGapWidth;
+            offsetPoint.move(floor((widthMod + gapIncludeWidth) / 2), 0);
             width -= widthMod;
         }
     }

@@ -1,0 +1,46 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    font-family: 'Times New Roman';
+    font-size: 12pt;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    typeCharacterCommand('w');
+    typeCharacterCommand('a');
+    typeCharacterCommand('f');
+    typeCharacterCommand('e');
+    typeCharacterCommand('w');
+    typeCharacterCommand('e');
+    typeCharacterCommand('r');
+    typeCharacterCommand('e');
+    typeCharacterCommand('w');
+    typeCharacterCommand('d');
+    typeCharacterCommand('f');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div>The misspelling dots on the text below should be visually centered.</div>
+<div contenteditable id="root" class="editing">
+<span id="test"></span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

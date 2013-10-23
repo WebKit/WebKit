@@ -1,3 +1,23 @@
+2013-10-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Include misspelling dot gap width when centering misspelling dots
+        https://bugs.webkit.org/show_bug.cgi?id=122365
+
+        Reviewed by Simon Fraser.
+
+        Created a pixel new test where taking this gap width into account when
+        performing the centering calculation actually changes the location of
+        where the dots end up. In addition, created a pixel test that misspells
+        two words next to each other to make sure that the misspelling dots don't
+        appear under the space between the words.
+
+        * editing/spelling/centering-misspelling-dots-expected.txt: Added.
+        * editing/spelling/centering-misspelling-dots.html: Added.
+        * platform/mac/editing/spelling/centering-misspelling-dots-expected.png: Added.
+        * editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.txt: Added.
+        * editing/spelling/misspelling-dots-dont-extend-beyond-words.html: Added.
+        * platform/mac/editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.png: Added.
+
 2013-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERT d->m_defersLoading != defers on detik.com and drive.google.com
