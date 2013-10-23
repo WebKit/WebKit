@@ -54,6 +54,12 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceError& resourceEr
 {
 }
 
+PlatformCertificateInfo::PlatformCertificateInfo(GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
+    : m_certificate(certificate)
+    , m_tlsErrors(tlsErrors)
+{
+}
+
 PlatformCertificateInfo::~PlatformCertificateInfo()
 {
 }

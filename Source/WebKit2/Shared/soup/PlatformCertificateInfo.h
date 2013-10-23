@@ -47,6 +47,7 @@ public:
     PlatformCertificateInfo();
     explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
     explicit PlatformCertificateInfo(const WebCore::ResourceError&);
+    explicit PlatformCertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
     ~PlatformCertificateInfo();
 
     GTlsCertificate* certificate() const { return m_certificate.get(); }

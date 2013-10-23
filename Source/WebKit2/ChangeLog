@@ -1,3 +1,20 @@
+2013-10-23  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Add WebKit2 API for TLS errors
+        https://bugs.webkit.org/show_bug.cgi?id=120160
+
+        Reviewed by Mario Sanchez Prada.
+
+        Revert back to using PlatformCertificateInfo following the rollout
+        of https://bugs.webkit.org/show_bug.cgi?id=118520.
+
+        * Shared/soup/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        * Shared/soup/PlatformCertificateInfo.h:
+        * UIProcess/API/gtk/WebKitCertificateInfo.cpp:
+        (webkitCertificateInfoGetCertificateInfo):
+        * UIProcess/API/gtk/WebKitCertificateInfoPrivate.h:
+
 2013-10-23  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Implement superlayer, removeFromSuperlayer, replaceSublayer, and adoptSublayers

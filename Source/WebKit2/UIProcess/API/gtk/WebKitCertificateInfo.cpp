@@ -42,7 +42,7 @@ using namespace WebCore;
 
 G_DEFINE_BOXED_TYPE(WebKitCertificateInfo, webkit_certificate_info, webkit_certificate_info_copy, webkit_certificate_info_free)
 
-const CertificateInfo& webkitCertificateInfoGetCertificateInfo(WebKitCertificateInfo* info)
+const PlatformCertificateInfo& webkitCertificateInfoGetCertificateInfo(WebKitCertificateInfo* info)
 {
     ASSERT(info);
     return info->certificateInfo;

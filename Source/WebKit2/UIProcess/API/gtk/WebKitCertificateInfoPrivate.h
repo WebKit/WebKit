@@ -20,7 +20,7 @@
 #ifndef WebKitCertificateInfoPrivate_h
 #define WebKitCertificateInfoPrivate_h
 
-#include "CertificateInfo.h"
+#include "PlatformCertificateInfo.h"
 #include "WebKitCertificateInfo.h"
 #include "WebKitPrivate.h"
 
@@ -35,9 +35,9 @@ struct _WebKitCertificateInfo {
     {
     }
 
-    WebCore::CertificateInfo certificateInfo;
+    WebKit::PlatformCertificateInfo certificateInfo;
 };
 
-const WebCore::CertificateInfo& webkitCertificateInfoGetCertificateInfo(WebKitCertificateInfo*);
+const WebKit::PlatformCertificateInfo& webkitCertificateInfoGetCertificateInfo(WebKitCertificateInfo*);
 
 #endif // WebKitCertificateInfoPrivate_h
