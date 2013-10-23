@@ -79,7 +79,6 @@
 
 .status-line.bad .bubble {
     background-color: rgb(191, 67, 41);
-    -webkit-animation: glow-red 1.2s ease-in-out 0s infinite alternate;
 }
 
 .status-line.bad .bubble.pictogram {
@@ -140,15 +139,4 @@
 .status-line.bad .label,
 .status-line.bad .message {
     color: rgb(191, 67, 41);
-}
-
-@-webkit-keyframes glow-red {
-    from {
-        background-color: rgb(191, 67, 41);
-        box-shadow: rgba(191, 67, 41, 0) 0 0 2px 2px;
-    }
-    to {
-        background-color: rgb(204, 61, 33);
-        box-shadow: rgba(204, 61, 33, 0.33) 0 0 4px 2px;
-    }
 }
