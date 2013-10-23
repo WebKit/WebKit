@@ -2447,6 +2447,7 @@
 		C2F0F2D016BAEEE900187C19 /* StructureRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureRareData.cpp; sourceTree = "<group>"; };
 		C2FC9BD216644DFB00810D33 /* CopiedBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedBlockInlines.h; sourceTree = "<group>"; };
 		C2FE18A316BAEC4000AF3061 /* StructureRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureRareData.h; sourceTree = "<group>"; };
+		FEE7D5A00D99AC04005351F6 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
@@ -3140,6 +3141,7 @@
 				1C9051450BA9E8A70081E9D0 /* Base.xcconfig */,
 				1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */,
 				449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */,
+				FEE7D5A00D99AC04005351F6 /* iOS.xcconfig */,
 				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
 				5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */,
 				BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */,
