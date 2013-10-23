@@ -35,18 +35,10 @@ class ArgumentDecoder;
 class ArgumentEncoder;
 }
 
-<<<<<<< HEAD:Source/WebCore/platform/network/CertificateInfo.h
-#if PLATFORM(MAC)
-    explicit CertificateInfo(CFArrayRef certificateChain);
-#elif USE(SOUP)
-    explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
-#endif
-=======
 namespace WebCore {
 class ResourceError;
 class ResourceResponse;
 }
->>>>>>> parent of baccb1d... Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object:Source/WebKit2/Shared/soup/PlatformCertificateInfo.h
 
 namespace WebKit {
 

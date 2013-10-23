@@ -1,3 +1,9 @@
+2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on EFL port after r157842.
+
+        * Shared/soup/PlatformCertificateInfo.h: Removed message of merge confliction.
+
 2013-10-22  Mark Rowe  <mrowe@apple.com>
 
         Fix build failures after r157842.
