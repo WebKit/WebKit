@@ -36,13 +36,13 @@
 
 using namespace WebCore;
 
-PassRefPtr<Clock> Clock::create()
+std::unique_ptr<Clock> Clock::create()
 {
 #if USE(COREMEDIA)
-    return adoptRef(new PlatformClockCM());
+    return std::make_unique<PlatformClockCM>();
 #elif USE(COREAUDIO)
-    return adoptRef(new PlatformClockCA());
+    return std::make_unique<PlatformClockCA>();
 #else
-    return adoptRef(new ClockGeneric());
+    return std::make_unique<ClockGeneric>();
 #endif
 }

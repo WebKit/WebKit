@@ -30,20 +30,20 @@
 
 namespace WebCore {
 
-class ClockGeneric : public Clock {
+class ClockGeneric FINAL : public Clock {
 public:
     ClockGeneric();
 
 private:
-    virtual void setCurrentTime(double);
-    virtual double currentTime() const;
+    virtual void setCurrentTime(double) OVERRIDE;
+    virtual double currentTime() const OVERRIDE;
 
-    virtual void setPlayRate(double);
-    virtual double playRate() const { return m_rate; }
+    virtual void setPlayRate(double) OVERRIDE;
+    virtual double playRate() const OVERRIDE { return m_rate; }
 
-    virtual void start();
-    virtual void stop();
-    virtual bool isRunning() const { return m_running; }
+    virtual void start() OVERRIDE;
+    virtual void stop() OVERRIDE;
+    virtual bool isRunning() const OVERRIDE { return m_running; }
 
     double now() const;
 

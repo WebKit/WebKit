@@ -1,3 +1,15 @@
+2013-10-23  Andreas Kling  <akling@apple.com>
+
+        Clock should not be ref-counted.
+        <https://webkit.org/b/123217>
+
+        The Clock object is only ever owned by the MediaController,
+        so remove the ref counting and store it in a std::unique_ptr.
+
+        Also slapped the Clock subclasses with FINAL and OVERRIDE.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-23  Mark Lam  <mark.lam@apple.com>
 
         Fix assertion in DatabaseManager::detailsForNameAndOrigin() to be iOS friendly.
