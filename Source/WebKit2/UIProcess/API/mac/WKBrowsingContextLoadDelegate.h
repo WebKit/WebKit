@@ -53,6 +53,6 @@
 - (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress;
 - (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender;
 
-- (void)browsingContextControllerDidChangedBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems;
+- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems;
 
 @end

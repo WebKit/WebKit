@@ -1,3 +1,11 @@
+2013-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a typo.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (didChangeBackForwardList):
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h:
+
 2013-10-23  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Enable respect image orientation by default
