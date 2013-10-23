@@ -178,17 +178,17 @@ PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters,
 }
 
 template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternal(unsigned length, CharType*& data)
+inline PassRef<StringImpl> StringImpl::createUninitializedInternal(unsigned length, CharType*& data)
 {
     if (!length) {
         data = 0;
-        return empty();
+        return *empty();
     }
     return createUninitializedInternalNonEmpty(length, data);
 }
 
 template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, CharType*& data)
+inline PassRef<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, CharType*& data)
 {
     ASSERT(length);
 
@@ -387,7 +387,7 @@ UChar32 StringImpl::characterStartingAt(unsigned i)
     return 0;
 }
 
-PassRefPtr<StringImpl> StringImpl::lower()
+PassRef<StringImpl> StringImpl::lower()
 {
     // Note: This is a hot function in the Dromaeo benchmark, specifically the
     // no-op code path up through the first 'return' statement.
@@ -402,11 +402,11 @@ PassRefPtr<StringImpl> StringImpl::lower()
                 goto SlowPath8bitLower;
             }
         }
-        return this;
+        return *this;
 
 SlowPath8bitLower:
         LChar* data8;
-        RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data8);
+        auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
         for (unsigned i = 0; i < failingIndex; ++i)
             data8[i] = m_data8[i];
@@ -421,7 +421,7 @@ SlowPath8bitLower:
             }
         }
 
-        return newImpl.release();
+        return newImpl;
     }
     bool noUpper = true;
     unsigned ored = 0;
@@ -434,17 +434,17 @@ SlowPath8bitLower:
     }
     // Nothing to do if the string is all ASCII with no uppercase.
     if (noUpper && !(ored & ~0x7F))
-        return this;
+        return *this;
 
     if (!(ored & ~0x7F)) {
         UChar* data16;
-        RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
+        auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
         
         for (unsigned i = 0; i < m_length; ++i) {
             UChar c = m_data16[i];
             data16[i] = toASCIILower(c);
         }
-        return newImpl.release();
+        return newImpl;
     }
 
     if (m_length > static_cast<unsigned>(numeric_limits<int32_t>::max()))
@@ -458,14 +458,14 @@ SlowPath8bitLower:
     UErrorCode status = U_ZERO_ERROR;
     int32_t realLength = u_strToLower(data16, length, m_data16, m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
-        return newImpl.release();
+        return newImpl.releaseNonNull();
 
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
     u_strToLower(data16, realLength, m_data16, m_length, "", &status);
     if (U_FAILURE(status))
-        return this;
-    return newImpl.release();
+        return *this;
+    return newImpl.releaseNonNull();
 }
 
 PassRefPtr<StringImpl> StringImpl::upper()
@@ -579,7 +579,7 @@ static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
         && (localeIdentifier.length() == 2 || localeIdentifier[2] == '-');
 }
 
-RefPtr<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
+PassRef<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules.
@@ -605,13 +605,13 @@ RefPtr<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     UErrorCode status = U_ZERO_ERROR;
     int realLength = u_strToLower(data16, length, source16, length, "tr", &status);
     if (U_SUCCESS(status) && realLength == length)
-        return newString;
+        return newString.releaseNonNull();
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
     u_strToLower(data16, realLength, source16, length, "tr", &status);
     if (U_FAILURE(status))
-        return this;
-    return newString.release();
+        return *this;
+    return newString.releaseNonNull();
 }
 
 RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)

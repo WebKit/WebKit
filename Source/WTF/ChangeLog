@@ -1,3 +1,15 @@
+2013-10-22  Andreas Kling  <akling@apple.com>
+
+        StringImpl::lower() should return a PassRef.
+        <https://webkit.org/b/123190>
+
+        Test the waters and hack enough of StringImpl to be able to return
+        a PassRef<StringImpl> from lower().
+
+        Also gave String a constructor that takes a PassRef<StringImpl>.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r157835.

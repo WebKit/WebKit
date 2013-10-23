@@ -317,7 +317,7 @@ bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
 
 bool HTMLImageElement::matchesLowercasedUsemap(const AtomicStringImpl& name) const
 {
-    ASSERT(const_cast<AtomicStringImpl&>(name).lower() == &name);
+    ASSERT(String(&const_cast<AtomicStringImpl&>(name)).lower().impl() == &name);
     return m_lowercasedUsemap.impl() == &name;
 }
 

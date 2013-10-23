@@ -688,9 +688,9 @@ public:
     double toDouble(bool* ok = 0);
     float toFloat(bool* ok = 0);
 
-    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> lower();
+    WTF_EXPORT_STRING_API PassRef<StringImpl> lower();
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> upper();
-    WTF_EXPORT_STRING_API RefPtr<StringImpl> lower(const AtomicString& localeIdentifier);
+    WTF_EXPORT_STRING_API PassRef<StringImpl> lower(const AtomicString& localeIdentifier);
     WTF_EXPORT_STRING_API RefPtr<StringImpl> upper(const AtomicString& localeIdentifier);
 
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> fill(UChar);
@@ -775,9 +775,9 @@ private:
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
-    template <typename CharType> static PassRefPtr<StringImpl> constructInternal(StringImpl*, unsigned);
-    template <typename CharType> static PassRefPtr<StringImpl> createUninitializedInternal(unsigned, CharType*&);
-    template <typename CharType> static PassRefPtr<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharType*&);
+    template <typename CharType> static PassRef<StringImpl> constructInternal(StringImpl*, unsigned);
+    template <typename CharType> static PassRef<StringImpl> createUninitializedInternal(unsigned, CharType*&);
+    template <typename CharType> static PassRef<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharType*&);
     template <typename CharType> static PassRefPtr<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
     template <typename CharType> static PassRefPtr<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_STRING_API NEVER_INLINE const UChar* getData16SlowCase() const;
@@ -857,9 +857,9 @@ ValueCheck<StringImpl*> {
 #endif
 
 template <>
-ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal<LChar>(StringImpl* impl, unsigned length) { return adoptRef(new (NotNull, impl) StringImpl(length, Force8BitConstructor)); }
+ALWAYS_INLINE PassRef<StringImpl> StringImpl::constructInternal<LChar>(StringImpl* impl, unsigned length) { return adoptRef(*new (NotNull, impl) StringImpl(length, Force8BitConstructor)); }
 template <>
-ALWAYS_INLINE PassRefPtr<StringImpl> StringImpl::constructInternal<UChar>(StringImpl* impl, unsigned length) { return adoptRef(new (NotNull, impl) StringImpl(length)); }
+ALWAYS_INLINE PassRef<StringImpl> StringImpl::constructInternal<UChar>(StringImpl* impl, unsigned length) { return adoptRef(*new (NotNull, impl) StringImpl(length)); }
 
 template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
