@@ -41,7 +41,7 @@ using namespace std;
 namespace WebCore {
 
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
-const CFStringRef kCGImageSourceSkipMetaData = CFSTR("kCGImageSourceSkipMetaData");
+const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
 
 // kCGImagePropertyGIFUnclampedDelayTime is available in the ImageIO framework headers on some versions
 // of SnowLeopard. It's not possible to detect whether the constant is available so we define our own here
@@ -104,16 +104,16 @@ static CFDictionaryRef imageSourceOptions(ImageSource::ShouldSkipMetadata skipMe
         const unsigned numOptions = 3;
 
 #if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-        // Lion and Snow Leopard only return Orientation when kCGImageSourceSkipMetaData is false,
-        // and incorrectly return cached metadata if an image is queried once with kCGImageSourceSkipMetaData true
-        // and then subsequently with kCGImageSourceSkipMetaData false.
+        // Lion and Snow Leopard only return Orientation when kCGImageSourceSkipMetadata is false,
+        // and incorrectly return cached metadata if an image is queried once with kCGImageSourceSkipMetadata true
+        // and then subsequently with kCGImageSourceSkipMetadata false.
         // <rdar://problem/11148192>
         UNUSED_PARAM(skipMetadata);
         const CFBooleanRef imageSourceSkipMetadata = kCFBooleanFalse;
 #else
         const CFBooleanRef imageSourceSkipMetadata = (skipMetadata == ImageSource::SkipMetadata) ? kCFBooleanTrue : kCFBooleanFalse;
 #endif
-        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetaData };
+        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetadata };
         const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, imageSourceSkipMetadata };
         options = CFDictionaryCreate(NULL, keys, values, numOptions, 
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);

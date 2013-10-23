@@ -1,3 +1,15 @@
+2013-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        [cg] Fix the capitalization of kCGImageSourceSkipMetaData (-> Metadata)
+        https://bugs.webkit.org/show_bug.cgi?id=122918
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::imageSourceOptions):
+        The capitalization of kCGImageSourceSkipMetaData changed to
+        kCGImageSourceSkipMetadata in Mountain Lion.
+
 2013-10-23  Brady Eidson  <beidson@apple.com>
 
         Make IDBDatabaseBackendLevelDB.cpp be cross platform
