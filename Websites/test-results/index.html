@@ -4,6 +4,8 @@
 <title>WebKit Test Results</title>
 <link rel="stylesheet" href="common.css">
 <link rel="stylesheet" href="main.css">
+<script src="https://svn.webkit.org/repository/webkit/!svn/bc/128779/trunk/PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js"></script>
+<script src="https://svn.webkit.org/repository/webkit/!svn/bc/128779/trunk/PerformanceTests/resources/jquery.tablesorter.min.js"></script>
 <script src="js/autocompleter.js"></script>
 <script src="js/build.js"></script>
 <script src="js/dom.js"></script>
@@ -151,7 +153,7 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
 
 TestResultsView._populateTestPane = function(testName, results, section) {
     var test = {name: testName, category: 'LayoutTest'}; // FIXME: Use the real test object.
-    var table = element('table', {'class': 'resultsTable'}, [element('caption', [this._linkifiedTestName(test)])]);
+    var table = element('table', {'class': 'resultsTable tablesorter'}, [element('caption', [this._linkifiedTestName(test)])]);
     table.appendChild(this._createTestResultHeader('Builder'));
 
     var resultsByBuilder = results['builders'];
@@ -167,12 +169,15 @@ TestResultsView._populateTestPane = function(testName, results, section) {
     }
     buildTimes.sort(function (a, b) { return b - a; });
 
+    var tbody = element('tbody');
     for (var builderId in resultsByBuilder) {
         var builder = this._builders[builderId];
         // FIXME: Add a master name if there is more than one.
-        table.appendChild(this._createTestResultRow(builder.name, resultsByBuilder[builderId], builder, buildTimes));
+        tbody.appendChild(this._createTestResultRow(builder.name, resultsByBuilder[builderId], builder, buildTimes));
     }
+    table.appendChild(tbody);
     section.appendChild(table);
+    $(table).tablesorter();
 }
 
 TestResultsView._linkifiedTestName = function (test) {
@@ -328,7 +333,7 @@ TestResultsView._matchesFailureType = function (results, failureType, tn) {
 }
 
 TestResultsView._populateBuilderPane = function(builderName, failureType, results, section) {
-    var table = element('table', {'class': 'resultsTable'}, [element('caption', [builderName])]);
+    var table = element('table', {'class': 'resultsTable tablesorter'}, [element('caption', [builderName])]);
     var resultsByBuilder = results['builders'];
     var resultsByTests;
     var builderId;
@@ -341,15 +346,20 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
 
     table.appendChild(this._createTestResultHeader('Test'));
 
+    var tbody = element('tbody');
     var builder = this._builders[builderId];
     for (var testId in resultsByTests) {
         var results = resultsByTests[testId];
         if (!results.length || !this._matchesFailureType(results, failureType, this._availableTests[testId].name))
             continue;
         this._createBuildsAndComputeSlownessOfResults(builderId, resultsByTests[testId]);
-        table.appendChild(this._createTestResultRow(this._linkifiedTestName(this._availableTests[testId]), resultsByTests[testId], builder));
+        tbody.appendChild(this._createTestResultRow(this._linkifiedTestName(this._availableTests[testId]), resultsByTests[testId], builder));
     }
+
+    table.appendChild(tbody);
     section.appendChild(table);
+
+    $(table).tablesorter(); 
 }
 
 TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDays, failureType, doNotUpdateHash) {

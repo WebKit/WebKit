@@ -1,3 +1,22 @@
+2013-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make tables on the new flakiness dashboard sortable
+        https://bugs.webkit.org/show_bug.cgi?id=123141
+
+        Reviewed by Simon Fraser.
+
+        Use jquery.tablesorter.js to make test and builder tables sortable. The jquery plugin is already used by run-perf-tests.
+
+        * index.html:
+        (TestResultsView._populateTestPane): Add tablesorter to the class name and wrap tr's inside a tbody so that tablesorter
+        could sort them.
+        (TestResultsView._populateBuilderPane): Ditto.
+        * main.css:
+        (.resultsTable thead): Use cursor: pointer to signify the fact it's clickable.
+        (.resultsTable th): Don't repeat arrows.
+        (.resultsTable th.headerSortUp): Inline SVG up arrow.
+        (.resultsTable th.headerSortDown): Inline SVG down arrow.
+
 2013-10-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         New flakiness dashboard should hyperlink test names, WebKit revisions, and bubbles

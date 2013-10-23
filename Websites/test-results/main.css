@@ -77,8 +77,24 @@
     vertical-align: bottom;
 }
 
-.resultsTable tr:hover,
-.resultsTable tr:hover {
+.resultsTable thead {
+    cursor: pointer;
+}
+
+.resultsTable th {
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.resultsTable th.headerSortUp {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='6'><polygon points='0,0 8,0 4,6' fill='#999'/></svg>");
+}
+
+.resultsTable th.headerSortDown {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><polygon points='0,6 8,6 4,0' fill='#999'/></svg>");
+}
+
+.resultsTable tbody tr:hover {
     background-color: #eee;
 }
 
