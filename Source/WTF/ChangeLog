@@ -1,5 +1,20 @@
 2013-10-23  Anders Carlsson  <andersca@apple.com>
 
+        Remove USE(LOCKFREE_THREADSAFEREFCOUNTED)
+        https://bugs.webkit.org/show_bug.cgi?id=123228
+
+        Reviewed by Geoffrey Garen.
+
+        All ports supports USE(LOCKFREE_THREADSAFEREFCOUNTED) now and taking a lock on every ref/deref seems bad.
+
+        * wtf/Atomics.h:
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCountedBase::ref):
+        (WTF::ThreadSafeRefCountedBase::refCount):
+        (WTF::ThreadSafeRefCountedBase::derefBase):
+
+2013-10-23  Anders Carlsson  <andersca@apple.com>
+
         Remove HAVE_XPC
         https://bugs.webkit.org/show_bug.cgi?id=123226
 
