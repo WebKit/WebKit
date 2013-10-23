@@ -1,3 +1,20 @@
+2013-10-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Expose image links properly
+        https://bugs.webkit.org/show_bug.cgi?id=84044
+
+        Reviewed by Chris Fleizach.
+
+        Rebaseline some tests that would now be printing the new
+        AXURL string for implementations of AtkHyperlinkImpl.
+
+        * platform/efl-wk1/accessibility/image-link-expected.txt: Updated.
+        * platform/efl-wk1/accessibility/image-map2-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/image-link-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/image-map2-expected.txt: Ditto.
+        * platform/gtk/accessibility/image-link-expected.txt: Ditto.
+        * platform/gtk/accessibility/image-map2-expected.txt: Ditto.
+
 2013-10-23  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [GTK] accessibility/self-referencing-aria-labelledby.html is failing

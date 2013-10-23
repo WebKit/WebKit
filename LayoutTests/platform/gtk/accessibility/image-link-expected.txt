@@ -20,6 +20,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
+AXURL: http://www.wowhead.com/?item=33924
 AXPlatformAttributes: html-id:test, toolkit:WebKitGtk
 
 Child 0:
@@ -39,6 +40,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
+AXURL: LayoutTests/accessibility/resources/cake.png
 AXPlatformAttributes: toolkit:WebKitGtk
 
 

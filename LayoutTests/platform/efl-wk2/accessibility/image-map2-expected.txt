@@ -35,6 +35,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
+AXURL: http://www.apple.com/
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 AXRole: AXLink
@@ -53,6 +54,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
+AXURL: http://www.apple.com/
 AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 

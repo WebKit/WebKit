@@ -1,3 +1,26 @@
+2013-10-23  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Expose image links properly
+        https://bugs.webkit.org/show_bug.cgi?id=84044
+
+        Reviewed by Chris Fleizach.
+
+        Expose the accessible URL if present, as yet another attribute
+        for the AccessibilityUIElement wrapper. For coherence with what
+        the Mac port does (and what you would expect as the output of
+        the layout test), we strip the absolute URL path for relative
+        references, if it's the case, leaving the base of the URL path
+        out of the exposed string.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (attributesOfElement): Print the AXURL, if available.
+        (AccessibilityUIElement::url): Expose the URL if present. That
+        is, if the wrapped AtkObject implements AtkHyperlinkImpl.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (attributesOfElement): Print the AXURL, if available.
+        (WTR::AccessibilityUIElement::url): Expose the URL if present.
+        That is, if the wrapped AtkObject implements AtkHyperlinkImpl.
+
 2013-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         Remove Lion bots.
