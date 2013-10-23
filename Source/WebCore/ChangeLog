@@ -1,3 +1,12 @@
+2013-10-23  Brady Eidson  <beidson@apple.com>
+
+        Remove unused IDBBackingStoreLevelDB default constructor.
+
+        Rubberstamped by Anders Carlsson.
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
 2013-10-23  Alex Christensen  <achristensen@webkit.org>
 
         Added Texture Mapper and Coordinated Graphics to Windows build for WinCairo.

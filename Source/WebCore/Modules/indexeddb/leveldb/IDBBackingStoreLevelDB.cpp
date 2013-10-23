@@ -345,13 +345,6 @@ IDBBackingStoreLevelDB::IDBBackingStoreLevelDB(const String& identifier, PassOwn
 {
 }
 
-IDBBackingStoreLevelDB::IDBBackingStoreLevelDB()
-    : m_weakFactory(this)
-{
-    // FIXME: this comments was related to Chromium code. It may be incorrect
-    // This constructor should only be used in unit tests.
-}
-
 IDBBackingStoreLevelDB::~IDBBackingStoreLevelDB()
 {
     // m_db's destructor uses m_comparator. The order of destruction is important.
@@ -620,7 +613,6 @@ static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
     for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next())
         transaction->remove(it->key());
 }
-
 
 bool IDBBackingStoreLevelDB::deleteDatabase(const String& name)
 {

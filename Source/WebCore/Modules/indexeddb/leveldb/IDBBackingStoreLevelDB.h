@@ -174,9 +174,6 @@ public:
 protected:
     IDBBackingStoreLevelDB(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
 
-    // Should only used for mocking.
-    IDBBackingStoreLevelDB();
-
 private:
     static PassRefPtr<IDBBackingStoreLevelDB> create(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
 
