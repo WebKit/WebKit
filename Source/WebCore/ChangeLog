@@ -1,3 +1,14 @@
+2013-10-15  Andreas Kling  <akling@apple.com>
+
+        Tighten animation-driven restyle to operate on Element only.
+        <https://webkit.org/b/122820>
+
+        Text nodes are never directly animated, so we can tighten this code
+        to work on Element only. This happens naturally since the code was
+        already working with RenderElement everywhere.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-22  Andreas Kling  <akling@apple.com>
 
         Even more PassRef<RenderStyle>!

@@ -43,7 +43,6 @@ class AnimationBase;
 class AnimationController;
 class CompositeAnimation;
 class Element;
-class Node;
 class RenderElement;
 class RenderStyle;
 class TimingFunction;
@@ -214,7 +213,7 @@ protected:
 
     bool isAccelerated() const { return m_isAccelerated; }
 
-    static void setNeedsStyleRecalc(Node*);
+    static void setNeedsStyleRecalc(Element*);
     
     void getTimeToNextEvent(double& time, bool& isLooping) const;
 

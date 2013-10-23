@@ -40,7 +40,6 @@ class AnimationControllerPrivate;
 class Document;
 class Element;
 class Frame;
-class Node;
 class RenderElement;
 class RenderStyle;
 

@@ -164,7 +164,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     // Protect the frame from getting destroyed in the event handler
     Ref<Frame> protector(m_frame);
 
-    bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_nodeChangesToDispatch.isEmpty();
+    bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_elementChangesToDispatch.isEmpty();
 
     // fire all the events
     Vector<EventToDispatch> eventsToDispatch = std::move(m_eventsToDispatch);
@@ -177,12 +177,10 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
             element->dispatchEvent(WebKitAnimationEvent::create(it->eventType, it->name, it->elapsedTime));
     }
 
-    // call setChanged on all the elements
-    Vector<RefPtr<Node>>::const_iterator nodeChangesToDispatchEnd = m_nodeChangesToDispatch.end();
-    for (Vector<RefPtr<Node>>::const_iterator it = m_nodeChangesToDispatch.begin(); it != nodeChangesToDispatchEnd; ++it)
-        (*it)->setNeedsStyleRecalc(SyntheticStyleChange);
+    for (unsigned i = 0, size = m_elementChangesToDispatch.size(); i < size; ++i)
+        m_elementChangesToDispatch[i]->setNeedsStyleRecalc(SyntheticStyleChange);
 
-    m_nodeChangesToDispatch.clear();
+    m_elementChangesToDispatch.clear();
 
     if (updateStyle)
         m_frame.document()->updateStyleIfNeeded();
@@ -206,13 +204,10 @@ void AnimationControllerPrivate::addEventToDispatch(PassRefPtr<Element> element,
     startUpdateStyleIfNeededDispatcher();
 }
 
-void AnimationControllerPrivate::addNodeChangeToDispatch(PassRefPtr<Node> node)
+void AnimationControllerPrivate::addElementChangeToDispatch(PassRef<Element> element)
 {
-    ASSERT(!node || !node->document().inPageCache());
-    if (!node)
-        return;
-
-    m_nodeChangesToDispatch.append(node);
+    m_elementChangesToDispatch.append(std::move(element));
+    ASSERT(!m_elementChangesToDispatch.last()->document().inPageCache());
     startUpdateStyleIfNeededDispatcher();
 }
 

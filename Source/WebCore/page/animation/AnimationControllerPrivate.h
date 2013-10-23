@@ -46,7 +46,6 @@ class CompositeAnimation;
 class Document;
 class Element;
 class Frame;
-class Node;
 class RenderElement;
 class RenderStyle;
 
@@ -71,7 +70,7 @@ public:
     void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
     void startUpdateStyleIfNeededDispatcher();
     void addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime);
-    void addNodeChangeToDispatch(PassRefPtr<Node>);
+    void addElementChangeToDispatch(PassRef<Element>);
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
 
@@ -134,7 +133,7 @@ private:
     };
     
     Vector<EventToDispatch> m_eventsToDispatch;
-    Vector<RefPtr<Node>> m_nodeChangesToDispatch;
+    Vector<Ref<Element>> m_elementChangesToDispatch;
     
     double m_beginAnimationUpdateTime;
 

@@ -91,11 +91,11 @@ AnimationBase::AnimationBase(const Animation& transition, RenderElement* rendere
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }
 
-void AnimationBase::setNeedsStyleRecalc(Node* node)
+void AnimationBase::setNeedsStyleRecalc(Element* element)
 {
-    ASSERT(!node || !node->document().inPageCache());
-    if (node)
-        node->setNeedsStyleRecalc(SyntheticStyleChange);
+    ASSERT(!element || !element->document().inPageCache());
+    if (element)
+        element->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 double AnimationBase::duration() const
@@ -222,8 +222,8 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 m_compAnim->animationController()->addToAnimationsWaitingForStyle(this);
 
                 // Trigger a render so we can start the animation
-                if (m_object)
-                    m_compAnim->animationController()->addNodeChangeToDispatch(m_object->element());
+                if (m_object && m_object->element())
+                    m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
             } else {
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
@@ -287,8 +287,8 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 goIntoEndingOrLoopingState();
 
                 // Dispatch updateStyleIfNeeded so we can start the animation
-                if (m_object)
-                    m_compAnim->animationController()->addNodeChangeToDispatch(m_object->element());
+                if (m_object && m_object->element())
+                    m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
@@ -338,7 +338,8 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                         resumeOverriddenAnimations();
 
                     // Fire off another style change so we can set the final value
-                    m_compAnim->animationController()->addNodeChangeToDispatch(m_object->element());
+                    if (m_object->element())
+                        m_compAnim->animationController()->addElementChangeToDispatch(*m_object->element());
                 }
             } else {
                 // We are pausing while running. Cancel the animation and wait
