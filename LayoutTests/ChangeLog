@@ -1,3 +1,12 @@
+2013-10-22  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION: `if (false === (true && undefined)) console.log("wrong!");` logs "wrong!", shouldn't!
+        https://bugs.webkit.org/show_bug.cgi?id=123179
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/dom/branch-fold-correctness.html: Added a test for this case.
+
 2013-10-22  Samuel White  <samuel_white@apple.com>
 
         AX: Add paramAttrs to fetch start and end text markers in a given rect.
