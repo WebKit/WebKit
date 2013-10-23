@@ -1,5 +1,22 @@
 2013-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New flakiness dashboard's test pane should show the latest WebKit revision for each builder
+        https://bugs.webkit.org/show_bug.cgi?id=123189
+
+        Reviewed by Simon Fraser.
+
+        * index.html:
+        (TestResultsView._populateTestPane): Call _createTestResultHeader and _createTestResultRow with
+        a list of repository information.
+        (TestResultsView._createTestResultHeader): Optionally creates headers for a list of repositories.
+        (TestResultsView._createTestResultRow): Add a hyperlinked revision information for each builder.
+        Also add a hyperlink to file a Bugzilla bug when there is no bug associated with the test already.
+        * js/build.js:
+        (Build.formattedRevision): Extracted from Build.formattedRevisions.
+        (Build.formattedRevisions):
+
+2013-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make tables on the new flakiness dashboard sortable
         https://bugs.webkit.org/show_bug.cgi?id=123141
 

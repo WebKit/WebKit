@@ -28,45 +28,50 @@ function TestBuild(repositories, builders, rawRun) {
         var repository = revisions[repositoryId];
         return repository ? repository[0] : null;
     }
+    this.formattedRevision = function (repositoryId, previousBuild, shouldIncludeNameInLabel) {
+        var repository = repositories[repositoryId];
+        var repositoryName = repository ? repository.name : 'Unknown repository ' + repositoryId;
+        var previousRevision = previousBuild ? previousBuild.revision(repositoryId) : undefined;
+        var currentRevision = this.revision(repositoryId);
+        if (previousRevision === currentRevision)
+            previousRevision = undefined;
+
+        var revisionPrefix = '';
+        if (currentRevision.length < 10) { // SVN-like revision.
+            revisionPrefix = 'r';
+            if (previousRevision)
+                previousRevision = (parseInt(previousRevision) + 1);
+        }
+
+        var labelForThisRepository = shouldIncludeNameInLabel ? repositoryName : '';
+        if (previousRevision) {
+            if (labelForThisRepository)
+                labelForThisRepository += ' ';
+            labelForThisRepository += revisionPrefix + previousRevision + '-' + revisionPrefix + currentRevision;
+        } else
+            labelForThisRepository += ' @' + revisionPrefix + currentRevision;
+
+        var url;
+        if (repository) {
+            if (previousRevision)
+                url = (repository['blameUrl'] || '').replace(/\$1/g, previousRevision).replace(/\$2/g, currentRevision);
+            else
+                url = (repository['url'] || '').replace(/\$1/g, currentRevision);
+        }
+
+        return {
+            'name': repositoryName,
+            'label': labelForThisRepository,
+            'currentRevision': currentRevision,
+            'previousRevision': previousRevision,
+            'url': url,
+        };
+    }
     this.formattedRevisions = function (previousBuild) {
         var result = {};
         for (var repositoryId in revisions) {
-            var repository = repositories[repositoryId];
-            var repositoryName = repository ? repository.name : 'Unknown repository ' + repositoryId;
-            var previousRevision = previousBuild ? previousBuild.revision(repositoryId) : undefined;
-            var currentRevision = this.revision(repositoryId);
-            if (previousRevision === currentRevision)
-                previousRevision = undefined;
-
-            var revisionPrefix = '';
-            if (currentRevision.length < 10) { // SVN-like revision.
-                revisionPrefix = 'r';
-                if (previousRevision)
-                    previousRevision = (parseInt(previousRevision) + 1);
-            }
-
-            var labelForThisRepository = revisionCount ? repositoryName : '';
-            if (previousRevision) {
-                if (labelForThisRepository)
-                    labelForThisRepository += ' ';
-                labelForThisRepository += revisionPrefix + previousRevision + '-' + revisionPrefix + currentRevision;
-            } else
-                labelForThisRepository += ' @ ' + revisionPrefix + currentRevision;
-
-            var url;
-            if (repository) {
-                if (previousRevision)
-                    url = (repository['blameUrl'] || '').replace(/\$1/g, previousRevision).replace(/\$2/g, currentRevision);
-                else
-                    url = (repository['url'] || '').replace(/\$1/g, currentRevision);
-            }
-
-            result[repositoryName] = {
-                'label': labelForThisRepository,
-                'currentRevision': currentRevision,
-                'previousRevision': previousRevision,
-                'url': url,
-            };
+            var info = this.formattedRevision(repositoryId, previousBuild, !!revisionCount);
+            result[info.name] = info;
         }
         return result;
     }

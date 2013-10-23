@@ -154,7 +154,6 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
 TestResultsView._populateTestPane = function(testName, results, section) {
     var test = {name: testName, category: 'LayoutTest'}; // FIXME: Use the real test object.
     var table = element('table', {'class': 'resultsTable tablesorter'}, [element('caption', [this._linkifiedTestName(test)])]);
-    table.appendChild(this._createTestResultHeader('Builder'));
 
     var resultsByBuilder = results['builders'];
     var buildTimes = new Array();
@@ -169,11 +168,17 @@ TestResultsView._populateTestPane = function(testName, results, section) {
     }
     buildTimes.sort(function (a, b) { return b - a; });
 
+    var repositories = [];
+    for (var repositoryId in this._repositories)
+        repositories.push(this._repositories[repositoryId]);
+
+    table.appendChild(this._createTestResultHeader('Builder', repositories));
+
     var tbody = element('tbody');
     for (var builderId in resultsByBuilder) {
         var builder = this._builders[builderId];
         // FIXME: Add a master name if there is more than one.
-        tbody.appendChild(this._createTestResultRow(builder.name, resultsByBuilder[builderId], builder, buildTimes));
+        tbody.appendChild(this._createTestResultRow(builder.name, resultsByBuilder[builderId], builder, buildTimes, repositories));
     }
     table.appendChild(tbody);
     section.appendChild(table);
@@ -188,12 +193,14 @@ TestResultsView._linkifiedTestName = function (test) {
     return element('a', {'href': category.url.replace(/\$testName/g, test.name)}, [test.name]);
 }
 
-TestResultsView._createTestResultHeader = function (labelForFirstColumn) {
+TestResultsView._createTestResultHeader = function (labelForFirstColumn, repositories) {
     return element('thead', [element('tr', [
         element('th', [labelForFirstColumn]),
         element('th', ['Bug']),
         element('th', ['Expectations']),
-        element('th', ['Slowest'])])]);
+        element('th', ['Slowest'])]
+        .concat(repositories ? repositories.map(function (repository) { return element('th', [repository.name]); }) : [])
+        .concat([element('th')]))]);
 }
 
 TestResultsView._createBuildsAndComputeSlownessOfResults = function (builderId, results) {
@@ -206,7 +213,7 @@ TestResultsView._createBuildsAndComputeSlownessOfResults = function (builderId, 
     }
 }
 
-TestResultsView._createTestResultRow = function (title, results, builder, buildTimes) {
+TestResultsView._createTestResultRow = function (title, results, builder, buildTimes, repositories) {
     var sortedResults = results.sort(function (result1, result2) { return result2.build.time() - result1.build.time(); });
     var cells = new Array();
 
@@ -232,11 +239,21 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
         }
     }
 
+    var seenBugLink = false;
     var formattedModifiers = sortedResults[0].modifiers.split(' ').map(function (modifier) {
-        if (modifier.indexOf('/') > 0)
+        if (modifier.indexOf('/') > 0) {
+            seenBugLink = true;
             return element('a', {'href': (modifier.indexOf('http') == 0 ? '' : 'http://') + modifier}, [modifier]);
+        }
         return modifier;
     });
+
+    if (!seenBugLink) {
+        // FIXME: Make bug tracker configurable.
+        formattedModifiers.push(element('a',
+            {'href': 'https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Tools%20/%20Tests&form_name=enter_bug&keywords=LayoutTestFailure'},
+            ['File a bug']));
+    }
 
     var slowestTime = Math.max.apply(Math, results.map(function (result) { return result.roundedTime; }));
     if (slowestTime >= 1)
@@ -244,12 +261,25 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
     else
         slowestTime = '';
 
+    var formattedRevisionCells = [];
+    if (repositories) {
+        var build = sortedResults[0].build;
+        for (var i = 0; i < repositories.length; i++) {
+            var revisionInfo = build.formattedRevision(repositories[i].id);
+            if (revisionInfo.url)
+                formattedRevisionCells.push(element('a', {'href': revisionInfo.url}, [revisionInfo.label]));
+            else
+                formattedRevisionCells.push(revisionInfo.label);
+        }
+    }
+
     return element('tr', [
         element('th', [title]),
         element('td', {'class': 'modifiers'}, formattedModifiers),
         element('td', {'class': 'expected'}, [sortedResults[0].expected]),
-        element('td', {'class': 'slowestTime'}, [slowestTime]),
-        element('td', cells)]);
+        element('td', {'class': 'slowestTime'}, [slowestTime])]
+        .concat(formattedRevisionCells)
+        .concat([element('td', cells)]));
 }
 
 TestResultsView.fetchTest = function (testName) {
