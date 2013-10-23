@@ -301,6 +301,18 @@
     <Filter Include="Modules\indexeddb\leveldb">
       <UniqueIdentifier>{54c889f7-b5e7-491e-9029-65dc7185b9d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\graphics\texmap">
+      <UniqueIdentifier>{984df990-811f-422a-8d2b-f090395f3e4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\graphics\texmap\coordinated">
+      <UniqueIdentifier>{4845c0c4-e589-4dc4-9969-fc200aca1e40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="page\scrolling">
+      <UniqueIdentifier>{68262d42-bb5c-4826-9f81-26ce02881f58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="page\scrolling\coordinatedgraphics">
+      <UniqueIdentifier>{1912e806-139c-44ba-8a2f-e46d4f370106}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -6909,6 +6921,121 @@
     </ClCompile>
     <ClCompile Include="..\platform\network\curl\CertificateInfoCurl.cpp">
       <Filter>platform\network\curl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderNamedFlowFragment.cpp" />
+    <ClCompile Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapper.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperBackingStore.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperFPSCounter.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperGL.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperImageBuffer.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperLayer.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperShaderProgram.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperSurfaceBackingStore.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperTile.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperTiledBackingStore.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\AreaAllocator.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsScene.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedImageBacking.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedSurface.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\CoordinatedTile.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\ThreadSafeCoordinatedSurface.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.cpp">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.cpp">
+      <Filter>page\scrolling\coordinatedgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateNodeCoordinatedGraphics.cpp">
+      <Filter>page\scrolling\coordinatedgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateScrollingNodeCoordinatedGraphics.cpp">
+      <Filter>page\scrolling\coordinatedgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GraphicsLayerAnimation.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GraphicsLayerTransform.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\TiledBackingStore.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingStateFixedNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingStateNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingStateScrollingNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingStateStickyNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingStateTree.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingThread.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingTree.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingTreeNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\scrolling\ScrollingTreeScrollingNode.cpp">
+      <Filter>page\scrolling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cairo\TileCairo.cpp">
+      <Filter>platform\graphics\cairo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cairo\TiledBackingStoreBackendCairo.cpp">
+      <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14531,6 +14658,139 @@
     <ClInclude Include="..\rendering\TextPaintStyle.h" />
     <ClInclude Include="..\platform\graphics\ca\win\PlatformCALayerWin.h">
       <Filter>platform\graphics\ca\win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderNamedFlowFragment.h" />
+    <ClInclude Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapper.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperBackingStore.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperFPSCounter.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperGL.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperImageBuffer.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperLayer.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperPlatformLayer.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperShaderProgram.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperSurfaceBackingStore.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperTile.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperTiledBackingStore.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\AreaAllocator.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CompositingCoordinator.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedBackingStore.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterOperation.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedCustomFilterProgram.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsLayer.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsScene.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedGraphicsState.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedImageBacking.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedSurface.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\CoordinatedTile.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\SurfaceUpdateInfo.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\ThreadSafeCoordinatedSurface.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.h">
+      <Filter>platform\graphics\texmap\coordinated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.h">
+      <Filter>page\scrolling\coordinatedgraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GraphicsLayerAnimation.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GraphicsLayerFactory.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GraphicsLayerTransform.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\TiledBacking.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\TiledBackingStore.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\TiledBackingStoreBackend.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\TiledBackingStoreClient.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingStateFixedNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingStateNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingStateScrollingNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingStateStickyNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingStateTree.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingThread.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingTree.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingTreeNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\scrolling\ScrollingTreeScrollingNode.h">
+      <Filter>page\scrolling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\cairo\TileCairo.h">
+      <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
