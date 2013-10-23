@@ -147,6 +147,8 @@ static void webKitSettingsConstructed(GObject* object)
     bool regionBasedColumnsEnabled = features.isEnabled(ExperimentalFeatures::RegionBasedColumns);
     if (prefs->regionBasedColumnsEnabled() != regionBasedColumnsEnabled)
         prefs->setRegionBasedColumnsEnabled(regionBasedColumnsEnabled);
+
+    prefs->setShouldRespectImageOrientation(true);
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
