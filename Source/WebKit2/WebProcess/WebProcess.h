@@ -35,7 +35,6 @@
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
-#include <WebCore/CertificateInfo.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
