@@ -1,3 +1,16 @@
+2013-10-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Have a way of dealing with slow tests in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=123221
+
+        Reviewed by Mark Hahnenberg.
+        
+        If you add the slow! command to //@ then all subsequent plans are prepended to the run list
+        rather than appended to it. This means that slow tests get queued up first and are less likely
+        to block completion.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-23  Alex Christensen  <achristensen@webkit.org>
 
         Explicitly build Win32 or x64 configuration on Windows.

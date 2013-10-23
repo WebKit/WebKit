@@ -1,3 +1,4 @@
+//@ slow!
 //@ runDefault
 //@ runDefaultFTL if $enableFTL
 
