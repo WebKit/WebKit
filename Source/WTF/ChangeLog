@@ -1,3 +1,20 @@
+2013-10-22  Jer Noble  <jer.noble@apple.com>
+
+        [WTF] Add a multiplication operator (and a few others) to MediaTime
+        https://bugs.webkit.org/show_bug.cgi?id=123137
+
+        Reviewed by Eric Carlson.
+
+        Add a multiplication operator and an inequality operator to the
+        MediaTime class for use by MSE.
+
+        * wtf/MediaTime.cpp:
+        (WTF::signum): Moved to top of file.
+        (WTF::MediaTime::operator*): Added.
+        (WTF::MediaTime::operator!=): Added.
+        * wtf/MediaTime.h:
+        (WTF::operator*): Added non-class version of operator*.
+
 2013-10-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Make TYPE_CASTS_BASE more flexible

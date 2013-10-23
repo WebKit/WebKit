@@ -54,6 +54,11 @@ static int32_t leastCommonMultiple(int32_t a, int32_t b, int32_t &result)
     return safeMultiply(a, b / greatestCommonDivisor(a, b), result);
 }
 
+static int32_t signum(int64_t val)
+{
+    return (0 < val) - (val < 0);
+}
+
 const int32_t MediaTime::MaximumTimeScale = 0x7fffffffL;
 
 MediaTime::MediaTime()
@@ -215,6 +220,40 @@ MediaTime MediaTime::operator-(const MediaTime& rhs) const
     return a;
 }
 
+MediaTime MediaTime::operator*(int32_t rhs) const
+{
+    if (isInvalid())
+        return invalidTime();
+
+    if (isIndefinite())
+        return indefiniteTime();
+
+    if (!rhs)
+        return zeroTime();
+
+    if (isPositiveInfinite()) {
+        if (rhs > 0)
+            return positiveInfiniteTime();
+        return negativeInfiniteTime();
+    }
+
+    if (isNegativeInfinite()) {
+        if (rhs > 0)
+            return negativeInfiniteTime();
+        return positiveInfiniteTime();
+    }
+
+    MediaTime a = *this;
+
+    while (!safeMultiply(a.m_timeValue, rhs, a.m_timeValue)) {
+        if (a.m_timeScale == 1)
+            return signum(a.m_timeValue) == signum(rhs) ? positiveInfiniteTime() : negativeInfiniteTime();
+        a.setTimeScale(a.m_timeScale / 2);
+    }
+
+    return a;
+}
+
 bool MediaTime::operator<(const MediaTime& rhs) const
 {
     return compare(rhs) == LessThan;
@@ -223,6 +262,11 @@ bool MediaTime::operator<(const MediaTime& rhs) const
 bool MediaTime::operator>(const MediaTime& rhs) const
 {
     return compare(rhs) == GreaterThan;
+}
+
+bool MediaTime::operator!=(const MediaTime& rhs) const
+{
+    return compare(rhs) != EqualTo;
 }
 
 bool MediaTime::operator==(const MediaTime& rhs) const
@@ -330,11 +374,6 @@ void MediaTime::setTimeScale(int32_t timeScale)
     int64_t remainder = m_timeValue % m_timeScale;
     m_timeValue = newWholePart + (remainder * timeScale) / m_timeScale;
     m_timeScale = timeScale;
-}
-
-static int32_t signum(int64_t val)
-{
-    return (0 < val) - (val < 0);
 }
 
 MediaTime abs(const MediaTime& rhs)
