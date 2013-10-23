@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseBackendLevelDB_h
-#define IDBDatabaseBackendLevelDB_h
+#ifndef IDBDatabaseBackendImpl_h
+#define IDBDatabaseBackendImpl_h
 
 #include "IDBCallbacks.h"
 #include "IDBDatabaseCallbacks.h"
@@ -44,10 +44,10 @@ class IDBFactoryBackendInterface;
 class IDBTransactionBackendInterface;
 class IDBTransactionCoordinator;
 
-class IDBDatabaseBackendLevelDB : public IDBDatabaseBackendInterface {
+class IDBDatabaseBackendImpl FINAL : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
-    virtual ~IDBDatabaseBackendLevelDB();
+    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    virtual ~IDBDatabaseBackendImpl();
 
     IDBBackingStoreInterface* backingStore() const;
 
@@ -90,11 +90,13 @@ public:
     virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE;
 
+    virtual bool isIDBDatabaseBackendImpl() OVERRIDE { return true; }
+
     class VersionChangeOperation;
     class VersionChangeAbortOperation;
 
 private:
-    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    IDBDatabaseBackendImpl(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
 
     bool openInternal();
     void runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t requestedVersion);
@@ -173,4 +175,4 @@ private:
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBDatabaseBackendLevelDB_h
+#endif // IDBDatabaseBackendImpl_h

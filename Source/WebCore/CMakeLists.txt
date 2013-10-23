@@ -765,6 +765,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBCursor.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
+    Modules/indexeddb/IDBDatabaseBackendImpl.cpp
     Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp
     Modules/indexeddb/IDBDatabaseException.cpp
     Modules/indexeddb/IDBEventDispatcher.cpp
@@ -786,7 +787,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
     Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp
     Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp
-    Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
     Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp

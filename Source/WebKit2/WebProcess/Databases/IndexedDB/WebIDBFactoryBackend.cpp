@@ -100,7 +100,7 @@ void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String&)
     notImplemented();
 }
 
-PassRefPtr<IDBTransactionBackendInterface> WebIDBFactoryBackend::createTransactionBackend(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode)
+PassRefPtr<IDBTransactionBackendInterface> WebIDBFactoryBackend::maybeCreateTransactionBackend(IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode)
 {
     notImplemented();
     return 0;

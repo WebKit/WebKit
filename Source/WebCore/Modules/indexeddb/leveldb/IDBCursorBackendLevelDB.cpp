@@ -30,7 +30,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCallbacks.h"
-#include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"

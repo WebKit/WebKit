@@ -41,7 +41,7 @@ namespace WebCore {
 class IDBBackingStoreInterface;
 class IDBCallbacks;
 class IDBDatabase;
-class IDBDatabaseBackendLevelDB; // FIXME: This is a LevelDB specific type for now. http://webkit.org/b/123027 will fix that.
+class IDBDatabaseBackendInterface;
 class IDBDatabaseCallbacks;
 class IDBTransactionBackendInterface;
 class SecurityOrigin;
@@ -64,7 +64,7 @@ public:
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) = 0;
 
-    virtual PassRefPtr<IDBTransactionBackendInterface> createTransactionBackend(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
+    virtual PassRefPtr<IDBTransactionBackendInterface> maybeCreateTransactionBackend(IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
 };
 
 } // namespace WebCore

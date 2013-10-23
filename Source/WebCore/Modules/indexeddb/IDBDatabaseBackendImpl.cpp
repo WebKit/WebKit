@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -44,15 +44,15 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackendImpl> IDBDatabaseBackendImpl::create(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
 {
-    RefPtr<IDBDatabaseBackendLevelDB> backend = adoptRef(new IDBDatabaseBackendLevelDB(name, backingStore, factory, uniqueIdentifier));
+    RefPtr<IDBDatabaseBackendImpl> backend = adoptRef(new IDBDatabaseBackendImpl(name, backingStore, factory, uniqueIdentifier));
     if (!backend->openInternal())
         return 0;
     return backend.release();
 }
 
-IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
     , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
@@ -63,7 +63,7 @@ IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBack
     ASSERT(!m_metadata.name.isNull());
 }
 
-void IDBDatabaseBackendLevelDB::addObjectStore(const IDBObjectStoreMetadata& objectStore, int64_t newMaxObjectStoreId)
+void IDBDatabaseBackendImpl::addObjectStore(const IDBObjectStoreMetadata& objectStore, int64_t newMaxObjectStoreId)
 {
     ASSERT(!m_metadata.objectStores.contains(objectStore.id));
     if (newMaxObjectStoreId != IDBObjectStoreMetadata::InvalidId) {
@@ -73,13 +73,13 @@ void IDBDatabaseBackendLevelDB::addObjectStore(const IDBObjectStoreMetadata& obj
     m_metadata.objectStores.set(objectStore.id, objectStore);
 }
 
-void IDBDatabaseBackendLevelDB::removeObjectStore(int64_t objectStoreId)
+void IDBDatabaseBackendImpl::removeObjectStore(int64_t objectStoreId)
 {
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     m_metadata.objectStores.remove(objectStoreId);
 }
 
-void IDBDatabaseBackendLevelDB::addIndex(int64_t objectStoreId, const IDBIndexMetadata& index, int64_t newMaxIndexId)
+void IDBDatabaseBackendImpl::addIndex(int64_t objectStoreId, const IDBIndexMetadata& index, int64_t newMaxIndexId)
 {
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     IDBObjectStoreMetadata objectStore = m_metadata.objectStores.get(objectStoreId);
@@ -93,7 +93,7 @@ void IDBDatabaseBackendLevelDB::addIndex(int64_t objectStoreId, const IDBIndexMe
     m_metadata.objectStores.set(objectStoreId, objectStore);
 }
 
-void IDBDatabaseBackendLevelDB::removeIndex(int64_t objectStoreId, int64_t indexId)
+void IDBDatabaseBackendImpl::removeIndex(int64_t objectStoreId, int64_t indexId)
 {
     ASSERT(m_metadata.objectStores.contains(objectStoreId));
     IDBObjectStoreMetadata objectStore = m_metadata.objectStores.get(objectStoreId);
@@ -103,7 +103,7 @@ void IDBDatabaseBackendLevelDB::removeIndex(int64_t objectStoreId, int64_t index
     m_metadata.objectStores.set(objectStoreId, objectStore);
 }
 
-bool IDBDatabaseBackendLevelDB::openInternal()
+bool IDBDatabaseBackendImpl::openInternal()
 {
     bool success = false;
     bool ok = m_backingStore->getIDBDatabaseMetaData(m_metadata.name, &m_metadata, success);
@@ -116,18 +116,18 @@ bool IDBDatabaseBackendLevelDB::openInternal()
     return m_backingStore->createIDBDatabaseMetaData(m_metadata.name, String::number(m_metadata.version), m_metadata.version, m_metadata.id);
 }
 
-IDBDatabaseBackendLevelDB::~IDBDatabaseBackendLevelDB()
+IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
 {
 }
 
-IDBBackingStoreInterface* IDBDatabaseBackendLevelDB::backingStore() const
+IDBBackingStoreInterface* IDBDatabaseBackendImpl::backingStore() const
 {
     return m_backingStore.get();
 }
 
-void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+void IDBDatabaseBackendImpl::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createObjectStore");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::createObjectStore");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -140,9 +140,9 @@ void IDBDatabaseBackendLevelDB::createObjectStore(int64_t transactionId, int64_t
     addObjectStore(objectStoreMetadata, objectStoreId);
 }
 
-void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t objectStoreId)
+void IDBDatabaseBackendImpl::deleteObjectStore(int64_t transactionId, int64_t objectStoreId)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteObjectStore");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::deleteObjectStore");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -155,9 +155,9 @@ void IDBDatabaseBackendLevelDB::deleteObjectStore(int64_t transactionId, int64_t
     removeObjectStore(objectStoreId);
 }
 
-void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+void IDBDatabaseBackendImpl::createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::createIndex");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::createIndex");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -174,9 +174,9 @@ void IDBDatabaseBackendLevelDB::createIndex(int64_t transactionId, int64_t objec
     addIndex(objectStoreId, indexMetadata, indexId);
 }
 
-void IDBDatabaseBackendLevelDB::deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId)
+void IDBDatabaseBackendImpl::deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteIndex");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::deleteIndex");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -193,30 +193,30 @@ void IDBDatabaseBackendLevelDB::deleteIndex(int64_t transactionId, int64_t objec
     removeIndex(objectStoreId, indexId);
 }
 
-void IDBDatabaseBackendLevelDB::commit(int64_t transactionId)
+void IDBDatabaseBackendImpl::commit(int64_t transactionId)
 {
     // The frontend suggests that we commit, but we may have previously initiated an abort, and so have disposed of the transaction. onAbort has already been dispatched to the frontend, so it will find out about that asynchronously.
     if (m_transactions.contains(transactionId))
         m_transactions.get(transactionId)->commit();
 }
 
-void IDBDatabaseBackendLevelDB::abort(int64_t transactionId)
+void IDBDatabaseBackendImpl::abort(int64_t transactionId)
 {
     // If the transaction is unknown, then it has already been aborted by the backend before this call so it is safe to ignore it.
     if (m_transactions.contains(transactionId))
         m_transactions.get(transactionId)->abort();
 }
 
-void IDBDatabaseBackendLevelDB::abort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
+void IDBDatabaseBackendImpl::abort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
 {
     // If the transaction is unknown, then it has already been aborted by the backend before this call so it is safe to ignore it.
     if (m_transactions.contains(transactionId))
         m_transactions.get(transactionId)->abort(error);
 }
 
-void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, bool keyOnly, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::get");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::get");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -224,9 +224,9 @@ void IDBDatabaseBackendLevelDB::get(int64_t transactionId, int64_t objectStoreId
     transaction->scheduleGetOperation(m_metadata, objectStoreId, indexId, keyRange, keyOnly ? IndexedDB::CursorKeyOnly : IndexedDB::CursorKeyAndValue, callbacks);
 }
 
-void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::put");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::put");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -239,9 +239,9 @@ void IDBDatabaseBackendLevelDB::put(int64_t transactionId, int64_t objectStoreId
     transaction->schedulePutOperation(objectStoreMetadata, value, key, putMode, callbacks, indexIds, indexKeys);
 }
 
-void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackendImpl::setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexKeys");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::setIndexKeys");
     ASSERT(prpPrimaryKey);
 
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
@@ -285,9 +285,9 @@ void IDBDatabaseBackendLevelDB::setIndexKeys(int64_t transactionId, int64_t obje
     }
 }
 
-void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
+void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::setIndexesReady");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::setIndexesReady");
 
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
@@ -296,9 +296,9 @@ void IDBDatabaseBackendLevelDB::setIndexesReady(int64_t transactionId, int64_t, 
     transaction->scheduleSetIndexesReadyOperation(indexIds.size());
 }
 
-void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, bool keyOnly, TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::openCursor");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::openCursor");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -306,9 +306,9 @@ void IDBDatabaseBackendLevelDB::openCursor(int64_t transactionId, int64_t object
     transaction->scheduleOpenCursorOperation(objectStoreId, indexId, keyRange, direction, keyOnly ? IndexedDB::CursorKeyOnly : IndexedDB::CursorKeyAndValue, taskType, callbacks);
 }
 
-void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::count");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::count");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -318,9 +318,9 @@ void IDBDatabaseBackendLevelDB::count(int64_t transactionId, int64_t objectStore
 }
 
 
-void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::deleteRange");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::deleteRange");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -329,9 +329,9 @@ void IDBDatabaseBackendLevelDB::deleteRange(int64_t transactionId, int64_t objec
     transaction->scheduleDeleteRangeOperation(objectStoreId, keyRange, callbacks);
 }
 
-void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
-    LOG(StorageAPI, "IDBDatabaseBackendLevelDB::clear");
+    LOG(StorageAPI, "IDBDatabaseBackendImpl::clear");
     IDBTransactionBackendInterface* transaction = m_transactions.get(transactionId);
     if (!transaction)
         return;
@@ -340,7 +340,7 @@ void IDBDatabaseBackendLevelDB::clear(int64_t transactionId, int64_t objectStore
     transaction->scheduleClearOperation(objectStoreId, callbacks);
 }
 
-void IDBDatabaseBackendLevelDB::transactionStarted(IDBTransactionBackendInterface* transaction)
+void IDBDatabaseBackendImpl::transactionStarted(IDBTransactionBackendInterface* transaction)
 {
     if (transaction->mode() == IndexedDB::TransactionVersionChange) {
         ASSERT(!m_runningVersionChangeTransaction);
@@ -348,7 +348,7 @@ void IDBDatabaseBackendLevelDB::transactionStarted(IDBTransactionBackendInterfac
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinished(IDBTransactionBackendInterface* rawTransaction)
+void IDBDatabaseBackendImpl::transactionFinished(IDBTransactionBackendInterface* rawTransaction)
 {
     RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     ASSERT(m_transactions.contains(transaction->id()));
@@ -360,7 +360,7 @@ void IDBDatabaseBackendLevelDB::transactionFinished(IDBTransactionBackendInterfa
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired(IDBTransactionBackendInterface* rawTransaction)
+void IDBDatabaseBackendImpl::transactionFinishedAndAbortFired(IDBTransactionBackendInterface* rawTransaction)
 {
     RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     if (transaction->mode() == IndexedDB::TransactionVersionChange) {
@@ -375,20 +375,20 @@ void IDBDatabaseBackendLevelDB::transactionFinishedAndAbortFired(IDBTransactionB
     }
 }
 
-void IDBDatabaseBackendLevelDB::transactionFinishedAndCompleteFired(IDBTransactionBackendInterface* rawTransaction)
+void IDBDatabaseBackendImpl::transactionFinishedAndCompleteFired(IDBTransactionBackendInterface* rawTransaction)
 {
     RefPtr<IDBTransactionBackendInterface> transaction = rawTransaction;
     if (transaction->mode() == IndexedDB::TransactionVersionChange)
         processPendingCalls();
 }
 
-size_t IDBDatabaseBackendLevelDB::connectionCount()
+size_t IDBDatabaseBackendImpl::connectionCount()
 {
     // This does not include pending open calls, as those should not block version changes and deletes.
     return m_databaseCallbacksSet.size();
 }
 
-void IDBDatabaseBackendLevelDB::processPendingCalls()
+void IDBDatabaseBackendImpl::processPendingCalls()
 {
     if (m_pendingSecondHalfOpen) {
         // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
@@ -427,15 +427,18 @@ void IDBDatabaseBackendLevelDB::processPendingCalls()
     }
 }
 
-void IDBDatabaseBackendLevelDB::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
+void IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
-    RefPtr<IDBTransactionBackendInterface> transaction = m_factory->createTransactionBackend(this, transactionId, callbacks, objectStoreIds, static_cast<IndexedDB::TransactionMode>(mode));
+    RefPtr<IDBTransactionBackendInterface> transaction = m_factory->maybeCreateTransactionBackend(this, transactionId, callbacks, objectStoreIds, static_cast<IndexedDB::TransactionMode>(mode));
+
+    if (!transaction)
+        return;
 
     ASSERT(!m_transactions.contains(transactionId));
     m_transactions.add(transactionId, transaction.get());
 }
 
-void IDBDatabaseBackendLevelDB::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t version)
+void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t version)
 {
     ASSERT(m_backingStore.get());
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
@@ -502,7 +505,7 @@ void IDBDatabaseBackendLevelDB::openConnection(PassRefPtr<IDBCallbacks> prpCallb
     callbacks->onSuccess(this, this->metadata());
 }
 
-void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t requestedVersion)
+void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t requestedVersion)
 {
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
@@ -537,7 +540,7 @@ void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCal
     m_databaseCallbacksSet.add(databaseCallbacks);
 }
 
-void IDBDatabaseBackendLevelDB::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
+void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
 {
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     if (isDeleteDatabaseBlocked()) {
@@ -555,12 +558,12 @@ void IDBDatabaseBackendLevelDB::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallb
     deleteDatabaseFinal(callbacks.release());
 }
 
-bool IDBDatabaseBackendLevelDB::isDeleteDatabaseBlocked()
+bool IDBDatabaseBackendImpl::isDeleteDatabaseBlocked()
 {
     return connectionCount();
 }
 
-void IDBDatabaseBackendLevelDB::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> callbacks)
 {
     ASSERT(!isDeleteDatabaseBlocked());
     ASSERT(m_backingStore);
@@ -574,7 +577,7 @@ void IDBDatabaseBackendLevelDB::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> cal
     callbacks->onSuccess();
 }
 
-void IDBDatabaseBackendLevelDB::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)
+void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)
 {
     RefPtr<IDBDatabaseCallbacks> callbacks = prpCallbacks;
     ASSERT(m_databaseCallbacksSet.contains(callbacks));
@@ -589,7 +592,7 @@ void IDBDatabaseBackendLevelDB::close(PassRefPtr<IDBDatabaseCallbacks> prpCallba
         return;
 
     // processPendingCalls allows the inspector to process a pending open call
-    // and call close, reentering IDBDatabaseBackendLevelDB::close. Then the
+    // and call close, reentering IDBDatabaseBackendImpl::close. Then the
     // backend would be removed both by the inspector closing its connection, and
     // by the connection that first called close.
     // To avoid that situation, don't proceed in case of reentrancy.

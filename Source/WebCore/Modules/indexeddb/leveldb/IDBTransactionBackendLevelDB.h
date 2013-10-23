@@ -29,8 +29,8 @@
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBBackingStoreLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseBackendInterface.h"
-#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseError.h"
 #include "IDBTransactionBackendInterface.h"
 #include "Timer.h"
@@ -46,7 +46,7 @@ class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendLevelDB FINAL : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBDatabaseBackendLevelDB*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBDatabaseBackendImpl*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     virtual ~IDBTransactionBackendLevelDB();
 
     virtual void commit() OVERRIDE FINAL;
@@ -70,7 +70,7 @@ public:
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     virtual IDBBackingStoreInterface::Transaction* backingStoreTransaction() { return &m_transaction; }
 
-    IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
+    IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 
     virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
     virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
@@ -86,7 +86,7 @@ public:
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     
 private:
-    IDBTransactionBackendLevelDB(IDBDatabaseBackendLevelDB*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    IDBTransactionBackendLevelDB(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -109,7 +109,7 @@ private:
     State m_state;
     bool m_commitPending;
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
-    RefPtr<IDBDatabaseBackendLevelDB> m_database;
+    RefPtr<IDBDatabaseBackendImpl> m_database;
 
     typedef Deque<OwnPtr<Operation>> TaskQueue;
     TaskQueue m_taskQueue;

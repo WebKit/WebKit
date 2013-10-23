@@ -1,3 +1,50 @@
+2013-10-23  Brady Eidson  <beidson@apple.com>
+
+        Make IDBDatabaseBackendLevelDB.cpp be cross platform
+        https://bugs.webkit.org/show_bug.cgi?id=123027
+
+        Attentively reviewed by Dean Jackson.
+
+        Move it out of the indexeddb/leveldb directory, and rename it to IDBDatabaseBackendImpl.
+
+        Project files:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp.
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h.
+
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (WebCore::IDBDatabaseBackendInterface::isIDBDatabaseBackendImpl): Add to support a required cast in LevelDB code.
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::deleteDatabase):
+        (WebCore::IDBFactoryBackendLevelDB::open):
+        (WebCore::IDBFactoryBackendLevelDB::maybeCreateTransactionBackend):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp:
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::create):
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleVersionChangeOperation):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp:
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h:
+
 2013-10-23  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream more ARMv7s bits

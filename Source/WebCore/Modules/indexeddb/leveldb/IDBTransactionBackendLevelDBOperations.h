@@ -72,7 +72,7 @@ private:
     const IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendLevelDB::VersionChangeOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBDatabaseBackendImpl::VersionChangeOperation : public IDBTransactionBackendLevelDB::Operation {
 public:
     static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
@@ -132,7 +132,7 @@ private:
     IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendLevelDB::VersionChangeAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBDatabaseBackendImpl::VersionChangeAbortOperation : public IDBTransactionBackendLevelDB::Operation {
 public:
     static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, const String& previousVersion, int64_t previousIntVersion)
     {

@@ -30,7 +30,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendLevelDB.h"
-#include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(IDBDatabaseBackendLevelDB* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
@@ -49,7 +49,7 @@ PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(ID
     return adoptRef(new IDBTransactionBackendLevelDB(databaseBackend, id, callbacks, objectStoreHashSet, mode));
 }
 
-IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBDatabaseBackendLevelDB* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
     : IDBTransactionBackendInterface(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
@@ -282,7 +282,7 @@ void IDBTransactionBackendLevelDB::scheduleDeleteObjectStoreOperation(const IDBO
 
 void IDBTransactionBackendLevelDB::scheduleVersionChangeOperation(int64_t transactionId, int64_t requestedVersion, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const IDBDatabaseMetadata& metadata)
 {
-    scheduleTask(IDBDatabaseBackendLevelDB::VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::create(this, String::number(metadata.version), metadata.version));
+    scheduleTask(IDBDatabaseBackendImpl::VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), IDBDatabaseBackendImpl::VersionChangeAbortOperation::create(this, String::number(metadata.version), metadata.version));
 }
 
 void IDBTransactionBackendLevelDB::scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)

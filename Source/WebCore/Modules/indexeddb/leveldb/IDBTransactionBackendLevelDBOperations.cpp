@@ -340,10 +340,10 @@ void DeleteObjectStoreOperation::perform()
     }
 }
 
-void IDBDatabaseBackendLevelDB::VersionChangeOperation::perform()
+void IDBDatabaseBackendImpl::VersionChangeOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeOperation");
-    IDBDatabaseBackendLevelDB* database = m_transaction->database();
+    IDBDatabaseBackendImpl* database = m_transaction->database();
     int64_t databaseId = database->id();
     uint64_t oldVersion = database->m_metadata.version;
 
@@ -373,7 +373,7 @@ void DeleteObjectStoreAbortOperation::perform()
     m_transaction->database()->addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
 }
 
-void IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::perform()
+void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeAbortOperation");
     m_transaction->database()->m_metadata.version = m_previousIntVersion;

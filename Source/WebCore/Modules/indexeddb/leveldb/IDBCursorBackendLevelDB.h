@@ -31,7 +31,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendInterface.h"
-#include "IDBDatabaseBackendLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
 #include "IDBTransactionBackendLevelDB.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
@@ -76,7 +76,7 @@ private:
 
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
-    const RefPtr<IDBDatabaseBackendLevelDB> m_database;
+    const RefPtr<IDBDatabaseBackendImpl> m_database;
     RefPtr<IDBTransactionBackendLevelDB> m_transaction;
     const int64_t m_objectStoreId;
 

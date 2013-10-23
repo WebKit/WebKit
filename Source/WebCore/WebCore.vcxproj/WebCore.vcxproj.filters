@@ -6886,9 +6886,6 @@
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBCursorBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBDatabaseBackendLevelDB.cpp">
-      <Filter>Modules\indexeddb\leveldb</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
