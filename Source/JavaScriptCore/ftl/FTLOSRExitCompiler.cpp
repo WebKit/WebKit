@@ -361,7 +361,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
     
-    if (Options::ftlOSRExitUsesStackmap())
+    if (Options::ftlUsesStackmaps())
         compileStubWithOSRExitStackmap(exitID, jitCode, exit, vm, codeBlock);
     else
         compileStubWithoutOSRExitStackmap(exitID, exit, vm, codeBlock);

@@ -55,7 +55,7 @@ static int compileCounter;
 
 static bool generateExitThunks()
 {
-    return !Options::useLLVMOSRExitIntrinsic() && !Options::ftlOSRExitUsesStackmap();
+    return !Options::useLLVMOSRExitIntrinsic() && !Options::ftlUsesStackmaps();
 }
 
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
@@ -1233,7 +1233,7 @@ private:
         LValue base = lowCell(m_node->child1());
         StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
 
-        if (!Options::ftlICUsesPatchpoint()) {
+        if (!Options::ftlUsesStackmaps()) {
             setJSValue(vmCall(m_out.operation(operationGetById), m_callFrame, m_out.intPtrZero, base, m_out.constIntPtr(uid)));
             return;
         }
@@ -3399,7 +3399,7 @@ private:
             return;
         }
         
-        if (Options::ftlOSRExitUsesStackmap()) {
+        if (Options::ftlUsesStackmaps()) {
             exit.m_stackmapID = m_stackmapIDs++;
             arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
             arguments.insert(0, m_out.constInt32(exit.m_stackmapID));
@@ -3492,7 +3492,7 @@ private:
         value = m_booleanValues.get(node);
         if (isValid(value)) {
             LValue valueToPass;
-            if (Options::ftlOSRExitUsesStackmap())
+            if (Options::ftlUsesStackmaps())
                 valueToPass = m_out.zeroExt(value.value(), m_out.int32);
             else
                 valueToPass = value.value();
