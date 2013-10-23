@@ -102,7 +102,7 @@ public:
     void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(PassRefPtr<RenderStyle> computedStyle) { m_computedStyle = computedStyle; }
+    void setComputedStyle(PassRef<RenderStyle> computedStyle) { m_computedStyle = std::move(computedStyle); }
 
     ClassList* classList() const { return m_classList.get(); }
     void setClassList(OwnPtr<ClassList> classList) { m_classList = std::move(classList); }
@@ -225,7 +225,7 @@ inline void ElementRareData::setAfterPseudoElement(PassRefPtr<PseudoElement> pse
 
 inline void ElementRareData::resetComputedStyle()
 {
-    setComputedStyle(0);
+    m_computedStyle = nullptr;
     setStyleAffectedByEmpty(false);
     setChildIndex(0);
 }

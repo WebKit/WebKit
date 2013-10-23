@@ -1,3 +1,16 @@
+2013-10-22  Andreas Kling  <akling@apple.com>
+
+        Even more PassRef<RenderStyle>!
+        <https://webkit.org/b/123147>
+
+        Convert more of the WebCore code to use PassRef for RenderStyle
+        in places where they are known to be non-null.
+
+        Re-landing this without region styling since that caused some
+        assertions last time.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-22  Zoltan Horvath  <zoltan@webkit.org>
 
         Refactor LineBreaker::nextSegmentBreak, add BreakingContext that holds all its state

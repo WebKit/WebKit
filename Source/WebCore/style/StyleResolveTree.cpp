@@ -606,11 +606,11 @@ static Change resolveLocal(Element& current, Change inheritedChange)
 
     if (RenderElement* renderer = current.renderer()) {
         if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (inheritedChange == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
-            renderer->setAnimatableStyle(*newStyle.get());
+            renderer->setAnimatableStyle(*newStyle);
         else if (current.needsStyleRecalc()) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.
-            renderer->setStyleInternal(newStyle.get());
+            renderer->setStyleInternal(*newStyle);
         }
     }
 

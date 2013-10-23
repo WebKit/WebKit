@@ -520,7 +520,7 @@ public:
     
     virtual bool isSpellCheckingEnabled() const;
 
-    PassRefPtr<RenderStyle> styleForRenderer();
+    PassRef<RenderStyle> styleForRenderer();
 
     RenderRegion* renderRegion() const;
 

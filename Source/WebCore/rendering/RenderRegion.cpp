@@ -540,7 +540,7 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
         RefPtr<RenderStyle> objectRegionStyle = object->style();
         RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
         if (object->isRenderElement())
-            toRenderElement(object)->setStyleInternal(objectOriginalStyle);
+            toRenderElement(object)->setStyleInternal(*objectOriginalStyle);
 
         bool shouldCacheRegionStyle = iter->value.cached;
         if (!shouldCacheRegionStyle) {
@@ -621,7 +621,7 @@ void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<Rende
 
     RefPtr<RenderStyle> objectOriginalStyle = object->style();
     if (object->isRenderElement())
-        toRenderElement(object)->setStyleInternal(styleInRegion);
+        toRenderElement(object)->setStyleInternal(*styleInRegion);
 
     if (object->isBoxModelObject() && !object->hasBoxDecorations()) {
         bool hasBoxDecorations = object->isTableCell()
