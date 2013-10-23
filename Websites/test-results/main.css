@@ -15,8 +15,21 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 5px;
-    margin: 10px 0px;
+    margin: 1em 0px;
     position: relative;
+}
+
+#buildersView {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 2em 0 1em 0;
+}
+
+#buildersView .testResults {
+    border: none;
+    margin: 1em 0 0 0;
+    padding: 0;
 }
 
 .closeButton {
@@ -98,17 +111,26 @@
     background-color: #eee;
 }
 
+.resultsTable .externalTestLink {
+    margin-left: 0.5em;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><circle cx='10' cy='8' r='5' fill='transparent' stroke='#999'></circle><polygon points='8,5 13,8 8,11' fill='#999'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
 .resultsTable a {
     color: #00f;
     text-shadow: none;
-    text-decoration: underline;
 }
 
 .resultsTable a:visited {
     color: #006;
 }
 
-.resultsTable span a {
+.resultsTable .resultCell a {
     display: block;
     width: 1.5em;
     height: 2.5em;

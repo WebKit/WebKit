@@ -26,6 +26,7 @@
     placeholder="Type in a test name, or copy and paste test names on results.html or NRWT stdout (including junks)"></form>
 <div id="testView"></div>
 
+<div id="buildersView">
 <form>
 Show
 <label>tests <select id="builderFailureTypeView"><option>failing</option><option>flaky</option><option value="wrongexpectations">has wrong expectations</option></select></label>
@@ -33,6 +34,7 @@ Show
 <label for="builderDaysView">in the last <select id="builderDaysView"><option>5</option><option>15</option><option>30</option></select> days</label>
 </form>
 <div id="builderFailingTestsView"></div>
+</div>
 
 <div id="tooltipContainer"></div>
 
@@ -185,12 +187,16 @@ TestResultsView._populateTestPane = function(testName, results, section) {
     $(table).tablesorter();
 }
 
-TestResultsView._linkifiedTestName = function (test) {
+TestResultsView._urlFromTest = function (test) {
     var category = this._testCategories[test.category];
     if (!category)
-        return test.name;
+        return null;
+    return category.url.replace(/\$testName/g, test.name);
+}
 
-    return element('a', {'href': category.url.replace(/\$testName/g, test.name)}, [test.name]);
+TestResultsView._linkifiedTestName = function (test) {
+    var url = this._urlFromTest(test);
+    return url ? element('a', {'href': url}, [test.name]) : test.name;
 }
 
 TestResultsView._createTestResultHeader = function (labelForFirstColumn, repositories) {
@@ -332,6 +338,7 @@ TestResultsView.fetchTests = function (testNames, doNotUpdateHash) {
 }
 
 TestResultsView._matchesFailureType = function (results, failureType, tn) {
+    return true;
     if (!results.length)
         return false;
     var latestActualResult = results[0].actual;
@@ -378,12 +385,21 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
 
     var tbody = element('tbody');
     var builder = this._builders[builderId];
+    var self = this;
     for (var testId in resultsByTests) {
         var results = resultsByTests[testId];
         if (!results.length || !this._matchesFailureType(results, failureType, this._availableTests[testId].name))
             continue;
         this._createBuildsAndComputeSlownessOfResults(builderId, resultsByTests[testId]);
-        tbody.appendChild(this._createTestResultRow(this._linkifiedTestName(this._availableTests[testId]), resultsByTests[testId], builder));
+        var test = this._availableTests[testId];
+        var externalTestLink = element('a', {'class': 'externalTestLink', 'href': this._urlFromTest(test)});
+        var testName = element('a', {'href':'#'}, [test.name]);
+        testName.onclick = function (event) {
+            self.fetchTests([this.textContent]);
+            event.preventDefault();
+            return false;
+        }
+        tbody.appendChild(this._createTestResultRow(element('span', [testName, externalTestLink]), resultsByTests[testId], builder));
     }
 
     table.appendChild(tbody);
@@ -401,7 +417,7 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
 
     var self = this;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays, true);  
+    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays + '&failureType=' + failureType, true);  
     xhr.onload = function(event) {
         var response = JSON.parse(xhr.response);
         section.innerHTML = '';
@@ -420,9 +436,9 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
     xhr.send();
 }
 
-TestResultsView.updateLocationHash = function () {
+TestResultsView._createLocationHash = function (tests) {
     var params = {
-        'tests': this._tests.join(','),
+        'tests': tests.join(','),
         'builder': this._currentBuilder,
         'builderFailureType': this._currentBuilderFailureType,
         'builderDays': this._currentBuilderDays,
@@ -434,7 +450,11 @@ TestResultsView.updateLocationHash = function () {
             continue;
         hash += '&' + decodeURIComponent(key) + '=' + decodeURIComponent(value);
     }
-    location.hash = hash;
+    return hash;
+}
+
+TestResultsView.updateLocationHash = function () {
+    location.hash = this._createLocationHash(this._tests);
     this._oldHash = location.hash;
 }
 
