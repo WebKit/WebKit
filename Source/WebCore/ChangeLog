@@ -1,3 +1,12 @@
+2013-10-22  Andreas Kling  <akling@apple.com>
+
+        Merge SVGRenderBlock::styleWillChange() into styleDidChange().
+        <https://webkit.org/b/123181>
+
+        I meant to do this one in r157787, but better late than never.
+
+        Reviewed by Geoffrey Garen.
+
 2013-10-22  Sam Weinig  <sam@webkit.org>
 
         CTTE: Modernize RenderBlock a bit
