@@ -196,10 +196,6 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
     find_package(OpenGL REQUIRED)
     CHECK_INCLUDE_FILES("GL/glx.h" OPENGLX_FOUND)
 
-    if (OPENGLX_FOUND)
-        add_definitions(-DHAVE_GLX)
-    endif ()
-
     option(ENABLE_EGL "Enable EGL Support")
 
     if (ENABLE_EGL)

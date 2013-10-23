@@ -41,7 +41,7 @@ struct GraphicsSurfaceToken {
     typedef HANDLE BufferHandle;
 #endif
 
-#if HAVE(GLX)
+#if USE(GLX)
     GraphicsSurfaceToken(uint32_t windowID = 0)
         : frontBufferHandle(windowID)
     { }

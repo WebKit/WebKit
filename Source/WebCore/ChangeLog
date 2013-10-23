@@ -1,3 +1,15 @@
+2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove HAVE_GLX macro
+        https://bugs.webkit.org/show_bug.cgi?id=123191
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r138313, HAVE(GLX) was replaced to USE(GLX) except in GraphicsSurfaceToken.h.
+
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h:
+        Replace HAVE(GLX) to USE(GLX)
+
 2013-10-22  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix broken build on Windows.
