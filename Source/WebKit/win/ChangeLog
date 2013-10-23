@@ -1,3 +1,25 @@
+2013-10-23  Alex Christensen  <achristensen@webkit.org>
+
+        Separated USE(CA) from USE(ACCELERATED_COMPOSITING) to prepare WinCairo for accelerated compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=123214
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::delegatedScrollRequested): Added empty function.
+        * WebPreferences.cpp:
+        (WebPreferences::acceleratedCompositingEnabled):
+        Return true for non-CA ports using accelerated compositing.
+        * WebView.cpp:
+        (WebView::~WebView):
+        (WebView::sizeChanged):
+        (WebView::paint):
+        (WebView::setShouldInvertColors):
+        (WebView::flushPendingGraphicsLayerChangesSoon):
+        (WebView::setAcceleratedCompositing):
+        * WebView.h:
+        Added USE(CA) where necessary to compile WinCairo with accelerated compositing.
+
 2013-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Attempt to fix the Windows build after http://trac.webkit.org/changeset/157547.

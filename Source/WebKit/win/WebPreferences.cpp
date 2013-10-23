@@ -1540,7 +1540,11 @@ HRESULT WebPreferences::setAcceleratedCompositingEnabled(BOOL enabled)
 HRESULT WebPreferences::acceleratedCompositingEnabled(BOOL* enabled)
 {
 #if USE(ACCELERATED_COMPOSITING)
+#if USE(CA)
     *enabled = CACFLayerTreeHost::acceleratedCompositingAvailable() && boolValueForKey(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey));
+#else
+    *enabled = TRUE;
+#endif
 #else
     *enabled = FALSE;
 #endif

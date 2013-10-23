@@ -52,7 +52,7 @@
 #endif
 
 namespace WebCore {
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(CA)
     class CACFLayerTreeHost;
 #endif
     class FullScreenController;
@@ -1155,8 +1155,9 @@ protected:
 #if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
-
+#if USE(CA)
     RefPtr<WebCore::CACFLayerTreeHost> m_layerTreeHost;
+#endif
     std::unique_ptr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
 #endif

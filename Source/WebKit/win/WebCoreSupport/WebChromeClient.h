@@ -141,6 +141,10 @@ public:
         virtual void scheduleCompositingLayerFlush();
 #endif
 
+#if USE(TILED_BACKING_STORE)
+    virtual void delegatedScrollRequested(const WebCore::IntPoint&) { }
+#endif
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const OVERRIDE;
 #endif
