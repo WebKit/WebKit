@@ -1,3 +1,61 @@
+2013-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Implement superlayer, removeFromSuperlayer, replaceSublayer, and adoptSublayers
+        https://bugs.webkit.org/show_bug.cgi?id=123130
+
+        Reviewed by Anders Carlsson.
+
+        Implement the remaining layer-hierarchy-manipulation methods.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        (PlatformCALayerRemote::~PlatformCALayerRemote):
+        Null out the superlayer back-pointer on our sublayers.
+
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Ensure that our children all have us as their superlayer.
+
+        (PlatformCALayerRemote::superlayer):
+        Return the stored superlayer pointer.
+
+        (PlatformCALayerRemote::removeFromSuperlayer):
+        Call removeSublayer on our superlayer, if we have one.
+
+        (PlatformCALayerRemote::removeSublayer):
+        Remove the given layer if it's in our list of sublayers, clear its
+        reference to us, and note that we'll need to commit hierarchy changes.
+
+        (PlatformCALayerRemote::setSublayers):
+        removeAllSublayers() before setting the new list, to clear superlayer
+        back-pointers. Children will be protected by the PlatformCALayerList.
+        Update the new layers' superlayers.
+
+        (PlatformCALayerRemote::removeAllSublayers):
+        Remove each sublayer from its superlayer, then clear our list of children.
+
+        (PlatformCALayerRemote::appendSublayer):
+        (PlatformCALayerRemote::insertSublayer):
+        Protect the layer from deletion, so that we can remove it from its prior
+        superlayer before appending or inserting it.
+
+        (PlatformCALayerRemote::replaceSublayer):
+        Find the reference sublayer, if it exists, and replace it with the new one.
+
+        (PlatformCALayerRemote::adoptSublayers):
+        adoptSublayers is really just "set sublayers to this other layer's sublayers".
+        Since setSublayers already removes layers from the existing superlayer,
+        we can just go ahead and call it.
+
+        (PlatformCALayerRemote::addAnimationForKey):
+        (PlatformCALayerRemote::removeAnimationForKey):
+        (PlatformCALayerRemote::animationForKey):
+        Add some ASSERT_NOT_REACHEDs in animation code.
+        We ought not get here because we've disabled hardware animations
+        in GraphicsLayerCARemote.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Add m_superlayer and removeSublayer().
+
 2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on Soup based port after r157842.

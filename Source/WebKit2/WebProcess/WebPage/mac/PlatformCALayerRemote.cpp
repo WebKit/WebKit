@@ -50,6 +50,12 @@ static RemoteLayerTreeTransaction::LayerID generateLayerID()
     return ++layerID;
 }
 
+static PlatformCALayerRemote* toPlatformCALayerRemote(PlatformCALayer* layer)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!layer || layer->isRemote());
+    return static_cast<PlatformCALayerRemote*>(layer);
+}
+
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
 {
     return adoptRef(new PlatformCALayerRemote(layerType, owner, context));
@@ -58,6 +64,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, P
 PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
     : PlatformCALayer(layerType, owner)
     , m_layerID(generateLayerID())
+    , m_superlayer(nullptr)
     , m_context(context)
 {
     m_context->layerWasCreated(this, layerType);
@@ -70,6 +77,8 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* 
 
 PlatformCALayerRemote::~PlatformCALayerRemote()
 {
+    for (const auto& layer : m_children)
+        toPlatformCALayerRemote(layer.get())->m_superlayer = nullptr;
     m_context->layerWillBeDestroyed(this);
 }
 
@@ -82,7 +91,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
         if (m_properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
             m_properties.children.clear();
             for (auto layer : m_children)
-                m_properties.children.append(static_cast<PlatformCALayerRemote*>(layer.get())->layerID());
+                m_properties.children.append(toPlatformCALayerRemote(layer.get())->layerID());
         }
 
         transaction.layerPropertiesChanged(this, m_properties);
@@ -90,7 +99,8 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
     }
 
     for (size_t i = 0; i < m_children.size(); ++i) {
-        PlatformCALayerRemote* child = static_cast<PlatformCALayerRemote*>(m_children[i].get());
+        PlatformCALayerRemote* child = toPlatformCALayerRemote(m_children[i].get());
+        ASSERT(child->superlayer() == this);
         child->recursiveBuildTransaction(transaction);
     }
 }
@@ -128,76 +138,106 @@ void PlatformCALayerRemote::setContentsChanged()
 
 PlatformCALayer* PlatformCALayerRemote::superlayer() const
 {
-    return nullptr;
+    return m_superlayer;
 }
 
 void PlatformCALayerRemote::removeFromSuperlayer()
 {
-    ASSERT_NOT_REACHED();
+    if (!m_superlayer)
+        return;
+
+    m_superlayer->removeSublayer(this);
+}
+
+void PlatformCALayerRemote::removeSublayer(PlatformCALayerRemote* layer)
+{
+    size_t childIndex = m_children.find(layer);
+    if (childIndex != notFound)
+        m_children.remove(childIndex);
+    layer->m_superlayer = nullptr;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
 {
-#ifndef ASSERT_DISABLED
-    for (const auto& layer : list) {
-        ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
-    }
-#endif
-
+    removeAllSublayers();
     m_children = list;
+
+    for (const auto& layer : list)
+        toPlatformCALayerRemote(layer.get())->m_superlayer = this;
+
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::removeAllSublayers()
 {
+    for (const auto& layer : m_children)
+        layer->removeFromSuperlayer();
     m_children.clear();
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::appendSublayer(PlatformCALayer* layer)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+    RefPtr<PlatformCALayer> layerProtector(layer);
 
+    layer->removeFromSuperlayer();
     m_children.append(layer);
+    toPlatformCALayerRemote(layer)->m_superlayer = this;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::insertSublayer(PlatformCALayer* layer, size_t index)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
+    RefPtr<PlatformCALayer> layerProtector(layer);
 
+    layer->removeFromSuperlayer();
     m_children.insert(index, layer);
+    toPlatformCALayerRemote(layer)->m_superlayer = this;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::replaceSublayer(PlatformCALayer* reference, PlatformCALayer* layer)
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(reference->superlayer() == this);
+    RefPtr<PlatformCALayer> layerProtector(layer);
+
+    layer->removeFromSuperlayer();
+    size_t referenceIndex = m_children.find(reference);
+    if (referenceIndex != notFound) {
+        m_children[referenceIndex]->removeFromSuperlayer();
+        m_children.remove(referenceIndex);
+        m_children.insert(referenceIndex, layer);
+    }
+
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
 void PlatformCALayerRemote::adoptSublayers(PlatformCALayer* source)
 {
-    ASSERT_NOT_REACHED();
+    setSublayers(toPlatformCALayerRemote(source)->m_children);
 }
 
 void PlatformCALayerRemote::addAnimationForKey(const String& key, PlatformCAAnimation* animation)
 {
+    ASSERT_NOT_REACHED();
 }
 
 void PlatformCALayerRemote::removeAnimationForKey(const String& key)
 {
+    ASSERT_NOT_REACHED();
 }
 
 PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const String& key)
 {
+    ASSERT_NOT_REACHED();
+
     return nullptr;
 }
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(layer->isRemote());
-
-    m_properties.maskLayer = static_cast<PlatformCALayerRemote*>(layer)->layerID();
+    m_properties.maskLayer = toPlatformCALayerRemote(layer)->layerID();
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
 }
 

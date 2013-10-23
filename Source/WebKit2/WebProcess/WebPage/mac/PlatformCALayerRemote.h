@@ -149,10 +149,12 @@ private:
     virtual AVPlayerLayer *playerLayer() const OVERRIDE;
 
     void ensureBackingStore();
+    void removeSublayer(PlatformCALayerRemote*);
 
     RemoteLayerTreeTransaction::LayerID m_layerID;
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
+    PlatformCALayerRemote* m_superlayer;
 
     RemoteLayerTreeContext* m_context;
 };
