@@ -137,7 +137,7 @@ public:
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<LayerID>);
 
-#if !defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !defined(NDEBUG)
     void dump() const;
 #endif
 

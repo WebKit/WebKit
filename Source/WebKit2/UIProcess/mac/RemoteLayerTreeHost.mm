@@ -98,7 +98,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
-#if !defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !defined(NDEBUG)
     transaction.dump();
 #endif
 

@@ -344,7 +344,7 @@ void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<LayerID> destroyedL
     m_destroyedLayerIDs = std::move(destroyedLayerIDs);
 }
 
-#if !defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !defined(NDEBUG)
 
 class RemoteLayerTreeTextStream : public TextStream
 {

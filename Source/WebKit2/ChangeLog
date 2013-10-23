@@ -1,3 +1,15 @@
+2013-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        Remove the ifdef to exclude remote layer tree transaction logging
+        on Lion and before.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+
 2013-10-23  Brady Eidson  <beidson@apple.com>
 
         Make IDBDatabaseBackendLevelDB.cpp be cross platform
