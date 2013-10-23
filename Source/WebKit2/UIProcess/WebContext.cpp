@@ -1090,7 +1090,7 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
     }
 #else
 #if USE(SOUP)
-    m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
+    m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->platformCertificateInfo(), host), 0);
     return;
 #else
     UNUSED_PARAM(certificate);

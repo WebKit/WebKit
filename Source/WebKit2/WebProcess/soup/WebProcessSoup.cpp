@@ -31,6 +31,7 @@
 #include "SeccompFiltersWebProcessEfl.h"
 #endif
 
+#include "PlatformCertificateInfo.h"
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
 #include "WebSoupRequestManager.h"
@@ -209,7 +210,7 @@ void WebProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 }
 
 #if !ENABLE(NETWORK_PROCESS)
-void WebProcess::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificateInfo, const String& host)
+void WebProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo& certificateInfo, const String& host)
 {
     WebCore::ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
 }

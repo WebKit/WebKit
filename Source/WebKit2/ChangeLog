@@ -1,5 +1,18 @@
 2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        Unreviewed build fix attempt on Soup based port after r157842.
+
+        WebCore::CertificateInfo was reverted to WebKit::PlatformCertificateInfo.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::allowSpecificHTTPSCertificateForHost):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost):
+
+2013-10-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Unreviewed build fix attempt on EFL port after r157842.
 
         * Shared/soup/PlatformCertificateInfo.h: Removed message of merge confliction.
