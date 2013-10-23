@@ -1,3 +1,12 @@
+2013-10-23  Andreas Kling  <akling@apple.com>
+
+        SVGFilterBuilder should not be ref-counted.
+        <https://webkit.org/b/123222>
+
+        These objects are singly-owned and do not need ref counting.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-23  Brady Eidson  <beidson@apple.com>
 
         Remove unused IDBBackingStoreLevelDB default constructor.

@@ -89,12 +89,12 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool m
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
+std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
 {
     FloatRect targetBoundingBox = filter->targetBoundingBox();
 
     // Add effects to the builder
-    RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(SourceGraphic::create(filter), SourceAlpha::create(filter));
+    auto builder = std::make_unique<SVGFilterBuilder>(SourceGraphic::create(filter), SourceAlpha::create(filter));
     auto children = childrenOfType<SVGFilterPrimitiveStandardAttributes>(&filterElement());
     for (auto element = children.begin(), end = children.end(); element != end; ++element) {
         RefPtr<FilterEffect> effect = element->build(builder.get(), filter);
@@ -108,7 +108,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
         effect->setOperatingColorSpace(element->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
         builder->add(element->result(), effect.release());
     }
-    return builder.release();
+    return builder;
 }
 
 bool RenderSVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size, FloatSize& scale)

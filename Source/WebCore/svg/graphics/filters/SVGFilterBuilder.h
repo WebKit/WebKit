@@ -34,11 +34,11 @@ namespace WebCore {
 
 class RenderObject;
 
-class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
+class SVGFilterBuilder {
 public:
     typedef HashSet<FilterEffect*> FilterEffectSet;
 
-    static PassRefPtr<SVGFilterBuilder> create(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha) { return adoptRef(new SVGFilterBuilder(sourceGraphic, sourceAlpha)); }
+    SVGFilterBuilder(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha);
 
     void add(const AtomicString& id, PassRefPtr<FilterEffect>);
 
@@ -61,8 +61,6 @@ public:
     void clearResultsRecursive(FilterEffect*);
 
 private:
-    SVGFilterBuilder(PassRefPtr<FilterEffect> sourceGraphic, PassRefPtr<FilterEffect> sourceAlpha);
-
     inline void addBuiltinEffects()
     {
         HashMap<AtomicString, RefPtr<FilterEffect>>::iterator end = m_builtinEffects.end();

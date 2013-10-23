@@ -41,6 +41,7 @@ namespace WebCore {
 
 struct FilterData {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(FilterData);
 public:
     enum FilterDataState { PaintingSource, Applying, Built, CycleDetected, MarkedForRemoval };
 
@@ -51,7 +52,7 @@ public:
     }
 
     RefPtr<SVGFilter> filter;
-    RefPtr<SVGFilterBuilder> builder;
+    std::unique_ptr<SVGFilterBuilder> builder;
     OwnPtr<ImageBuffer> sourceGraphicBuffer;
     GraphicsContext* savedContext;
     AffineTransform shearFreeAbsoluteTransform;
@@ -78,7 +79,7 @@ public:
 
     virtual FloatRect resourceBoundingBox(RenderObject*);
 
-    PassRefPtr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
+    std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
 
     SVGUnitTypes::SVGUnitType filterUnits() const { return filterElement().filterUnits(); }
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return filterElement().primitiveUnits(); }
