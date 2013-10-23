@@ -61,7 +61,7 @@ public:
     // The complete details are documented in ANGLE/ShaderLang.h.
     ANGLEWebKitBridge* mixShaderValidator();
     
-    void prepareContextIfNeeded(HostWindow*);
+    void prepareContextIfNeeded(HostWindow*, bool forceSoftwareRendering);
 private:
     static PassOwnPtr<ANGLEWebKitBridge> createShaderValidator(ShShaderSpec);
 

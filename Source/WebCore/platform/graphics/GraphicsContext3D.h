@@ -434,6 +434,7 @@ public:
             , shareResources(true)
             , preferDiscreteGPU(false)
             , multithreaded(false)
+            , forceSoftwareRenderer(false)
         {
         }
 
@@ -447,6 +448,7 @@ public:
         bool shareResources;
         bool preferDiscreteGPU;
         bool multithreaded;
+        bool forceSoftwareRenderer;
     };
 
     enum RenderStyle {

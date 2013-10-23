@@ -118,42 +118,46 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     CGLPixelFormatObj pixelFormatObj = 0;
     GLint numPixelFormats = 0;
     
-    // We will try:
+    // If we're configured to demand the software renderer, we'll
+    // do so. We attempt to create contexts in this order:
     //
-    //  1) 32 bit RGBA/32 bit depth/accelerated/supersampled
-    //  2) 32 bit RGBA/32 bit depth/accelerated
-    //  3) 32 bit RGBA/16 bit depth/accelerated
-    //  4) closest to 32 bit RGBA/16 bit depth/software renderer
+    // 1) 32 bit RGBA/32 bit depth/supersampled
+    // 2) 32 bit RGBA/32 bit depth
+    // 3) 32 bit RGBA/16 bit depth
     //
-    //  If none of that works, we simply fail and set m_contextObj to 0.
-    
-    setPixelFormat(attribs, 32, 32, true, true, false);
+    // If we were not forced into software mode already, our final attempt is
+    // to try that:
+    //
+    // 4) closest to 32 bit RGBA/16 bit depth/software renderer
+    //
+    // If none of that works, we simply fail and set m_contextObj to 0.
+
+    setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, true, false);
     CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
+
     if (numPixelFormats == 0) {
-        setPixelFormat(attribs, 32, 32, true, false, false);
+        setPixelFormat(attribs, 32, 32, !attrs.forceSoftwareRenderer, false, false);
         CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-        
+
         if (numPixelFormats == 0) {
-            setPixelFormat(attribs, 32, 16, true, false, false);
+            setPixelFormat(attribs, 32, 16, !attrs.forceSoftwareRenderer, false, false);
             CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-        
-            if (numPixelFormats == 0) {
-                setPixelFormat(attribs, 32, 16, false, false, true);
-                CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
-        
-                if (numPixelFormats == 0) {
-                    // Could not find an acceptable renderer - fail
-                    return;
-                }
+
+             if (!attrs.forceSoftwareRenderer && numPixelFormats == 0) {
+                 setPixelFormat(attribs, 32, 16, false, false, true);
+                 CGLChoosePixelFormat(attribs.data(), &pixelFormatObj, &numPixelFormats);
             }
         }
     }
-    
+
+    if (numPixelFormats == 0)
+        return;
+
     CGLError err = CGLCreateContext(pixelFormatObj, 0, &m_contextObj);
     CGLDestroyPixelFormat(pixelFormatObj);
     
     if (err != kCGLNoError || !m_contextObj) {
-        // Could not create the context - fail
+        // We were unable to create the context.
         m_contextObj = 0;
         return;
     }

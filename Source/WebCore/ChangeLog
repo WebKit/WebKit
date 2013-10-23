@@ -1,3 +1,38 @@
+2013-10-22  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Implement a software rendering option on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123177
+
+        Reviewed by Tim Horton.
+
+        Implement a way to force software OpenGL rendering
+        for WebGL, via a Setting/Preference.
+
+        No new tests. We intentionally hide the capabilities of
+        the renderer from the content, so you can't test for
+        this setting. However, manual inspection is pretty
+        obvious. Just go to a page with a complex shader
+        such as https://www.shadertoy.com/view/lss3WS.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create): If we're forcing software
+        rendering, mark the context attributes as such.
+        * page/Settings.in: New setting key.
+        * platform/graphics/GraphicsContext3D.h: New flag in Attributes.
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Slight update to the
+        algorithm that sets a pixel format. If we're forcing software rendering,
+        obviously we never want to create an accelerated pixel format.
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp:
+        (WebCore::CustomFilterGlobalContext::prepareContextIfNeeded): Set the attribute
+        here before trying to create the context.
+        * platform/graphics/filters/CustomFilterGlobalContext.h: Add a forceSoftwareRendering
+        flag to prepareContextIfNeeded.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::createCustomFilterEffect): Check the Setting before creating a custom
+        filter context.
+
 2013-10-22  Anders Carlsson  <andersca@apple.com>
 
         Revert r157445 since it broke certificates on Mac.

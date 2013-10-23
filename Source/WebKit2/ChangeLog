@@ -1,3 +1,22 @@
+2013-10-22  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Implement a software rendering option on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123177
+
+        Reviewed by Tim Horton.
+
+        Implement a way to force software OpenGL rendering
+        for WebGL, via a Setting/Preference.
+
+        * Shared/WebPreferencesStore.h: New ForceSoftwareWebGLRendering entry.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetForceSoftwareWebGLRendering):
+        (WKPreferencesGetForceSoftwareWebGLRendering):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * mac/WebKit2.order:
+
 2013-10-22  Anders Carlsson  <andersca@apple.com>
 
         Revert r157445 since it broke certificates on Mac.

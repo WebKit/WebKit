@@ -67,7 +67,7 @@ PassOwnPtr<ANGLEWebKitBridge> CustomFilterGlobalContext::createShaderValidator(S
     return validator.release();
 }
 
-void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
+void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow, bool forceSoftwareRendering)
 {
     if (m_context.get())
         return;
@@ -77,6 +77,10 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
     attributes.premultipliedAlpha = false;
     attributes.shareResources = true;
     attributes.preferDiscreteGPU = true;
+
+    if (forceSoftwareRendering)
+        attributes.forceSoftwareRenderer = true;
+
     m_context = GraphicsContext3D::create(attributes, hostWindow, GraphicsContext3D::RenderOffscreen);
     if (!m_context)
         return;

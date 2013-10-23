@@ -94,6 +94,7 @@ namespace WebKit {
     macro(CSSCustomFilterEnabled, cssCustomFilterEnabled, Bool, bool, true) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, true) \
     macro(MultithreadedWebGLEnabled, multithreadedWebGLEnabled, Bool, bool, false) \
+    macro(ForceSoftwareWebGLRendering, forceSoftwareWebGLRendering, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
     macro(CSSCompositingEnabled, cssCompositingEnabled, Bool, bool, true) \

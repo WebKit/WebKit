@@ -489,6 +489,16 @@ bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->multithreadedWebGLEnabled();
 }
 
+void WKPreferencesSetForceSoftwareWebGLRendering(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setForceSoftwareWebGLRendering(flag);
+}
+
+bool WKPreferencesGetForceSoftwareWebGLRendering(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->forceSoftwareWebGLRendering();
+}
+
 void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAccelerated2dCanvasEnabled(flag);

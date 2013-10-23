@@ -379,6 +379,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMultithreadedWebGLEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
@@ -1477,6 +1478,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setMultithreadedWebGLEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitMultithreadedWebGLEnabledPreferenceKey];
+}
+
+- (BOOL)forceSoftwareWebGLRendering
+{
+    return [self _boolValueForKey:WebKitForceSoftwareWebGLRenderingPreferenceKey];
+}
+
+- (void)setForceSoftwareWebGLRendering:(BOOL)forced
+{
+    [self _setBoolValue:forced forKey:WebKitForceSoftwareWebGLRenderingPreferenceKey];
 }
 
 - (BOOL)accelerated2dCanvasEnabled

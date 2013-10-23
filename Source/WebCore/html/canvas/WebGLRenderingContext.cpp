@@ -429,6 +429,9 @@ OwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* c
     if (frame->settings().multithreadedWebGLEnabled())
         attributes.multithreaded = true;
 
+    if (frame->settings().forceSoftwareWebGLRendering())
+        attributes.forceSoftwareRenderer = true;
+
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context || !context->makeContextCurrent()) {

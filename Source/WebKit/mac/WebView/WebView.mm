@@ -1524,6 +1524,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setShowRepaintCounter([preferences showRepaintCounter]);
     settings.setWebGLEnabled([preferences webGLEnabled]);
     settings.setMultithreadedWebGLEnabled([preferences multithreadedWebGLEnabled]);
+    settings.setForceSoftwareWebGLRendering([preferences forceSoftwareWebGLRendering]);
     settings.setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings.setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings.setWindowFocusRestricted(shouldRestrictWindowFocus());
