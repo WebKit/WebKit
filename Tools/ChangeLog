@@ -1,3 +1,11 @@
+2013-10-23  Lucas Forschler  <lforschler@apple.com>
+
+        Add two more mac bots to the Mavericks Test Queue.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-10-23  Filip Pizlo  <fpizlo@apple.com>
 
         Have a way of dealing with slow tests in run-jsc-stress-tests
