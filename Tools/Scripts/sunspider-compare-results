@@ -91,7 +91,7 @@ sub pathToBuiltJSC($)
 {
     my ($productDir) = @_;
     my $jscName = "jsc";
-    $jscName .= "_debug" if configurationForVisualStudio() eq "Debug_All";
+    $jscName .= "_debug" if configuration() eq "Debug_All";
     return "$productDir/$jscName";
 }
 

@@ -433,16 +433,16 @@ if (!defined($root) && !$noBuildDumpTool) {
 my $dumpToolName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
 
 if (isAppleWinWebKit()) {
-    $dumpToolName .= "_debug" if configurationForVisualStudio() eq "Debug_All";
-    $dumpToolName .= "_debug" if configurationForVisualStudio() eq "Debug_Cairo_CFLite";
+    $dumpToolName .= "_debug" if configuration() eq "Debug_All";
+    $dumpToolName .= "_debug" if configuration() eq "Debug_Cairo";
     $dumpToolName .= $Config{_exe};
 }
 my $dumpTool = File::Spec->catfile($productDir, $dumpToolName);
 die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;
 
 my $imageDiffTool = "$productDir/ImageDiff";
-$imageDiffTool .= "_debug" if isCygwin() && configurationForVisualStudio() eq "Debug_All";
-$imageDiffTool .= "_debug" if isCygwin() && configurationForVisualStudio() eq "Debug_Cairo_CFLite";
+$imageDiffTool .= "_debug" if isCygwin() && configuration() eq "Debug_All";
+$imageDiffTool .= "_debug" if isCygwin() && configuration() eq "Debug_Cairo";
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks() unless isCygwin();

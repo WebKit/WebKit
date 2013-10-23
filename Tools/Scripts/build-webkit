@@ -281,7 +281,7 @@ for my $dir (@projects) {
         if ($project eq "WebKit") {
             my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
-            my $vsConfiguration = configurationForVisualStudio();
+            my $vsConfiguration = configuration();
             if (usingVisualStudioExpress()) {
                 # Visual Studio Express is so lame it can't stdout build failures.
                 # So we find its logs and dump them to the console ourselves.

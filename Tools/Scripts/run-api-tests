@@ -330,7 +330,7 @@ sub testToolPath()
     return $path unless isAppleWinWebKit();
 
     my $suffix;
-    if (configurationForVisualStudio() eq "Debug_All") {
+    if (configuration() eq "Debug_All") {
         $suffix = "_debug";
     } else {
         $suffix = "";
