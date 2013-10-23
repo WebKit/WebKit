@@ -1,3 +1,15 @@
+2013-10-23  Michael Saboff  <msaboff@apple.com>
+
+        LLInt arity check exception processing should start unwinding from caller
+        https://bugs.webkit.org/show_bug.cgi?id=123209
+
+        Reviewed by Oliver Hunt.
+
+        Use the caller frame returned from slow_path_call_arityCheck to process exceptions.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2013-10-22  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to do some simple inline caches using LLVM patchpoints

@@ -307,6 +307,7 @@ macro functionArityCheck(doneLabel, slow_path)
     biaeq t0, CodeBlock::m_numParameters[t1], doneLabel
     cCall2(slow_path, cfr, PC)   # This slow_path has a simple protocol: t0 = 0 => no error, t0 != 0 => error
     btiz t0, .isArityFixupNeeded
+    move t1, cfr   # t1 contains caller frame
     jmp _llint_throw_from_slow_path_trampoline
 
 .isArityFixupNeeded:
