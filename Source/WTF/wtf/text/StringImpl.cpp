@@ -249,31 +249,31 @@ PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalStr
 }
 
 template <typename CharType>
-inline PassRefPtr<StringImpl> StringImpl::createInternal(const CharType* characters, unsigned length)
+inline PassRef<StringImpl> StringImpl::createInternal(const CharType* characters, unsigned length)
 {
     if (!characters || !length)
-        return empty();
+        return *empty();
 
     CharType* data;
-    RefPtr<StringImpl> string = createUninitializedInternalNonEmpty(length, data);
+    auto string = createUninitializedInternalNonEmpty(length, data);
     memcpy(data, characters, length * sizeof(CharType));
-    return string.release();
+    return string;
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
+PassRef<StringImpl> StringImpl::create(const UChar* characters, unsigned length)
 {
     return createInternal(characters, length);
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
+PassRef<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
 {
     return createInternal(characters, length);
 }
 
-PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsigned length)
+PassRef<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsigned length)
 {
     if (!characters || !length)
-        return empty();
+        return *empty();
 
     LChar* data;
     RefPtr<StringImpl> string = createUninitializedInternalNonEmpty(length, data);
@@ -284,10 +284,10 @@ PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters,
         data[i] = static_cast<LChar>(characters[i]);
     }
 
-    return string.release();
+    return string.releaseNonNull();
 }
 
-PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* string)
+PassRef<StringImpl> StringImpl::create8BitIfPossible(const UChar* string)
 {
     return StringImpl::create8BitIfPossible(string, lengthOfNullTerminatedString(string));
 }

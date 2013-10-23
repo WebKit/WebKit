@@ -316,7 +316,7 @@ static StringImpl* stringForQuoteCharacter(UChar character)
             return strings[i].string;
         if (!strings[i].character) {
             strings[i].character = character;
-            strings[i].string = StringImpl::create8BitIfPossible(&character, 1).leakRef();
+            strings[i].string = &StringImpl::create8BitIfPossible(&character, 1).leakRef();
             return strings[i].string;
         }
     }

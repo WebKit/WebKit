@@ -1,3 +1,13 @@
+2013-10-23  Andreas Kling  <akling@apple.com>
+
+        Make more StringImpl construction functions return PassRef.
+        <https://webkit.org/b/123203>
+
+        Knock out a couple more of the StringImpl construction helpers that
+        always return a non-null StringImpl.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-22  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should be able to do some simple inline caches using LLVM patchpoints
