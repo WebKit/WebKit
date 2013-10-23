@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Portions Copyright (c) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,55 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CertificateInfo_h
-#define CertificateInfo_h
+#ifndef PlatformCertificateInfo_h
+#define PlatformCertificateInfo_h
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#include <WebCore/ResourceResponse.h>
 #include <wtf/RetainPtr.h>
-#elif USE(SOUP)
-#include <gio/gio.h>
-#include <wtf/gobject/GRefPtr.h>
-#endif
 
-namespace WebCore {
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
-class CertificateInfo {
+namespace WebKit {
+
+class PlatformCertificateInfo {
 public:
-    CertificateInfo();
+    PlatformCertificateInfo();
+    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+    explicit PlatformCertificateInfo(CFArrayRef certificateChain);
 
-#if PLATFORM(MAC)
-    explicit CertificateInfo(CFArrayRef certificateChain);
-#elif USE(SOUP)
-    explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
-#endif
+    CFArrayRef certificateChain() const { return m_certificateChain.get(); }
 
-    ~CertificateInfo();
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder&, PlatformCertificateInfo&);
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    void setCertificateChain(CFArrayRef);
-    CFArrayRef certificateChain() const;
 #ifndef NDEBUG
     void dump() const;
 #endif
 
-#elif USE(SOUP)
-    GTlsCertificate* certificate() const { return m_certificate.get(); }
-    void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
-
-    GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
-    void setTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
-#endif
-
 private:
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
     RetainPtr<CFArrayRef> m_certificateChain;
-#elif USE(SOUP)
-    GRefPtr<GTlsCertificate> m_certificate;
-    GTlsCertificateFlags m_tlsErrors;
-#endif
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // CertificateInfo_h
+#endif // PlatformCertificateInfo_h

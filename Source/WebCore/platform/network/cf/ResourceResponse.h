@@ -117,6 +117,10 @@ private:
 #if PLATFORM(MAC)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    // Certificate chain is normally part of NS/CFURLResponse, but there is no way to re-add it to a deserialized response after IPC.
+    RetainPtr<CFArrayRef> m_externalCertificateChain;
+#endif
     InitLevel m_initLevel;
     bool m_platformResponseIsUpToDate;
 };

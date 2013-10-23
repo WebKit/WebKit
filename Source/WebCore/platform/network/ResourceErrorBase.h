@@ -26,7 +26,6 @@
 #ifndef ResourceErrorBase_h
 #define ResourceErrorBase_h
 
-#include "CertificateInfo.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,9 +51,6 @@ public:
 
     void setIsTimeout(bool isTimeout) { m_isTimeout = isTimeout; }
     bool isTimeout() const { return m_isTimeout; }
-
-    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
-    void setCertificateInfo(const CertificateInfo& certificateInfo) { m_certificateInfo = certificateInfo; }
 
     static bool compare(const ResourceError&, const ResourceError&);
 
@@ -93,7 +89,6 @@ protected:
     int m_errorCode;
     String m_failingURL;
     String m_localizedDescription;
-    CertificateInfo m_certificateInfo;
     bool m_isNull;
     bool m_isCancellation;
     bool m_isTimeout;

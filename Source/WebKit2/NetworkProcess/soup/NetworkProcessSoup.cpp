@@ -44,7 +44,7 @@ void NetworkProcess::platformSetCacheModel(CacheModel)
     notImplemented();
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String&)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String&)
 {
     notImplemented();
 }

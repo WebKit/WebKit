@@ -40,14 +40,10 @@ namespace CoreIPC {
     class Connection;
 }
 
-namespace WebCore {
-class CertificateInfo;
-}
-
 namespace WebKit {
 
 class ImmutableArray;
-
+class PlatformCertificateInfo;
 class WebCertificateInfo;
 class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
@@ -110,7 +106,7 @@ public:
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, const WebCore::CertificateInfo&);
+    void didCommitLoad(const String& contentType, const PlatformCertificateInfo&);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(const String&); // eg. anchor navigation, session state change.

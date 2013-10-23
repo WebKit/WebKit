@@ -30,13 +30,13 @@
 
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
+#import "PlatformCertificateInfo.h"
 #import "ResourceCachesToClear.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "StringUtilities.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/CertificateInfo.h>
 #import <WebKitSystemInterface.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
@@ -185,7 +185,7 @@ void NetworkProcess::platformSetCacheModel(CacheModel cacheModel)
     [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
-void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+void NetworkProcess::allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo& certificateInfo, const String& host)
 {
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }

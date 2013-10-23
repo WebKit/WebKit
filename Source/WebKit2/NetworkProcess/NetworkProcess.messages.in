@@ -39,7 +39,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetProcessSuppressionEnabled(bool flag)
 #endif
 
-    AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, WTF::String host)
+    AllowSpecificHTTPSCertificateForHost(WebKit::PlatformCertificateInfo certificate, WTF::String host)
     
     GetNetworkProcessStatistics(uint64_t callbackID)
     

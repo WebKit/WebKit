@@ -28,11 +28,10 @@
 
 #include "DataReference.h"
 #include "NetworkResourceLoader.h"
+#include "PlatformCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
-#include <WebCore/CertificateInfo.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/CurrentTime.h>
 
@@ -64,7 +63,7 @@ void AsynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace(Netw
 
 void AsynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader* loader, const ResourceResponse& response)
 {
-    loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, response.certificateInfo(), loader->isLoadingMainResource()));
+    loader->sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response), loader->isLoadingMainResource()));
 }
 
 void AsynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader* loader, SharedBuffer* buffer, int encodedDataLength)

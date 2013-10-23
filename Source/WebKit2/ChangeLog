@@ -1,3 +1,79 @@
+2013-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Revert r157445 since it broke certificates on Mac.
+        <rdar://problem/15246926&15254017&15269117>
+
+        * GNUmakefile.list.am:
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoCreateWithCertficateChain):
+        (WKCertificateInfoGetCertificateChain):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create):
+        (WebKit::WebCertificateInfo::platformCertificateInfo):
+        (WebKit::WebCertificateInfo::WebCertificateInfo):
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/PlatformCertificateInfo.h: Renamed from Source/WebCore/platform/network/soup/CertificateInfoSoup.cpp.
+        (WebKit::PlatformCertificateInfo::certificateChain):
+        * Shared/mac/PlatformCertificateInfo.mm: Renamed from Source/WebCore/platform/network/mac/CertificateInfoMac.mm.
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        (WebKit::PlatformCertificateInfo::dump):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/soup/PlatformCertificateInfo.cpp: Added.
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::~PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        * Shared/soup/PlatformCertificateInfo.h: Renamed from Source/WebCore/platform/network/CertificateInfo.h.
+        (WebKit::PlatformCertificateInfo::certificate):
+        (WebKit::PlatformCertificateInfo::tlsErrors):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_tls_info):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::allowSpecificHTTPSCertificateForHost):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2013-10-22  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Disable threaded scrolling for RemoteLayerTreeDrawingArea
@@ -1537,102 +1613,6 @@
         * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
         (WebKit::serviceName):
         (WebKit::createProcess):
-
-2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
-
-        [Soup] Unreviewed buildfix after r157445 for ENABLE(NETWORK_PROCESS) builds.
-
-        * NetworkProcess/soup/NetworkProcessSoup.cpp:
-        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
-
-2013-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
-
-        Unreviewed. Fix the GTK+ build after r157445.
-
-        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
-        (didFailProvisionalLoadWithErrorForFrame):
-
-2013-10-15  Csaba Osztrogonác  <ossy@webkit.org>
-
-        Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object
-        https://bugs.webkit.org/show_bug.cgi?id=118520
-
-        Reviewed by Anders Carlsson.
-
-        Added PlatformCertificateInfo getter and setter to ResourceErrorBase
-        and ResourceResponseBase so that getting and setting certificates
-        becomes cross platform.
-
-        Changed the existing platform specific certificate getters and setters
-        of ResourceError and ResourceResponse to use the
-        PlatformCertificateInfo member.
-
-        Original patch by Kwang Yul Seo  <skyul@company100.net>
-
-        The following things were fixed by Csaba Osztrogonác:
-        - trivial conflicts resolved in WebCore.exp.in, project.pbxproj, NetworkResourceLoader.cpp,
-          WebPageProxy.h, WebFrameLoaderClient.cpp and PlatformEfl.cmake.
-        - trivial fix in the new AsynchronousNetworkLoaderClient.cpp
-        - style fixed (NULL -> 0 and smaller indentation in WebCoreArgumentCodersSoup.cpp)
-        - obsolete change removed from NetworkResourceLoader.cpp
-        - unneeded typo removed from ResourceHandleSoup.cpp
-        - Fixed the if guard of including RetainPtr.h in PlatformCertificateInfo.h to make Windows build happy.
-        - add PlatformCertificateInfoCFNet.cpp with empty constructor and destructor to make Windows build happy.
-        - resolve conflict in Source/WebCore/WebCore.xcodeproj/project.pbxproj after r156488
-        - rename KURL to URL after r156550.
-        - remove obsolete Qt changes
-        - added back initializers for m_soupFlags
-        - included gio/gio.h instead of libsoup/soup.h in PlatformCertificateInfo.h
-        - removed unused class forward declarations and includes
-
-        * GNUmakefile.list.am:
-        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
-        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
-        * NetworkProcess/NetworkProcess.h:
-        * NetworkProcess/NetworkProcess.messages.in:
-        * NetworkProcess/NetworkResourceLoader.cpp:
-        * NetworkProcess/mac/NetworkProcessMac.mm:
-        * PlatformEfl.cmake:
-        * PlatformGTK.cmake:
-        * Shared/API/c/mac/WKCertificateInfoMac.mm:
-        (WKCertificateInfoCreateWithCertficateChain):
-        * Shared/Authentication/AuthenticationManager.h:
-        * Shared/Authentication/AuthenticationManager.messages.in:
-        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
-        * Shared/UserMessageCoders.h:
-        (WebKit::UserMessageDecoder::baseDecode):
-        * Shared/WebCertificateInfo.h:
-        (WebKit::WebCertificateInfo::create):
-        (WebKit::WebCertificateInfo::platformCertificateInfo):
-        (WebKit::WebCertificateInfo::WebCertificateInfo):
-        * Shared/WebCoreArgumentCoders.cpp:
-        (CoreIPC::::decode):
-        (CoreIPC::::encode):
-        * Shared/WebCoreArgumentCoders.h:
-        * Shared/mac/WebCoreArgumentCodersMac.mm:
-        (CoreIPC::::encodePlatformData):
-        (CoreIPC::::decodePlatformData):
-        * Shared/soup/PlatformCertificateInfo.cpp: Removed.
-        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
-        (CoreIPC::::encodePlatformData):
-        (CoreIPC::::decodePlatformData):
-        * Target.pri:
-        * UIProcess/API/gtk/WebKitWebView.cpp:
-        (webkit_web_view_get_tls_info):
-        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
-        (WebKit::AuthenticationChallengeProxy::useCredential):
-        * UIProcess/WebFrameProxy.cpp:
-        (WebKit::WebFrameProxy::didCommitLoad):
-        * UIProcess/WebFrameProxy.h:
-        * UIProcess/WebPageProxy.h:
-        * UIProcess/WebPageProxy.messages.in:
-        * WebKit2.xcodeproj/project.pbxproj:
-        * WebProcess/Network/WebResourceLoader.cpp:
-        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
-        * WebProcess/Network/WebResourceLoader.h:
-        * WebProcess/Network/WebResourceLoader.messages.in:
-        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
-        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
 
 2013-10-14  Csaba Osztrogonác  <ossy@webkit.org>
 

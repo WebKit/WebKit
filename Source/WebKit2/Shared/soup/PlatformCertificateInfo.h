@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +24,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCertificateInfo_h
-#define WebCertificateInfo_h
+#ifndef PlatformCertificateInfo_h
+#define PlatformCertificateInfo_h
 
-#include "APIObject.h"
-#include "PlatformCertificateInfo.h"
-#include <wtf/PassRefPtr.h>
+#include <libsoup/soup.h>
+#include <wtf/gobject/GRefPtr.h>
+
+namespace CoreIPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
+<<<<<<< HEAD:Source/WebCore/platform/network/CertificateInfo.h
+#if PLATFORM(MAC)
+    explicit CertificateInfo(CFArrayRef certificateChain);
+#elif USE(SOUP)
+    explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
+#endif
+=======
+namespace WebCore {
+class ResourceError;
+class ResourceResponse;
+}
+>>>>>>> parent of baccb1d... Move PlatformCertificateInfo to WebCore and make the ResourceResponse primitives work in terms of that platform agnostic object:Source/WebKit2/Shared/soup/PlatformCertificateInfo.h
 
 namespace WebKit {
 
-class WebCertificateInfo : public TypedAPIObject<APIObject::TypeCertificateInfo> {
+class PlatformCertificateInfo {
 public:
-    static PassRefPtr<WebCertificateInfo> create(const PlatformCertificateInfo& info)
-    {
-        return adoptRef(new WebCertificateInfo(info));
-    }
+    PlatformCertificateInfo();
+    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+    explicit PlatformCertificateInfo(const WebCore::ResourceError&);
+    ~PlatformCertificateInfo();
 
-    const PlatformCertificateInfo& platformCertificateInfo() const { return m_platformCertificateInfo; }
+    GTlsCertificate* certificate() const { return m_certificate.get(); }
+    GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
+
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder&, PlatformCertificateInfo&);
 
 private:
-    explicit WebCertificateInfo(const PlatformCertificateInfo& info)
-        : m_platformCertificateInfo(info)
-    {
-    }
-
-    PlatformCertificateInfo m_platformCertificateInfo;
+    GRefPtr<GTlsCertificate> m_certificate;
+    GTlsCertificateFlags m_tlsErrors;
 };
 
 } // namespace WebKit
 
-#endif // WebCertificateInfo_h
+#endif // PlatformCertificateInfo_h

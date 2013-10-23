@@ -66,7 +66,7 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
         m_connection->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
     else {
         WebCertificateInfo* certificateInfo = credential->certificateInfo();
-        WebCore::CertificateInfo platformInfo = certificateInfo ? certificateInfo->certificateInfo() : WebCore::CertificateInfo();
+        PlatformCertificateInfo platformInfo = certificateInfo ? certificateInfo->platformCertificateInfo() : PlatformCertificateInfo();
         m_connection->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core(), platformInfo), 0);
     }
 

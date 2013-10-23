@@ -27,10 +27,9 @@
 #ifndef ResourceResponseBase_h
 #define ResourceResponseBase_h
 
-#include "CertificateInfo.h"
 #include "HTTPHeaderMap.h"
-#include "ResourceLoadTiming.h"
 #include "URL.h"
+#include "ResourceLoadTiming.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -113,9 +112,6 @@ public:
     ResourceLoadTiming* resourceLoadTiming() const;
     void setResourceLoadTiming(PassRefPtr<ResourceLoadTiming>);
 
-    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
-    void setCertificateInfo(const CertificateInfo& certificateInfo) { m_certificateInfo = certificateInfo; }
-
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
     {
@@ -156,7 +152,6 @@ protected:
     unsigned m_connectionID;
     bool m_connectionReused : 1;
     RefPtr<ResourceLoadTiming> m_resourceLoadTiming;
-    CertificateInfo m_certificateInfo;
 
     bool m_isNull : 1;
     

@@ -28,15 +28,15 @@
 
 #if USE(SECURITY_FRAMEWORK)
 
+#include "PlatformCertificateInfo.h"
 #include <Security/SecIdentity.h>
 #include <WebCore/AuthenticationChallenge.h>
-#include <WebCore/CertificateInfo.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-bool AuthenticationManager::tryUseCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const CertificateInfo& certificateInfo)
+bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const PlatformCertificateInfo& certificateInfo)
 {
     CFArrayRef chain = certificateInfo.certificateChain();
     if (!chain)

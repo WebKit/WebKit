@@ -22,6 +22,7 @@
 #include "WebKitWebView.h"
 
 #include "ImageOptions.h"
+#include "PlatformCertificateInfo.h"
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
@@ -59,7 +60,6 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
-#include <WebCore/CertificateInfo.h>
 #include <WebCore/DragIcon.h>
 #include <WebCore/GOwnPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
@@ -3026,7 +3026,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
     if (!mainFrame)
         return FALSE;
 
-    const WebCore::CertificateInfo& certificateInfo = mainFrame->certificateInfo()->certificateInfo();
+    const PlatformCertificateInfo& certificateInfo = mainFrame->certificateInfo()->platformCertificateInfo();
     if (certificate)
         *certificate = certificateInfo.certificate();
     if (errors)

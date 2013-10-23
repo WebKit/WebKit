@@ -150,7 +150,6 @@ list(APPEND WebCore_SOURCES
     platform/network/efl/NetworkStateNotifierEfl.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
-    platform/network/soup/CertificateInfoSoup.cpp
     platform/network/soup/CookieJarSoup.cpp
     platform/network/soup/CookieStorageSoup.cpp
     platform/network/soup/CredentialStorageSoup.cpp

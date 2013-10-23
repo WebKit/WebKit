@@ -36,8 +36,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-class CertificateInfo;
-class RunLoop;
+    class RunLoop;
 }
 
 namespace WebKit {
@@ -45,6 +44,7 @@ namespace WebKit {
 class AuthenticationManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
+class PlatformCertificateInfo;
 struct NetworkProcessCreationParameters;
 
 class NetworkProcess : public ChildProcess, private DownloadManager::Client {
@@ -108,7 +108,7 @@ private:
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
-    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
 

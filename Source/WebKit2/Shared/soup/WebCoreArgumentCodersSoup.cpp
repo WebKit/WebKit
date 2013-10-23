@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
- * Portions Copyright (c) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +25,16 @@
  */
 
 #include "config.h"
-#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 
-#include <WebCore/CertificateInfo.h>
+#include "PlatformCertificateInfo.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace CoreIPC {
 
@@ -69,69 +68,19 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
 }
 
 
-void ArgumentCoder<CertificateInfo>::encodePlatformData(ArgumentEncoder& encoder, const CertificateInfo& certificateInfo)
-{
-    if (!certificateInfo.certificate()) {
-        encoder << false;
-        return;
-    }
-
-    GByteArray* certificateData = 0;
-    g_object_get(G_OBJECT(certificateInfo.certificate()), "certificate", &certificateData, NULL);
-    if (!certificateData) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true;
-    GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
-    encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(certificate->data, certificate->len));
-    encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
-}
-
-bool ArgumentCoder<CertificateInfo>::decodePlatformData(ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
-{
-    bool hasCertificate;
-    if (!decoder.decode(hasCertificate))
-        return false;
-
-    if (!hasCertificate)
-        return true;
-
-    CoreIPC::DataReference certificateDataReference;
-    if (!decoder.decodeVariableLengthByteArray(certificateDataReference))
-        return false;
-
-    GByteArray* certificateData = g_byte_array_sized_new(certificateDataReference.size());
-    certificateData = g_byte_array_append(certificateData, certificateDataReference.data(), certificateDataReference.size());
-    GRefPtr<GByteArray> certificateBytes = adoptGRef(certificateData);
-
-    GTlsBackend* backend = g_tls_backend_get_default();
-    GRefPtr<GTlsCertificate> certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(g_tls_backend_get_certificate_type(backend), 0, 0,
-        "certificate", certificateBytes.get(), 0)));
-    certificateInfo.setCertificate(certificate.get());
-
-    uint32_t tlsErrors;
-    if (!decoder.decode(tlsErrors))
-        return false;
-    certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(tlsErrors));
-
-    return true;
-}
-
-
 void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
-    encoder << resourceError.certificateInfo();
+    encoder << PlatformCertificateInfo(resourceError);
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
 {
-    CertificateInfo certificateInfo;
+    PlatformCertificateInfo certificateInfo;
     if (!decoder.decode(certificateInfo))
         return false;
 
-    resourceError.setCertificateInfo(certificateInfo);
+    resourceError.setCertificate(certificateInfo.certificate());
+    resourceError.setTLSErrors(certificateInfo.tlsErrors());
     return true;
 }
 

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Company 100 Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +24,62 @@
  */
 
 #import "config.h"
-#import "CertificateInfo.h"
+#import "PlatformCertificateInfo.h"
 
-namespace WebCore {
+#import "ArgumentCodersCF.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
 
-CertificateInfo::CertificateInfo()
+using namespace WebCore;
+
+namespace WebKit {
+
+PlatformCertificateInfo::PlatformCertificateInfo()
 {
 }
 
+PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
+    : m_certificateChain(response.certificateChain())
+{
+}
 
-CertificateInfo::CertificateInfo(CFArrayRef certificateChain)
+PlatformCertificateInfo::PlatformCertificateInfo(CFArrayRef certificateChain)
     : m_certificateChain(certificateChain)
 {
 }
 
-CertificateInfo::~CertificateInfo()
+void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
+    if (!m_certificateChain) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    CoreIPC::encode(encoder, m_certificateChain.get());
 }
 
-void CertificateInfo::setCertificateChain(CFArrayRef certificateChain)
+bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, PlatformCertificateInfo& c)
 {
-    m_certificateChain = certificateChain;
-}
+    bool hasCertificateChain;
+    if (!decoder.decode(hasCertificateChain))
+        return false;
 
-CFArrayRef CertificateInfo::certificateChain() const
-{
-    return m_certificateChain.get();
+    if (!hasCertificateChain)
+        return true;
+
+    if (!CoreIPC::decode(decoder, c.m_certificateChain))
+        return false;
+
+    return true;
 }
 
 #ifndef NDEBUG
-void CertificateInfo::dump() const
+void PlatformCertificateInfo::dump() const
 {
     unsigned entries = m_certificateChain ? CFArrayGetCount(m_certificateChain.get()) : 0;
 
-    NSLog(@"CertificateInfo\n");
+    NSLog(@"PlatformCertificateInfo\n");
     NSLog(@"  Entries: %d\n", entries);
     for (unsigned i = 0; i < entries; ++i) {
         RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
@@ -67,4 +88,4 @@ void CertificateInfo::dump() const
 }
 #endif
 
-} // namespace WebCore
+} // namespace WebKit

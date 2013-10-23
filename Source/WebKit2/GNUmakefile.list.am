@@ -487,6 +487,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/SessionState.h \
 	Source/WebKit2/Shared/StatisticsData.cpp \
 	Source/WebKit2/Shared/StatisticsData.h \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/soup/SoupCookiePersistentStorageType.h \
 	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
 	Source/WebKit2/Shared/TextCheckerState.h \
@@ -1368,6 +1370,8 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
