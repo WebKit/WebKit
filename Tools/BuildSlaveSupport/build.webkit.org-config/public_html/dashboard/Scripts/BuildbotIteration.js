@@ -28,7 +28,6 @@ BuildbotIteration = function(queue, id, finished)
     BaseObject.call(this);
 
     console.assert(queue);
-    console.assert(id);
 
     this.queue = queue;
     this.id = id;

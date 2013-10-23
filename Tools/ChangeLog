@@ -1,5 +1,14 @@
 2013-10-23  Simon Fraser  <simon.fraser@apple.com>
 
+        It's valid to have a build ID of 0.
+
+        Reviewed by Tim Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration):
+
+2013-10-23  Simon Fraser  <simon.fraser@apple.com>
+
         Remove Lion bots from the Dashboard.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
