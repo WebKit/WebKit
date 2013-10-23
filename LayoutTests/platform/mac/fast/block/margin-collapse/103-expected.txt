@@ -74,8 +74,8 @@ layer at (0,0) size 785x1718
                 text run at (0,22) width 41: "online?"
             RenderMenuList {SELECT} at (325,230) size 180x18 [bgcolor=#FFFFFF]
               RenderBlock (anonymous) at (0,0) size 180x18
-                RenderText at (8,2) size 44x13
-                  text run at (8,2) width 44: "Reasons"
+                RenderText at (8,2) size 43x13
+                  text run at (8,2) width 43: "Reasons"
             RenderBlock (floating) {SPAN} at (0,250) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 220x15
                 text run at (0,2) width 220: "Your research is primarily focused on:"

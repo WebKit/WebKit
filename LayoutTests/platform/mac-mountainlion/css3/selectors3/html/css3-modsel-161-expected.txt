@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x138
+  RenderBlock {HTML} at (0,0) size 800x138
+    RenderBody {BODY} at (8,16) size 784x114
+      RenderBlock {P} at (0,0) size 784x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 268x18
+          text run at (0,0) width 268: "This line should have a green background."
+      RenderBlock {P} at (0,34) size 784x40 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 692x18
+          text run at (0,0) width 692: "UAs may render the following element as a pop up menu. If so, please ensure the menu is unstyled (or green)."
+        RenderMenuList {SELECT} at (2,20) size 100x18 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 98x16
+            RenderText at (8,1) size 63x13
+              text run at (8,1) width 63: "This should"
+        RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,90) size 429x24 [bgcolor=#00FF00]
+        RenderTableSection {TBODY} at (0,0) size 429x24
+          RenderTableRow {TR} at (0,2) size 429x20
+            RenderTableCell {TD} at (2,2) size 425x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 423x18
+                text run at (1,1) width 423: "This line should have a green background (or it might be unstyled)."
