@@ -1,15 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "apple-macpro-4", "platform": "mac-lion" },
-                    { "name": "apple-macpro-5", "platform": "mac-lion" },
-                    { "name": "apple-macpro-6", "platform": "mac-lion" },
-                    { "name": "apple-macpro-8", "platform": "mac-lion" },
-                    { "name": "apple-xserve-2", "platform": "mac-lion" },
-                    { "name": "apple-xserve-3", "platform": "mac-lion" },
-                    { "name": "apple-xserve-10", "platform": "mac-lion" },
-                    { "name": "apple-xserve-11", "platform": "mac-lion" },
-
                     { "name": "apple-mini-201", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-202", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-203", "platform": "mac-mountainlion"},
@@ -51,38 +42,7 @@
 
                   ],
 
-    "builders":   [ { "name": "Apple Lion Debug (Build)", "type": "Build", "builddir": "lion-debug",
-                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2"],
-                      "slavenames": ["apple-xserve-2", "apple-xserve-10"]
-                    },
-                    { "name": "Apple Lion Release (Build)", "type": "Build", "builddir": "lion-release",
-                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["lion-release-tests-wk1", "lion-release-tests-wk2", "lion-release-perf"],
-                      "slavenames": ["apple-xserve-3"]
-                    },
-                    { "name": "Apple Lion Debug WK1 (Tests)", "type": "Test", "builddir": "lion-debug-tests-wk1",
-                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-4"]
-                    },
-                    { "name": "Apple Lion Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "lion-debug-tests-wk2",
-                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-8"]
-                    },
-                    { "name": "Apple Lion Release WK1 (Tests)", "type": "Test", "builddir": "lion-release-tests-wk1",
-                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-5"]
-                    },
-                    { "name": "Apple Lion Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "lion-release-tests-wk2",
-                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-6"]
-                    },
-                    {
-                      "name": "Apple Lion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "lion-release-perf-tests",
-                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-xserve-11"]
-                    },
-                    { "name": "Apple MountainLion (Leaks)", "type": "TestLeaks", "builddir": "mountainlion-leaks",
+    "builders":   [ { "name": "Apple MountainLion (Leaks)", "type": "TestLeaks", "builddir": "mountainlion-leaks",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-201"]
                     },
@@ -224,9 +184,6 @@
                                        "EFL Linux 64-bit Release WK1", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Lion Release (Build)", "Apple Lion Debug (Build)"]
-                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mountainlion", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]
                     },
@@ -235,21 +192,6 @@
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-release-tests-wk1",
-                      "builderNames": ["Apple Lion Release WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-release-tests-wk2",
-                      "builderNames": ["Apple Lion Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-release-perf",
-                      "builderNames": ["Apple Lion Release (Perf)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-debug-tests-wk1",
-                      "builderNames": ["Apple Lion Debug WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-debug-tests-wk2",
-                      "builderNames": ["Apple Lion Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "mountainlion-release-tests-wk1",
                       "builderNames": ["Apple MountainLion Release WK1 (Tests)"]

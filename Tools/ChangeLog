@@ -1,3 +1,9 @@
+2013-10-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Lion bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Dashboard repaints constantly
