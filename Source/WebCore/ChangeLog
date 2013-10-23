@@ -1,3 +1,34 @@
+2013-10-23  Mark Lam  <mark.lam@apple.com>
+
+        Re-instate ProposedDatabases needed by detailsForNameAndOrigin().
+        https://bugs.webkit.org/show_bug.cgi?id=123131.
+
+        Reviewed by Geoffrey Garen.
+
+        Test: storage/websql/open-database-expand-quota.html
+
+        If a webpage tries to create a database that exceeds the database size
+        quota for that security origin, the WebKit1 quota request mechanism
+        uses detailsForNameAndOrigin() to get the requested size of the database
+        (that the webpage is attempting to open) in order to determine whether
+        to increase the quota or not.
+
+        Previously, detailsForNameAndOrigin() relies on the ProposedDatabase
+        mechanism to provide this size information. This change re-instates the
+        ProposedDatabase mechanism so that WebKit1 client code that relies on
+        this behavior will continue to work.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::ProposedDatabase::ProposedDatabase):
+        (WebCore::DatabaseManager::ProposedDatabase::~ProposedDatabase):
+        (WebCore::DatabaseManager::DatabaseManager):
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseManager.h:
+        (WebCore::DatabaseManager::ProposedDatabase::origin):
+        (WebCore::DatabaseManager::ProposedDatabase::details):
+
 2013-10-23  Tim Horton  <timothy_horton@apple.com>
 
         [cg] Fix the capitalization of kCGImageSourceSkipMetaData (-> Metadata)

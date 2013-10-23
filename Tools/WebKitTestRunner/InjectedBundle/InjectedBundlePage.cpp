@@ -1449,7 +1449,18 @@ uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKSecurityOriginRef origin, 
     }
 
     static const uint64_t defaultQuota = 5 * 1024 * 1024;
-    return defaultQuota;
+    static const uint64_t maxQuota = 10 * 1024 * 1024;
+    uint64_t newQuota = defaultQuota;
+    if (defaultQuota < expectedUsageBytes && expectedUsageBytes <= maxQuota) {
+        newQuota = expectedUsageBytes;
+
+        StringBuilder stringBuilder;
+        stringBuilder.appendLiteral("UI DELEGATE DATABASE CALLBACK: increased quota to ");
+        stringBuilder.appendNumber(newQuota);
+        stringBuilder.append('\n');
+        InjectedBundle::shared().outputText(stringBuilder.toString());
+    }
+    return newQuota;
 }
 
 // Editor Client Callbacks

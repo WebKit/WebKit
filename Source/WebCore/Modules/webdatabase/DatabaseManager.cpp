@@ -49,6 +49,21 @@
 
 namespace WebCore {
 
+DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager,
+    SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
+    : m_manager(manager)
+    , m_origin(origin->isolatedCopy())
+    , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0)
+{
+    ASSERT(!m_manager.m_proposedDatabase);
+    m_manager.m_proposedDatabase = this;
+}
+
+DatabaseManager::ProposedDatabase::~ProposedDatabase()
+{
+    m_manager.m_proposedDatabase = 0;
+}
+
 DatabaseManager& DatabaseManager::manager()
 {
     static DatabaseManager* dbManager = 0;
@@ -68,6 +83,7 @@ DatabaseManager::DatabaseManager()
     , m_databaseContextRegisteredCount(0)
     , m_databaseContextInstanceCount(0)
 #endif
+    , m_proposedDatabase(0)
 {
     ASSERT(m_server); // We should always have a server to work with.
 }
@@ -248,9 +264,11 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
             // Notify the client that we've exceeded the database quota.
             // The client may want to increase the quota, and we'll give it
             // one more try after if that is the case.
-            databaseContext->databaseExceededQuota(name,
-                DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
-
+            {
+                ProposedDatabase proposedDb(*this, context->securityOrigin(), name, displayName, estimatedSize);
+                databaseContext->databaseExceededQuota(name,
+                    DatabaseDetails(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0));
+            }
             error = DatabaseError::None;
 
             backend = m_server->openDatabase(backendContext, type, name, expectedVersion,
@@ -351,6 +369,9 @@ void DatabaseManager::stopDatabases(ScriptExecutionContext* context, DatabaseTas
 
 String DatabaseManager::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
 {
+    ProposedDatabase* db = m_proposedDatabase;
+    if (db && db->details().name() == name && db->origin()->equal(origin))
+        return String();
     return m_server->fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
@@ -371,6 +392,11 @@ bool DatabaseManager::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
 
 DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
+    ProposedDatabase* db = m_proposedDatabase;
+    if (db && db->details().name() == name && db->origin()->equal(origin)) {
+        ASSERT(db->details().thread() == currentThread());
+        return db->details();
+    }
     return m_server->detailsForNameAndOrigin(name, origin);
 }
 

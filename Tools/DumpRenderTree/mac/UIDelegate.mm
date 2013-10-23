@@ -34,9 +34,11 @@
 #import "EventSendingController.h"
 #import "MockWebNotificationProvider.h"
 #import "TestRunner.h"
+
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebDatabaseManagerPrivate.h>
 #import <WebKit/WebQuotaManager.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
@@ -172,8 +174,17 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
             [origin port], [databaseIdentifier UTF8String]);
     }
 
-    static const unsigned long long defaultQuota = 5 * 1024 * 1024;    
-    [[origin databaseQuotaManager] setQuota:defaultQuota];
+    NSDictionary *databaseDetails = [[WebDatabaseManager sharedWebDatabaseManager] detailsForDatabase:databaseIdentifier withOrigin:origin];
+    ASSERT(databaseDetails);
+    unsigned long long expectedSize = [[databaseDetails objectForKey:WebDatabaseExpectedSizeKey] unsignedLongLongValue];
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    static const unsigned long long maxQuota = 10 * 1024 * 1024;
+    unsigned long long newQuota = defaultQuota;
+    if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+        newQuota = expectedSize;
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+    }
+    [[origin databaseQuotaManager] setQuota:newQuota];
 }
 
 - (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded

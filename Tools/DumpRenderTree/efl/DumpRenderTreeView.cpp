@@ -134,7 +134,13 @@ static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Obj
             databaseName);
     ewk_security_origin_free(origin);
 
-    return 5 * 1024 * 1024;
+    static const uint64_t defaultQuota = 5 * 1024 * 1024;
+    static const uint64_t maxQuota = 10 * 1024 * 1024;
+    if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", expectedSize);
+        return expectedSize;
+    }
+    return defaultQuota;
 }
 
 static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)

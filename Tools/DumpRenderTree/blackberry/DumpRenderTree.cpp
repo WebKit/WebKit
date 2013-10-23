@@ -24,7 +24,7 @@
 #include "BackForwardController.h"
 #include "BackForwardListBlackBerry.h"
 #include "Credential.h"
-#include "DatabaseTracker.h"
+#include "DatabaseManager.h"
 #include "DocumentLoader.h"
 #include "DumpRenderTree/GCController.h"
 #include "DumpRenderTreeSupport.h"
@@ -783,7 +783,16 @@ void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, cons
     if (!testDone && gTestRunner->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", origin->protocol().utf8().data(), origin->host().utf8().data(), origin->port(), name.utf8().data());
 
-    WebCore::DatabaseTracker::tracker().setQuota(mainFrame->document()->securityOrigin(), 5 * 1024 * 1024);
+    WebCore::DatabaseManager& manager = WebCore::DatabaseManager::manager(); 
+    WebCore::DatabaseDetails details = detailsForNameAndOrigin(name, origin);
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    static const unsigned long long maxQuota = 10 * 1024 * 1024;
+    unsigned long long newQuota = defaultQuota;
+    if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+        newQuota = expectedSize;
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+    }
+    manager.setQuota(origin, newQuota);
 }
 
 bool DumpRenderTree::allowsOpeningWindow()

@@ -447,6 +447,9 @@ webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb-allowed.ht
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 
+# Needs to update the gtk databaseQuotaExceeded() test function to handle quota expansion requests.
+storage/websql/open-database-expand-quota.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

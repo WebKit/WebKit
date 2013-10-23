@@ -106,6 +106,21 @@ public:
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
 private:
+    class ProposedDatabase {
+    public:
+        ProposedDatabase(DatabaseManager&, SecurityOrigin*,
+            const String& name, const String& displayName, unsigned long estimatedSize);
+        ~ProposedDatabase();
+
+        SecurityOrigin* origin() { return m_origin.get(); }
+        DatabaseDetails& details() { return m_details; }
+
+    private:
+        DatabaseManager& m_manager;
+        RefPtr<SecurityOrigin> m_origin;
+        DatabaseDetails m_details;
+    };
+
     DatabaseManager();
     ~DatabaseManager() { }
 
@@ -131,6 +146,8 @@ private:
     int m_databaseContextInstanceCount;
 #endif
     Mutex m_contextMapLock;
+
+    ProposedDatabase* m_proposedDatabase;
 };
 
 } // namespace WebCore

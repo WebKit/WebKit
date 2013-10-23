@@ -8,7 +8,7 @@ function runTest() {
     }
 
     try {
-        var db = openDatabase('OverQuotaOpen', '', 'Test for bug 36473: missing lock in call to doneCreatingDatabase', 10000000);
+        var db = openDatabase('OverQuotaOpen', '', 'Test for bug 36473: missing lock in call to doneCreatingDatabase', 20000000);
     } catch (err) {
         document.getElementById('result').innerHTML = 'PASS'
     }
@@ -16,7 +16,8 @@ function runTest() {
 </script>
 </head>
 <body onload="runTest()">
-<div>This tests that calling openDatabase with a size over 5MB doesn't assert on debug builds.
+<div>This tests that calling openDatabase with a size greater or equal to the test max quota limit of 10MB
+doesn't assert on debug builds.
 <div id="result">
 FAIL: We shouldn't have been able to open the database.
 </div>

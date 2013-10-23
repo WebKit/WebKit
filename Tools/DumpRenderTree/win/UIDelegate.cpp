@@ -41,6 +41,7 @@
 #include <wtf/Vector.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <stdio.h>
 
 using std::wstring;
@@ -595,7 +596,33 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
     SysFreeString(host);
 
     static const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    origin->setQuota(defaultQuota);
+    static const unsigned long long maxQuota = 10 * 1024 * 1024;
+
+    COMPtr<IWebDatabaseManager> databaseManager;
+    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
+
+    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager))) {
+        origin->setQuota(defaultQuota);
+        return S_OK;
+    }
+    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager))) {
+        origin->setQuota(defaultQuota);
+        return S_OK;
+    }
+    IPropertyBag* detailsBag;
+    if (FAILED(databaseManager->detailsForDatabase(databaseIdentifier, origin, &detailsBag))) {
+        origin->setQuota(defaultQuota);
+        return S_OK;
+    }
+    VARIANT var;
+    detailsBag->Read(WebDatabaseUsageKey, &var, 0);
+    unsigned long long expectedSize = V_UI8(&var);
+    unsigned long long newQuota = defaultQuota;
+    if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+        newQuota = expectedSize;
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+    }
+    origin->setQuota(newQuota);
 
     return S_OK;
 }

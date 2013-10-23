@@ -143,10 +143,16 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     return TestController::shared().beforeUnloadReturnValue();
 }
 
-static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, unsigned long long, const void*)
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, unsigned long long expectedUsage, const void*)
 {
     static const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    return defaultQuota;
+    static const unsigned long long maxQuota = 10 * 1024 * 1024;
+    unsigned long long newQuota = defaultQuota;
+    if (defaultQuota < expectedUsage && expectedUsage <= maxQuota) {
+        newQuota = expectedUsage;
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+    }
+    return newQuota;
 }
 
 
