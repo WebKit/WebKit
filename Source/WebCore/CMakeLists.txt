@@ -283,6 +283,7 @@ set(WebCore_IDL_FILES
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
 
+    crypto/CryptoKey.idl
     crypto/SubtleCrypto.idl
 
     css/CSSCharsetRule.idl
