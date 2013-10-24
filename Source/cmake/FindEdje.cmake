@@ -32,7 +32,7 @@
 include(EFLHelpers)
 
 FIND_EFL_LIBRARY(EDJE
-    HEADERS Edje.h
+    HEADERS Edje.h Edje_Common.h
     HEADER_PREFIXES edje-1
     LIBRARY edje
 )

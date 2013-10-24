@@ -59,7 +59,7 @@ typedef void* PlatformWidget;
 
 #if PLATFORM(EFL)
 #if USE(EO)
-typedef struct _Eo Evas_Object;
+typedef struct _Eo_Opaque Evas_Object;
 #else
 typedef struct _Evas_Object Evas_Object;
 #endif

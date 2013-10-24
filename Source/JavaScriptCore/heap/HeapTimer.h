@@ -34,7 +34,11 @@
 #elif PLATFORM(BLACKBERRY)
 #include <BlackBerryPlatformTimer.h>
 #elif PLATFORM(EFL)
+#if USE(EO)
+typedef struct _Eo_Opaque Ecore_Timer;
+#else
 typedef struct _Ecore_Timer Ecore_Timer;
+#endif
 #endif
 
 namespace JSC {

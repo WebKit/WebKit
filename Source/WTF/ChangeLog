@@ -1,3 +1,16 @@
+2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL 1.8 libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=123245
+
+        Reviewed by Gyuyoung Kim.
+
+        After fixed build break on EFL 1.8 at r138326, EFL libraries are changed
+        Eo typedef and splitted header files which contain version macro.
+
+        * wtf/OwnPtrCommon.h: Changed Eo typedef.
+        * wtf/efl/RefPtrEfl.h: Ditto.
+
 2013-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GObject bindings] Make EventTarget interface introspectable

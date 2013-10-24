@@ -1,3 +1,17 @@
+2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL 1.8 libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=123245
+
+        Reviewed by Gyuyoung Kim.
+
+        After fixed build break on EFL 1.8 at r138326, EFL libraries are changed
+        Eo typedef and splitted header files which contain version macro.
+
+        * platform/Widget.h: Changed Eo typedef.
+        * platform/efl/EflScreenUtilities.h: Ditto.
+        * platform/graphics/Image.h: Ditto.
+
 2013-10-24  Andreas Kling  <akling@apple.com>
 
         RenderSVGResource: Pass RenderElement to fill/strokePaintingResource.

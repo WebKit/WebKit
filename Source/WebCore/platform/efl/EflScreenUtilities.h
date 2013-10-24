@@ -22,7 +22,7 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(EO)
-typedef struct _Eo Evas;
+typedef struct _Eo_Opaque Evas;
 #else
 typedef struct _Evas Evas;
 #endif

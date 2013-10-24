@@ -31,7 +31,7 @@
 include(EFLHelpers)
 
 FIND_EFL_LIBRARY(EVAS
-    HEADERS Evas.h
+    HEADERS Evas.h Evas_Common.h
     HEADER_PREFIXES evas-1
     LIBRARY evas
 )

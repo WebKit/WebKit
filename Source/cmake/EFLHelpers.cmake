@@ -45,11 +45,12 @@ function(FIND_EFL_LIBRARY _name)
 
     foreach (_current_header ${PARAM_HEADERS})
         find_path(${_current_header}_INCLUDE_DIR NAMES ${_current_header} PATH_SUFFIXES ${PARAM_HEADER_PREFIXES})
-        list(APPEND ${_name}_INCLUDE_DIRS "${${_current_header}_INCLUDE_DIR}")
 
-        if (NOT _version_found)
-            set(_header_path "${${_current_header}_INCLUDE_DIR}/${_current_header}")
-            if (EXISTS ${_header_path})
+        set(_header_path "${${_current_header}_INCLUDE_DIR}/${_current_header}")
+        if (EXISTS ${_header_path})
+            list(APPEND ${_name}_INCLUDE_DIRS "${${_current_header}_INCLUDE_DIR}")
+
+            if (NOT _version_found)
                 file(READ "${_header_path}" _header_contents)
 
                 string(REGEX MATCH "#define +${_name_upper}_VERSION_MAJOR +([0-9]+)" _dummy "${_header_contents}")

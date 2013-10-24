@@ -41,7 +41,7 @@
 include(EFLHelpers)
 
 FIND_EFL_LIBRARY(ECORE
-    HEADERS Ecore.h
+    HEADERS Ecore.h Ecore_Common.h
     HEADER_PREFIXES ecore-1
     LIBRARY ecore
 )

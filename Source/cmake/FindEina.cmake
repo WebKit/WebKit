@@ -31,7 +31,7 @@
 include(EFLHelpers)
 
 FIND_EFL_LIBRARY(EINA
-    HEADERS Eina.h eina_main.h
+    HEADERS Eina.h Eina_Common.h eina_main.h
     HEADER_PREFIXES eina-1 eina-1/eina
     LIBRARY eina
 )

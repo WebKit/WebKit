@@ -31,8 +31,8 @@
 include(EFLHelpers)
 
 FIND_EFL_LIBRARY(EO
-    HEADERS Eo.h
-    HEADER_PREFIXES eo-1
+    HEADERS Eo.h Efl_Config.h
+    HEADER_PREFIXES eo-1 efl-1
     LIBRARY eo
 )
 

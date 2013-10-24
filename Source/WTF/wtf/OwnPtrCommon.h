@@ -35,7 +35,7 @@ typedef struct _Ecore_Pipe Ecore_Pipe;
 typedef struct _Eina_Hash Eina_Hash;
 typedef struct _Eina_Module Eina_Module;
 #if USE(EO)
-typedef struct _Eo Evas_Object;
+typedef struct _Eo_Opaque Evas_Object;
 #else
 typedef struct _Evas_Object Evas_Object;
 #endif
