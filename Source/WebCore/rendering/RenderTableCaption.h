@@ -44,20 +44,7 @@ private:
     RenderTable* table() const;
 };
 
-inline RenderTableCaption* toRenderTableCaption(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableCaption());
-    return static_cast<RenderTableCaption*>(object);
-}
-
-inline const RenderTableCaption* toRenderTableCaption(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTableCaption());
-    return static_cast<const RenderTableCaption*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderTableCaption(const RenderTableCaption*);
+RENDER_OBJECT_TYPE_CASTS(RenderTableCaption, isTableCaption())
 
 } // namespace WebCore
 

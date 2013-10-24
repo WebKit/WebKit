@@ -73,20 +73,7 @@ private:
     bool m_inBalancingPass; // Set when relayouting for column balancing.
 };
 
-inline RenderMultiColumnBlock* toRenderMultiColumnBlock(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnBlock());
-    return static_cast<RenderMultiColumnBlock*>(object);
-}
-
-inline const RenderMultiColumnBlock* toRenderMultiColumnBlock(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderMultiColumnBlock());
-    return static_cast<const RenderMultiColumnBlock*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderMultiColumnBlock(const RenderMultiColumnBlock*);
+RENDER_OBJECT_TYPE_CASTS(RenderMultiColumnBlock, isRenderMultiColumnBlock())
 
 } // namespace WebCore
 

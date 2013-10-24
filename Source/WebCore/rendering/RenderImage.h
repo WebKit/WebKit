@@ -118,33 +118,7 @@ private:
     friend class RenderImageScaleObserver;
 };
 
-inline RenderImage& toRenderImage(RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderImage());
-    return static_cast<RenderImage&>(object);
-}
-
-inline const RenderImage& toRenderImage(const RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderImage());
-    return static_cast<const RenderImage&>(object);
-}
-
-inline RenderImage* toRenderImage(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderImage());
-    return static_cast<RenderImage*>(object);
-}
-
-inline const RenderImage* toRenderImage(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderImage());
-    return static_cast<const RenderImage*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderImage(const RenderImage*);
-void toRenderImage(const RenderImage&);
+RENDER_OBJECT_TYPE_CASTS(RenderImage, isRenderImage())
 
 } // namespace WebCore
 

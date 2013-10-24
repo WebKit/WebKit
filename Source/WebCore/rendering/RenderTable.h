@@ -350,20 +350,7 @@ inline RenderTableSection* RenderTable::topSection() const
     return m_foot;
 }
 
-inline RenderTable* toRenderTable(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
-    return static_cast<RenderTable*>(object);
-}
-
-inline const RenderTable* toRenderTable(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTable());
-    return static_cast<const RenderTable*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderTable(const RenderTable*);
+RENDER_OBJECT_TYPE_CASTS(RenderTable, isTable())
 
 } // namespace WebCore
 

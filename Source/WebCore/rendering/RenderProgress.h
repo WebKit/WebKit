@@ -60,14 +60,7 @@ private:
     Timer<RenderProgress> m_animationTimer;
 };
 
-inline RenderProgress* toRenderProgress(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isProgress());
-    return static_cast<RenderProgress*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderProgress(const RenderProgress*);
+RENDER_OBJECT_TYPE_CASTS(RenderProgress, isProgress())
 
 } // namespace WebCore
 

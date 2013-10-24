@@ -63,21 +63,7 @@ private:
     RenderView* contentRootRenderer() const;
 };
 
-inline RenderIFrame* toRenderIFrame(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderIFrame());
-    return static_cast<RenderIFrame*>(object);
-}
-
-inline const RenderIFrame* toRenderIFrame(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderIFrame());
-    return static_cast<const RenderIFrame*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderIFrame(const RenderIFrame*);
-
+RENDER_OBJECT_TYPE_CASTS(RenderIFrame, isRenderIFrame())
 
 } // namespace WebCore
 

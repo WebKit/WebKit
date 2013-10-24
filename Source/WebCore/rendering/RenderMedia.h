@@ -57,14 +57,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE FINAL { return true; }
 };
 
-inline RenderMedia* toRenderMedia(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMedia());
-    return static_cast<RenderMedia*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderMedia(const RenderMedia*);
+RENDER_OBJECT_TYPE_CASTS(RenderMedia, isMedia())
 
 } // namespace WebCore
 

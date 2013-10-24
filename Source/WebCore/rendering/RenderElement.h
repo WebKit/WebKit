@@ -236,40 +236,14 @@ inline bool RenderElement::isRenderInline() const
     return m_baseTypeFlags & RenderInlineFlag;
 }
 
-inline RenderElement& toRenderElement(RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderElement());
-    return static_cast<RenderElement&>(object);
-}
-
-inline const RenderElement& toRenderElement(const RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderElement());
-    return static_cast<const RenderElement&>(object);
-}
-
-inline RenderElement* toRenderElement(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderElement());
-    return static_cast<RenderElement*>(object);
-}
-
-inline const RenderElement* toRenderElement(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderElement());
-    return static_cast<const RenderElement*>(object);
-}
+RENDER_OBJECT_TYPE_CASTS(RenderElement, isRenderElement())
 
 inline Element* RenderElement::generatingElement() const
 {
     if (parent() && isRenderNamedFlowFragment())
-        return toRenderElement(parent())->generatingElement();
+        return parent()->generatingElement();
     return toElement(RenderObject::generatingNode());
 }
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderElement(const RenderElement*);
-void toRenderElement(const RenderElement&);
 
 inline bool RenderObject::isRenderLayerModelObject() const
 {

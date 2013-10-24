@@ -153,20 +153,7 @@ private:
     bool m_needsTransformUpdate : 1;
 };
 
-inline RenderSVGShape* toRenderSVGShape(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGShape());
-    return static_cast<RenderSVGShape*>(object);
-}
-
-inline const RenderSVGShape* toRenderSVGShape(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGShape());
-    return static_cast<const RenderSVGShape*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderSVGShape(const RenderSVGShape*);
+RENDER_OBJECT_TYPE_CASTS(RenderSVGShape, isSVGShape())
 
 }
 

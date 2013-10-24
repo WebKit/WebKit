@@ -49,14 +49,7 @@ private:
     virtual void intrinsicSizeChanged() OVERRIDE { canvasSizeChanged(); }
 };
 
-inline RenderHTMLCanvas* toRenderHTMLCanvas(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCanvas());
-    return static_cast<RenderHTMLCanvas*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderHTMLCanvas(const RenderHTMLCanvas*);
+RENDER_OBJECT_TYPE_CASTS(RenderHTMLCanvas, isCanvas())
 
 } // namespace WebCore
 

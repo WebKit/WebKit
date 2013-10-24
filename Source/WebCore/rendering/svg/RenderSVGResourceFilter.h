@@ -101,11 +101,7 @@ private:
     HashMap<RenderObject*, std::unique_ptr<FilterData>> m_filter;
 };
 
-inline RenderSVGResourceFilter* toRenderSVGFilter(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGResourceFilter());
-    return static_cast<RenderSVGResourceFilter*>(object);
-}
+RENDER_OBJECT_TYPE_CASTS(RenderSVGResourceFilter, isSVGResourceFilter())
 
 }
 

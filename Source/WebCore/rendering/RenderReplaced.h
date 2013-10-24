@@ -89,20 +89,7 @@ private:
     mutable LayoutSize m_intrinsicSize;
 };
 
-inline RenderReplaced* toRenderReplaced(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderReplaced());
-    return static_cast<RenderReplaced*>(object);
-}
-
-inline const RenderReplaced* toRenderReplaced(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderReplaced());
-    return static_cast<const RenderReplaced*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderReplaced(const RenderReplaced*);
+RENDER_OBJECT_TYPE_CASTS(RenderReplaced, isRenderReplaced())
 
 }
 

@@ -126,15 +126,7 @@ private:
     bool m_isChildResizing;
 };
 
-
-inline RenderFrameSet* toRenderFrameSet(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isFrameSet());
-    return static_cast<RenderFrameSet*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderFrameSet(const RenderFrameSet*);
+RENDER_OBJECT_TYPE_CASTS(RenderFrameSet, isFrameSet())
 
 } // namespace WebCore
 

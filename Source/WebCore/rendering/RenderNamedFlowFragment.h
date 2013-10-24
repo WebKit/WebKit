@@ -63,20 +63,7 @@ private:
     virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }
 };
 
-inline RenderNamedFlowFragment* toRenderNamedFlowFragment(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderNamedFlowFragment());
-    return static_cast<RenderNamedFlowFragment*>(object);
-}
-
-inline const RenderNamedFlowFragment* toRenderNamedFlowFragment(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderNamedFlowFragment());
-    return static_cast<const RenderNamedFlowFragment*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderNamedFlowFragment(const RenderNamedFlowFragment*);
+RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowFragment, isRenderNamedFlowFragment())
 
 } // namespace WebCore
 

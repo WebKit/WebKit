@@ -79,20 +79,7 @@ private:
     bool m_default;
 };
 
-inline RenderButton* toRenderButton(RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderButton());
-    return static_cast<RenderButton*>(object);
-}
-
-inline const RenderButton* toRenderButton(const RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderButton());
-    return static_cast<const RenderButton*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderButton(const RenderButton*);
+RENDER_OBJECT_TYPE_CASTS(RenderButton, isRenderButton())
 
 } // namespace WebCore
 

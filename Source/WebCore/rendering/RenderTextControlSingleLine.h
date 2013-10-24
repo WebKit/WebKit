@@ -98,14 +98,7 @@ inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
     return inputElement().innerBlockElement();
 }
 
-inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTextField());
-    return static_cast<RenderTextControlSingleLine*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
+RENDER_OBJECT_TYPE_CASTS(RenderTextControlSingleLine, isTextField())
 
 // ----------------------------
 
@@ -121,14 +114,7 @@ private:
     virtual bool isTextControlInnerBlock() const OVERRIDE { return true; }
 };
 
-inline RenderTextControlInnerBlock* toRenderTextControlInnerBlock(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isTextControlInnerBlock());
-    return static_cast<RenderTextControlInnerBlock*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderTextControlInnerBlock(const RenderTextControlInnerBlock*);
+RENDER_OBJECT_TYPE_CASTS(RenderTextControlInnerBlock, isTextControlInnerBlock())
 
 }
 

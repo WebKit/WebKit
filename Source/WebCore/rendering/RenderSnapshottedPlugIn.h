@@ -63,14 +63,7 @@ private:
     bool m_isPotentialMouseActivation;
 };
 
-inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSnapshottedPlugIn());
-    return static_cast<RenderSnapshottedPlugIn*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderSnapshottedPlugIn(const RenderSnapshottedPlugIn*);
+RENDER_OBJECT_TYPE_CASTS(RenderSnapshottedPlugIn, isSnapshottedPlugIn())
 
 } // namespace WebCore
 

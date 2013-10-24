@@ -93,20 +93,7 @@ private:
     OwnPtr<ImageBuffer> m_bufferedForeground;
 };
 
-inline RenderSVGImage* toRenderSVGImage(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGImage());
-    return static_cast<RenderSVGImage*>(object);
-}
-
-inline const RenderSVGImage* toRenderSVGImage(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGImage());
-    return static_cast<const RenderSVGImage*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderSVGImage(const RenderSVGImage*);
+RENDER_OBJECT_TYPE_CASTS(RenderSVGImage, isSVGImage())
 
 } // namespace WebCore
 

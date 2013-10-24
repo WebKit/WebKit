@@ -154,14 +154,7 @@ private:
     RefPtr<Scrollbar> m_vBar;
 };
 
-inline RenderListBox* toRenderListBox(RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isListBox());
-    return static_cast<RenderListBox*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderListBox(const RenderListBox*);
+RENDER_OBJECT_TYPE_CASTS(RenderListBox, isListBox())
 
 } // namepace WebCore
 

@@ -67,21 +67,8 @@ private:
     bool m_isLayoutSizeChanged : 1;
     bool m_needsTransformUpdate : 1;
 };
-  
-inline RenderSVGViewportContainer* toRenderSVGViewportContainer(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGViewportContainer());
-    return static_cast<RenderSVGViewportContainer*>(object);
-}
 
-inline const RenderSVGViewportContainer* toRenderSVGViewportContainer(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGViewportContainer());
-    return static_cast<const RenderSVGViewportContainer*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderSVGViewportContainer(const RenderSVGViewportContainer*);
+RENDER_OBJECT_TYPE_CASTS(RenderSVGViewportContainer, isSVGViewportContainer())
 
 } // namespace WebCore
 

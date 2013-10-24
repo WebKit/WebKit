@@ -81,21 +81,8 @@ private:
     FloatRect m_repaintBoundingBox;
     bool m_needsBoundariesUpdate : 1;
 };
-  
-inline RenderSVGContainer* toRenderSVGContainer(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGContainer());
-    return static_cast<RenderSVGContainer*>(object);
-}
 
-inline const RenderSVGContainer* toRenderSVGContainer(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGContainer());
-    return static_cast<const RenderSVGContainer*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderSVGContainer(const RenderSVGContainer*);
+RENDER_OBJECT_TYPE_CASTS(RenderSVGContainer, isSVGContainer())
 
 } // namespace WebCore
 

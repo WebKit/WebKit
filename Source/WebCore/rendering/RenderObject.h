@@ -1158,6 +1158,9 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, RenderObject
 }
 #endif
 
+#define RENDER_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, RenderObject, object, object->predicate, object.predicate)
+
 } // namespace WebCore
 
 #ifndef NDEBUG
