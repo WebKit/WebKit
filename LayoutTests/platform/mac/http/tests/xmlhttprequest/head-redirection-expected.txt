@@ -3,8 +3,8 @@ As described in http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics (in p
 
 This test loads a web page that does a XHR HEAD request to a first script. This script does a redirection to a second script that sends a response containing the request method as a HTTP header.
 
-HEAD-301 - expected HEAD and received HEAD
-HEAD-302 - expected HEAD and received HEAD
+HEAD-301 - expected HEAD and received GET
+HEAD-302 - expected HEAD and received GET
 HEAD-303 - expected HEAD and received GET
 HEAD-307 - expected HEAD and received HEAD
 

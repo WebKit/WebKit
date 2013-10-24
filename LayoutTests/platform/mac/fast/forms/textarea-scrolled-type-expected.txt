@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
 layer at (10,28) size 161x97 clip at (11,29) size 144x95 scrollY 182 scrollHeight 277
   RenderTextControl {TEXTAREA} at (2,20) size 161x97 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x273
-      RenderText {#text} at (0,0) size 40x260
+      RenderText {#text} at (0,0) size 41x260
         text run at (0,0) width 7: "1"
         text run at (6,0) width 1: " "
         text run at (0,13) width 7: "2"
@@ -49,8 +49,8 @@ layer at (10,28) size 161x97 clip at (11,29) size 144x95 scrollY 182 scrollHeigh
         text run at (13,195) width 1: " "
         text run at (0,208) width 14: "17"
         text run at (13,208) width 1: " "
-        text run at (0,221) width 40: "18 Pass"
-        text run at (39,221) width 1: " "
+        text run at (0,221) width 41: "18 Pass"
+        text run at (40,221) width 1: " "
         text run at (0,234) width 14: "19"
         text run at (13,234) width 1: " "
         text run at (0,247) width 14: "20"

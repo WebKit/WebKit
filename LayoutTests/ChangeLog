@@ -1,5 +1,22 @@
 2013-10-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Revert <http://trac.webkit.org/changeset/157893>
+        (Mavericks test results mega-patch).
+
+        It didn't fix Mavericks, which still has dozens of failures, and it broke Mountain
+        Lion bots, which need to remain green for tools like EWS to work.
+
+        At a glance, there are multiple systemic issues with this change:
+        - some results went to broken locations like platform/mac/platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.png;
+        - WK2 expectations also went to platform/mac/platform/mac-wk2/TestExpectations.
+        - some tests like js/dom/global-constructors-attributes.html used to match cross-platform
+        baseline, but copying Mavericks results over to platform/mac made it so that those results
+        are now ignored on Mountain Lion.
+
+        I think that starting over will be easier that fixing these issues incrementally.
+
+2013-10-23  Alexey Proskuryakov  <ap@apple.com>
+
         Freshly landed webgl-1.0.1 tests are failing.
 
         * platform/mac/TestExpectations: Mark them as such.

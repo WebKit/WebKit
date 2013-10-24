@@ -74,7 +74,7 @@ AXElementBusy: 0
 
 ------------
 AXRole: AXList
-AXSubrole: AXDescriptionList
+AXSubrole: AXDefinitionList
 AXRoleDescription: description list
 AXChildren: <array of size 5>
 AXHelp: 

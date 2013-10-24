@@ -31,5 +31,5 @@ layer at (10,10) size 161x32 clip at (11,11) size 159x30
 layer at (179,10) size 161x32 clip at (180,11) size 159x30
   RenderTextControl {TEXTAREA} at (171,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13
-      RenderText {#text} at (0,0) size 66x13
-        text run at (0,0) width 66: "Default Text"
+      RenderText {#text} at (0,0) size 67x13
+        text run at (0,0) width 67: "Default Text"

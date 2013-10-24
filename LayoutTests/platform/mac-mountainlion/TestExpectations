@@ -1,5 +1,0 @@
-# These are the layout test expectations for Apple's Mac port of WebKit.
-#
-# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
-
-webkit.org/b/123235 fast/forms/input-type-text-min-width.html [ Pass ]
