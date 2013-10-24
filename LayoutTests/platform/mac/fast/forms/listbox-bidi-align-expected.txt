@@ -61,14 +61,14 @@ layer at (0,0) size 800x504
       RenderBlock (anonymous) at (0,403) size 784x18
         RenderText {#text} at (0,0) size 290x18
           text run at (0,0) width 290: "The following tables check mixed alignments."
-      RenderTable {TABLE} at (0,421) size 744x67
-        RenderTableSection {TBODY} at (0,0) size 744x67
-          RenderTableRow {TR} at (0,2) size 744x63
-            RenderTableCell {TD} at (2,2) size 174x63 [r=0 c=0 rs=1 cs=1]
-              RenderListBox {SELECT} at (3,3) size 168x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-            RenderTableCell {TD} at (178,2) size 174x63 [r=0 c=1 rs=1 cs=1]
-              RenderListBox {SELECT} at (3,3) size 168x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-            RenderTableCell {TD} at (354,2) size 193x63 [r=0 c=2 rs=1 cs=1]
+      RenderTable {TABLE} at (0,421) size 740x67
+        RenderTableSection {TBODY} at (0,0) size 740x67
+          RenderTableRow {TR} at (0,2) size 740x63
+            RenderTableCell {TD} at (2,2) size 172x63 [r=0 c=0 rs=1 cs=1]
+              RenderListBox {SELECT} at (3,3) size 166x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+            RenderTableCell {TD} at (176,2) size 172x63 [r=0 c=1 rs=1 cs=1]
+              RenderListBox {SELECT} at (3,3) size 166x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+            RenderTableCell {TD} at (350,2) size 193x63 [r=0 c=2 rs=1 cs=1]
               RenderListBox {SELECT} at (3,3) size 187x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-            RenderTableCell {TD} at (549,2) size 193x63 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (545,2) size 193x63 [r=0 c=3 rs=1 cs=1]
               RenderListBox {SELECT} at (3,3) size 187x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]

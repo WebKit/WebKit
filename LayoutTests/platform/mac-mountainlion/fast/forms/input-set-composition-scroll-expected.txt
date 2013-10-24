@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 16: TypeError: undefined is not a function (evaluating 'textInputController.setComposition('longsinglewordstringcomposition')')
+This tests whether an input field scrolls to the end of the new composition when setComposition is called.
+
+
+

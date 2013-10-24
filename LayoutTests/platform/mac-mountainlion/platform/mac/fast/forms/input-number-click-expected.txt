@@ -1,0 +1,22 @@
+
+Test for the spin control behavior in a type=numnber input.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value is 3.14, click the up button once
+PASS i.value is "4.14"
+Click the up button again.  The maximum value is 5.
+PASS i.value is "4.14"
+Click the down button four times
+PASS i.value is "0.14"
+Click the down button again. The minimum value is 0.
+PASS i.value is "0.14"
+Make the control "disabled" and click the up button
+PASS i.value is "0.14"
+Make the control "readOnly" and click the up button
+PASS i.value is "0.14"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

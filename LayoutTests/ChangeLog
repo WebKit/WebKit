@@ -1,3 +1,218 @@
+2013-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Update fast/forms tests for Mavericks, adding results for MountainLion when necessary.
+
+        * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label01-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label01-expected.txt.
+        * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label02-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label02-expected.txt.
+        * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label03-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label03-expected.txt.
+        * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label04-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label04-expected.txt.
+        * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label05-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label05-expected.txt.
+        * platform/mac-mountainlion/fast/forms/basic-inputs-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/basic-inputs-expected.txt.
+        * platform/mac-mountainlion/fast/forms/basic-selects-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/basic-selects-expected.txt.
+        * platform/mac-mountainlion/fast/forms/basic-textareas-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/basic-textareas-expected.txt.
+        * platform/mac-mountainlion/fast/forms/basic-textareas-quirks-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/basic-textareas-quirks-expected.txt.
+        * platform/mac-mountainlion/fast/forms/box-shadow-override-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/box-shadow-override-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-positioned-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-positioned-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-sizes-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-style-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-style-color-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-table-styles-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-table-styles-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-text-transform-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-text-transform-expected.txt.
+        * platform/mac-mountainlion/fast/forms/button-white-space-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/button-white-space-expected.txt.
+        * platform/mac-mountainlion/fast/forms/control-clip-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/control-clip-expected.txt.
+        * platform/mac-mountainlion/fast/forms/control-clip-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/control-clip-overflow-expected.txt.
+        * platform/mac-mountainlion/fast/forms/control-restrict-line-height-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/control-restrict-line-height-expected.txt.
+        * platform/mac-mountainlion/fast/forms/encoding-test-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/encoding-test-expected.txt.
+        * platform/mac-mountainlion/fast/forms/fieldset-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/fieldset-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/file/input-file-re-render-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/file/input-file-re-render-expected.txt.
+        * platform/mac-mountainlion/fast/forms/form-element-geometry-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/form-element-geometry-expected.txt.
+        * platform/mac-mountainlion/fast/forms/hidden-listbox-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/hidden-listbox-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-bkcolor-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-bkcolor-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-default-bkcolor-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-default-bkcolor-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-disabled-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-disabled-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-focus-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-focus-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-height-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-height-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-preventDefault-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-preventDefault-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-readonly-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-readonly-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-selection-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-selection-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-visibility-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-visibility-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-appearance-width-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-width-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-baseline-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/input-button-sizes-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-button-sizes-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-disabled-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-disabled-color-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-double-click-selection-gap-bug-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-double-click-selection-gap-bug-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-field-text-truncated-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-field-text-truncated-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-placeholder-visibility-1-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-placeholder-visibility-1-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-placeholder-visibility-3-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-placeholder-visibility-3-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-readonly-autoscroll-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-readonly-autoscroll-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-readonly-dimmed-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-readonly-dimmed-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-readonly-empty-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-readonly-empty-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-set-composition-scroll-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/input-spaces-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-spaces-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-table-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-table-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-click-inside-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-click-inside-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-click-outside-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-click-outside-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-double-click-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-double-click-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-drag-down-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-drag-down-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-option-delete-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-option-delete-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-scroll-left-on-blur-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-self-emptying-click-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-self-emptying-click-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-text-word-wrap-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-text-word-wrap-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-type-text-min-width-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-type-text-min-width-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-value-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-value-expected.txt.
+        * platform/mac-mountainlion/fast/forms/input-width-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-width-expected.txt.
+        * platform/mac-mountainlion/fast/forms/listbox-bidi-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/listbox-bidi-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/listbox-hit-test-zoomed-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/listbox-hit-test-zoomed-expected.txt.
+        * platform/mac-mountainlion/fast/forms/listbox-width-change-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/listbox-width-change-expected.txt.
+        * platform/mac-mountainlion/fast/forms/menulist-no-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/menulist-no-overflow-expected.txt.
+        * platform/mac-mountainlion/fast/forms/menulist-option-wrap-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/menulist-option-wrap-expected.txt.
+        * platform/mac-mountainlion/fast/forms/menulist-restrict-line-height-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/menulist-restrict-line-height-expected.txt.
+        * platform/mac-mountainlion/fast/forms/minWidthPercent-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/minWidthPercent-expected.txt.
+        * platform/mac-mountainlion/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/number-appearance-rtl-expected.txt.
+        * platform/mac-mountainlion/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/mac-mountainlion/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/number-appearance-spinbutton-layer-expected.txt.
+        * platform/mac-mountainlion/fast/forms/placeholder-position-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/placeholder-pseudo-style-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/placeholder-pseudo-style-expected.txt.
+        * platform/mac-mountainlion/fast/forms/plaintext-mode-2-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/plaintext-mode-2-expected.txt.
+        * platform/mac-mountainlion/fast/forms/search-cancel-button-style-sharing-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt.
+        * platform/mac-mountainlion/fast/forms/search-display-none-cancel-button-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/search-display-none-cancel-button-expected.txt.
+        * platform/mac-mountainlion/fast/forms/search-rtl-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/search-rtl-expected.txt.
+        * platform/mac-mountainlion/fast/forms/search-vertical-alignment-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/search-vertical-alignment-expected.txt.
+        * platform/mac-mountainlion/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/searchfield-heights-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/searchfield-heights-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-change-listbox-to-popup-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-change-popup-to-listbox-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-disabled-appearance-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-disabled-appearance-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-empty-option-height-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-empty-option-height-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-initial-position-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-initial-position-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-listbox-multiple-no-focusring-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-listbox-multiple-no-focusring-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select-selected-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/select-selected-expected.txt.
+        * platform/mac-mountainlion/fast/forms/select/popup-closes-on-blur-expected.txt: Added.
+        * platform/mac-mountainlion/fast/forms/stuff-on-my-optgroup-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/stuff-on-my-optgroup-expected.txt.
+        * platform/mac-mountainlion/fast/forms/tabbing-input-iframe-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/tabbing-input-iframe-expected.txt.
+        * platform/mac-mountainlion/fast/forms/text-style-color-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/text-style-color-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textAreaLineHeight-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textAreaLineHeight-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textarea-align-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textarea-align-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textarea-scrolled-type-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textarea-scrolled-type-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textarea-setinnerhtml-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textarea-setinnerhtml-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textfield-focus-ring-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textfield-focus-ring-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textfield-outline-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textfield-outline-expected.txt.
+        * platform/mac-mountainlion/fast/forms/textfield-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/textfield-overflow-expected.txt.
+        * platform/mac-mountainlion/fast/forms/validation-message-appearance-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/validation-message-appearance-expected.txt.
+        * platform/mac-mountainlion/fast/forms/visual-hebrew-text-field-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/visual-hebrew-text-field-expected.txt.
+        * platform/mac-mountainlion/platform/mac/fast/forms/attributed-strings-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/fast/forms/focus-option-control-on-page-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/fast/forms/indeterminate-progress-inline-height-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/fast/forms/input-appearance-spinbutton-size-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt: Copied from LayoutTests/platform/mac/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt.
+        * platform/mac-mountainlion/platform/mac/fast/forms/input-number-click-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/HTMLOptionElement_label01-expected.txt:
+        * platform/mac/fast/forms/HTMLOptionElement_label02-expected.txt:
+        * platform/mac/fast/forms/HTMLOptionElement_label03-expected.txt:
+        * platform/mac/fast/forms/HTMLOptionElement_label04-expected.txt:
+        * platform/mac/fast/forms/HTMLOptionElement_label05-expected.txt:
+        * platform/mac/fast/forms/basic-inputs-expected.txt:
+        * platform/mac/fast/forms/basic-selects-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/button-align-expected.txt:
+        * platform/mac/fast/forms/button-positioned-expected.txt:
+        * platform/mac/fast/forms/button-sizes-expected.txt:
+        * platform/mac/fast/forms/button-style-color-expected.txt:
+        * platform/mac/fast/forms/button-table-styles-expected.txt:
+        * platform/mac/fast/forms/button-text-transform-expected.txt:
+        * platform/mac/fast/forms/button-white-space-expected.txt:
+        * platform/mac/fast/forms/control-clip-expected.txt:
+        * platform/mac/fast/forms/control-clip-overflow-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/encoding-test-expected.txt:
+        * platform/mac/fast/forms/fieldset-align-expected.txt:
+        * platform/mac/fast/forms/file/input-file-re-render-expected.txt:
+        * platform/mac/fast/forms/form-element-geometry-expected.txt:
+        * platform/mac/fast/forms/hidden-listbox-expected.txt:
+        * platform/mac/fast/forms/input-align-expected.txt:
+        * platform/mac/fast/forms/input-appearance-bkcolor-expected.txt:
+        * platform/mac/fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * platform/mac/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/mac/fast/forms/input-appearance-focus-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/mac/fast/forms/input-appearance-readonly-expected.txt:
+        * platform/mac/fast/forms/input-appearance-selection-expected.txt:
+        * platform/mac/fast/forms/input-appearance-visibility-expected.txt:
+        * platform/mac/fast/forms/input-appearance-width-expected.txt:
+        * platform/mac/fast/forms/input-baseline-expected.txt: Added.
+        * platform/mac/fast/forms/input-button-sizes-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/mac/fast/forms/input-field-text-truncated-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/input-readonly-empty-expected.txt:
+        * platform/mac/fast/forms/input-spaces-expected.txt:
+        * platform/mac/fast/forms/input-table-expected.txt:
+        * platform/mac/fast/forms/input-text-click-inside-expected.txt:
+        * platform/mac/fast/forms/input-text-click-outside-expected.txt:
+        * platform/mac/fast/forms/input-text-double-click-expected.txt:
+        * platform/mac/fast/forms/input-text-drag-down-expected.txt:
+        * platform/mac/fast/forms/input-text-option-delete-expected.txt:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/mac/fast/forms/input-text-self-emptying-click-expected.txt:
+        * platform/mac/fast/forms/input-text-word-wrap-expected.txt:
+        * platform/mac/fast/forms/input-type-text-min-width-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/forms/input-width-expected.txt:
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/mac/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/mac/fast/forms/listbox-width-change-expected.txt:
+        * platform/mac/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/mac/fast/forms/menulist-option-wrap-expected.txt:
+        * platform/mac/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/minWidthPercent-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-rtl-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-layer-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.txt: Added.
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/forms/select-align-expected.txt:
+        * platform/mac/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/mac/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/mac/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/mac/fast/forms/select-empty-option-height-expected.txt:
+        * platform/mac/fast/forms/select-initial-position-expected.txt:
+        * platform/mac/fast/forms/select-listbox-multiple-no-focusring-expected.txt:
+        * platform/mac/fast/forms/select-selected-expected.txt:
+        * platform/mac/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/mac/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/mac/fast/forms/text-style-color-expected.txt:
+        * platform/mac/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/mac/fast/forms/textarea-align-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/mac/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/mac/fast/forms/textfield-focus-ring-expected.txt:
+        * platform/mac/fast/forms/textfield-outline-expected.txt:
+        * platform/mac/fast/forms/textfield-overflow-expected.txt:
+        * platform/mac/fast/forms/validation-message-appearance-expected.txt:
+        * platform/mac/fast/forms/visual-hebrew-text-field-expected.txt:
+        * platform/mac/platform/mac/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/mac/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+
 2013-10-24  Roger Fong  <roger_fong@apple.com>
 
         Add texture level dependent size checks to textureImage2D calls.

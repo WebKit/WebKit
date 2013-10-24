@@ -157,7 +157,7 @@ fast/forms/datalist
 
 # Times out only in non-wk2 Mac, possibly because of platform-specific behavior
 # interfering with how the test is executed.
-webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Timeout Pass ]
+webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Timeout Pass Failure ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=29359
@@ -1291,3 +1291,5 @@ webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.ht
 webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html  [ Pass ImageOnlyFailure ]
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
+
+webkit.org/b/69900 [ Mavericks ] platform/mac/fast/forms/focus-option-control-on-page.html [ Failure ]
