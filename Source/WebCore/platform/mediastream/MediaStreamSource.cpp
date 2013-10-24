@@ -48,7 +48,6 @@ MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& 
     , m_type(type)
     , m_name(name)
     , m_readyState(New)
-    , m_stream(0)
     , m_enabled(true)
     , m_muted(false)
     , m_readonly(false)
@@ -63,7 +62,6 @@ MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& 
 void MediaStreamSource::reset()
 {
     m_readyState = New;
-    m_stream = 0;
     m_enabled = true;
     m_muted = false;
     m_readonly = false;
@@ -90,13 +88,6 @@ void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
     size_t pos = m_observers.find(observer);
     if (pos != notFound)
         m_observers.remove(pos);
-}
-
-void MediaStreamSource::setStream(MediaStreamDescriptor* stream)
-{
-    // FIXME: A source should not need to know about its stream(s). This will be fixed as a part of
-    // https://bugs.webkit.org/show_bug.cgi?id=121954
-    m_stream = stream;
 }
 
 MediaConstraints* MediaStreamSource::constraints() const

@@ -48,15 +48,6 @@ PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const MediaStrea
     return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources, flag == IsEnded));
 }
 
-MediaStreamDescriptor::~MediaStreamDescriptor()
-{
-    for (size_t i = 0; i < m_audioStreamSources.size(); i++)
-        m_audioStreamSources[i]->setStream(0);
-    
-    for (size_t i = 0; i < m_videoStreamSources.size(); i++)
-        m_videoStreamSources[i]->setStream(0);
-}
-
 void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> source)
 {
     switch (source->type()) {
@@ -88,8 +79,6 @@ void MediaStreamDescriptor::removeSource(PassRefPtr<MediaStreamSource> source)
         m_videoStreamSources.remove(pos);
         break;
     }
-
-    source->setStream(0);
 }
 
 void MediaStreamDescriptor::addRemoteSource(MediaStreamSource* source)
@@ -114,26 +103,19 @@ MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStream
     , m_ended(ended)
 {
     ASSERT(m_id.length());
-    for (size_t i = 0; i < audioSources.size(); i++) {
-        audioSources[i]->setStream(this);
+    for (size_t i = 0; i < audioSources.size(); i++)
         m_audioStreamSources.append(audioSources[i]);
-    }
 
-    for (size_t i = 0; i < videoSources.size(); i++) {
-        videoSources[i]->setStream(this);
+    for (size_t i = 0; i < videoSources.size(); i++)
         m_videoStreamSources.append(videoSources[i]);
-    }
 }
 
 void MediaStreamDescriptor::setEnded()
 {
     if (m_client)
         m_client->streamDidEnd();
+
     m_ended = true;
-    for (size_t i = 0; i < m_audioStreamSources.size(); i++)
-        m_audioStreamSources[i]->setReadyState(MediaStreamSource::Ended);
-    for (size_t i = 0; i < m_videoStreamSources.size(); i++)
-        m_videoStreamSources[i]->setReadyState(MediaStreamSource::Ended);
 }
 
 } // namespace WebCore

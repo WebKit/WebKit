@@ -98,6 +98,8 @@ private:
     virtual void addRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
     virtual void removeRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
 
+    bool haveTrackWithSource(PassRefPtr<MediaStreamSource>);
+
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<MediaStream>*);
 

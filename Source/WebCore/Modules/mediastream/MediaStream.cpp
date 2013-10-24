@@ -118,15 +118,22 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     ASSERT(m_descriptor);
     m_descriptor->setClient(this);
 
+    RefPtr<MediaStreamTrack> track;
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioStreams();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
-    for (size_t i = 0; i < numberOfAudioTracks; i++)
-        m_audioTracks.append(AudioStreamTrack::create(context, m_descriptor->audioStreams(i)));
+    for (size_t i = 0; i < numberOfAudioTracks; i++) {
+        track = AudioStreamTrack::create(context, m_descriptor->audioStreams(i));
+        track->addObserver(this);
+        m_audioTracks.append(track.release());
+    }
 
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoStreams();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
-    for (size_t i = 0; i < numberOfVideoTracks; i++)
-        m_videoTracks.append(VideoStreamTrack::create(context, m_descriptor->videoStreams(i)));
+    for (size_t i = 0; i < numberOfVideoTracks; i++) {
+        track = VideoStreamTrack::create(context, m_descriptor->videoStreams(i));
+        track->addObserver(this);
+        m_videoTracks.append(track.release());
+    }
 }
 
 MediaStream::~MediaStream()
@@ -185,6 +192,9 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
         m_videoTracks.append(track);
         break;
     }
+
+    track->addObserver(this);
+    m_descriptor->addSource(track->source());
 }
 
 void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
@@ -218,10 +228,34 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCo
     if (pos == notFound)
         return;
 
-    m_descriptor->removeSource(track->source());
+    // There can be other tracks using the same source in the same MediaStream,
+    // like when MediaStreamTrack::clone() is called, for instance.
+    // Spec says that a source can be shared, so we must assure that there is no
+    // other track using it.
+    if (!haveTrackWithSource(track->source()))
+        m_descriptor->removeSource(track->source());
 
+    track->removeObserver(this);
     if (!m_audioTracks.size() && !m_videoTracks.size())
         setEnded();
+}
+
+bool MediaStream::haveTrackWithSource(PassRefPtr<MediaStreamSource> source)
+{
+    if (source->type() == MediaStreamSource::Audio) {
+        for (MediaStreamTrackVector::iterator iter = m_audioTracks.begin(); iter != m_audioTracks.end(); ++iter) {
+            if ((*iter)->source() == source.get())
+                return true;
+        }
+        return false;
+    }
+
+    for (MediaStreamTrackVector::iterator iter = m_videoTracks.begin(); iter != m_videoTracks.end(); ++iter) {
+        if ((*iter)->source() == source.get())
+            return true;
+    }
+
+    return false;
 }
 
 MediaStreamTrack* MediaStream::getTrackById(String id)
@@ -271,8 +305,6 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
     if (ended())
         return;
 
-    source->setStream(descriptor());
-
     RefPtr<MediaStreamTrack> track;
     switch (source->type()) {
     case MediaStreamSource::Audio:
@@ -284,6 +316,7 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
         m_videoTracks.append(track);
         break;
     }
+    track->addObserver(this);
     m_descriptor->addSource(source);
 
     scheduleDispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, false, false, track));
@@ -304,21 +337,20 @@ void MediaStream::removeRemoteSource(MediaStreamSource* source)
         break;
     }
 
-    size_t index = notFound;
+    Vector<int> tracksToRemove;
     for (size_t i = 0; i < tracks->size(); ++i) {
-        if ((*tracks)[i]->source() == source) {
-            index = i;
-            break;
-        }
+        if ((*tracks)[i]->source() == source)
+            tracksToRemove.append(i);
     }
-    if (index == notFound)
-        return;
 
     m_descriptor->removeSource(source);
 
-    RefPtr<MediaStreamTrack> track = (*tracks)[index];
-    tracks->remove(index);
-    scheduleDispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, track));
+    for (int i = tracksToRemove.size() - 1; i >= 0; i--) {
+        RefPtr<MediaStreamTrack> track = (*tracks)[tracksToRemove[i]];
+        track->removeObserver(this);
+        tracks->remove(tracksToRemove[i]);
+        scheduleDispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, track.release()));
+    }
 }
 
 void MediaStream::scheduleDispatchEvent(PassRefPtr<Event> event)

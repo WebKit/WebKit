@@ -1,3 +1,58 @@
+2013-10-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [MediaStream API] allow a stream source to be shared
+        https://bugs.webkit.org/show_bug.cgi?id=121954
+
+        Reviewed by Eric Carlson.
+
+        Now, the MediaStreamSource don't know about the MediaStream that owns it,
+        since there can be more than one MediaStream that has it as source for some track.
+        MediaStreamTrack classes now have observers registered, in case there are more than
+        one MediaStream owning that track
+
+        No new tests, no change in functionality.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Adding the MediaStream as an observer for each track it owns.
+
+        (WebCore::MediaStream::addTrack): Now adding the MediaStream as an observer the new added track
+        and adding the source to the MediaStreamDescriptor.
+
+        (WebCore::MediaStream::removeTrack): Instead of removing the source right away, we first check if
+        there isn't any other track using that source, if not we remove the source.
+
+        (WebCore::MediaStream::haveTrackWithSource):
+        (WebCore::MediaStream::addRemoteSource): MediaStreamSource has no information about the MediaStream
+        that uses it, so now we don't set the stream in the source anymore.
+
+        (WebCore::MediaStream::removeRemoteSource): There can be more than on track using the source. So we
+        get each track that is using the source and then remove it and fire the ended event.
+
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::addObserver):
+        (WebCore::MediaStreamTrack::removeObserver):
+        (WebCore::MediaStreamTrack::trackDidEnd): Does not get the client from the MediaStreamDescriptor, it now
+        notify each of its observers that the track ended.
+
+        * Modules/mediastream/MediaStreamTrack.h: Adding Observer class.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp: Destructor now does nothing. Previously it was setting
+        each MediaStreamSource's descriptor to null.
+
+        (WebCore::MediaStreamDescriptor::removeSource): Not setting the stream in source anymore.
+
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor): Ditto.
+
+        (WebCore::MediaStreamDescriptor::setEnded): Not setting the state of the source to Ended
+
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::~MediaStreamDescriptor):
+        * platform/mediastream/MediaStreamSource.cpp: Removing references to MediaStream object
+        (WebCore::MediaStreamSource::MediaStreamSource):
+        (WebCore::MediaStreamSource::reset):
+        * platform/mediastream/MediaStreamSource.h:
+
 2013-10-24  Daniel Bates  <dabates@apple.com>
 
         Crash in WebCore::NavigationScheduler::startTimer()

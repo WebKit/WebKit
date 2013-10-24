@@ -296,6 +296,18 @@ bool MediaStreamTrack::ended() const
     return m_stopped || m_readyState == MediaStreamSource::Ended;
 }
 
+void MediaStreamTrack::addObserver(MediaStreamTrack::Observer* observer)
+{
+    m_observers.append(observer);
+}
+
+void MediaStreamTrack::removeObserver(MediaStreamTrack::Observer* observer)
+{
+    size_t pos = m_observers.find(observer);
+    if (pos != notFound)
+        m_observers.remove(pos);
+}
+
 void MediaStreamTrack::sourceStateChanged()
 {
     if (m_stopped)
@@ -347,13 +359,8 @@ bool MediaStreamTrack::stopped()
 
 void MediaStreamTrack::trackDidEnd()
 {
-    // FIXME: this is wrong, the track shouldn't have to call the descriptor's client!
-    MediaStreamDescriptorClient* client = m_source ? m_source->stream()->client() : 0;
-    if (!client)
-        return;
-    
-    client->trackDidEnd();
-    setState(MediaStreamSource::Ended);
+    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
+        (*i)->trackDidEnd();
 }
 
 void MediaStreamTrack::stop()
