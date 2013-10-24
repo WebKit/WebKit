@@ -1,3 +1,17 @@
+2013-10-23  Tibor Meszaros  <tmeszaros@inf.u-szeged.hu>
+
+        Web Inspector: Make WebKitEFL port work with chromedevtools
+        https://bugs.webkit.org/show_bug.cgi?id=123017
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added /json path and extended the returned JSON format
+        with the required extra informations
+
+        * UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::buildPageList):
+
 2013-10-23  Anders Carlsson  <andersca@apple.com>
 
         Remove HAVE_XPC
