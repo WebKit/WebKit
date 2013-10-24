@@ -1,3 +1,20 @@
+2013-10-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        dumpAsText() is unnecessarily called in spellchecking tests
+        https://bugs.webkit.org/show_bug.cgi?id=123266
+
+        Reviewed by Darin Adler.
+
+        dumpAsText is already called either by notifyDone (js-test-post.js) or
+        by finishJSTest() when asynchrononous spell checking is used.
+
+        * editing/spelling/spellcheck-async-mutation.html:
+        * editing/spelling/spellcheck-async.html:
+        * editing/spelling/spellcheck-attribute-expected.txt:
+        * editing/spelling/spellcheck-attribute.html:
+        * editing/spelling/spelling-insert-html.html:
+        * editing/spelling/spelling-unified-emulation.html:
+
 2013-10-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Gaps between underlines in adjacent underlined text runs

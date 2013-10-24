@@ -25,10 +25,6 @@ function removeChildren(node) {
         node.removeChild(node.firstChild);
 }
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-}
-
 if (window.internals)
     internals.settings.setUnifiedTextCheckerEnabled(true);
 

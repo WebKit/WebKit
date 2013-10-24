@@ -51,4 +51,7 @@ id=test4_5 type=search spellcheck=true parent's spellcheck=false
 PASS internals.hasSpellingMarker(document, 0, 2) is true
 id=test4_6 type=search spellcheck=false parent's spellcheck=false
 PASS internals.hasSpellingMarker(document, 0, 2) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
