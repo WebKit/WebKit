@@ -1,3 +1,17 @@
+2013-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Comment in ScopedEventQueue::dispatchEvent is unnecessarily verbose
+        https://bugs.webkit.org/show_bug.cgi?id=123252
+
+        Reviewed by Darin Adler.
+
+        Shorten the comment about the crash avoidance in ScopedEventQueue::dispatchEvent due to
+        the calling convention in C++ is left unspecified. The problem was already fixed in r157219
+        and later adjusted in r157401, but the comment could have been shorter and simpler in both cases.
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent):
+
 2013-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Removed unused ThreadSafeCoordinatedSurface and CertificateInfoCurl files.
