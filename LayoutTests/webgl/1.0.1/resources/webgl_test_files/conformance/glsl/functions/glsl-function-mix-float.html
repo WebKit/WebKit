@@ -1,0 +1,53 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <title>GLSL mix-float function test</title>
+  <link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+  <link rel="stylesheet" href="../../resources/glsl-feature-tests.css"/>
+  <script src="../../../resources/js-test-pre.js"></script>
+  <script src="../../resources/webgl-test.js"> </script>
+  <script src="../../resources/webgl-test-utils.js"> </script>
+  <script src="../../resources/glsl-generator.js"> </script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+GLSLGenerator.runFeatureTest({
+  feature: "mix",
+  args: "$(type) startValue, $(type) endValue, float mixValue",
+  baseArgs: "startValue$(field), endValue$(field), mixValue",
+  testFunc: "$(func)($(type), $(type), float)",
+  emuFunc: [
+    "float $(func)_base(float startValue, float endValue, float mixValue) {",
+    "  return startValue * (1.0 - mixValue) + endValue * mixValue;",
+    "}"].join("\n"),
+  gridRes: 8,
+  tests: [
+    ["$(output) = vec4(",
+     "    $(func)(1.0, 0.0, $(input).x),",
+     "    ($(func)(-2.0, 3.0, $(input).y) + 2.0) / 5.0,",
+     "    0,",
+     "    1);"].join("\n"),
+    ["$(output) = vec4(",
+     "    $(func)(vec2(1, -2),  vec2(0, 2), $(input).z), ",
+     "    0, 1);"].join("\n"),
+    ["$(output) = vec4(",
+     "    $(func)(vec3(1, -2, -1), vec3(0, 2, 3), $(input).y),",
+     "    1);"].join("\n"),
+    ["$(output) = ",
+     "    $(func)(vec4(1, -2, -1, 0.5), vec4(0, 2, 3, 1), $(input).w);"
+    ].join("\n")
+  ]
+});
+successfullyParsed = true;
+</script>
+</body>
+</html>
+

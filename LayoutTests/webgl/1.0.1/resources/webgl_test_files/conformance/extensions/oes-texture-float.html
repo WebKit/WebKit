@@ -1,0 +1,222 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL OES_texture_float Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<div id="console"></div>
+<!-- Shaders for testing floating-point textures -->
+<script id="testFragmentShader" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D tex;
+varying vec2 texCoord;
+void main()
+{
+    vec4 color = texture2D(tex, texCoord);
+    if (abs(color.r - 10000.0) +
+        abs(color.g - 10000.0) +
+        abs(color.b - 10000.0) +
+        abs(color.a - 10000.0) < 8.0) {
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    } else {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+}
+</script>
+<!-- Shaders for testing floating-point render targets -->
+<script id="positionVertexShader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="floatingPointFragmentShader" type="x-shader/x-fragment">
+void main()
+{
+    gl_FragColor = vec4(10000.0, 10000.0, 10000.0, 10000.0);
+}
+</script>
+<script>
+description("This test verifies the functionality of the OES_texture_float extension, if it is available.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+
+if (!gl) {
+  testFailed("WebGL context does not exist");
+} else {
+  testPassed("WebGL context exists");
+
+  var texturedShaders = [
+      wtu.setupSimpleTextureVertexShader(gl),
+      "testFragmentShader"
+  ];
+  var testProgram =
+      wtu.setupProgram(gl,
+                       texturedShaders,
+                       ['vPosition', 'texCoord0'],
+                       [0, 1]);
+  var quadParameters = wtu.setupUnitQuad(gl, 0, 1);
+
+  // First verify that allocation of floating-point textures fails if
+  // the extension has not been enabled yet.
+  runTextureCreationTest(testProgram, false);
+
+  if (!gl.getExtension("OES_texture_float")) {
+      testPassed("No OES_texture_float support -- this is legal");
+  } else {
+      testPassed("Successfully enabled OES_texture_float extension");
+      runTextureCreationTest(testProgram, true);
+      runRenderTargetTest(testProgram);
+      runUniqueObjectTest();
+  }
+}
+
+// Needs to be global for shouldBe to see it.
+var pixels;
+
+function allocateTexture()
+{
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    glErrorShouldBe(gl, gl.NO_ERROR, "texture parameter setup should succeed");
+    return texture;
+}
+
+function checkRenderingResults()
+{
+    pixels = new Uint8Array(4);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    // Outputs green if OK, red if not.
+    shouldBe("pixels[0]", "0");
+    shouldBe("pixels[1]", "255");
+    shouldBe("pixels[2]", "0");
+    shouldBe("pixels[3]", "255");
+}
+
+function runTextureCreationTest(testProgram, extensionEnabled)
+{
+    var expectFailure = !extensionEnabled;
+
+    var texture = allocateTexture();
+    // Generate data.
+    var width = 2;
+    var height = 2;
+    var numberOfChannels = 4;
+    var data = new Float32Array(width * height * numberOfChannels);
+    for (var ii = 0; ii < data.length; ++ii) {
+        data[ii] = 10000;
+    }
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, data);
+    if (expectFailure) {
+        glErrorShouldBe(gl, gl.INVALID_ENUM, "floating-point texture allocation must be disallowed if OES_texture_float isn't enabled");
+        return;
+    } else {
+        glErrorShouldBe(gl, gl.NO_ERROR, "floating-point texture allocation should succeed if OES_texture_float is enabled");
+    }
+    // Verify that the texture actually works for sampling and contains the expected data.
+    gl.uniform1i(gl.getUniformLocation(testProgram, "tex"), 0);
+    wtu.drawQuad(gl);
+    checkRenderingResults();
+}
+
+function runRenderTargetTest(testProgram)
+{
+    debug("");
+    debug("testing floating-point render targets");
+
+    var texture = allocateTexture();
+    var width = 2;
+    var height = 2;
+    var numberOfChannels = 4;
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
+    glErrorShouldBe(gl, gl.NO_ERROR, "floating-point texture allocation should succeed if OES_texture_float is enabled");
+
+    // Try to use this texture as a render target.
+    var fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    // It is legal for a WebGL implementation exposing the OES_texture_float extension to
+    // support floating-point textures but not as attachments to framebuffer objects.
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        debug("floating-point render targets not supported -- this is legal");
+        return;
+    }
+
+    var renderProgram =
+        wtu.setupProgram(gl,
+                         ["positionVertexShader", "floatingPointFragmentShader"],
+                         ['vPosition'],
+                         [0]);
+    wtu.drawQuad(gl);
+    glErrorShouldBe(gl, gl.NO_ERROR, "rendering to floating-point texture should succeed");
+
+    // Now sample from the floating-point texture and verify we got the correct values.
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.useProgram(testProgram);
+    gl.uniform1i(gl.getUniformLocation(testProgram, "tex"), 0);
+    wtu.drawQuad(gl);
+    glErrorShouldBe(gl, gl.NO_ERROR, "rendering from floating-point texture should succeed");
+    checkRenderingResults();
+}
+
+function attemptToForceGC()
+{
+    var holderArray = [];
+    var tempArray;
+    window.tempArray = holderArray;
+    for (var i = 0; i < 12; ++i) {
+        tempArray = [];
+        for (var j = 0; j < 1024 * 1024; ++j) {
+            tempArray.push(0);
+        }
+        holderArray.push(tempArray);
+    }
+    window.tempArray = null;
+}
+
+function runUniqueObjectTest()
+{
+    debug("Testing that getExtension() returns the same object each time");
+    gl.getExtension("OES_texture_float").myProperty = 2;
+    if (window.GCController) {
+        window.GCController.collect();
+    } else if (window.opera && window.opera.collect) {
+        window.opera.collect();
+    } else {
+        attemptToForceGC();
+    }
+    shouldBe('gl.getExtension("OES_texture_float").myProperty', '2');
+}
+
+
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

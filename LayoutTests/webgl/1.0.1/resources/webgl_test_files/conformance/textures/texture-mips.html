@@ -1,0 +1,256 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL texture mips conformance test.</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"> </script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="example" width="2" height="2" style="width: 40px; height: 40px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+uniform vec4 uMult;
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main()
+{
+    gl_Position = vPosition * uMult;
+    texCoord = texCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D tex;
+varying vec2 texCoord;
+void main()
+{
+    gl_FragColor = texture2D(tex, texCoord);
+}
+</script>
+<script>
+var canvas;
+var wtu = WebGLTestUtils;
+function init()
+{
+  if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(false);
+  }
+
+  description("Checks mip issues");
+
+  canvas = document.getElementById("example");
+  shouldBe("canvas.width", "2");
+  shouldBe("canvas.height", "2");
+
+  gl = wtu.create3DContext(canvas);
+  wtu.setupUnitQuad(gl, 0, 1);
+  var program = wtu.setupProgram(
+      gl, ['vshader', 'fshader'], ['vPosition', 'texCoord0'], [0, 1]);
+
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+
+  var colors = {
+    blue: [0, 0, 255, 255],
+    red: [255, 0, 0, 255],
+    green:  [0, 255, 0, 255],
+    cyan: [128, 255, 255, 255],
+    black: [0, 0, 0, 255]
+  };
+
+  var mips = [
+  ];
+
+  var texLoc = gl.getUniformLocation(program, "tex");
+  gl.uniform1i(texLoc, 0);
+  var multLoc = gl.getUniformLocation(program, "uMult");
+
+  // ----------------------------------------------------
+  var tex = createTexture();
+  gl.uniform4f(multLoc, 1, 1, 1, 1);
+
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  // 16x16 texture no mips
+  fillLevel(tex, 0, 16, 'cyan');
+
+  check('black',
+        "texture that is missing mips when TEXTURE_MIN_FILTER not NEAREST or LINEAR");
+
+  generateMipmap();
+
+  check('cyan', "texture that has all mips");
+
+  // Fill in the bottom 2 mips with a different color.
+  fillLevel(tex, 4, 1, 'green');
+  fillLevel(tex, 3, 2, 'green');
+
+  // Choose the nearest mip
+  texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+
+  check('green', "texture that is only using the smallest 2 mips");
+
+  gl.uniform4f(multLoc, 16, 16, 1, 1);
+
+  check('cyan', "texture that is using only the largest 2 mips");
+
+  // Set the top level
+  fillLevel(tex, 0, 1, 'red');
+  check('red',
+        "texture that is only using the top level even though other levels are defined");
+
+  // Set the top 2 levels using generateMipmap
+  fillLevel(tex, 0, 2, 'blue');
+  generateMipmap();
+
+  check('blue',
+        "texture that is only using the top 2 levels even though other levels are defined");
+
+  // Set the top 2 levels back to sizes that end up using levels 2, 3, and 4 again.
+  fillLevel(tex, 0, 16, 'blue');
+  fillLevel(tex, 1, 8, 'blue');
+  check('blue', "texture that is only using the largest 2 mips");
+  gl.uniform4f(multLoc, 1, 1, 1, 1);
+  check('green', "texture that is only using the smallest 2 mips");
+
+  // ----------------------------------------------------
+  var tex = createTexture();
+  gl.uniform4f(multLoc, 1, 1, 1, 1);
+  fillLevel(tex, 0, 8, 'cyan');
+  generateMipmap();
+  check('cyan', "texture that has 3 mips");
+
+  fillLevel(tex, 0, 16, 'blue');
+  texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  check('blue', "texture that is only using top mips");
+
+  fillLevel(tex, 0, 8, 'red');
+  texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+  check('cyan', "texture that is only using smallest mips");
+
+  gl.uniform4f(multLoc, 16, 16, 1, 1);
+  check('red', "texture that is using only the largest mip");
+
+  // ----------------------------------------------------
+  var tex = createTexture();
+  gl.uniform4f(multLoc, 1, 1, 1, 1);
+  fillLevel(tex, 2, 1, 'green');
+  fillLevel(tex, 1, 2, 'green');
+  fillLevel(tex, 0, 4, 'green');
+  check('green', "texture that was built smallest mip first");
+
+  // ----------------------------------------------------
+  var tex = createTexture();
+  gl.uniform4f(multLoc, 1, 1, 1, 1);
+  fillLevel(tex, 0, 16, 'red');
+  generateMipmap();
+  check('red', "texture with 1 genmipmaps");
+  fillLevel(tex, 0, 16, 'blue');
+  generateMipmap();
+  fillLevel(tex, 0, 16, 'green');
+  generateMipmap();
+  check('green', "texture with 2 genmipmaps");
+
+  // ----------------------------------------------------
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors.");
+
+  function createTexture() {
+    debug("<hr/>gl.createTexture()");
+    mips = [];
+    makeDivMipChain();
+    return gl.createTexture();
+  }
+
+  function texParameteri(target, pname, value) {
+	debug("gl.texParameteri(" +
+          wtu.glEnumToString(gl, target) + ", " +
+          wtu.glEnumToString(gl, pname) + ", " +
+          wtu.glEnumToString(gl, value) + ")")
+	gl.texParameteri(target, pname, value);
+  }
+
+  function generateMipmap() {
+    debug("gl.generateMipmap(gl.TEXTURE_2D)");
+    gl.generateMipmap(gl.TEXTURE_2D);
+    var mip0 = mips[0];
+    var size = mip0.size;
+    var level = 1;
+    for(;;) {
+      size = Math.floor(size / 2);
+      if (!size) {
+        break;
+      }
+      setMipData(level, size, mip0.color);
+      ++level;
+    }
+    makeDivMipChain();
+  }
+
+  function check(color, msg) {
+    wtu.drawQuad(gl);
+    wtu.checkCanvas(gl, colors[color], msg + " should draw with " + color);
+  }
+
+  function fillLevel(tex, level, size, color) {
+    setMipData(level, size, color);
+    debug("gl.texImage2D(gl.TEXTURE_2D, " + level + ", gl.RGBA, " + size + ", " + size +
+          ", 0, gl.RGBA, gl.UNSIGNED_BYTE, " + color + ");");
+    wtu.fillTexture(gl, tex, size, size, colors[color], level);
+    makeDivMipChain();
+  }
+
+  function setMipData(level, size, color) {
+    mips[level] = {
+      size: size,
+      color: color
+    };
+  }
+
+  function makeDivMipChain(color) {
+    var html = [
+      '<div style="height: 68px; margin-top: 5px">',
+      '<div style="float:left;">mips: </div>'];
+    for (var ii = 0; ii < 5; ++ii) {
+      var mip = mips[ii];
+      if (mip) {
+        html.push(makeDivSquare(mip.size, mip.color));
+      } else {
+        html.push(makeDivSquare(16, undefined));
+      }
+    }
+    html.push("</div>");
+    debug(html.join(""));
+  }
+
+  function makeDivSquare(size, color) {
+    size *= 4;
+    var c = color ? colors[color] : [255,255,255];
+    var border = color ? 'solid' : 'dashed';
+    return '<div style="float:left; width: ' + size + 'px; height: ' + size +
+           'px; background-color: ' + rgb(c) +
+           '; border: 1px ' + border + ' black; margin-right: 3px;"></div>';
+  }
+
+  function rgb(c) {
+    return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] +')';
+  }
+}
+
+init();
+successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

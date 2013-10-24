@@ -1,0 +1,91 @@
+<!--
+// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Enable Vertex Attrib Zero Test</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"> </script>
+<script src="../resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="50" height="50">
+</canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    void main()
+    {
+        gl_Position = vPosition;
+    }
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+    void main()
+    {
+        gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+    }
+</script>
+
+<script>
+description("Test some of the issues of the difference between attrib 0 on OpenGL vs WebGL");
+debug("");
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext("example");
+
+function setup(numVerts, attribIndex) {
+  var program = wtu.setupProgram(
+      gl, ['vshader', 'fshader'], ['vPosition'], [attribIndex]);
+  // draw with something on attrib zero with a small number of vertices
+  var vertexObject = gl.createBuffer();
+  g_program = program;
+  g_attribLocation = attribIndex;
+  shouldBe("g_attribLocation", "gl.getAttribLocation(g_program, 'vPosition')");
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(
+      gl.ARRAY_BUFFER, new Float32Array(numVerts * 3), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(attribIndex, 3, gl.FLOAT, false, 0, 0);
+  var indices = new Uint16Array(numVerts);
+  for (var ii = 0; ii < numVerts; ++ii) {
+    indices[ii] = ii;
+  }
+  var indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+  return program;
+}
+
+var p1 = setup(3, 0);
+var p2 = setup(60000, 3);
+
+for (var ii = 0; ii < 5; ++ii) {
+  gl.useProgram(p1);
+  gl.enableVertexAttribArray(0);
+  gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
+  glErrorShouldBe(
+      gl, gl.NO_ERROR,
+      "drawing using attrib 0 with 3 verts");
+
+  gl.useProgram(p2);
+  gl.enableVertexAttribArray(3);
+  gl.drawArrays(gl.LINES, 0, 60000);
+  glErrorShouldBe(
+      gl, gl.NO_ERROR,
+      "drawing using attrib 3 with 60000 verts");
+}
+
+wtu.checkCanvas(gl, [0, 0, 0, 0], "canvas should be 0, 0, 0, 0");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

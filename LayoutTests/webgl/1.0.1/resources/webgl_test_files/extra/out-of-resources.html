@@ -1,0 +1,109 @@
+<!--
+Copyright (c) 2009 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Out Of Resources Test</title>
+<link rel="stylesheet" href="../resources/js-test-style.css"/>
+<script src="../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../debug/webgl-debug.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../conformance/resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<canvas id="canvas2" width="2" height="2"> </canvas>
+<script>
+window.onload = init;
+debug("Tests a WebGL program that tries to use all of vram.");
+
+function init() {
+  if (confirm(
+      "after clicking ok your machine may be come unresponsive or crash")) {
+    main();
+  } else {
+    debug("cancelled");
+  }
+}
+
+function main() {
+  debug("");
+  debug("Canvas.getContext");
+
+  var gl = create3DContext(document.getElementById("canvas"));
+  if (!gl) {
+    testFailed("context does not exist");
+  } else {
+    testPassed("context exists");
+
+    debug("");
+    debug("Checking for out of memory handling.");
+
+    var size = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
+    debug("max render buffer size: " + size);
+
+    var allocateFramebuffers = true;
+    var itervalId;
+    var count = 0;
+
+    gl = WebGLDebugUtils.makeDebugContext(gl, function(err, functionName, args) {
+          window.clearInterval(intervalId);
+          assertMsg(err == gl.OUT_OF_MEMORY,
+                    "correctly returns gl.OUT_OF_MEMORY when out of memory");
+          finish();
+        });
+
+    intervalId = window.setInterval(function() {
+      ++count;
+      var mem = count * size * size * 4;
+      debug("#" + count + " : memory allocated so far " + (mem / 1024 / 1024) + "MB");
+      var tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D,
+                    0,                 // level
+                    gl.RGBA,           // internalFormat
+                    size,              // width
+                    size,              // height
+                    0,                 // border
+                    gl.RGBA,           // format
+                    gl.UNSIGNED_BYTE,  // type
+                    null);             // data
+      if (allocateFrameBuffers) {
+        var fb = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER,
+            gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D,
+            tex,
+            0);
+        var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (status != gl.FRAMEBUFFER_COMPLETE) {
+          testFailed("gl.checkFramebufferStatus() returned " + WebGLDebugUtils.glEnumToString(status) +
+                     " should have gotten gl.OUT_OF_MEMORY before getting this.");
+          window.clearInterval(intervalId);
+          finish();
+        }
+      }
+    }, 1000/10);
+  }
+
+  function finish() {
+    debug("");
+    successfullyParsed = true;
+  }
+}
+</script>
+</body>
+</html>

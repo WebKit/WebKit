@@ -1,0 +1,177 @@
+<!--
+Copyright (C) 2011 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test of drawElements with out-of-bounds parameters");
+
+var context = create3DContext();
+var program = loadStandardProgram(context);
+
+context.useProgram(program);
+var vertexObject = context.createBuffer();
+context.enableVertexAttribArray(0);
+context.bindBuffer(context.ARRAY_BUFFER, vertexObject);
+context.bufferData(context.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), context.STATIC_DRAW);
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 0, 0);
+
+var indexObject = context.createBuffer();
+
+debug("Test empty index buffer")
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexObject);
+context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint8Array([  ]), context.STATIC_DRAW);
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 10000, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 10000000000000, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, -1, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 1, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, -1)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, -1, context.UNSIGNED_BYTE, 1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 1, context.UNSIGNED_BYTE, -1)");
+
+debug("")
+debug("Test buffer with 3 byte indexes")
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexObject);
+context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint8Array([ 0, 1, 2 ]), context.STATIC_DRAW);
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_INT, 0)");
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawElements(0x0009, 3, context.UNSIGNED_BYTE, 0)"); // GL_POLYGON
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 2)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 10000, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 10000000000000, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, -1, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, -1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, -1, context.UNSIGNED_BYTE, 1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 1, context.UNSIGNED_BYTE, -1)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, 4)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 0xffffffff, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 0x7fffffff, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 0x7fffffff, context.UNSIGNED_BYTE, 0x7fffffff)");
+
+shouldGenerateGLError(context, context.NO_ERROR, "context.bufferData(context.ELEMENT_ARRAY_BUFFER, (new Uint8Array([ 3, 0, 1, 2 ])).subarray(1), context.STATIC_DRAW)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.bufferSubData(context.ELEMENT_ARRAY_BUFFER, 0, new Uint8Array([ 3, 0, 1]))");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.bufferSubData(context.ELEMENT_ARRAY_BUFFER, 0, (new Uint8Array([ 3, 0, 1, 2 ])).subarray(1))");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_BYTE, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_BYTE, 0)");
+
+debug("")
+debug("Test buffer with interleaved (3+2) float vectors")
+
+var program2 = createProgram(context,
+                             "attribute vec3 aOne;" +
+                             "attribute vec2 aTwo;" +
+                             "void main() { gl_Position = vec4(aOne, 1.0) + vec4(aTwo, 0.0, 1.0); }",
+                             "void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }",
+                             [ "aOne", "aTwo" ]);
+if (!program2) {
+    testFailed("failed to create test program");
+}
+
+context.useProgram(program2);
+
+var vbo = context.createBuffer();
+context.bindBuffer(context.ARRAY_BUFFER, vbo);
+// enough for 9 vertices, so 3 triangles
+context.bufferData(context.ARRAY_BUFFER, new Float32Array(9*5), context.STATIC_DRAW);
+
+// bind first 3 elements, with a stride of 5 float elements
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 5*4, 0);
+// bind 2 elements, starting after the first 3; same stride of 5 float elements
+context.vertexAttribPointer(1, 2, context.FLOAT, false, 5*4, 3*4);
+
+context.enableVertexAttribArray(0);
+context.enableVertexAttribArray(1);
+
+var ebo = context.createBuffer();
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, ebo);
+context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint16Array(
+    [ 0, 1, 2,
+      1, 2, 0,
+      2, 0, 1,
+      200, 200, 200,
+      0x7fff, 0x7fff, 0x7fff,
+      0xffff, 0xffff, 0xffff ]),
+    context.STATIC_DRAW);
+
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 9, context.UNSIGNED_SHORT, 0)");
+
+// invalid type arguments
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawElements(context.TRIANGLES, 9, context.FLOAT, 0)");
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawElements(context.TRIANGLES, 9, context.SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawElements(context.TRIANGLES, 9, context.UNSIGNED_INT, 0)");
+
+// invalid operation with indices that would be valid with correct bindings
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 9, context.UNSIGNED_SHORT, 1000)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 12, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 15, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 18, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 3, context.UNSIGNED_SHORT, 2*15)");
+
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawElements(context.TRIANGLES, 0xffffffff, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 0x7fffffff, context.UNSIGNED_SHORT, 0)");
+
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 0, context.UNSIGNED_SHORT, 0)");
+
+// invalid operation with offset that's not a multiple of the type size
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 0)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 1)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 2)");
+
+// invalid operation if no buffer is bound to ELEMENT_ARRAY_BUFFER
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, null);
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 0)");
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, ebo);
+
+debug("")
+debug("Test buffer setting attrib 0 to a buffer too small and disable it.");
+var smallVBO = context.createBuffer();
+shouldBeNonNull('smallVBO');
+context.bindBuffer(context.ARRAY_BUFFER, smallVBO);
+context.bufferData(context.ARRAY_BUFFER, 1, context.STATIC_DRAW);
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 0, 0x10);
+context.disableVertexAttribArray(0);
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 2)");
+context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, null);
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawElements(context.TRIANGLES, 6, context.UNSIGNED_SHORT, 2)");
+debug("")
+successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

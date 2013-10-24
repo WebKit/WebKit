@@ -1,0 +1,8 @@
+buffer-offscreen-test.html
+buffer-preserve-test.html
+canvas-test.html
+canvas-zero-size.html
+drawingbuffer-static-canvas-test.html
+drawingbuffer-test.html
+viewport-unchanged-upon-resize.html
+

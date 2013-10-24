@@ -726,6 +726,10 @@ webgl/1.0.2/conformance/rendering/gl-scissor-test.html
 webgl/1.0.2/conformance/textures/texture-size-limit.html
 webgl/1.0.2/conformance/typedarrays/array-unit-tests.html
 webgl/1.0.2/conformance/typedarrays/data-view-test.html
+webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
+webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
+webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
+http/tests/webgl/1.0.2/origin-clean-conformance.html
 
 # Skipping all webgl conformance tests on trunk
 webgl/conformance

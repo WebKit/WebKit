@@ -1,0 +1,133 @@
+<!--
+Copyright (C) 2011 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Test of drawArrays with out-of-bounds parameters");
+
+var context = create3DContext();
+var program = loadStandardProgram(context);
+
+context.useProgram(program);
+var vertexObject = context.createBuffer();
+context.bindBuffer(context.ARRAY_BUFFER, vertexObject);
+context.enableVertexAttribArray(0);
+
+debug("Test empty buffer")
+context.bufferData(context.ARRAY_BUFFER, new Float32Array([  ]), context.STATIC_DRAW);
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 0, 0);
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 1)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000000000000)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 1, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 1, -1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 1)");
+
+debug("")
+debug("Test buffer with 3 float vectors")
+context.bufferData(context.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), context.STATIC_DRAW);
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 0, 0);
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 3)");
+shouldGenerateGLError(context, context.INVALID_ENUM, "context.drawArrays(0x0009, 0, 3)"); // GL_POLYGON
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 3, 2)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000000000000)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 1, -1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 1)");
+
+debug("")
+debug("Test buffer with interleaved (3+2) float vectors")
+
+var program2 = createProgram(context,
+                             "attribute vec3 aOne;" +
+                             "attribute vec2 aTwo;" +
+                             "void main() { gl_Position = vec4(aOne, 1.0) + vec4(aTwo, 0.0, 1.0); }",
+                             "void main() { gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); }",
+                             [ "aOne", "aTwo" ]);
+if (!program2) {
+    testFailed("failed to create test program");
+}
+
+context.useProgram(program2);
+
+var vbo = context.createBuffer();
+context.bindBuffer(context.ARRAY_BUFFER, vbo);
+// enough for 9 vertices, so 3 triangles
+context.bufferData(context.ARRAY_BUFFER, new Float32Array(9*5), context.STATIC_DRAW);
+
+// bind first 3 elements, with a stride of 5 float elements
+context.vertexAttribPointer(0, 3, context.FLOAT, false, 5*4, 0);
+// bind 2 elements, starting after the first 3; same stride of 5 float elements
+context.vertexAttribPointer(1, 2, context.FLOAT, false, 5*4, 3*4);
+
+context.enableVertexAttribArray(0);
+context.enableVertexAttribArray(1);
+
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 9)");
+
+// negative values must generate INVALID_VALUE; they can never be valid
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -500)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -200, 1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -200, -500)");
+
+// 0xffffffff needs to convert to a 'long' IDL argument as -1, as per
+// WebIDL 4.1.7.  JS ToInt32(0xffffffff) == -1, which is the first step
+// of the conversion.  Thus INVALID_VALUE.
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, 0xffffffff)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0xffffffff, 1)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0xffffffff, 0xffffffff)");
+
+// values that could otherwise be valid but aren't due to bindings generate
+// INVALID_OPERATION
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 200)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 0x7fffffff)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0x7fffffff, 1)");
+shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0x7fffffff, 0x7fffffff)");
+
+debug("")
+successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

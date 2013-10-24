@@ -1,0 +1,137 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+  <head>
+<meta charset="utf-8">
+    <title>WebGL GLSL 2 types of textures on same unit conformance test.</title>
+    <link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../resources/webgl-test.js"> </script>
+    <script src="../../../debug/webgl-debug.js"> </script>
+</head>
+<body>
+<canvas id="example" width="2" height="2" style="width: 40px; height: 40px;"></canvas>
+<canvas id="canvas2d" width="1" height="1" style="width: 40px; height: 40px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec2 texCoord0;
+varying vec2 texCoord;
+void main()
+{
+  gl_Position = vPosition;
+  texCoord = texCoord0;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform sampler2D tex2d;
+uniform samplerCube texCube;
+varying vec2 texCoord;
+void main()
+{
+  gl_FragColor =  texture2D(tex2d, texCoord) +
+                  textureCube(texCube, vec3(0,1,0));
+}
+</script>
+
+  <script>
+function init()
+{
+  if (window.initNonKhronosFramework) {
+      window.initNonKhronosFramework(false);
+  }
+
+  description(
+    "Tests that using 2 types of textures on the same texture unit" +
+    "and referencing them both in the same program fails as per" +
+    "OpenGL ES 2.0.24 spec section 2.10.4, Samplers subsection.");
+
+  var canvas2d = document.getElementById("canvas2d");
+  var ctx2d = canvas2d.getContext("2d");
+
+  gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "texCoord0"],
+                 [ 0, 0, 0, 1 ], 1);
+
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([
+          -1, 1,0, 1,1,0, -1,-1,0,
+          -1,-1,0, 1,1,0,  1,-1,0]),
+      gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([
+          0,0, 1,0, 0,1,
+          0,1, 1,0, 1,1]),
+      gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(1);
+  gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+
+  // Make texture unit 1 active.
+  gl.activeTexture(gl.TEXTURE1);
+
+  // Make a 2d texture
+  var tex2d = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex2d);
+  ctx2d.fillStyle = "rgba(0, 0, 255, 255)";
+  ctx2d.fillRect(0, 0, 1, 1);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+
+  // make a cube texture
+  var texCube = gl.createTexture();
+  ctx2d.fillStyle = "rgba(0, 255, 0, 64)";
+  ctx2d.fillRect(0, 0, 1, 1);
+  var targets = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z];
+  for (var ii = 0; ii < targets.length; ++ii) {
+    gl.texImage2D(targets[ii], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d);
+  }
+
+  var tex2dLoc = gl.getUniformLocation(gl.program, "tex2d");
+  var texCubeLoc = gl.getUniformLocation(gl.program, "texCube");
+  gl.uniform1i(tex2dLoc, 1);
+  gl.uniform1i(texCubeLoc, 1);
+
+  gl.clearColor(1,0,0,1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  for (var ii = 0; ii < 4; ++ii) {
+    var x = ii % 2;
+    var y = Math.floor(ii / 2);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    glErrorShouldBe(gl, gl.INVALID_OPERATION,
+              "drawing with 2 different targets on the same texture unit should generate INVALID_VALUE");
+  }
+}
+
+init();
+successfullyParsed = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

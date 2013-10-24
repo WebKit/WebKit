@@ -1,0 +1,790 @@
+<!--
+
+/*
+** Copyright (c) 2012 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Prevents Chrome from offering to translate tests which generate
+     random characters for things like attribute names -->
+<meta name="google" value="notranslate">
+<title>WebGL Conformance Tests</title>
+<style>
+  body {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      max-height:100%;
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+  #testlist {
+    position:fixed;
+    top:310px;
+    left:0;
+    right:0;
+    bottom:0px;
+    overflow:auto;
+    padding:1em;
+  }
+
+  #header {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:310px;
+    overflow:auto;
+  }
+
+  #info {
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+    height: 100%;
+  }
+  .timeout { }
+  .success { }
+  .fail { }
+  .testpage { border: 1px solid black; background-color: #ccc; }
+  .testpagesuccess { border: 1px solid black; background-color: #8F8; }
+  .testpagefail { border: 1px solid black; background-color: #F88; }
+  .testpageskipped { border: 1px solid black; background-color: #888; }
+  .testpagetimeout { border: 1px solid black; background-color: #FC8; }
+  .nowebgl { font-weight: bold; color: red; }
+  #error-wrap {
+      float: left;
+      position: relative;
+      left: 50%;
+  }
+  #error {
+     color: red;
+     float: left;
+     position: relative;
+     left: -50%;
+     text-align: left;
+  }
+  ul {
+    list-style: none;
+    padding-left: 1em;
+  }
+</style>
+<script type="text/javascript" src="resources/webgl-test-harness.js"></script>
+<script>
+var CONFORMANCE_TEST_VERSION = "1.0.1";
+
+var OPTIONS = {
+  version: CONFORMANCE_TEST_VERSION,
+  allowSkip: 0
+};
+
+function start() {
+
+  function log(msg) {
+    if (window.console && window.console.log) {
+      window.console.log(msg);
+    }
+  }
+
+  function create3DContext(canvas)
+  {
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+    }
+    var context = null;
+    var names = ["webgl", "experimental-webgl"];
+    for (var i = 0; i < names.length; ++i) {
+      try {
+        context = canvas.getContext(names[i]);
+      } catch (e) {
+      }
+      if (context) {
+        break;
+      }
+    }
+    return context;
+  }
+
+  var reportType = WebGLTestHarnessModule.TestHarness.reportType;
+  var pageCount = 0;
+  var folderCount = 0;
+  var autoScroll = true;
+
+  var Page = function(reporter, folder, testIndex, url) {
+    this.reporter = reporter;
+    this.folder = folder;
+    this.url = url;
+    this.totalTests = 0;
+    this.totalSuccessful = 0;
+    this.totalTimeouts = 0;
+    this.totalSkipped = 0;
+    this.testIndex = testIndex;
+
+    this.elementId = "page" + pageCount++;
+    var li = reporter.localDoc.createElement('li');
+    li.id = this.elementId;
+    var div = reporter.localDoc.createElement('div');
+    var check = reporter.localDoc.createElement('input');
+    check.type = 'checkbox';
+    check.checked = true;
+    div.appendChild(check);
+    var button = reporter.localDoc.createElement('input');
+    button.type = 'button';
+    button.value = 'run';
+    button.onclick = function() {
+      autoScroll = false;
+      reporter.runTest(url);
+    };
+    if (reporter.noWebGL) {
+      button.disabled = true;
+    }
+    div.appendChild(button);
+    var a = reporter.localDoc.createElement('a');
+    a.href = url;
+    a.target = "_blank";
+    var node = reporter.localDoc.createTextNode(url);
+    a.appendChild(node);
+    div.appendChild(a);
+    li.setAttribute('class', 'testpage');
+    li.appendChild(div);
+    var ul = reporter.localDoc.createElement('ul');
+    var node = reporter.localDoc.createTextNode('');
+    li.appendChild(ul);
+    div.appendChild(node);
+    this.totalsElem = node;
+    this.resultElem = ul;
+    this.elem = li;
+    this.check = check;
+  };
+
+  Page.prototype.addResult = function(msg, success, skipped) {
+    ++this.totalTests;
+    if (success === undefined) {
+      ++this.totalTimeouts;
+      var result = "timeout";
+      var css = "timeout";
+    } else if (success) {
+      if(skipped) {
+        ++this.totalSkipped;
+      } else {
+        ++this.totalSuccessful;
+      }
+      // don't report success.
+      return;
+    } else {
+      var result = "failed";
+      var css = "fail";
+    }
+
+    var node = this.reporter.localDoc.createTextNode(result + ': ' + msg);
+    var li = this.reporter.localDoc.createElement('li');
+    li.appendChild(node);
+    li.setAttribute('class', css);
+    this.resultElem.appendChild(li);
+  };
+
+  Page.prototype.startPage = function() {
+    if (autoScroll && this.elem.scrollIntoView) {
+      this.elem.scrollIntoView(false);
+    }
+    this.totalTests = 0;
+    this.totalSuccessful = 0;
+    this.totalTimeouts = 0;
+    // remove previous results.
+    while (this.resultElem.hasChildNodes()) {
+      this.resultElem.removeChild(this.resultElem.childNodes[0]);
+    }
+    this.totalsElem.textContent = '';
+    return this.check.checked && this.folder.checked();
+  };
+
+  Page.prototype.firstTestIndex = function() {
+    return this.testIndex;
+  };
+
+  Page.prototype.finishPage = function(success) {
+    if(this.totalSkipped) {
+      var msg = ' (' + this.totalSkipped + ' of ' + this.totalTests + ' skipped)';
+    } else {
+      var msg = ' (' + this.totalSuccessful + ' of ' + this.totalTests + ' passed)';
+    }
+
+    if (success === undefined) {
+      var css = 'testpagetimeout';
+      msg = '(*timeout*)';
+      ++this.totalTests;
+      ++this.totalTimeouts;
+    } else if (this.totalSkipped) {
+      var css = 'testpageskipped';
+    } else if (this.totalSuccessful != this.totalTests) {
+      var css = 'testpagefail';
+    } else {
+      var css = 'testpagesuccess';
+    }
+    this.elem.setAttribute('class', css);
+    this.totalsElem.textContent = msg;
+  };
+
+  Page.prototype.enableTest = function(re) {
+    if (this.url.match(re)) {
+      this.check.checked = true;
+      this.folder.enableUp_();
+    }
+  };
+
+  Page.prototype.disableTest = function(re) {
+    if (this.url.match(re)) {
+      this.check.checked = false;
+    }
+  };
+
+  var Folder = function(reporter, folder, depth, opt_name) {
+    this.reporter = reporter;
+    this.depth = depth;
+    this.name = opt_name || "";
+    this.subFolders = {};
+    this.pages = [];
+    this.items = [];
+    this.folder = folder;
+    var that = this;
+
+    var doc = reporter.localDoc;
+    this.elementId = "folder" + folderCount++;
+    var li = doc.createElement('li');
+    li.id = this.elementId;
+    var div = doc.createElement('div');
+    var check = doc.createElement('input');
+    check.type = 'checkbox';
+    check.checked = true;
+    div.appendChild(check);
+    var button = doc.createElement('input');
+    button.type = 'button';
+    button.value = 'run';
+    button.onclick = function() {
+      autoScroll = true;
+      that.run();
+    };
+    if (reporter.noWebGL) {
+      button.disabled = true;
+    }
+    div.appendChild(button);
+    var h = doc.createElement('span');
+    h.appendChild(doc.createTextNode(this.name));
+    div.appendChild(h);
+    var ul = doc.createElement('ul');
+    li.appendChild(div);
+    li.appendChild(ul);
+    this.childUL = ul;
+    this.elem = li;
+    this.check = check;
+  };
+
+  Folder.prototype.checked = function() {
+    return this.check.checked &&
+        (this.folder ? this.folder.checked() : true);
+  };
+
+  Folder.prototype.firstTestIndex = function() {
+    return this.items[0].firstTestIndex();
+  };
+
+  Folder.prototype.numChildren = function() {
+    var numChildren = 0;
+    for (var name in this.subFolders) {
+      numChildren += this.subFolders[name].numChildren();
+    }
+    return numChildren + this.pages.length;
+  };
+
+  Folder.prototype.run = function() {
+    var firstTestIndex = this.firstTestIndex();
+    var count = this.numChildren();
+    log("run tests: " + firstTestIndex + " to " + (firstTestIndex + count - 1))
+    testHarness.runTests(firstTestIndex, count);
+  };
+
+  Folder.prototype.getSubFolder = function(name) {
+    var subFolder = this.subFolders[name];
+    if (subFolder === undefined) {
+      subFolder = new Folder(this.reporter, this, this.depth + 1, name);
+      this.subFolders[name] = subFolder;
+      this.items.push(subFolder);
+      this.childUL.appendChild(subFolder.elem);
+    }
+    return subFolder;
+  };
+
+  Folder.prototype.getOrCreateFolder = function(url) {
+    var parts = url.split('/');
+    var folder = this;
+    for (var pp = 0; pp < parts.length - 1; ++pp) {
+      folder = folder.getSubFolder(parts[pp]);
+    }
+    return folder;
+  };
+
+  Folder.prototype.addPage = function(page) {
+    this.pages.push(page);
+    this.items.push(page);
+    this.childUL.appendChild(page.elem);
+  };
+
+  Folder.prototype.disableTest = function(re, opt_forceRecurse) {
+    var recurse = true;
+    if (this.name.match(re)) {
+      this.check.checked = false;
+      recurse = opt_forceRecurse;
+    }
+    if (recurse) {
+      for (var name in this.subFolders) {
+        this.subFolders[name].disableTest(re, opt_forceRecurse);
+      }
+      for (var ii = 0; ii < this.pages.length; ++ii) {
+        this.pages[ii].disableTest(re);
+      }
+    }
+  };
+
+  Folder.prototype.enableUp_ = function() {
+    this.check.checked = true;
+    var parent = this.folder;
+    if (parent) {
+      parent.enableUp_();
+    }
+  }
+
+  Folder.prototype.enableTest = function(re) {
+    if (this.name.match(re)) {
+      this.enableUp_();
+    }
+    for (var name in this.subFolders) {
+      this.subFolders[name].enableTest(re);
+    }
+    for (var ii = 0; ii < this.pages.length; ++ii) {
+      this.pages[ii].enableTest(re);
+    }
+  };
+
+  var Reporter = function() {
+    this.localDoc = document;
+    this.resultElem = document.getElementById("results");
+    this.fullResultsElem = document.getElementById("fullresults");
+    var node = this.localDoc.createTextNode('');
+    this.fullResultsElem.appendChild(node);
+    this.fullResultsNode = node;
+    this.iframe = document.getElementById("testframe");
+    this.currentPageElem = null;
+    this.totalPages = 0;
+    this.pagesByURL = {};
+    var canvas = document.getElementById("webglcheck");
+    var ctx = create3DContext(canvas);
+    this.noWebGL = !ctx;
+    this.contextInfo = {};
+    this.root = new Folder(this, null, 0, "all");
+    this.resultElem.appendChild(this.root.elem);
+    this.callbacks = { };
+
+    if (ctx) {
+      this.contextInfo["VENDOR"] = ctx.getParameter(ctx.VENDOR);
+      this.contextInfo["VERSION"] = ctx.getParameter(ctx.VERSION);
+      this.contextInfo["RENDERER"] = ctx.getParameter(ctx.RENDERER);
+      this.contextInfo["RED_BITS"] = ctx.getParameter(ctx.RED_BITS);
+      this.contextInfo["GREEN_BITS"] = ctx.getParameter(ctx.GREEN_BITS);
+      this.contextInfo["BLUE_BITS"] = ctx.getParameter(ctx.BLUE_BITS);
+      this.contextInfo["ALPHA_BITS"] = ctx.getParameter(ctx.ALPHA_BITS);
+      this.contextInfo["DEPTH_BITS"] = ctx.getParameter(ctx.DEPTH_BITS);
+      this.contextInfo["STENCIL_BITS"] = ctx.getParameter(ctx.STENCIL_BITS);
+
+      var ext = ctx.getExtension("WEBGL_debug_renderer_info");
+      if (ext) {
+        this.contextInfo["UNMASKED_VENDOR"] = ctx.getParameter(ext.UNMASKED_VENDOR_WEBGL);
+        this.contextInfo["UNMASKED_RENDERER"] = ctx.getParameter(ext.UNMASKED_RENDERER_WEBGL);
+      }
+    }
+  };
+
+  Reporter.prototype.enableTest = function(name) {
+    this.root.enableTest(name);
+  };
+
+  Reporter.prototype.disableTest = function(name) {
+    this.root.disableTest(name);
+  };
+
+  Reporter.prototype.disableAllTests = function() {
+    this.root.disableTest(".*", true);
+  };
+
+  Reporter.prototype.addEventListener = function(type, func) {
+    if (!this.callbacks[type]) {
+      this.callbacks[type] = [];
+    }
+    this.callbacks[type].push(func);
+  };
+
+  Reporter.prototype.executeListenerEvents_ = function(type) {
+    var callbacks = this.callbacks[type].slice(0);
+    for (var ii = 0; ii < callbacks.length; ++ii) {
+      setTimeout(callbacks[ii], 0);
+    }
+  };
+
+  Reporter.prototype.runTest = function(url) {
+    var page = this.pagesByURL[url];
+    page.startPage();
+    this.currentPage = page;
+    this.iframe.src = url;
+  };
+
+  Reporter.prototype.getFolder = function(url) {
+    return this.root.getOrCreateFolder(url);
+  };
+
+  Reporter.prototype.addPage = function(url) {
+    var folder = this.getFolder(url);
+    var page = new Page(this, folder, this.totalPages, url);
+    folder.addPage(page);
+    ++this.totalPages;
+    this.pagesByURL[url] = page;
+  };
+
+  Reporter.prototype.startPage = function(url) {
+    var page = this.pagesByURL[url];
+    this.currentPage = page;
+    return page.startPage();
+  };
+
+  Reporter.prototype.addResult = function(msg, success, skipped) {
+    if (this.currentPage != null) {
+      this.currentPage.addResult(msg, success, skipped);
+    }
+  };
+
+  Reporter.prototype.finishPage = function(success) {
+    if (this.currentPage != null) {
+      this.currentPage.finishPage(success);
+      this.currentPage = null;
+    }
+  };
+
+  Reporter.prototype.displayFinalResults = function(msg, success) {
+    if (success) {
+      var totalTests = 0;
+      var totalSuccessful = 0;
+      var totalTimeouts = 0;
+      var totalSkipped = 0;
+      for (var url in this.pagesByURL) {
+        var page = this.pagesByURL[url];
+        totalTests += page.totalTests;
+        totalSuccessful += page.totalSuccessful;
+        totalTimeouts += page.totalTimeouts;
+        totalSkipped += page.totalSkipped;
+      }
+      var timeout = '';
+      if (totalTimeouts > 0) {
+        timeout = ', ' + totalTimeouts + ' timed out';
+      }
+      var msg = ' (' + totalSuccessful + ' of ' +
+                totalTests + ' passed' + timeout + ')';
+      this.fullResultsNode.textContent = msg;
+
+      // generate a text summary
+      var tx = "";
+      tx += "WebGL Conformance Test Results\n";
+      tx += "Version " + OPTIONS.version + "\n";
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "User Agent: " + (navigator.userAgent ? navigator.userAgent : "(navigator.userAgent is null)") + "\n";
+      tx += "WebGL VENDOR: " + this.contextInfo["VENDOR"] + "\n";
+      tx += "WebGL VERSION: " + this.contextInfo["VERSION"] + "\n";
+      tx += "WebGL RENDERER: " + this.contextInfo["RENDERER"] + "\n";
+      tx += "Unmasked VENDOR: " + this.contextInfo["UNMASKED_VENDOR"] + "\n";
+      tx += "Unmasked RENDERER: " + this.contextInfo["UNMASKED_RENDERER"] + "\n";
+      tx += "WebGL R/G/B/A/Depth/Stencil bits (default config): " + this.contextInfo["RED_BITS"] + "/" + this.contextInfo["GREEN_BITS"] + "/" + this.contextInfo["BLUE_BITS"] + "/" + this.contextInfo["ALPHA_BITS"] + "/" + this.contextInfo["DEPTH_BITS"] + "/" + this.contextInfo["STENCIL_BITS"] + "\n";
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Test Summary (" + totalTests + " total tests):\n";
+      tx += "Tests PASSED: " + totalSuccessful + "\n";
+      tx += "Tests FAILED: " + (totalTests - totalSuccessful - totalSkipped) + "\n";
+      tx += "Tests TIMED OUT: " + totalTimeouts + "\n";
+      tx += "Tests SKIPPED: " + totalSkipped + "\n";
+      tx += "\n";
+      tx += "-------------------\n\n";
+      if (totalSuccessful < totalTests) {
+        tx += "Failures:\n\n";
+        for (var url in this.pagesByURL) {
+            var page = this.pagesByURL[url];
+            var pageTotalFail = page.totalTests - page.totalSuccessful - page.totalSkipped;
+            if (!(page.totalTests == 0 && page.totalTimeouts == 0) &&
+                pageTotalFail > 0)
+            {
+            tx += url + ": " + pageTotalFail + " tests failed";
+            if (page.totalTimeouts)
+                tx += " (" + page.totalTimeouts + " timed out)";
+            tx += "\n";
+            }
+        }
+      } else {
+        tx += "All tests PASSED\n\n";
+      }
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Complete Test Results (total / pass / fail / timeout / skipped):\n\n";
+      for (var url in this.pagesByURL) {
+        var page = this.pagesByURL[url];
+        var pageTotalFail = page.totalTests - page.totalSuccessful - page.totalSkipped;
+        if (!(page.totalTests == 0 && page.totalTimeouts == 0)) {
+          tx += url + ": " + page.totalTests + " / " +
+              page.totalSuccessful + " / " + pageTotalFail + " / " + page.totalTimeouts + " / " + page.totalSkipped + "\n";
+        }
+      }
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Generated on: " + (new Date()).toString() + "\n";
+
+      var r = document.getElementById("testResultsAsText");
+      while (r.firstChild) r.removeChild(r.firstChild);
+      r.appendChild(document.createTextNode(tx));
+      document.getElementById("showTextSummary").style.visibility = "visible";
+
+      this.postResultsToServer(tx);
+    } else {
+      var e = document.getElementById("error");
+      e.innerHTML = msg;
+      this.postResultsToServer(msg);
+    }
+  };
+
+  Reporter.prototype.postTestStartToServer = function(resultText) {
+    if(OPTIONS.postResults == undefined || OPTIONS.postResults == 0) {
+      return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', "/start", true);
+    xhr.send(null);
+  };
+
+  Reporter.prototype.postResultsToServer = function(resultText) {
+    if(OPTIONS.postResults == undefined || OPTIONS.postResults == 0) {
+      return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', "/finish", true);
+    xhr.setRequestHeader("Content-Type", "text/plain");
+    xhr.send(resultText);
+  };
+
+  Reporter.prototype.ready = function() {
+    var loading = document.getElementById("loading");
+    loading.style.display = "none";
+    if (!this.noWebGL) {
+      var button = document.getElementById("runTestsButton");
+      button.disabled = false;
+      this.executeListenerEvents_("ready");
+    }
+  };
+
+  Reporter.prototype.reportFunc = function(type, msg, success, skipped) {
+    switch (type) {
+      case reportType.ADD_PAGE:
+        return this.addPage(msg);
+      case reportType.READY:
+        return this.ready();
+      case reportType.START_PAGE:
+        return this.startPage(msg);
+      case reportType.TEST_RESULT:
+        return this.addResult(msg, success, skipped);
+      case reportType.FINISH_PAGE:
+        return this.finishPage(success);
+      case reportType.FINISHED_ALL_TESTS:
+        return this.displayFinalResults(msg, success);
+      default:
+        throw 'unhandled';
+        break;
+    };
+  };
+
+  var getURLOptions = function(obj) {
+    var s = window.location.href;
+    var q = s.indexOf("?");
+    var e = s.indexOf("#");
+    if (e < 0) {
+      e = s.length;
+    }
+    var query = s.substring(q + 1, e);
+    var pairs = query.split("&");
+    for (var ii = 0; ii < pairs.length; ++ii) {
+      var keyValue = pairs[ii].split("=");
+      var key = keyValue[0];
+      var value = decodeURIComponent(keyValue[1]);
+      obj[key] = value;
+    }
+  };
+
+  getURLOptions(OPTIONS);
+
+  document.getElementById("testVersion").innerHTML = OPTIONS.version;
+
+  var reporter = new Reporter();
+  var iframe = document.getElementById("testframe");
+  var testHarness = new WebGLTestHarnessModule.TestHarness(
+      iframe,
+      '00_test_list.txt',
+      function(type, msg, success, skipped) {
+        return reporter.reportFunc(type, msg, success, skipped);
+      },
+      OPTIONS);
+  reporter.addEventListener("ready", function() {
+    // Set which tests to include.
+    if (OPTIONS.include) {
+      reporter.disableAllTests();
+      var includes = OPTIONS.include.split(",")
+      for (var ii = 0; ii < includes.length; ++ii) {
+        reporter.enableTest(new RegExp(includes[ii]));
+      }
+    }
+    // Remove tests based on skip=re1,re2 in URL.
+    if (OPTIONS.skip) {
+      var skips = OPTIONS.skip.split(",")
+      for (var ii = 0; ii < skips.length; ++ii) {
+        reporter.disableTest(new RegExp(skips[ii]));
+      }
+    }
+    // Auto run the tests if the run=1 in URL
+    if (OPTIONS.run != undefined && OPTIONS.run != 0) {
+      reporter.postTestStartToServer();
+      testHarness.runTests();
+    }
+  });
+  window.webglTestHarness = testHarness;
+  var button = document.getElementById("runTestsButton");
+  button.disabled = true;
+  button.onclick = function() {
+    autoScroll = true;
+    reporter.postTestStartToServer();
+    testHarness.runTests();
+  };
+  var textbutton = document.getElementById("showTextSummary");
+  textbutton.onclick = function() {
+    log("click");
+    var htmldiv = document.getElementById("testResultsHTML");
+    var textdiv = document.getElementById("testResultsText");
+    if (textdiv.style.display == "none") {
+      textdiv.style.display = "block";
+      htmldiv.style.display = "none";
+      textbutton.setAttribute("value", "display html summary");
+    } else {
+      textdiv.style.display = "none";
+      htmldiv.style.display = "block";
+      textbutton.setAttribute("value", "display text summary");
+    }
+  };
+  if (reporter.noWebGL) {
+    button.disabled = true;
+    var elem = document.getElementById("nowebgl");
+    elem.style.display = "";
+    reporter.postResultsToServer("Browser does not appear to support WebGL");
+  }
+}
+</script>
+</head>
+<body onload="start()">
+
+<div id="testlist">
+
+        <div id="testResultsHTML">
+          <ul id="results">
+          </ul>
+        </div>
+        <div style="display: none;" id="testResultsText">
+          <pre id="testResultsAsText"></pre>
+        </div>
+
+</div> <!-- end of container -->
+
+<div id="header">
+
+<table border="2">
+  <tr style="height: 300px;">
+    <td>
+      <table>
+        <tr>
+          <td style="width: 300px">
+            <div id="info">
+              <img src="resources/webgl-logo.png" /><br />
+              WebGL Conformance Test Runner<br/>
+              Version
+              <span id="testVersion">
+              </span>
+              <br/>
+              <input type="button" value="run tests" id="runTestsButton"/>
+              <br/>
+              <input type="button" style="visibility: hidden;" value="display text summary" id="showTextSummary"/>
+              <div id="nowebgl" class="nowebgl" style="display: none;">
+                This browser does not appear to support WebGL
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div id="loading">
+              Loading Tests...
+            </div>
+            <div style="border: 1px">
+              Results:
+              <span id="fullresults">
+              </span>
+            </div>
+            <canvas id="webglcheck" style="display: none;">
+            </canvas>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div id="error-wrap">
+              <pre id="error"></pre>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+    <td>
+      <iframe id="testframe" scrolling="yes" width="100%" height="100%">
+      </iframe>
+    </td>
+  </tr>
+</table>
+</div> <!-- end of header -->
+
+</body>
+</html>

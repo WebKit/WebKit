@@ -1,0 +1,104 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL GLES2 difference test.</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+var wtu = WebGLTestUtils;
+description("Tests the a few differences between WebGL and GLES2");
+
+var gl = wtu.create3DContext();
+var program = wtu.loadStandardProgram(gl);
+gl.useProgram(program);
+var vertexObject = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+gl.enableVertexAttribArray(0);
+glErrorShouldBe(gl, gl.NO_ERROR, "Setup should succeed");
+
+debug("");
+debug("Verify that constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR)");
+
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO)");
+
+debug("");
+debug("Verify that in depthRange zNear <= zFar");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.depthRange(20, 10)");
+
+debug("");
+debug("Verify that front/back settings should be the same for stenclMask and stencilFunc");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMask(255)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.FRONT, 1)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.BACK, 1)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFunc(gl.ALWAYS, 0, 255)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 255)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 255)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 1)");
+shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 1)");
+shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+
+debug("");
+debug("Verify that IMPLEMENTATION_COLOR_READ_FORMAT and IMPLEMENTATION_COLOR_READ_TYPE are undefined");
+shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_TYPE);
+
+debug("");
+debug("Verify that *LENGTH are undefined");
+shouldBeUndefined(gl.INFO_LOG_LENGTH);
+shouldBeUndefined(gl.SHADER_SOURCE_LENGTH);
+shouldBeUndefined(gl.ACTIVE_UNIFORM_MAX_LENGTH);
+shouldBeUndefined(gl.ACTIVE_ATTRIB_MAX_LENGTH);
+
+debug("");
+debug("Verify that UNPACK_COLORSPACE_CONVERSION_WEBGL is supported");
+shouldBe("gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL)", "gl.BROWSER_DEFAULT_WEBGL");
+gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+shouldBe("gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL)", "gl.NONE");
+glErrorShouldBe(gl, gl.NO_ERROR, "set/get UNPACK_COLORSPACE_CONVERSION_WEBGL should generate no error");
+
+debug("");
+debug("Verify that drawingBufferWidth and drawingBufferHeights are implemented");
+shouldBeTrue("gl.drawingBufferWidth >= 0 && gl.drawingBufferHeight >= 0");
+
+successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

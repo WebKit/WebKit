@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="../unit.css" />
+<script type="application/x-javascript" src="../unit.js"></script>
+<script type="application/x-javascript" src="../util.js"></script>
+<script type="application/x-javascript">
+
+Tests.autorun = false;
+Tests.message = "This might take a second or two";
+
+Tests.testGLOverhead = function() {
+    var gl = document.getElementById("gl").getContext(GL_CONTEXT_ID);
+    var fakeGl = {getError: function(){ return 0; }};
+    time("testGLOverhead", function() {
+        for (var i=0; i<1000000; i++)
+            gl.getError();
+    });
+    time("testJSOverhead", function() {
+        for (var i=0; i<1000000; i++)
+            fakeGl.getError();
+    });
+    time("testLoopOverhead", function() {
+        for (var i=0; i<1000000;)
+            i++;
+    });
+}
+
+</script>
+<style>canvas{ position:absolute; }</style>
+</head><body>
+<canvas id="gl" width="16" height="16"></canvas>
+<h3>1000000x gl.getError() (measuring JS->GL call overhead)</h3>
+<p id="testGLOverhead"></p>
+<h3>1000000x fakeGl.getError() (measuring JS->JS call overhead)</h3>
+<p id="testJSOverhead"></p>
+<h3>1000000x i++ (measuring loop overhead)</h3>
+<p id="testLoopOverhead"></p>
+</body></html>
+

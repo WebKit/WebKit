@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="testbed" width="16" height="16"></canvas>
+<canvas id="c" width="16" height="16"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Tests texSubImage2D with bad arguments');
+
+var wtu = WebGLTestUtils;
+var c = document.getElementById("c");
+
+var gl = wtu.create3DContext("testbed");
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "Setup should succeed"); 
+
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 1, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "y + height > texture height");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "x + width > texture width");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, -1, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "negative x");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, -1, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "negative y");
+gl.texSubImage2D(gl.TEXTURE_2D, -1, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_VALUE, "negative level");
+gl.texSubImage2D(gl.FLOAT, 0, 0,0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_ENUM, "bad target");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "good args");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGB, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "format not same as original");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "type not same as original");
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "make texture RGB");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGB, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "format same as original RGB");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "format not same as original RGB");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "type not same as original RGB");
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "make texture RGBA 4_4_4_4");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, c);
+glErrorShouldBe(gl, gl.NO_ERROR, "format same as original RGBA 4_4_4_4");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGB, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "format not same as original RGBA 4_4_4_4");
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, gl.RGBA, gl.UNSIGNED_BYTE, c);
+glErrorShouldBe(gl, gl.INVALID_OPERATION, "type not same as original RGBA 4_4_4_4");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript">
+
+window.onload = function() {
+  setup("1");
+  setup("2");
+}
+
+function setup(id) {
+  var c = document.getElementById(id);
+  var names = ["webgl", "experimental-webgl"];
+  for (var i = 0; i < names.length; ++i) {
+    gl = canvas.getContext(names[i]);
+    if (gl) {
+      break;
+    }
+  }
+  gl.clearColor(1,0,0,1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  setTimeout(function() {
+    gl.enable(gl.SCISSOR_TEST);
+    gl.scissor(0,0,50,50);
+    gl.clearColor(0,1,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+  }, 500);
+}
+</script>
+</head>
+<body>
+<canvas id="1"></canvas>
+<div style="height:4000px;">content that is tall like several articles</div>
+<canvas id="2"></canvas>
+</body>
+</html>
+

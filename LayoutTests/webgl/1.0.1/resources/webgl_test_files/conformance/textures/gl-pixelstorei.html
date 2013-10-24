@@ -1,0 +1,124 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL pixelStorei Test</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"> </script>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+</head>
+<body>
+<canvas id="example" width="50" height="50"></canvas>
+<canvas id="2d00" width="50" height="50"></canvas>
+<canvas id="2d01" width="50" height="50"></canvas>
+<canvas id="2d02" width="50" height="50"></canvas>
+<canvas id="2d03" width="50" height="50"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+void main() {
+  gl_Position = vPosition;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+void main() {
+  gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+}
+</script>
+
+<script>
+function fail(x,y, name, buf, shouldBe) {
+  var i = (y*50+x) * 4;
+  var reason = "pixel in "+name+" at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+  testFailed(reason);
+}
+
+function pass(name) {
+  testPassed("drawing is correct in " + name);
+}
+
+function init() {
+  description("This test checks that drawImage and readPixels are not effected by gl.Pixelstorei(gl.PACK_ALIGNMENT) and visa versa");
+
+  debug("There should be 5 red triangles on 5 black squares above");
+  debug("");
+
+  var canvas3d = document.getElementById("example");
+  gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
+
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+
+  function checkData(buf, name) {
+    // Test several locations
+    // First line should be all black
+    for (var i = 0; i < 50; ++i) {
+      if (buf[i*4] != 0 || buf[i*4+1] != 0 || buf[i*4+2] != 0 || buf[i*4+3] != 255) {
+        fail(i, 0, name, buf, "(0,0,0,255)");
+        return;
+      }
+    }
+
+    // Line 25 should be red for at least 6 red pixels starting 22 pixels in
+    var offset = (25*50+22) * 4;
+    for (var i = 0; i < 6; ++i) {
+      if (buf[offset+i*4] != 255 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+        fail(22 + i, 25, name, buf, "(255,0,0,255)");
+        return;
+      }
+    }
+
+    // Last line should be all black
+    offset = (49*50) * 4;
+    for (var i = 0; i < 50; ++i) {
+      if (buf[offset+i*4] != 0 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+        fail(i, 49, name, buf, "(0,0,0,255)");
+        return;
+      }
+    }
+
+    pass(name);
+  }
+
+  function checkColors() {
+    var buf = new Uint8Array(50 * 50 * 4);
+    gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    checkData(buf, "3d context");
+    var imgData = ctx2d.getImageData(0, 0, 50, 50);
+    checkData(imgData.data, "2d context");
+  }
+
+  var table = [1, 2, 4, 8];
+  for (var ii = 0; ii < table.length; ++ii) {
+    gl.pixelStorei(gl.PACK_ALIGNMENT, table[ii]);
+    ctx2d = document.getElementById("2d0" + ii).getContext("2d");
+    ctx2d.globalCompositeOperation = 'copy';
+    ctx2d.drawImage(canvas3d, 0, 0);
+    checkColors();
+    assertMsg(gl.getParameter(gl.PACK_ALIGNMENT) == table[ii],
+        "PACK_ALIGNMENT is " + table[ii]);
+  }
+}
+
+init();
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

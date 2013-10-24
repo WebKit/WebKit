@@ -1,0 +1,87 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <title>gl-fragcoord Test</title>
+  <link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+  <script src="../../../resources/js-test-pre.js"></script>
+  <script src="../../resources/webgl-test.js"> </script>
+  <script src="../../resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="32" height="32">
+</canvas>
+<div id="description"></div>
+<div id="console"></div>
+  <script id="vshader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    void main()
+    {
+      gl_Position = vPosition;
+    }
+  </script>
+
+  <script id="fshader" type="x-shader/x-fragment">
+    precision mediump float;
+    void main()
+    {
+      gl_FragColor = vec4(
+        floor(gl_FragCoord.x * 4.0 / 32.0) / 4.0,
+        floor(gl_FragCoord.y * 4.0 / 32.0) / 4.0,
+        floor(gl_FragCoord.z * 4.0) / 4.0,
+        1);
+    }
+  </script>
+
+  <script>
+    function init()
+    {
+      if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(false);
+      }
+
+      description("tests gl_FragCoord");
+
+      wtu = WebGLTestUtils;
+      gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
+
+      var vertexObject = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
+        [-1, -1, -1,  1, -1,  0, -1,  1,  0,
+         -1,  1,  0,  1, -1,  0,  1,  1,  1]),
+                    gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no errors from draw");
+
+      for (var xx = 0; xx < 32; xx += 4) {
+        for (var yy = 0; yy < 32; yy += 4) {
+          var zz = (xx / 64) + (yy / 64);
+          var color = [
+             Math.floor(Math.floor(xx * 4.0 / 32.0) / 4 * 256),
+             Math.floor(Math.floor(yy * 4.0 / 32.0) / 4 * 256),
+             Math.floor(Math.floor(zz * 4.0) / 4 * 256)
+          ];
+          var msg = "should be " + color;
+          wtu.checkCanvasRect(
+              gl, xx, yy, 1, 1, color, msg, 4);
+        }
+      }
+    }
+
+    init();
+    successfullyParsed = true;
+  </script>
+<script src="../../../resources/js-test-post.js"></script>
+
+</body>
+</html>

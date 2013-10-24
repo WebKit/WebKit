@@ -1,0 +1,71 @@
+Rules for Claiming a Conformant WebGL Implementation
+====================================================
+
+The WebGL API is a web standard, and many web browser implementers
+deliver their browser on multiple operating systems (OSs). WebGL
+implementations also typically rely on the presence of an OpenGL or
+OpenGL ES implementation on the OS. It can be appreciated that a WebGL
+implementation therefore has many dependencies. This document attempts
+to clarify to potential implementers the rules the Khronos Group uses
+to judge whether a particular WebGL implementation is conformant.
+
+1. Conformance on a particular operating system
+
+On a given OS, a WebGL implementation will be considered to conform to
+a particular version of the conformance suite if the suite passes with
+no test failures on at least two GPUs, each from a different
+vendor. If the OS only supports a GPU from one vendor, the two-GPU
+requirement is dropped.
+
+2. Conformance across multiple operating systems
+
+A WebGL implementation will be considered to conform to a particular
+version of the conformance suite if it passes rule (1) on all of the
+OSs on which the WebGL implementation is intended to be supported.
+
+Discussion
+==========
+
+A WebGL implementation might reach conformance on a particular OS, but
+a subsequent graphics driver release on that OS might introduce a
+regression causing failures of one or more of the WebGL conformance
+tests. In this situation it is not required that the browser revoke
+support for the "webgl" HTML Canvas context type. The browser vendor
+should work with the GPU vendor to ensure the driver regression is
+fixed. A situation like this would, however, prevent the WebGL
+implementer from conforming to a subsequent version of the test suite.
+
+A WebGL implementation intended to ship on three OSs may reach
+conformance on two of them, but due to graphics driver bugs, may be
+unable to reach conformance on the third. In this situation the
+implementation is not yet considered to be conformant.
+
+A web browser author developing a new WebGL implementation should not
+support the "webgl" HTML Canvas context type by default in a shipping
+version of the product until reaching conformance. It is acceptable to
+give end users an option to turn on WebGL support in a non-conformant
+implementation as long as the documentation for that option clearly
+indicates that the implementation is not yet conformant and may have
+compatibility issues. It is suggested that the Canvas context type
+"experimental-webgl" may be supported by default in such
+implementations.
+
+An existing WebGL implementation which conformed to an earlier version
+of the test suite is not required to remove support for the "webgl"
+HTML Canvas context type while in the process of conforming to a later
+version of the test suite. However, the implementer must not advertise
+conformance to the later version until it has been reached. It is
+acceptable for the implementer to advertise details of their
+conformance, for example number or percentage of passing or failing
+tests, or names of passing or failing tests.
+
+The WebGL API has strict security requirements. Even one failing test
+may indicate a serious security issue in the WebGL implementation. For
+this reason, no exceptions for failing conformance tests will be
+granted.
+
+The Khronos Group determines whether a particular WebGL implementation
+is conformant based on the implementer's conformance suite
+submissions, on multiple OSs and on multiple GPUs as necessary, using
+the rules above. An implementer shall not judge their own
+implementation conformant simply by applying the above rules.

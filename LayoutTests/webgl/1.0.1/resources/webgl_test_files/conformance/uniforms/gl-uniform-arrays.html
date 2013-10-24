@@ -1,0 +1,302 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL uniform array Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="example" width="2" height="2"> </canvas>
+<script id="vshader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    void main()
+    {
+        gl_Position = vPosition;
+    }
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform $type color[3];
+    void main()
+    {
+        gl_FragColor = vec4(color[0]$elem, color[1]$elem, color[2]$elem, 1);
+    }
+</script>
+<script>
+function loadShader(ctx, shaderType, shaderSource) {
+  // Create the shader object
+  var shader = ctx.createShader(shaderType);
+  if (shader == null) {
+    debug("*** Error: unable to create shader '"+shader+"'");
+    return null;
+  }
+
+  // Load the shader source
+  ctx.shaderSource(shader, shaderSource);
+
+  // Compile the shader
+  ctx.compileShader(shader);
+
+  // Check the compile status
+  var compiled = ctx.getShaderParameter(shader, ctx.COMPILE_STATUS);
+  if (!compiled) {
+    // Something went wrong during compilation; get the error
+    var error = ctx.getShaderInfoLog(shader);
+    debug("*** Error compiling shader '"+shader+"':"+error);
+    ctx.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function loadProgram(ctx, vertexShaderSrc, fragmentShaderSrc) {
+  var program = ctx.createProgram();
+  var vShader = loadShader(ctx, ctx.VERTEX_SHADER, vertexShaderSrc)
+  var fShader = loadShader(ctx, ctx.FRAGMENT_SHADER, fragmentShaderSrc);
+  ctx.attachShader(program, vShader);
+  ctx.attachShader(program, fShader);
+  ctx.linkProgram(program);
+  var linked = ctx.getProgramParameter(program, ctx.LINK_STATUS);
+  if (!linked) {
+    // something went wrong with the link
+    var error = ctx.getProgramInfoLog (ctx.program);
+    debug("Error in program linking:" + error);
+    ctx.deleteProgram(ctx.program);
+    program = null;
+  }
+//  ctx.deleteShader(fShader);
+//  ctx.deleteShader(vShader);
+  return program;
+}
+
+description("This test ensures WebGL implementations handle uniform arrays correctly.");
+
+debug("");
+
+var gl = create3DContext(document.getElementById("example"));
+
+var vSrc = document.getElementById("vshader").text;
+var fTemplate = document.getElementById("fshader").text;
+
+var typeInfos = [
+  { type: 'float',
+    jsTypeOf: 'number',
+    setter: 'uniform1fv',
+    elem: '',
+    numSrcValues: 3,
+    invalidSet: function(loc) {
+      gl.uniform2fv(loc, [1, 2]);
+    },
+    srcValueAsString: function(index, srcValues) {
+      return srcValues[index].toString();
+    },
+    returnValueAsString: function(value) {
+      return value === null ? 'null' : value.toString();
+    },
+    checkType: function(value) {
+      return typeof value === 'number';
+    },
+    checkValue: function(typeInfo, index, value) {
+      return typeInfo.srcValues[index] == value;
+    },
+    srcValues: [16, 15, 14],
+    srcValuesLess: [],
+    srcValuesNonMultiple: null,
+  },
+  { type: 'vec2',
+    jsTypeOf: 'Float32Array',
+    setter: 'uniform2fv',
+    elem: '[1]',
+    numSrcValues: 3,
+    invalidSet: function(loc) {
+      gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
+    },
+    srcValueAsString: function(index, srcValues) {
+      return "[" + srcValues[index * 2 + 0].toString() + ", " +
+                   srcValues[index * 2 + 1].toString() + "]";
+    },
+    returnValueAsString: function(value) {
+      return value === null ? 'null' : ("[" + value[0] + ", " + value[1] + "]");
+    },
+    checkType: function(value) {
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 2;
+    },
+    checkValue: function(typeInfo, index, value) {
+      return value !== null &&
+             typeInfo.srcValues[index * 2 + 0] == value[0] &&
+             typeInfo.srcValues[index * 2 + 1] == value[1];
+    },
+    srcValues: [16, 15, 14, 13, 12, 11],
+    srcValuesLess: [16],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10],
+  },
+  { type: 'vec3',
+    jsTypeOf: 'Float32Array',
+    setter: 'uniform3fv',
+    elem: '[2]',
+    numSrcValues: 3,
+    invalidSet: function(loc) {
+      gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
+    },
+    srcValueAsString: function(index, srcValues) {
+      return "[" + srcValues[index * 3 + 0].toString() + ", " +
+                   srcValues[index * 3 + 1].toString() + ", " +
+                   srcValues[index * 3 + 2].toString() + "]";
+    },
+    returnValueAsString: function(value) {
+      return value === null ? 'null' :
+          ("[" + value[0] + ", " + value[1] + ", " + value[2] + "]");
+    },
+    checkType: function(value) {
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 3;
+    },
+    checkValue: function(typeInfo, index, value) {
+      return value !== null &&
+             typeInfo.srcValues[index * 3 + 0] == value[0] &&
+             typeInfo.srcValues[index * 3 + 1] == value[1] &&
+             typeInfo.srcValues[index * 3 + 2] == value[2];
+    },
+    srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8],
+    srcValuesLess: [16, 15],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7],
+  },
+  { type: 'vec4',
+    jsTypeOf: 'Float32Array',
+    setter: 'uniform4fv',
+    elem: '[3]',
+    numSrcValues: 3,
+    invalidSet: function(loc) {
+      gl.uniform1fv(loc, [2]);
+    },
+    illegalSet: function(loc) {
+      gl.uniform1fv(loc, 2);
+    },
+    srcValueAsString: function(index, srcValues) {
+      return "[" + srcValues[index * 4 + 0].toString() + ", " +
+                   srcValues[index * 4 + 1].toString() + ", " +
+                   srcValues[index * 4 + 2].toString() + ", " +
+                   srcValues[index * 4 + 3].toString() + "]";
+    },
+    returnValueAsString: function(value) {
+      return value === null ? 'null' :
+          ("[" + value[0] + ", " + value[1] +
+           ", " + value[2] + ", " + value[3] + "]");
+    },
+    checkType: function(value) {
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 4;
+    },
+    checkValue: function(typeInfo, index, value) {
+      return value !== null &&
+             typeInfo.srcValues[index * 4 + 0] == value[0] &&
+             typeInfo.srcValues[index * 4 + 1] == value[1] &&
+             typeInfo.srcValues[index * 4 + 2] == value[2] &&
+             typeInfo.srcValues[index * 4 + 3] == value[3];
+    },
+    srcValues: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5],
+    srcValuesLess: [16, 15, 14],
+    srcValuesNonMultiple: [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4],
+  }
+];
+
+for (var tt = 0; tt < typeInfos.length; ++tt) {
+  var typeInfo = typeInfos[tt];
+  debug("");
+  debug("check " + typeInfo.type);
+  var fSrc = fTemplate.replace(/\$type/g, typeInfo.type).
+                       replace(/\$elem/g, typeInfo.elem);
+  //debug("fSrc: " + fSrc);
+  var program = loadProgram(gl, vSrc, fSrc);
+
+  var numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+  assertMsg(numUniforms == 1, "1 uniform found");
+  var info = gl.getActiveUniform(program, 0);
+  assertMsg(info.name == "color[0]",
+            "uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10");
+  var loc = gl.getUniformLocation(program, "color[0]");
+  var srcValues = typeInfo.srcValues;
+  var srcValuesLess = typeInfo.srcValuesLess;
+  var srcValuesNonMultiple = typeInfo.srcValuesNonMultiple;
+
+  // Try setting the value before using the program
+  gl[typeInfo.setter](loc, srcValues);
+  glErrorShouldBe(gl, gl.INVALID_OPERATION,
+                  "should fail if there is no current program");
+
+  gl.useProgram(program);
+  gl[typeInfo.setter](loc, srcValuesLess);
+  glErrorShouldBe(gl, gl.INVALID_VALUE,
+                  "should fail with insufficient array size with gl." + typeInfo.setter);
+  if (srcValuesNonMultiple) {
+    gl[typeInfo.setter](loc, srcValuesNonMultiple);
+    glErrorShouldBe(gl, gl.INVALID_VALUE,
+                    "should fail with non-multiple array size with gl." + typeInfo.setter);
+  }
+  gl[typeInfo.setter](loc, srcValues);
+  glErrorShouldBe(gl, gl.NO_ERROR,
+                  "can set an array of uniforms with gl." + typeInfo.setter);
+  var values = gl.getUniform(program, loc);
+  glErrorShouldBe(gl, gl.NO_ERROR,
+                  "can call gl.getUniform");
+  assertMsg(typeInfo.checkType(values),
+            "gl.getUniform returns the correct type.");
+  for (var ii = 0; ii < typeInfo.numSrcValues; ++ii) {
+    var elemLoc = gl.getUniformLocation(program, "color[" + ii + "]");
+    glErrorShouldBe(gl, gl.NO_ERROR,
+                    "can get location of element " + ii +
+                    " of array from gl.getUniformLocation");
+    var value = gl.getUniform(program, elemLoc);
+    glErrorShouldBe(gl, gl.NO_ERROR,
+                    "can get value of element " + ii + " of array from gl.getUniform");
+    assertMsg(typeInfo.checkValue(typeInfo, ii, value),
+              "value put in (" + typeInfo.srcValueAsString(ii, srcValues) +
+              ") matches value pulled out (" +
+              typeInfo.returnValueAsString(value) + ")");
+  }
+  typeInfo.invalidSet(loc);
+  glErrorShouldBe(gl, gl.INVALID_OPERATION,
+                  "using the wrong size of gl.Uniform fails");
+  var exceptionCaught = false;
+  if (typeInfo.illegalSet) {
+    try {
+      typeInfo.illegalSet(loc);
+    } catch (e) {
+      exceptionCaught = true;
+    }
+    assertMsg(exceptionCaught, "passing non-array to glUniform*fv should throw TypeError");
+  }
+
+  gl.useProgram(null);
+  glErrorShouldBe(gl, gl.NO_ERROR,
+                  "can call gl.useProgram(null)");
+}
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

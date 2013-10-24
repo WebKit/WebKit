@@ -1,0 +1,232 @@
+diff --git a/conformance-suites/1.0.1/conformance/more/functions/copyTexSubImage2D.html b/conformance-suites/1.0.1/conformance/more/functions/copyTexSubImage2D.html
+index 8e0ec45..d7971e7 100644
+--- a/conformance-suites/1.0.1/conformance/more/functions/copyTexSubImage2D.html
++++ b/conformance-suites/1.0.1/conformance/more/functions/copyTexSubImage2D.html
+@@ -41,14 +41,18 @@ Tests.startUnit = function () {
+ 
+ Tests.setup = function(gl) {
+   var tex = gl.createTexture();
++  gl.activeTexture(gl.TEXTURE0);
+   gl.bindTexture(gl.TEXTURE_2D, tex);
+   var texCubeMap = gl.createTexture();
++  gl.activeTexture(gl.TEXTURE1);
+   gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap);
+   return [gl]
+ }
+ 
+ Tests.teardown = function(gl,tex,texCubeMap) {
++  gl.activeTexture(gl.TEXTURE0);
+   gl.bindTexture(gl.TEXTURE_2D, null);
++  gl.activeTexture(gl.TEXTURE1);
+   gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+   gl.deleteTexture(tex);
+   gl.deleteTexture(texCubeMap);
+@@ -56,6 +60,7 @@ Tests.teardown = function(gl,tex,texCubeMap) {
+ 
+ 
+ Tests.testTexImage2D = function(gl) {
++	gl.activeTexture(gl.TEXTURE0);
+   gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0,0,16,16,0);
+   gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0, 0,0,1,1);
+   gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0, 0,0,2,1);
+@@ -64,8 +69,12 @@ Tests.testTexImage2D = function(gl) {
+   gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0, 15,15,1,1);
+   gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 1,1, 0,0,15,15);
+   gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 15,15, 0,0,1,1);
++
++  assertOk(function(){
++      gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0,0,1,1,0);
++      gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0,0,0,0,1,1);
++  });
+   var valid_targets = [
+-    gl.TEXTURE_2D,
+     gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+     gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+     gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+@@ -73,6 +82,7 @@ Tests.testTexImage2D = function(gl) {
+     gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+     gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+   ];
++	gl.activeTexture(gl.TEXTURE1);
+   valid_targets.forEach(function(t) {
+     assertOk(function(){
+         gl.copyTexImage2D(t, 0, gl.RGBA, 0,0,1,1,0);
+@@ -80,6 +90,7 @@ Tests.testTexImage2D = function(gl) {
+     });
+   });
+ }
++
+ Tests.testRoundtrip = function(gl) {
+     var sh = new Filter(gl, 'identity-flip-vert', 'identity-frag');
+     gl.clearColor(1.0, 0.0, 0.0, 1.0);
+@@ -90,6 +101,7 @@ Tests.testRoundtrip = function(gl) {
+     // red texture
+     gl.clearColor(0.0, 0.0, 0.0, 0.0);
+     gl.clear(gl.COLOR_BUFFER_BIT);
++    gl.activeTexture(gl.TEXTURE0);
+     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById('gl'));
+     gl.clearColor(1.0, 0.0, 0.0, 1.0);
+     gl.clear(gl.COLOR_BUFFER_BIT);
+diff --git a/conformance-suites/1.0.1/conformance/more/functions/texSubImage2DHTML.html b/conformance-suites/1.0.1/conformance/more/functions/texSubImage2DHTML.html
+index e064799..f0f69c7 100644
+--- a/conformance-suites/1.0.1/conformance/more/functions/texSubImage2DHTML.html
++++ b/conformance-suites/1.0.1/conformance/more/functions/texSubImage2DHTML.html
+@@ -44,18 +44,22 @@ Tests.startUnit = function () {
+ }
+ 
+ Tests.setup = function(gl) {
+-    var tex = gl.createTexture();
+-    gl.bindTexture(gl.TEXTURE_2D, tex);
+-    var texCubeMap = gl.createTexture();
+-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap);
+-    return [gl]
++  var tex = gl.createTexture();
++  gl.activeTexture(gl.TEXTURE0);
++  gl.bindTexture(gl.TEXTURE_2D, tex);
++  var texCubeMap = gl.createTexture();
++  gl.activeTexture(gl.TEXTURE1);
++  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texCubeMap);
++  return [gl]
+ }
+ 
+ Tests.teardown = function(gl, tex, texCubeMap) {
+-    gl.bindTexture(gl.TEXTURE_2D, null);
+-    gl.deleteTexture(tex);
+-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+-    gl.deleteTexture(texCubeMap);
++  gl.activeTexture(gl.TEXTURE0);
++  gl.bindTexture(gl.TEXTURE_2D, null);
++  gl.activeTexture(gl.TEXTURE1);
++  gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
++  gl.deleteTexture(tex);
++  gl.deleteTexture(texCubeMap);
+ }
+ 
+ Tests.testTexImage2D = function(gl) {
+@@ -64,6 +68,7 @@ Tests.testTexImage2D = function(gl) {
+     var c = document.getElementById('c');
+     var ctx = c.getContext('2d');
+     ctx.drawImage(img,0,0);
++    gl.activeTexture(gl.TEXTURE0);
+     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, img);
+     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+@@ -80,8 +85,17 @@ Tests.testTexImage2D = function(gl) {
+     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+     f.apply();
+     f.destroy();
++
++    assertOk(function(){
++            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
++            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
++    });
++    assertOk(function(){
++            gl.texImage2D(gl.TEXTURE_2D, 1, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
++            gl.texSubImage2D(gl.TEXTURE_2D, 1, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, c);
++    });
++
+     var valid_targets = [
+-        gl.TEXTURE_2D,
+         gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+         gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+         gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+@@ -89,6 +103,8 @@ Tests.testTexImage2D = function(gl) {
+         gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+         gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+     ];
++
++    gl.activeTexture(gl.TEXTURE1);
+     valid_targets.forEach(function(t) {
+         assertOk(function(){
+                 gl.texImage2D(t, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+@@ -107,6 +123,8 @@ Tests.testTexImage2DNonSOP = function(gl) {
+     var c = document.getElementById('c');
+     var ctx = c.getContext('2d');
+     ctx.drawImage(img,0,0);
++
++    gl.activeTexture(gl.TEXTURE0);
+     assertThrowNoGLError(gl, "texImage2D with cross-origin image should throw exception.",
+       function(){gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);});
+     assertThrowNoGLError(gl, "texSubImage2D with cross-origin image should throw exception.",
+diff --git a/conformance-suites/1.0.2/conformance/textures/texture-size.html b/conformance-suites/1.0.2/conformance/textures/texture-size.html
+index 0e67ed7..cc2b010 100644
+--- a/conformance-suites/1.0.2/conformance/textures/texture-size.html
++++ b/conformance-suites/1.0.2/conformance/textures/texture-size.html
+@@ -82,13 +82,8 @@ var max2DSquareSize = Math.min(max2DSize, 2048);
+ // 1024 is 33.5 meg (with mips)
+ var maxCubeMapSize = Math.min(maxCubeMapSize, 1024);
+ 
+-var colors = [
+-  { name: "green", rgba: [0, 0, 255, 255] },
+-  { name: "red", rgba: [255, 0, 0, 255] },
+-  { name: "blue", rgba: [0, 255, 0, 255] },
+-  { name: "yellow", rgba: [255, 255, 0, 255] },
+-  { name: "magenta", rgba: [255, 0, 255, 255] },
+-  { name: "cyan", rgba: [0, 255, 255, 255] }
++var colors = [//note green and blue mixed up
++  { name: "green", rgba: [0, 255, 0, 255] },
+ ];
+ 
+ var count = 0;
+@@ -97,39 +92,18 @@ runTest();
+ 
+ function runTest() {
+   function doTest() {
+-    var size = Math.pow(2, power);
+-    if (size > max2DSize) {
+-      return false;
+-    }
++    var size = 128;
+     gl.useProgram(program2D);
+-    if (!checkTexture(size, 1, false)) return false;
+     if (!checkTexture(1, size, false)) return false;
+-    if (size <= max2DSquareSize) {
+-      if (!checkTexture(size, size, false)) {
+-        return false;
+-      }
+-    }
+-    if (size <= maxCubeMapSize) {
+-      gl.useProgram(programCubeMap);
+-      if (!checkTexture(size, size, true)) {
+-        return false;
+-      }
+-    }
+     return true;
+   }
+-
+-  if (doTest()) {
+-    ++power;
+-    setTimeout(runTest, 0);
+-  } else {
+-    finishTest();
+-  }
++  doTest();
++  finishTest();
+ }
+ 
+ function checkTexture(width, height, cubeMap) {
+   debug("");
+-  count = (count + 1) % colors.length;
+-  var color = colors[count];
++  var color = colors[0];
+   var tex = gl.createTexture();
+   var target = cubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D;
+   var type = cubeMap ? "cube map" : "2D texture";
+@@ -150,8 +124,6 @@ function checkTexture(width, height, cubeMap) {
+   wtu.clearAndDrawUnitQuad(gl);
+   wtu.checkCanvas(gl, color.rgba,
+       type + " of size " + width + "x" + height + " with no mips should draw with " + color.name);
+-  count = (count + 1) % colors.length;
+-  color = colors[count];
+   fillLevel(0, width, height, color.rgba, cubeMap);
+   gl.generateMipmap(target);
+   var err = gl.getError();
+@@ -167,8 +139,6 @@ function checkTexture(width, height, cubeMap) {
+   wtu.checkCanvas(gl, color.rgba,
+       type + " of size " + width + "x" + height + " with mips should draw with " + color.name);
+ 
+-  count = (count + 1) % colors.length;
+-  color = colors[count];
+   fillLevel(0, width, height, color.rgba, cubeMap, true);
+   gl.generateMipmap(target);
+ 

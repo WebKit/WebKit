@@ -1,0 +1,92 @@
+<!--
+Copyright (c) 2009 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Out Of Memory Test</title>
+<link rel="stylesheet" href="../resources/js-test-style.css"/>
+<script src="../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../conformance/resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+debug("This tests WebGL running out of memory.");
+
+debug("");
+debug("Canvas.getContext");
+
+var gl = create3DContext(document.getElementById("canvas"));
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  debug("Allocating shaders.");
+
+  function makeBigShader() {
+    var lines = [];
+    var line = "// ";
+    for (var ii = 0; ii < 1024; ++ii) {
+      line += String.fromCharCode(48 + ii % 10);
+    }
+    for (var ii = 0; ii < 1024; ++ii) {
+      lines[ii] = line;
+    }
+    var oneMB = lines.join();
+    for (var ii = 0; ii < 64; ++ii) {
+      lines[ii] = oneMB;
+    }
+    return lines.join("\n");
+  }
+
+  var shaderSource = makeBigShader();
+  debug("created " + Math.floor(shaderSource.length / 1024 / 1024) + "MB shader");
+
+  var intervalId;
+  var count = 0;
+
+  function makeShader() {
+    ++count;
+    debug ("creating shader #" + count + " mem = " + Math.floor(shaderSource.length * count / 1024 / 1024) + "MB");
+    var shader = gl.createShader(gl.VERTEX_SHADER);
+    if (shader == null) {
+      window.clearInterval(intervalId);
+      testPassed("createShader returns null");  // not sure this is a passing
+      finish();
+    } else {
+      gl.shaderSource(shader, shaderSource);
+      var err = gl.getError();
+      if (err != gl.NO_ERROR) {
+        window.clearInterval(intervalId);
+        assertMsg(err == gl.OUT_OF_MEMORY, "shaderSource returns OUT_OF_MEMORY");
+        finish();
+      }
+    }
+  }
+
+  intervalId = window.setInterval(makeShader, 1000/15);
+}
+
+function finish() {
+  debug("");
+  successfullyParsed = true;
+}
+
+</script>
+<!-- <script src="../resources/js-test-post.js"></script> -->
+
+<script>
+</script>
+
+</body>
+</html>

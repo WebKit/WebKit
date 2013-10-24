@@ -1,0 +1,125 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+    attribute vec3 pos;
+    attribute vec4 colorIn;
+    uniform float pointSize;
+    varying vec4 color;
+
+    void main()
+    {
+        gl_PointSize = pointSize;
+        color = colorIn;
+        gl_Position = vec4(pos, 1.0);
+    }
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 color;
+
+    void main()
+    {
+        gl_FragColor = color;
+    }
+</script>
+</head>
+<body>
+<canvas id="testbed" width="2px" height="2px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    description('Verify GL_VERTEX_PROGRAM_POINT_SIZE is enabled in WebGL');
+
+    var gl = initWebGL('testbed', 'vshader', 'fshader', ['pos', 'colorIn'], [0, 0, 0, 1], 1, { antialias: false });
+    shouldBeNonNull("gl");
+    shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+    gl.disable(gl.BLEND);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // The choice of (0.4, 0.4) ensures that the centers of the surrounding
+    // pixels are not contained within the point when it is of size 1, but
+    // that they definitely are when it is of size 2.
+    var vertices = new Float32Array([
+        0.4, 0.4, 0.0]);
+    var colors = new Uint8Array([
+        255, 0, 0, 255]);
+
+    var colorOffset = vertices.byteLength;
+
+    var vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, colorOffset + colors.byteLength, gl.STATIC_DRAW);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+    gl.bufferSubData(gl.ARRAY_BUFFER, colorOffset, colors);
+
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 0, colorOffset);
+    gl.enableVertexAttribArray(1);
+
+    var locPointSize = gl.getUniformLocation(gl.program, 'pointSize');
+
+    shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+    debug('Draw a point of size 1 and verify it does not touch any other pixels.');
+
+    gl.uniform1f(locPointSize, 1.0);
+    gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
+    var buf = new Uint8Array(2 * 2 * 4);
+    gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+    var index = 0;
+    var correctColor;
+    for (var y = 0; y < 2; ++y) {
+        for (var x = 0; x < 2; ++x) {
+            correctColor = [0, 0, 0];
+            if (x == 1 && y == 1)
+                shouldBe('buf[index]', '255');
+            else
+                shouldBe('buf[index]', '0');
+            shouldBe('buf[index + 1]', '0');
+            shouldBe('buf[index + 2]', '0');
+            index += 4;
+        }
+    }
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    debug('Draw a point of size 2 and verify it fills the appropriate region.');
+
+    var pointSizeRange = gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE);
+    if (pointSizeRange[1] >= 2.0) {
+        gl.uniform1f(locPointSize, 2.0);
+        gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
+        gl.readPixels(0, 0, 2, 2, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+        shouldBe('gl.getError()', 'gl.NO_ERROR');
+        index = 0;
+        for (var y = 0; y < 2; ++y) {
+            for (var x = 0; x < 2; ++x) {
+                shouldBe('buf[index]', '255');
+                shouldBe('buf[index + 1]', '0');
+                shouldBe('buf[index + 2]', '0');
+                index += 4;
+            }
+        }
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

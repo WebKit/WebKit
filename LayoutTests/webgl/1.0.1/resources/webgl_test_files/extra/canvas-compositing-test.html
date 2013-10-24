@@ -1,0 +1,125 @@
+<!--
+Copyright (C) 2009 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+<meta charset="utf-8">
+    <title>Canvas Compositing Test</title>
+    <link rel="stylesheet" href="../resources/js-test-style.css"/>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="../conformance/resources/webgl-test.js"> </script>
+</head>
+<body>
+Below are 2 50x50 pixel canvas but using CSS to display them at 100x100 pixels. <br/>
+They are solid black with a red triangle<br/>
+They each have a 10px CSS solid black border around them.<br/>
+Depending on how the browser composites the canvas with the page  they will get
+a white outline<hr/>
+<div>
+2d canvas<br/>
+<canvas id="example2" width="50" height="50" style="width: 100px; height: 100px; border: 10px solid black;"></canvas>
+</div>
+<hr/>
+3d canvas<br/>
+<div>
+<canvas id="example" width="50" height="50" style="width: 100px; height: 100px; border: 10px solid black;"></canvas>
+</div>
+<hr/>
+img tag<br/>
+<img src="50x50pixel-black-with-red-triangle.png" style="width: 100px; height: 100px; border: 10px solid black;"/>
+<div id="description"></div>
+<div id="console"></div>
+    <script id="vshader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        void main()
+        {
+            gl_Position = vPosition;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        void main()
+        {
+            gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        }
+    </script>
+
+    <script>
+        function fail(x,y, buf, shouldBe)
+        {
+            var i = (y*50+x) * 4;
+            var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+            testFailed(reason);
+        }
+
+        function pass()
+        {
+            testPassed("drawing is correct");
+        }
+
+        function init()
+        {
+  var canvas2d = document.getElementById("example2");
+  var ctx2d = canvas2d.getContext("2d");
+  ctx2d.fillStyle = "rgba(0, 0, 0, 255)"
+  ctx2d.fillRect(0, 0, 50, 50);
+  ctx2d.fillStyle = "rgba(255, 0, 0, 255)"
+  ctx2d.beginPath();
+  ctx2d.moveTo(25, 12.5);
+  ctx2d.lineTo(12.5, 37.5);
+  ctx2d.lineTo(37.5, 37.5);
+  ctx2d.lineTo(25, 12.5);
+  ctx2d.fill();
+
+
+            if (window.initNonKhronosFramework) {
+                window.initNonKhronosFramework(false);
+            }
+
+            gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
+            gl.viewport(0, 0, 50, 50);
+
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+       }
+
+       init();
+       successfullyParsed = true;
+    </script>
+</body>
+<script src="../resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

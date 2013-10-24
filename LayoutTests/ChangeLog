@@ -1,3 +1,15 @@
+2013-10-23  Roger Fong  <roger_fong@apple.com>
+
+        Forgot to add 1.0.1 conformance tests in r157888.
+
+        * webgl/1.0.1
+
+2013-10-23  Roger Fong  <roger_fong@apple.com>
+
+        Skip some unexpected WebGL 1.0.2 conformance suite failures.
+
+        * platform/mac/TestExpectations:
+
 2013-10-23  Simon Fraser  <simon.fraser@apple.com>
 
         fast/forms/input-type-text-min-width.html fails on Mavericks.

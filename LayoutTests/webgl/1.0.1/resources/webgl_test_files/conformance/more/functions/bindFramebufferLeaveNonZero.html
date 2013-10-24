@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>OpenGL for the web</title>
+
+<script type="application/x-javascript" src="../util.js"></script>
+<link rel="stylesheet" type="text/css" href="../unit.css" />
+<script type="application/x-javascript" src="../unit.js"></script>
+
+    <script type="application/x-javascript">
+Tests.message = "This was segfaulting when the GL context got GC'd (in glXDestroyContext)";
+Tests.testSeg = function () {
+    var canvas = document.getElementById('canvas');
+    var gl = getGLContext(canvas);
+
+    var fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+}
+</script>
+
+</head><body>
+    <canvas id="canvas" width="400" height="400"></canvas>
+</body></html>

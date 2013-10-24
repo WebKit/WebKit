@@ -1,0 +1,81 @@
+<!--
+Copyright (c) 2010 Mozilla Foundation. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- This is a visual test that programs must have both a vertex and
+     fragment shader attached; the fixed function pipeline on the
+     desktop must remain disabled. -->
+<script type="text/javascript">
+    function log() {
+	var s = "";
+	for (var i = 0; i < arguments.length; ++i) {
+            s += arguments[i] + " ";
+	}
+
+	document.getElementById("log").innerHTML += s + "<br>";
+    }
+
+    function go() {
+	var gl = document.getElementById("c").getContext("experimental-webgl");
+
+	gl.clearColor(0.0, 0.0, 0.0, 0.0);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+	var vs = gl.createShader(gl.VERTEX_SHADER);
+	gl.shaderSource(vs, "attribute vec4 aVertex; attribute vec4 aColor; varying vec4 vColor; void main() { vColor = aColor; gl_Position = aVertex; }");
+	gl.compileShader(vs);
+
+	var fs = gl.createShader(gl.FRAGMENT_SHADER);
+	gl.shaderSource(fs, "precision mediump float; varying vec4 vColor; void main() { gl_FragColor = vColor; }");
+	gl.compileShader(fs);
+
+	var prog = gl.createProgram();
+	gl.attachShader(prog, vs);
+	// don't attach a fragment shader -- may use fixed pipeline on desktop if the implementation doesn't check!
+	//gl.attachShader(prog, fs);
+
+	gl.bindAttribLocation(prog, 0, "aVertex");
+	gl.bindAttribLocation(prog, 1, "aColor");
+
+	gl.linkProgram(prog);
+
+	var vbuf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                  -1.0, -1.0, 0.0, 1.0,
+							    -1.0, 1.0, 0.0, 1.0,
+							    1.0, -1.0, 0.0, 1.0,
+							    1.0, 1.0, 0.0, 1.0]), gl.STATIC_DRAW);
+	gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 0);
+
+	var cbuf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cbuf);
+	gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([255, 0, 0,
+								   0, 255, 0,
+								   0, 0, 255,
+								   255, 255, 0]), gl.STATIC_DRAW);
+	gl.vertexAttribPointer(1, 3, gl.UNSIGNED_BYTE, false, 0, 0);
+
+	gl.enableVertexAttribArray(0);
+	gl.enableVertexAttribArray(1);
+
+	gl.useProgram(prog);
+
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+	log("glError", "0x" + gl.getError().toString(16));
+    }
+</script>
+</head>
+
+<body onload="go()">
+<p>Should be green in the rectangle below:</p>
+<canvas style="background: green;" id="c"></canvas>
+<div id="log"></div>
+</body>
+</html>

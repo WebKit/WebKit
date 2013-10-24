@@ -1,0 +1,147 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Canvas Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+void main()
+{
+  gl_Position = vPosition;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+void main()
+{
+  gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+}
+</script>
+
+<script>
+function fail(x,y, buf, shouldBe)
+{
+  var i = (y*50+x) * 4;
+  var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+  testFailed(reason);
+}
+
+function pass()
+{
+  testPassed("drawing is correct");
+}
+
+function drawTriangleTest(gl)
+{
+  gl.viewport(0, 0, 50, 50);
+  var vertexObject = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  var buf = new Uint8Array(50 * 50 * 4);
+  gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+
+  // Test several locations
+  // First line should be all black
+  for (var i = 0; i < 50; ++i) {
+    if (buf[i*4] != 0 || buf[i*4+1] != 0 || buf[i*4+2] != 0 || buf[i*4+3] != 255) {
+      fail(i, 0, buf, "(0,0,0,255)");
+      return;
+    }
+  }
+  // Line 15 should be red for at least 10 red pixels starting 20 pixels in
+  var offset = (15*50+20) * 4;
+  for (var i = 0; i < 10; ++i) {
+    if (buf[offset+i*4] != 255 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+      fail(20 + i, 15, buf, "(255,0,0,255)");
+      return;
+    }
+  }
+  // Last line should be all black
+  offset = (49*50) * 4;
+  for (var i = 0; i < 50; ++i) {
+    if (buf[offset+i*4] != 0 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+      fail(i, 49, buf, "(0,0,0,255)");
+      return;
+    }
+  }
+}
+
+description("This test ensures WebGL implementations correctly implement drawingbufferWidth/Height.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var err;
+var maxSize;
+var gl = wtu.create3DContext();
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  gl.program = createProgram(gl, "vshader", "fshader", ["vPosition"]);
+  shouldBeNonNull("gl.program");
+  gl.useProgram(gl.program);
+  gl.enable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+  gl.clearColor(0, 0, 0, 1);
+  gl.clearDepth(1);
+  shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+  debug("");
+  debug("Checking drawingBufferWidth/drawingBufferHeight");
+
+  // Check that a canvas with no width or height is 300x150 pixels
+  shouldBe('gl.drawingBufferWidth', 'gl.canvas.width');
+  shouldBe('gl.drawingBufferHeight', 'gl.canvas.height');
+
+  // Check that changing the canvas size to something too large falls back to reasonable values.
+  maxSize = gl.getParameter(gl.MAX_VIEWPORT_DIMS);
+  shouldBeTrue('maxSize[0] > 0');
+  shouldBeTrue('maxSize[1] > 0');
+
+  // debug("MAX_VIEWPORT_DIMS = " + maxSize[0] + "x" + maxSize[1]);
+  gl.canvas.width = maxSize[0] * 4;
+  gl.canvas.height = maxSize[1] * 4;
+  shouldBeTrue('gl.drawingBufferWidth > 0');
+  shouldBeTrue('gl.drawingBufferHeight > 0');
+  shouldBeTrue('gl.drawingBufferWidth <= maxSize[0]');
+  shouldBeTrue('gl.drawingBufferHeight <= maxSize[1]');
+  shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+  debug("");
+  debug("Checking scaling up then back down to 50/50, drawing still works.");
+  gl.canvas.width = 50;
+  gl.canvas.height = 50;
+  shouldBeTrue('gl.drawingBufferWidth == 50');
+  shouldBeTrue('gl.drawingBufferHeight == 50');
+  shouldBe('gl.getError()', 'gl.NO_ERROR');
+  drawTriangleTest(gl);
+  shouldBe('gl.getError()', 'gl.NO_ERROR');
+}
+debug("")
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

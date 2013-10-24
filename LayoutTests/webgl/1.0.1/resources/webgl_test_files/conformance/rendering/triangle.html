@@ -1,0 +1,123 @@
+<!--
+Copyright (C) 2011 Apple Computer, Inc.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+<meta charset="utf-8">
+    <title>Rendering Test</title>
+    <link rel="stylesheet" href="../../resources/js-test-style.css"/>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../resources/webgl-test.js"> </script>
+</head>
+<body>
+<canvas id="example" width="50" height="50">
+There is supposed to be an example drawing here, but it's not important.
+</canvas>
+<div id="description"></div>
+<div id="console"></div>
+    <script id="vshader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        void main()
+        {
+            gl_Position = vPosition;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        void main()
+        {
+            gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+        }
+    </script>
+
+    <script>
+        function fail(x,y, buf, shouldBe)
+        {
+            var i = (y*50+x) * 4;
+            var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+            testFailed(reason);
+        }
+
+        function pass()
+        {
+            testPassed("drawing is correct");
+        }
+
+        function init()
+        {
+            if (window.initNonKhronosFramework) {
+                window.initNonKhronosFramework(false);
+            }
+
+            description(document.title);
+
+            gl = initWebGL("example", "vshader", "fshader", [ "vPosition"], [ 0, 0, 0, 1 ], 1);
+
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0.5,0, -0.5,-0.5,0, 0.5,-0.5,0 ]), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            var buf = new Uint8Array(50 * 50 * 4);
+            gl.readPixels(0, 0, 50, 50, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+
+            // Test several locations
+            // First line should be all black
+            for (var i = 0; i < 50; ++i)
+                if (buf[i*4] != 0 || buf[i*4+1] != 0 || buf[i*4+2] != 0 || buf[i*4+3] != 255) {
+                    fail(i, 0, buf, "(0,0,0,255)");
+                    return;
+                }
+
+            // Line 15 should be red for at least 10 red pixels starting 20 pixels in
+            var offset = (15*50+20) * 4;
+            for (var i = 0; i < 10; ++i)
+                if (buf[offset+i*4] != 255 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+                    fail(20 + i, 15, buf, "(255,0,0,255)");
+                    return;
+                }
+            // Last line should be all black
+            offset = (49*50) * 4;
+            for (var i = 0; i < 50; ++i)
+                if (buf[offset+i*4] != 0 || buf[offset+i*4+1] != 0 || buf[offset+i*4+2] != 0 || buf[offset+i*4+3] != 255) {
+                    fail(i, 49, buf, "(0,0,0,255)");
+                    return;
+                }
+
+            pass();
+       }
+
+       init();
+       successfullyParsed = true;
+    </script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

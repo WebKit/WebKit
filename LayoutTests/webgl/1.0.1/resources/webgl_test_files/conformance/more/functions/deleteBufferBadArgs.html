@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="../unit.css" />
+<script type="application/x-javascript" src="../unit.js"></script>
+<script type="application/x-javascript" src="../util.js"></script>
+<script type="application/x-javascript">
+
+Tests.startUnit = function () {
+  var canvas = document.getElementById('gl');
+  var gl = getGLContext(canvas);
+  return [gl];
+}
+
+Tests.testDeleteBuffer = function(gl) {
+  assertThrowNoGLError(gl, "number ", function(){ gl.deleteBuffer(1); });
+  assertGLError(gl, gl.NO_ERROR, "null", function(){ gl.deleteBuffer(null); });
+  assertThrowNoGLError(gl, "0", function(){ gl.deleteBuffer(0); });
+  assertThrowNoGLError(gl, "false", function(){ gl.deleteBuffer(false); });
+  assertThrowNoGLError(gl, "true", function(){ gl.deleteBuffer(true); });
+  assertThrowNoGLError(gl, "{}", function(){ gl.deleteBuffer({}); });
+  var tex = gl.createTexture();
+  assertThrowNoGLError(gl, "tex as buf", function(){ gl.deleteBuffer(tex); });
+  var buf = gl.createBuffer();
+  assertOk(function(){ gl.deleteBuffer(buf); });
+  assertOk(function(){ gl.deleteBuffer(buf); });
+  assertOk(function(){ gl.deleteBuffer(buf); });
+  assertOk(function(){ gl.deleteTexture(tex); });
+}
+
+Tests.endUnit = function(gl) {
+}
+
+</script>
+<style>canvas{ position:absolute; }</style>
+</head><body>
+<canvas id="gl" width="16" height="16"></canvas>
+</body></html>

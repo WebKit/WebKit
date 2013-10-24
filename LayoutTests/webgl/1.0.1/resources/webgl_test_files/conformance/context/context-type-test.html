@@ -1,0 +1,49 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Canvas Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<canvas id="canvas2d" width="40" height="40"> </canvas>
+<script>
+description("This test ensures WebGL implementations interact correctly with the canvas tag.");
+
+debug("");
+debug("Canvas.getContext");
+
+assertMsg(window.WebGLRenderingContext,
+          "WebGLRenderingContext should be a member of window");
+assertMsg('WebGLRenderingContext' in window,
+          "WebGLRenderingContext should be 'in' window");
+
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("Checking context type");
+  assertMsg(gl instanceof WebGLRenderingContext,
+            "context type should be WebGLRenderingContext");
+}
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+﻿<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL OES_standard_derivatives Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<div id="console"></div>
+<!-- Shaders for testing standard derivatives -->
+
+<!-- Shader omitting the required #extension pragma -->
+<script id="missingPragmaFragmentShader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec2 texCoord;
+void main() {
+    float dx = dFdx(texCoord.x);
+    float dy = dFdy(texCoord.y);
+    float w = fwidth(texCoord.x);
+    gl_FragColor = vec4(dx, dy, w, 1.0);
+}
+</script>
+
+<!-- Shader to test macro definition -->
+<script id="macroFragmentShader" type="x-shader/x-fragment">
+precision mediump float;
+void main() {
+#ifdef GL_OES_standard_derivatives
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+#else
+    // Error expected
+    #error no GL_OES_standard_derivatives;
+#endif
+}
+</script>
+
+<!-- Shader with required #extension pragma -->
+<script id="testFragmentShader" type="x-shader/x-fragment">
+#extension GL_OES_standard_derivatives : enable
+precision mediump float;
+varying vec2 texCoord;
+void main() {
+    float dx = dFdx(texCoord.x);
+    float dy = dFdy(texCoord.y);
+    float w = fwidth(texCoord.x);
+    gl_FragColor = vec4(dx, dy, w, 1.0);
+}
+</script>
+<!-- Shaders to link with test fragment shaders -->
+<script id="goodVertexShader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+varying vec2 texCoord;
+void main() {
+    texCoord = vPosition.xy;
+    gl_Position = vPosition;
+}
+</script>
+<!-- Shaders to test output -->
+<script id="outputVertexShader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+varying vec4 position;
+void main() {
+    position = vPosition;
+    gl_Position = vPosition;
+}
+</script>
+<script id="outputFragmentShader" type="x-shader/x-fragment">
+#extension GL_OES_standard_derivatives : enable
+precision mediump float;
+varying vec4 position;
+void main() {
+    float dzdx = dFdx(position.z);
+    float dzdy = dFdy(position.z);
+    float fw = fwidth(position.z);
+    gl_FragColor = vec4(abs(dzdx), abs(dzdy), fw, 1.0);
+}
+</script>
+
+<script>
+description("This test verifies the functionality of the OES_standard_derivatives extension, if it is available.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+var ext = null;
+
+if (!gl) {
+    testFailed("WebGL context does not exist");
+} else {
+    testPassed("WebGL context exists");
+
+    // Run tests with extension disabled
+    runHintTestDisabled();
+    runShaderTests(false);
+
+    // Query the extension and store globally so shouldBe can access it
+    ext = gl.getExtension("OES_standard_derivatives");
+    if (!ext) {
+        testPassed("No OES_standard_derivatives support -- this is legal");
+
+        runSupportedTest(false);
+    } else {
+        testPassed("Successfully enabled OES_standard_derivatives extension");
+
+        runSupportedTest(true);
+
+        runHintTestEnabled();
+        runShaderTests(true);
+        runOutputTests();
+        runUniqueObjectTest();
+    }
+}
+
+function runSupportedTest(extensionEnabled) {
+    var supported = gl.getSupportedExtensions();
+    if (supported.indexOf("OES_standard_derivatives") >= 0) {
+        if (extensionEnabled) {
+            testPassed("OES_standard_derivatives listed as supported and getExtension succeeded");
+        } else {
+            testFailed("OES_standard_derivatives listed as supported but getExtension failed");
+        }
+    } else {
+        if (extensionEnabled) {
+            testFailed("OES_standard_derivatives not listed as supported but getExtension succeeded");
+        } else {
+            testPassed("OES_standard_derivatives not listed as supported and getExtension failed -- this is legal");
+        }
+    }
+}
+
+function runHintTestDisabled() {
+    debug("Testing FRAGMENT_SHADER_DERIVATIVE_HINT_OES with extension disabled");
+
+    // Use the constant directly as we don't have the extension
+    var FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
+
+    gl.getParameter(FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
+    glErrorShouldBe(gl, gl.INVALID_ENUM, "FRAGMENT_SHADER_DERIVATIVE_HINT_OES should not be queryable if extension is disabled");
+
+    gl.hint(FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl.DONT_CARE);
+    glErrorShouldBe(gl, gl.INVALID_ENUM, "hint should not accept FRAGMENT_SHADER_DERIVATIVE_HINT_OES if extension is disabled");
+}
+
+function runHintTestEnabled() {
+    debug("Testing FRAGMENT_SHADER_DERIVATIVE_HINT_OES with extension enabled");
+
+    shouldBe("ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES", "0x8B8B");
+
+    gl.getParameter(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
+    glErrorShouldBe(gl, gl.NO_ERROR, "FRAGMENT_SHADER_DERIVATIVE_HINT_OES query should succeed if extension is enabled");
+
+    // Default value is DONT_CARE
+    if (gl.getParameter(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES) == gl.DONT_CARE) {
+        testPassed("Default value of FRAGMENT_SHADER_DERIVATIVE_HINT_OES is DONT_CARE");
+    } else {
+        testFailed("Default value of FRAGMENT_SHADER_DERIVATIVE_HINT_OES is not DONT_CARE");
+    }
+
+    // Ensure that we can set the target
+    gl.hint(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl.DONT_CARE);
+    glErrorShouldBe(gl, gl.NO_ERROR, "hint should accept FRAGMENT_SHADER_DERIVATIVE_HINT_OES");
+
+    // Test all the hint modes
+    var validModes = ["FASTEST", "NICEST", "DONT_CARE"];
+    var anyFailed = false;
+    for (var n = 0; n < validModes.length; n++) {
+        var mode = validModes[n];
+        gl.hint(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl[mode]);
+        if (gl.getParameter(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES) != gl[mode]) {
+            testFailed("Round-trip of hint()/getParameter() failed on mode " + mode);
+            anyFailed = true;
+        }
+    }
+    if (!anyFailed) {
+        testPassed("Round-trip of hint()/getParameter() with all supported modes");
+    }
+}
+
+function runShaderTests(extensionEnabled) {
+    debug("");
+    debug("Testing various shader compiles with extension " + (extensionEnabled ? "enabled" : "disabled"));
+
+    // Expect the macro shader to succeed ONLY if enabled
+    var macroFragmentProgram = wtu.loadProgramFromScriptExpectError(gl, "goodVertexShader", "macroFragmentShader");
+    if (extensionEnabled) {
+        if (macroFragmentProgram) {
+            // Expected result
+            testPassed("GL_OES_standard_derivatives defined in shaders when extension is enabled");
+        } else {
+            testFailed("GL_OES_standard_derivatives not defined in shaders when extension is enabled");
+        }
+    } else {
+        if (macroFragmentProgram) {
+            testFailed("GL_OES_standard_derivatives defined in shaders when extension is disabled");
+        } else {
+            testPassed("GL_OES_standard_derivatives not defined in shaders when extension disabled");
+        }
+    }
+
+    // Always expect the shader missing the #pragma to fail (whether enabled or not)
+    var missingPragmaFragmentProgram = wtu.loadProgramFromScriptExpectError(gl, "goodVertexShader", "missingPragmaFragmentShader");
+    if (missingPragmaFragmentProgram) {
+        testFailed("Shader built-ins allowed without #extension pragma");
+    } else {
+        testPassed("Shader built-ins disallowed without #extension pragma");
+    }
+
+    // Try to compile a shader using the built-ins that should only succeed if enabled
+    var testFragmentProgram = wtu.loadProgramFromScriptExpectError(gl, "goodVertexShader", "testFragmentShader");
+    if (extensionEnabled) {
+        if (testFragmentProgram) {
+            testPassed("Shader built-ins compiled successfully when extension enabled");
+        } else {
+            testFailed("Shader built-ins failed to compile when extension enabled");
+        }
+    } else {
+        if (testFragmentProgram) {
+            testFailed("Shader built-ins compiled successfully when extension disabled");
+        } else {
+            testPassed("Shader built-ins failed to compile when extension disabled");
+        }
+    }
+}
+
+function runOutputTests() {
+    // This tests does several draws with various values of z.
+    // The output of the fragment shader is:
+    // [dFdx(z), dFdy(z), fwidth(z), 1.0]
+    // The expected math: (note the conversion to uint8)
+    //    canvas.width = canvas.height = 50
+    //    dFdx = totalChange.x / canvas.width  = 0.5 / 50.0 = 0.01
+    //    dFdy = totalChange.y / canvas.height = 0.5 / 50.0 = 0.01
+    //    fw = abs(dFdx + dFdy) = 0.01 + 0.01 = 0.02
+    //    r = floor(dFdx * 255) = 3
+    //    g = floor(dFdy * 255) = 3
+    //    b = floor(fw * 255) = 5
+
+    var e = 5; // Amount of variance to allow in result pixels - may need to be tweaked higher
+
+    debug("Testing various draws for valid built-in function behavior");
+
+    canvas.width = 50; canvas.height = 50;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.hint(ext.FRAGMENT_SHADER_DERIVATIVE_HINT_OES, gl.NICEST);
+
+    var program = wtu.setupProgram(gl, ["outputVertexShader", "outputFragmentShader"], ['vPosition', 'texCoord0'], [0, 1]);
+    var quadParameters = wtu.setupUnitQuad(gl, 0, 1);
+
+    function readLocation(x, y) {
+        var pixels = new Uint8Array(1 * 1 * 4);
+        var px = Math.floor(x * canvas.width);
+        var py = Math.floor(y * canvas.height);
+        gl.readPixels(px, py, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        return pixels;
+    };
+    function toString(arr) {
+        var s = "[";
+        for (var n = 0; n < arr.length; n++) {
+            s += arr[n];
+            if (n < arr.length - 1) {
+                s += ", ";
+            }
+        }
+        return s + "]";
+    };
+    function expectResult(target, successMessage, failureMessage) {
+        var locations = [
+            readLocation(0.1, 0.1),
+            readLocation(0.9, 0.1),
+            readLocation(0.1, 0.9),
+            readLocation(0.9, 0.9),
+            readLocation(0.5, 0.5)
+        ];
+        var anyDiffer = false;
+        for (var n = 0; n < locations.length; n++) {
+            var source = locations[n];
+            for (var m = 0; m < 4; m++) {
+                if (Math.abs(source[m] - target[m]) > e) {
+                    anyDiffer = true;
+                    testFailed(failureMessage + "; should be " + toString(target) + ", was " + toString(source));
+                    break;
+                }
+            }
+        }
+        if (!anyDiffer) {
+            testPassed(successMessage);
+        }
+    };
+
+    function setupBuffers(tl, tr, bl, br) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, quadParameters[0]);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+           1.0,  1.0, tr,
+          -1.0,  1.0, tl,
+          -1.0, -1.0, bl,
+           1.0,  1.0, tr,
+          -1.0, -1.0, bl,
+           1.0, -1.0, br]), gl.STATIC_DRAW);
+    };
+
+    // Draw 1: (no variation)
+    setupBuffers(0.0, 0.0, 0.0, 0.0);
+    wtu.drawQuad(gl);
+    expectResult([0, 0, 0, 255],
+                 "Draw 1 (no variation) returned the correct data",
+                 "Draw 1 (no variation) returned incorrect data");
+
+    // Draw 2: (variation in x)
+    setupBuffers(1.0, 0.0, 1.0, 0.0);
+    wtu.drawQuad(gl);
+    expectResult([5, 0, 5, 255],
+                 "Draw 2 (variation in x) returned the correct data",
+                 "Draw 2 (variation in x) returned incorrect data");
+
+    // Draw 3: (variation in y)
+    setupBuffers(1.0, 1.0, 0.0, 0.0);
+    wtu.drawQuad(gl);
+    expectResult([0, 5, 5, 255],
+                 "Draw 3 (variation in y) returned the correct data",
+                 "Draw 3 (variation in y) returned incorrect data");
+
+    // Draw 4: (variation in x & y)
+    setupBuffers(1.0, 0.5, 0.5, 0.0);
+    wtu.drawQuad(gl);
+    expectResult([3, 3, 5, 255],
+                 "Draw 4 (variation in x & y) returned the correct data",
+                 "Draw 4 (variation in x & y) returned incorrect data");
+
+}
+
+function attemptToForceGC()
+{
+    var holderArray = [];
+    var tempArray;
+    window.tempArray = holderArray;
+    for (var i = 0; i < 12; ++i) {
+        tempArray = [];
+        for (var j = 0; j < 1024 * 1024; ++j) {
+            tempArray.push(0);
+        }
+        holderArray.push(tempArray);
+    }
+    window.tempArray = null;
+}
+
+function runUniqueObjectTest()
+{
+    debug("Testing that getExtension() returns the same object each time");
+    gl.getExtension("OES_standard_derivatives").myProperty = 2;
+    if (window.GCController) {
+        window.GCController.collect();
+    } else if (window.opera && window.opera.collect) {
+        window.opera.collect();
+    } else {
+        attemptToForceGC();
+    }
+    shouldBe('gl.getExtension("OES_standard_derivatives").myProperty', '2');
+}
+
+
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

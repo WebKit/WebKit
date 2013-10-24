@@ -1,0 +1,80 @@
+<!--
+Copyright (c) 2009 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+  found in the LICENSE file.
+ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Information</title>
+<script src="../../demos/common/webgl-utils.js"> </script>
+<script>
+window.onload = main;
+
+function createCell(txt) {
+  var str = txt.toString();
+  if (typeof txt != 'string') {
+    if (txt.length !== undefined) {
+      str = "";
+      for (var ii = 0; ii < txt.length; ++ii) {
+        str += (ii == 0 ? "" : ", ") + txt[ii];
+      }
+    }
+  }
+  var t = document.createTextNode(str);
+  var d = document.createElement("div");
+  var td = document.createElement("td");
+  d.appendChild(t);
+  td.appendChild(d);
+  return td;
+}
+
+function main() {
+  var canvas = document.getElementById("example");
+  var gl = WebGLUtils.setupWebGL(canvas);
+  if (!gl) {
+    return;
+  }
+
+  var pnames = [
+    'VERSION',
+    'VENDOR',
+    'RENDERER',
+    'MAX_COMBINED_TEXTURE_IMAGE_UNITS',
+    'MAX_CUBE_MAP_TEXTURE_SIZE',
+    'MAX_FRAGMENT_UNIFORM_VECTORS',
+    'MAX_RENDERBUFFER_SIZE',
+    'MAX_TEXTURE_IMAGE_UNITS',
+    'MAX_TEXTURE_SIZE',
+    'MAX_VARYING_VECTORS',
+    'MAX_VERTEX_ATTRIBS',
+    'MAX_VERTEX_TEXTURE_IMAGE_UNITS',
+    'MAX_VERTEX_UNIFORM_VECTORS',
+    'MAX_VIEWPORT_DIMS'
+  ];
+  var table = document.createElement("table");
+  var tb = document.createElement("tbody");
+  for (var ii = 0; ii < pnames.length; ++ii) {
+    var pname = pnames[ii];
+    var value = gl.getParameter(gl[pname]);
+    var tr = document.createElement("tr");
+    var td1 = createCell(pname);
+    var td2 = createCell(value);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tb.appendChild(tr);
+  }
+  table.appendChild(tb);
+  document.getElementById("info").appendChild(table);
+}
+</script>
+</head>
+<body>
+<h1>WebGL Info</h1>
+<div id="info"></div>
+<canvas id="example" width="256" height="16" style="width: 256px; height: 48px;"></canvas>
+</body>
+</html>
+

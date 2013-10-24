@@ -1,0 +1,409 @@
+﻿<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL OES_vertex_array_object Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+<!-- comment in the script tag below to test through JS emualation of the extension. -->
+<!--
+<script src="../../../demos/google/resources/OESVertexArrayObject.js"></script>
+-->
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<div id="console"></div>
+<!-- Shaders for testing standard derivatives -->
+
+<script>
+description("This test verifies the functionality of the OES_vertex_array_object extension, if it is available.");
+
+debug("");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+var ext = null;
+var vao = null;
+
+if (!gl) {
+    testFailed("WebGL context does not exist");
+} else {
+    testPassed("WebGL context exists");
+
+    // Setup emulated OESVertexArrayObject if it has been included.
+    if (window.setupVertexArrayObject) {
+        debug("using emuated OES_vertex_array_object");
+        setupVertexArrayObject(gl);
+    }
+
+    // Run tests with extension disabled
+    runBindingTestDisabled();
+
+    // Query the extension and store globally so shouldBe can access it
+    ext = gl.getExtension("OES_vertex_array_object");
+    if (!ext) {
+        testPassed("No OES_vertex_array_object support -- this is legal");
+
+        runSupportedTest(false);
+    } else {
+        testPassed("Successfully enabled OES_vertex_array_object extension");
+
+        runSupportedTest(true);
+        runBindingTestEnabled();
+        runObjectTest();
+        runAttributeTests();
+        runAttributeValueTests();
+        runDrawTests();
+    }
+}
+
+function runSupportedTest(extensionEnabled) {
+    var supported = gl.getSupportedExtensions();
+    if (supported.indexOf("OES_vertex_array_object") >= 0) {
+        if (extensionEnabled) {
+            testPassed("OES_vertex_array_object listed as supported and getExtension succeeded");
+        } else {
+            testFailed("OES_vertex_array_object listed as supported but getExtension failed");
+        }
+    } else {
+        if (extensionEnabled) {
+            testFailed("OES_vertex_array_object not listed as supported but getExtension succeeded");
+        } else {
+            testPassed("OES_vertex_array_object not listed as supported and getExtension failed -- this is legal");
+        }
+    }
+}
+
+function runBindingTestDisabled() {
+    debug("Testing binding enum with extension disabled");
+    
+    // Use the constant directly as we don't have the extension
+    var VERTEX_ARRAY_BINDING_OES = 0x85B5;
+    
+    gl.getParameter(VERTEX_ARRAY_BINDING_OES);
+    glErrorShouldBe(gl, gl.INVALID_ENUM, "VERTEX_ARRAY_BINDING_OES should not be queryable if extension is disabled");
+}
+
+function runBindingTestEnabled() {
+    debug("Testing binding enum with extension enabled");
+    
+    shouldBe("ext.VERTEX_ARRAY_BINDING_OES", "0x85B5");
+    
+    gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES);
+    glErrorShouldBe(gl, gl.NO_ERROR, "VERTEX_ARRAY_BINDING_OES query should succeed if extension is enable");
+    
+    // Default value is null
+    if (gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) === null) {
+        testPassed("Default value of VERTEX_ARRAY_BINDING_OES is null");
+    } else {
+        testFailed("Default value of VERTEX_ARRAY_BINDING_OES is not null");
+    }
+    
+    debug("Testing binding a VAO");
+    var vao0 = ext.createVertexArrayOES();
+    var vao1 = ext.createVertexArrayOES();
+    shouldBeNull("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES)");
+    ext.bindVertexArrayOES(vao0);
+    if (gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) == vao0) {
+        testPassed("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) is expected VAO");
+    } else {
+        testFailed("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) is not expected VAO")
+    }
+    ext.bindVertexArrayOES(vao1);
+    if (gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) == vao1) {
+        testPassed("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) is expected VAO");
+    } else {
+        testFailed("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES) is not expected VAO")
+    }
+    ext.deleteVertexArrayOES(vao1);
+    shouldBeNull("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES)");
+    ext.bindVertexArrayOES(vao1);
+    glErrorShouldBe(gl, gl.INVALID_OPERATION, "binding a deleted vertex array object");
+    ext.bindVertexArrayOES(null);
+    shouldBeNull("gl.getParameter(ext.VERTEX_ARRAY_BINDING_OES)");
+    ext.deleteVertexArrayOES(vao1);
+}
+
+function runObjectTest() {
+    debug("Testing object creation");
+    
+    vao = ext.createVertexArrayOES();
+    glErrorShouldBe(gl, gl.NO_ERROR, "createVertexArrayOES should not set an error");
+    shouldBeNonNull("vao");
+    
+    // Expect false if never bound
+    shouldBeFalse("ext.isVertexArrayOES(vao)");
+    ext.bindVertexArrayOES(vao);
+    shouldBeTrue("ext.isVertexArrayOES(vao)");
+    ext.bindVertexArrayOES(null);
+    shouldBeTrue("ext.isVertexArrayOES(vao)");
+    
+    shouldBeFalse("ext.isVertexArrayOES(null)");
+    
+    ext.deleteVertexArrayOES(vao);
+    vao = null;
+}
+
+function runAttributeTests() {
+    debug("Testing attributes work across bindings");
+    
+    var states = [];
+    
+    var attrCount = gl.getParameter(gl.MAX_VERTEX_ATTRIBS);
+    for (var n = 0; n < attrCount; n++) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        
+        var state = {};
+        states.push(state);
+        
+        var vao = state.vao = ext.createVertexArrayOES();
+        ext.bindVertexArrayOES(vao);
+        
+        if (n % 2 == 0) {
+            gl.enableVertexAttribArray(n);
+        } else {
+            gl.disableVertexAttribArray(n);
+        }
+        
+        if (n % 2 == 0) {
+            var buffer = state.buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, 1024, gl.STATIC_DRAW);
+            
+            gl.vertexAttribPointer(n, 1 + n % 4, gl.FLOAT, true, n * 4, n * 4);
+        }
+        
+        if (n % 2 == 0) {
+            var elbuffer = state.elbuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elbuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 1024, gl.STATIC_DRAW);
+        }
+        
+        ext.bindVertexArrayOES(null);
+    }
+    
+    var anyMismatch = false;
+    for (var n = 0; n < attrCount; n++) {
+        var state = states[n];
+        
+        ext.bindVertexArrayOES(state.vao);
+        
+        var isEnabled = gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_ENABLED);
+        if ((n % 2 == 1) || isEnabled) {
+            // Valid
+        } else {
+            testFailed("VERTEX_ATTRIB_ARRAY_ENABLED not preserved");
+            anyMismatch = true;
+        }
+        
+        var buffer = gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING);
+        if (n % 2 == 0) {
+            if (buffer == state.buffer) {
+                // Matched
+                if ((gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_SIZE) == 1 + n % 4) &&
+                    (gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_TYPE) == gl.FLOAT) &&
+                    (gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_NORMALIZED) == true) &&
+                    (gl.getVertexAttrib(n, gl.VERTEX_ATTRIB_ARRAY_STRIDE) == n * 4) &&
+                    (gl.getVertexAttribOffset(n, gl.VERTEX_ATTRIB_ARRAY_POINTER) == n * 4)) {
+                    // Matched
+                } else {
+                    testFailed("VERTEX_ATTRIB_ARRAY_* not preserved");
+                    anyMismatch = true;
+                }
+            } else {
+                testFailed("VERTEX_ATTRIB_ARRAY_BUFFER_BINDING not preserved");
+                anyMismatch = true;
+            }
+        } else {
+            // GL_CURRENT_VERTEX_ATTRIB is not preserved
+            if (buffer) {
+                testFailed("VERTEX_ATTRIB_ARRAY_BUFFER_BINDING not preserved");
+                anyMismatch = true;
+            }
+        }
+        
+        var elbuffer = gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING);
+        if (n % 2 == 0) {
+            if (elbuffer == state.elbuffer) {
+                // Matched
+            } else {
+                testFailed("ELEMENT_ARRAY_BUFFER_BINDING not preserved");
+                anyMismatch = true;
+            }
+        } else {
+            if (elbuffer == null) {
+                // Matched
+            } else {
+                testFailed("ELEMENT_ARRAY_BUFFER_BINDING not preserved");
+                anyMismatch = true;
+            }
+        }
+    }
+    ext.bindVertexArrayOES(null);
+    if (!anyMismatch) {
+        testPassed("All attributes preserved across bindings");
+    }
+    
+    for (var n = 0; n < attrCount; n++) {
+        var state = states[n];
+        ext.deleteVertexArrayOES(state.vao);
+    }
+}
+
+function runAttributeValueTests() {
+    debug("Testing that attribute values are not attached to bindings");
+    
+    var v;
+    var vao0 = ext.createVertexArrayOES();
+    var anyFailed = false;
+    
+    ext.bindVertexArrayOES(null);
+    gl.vertexAttrib4f(0, 0, 1, 2, 3);
+    
+    v = gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB);
+    if (!(v[0] == 0 && v[1] == 1 && v[2] == 2 && v[3] == 3)) {
+        testFailed("Vertex attrib value not round-tripped?");
+        anyFailed = true;
+    }
+    
+    ext.bindVertexArrayOES(vao0);
+    
+    v = gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB);
+    if (!(v[0] == 0 && v[1] == 1 && v[2] == 2 && v[3] == 3)) {
+        testFailed("Vertex attrib value reset across bindings");
+        anyFailed = true;
+    }
+    
+    gl.vertexAttrib4f(0, 4, 5, 6, 7);
+    ext.bindVertexArrayOES(null);
+    
+    v = gl.getVertexAttrib(0, gl.CURRENT_VERTEX_ATTRIB);
+    if (!(v[0] == 4 && v[1] == 5 && v[2] == 6 && v[3] == 7)) {
+        testFailed("Vertex attrib value bound to buffer");
+        anyFailed = true;
+    }
+    
+    if (!anyFailed) {
+        testPassed("Vertex attribute values are not attached to bindings")
+    }
+    
+    ext.bindVertexArrayOES(null);
+    ext.deleteVertexArrayOES(vao0);
+}
+
+function runDrawTests() {
+    debug("Testing draws with various VAO bindings");
+    
+    canvas.width = 50; canvas.height = 50;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    
+    var vao0 = ext.createVertexArrayOES();
+    var vao1 = ext.createVertexArrayOES();
+    
+    var program = wtu.setupSimpleTextureProgram(gl, 0, 1);
+    
+    function setupQuad(s) {
+        var opt_positionLocation = 0;
+        var opt_texcoordLocation = 1;
+        var vertexObject = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+             1.0 * s,  1.0 * s, 0.0,
+            -1.0 * s,  1.0 * s, 0.0,
+            -1.0 * s, -1.0 * s, 0.0,
+             1.0 * s,  1.0 * s, 0.0,
+            -1.0 * s, -1.0 * s, 0.0,
+             1.0 * s, -1.0 * s, 0.0]), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(opt_positionLocation);
+        gl.vertexAttribPointer(opt_positionLocation, 3, gl.FLOAT, false, 0, 0);
+
+        var vertexObject = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            1.0 * s, 1.0 * s,
+            0.0 * s, 1.0 * s,
+            0.0 * s, 0.0 * s,
+            1.0 * s, 1.0 * s,
+            0.0 * s, 0.0 * s,
+            1.0 * s, 0.0 * s]), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(opt_texcoordLocation);
+        gl.vertexAttribPointer(opt_texcoordLocation, 2, gl.FLOAT, false, 0, 0);
+    };
+    
+    function readLocation(x, y) {
+        var pixels = new Uint8Array(1 * 1 * 4);
+        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        return pixels;
+    };
+    function testPixel(blackList, whiteList) {
+        function testList(list, expected) {
+            for (var n = 0; n < list.length; n++) {
+                var l = list[n];
+                var x = -Math.floor(l * canvas.width / 2) + canvas.width / 2;
+                var y = -Math.floor(l * canvas.height / 2) + canvas.height / 2;
+                var source = readLocation(x, y);
+                if (Math.abs(source[0] - expected) > 2) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return testList(blackList, 0) && testList(whiteList, 255);
+    };
+    function verifyDraw(drawNumber, s) {
+        wtu.drawQuad(gl);
+        var blackList = [];
+        var whiteList = [];
+        var points = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
+        for (var n = 0; n < points.length; n++) {
+            if (points[n] <= s) {
+                blackList.push(points[n]);
+            } else {
+                whiteList.push(points[n]);
+            }
+        }
+        if (testPixel(blackList, whiteList)) {
+            testPassed("Draw " + drawNumber + " passed pixel test");
+        } else {
+            testFailed("Draw " + drawNumber + " failed pixel test");
+        }
+    };
+    
+    // Setup all bindings
+    setupQuad(1);
+    ext.bindVertexArrayOES(vao0);
+    setupQuad(0.5);
+    ext.bindVertexArrayOES(vao1);
+    setupQuad(0.25);
+    
+    // Verify drawing
+    ext.bindVertexArrayOES(null);
+    verifyDraw(0, 1);
+    ext.bindVertexArrayOES(vao0);
+    verifyDraw(1, 0.5);
+    ext.bindVertexArrayOES(vao1);
+    verifyDraw(2, 0.25);
+    
+    ext.bindVertexArrayOES(null);
+    ext.deleteVertexArrayOES(vao0);
+    ext.deleteVertexArrayOES(vao1);
+}
+
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
