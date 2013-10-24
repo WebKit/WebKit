@@ -419,9 +419,6 @@ template <typename U, typename V> static inline bool safeEquals(U lhs, V rhs)
 
 enum ResultOverflowedTag { ResultOverflowed };
     
-// FIXME: Needed to workaround http://llvm.org/bugs/show_bug.cgi?id=10801
-static inline bool workAroundClangBug() { return true; }
-
 template <typename T, class OverflowHandler> class Checked : public OverflowHandler {
 public:
     template <typename _T, class _OverflowHandler> friend class Checked;
@@ -433,9 +430,7 @@ public:
     Checked(ResultOverflowedTag)
         : m_value(0)
     {
-        // FIXME: Remove this when clang fixes http://llvm.org/bugs/show_bug.cgi?id=10801
-        if (workAroundClangBug())
-            this->overflowed();
+        this->overflowed();
     }
 
     template <typename U> Checked(U value)

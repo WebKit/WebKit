@@ -1,3 +1,13 @@
+2013-10-24  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove Clang workaround.
+        https://bugs.webkit.org/show_bug.cgi?id=123262
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::Checked::Checked):
+
 2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL 1.8 libraries.
