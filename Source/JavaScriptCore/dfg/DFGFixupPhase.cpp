@@ -873,6 +873,7 @@ private:
         case CountExecution:
         case ForceOSRExit:
         case CheckWatchdogTimer:
+        case Unreachable:
             break;
 #else
         default:

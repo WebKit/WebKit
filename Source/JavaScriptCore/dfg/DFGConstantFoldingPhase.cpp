@@ -434,8 +434,7 @@ private:
             Node* node = block->at(indexInBlock);
             switch (node->op()) {
             case Return:
-            case Throw:
-            case ThrowReferenceError:
+            case Unreachable:
             case ForceOSRExit:
                 // Do nothing. These nodes will already do the right thing.
                 break;

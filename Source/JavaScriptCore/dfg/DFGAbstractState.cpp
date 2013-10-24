@@ -1529,7 +1529,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
         forNode(node).set(SpecBoolean);
         break;
-            
+
     case Phi:
     case Flush:
     case PhantomLocal:
@@ -1550,6 +1550,10 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GarbageValue:
         clobberWorld(node->codeOrigin, indexInBlock);
         forNode(node).makeTop();
+        break;
+
+    case Unreachable:
+        RELEASE_ASSERT_NOT_REACHED();
         break;
 
     case ForceOSRExit:
@@ -1777,8 +1781,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     }
         
     case Return:
-    case Throw:
-    case ThrowReferenceError:
+    case Unreachable:
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         return false;
         
