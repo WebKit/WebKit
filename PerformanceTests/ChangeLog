@@ -1,3 +1,16 @@
+2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Use a Vector instead of HashSet to computed the orderValues in RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=118620
+
+        Reviewed by Antti Koivisto.
+
+        From Blink r152960 by <ojan@chromium.org>
+
+        New performance test for layouts in flexboxes.
+
+        * Layout/flexbox-lots-of-data.html: Added.
+
 2013-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         DoYouEvenBench: Make it work on Internet Explorer 11 Release Preview

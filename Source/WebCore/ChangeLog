@@ -1,3 +1,24 @@
+2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Use a Vector instead of HashSet to computed the orderValues in RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=118620
+
+        Reviewed by Antti Koivisto.
+
+        Turns out that order is extremelly uncommon so using a Vector is
+        much less expensive. This also special-cases the much common case
+        of only having order of value 0 by using Vectors with just one
+        preallocated member.
+
+        Also added the performance test that shows a ~1% win when using a
+        vector instead of the HashSet.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::OrderIterator::setOrderValues):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        * rendering/RenderFlexibleBox.h:
+
 2013-10-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix since r157823.
