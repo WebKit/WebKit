@@ -1,3 +1,14 @@
+2013-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Adjust the precision of byte strings in Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=123281
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Utilities.js:
+        (Number.bytesToString): More precision for MB and less precision for 10..1023 KB.
+
 2013-10-24  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: Add a way to test the Manager and model classes

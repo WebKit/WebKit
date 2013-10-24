@@ -936,16 +936,16 @@ Object.defineProperty(Number, "bytesToString",
             return WebInspector.UIString("%.0f B").format(bytes);
 
         var kilobytes = bytes / 1024;
-        if (higherResolution && kilobytes < 1024)
+        if (higherResolution || kilobytes < 10)
             return WebInspector.UIString("%.2f KB").format(kilobytes);
         else if (kilobytes < 1024)
-            return WebInspector.UIString("%.0f KB").format(kilobytes);
+            return WebInspector.UIString("%.1f KB").format(kilobytes);
 
         var megabytes = kilobytes / 1024;
-        if (higherResolution)
+        if (higherResolution || megabytes < 10)
             return WebInspector.UIString("%.2f MB").format(megabytes);
         else
-            return WebInspector.UIString("%.0f MB").format(megabytes);
+            return WebInspector.UIString("%.1f MB").format(megabytes);
     }
 });
 
