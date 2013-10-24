@@ -1,3 +1,17 @@
+2013-10-24  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fix argument passing for jhbuild.
+        https://bugs.webkit.org/show_bug.cgi?id=123253
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The update-webkit-libs-jhbuild previously didn't allowed
+        extra arguments to be passed to jhbuild.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (runJhbuild):
+        * Scripts/update-webkitefl-libs:
+
 2013-10-24  Sanghyup Lee  <sh53.lee@samsung.com>
 
         [EFL] Compilation warning in DumpRenderTreeView.cpp on 64-Bit
