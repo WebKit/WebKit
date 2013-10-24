@@ -372,11 +372,9 @@ EXPORTS
         symbolWithPointer(?getCGImageRef@BitmapImage@WebCore@@UAEPAUCGImage@@XZ, ?getCGImageRef@BitmapImage@WebCore@@UEAAPEAUCGImage@@XZ)
         symbolWithPointer(?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UAEPAUCGImage@@ABVIntSize@2@@Z, ?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UEAAPEAUCGImage@@AEBVIntSize@2@@Z)
         symbolWithPointer(?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ, ?getCGImageArray@BitmapImage@WebCore@@UEAA?AV?$RetainPtr@PEBU__CFArray@@@WTF@@XZ)
-        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #elif USE(CAIRO)
         symbolWithPointer(?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAE?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ, ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UEAA?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z)
-        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #endif
         symbolWithPointer(?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z, ?getHBITMAP@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@@Z)
         symbolWithPointer(?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PBVIntSize@2@@Z, ?getHBITMAPOfSize@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@PEBVIntSize@2@@Z)

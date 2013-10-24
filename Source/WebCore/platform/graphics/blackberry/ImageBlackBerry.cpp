@@ -119,10 +119,6 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
-{
-    draw(context, dstRect, srcRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
-
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription description)
 {
     startAnimation();

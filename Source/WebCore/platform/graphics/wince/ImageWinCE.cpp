@@ -108,7 +108,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
     draw(ctxt, dstRect, FloatRect(0, 0, imageSize.width(), imageSize.height()), styleColorSpace, compositeOp, BlendModeNormal);
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRectIn, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRectIn, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)
 {
     if (!m_source.initialized())
         return;

@@ -61,11 +61,6 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
     checkForSolidColor();
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
-{
-    draw(context, dst, src, styleColorSpace, op, blendMode, ImageOrientationDescription());
-}
-
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
     BlendMode blendMode, ImageOrientationDescription description)
 {
@@ -98,18 +93,18 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     FloatRect adjustedSrcRect(src);
 #endif
 
-    ImageOrientation orientation;
+    ImageOrientation frameOrientation(description.imageOrientation());
     if (description.respectImageOrientation() == RespectImageOrientation)
-        orientation = frameOrientationAtIndex(m_currentFrame);
+        frameOrientation = frameOrientationAtIndex(m_currentFrame);
 
     FloatRect dstRect = dst;
 
-    if (orientation != DefaultImageOrientation) {
+    if (frameOrientation != DefaultImageOrientation) {
         // ImageOrientation expects the origin to be at (0, 0).
         context->translate(dstRect.x(), dstRect.y());
         dstRect.setLocation(FloatPoint());
-        context->concatCTM(orientation.transformFromDefault(dstRect.size()));
-        if (orientation.usesWidthAsHeight()) {
+        context->concatCTM(frameOrientation.transformFromDefault(dstRect.size()));
+        if (frameOrientation.usesWidthAsHeight()) {
             // The destination rectangle will have it's width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
             dstRect = FloatRect(dstRect.x(), dstRect.y(), dstRect.height(), dstRect.width());

@@ -176,7 +176,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext* context, const
     }
 }
 
-void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode)
+void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription)
 {
     if (!m_document || !m_hasPage)
         return;

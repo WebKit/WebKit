@@ -5,7 +5,7 @@
 </head>
 <body>
 <script>
-description('Apply image-resolution property and check computed style.');
+description('Apply image-orientation property and check computed style.');
 
 var expectations = {
     '0deg': ['-360deg', '-315deg', '0deg', '315deg', '360deg'],
@@ -19,7 +19,7 @@ for (expected in expectations) {
     expectations[expected].forEach(function(test) {
         p.style.imageOrientation = '';
         p.style.imageOrientation = test;
-        shouldBe('p.style.cssText', '"image-orientation: ' + test + '; "');
+        shouldBe('p.style.cssText', '"image-orientation: ' + test + ';"');
         shouldBe('getComputedStyle(p).imageOrientation', '"' + expected + '"');
     });
 }

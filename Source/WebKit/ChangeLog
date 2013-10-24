@@ -1,3 +1,12 @@
+2013-10-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Integrate css3-images image-orientation with existing EXIF support
+        https://bugs.webkit.org/show_bug.cgi?id=91566
+
+        Reviewed by Beth Dakin.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Update export symbols for draw functions.
+
 2013-10-15  Andy Estes  <aestes@apple.com>
 
         Expose -[WebPluginPackage bundle] as SPI

@@ -160,11 +160,6 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
     return adoptCF(array);
 }
 
-void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
-{
-    draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
-}
-
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
     startAnimation();

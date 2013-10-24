@@ -1,3 +1,77 @@
+2013-10-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Integrate css3-images image-orientation with existing EXIF support
+        https://bugs.webkit.org/show_bug.cgi?id=91566
+
+        Reviewed by Beth Dakin.
+
+        Original patch by David Barr(davidbarr@chromium.org).
+
+        This patch passes an information of image orientation into existing EXIF support functions
+        (draw() functions of image classes mainly). We need to let the functions to know the information
+        in order to meet the image-orientation requirement.
+
+        Spec: http://dev.w3.org/csswg/css-images-3/#the-image-orientation
+        The css3-images module specification is at last call.
+
+        Test: fast/css/image-orientation/image-orientation.html
+        Image orientation test is to check if incorrect rotation value can be fixed with correct orientation.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateSize):
+        (WebCore::BitmapImage::sizeRespectingOrientation):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::draw):
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/blackberry/ImageBlackBerry.cpp:
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::BufferedImage::draw):
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawForContainer):
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::draw):
+        * svg/graphics/SVGImageForContainer.h:
+
 2013-10-23  Andreas Kling  <akling@apple.com>
 
         Tighten typing in SVGInlineTextBox a bit.
