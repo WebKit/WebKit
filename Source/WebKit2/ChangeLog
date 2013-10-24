@@ -1,5 +1,11 @@
 2013-10-24  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the Mountain Lion build.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
+2013-10-24  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add -[WKBrowsingContextController goToBackForwardItem:]
         https://bugs.webkit.org/show_bug.cgi?id=123289
 
