@@ -71,14 +71,14 @@ public:
 private:
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
-    bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderObject*, RenderStyle*);
+    bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, RenderStyle*);
     void releasePaintingResource(GraphicsContext*&, const Path*);
 
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, float scalingFactor, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
 
     void paintDecoration(GraphicsContext*, TextDecoration, const SVGTextFragment&);
-    void paintDecorationWithStyle(GraphicsContext*, TextDecoration, const SVGTextFragment&, RenderObject* decorationRenderer);
+    void paintDecorationWithStyle(GraphicsContext*, TextDecoration, const SVGTextFragment&, RenderBoxModelObject& decorationRenderer);
     void paintTextWithShadows(GraphicsContext*, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
     void paintText(GraphicsContext*, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 

@@ -1,3 +1,14 @@
+2013-10-23  Andreas Kling  <akling@apple.com>
+
+        Tighten typing in SVGInlineTextBox a bit.
+        <https://webkit.org/b/123238>
+
+        Use RenderBoxModelObject& instead of generic RenderObject* in some
+        places where it happens as a natural consequence of keeping the
+        original return type from InlineBox::parent()->renderer().
+
+        Reviewed by Anders Carlsson.
+
 2013-10-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce RENDER_OBJECT_TYPE_CASTS to replace manual toFoo() in child render object
