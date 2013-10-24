@@ -1,3 +1,13 @@
+2013-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints in sourceURL named scripts do not work
+        https://bugs.webkit.org/show_bug.cgi?id=123231
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/debugger/setBreakpointByUrl-sourceURL-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html: Added.
+
 2013-10-24  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: Add a way to test the Manager and model classes

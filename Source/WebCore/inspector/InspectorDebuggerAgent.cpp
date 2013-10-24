@@ -320,8 +320,10 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString* errorString, int li
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition, breakpointActions, autoContinue);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
-        if (!matches(it->value.url, url, isRegex))
+        String scriptURL = !it->value.sourceURL.isEmpty() ? it->value.sourceURL : it->value.url;
+        if (!matches(scriptURL, url, isRegex))
             continue;
+
         RefPtr<TypeBuilder::Debugger::Location> location = resolveBreakpoint(breakpointId, it->key, breakpoint);
         if (location)
             locations->addItem(location);
@@ -701,18 +703,18 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 
 // JavaScriptDebugListener functions
 
-void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script& script)
+void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script& inScript)
 {
-    // Don't send script content to the front end until it's really needed.
-    const bool* isContentScript = script.isContentScript ? &script.isContentScript : 0;
-    String sourceMapURL = sourceMapURLForScript(script);
-    String* sourceMapURLParam = sourceMapURL.isNull() ? 0 : &sourceMapURL;
-    String sourceURL;
+    Script script = inScript;
     if (!script.startLine && !script.startColumn)
-        sourceURL = ContentSearchUtils::findScriptSourceURL(script.source);
-    bool hasSourceURL = !sourceURL.isEmpty();
-    String scriptURL = hasSourceURL ? sourceURL : script.url;
+        script.sourceURL = ContentSearchUtils::findScriptSourceURL(script.source);
+    script.sourceMappingURL = sourceMapURLForScript(script);
+
+    bool hasSourceURL = !script.sourceURL.isEmpty();
+    String scriptURL = hasSourceURL ? script.sourceURL : script.url;
     bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : 0;
+    String* sourceMapURLParam = script.sourceMappingURL.isNull() ? 0 : &script.sourceMappingURL;
+    const bool* isContentScript = script.isContentScript ? &script.isContentScript : 0;
     m_frontend->scriptParsed(scriptId, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
 
     m_scripts.set(scriptId, script);

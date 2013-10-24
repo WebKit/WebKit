@@ -1,3 +1,23 @@
+2013-10-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints in sourceURL named scripts do not work
+        https://bugs.webkit.org/show_bug.cgi?id=123231
+
+        Reviewed by Timothy Hatcher.
+
+        Remember a Script's sourceURL and sourceMappingURL. When setting a
+        breakpoint by URL, check it against the sourceURL or original URL.
+        If a script had a sourceURL that would have been the only URL sent
+        to the frontend, so that receives priority.
+
+        Test: inspector-protocol/debugger/setBreakpointByUrl-sourceURL.html
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptDebugListener.h:
+
 2013-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         Add CryptoKey base class and bindings
