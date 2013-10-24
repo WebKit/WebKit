@@ -139,7 +139,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     m_animationPath = Path();
     bool foundMPath = false;
 
-    auto mPathChildren = childrenOfType<SVGMPathElement>(this);
+    auto mPathChildren = childrenOfType<SVGMPathElement>(*this);
     for (auto mPath = mPathChildren.begin(), end = mPathChildren.end(); mPath != end; ++mPath) {
         SVGPathElement* pathElement = mPath->pathElement();
         if (pathElement) {

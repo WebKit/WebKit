@@ -86,7 +86,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         // The legend element is ignored if it lives inside of a fieldset element that uses it to generate alternative text.
         if (renderer->isLegend()) {
             Element* element = this->element();
-            if (element && ancestorsOfType<HTMLFieldSetElement>(element).first())
+            if (element && ancestorsOfType<HTMLFieldSetElement>(*element).first())
                 return IgnoreObject;
         }
     }

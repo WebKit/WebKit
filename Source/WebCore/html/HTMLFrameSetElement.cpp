@@ -165,7 +165,7 @@ RenderElement* HTMLFrameSetElement::createRenderer(RenderStyle& style)
 
 HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)
 {
-    return ancestorsOfType<HTMLFrameSetElement>(descendant).first();
+    return ancestorsOfType<HTMLFrameSetElement>(*descendant).first();
 }
 
 void HTMLFrameSetElement::willAttachRenderers()

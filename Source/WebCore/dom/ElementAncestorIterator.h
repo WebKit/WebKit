@@ -49,7 +49,7 @@ public:
 template <typename ElementType>
 class ElementAncestorIteratorAdapter {
 public:
-    explicit ElementAncestorIteratorAdapter(ElementType* descendant);
+    explicit ElementAncestorIteratorAdapter(ElementType* first);
     ElementAncestorIterator<ElementType> begin();
     ElementAncestorIterator<ElementType> end();
     ElementType* first() { return m_first; }
@@ -61,7 +61,7 @@ private:
 template <typename ElementType>
 class ElementAncestorConstIteratorAdapter {
 public:
-    explicit ElementAncestorConstIteratorAdapter(const ElementType* descendant);
+    explicit ElementAncestorConstIteratorAdapter(const ElementType* first);
     ElementAncestorConstIterator<ElementType> begin() const;
     ElementAncestorConstIterator<ElementType> end() const;
     const ElementType* first() const { return m_first; }
@@ -74,10 +74,10 @@ ElementAncestorIteratorAdapter<Element> elementLineage(Element* first);
 ElementAncestorConstIteratorAdapter<Element> elementLineage(const Element* first);
 ElementAncestorIteratorAdapter<Element> elementAncestors(Element* descendant);
 ElementAncestorConstIteratorAdapter<Element> elementAncestors(const Element* descendant);
-template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> lineageOfType(Element* first);
-template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const Element* first);
-template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element* descendant);
-template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element* descendant);
+template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> lineageOfType(Element& first);
+template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const Element& first);
+template <typename ElementType> ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element& descendant);
+template <typename ElementType> ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element& descendant);
 
 // ElementAncestorIterator
 
@@ -182,28 +182,28 @@ inline ElementAncestorConstIteratorAdapter<Element> elementAncestors(const Eleme
 }
 
 template <typename ElementType>
-inline ElementAncestorIteratorAdapter<ElementType> lineageOfType(ElementType* first)
+inline ElementAncestorIteratorAdapter<ElementType> lineageOfType(ElementType& first)
 {
+    return ElementAncestorIteratorAdapter<ElementType>(&first);
+}
+
+template <typename ElementType>
+inline ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const ElementType& first)
+{
+    return ElementAncestorConstIteratorAdapter<ElementType>(&first);
+}
+
+template <typename ElementType>
+inline ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element& descendant)
+{
+    ElementType* first = findElementAncestorOfType<ElementType>(descendant);
     return ElementAncestorIteratorAdapter<ElementType>(first);
 }
 
 template <typename ElementType>
-inline ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const ElementType* first)
+inline ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element& descendant)
 {
-    return ElementAncestorConstIteratorAdapter<ElementType>(first);
-}
-
-template <typename ElementType>
-inline ElementAncestorIteratorAdapter<ElementType> ancestorsOfType(Element* descendant)
-{
-    ElementType* first = findElementAncestorOfType<ElementType>(*descendant);
-    return ElementAncestorIteratorAdapter<ElementType>(first);
-}
-
-template <typename ElementType>
-inline ElementAncestorConstIteratorAdapter<ElementType> ancestorsOfType(const Element* descendant)
-{
-    const ElementType* first = findElementAncestorOfType<const ElementType>(*descendant);
+    const ElementType* first = findElementAncestorOfType<const ElementType>(descendant);
     return ElementAncestorConstIteratorAdapter<ElementType>(first);
 }
 

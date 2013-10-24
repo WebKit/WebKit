@@ -53,7 +53,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node* child) const
 {
     // FIXME: This function does not do what the comment below implies it does.
     // It will create a renderer for any valid SVG element children, not just the first one.
-    auto svgChildren = childrenOfType<SVGElement>(this);
+    auto svgChildren = childrenOfType<SVGElement>(*this);
     for (auto element = svgChildren.begin(), end = svgChildren.end(); element != end; ++element) {
         if (!element->isValid())
             continue;

@@ -510,7 +510,7 @@ void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attribute
 
 bool SVGElement::haveLoadedRequiredResources()
 {
-    auto svgChildren = childrenOfType<SVGElement>(this);
+    auto svgChildren = childrenOfType<SVGElement>(*this);
     for (auto child = svgChildren.begin(), end = svgChildren.end(); child != end; ++child) {
         if (!child->haveLoadedRequiredResources())
             return false;
@@ -925,7 +925,7 @@ String SVGElement::title() const
 
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
-    auto firstTitle = descendantsOfType<SVGTitleElement>(this).first();
+    auto firstTitle = descendantsOfType<SVGTitleElement>(*this).first();
     return firstTitle ? const_cast<SVGTitleElement*>(firstTitle)->innerText() : String();
 }
 

@@ -51,7 +51,7 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    auto formControlDescendants = descendantsOfType<HTMLFormControlElement>(base);
+    auto formControlDescendants = descendantsOfType<HTMLFormControlElement>(*base);
     for (auto control = formControlDescendants.begin(), end = formControlDescendants.end(); control != end; ++control)
         control->ancestorDisabledStateWasChanged();
 }
@@ -67,7 +67,7 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
     HTMLFormControlElement::childrenChanged(change);
 
-    auto legendChildren = childrenOfType<HTMLLegendElement>(this);
+    auto legendChildren = childrenOfType<HTMLLegendElement>(*this);
     for (auto legend = legendChildren.begin(), end = legendChildren.end(); legend != end; ++legend)
         invalidateDisabledStateUnder(&*legend);
 }
@@ -90,7 +90,7 @@ RenderElement* HTMLFieldSetElement::createRenderer(RenderStyle&)
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    return const_cast<HTMLLegendElement*>(descendantsOfType<HTMLLegendElement>(this).first());
+    return const_cast<HTMLLegendElement*>(descendantsOfType<HTMLLegendElement>(*this).first());
 }
 
 PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()
@@ -108,7 +108,7 @@ void HTMLFieldSetElement::refreshElementsIfNeeded() const
 
     m_associatedElements.clear();
 
-    auto descendants = elementDescendants(const_cast<HTMLFieldSetElement*>(this));
+    auto descendants = elementDescendants(const_cast<HTMLFieldSetElement&>(*this));
     for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
         if (element->hasTagName(objectTag))
             m_associatedElements.append(&toHTMLObjectElement(*element));

@@ -747,7 +747,7 @@ TranslateAttributeMode HTMLElement::translateAttributeMode() const
 
 bool HTMLElement::translate() const
 {
-    auto lineage = lineageOfType<HTMLElement>(this);
+    auto lineage = lineageOfType<HTMLElement>(*this);
     for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
         TranslateAttributeMode mode = element->translateAttributeMode();
         if (mode == TranslateAttributeInherit)
@@ -954,7 +954,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode, false);
 
-    auto lineage = lineageOfType<HTMLElement>(this);
+    auto lineage = lineageOfType<HTMLElement>(*this);
     for (auto elementToAdjust = lineage.begin(), end = lineage.end(); elementToAdjust != end; ++elementToAdjust) {
         if (elementAffectsDirectionality(&*elementToAdjust)) {
             elementToAdjust->calculateAndAdjustDirectionality();

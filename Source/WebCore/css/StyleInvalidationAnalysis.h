@@ -40,7 +40,7 @@ public:
     StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
-    void invalidateStyle(Document*);
+    void invalidateStyle(Document&);
 
 private:
 

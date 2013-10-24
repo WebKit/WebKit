@@ -90,7 +90,8 @@ PassRefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* 
     ComponentTransferFunction blue;
     ComponentTransferFunction alpha;
 
-    for (auto child = childrenOfType<SVGElement>(this).begin(), end = childrenOfType<SVGElement>(this).end(); child != end; ++child) {
+    auto children = childrenOfType<SVGElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
         SVGElement* element = &*child;
         if (isSVGFEFuncRElement(element))
             red = toSVGFEFuncRElement(element)->transferFunction();

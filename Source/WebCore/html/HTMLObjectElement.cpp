@@ -154,7 +154,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     
     // Scan the PARAM children and store their name/value pairs.
     // Get the URL and type from the params if we don't already have them.
-    auto paramChildren = childrenOfType<HTMLParamElement>(this);
+    auto paramChildren = childrenOfType<HTMLParamElement>(*this);
     for (auto param = paramChildren.begin(), end = paramChildren.end(); param != end; ++param) {
         String name = param->name();
         if (name.isEmpty())
@@ -448,7 +448,8 @@ bool HTMLObjectElement::containsJavaApplet() const
     if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
         return true;
 
-    for (auto child = elementChildren(this).begin(), end = elementChildren(this).end(); child != end; ++child) {
+    auto children = elementChildren(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
         if (child->hasTagName(paramTag) && equalIgnoringCase(child->getNameAttribute(), "type")
             && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
             return true;

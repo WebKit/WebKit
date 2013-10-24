@@ -48,7 +48,7 @@ PassRefPtr<SVGFontFaceSrcElement> SVGFontFaceSrcElement::create(const QualifiedN
 PassRefPtr<CSSValueList> SVGFontFaceSrcElement::srcValue() const
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    auto svgChildren = childrenOfType<SVGElement>(this);
+    auto svgChildren = childrenOfType<SVGElement>(*this);
     for (auto child = svgChildren.begin(), end = svgChildren.end(); child != end; ++child) {
         RefPtr<CSSFontFaceSrcValue> srcValue;
         if (isSVGFontFaceUriElement(*child))

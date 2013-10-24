@@ -33,61 +33,61 @@ namespace WebCore {
 template <typename ElementType>
 class ElementDescendantIterator : public ElementIterator<ElementType> {
 public:
-    ElementDescendantIterator(const ContainerNode* root);
-    ElementDescendantIterator(const ContainerNode* root, ElementType* current);
+    ElementDescendantIterator(const ContainerNode& root);
+    ElementDescendantIterator(const ContainerNode& root, ElementType* current);
     ElementDescendantIterator& operator++();
 };
 
 template <typename ElementType>
 class ElementDescendantConstIterator : public ElementConstIterator<ElementType>  {
 public:
-    ElementDescendantConstIterator(const ContainerNode* root);
-    ElementDescendantConstIterator(const ContainerNode* root, const ElementType* current);
+    ElementDescendantConstIterator(const ContainerNode& root);
+    ElementDescendantConstIterator(const ContainerNode& root, const ElementType* current);
     ElementDescendantConstIterator& operator++();
 };
 
 template <typename ElementType>
 class ElementDescendantIteratorAdapter {
 public:
-    ElementDescendantIteratorAdapter(ContainerNode* root);
+    ElementDescendantIteratorAdapter(ContainerNode& root);
     ElementDescendantIterator<ElementType> begin();
     ElementDescendantIterator<ElementType> end();
     ElementType* first();
     ElementType* last();
 
 private:
-    ContainerNode* m_root;
+    ContainerNode& m_root;
 };
 
 template <typename ElementType>
 class ElementDescendantConstIteratorAdapter {
 public:
-    ElementDescendantConstIteratorAdapter(const ContainerNode* root);
+    ElementDescendantConstIteratorAdapter(const ContainerNode& root);
     ElementDescendantConstIterator<ElementType> begin() const;
     ElementDescendantConstIterator<ElementType> end() const;
     const ElementType* first() const;
     const ElementType* last() const;
 
 private:
-    const ContainerNode* m_root;
+    const ContainerNode& m_root;
 };
 
-ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode* root);
-ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode* root);
-template <typename ElementType> ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode* root);
-template <typename ElementType> ElementDescendantConstIteratorAdapter<ElementType> descendantsOfType(const ContainerNode* root);
+ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode&);
+ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode&);
+template <typename ElementType> ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode&);
+template <typename ElementType> ElementDescendantConstIteratorAdapter<ElementType> descendantsOfType(const ContainerNode&);
 
 // ElementDescendantIterator
 
 template <typename ElementType>
-inline ElementDescendantIterator<ElementType>::ElementDescendantIterator(const ContainerNode* root)
-    : ElementIterator<ElementType>(root)
+inline ElementDescendantIterator<ElementType>::ElementDescendantIterator(const ContainerNode& root)
+    : ElementIterator<ElementType>(&root)
 {
 }
 
 template <typename ElementType>
-inline ElementDescendantIterator<ElementType>::ElementDescendantIterator(const ContainerNode* root, ElementType* current)
-    : ElementIterator<ElementType>(root, current)
+inline ElementDescendantIterator<ElementType>::ElementDescendantIterator(const ContainerNode& root, ElementType* current)
+    : ElementIterator<ElementType>(&root, current)
 {
 }
 
@@ -100,15 +100,15 @@ inline ElementDescendantIterator<ElementType>& ElementDescendantIterator<Element
 // ElementDescendantConstIterator
 
 template <typename ElementType>
-inline ElementDescendantConstIterator<ElementType>::ElementDescendantConstIterator(const ContainerNode* root)
-    : ElementConstIterator<ElementType>(root)
+inline ElementDescendantConstIterator<ElementType>::ElementDescendantConstIterator(const ContainerNode& root)
+    : ElementConstIterator<ElementType>(&root)
 
 {
 }
 
 template <typename ElementType>
-inline ElementDescendantConstIterator<ElementType>::ElementDescendantConstIterator(const ContainerNode* root, const ElementType* current)
-    : ElementConstIterator<ElementType>(root, current)
+inline ElementDescendantConstIterator<ElementType>::ElementDescendantConstIterator(const ContainerNode& root, const ElementType* current)
+    : ElementConstIterator<ElementType>(&root, current)
 {
 }
 
@@ -121,7 +121,7 @@ inline ElementDescendantConstIterator<ElementType>& ElementDescendantConstIterat
 // ElementDescendantIteratorAdapter
 
 template <typename ElementType>
-inline ElementDescendantIteratorAdapter<ElementType>::ElementDescendantIteratorAdapter(ContainerNode* root)
+inline ElementDescendantIteratorAdapter<ElementType>::ElementDescendantIteratorAdapter(ContainerNode& root)
     : m_root(root)
 {
 }
@@ -129,7 +129,7 @@ inline ElementDescendantIteratorAdapter<ElementType>::ElementDescendantIteratorA
 template <typename ElementType>
 inline ElementDescendantIterator<ElementType> ElementDescendantIteratorAdapter<ElementType>::begin()
 {
-    return ElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
+    return ElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(&m_root));
 }
 
 template <typename ElementType>
@@ -141,19 +141,19 @@ inline ElementDescendantIterator<ElementType> ElementDescendantIteratorAdapter<E
 template <typename ElementType>
 inline ElementType* ElementDescendantIteratorAdapter<ElementType>::first()
 {
-    return Traversal<ElementType>::firstWithin(m_root);
+    return Traversal<ElementType>::firstWithin(&m_root);
 }
 
 template <typename ElementType>
 inline ElementType* ElementDescendantIteratorAdapter<ElementType>::last()
 {
-    return Traversal<ElementType>::lastWithin(m_root);
+    return Traversal<ElementType>::lastWithin(&m_root);
 }
 
 // ElementDescendantConstIteratorAdapter
 
 template <typename ElementType>
-inline ElementDescendantConstIteratorAdapter<ElementType>::ElementDescendantConstIteratorAdapter(const ContainerNode* root)
+inline ElementDescendantConstIteratorAdapter<ElementType>::ElementDescendantConstIteratorAdapter(const ContainerNode& root)
     : m_root(root)
 {
 }
@@ -161,7 +161,7 @@ inline ElementDescendantConstIteratorAdapter<ElementType>::ElementDescendantCons
 template <typename ElementType>
 inline ElementDescendantConstIterator<ElementType> ElementDescendantConstIteratorAdapter<ElementType>::begin() const
 {
-    return ElementDescendantConstIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
+    return ElementDescendantConstIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(&m_root));
 }
 
 template <typename ElementType>
@@ -173,35 +173,35 @@ inline ElementDescendantConstIterator<ElementType> ElementDescendantConstIterato
 template <typename ElementType>
 inline const ElementType* ElementDescendantConstIteratorAdapter<ElementType>::first() const
 {
-    return Traversal<ElementType>::firstWithin(m_root);
+    return Traversal<ElementType>::firstWithin(&m_root);
 }
 
 template <typename ElementType>
 inline const ElementType* ElementDescendantConstIteratorAdapter<ElementType>::last() const
 {
-    return Traversal<ElementType>::lastWithin(m_root);
+    return Traversal<ElementType>::lastWithin(&m_root);
 }
 
 // Standalone functions
 
-inline ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode* root)
+inline ElementDescendantIteratorAdapter<Element> elementDescendants(ContainerNode& root)
 {
     return ElementDescendantIteratorAdapter<Element>(root);
 }
 
 template <typename ElementType>
-inline ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode* root)
+inline ElementDescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode& root)
 {
     return ElementDescendantIteratorAdapter<ElementType>(root);
 }
 
-inline ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode* root)
+inline ElementDescendantConstIteratorAdapter<Element> elementDescendants(const ContainerNode& root)
 {
     return ElementDescendantConstIteratorAdapter<Element>(root);
 }
 
 template <typename ElementType>
-inline ElementDescendantConstIteratorAdapter<ElementType> descendantsOfType(const ContainerNode* root)
+inline ElementDescendantConstIteratorAdapter<ElementType> descendantsOfType(const ContainerNode& root)
 {
     return ElementDescendantConstIteratorAdapter<ElementType>(root);
 }

@@ -337,7 +337,7 @@ PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const Flo
 {
     Vector<Ref<Element>> elements;
 
-    auto svgDescendants = descendantsOfType<SVGElement>(referenceElement ? referenceElement : this);
+    auto svgDescendants = descendantsOfType<SVGElement>(*(referenceElement ? referenceElement : this));
     for (auto it = svgDescendants.begin(), end = svgDescendants.end(); it != end; ++it) {
         const SVGElement* svgElement = &*it;
         if (collect == CollectIntersectionList) {
@@ -777,7 +777,8 @@ Element* SVGSVGElement::getElementById(const AtomicString& id)
 
     // Fall back to traversing our subtree. Duplicate ids are allowed, the first found will
     // be returned.
-    for (auto element = elementDescendants(this).begin(), end = elementDescendants(this).end(); element != end; ++element) {
+    auto descendants = elementDescendants(*this);
+    for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
         if (element->getIdAttribute() == id)
             return &*element;
     }

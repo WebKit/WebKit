@@ -112,7 +112,7 @@ static bool elementMatchesSelectorScopes(const Element& element, const HashSet<A
     return false;
 }
 
-void StyleInvalidationAnalysis::invalidateStyle(Document* document)
+void StyleInvalidationAnalysis::invalidateStyle(Document& document)
 {
     ASSERT(!m_dirtiesAllStyle);
     if (m_idScopes.isEmpty() && m_classScopes.isEmpty())

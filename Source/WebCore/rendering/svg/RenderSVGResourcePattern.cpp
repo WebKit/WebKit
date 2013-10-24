@@ -272,7 +272,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
         contentTransformation = tileImageTransform;
 
     // Draw the content into the ImageBuffer.
-    auto children = childrenOfType<SVGElement>(attributes.patternContentElement());
+    auto children = childrenOfType<SVGElement>(*attributes.patternContentElement());
     for (auto it = children.begin(), end = children.end(); it != end; ++it) {
         const SVGElement& child = *it;
         if (!child.renderer())

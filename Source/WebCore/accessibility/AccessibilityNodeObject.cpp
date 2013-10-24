@@ -398,7 +398,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
         return false;
     case LegendRole:
         if (Element* element = this->element())
-            return !ancestorsOfType<HTMLFieldSetElement>(element).first();
+            return !ancestorsOfType<HTMLFieldSetElement>(*element).first();
     default:
         return true;
     }
@@ -424,7 +424,7 @@ bool AccessibilityNodeObject::canvasHasFallbackContent() const
     Node* node = this->node();
     if (!node || !node->hasTagName(canvasTag))
         return false;
-    Element* canvasElement = toElement(node);
+    Element& canvasElement = toElement(*node);
     // If it has any children that are elements, we'll assume it might be fallback
     // content. If it has no children or its only children are not elements
     // (e.g. just text nodes), it doesn't have fallback content.
@@ -1141,7 +1141,7 @@ HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) con
             return label;
     }
 
-    return ancestorsOfType<HTMLLabelElement>(element).first();
+    return ancestorsOfType<HTMLLabelElement>(*element).first();
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const
@@ -1162,7 +1162,8 @@ static Element* siblingWithAriaRole(String role, Node* node)
     ContainerNode* parent = node->parentNode();
     if (!parent)
         return 0;
-    for (auto sibling = elementChildren(parent).begin(), end = elementChildren(parent).end(); sibling != end; ++sibling) {
+    auto children = elementChildren(*parent);
+    for (auto sibling = children.begin(), end = children.end(); sibling != end; ++sibling) {
         const AtomicString& siblingAriaRole = sibling->fastGetAttribute(roleAttr);
         if (equalIgnoringCase(siblingAriaRole, role))
             return &*sibling;

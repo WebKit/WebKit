@@ -47,7 +47,8 @@ PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilde
     RefPtr<FilterEffect> effect = FEMerge::create(filter);
     FilterEffectVector& mergeInputs = effect->inputEffects();
 
-    for (auto mergeNode = childrenOfType<SVGFEMergeNodeElement>(this).begin(), end = childrenOfType<SVGFEMergeNodeElement>(this).end(); mergeNode != end; ++mergeNode) {
+    auto children = childrenOfType<SVGFEMergeNodeElement>(*this);
+    for (auto mergeNode = children.begin(), end = children.end(); mergeNode != end; ++mergeNode) {
         FilterEffect* mergeEffect = filterBuilder->getEffectById(mergeNode->in1());
         if (!mergeEffect)
             return 0;

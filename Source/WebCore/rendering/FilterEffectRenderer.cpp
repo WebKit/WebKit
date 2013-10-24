@@ -161,7 +161,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElemen
     // This may need a spec clarification.
     auto builder = std::make_unique<SVGFilterBuilder>(previousEffect, SourceAlpha::create(this));
 
-    auto attributesChildren = childrenOfType<SVGFilterPrimitiveStandardAttributes>(filter);
+    auto attributesChildren = childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter);
     for (auto it = attributesChildren.begin(), end = attributesChildren.end(); it != end; ++it) {
         SVGFilterPrimitiveStandardAttributes* effectElement = &*it;
         effect = effectElement->build(builder.get(), this);

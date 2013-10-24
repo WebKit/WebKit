@@ -403,7 +403,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     StyleInvalidationAnalysis invalidationAnalysis(addedSheets);
     if (invalidationAnalysis.dirtiesAllStyle())
         return;
-    invalidationAnalysis.invalidateStyle(&m_document);
+    invalidationAnalysis.invalidateStyle(m_document);
     requiresFullStyleRecalc = false;
 }
 

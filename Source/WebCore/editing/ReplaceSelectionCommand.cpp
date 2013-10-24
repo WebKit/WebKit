@@ -712,8 +712,8 @@ static void removeHeadContents(ReplacementFragment& fragment)
 
     Vector<Element*> toRemove;
 
-    auto it = elementDescendants(fragment.fragment()).begin();
-    auto end = elementDescendants(fragment.fragment()).end();
+    auto it = elementDescendants(*fragment.fragment()).begin();
+    auto end = elementDescendants(*fragment.fragment()).end();
     while (it != end) {
         if (it->hasTagName(baseTag) || it->hasTagName(linkTag) || it->hasTagName(metaTag) || it->hasTagName(styleTag) || isHTMLTitleElement(*it)) {
             toRemove.append(&*it);

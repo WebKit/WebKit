@@ -89,7 +89,7 @@ bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) co
     bool fountFirstGlyphRef = false;
     bool foundFirstAltGlyphItem = false;
 
-    auto svgChildren = childrenOfType<SVGElement>(this);
+    auto svgChildren = childrenOfType<SVGElement>(*this);
     for (auto it = svgChildren.begin(), end = svgChildren.end(); it != end; ++it) {
         const SVGElement& child = *it;
         if (!foundFirstAltGlyphItem && isSVGGlyphRefElement(child)) {

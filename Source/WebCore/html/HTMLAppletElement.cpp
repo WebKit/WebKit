@@ -148,7 +148,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         paramValues.append(mayScript.string());
     }
 
-    auto paramChildren = childrenOfType<HTMLParamElement>(this);
+    auto paramChildren = childrenOfType<HTMLParamElement>(*this);
     for (auto param = paramChildren.begin(), end = paramChildren.end(); param != end; ++param) {
         if (param->name().isEmpty())
             continue;

@@ -95,7 +95,7 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
 
     // Add effects to the builder
     auto builder = std::make_unique<SVGFilterBuilder>(SourceGraphic::create(filter), SourceAlpha::create(filter));
-    auto children = childrenOfType<SVGFilterPrimitiveStandardAttributes>(&filterElement());
+    auto children = childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement());
     for (auto element = children.begin(), end = children.end(); element != end; ++element) {
         RefPtr<FilterEffect> effect = element->build(builder.get(), filter);
         if (!effect) {

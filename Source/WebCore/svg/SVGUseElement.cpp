@@ -369,7 +369,7 @@ static bool isDisallowedElement(const Element& element)
 
 static bool subtreeContainsDisallowedElement(SVGElement& start)
 {
-    auto descendants = elementDescendants(&start);
+    auto descendants = elementDescendants(start);
     for (auto element = descendants.begin(), end = descendants.end(); element != end; ++element) {
         if (isDisallowedElement(*element))
             return true;
@@ -606,7 +606,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     // is the SVGGElement object for the 'g', and then two child SVGElementInstance objects, each of which has
     // its correspondingElement that is an SVGRectElement object.
 
-    auto svgChildren = childrenOfType<SVGElement>(target);
+    auto svgChildren = childrenOfType<SVGElement>(*target);
     for (auto element = svgChildren.begin(), end = svgChildren.end(); element != end; ++element) {
         // Skip any non-svg nodes or any disallowed element.
         if (isDisallowedElement(*element))
@@ -664,8 +664,8 @@ static inline void removeDisallowedElementsFromSubtree(SVGElement& subtree)
 {
     ASSERT(!subtree.inDocument());
     Vector<Element*> toRemove;
-    auto it = elementDescendants(&subtree).begin();
-    auto end = elementDescendants(&subtree).end();
+    auto it = elementDescendants(subtree).begin();
+    auto end = elementDescendants(subtree).end();
     while (it != end) {
         if (isDisallowedElement(*it)) {
             toRemove.append(&*it);
