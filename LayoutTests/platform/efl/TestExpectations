@@ -1115,14 +1115,6 @@ webkit.org/b/88191 fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 webkit.org/b/88191 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 webkit.org/b/88191 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 
-# WKTR / EFL's DRT do not support setViewModeMediaFeature().
-Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
-Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
-
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
 webkit.org/b/82140 fast/dom/Window/window-properties-geolocation.html [ Failure ]
