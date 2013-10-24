@@ -5,7 +5,7 @@
 
         Reviewed by Geoffrey Garen.
 
-        All ports supports USE(LOCKFREE_THREADSAFEREFCOUNTED) now and taking a lock on every ref/deref seems bad.
+        All ports support USE(LOCKFREE_THREADSAFEREFCOUNTED) now and taking a lock on every ref/deref seems bad.
 
         * wtf/Atomics.h:
         * wtf/ThreadSafeRefCounted.h:
