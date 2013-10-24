@@ -1,3 +1,16 @@
+2013-10-24  peavo@outlook.com  <peavo@outlook.com>
+
+        Uninitialized member causes crash when DFG JIT is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=123270
+
+        Reviewed by Brent Fulgham.
+
+        The data member sizeOfLastScratchBuffer in the VM class is only initialized if DFG JIT is enabled, even though it's defined regardless.
+        This causes an early crash on Windows, which doesn't have DFG JIT enabled.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Initialize sizeOfLastScratchBuffer member regardless of whether DFG JIT is enabled.
+
 2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL 1.8 libraries.
