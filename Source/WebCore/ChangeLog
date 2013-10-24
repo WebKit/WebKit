@@ -1,3 +1,26 @@
+2013-10-24  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [contenteditable] Content after non-editable element disappears when merging lines using backspace
+        https://bugs.webkit.org/show_bug.cgi?id=122748
+
+        Reviewed by Ryosuke Niwa.
+
+        In case of paragraph merging after deletion if second paragraph
+        contains non-editable element, then content after the non-editable
+        element(including non-editable element) will be removed while the
+        content before the element will be merged with the first paragraph.
+        This happens becasue endOfParagraphToMove calculation in merging function
+        stop at editing boundary so endOfParagraphToMove becomes position just
+        before non-editable content.
+        With this patch now endOfParagraphToMove is calculated by skipping
+        over the non-editable element.
+
+        Test: editing/deleting/merge-paragraph-contatining-noneditable.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): use CanSkipOverEditingBoundary
+        condition while calculating endOfParagraphToMove.
+
 2013-10-24  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Inspector doesn't show webkitTransitionEnd events in the timeline

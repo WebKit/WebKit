@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="container" contenteditable="true">
+        <p>First Paragraph.</p>
+        <p id="paragraph">First<span class="noteditable" contenteditable="false">Second</span>Third</p>
+    </div>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        Markup.description('This test verifies merging of second paragraph containing non-editable element with first paragraph does not cause loss of element in second paragraph.\nExpected behavior is on hitting backspace all three word (First, Second and Third) should be visible and merged at the end of first line.');
+
+        getSelection().collapse(document.getElementById("paragraph"), 0);
+        Markup.dump('container', 'Before');
+
+        document.execCommand("Delete");
+        Markup.dump('container', 'After');
+    </script>
+</body>
+</html>

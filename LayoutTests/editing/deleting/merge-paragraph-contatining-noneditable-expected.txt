@@ -1,0 +1,32 @@
+This test verifies merging of second paragraph containing non-editable element with first paragraph does not cause loss of element in second paragraph.
+Expected behavior is on hitting backspace all three word (First, Second and Third) should be visible and merged at the end of first line.
+
+Before:
+| "
+        "
+| <p>
+|   "First Paragraph."
+| "
+        "
+| <p>
+|   id="paragraph"
+|   "<#selection-caret>First"
+|   <span>
+|     class="noteditable"
+|     contenteditable="false"
+|     "Second"
+|   "Third"
+| "
+    "
+
+After:
+| "
+        "
+| <p>
+|   "First Paragraph.<#selection-caret>First"
+|   <span>
+|     class="noteditable"
+|     "Second"
+|   "Third"
+| "
+    "
