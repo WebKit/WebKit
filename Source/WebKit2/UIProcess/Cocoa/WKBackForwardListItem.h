@@ -31,6 +31,7 @@
 
 #if WK_API_ENABLED
 
+WK_API_CLASS
 @interface WKBackForwardListItem : NSObject
 
 @property (readonly) NSURL *URL;

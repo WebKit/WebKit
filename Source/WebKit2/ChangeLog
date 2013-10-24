@@ -1,3 +1,20 @@
+2013-10-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add -[WKBrowsingContextController goToBackForwardItem:]
+        https://bugs.webkit.org/show_bug.cgi?id=123289
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKFoundation.h: Defined WK_API_CLASS.
+        * UIProcess/API/mac/WKBrowsingContextController.h: Declared -goToBackForwardListItem:.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController goToBackForwardListItem:]): Added.
+        * UIProcess/Cocoa/WKBackForwardList.h: Deployed WK_API_CLASS to make the class exported.
+        * UIProcess/Cocoa/WKBackForwardListItem.h: Ditto.
+        * UIProcess/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem _item]): Added. Returns the underlying WebBackForwardListItem.
+        * UIProcess/Cocoa/WKBackForwardListItemInternal.h: Declared _item.
+
 2013-10-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed build fix since r157823.

@@ -35,6 +35,8 @@ class WebBackForwardListItem;
 
 - (id)_initWithItem:(WebKit::WebBackForwardListItem&)item;
 
+@property (readonly) WebKit::WebBackForwardListItem& _item;
+
 @end
 
 #endif // WK_API_ENABLED

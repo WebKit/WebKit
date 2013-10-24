@@ -29,6 +29,7 @@
 
 @class WKBrowsingContextControllerData;
 @class WKBackForwardList;
+@class WKBackForwardListItem;
 @protocol WKBrowsingContextLoadDelegate;
 
 WK_EXPORT
@@ -93,8 +94,10 @@ WK_EXPORT
 @property(readonly) BOOL canGoBack;
 
 #if WK_API_ENABLED
+- (void)goToBackForwardListItem:(WKBackForwardListItem *)item;
+
 @property(readonly) WKBackForwardList *backForwardList;
-#endif
+#endif // WK_API_ENABLED
 
 #pragma mark Active Load Introspection
 

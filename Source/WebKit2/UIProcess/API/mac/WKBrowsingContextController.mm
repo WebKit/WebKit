@@ -256,6 +256,11 @@ static void releaseNSData(unsigned char*, const void* data)
 }
 
 #if WK_API_ENABLED
+- (void)goToBackForwardListItem:(WKBackForwardListItem *)item
+{
+    toImpl(self._pageRef)->goToBackForwardItem(&item._item);
+}
+
 - (WKBackForwardList *)backForwardList
 {
     WebBackForwardList* list = toImpl(self._pageRef)->backForwardList();

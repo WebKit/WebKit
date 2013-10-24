@@ -32,6 +32,7 @@
 
 #if WK_API_ENABLED
 
+WK_API_CLASS
 @interface WKBackForwardList : NSObject
 
 @property (readonly) WKBackForwardListItem *currentItem;

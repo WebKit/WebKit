@@ -95,6 +95,11 @@ using namespace WebKit;
     return self;
 }
 
+- (WebKit::WebBackForwardListItem&)_item
+{
+    return *_item;
+}
+
 @end
 
 #endif // WK_API_ENABLED

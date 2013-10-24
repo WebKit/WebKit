@@ -25,8 +25,12 @@
 
 #import <TargetConditionals.h>
 
+#if !defined(WK_API_ENABLED)
 #if TARGET_OS_IPHONE
 #define WK_API_ENABLED 1
+#define WK_API_CLASS NS_CLASS_AVAILABLE_IOS(7_0)
 #else
 #define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
+#define WK_API_CLASS NS_CLASS_AVAILABLE_MAC(10_9)
+#endif
 #endif
