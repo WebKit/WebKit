@@ -1,3 +1,31 @@
+2013-10-24  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Inspector doesn't show webkitTransitionEnd events in the timeline
+        https://bugs.webkit.org/show_bug.cgi?id=123263
+
+        Reviewed by Timothy Hatcher.
+
+        A legacy event type is only set on an event in EventTarget::fireEventListeners(Event*)
+        which is called after we used to call InspectorInstrumentation::willDispatchEvent(), the method
+        that would ultimately yield the creation of a TimelineRecord for the event in the Web Inspector
+        frontend, and as a result we would try to dispatch an event with an unprefixed event type to
+        the frontend, which wouldn't even happen because most likely it wouldn't have listeners for this
+        unprefixed type.
+
+        We now move the call to InspectorInstrumentation::willDispatchEvent() in
+        EventTarget::fireEventListeners(Event*, EventTargetData*, EventListenerVector&) such that the
+        correct event type and list of listeners is used to determine what event to dispatch to the frontend.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        Remove calls to InspectorInstrumentation::willDispatchEvent() and InspectorInstrumentation::didDispatchEvent().
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        Add call to InspectorInstrumentation::willDispatchEvent() before we go through each listener and
+        call InspectorInstrumentation::willHandleEvent(). Additionally, we refactor some code since we're
+        getting references to the ScriptExecutionContext and Document upfront now.
+
 2013-10-24  Andreas Kling  <akling@apple.com>
 
         SVG: RenderElement-ize intersectRepaintRectWithResources().

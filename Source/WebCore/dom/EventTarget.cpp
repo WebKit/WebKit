@@ -258,6 +258,15 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
     if (!d->firingEventIterators)
         d->firingEventIterators = adoptPtr(new FiringEventIteratorVector);
     d->firingEventIterators->append(FiringEventIterator(event->type(), i, size));
+
+    ScriptExecutionContext* context = scriptExecutionContext();
+    Document* document = nullptr;
+    InspectorInstrumentationCookie willDispatchEventCookie;
+    if (context && context->isDocument()) {
+        document = toDocument(context);
+        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(document, *event, size > 0);
+    }
+
     for (; i < size; ++i) {
         RegisteredEventListener& registeredListener = entry[i];
         if (event->eventPhase() == Event::CAPTURING_PHASE && !registeredListener.useCapture)
@@ -270,7 +279,6 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
         if (event->immediatePropagationStopped())
             break;
 
-        ScriptExecutionContext* context = scriptExecutionContext();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, event);
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
@@ -280,13 +288,11 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
         InspectorInstrumentation::didHandleEvent(cookie);
     }
     d->firingEventIterators->removeLast();
-    if (userEventWasHandled) {
-        ScriptExecutionContext* context = scriptExecutionContext();
-        if (context && context->isDocument()) {
-            Document* document = toDocument(context);
-            document->resetLastHandledUserGestureTimestamp();
-        }
-    }
+    if (userEventWasHandled && document)
+        document->resetLastHandledUserGestureTimestamp();
+
+    if (document)
+        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie);
 }
 
 const EventListenerVector& EventTarget::getEventListeners(const AtomicString& eventType)

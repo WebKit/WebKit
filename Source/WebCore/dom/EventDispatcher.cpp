@@ -324,9 +324,6 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
     WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
-    bool hasEventListners = (windowEventContext.window() && windowEventContext.window()->hasEventListeners(event->type()))
-        || node->hasEventListeners(event->type()) || eventPath.hasEventListeners(event->type());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(&node->document(), *event, hasEventListners);
 
     InputElementClickState clickHandlingState;
     if (isHTMLInputElement(node.get()))
@@ -352,7 +349,6 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     // outermost shadow DOM boundary.
     event->setTarget(windowEventContext.target());
     event->setCurrentTarget(0);
-    InspectorInstrumentation::didDispatchEvent(cookie);
 
     return !event->defaultPrevented();
 }
