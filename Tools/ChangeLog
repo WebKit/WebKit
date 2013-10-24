@@ -1,3 +1,16 @@
+2013-10-24  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL] Compilation warning in DumpRenderTreeView.cpp on 64-Bit
+        https://bugs.webkit.org/show_bug.cgi?id=123251
+
+        Reviewed by Csaba Osztrogonác.
+
+        Replace %llu by PRIu64 macro to print an uint64_t value and silent a
+        compilation warning on 64-Bit.
+
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededDatabaseQuota):
+
 2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL 1.8 libraries.

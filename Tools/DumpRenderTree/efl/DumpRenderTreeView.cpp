@@ -137,7 +137,7 @@ static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Obj
     static const uint64_t defaultQuota = 5 * 1024 * 1024;
     static const uint64_t maxQuota = 10 * 1024 * 1024;
     if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
-        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", expectedSize);
+        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %" PRIu64 "\n", expectedSize);
         return expectedSize;
     }
     return defaultQuota;
