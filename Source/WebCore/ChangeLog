@@ -1,5 +1,12 @@
 2013-10-24  Antti Koivisto  <antti@apple.com>
 
+        Try to fix build without CSS_SHAPES.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
+2013-10-24  Antti Koivisto  <antti@apple.com>
+
         Simple line layout
         https://bugs.webkit.org/show_bug.cgi?id=122458
 

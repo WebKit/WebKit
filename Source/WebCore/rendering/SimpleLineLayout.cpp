@@ -75,8 +75,10 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     // These tests only works during layout. Outside layout this function may give false positives.
     if (flow.view().layoutState()) {
+#if ENABLE(CSS_SHAPES)
         if (flow.view().layoutState()->shapeInsideInfo())
             return false;
+#endif
         if (flow.view().layoutState()->m_columnInfo)
             return false;
     }
@@ -116,8 +118,10 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (style.textShadow())
         return false;
+#if ENABLE(CSS_SHAPES)
     if (style.resolvedShapeInside())
         return true;
+#endif
     if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style()->textOverflow()))
         return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
