@@ -70,7 +70,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     SVGRenderingContext renderingContext;
     bool continueRendering = true;
     if (paintInfo.phase == PaintPhaseForeground) {
-        renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+        renderingContext.prepareToRenderSVGContent(*this, childPaintInfo);
         continueRendering = renderingContext.isRenderingPrepared();
     }
 

@@ -287,7 +287,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
         SVGRenderingContext renderingContext;
         bool continueRendering = true;
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+            renderingContext.prepareToRenderSVGContent(*this, childPaintInfo);
             continueRendering = renderingContext.isRenderingPrepared();
         }
 

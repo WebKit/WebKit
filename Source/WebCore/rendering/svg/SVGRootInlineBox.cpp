@@ -65,7 +65,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
         }
     }
 
-    SVGRenderingContext renderingContext(&renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
+    SVGRenderingContext renderingContext(renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())

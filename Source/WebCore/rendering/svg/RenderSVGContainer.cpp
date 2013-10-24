@@ -133,7 +133,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
         SVGRenderingContext renderingContext;
         bool continueRendering = true;
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+            renderingContext.prepareToRenderSVGContent(*this, childPaintInfo);
             continueRendering = renderingContext.isRenderingPrepared();
         }
 

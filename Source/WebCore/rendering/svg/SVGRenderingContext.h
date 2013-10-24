@@ -48,22 +48,22 @@ public:
     // Does not start rendering.
     SVGRenderingContext()
         : m_renderingFlags(0)
-        , m_object(0)
-        , m_paintInfo(0)
-        , m_savedContext(0)
+        , m_renderer(nullptr)
+        , m_paintInfo(nullptr)
+        , m_savedContext(nullptr)
 #if ENABLE(FILTERS)
-        , m_filter(0)
+        , m_filter(nullptr)
 #endif
     {
     }
 
-    SVGRenderingContext(RenderObject* object, PaintInfo& paintinfo, NeedsGraphicsContextSave needsGraphicsContextSave = DontSaveGraphicsContext)
+    SVGRenderingContext(RenderElement& object, PaintInfo& paintinfo, NeedsGraphicsContextSave needsGraphicsContextSave = DontSaveGraphicsContext)
         : m_renderingFlags(0)
-        , m_object(0)
-        , m_paintInfo(0)
-        , m_savedContext(0)
+        , m_renderer(nullptr)
+        , m_paintInfo(nullptr)
+        , m_savedContext(nullptr)
 #if ENABLE(FILTERS)
-        , m_filter(0)
+        , m_filter(nullptr)
 #endif
     {
         prepareToRenderSVGContent(object, paintinfo, needsGraphicsContextSave);
@@ -73,7 +73,7 @@ public:
     ~SVGRenderingContext();
 
     // Used by all SVG renderers who apply clip/filter/etc. resources to the renderer content.
-    void prepareToRenderSVGContent(RenderObject*, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
+    void prepareToRenderSVGContent(RenderElement&, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
     static bool createImageBuffer(const FloatRect& paintRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
@@ -112,7 +112,7 @@ private:
     const static int ActionsNeeded = RestoreGraphicsContext | EndOpacityLayer | EndShadowLayer | EndFilterLayer;
 
     int m_renderingFlags;
-    RenderObject* m_object;
+    RenderElement* m_renderer;
     PaintInfo* m_paintInfo;
     GraphicsContext* m_savedContext;
     IntRect m_savedPaintRect;

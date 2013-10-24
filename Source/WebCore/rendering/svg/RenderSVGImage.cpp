@@ -134,7 +134,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            SVGRenderingContext renderingContext(this, childPaintInfo);
+            SVGRenderingContext renderingContext(*this, childPaintInfo);
 
             if (renderingContext.isRenderingPrepared()) {
                 if (style()->svgStyle()->bufferedRendering() == BR_STATIC  && renderingContext.bufferForeground(m_bufferedForeground))

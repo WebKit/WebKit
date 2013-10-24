@@ -1,3 +1,15 @@
+2013-10-24  Andreas Kling  <akling@apple.com>
+
+        SVGRenderingContext should wrap a RenderElement.
+        <https://webkit.org/b/123283>
+
+        The SVG rendering context class is never used with text renderers
+        so we can have it wrap a RenderElement for tighter code.
+
+        Also renamed SVGRenderingContext::m_object to m_renderer.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-24  Santosh Mahto  <santosh.ma@samsung.com>
 
         [contenteditable] Content after non-editable element disappears when merging lines using backspace

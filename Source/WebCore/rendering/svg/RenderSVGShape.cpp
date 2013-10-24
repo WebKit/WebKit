@@ -280,7 +280,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            SVGRenderingContext renderingContext(this, childPaintInfo);
+            SVGRenderingContext renderingContext(*this, childPaintInfo);
 
             if (renderingContext.isRenderingPrepared()) {
                 const SVGRenderStyle* svgStyle = style()->svgStyle();

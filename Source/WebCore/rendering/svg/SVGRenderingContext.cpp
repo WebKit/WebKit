@@ -56,12 +56,12 @@ SVGRenderingContext::~SVGRenderingContext()
     if (!(m_renderingFlags & ActionsNeeded))
         return;
 
-    ASSERT(m_object && m_paintInfo);
+    ASSERT(m_renderer && m_paintInfo);
 
 #if ENABLE(FILTERS)
     if (m_renderingFlags & EndFilterLayer) {
         ASSERT(m_filter);
-        m_filter->postApplyResource(m_object, m_paintInfo->context, ApplyToDefaultMode, 0, 0);
+        m_filter->postApplyResource(m_renderer, m_paintInfo->context, ApplyToDefaultMode, 0, 0);
         m_paintInfo->context = m_savedContext;
         m_paintInfo->rect = m_savedPaintRect;
     }
@@ -77,17 +77,15 @@ SVGRenderingContext::~SVGRenderingContext()
         m_paintInfo->context->restore();
 }
 
-void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, NeedsGraphicsContextSave needsGraphicsContextSave)
+void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, PaintInfo& paintInfo, NeedsGraphicsContextSave needsGraphicsContextSave)
 {
-    ASSERT(object);
-
 #ifndef NDEBUG
     // This function must not be called twice!
     ASSERT(!(m_renderingFlags & PrepareToRenderSVGContentWasCalled));
     m_renderingFlags |= PrepareToRenderSVGContentWasCalled;
 #endif
 
-    m_object = object;
+    m_renderer = &renderer;
     m_paintInfo = &paintInfo;
 #if ENABLE(FILTERS)
     m_filter = 0;
@@ -99,18 +97,18 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
         m_renderingFlags |= RestoreGraphicsContext;
     }
 
-    RenderStyle* style = m_object->style();
+    RenderStyle* style = m_renderer->style();
     ASSERT(style);
 
     const SVGRenderStyle* svgStyle = style->svgStyle();
     ASSERT(svgStyle);
 
     // Setup transparency layers before setting up SVG resources!
-    bool isRenderingMask = isRenderingMaskImage(*m_object);
+    bool isRenderingMask = isRenderingMaskImage(*m_renderer);
     float opacity = isRenderingMask ? 1 : style->opacity();
     const ShadowData* shadow = svgStyle->shadow();
     if (opacity < 1 || shadow) {
-        FloatRect repaintRect = m_object->repaintRectInLocalCoordinates();
+        FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
 
         if (opacity < 1) {
             m_paintInfo->context->clip(repaintRect);
@@ -129,10 +127,10 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
     ClipPathOperation* clipPathOperation = style->clipPath();
     if (clipPathOperation && clipPathOperation->type() == ClipPathOperation::SHAPE) {
         ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(clipPathOperation);
-        m_paintInfo->context->clipPath(clipPath->path(object->objectBoundingBox()), clipPath->windRule());
+        m_paintInfo->context->clipPath(clipPath->path(renderer.objectBoundingBox()), clipPath->windRule());
     }
 
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(m_object);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(m_renderer);
     if (!resources) {
 #if ENABLE(FILTERS)
         if (svgStyle->hasFilter())
@@ -144,14 +142,14 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
 
     if (!isRenderingMask) {
         if (RenderSVGResourceMasker* masker = resources->masker()) {
-            if (!masker->applyResource(m_object, style, m_paintInfo->context, ApplyToDefaultMode))
+            if (!masker->applyResource(m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
                 return;
         }
     }
 
     RenderSVGResourceClipper* clipper = resources->clipper();
     if (!clipPathOperation && clipper) {
-        if (!clipper->applyResource(m_object, style, m_paintInfo->context, ApplyToDefaultMode))
+        if (!clipper->applyResource(m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
             return;
     }
 
@@ -164,14 +162,14 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
             // Return with false here may mean that we don't need to draw the content
             // (because it was either drawn before or empty) but we still need to apply the filter.
             m_renderingFlags |= EndFilterLayer;
-            if (!m_filter->applyResource(m_object, style, m_paintInfo->context, ApplyToDefaultMode))
+            if (!m_filter->applyResource(m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
                 return;
 
             // Since we're caching the resulting bitmap and do not invalidate it on repaint rect
             // changes, we need to paint the whole filter region. Otherwise, elements not visible
             // at the time of the initial paint (due to scrolling, window size, etc.) will never
             // be drawn.
-            m_paintInfo->rect = IntRect(m_filter->drawingRegion(m_object));
+            m_paintInfo->rect = IntRect(m_filter->drawingRegion(m_renderer));
         }
     }
 #endif
@@ -333,8 +331,8 @@ void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
 bool SVGRenderingContext::bufferForeground(OwnPtr<ImageBuffer>& imageBuffer)
 {
     ASSERT(m_paintInfo);
-    ASSERT(m_object->isSVGImage());
-    FloatRect boundingBox = m_object->objectBoundingBox();
+    ASSERT(m_renderer->isSVGImage());
+    FloatRect boundingBox = m_renderer->objectBoundingBox();
 
     // Invalidate an existing buffer if the scale is not correct.
     if (imageBuffer) {
@@ -352,7 +350,7 @@ bool SVGRenderingContext::bufferForeground(OwnPtr<ImageBuffer>& imageBuffer)
             bufferedRenderingContext->translate(-boundingBox.x(), -boundingBox.y());
             PaintInfo bufferedInfo(*m_paintInfo);
             bufferedInfo.context = bufferedRenderingContext;
-            toRenderSVGImage(m_object)->paintForeground(bufferedInfo);
+            toRenderSVGImage(m_renderer)->paintForeground(bufferedInfo);
         } else
             return false;
     }
