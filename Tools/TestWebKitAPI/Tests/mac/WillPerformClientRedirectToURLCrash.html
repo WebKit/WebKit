@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="frame" src="about:blank"></iframe>
+<script>
+var query = window.location.search;
+if (!query)
+    document.getElementById("frame").src = "WillPerformClientRedirectToURLCrash.html?FAIL";
+else if (query == "?PASS")
+    alert("PASS");
+else
+    alert("FAIL");
+</script>
+</body>
+</html>

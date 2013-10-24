@@ -1,3 +1,17 @@
+2013-10-24  Daniel Bates  <dabates@apple.com>
+
+        Crash in WebCore::NavigationScheduler::startTimer()
+        https://bugs.webkit.org/show_bug.cgi?id=123288
+        <rdar://problem/14055644>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WillPerformClientRedirectToURLCrash.html: Added.
+        * TestWebKitAPI/Tests/mac/WillPerformClientRedirectToURLCrash.mm: Added.
+
 2013-10-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [GTK] Disable css-image-orientation

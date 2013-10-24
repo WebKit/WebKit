@@ -1,3 +1,25 @@
+2013-10-24  Daniel Bates  <dabates@apple.com>
+
+        Crash in WebCore::NavigationScheduler::startTimer()
+        https://bugs.webkit.org/show_bug.cgi?id=123288
+        <rdar://problem/14055644>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently NavigationScheduler::startTimer() synchronously notifies the client
+        before the Web Inspector of a scheduled redirect. If a client cancels this
+        redirect then NavigationScheduler::m_redirect will become null and we'll
+        subsequently crash when informing the Web Inspector of this formerly scheduled
+        redirect. Instead, NavigationScheduler::startTimer() should notify the Web
+        Inspector before it notifies the client of a scheduled redirect.
+
+        As a side benefit of this change, the Web Inspector is notified of a scheduled
+        redirect before being notified of it being canceled when a client chooses to cancel
+        a scheduled redirect.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::startTimer):
+
 2013-10-24  Antti Koivisto  <antti@apple.com>
 
         Try to fix build without CSS_SHAPES.
