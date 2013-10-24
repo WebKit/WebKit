@@ -1487,7 +1487,7 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& fo
     TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
     run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     if (textRunNeedsRenderingContext(font))
-        run.setRenderingContext(SVGTextRunRenderingContext::create(&renderer()));
+        run.setRenderingContext(SVGTextRunRenderingContext::create(renderer()));
 
     // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
     run.setCharactersLength(maximumLength);

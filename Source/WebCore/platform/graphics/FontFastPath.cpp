@@ -208,7 +208,7 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
         if (nextFontData != fontData || nextOffset != offset) {
 #if ENABLE(SVG_FONTS)
             if (renderingContext && fontData->isSVGFont())
-                renderingContext->drawSVGGlyphs(context, run, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+                renderingContext->drawSVGGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
             else
 #endif
                 drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
@@ -226,7 +226,7 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
 
 #if ENABLE(SVG_FONTS)
     if (renderingContext && fontData->isSVGFont())
-        renderingContext->drawSVGGlyphs(context, run, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+        renderingContext->drawSVGGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
     else
 #endif
         drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);

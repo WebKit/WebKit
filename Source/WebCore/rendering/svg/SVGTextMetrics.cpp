@@ -77,7 +77,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText* text, const UChar*
                 , isOverride(style->unicodeBidi()) /* directionalOverride */);
 
     if (textRunNeedsRenderingContext(style->font()))
-        run.setRenderingContext(SVGTextRunRenderingContext::create(text));
+        run.setRenderingContext(SVGTextRunRenderingContext::create(*text));
 
     run.disableRoundingHacks();
 

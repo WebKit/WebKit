@@ -159,7 +159,7 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
 
     RenderObject* renderObject = 0;
     if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        renderObject = static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
+        renderObject = &static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
 
     String language;
     bool isVerticalText = false;

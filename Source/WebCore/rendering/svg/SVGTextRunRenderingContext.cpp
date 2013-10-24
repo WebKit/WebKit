@@ -53,26 +53,6 @@ static inline const SVGFontData* svgFontAndFontFaceElementForFontData(const Simp
     return svgFontData;
 }
 
-static inline RenderObject* firstParentRendererForNonTextNode(RenderObject* renderer)
-{
-    ASSERT(renderer);
-    return renderer->isText() ? renderer->parent() : renderer;
-}
-
-static inline RenderObject* renderObjectFromRun(const TextRun& run)
-{
-    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        return static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
-    return 0;
-}
-
-static inline RenderSVGResource* activePaintingResourceFromRun(const TextRun& run)
-{
-    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        return static_cast<SVGTextRunRenderingContext*>(renderingContext)->activePaintingResource();
-    return 0;
-}
-
 float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const TextRun& run, int& charsConsumed, String& glyphName) const
 {
     WidthIterator it(&font, run);
@@ -122,7 +102,7 @@ bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData,
     return true;
 }
 
-void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const TextRun& run, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
+void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     SVGFontElement* fontElement = 0;
     SVGFontFaceElement* fontFaceElement = 0;
@@ -131,26 +111,17 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const T
     if (!fontElement || !fontFaceElement)
         return;
 
-    // We can only paint SVGFonts if a context is available.
-    RenderSVGResource* activePaintingResource = activePaintingResourceFromRun(run);
-    RenderObject* renderObject = renderObjectFromRun(run);
-    RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject);
-    RenderStyle* parentRenderObjectStyle = 0;
-
-    ASSERT(renderObject);
+    auto activePaintingResource = this->activePaintingResource();
     if (!activePaintingResource) {
         // TODO: We're only supporting simple filled HTML text so far.
         RenderSVGResourceSolidColor* solidPaintingResource = RenderSVGResource::sharedSolidPaintingResource();
         solidPaintingResource->setColor(context->fillColor());
         activePaintingResource = solidPaintingResource;
     }
- 
-    bool isVerticalText = false;
-    if (parentRenderObject) {
-        parentRenderObjectStyle = parentRenderObject->style();
-        ASSERT(parentRenderObjectStyle);
-        isVerticalText = parentRenderObjectStyle->svgStyle()->isVerticalWritingMode();
-    }
+
+    auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+    RenderStyle& style = *elementRenderer.style();
+    bool isVerticalText = style.svgStyle()->isVerticalWritingMode();
 
     float scale = scaleEmToUnits(fontData->platformData().size(), fontFaceElement->unitsPerEm());
     ASSERT(activePaintingResource);
@@ -194,11 +165,11 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const T
         Path glyphPath = svgGlyph.pathData;
         glyphPath.transform(glyphPathTransform);
 
-        if (activePaintingResource->applyResource(parentRenderObject, parentRenderObjectStyle, context, resourceMode)) {
+        if (activePaintingResource->applyResource(&elementRenderer, &style, context, resourceMode)) {
             float strokeThickness = context->strokeThickness();
-            if (renderObject && renderObject->isSVGInlineText())
-                context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderObject)->scalingFactor());
-            activePaintingResource->postApplyResource(parentRenderObject, context, resourceMode, &glyphPath, 0);
+            if (renderer().isSVGInlineText())
+                context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderer()).scalingFactor());
+            activePaintingResource->postApplyResource(&elementRenderer, context, resourceMode, &glyphPath, 0);
             context->setStrokeThickness(strokeThickness);
         }
 
@@ -209,7 +180,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const T
     }
 }
 
-GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, const TextRun& run, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
+GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
 {
     const SimpleFontData* primaryFont = font.primaryFont();
     ASSERT(primaryFont);
@@ -233,14 +204,10 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
     // Characters enclosed by an <altGlyph> element, may not be registered in the GlyphPage.
     const SimpleFontData* originalFontData = glyphData.fontData;
     if (glyphData.fontData && !glyphData.fontData->isSVGFont()) {
-        if (TextRun::RenderingContext* renderingContext = run.renderingContext()) {
-            RenderObject* renderObject = static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
-            RenderObject* parentRenderObject = renderObject->isText() ? renderObject->parent() : renderObject;
-            ASSERT(parentRenderObject);
-            if (Element* parentRenderObjectElement = toElement(parentRenderObject->node())) {
-                if (parentRenderObjectElement->hasTagName(SVGNames::altGlyphTag))
-                    glyphData.fontData = primaryFont;
-            }
+        auto& elementRenderer = renderer().isRenderElement() ? toRenderElement(renderer()) : *renderer().parent();
+        if (Element* parentRendererElement = elementRenderer.element()) {
+            if (parentRendererElement->hasTagName(SVGNames::altGlyphTag))
+                glyphData.fontData = primaryFont;
         }
     }
 

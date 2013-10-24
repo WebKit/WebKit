@@ -1,3 +1,23 @@
+2013-10-24  Andreas Kling  <akling@apple.com>
+
+        Uncomplicate some of SVGTextRunRenderingContext.
+        <https://webkit.org/b/123294>
+
+        This class was weird about a few things, so I've taken these steps
+        to clear things up:
+
+        - FINAL and OVERRIDE all the things.
+        - Constructor now takes a RenderObject&.
+        - renderer() now returns a RenderObject&.
+        - drawSVGGlyphs() no longer takes a TextRun.
+        - glyphDataForCharacter() no longer takes a TextRun.
+
+        To expand on the last two, there was also some awkward hoop-jumping
+        where we'd go through the TextRun passed by argument to find its
+        rendering context, which was really just |this| all along.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-24  Roger Fong  <roger_fong@apple.com>
 
         Add texture level dependent size checks to textureImage2D calls.

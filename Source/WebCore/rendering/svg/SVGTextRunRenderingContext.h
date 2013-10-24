@@ -29,27 +29,27 @@ namespace WebCore {
 class RenderObject;
 class RenderSVGResource;
 
-class SVGTextRunRenderingContext : public TextRun::RenderingContext {
+class SVGTextRunRenderingContext FINAL : public TextRun::RenderingContext {
 public:
-    static PassRefPtr<SVGTextRunRenderingContext> create(RenderObject* renderer)
+    static PassRef<SVGTextRunRenderingContext> create(RenderObject& renderer)
     {
-        return adoptRef(new SVGTextRunRenderingContext(renderer));
+        return adoptRef(*new SVGTextRunRenderingContext(renderer));
     }
 
-    RenderObject* renderer() const { return m_renderer; }
+    RenderObject& renderer() const { return m_renderer; }
 
 #if ENABLE(SVG_FONTS)
     RenderSVGResource* activePaintingResource() const { return m_activePaintingResource; }
     void setActivePaintingResource(RenderSVGResource* object) { m_activePaintingResource = object; }
 
-    virtual GlyphData glyphDataForCharacter(const Font&, const TextRun&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength);
-    virtual void drawSVGGlyphs(GraphicsContext*, const TextRun&, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const;
-    virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const;
+    virtual GlyphData glyphDataForCharacter(const Font&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) OVERRIDE;
+    virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const OVERRIDE;
+    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const OVERRIDE;
+    virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const OVERRIDE;
 #endif
 
 private:
-    SVGTextRunRenderingContext(RenderObject* renderer)
+    SVGTextRunRenderingContext(RenderObject& renderer)
         : m_renderer(renderer)
 #if ENABLE(SVG_FONTS)
         , m_activePaintingResource(0)
@@ -59,7 +59,7 @@ private:
 
     virtual ~SVGTextRunRenderingContext() { }
 
-    RenderObject* m_renderer;
+    RenderObject& m_renderer;
 
 #if ENABLE(SVG_FONTS)
     RenderSVGResource* m_activePaintingResource;

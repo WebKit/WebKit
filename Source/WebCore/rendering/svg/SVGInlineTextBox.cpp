@@ -417,7 +417,7 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
                 , dirOverride() || style->rtlOrdering() == VisualOrder /* directionalOverride */);
 
     if (textRunNeedsRenderingContext(style->font()))
-        run.setRenderingContext(SVGTextRunRenderingContext::create(&renderer()));
+        run.setRenderingContext(SVGTextRunRenderingContext::create(renderer()));
 
     run.disableRoundingHacks();
 
