@@ -224,17 +224,20 @@ RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle
 
 bool SliderThumbElement::isDisabledFormControl() const
 {
-    return hostInput()->isDisabledFormControl();
+    HTMLInputElement* input = hostInput();
+    return !input || input->isDisabledFormControl();
 }
 
 bool SliderThumbElement::matchesReadOnlyPseudoClass() const
 {
-    return hostInput()->matchesReadOnlyPseudoClass();
+    HTMLInputElement* input = hostInput();
+    return input && input->matchesReadOnlyPseudoClass();
 }
 
 bool SliderThumbElement::matchesReadWritePseudoClass() const
 {
-    return hostInput()->matchesReadWritePseudoClass();
+    HTMLInputElement* input = hostInput();
+    return input && input->matchesReadWritePseudoClass();
 }
 
 Element* SliderThumbElement::focusDelegate()
@@ -250,15 +253,15 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
 {
-    HTMLInputElement* input = hostInput();
-    HTMLElement* trackElement = sliderTrackElementOf(input);
+    RefPtr<HTMLInputElement> input(hostInput());
+    HTMLElement* trackElement = sliderTrackElementOf(input.get());
 
     if (!input->renderer() || !renderBox() || !trackElement->renderBox())
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
     LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, UseTransforms));
-    bool isVertical = hasVerticalAppearance(input);
+    bool isVertical = hasVerticalAppearance(input.get());
     bool isLeftToRightDirection = renderBox()->style()->isLeftToRightDirection();
     LayoutUnit trackSize;
     LayoutUnit position;
@@ -307,7 +310,8 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
 
     // FIXME: This is no longer being set from renderer. Consider updating the method name.
     input->setValueFromRenderer(valueString);
-    renderer()->setNeedsLayout(true);
+    if (renderer())
+        renderer()->setNeedsLayout(true);
     input->dispatchFormControlChangeEvent();
 }
 
@@ -400,7 +404,8 @@ HTMLInputElement* SliderThumbElement::hostInput() const
 {
     // Only HTMLInputElement creates SliderThumbElement instances as its shadow nodes.
     // So, shadowHost() must be an HTMLInputElement.
-    return shadowHost()->toInputElement();
+    Element* host = shadowHost();
+    return host ? host->toInputElement() : 0;
 }
 
 static const AtomicString& sliderThumbShadowPseudoId()

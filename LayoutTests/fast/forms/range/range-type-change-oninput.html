@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<input type="range" value="0" oninput="this.type = 'text';">
+<script>
+if (!window.eventSender) {
+    debug('Manual test instruction: Click on the slider.');
+} else {
+    clickElement(document.querySelector('input'));
+    testPassed('if not crashed.');
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
