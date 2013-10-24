@@ -98,7 +98,10 @@ using namespace JSC::LLInt;
     #define OFFLINE_ASM_GLUE_LABEL(label)  case label: label:
 #endif
 
-#define OFFLINE_ASM_LOCAL_LABEL(label)   label:
+#define OFFLINE_ASM_LOCAL_LABEL(label) \
+    label: \
+        if (false) \
+            goto label;
 
 
 //============================================================================

@@ -295,7 +295,6 @@ CXX_INSTRUCTIONS =
      "cloopCallJSFunction",  # operands: callee
      "cloopCallNative",      # operands: callee
      "cloopCallSlowPath",    # operands: callTarget, currentFrame, currentPC
-     "cloopUnusedLabel",     # operands: label
 
      # For debugging only:
      # Takes no operands but simply emits whatever follows in // comments as

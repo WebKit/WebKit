@@ -1,5 +1,20 @@
 2013-10-24  Mark Lam  <mark.lam@apple.com>
 
+        Better way to fix part of broken C Loop LLINT build.
+        https://bugs.webkit.org/show_bug.cgi?id=123271.
+
+        Reviewed by Geoffrey Garen.
+
+        Undoing offline asm hackery.
+
+        * llint/LowLevelInterpreter.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+
+2013-10-24  Mark Lam  <mark.lam@apple.com>
+
         Fix broken C Loop LLINT build.
         https://bugs.webkit.org/show_bug.cgi?id=123271.
 

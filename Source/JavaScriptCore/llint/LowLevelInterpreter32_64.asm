@@ -1389,9 +1389,6 @@ _llint_op_put_by_val:
 
 _llint_op_put_by_val_direct:
     putByVal(macro(addr, slowPath)
-        if C_LOOP
-            cloopUnusedLabel slowPath
-        end
     end, _llint_slow_path_put_by_val_direct)
 
 _llint_op_jmp:
