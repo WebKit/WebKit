@@ -1,3 +1,19 @@
+2013-10-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Add a way to test the Manager and model classes
+        https://bugs.webkit.org/show_bug.cgi?id=123223
+
+        Reviewed by Timothy Hatcher.
+
+        Added the first new WebInspector layout test file. The test is using InspectorTest.importInspectorScripts
+        to bootstrap some of the managers/observers/models from the new WebInspector.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.importScript):
+        (InspectorTest.importInspectorScripts):
+        * inspector-protocol/model/main-frame-resource-expected.txt: Added.
+        * inspector-protocol/model/main-frame-resource.html: Added.
+
 2013-10-24  Alexey Proskuryakov  <ap@apple.com>
 
         Freshly landed webgl-1.0.1 tests are failing.

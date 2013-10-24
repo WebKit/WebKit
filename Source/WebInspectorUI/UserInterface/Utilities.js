@@ -981,38 +981,6 @@ function isEnterKey(event)
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
-function removeURLFragment(url)
-{
-    var hashIndex = url.indexOf("#");
-    if (hashIndex >= 0)
-        return url.substring(0, hashIndex);
-    return url;
-}
-
-function relativePath(path, basePath)
-{
-    console.assert(path.charAt(0) === "/");
-    console.assert(basePath.charAt(0) === "/");
-    
-    var pathComponents = path.split("/");
-    var baseComponents = basePath.replace(/\/$/, "").split("/");
-    var finalComponents = [];
-
-    var index = 1;
-    for (; index < pathComponents.length && index < baseComponents.length; ++index) {
-        if (pathComponents[index] !== baseComponents[index])
-            break;
-    }
-
-    for (var i = index; i < baseComponents.length; ++i)
-        finalComponents.push("..");
-
-    for (var i = index; i < pathComponents.length; ++i)
-        finalComponents.push(pathComponents[i]);
-
-    return finalComponents.join("/");
-}
-
 function resolveDotsInPath(path)
 {
     if (!path)
@@ -1045,91 +1013,6 @@ function resolveDotsInPath(path)
     }
 
     return result.join("/");
-}
-
-function parseURL(url)
-{
-    url = url ? url.trim() : "";
-
-    var match = url.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
-    if (!match)
-        return {scheme: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
-
-    var scheme = match[1].toLowerCase();
-    var host = match[2].toLowerCase();
-    var port = Number(match[3]) || null;
-    var wholePath = match[4] || null;
-    var fragment = match[5] || null;
-    var path = wholePath;
-    var queryString = null;
-
-    // Split the path and the query string.
-    if (wholePath) {
-        var indexOfQuery = wholePath.indexOf("?");
-        if (indexOfQuery !== -1) {
-            path = wholePath.substring(0, indexOfQuery);
-            queryString = wholePath.substring(indexOfQuery + 1);
-        }
-        path = resolveDotsInPath(path);
-    }
-
-    // Find last path component.
-    var lastPathComponent = null;
-    if (path && path !== "/") {
-        // Skip the trailing slash if there is one.
-        var endOffset = path[path.length - 1] === "/" ? 1 : 0;
-        var lastSlashIndex = path.lastIndexOf("/", path.length - 1 - endOffset);
-        if (lastSlashIndex !== -1)
-            lastPathComponent = path.substring(lastSlashIndex + 1, path.length - endOffset);
-    }
-
-    return {scheme: scheme, host: host, port: port, path: path, queryString: queryString, fragment: fragment, lastPathComponent: lastPathComponent};
-}
-
-function absoluteURL(partialURL, baseURL)
-{
-    partialURL = partialURL ? partialURL.trim() : "";
-
-    // Return data and javascript URLs as-is.
-    if (partialURL.startsWith("data:") || partialURL.startsWith("javascript:") || partialURL.startsWith("mailto:"))
-        return partialURL;
-
-    // If the URL has a scheme it is already a full URL, so return it.
-    if (parseURL(partialURL).scheme)
-        return partialURL;
-
-    // If there is no partial URL, just return the base URL.
-    if (!partialURL)
-        return baseURL || null;
-
-    var baseURLComponents = parseURL(baseURL);
-
-    // The base URL needs to be an absolute URL. Return null if it isn't.
-    if (!baseURLComponents.scheme)
-        return null;
-
-    // A URL that starts with "//" is a full URL without the scheme. Use the base URL scheme.
-    if (partialURL[0] === "/" && partialURL[1] === "/")
-        return baseURLComponents.scheme + ":" + partialURL;
-
-    // The path can be null for URLs that have just a scheme and host (like "http://apple.com"). So make the path be "/".
-    if (!baseURLComponents.path)
-        baseURLComponents.path = "/";
-
-    // Generate the base URL prefix that is used in the rest of the cases.
-    var baseURLPrefix = baseURLComponents.scheme + "://" + baseURLComponents.host + (baseURLComponents.port ? (":" + baseURLComponents.port) : "");
-
-    // A URL that starts with "?" is just a query string that gets applied to the base URL (replacing the base URL query string and fragment).
-    if (partialURL[0] === "?")
-        return baseURLPrefix + baseURLComponents.path + partialURL;
-
-    // A URL that starts with "/" is an absolute path that gets applied to the base URL (replacing the base URL path, query string and fragment).
-    if (partialURL[0] === "/")
-        return baseURLPrefix + resolveDotsInPath(partialURL);
-
-    // Generate the base path that is used in the final case by removing everything after the last "/" from the base URL's path.
-    var basePath = baseURLComponents.path.substring(0, baseURLComponents.path.lastIndexOf("/")) + "/";
-    return baseURLPrefix + resolveDotsInPath(basePath + partialURL);
 }
 
 function parseMIMEType(fullMimeType)
@@ -1189,38 +1072,4 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
     }
 
     return new RegExp(regexString, regExpFlags);
-}
-
-function parseLocationQueryParameters(arrayResult)
-{
-    // The first character is always the "?".
-    return parseQueryString(window.location.search.substring(1), arrayResult);
-}
-
-function parseQueryString(queryString, arrayResult)
-{
-    if (!queryString)
-        return arrayResult ? [] : {};
-
-    function decode(string)
-    {
-        try {
-            // Replace "+" with " " then decode precent encoded values.
-            return decodeURIComponent(string.replace(/\+/g, " "));
-        } catch (e) {
-            return string;
-        }
-    }
-
-    var parameters = arrayResult ? [] : {};
-    var parameterStrings = queryString.split("&");
-    for (var i = 0; i < parameterStrings.length; ++i) {
-        var pair = parameterStrings[i].split("=").map(decode);
-        if (arrayResult)
-            parameters.push({name: pair[0], value: pair[1]});
-        else
-            parameters[pair[0]] = pair[1];
-    }
-
-    return parameters;
 }

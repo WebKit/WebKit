@@ -311,31 +311,6 @@ WebInspector.contentLoaded = function()
         this.showSplitConsole();
 }
 
-WebInspector.messagesToDispatch = [];
-
-WebInspector.dispatchNextQueuedMessageFromBackend = function()
-{
-    for (var i = 0; i < this.messagesToDispatch.length; ++i)
-        InspectorBackend.dispatch(this.messagesToDispatch[i]);
-
-    this.messagesToDispatch = [];
-
-    this._dispatchTimeout = null;
-}
-
-WebInspector.dispatchMessageFromBackend = function(message)
-{
-    // Enforce asynchronous interaction between the backend and the frontend by queueing messages.
-    // The messages are dequeued on a zero delay timeout.
-
-    this.messagesToDispatch.push(message);
-
-    if (this._dispatchTimeout)
-        return;
-
-    this._dispatchTimeout = setTimeout(this.dispatchNextQueuedMessageFromBackend.bind(this), 0);
-}
-
 WebInspector.sidebarPanelForCurrentContentView = function()
 {
     var currentContentView = this.contentBrowser.currentContentView;
@@ -376,27 +351,6 @@ WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBro
     if (sidebarPanel)
         return sidebarPanel.treeElementForRepresentedObject(representedObject);
     return null;
-}
-
-WebInspector.displayNameForURL = function(url, urlComponents)
-{
-    if (!urlComponents)
-        urlComponents = parseURL(url);
-
-    var displayName;
-    try {
-        displayName = decodeURIComponent(urlComponents.lastPathComponent || "");
-    } catch (e) {
-        displayName = urlComponents.lastPathComponent;
-    }
-
-    return displayName || WebInspector.displayNameForHost(urlComponents.host) || url;
-}
-
-WebInspector.displayNameForHost = function(host)
-{
-    // FIXME <rdar://problem/11237413>: This should decode punycode hostnames.
-    return host;
 }
 
 WebInspector.updateWindowTitle = function()

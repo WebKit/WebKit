@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.importInspectorScripts();
+
+    WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, function(event) {
+        var url = WebInspector.frameResourceManager.mainFrame.url;
+        InspectorTest.log("Main frame: " + url.substring(url.lastIndexOf("/") + 1));
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the inspector scripts are loaded and the main frame URL can be received.</p>
+</body>
+</html>

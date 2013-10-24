@@ -1,3 +1,29 @@
+2013-10-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Add a way to test the Manager and model classes
+        https://bugs.webkit.org/show_bug.cgi?id=123223
+
+        Reviewed by Timothy Hatcher.
+
+        Moved some global functions out of Main.js, so that they can be used in the 
+        layout tests without including Main.js.
+
+        * UserInterface/Main.html: Referenced the new JS files.
+        * UserInterface/Main.js:
+        * UserInterface/MessageDispatcher.js: Added.
+        (WebInspector.dispatchNextQueuedMessageFromBackend):
+        (WebInspector.dispatchMessageFromBackend):
+        * UserInterface/URLUtilities.js: Added.
+        (removeURLFragment):
+        (relativePath):
+        (parseURL):
+        (absoluteURL):
+        (parseLocationQueryParameters):
+        (parseQueryString):
+        (WebInspector.displayNameForURL):
+        (WebInspector.displayNameForHost):
+        * UserInterface/Utilities.js:
+
 2013-10-21  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Flows are not loading if you refresh the page several times
