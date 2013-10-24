@@ -1,3 +1,11 @@
+2013-10-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on CMake based ports when CMAKE_BUILD_TYPE is not given.
+
+        When CMAKE_BUILD_TYPE is empty, FIND command will be failed.
+
+        * CMakeLists.txt:
+
 2013-10-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Integrate css3-images image-orientation with existing EXIF support
