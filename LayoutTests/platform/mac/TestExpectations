@@ -1282,3 +1282,5 @@ webkit.org/b/123099 media/media-controller-time-clamp.html [ Pass Failure Timeou
 webkit.org/b/123220 compositing/regions/floated-region-with-transformed-child.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/123235 fast/forms/input-type-text-min-width.html [ Failure ]
+
+webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
