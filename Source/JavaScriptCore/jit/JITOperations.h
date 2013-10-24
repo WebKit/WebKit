@@ -26,6 +26,8 @@
 #ifndef JITOperations_h
 #define JITOperations_h
 
+#if ENABLE(JIT)
+
 #include "CallFrame.h"
 #include "JITExceptions.h"
 #include "JSArray.h"
@@ -274,6 +276,8 @@ void JIT_OPERATION operationPutToScope(ExecState*, Instruction* bytecodePC) WTF_
 } // extern "C"
 
 } // namespace JSC
+
+#endif // ENABLE(JIT)
 
 #endif // JITOperations_h
 

@@ -1248,6 +1248,9 @@ _llint_op_put_by_val:
 
 _llint_op_put_by_val_direct:
     putByVal(macro(slot, slowPath)
+        if C_LOOP
+            cloopUnusedLabel slowPath
+        end
     end, _llint_slow_path_put_by_val_direct)
 
 

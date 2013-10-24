@@ -28,8 +28,6 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
-
 #include "CodeOrigin.h"
 #include "Instruction.h"
 #include "JITStubRoutine.h"
@@ -42,6 +40,8 @@
 #include <wtf/OwnPtr.h>
 
 namespace JSC {
+
+#if ENABLE(JIT)
 
 class PolymorphicPutByIdList;
 
@@ -301,8 +301,12 @@ inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStu
 
 typedef HashMap<CodeOrigin, StructureStubInfo*> StubInfoMap;
 
-} // namespace JSC
+#else
+
+typedef HashMap<int, void*> StubInfoMap;
 
 #endif // ENABLE(JIT)
+
+} // namespace JSC
 
 #endif // StructureStubInfo_h

@@ -444,6 +444,8 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             out.printf(")");
         }
     }
+#else
+    UNUSED_PARAM(map);
 #endif
 }
 
@@ -522,10 +524,12 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     out.printf("\n");
     
     StubInfoMap stubInfos;
+#if ENABLE(JIT)
     {
         ConcurrentJITLocker locker(m_lock);
         getStubInfoMap(locker, stubInfos);
     }
+#endif
     
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();

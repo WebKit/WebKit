@@ -1110,6 +1110,9 @@ class Instruction
         when "cloopCallSlowPath"
             cloopEmitCallSlowPath(operands)
 
+        when "cloopUnusedLabel"
+            $asm.putc "if (false) goto #{operands[0].cLabel};"
+
         # For debugging only. This is used to insert instrumentation into the
         # generated LLIntAssembly.h during llint development only. Do not use
         # for production code.

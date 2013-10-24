@@ -1,3 +1,44 @@
+2013-10-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken C Loop LLINT build.
+        https://bugs.webkit.org/show_bug.cgi?id=123271.
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus): Added an UNUSED_PARAM().
+        (JSC::CodeBlock::dumpBytecode): Added #if ENABLE(JIT) to JIT only code.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor): Added an UNUSED_PARAM().
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor): Added an UNUSED_PARAM().
+        * bytecode/StructureStubInfo.h:
+        - Added a stub StubInfoMap for non-JIT builds. StubInfoMap is still used
+          in function prototypes even when !ENABLE(JIT). Rather that adding #if's
+          in many places, we just provide a stub/placeholder implementation that
+          is unused but keeps the compiler happy.
+        * jit/JITOperations.h: Added #if ENABLE(JIT).
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        - The putByVal() macro reifies a slow path which is never taken in one case.
+          This translates into a label that is never used in the C Loop LLINT. The
+          C++ compiler doesn't like unused labels. So, we fix this by adding a
+          cloopUnusedLabel offline asm instruction that synthesizes the following:
+
+              if (false) goto unusedLabel;
+
+          This keeps the C++ compiler happy without changing code behavior.
+        * offlineasm/cloop.rb: Implementing cloopUnusedLabel.
+        * offlineasm/instructions.rb: Declaring cloopUnusedLabel.
+        * runtime/Executable.cpp:
+        (JSC::setupJIT): Added UNUSED_PARAM()s.
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        - run-javascriptcore-tests have phases that forces the LLINT to be off
+          which in turn asserts that the JIT is enabled. With the C Loop LLINT,
+          this combination is illegal. So, we override the setup code here to
+          always use the LLINT if !ENABLE(JIT) regardless of what options are
+          passed in.
+
 2013-10-24  peavo@outlook.com  <peavo@outlook.com>
 
         Uninitialized member causes crash when DFG JIT is not enabled.

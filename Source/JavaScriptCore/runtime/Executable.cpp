@@ -277,6 +277,8 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
     CompilationResult result = JIT::compile(&vm, codeBlock, JITCompilationMustSucceed);
     RELEASE_ASSERT(result == CompilationSuccessful);
 #else
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(codeBlock);
     UNREACHABLE_FOR_PLATFORM();
 #endif
 }
@@ -295,7 +297,11 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
     }
     
     bool shouldUseLLInt;
-#if ENABLE(LLINT)
+#if !ENABLE(JIT)
+    // No JIT implies use of the C Loop LLINT. Override the options to reflect this. 
+    Options::useLLInt() = true;
+    shouldUseLLInt = true;
+#elif ENABLE(LLINT)
     shouldUseLLInt = Options::useLLInt();
 #else
     shouldUseLLInt = false;

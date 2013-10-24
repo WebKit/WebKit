@@ -246,6 +246,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     
     return result;
 #else // ENABLE(JIT)
+    UNUSED_PARAM(map);
     return GetByIdStatus(NoInformation, false);
 #endif // ENABLE(JIT)
 }

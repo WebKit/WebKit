@@ -143,6 +143,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
 #else // ENABLE(JIT)
+    UNUSED_PARAM(map);
     return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
 #endif // ENABLE(JIT)
 }
