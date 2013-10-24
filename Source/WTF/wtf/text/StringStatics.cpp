@@ -43,15 +43,7 @@ namespace WTF {
 
 StringImpl* StringImpl::empty()
 {
-    // FIXME: This works around a bug in our port of PCRE, that a regular expression
-    // run on the empty string may still perform a read from the first element, and
-    // as such we need this to be a valid pointer. No code should ever be reading
-    // from a zero length string, so this should be able to be a non-null pointer
-    // into the zero-page.
-    // Replace this with 'reinterpret_cast<UChar*>(static_cast<intptr_t>(1))' once
-    // PCRE goes away.
-    static LChar emptyLCharData = 0;
-    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (&emptyLCharData, 0, ConstructStaticString));
+    DEFINE_STATIC_LOCAL(StringImpl, emptyString, (reinterpret_cast<UChar*>(static_cast<intptr_t>(1)), 0, ConstructStaticString));
     WTF_ANNOTATE_BENIGN_RACE(&emptyString, "Benign race on StringImpl::emptyString reference counter");
     return &emptyString;
 }
