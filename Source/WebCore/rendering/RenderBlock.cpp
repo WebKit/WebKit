@@ -152,6 +152,7 @@ RenderBlock::RenderBlock(Element& element, unsigned baseTypeFlags)
     , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
+    , m_forceLineBoxLayout(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -167,6 +168,7 @@ RenderBlock::RenderBlock(Document& document, unsigned baseTypeFlags)
     , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
+    , m_forceLineBoxLayout(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -1383,6 +1385,10 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
 
 ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
 {
+    // This may be called outside layout when switching from SimpleLineLayout to line boxes. This case never has shape info.
+    if (!view().layoutState())
+        return nullptr;
+
     ShapeInsideInfo* shapeInsideInfo = view().layoutState()->shapeInsideInfo();
 
     if (!shapeInsideInfo && flowThreadContainingBlock() && allowsShapeInsideInfoSharing()) {

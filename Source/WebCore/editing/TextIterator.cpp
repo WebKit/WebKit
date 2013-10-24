@@ -521,6 +521,36 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
+    if (renderer->simpleLines()) {
+        if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
+            return true;
+        // This code aims to produce same results as handleTextBox() below so test results don't change. It does not make much logical sense.
+        unsigned runEnd = m_offset;
+        unsigned runStart = m_offset;
+        while (runEnd < str.length() && (isCollapsibleWhitespace(str[runEnd]) || str[runEnd] == '\t'))
+            ++runEnd;
+        bool addSpaceForPrevious = m_lastTextNodeEndedWithCollapsedSpace && m_lastCharacter && !isCollapsibleWhitespace(m_lastCharacter);
+        if (runEnd > runStart || addSpaceForPrevious) {
+            if (runEnd == str.length()) {
+                m_lastTextNodeEndedWithCollapsedSpace = true;
+                return true;
+            }
+            bool addSpaceForCurrent = runStart || (m_lastCharacter && !isCollapsibleWhitespace(m_lastCharacter));
+            if (addSpaceForCurrent || addSpaceForPrevious) {
+                emitCharacter(' ', m_node, 0, runStart, runEnd);
+                m_offset = runEnd;
+                return false;
+            }
+            runStart = runEnd;
+        }
+        while (runEnd < str.length() && !isCollapsibleWhitespace(str[runEnd]))
+            ++runEnd;
+        if (runStart < str.length())
+            emitText(m_node, renderer, runStart, runEnd);
+        m_offset = runEnd;
+        return runEnd == str.length();
+    }
+
     if (renderer->firstTextBox())
         m_textBox = renderer->firstTextBox();
 

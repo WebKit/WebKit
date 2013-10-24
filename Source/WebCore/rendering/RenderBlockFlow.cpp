@@ -33,7 +33,9 @@
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
+#include "RenderText.h"
 #include "RenderView.h"
+#include "SimpleLineLayoutFunctions.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
 
@@ -516,6 +518,19 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
+}
+
+void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+{
+    bool canUseSimpleLineLayout = !m_forceLineBoxLayout && SimpleLineLayout::canUseFor(*this);
+    if (canUseSimpleLineLayout) {
+        deleteLineBoxesBeforeSimpleLineLayout();
+        layoutSimpleLines(repaintLogicalTop, repaintLogicalBottom);
+        return;
+    }
+
+    m_simpleLines = nullptr;
+    layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -1632,7 +1647,11 @@ void RenderBlockFlow::deleteLines()
     if (containsFloats())
         m_floatingObjects->clearLineBoxTreePointers();
 
-    m_lineBoxes.deleteLineBoxTree(renderArena());
+    if (m_simpleLines) {
+        ASSERT(!m_lineBoxes.firstLineBox());
+        m_simpleLines = nullptr;
+    } else
+        m_lineBoxes.deleteLineBoxTree(renderArena());
 
     RenderBlock::deleteLines();
 }
@@ -2413,6 +2432,10 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
 bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     ASSERT(childrenInline());
+
+    if (m_simpleLines)
+        return SimpleLineLayout::hitTestFlow(*this, *m_simpleLines, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
@@ -2424,6 +2447,8 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
     // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
     // for either overflow or translations via relative positioning.
     if (childrenInline()) {
+        const_cast<RenderBlockFlow&>(*this).ensureLineBoxes();
+
         for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
             if (box->firstChild())
                 left = min(left, x + static_cast<LayoutUnit>(box->firstChild()->x()));
@@ -2512,10 +2537,14 @@ int RenderBlockFlow::firstLineBaseline() const
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
-    if (firstLineBox())
-        return firstLineBox()->logicalTop() + firstLineStyle()->fontMetrics().ascent(firstRootBox()->baselineType());
+    if (!hasLines())
+        return -1;
 
-    return -1;
+    if (m_simpleLines)
+        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *m_simpleLines);
+
+    ASSERT(firstLineBox());
+    return firstLineBox()->logicalTop() + firstLineStyle()->fontMetrics().ascent(firstRootBox()->baselineType());
 }
 
 int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
@@ -2535,6 +2564,9 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
     }
 
+    if (m_simpleLines)
+        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *m_simpleLines);
+
     bool isFirstLine = lastLineBox() == firstLineBox();
     RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
     return lastLineBox()->logicalTop() + style->fontMetrics().ascent(lastRootBox()->baselineType());
@@ -2543,6 +2575,8 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
+    ASSERT(!m_simpleLines);
+
     GapRects result;
 
     bool containsStart = selectionState() == SelectionStart || selectionState() == SelectionBoth;
@@ -2752,6 +2786,8 @@ void RenderBlockFlow::clearTruncation()
         return;
 
     if (childrenInline() && hasMarkupTruncation()) {
+        ensureLineBoxes();
+
         setHasMarkupTruncation(false);
         for (auto box = firstRootBox(); box; box = box->nextRootBox())
             box->clearTruncation();
@@ -2792,6 +2828,8 @@ Position RenderBlockFlow::positionForBox(InlineBox *box, bool start) const
 VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents)
 {
     ASSERT(childrenInline());
+
+    ensureLineBoxes();
 
     if (!firstRootBox())
         return createVisiblePosition(0, DOWNSTREAM);
@@ -2879,6 +2917,10 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
 {
+    ASSERT(childrenInline());
+
+    ensureLineBoxes();
+
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         LayoutUnit top = max<LayoutUnit>(curr->lineTop(), curr->top());
         LayoutUnit bottom = min<LayoutUnit>(curr->lineBottom(), curr->top() + curr->height());
@@ -2891,6 +2933,11 @@ void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<IntRect>& rects,
 void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(childrenInline());
+
+    if (m_simpleLines) {
+        SimpleLineLayout::paintFlow(*this, *m_simpleLines, paintInfo, paintOffset);
+        return;
+    }
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
@@ -2944,6 +2991,63 @@ bool RenderBlockFlow::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, 
         m_overflow = savedOverflow.release();
     
     return false;
+}
+
+bool RenderBlockFlow::hasLines() const
+{
+    ASSERT(childrenInline());
+
+    if (m_simpleLines)
+        return !m_simpleLines->isEmpty();
+
+    return lineBoxes().firstLineBox();
+}
+
+void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+{
+    ASSERT(!m_lineBoxes.firstLineBox());
+
+    m_simpleLines = SimpleLineLayout::createLines(*this);
+
+    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLines);
+    LayoutUnit lineLayoutTop = borderAndPaddingBefore();
+
+    repaintLogicalTop = lineLayoutTop;
+    repaintLogicalBottom = lineLayoutTop + lineLayoutHeight;
+
+    setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
+}
+
+void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
+{
+    ASSERT(!m_forceLineBoxLayout);
+    lineBoxes().deleteLineBoxes(renderArena());
+    toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
+}
+
+void RenderBlockFlow::ensureLineBoxes()
+{
+    m_forceLineBoxLayout = true;
+
+    if (!m_simpleLines)
+        return;
+    m_simpleLines = nullptr;
+
+#if !ASSERT_DISABLED
+    LayoutUnit oldHeight = logicalHeight();
+#endif
+    bool didNeedLayout = needsLayout();
+
+    bool relayoutChildren = false;
+    LayoutUnit repaintLogicalTop;
+    LayoutUnit repaintLogicalBottom;
+    layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+
+    updateLogicalHeight();
+    ASSERT(didNeedLayout || logicalHeight() == oldHeight);
+
+    if (!didNeedLayout)
+        clearNeedsLayout();
 }
 
 #ifndef NDEBUG

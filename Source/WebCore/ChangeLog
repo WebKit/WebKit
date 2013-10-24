@@ -1,3 +1,165 @@
+2013-10-24  Antti Koivisto  <antti@apple.com>
+
+        Simple line layout
+        https://bugs.webkit.org/show_bug.cgi?id=122458
+
+        Reviewed by Darin Adler.
+
+        Line box based inline layout is powerful but also rather slow and memory intensive. Simple line layout
+        is a compact alternative data structure and fast code path to cover common cases without requiring line
+        boxes.
+        
+        This patch handles a case single left-aligned text renderer inside flow with no floats. Even this very basic
+        case is sufficiently common to handle up to 25% of all text lines on some popular new sites. The decision
+        which path to use is made per block flow (paragraph).
+        
+        Simple line layout aims to produce pixel-exact rendering result when compared to the line box layout.
+        
+        The goal is to handle everything that requires line level access in cases that allow use of simple lines.
+        This is not quite the case yet. For example selections and outline painting are not supported. In these
+        cases we seamlessly switch to the line boxes.
+
+        The simple line data structure currently uses 12 bytes per line. Lineboxes take ~160 bytes minimum per line.
+        Laying out the lines is also several times faster as is iterating over them.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.cpp:
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        (WebCore::Position::getInlineBoxAndOffset):
+        
+            Creating positions within a simple line flow causes switch to line boxes.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        
+            TextIterator traverses line boxes if available. In case simple line case we need to replicate the
+            same results (for compatibility but especially to avoid changing test results). This is done here
+            by just traversing the string without actually using the layout.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        
+            Select the layout path to use.
+
+        (WebCore::RenderBlockFlow::deleteLines):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        (WebCore::RenderBlockFlow::firstLineBaseline):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::clearTruncation):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::hasLines):
+        (WebCore::RenderBlockFlow::layoutSimpleLines):
+        
+            Do simple layout.
+
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        
+            This function switches from simple lines to line boxes. The switching can be done outside normal layout.
+            This is used to cover some cases that are not yet supported by simple lines (like selections).
+
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::simpleLines):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        
+            Rename the line box layout function.
+
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderText::absoluteRects):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsClippedToEllipsis):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        (WebCore::RenderText::positionForPoint):
+        (WebCore::RenderText::knownToHaveNoOverflowAndNoFallbackFonts):
+        (WebCore::RenderText::setSelectionState):
+        (WebCore::RenderText::setTextWithOffset):
+        (WebCore::RenderText::ensureLineBoxes):
+        (WebCore::RenderText::simpleLines):
+        (WebCore::RenderText::linesBoundingBox):
+        (WebCore::RenderText::linesVisualOverflowBoundingBox):
+        (WebCore::RenderText::selectionRectForRepaint):
+        (WebCore::RenderText::caretMinOffset):
+        (WebCore::RenderText::caretMaxOffset):
+        (WebCore::RenderText::countRenderedCharacterOffsetsUntil):
+        (WebCore::RenderText::containsRenderedCharacterOffset):
+        (WebCore::RenderText::containsCaretOffset):
+        (WebCore::RenderText::hasRenderedText):
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeSimpleLine):
+        (WebCore::write):
+        * rendering/SimpleLineLayout.cpp: Added.
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            This check for the cases supported by the simple line layout path.
+
+        (WebCore::SimpleLineLayout::isWhitespace):
+        (WebCore::SimpleLineLayout::skipWhitespaces):
+        (WebCore::SimpleLineLayout::textWidth):
+        (WebCore::SimpleLineLayout::createLines):
+        
+            The main layout functions that breaks text to lines. It only handles the cases allowed by 
+            SimpleLineLayout::canUseFor. What it handles it aims to break exactly as line box layout does.
+
+        * rendering/SimpleLineLayout.h: Added.
+        * rendering/SimpleLineLayoutFunctions.cpp: Added.
+        (WebCore::SimpleLineLayout::paintFlow):
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        (WebCore::SimpleLineLayout::collectFlowOverflow):
+        (WebCore::SimpleLineLayout::computeTextBoundingBox):
+        * rendering/SimpleLineLayoutFunctions.h: Added.
+        (WebCore::SimpleLineLayout::computeFlowHeight):
+        (WebCore::SimpleLineLayout::computeFlowFirstLineBaseline):
+        (WebCore::SimpleLineLayout::computeFlowLastLineBaseline):
+        (WebCore::SimpleLineLayout::findTextCaretMinimumOffset):
+        (WebCore::SimpleLineLayout::findTextCaretMaximumOffset):
+        (WebCore::SimpleLineLayout::containsTextCaretOffset):
+        (WebCore::SimpleLineLayout::isTextRendered):
+        (WebCore::SimpleLineLayout::lineHeightFromFlow):
+        
+            Support functions called from RenderBlockFlow and RenderText. They are equivalent to
+            similar line box functions.
+
+        (WebCore::SimpleLineLayout::baselineFromFlow):
+        * rendering/SimpleLineLayoutResolver.h: Added.
+        (WebCore::SimpleLineLayout::Resolver::Line::Line):
+        (WebCore::SimpleLineLayout::Resolver::Line::rect):
+        (WebCore::SimpleLineLayout::Resolver::Line::baseline):
+        (WebCore::SimpleLineLayout::Resolver::Line::text):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::operator++):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::operator--):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::operator==):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::operator!=):
+        (WebCore::SimpleLineLayout::Resolver::Iterator::operator*):
+        
+            Lazy iterator for deriving line metrics. This keeps the line data structure small as
+            we don't need to keep easily derived values around.
+
+        (WebCore::SimpleLineLayout::Resolver::Resolver):
+        (WebCore::SimpleLineLayout::Resolver::size):
+        (WebCore::SimpleLineLayout::Resolver::begin):
+        (WebCore::SimpleLineLayout::Resolver::end):
+        (WebCore::SimpleLineLayout::Resolver::last):
+        (WebCore::SimpleLineLayout::Resolver::operator[]):
+
 2013-10-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Gaps between underlines in adjacent underlined text runs

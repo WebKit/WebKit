@@ -39,6 +39,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "SimpleLineLayoutFunctions.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "TextResourceDecoder.h"
@@ -265,6 +266,11 @@ void RenderText::willBeDestroyed()
     RenderObject::willBeDestroyed();
 }
 
+void RenderText::deleteLineBoxesBeforeSimpleLineLayout()
+{
+    m_lineBoxes.deleteAll(*this);
+}
+
 String RenderText::originalText() const
 {
     return textNode() ? textNode()->data() : String();
@@ -272,11 +278,16 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
+    // FIXME: These will go away when simple layout can do everything.
+    const_cast<RenderText&>(*this).ensureLineBoxes();
+
     rects.appendVector(m_lineBoxes.absoluteRects(accumulatedOffset));
 }
 
 Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
+    const_cast<RenderText&>(*this).ensureLineBoxes();
+
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
     // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
@@ -292,16 +303,22 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
+    const_cast<RenderText&>(*this).ensureLineBoxes();
+
     return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
 }
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
+    const_cast<RenderText&>(*this).ensureLineBoxes();
+
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
 }
 
 Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
+    const_cast<RenderText&>(*this).ensureLineBoxes();
+
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
     // function to take ints causes various internal mismatches. But selectionRect takes ints, and 
@@ -317,6 +334,8 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
 VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
 {
+    ensureLineBoxes();
+
     return m_lineBoxes.positionForPoint(*this, point);
 }
 
@@ -489,6 +508,14 @@ float RenderText::maxLogicalWidth() const
         const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
         
     return m_maxWidth;
+}
+
+bool RenderText::knownToHaveNoOverflowAndNoFallbackFonts() const
+{
+    if (preferredLogicalWidthsDirty())
+        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
+
+    return m_knownToHaveNoOverflowAndNoFallbackFonts;
 }
 
 void RenderText::computePreferredLogicalWidths(float leadWidth)
@@ -836,6 +863,9 @@ float RenderText::firstRunY() const
     
 void RenderText::setSelectionState(SelectionState state)
 {
+    if (state != SelectionNone)
+        ensureLineBoxes();
+
     RenderObject::setSelectionState(state);
 
     if (canUpdateSelectionOnRootLineBoxes())
@@ -855,7 +885,7 @@ void RenderText::setTextWithOffset(const String& text, unsigned offset, unsigned
     int delta = text.length() - textLength();
     unsigned end = len ? offset + len - 1 : offset;
 
-    m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
+    m_linesDirty = simpleLines() || m_lineBoxes.dirtyRange(*this, offset, end, delta);
 
     setText(text, force || m_linesDirty);
 }
@@ -1025,6 +1055,20 @@ void RenderText::positionLineBox(InlineBox* box)
     m_containsReversedText |= !textBox->isLeftToRightDirection();
 }
 
+void RenderText::ensureLineBoxes()
+{
+    if (!parent()->isRenderBlockFlow())
+        return;
+    toRenderBlockFlow(parent())->ensureLineBoxes();
+}
+
+const SimpleLineLayout::Lines* RenderText::simpleLines() const
+{
+    if (!parent()->isRenderBlockFlow())
+        return nullptr;
+    return toRenderBlockFlow(parent())->simpleLines();
+}
+
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (from >= textLength())
@@ -1075,11 +1119,15 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
 
 IntRect RenderText::linesBoundingBox() const
 {
+    if (auto lines = simpleLines())
+        return SimpleLineLayout::computeTextBoundingBox(*this, *lines);
+
     return m_lineBoxes.boundingBox(*this);
 }
 
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
+    ASSERT(!simpleLines());
     return m_lineBoxes.visualOverflowBoundingBox(*this);
 }
 
@@ -1102,6 +1150,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
 LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
+    ASSERT(!simpleLines());
 
     if (selectionState() == SelectionNone)
         return LayoutRect();
@@ -1143,31 +1192,41 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
+    if (auto lines = simpleLines())
+        return SimpleLineLayout::findTextCaretMinimumOffset(*this, *lines);
     return m_lineBoxes.caretMinOffset();
 }
 
 int RenderText::caretMaxOffset() const
 {
+    if (auto lines = simpleLines())
+        return SimpleLineLayout::findTextCaretMaximumOffset(*this, *lines);
     return m_lineBoxes.caretMaxOffset(*this);
 }
 
 unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
+    ASSERT(!simpleLines());
     return m_lineBoxes.countCharacterOffsetsUntil(offset);
 }
 
 bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 {
+    ASSERT(!simpleLines());
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CharacterOffset);
 }
 
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
+    if (auto layout = simpleLines())
+        return SimpleLineLayout::containsTextCaretOffset(*this, *layout, offset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
 }
 
 bool RenderText::hasRenderedText() const
 {
+    if (auto lines = simpleLines())
+        return SimpleLineLayout::isTextRendered(*this, *lines);
     return m_lineBoxes.hasRenderedText();
 }
 

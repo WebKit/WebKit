@@ -45,6 +45,7 @@
 #include "RenderRubyRun.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "SimpleLineLayoutFunctions.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
 #include "break_lines.h"
@@ -1833,8 +1834,10 @@ void RenderBlockFlow::repaintDirtyFloats(Vector<FloatWithRect>& floats)
     }
 }
 
-void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
+    ASSERT(!m_simpleLines);
+
     setLogicalHeight(borderAndPaddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
@@ -3510,6 +3513,11 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
 {
+    if (auto lines = simpleLines()) {
+        ASSERT(!hasOverflowClip());
+        SimpleLineLayout::collectFlowOverflow(*this, *lines);
+        return;
+    }
     LayoutUnit endPadding = hasOverflowClip() ? paddingEnd() : LayoutUnit();
     // FIXME: Need to find another way to do this, since scrollbars could show when we don't want them to.
     if (hasOverflowClip() && !endPadding && element() && element()->isRootEditableElement() && style()->isLeftToRightDirection())

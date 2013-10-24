@@ -25,6 +25,7 @@
 
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
+#include "SimpleLineLayout.h"
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ protected:
     // When the children are are all inline (e.g., lines), we call layoutInlineChildren.
     void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
-    
+
     // RenderBlockFlows override these methods, since they are the only class that supports margin collapsing.
     virtual LayoutUnit collapsedMarginBefore() const OVERRIDE FINAL { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const OVERRIDE FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
@@ -310,7 +311,7 @@ public:
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
 
-    virtual bool hasLines() const OVERRIDE FINAL { return firstLineBox(); }
+    virtual bool hasLines() const OVERRIDE FINAL;
 
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int) const;
@@ -322,6 +323,10 @@ public:
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
 
     bool containsNonZeroBidiLevel() const;
+
+    const SimpleLineLayout::Lines* simpleLines() const { return m_simpleLines.get(); }
+    void deleteLineBoxesBeforeSimpleLineLayout();
+    void ensureLineBoxes();
 
 #ifndef NDEBUG
     virtual void showLineTreeAndMark(const InlineBox* = nullptr, const char* = nullptr, const InlineBox* = nullptr, const char* = nullptr, const RenderObject* = nullptr) const OVERRIDE;
@@ -427,6 +432,9 @@ public:
     RootInlineBox* createAndAppendRootInlineBox();
 
 private:
+    void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+
     virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox, bool startsNewSegment);
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
@@ -479,6 +487,7 @@ protected:
     OwnPtr<FloatingObjects> m_floatingObjects;
     OwnPtr<RenderBlockFlowRareData> m_rareData;
     RenderLineBoxList m_lineBoxes;
+    std::unique_ptr<SimpleLineLayout::Lines> m_simpleLines;
 
     friend class BreakingContext;
     friend class LineBreaker;

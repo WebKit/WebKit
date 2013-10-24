@@ -751,12 +751,13 @@ public:
 protected:
     OwnPtr<RenderBlockRareData> m_rareData;
 
-    mutable signed m_lineHeight : 27;
+    mutable signed m_lineHeight : 26;
     unsigned m_hasMarginBeforeQuirk : 1; // Note these quirk values can't be put in RenderBlockRareData since they are set too frequently.
     unsigned m_hasMarginAfterQuirk : 1;
     unsigned m_beingDestroyed : 1;
     unsigned m_hasMarkupTruncation : 1;
     unsigned m_hasBorderOrPaddingLogicalWidthChanged : 1;
+    unsigned m_forceLineBoxLayout : 1;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;

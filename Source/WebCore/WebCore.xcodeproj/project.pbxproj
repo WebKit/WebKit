@@ -5681,6 +5681,8 @@
 		E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */; };
 		E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */; };
+		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
+		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4946EAE156E64DD00D3297F /* StyleRuleImport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */; };
 		E4946EAF156E64DD00D3297F /* StyleRuleImport.h in Headers */ = {isa = PBXBuildFile; fileRef = E4946EAD156E64DD00D3297F /* StyleRuleImport.h */; };
 		E49BD9FA131FD2ED003C56F0 /* CSSValuePool.h in Headers */ = {isa = PBXBuildFile; fileRef = E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5717,6 +5719,9 @@
 		E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */; };
 		E4DEAA1717A93DC3000E0430 /* StyleResolveTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */; };
 		E4DEAA1817A93DC3000E0430 /* StyleResolveTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */; };
+		E4E9B11B18145692003ACCDF /* SimpleLineLayoutFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */; };
+		E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */; };
 		E4F9EEF2156D9FFA00D23E7E /* StyleSheetContents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; };
 		E51A81DF17298D7700BFCA61 /* JSPerformance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */; };
@@ -12669,6 +12674,8 @@
 		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
 		E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentStyleSheetCollection.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentStyleSheetCollection.cpp; sourceTree = "<group>"; };
+		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
+		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleRuleImport.cpp; sourceTree = "<group>"; };
 		E4946EAD156E64DD00D3297F /* StyleRuleImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleRuleImport.h; sourceTree = "<group>"; };
 		E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSValuePool.h; sourceTree = "<group>"; };
@@ -12722,6 +12729,9 @@
 		E4D988B517BFEB210084FB88 /* TextNodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextNodeTraversal.cpp; sourceTree = "<group>"; };
 		E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolveTree.cpp; sourceTree = "<group>"; };
 		E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolveTree.h; sourceTree = "<group>"; };
+		E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutResolver.h; sourceTree = "<group>"; };
+		E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFunctions.cpp; sourceTree = "<group>"; };
+		E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFunctions.h; sourceTree = "<group>"; };
 		E4F9EEF0156D84C400D23E7E /* StyleSheetContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheetContents.cpp; sourceTree = "<group>"; };
 		E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSheetContents.h; sourceTree = "<group>"; };
 		E51A81DE17298D7700BFCA61 /* JSPerformance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformance.cpp; sourceTree = "<group>"; };
@@ -20768,6 +20778,11 @@
 				5D925B650F64D4DD00B847F0 /* ScrollBehavior.cpp */,
 				5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
+				E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */,
+				E48944A1180B57D800F165D8 /* SimpleLineLayout.h */,
+				E4E9B11A18145692003ACCDF /* SimpleLineLayoutFunctions.cpp */,
+				E4E9B11C1814569C003ACCDF /* SimpleLineLayoutFunctions.h */,
+				E4E9B1181810916F003ACCDF /* SimpleLineLayoutResolver.h */,
 				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
 				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
@@ -22573,6 +22588,7 @@
 				A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */,
 				0F580B0D0F12A2690051D689 /* GraphicsLayer.h in Headers */,
 				499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */,
+				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
 				CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */,
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
@@ -23633,6 +23649,7 @@
 				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
 				D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */,
 				377C4CDF1014E9F600B9AE42 /* PlaceholderDocument.h in Headers */,
+				E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */,
 				499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */,
 				0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */,
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
@@ -23819,6 +23836,7 @@
 				0854B0171255E4E600B9CDD0 /* RenderSVGInlineText.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
 				436708CB12D9CA4B00044234 /* RenderSVGModelObject.h in Headers */,
+				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */,
 				A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */,
 				436708CD12D9CA4B00044234 /* RenderSVGResource.h in Headers */,
@@ -26603,6 +26621,7 @@
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				BE8EF04A171C9014009B48C3 /* JSVideoTrack.cpp in Sources */,
 				BE6DF70B171CA2C500DD52B8 /* JSVideoTrackCustom.cpp in Sources */,
+				E4E9B11B18145692003ACCDF /* SimpleLineLayoutFunctions.cpp in Sources */,
 				BE8EF04C171C9014009B48C3 /* JSVideoTrackList.cpp in Sources */,
 				BE6DF70D171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp in Sources */,
 				078E093317D16B0600420AA1 /* MediaStreamCenter.cpp in Sources */,
@@ -26845,6 +26864,7 @@
 				F3820892147D35F90010BC06 /* PageConsoleAgent.cpp in Sources */,
 				F34742DC134362F000531BC2 /* PageDebuggerAgent.cpp in Sources */,
 				9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */,
+				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,
 				7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */,
 				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
 				FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */,

@@ -36,6 +36,7 @@
 #include "InlineTextBox.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
+#include "RenderBlockFlow.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
 #include "RenderInline.h"
@@ -49,6 +50,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ShadowRoot.h"
+#include "SimpleLineLayoutResolver.h"
 #include "StylePropertySet.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Vector.h>
@@ -244,7 +246,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // many test results.
         const RenderText& text = toRenderText(o);
         IntRect linesBox = text.linesBoundingBox();
-        r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
+        if (text.simpleLines()) {
+            int y = linesBox.y();
+            if (text.containingBlock()->isTableCell())
+                y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
+            r = IntRect(linesBox.x(), y, linesBox.width(), linesBox.height());
+        } else
+            r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
     } else if (o.isBR()) {
@@ -526,6 +534,21 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
     ts << "\n";
 }
 
+static void writeSimpleLine(TextStream& ts, const RenderText& o, const LayoutRect& rect, const String& text)
+{
+    int x = rect.x();
+    int y = rect.y();
+    int logicalWidth = ceilf(rect.x() + rect.width()) - x;
+
+    if (o.containingBlock()->isTableCell())
+        y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
+        
+    ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
+    ts << ": "
+        << quoteAndEscapeNonPrintables(text);
+    ts << "\n";
+}
+
 void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)
 {
 #if ENABLE(SVG)
@@ -569,11 +592,22 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
     ts << "\n";
 
     if (o.isText()) {
-        const RenderText& text = toRenderText(o);
-        for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
-            writeIndent(ts, indent + 1);
-            writeTextRun(ts, text, *box);
+        auto& text = toRenderText(o);
+        if (auto lines = text.simpleLines()) {
+            ASSERT(!text.firstTextBox());
+            SimpleLineLayout::Resolver resolver(*lines, toRenderBlockFlow(*text.parent()));
+            for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
+                auto line = *it;
+                writeIndent(ts, indent + 1);
+                writeSimpleLine(ts, text, line.rect(), line.text());
+            }
+        } else {
+            for (auto box = text.firstTextBox(); box; box = box->nextTextBox()) {
+                writeIndent(ts, indent + 1);
+                writeTextRun(ts, text, *box);
+            }
         }
+
     } else {
         if (!toRenderElement(o).isRenderNamedFlowFragmentContainer()) {
             for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {

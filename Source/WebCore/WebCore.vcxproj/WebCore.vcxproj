@@ -10912,6 +10912,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\SimpleLineLayout.cpp" />
+    <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp" />
     <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
@@ -19682,6 +19684,9 @@
     <ClInclude Include="..\rendering\RenderWidget.h" />
     <ClInclude Include="..\rendering\RootInlineBox.h" />
     <ClInclude Include="..\rendering\ScrollBehavior.h" />
+    <ClInclude Include="..\rendering\SimpleLineLayout.h" />
+    <ClInclude Include="..\rendering\SimpleLineLayoutFunctions.h" />
+    <ClInclude Include="..\rendering\SimpleLineLayoutResolver.h" />
     <ClInclude Include="..\rendering\svg\SVGMarkerData.h" />
     <ClInclude Include="..\rendering\svg\SVGPathData.h" />
     <ClInclude Include="..\rendering\svg\SVGRenderingContext.h" />

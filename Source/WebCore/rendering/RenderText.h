@@ -25,6 +25,7 @@
 
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
+#include "SimpleLineLayout.h"
 #include "Text.h"
 #include <wtf/Forward.h>
 
@@ -139,7 +140,7 @@ public:
     bool isAllCollapsibleWhitespace() const;
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
-    bool knownToHaveNoOverflowAndNoFallbackFonts() const { return m_knownToHaveNoOverflowAndNoFallbackFonts; }
+    bool knownToHaveNoOverflowAndNoFallbackFonts() const;
 
     void removeAndDestroyTextBoxes();
 
@@ -151,6 +152,10 @@ public:
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float s) { m_candidateComputedTextSize = s; }
 #endif
+
+    void ensureLineBoxes();
+    void deleteLineBoxesBeforeSimpleLineLayout();
+    const SimpleLineLayout::Lines* simpleLines() const;
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
@@ -197,7 +202,7 @@ private:
     bool m_canUseSimpleFontCodePath : 1;
     mutable bool m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     bool m_useBackslashAsYenSymbol : 1;
-    
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
     float m_candidateComputedTextSize;

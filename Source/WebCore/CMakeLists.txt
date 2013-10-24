@@ -2175,6 +2175,8 @@ set(WebCore_SOURCES
     rendering/RenderWidget.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
+    rendering/SimpleLineLayout.cpp
+    rendering/SimpleLineLayoutFunctions.cpp
     rendering/TextAutosizer.cpp
     rendering/TextPaintStyle.cpp
     rendering/break_lines.cpp

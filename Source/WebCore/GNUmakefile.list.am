@@ -4483,6 +4483,11 @@ webcore_sources += \
 	Source/WebCore/rendering/RootInlineBox.h \
 	Source/WebCore/rendering/ScrollBehavior.cpp \
 	Source/WebCore/rendering/ScrollBehavior.h \
+	Source/WebCore/rendering/SimpleLineLayout.cpp \
+	Source/WebCore/rendering/SimpleLineLayout.h \
+	Source/WebCore/rendering/SimpleLineLayoutFunctions.cpp \
+	Source/WebCore/rendering/SimpleLineLayoutFunctions.h \
+	Source/WebCore/rendering/SimpleLineLayoutResolver.h \
 	Source/WebCore/rendering/TextAutosizer.cpp \
 	Source/WebCore/rendering/TextAutosizer.h \
 	Source/WebCore/rendering/TextPaintStyle.cpp \
