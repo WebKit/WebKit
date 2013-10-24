@@ -56,29 +56,30 @@ WebKitDOMTestNode* wrapTestNode(WebCore::TestNode* coreObject)
 
 } // namespace WebKit
 
-static void webkit_dom_test_node_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
+static gboolean webkit_dom_test_node_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
     WebCore::Event* coreEvent = WebKit::core(event);
     WebCore::TestNode* coreTarget = static_cast<WebCore::TestNode*>(WEBKIT_DOM_OBJECT(target)->coreObject);
 
     WebCore::ExceptionCode ec = 0;
-    coreTarget->dispatchEvent(coreEvent, ec);
+    gboolean result = coreTarget->dispatchEvent(coreEvent, ec);
     if (ec) {
         WebCore::ExceptionCodeDescription description(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
     }
+    return result;
 }
 
-static gboolean webkit_dom_test_node_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)
+static gboolean webkit_dom_test_node_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)
 {
     WebCore::TestNode* coreTarget = static_cast<WebCore::TestNode*>(WEBKIT_DOM_OBJECT(target)->coreObject);
-    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble, userData);
+    return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
-static gboolean webkit_dom_test_node_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)
+static gboolean webkit_dom_test_node_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GClosure* handler, gboolean useCapture)
 {
     WebCore::TestNode* coreTarget = static_cast<WebCore::TestNode*>(WEBKIT_DOM_OBJECT(target)->coreObject);
-    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble);
+    return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, useCapture);
 }
 
 static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)

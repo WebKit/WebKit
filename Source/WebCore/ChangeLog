@@ -1,3 +1,43 @@
+2013-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GObject bindings] Make EventTarget interface introspectable
+        https://bugs.webkit.org/show_bug.cgi?id=77835
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add webkit_dom_event_target_add_event_listener_with_closure and
+        webkit_dom_event_target_remove_event_listener_with_closure to be
+        used by GObject instrospection bindings. Instead of receving a
+        GCallback, which makes the function not introspectable, they
+        receive a GClosure.
+
+        * bindings/gobject/GObjectEventListener.cpp:
+        (WebCore::GObjectEventListener::GObjectEventListener):
+        (WebCore::GObjectEventListener::~GObjectEventListener):
+        (WebCore::GObjectEventListener::gobjectDestroyed):
+        (WebCore::GObjectEventListener::handleEvent):
+        (WebCore::GObjectEventListener::operator==):
+        * bindings/gobject/GObjectEventListener.h:
+        (WebCore::GObjectEventListener::addEventListener):
+        (WebCore::GObjectEventListener::removeEventListener):
+        * bindings/gobject/WebKitDOMEventTarget.cpp:
+        (webkit_dom_event_target_dispatch_event):
+        (webkit_dom_event_target_add_event_listener):
+        (webkit_dom_event_target_remove_event_listener):
+        (webkit_dom_event_target_add_event_listener_with_closure):
+        (webkit_dom_event_target_remove_event_listener_with_closure):
+        * bindings/gobject/WebKitDOMEventTarget.h:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateEventTargetIface):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (webkit_dom_test_event_target_dispatch_event):
+        (webkit_dom_test_event_target_add_event_listener):
+        (webkit_dom_test_event_target_remove_event_listener):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (webkit_dom_test_node_dispatch_event):
+        (webkit_dom_test_node_add_event_listener):
+        (webkit_dom_test_node_remove_event_listener):
+
 2013-10-14  Sergio Villar Senin  <svillar@igalia.com>
 
         Use a Vector instead of HashSet to computed the orderValues in RenderFlexibleBox

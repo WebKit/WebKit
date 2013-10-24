@@ -1,3 +1,18 @@
+2013-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GObject bindings] Make EventTarget interface introspectable
+        https://bugs.webkit.org/show_bug.cgi?id=77835
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support for use GRefPtr with GClosure.
+
+        * wtf/gobject/GRefPtr.cpp:
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/gobject/GRefPtr.h:
+        * wtf/gobject/GTypedefs.h:
+
 2013-10-23  Anders Carlsson  <andersca@apple.com>
 
         Remove USE(LOCKFREE_THREADSAFEREFCOUNTED)

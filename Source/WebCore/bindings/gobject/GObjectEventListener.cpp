@@ -22,31 +22,30 @@
 #include "Event.h"
 #include "WebKitDOMEvent.h"
 #include "WebKitDOMEventPrivate.h"
-#include <glib-object.h>
+#include "WebKitDOMEventTarget.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-typedef void (*GObjectEventListenerCallback)(GObject*, WebKitDOMEvent*, void*);
-
-GObjectEventListener::GObjectEventListener(GObject* object, EventTarget* target, const char* domEventName, GCallback handler, bool capture, void* userData)
+GObjectEventListener::GObjectEventListener(GObject* target, EventTarget* coreTarget, const char* domEventName, GClosure* handler, bool capture)
     : EventListener(GObjectEventListenerType)
-    , m_object(object)
-    , m_coreTarget(target)
+    , m_target(target)
+    , m_coreTarget(coreTarget)
     , m_domEventName(domEventName)
     , m_handler(handler)
     , m_capture(capture)
-    , m_userData(userData)
 {
     ASSERT(m_coreTarget);
-    g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
+    if (G_CLOSURE_NEEDS_MARSHAL(m_handler.get()))
+        g_closure_set_marshal(m_handler.get(), g_cclosure_marshal_generic);
+    g_object_weak_ref(m_target, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 GObjectEventListener::~GObjectEventListener()
 {
     if (!m_coreTarget)
         return;
-    g_object_weak_unref(m_object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
+    g_object_weak_unref(m_target, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
 }
 
 void GObjectEventListener::gobjectDestroyed()
@@ -59,19 +58,29 @@ void GObjectEventListener::gobjectDestroyed()
     EventTarget* target = m_coreTarget;
     m_coreTarget = 0;
     target->removeEventListener(m_domEventName.data(), this, m_capture);
+    m_handler = 0;
 }
 
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
-    WebKitDOMEvent* gobjectEvent = WEBKIT_DOM_EVENT(WebKit::kit(event));
-    reinterpret_cast<GObjectEventListenerCallback>(m_handler)(m_object, gobjectEvent, m_userData);
-    g_object_unref(gobjectEvent);
+    GValue parameters[2] = { G_VALUE_INIT, G_VALUE_INIT };
+    g_value_init(&parameters[0], WEBKIT_TYPE_DOM_EVENT_TARGET);
+    g_value_set_object(&parameters[0], m_target);
+
+    GRefPtr<WebKitDOMEvent> domEvent = adoptGRef(WebKit::kit(event));
+    g_value_init(&parameters[1], WEBKIT_TYPE_DOM_EVENT);
+    g_value_set_object(&parameters[1], domEvent.get());
+
+    g_closure_invoke(m_handler.get(), 0, 2, parameters, NULL);
+    g_value_unset(parameters + 0);
+    g_value_unset(parameters + 1);
 }
 
 bool GObjectEventListener::operator==(const EventListener& listener)
 {
     if (const GObjectEventListener* gobjectEventListener = GObjectEventListener::cast(&listener))
-        return m_object == gobjectEventListener->m_object && m_handler == gobjectEventListener->m_handler;
+        return m_target == gobjectEventListener->m_target
+            && reinterpret_cast<GCClosure*>(m_handler.get())->callback == reinterpret_cast<GCClosure*>(gobjectEventListener->m_handler.get())->callback;
 
     return false;
 }
