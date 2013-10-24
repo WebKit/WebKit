@@ -1,5 +1,14 @@
 2013-10-24  Antti Koivisto  <antti@apple.com>
 
+        Remove a stray space.
+        
+        Not reviewed.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+
+2013-10-24  Antti Koivisto  <antti@apple.com>
+
         Element iterator functions should take reference
         https://bugs.webkit.org/show_bug.cgi?id=123267
 
