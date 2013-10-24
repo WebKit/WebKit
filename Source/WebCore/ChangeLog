@@ -1,3 +1,17 @@
+2013-10-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix since r157823.
+        FilterOperation::getOperationType() is renamed FilterOperation::type().
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::prepareFilterProgram):
+        (WebCore::TextureMapperGL::drawTexture):
+        (WebCore::TextureMapperGL::drawUsingCustomFilter):
+        (WebCore::TextureMapperGL::drawFiltered):
+        (WebCore::BitmapTextureGL::applyFilters):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        (WebCore::CoordinatedGraphicsScene::injectCachedCustomFilterPrograms):
+
 2013-10-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on CMake based ports when CMAKE_BUILD_TYPE is not given.

@@ -252,7 +252,7 @@ void CoordinatedLayerTreeHost::checkCustomFilterProgramProxies(const FilterOpera
     // At that point the program will only be serialized once. All the other times it will only use the ID of the program.
     for (size_t i = 0; i < filters.size(); ++i) {
         const FilterOperation* operation = filters.at(i);
-        if (operation->getOperationType() != FilterOperation::VALIDATED_CUSTOM)
+        if (operation->type() != FilterOperation::VALIDATED_CUSTOM)
             continue;
         const ValidatedCustomFilterOperation* customOperation = static_cast<const ValidatedCustomFilterOperation*>(operation);
         ASSERT(customOperation->validatedProgram()->isInitialized());

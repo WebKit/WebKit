@@ -256,7 +256,7 @@ void CoordinatedGraphicsScene::injectCachedCustomFilterPrograms(const FilterOper
 {
     for (size_t i = 0; i < filters.size(); ++i) {
         FilterOperation* operation = filters.operations().at(i).get();
-        if (operation->getOperationType() != FilterOperation::CUSTOM)
+        if (operation->type() != FilterOperation::CUSTOM)
             continue;
 
         CoordinatedCustomFilterOperation* customOperation = static_cast<CoordinatedCustomFilterOperation*>(operation);

@@ -1,3 +1,13 @@
+2013-10-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix since r157823.
+        FilterOperation::getOperationType() is renamed FilterOperation::type().
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::checkCustomFilterProgramProxies):
+
 2013-10-23  Tibor Meszaros  <tmeszaros@inf.u-szeged.hu>
 
         Web Inspector: Make WebKitEFL port work with chromedevtools

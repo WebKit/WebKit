@@ -85,7 +85,7 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
     encoder << static_cast<uint32_t>(filters.size());
     for (size_t i = 0; i < filters.size(); ++i) {
         const FilterOperation* filter = filters.at(i);
-        FilterOperation::OperationType type = filter->getOperationType();
+        FilterOperation::OperationType type = filter->type();
         encoder.encodeEnum(type);
         switch (type) {
         case FilterOperation::GRAYSCALE:
