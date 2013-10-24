@@ -1,3 +1,19 @@
+2013-10-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Gaps between underlines in adjacent underlined text runs
+        https://bugs.webkit.org/show_bug.cgi?id=123236
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        Added a test that checks that we have accurate precision in our
+        floating-point computations. We should perform calculations before
+        rounding, instead of rouding twice and performing calculations on
+        the rounded values.
+
+        * fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html: Added.
+        * platform/mac/fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes-expected.png: Added.
+        * platform/mac/fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes-expected.txt: Added.
+
 2013-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix unnecessary alerted value leaking into another test.

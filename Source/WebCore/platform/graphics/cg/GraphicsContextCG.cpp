@@ -1261,7 +1261,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
         // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
         // makes our thickness more than double, then there must be a shrinking-scale factor and rounding to pixels
         // in device space will make the underlines too thick.
-        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness), RoundOriginAndDimensions);
+        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness), RoundAllSides);
         if (lineRect.size.height < thickness * 2.0) {
             x = lineRect.origin.x;
             y = lineRect.origin.y;

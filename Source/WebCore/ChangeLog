@@ -1,3 +1,32 @@
+2013-10-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Gaps between underlines in adjacent underlined text runs
+        https://bugs.webkit.org/show_bug.cgi?id=123236
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        There are two pieces to this change. The first piece is in
+        InlineTextBox::paint(). We were putting floating-point
+        extents into a LayoutSize, which simply uses ints (for now),
+        and then immediately converting this back to a FloatSize.
+        Instead, we should be using floats throughout all of
+        this code.
+
+        In addition, inside GraphicsContext::drawLineForText(), we are
+        rounding the underline to pixel boundaries so that it appears
+        very crisp on the screen. However, we should round once after
+        performing computations, rather than rounding twice and then
+        performing computations on the rounded numbers.
+
+        Test: fast/css3-text/css3-text-decoration/no-gap-between-two-rounded-textboxes.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Change rounding mode
+            to perform computations before rounding
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Don't convert to a LayoutSize
+            just to convert to a FloatSize
+
 2013-10-24  Andreas Kling  <akling@apple.com>
 
         SVGRenderingContext should wrap a RenderElement.
