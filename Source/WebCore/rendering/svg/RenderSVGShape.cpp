@@ -124,7 +124,7 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
         return false;
 
     Color fallbackColor;
-    if (requiresFill && !RenderSVGResource::fillPaintingResource(this, style(), fallbackColor))
+    if (requiresFill && !RenderSVGResource::fillPaintingResource(*this, style(), fallbackColor))
         return false;
 
     return shapeDependentFillContains(point, fillRule);
@@ -136,7 +136,7 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
         return false;
 
     Color fallbackColor;
-    if (requiresStroke && !RenderSVGResource::strokePaintingResource(this, style(), fallbackColor))
+    if (requiresStroke && !RenderSVGResource::strokePaintingResource(*this, style(), fallbackColor))
         return false;
 
     return shapeDependentStrokeContains(point);
@@ -218,7 +218,7 @@ bool RenderSVGShape::shouldGenerateMarkerPositions() const
 void RenderSVGShape::fillShape(RenderStyle* style, GraphicsContext* context)
 {
     Color fallbackColor;
-    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(this, style, fallbackColor)) {
+    if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(*this, style, fallbackColor)) {
         if (fillPaintingResource->applyResource(this, style, context, ApplyToFillMode))
             fillPaintingResource->postApplyResource(this, context, ApplyToFillMode, 0, this);
         else if (fallbackColor.isValid()) {
@@ -233,7 +233,7 @@ void RenderSVGShape::fillShape(RenderStyle* style, GraphicsContext* context)
 void RenderSVGShape::strokeShape(RenderStyle* style, GraphicsContext* context)
 {
     Color fallbackColor;
-    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(this, style, fallbackColor)) {
+    if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(*this, style, fallbackColor)) {
         if (strokePaintingResource->applyResource(this, style, context, ApplyToStrokeMode))
             strokePaintingResource->postApplyResource(this, context, ApplyToStrokeMode, 0, this);
         else if (fallbackColor.isValid()) {

@@ -1,3 +1,13 @@
+2013-10-24  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResource: Pass RenderElement to fill/strokePaintingResource.
+        <https://webkit.org/b/123242>
+
+        We never pass text renderers to these functions, so make them take
+        RenderElement instead.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GObject bindings] Make EventTarget interface introspectable

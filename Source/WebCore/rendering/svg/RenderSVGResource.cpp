@@ -39,20 +39,19 @@
 
 namespace WebCore {
 
-static inline bool inheritColorFromParentStyleIfNeeded(RenderObject* object, bool applyToFill, Color& color)
+static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bool applyToFill, Color& color)
 {
     if (color.isValid())
         return true;
-    if (!object->parent() || !object->parent()->style())
+    if (!object.parent())
         return false;
-    const SVGRenderStyle* parentSVGStyle = object->parent()->style()->svgStyle();
+    const SVGRenderStyle* parentSVGStyle = object.parent()->style()->svgStyle();
     color = applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor();
     return true;
 }
 
-static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderObject* object, const RenderStyle* style, Color& fallbackColor)
+static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderElement& object, const RenderStyle* style, Color& fallbackColor)
 {
-    ASSERT(object);
     ASSERT(style);
 
     // If we have no style at all, ignore it.
@@ -60,7 +59,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     if (!svgStyle)
         return 0;
 
-    bool isRenderingMask = object->view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
+    bool isRenderingMask = object.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
     // If we have no fill/stroke, return 0.
     if (mode == ApplyToFillMode) {
@@ -119,7 +118,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     }
 
     // If no resources are associated with the given renderer, return the color resource.
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&object);
     if (!resources) {
         if (paintType == SVGPaint::SVG_PAINTTYPE_URI_NONE || !inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
             return 0;
@@ -144,12 +143,12 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     return uriResource;
 }
 
-RenderSVGResource* RenderSVGResource::fillPaintingResource(RenderObject* object, const RenderStyle* style, Color& fallbackColor)
+RenderSVGResource* RenderSVGResource::fillPaintingResource(RenderElement& object, const RenderStyle* style, Color& fallbackColor)
 {
     return requestPaintingResource(ApplyToFillMode, object, style, fallbackColor);
 }
 
-RenderSVGResource* RenderSVGResource::strokePaintingResource(RenderObject* object, const RenderStyle* style, Color& fallbackColor)
+RenderSVGResource* RenderSVGResource::strokePaintingResource(RenderElement& object, const RenderStyle* style, Color& fallbackColor)
 {
     return requestPaintingResource(ApplyToStrokeMode, object, style, fallbackColor);
 }
