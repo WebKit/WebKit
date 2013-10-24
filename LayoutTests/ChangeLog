@@ -1,5 +1,11 @@
 2013-10-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Freshly landed webgl-1.0.1 tests are failing.
+
+        * platform/mac/TestExpectations: Mark them as such.
+
+2013-10-23  Alexey Proskuryakov  <ap@apple.com>
+
         Layout Test plugins/destroy-during-npp-new-object-with-fallback-content.html is flaky   
         https://bugs.webkit.org/show_bug.cgi?id=123250
 

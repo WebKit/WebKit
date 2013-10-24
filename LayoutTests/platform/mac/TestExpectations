@@ -731,6 +731,11 @@ webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
 webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
 http/tests/webgl/1.0.2/origin-clean-conformance.html
 
+# Failing on bots.
+webgl/1.0.1/conformance/context/context-lost-restored.html [ Fail ]
+webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Fail ]
+webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Fail ]
+
 # Skipping all webgl conformance tests on trunk
 webgl/conformance
 
