@@ -1,3 +1,19 @@
+2013-10-24  Roger Fong  <roger_fong@apple.com>
+
+        Add texture level dependent size checks to textureImage2D calls.
+        https://bugs.webkit.org/show_bug.cgi?id=123290
+        <rdar://problem/15201382>
+
+        Reviewed by Dean Jackson
+
+        Test covered by WebGL Conformance suite 1.0.2 test, textures/texture-size-limit.html.
+
+        There are different size limits when calling textureImage2D on different texture levels.
+        We should be throwing an error if our texture size exceeds these limits.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+
 2013-10-24  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [MediaStream API] allow a stream source to be shared

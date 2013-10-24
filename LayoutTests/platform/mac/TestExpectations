@@ -723,13 +723,8 @@ webgl/1.0.2/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html
 webgl/1.0.2/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html
 webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html
 webgl/1.0.2/conformance/rendering/gl-scissor-test.html
-webgl/1.0.2/conformance/textures/texture-size-limit.html
 webgl/1.0.2/conformance/typedarrays/array-unit-tests.html
 webgl/1.0.2/conformance/typedarrays/data-view-test.html
-webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
-webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
-webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
-http/tests/webgl/1.0.2/origin-clean-conformance.html
 
 # Failing on bots.
 webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
@@ -750,6 +745,14 @@ webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html
 webgl/1.0.1/conformance/textures/origin-clean-conformance.html
 webgl/1.0.2/conformance/context/context-creation-and-destruction.html
 webgl/1.0.2/conformance/rendering/multisample-corruption.html
+webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
+webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
+webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
+webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html
+webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html
+webgl/1.0.2/conformance/state/gl-object-get-calls.html
+webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html
+http/tests/webgl/1.0.2/origin-clean-conformance.html
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html

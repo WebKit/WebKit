@@ -5156,9 +5156,10 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
         return false;
     }
 
+    GC3Dint maxTextureSizeForLevel = pow(2.0, m_maxTextureLevel - 1 - level);
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
-        if (width > m_maxTextureSize || height > m_maxTextureSize) {
+        if (width > maxTextureSizeForLevel || height > maxTextureSizeForLevel) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height out of range");
             return false;
         }
@@ -5170,12 +5171,12 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
         if (functionType != TexSubImage2D && width != height) {
-          synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width != height for cube map");
-          return false;
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width != height for cube map");
+            return false;
         }
         // No need to check height here. For texImage width == height.
         // For texSubImage that will be checked when checking yoffset + height is in range.
-        if (width > m_maxCubeMapTextureSize) {
+        if (width > maxTextureSizeForLevel) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height out of range for cube map");
             return false;
         }
