@@ -54,7 +54,7 @@ public:
     static void intersectRepaintRectWithShadows(const RenderObject*, FloatRect&);
 
     // Calculates the repaintRect in combination with filter, clipper and masker in local coordinates.
-    static void intersectRepaintRectWithResources(const RenderObject*, FloatRect&);
+    static void intersectRepaintRectWithResources(const RenderElement&, FloatRect&);
 
     // Determines whether a container needs to be laid out because it's filtered and a child is being laid out.
     static bool filtersForceContainerLayout(RenderObject*);

@@ -649,7 +649,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
             writeNameAndQuotedValue(ts, "masker", svgStyle->maskerResource());
             ts << " ";
             writeStandardPrefix(ts, *masker, 0);
-            ts << " " << masker->resourceBoundingBox(&renderer) << "\n";
+            ts << " " << masker->resourceBoundingBox(renderer) << "\n";
         }
     }
     if (!svgStyle->clipperResource().isEmpty()) {
@@ -659,7 +659,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
             writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipperResource());
             ts << " ";
             writeStandardPrefix(ts, *clipper, 0);
-            ts << " " << clipper->resourceBoundingBox(&renderer) << "\n";
+            ts << " " << clipper->resourceBoundingBox(renderer) << "\n";
         }
     }
 #if ENABLE(FILTERS)
@@ -670,7 +670,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
             writeNameAndQuotedValue(ts, "filter", svgStyle->filterResource());
             ts << " ";
             writeStandardPrefix(ts, *filter, 0);
-            ts << " " << filter->resourceBoundingBox(&renderer) << "\n";
+            ts << " " << filter->resourceBoundingBox(renderer) << "\n";
         }
     }
 #endif

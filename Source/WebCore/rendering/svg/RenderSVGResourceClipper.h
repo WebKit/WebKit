@@ -56,7 +56,7 @@ public:
     // applyResource directly and use the rects from the object, since they are empty for RenderSVGResources
     // FIXME: We made applyClippingToContext public because we cannot call applyResource on HTML elements (it asserts on RenderObject::objectBoundingBox)
     bool applyClippingToContext(RenderObject*, const FloatRect&, const FloatRect&, GraphicsContext*);
-    virtual FloatRect resourceBoundingBox(RenderObject*);
+    virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE;
 
     virtual RenderSVGResourceType resourceType() const { return ClipperResourceType; }
     

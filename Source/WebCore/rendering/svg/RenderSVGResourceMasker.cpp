@@ -161,9 +161,9 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
     }
 }
 
-FloatRect RenderSVGResourceMasker::resourceBoundingBox(RenderObject* object)
+FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object)
 {
-    FloatRect objectBoundingBox = object->objectBoundingBox();
+    FloatRect objectBoundingBox = object.objectBoundingBox();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);
 
     // Resource was not layouted yet. Give back clipping rect of the mask.

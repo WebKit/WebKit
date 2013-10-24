@@ -1,3 +1,16 @@
+2013-10-24  Andreas Kling  <akling@apple.com>
+
+        SVG: RenderElement-ize intersectRepaintRectWithResources().
+        <https://webkit.org/b/123278>
+
+        SVGRenderSupport::intersectRepaintRectWithResources() is only ever
+        called with non-text renderers so make it take RenderElement&.
+
+        Had to tweak RenderSVGResource::resourceBoundingBox() to take the
+        renderer by reference.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints in sourceURL named scripts do not work

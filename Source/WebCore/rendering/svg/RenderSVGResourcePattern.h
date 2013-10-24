@@ -53,7 +53,7 @@ public:
 
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
     virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*);
-    virtual FloatRect resourceBoundingBox(RenderObject*) { return FloatRect(); }
+    virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE { return FloatRect(); }
 
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;

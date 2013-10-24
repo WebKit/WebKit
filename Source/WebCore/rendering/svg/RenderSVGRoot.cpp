@@ -399,7 +399,7 @@ const RenderObject* RenderSVGRoot::pushMappingToContainer(const RenderLayerModel
 void RenderSVGRoot::updateCachedBoundaries()
 {
     SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBoxExcludingShadow);
-    SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBoxExcludingShadow);
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
     m_repaintBoundingBoxExcludingShadow.inflate(borderAndPaddingWidth());
 
     m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;

@@ -311,9 +311,9 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
     filterData->sourceGraphicBuffer.clear();
 }
 
-FloatRect RenderSVGResourceFilter::resourceBoundingBox(RenderObject* object)
+FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object)
 {
-    return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object->objectBoundingBox());
+    return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
 }
 
 void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, const QualifiedName& attribute)

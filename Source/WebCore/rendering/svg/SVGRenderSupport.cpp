@@ -371,12 +371,9 @@ void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderObject* objec
     repaintRect = rootToLocalTransform.mapRect(repaintRect);
 }
 
-void SVGRenderSupport::intersectRepaintRectWithResources(const RenderObject* object, FloatRect& repaintRect)
+void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect)
 {
-    ASSERT(object);
-
-    RenderObject* renderer = const_cast<RenderObject*>(object);
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
     if (!resources)
         return;
 

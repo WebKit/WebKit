@@ -309,17 +309,17 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
     return false;
 }
 
-FloatRect RenderSVGResourceClipper::resourceBoundingBox(RenderObject* object)
+FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object)
 {
     // Resource was not layouted yet. Give back the boundingBox of the object.
     if (selfNeedsLayout())
-        return object->objectBoundingBox();
+        return object.objectBoundingBox();
     
     if (m_clipBoundaries.isEmpty())
         calculateClipContentRepaintRect();
 
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        FloatRect objectBoundingBox = object->objectBoundingBox();
+        FloatRect objectBoundingBox = object.objectBoundingBox();
         AffineTransform transform;
         transform.translate(objectBoundingBox.x(), objectBoundingBox.y());
         transform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
