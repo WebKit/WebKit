@@ -1,3 +1,29 @@
+2013-10-25  Antti Koivisto  <antti@apple.com>
+
+        Faster way for simple line layout to check if text has fallback fonts
+        https://bugs.webkit.org/show_bug.cgi?id=123342
+
+        Reviewed by Andreas Kling.
+        
+        Don't use RenderText::knownToHaveNoOverflowAndNoFallbackFonts as it is slow.
+
+        Simple text code path test already guarantees there is no overflow. Test for fallback
+        fonts explicitly.
+
+        * platform/graphics/SimpleFontData.h:
+        
+            Make FINAL.
+
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        
+            Remove knownToHaveNoOverflowAndNoFallbackFonts() as it has no clients.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Check if all characters can be found from the primary font.
+
 2013-10-25  Andreas Kling  <akling@apple.com>
 
         SVGResourcesCache::clientDestroyed() should take a RenderElement&.

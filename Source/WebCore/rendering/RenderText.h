@@ -140,7 +140,6 @@ public:
     bool isAllCollapsibleWhitespace() const;
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
-    bool knownToHaveNoOverflowAndNoFallbackFonts() const;
 
     void removeAndDestroyTextBoxes();
 

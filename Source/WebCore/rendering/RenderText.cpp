@@ -510,14 +510,6 @@ float RenderText::maxLogicalWidth() const
     return m_maxWidth;
 }
 
-bool RenderText::knownToHaveNoOverflowAndNoFallbackFonts() const
-{
-    if (preferredLogicalWidthsDirty())
-        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
-
-    return m_knownToHaveNoOverflowAndNoFallbackFonts;
-}
-
 void RenderText::computePreferredLogicalWidths(float leadWidth)
 {
     HashSet<const SimpleFontData*> fallbackFonts;

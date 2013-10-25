@@ -65,7 +65,7 @@ struct WidthIterator;
 enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
-class SimpleFontData : public FontData {
+class SimpleFontData FINAL : public FontData {
 public:
     class AdditionalFontData {
         WTF_MAKE_FAST_ALLOCATED;
