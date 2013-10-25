@@ -1389,43 +1389,45 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
 {
     ASSERT(layoutState.flowThread());
 
-    LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-
     RenderRegion* currentRegion = regionAtBlockOffset(logicalHeight());
     if (!currentRegion || !currentRegion->logicalHeight())
         return;
 
     shapeInsideInfo = currentRegion->shapeInsideInfo();
 
+    RenderRegion* nextRegion = 0;
+    if (!currentRegion->isLastRegion()) {
+        RenderRegionList regionList = layoutState.flowThread()->renderRegionList();
+        auto it = regionList.find(currentRegion);
+        nextRegion = *(++it);
+    }
+
+    // We only want to deal regions with shapes, so we check if the next region has a shape
+    if (!shapeInsideInfo && nextRegion && !nextRegion->shapeInsideInfo())
+        return;
+
+    LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     LayoutUnit logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
     LayoutUnit logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
     LayoutUnit logicalRegionTopInFlowThread = currentRegion->logicalTopForFlowThreadContent();
     LayoutUnit logicalRegionBottomInFlowThread = logicalRegionTopInFlowThread + currentRegion->logicalHeight() - currentRegion->borderAndPaddingBefore() - currentRegion->borderAndPaddingAfter();
 
-    // We only want to deal regions with shapes, so we look up for the next region whether it has a shape
-    if (!shapeInsideInfo && !currentRegion->isLastRegion()) {
-        LayoutUnit deltaToNextRegion = logicalHeight() + logicalRegionBottomInFlowThread - logicalLineTopInFlowThread;
-        RenderRegion* lookupForNextRegion = regionAtBlockOffset(logicalHeight() + deltaToNextRegion);
-        if (!lookupForNextRegion->shapeInsideInfo())
-            return;
-    }
-
     LayoutUnit shapeBottomInFlowThread = LayoutUnit::max();
     if (shapeInsideInfo)
         shapeBottomInFlowThread = shapeInsideInfo->shapeLogicalBottom() + currentRegion->logicalTopForFlowThreadContent();
 
+    bool lineOverLapsWithShapeBottom = shapeBottomInFlowThread < logicalLineBottomInFlowThread;
+    bool lineOverLapsWithRegionBottom = logicalLineBottomInFlowThread > logicalRegionBottomInFlowThread;
+    bool overFlowsToNextRegion = nextRegion && (lineOverLapsWithShapeBottom || lineOverLapsWithRegionBottom);
+
     // If the line is between two shapes/regions we position the line to the top of the next shape/region
-    RenderRegion* nextRegion = regionAtBlockOffset(logicalHeight() + lineHeight);
-    if ((currentRegion != nextRegion && (logicalLineBottomInFlowThread > logicalRegionBottomInFlowThread)) || (!currentRegion->isLastRegion() && shapeBottomInFlowThread < logicalLineBottomInFlowThread)) {
-        LayoutUnit deltaToNextRegion = logicalRegionBottomInFlowThread - logicalLineTopInFlowThread;
-        nextRegion = regionAtBlockOffset(logicalHeight() + deltaToNextRegion);
-
+    if (overFlowsToNextRegion) {
         ASSERT(currentRegion != nextRegion);
-
-        shapeInsideInfo = nextRegion->shapeInsideInfo();
+        LayoutUnit deltaToNextRegion = logicalRegionBottomInFlowThread - logicalLineTopInFlowThread;
         setLogicalHeight(logicalHeight() + deltaToNextRegion);
 
         currentRegion = nextRegion;
+        shapeInsideInfo = currentRegion->shapeInsideInfo();
 
         logicalLineTopInFlowThread = logicalHeight() + offsetFromLogicalTopOfFirstPage();
         logicalLineBottomInFlowThread = logicalLineTopInFlowThread + lineHeight;
