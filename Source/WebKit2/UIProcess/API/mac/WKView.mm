@@ -1923,20 +1923,16 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)viewDidMoveToWindow
 {
-    // We want to make sure to update the active state while hidden, so if the view is about to become visible, we
-    // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
-    // update the active state.
     if ([self window]) {
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
-        _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
-        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 
-        if ([self isDeferringViewInWindowChanges]) {
-            _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
+        if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
-        } else
-            _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
+        else
+            viewStateChanges |= WebPageProxy::ViewIsInWindow;
+        _data->_page->viewStateDidChange(viewStateChanges);
 
         [self _updateWindowAndViewFrames];
 
@@ -1949,14 +1945,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
-        _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
-        _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-
-        if ([self isDeferringViewInWindowChanges]) {
-            _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
+        if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
-        } else
-            _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
+        else
+            viewStateChanges |= WebPageProxy::ViewIsInWindow;
+        _data->_page->viewStateDidChange(viewStateChanges);
 
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
@@ -2020,20 +2014,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
-    // We want to make sure to update the active state while hidden, so since the view is about to be hidden,
-    // we hide it first and then update the active state.
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-    _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
-    // We want to make sure to update the active state while hidden, so since the view is about to become visible,
-    // we update the active state first and then make it visible.
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
-    _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification

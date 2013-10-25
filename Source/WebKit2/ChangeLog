@@ -1,3 +1,19 @@
+2013-10-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Coalesce calls to viewStateDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=123307
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+            - coalesce calls to viewStateDidChange
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - handle changes to view visibility & active state in correct order.
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/15312643> Prepare for the mysterious future.
