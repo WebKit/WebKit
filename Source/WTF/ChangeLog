@@ -1,3 +1,17 @@
+2013-10-24  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r154647
+
+    2013-08-23  Andy Estes  <aestes@apple.com>
+
+            Fix issues found by the Clang Static Analyzer
+            https://bugs.webkit.org/show_bug.cgi?id=120230
+
+            Reviewed by Darin Adler.
+
+            * wtf/ObjcRuntimeExtras.h:
+            (HardAutorelease): Added a canonical implementation of HardAutorelease.
+
 2013-10-21  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153767

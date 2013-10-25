@@ -33,18 +33,6 @@
 extern "C" {
 #endif
 
-// Use WebCFAutorelease to return an object made by a CoreFoundation
-// "create" or "copy" function as an autoreleased and garbage collected
-// object. CF objects need to be "made collectable" for autorelease to work
-// properly under GC.
-static inline id WebCoreCFAutorelease(CFTypeRef obj)
-{
-    if (obj)
-        CFMakeCollectable(obj);
-    [(id)obj autorelease];
-    return (id)obj;
-}
-
 void WebCoreObjCFinalizeOnMainThread(Class cls);
 
 // The 'Class' that should be passed in here is the class of the

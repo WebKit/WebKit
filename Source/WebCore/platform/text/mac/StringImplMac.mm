@@ -18,11 +18,11 @@
  *
  */
 
-#include "config.h"
-#include <wtf/text/StringImpl.h>
+#import "config.h"
+#import <wtf/text/StringImpl.h>
 
-#include "FoundationExtras.h"
-#include <wtf/RetainPtr.h>
+#import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/RetainPtr.h>
 
 namespace WTF {
 

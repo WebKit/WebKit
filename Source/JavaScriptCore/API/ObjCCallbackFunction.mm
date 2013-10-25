@@ -406,8 +406,6 @@ public:
 
     ~ObjCCallbackFunctionImpl()
     {
-        if (m_type != CallbackInstanceMethod)
-            [[m_invocation.get() target] release];
         [m_instanceClass release];
     }
 
@@ -601,7 +599,10 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
         return 0;
     const char* signature = _Block_signature(target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
-    [invocation setTarget:[target copy]];
+    [invocation retainArguments];
+    id targetCopy = [target copy];
+    [invocation setTarget:targetCopy];
+    [targetCopy release];
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
 

@@ -30,6 +30,7 @@
 #import "TestBrowsingContextLoadDelegate.h"
 #import "TestProtocol.h"
 #import <WebKit2/WebKit2.h>
+#import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
 
@@ -40,13 +41,13 @@ TEST(WebKit2CustomProtocolsTest, MainResource)
     [NSURLProtocol registerClass:[TestProtocol class]];
     [WKBrowsingContextController registerSchemeForCustomProtocol:[TestProtocol scheme]];
 
-    WKProcessGroup *processGroup = [[WKProcessGroup alloc] init];
-    WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
-    WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
-    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    RetainPtr<WKProcessGroup> processGroup = adoptNS([[WKProcessGroup alloc] init]);
+    RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
+    RetainPtr<WKView> wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+    wkView.get().browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         testFinished = true;
     }];
-    [wkView.browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://test", [TestProtocol scheme]]]]];
+    [wkView.get().browsingContextController loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://test", [TestProtocol scheme]]]]];
 
     Util::run(&testFinished);
 }

@@ -194,6 +194,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -5883,7 +5884,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-    NSString *nsurlCacheDirectory = (NSString *)WebCFAutorelease(WKCopyFoundationCacheDirectory());
+    NSString *nsurlCacheDirectory = (NSString *)HardAutorelease(WKCopyFoundationCacheDirectory());
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 
@@ -6317,7 +6318,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     // and we should release the web view. Autorelease rather than release in order to
     // avoid re-entering this method beneath -dealloc with the same identifier. <rdar://problem/10523721>
     if (_private->identifierMap.isEmpty())
-        WebCFAutorelease(self);
+        [self autorelease];
 }
 
 - (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification

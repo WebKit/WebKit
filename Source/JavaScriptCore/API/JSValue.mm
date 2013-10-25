@@ -39,6 +39,7 @@
 #import "JSCJSValue.h"
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/Vector.h>
 #import <wtf/TCSpinLock.h>
 #import <wtf/text/WTFString.h>
@@ -745,7 +746,7 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    NSString *stringNS = [(NSString *)JSStringCopyCFString(kCFAllocatorDefault, jsstring) autorelease];
+    NSString *stringNS = HardAutorelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
     JSStringRelease(jsstring);
     return stringNS;
 }

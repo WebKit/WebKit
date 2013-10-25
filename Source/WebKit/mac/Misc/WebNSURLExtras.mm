@@ -32,7 +32,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebLocalizableStrings.h"
 #import "WebNSDataExtras.h"
-#import "WebNSObjectExtras.h"
 #import "WebSystemInterface.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/KURL.h>
@@ -40,6 +39,7 @@
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <unicode/uchar.h>
 #import <unicode/uscript.h>
 
@@ -214,7 +214,7 @@ using namespace WTF;
     }
     
     NSURL *result = changed
-        ? (NSURL *)WebCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
+        ? (NSURL *)HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
         : (NSURL *)self;
 
     if (buffer != static_buffer) {

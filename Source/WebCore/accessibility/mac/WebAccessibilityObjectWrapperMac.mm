@@ -73,6 +73,7 @@
 #import "WebCoreObjCExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "htmlediting.h"
+#import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -403,14 +404,6 @@ using namespace std;
 
 #pragma mark SystemInterface wrappers
 
-static inline id CFAutoreleaseHelper(CFTypeRef obj)
-{
-    if (obj)
-        CFMakeCollectable(obj);
-    [(id)obj autorelease];
-    return (id)obj;
-}
-
 static inline BOOL AXObjectIsTextMarker(id obj)
 {
     return obj != nil && CFGetTypeID(obj) == wkGetAXTextMarkerTypeID();
@@ -427,21 +420,21 @@ static id AXTextMarkerRange(id startMarker, id endMarker)
     ASSERT(endMarker != nil);
     ASSERT(CFGetTypeID(startMarker) == wkGetAXTextMarkerTypeID());
     ASSERT(CFGetTypeID(endMarker) == wkGetAXTextMarkerTypeID());
-    return CFAutoreleaseHelper(wkCreateAXTextMarkerRange((CFTypeRef)startMarker, (CFTypeRef)endMarker));
+    return HardAutorelease(wkCreateAXTextMarkerRange((CFTypeRef)startMarker, (CFTypeRef)endMarker));
 }
 
 static id AXTextMarkerRangeStart(id range)
 {
     ASSERT(range != nil);
     ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return CFAutoreleaseHelper(wkCopyAXTextMarkerRangeStart(range));
+    return HardAutorelease(wkCopyAXTextMarkerRangeStart(range));
 }
 
 static id AXTextMarkerRangeEnd(id range)
 {
     ASSERT(range != nil);
     ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return CFAutoreleaseHelper(wkCopyAXTextMarkerRangeEnd(range));
+    return HardAutorelease(wkCopyAXTextMarkerRangeEnd(range));
 }
 
 #pragma mark Search helpers
@@ -526,7 +519,7 @@ static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePositi
     if (!textMarkerData.axID)
         return nil;
     
-    return CFAutoreleaseHelper(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return HardAutorelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
 }
 
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
