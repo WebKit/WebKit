@@ -1,5 +1,48 @@
 2013-10-24  Simon Fraser  <simon.fraser@apple.com>
 
+        New Mavericks results for editing and fast/html, with MountainLion fallbacks.
+
+        * platform/mac-mountainlion/editing/input/caret-at-the-edge-of-input-expected.txt: Copied from LayoutTests/platform/mac/editing/input/caret-at-the-edge-of-input-expected.txt.
+        * platform/mac-mountainlion/editing/inserting/before-after-input-element-expected.txt: Copied from LayoutTests/platform/mac/editing/inserting/before-after-input-element-expected.txt.
+        * platform/mac-mountainlion/editing/pasteboard/4806874-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/4806874-expected.txt.
+        * platform/mac-mountainlion/editing/pasteboard/drop-text-without-selection-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/drop-text-without-selection-expected.txt.
+        * platform/mac-mountainlion/editing/pasteboard/input-field-1-expected.txt: Copied from LayoutTests/platform/mac/editing/pasteboard/input-field-1-expected.txt.
+        * platform/mac-mountainlion/editing/selection/3690703-2-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/3690703-2-expected.txt.
+        * platform/mac-mountainlion/editing/selection/3690703-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/3690703-expected.txt.
+        * platform/mac-mountainlion/editing/selection/3690719-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/3690719-expected.txt.
+        * platform/mac-mountainlion/editing/selection/4895428-3-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/4895428-3-expected.txt.
+        * platform/mac-mountainlion/editing/selection/4975120-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/4975120-expected.txt.
+        * platform/mac-mountainlion/editing/selection/drag-select-1-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/drag-select-1-expected.txt.
+        * platform/mac-mountainlion/editing/selection/replaced-boundaries-3-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/replaced-boundaries-3-expected.txt.
+        * platform/mac-mountainlion/editing/selection/select-from-textfield-outwards-expected.txt: Copied from LayoutTests/platform/mac/editing/selection/select-from-textfield-outwards-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-no-summary4-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-no-summary4-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-open-javascript-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-open-javascript-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-open2-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-open2-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-open4-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-open4-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-replace-summary-child-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-replace-summary-child-expected.txt.
+        * platform/mac-mountainlion/fast/html/details-replace-text-expected.txt: Copied from LayoutTests/platform/mac/fast/html/details-replace-text-expected.txt.
+        * platform/mac/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/mac/editing/inserting/before-after-input-element-expected.txt:
+        * platform/mac/editing/pasteboard/4806874-expected.txt:
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.txt:
+        * platform/mac/editing/pasteboard/input-field-1-expected.txt:
+        * platform/mac/editing/selection/3690703-2-expected.txt:
+        * platform/mac/editing/selection/3690703-expected.txt:
+        * platform/mac/editing/selection/3690719-expected.txt:
+        * platform/mac/editing/selection/4895428-3-expected.txt:
+        * platform/mac/editing/selection/4975120-expected.txt:
+        * platform/mac/editing/selection/drag-select-1-expected.txt:
+        * platform/mac/editing/selection/replaced-boundaries-3-expected.txt:
+        * platform/mac/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/mac/fast/html/details-no-summary4-expected.txt:
+        * platform/mac/fast/html/details-open-javascript-expected.txt:
+        * platform/mac/fast/html/details-open2-expected.txt:
+        * platform/mac/fast/html/details-open4-expected.txt:
+        * platform/mac/fast/html/details-replace-summary-child-expected.txt:
+        * platform/mac/fast/html/details-replace-text-expected.txt:
+
+2013-10-24  Simon Fraser  <simon.fraser@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=123304
 
         The focus-option-control-on-page.html test has behavior that depends on the system
