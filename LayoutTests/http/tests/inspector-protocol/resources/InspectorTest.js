@@ -75,6 +75,17 @@ InspectorTest.log = function(message)
 }
 
 /**
+* Logs an assert message to document.
+* @param {boolean} condition
+* @param {string} message
+*/
+InspectorTest.assert = function(condition, message)
+{
+    var status = condition ? "PASS" : "FAIL";
+    this.sendCommand("Runtime.evaluate", { "expression": "log(" + JSON.stringify(status + ": " + message) + ")" } );
+}
+
+/**
 * Logs message directly to process stdout via alert function (hopefully followed by flush call).
 * This message should survive process crash or kill by timeout.
 * @param {string} message
@@ -130,6 +141,7 @@ InspectorTest.importInspectorScripts = function()
         "Setting",
         "PageObserver",
         "DOMObserver",
+        "CSSObserver",
         "FrameResourceManager",
         "RuntimeManager",
         "Frame",
@@ -143,7 +155,9 @@ InspectorTest.importInspectorScripts = function()
         "ContentFlow",
         "DOMTree",
         "ExecutionContext",
-        "ExecutionContextList"
+        "ExecutionContextList",
+        "CSSStyleManager",
+        "Color"
     ];
     for (var i = 0; i < inspectorScripts.length; ++i)
         InspectorTest.importScript("../../../../../Source/WebInspectorUI/UserInterface/" + inspectorScripts[i] + ".js");
@@ -154,9 +168,11 @@ InspectorTest.importInspectorScripts = function()
 
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
+    InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
 
     WebInspector.frameResourceManager = new WebInspector.FrameResourceManager;
     WebInspector.domTreeManager = new WebInspector.DOMTreeManager;
+    WebInspector.cssStyleManager = new WebInspector.CSSStyleManager;
 
     InspectorFrontendHost.loaded();
 }

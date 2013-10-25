@@ -1,3 +1,21 @@
+2013-10-25  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: Add layout tests for the new events in the DOMTreeManager
+        https://bugs.webkit.org/show_bug.cgi?id=123361
+
+        Reviewed by Timothy Hatcher.
+
+        Created a test to check that WebInspector.DOMTree.Event.ContentFlowWasAdded and
+        WebInspector.DOMTree.Event.ContentFlowWasRemoved are dispatched when a flow is added
+        and removed.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.assert): Similar to InspectorTest.log, but also takes a boolean and prefixes the message 
+        with "FAIL" or "PASS" depending on the value.
+        (InspectorTest.importInspectorScripts): Added the required CSS Agent scripts to enable the flow thread events.
+        * inspector-protocol/model/content-flow-list-expected.txt: Added.
+        * inspector-protocol/model/content-flow-list.html: Added.
+
 2013-10-25  Oliver Hunt  <oliver@apple.com>
 
         Fix a number of problems with destructuring of arguments
