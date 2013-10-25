@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Label 'LABEL' is not defined
+CONSOLE MESSAGE: line 82: SyntaxError: Cannot use the undeclared label 'LABEL'.
 S12.7_A1_T3
 
 PASS Expected parsing failure

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 79: SyntaxError: Unexpected number '1'
+CONSOLE MESSAGE: line 79: SyntaxError: Cannot have a newline after 'throw'.
 S7.9_A4
 
 PASS Expected parsing failure

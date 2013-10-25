@@ -4,11 +4,13 @@ function isReserved(word)
         eval("\"use strict\";var " + word + ";");
         return false;
     } catch (e) {
-    	var expectedError = "Use of reserved word '" + word + "' in strict mode";
+    	var expectedError = "Cannot use the reserved word '" + word + "' as a variable name in strict mode.";
     	if (expectedError == e.message)
         	return true;
-        else
+        else {
+            debug(e.message);
         	return false;
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected token '{'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected a block statement as body of a try statement.
 S7.5.2_A1.20
 
 PASS Expected parsing failure

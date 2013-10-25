@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected token '}'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'case'. Expected a closing '}' at the end of a block statement.
 S7.5.2_A1.2
 
 PASS Expected parsing failure

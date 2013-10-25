@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Expected token '('
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected keyword 'true'. Expected '(' to start a do-while loop condition.
 S12.6.1_A6_T3
 
 PASS Expected parsing failure

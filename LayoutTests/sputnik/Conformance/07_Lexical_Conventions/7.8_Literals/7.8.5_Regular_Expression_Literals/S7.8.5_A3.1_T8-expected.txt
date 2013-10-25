@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u0069' instead
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected identifier '\u0069'. Expected ';' after var declaration.
 S7.8.5_A3.1_T8
 
 FAIL successfullyParsed is not set

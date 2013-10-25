@@ -36,27 +36,56 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/WTFThreadData.h>
 
-#define fail() do { if (!hasError()) updateErrorMessage(); return 0; } while (0)
-#define failWithToken(tok) do { if (!hasError()) updateErrorMessage(tok); return 0; } while (0)
-#define failWithMessage(msg) do { if (!hasError()) updateErrorMessage(msg); return 0; } while (0)
-#define failWithNameAndMessage(before, name, after) do { if (!hasError()) updateErrorWithNameAndMessage(before, name, after); return 0; } while (0)
-#define failWithStackOverflow() do { updateErrorMessage("Stack exhausted"); m_hasStackOverflow = true; return 0; } while (0)
-#define failIfFalse(cond) do { if (!(cond)) fail(); } while (0)
-#define failIfFalseWithMessage(cond, msg) do { if (!(cond)) failWithMessage(msg); } while (0)
-#define failIfFalseWithNameAndMessage(cond, before, name, msg) do { if (!(cond)) failWithNameAndMessage(before, name, msg); } while (0)
-#define failIfTrue(cond) do { if ((cond)) fail(); } while (0)
-#define failIfTrueWithMessage(cond, msg) do { if ((cond)) failWithMessage(msg); } while (0)
-#define failIfTrueWithNameAndMessage(cond, before, name, msg) do { if ((cond)) failWithNameAndMessage(before, name, msg); } while (0)
-#define failIfTrueIfStrict(cond) do { if ((cond) && strictMode()) fail(); } while (0)
-#define failIfTrueIfStrictWithMessage(cond, msg) do { if ((cond) && strictMode()) failWithMessage(msg); } while (0)
-#define failIfTrueIfStrictWithNameAndMessage(cond, before, name, after) do { if ((cond) && strictMode()) failWithNameAndMessage(before, name, after); } while (0)
-#define failIfFalseIfStrict(cond) do { if ((!(cond)) && strictMode()) fail(); } while (0)
-#define failIfFalseIfStrictWithMessage(cond, msg) do { if ((!(cond)) && strictMode()) failWithMessage(msg); } while (0)
-#define failIfFalseIfStrictWithNameAndMessage(cond, before, name, after) do { if ((!(cond)) && strictMode()) failWithNameAndMessage(before, name, after); } while (0)
-#define consumeOrFail(tokenType) do { if (!consume(tokenType)) failWithToken(tokenType); } while (0)
-#define consumeOrFailWithFlags(tokenType, flags) do { if (!consume(tokenType, flags)) failWithToken(tokenType); } while (0)
-#define matchOrFail(tokenType) do { if (!match(tokenType)) failWithToken(tokenType); } while (0)
+#define updateErrorMessage(shouldPrintToken, ...) do {\
+    ASSERT(!hasError());\
+    StringPrintStream stream;\
+    if (shouldPrintToken) {\
+        printUnexpectedTokenText(stream); \
+        stream.print(". "); \
+    }\
+    stream.print(__VA_ARGS__);\
+    stream.print(".");\
+    setErrorMessage(stream.toString());\
+} while (0)
+
+#define propagateError() do { if (hasError()) return 0; } while (0)
+#define internalFailWithMessage(shouldPrintToken, ...) do { if (!hasError()) updateErrorMessage(shouldPrintToken, __VA_ARGS__); return 0; } while (0)
+#define handleErrorToken() do { if (m_token.m_type == EOFTOK || m_token.m_type & ErrorTokenFlag) { failDueToUnexpectedToken(); } } while (0)
+#define failWithMessage(...) do { if (!hasError()) { handleErrorToken(); updateErrorMessage(true, __VA_ARGS__); } return 0; } while (0)
+#define failWithStackOverflow() do { updateErrorMessage(false, "Stack exhausted"); m_hasStackOverflow = true; return 0; } while (0)
+#define failIfFalse(cond, ...) do { if (!(cond)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
+#define failIfTrue(cond, ...) do { if ((cond)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
+#define failIfTrueIfStrict(cond, ...) do { if ((cond) && strictMode()) internalFailWithMessage(false, __VA_ARGS__); } while (0)
+#define failIfFalseIfStrict(cond, ...) do { if ((!(cond)) && strictMode()) internalFailWithMessage(false, __VA_ARGS__); } while (0)
+#define consumeOrFail(tokenType, ...) do { if (!consume(tokenType)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
+#define consumeOrFailWithFlags(tokenType, flags, ...) do { if (!consume(tokenType, flags)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
+#define matchOrFail(tokenType, ...) do { if (!match(tokenType)) { handleErrorToken(); internalFailWithMessage(true, __VA_ARGS__); } } while (0)
 #define failIfStackOverflow() do { if (!canRecurse()) failWithStackOverflow(); } while (0)
+#define semanticFail(...) do { internalFailWithMessage(false, __VA_ARGS__); } while (0)
+#define semanticFailIfTrue(cond, ...) do { if ((cond)) internalFailWithMessage(false, __VA_ARGS__); } while (0)
+#define semanticFailIfFalse(cond, ...) do { if (!(cond)) internalFailWithMessage(false, __VA_ARGS__); } while (0)
+#define regexFail(failure) do { if (!hasError()) setErrorMessage(failure); return 0; } while (0)
+#define failDueToUnexpectedToken() do {\
+    if (!hasError()) {\
+        StringPrintStream stream;\
+        printUnexpectedTokenText(stream); \
+        setErrorMessage(stream.toString());\
+    }\
+    return 0;\
+} while (0)
+
+#define handleProductionOrFail(token, tokenString, operation, production) do {\
+    consumeOrFail(token, "Expected '", tokenString, "' to ", operation, " a ", production);\
+} while (0)
+
+#define semanticFailureDueToKeyword(forWhat...) do { \
+    if (strictMode() && m_token.m_type == RESERVED_IF_STRICT) \
+        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", forWhat, " in strict mode"); \
+    if (m_token.m_type == RESERVED || m_token.m_type == RESERVED_IF_STRICT) \
+        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", forWhat); \
+    if (m_token.m_type & KeywordTokenFlag) \
+        semanticFail("Cannot use the keyword '", getToken(), "' as a ", forWhat); \
+} while (0)
 
 using namespace std;
 
@@ -75,6 +104,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     , m_statementDepth(0)
     , m_nonTrivialExpressionCount(0)
     , m_lastIdentifier(0)
+    , m_lastFunctionName(nullptr)
     , m_sourceElements(0)
 {
     m_lexer = adoptPtr(new LexerType(vm));
@@ -180,12 +210,24 @@ template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<
                 if (!hasSetStrict && directiveLiteralLength == lengthOfUseStrictLiteral && m_vm->propertyNames->useStrictIdentifier == *directive) {
                     setStrictMode();
                     hasSetStrict = true;
-                    failIfFalse(isValidStrictMode());
+                    if (!isValidStrictMode()) {
+                        if (m_lastFunctionName) {
+                            if (m_vm->propertyNames->arguments == *m_lastFunctionName)
+                                semanticFail("Cannot name a function 'arguments' in strict mode");
+                            if (m_vm->propertyNames->eval == *m_lastFunctionName)
+                                semanticFail("Cannot name a function 'eval' in strict mode");
+                        }
+                        if (hasDeclaredVariable(m_vm->propertyNames->arguments))
+                            semanticFail("Cannot declare a variable named 'arguments' in strict mode");
+                        if (hasDeclaredVariable(m_vm->propertyNames->eval))
+                            semanticFail("Cannot declare a variable named 'eval' in strict mode");
+                        semanticFailIfFalse(isValidStrictMode(), "Invalid parameters or function name in strict mode");
+                    }
                     m_lexer->setOffset(startOffset, startLineStartOffset);
                     next();
                     m_lexer->setLastLineNumber(oldLastLineNumber);
                     m_lexer->setLineNumber(oldLineNumber);
-                    failIfTrue(hasError());
+                    propagateError();
                     continue;
                 }
             } else
@@ -194,7 +236,7 @@ template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<
         context.appendStatement(sourceElements, statement);
     }
 
-    failIfTrue(hasError());
+    propagateError();
     return sourceElements;
 }
 
@@ -210,8 +252,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVarDeclaratio
     TreeExpression scratch2 = 0;
     JSTextPosition scratch3;
     TreeExpression varDecls = parseVarDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3);
-    failIfTrue(hasError());
-    failIfFalse(autoSemiColon());
+    propagateError();
+    failIfFalse(autoSemiColon(), "Expected ';' after var declaration");
     
     return context.createVarStatement(location, varDecls, start, end);
 }
@@ -224,8 +266,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseConstDeclarat
     int start = tokenLine();
     int end = 0;
     TreeConstDeclList constDecls = parseConstDeclarationList(context);
-    failIfTrue(hasError());
-    failIfFalse(autoSemiColon());
+    propagateError();
+    failIfFalse(autoSemiColon(), "Expected ';' after const declaration");
     
     return context.createConstStatement(location, constDecls, start, end);
 }
@@ -240,14 +282,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDoWhileStatem
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
-    failIfFalse(statement);
+    failIfFalse(statement, "Expected a statement following 'do'");
     int endLine = tokenLine();
     JSTokenLocation location(tokenLocation());
-    consumeOrFail(WHILE);
-    consumeOrFail(OPENPAREN);
+    handleProductionOrFail(WHILE, "while", "end", "do-while loop");
+    handleProductionOrFail(OPENPAREN, "(", "start", "do-while loop condition");
+    semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a do-while loop condition");
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
-    consumeOrFail(CLOSEPAREN);
+    failIfFalse(expr, "Unable to parse do-while loop condition");
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "do-while loop condition");
     if (match(SEMICOLON))
         next(); // Always performs automatic semicolon insertion.
     return context.createDoWhileStatement(location, statement, expr, startLine, endLine);
@@ -260,16 +303,19 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
     JSTokenLocation location(tokenLocation());
     int startLine = tokenLine();
     next();
-    consumeOrFail(OPENPAREN);
+    
+    handleProductionOrFail(OPENPAREN, "(", "start", "while loop condition");
+    semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a while loop condition");
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Unable to parse while loop condition");
     int endLine = tokenLine();
-    consumeOrFail(CLOSEPAREN);
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "while loop condition");
+    
     const Identifier* unused = 0;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
-    failIfFalse(statement);
+    failIfFalse(statement, "Expected a statement as the body of a while loop");
     return context.createWhileStatement(location, expr, statement, startLine, endLine);
 }
 
@@ -293,7 +339,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             lastIdent = name;
             next();
             hasInitializer = match(EQUAL);
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
+            failIfFalseIfStrict(declareVariable(name), "Cannot declare a variable named ", name->impl(), " in strict mode");
             context.addVar(name, (hasInitializer || (!m_allowsIn && (match(INTOKEN) || isofToken()))) ? DeclarationStacks::HasInitializer : 0);
             if (hasInitializer) {
                 JSTextPosition varDivot = tokenStartPosition() + 1;
@@ -302,14 +348,14 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
                 TreeExpression initializer = parseAssignmentExpression(context);
                 initEnd = lastTokenEndPosition();
                 lastInitializer = initializer;
-                failIfFalse(initializer);
+                failIfFalse(initializer, "Expected expression as the intializer for the variable '", name->impl(), "'");
                 
                 node = context.createAssignResolve(location, *name, initializer, varStart, varDivot, lastTokenEndPosition());
             }
         } else {
             lastIdent = 0;
             auto pattern = parseDeconstructionPattern<DeconstructToVariables>(context);
-            failIfFalse(pattern);
+            failIfFalse(pattern, "Cannot parse this deconstruction pattern");
             hasInitializer = match(EQUAL);
             lastPattern = pattern;
             if (hasInitializer) {
@@ -340,21 +386,44 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
     ASSERT(name.impl()->isIdentifier());
     if (depth) {
         if (kind == DeconstructToVariables)
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(&name), "Cannot deconstruct to a variable named", name.impl(), ".");
+            failIfFalseIfStrict(declareVariable(&name), "Cannot deconstruct to a variable named '", name.impl(), "' in strict mode");
         if (kind == DeconstructToParameters) {
             auto bindingResult = declareBoundParameter(&name);
-            failIfFalseIfStrictWithNameAndMessage(bindingResult != Scope::StrictBindingFailed, "Cannot deconstruct to a parameter named", name.impl(), "in strict mode.");
-            failIfFalseWithNameAndMessage(bindingResult != Scope::BindingFailed, "Cannot deconstruct to a parameter named", name.impl(), ".");
+            if (bindingResult == Scope::StrictBindingFailed && strictMode()) {
+                semanticFailIfTrue(m_vm->propertyNames->arguments == name || m_vm->propertyNames->eval == name, "Cannot deconstruct to a parameter name '", name.impl(), "' in strict mode");
+                if (m_lastFunctionName && name == *m_lastFunctionName)
+                    semanticFail("Cannot deconstruct to '", name.impl(), "' as it shadows the name of a strict mode function");
+                semanticFailureDueToKeyword("bound parameter name");
+                if (hasDeclaredParameter(name))
+                    semanticFail("Cannot deconstruct to '", name.impl(), "' as it has already been declared");
+                semanticFail("Cannot bind to a parameter named '", name.impl(), "' in strict mode");
+            }
+            if (bindingResult == Scope::BindingFailed) {
+                semanticFailureDueToKeyword("bound parameter name");
+                if (hasDeclaredParameter(name))
+                    semanticFail("Cannot deconstruct to '", name.impl(), "' as it has already been declared");
+                semanticFail("Cannot deconstruct to a parameter named '", name.impl(), "'");
+            }
         }
         context.addVar(&name, kind == DeconstructToParameters ? 0 : DeclarationStacks::HasInitializer);
     } else {
         if (kind == DeconstructToVariables) {
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(&name), "Cannot declare a variable named", name.impl(), "in strict mode.");
+            failIfFalseIfStrict(declareVariable(&name), "Cannot declare a variable named '", name.impl(), "' in strict mode");
             context.addVar(&name, DeclarationStacks::HasInitializer);
         }
         
-        if (kind == DeconstructToParameters)
-            failIfFalseIfStrictWithNameAndMessage(declareParameter(&name), "Cannot declare a parameter named", name.impl(), "in strict mode.");
+        if (kind == DeconstructToParameters) {
+            bool declarationResult = declareParameter(&name);
+            if (!declarationResult && strictMode()) {
+                semanticFailIfTrue(m_vm->propertyNames->arguments == name || m_vm->propertyNames->eval == name, "Cannot deconstruct to a parameter name '", name.impl(), "' in strict mode");
+                if (m_lastFunctionName && name == *m_lastFunctionName)
+                    semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
+                semanticFailureDueToKeyword("parameter name");
+                if (hasDeclaredParameter(name))
+                    semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
+                semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
+            }
+        }
     }
     return context.createBindingLocation(m_token.m_location, name, m_token.m_endPosition, m_token.m_startPosition, m_token.m_endPosition);
 }
@@ -369,23 +438,25 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
     case OPENBRACKET: {
         auto arrayPattern = context.createArrayPattern(m_token.m_location);
         next();
+        failIfTrue(match(CLOSEBRACKET), "There must be at least one bound property in an array deconstruction pattern");
         do {
             while (match(COMMA)) {
                 context.appendArrayPatternSkipEntry(arrayPattern, m_token.m_location);
                 next();
             }
-            failIfTrue(hasError());
+            propagateError();
             JSTokenLocation location = m_token.m_location;
             auto innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
-            failIfFalse(innerPattern);
+            failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
             context.appendArrayPatternEntry(arrayPattern, location, innerPattern);
         } while (consume(COMMA));
-        consumeOrFail(CLOSEBRACKET);
+        consumeOrFail(CLOSEBRACKET, "Expected either a closing ']' or a ',' following an element deconstruction pattern");
         pattern = arrayPattern;
         break;
     }
     case OPENBRACE: {
         next();
+        failIfTrue(match(CLOSEBRACE), "There must be at least one bound property in an object deconstruction pattern");
         auto objectPattern = context.createObjectPattern(m_token.m_location);
         bool wasString = false;
         do {
@@ -400,6 +471,7 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
                 else
                     innerPattern = createBindingPattern<kind>(context, propertyName, depth);
             } else {
+                JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {
                 case NUMBER:
                     propertyName = Identifier::from(m_vm, m_token.m_data.doubleValue);
@@ -409,24 +481,34 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
                     wasString = true;
                     break;
                 default:
-                    failIfTrue(!(m_token.m_type & KeywordTokenFlag));
+                    if (m_token.m_type != RESERVED && m_token.m_type != RESERVED_IF_STRICT && !(m_token.m_type & KeywordTokenFlag))
+                        failWithMessage("Expected a property name");
                     propertyName = *m_token.m_data.ident;
                     break;
                 }
                 next();
-                consumeOrFail(COLON);
+                if (!consume(COLON)) {
+                    semanticFailIfTrue(tokenType == RESERVED, "Cannot use abbreviated deconstruction syntax for reserved name '", propertyName.impl(), "'");
+                    semanticFailIfTrue(tokenType == RESERVED_IF_STRICT, "Cannot use abbreviated deconstruction syntax for reserved name '", propertyName.impl(), "' in strict mode");
+                    semanticFailIfTrue(tokenType & KeywordTokenFlag, "Cannot use abbreviated deconstruction syntax for keyword '", propertyName.impl(), "'");
+                    
+                    failWithMessage("Expected a ':' prior to named property deconstruction");
+                }
                 innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
             }
-            failIfFalse(innerPattern);
+            failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
             context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern);
         } while (consume(COMMA));
-        consumeOrFail(CLOSEBRACE);
+        consumeOrFail(CLOSEBRACE, "Expected either a closing '}' or an ',' after a property deconstruction pattern");
         pattern = objectPattern;
         break;
     }
 
     default: {
-        matchOrFail(IDENT);
+        if (!match(IDENT)) {
+            semanticFailureDueToKeyword("variable name");
+            failWithMessage("Expected a parameter pattern or a ')' in parameter list");
+        }
         pattern = createBindingPattern<kind>(context, *m_token.m_data.ident, depth);
         next();
         break;
@@ -439,13 +521,13 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
 template <typename LexerType>
 template <class TreeBuilder> TreeConstDeclList Parser<LexerType>::parseConstDeclarationList(TreeBuilder& context)
 {
-    failIfTrue(strictMode());
+    failIfTrue(strictMode(), "Const declarations are not supported in strict mode");
     TreeConstDeclList constDecls = 0;
     TreeConstDeclList tail = 0;
     do {
         JSTokenLocation location(tokenLocation());
         next();
-        matchOrFail(IDENT);
+        matchOrFail(IDENT, "Expected an identifier name in const declaration");
         const Identifier* name = m_token.m_data.ident;
         next();
         bool hasInitializer = match(EQUAL);
@@ -471,7 +553,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     JSTokenLocation location(tokenLocation());
     int startLine = tokenLine();
     next();
-    consumeOrFail(OPENPAREN);
+    handleProductionOrFail(OPENPAREN, "(", "start", "for-loop header");
     int nonLHSCount = m_nonLHSCount;
     int declarations = 0;
     JSTextPosition declsStart;
@@ -489,36 +571,37 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         JSTextPosition initEnd;
         decls = parseVarDeclarationList(context, declarations, forInTarget, forInInitializer, declsStart, initStart, initEnd);
         m_allowsIn = true;
-        failIfTrue(hasError());
+        propagateError();
 
         // Remainder of a standard for loop is handled identically
         if (match(SEMICOLON))
             goto standardForLoop;
         
-        failIfFalse(declarations == 1);
-        failIfTrueWithMessage(forInInitializer, "Cannot use initialiser syntax in a for-in loop");
+        failIfFalse(declarations == 1, "must declare variables after 'var'");
+        failIfTrue(forInInitializer, "Cannot use initialiser syntax in a for-in loop");
         
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
         bool isOfEnumeration = false;
         if (!consume(INTOKEN)) {
-            failIfFalseWithMessage(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
+            failIfFalse(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
             isOfEnumeration = true;
             next();
         }
         
         TreeExpression expr = parseExpression(context);
-        failIfFalse(expr);
+        failIfFalse(expr, "Expected expression to enumerate");
         JSTextPosition exprEnd = lastTokenEndPosition();
         
         int endLine = tokenLine();
-        consumeOrFail(CLOSEPAREN);
+        
+        handleProductionOrFail(CLOSEPAREN, ")", "end", (isOfEnumeration ? "for-of header" : "for-in header"));
         
         const Identifier* unused = 0;
         startLoop();
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
-        failIfFalse(statement);
+        failIfFalse(statement, "Expected statement as body of for-", isOfEnumeration ? "of" : "in", " statement");
         if (isOfEnumeration)
             return context.createForOfLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
         return context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
@@ -530,7 +613,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         decls = parseExpression(context);
         declsEnd = lastTokenEndPosition();
         m_allowsIn = true;
-        failIfFalse(decls);
+        failIfFalse(decls, "Cannot parse for loop declarations");
     }
     
     if (match(SEMICOLON)) {
@@ -541,43 +624,44 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         
         if (!match(SEMICOLON)) {
             condition = parseExpression(context);
-            failIfFalse(condition);
+            failIfFalse(condition, "Cannot parse for loop condition expression");
         }
-        consumeOrFail(SEMICOLON);
+        consumeOrFail(SEMICOLON, "Expected a ';' after the for loop condition expression");
         
         TreeExpression increment = 0;
         if (!match(CLOSEPAREN)) {
             increment = parseExpression(context);
-            failIfFalse(increment);
+            failIfFalse(increment, "Cannot parse for loop iteration expression");
         }
         int endLine = tokenLine();
-        consumeOrFail(CLOSEPAREN);
+        handleProductionOrFail(CLOSEPAREN, ")", "end", "for-loop header");
         const Identifier* unused = 0;
         startLoop();
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
-        failIfFalse(statement);
+        failIfFalse(statement, "Expected a statement as the body of a for loop");
         return context.createForLoop(location, decls, condition, increment, statement, startLine, endLine);
     }
     
     // For-in loop
-    failIfFalse(nonLHSCount == m_nonLHSCount);
+    failIfFalse(nonLHSCount == m_nonLHSCount, "Expected a reference on the left hand side of an enumeration statement");
     bool isOfEnumeration = false;
     if (!consume(INTOKEN)) {
-        failIfFalseWithMessage(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
+        failIfFalse(match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of, "Expected either 'in' or 'of' in enumeration syntax");
         isOfEnumeration = true;
         next();
     }
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Cannot parse subject for-", isOfEnumeration ? "of" : "in", " statement");
     JSTextPosition exprEnd = lastTokenEndPosition();
     int endLine = tokenLine();
-    consumeOrFail(CLOSEPAREN);
+    
+    handleProductionOrFail(CLOSEPAREN, ")", "end", (isOfEnumeration ? "for-of header" : "for-in header"));
     const Identifier* unused = 0;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
-    failIfFalse(statement);
+    failIfFalse(statement, "Expected a statement as the body of a for-", isOfEnumeration ? "of" : "in", "loop");
     if (isOfEnumeration)
         return context.createForOfLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
     return context.createForInLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
@@ -593,15 +677,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBreakStatemen
     next();
     
     if (autoSemiColon()) {
-        failIfFalseWithMessage(breakIsValid(), "'break' is only valid inside a switch or loop statement");
+        semanticFailIfFalse(breakIsValid(), "'break' is only valid inside a switch or loop statement");
         return context.createBreakStatement(location, start, end);
     }
-    matchOrFail(IDENT);
+    matchOrFail(IDENT, "Expected an identifier as the target for a break statement");
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalseWithNameAndMessage(getLabel(ident), "Label", ident->impl(), "is not defined");
+    semanticFailIfFalse(getLabel(ident), "Cannot use the undeclared label '", ident->impl(), "'");
     end = tokenEndPosition();
     next();
-    failIfFalse(autoSemiColon());
+    failIfFalse(autoSemiColon(), "Expected a ';' following a targeted break statement");
     return context.createBreakStatement(location, ident, start, end);
 }
 
@@ -615,17 +699,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseContinueState
     next();
     
     if (autoSemiColon()) {
-        failIfFalseWithMessage(continueIsValid(), "'continue' is only valid inside a loop statement");
+        semanticFailIfFalse(continueIsValid(), "'continue' is only valid inside a loop statement");
         return context.createContinueStatement(location, start, end);
     }
-    matchOrFail(IDENT);
+    matchOrFail(IDENT, "Expected an identifier as the target for a continue statement");
     const Identifier* ident = m_token.m_data.ident;
     ScopeLabelInfo* label = getLabel(ident);
-    failIfFalseWithNameAndMessage(label, "Label", ident->impl(), "is not defined");
-    failIfFalseWithMessage(label->m_isLoop, "'continue' is only valid inside a loop statement");
+    semanticFailIfFalse(label, "Cannot use the undeclared label '", ident->impl(), "'");
+    semanticFailIfFalse(label->m_isLoop, "Cannot continue to the label '", ident->impl(), "' as it is not targeting a loop");
     end = tokenEndPosition();
     next();
-    failIfFalse(autoSemiColon());
+    failIfFalse(autoSemiColon(), "Expected a ';' following a targeted continue statement");
     return context.createContinueStatement(location, ident, start, end);
 }
 
@@ -634,11 +718,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStateme
 {
     ASSERT(match(RETURN));
     JSTokenLocation location(tokenLocation());
-    failIfFalse(currentScope()->isFunction());
+    semanticFailIfFalse(currentScope()->isFunction(), "Return statements are only valid inside functions");
     JSTextPosition start = tokenStartPosition();
     JSTextPosition end = tokenEndPosition();
     next();
-    // We do the auto semicolon check before attempting to parse an expression
+    // We do the auto semicolon check before attempting to parse expression
     // as we need to ensure the a line break after the return correctly terminates
     // the statement
     if (match(SEMICOLON))
@@ -647,11 +731,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseReturnStateme
     if (autoSemiColon())
         return context.createReturnStatement(location, 0, start, end);
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Cannot parse the return expression");
     end = lastTokenEndPosition();
     if (match(SEMICOLON))
         end  = tokenEndPosition();
-    failIfFalse(autoSemiColon());
+    if (!autoSemiColon())
+        failWithMessage("Expected a ';' following a return statement");
     return context.createReturnStatement(location, expr, start, end);
 }
 
@@ -662,13 +747,13 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseThrowStatemen
     JSTokenLocation location(tokenLocation());
     JSTextPosition start = tokenStartPosition();
     next();
-    
-    failIfTrue(autoSemiColon());
+    failIfTrue(match(SEMICOLON), "Expected expression after 'throw'");
+    semanticFailIfTrue(autoSemiColon(), "Cannot have a newline after 'throw'");
     
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Cannot parse expression for throw statement");
     JSTextPosition end = lastTokenEndPosition();
-    failIfFalse(autoSemiColon());
+    failIfFalse(autoSemiColon(), "Expected a ';' after a throw statement");
     
     return context.createThrowStatement(location, expr, start, end);
 }
@@ -678,20 +763,21 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
 {
     ASSERT(match(WITH));
     JSTokenLocation location(tokenLocation());
-    failIfTrueWithMessage(strictMode(), "'with' statements are not valid in strict mode");
+    semanticFailIfTrue(strictMode(), "'with' statements are not valid in strict mode");
     currentScope()->setNeedsFullActivation();
     int startLine = tokenLine();
     next();
-    consumeOrFail(OPENPAREN);
+
+    handleProductionOrFail(OPENPAREN, "(", "start", "subject of a 'with' statement");
     int start = tokenStart();
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Cannot parse 'with' subject expression");
     JSTextPosition end = lastTokenEndPosition();
     int endLine = tokenLine();
-    consumeOrFail(CLOSEPAREN);
+    handleProductionOrFail(CLOSEPAREN, ")", "start", "subject of a 'with' statement");
     const Identifier* unused = 0;
     TreeStatement statement = parseStatement(context, unused);
-    failIfFalse(statement);
+    failIfFalse(statement, "A 'with' statement must have a body");
     
     return context.createWithStatement(location, expr, statement, start, end, startLine, endLine);
 }
@@ -703,23 +789,24 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStateme
     JSTokenLocation location(tokenLocation());
     int startLine = tokenLine();
     next();
-    consumeOrFail(OPENPAREN);
+    handleProductionOrFail(OPENPAREN, "(", "start", "subject of a 'switch'");
     TreeExpression expr = parseExpression(context);
-    failIfFalse(expr);
+    failIfFalse(expr, "Cannot parse switch subject expression");
     int endLine = tokenLine();
-    consumeOrFail(CLOSEPAREN);
-    consumeOrFail(OPENBRACE);
+    
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "subject of a 'switch'");
+    handleProductionOrFail(OPENBRACE, "{", "start", "body of a 'switch'");
     startSwitch();
     TreeClauseList firstClauses = parseSwitchClauses(context);
-    failIfTrue(hasError());
+    propagateError();
     
     TreeClause defaultClause = parseSwitchDefaultClause(context);
-    failIfTrue(hasError());
+    propagateError();
     
     TreeClauseList secondClauses = parseSwitchClauses(context);
-    failIfTrue(hasError());
+    propagateError();
     endSwitch();
-    consumeOrFail(CLOSEBRACE);
+    handleProductionOrFail(CLOSEBRACE, "}", "end", "body of a 'switch'");
     
     return context.createSwitchStatement(location, expr, firstClauses, defaultClause, secondClauses, startLine, endLine);
     
@@ -732,10 +819,10 @@ template <class TreeBuilder> TreeClauseList Parser<LexerType>::parseSwitchClause
         return 0;
     next();
     TreeExpression condition = parseExpression(context);
-    failIfFalse(condition);
-    consumeOrFail(COLON);
+    failIfFalse(condition, "Cannot parse switch clause");
+    consumeOrFail(COLON, "Expected a ':' after switch clause expression");
     TreeSourceElements statements = parseSourceElements<DontCheckForStrictMode>(context);
-    failIfFalse(statements);
+    failIfFalse(statements, "Cannot parse the body of a switch clause");
     TreeClause clause = context.createClause(condition, statements);
     TreeClauseList clauseList = context.createClauseList(clause);
     TreeClauseList tail = clauseList;
@@ -743,10 +830,10 @@ template <class TreeBuilder> TreeClauseList Parser<LexerType>::parseSwitchClause
     while (match(CASE)) {
         next();
         TreeExpression condition = parseExpression(context);
-        failIfFalse(condition);
-        consumeOrFail(COLON);
+        failIfFalse(condition, "Cannot parse switch case expression");
+        consumeOrFail(COLON, "Expected a ':' after switch clause expression");
         TreeSourceElements statements = parseSourceElements<DontCheckForStrictMode>(context);
-        failIfFalse(statements);
+        failIfFalse(statements, "Cannot parse the body of a switch clause");
         clause = context.createClause(condition, statements);
         tail = context.createClauseList(tail, clause);
     }
@@ -759,9 +846,9 @@ template <class TreeBuilder> TreeClause Parser<LexerType>::parseSwitchDefaultCla
     if (!match(DEFAULT))
         return 0;
     next();
-    consumeOrFail(COLON);
+    consumeOrFail(COLON, "Expected a ':' after switch default clause");
     TreeSourceElements statements = parseSourceElements<DontCheckForStrictMode>(context);
-    failIfFalse(statements);
+    failIfFalse(statements, "Cannot parse the body of a switch default clause");
     return context.createClause(0, statements);
 }
 
@@ -776,36 +863,40 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     TreeStatement finallyBlock = 0;
     int firstLine = tokenLine();
     next();
-    matchOrFail(OPENBRACE);
+    matchOrFail(OPENBRACE, "Expected a block statement as body of a try statement");
     
     tryBlock = parseBlockStatement(context);
-    failIfFalse(tryBlock);
+    failIfFalse(tryBlock, "Cannot parse the body of try block");
     int lastLine = m_lastTokenEndPosition.line;
     
     if (match(CATCH)) {
         currentScope()->setNeedsFullActivation();
         next();
-        consumeOrFail(OPENPAREN);
-        matchOrFail(IDENT);
+        
+        handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
+        if (!match(IDENT)) {
+            semanticFailureDueToKeyword("catch variable name");
+            failWithMessage("Expected identifier name as catch target");
+        }
         ident = m_token.m_data.ident;
         next();
         AutoPopScopeRef catchScope(this, pushScope());
-        failIfFalseIfStrictWithNameAndMessage(declareVariable(ident), "Cannot declare a variable named", ident->impl(), "in strict mode");
+        failIfFalseIfStrict(declareVariable(ident), "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
         catchScope->preventNewDecls();
-        consumeOrFail(CLOSEPAREN);
-        matchOrFail(OPENBRACE);
+        handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
+        matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
         catchBlock = parseBlockStatement(context);
-        failIfFalseWithMessage(catchBlock, "'try' must have a catch or finally block");
-        failIfFalse(popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo));
+        failIfFalse(catchBlock, "Unable to parse 'catch' block");
+        failIfFalse(popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo), "Parse error");
     }
     
     if (match(FINALLY)) {
         next();
-        matchOrFail(OPENBRACE);
+        matchOrFail(OPENBRACE, "Expected block statement for finally body");
         finallyBlock = parseBlockStatement(context);
-        failIfFalse(finallyBlock);
+        failIfFalse(finallyBlock, "Cannot parse finally body");
     }
-    failIfFalse(catchBlock || finallyBlock);
+    failIfFalse(catchBlock || finallyBlock, "Try statements must have at least a catch or finally block");
     return context.createTryStatement(location, tryBlock, ident, catchBlock, finallyBlock, firstLine, lastLine);
 }
 
@@ -819,7 +910,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDebuggerState
     next();
     if (match(SEMICOLON))
         startLine = tokenLine();
-    failIfFalse(autoSemiColon());
+    failIfFalse(autoSemiColon(), "Debugger keyword must be followed by a ';'");
     return context.createDebugger(location, startLine, endLine);
 }
 
@@ -835,8 +926,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
         return context.createBlockStatement(location, 0, start, m_lastTokenEndPosition.line);
     }
     TreeSourceElements subtree = parseSourceElements<DontCheckForStrictMode>(context);
-    failIfFalse(subtree);
-    matchOrFail(CLOSEBRACE);
+    failIfFalse(subtree, "Cannot parse the body of the block statement");
+    matchOrFail(CLOSEBRACE, "Expected a closing '}' at the end of a block statement");
     next();
     return context.createBlockStatement(location, subtree, start, m_lastTokenEndPosition.line);
 }
@@ -857,7 +948,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case CONSTTOKEN:
         return parseConstDeclaration(context);
     case FUNCTION:
-        failIfFalseIfStrictWithMessage(m_statementDepth == 1, "Functions cannot be declared in a nested block in strict mode");
+        failIfFalseIfStrict(m_statementDepth == 1, "Nested functions cannot be declared in strict mode");
         return parseFunctionDeclaration(context);
     case SEMICOLON: {
         JSTokenLocation location(tokenLocation());
@@ -913,12 +1004,12 @@ template <typename LexerType>
 template <class TreeBuilder> TreeFormalParameterList Parser<LexerType>::parseFormalParameters(TreeBuilder& context)
 {
     auto parameter = parseDeconstructionPattern<DeconstructToParameters>(context);
-    failIfFalse(parameter);
+    failIfFalse(parameter, "Cannot parse parameter pattern");
     TreeFormalParameterList list = context.createFormalParameterList(parameter);
     TreeFormalParameterList tail = list;
     while (consume(COMMA)) {
         parameter = parseDeconstructionPattern<DeconstructToParameters>(context);
-        failIfFalse(parameter);
+        failIfFalse(parameter, "Cannot parse parameter pattern");
         tail = context.createFormalParameterList(tail, parameter);
     }
     return list;
@@ -936,30 +1027,55 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth = 0;
     typename TreeBuilder::FunctionBodyBuilder bodyBuilder(const_cast<VM*>(m_vm), m_lexer.get());
-    failIfFalse(parseSourceElements<CheckForStrictMode>(bodyBuilder));
+    failIfFalse(parseSourceElements<CheckForStrictMode>(bodyBuilder), "Cannot parse body of this function");
     return context.createFunctionBody(startLocation, tokenLocation(), startColumn, strictMode());
 }
 
+static const char* stringForFunctionMode(FunctionParseMode mode)
+{
+    switch (mode) {
+    case GetterMode:
+        return "getter";
+    case SetterMode:
+        return "setter";
+    case FunctionMode:
+        return "function";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 template <typename LexerType>
-template <FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn)
+template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIsInContainingScope, class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn)
 {
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setIsFunction();
     int functionStart = m_token.m_location.startOffset;
+    const Identifier* lastFunctionName = m_lastFunctionName;
+    m_lastFunctionName = nullptr;
     if (match(IDENT)) {
         name = m_token.m_data.ident;
+        m_lastFunctionName = name;
         next();
         if (!nameIsInContainingScope)
-            failIfFalseIfStrict(functionScope->declareVariable(name));
-    } else if (requirements == FunctionNeedsName)
+            failIfFalseIfStrict(functionScope->declareVariable(name), "'", name->impl(), "' is not a valid ", stringForFunctionMode(mode), " name in strict mode");
+    } else if (requirements == FunctionNeedsName) {
+        if (match(OPENPAREN) && mode == FunctionMode)
+            semanticFail("Function statements must have a name");
+        semanticFailureDueToKeyword(stringForFunctionMode(mode), " name");
+        failDueToUnexpectedToken();
         return false;
-    consumeOrFail(OPENPAREN);
+    }
+    if (!consume(OPENPAREN)) {
+        semanticFailureDueToKeyword(stringForFunctionMode(mode), " name");
+        failWithMessage("Expected an opening '(' before a ", stringForFunctionMode(mode), "'s parameter list");
+    }
     if (!match(CLOSEPAREN)) {
         parameters = parseFormalParameters(context);
-        failIfFalse(parameters);
+        failIfFalse(parameters, "Cannot parse parameters for this ", stringForFunctionMode(mode));
     }
-    consumeOrFail(CLOSEPAREN);
-    matchOrFail(OPENBRACE);
+    consumeOrFail(CLOSEPAREN, "Expected a ')' or a ',' after a parameter declaration");
+    matchOrFail(OPENBRACE, "Expected an opening '{' at the start of a ", stringForFunctionMode(mode), " body");
     
     openBraceOffset = m_token.m_data.offset;
     bodyStartLine = tokenLine();
@@ -980,7 +1096,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
         body = context.createFunctionBody(startLocation, endLocation, bodyStartColumn, cachedInfo->strictMode);
         
         functionScope->restoreFromSourceProviderCache(cachedInfo);
-        failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
+        failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
         
         closeBraceOffset = cachedInfo->closeBraceOffset;
 
@@ -993,12 +1109,13 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
         next();
         return true;
     }
-    
+    m_lastFunctionName = lastFunctionName;
     body = parseFunctionBody(context);
-    failIfFalse(body);
+    failIfFalse(body, "Cannot parse the body of this ", stringForFunctionMode(mode));
     if (functionScope->strictMode() && name) {
-        failIfTrueWithNameAndMessage(m_vm->propertyNames->arguments == *name, "Function name", name->impl(), "is not valid in strict mode");
-        failIfTrueWithNameAndMessage(m_vm->propertyNames->eval == *name, "Function name", name->impl(), "is not valid in strict mode");
+        RELEASE_ASSERT(mode == FunctionMode);
+        semanticFailIfTrue(m_vm->propertyNames->arguments == *name, "'", name->impl(), "' is not a valid function name in strict mode");
+        semanticFailIfTrue(m_vm->propertyNames->eval == *name, "'", name->impl(), "' is not a valid function name in strict mode");
     }
     closeBraceOffset = m_token.m_data.offset;
     unsigned closeBraceLine = m_token.m_data.line;
@@ -1021,8 +1138,8 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     }
     context.setFunctionStart(body, functionStart);
     
-    failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
-    matchOrFail(CLOSEBRACE);
+    failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
+    matchOrFail(CLOSEBRACE, "Expected a closing '}' after a ", stringForFunctionMode(mode), " body");
     
     if (newInfo)
         m_functionCache->add(openBraceOffset, std::move(newInfo));
@@ -1044,9 +1161,9 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     unsigned closeBraceOffset = 0;
     int bodyStartLine = 0;
     unsigned bodyStartColumn = 0;
-    failIfFalse((parseFunctionInfo<FunctionNeedsName, true>(context, name, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)));
-    failIfFalse(name);
-    failIfFalseIfStrict(declareVariable(name));
+    failIfFalse((parseFunctionInfo<FunctionNeedsName, FunctionMode, true>(context, name, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)), "Cannot parse this function");
+    failIfFalse(name, "Function statements must have a name");
+    failIfFalseIfStrict(declareVariable(name), "Cannot declare a function named '", name->impl(), "' in strict mode");
     return context.createFuncDeclStatement(location, name, body, parameters, openBraceOffset, closeBraceOffset, bodyStartLine, m_lastTokenEndPosition.line, bodyStartColumn);
 }
 
@@ -1080,20 +1197,21 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
             // by definition can't make use of continue/break so we can just
             // ignore any labels we might have accumulated.
             TreeExpression expression = parseExpression(context);
-            failIfFalse(expression);
-            failIfFalse(autoSemiColon());
+            failIfFalse(expression, "Cannot parse expression statement");
+            if (!autoSemiColon())
+                failDueToUnexpectedToken();
             return context.createExprStatement(location, expression, start, m_lastTokenEndPosition.line);
         }
         const Identifier* ident = m_token.m_data.ident;
         JSTextPosition end = tokenEndPosition();
         next();
-        consumeOrFail(COLON);
+        consumeOrFail(COLON, "Labels must be followed by a ':'");
         if (!m_syntaxAlreadyValidated) {
             // This is O(N^2) over the current list of consecutive labels, but I
             // have never seen more than one label in a row in the real world.
             for (size_t i = 0; i < labels.size(); i++)
-                failIfTrue(ident->impl() == labels[i].m_ident->impl());
-            failIfTrue(getLabel(ident));
+                failIfTrue(ident->impl() == labels[i].m_ident->impl(), "Attempted to redeclare the label '", ident->impl(), "'");
+            failIfTrue(getLabel(ident), "Cannot find scope for the label '", ident->impl(), "'");
             labels.append(LabelInfo(ident, start, end));
         }
     } while (match(IDENT));
@@ -1118,7 +1236,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
         for (size_t i = 0; i < labels.size(); i++)
             popLabel();
     }
-    failIfFalse(statement);
+    failIfFalse(statement, "Cannot parse statement");
     for (size_t i = 0; i < labels.size(); i++) {
         const LabelInfo& info = labels[labels.size() - i - 1];
         statement = context.createLabelStatement(location, info.m_ident, statement, info.m_start, info.m_end);
@@ -1132,8 +1250,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionSta
     JSTextPosition start = tokenStartPosition();
     JSTokenLocation location(tokenLocation());
     TreeExpression expression = parseExpression(context);
-    failIfFalse(expression);
-    failIfFalse(autoSemiColon());
+    failIfFalse(expression, "Cannot parse expression statement");
+    failIfFalse(autoSemiColon(), "Parse error");
     return context.createExprStatement(location, expression, start, m_lastTokenEndPosition.line);
 }
 
@@ -1144,17 +1262,16 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
     JSTokenLocation ifLocation(tokenLocation());
     int start = tokenLine();
     next();
-
-    consumeOrFail(OPENPAREN);
+    handleProductionOrFail(OPENPAREN, "(", "start", "'if' condition");
 
     TreeExpression condition = parseExpression(context);
-    failIfFalse(condition);
+    failIfFalse(condition, "Expected a expression as the condition for an if statement");
     int end = tokenLine();
-    consumeOrFail(CLOSEPAREN);
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
 
     const Identifier* unused = 0;
     TreeStatement trueBlock = parseStatement(context, unused);
-    failIfFalse(trueBlock);
+    failIfFalse(trueBlock, "Expected a statement as the body of an if block");
 
     if (!match(ELSE))
         return context.createIfStatement(ifLocation, condition, trueBlock, 0, start, end);
@@ -1170,23 +1287,23 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
         if (!match(IF)) {
             const Identifier* unused = 0;
             TreeStatement block = parseStatement(context, unused);
-            failIfFalse(block);
+            failIfFalse(block, "Expected a statement as the body of an else block");
             statementStack.append(block);
             trailingElse = true;
             break;
         }
         int innerStart = tokenLine();
         next();
-
-        consumeOrFail(OPENPAREN);
+        
+        handleProductionOrFail(OPENPAREN, "(", "start", "'if' condition");
 
         TreeExpression innerCondition = parseExpression(context);
-        failIfFalse(innerCondition);
+        failIfFalse(innerCondition, "Expected a expression as the condition for an if statement");
         int innerEnd = tokenLine();
-        consumeOrFail(CLOSEPAREN);
+        handleProductionOrFail(CLOSEPAREN, ")", "end", "'if' condition");
         const Identifier* unused = 0;
         TreeStatement innerTrueBlock = parseStatement(context, unused);
-        failIfFalse(innerTrueBlock);
+        failIfFalse(innerTrueBlock, "Expected a statement as the body of an if block");
         tokenLocationStack.append(tempLocation);
         exprStack.append(innerCondition);
         posStack.append(make_pair(innerStart, innerEnd));
@@ -1228,19 +1345,19 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseExpression(T
     failIfStackOverflow();
     JSTokenLocation location(tokenLocation());
     TreeExpression node = parseAssignmentExpression(context);
-    failIfFalse(node);
+    failIfFalse(node, "Cannot parse expression");
     if (!match(COMMA))
         return node;
     next();
     m_nonTrivialExpressionCount++;
     m_nonLHSCount++;
     TreeExpression right = parseAssignmentExpression(context);
-    failIfFalse(right);
+    failIfFalse(right, "Cannot parse expression in a comma expression");
     typename TreeBuilder::Comma commaNode = context.createCommaExpr(location, node, right);
     while (match(COMMA)) {
         next(TreeBuilder::DontBuildStrings);
         right = parseAssignmentExpression(context);
-        failIfFalse(right);
+        failIfFalse(right, "Cannot parse expression in a comma expression");
         context.appendToComma(commaNode, right);
     }
     return commaNode;
@@ -1255,9 +1372,13 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     int initialAssignmentCount = m_assignmentCount;
     int initialNonLHSCount = m_nonLHSCount;
     TreeExpression lhs = parseConditionalExpression(context);
-    failIfFalse(lhs);
-    if (initialNonLHSCount != m_nonLHSCount)
+    failIfFalse(lhs, "Cannot parse expression");
+    if (initialNonLHSCount != m_nonLHSCount) {
+        if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
+            semanticFail("Left hand sign of operator '", getToken(), "' must be a reference");
+
         return lhs;
+    }
     
     int assignmentStack = 0;
     Operator op;
@@ -1286,15 +1407,18 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         m_assignmentCount++;
         next(TreeBuilder::DontBuildStrings);
         if (strictMode() && m_lastIdentifier && context.isResolve(lhs)) {
-            failIfTrueIfStrictWithMessage(m_vm->propertyNames->eval == *m_lastIdentifier, "'eval' cannot be modified in strict mode");
-            failIfTrueIfStrictWithMessage(m_vm->propertyNames->arguments == *m_lastIdentifier, "'arguments' cannot be modified in strict mode");
+            failIfTrueIfStrict(m_vm->propertyNames->eval == *m_lastIdentifier, "Cannot modify 'eval' in strict mode");
+            failIfTrueIfStrict(m_vm->propertyNames->arguments == *m_lastIdentifier, "Cannot modify 'arguments' in strict mode");
             declareWrite(m_lastIdentifier);
             m_lastIdentifier = 0;
         }
         lhs = parseAssignmentExpression(context);
-        failIfFalse(lhs);
-        if (initialNonLHSCount != m_nonLHSCount)
+        failIfFalse(lhs, "Cannot parse the right hand side of an assignment expression");
+        if (initialNonLHSCount != m_nonLHSCount) {
+            if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
+                semanticFail("Left hand sign of operator '", getToken(), "' must be a reference");
             break;
+        }
     }
 end:
     if (hadAssignment)
@@ -1314,17 +1438,18 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalE
 {
     JSTokenLocation location(tokenLocation());
     TreeExpression cond = parseBinaryExpression(context);
-    failIfFalse(cond);
+    failIfFalse(cond, "Cannot parse expression");
     if (!match(QUESTION))
         return cond;
     m_nonTrivialExpressionCount++;
     m_nonLHSCount++;
     next(TreeBuilder::DontBuildStrings);
     TreeExpression lhs = parseAssignmentExpression(context);
-    consumeOrFailWithFlags(COLON, TreeBuilder::DontBuildStrings);
+    failIfFalse(lhs, "Cannot parse left hand side of ternary operator");
+    consumeOrFailWithFlags(COLON, TreeBuilder::DontBuildStrings, "Expected ':' in ternary operator");
     
     TreeExpression rhs = parseAssignmentExpression(context);
-    failIfFalse(rhs);
+    failIfFalse(rhs, "Cannot parse right hand side of ternary operator");
     return context.createConditionalExpr(location, cond, lhs, rhs);
 }
 
@@ -1353,7 +1478,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
         JSTextPosition exprStart = tokenStartPosition();
         int initialAssignments = m_assignmentCount;
         TreeExpression current = parseUnaryExpression(context);
-        failIfFalse(current);
+        failIfFalse(current, "Cannot parse expression");
         
         context.appendBinaryExpressionInfo(operandStackDepth, current, exprStart, lastTokenEndPosition(), lastTokenEndPosition(), initialAssignments != m_assignmentCount);
         int precedence = isBinaryOperator(m_token.m_type);
@@ -1405,10 +1530,10 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
         if (match(COLON)) {
             next();
             TreeExpression node = parseAssignmentExpression(context);
-            failIfFalse(node);
+            failIfFalse(node, "Cannot parse expression for property declaration");
             return context.template createProperty<complete>(ident, node, PropertyNode::Constant);
         }
-        failIfFalse(wasIdent);
+        failIfFalse(wasIdent, "Expected an identifier as property name");
         const Identifier* accessorName = 0;
         TreeFormalParameterList parameters = 0;
         TreeFunctionBody body = 0;
@@ -1422,7 +1547,7 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
         else if (*ident == m_vm->propertyNames->set)
             type = PropertyNode::Setter;
         else
-            fail();
+            failWithMessage("Expected a ':' following the property name '", ident->impl(), "'");
         const Identifier* stringPropertyName = 0;
         double numericPropertyName = 0;
         if (m_token.m_type == IDENT || m_token.m_type == STRING)
@@ -1430,10 +1555,16 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
         else if (m_token.m_type == NUMBER)
             numericPropertyName = m_token.m_data.doubleValue;
         else
-            fail();
+            failDueToUnexpectedToken();
         JSTokenLocation location(tokenLocation());
         next();
-        failIfFalse((parseFunctionInfo<FunctionNoRequirements, false>(context, accessorName, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)));
+        if (type == PropertyNode::Getter) {
+            failIfFalse(match(OPENPAREN), "Expected a parameter list for getter definition");
+            failIfFalse((parseFunctionInfo<FunctionNoRequirements, GetterMode, false>(context, accessorName, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)), "Cannot parse getter definition");
+        } else {
+            failIfFalse(match(OPENPAREN), "Expected a parameter list for setter definition");
+            failIfFalse((parseFunctionInfo<FunctionNoRequirements, SetterMode, false>(context, accessorName, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)), "Cannot parse setter definition");
+        }
         if (stringPropertyName)
             return context.template createGetterOrSetterProperty<complete>(location, type, stringPropertyName, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, m_lastTokenEndPosition.line, bodyStartColumn);
         return context.template createGetterOrSetterProperty<complete>(const_cast<VM*>(m_vm), location, type, numericPropertyName, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, m_lastTokenEndPosition.line, bodyStartColumn);
@@ -1441,23 +1572,24 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
     case NUMBER: {
         double propertyName = m_token.m_data.doubleValue;
         next();
-        consumeOrFail(COLON);
+        consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
-        failIfFalse(node);
+        failIfFalse(node, "Cannot parse expression for property declaration");
         return context.template createProperty<complete>(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant);
     }
     case OPENBRACKET: {
         next();
         auto propertyName = parseExpression(context);
-        failIfFalse(propertyName);
-        consumeOrFail(CLOSEBRACKET);
-        consumeOrFail(COLON);
+        failIfFalse(propertyName, "Cannot parse computed property name");
+        
+        handleProductionOrFail(CLOSEBRACKET, "]", "end", "computed property name");
+        consumeOrFail(COLON, "Expected ':' after property name");
         TreeExpression node = parseAssignmentExpression(context);
-        failIfFalse(node);
+        failIfFalse(node, "Cannot parse expression for property declaration");
         return context.template createProperty<complete>(const_cast<VM*>(m_vm), propertyName, node, PropertyNode::Constant);
     }
     default:
-        failIfFalse(m_token.m_type & KeywordTokenFlag);
+        failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");
         goto namedProperty;
     }
 }
@@ -1469,7 +1601,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     unsigned oldLineStartOffset = m_lexer->currentLineStartOffset();
     unsigned oldLastLineNumber = m_lexer->lastLineNumber();
     unsigned oldLineNumber = m_lexer->lineNumber();
-    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
+    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of an object literal");
     JSTokenLocation location(tokenLocation());
 
     int oldNonLHSCount = m_nonLHSCount;
@@ -1480,7 +1612,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     }
     
     TreeProperty property = parseProperty<false>(context);
-    failIfFalse(property);
+    failIfFalse(property, "Cannot parse object literal property");
     if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
         m_lexer->setOffset(startOffset, oldLineStartOffset);
         next();
@@ -1497,7 +1629,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
             break;
         JSTokenLocation propertyLocation(tokenLocation());
         property = parseProperty<false>(context);
-        failIfFalse(property);
+        failIfFalse(property, "Cannot parse object literal property");
         if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
             m_lexer->setOffset(startOffset, oldLineStartOffset);
             next();
@@ -1509,7 +1641,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     }
 
     location = tokenLocation();
-    consumeOrFail(CLOSEBRACE);
+    handleProductionOrFail(CLOSEBRACE, "}", "end", "object literal");
     
     m_nonLHSCount = oldNonLHSCount;
     
@@ -1519,7 +1651,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObjectLiteral(TreeBuilder& context)
 {
-    consumeOrFail(OPENBRACE);
+    consumeOrFail(OPENBRACE, "Expected opening '{' at the start of an object literal");
     
     int oldNonLHSCount = m_nonLHSCount;
 
@@ -1530,7 +1662,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     }
     
     TreeProperty property = parseProperty<true>(context);
-    failIfFalse(property);
+    failIfFalse(property, "Cannot parse object literal property");
     
     typedef HashMap<RefPtr<StringImpl>, unsigned, IdentifierRepHash> ObjectValidationMap;
     ObjectValidationMap objectValidator;
@@ -1547,13 +1679,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
             break;
         JSTokenLocation propertyLocation(tokenLocation());
         property = parseProperty<true>(context);
-        failIfFalse(property);
+        failIfFalse(property, "Cannot parse object literal property");
         if (!m_syntaxAlreadyValidated && context.getName(property)) {
             ObjectValidationMap::AddResult propertyEntry = objectValidator.add(context.getName(property)->impl(), context.getType(property));
             if (!propertyEntry.isNewEntry) {
-                failIfTrue(propertyEntry.iterator->value == PropertyNode::Constant);
-                failIfTrue(context.getType(property) == PropertyNode::Constant);
-                failIfTrue(context.getType(property) & propertyEntry.iterator->value);
+                semanticFailIfTrue(propertyEntry.iterator->value == PropertyNode::Constant, "Attempted to redefine property '", propertyEntry.iterator->key.get(), "'");
+                semanticFailIfTrue(context.getType(property) == PropertyNode::Constant, "Attempted to redefine property '", propertyEntry.iterator->key.get(), "'");
+                semanticFailIfTrue(context.getType(property) & propertyEntry.iterator->value, "Attempted to redefine property '", propertyEntry.iterator->key.get(), "'");
                 propertyEntry.iterator->value |= context.getType(property);
             }
         }
@@ -1561,7 +1693,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
     }
 
     location = tokenLocation();
-    consumeOrFail(CLOSEBRACE);
+    handleProductionOrFail(CLOSEBRACE, "}", "end", "object literal");
 
     m_nonLHSCount = oldNonLHSCount;
 
@@ -1571,7 +1703,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseStrictObject
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral(TreeBuilder& context)
 {
-    consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings);
+    consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings, "Expected an opening '[' at the beginning of an array literal");
     
     int oldNonLHSCount = m_nonLHSCount;
     
@@ -1593,11 +1725,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
         auto divot = m_token.m_endPosition;
         next();
         auto spreadExpr = parseAssignmentExpression(context);
-        failIfFalse(spreadExpr);
+        failIfFalse(spreadExpr, "Cannot parse subject of a spread operation");
         elem = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, m_lastTokenEndPosition);
     } else
         elem = parseAssignmentExpression(context);
-    failIfFalse(elem);
+    failIfFalse(elem, "Cannot parse array literal element");
     typename TreeBuilder::ElementList elementList = context.createElementList(elisions, elem);
     typename TreeBuilder::ElementList tail = elementList;
     elisions = 0;
@@ -1621,18 +1753,21 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseArrayLiteral
             auto divot = m_token.m_endPosition;
             next();
             TreeExpression elem = parseAssignmentExpression(context);
-            failIfFalse(elem);
+            failIfFalse(elem, "Cannot parse subject of a spread operation");
             auto spread = context.createSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
             tail = context.createElementList(tail, elisions, spread);
             continue;
         }
         TreeExpression elem = parseAssignmentExpression(context);
-        failIfFalse(elem);
+        failIfFalse(elem, "Cannot parse array literal element");
         tail = context.createElementList(tail, elisions, elem);
     }
 
     JSTokenLocation location(tokenLocation());
-    consumeOrFail(CLOSEBRACKET);
+    if (!consume(CLOSEBRACKET)) {
+        failIfFalse(match(DOTDOTDOT), "Expected either a closing ']' or a ',' following an array element");
+        semanticFail("The '...' operator should come before a target expression");
+    }
     
     m_nonLHSCount = oldNonLHSCount;
     
@@ -1655,8 +1790,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         int oldNonLHSCount = m_nonLHSCount;
         TreeExpression result = parseExpression(context);
         m_nonLHSCount = oldNonLHSCount;
-        consumeOrFail(CLOSEPAREN);
-        
+        handleProductionOrFail(CLOSEPAREN, ")", "end", "compound expression");
         return result;
     }
     case THISTOKEN: {
@@ -1706,9 +1840,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         const Identifier* pattern;
         const Identifier* flags;
         if (match(DIVEQUAL))
-            failIfFalse(m_lexer->scanRegExp(pattern, flags, '='));
+            failIfFalse(m_lexer->scanRegExp(pattern, flags, '='), "Invalid regular expression");
         else
-            failIfFalse(m_lexer->scanRegExp(pattern, flags));
+            failIfFalse(m_lexer->scanRegExp(pattern, flags), "Invalid regular expression");
         
         JSTextPosition start = tokenStartPosition();
         JSTokenLocation location(tokenLocation());
@@ -1716,19 +1850,19 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         TreeExpression re = context.createRegExp(location, *pattern, *flags, start);
         if (!re) {
             const char* yarrErrorMsg = Yarr::checkSyntax(pattern->string());
-            failWithMessage(yarrErrorMsg);
+            regexFail(yarrErrorMsg);
         }
         return re;
     }
     default:
-        fail();
+        failDueToUnexpectedToken();
     }
 }
 
 template <typename LexerType>
 template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(TreeBuilder& context, SpreadMode mode)
 {
-    consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings);
+    consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings, "Expected opening '(' at start of argument list");
     JSTokenLocation location(tokenLocation());
     if (match(CLOSEPAREN)) {
         next(TreeBuilder::DontBuildStrings);
@@ -1742,14 +1876,18 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
         auto spreadExpr = parseAssignmentExpression(context);
         auto end = m_lastTokenEndPosition;
         if (!spreadExpr)
-            failWithMessage("Invalid spread expression.");
-        consumeOrFail(CLOSEPAREN);
+            failWithMessage("Cannot parse spread expression");
+        if (!consume(CLOSEPAREN)) {
+            if (match(COMMA))
+                semanticFail("Spread operator may only be applied to the last argument passed to a function");
+            handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
+        }
         auto spread = context.createSpreadExpression(spreadLocation, spreadExpr, start, divot, end);
         TreeArgumentsList argList = context.createArgumentsList(location, spread);
         return context.createArguments(argList);
     }
     TreeExpression firstArg = parseAssignmentExpression(context);
-    failIfFalse(firstArg);
+    failIfFalse(firstArg, "Cannot parse function argument");
     
     TreeArgumentsList argList = context.createArgumentsList(location, firstArg);
     TreeArgumentsList tail = argList;
@@ -1757,10 +1895,11 @@ template <class TreeBuilder> TreeArguments Parser<LexerType>::parseArguments(Tre
         JSTokenLocation argumentLocation(tokenLocation());
         next(TreeBuilder::DontBuildStrings);
         TreeExpression arg = parseAssignmentExpression(context);
-        failIfFalse(arg);
+        failIfFalse(arg, "Cannot parse function argument");
         tail = context.createArgumentsList(argumentLocation, tail, arg);
     }
-    consumeOrFail(CLOSEPAREN);
+    semanticFailIfTrue(match(DOTDOTDOT), "The '...' operator should come before the target expression");
+    handleProductionOrFail(CLOSEPAREN, ")", "end", "argument list");
     return context.createArguments(argList);
 }
 
@@ -1786,12 +1925,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         unsigned bodyStartColumn = 0;
         location = tokenLocation();
         next();
-        failIfFalse((parseFunctionInfo<FunctionNoRequirements, false>(context, name, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)));
+        failIfFalse((parseFunctionInfo<FunctionNoRequirements, FunctionMode, false>(context, name, parameters, body, openBraceOffset, closeBraceOffset, bodyStartLine, bodyStartColumn)), "Cannot parse function expression");
         base = context.createFunctionExpr(location, name, body, parameters, openBraceOffset, closeBraceOffset, bodyStartLine, m_lastTokenEndPosition.line, bodyStartColumn);
     } else
         base = parsePrimaryExpression(context);
     
-    failIfFalse(base);
+    failIfFalse(base, "Cannot parse base expression");
     while (true) {
         location = tokenLocation();
         switch (m_token.m_type) {
@@ -1802,9 +1941,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             int nonLHSCount = m_nonLHSCount;
             int initialAssignments = m_assignmentCount;
             TreeExpression property = parseExpression(context);
-            failIfFalse(property);
+            failIfFalse(property, "Cannot parse subscript expression");
             base = context.createBracketAccess(location, base, property, initialAssignments != m_assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
-            consumeOrFail(CLOSEBRACKET);
+            handleProductionOrFail(CLOSEBRACKET, "]", "end", "subscript expression");
             m_nonLHSCount = nonLHSCount;
             break;
         }
@@ -1815,12 +1954,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 newCount--;
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 TreeArguments arguments = parseArguments(context, DontAllowSpread);
-                failIfFalse(arguments);
+                failIfFalse(arguments, "Cannot parse call arguments");
                 base = context.createNewExpr(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             } else {
                 JSTextPosition expressionEnd = lastTokenEndPosition();
                 TreeArguments arguments = parseArguments(context, AllowSpread);
-                failIfFalse(arguments);
+                failIfFalse(arguments, "Cannot parse call arguments");
                 base = context.makeFunctionCallNode(location, base, arguments, expressionStart, expressionEnd, lastTokenEndPosition());
             }
             m_nonLHSCount = nonLHSCount;
@@ -1830,7 +1969,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             m_nonTrivialExpressionCount++;
             JSTextPosition expressionEnd = lastTokenEndPosition();
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
-            matchOrFail(IDENT);
+            matchOrFail(IDENT, "Expected a property name after '.'");
             base = context.createDotAccess(location, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
             next();
             break;
@@ -1845,6 +1984,36 @@ endMemberExpression:
     return base;
 }
 
+static const char* operatorString(bool prefix, unsigned tok)
+{
+    switch (tok) {
+    case MINUSMINUS:
+    case AUTOMINUSMINUS:
+        return prefix ? "prefix-decrement" : "decrement";
+
+    case PLUSPLUS:
+    case AUTOPLUSPLUS:
+        return prefix ? "prefix-increment" : "increment";
+
+    case EXCLAMATION:
+        return "logical-not";
+
+    case TILDE:
+        return "bitwise-not";
+    
+    case TYPEOF:
+        return "typeof";
+    
+    case VOIDTOKEN:
+        return "void";
+    
+    case DELETETOKEN:
+        return "delete";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "error";
+}
+
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpression(TreeBuilder& context)
 {
@@ -1853,6 +2022,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     int tokenStackDepth = 0;
     bool modifiesExpr = false;
     bool requiresLExpr = false;
+    unsigned lastOperator = 0;
     while (isUnaryOp(m_token.m_type)) {
         if (strictMode()) {
             switch (m_token.m_type) {
@@ -1860,19 +2030,20 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             case MINUSMINUS:
             case AUTOPLUSPLUS:
             case AUTOMINUSMINUS:
-                failIfTrue(requiresLExpr);
+                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
                 modifiesExpr = true;
                 requiresLExpr = true;
                 break;
             case DELETETOKEN:
-                failIfTrue(requiresLExpr);
+                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
                 requiresLExpr = true;
                 break;
             default:
-                failIfTrue(requiresLExpr);
+                semanticFailIfTrue(requiresLExpr, "The ", operatorString(true, lastOperator), " operator requires a reference expression");
                 break;
             }
         }
+        lastOperator = m_token.m_type;
         m_nonLHSCount++;
         context.appendUnaryToken(tokenStackDepth, m_token.m_type, tokenStartPosition());
         next();
@@ -1882,21 +2053,26 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     ASSERT(subExprStart.offset >= subExprStart.lineStartOffset);
     JSTokenLocation location(tokenLocation());
     TreeExpression expr = parseMemberExpression(context);
-    failIfFalse(expr);
+    if (!expr) {
+        if (lastOperator)
+            failWithMessage("Cannot parse subexpression of ", operatorString(true, lastOperator), "operator");
+        failWithMessage("Cannot parse member expression");
+    }
     bool isEvalOrArguments = false;
     if (strictMode() && !m_syntaxAlreadyValidated) {
         if (context.isResolve(expr))
             isEvalOrArguments = *m_lastIdentifier == m_vm->propertyNames->eval || *m_lastIdentifier == m_vm->propertyNames->arguments;
     }
-    failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments && modifiesExpr, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
+    failIfTrueIfStrict(isEvalOrArguments && modifiesExpr, "Cannot modify '", m_lastIdentifier->impl(), "' in strict mode");
     switch (m_token.m_type) {
     case PLUSPLUS:
         m_nonTrivialExpressionCount++;
         m_nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpPlusPlus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_assignmentCount++;
-        failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
-        failIfTrueIfStrict(requiresLExpr);
+        failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", m_lastIdentifier->impl(), "' in strict mode");
+        semanticFailIfTrue(requiresLExpr, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
+        lastOperator = PLUSPLUS;
         next();
         break;
     case MINUSMINUS:
@@ -1904,8 +2080,9 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
         m_nonLHSCount++;
         expr = context.makePostfixNode(location, expr, OpMinusMinus, subExprStart, lastTokenEndPosition(), tokenEndPosition());
         m_assignmentCount++;
-        failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
-        failIfTrueIfStrict(requiresLExpr);
+        failIfTrueIfStrict(isEvalOrArguments, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
+        semanticFailIfTrue(requiresLExpr, "The ", operatorString(false, lastOperator), " operator requires a reference expression");
+        lastOperator = PLUSPLUS;
         next();
         break;
     default:
@@ -1950,7 +2127,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
             expr = context.createVoid(location, expr);
             break;
         case DELETETOKEN:
-            failIfTrueIfStrictWithNameAndMessage(context.isResolve(expr), "Cannot delete unqualified property", m_lastIdentifier->impl(), "in strict mode");
+            failIfTrueIfStrict(context.isResolve(expr), "Cannot delete unqualified property '", m_lastIdentifier->impl(), "' in strict mode");
             expr = context.makeDeleteNode(location, expr, context.unaryTokenStackLastStart(tokenStackDepth), end, end);
             break;
         default:
@@ -1963,8 +2140,77 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseUnaryExpress
     return expr;
 }
 
+
+template <typename LexerType> void Parser<LexerType>::printUnexpectedTokenText(WTF::PrintStream& out)
+{
+    switch (m_token.m_type) {
+    case EOFTOK:
+        out.print("Unexpected end of script");
+        return;
+    case UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK:
+    case UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+        out.print("Incomplete unicode escape in identifier: '", getToken(), "'");
+        return;
+    case UNTERMINATED_MULTILINE_COMMENT_ERRORTOK:
+        out.print("Unterminated multiline comment");
+        return;
+    case UNTERMINATED_NUMERIC_LITERAL_ERRORTOK:
+        out.print("Unterminated numeric literal '", getToken(), "'");
+        return;
+    case UNTERMINATED_STRING_LITERAL_ERRORTOK:
+        out.print("Unterminated string literal '", getToken(), "'");
+        return;
+    case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
+        out.print("Invalid escape in identifier: '", getToken(), "'");
+        return;
+    case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
+        out.print("Invalid unicode escape in identifier: '", getToken(), "'");
+        return;
+    case INVALID_NUMERIC_LITERAL_ERRORTOK:
+        out.print("Invalid numeric literal: '", getToken(), "'");
+        return;
+    case INVALID_OCTAL_NUMBER_ERRORTOK:
+        out.print("Invalid use of octal: '", getToken(), "'");
+        return;
+    case INVALID_STRING_LITERAL_ERRORTOK:
+        out.print("Invalid string literal: '", getToken(), "'");
+        return;
+    case ERRORTOK:
+        out.print("Unrecognized token '", getToken(), "'");
+        return;
+    case STRING:
+        out.print("Unexpected string literal ", getToken());
+        return;
+    case NUMBER:
+        out.print("Unexpected number '", getToken(), "'");
+        return;
+    
+    case RESERVED_IF_STRICT:
+        out.print("Unexpected use of reserved word '", getToken(), "' in strict mode");
+        return;
+        
+    case RESERVED:
+        out.print("Unexpected use of reserved word '", getToken(), "'");
+        return;
+            
+    case IDENT:
+        out.print("Unexpected identifier '", getToken(), "'");
+        return;
+
+    default:
+        break;
+    }
+
+    if (m_token.m_type & KeywordTokenFlag) {
+        out.print("Unexpected keyword '", getToken(), "'");
+        return;
+    }
+    
+    out.print("Unexpected token '", getToken(), "'");
+}
+
 // Instantiate the two flavors of Parser we need instead of putting most of this file in Parser.h
 template class Parser<Lexer<LChar>>;
 template class Parser<Lexer<UChar>>;
-
+    
 } // namespace JSC

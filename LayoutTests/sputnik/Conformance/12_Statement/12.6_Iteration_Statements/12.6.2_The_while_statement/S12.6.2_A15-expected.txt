@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Expected token ':'
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '}'. Expected ':' after property name.
 S12.6.2_A15
 
 PASS Expected parsing failure

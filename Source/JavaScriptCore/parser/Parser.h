@@ -79,6 +79,7 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
+enum FunctionParseMode { FunctionMode, GetterMode, SetterMode };
 enum DeconstructionKind {
     DeconstructToVariables,
     DeconstructToParameters,
@@ -209,6 +210,16 @@ struct Scope {
         return isValidStrictMode;
     }
 
+    bool hasDeclaredVariable(const Identifier& ident)
+    {
+        return m_declaredVariables.contains(ident.impl());
+    }
+    
+    bool hasDeclaredParameter(const Identifier& ident)
+    {
+        return m_declaredParameters.contains(ident.impl()) || m_declaredVariables.contains(ident.impl());
+    }
+    
     void declareWrite(const Identifier* ident)
     {
         ASSERT(m_strictMode);
@@ -489,6 +500,28 @@ private:
         return m_scopeStack[i].declareVariable(ident);
     }
     
+    NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (!m_scopeStack[i].allowsNewDecls()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+        return m_scopeStack[i].hasDeclaredVariable(ident);
+    }
+    
+    NEVER_INLINE bool hasDeclaredParameter(const Identifier& ident)
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (!m_scopeStack[i].allowsNewDecls()) {
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+        return m_scopeStack[i].hasDeclaredParameter(ident);
+    }
+    
     void declareWrite(const Identifier* ident)
     {
         if (!m_syntaxAlreadyValidated || strictMode())
@@ -544,7 +577,8 @@ private:
             next(flags);
         return result;
     }
-    
+
+    void printUnexpectedTokenText(WTF::PrintStream&);
     ALWAYS_INLINE String getToken() {
         SourceProvider* sourceProvider = m_source->provider();
         return sourceProvider->getRange(tokenStart(), tokenEndPosition().offset);
@@ -595,281 +629,9 @@ private:
         return m_token.m_location;
     }
 
-    const char* getTokenName(JSTokenType tok)
+    void setErrorMessage(String msg)
     {
-        switch (tok) {
-        case NULLTOKEN: 
-            return "null";
-        case TRUETOKEN:
-            return "true";
-        case FALSETOKEN: 
-            return "false";
-        case BREAK: 
-            return "break";
-        case CASE: 
-            return "case";
-        case DEFAULT: 
-            return "default";
-        case FOR: 
-            return "for";
-        case NEW: 
-            return "new";
-        case VAR: 
-            return "var";
-        case CONSTTOKEN: 
-            return "const";
-        case CONTINUE: 
-            return "continue";
-        case FUNCTION: 
-            return "function";
-        case IF: 
-            return "if";
-        case THISTOKEN: 
-            return "this";
-        case DO: 
-            return "do";
-        case WHILE: 
-            return "while";
-        case SWITCH: 
-            return "switch";
-        case WITH: 
-            return "with";
-        case THROW: 
-            return "throw";
-        case TRY: 
-            return "try";
-        case CATCH: 
-            return "catch";
-        case FINALLY: 
-            return "finally";
-        case DEBUGGER: 
-            return "debugger";
-        case ELSE: 
-            return "else";
-        case OPENBRACE: 
-            return "{";
-        case CLOSEBRACE: 
-            return "}";
-        case OPENPAREN: 
-            return "(";
-        case CLOSEPAREN: 
-            return ")";
-        case OPENBRACKET: 
-            return "[";
-        case CLOSEBRACKET: 
-            return "]";
-        case COMMA: 
-            return ",";
-        case QUESTION: 
-            return "?";
-        case SEMICOLON: 
-            return ";";
-        case COLON: 
-            return ":";
-        case DOT: 
-            return ".";
-        case EQUAL: 
-            return "=";
-        case PLUSEQUAL: 
-            return "+=";
-        case MINUSEQUAL: 
-            return "-=";
-        case MULTEQUAL: 
-            return "*=";
-        case DIVEQUAL: 
-            return "/=";
-        case LSHIFTEQUAL: 
-            return "<<=";
-        case RSHIFTEQUAL: 
-            return ">>=";
-        case URSHIFTEQUAL: 
-            return ">>>=";
-        case ANDEQUAL: 
-            return "&=";
-        case MODEQUAL: 
-            return "%=";
-        case XOREQUAL: 
-            return "^=";
-        case OREQUAL: 
-            return "|=";
-        case AUTOPLUSPLUS: 
-        case PLUSPLUS: 
-            return "++";
-        case AUTOMINUSMINUS: 
-        case MINUSMINUS: 
-            return "--";
-        case EXCLAMATION: 
-            return "!";
-        case TILDE: 
-            return "~";
-        case TYPEOF: 
-            return "typeof";
-        case VOIDTOKEN: 
-            return "void";
-        case DELETETOKEN: 
-            return "delete";
-        case OR: 
-            return "||";
-        case AND: 
-            return "&&";
-        case BITOR: 
-            return "|";
-        case BITXOR: 
-            return "^";
-        case BITAND: 
-            return "&";
-        case EQEQ: 
-            return "==";
-        case NE: 
-            return "!=";
-        case STREQ: 
-            return "===";
-        case STRNEQ: 
-            return "!==";
-        case LT: 
-            return "<";
-        case GT: 
-            return ">";
-        case LE: 
-            return "<=";
-        case GE: 
-            return ">=";
-        case INSTANCEOF: 
-            return "instanceof";
-        case INTOKEN: 
-            return "in";
-        case LSHIFT: 
-            return "<<";
-        case RSHIFT: 
-            return ">>";
-        case URSHIFT: 
-            return ">>>";
-        case PLUS: 
-            return "+";
-        case MINUS: 
-            return "-";
-        case TIMES: 
-            return "*";
-        case DIVIDE: 
-            return "/";
-        case MOD: 
-            return "%";
-        case DOTDOTDOT:
-            return "...";
-        case RETURN:
-        case RESERVED_IF_STRICT:
-        case RESERVED: 
-        case NUMBER:
-        case IDENT: 
-        case STRING:
-        case UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK:
-        case UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
-        case UNTERMINATED_MULTILINE_COMMENT_ERRORTOK:
-        case UNTERMINATED_NUMERIC_LITERAL_ERRORTOK:
-        case UNTERMINATED_STRING_LITERAL_ERRORTOK:
-        case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
-        case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
-        case INVALID_NUMERIC_LITERAL_ERRORTOK:
-        case INVALID_OCTAL_NUMBER_ERRORTOK:
-        case INVALID_STRING_LITERAL_ERRORTOK:
-        case ERRORTOK:
-        case EOFTOK:
-            return 0;
-        case LastUntaggedToken: 
-            break;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return "internal error";
-    }
-    
-    ALWAYS_INLINE void updateErrorMessageSpecialCase(JSTokenType expectedToken) 
-    {
-        switch (expectedToken) {
-        case RESERVED_IF_STRICT:
-            m_errorMessage = "Use of reserved word '" + getToken() + "' in strict mode";
-            return;
-        case RESERVED:
-            m_errorMessage = "Use of reserved word '" + getToken() + '\'';
-            return;
-        case NUMBER: 
-            m_errorMessage = "Unexpected number '" + getToken() + '\'';
-            return;
-        case IDENT: 
-            m_errorMessage = "Expected an identifier but found '" + getToken() + "' instead";
-            return;
-        case STRING: 
-            m_errorMessage = "Unexpected string " + getToken();
-            return;
-            
-        case UNTERMINATED_IDENTIFIER_ESCAPE_ERRORTOK:
-        case UNTERMINATED_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
-            m_errorMessage = "Incomplete unicode escape in identifier: '" + getToken() + '\'';
-            return;
-        case UNTERMINATED_MULTILINE_COMMENT_ERRORTOK:
-            m_errorMessage = "Unterminated multiline comment";
-            return;
-        case UNTERMINATED_NUMERIC_LITERAL_ERRORTOK:
-            m_errorMessage = "Unterminated numeric literal '" + getToken() + '\'';
-            return;
-        case UNTERMINATED_STRING_LITERAL_ERRORTOK:
-            m_errorMessage = "Unterminated string literal '" + getToken() + '\'';
-            return;
-        case INVALID_IDENTIFIER_ESCAPE_ERRORTOK:
-            m_errorMessage = "Invalid escape in identifier: '" + getToken() + '\'';
-            return;
-        case INVALID_IDENTIFIER_UNICODE_ESCAPE_ERRORTOK:
-            m_errorMessage = "Invalid unicode escape in identifier: '" + getToken() + '\'';
-            return;
-        case INVALID_NUMERIC_LITERAL_ERRORTOK:
-            m_errorMessage = "Invalid numeric literal: '" + getToken() + '\'';
-            return;
-        case INVALID_OCTAL_NUMBER_ERRORTOK:
-            m_errorMessage = "Invalid use of octal: '" + getToken() + '\'';
-                return;
-        case INVALID_STRING_LITERAL_ERRORTOK:
-            m_errorMessage = "Invalid string literal: '" + getToken() + '\'';
-            return;
-        case ERRORTOK:
-            m_errorMessage = "Unrecognized token '" + getToken() + '\'';
-            return;
-        case EOFTOK:  
-            m_errorMessage = ASCIILiteral("Unexpected EOF");
-            return;
-        case RETURN:
-            m_errorMessage = ASCIILiteral("Return statements are only valid inside functions");
-            return;
-        case DOTDOTDOT:
-            m_errorMessage = ASCIILiteral("Spread operator is not supported in this context");
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            m_errorMessage = ASCIILiteral("internal error");
-            return;
-        }
-    }
-    
-    NEVER_INLINE void updateErrorMessage() 
-    {
-        const char* name = getTokenName(m_token.m_type);
-        if (!name) 
-            updateErrorMessageSpecialCase(m_token.m_type);
-        else 
-            m_errorMessage = String::format("Unexpected token '%s'", name);
-        ASSERT(!m_errorMessage.isNull());
-    }
-    
-    NEVER_INLINE void updateErrorMessage(JSTokenType expectedToken) 
-    {
-        const char* name = getTokenName(expectedToken);
-        if (name)
-            m_errorMessage = String::format("Expected token '%s'", name);
-        else {
-            if (!getTokenName(m_token.m_type))
-                updateErrorMessageSpecialCase(m_token.m_type);
-            else
-                updateErrorMessageSpecialCase(expectedToken);
-        }
-        ASSERT(!m_errorMessage.isNull());
+        m_errorMessage = msg;
     }
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, String name, const char* afterMsg)
@@ -969,7 +731,7 @@ private:
 
     template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, const Identifier&, int depth);
     template <DeconstructionKind, class TreeBuilder> TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
-    template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
+    template <FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
     
@@ -1014,6 +776,7 @@ private:
     int m_statementDepth;
     int m_nonTrivialExpressionCount;
     const Identifier* m_lastIdentifier;
+    const Identifier* m_lastFunctionName;
     RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token 'catch'
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'catch'
 S7.5.2_A1.3
 
 PASS Expected parsing failure

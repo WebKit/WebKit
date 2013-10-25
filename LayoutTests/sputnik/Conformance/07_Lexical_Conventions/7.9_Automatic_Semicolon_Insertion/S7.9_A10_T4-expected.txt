@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Expected token ')'
+CONSOLE MESSAGE: line 77: SyntaxError: Unexpected token ';'. Expected ')' to end a compound expression.
 S7.9_A10_T4
 
 PASS Expected parsing failure

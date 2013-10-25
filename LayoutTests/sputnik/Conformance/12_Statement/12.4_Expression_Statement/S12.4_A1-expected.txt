@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '('
+CONSOLE MESSAGE: line 78: SyntaxError: Function statements must have a name.
 S12.4_A1
 
 PASS Expected parsing failure

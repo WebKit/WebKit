@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Label 'IN_DO_FUNC' is not defined
+CONSOLE MESSAGE: line 82: SyntaxError: Cannot use the undeclared label 'IN_DO_FUNC'.
 S12.8_A5_T2
 
 PASS Expected parsing failure

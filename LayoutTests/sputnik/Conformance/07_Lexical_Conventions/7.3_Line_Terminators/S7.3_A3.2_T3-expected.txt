@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Expected an identifier but found 'comment' instead
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected identifier 'comment'
 S7.3_A3.2_T3
 
 PASS Expected parsing failure

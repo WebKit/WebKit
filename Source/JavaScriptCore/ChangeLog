@@ -1,3 +1,77 @@
+2013-10-25  Oliver Hunt  <oliver@apple.com>
+
+        Improve JSC Parser error messages
+        https://bugs.webkit.org/show_bug.cgi?id=123341
+
+        Reviewed by Andreas Kling.
+
+        This patch moves away from the current cludgy mechanisms used to produce
+        error messages and moves to something closer to case by case errors.
+
+        This results in a large change size as previously we may just have
+        'failIfFalse(foo)', but now the logic becomes either
+        'failIfFalseWithMessage(foo, "Cannot do blah with ", foo->thing())'
+        Or alternatively
+
+        if (!foo)
+            check for 'interesting' errors, before falling back to generic error
+
+        This means that this patch is large, but produces no semantic changes, and
+        only hits slow (e.g. error) paths.
+
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseConstDeclaration):
+        (JSC::::parseDoWhileStatement):
+        (JSC::::parseWhileStatement):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::createBindingPattern):
+        (JSC::::parseDeconstructionPattern):
+        (JSC::::parseConstDeclarationList):
+        (JSC::::parseForStatement):
+        (JSC::::parseBreakStatement):
+        (JSC::::parseContinueStatement):
+        (JSC::::parseReturnStatement):
+        (JSC::::parseThrowStatement):
+        (JSC::::parseWithStatement):
+        (JSC::::parseSwitchStatement):
+        (JSC::::parseSwitchClauses):
+        (JSC::::parseSwitchDefaultClause):
+        (JSC::::parseTryStatement):
+        (JSC::::parseDebuggerStatement):
+        (JSC::::parseBlockStatement):
+        (JSC::::parseStatement):
+        (JSC::::parseFormalParameters):
+        (JSC::::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::::parseExpressionOrLabelStatement):
+        (JSC::::parseExpressionStatement):
+        (JSC::::parseIfStatement):
+        (JSC::::parseExpression):
+        (JSC::::parseAssignmentExpression):
+        (JSC::::parseConditionalExpression):
+        (JSC::::parseBinaryExpression):
+        (JSC::::parseProperty):
+        (JSC::::parseObjectLiteral):
+        (JSC::::parseStrictObjectLiteral):
+        (JSC::::parseArrayLiteral):
+        (JSC::::parsePrimaryExpression):
+        (JSC::::parseArguments):
+        (JSC::::parseMemberExpression):
+        (JSC::operatorString):
+        (JSC::::parseUnaryExpression):
+        (JSC::::printUnexpectedTokenText):
+        * parser/Parser.h:
+        (JSC::Scope::hasDeclaredVariable):
+        (JSC::Scope::hasDeclaredParameter):
+        (JSC::Parser::hasDeclaredVariable):
+        (JSC::Parser::hasDeclaredParameter):
+        (JSC::Parser::setErrorMessage):
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         Remove references to OS X 10.7 from Xcode configuration settings.

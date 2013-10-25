@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Debugger keyword must be followed by a ';'.
 S7.5.3_A1.7
 
 PASS Expected parsing failure
