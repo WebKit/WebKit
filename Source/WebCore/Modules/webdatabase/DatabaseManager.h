@@ -33,6 +33,7 @@
 #include "DatabaseError.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -132,22 +133,26 @@ private:
         DatabaseType, const String& name, const String& expectedVersion, const String& displayName,
         unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
+    void addProposedDatabase(ProposedDatabase*);
+    void removeProposedDatabase(ProposedDatabase*);
+
     static void logErrorMessage(ScriptExecutionContext*, const String& message);
 
     AbstractDatabaseServer* m_server;
     DatabaseManagerClient* m_client;
     bool m_databaseIsAvailable;
 
-    // Access to the following fields require locking m_contextMapLock:
+    // Access to the following fields require locking m_lock below:
     typedef HashMap<ScriptExecutionContext*, DatabaseContext*> ContextMap;
     ContextMap m_contextMap;
 #if !ASSERT_DISABLED
     int m_databaseContextRegisteredCount;
     int m_databaseContextInstanceCount;
 #endif
-    Mutex m_contextMapLock;
+    HashSet<ProposedDatabase*> m_proposedDatabases;
 
-    ProposedDatabase* m_proposedDatabase;
+    // This lock protects m_contextMap, and m_proposedDatabases.
+    Mutex m_lock;
 };
 
 } // namespace WebCore

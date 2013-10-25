@@ -55,13 +55,12 @@ DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager,
     , m_origin(origin->isolatedCopy())
     , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0)
 {
-    ASSERT(!m_manager.m_proposedDatabase);
-    m_manager.m_proposedDatabase = this;
+    m_manager.addProposedDatabase(this);
 }
 
 DatabaseManager::ProposedDatabase::~ProposedDatabase()
 {
-    m_manager.m_proposedDatabase = 0;
+    m_manager.removeProposedDatabase(this);
 }
 
 DatabaseManager& DatabaseManager::manager()
@@ -83,7 +82,6 @@ DatabaseManager::DatabaseManager()
     , m_databaseContextRegisteredCount(0)
     , m_databaseContextInstanceCount(0)
 #endif
-    , m_proposedDatabase(0)
 {
     ASSERT(m_server); // We should always have a server to work with.
 }
@@ -144,7 +142,7 @@ private:
 
 PassRefPtr<DatabaseContext> DatabaseManager::existingDatabaseContextFor(ScriptExecutionContext* context)
 {
-    MutexLocker locker(m_contextMapLock);
+    MutexLocker locker(m_lock);
 
     ASSERT(m_databaseContextRegisteredCount >= 0);
     ASSERT(m_databaseContextInstanceCount >= 0);
@@ -175,7 +173,7 @@ PassRefPtr<DatabaseContext> DatabaseManager::databaseContextFor(ScriptExecutionC
 
 void DatabaseManager::registerDatabaseContext(DatabaseContext* databaseContext)
 {
-    MutexLocker locker(m_contextMapLock);
+    MutexLocker locker(m_lock);
     ScriptExecutionContext* context = databaseContext->scriptExecutionContext();
     m_contextMap.set(context, databaseContext);
 #if !ASSERT_DISABLED
@@ -185,7 +183,7 @@ void DatabaseManager::registerDatabaseContext(DatabaseContext* databaseContext)
 
 void DatabaseManager::unregisterDatabaseContext(DatabaseContext* databaseContext)
 {
-    MutexLocker locker(m_contextMapLock);
+    MutexLocker locker(m_lock);
     ScriptExecutionContext* context = databaseContext->scriptExecutionContext();
     ASSERT(m_contextMap.get(context));
 #if !ASSERT_DISABLED
@@ -197,13 +195,13 @@ void DatabaseManager::unregisterDatabaseContext(DatabaseContext* databaseContext
 #if !ASSERT_DISABLED
 void DatabaseManager::didConstructDatabaseContext()
 {
-    MutexLocker lock(m_contextMapLock);
+    MutexLocker lock(m_lock);
     m_databaseContextInstanceCount++;
 }
 
 void DatabaseManager::didDestructDatabaseContext()
 {
-    MutexLocker lock(m_contextMapLock);
+    MutexLocker lock(m_lock);
     m_databaseContextInstanceCount--;
     ASSERT(m_databaseContextRegisteredCount <= m_databaseContextInstanceCount);
 }
@@ -296,6 +294,18 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
     return backend.release();
 }
 
+void DatabaseManager::addProposedDatabase(ProposedDatabase* proposedDb)
+{
+    MutexLocker locker(m_lock);
+    m_proposedDatabases.add(proposedDb);
+}
+
+void DatabaseManager::removeProposedDatabase(ProposedDatabase* proposedDb)
+{
+    MutexLocker locker(m_lock);
+    m_proposedDatabases.remove(proposedDb);
+}
+
 PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* context,
     const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback,
@@ -369,9 +379,12 @@ void DatabaseManager::stopDatabases(ScriptExecutionContext* context, DatabaseTas
 
 String DatabaseManager::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
 {
-    ProposedDatabase* db = m_proposedDatabase;
-    if (db && db->details().name() == name && db->origin()->equal(origin))
-        return String();
+    {
+        MutexLocker locker(m_lock);
+        for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
+            if ((*iter)->details().name() == name && (*iter)->origin()->equal(origin))
+                return String();
+    }
     return m_server->fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
@@ -392,10 +405,13 @@ bool DatabaseManager::databaseNamesForOrigin(SecurityOrigin* origin, Vector<Stri
 
 DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, SecurityOrigin* origin)
 {
-    ProposedDatabase* db = m_proposedDatabase;
-    if (db && db->details().name() == name && db->origin()->equal(origin)) {
-        ASSERT(db->details().thread() == currentThread() || isMainThread());
-        return db->details();
+    {
+        MutexLocker locker(m_lock);
+        for (HashSet<ProposedDatabase*>::iterator iter = m_proposedDatabases.begin(); iter != m_proposedDatabases.end(); ++iter)
+            if ((*iter)->details().name() == name && (*iter)->origin()->equal(origin)) {
+                ASSERT((*iter)->details().thread() == currentThread() || isMainThread());
+                return (*iter)->details();
+            }
     }
     return m_server->detailsForNameAndOrigin(name, origin);
 }

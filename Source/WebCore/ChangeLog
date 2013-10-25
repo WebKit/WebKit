@@ -1,3 +1,26 @@
+2013-10-25  Mark Lam  <mark.lam@apple.com>
+
+        DatabaseManager's ProposedDatabases need to be thread-safe.
+        https://bugs.webkit.org/show_bug.cgi?id=123313.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::DatabaseManager):
+        (WebCore::DatabaseManager::existingDatabaseContextFor):
+        (WebCore::DatabaseManager::registerDatabaseContext):
+        (WebCore::DatabaseManager::unregisterDatabaseContext):
+        (WebCore::DatabaseManager::didConstructDatabaseContext):
+        (WebCore::DatabaseManager::didDestructDatabaseContext):
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        (WebCore::DatabaseManager::addProposedDatabase):
+        (WebCore::DatabaseManager::removeProposedDatabase):
+        (WebCore::DatabaseManager::fullPathForDatabase):
+        (WebCore::DatabaseManager::detailsForNameAndOrigin):
+        * Modules/webdatabase/DatabaseManager.h:
+
 2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
