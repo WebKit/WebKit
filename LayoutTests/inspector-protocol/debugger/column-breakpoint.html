@@ -1,0 +1,58 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+window.onload = runTest;
+function test()
+{
+    // This test setting a breakpoint on line:column in the <script> below.
+    // We set a breakpoint before evaluating `var b = ...`, and verify that
+    // by running some expressions at that call frame.
+
+    // Debugger.enable -> Debugger.setBreakpointsActive
+    InspectorTest.sendCommand("Debugger.enable", {}, function() {
+        InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
+            InspectorTest.log("Breakpoints Enabled");
+        });
+    });
+
+    // Debugger.scriptParsed -> Debugger.setBreakpoint -> Runtime.evaluate
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/column-breakpoint\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
+            InspectorTest.log("Found <script>");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var lineNumber = messageObject.params.startLine + 2;
+            var columnNumber = 10;
+            var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                InspectorTest.log("Running testFunction");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
+            });
+        }
+    }
+
+    // Debugger.paused -> Debugger.evaluateOnCallFrame -> Debugger.evaluateOnCallFrame -> END
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+            InspectorTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
+            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
+                InspectorTest.log("Evaluted value of `b` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
+                InspectorTest.completeTest();
+            });
+        });
+    }
+}
+</script>
+</head>
+<body>
+<script>// Line 0
+function testFunction() {// Line 1
+var a = 1;var b = a + 1;// Line 2
+}// Line 3
+</script>
+</body>
+</html>
