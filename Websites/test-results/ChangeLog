@@ -1,5 +1,11 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        One more build fix. Put each latest revision information in an actual td.
+
+        * public/index.html:
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Yet another set of build fixes.
 
         1. Manually strip / from revisions JSON if there is any.

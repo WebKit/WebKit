@@ -280,9 +280,9 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
         for (var i = 0; i < repositories.length; i++) {
             var revisionInfo = build.formattedRevision(repositories[i].id);
             if (revisionInfo.url)
-                formattedRevisionCells.push(element('a', {'href': revisionInfo.url}, [revisionInfo.label]));
+                formattedRevisionCells.push(element('td', [element('a', {'href': revisionInfo.url}, [revisionInfo.label])]));
             else
-                formattedRevisionCells.push(revisionInfo.label);
+                formattedRevisionCells.push(element('td', [revisionInfo.label]));
         }
     }
 
