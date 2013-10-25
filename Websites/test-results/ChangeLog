@@ -1,3 +1,11 @@
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        It turns out that the current instruction only works on Mountain Lion.
+
+        Also fixed some typos.
+
+        * Install.md:
+
 2013-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an instruction on how to setup test-results app

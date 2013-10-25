@@ -1,10 +1,10 @@
 # Checking Out the Code and Installing Required Applications
 
-Note: These instructions assume you're using Mac OS X Mavericks as the host server, and assume that we're installing
+Note: These instructions assume you're using Mac OS X Mountain Lion as the host server, and assume that we're installing
 this application at `/Volumes/Data/test-results`.
 
 1. Install Server (DO NOT launch the Server app)
-2. Install Xcode with command line tools (only needed for svn); On Mavericks, simply run svn to trigger the installation.
+2. Install Xcode with command line tools (only needed for svn)
 3. `svn co https://svn.webkit.org/repository/webkit/trunk/Websites/test-results /Volumes/Data/test-results`
 
 # Configuring Apache
@@ -71,9 +71,9 @@ where <realm> is replaced with the realm of your choice.
 2. Create a user: `/Applications/Server.app/Contents/ServerRoot/usr/bin/createuser -P -S -e test-results-user -h localhost`
 3. Connect to database: `/Applications/Server.app/Contents/ServerRoot/usr/bin/psql test-results-db -h localhost`
 4. Grant all permissions to the new user: `grant all privileges on database "test-results-db" to "test-results-user";`
-5. Update database/config.json.
+5. Update config.json.
 
 ## Initializing the Database
 
-Run `database/init-database.sql` in psql as `test-results-user`:
+Run `init-database.sql` in psql as `test-results-user`:
 `/Applications/Server.app/Contents/ServerRoot/usr/bin/psql test-results-db -h localhost --username test-results-user -f init-database.sql`
