@@ -1,3 +1,34 @@
+2013-10-24  Antti Koivisto  <antti@apple.com>
+
+        Cache line layout path
+        https://bugs.webkit.org/show_bug.cgi?id=123298
+
+        Reviewed by Sam Weinig.
+        
+        Determining the path can be non-trivial. Avoid computing it repeatedly on relayouts.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::invalidateLineLayoutPath):
+        (WebCore::RenderBlock::removeChild):
+        
+            Invalidate the path when children change.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        
+            Invalidate the path when style changes.
+
+        (WebCore::RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+        
+            Invalidate the path when text changes.
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/15312643> Prepare for the mysterious future.

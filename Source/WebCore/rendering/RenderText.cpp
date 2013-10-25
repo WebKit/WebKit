@@ -1010,6 +1010,9 @@ void RenderText::setText(const String& text, bool force)
     setTextInternal(text);
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownToHaveNoOverflowAndNoFallbackFonts = false;
+
+    if (parent()->isRenderBlockFlow())
+        toRenderBlockFlow(parent())->invalidateLineLayoutPath();
     
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->textChanged(this);

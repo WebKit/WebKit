@@ -522,8 +522,10 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
 void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    bool canUseSimpleLineLayout = !m_forceLineBoxLayout && SimpleLineLayout::canUseFor(*this);
-    if (canUseSimpleLineLayout) {
+    if (m_lineLayoutPath == UndeterminedPath)
+        m_lineLayoutPath = SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath;
+
+    if (m_lineLayoutPath == SimpleLinesPath) {
         deleteLineBoxesBeforeSimpleLineLayout();
         layoutSimpleLines(repaintLogicalTop, repaintLogicalBottom);
         return;
@@ -1627,6 +1629,9 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (renderNamedFlowFragment())
         renderNamedFlowFragment()->setStyleForNamedFlowFragment(style());
+
+    if (diff >= StyleDifferenceRepaint)
+        invalidateLineLayoutPath();
 }
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
@@ -3020,14 +3025,14 @@ void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUni
 
 void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
-    ASSERT(!m_forceLineBoxLayout);
+    ASSERT(m_lineLayoutPath == SimpleLinesPath);
     lineBoxes().deleteLineBoxes(renderArena());
     toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
 }
 
 void RenderBlockFlow::ensureLineBoxes()
 {
-    m_forceLineBoxLayout = true;
+    m_lineLayoutPath = ForceLineBoxesPath;
 
     if (!m_simpleLines)
         return;

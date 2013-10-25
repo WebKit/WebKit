@@ -152,7 +152,7 @@ RenderBlock::RenderBlock(Element& element, unsigned baseTypeFlags)
     , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
-    , m_forceLineBoxLayout(false)
+    , m_lineLayoutPath(UndeterminedPath)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -168,7 +168,7 @@ RenderBlock::RenderBlock(Document& document, unsigned baseTypeFlags)
     , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
-    , m_forceLineBoxLayout(false)
+    , m_lineLayoutPath(UndeterminedPath)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -822,6 +822,8 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         }
     }
 
+    invalidateLineLayoutPath();
+
     RenderBox::addChild(newChild, beforeChild);
  
     // Handle placement of run-ins.
@@ -892,6 +894,13 @@ void RenderBlock::deleteLines()
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->recomputeIsIgnored(this);
+}
+
+void RenderBlock::invalidateLineLayoutPath()
+{
+    if (m_lineLayoutPath == ForceLineBoxesPath)
+        return;
+    m_lineLayoutPath = UndeterminedPath;
 }
 
 void RenderBlock::makeChildrenNonInline(RenderObject* insertionPoint)
@@ -1114,6 +1123,8 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             next = 0;
         }
     }
+
+    invalidateLineLayoutPath();
 
     RenderBox::removeChild(oldChild);
 
