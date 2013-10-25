@@ -101,16 +101,16 @@ SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObje
     return resourcesCacheFromRenderObject(renderer)->m_cache.get(renderer);
 }
 
-void SVGResourcesCache::clientLayoutChanged(RenderObject* object)
+void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
     if (!resources)
         return;
 
-    // Invalidate the resources if either the RenderObject itself changed,
+    // Invalidate the resources if either the RenderElement itself changed,
     // or we have filter resources, which could depend on the layout of children.
-    if (object->selfNeedsLayout())
-        resources->removeClientFromCache(object);
+    if (renderer.selfNeedsLayout())
+        resources->removeClientFromCache(&renderer);
 }
 
 static inline bool rendererCanHaveResources(RenderObject* renderer)

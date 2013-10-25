@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class RenderElement;
 class RenderObject;
 class RenderStyle;
 class RenderSVGResourceContainer;
@@ -50,7 +51,7 @@ public:
     static void clientDestroyed(RenderObject*);
 
     // Called from all SVG renderers layout() methods.
-    static void clientLayoutChanged(RenderObject*);
+    static void clientLayoutChanged(RenderElement&);
 
     // Called from all SVG renderers styleDidChange() methods.
     static void clientStyleChanged(RenderElement&, StyleDifference, const RenderStyle& newStyle);

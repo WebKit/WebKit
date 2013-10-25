@@ -73,7 +73,7 @@ void RenderSVGContainer::layout()
 
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && needsLayout())
-        SVGResourcesCache::clientLayoutChanged(this);
+        SVGResourcesCache::clientLayoutChanged(*this);
 
     // At this point LayoutRepainter already grabbed the old bounds,
     // recalculate them now so repaintAfterLayout() uses the new bounds.

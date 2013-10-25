@@ -168,7 +168,7 @@ void RenderSVGForeignObject::layout()
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)
-        SVGResourcesCache::clientLayoutChanged(this);
+        SVGResourcesCache::clientLayoutChanged(*this);
 
     repainter.repaintAfterLayout();
 }
