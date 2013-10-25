@@ -63,7 +63,7 @@ private:
     virtual const char* renderName() const OVERRIDE { return "RenderButton"; }
     virtual bool isRenderButton() const OVERRIDE { return true; }
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     virtual bool hasLineIfEmpty() const OVERRIDE;

@@ -38,7 +38,7 @@ public:
 
     virtual const char* renderName() const;
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) OVERRIDE;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0);
     void layoutHorizontalBox(bool relayoutChildren);

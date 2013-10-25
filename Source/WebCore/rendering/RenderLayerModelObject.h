@@ -39,7 +39,7 @@ public:
     bool hasSelfPaintingLayer() const;
     RenderLayer* layer() const { return m_layer.get(); }
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle) OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
     virtual void updateFromStyle() { }
 

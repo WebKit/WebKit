@@ -1634,13 +1634,13 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         invalidateLineLayoutPath();
 }
 
-void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     RenderStyle* oldStyle = style();
     s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
 
-    if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle->position()) {
-        if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition())
+    if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle.position()) {
+        if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition())
             markAllDescendantsWithFloatsForLayout();
     }
 

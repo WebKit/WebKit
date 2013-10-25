@@ -131,8 +131,8 @@ protected:
     void setLastChild(RenderObject* child) { m_lastChild = child; }
     void destroyLeftoverChildren();
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle*);
-    virtual void styleDidChange(StyleDifference, const RenderStyle*);
+    virtual void styleWillChange(StyleDifference, const RenderStyle& newStyle);
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;

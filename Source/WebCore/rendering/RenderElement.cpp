@@ -368,7 +368,7 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
-    styleWillChange(diff, &style.get());
+    styleWillChange(diff, style.get());
     
     RefPtr<RenderStyle> oldStyle = m_style.release();
     m_style = std::move(style);
@@ -793,54 +793,52 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
     return renderer && renderer->hasBackground();
 }
 
-void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     if (m_style) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
-        if (newStyle) {
-            bool visibilityChanged = m_style->visibility() != newStyle->visibility() 
-                || m_style->zIndex() != newStyle->zIndex() 
-                || m_style->hasAutoZIndex() != newStyle->hasAutoZIndex();
+        bool visibilityChanged = m_style->visibility() != newStyle.visibility()
+            || m_style->zIndex() != newStyle.zIndex()
+            || m_style->hasAutoZIndex() != newStyle.hasAutoZIndex();
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-            if (visibilityChanged)
-                document().setAnnotatedRegionsDirty(true);
+        if (visibilityChanged)
+            document().setAnnotatedRegionsDirty(true);
 #endif
-            if (visibilityChanged) {
-                if (AXObjectCache* cache = document().existingAXObjectCache())
-                    cache->childrenChanged(parent());
-            }
+        if (visibilityChanged) {
+            if (AXObjectCache* cache = document().existingAXObjectCache())
+                cache->childrenChanged(parent());
+        }
 
-            // Keep layer hierarchy visibility bits up to date if visibility changes.
-            if (m_style->visibility() != newStyle->visibility()) {
-                if (RenderLayer* layer = enclosingLayer()) {
-                    if (newStyle->visibility() == VISIBLE)
-                        layer->setHasVisibleContent();
-                    else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style()->visibility() != VISIBLE)) {
-                        layer->dirtyVisibleContentStatus();
-                        if (diff > StyleDifferenceRepaintLayer)
-                            repaint();
-                    }
+        // Keep layer hierarchy visibility bits up to date if visibility changes.
+        if (m_style->visibility() != newStyle.visibility()) {
+            if (RenderLayer* layer = enclosingLayer()) {
+                if (newStyle.visibility() == VISIBLE)
+                    layer->setHasVisibleContent();
+                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style()->visibility() != VISIBLE)) {
+                    layer->dirtyVisibleContentStatus();
+                    if (diff > StyleDifferenceRepaintLayer)
+                        repaint();
                 }
             }
         }
 
-        if (m_parent && (newStyle->outlineSize() < m_style->outlineSize() || shouldRepaintForStyleDifference(diff)))
+        if (m_parent && (newStyle.outlineSize() < m_style->outlineSize() || shouldRepaintForStyleDifference(diff)))
             repaint();
-        if (isFloating() && (m_style->floating() != newStyle->floating()))
+        if (isFloating() && (m_style->floating() != newStyle.floating()))
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
-        else if (isOutOfFlowPositioned() && (m_style->position() != newStyle->position()))
+        else if (isOutOfFlowPositioned() && (m_style->position() != newStyle.position()))
             // For changes in positioning styles, we need to conceivably remove ourselves
             // from the positioned objects list.
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
 
         s_affectsParentBlock = isFloatingOrOutOfFlowPositioned()
-            && (!newStyle->isFloating() && !newStyle->hasOutOfFlowPosition())
+            && (!newStyle.isFloating() && !newStyle.hasOutOfFlowPosition())
             && parent() && (parent()->isRenderBlockFlow() || parent()->isRenderInline());
 
-        s_noLongerAffectsParentBlock = ((!isFloating() && newStyle->isFloating()) || (!isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition()))
+        s_noLongerAffectsParentBlock = ((!isFloating() && newStyle.isFloating()) || (!isOutOfFlowPositioned() && newStyle.hasOutOfFlowPosition()))
             && parent() && parent()->isRenderBlock();
 
         // reset style flags
@@ -860,14 +858,14 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle* new
 
     bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
 
-    bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
+    bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyle.hasFixedBackgroundImage();
     bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
 
 #if USE(ACCELERATED_COMPOSITING)
     bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
     if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
         if (view().compositor().supportsFixedRootBackgroundCompositing()) {
-            if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
+            if (newStyleSlowScroll && newStyle.hasEntirelyFixedBackground())
                 newStyleSlowScroll = false;
 
             if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())

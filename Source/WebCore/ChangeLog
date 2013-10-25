@@ -1,3 +1,14 @@
+2013-10-25  Andreas Kling  <akling@apple.com>
+
+        RenderElement::styleWillChange() should pass newStyle as reference.
+        <https://webkit.org/b/123332>
+
+        When styleWillChange() is called, there is always a new style getting
+        set so there's no need to handle the null style case.
+        This flushed out a couple of unnecessary checks.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-25  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile fixes.
