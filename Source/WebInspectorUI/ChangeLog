@@ -1,3 +1,11 @@
+2013-10-25  Jessie Berlin  <jberlin@apple.com>
+
+        Ran update-localizable-strings after changes made in r157947.
+
+        Rubber-stamped by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         Remove references to OS X 10.7 from Xcode configuration settings.
