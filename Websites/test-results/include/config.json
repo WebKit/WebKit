@@ -1,6 +1,7 @@
 {
     "debug": true,
     "jsonCacheMaxAge": 600,
+    "dataDirectory": "../data",
     "database": {
         "host": "localhost",
         "port": "5432",

@@ -13,9 +13,13 @@ function exit_with_error($status, $details = array()) {
     exit(1);
 }
 
-function exit_with_success($details = array()) {
+function echo_success($details = array()) {
     $details['status'] = 'OK';
     echo json_encode($details);
+}
+
+function exit_with_success($details = array()) {
+    echo_success($details);
     exit(0);
 }
 

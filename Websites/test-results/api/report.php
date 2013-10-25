@@ -13,6 +13,9 @@ require_existence_of($_POST, array(
     'revisions' => '/^.+?$/',
     'start_time' => '/^[0-9]+(\.[0-9]+)?$/',
     'end_time' => '/^[0-9]+(\.[0-9]+)?$/'));
+$master = $_POST['master'];
+$builder_name = $_POST['builder_name'];
+$build_number = intval($_POST['build_number']);
 
 if (!array_key_exists('file', $_FILES) or !array_key_exists('tmp_name', $_FILES['file']) or count($_FILES['file']['tmp_name']) <= 0)
     exit_with_error('ResultsJSONNotIncluded');
@@ -33,9 +36,13 @@ if (!$test_results)
 $start_time = float_to_time($_POST['start_time']);
 $end_time = float_to_time($_POST['end_time']);
 
-$build_id = add_build($db, $_POST['master'], $_POST['builder_name'], intval($_POST['build_number']));
+$builder_id = add_builder($db, $master, $builder_name);
+if (!$builder_id)
+    exit_with_error('FailedToInsertBuilder', array('master' => $master, 'builderName' => $builder_name));
+
+$build_id = add_build($db, $builder_id, $build_number);
 if (!$build_id)
-    exit_with_error('FailedToInsertBuild', array('master' => $_POST['master'], 'builderName' => $_POST['builder_name'], 'buildNumber' => $_POST['build_number']));
+    exit_with_error('FailedToInsertBuild', array('builderId' => $builder_id, 'buildNumber' => $build_number));
 
 foreach ($revisions as $repository_name => $revision_data) {
     $repository_id = $db->select_or_insert_row('repositories', NULL, array('name' => $repository_name));
@@ -55,6 +62,14 @@ $slave_id = add_slave($db, $_POST['build_slave']);
 if (!store_test_results($db, $test_results, $build_id, $start_time, $end_time, $slave_id))
     exit_with_error('FailedToStoreResults', array('buildId' => $build_id));
 
-exit_with_success();
+echo_success();
+
+ob_end_flush();
+flush();
+if (function_exists('fastcgi_finish_request'))
+    fastcgi_finish_request();
+
+$generator = new ResultsJSONGenerator($db, $builder_id);
+$generator->generate();
 
 ?>

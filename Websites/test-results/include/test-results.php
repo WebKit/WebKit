@@ -8,14 +8,14 @@ function float_to_time($time_in_float) {
     return $time;
 }
 
-function add_build($db, $master, $builder_name, $build_number) {
+function add_builder($db, $master, $builder_name) {
     if (!in_array($master, config('masters')))
         return NULL;
 
-    $builder_id = $db->select_or_insert_row('builders', NULL, array('master' => $master, 'name' => $builder_name));
-    if (!$builder_id)
-        return NULL;
+    return $db->select_or_insert_row('builders', NULL, array('master' => $master, 'name' => $builder_name));
+}
 
+function add_build($db, $builder_id, $build_number) {
     return $db->select_or_insert_row('builds', NULL, array('builder' => $builder_id, 'number' => $build_number));
 }
 
@@ -105,13 +105,165 @@ function format_result($result) {
         'modifiers' => $result['modifiers']);
 }
 
-function format_result_rows($result_rows) {
-    $builders = array();
-    foreach ($result_rows as $result) {
-        array_push(array_ensure_item_has_array(array_ensure_item_has_array($builders, $result['builder']), $result['test']),
-            format_result($result));
+abstract class ResultsJSONWriter {
+    private $fp;
+    private $emitted_results;
+
+    public function __construct($fp) {
+        $this->fp = $fp;
+        $this->emitted_results = FALSE;
     }
-    return array('builders' => $builders);
+
+    public function start($builder_id) {
+        fwrite($this->fp, "{\"status\": \"OK\", \"builders\": {\"$builder_id\":{");
+    }
+
+    public function end($total_time) {
+        fwrite($this->fp, "}}, \"totalGenerationTime\": $total_time}");
+    }
+
+    public function add_results_for_test_if_matches($current_test, $current_results) {
+        if (!count($current_results) || $this->pass_for_failure_type($current_results))
+            return;
+        // FIXME: Why do we need to check the count?
+
+        $prefix = $this->emitted_results ? ",\n" : "";
+        fwrite($this->fp, "$prefix\"$current_test\":");
+        fwrite($this->fp, json_encode($current_results, true));
+
+        $this->emitted_results = TRUE;
+    }
+
+    abstract protected function pass_for_failure_type(&$results);
+}
+
+class FailingResultsJSONWriter extends ResultsJSONWriter {
+    public function __construct($fp) { parent::__construct($fp); }
+    protected function pass_for_failure_type(&$results) {
+        return $results[0]['actual'] == 'PASS';
+    }
+}
+
+class FlakyResultsJSONWriter extends ResultsJSONWriter {
+    public function __construct($fp) { parent::__construct($fp); }
+    protected function pass_for_failure_type(&$results) {
+        $last_index = count($results) - 1;
+        for ($i = 1; $i < $last_index; $i++) {
+            $previous_actual = $results[$i - 1]['actual'];
+            $next_actual = $results[$i + 1]['actual'];
+            if ($previous_actual == $next_actual && $results[$i]['actual'] != $previous_actual) {
+                $results[$i]['oneOffChange'] = TRUE;
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+}
+
+class WrongExpectationsResultsJSONWriter extends ResultsJSONWriter {
+    public function __construct($fp) { parent::__construct($fp); }
+    protected function pass_for_failure_type(&$results) {
+        $latest_expected_result = $results[0]['expected'];
+        $latest_actual_result = $results[0]['actual'];
+
+        if ($latest_expected_result == $latest_actual_result)
+            return TRUE;
+
+        $tokens = explode(' ', $latest_expected_result);
+        return array_search($latest_actual_result, $tokens) !== FALSE
+            || (($latest_actual_result == 'TEXT' || $latest_actual_result == 'TEXT+IMAGE') && array_search('FAIL', $tokens) !== FALSE);
+    }
+}
+
+class ResultsJSONGenerator {
+    private $db;
+    private $builder_id;
+
+    const MAXIMUM_NUMBER_OF_DAYS = 30;
+
+    public function __construct($db, $builder_id)
+    {
+        $this->db = $db;
+        $this->builder_id = $builder_id;
+    }
+
+    public function generate()
+    {
+        $start_time = microtime(true);
+
+        if (!$this->builder_id)
+            return FALSE;
+
+        $number_of_days = self::MAXIMUM_NUMBER_OF_DAYS;
+        $all_results = $this->db->query(
+        "SELECT results.*, builds.* FROM results
+            JOIN (SELECT builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions
+                    FROM builds, build_revisions
+                    WHERE build_revisions.build = builds.id AND builds.builder = $1 AND builds.start_time > now() - interval '$number_of_days days'
+                    GROUP BY builds.id
+                    ORDER BY max(build_revisions.time) DESC) as builds ON results.build = builds.id
+            ORDER BY results.test", array($this->builder_id));
+        if (!$all_results)
+            return FALSE;
+
+        $failing_json_fp = $this->open_json_for_failure_type('failing');
+        try {
+            $flaky_json_fp = $this->open_json_for_failure_type('flaky');
+            try {
+                $wrongexpectations_json_fp = $this->open_json_for_failure_type('wrongexpectations');
+                try {
+                    return $this->write_jsons($all_results, array(
+                        new FailingResultsJSONWriter($failing_json_fp),
+                        new FlakyResultsJSONWriter($flaky_json_fp),
+                        new WrongExpectationsResultsJSONWriter($wrongexpectations_json_fp)), $start_time);
+                } catch (Exception $exception) {
+                    fclose($wrongexpectations_json_fp);
+                    throw $exception;
+                }
+            } catch (Exception $exception) {
+                fclose($flaky_json_fp);
+                throw $exception;
+            }
+        } catch (Exception $exception) {
+            fclose($failing_json_fp);
+            throw $exception;
+        }
+        return FALSE;
+    }
+
+    private function open_json_for_failure_type($failure_type) {
+        $failing_json_path = configPath('dataDirectory', $this->builder_id . "-$failure_type.json");
+        if (!$failing_json_path)
+            exit_with_error('FailedToDetermineResultsJSONPath', array('builderId' => $this->builder_id, 'failureType' => $failure_type));
+        $fp = fopen($failing_json_path, 'w');
+        if (!$fp)
+            exit_with_error('FailedToOpenResultsJSON', array('builderId' => $this->builder_id, 'failureType' => $failure_type));
+        return $fp;
+    }
+
+    private function write_jsons($all_results, $writers, $start_time) {
+        foreach ($writers as $writer)
+            $writer->start($this->builder_id);
+        $current_test = NULL;
+        $current_results = array();
+        while ($result = $this->db->fetch_next_row($all_results)) {
+            if ($result['test'] != $current_test) {
+                if ($current_test) {
+                    foreach ($writers as $writer)
+                        $writer->add_results_for_test_if_matches($current_test, $current_results);
+                }
+                $current_results = array();
+                $current_test = $result['test'];
+            }
+            array_push($current_results, format_result($result));
+        }
+
+        $total_time = microtime(true) - $start_time;
+        foreach ($writers as $writer)
+            $writer->end($total_time);
+
+        return TRUE;
+    }
 }
 
 ?>

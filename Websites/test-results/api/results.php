@@ -19,6 +19,10 @@ $result_rows = $db->query_and_fetch_all(
 if (!$result_rows)
     exit_with_error('ResultsNotFound');
 
-exit_with_success(format_result_rows($result_rows));
+$builders = array();
+foreach ($result_rows as $result)
+    array_push(array_ensure_item_has_array($builders, $result['builder']), format_result($result));
+
+exit_with_success(array('builders' => $builders));
 
 ?>

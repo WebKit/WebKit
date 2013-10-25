@@ -1,3 +1,61 @@
+2013-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Showing lists of flaky tests for a builder takes too long
+        https://bugs.webkit.org/show_bug.cgi?id=123311
+
+        Reviewed by Sam Weinig.
+
+        Generate JSONs for tests failing, flaky, or with wrong expectation at the time a builder reports results
+        instead when the frontend requests to those those results since it takes multiple seconds or minutes to
+        generate those JSON files.
+
+        * api/failing-tests.php: Moved and renamed to manually generate all JSON files for a given builder.
+        (main):
+
+        * api/report.php: Manually flush and end the request (to avoid blocking run-webkit-tests on the other side
+        for minutes), then generate JSONs for tests that are failing, are flaky, and have wrong expectations.
+
+        * api/results.php: Merge format_result_rows here since it's not used anywhere else.
+
+        * include/config.json: Added the path to the data directory into which JSON files are generated.
+
+        * include/db.php:
+        (configPath): Takes a relative path value from config.json, and resolves it.
+
+        * include/json-shared.php:
+        (echo_success): Extracted from exit_with_success.
+        (exit_with_success):
+
+        * include/test-results.php:
+        (add_builder): Extracted from add_build.
+        (add_build):
+        (ResultsJSONWriter): Extracted from api/failing-tests.php.
+        (ResultsJSONWriter.__construct):
+        (ResultsJSONWriter.start):
+        (ResultsJSONWriter.end):
+        (ResultsJSONWriter.add_results_for_test_if_matches):
+        (ResultsJSONWriter.pass_for_failure_type):
+        (FailingResultsJSONWriter): Extracted from index.html's TestResultsView._matchesFailureType.
+        (FailingResultsJSONWriter.__construct):
+        (FailingResultsJSONWriter.pass_for_failure_type):
+        (FlakyResultsJSONWriter): Ditto.
+        (FlakyResultsJSONWriter.__construct):
+        (FlakyResultsJSONWriter.pass_for_failure_type):
+        (WrongExpectationsResultsJSONWriter): Ditto.
+        (WrongExpectationsResultsJSONWriter.__construct):
+        (WrongExpectationsResultsJSONWriter.pass_for_failure_type):
+        (ResultsJSONGenerator): Ditto.
+        (ResultsJSONGenerator.__construct):
+        (ResultsJSONGenerator.generate):
+        (ResultsJSONGenerator.open_json_for_failure_type):
+        (ResultsJSONGenerator.write_jsons):
+
+        * index.html:
+        (TestResultsView):
+        (TestResultsView.setBuilders):
+        (TestResultsView._createResultCell): Add a hyperlink to results.html in the tooltip.
+        (TestResultsView.fetchFailingTestsForBuilder): Fetch the generated JSON files.
+
 2013-10-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reverted erroneously committed changes from the previous commit.

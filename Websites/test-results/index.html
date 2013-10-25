@@ -29,9 +29,10 @@
 <div id="buildersView">
 <form>
 Show
-<label>tests <select id="builderFailureTypeView"><option>failing</option><option>flaky</option><option value="wrongexpectations">has wrong expectations</option></select></label>
+<label>all tests <select id="builderFailureTypeView"><option>failing</option><option>flaky</option><option value="wrongexpectations">has wrong expectations</option></select></label>
 <label>on <select id="builderListView"><option value="">Select builder</option></select></label>
-<label for="builderDaysView">in the last <select id="builderDaysView"><option>5</option><option>15</option><option>30</option></select> days</label>
+<label for="builderDaysView">for
+<select id="builderDaysView" disabled><option>5</option><option>15</option><option selected>30</option></select> days</label>
 </form>
 <div id="builderFailingTestsView"></div>
 </div>
@@ -60,6 +61,7 @@ var TestResultsView = new (function () {
     this._currentBuilderDays = null;
     this._oldHash = null;
     this._builders = {};
+    this._builderByName = {};
     this._slaves = {};
     this._repositories = {};
     this._testCategories = {};
@@ -71,6 +73,10 @@ TestResultsView.setAvailableTests = function (availableTests) {
 
 TestResultsView.setBuilders = function (builders) {
     this._builders = builders;
+    for (var builderId in builders) {
+        var builder = builders[builderId];
+        this._builderByName[builder.name] = builder;
+    }
 }
 
 TestResultsView.setSlaves = function (slaves) {
@@ -141,7 +147,8 @@ TestResultsView._createResultCell = function (master, builder, result, previousR
             element('ul', [
                 element('li', ['Build Time: ' + result.build.formattedBuildTime()]),
                 element('li', ['Revision: '].concat(revisionDescription)),
-                element('li', ['Build: ', element('a', {'href': result.build.buildUrl()}, [buildNumber])]),
+                element('li', ['Build: ', element('a', {'href': result.build.buildUrl()}, [buildNumber]), ' (',
+                    element('a', {'href': resultsPage}, ['results']), ')']),
                 element('li', ['Actual: ' + actual]),
                 element('li', ['Expected: ' + expected]),
             ])
@@ -337,37 +344,6 @@ TestResultsView.fetchTests = function (testNames, doNotUpdateHash) {
         this.updateLocationHash();
 }
 
-TestResultsView._matchesFailureType = function (results, failureType, tn) {
-    if (!results.length)
-        return false;
-    var latestActualResult = results[0].actual;
-    var latestExpectedResult = results[0].expected;
-    switch (failureType) {
-    case 'failing':
-        return results[0].actual != 'PASS';
-    case 'flaky':
-        var offOneChangeCount = 0;
-        for (var i = 1; i + 1 < results.length; i++) {
-            var previousActual = results[i - 1].actual;
-            var nextActual = results[i + 1].actual;
-            if (previousActual == nextActual && results[i].actual != previousActual)
-                offOneChangeCount++;
-        }
-        return offOneChangeCount; // Heuristics.
-    case 'wrongexpectations':
-        if (latestExpectedResult == latestActualResult)
-            return false;
-        var expectedTokens = latestExpectedResult.split(' ');
-        if (expectedTokens.indexOf(latestActualResult) >= 0)
-            return false;
-        if (latestActualResult == 'TEXT' || latestActualResult == 'TEXT+IMAGE' && expectedTokens.indexOf('FAIL') >= 0)
-            return false;
-        return true;
-    }
-
-    return false;
-}
-
 TestResultsView._populateBuilderPane = function(builderName, failureType, results, section) {
     var table = element('table', {'class': 'resultsTable tablesorter'}, [element('caption', [builderName])]);
     var resultsByBuilder = results['builders'];
@@ -387,7 +363,7 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
     var self = this;
     for (var testId in resultsByTests) {
         var results = resultsByTests[testId];
-        if (!results.length || !this._matchesFailureType(results, failureType, this._availableTests[testId].name))
+        if (!results.length)
             continue;
         this._createBuildsAndComputeSlownessOfResults(builderId, resultsByTests[testId]);
         var test = this._availableTests[testId];
@@ -416,8 +392,13 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
 
     var self = this;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", 'api/failing-tests.php?builder=' + escape(builderName) + '&days=' + numberOfDays, true);  
+    var builderId = this._builderByName[builderName].id;
+    xhr.open('GET', 'data/' + builderId + '-' + failureType + '.json', true);  
     xhr.onload = function(event) {
+        if (xhr.status != 200) {
+            section.appendChild(text('Failed to load results for ' + builderName + ': ' + xhr.status));
+            return;
+        }
         var response = JSON.parse(xhr.response);
         section.innerHTML = '';
         if (response['status'] != 'OK') {

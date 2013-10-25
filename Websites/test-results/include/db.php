@@ -33,6 +33,15 @@ function config($key) {
     return $_config[$key];
 }
 
+function configPath($key, $additional_path = '') {
+    $relative_path = config($key);
+    if (!$relative_path)
+        return NULL;
+    if ($additional_path)
+        $additional_path = '/' . $additional_path;
+    return realpath(dirname(__FILE__) . "/$relative_path") . $additional_path;
+}
+
 if (config('debug'))
     ini_set('display_errors', 'On');
 
