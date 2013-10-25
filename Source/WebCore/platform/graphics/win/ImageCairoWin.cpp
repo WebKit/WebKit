@@ -84,7 +84,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     if (size)
         drawFrameMatchingSourceSize(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, ColorSpaceDeviceRGB, CompositeCopy);
     else
-        draw(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal);
+        draw(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal, ImageOrientationDescription());
 
     // Do cleanup
     cairo_destroy(targetRef);
@@ -103,7 +103,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
         if (cairo_image_surface_get_height(surface.get()) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(surface.get()) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
-            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), ColorSpaceDeviceRGB, compositeOp, BlendModeNormal);
+            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), ColorSpaceDeviceRGB, compositeOp, BlendModeNormal, ImageOrientationDescription());
             m_currentFrame = currentFrame;
             return;
         }
@@ -111,7 +111,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 
     // No image of the correct size was found, fallback to drawing the current frame
     IntSize imageSize = BitmapImage::size();
-    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, compositeOp, BlendModeNormal);
+    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 
 } // namespace WebCore

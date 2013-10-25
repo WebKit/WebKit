@@ -1,3 +1,14 @@
+2013-10-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=123269
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/graphics/win/ImageCairoWin.cpp: Added new parameter to BitmapImage::draw() calls.
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+
 2013-10-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Use a Vector instead of HashSet to computed the orderValues in RenderFlexibleBox
