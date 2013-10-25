@@ -32,6 +32,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
+#include "ViewState.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
 #include "WebFullScreenClientGtk.h"
@@ -170,7 +171,7 @@ static gboolean toplevelWindowFocusInEvent(GtkWidget* widget, GdkEventFocus*, We
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->isInWindowActive) {
         priv->isInWindowActive = true;
-        priv->pageProxy->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        priv->pageProxy->viewStateDidChange(ViewState::WindowIsActive);
     }
 
     return FALSE;
@@ -181,7 +182,7 @@ static gboolean toplevelWindowFocusOutEvent(GtkWidget* widget, GdkEventFocus*, W
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (priv->isInWindowActive) {
         priv->isInWindowActive = false;
-        priv->pageProxy->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        priv->pageProxy->viewStateDidChange(ViewState::WindowIsActive);
     }
 
     return FALSE;
@@ -193,7 +194,7 @@ static gboolean toplevelWindowVisibilityEvent(GtkWidget*, GdkEventVisibility* vi
     bool isWindowVisible = visibilityEvent->state != GDK_VISIBILITY_FULLY_OBSCURED;
     if (priv->isWindowVisible != isWindowVisible) {
         priv->isWindowVisible = isWindowVisible;
-        priv->pageProxy->viewStateDidChange(WebPageProxy::WindowIsVisible);
+        priv->pageProxy->viewStateDidChange(ViewState::WindowIsVisible);
     }
 
     return FALSE;
@@ -223,7 +224,7 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     }
 
     priv->toplevelOnScreenWindow = window;
-    priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsInWindow);
+    priv->pageProxy->viewStateDidChange(ViewState::IsInWindow);
     if (!priv->toplevelOnScreenWindow)
         return;
 
@@ -1086,7 +1087,7 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     if (priv->isFocused == focused)
         return;
 
-    unsigned viewStateFlags = WebPageProxy::ViewIsFocused;
+    unsigned viewStateFlags = ViewState::IsFocused;
     priv->isFocused = focused;
 
     // If the view has received the focus and the window is not active
@@ -1096,7 +1097,7 @@ void webkitWebViewBaseSetFocus(WebKitWebViewBase* webViewBase, bool focused)
     // can't be focused.
     if (priv->isFocused && !priv->isInWindowActive) {
         priv->isInWindowActive = true;
-        viewStateFlags |= WebPageProxy::ViewWindowIsActive;
+        viewStateFlags |= ViewState::WindowIsActive;
     }
     priv->pageProxy->viewStateDidChange(viewStateFlags);
 }

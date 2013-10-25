@@ -32,6 +32,7 @@
 #include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedLayerTreeHostProxy.h"
 #include "NotImplemented.h"
+#include "ViewState.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/CoordinatedGraphicsScene.h>
@@ -83,7 +84,7 @@ void WebView::setActive(bool active)
         return;
 
     scene->setActive(active);
-    m_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+    m_page->viewStateDidChange(ViewState::WindowIsActive);
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -102,7 +103,7 @@ void WebView::setFocused(bool focused)
         return;
 
     m_focused = focused;
-    m_page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
+    m_page->viewStateDidChange(ViewState::IsFocused | ViewState::WindowIsActive);
 }
 
 void WebView::setVisible(bool visible)
@@ -111,7 +112,7 @@ void WebView::setVisible(bool visible)
         return;
 
     m_visible = visible;
-    m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    m_page->viewStateDidChange(ViewState::IsVisible);
 
 #if USE(ACCELERATED_COMPOSITING)
     if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea()))

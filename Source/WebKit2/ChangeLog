@@ -1,3 +1,19 @@
+2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF from non-Mac platforms after r158028.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowFocusInEvent):
+        (toplevelWindowFocusOutEvent):
+        (toplevelWindowVisibilityEvent):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseSetFocus):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::setActive):
+        (WebKit::WebView::setFocused):
+        (WebKit::WebView::setVisible):
+
 2013-10-25  Gavin Barraclough  <barraclough@apple.com>
 
         Move ViewStateFlags out of WebPageProxy
