@@ -1,3 +1,14 @@
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Command+Click on url(…) should go to image not source line
+        https://bugs.webkit.org/show_bug.cgi?id=123362
+
+        Reviewed by Timothy Hatcher.
+
+        CodeMirror changed "url" from being type "variable-2" to "string-2".
+
+        * UserInterface/CodeMirrorAdditions.js:
+
 2013-10-25  Jessie Berlin  <jberlin@apple.com>
 
         Ran update-localizable-strings after changes made in r157947.
