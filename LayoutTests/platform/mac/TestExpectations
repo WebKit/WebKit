@@ -1292,4 +1292,4 @@ webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-paddi
 
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
-webkit.org/b/69900 [ Mavericks ] platform/mac/fast/forms/focus-option-control-on-page.html [ Failure ]
+webkit.org/b/123304 platform/mac/fast/forms/focus-option-control-on-page.html [ Pass Failure ]

@@ -1,5 +1,16 @@
 2013-10-24  Simon Fraser  <simon.fraser@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=123304
+
+        The focus-option-control-on-page.html test has behavior that depends on the system
+        "Full Keyboard Access" prefs, so mark it as passing or failing, and remove a bogus
+        result that I added.
+
+        * platform/mac-mountainlion/platform/mac/fast/forms/focus-option-control-on-page-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
+2013-10-24  Simon Fraser  <simon.fraser@apple.com>
+
         More new test results for Mavericks, and MountainLion results where necessary.
 
         * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-161-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-161-expected.txt.
