@@ -1,5 +1,11 @@
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Mark some CSS filters and SVG ref tests as failing, and two WebGL tests are flakey.
+
+        * platform/mac/TestExpectations:
+
+2013-10-25  Simon Fraser  <simon.fraser@apple.com>
+
         Mavericks results with MountainLion variants.
 
         * platform/mac-mountainlion/fast/repaint/search-field-cancel-expected.txt: Added.

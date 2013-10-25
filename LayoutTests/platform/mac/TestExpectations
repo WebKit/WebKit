@@ -713,7 +713,9 @@ webgl/1.0.2/conformance/textures/texture-size.html
 webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html
 
 # Currently working on 1.0.2 conformance, skip currently failing tests, <rdar://problem/12099869>
+webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Pass Failure ]
 webgl/1.0.2/conformance/extensions/webgl-compressed-texture-s3tc.html
+webgl/1.0.2/conformance/glsl/misc/shader-with-too-many-uniforms.html [ Pass Failure ]
 webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html
 webgl/1.0.2/conformance/glsl/misc/shader-varying-packing-restrictions.html
 webgl/1.0.2/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html
@@ -1293,3 +1295,16 @@ webkit.org/b/123282 compositing/regions/propagate-region-box-shadow-border-paddi
 webkit.org/b/123250 plugins/destroy-during-npp-new-object-with-fallback-content.html [ Pass Failure ]
 
 webkit.org/b/123304 platform/mac/fast/forms/focus-option-control-on-page.html [ Pass Failure ]
+
+webkit.org/b/123370 [ Mavericks ] css3/filters/custom/composited/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-blend-modes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-clamp-css-color-matrix.html [ Pass ImageOnlyFailure ]
+webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-composite-fractional-source-alpha.html [ Pass ImageOnlyFailure ]
+webkit.org/b/123370 [ Mavericks ] css3/filters/custom/effect-custom-transform-parameters.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/123369 [ Mavericks ] svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks ] svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-luminance.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-not-set.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ Mavericks ] svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
