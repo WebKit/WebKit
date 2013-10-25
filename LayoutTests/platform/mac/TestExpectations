@@ -707,54 +707,52 @@ platform/mac/editing/spelling/delete-autocorrected-word-2.html
 editing/pasteboard/paste-global-selection.html
 
 # Known WebGL conformance test failures, fails on Intel and AMD hardware
-webgl/1.0.1/conformance/textures/texture-size.html
-webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html
-webgl/1.0.2/conformance/textures/texture-size.html
-webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html
+webgl/1.0.1/conformance/textures/texture-size.html [ Failure ]
+webgl/1.0.1/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
+webgl/1.0.2/conformance/textures/texture-size.html [ Failure ]
+webgl/1.0.2/conformance/limits/gl-max-texture-dimensions.html [ Failure ]
 
-# Currently working on 1.0.2 conformance, skip currently failing tests, <rdar://problem/12099869>
-webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Pass Failure ]
-webgl/1.0.2/conformance/extensions/webgl-compressed-texture-s3tc.html
-webgl/1.0.2/conformance/glsl/misc/shader-with-too-many-uniforms.html [ Pass Failure ]
-webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html
-webgl/1.0.2/conformance/glsl/misc/shader-varying-packing-restrictions.html
-webgl/1.0.2/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html
-webgl/1.0.2/conformance/glsl/misc/shader-with-short-circuiting-operators.html
-webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html
-webgl/1.0.2/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html
-webgl/1.0.2/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html
-webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html
-webgl/1.0.2/conformance/rendering/gl-scissor-test.html
-webgl/1.0.2/conformance/typedarrays/array-unit-tests.html
-webgl/1.0.2/conformance/typedarrays/data-view-test.html
-
-# Failing on bots.
-webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
-webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
-webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
+# Currently working on 1.0.2 conformance, skip currently known failing tests, <rdar://problem/12099869>
+webgl/1.0.2/conformance/glsl/misc/shader-with-too-many-uniforms.html [ Failure ]
+webgl/1.0.2/conformance/extensions/webgl-compressed-texture-s3tc.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shader-with-short-circuiting-operators.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
+webgl/1.0.2/conformance/ogles/GL/biuDepthRange/biuDepthRange_001_to_002.html [ Failure ]
+webgl/1.0.2/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html [ Failure ]
+webgl/1.0.2/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
+webgl/1.0.2/conformance/rendering/gl-scissor-test.html [ Failure ]
+webgl/1.0.2/conformance/typedarrays/array-unit-tests.html [ Failure ]
+webgl/1.0.2/conformance/typedarrays/data-view-test.html [ Failure ]
 
 # Skipping all webgl conformance tests on trunk
 webgl/conformance
 
 # Unexpected WebGL Conformance tests that need to be fixed
 # These tests pass when run through webgl-conformance-tests.html but not when just opened via a browser (or via run-webkit-tests)
-webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html
-webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html
-webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html
-webgl/1.0.1/conformance/textures/origin-clean-conformance.html
-webgl/1.0.2/conformance/context/context-creation-and-destruction.html
-webgl/1.0.2/conformance/rendering/multisample-corruption.html
-webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html
-webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html
-webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html
-webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html
-webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html
-webgl/1.0.2/conformance/state/gl-object-get-calls.html
-webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html
-http/tests/webgl/1.0.2/origin-clean-conformance.html
+webgl/1.0.1/conformance/glsl/misc/shader-with-conditional-scoping.html [ Failure ]
+webgl/1.0.1/conformance/glsl/misc/shader-with-do-scoping.html [ Failure ]
+webgl/1.0.1/conformance/glsl/misc/shader-with-for-scoping.html [ Failure ]
+webgl/1.0.1/conformance/glsl/misc/shader-with-functional-scoping.html [ Failure ]
+webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dlod.html [ Failure ]
+webgl/1.0.1/conformance/glsl/samplers/glsl-function-texture2dproj.html [ Failure ]
+webgl/1.0.1/conformance/textures/origin-clean-conformance.html [ Failure ]
+webgl/1.0.1/conformance/context/context-lost-restored.html [ Failure ]
+webgl/1.0.1/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
+webgl/1.0.1/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
+webgl/1.0.2/conformance/context/context-creation-and-destruction.html [ Failure ]
+webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
+webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Failure ]
+webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Failure ]
+webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Failure ]
+webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Failure ]
+webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
+webgl/1.0.2/conformance/state/gl-object-get-calls.html [ Failure Pass ]
+webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Failure Pass ]
+webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Pass Failure ]
+http/tests/webgl/1.0.2/origin-clean-conformance.html [ Failure ]
 
 # Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
 fast/events/mousedown-in-subframe-scrollbar.html

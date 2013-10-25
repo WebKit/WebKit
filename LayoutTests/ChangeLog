@@ -1,3 +1,11 @@
+2013-10-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Mark skipped webgl conformance tests as either flakey or failures.
+        
+        Also reorganize expectations for WebGL a bit.
+
+        * platform/mac/TestExpectations:
+
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Add Mavericks-specific results for some tests.
