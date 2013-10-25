@@ -1,3 +1,15 @@
+2013-10-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Non-SVG build broken after r157950
+        https://bugs.webkit.org/show_bug.cgi?id=123328
+
+        Reviewed by Xan Lopez.
+
+        The isSVGInlineTest() check should be done only if SVG is enabled.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2013-10-24  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add helper methods to convert CMTime <--> MediaTime

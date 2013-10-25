@@ -135,7 +135,11 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.borderFit() == BorderFitLines)
         return false;
     const RenderText& textRenderer = toRenderText(*flow.firstChild());
-    if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isSVGInlineText() || textRenderer.isTextFragment())
+    if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
+#if ENABLE(SVG)
+        || textRenderer.isSVGInlineText()
+#endif
+        )
         return false;
     if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
         return false;
