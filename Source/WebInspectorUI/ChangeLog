@@ -1,5 +1,17 @@
 2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: PrettyPrinting tool should have save button
+        https://bugs.webkit.org/show_bug.cgi?id=123371
+
+        Reviewed by Timothy Hatcher.
+
+        Add buttons to save as a URL to share or to save/clear to
+        localStorage for easier reloads testing local changes.
+
+        * Tools/PrettyPrinting/index.html:
+
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Command+Click on url(…) should go to image not source line
         https://bugs.webkit.org/show_bug.cgi?id=123362
 

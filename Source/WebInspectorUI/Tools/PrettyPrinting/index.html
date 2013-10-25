@@ -17,8 +17,6 @@
 
     <h1>Debug Pretty Printing</h1>
 
-    <!-- FIXME: There should be a "save" button that saves the mode and content, so reloading will restore that state -->
-
     <!-- Controls -->
     <select id="mode">
         <option selected value="text/javascript">JavaScript</option>
@@ -29,6 +27,9 @@
     <button id="clear">Clear</button>
     <button id="select-output">Select Output</button>
     <button id="run-again">Run Again</button>
+    <button id="save-as-url">Save URL</button>
+    <button id="save-local-storage">Save to Storage</button>
+    <button id="clear-local-storage">Clear Storage</button>
     <small id="time"></small>
 
     <br><br>
@@ -46,13 +47,47 @@
         lineNumbers: true,
     });
 
-    // Initial value.
-    var str = "(function() { var a=1; return a+1; })();";
-    cm.setValue(str);
+    // Initial values from URL.
+    var queryParams = {};
+    if (window.location.search.length > 0) {
+        var searchString = window.location.search.substring(1);
+        var groups = searchString.split("&");
+        for (var i = 0; i < groups.length; ++i) {
+            var pair = groups[i].split("=");
+            queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+    }
 
-    // Setup and changing the mode.
-    cm.setOption("mode", "text/javascript");
+    // Initial mode and string.
+    var mode = "text/javascript";
+    var content = "(function() { var a=1; return a+1; })();";
+    var updatePicker = false;
+    if (queryParams.content || queryParams.mode) {
+        content = queryParams.content || "";
+        mode = queryParams.mode || "text/javascript";
+        updatePicker = true;
+    } else if (localStorage.content || localStorage.mode) {
+        content = localStorage.content || "";
+        mode = localStorage.mode || "text/javascript";
+        updatePicker = true;
+    }
+
+    // Initial mode picker value.
     var modePicker = document.getElementById("mode");
+    if (updatePicker) {
+        for (var i = 0; i < modePicker.options.length; ++i) {
+            if (modePicker.options[i]) {
+                modePicker.options[i].selected = true;
+                break;
+            }
+        }
+    }
+
+    // Set on CodeMirror.
+    cm.setValue(content);
+    cm.setOption("mode", mode);
+
+    // Changing the mode.
     modePicker.addEventListener("change", function(event) {
         cm.setValue("");
         cm.setOption("mode", modePicker.value);
@@ -104,6 +139,25 @@
     // Run again button.
     document.getElementById("run-again").addEventListener("click", function(event) {
         refresh();
+    });
+
+    // Save as URL button.
+    document.getElementById("save-as-url").addEventListener("click", function(event) {
+        var mode = modePicker.value;
+        var content = cm.getValue();
+        window.location.search = "?mode=" + window.encodeURIComponent(mode) + "&content=" + window.encodeURIComponent(content);
+    });
+
+    // Save to localStorage.
+    document.getElementById("save-local-storage").addEventListener("click", function(event) {
+        localStorage.mode = modePicker.value;
+        localStorage.content = cm.getValue();
+    });
+
+    // Clear localStorage.
+    document.getElementById("clear-local-storage").addEventListener("click", function(event) {
+        localStorage.removeItem("mode");
+        localStorage.removeItem("content");
     });
 
     // Button helpers.
@@ -170,7 +224,7 @@
     setTimeout(refresh);
 
     // Tests.
-    function runTests() {        
+    function runTests() {
         disableButtons();
         function completedCallback() {
             enableButtons();
