@@ -1,3 +1,16 @@
+2013-10-25  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] [WebKit2] CanHandleRequest API test fails
+        https://bugs.webkit.org/show_bug.cgi?id=88453
+
+        Reviewed by Martin Robinson.
+
+        Make WebPage::platformCanHandleRequest return false by default 
+        for unknown schemes.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformCanHandleRequest):
+
 2013-10-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Build break after r157967 and r157972
