@@ -34,6 +34,7 @@
 #include <utility>
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/WTFThreadData.h>
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\

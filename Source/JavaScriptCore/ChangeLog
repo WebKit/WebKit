@@ -1,5 +1,11 @@
 2013-10-25  Oliver Hunt  <oliver@apple.com>
 
+        Fix MSVC again
+
+        * parser/Parser.cpp:
+
+2013-10-25  Oliver Hunt  <oliver@apple.com>
+
         Fix MSVC
 
         * parser/Parser.cpp:
