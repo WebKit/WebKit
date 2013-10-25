@@ -1,3 +1,15 @@
+2013-10-25  Oliver Hunt  <oliver@apple.com>
+
+        Fix a number of problems with destructuring of arguments
+        https://bugs.webkit.org/show_bug.cgi?id=123357
+
+        Reviewed by Filip Pizlo.
+
+        Add additional testing
+
+        * js/destructuring-assignment-expected.txt:
+        * js/script-tests/destructuring-assignment.js:
+
 2013-10-25  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] CORS-enabled fetch for shape image values

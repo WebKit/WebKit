@@ -1781,7 +1781,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         genericBinding:
             propertyName = generator.newTemporary();
             RefPtr<RegisterID> protect(propertyName);
-            assignNode->bindings()->emitBytecode(generator, propertyName);
+            assignNode->bindings()->bindValue(generator, propertyName);
         }
         completedSimpleBinding:
         ;
@@ -1839,7 +1839,7 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         } else {
             ASSERT(m_lexpr->isDeconstructionNode());
             DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
-            assignNode->bindings()->emitBytecode(generator, value);
+            assignNode->bindings()->bindValue(generator, value);
         }
         generator.emitNode(dst, m_statement);
     };
@@ -2297,7 +2297,7 @@ RegisterID* DeconstructingAssignmentNode::emitBytecode(BytecodeGenerator& genera
         return result;
     RefPtr<RegisterID> initializer = generator.tempDestination(dst);
     generator.emitNode(initializer.get(), m_initializer);
-    m_bindings->emitBytecode(generator, initializer.get());
+    m_bindings->bindValue(generator, initializer.get());
     return generator.moveToDestinationIfNeeded(dst, initializer.get());
 }
 
@@ -2305,7 +2305,7 @@ DeconstructionPatternNode::~DeconstructionPatternNode()
 {
 }
     
-void ArrayPatternNode::emitBytecode(BytecodeGenerator& generator, RegisterID* rhs) const
+void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto target = m_targetPatterns[i];
@@ -2314,7 +2314,7 @@ void ArrayPatternNode::emitBytecode(BytecodeGenerator& generator, RegisterID* rh
         RefPtr<RegisterID> temp = generator.newTemporary();
         generator.emitLoad(temp.get(), jsNumber(i));
         generator.emitGetByVal(temp.get(), rhs, temp.get());
-        target->emitBytecode(generator, temp.get());
+        target->bindValue(generator, temp.get());
     }
 }
 
@@ -2330,12 +2330,14 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
             
             RefPtr<RegisterID> temp = generator.newTemporary();
             generator.emitLoad(temp.get(), jsNumber(i));
-            generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedRegisterForArguments(), temp.get());
-            target->emitBytecode(generator, temp.get());
+            generator.emitGetArgumentByVal(temp.get(), generator.uncheckedRegisterForArguments(), temp.get());
+            target->bindValue(generator, temp.get());
         }
+        return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
     }
     if (!rhs->isSimpleArray())
         return 0;
+
     ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
     Vector<ExpressionNode*> elements;
     for (; elementNodes; elementNodes = elementNodes->next())
@@ -2351,10 +2353,10 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         if (m_targetPatterns[i])
-            m_targetPatterns[i]->emitBytecode(generator, registers[i].get());
+            m_targetPatterns[i]->bindValue(generator, registers[i].get());
     }
-    RefPtr<RegisterID> result = generator.finalDestination(dst);
-    return generator.emitLoad(result.get(), jsUndefined());
+
+    return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 
 void ArrayPatternNode::toString(StringBuilder& builder) const
@@ -2398,13 +2400,13 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
     builder.append('}');
 }
     
-void ObjectPatternNode::emitBytecode(BytecodeGenerator& generator, RegisterID* rhs) const
+void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         auto& target = m_targetPatterns[i];
         RefPtr<RegisterID> temp = generator.newTemporary();
         generator.emitGetById(temp.get(), rhs, target.propertyName);
-        target.pattern->emitBytecode(generator, temp.get());
+        target.pattern->bindValue(generator, temp.get());
     }
 }
 
@@ -2414,7 +2416,7 @@ void ObjectPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers)
         m_targetPatterns[i].pattern->collectBoundIdentifiers(identifiers);
 }
 
-void BindingNode::emitBytecode(BytecodeGenerator& generator, RegisterID* value) const
+void BindingNode::bindValue(BytecodeGenerator& generator, RegisterID* value) const
 {
     if (Local local = generator.local(m_boundProperty)) {
         if (local.isReadOnly()) {

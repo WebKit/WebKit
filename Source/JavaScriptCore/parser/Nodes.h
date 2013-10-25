@@ -1574,7 +1574,7 @@ namespace JSC {
 
     public:
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const = 0;
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID* source) const = 0;
+        virtual void bindValue(BytecodeGenerator&, RegisterID* source) const = 0;
         virtual void toString(StringBuilder&) const = 0;
 
         virtual bool isBindingNode() const { return false; }
@@ -1597,7 +1597,7 @@ namespace JSC {
     private:
         ArrayPatternNode(VM*);
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const OVERRIDE;
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID*) const OVERRIDE;
+        virtual void bindValue(BytecodeGenerator&, RegisterID*) const OVERRIDE;
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID* dst, ExpressionNode*) OVERRIDE;
         virtual void toString(StringBuilder&) const OVERRIDE;
 
@@ -1615,7 +1615,7 @@ namespace JSC {
     private:
         ObjectPatternNode(VM*);
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const OVERRIDE;
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID*) const OVERRIDE;
+        virtual void bindValue(BytecodeGenerator&, RegisterID*) const OVERRIDE;
         virtual void toString(StringBuilder&) const OVERRIDE;
         struct Entry {
             Entry(const Identifier& propertyName, bool wasString, DeconstructionPatternNode* pattern)
@@ -1640,7 +1640,7 @@ namespace JSC {
         BindingNode(VM*, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end);
 
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const OVERRIDE;
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID*) const OVERRIDE;
+        virtual void bindValue(BytecodeGenerator&, RegisterID*) const OVERRIDE;
         virtual void toString(StringBuilder&) const OVERRIDE;
         
         virtual bool isBindingNode() const OVERRIDE { return true; }

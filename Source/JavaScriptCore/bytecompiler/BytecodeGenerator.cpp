@@ -394,7 +394,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     }
     for (size_t i = 0; i < deconstructedParameters.size(); i++) {
         auto& entry = deconstructedParameters[i];
-        entry.second->emitBytecode(*this, entry.first);
+        entry.second->bindValue(*this, entry.first);
     }
 }
 
