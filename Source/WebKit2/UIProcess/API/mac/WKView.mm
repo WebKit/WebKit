@@ -3001,10 +3001,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (WKFullScreenWindowController*)fullScreenWindowController
 {
-    if (!_data->_fullScreenWindowController) {
-        _data->_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow]]);
-        [_data->_fullScreenWindowController.get() setWebView:self];
-    }
+    if (!_data->_fullScreenWindowController)
+        _data->_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow] webView:self]);
+
     return _data->_fullScreenWindowController.get();
 }
 
