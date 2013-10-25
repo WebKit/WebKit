@@ -39,6 +39,7 @@
 #include <WebCore/Position.h>
 #include <WebCore/RenderTextControl.h>
 #include <WebCore/VisibleSelection.h>
+#include <WebCore/VisibleUnits.h>
 #include <WebCore/htmlediting.h>
 
 using namespace WebCore;
@@ -202,24 +203,196 @@ HRESULT AccessibleText::get_textBeforeOffset(long offset, enum IA2TextBoundaryTy
 {
     if (initialCheck() == E_POINTER)
         return E_POINTER;
+
+    if (!startOffset || !endOffset || !text)
+        return E_POINTER;
     
-    return E_NOTIMPL;
+    offset = convertSpecialOffset(offset);
+
+    if (offset < 0 || offset > m_object->stringValue().length())
+        return E_INVALIDARG;
+
+    // Obtain the desired text range
+    VisiblePosition currentPosition = m_object->visiblePositionForIndex(offset);
+    VisiblePositionRange textRange;
+    int previousPos = std::max(0, static_cast<int>(offset-1));
+    switch (boundaryType) {
+    case IA2_TEXT_BOUNDARY_CHAR:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(previousPos, 1));
+        break;
+    case IA2_TEXT_BOUNDARY_WORD:
+        textRange = m_object->positionOfLeftWord(currentPosition);
+        textRange = m_object->positionOfRightWord(leftWordPosition(textRange.start, true));
+        break;
+    case IA2_TEXT_BOUNDARY_SENTENCE:
+        textRange.start = m_object->previousSentenceStartPosition(currentPosition);
+        textRange = m_object->sentenceForPosition(textRange.start);
+        if (isInRange(currentPosition, textRange))
+            textRange = m_object->sentenceForPosition(m_object->previousSentenceStartPosition(textRange.start.previous()));
+        break;
+    case IA2_TEXT_BOUNDARY_PARAGRAPH:
+        textRange.start = m_object->previousParagraphStartPosition(currentPosition);
+        textRange = m_object->paragraphForPosition(textRange.start);
+        if (isInRange(currentPosition, textRange))
+            textRange = m_object->paragraphForPosition(m_object->previousParagraphStartPosition(textRange.start.previous()));
+        break;
+    case IA2_TEXT_BOUNDARY_LINE:
+        textRange = m_object->visiblePositionRangeForLine(m_object->lineForPosition(currentPosition));
+        textRange = m_object->leftLineVisiblePositionRange(textRange.start.previous());
+        break;
+    case IA2_TEXT_BOUNDARY_ALL:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(0, offset));
+        break;
+    default:
+        return E_INVALIDARG;
+        break;
+    }
+
+    // Obtain string and offsets associated with text range
+    *startOffset = textRange.start.deepEquivalent().offsetInContainerNode();
+    *endOffset = textRange.end.deepEquivalent().offsetInContainerNode();
+
+    if (*startOffset == *endOffset)
+        return S_FALSE;
+
+    WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
+    *text = SysAllocStringLen(substringText.characters(), substringText.length());
+
+    if (substringText.length() && !*text)
+        return E_OUTOFMEMORY;
+
+    if (!*text)
+        return S_FALSE;
+
+    return S_OK;
 }
 
 HRESULT AccessibleText::get_textAfterOffset(long offset, enum IA2TextBoundaryType boundaryType, long* startOffset, long* endOffset, BSTR* text)
 {
     if (initialCheck() == E_POINTER)
         return E_POINTER;
-    
-    return E_NOTIMPL;
+
+    if (!startOffset || !endOffset || !text)
+        return E_POINTER;
+
+    int textLength = m_object->stringValue().length();
+    offset = convertSpecialOffset(offset);
+
+    if (offset < 0 || offset > textLength)
+        return E_INVALIDARG;
+
+    VisiblePosition currentPosition = m_object->visiblePositionForIndex(offset);
+    VisiblePositionRange textRange;
+
+    // Obtain the desired text range
+    switch (boundaryType) {
+    case IA2_TEXT_BOUNDARY_CHAR:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(offset + 1, offset + 2));
+        break;
+    case IA2_TEXT_BOUNDARY_WORD:
+        textRange = m_object->positionOfRightWord(rightWordPosition(currentPosition, true));
+        break;
+    case IA2_TEXT_BOUNDARY_SENTENCE:
+        textRange.end = m_object->nextSentenceEndPosition(currentPosition);
+        textRange = m_object->sentenceForPosition(textRange.end);
+        if (isInRange(currentPosition, textRange))
+            textRange = m_object->sentenceForPosition(m_object->nextSentenceEndPosition(textRange.end.next()));
+        break;
+    case IA2_TEXT_BOUNDARY_PARAGRAPH:
+        textRange.end = m_object->nextParagraphEndPosition(currentPosition);
+        textRange = m_object->paragraphForPosition(textRange.end);
+        if (isInRange(currentPosition, textRange))
+            textRange = m_object->paragraphForPosition(m_object->nextParagraphEndPosition(textRange.end.next()));
+        break;
+    case IA2_TEXT_BOUNDARY_LINE:
+        textRange = m_object->visiblePositionRangeForLine(m_object->lineForPosition(currentPosition));
+        textRange = m_object->rightLineVisiblePositionRange(textRange.end.next());
+        break;
+    case IA2_TEXT_BOUNDARY_ALL:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(offset, textLength-offset));
+        break;
+    default:
+        return E_INVALIDARG;
+        break;
+    }
+
+    // Obtain string and offsets associated with text range
+    *startOffset = textRange.start.deepEquivalent().offsetInContainerNode();
+    *endOffset = textRange.end.deepEquivalent().offsetInContainerNode();
+
+    if (*startOffset == *endOffset)
+        return S_FALSE;
+
+    WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
+    *text = SysAllocStringLen(substringText.characters(), substringText.length());
+    if (substringText.length() && !*text)
+        return E_OUTOFMEMORY;
+
+    if (!*text)
+        return S_FALSE;
+
+    return S_OK;
 }
 
 HRESULT AccessibleText::get_textAtOffset(long offset, enum IA2TextBoundaryType boundaryType, long* startOffset, long* endOffset, BSTR* text)
 {
     if (initialCheck() == E_POINTER)
         return E_POINTER;
-    
-    return E_NOTIMPL;
+
+    if (!startOffset || !endOffset || !text)
+        return E_POINTER;
+
+    int textLength = m_object->stringValue().length();
+
+    offset = convertSpecialOffset(offset);
+
+    if (offset < 0 || offset > textLength)
+        return E_INVALIDARG;
+
+    // Obtain the desired text range
+    VisiblePosition currentPosition = m_object->visiblePositionForIndex(offset);
+    VisiblePositionRange textRange;
+    switch (boundaryType) {
+    case IA2_TEXT_BOUNDARY_CHAR:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(offset, 1));
+        break;
+    case IA2_TEXT_BOUNDARY_WORD:
+        textRange = m_object->positionOfRightWord(leftWordPosition(currentPosition.next(), true));
+        break;
+    case IA2_TEXT_BOUNDARY_SENTENCE:
+        textRange = m_object->sentenceForPosition(currentPosition);
+        break;
+    case IA2_TEXT_BOUNDARY_PARAGRAPH:
+        textRange = m_object->paragraphForPosition(currentPosition);
+        break;
+    case IA2_TEXT_BOUNDARY_LINE:
+        textRange = m_object->leftLineVisiblePositionRange(currentPosition);
+        break;
+    case IA2_TEXT_BOUNDARY_ALL:
+        textRange = m_object->visiblePositionRangeForRange(PlainTextRange(0, m_object->text().length()));
+        break;
+    default:
+        return E_INVALIDARG;
+        break;
+    }
+
+    // Obtain string and offsets associated with text range
+    *startOffset = textRange.start.deepEquivalent().offsetInContainerNode();
+    *endOffset = textRange.end.deepEquivalent().offsetInContainerNode();
+
+    if (*startOffset == *endOffset)
+        return S_FALSE;
+
+    WTF::String substringText = m_object->text().substring(*startOffset, *endOffset - *startOffset);
+    *text = SysAllocStringLen(substringText.characters(), substringText.length());
+
+    if (substringText.length() && !*text)
+        return E_OUTOFMEMORY;
+
+    if (!*text)
+        return S_FALSE;
+
+    return S_OK;
 }
 
 HRESULT AccessibleText::removeSelection(long selectionIndex)
@@ -573,4 +746,11 @@ HRESULT AccessibleText::initialCheck()
         return E_FAIL;
 
     return S_OK;
+}
+
+bool AccessibleText::isInRange(VisiblePosition& current, VisiblePositionRange& wordRange)
+{
+    ASSERT(wordRange.start.isNotNull());
+    ASSERT(wordRange.end.isNotNull());
+    return comparePositions(current.deepEquivalent(), wordRange.start) >= 0 && comparePositions(current.deepEquivalent(), wordRange.end) <= 0;
 }
