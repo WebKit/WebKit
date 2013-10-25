@@ -1,5 +1,12 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix. Move .htaccess to public.
+
+        * .htaccess: Removed.
+        * public/.htaccess: Copied from .htaccess.
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         It turns out that the current instruction only works on Mountain Lion.
 
         Also fixed some typos.
