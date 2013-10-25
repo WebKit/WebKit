@@ -62,8 +62,8 @@ function recursively_add_test_results($db, $build_id, $tests, $full_name) {
         return;
     }
 
-    require_format('expected_result', $tests['expected'], '/^[A-Za-z ]+$/');
-    require_format('actual_result', $tests['actual'], '/^[A-Za-z ]+$/');
+    require_format('expected_result', $tests['expected'], '/^[A-Za-z \+]+$/');
+    require_format('actual_result', $tests['actual'], '/^[A-Za-z \+]+$/');
     require_format('test_time', $tests['time'], '/^\d*$/');
     $modifiers = array_get($tests, 'modifiers');
     if ($modifiers)

@@ -20,7 +20,7 @@ $build_number = intval($_POST['build_number']);
 if (!array_key_exists('file', $_FILES) or !array_key_exists('tmp_name', $_FILES['file']) or count($_FILES['file']['tmp_name']) <= 0)
     exit_with_error('ResultsJSONNotIncluded');
 
-$revisions = json_decode($_POST['revisions'], true);
+$revisions = json_decode(str_replace('\\', '', $_POST['revisions']), TRUE);
 foreach ($revisions as $repository_name => $revision_data) {
     require_format('repository_name', $repository_name, '/^\w+$/');
     require_existence_of($revision_data, array(
@@ -64,7 +64,7 @@ if (!store_test_results($db, $test_results, $build_id, $start_time, $end_time, $
 
 echo_success();
 
-ob_end_flush();
+@ob_end_flush();
 flush();
 if (function_exists('fastcgi_finish_request'))
     fastcgi_finish_request();

@@ -1,5 +1,16 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another set of build fixes.
+
+        1. Manually strip / from revisions JSON if there is any.
+        2. Suppress warnings from ob_end_flush.
+        3. Allow "+" in actual and expected results as used in "TEXT+IMAGE".
+
+        * public/api/report.php:
+        * public/include/test-results.php:
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix. Move .htaccess to public.
 
         * .htaccess: Removed.
