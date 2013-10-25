@@ -119,6 +119,7 @@ public:
     void storeDouble(FPRegisterID src, const void* address)
     {
         ASSERT(isSSE2Present());
+        ASSERT(address);
         m_assembler.movsd_rm(src, address);
     }
 

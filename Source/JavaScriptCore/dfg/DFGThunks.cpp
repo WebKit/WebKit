@@ -53,12 +53,12 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     }
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         jit.move(MacroAssembler::TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-        jit.storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
+        jit.storeDouble(FPRInfo::toRegister(i), MacroAssembler::Address(GPRInfo::regT0));
     }
     
     // Tell GC mark phase how much of the scratch buffer is active during call.
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), GPRInfo::regT0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(scratchSize), MacroAssembler::Address(GPRInfo::regT0));
 
     // Set up one argument.
 #if CPU(X86)
@@ -70,11 +70,11 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     MacroAssembler::Call functionCall = jit.call();
 
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
-    jit.storePtr(MacroAssembler::TrustedImmPtr(0), GPRInfo::regT0);
+    jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(GPRInfo::regT0));
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         jit.move(MacroAssembler::TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
-        jit.loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
+        jit.loadDouble(MacroAssembler::Address(GPRInfo::regT0), FPRInfo::toRegister(i));
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
 #if USE(JSVALUE64)

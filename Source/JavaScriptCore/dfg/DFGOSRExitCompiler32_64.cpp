@@ -230,7 +230,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         switch (recovery.technique()) {
         case InFPR:
             m_jit.move(AssemblyHelpers::TrustedImmPtr(scratch + index), GPRInfo::regT0);
-            m_jit.storeDouble(recovery.fpr(), GPRInfo::regT0);
+            m_jit.storeDouble(recovery.fpr(), MacroAssembler::Address(GPRInfo::regT0));
             break;
             
         default:
