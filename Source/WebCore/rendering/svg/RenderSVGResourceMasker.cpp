@@ -67,22 +67,21 @@ void RenderSVGResourceMasker::removeClientFromCache(RenderObject* client, bool m
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
 {
-    ASSERT(object);
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
-    bool missingMaskerData = !m_masker.contains(object);
+    bool missingMaskerData = !m_masker.contains(&renderer);
     if (missingMaskerData)
-        m_masker.set(object, std::make_unique<MaskerData>());
+        m_masker.set(&renderer, std::make_unique<MaskerData>());
 
-    MaskerData* maskerData = m_masker.get(object);
+    MaskerData* maskerData = m_masker.get(&renderer);
 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(object, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(&renderer, absoluteTransform);
 
-    FloatRect repaintRect = object->repaintRectInLocalCoordinates();
+    FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
         ASSERT(style());
@@ -92,7 +91,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
         if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskerData->maskImage, colorSpace, Unaccelerated))
             return false;
 
-        if (!drawContentIntoMaskImage(maskerData, colorSpace, object)) {
+        if (!drawContentIntoMaskImage(maskerData, colorSpace, &renderer)) {
             maskerData->maskImage.clear();
         }
     }

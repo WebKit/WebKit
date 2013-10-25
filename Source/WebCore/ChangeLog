@@ -1,3 +1,13 @@
+2013-10-24  Andreas Kling  <akling@apple.com>
+
+        SVG: applyResource() should take a RenderElement&.
+        <https://webkit.org/b/123286>
+
+        This function is always called with an object, and that object
+        is guaranteed to never be a text renderer.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-25  Andreas Kling  <akling@apple.com>
 
         RenderElement::styleWillChange() should pass newStyle as reference.

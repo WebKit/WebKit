@@ -62,7 +62,7 @@ public:
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) = 0;
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true) = 0;
 
-    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) = 0;
+    virtual bool applyResource(RenderElement&, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) = 0;
     virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short, const Path*, const RenderSVGShape*) { }
     virtual FloatRect resourceBoundingBox(const RenderObject&) = 0;
 

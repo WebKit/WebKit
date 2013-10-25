@@ -126,21 +126,20 @@ bool RenderSVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size, Floa
     return matchesFilterSize;
 }
 
-bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
 {
-    ASSERT(object);
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
-    if (m_filter.contains(object)) {
-        FilterData* filterData = m_filter.get(object);
+    if (m_filter.contains(&renderer)) {
+        FilterData* filterData = m_filter.get(&renderer);
         if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying)
             filterData->state = FilterData::CycleDetected;
         return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
     }
 
     auto filterData = std::make_unique<FilterData>();
-    FloatRect targetBoundingBox = object->objectBoundingBox();
+    FloatRect targetBoundingBox = renderer.objectBoundingBox();
 
     filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
     if (filterData->boundaries.isEmpty())
@@ -148,7 +147,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
 
     // Determine absolute transformation matrix for filter. 
     AffineTransform absoluteTransform;
-    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(object, absoluteTransform);
+    SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(&renderer, absoluteTransform);
     if (!absoluteTransform.isInvertible())
         return false;
 
@@ -157,7 +156,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
 
     // Determine absolute boundaries of the filter and the drawing region.
     FloatRect absoluteFilterBoundaries = filterData->shearFreeAbsoluteTransform.mapRect(filterData->boundaries);
-    filterData->drawingRegion = object->strokeBoundingBox();
+    filterData->drawingRegion = renderer.strokeBoundingBox();
     filterData->drawingRegion.intersect(filterData->boundaries);
     FloatRect absoluteDrawingRegion = filterData->shearFreeAbsoluteTransform.mapRect(filterData->drawingRegion);
 
@@ -205,9 +204,9 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
     // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
     if (filterData->drawingRegion.isEmpty()) {
-        ASSERT(!m_filter.contains(object));
+        ASSERT(!m_filter.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(object, std::move(filterData));
+        m_filter.set(&renderer, std::move(filterData));
         return false;
     }
 
@@ -217,11 +216,11 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     effectiveTransform.multiply(filterData->shearFreeAbsoluteTransform);
 
     OwnPtr<ImageBuffer> sourceGraphic;
-    RenderingMode renderingMode = object->frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
+    RenderingMode renderingMode = renderer.frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
     if (!SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, sourceGraphic, ColorSpaceLinearRGB, renderingMode)) {
-        ASSERT(!m_filter.contains(object));
+        ASSERT(!m_filter.contains(&renderer));
         filterData->savedContext = context;
-        m_filter.set(object, std::move(filterData));
+        m_filter.set(&renderer, std::move(filterData));
         return false;
     }
     
@@ -236,8 +235,8 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
 
     context = sourceGraphicContext;
 
-    ASSERT(!m_filter.contains(object));
-    m_filter.set(object, std::move(filterData));
+    ASSERT(!m_filter.contains(&renderer));
+    m_filter.set(&renderer, std::move(filterData));
 
     return true;
 }

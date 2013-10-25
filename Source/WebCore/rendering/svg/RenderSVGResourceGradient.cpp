@@ -110,9 +110,8 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context,
 }
 #endif
 
-bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
 {
-    ASSERT(object);
     ASSERT(style);
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
@@ -131,11 +130,11 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
 
     // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
     // then the given effect (e.g. a gradient or a filter) will be ignored.
-    FloatRect objectBoundingBox = object->objectBoundingBox();
+    FloatRect objectBoundingBox = renderer.objectBoundingBox();
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    OwnPtr<GradientData>& gradientData = m_gradientMap.add(object, nullptr).iterator->value;
+    OwnPtr<GradientData>& gradientData = m_gradientMap.add(&renderer, nullptr).iterator->value;
     if (!gradientData)
         gradientData = adoptPtr(new GradientData);
 
@@ -165,7 +164,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
             // Depending on font scaling factor, we may need to rescale the gradient here since
             // text painting removes the scale factor from the context.
             AffineTransform additionalTextTransform;
-            if (shouldTransformOnTextPainting(object, additionalTextTransform))
+            if (shouldTransformOnTextPainting(&renderer, additionalTextTransform))
                 gradientData->userspaceTransform *= additionalTextTransform;
         }
         gradientData->gradient->setGradientSpaceTransform(gradientData->userspaceTransform);
@@ -179,7 +178,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
 
     if (isPaintingText) {
 #if USE(CG)
-        if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, object)) {
+        if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, &renderer)) {
             context->restore();
             return false;
         }
@@ -197,10 +196,10 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
         context->setFillRule(svgStyle->fillRule());
     } else if (resourceMode & ApplyToStrokeMode) {
         if (svgStyle->vectorEffect() == VE_NON_SCALING_STROKE)
-            gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(object, gradientData->userspaceTransform));
+            gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
         context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokeGradient(gradientData->gradient);
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, object);
+        SVGRenderSupport::applyStrokeStyleToContext(context, style, &renderer);
     }
 
     return true;
