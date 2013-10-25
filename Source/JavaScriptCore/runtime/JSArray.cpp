@@ -755,21 +755,21 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         // so only if it's not horribly slow.
         if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
             return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
-        
+
+        // Storing to a hole is fine since we're still having a good time. But reading from a hole 
+        // is totally not fine, since we might have to read from the proto chain.
+        // We have to check for holes before we start moving things around so that we don't get halfway 
+        // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
         for (unsigned i = startIndex; i < end; ++i) {
-            // Storing to a hole is fine since we're still having a good time. But reading
-            // from a hole is totally not fine, since we might have to read from the proto
-            // chain.
             JSValue v = m_butterfly->contiguous()[i + count].get();
-            if (UNLIKELY(!v)) {
-                // The purpose of this path is to ensure that we don't make the same
-                // mistake in the future: shiftCountWithArrayStorage() can't do anything
-                // about holes (at least for now), but it can detect them quickly. So
-                // we convert to array storage and then allow the array storage path to
-                // figure it out.
+            if (UNLIKELY(!v))
                 return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
-            }
+        }
+
+        for (unsigned i = startIndex; i < end; ++i) {
+            JSValue v = m_butterfly->contiguous()[i + count].get();
+            ASSERT(v);
             // No need for a barrier since we're just moving data around in the same vector.
             // This is in line with our standing assumption that we won't have a deletion
             // barrier.
@@ -790,21 +790,21 @@ bool JSArray::shiftCountWithAnyIndexingType(ExecState* exec, unsigned startIndex
         // so only if it's not horribly slow.
         if (oldLength - (startIndex + count) >= MIN_SPARSE_ARRAY_INDEX)
             return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
-        
+
+        // Storing to a hole is fine since we're still having a good time. But reading from a hole 
+        // is totally not fine, since we might have to read from the proto chain.
+        // We have to check for holes before we start moving things around so that we don't get halfway 
+        // through shifting and then realize we should have been in ArrayStorage mode.
         unsigned end = oldLength - count;
         for (unsigned i = startIndex; i < end; ++i) {
-            // Storing to a hole is fine since we're still having a good time. But reading
-            // from a hole is totally not fine, since we might have to read from the proto
-            // chain.
             double v = m_butterfly->contiguousDouble()[i + count];
-            if (UNLIKELY(v != v)) {
-                // The purpose of this path is to ensure that we don't make the same
-                // mistake in the future: shiftCountWithArrayStorage() can't do anything
-                // about holes (at least for now), but it can detect them quickly. So
-                // we convert to array storage and then allow the array storage path to
-                // figure it out.
+            if (UNLIKELY(v != v))
                 return shiftCountWithArrayStorage(startIndex, count, ensureArrayStorage(exec->vm()));
-            }
+        }
+            
+        for (unsigned i = startIndex; i < end; ++i) {
+            double v = m_butterfly->contiguousDouble()[i + count];
+            ASSERT(v == v);
             // No need for a barrier since we're just moving data around in the same vector.
             // This is in line with our standing assumption that we won't have a deletion
             // barrier.
@@ -889,11 +889,18 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
             return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
         
         ensureLength(exec->vm(), oldLength + count);
-        
+
+        // We have to check for holes before we start moving things around so that we don't get halfway 
+        // through shifting and then realize we should have been in ArrayStorage mode.
         for (unsigned i = oldLength; i-- > startIndex;) {
             JSValue v = m_butterfly->contiguous()[i].get();
             if (UNLIKELY(!v))
                 return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
+        }
+
+        for (unsigned i = oldLength; i-- > startIndex;) {
+            JSValue v = m_butterfly->contiguous()[i].get();
+            ASSERT(v);
             m_butterfly->contiguous()[i + count].setWithoutWriteBarrier(v);
         }
         
@@ -915,10 +922,17 @@ bool JSArray::unshiftCountWithAnyIndexingType(ExecState* exec, unsigned startInd
         
         ensureLength(exec->vm(), oldLength + count);
         
+        // We have to check for holes before we start moving things around so that we don't get halfway 
+        // through shifting and then realize we should have been in ArrayStorage mode.
         for (unsigned i = oldLength; i-- > startIndex;) {
             double v = m_butterfly->contiguousDouble()[i];
             if (UNLIKELY(v != v))
                 return unshiftCountWithArrayStorage(exec, startIndex, count, ensureArrayStorage(exec->vm()));
+        }
+
+        for (unsigned i = oldLength; i-- > startIndex;) {
+            double v = m_butterfly->contiguousDouble()[i];
+            ASSERT(v == v);
             m_butterfly->contiguousDouble()[i + count] = v;
         }
         
