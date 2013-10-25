@@ -22,6 +22,7 @@
 .objc_class_name_WebHistoryItem
 .objc_class_name_WebIconDatabase
 .objc_class_name_WebInspector
+.objc_class_name_WebInspectorXPCWrapper
 .objc_class_name_WebJavaScriptTextInputPanel
 .objc_class_name_WebKeyGenerator
 .objc_class_name_WebKitStatistics

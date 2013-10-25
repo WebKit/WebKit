@@ -1,3 +1,12 @@
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
 2013-04-27  Darin Adler  <darin@apple.com>
 
         Move from constructor and member function adoptCF/NS to free function adoptCF/NS.

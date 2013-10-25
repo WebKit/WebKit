@@ -204,6 +204,11 @@ private:
     WebFullScreenController *newFullscreenController;
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+    BOOL allowsRemoteInspection;
+    NSDictionary *remoteInspectorUserInfo;
+#endif
+
 #if USE(GLIB)
     CFRunLoopObserverRef glibRunLoopObserver;
 #endif

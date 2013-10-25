@@ -34,6 +34,11 @@
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
+#if !defined(ENABLE_REMOTE_INSPECTOR)
+// FIXME: Should we just remove this ENABLE flag everywhere?
+#define ENABLE_REMOTE_INSPECTOR 1
+#endif
+
 @class NSError;
 @class WebFrame;
 @class WebDeviceOrientation;
@@ -70,6 +75,12 @@ extern NSString *WebElementIsInScrollBarKey;
 
 // One of the subviews of the WebView entered compositing mode.
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
+
+#if ENABLE_REMOTE_INSPECTOR
+// Notification when the number of inspector sessions becomes non-zero or returns to 0.
+// Check the current state via -[WebView _hasRemoteInspectorSession].
+extern NSString *_WebViewRemoteInspectorHasSessionChangedNotification;
+#endif
 
 extern NSString * const WebViewWillCloseNotification;
 
@@ -243,6 +254,61 @@ typedef enum {
 @interface WebView (WebPrivate)
 
 - (WebInspector *)inspector;
+
+#if ENABLE_REMOTE_INSPECTOR
++ (void)_enableRemoteInspector;
++ (void)_disableRemoteInspector;
++ (void)_disableAutoStartRemoteInspector;
++ (BOOL)_isRemoteInspectorEnabled;
++ (BOOL)_hasRemoteInspectorSession;
+
+/*!
+    @method canBeRemotelyInspected
+    @result Looks at all the factors of this WebView and returns whether or not
+    this WebView should allow a Remote Web Inspector to attach to it. This takes
+    into account -allowsRemoteInspection, Private Browsing, and potentially other
+    factors.
+*/
+- (BOOL)canBeRemotelyInspected;
+
+/*!
+    @method allowsRemoteInspection
+    @result Returns whether or not this WebView will allow a Remote Web Inspector
+    to attach to it.
+*/
+- (BOOL)allowsRemoteInspection;
+
+/*!
+    @method setAllowsRemoteInspection:
+    @param allow The new permission for this WebView.
+    @abstract Sets the permission of this WebView to either allow or disallow
+    a Remote Web Inspector to attach to it.
+*/
+- (void)setAllowsRemoteInspection:(BOOL)allow;
+
+/*!
+    @method setIndicatingForRemoteInspector
+    @param enabled Show the indication when true, hide when false.
+    @abstract indicate this WebView on screen for a remote inspector.
+*/
+- (void)setIndicatingForRemoteInspector:(BOOL)enabled;
+
+/*
+    @method setRemoteInspectorUserInfo
+    @param tag The dictionary to be associated with the WebView.
+    @abstract Developer specified dictionary for the WebView that will be
+    sent to the Remote Debugger. The dictionary must contain property
+    list serializable values.
+*/
+- (void)setRemoteInspectorUserInfo:(NSDictionary *)userInfo;
+
+/*!
+    @method remoteInspectorUserInfo
+    @result Returns the dictionary associated with this WebView.
+*/
+- (NSDictionary *)remoteInspectorUserInfo;
+#endif
+
 
 /*!
     @method setBackgroundColor:

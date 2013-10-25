@@ -1,3 +1,13 @@
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCore.exp.in:
+
 2013-10-25  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] CORS-enabled fetch for shape image values

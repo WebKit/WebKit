@@ -61,6 +61,9 @@ struct DictationAlternative;
 @class WebBasePluginPackage;
 @class WebDownload;
 @class WebNodeHighlight;
+#if ENABLE(REMOTE_INSPECTOR)
+@class WebInspectorServer;
+#endif
 
 #ifdef __cplusplus
 
@@ -212,6 +215,10 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_enterFullScreenForElement:(WebCore::Element*)element;
 - (void)_exitFullScreenForElement:(WebCore::Element*)element;
 - (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer;
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
++ (WebInspectorServer *)sharedWebInspectorServer;
 #endif
 
 // Conversion functions between WebCore root view coordinates and web view coordinates.

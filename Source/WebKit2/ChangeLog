@@ -1,3 +1,12 @@
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-10-25  Gavin Barraclough  <barraclough@apple.com>
 
         Merge viewInWindowStateDidChange into viewStateDidChange

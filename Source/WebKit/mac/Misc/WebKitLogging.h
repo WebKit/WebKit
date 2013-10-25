@@ -60,6 +60,7 @@ extern "C" {
     M(Plugins) \
     M(Progress) \
     M(Redirect) \
+    M(RemoteInspector) \
     M(TextInput) \
     M(Timing) \
     M(View) \

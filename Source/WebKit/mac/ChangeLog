@@ -1,3 +1,160 @@
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        The actual implementation at the WebCoreSupport/WebInspectorClient level
+        is the same as INSPECTOR_SERVER. Give debuggable pages a pageIdentifer.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Misc/WebKitLogging.h:
+        Misc.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorClient::pageId):
+        (WebInspectorClient::setPageId):
+        Give WebInspectorClient's a page identifier.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::sendMessageToFrontend):
+        (WebInspectorClient::sendMessageToBackend):
+        (WebInspectorClient::setupRemoteConnection):
+        (WebInspectorClient::teardownRemoteConnection):
+        (WebInspectorClient::hasLocalSession):
+        (WebInspectorClient::canBeRemotelyInspected):
+        (WebInspectorClient::inspectedWebView):
+        A WebInspectorClient can be either local or remote. Add handling
+        for remote connections.
+
+        * WebInspector/remote/WebInspectorClientRegistry.h: Added.
+        * WebInspector/remote/WebInspectorClientRegistry.mm: Added.
+        (+[WebInspectorClientRegistry sharedRegistry]):
+        (-[WebInspectorClientRegistry init]):
+        (-[WebInspectorClientRegistry _getNextAvailablePageId]):
+        (-[WebInspectorClientRegistry registerClient:]):
+        (-[WebInspectorClientRegistry unregisterClient:]):
+        (-[WebInspectorClientRegistry clientForPageId:]):
+        (-[WebInspectorClientRegistry inspectableWebViews]):
+        Registry for all potentially debuggable pages. All WebInspectorClient instances.
+
+        * WebInspector/remote/WebInspectorRelayDefinitions.h: Added.
+        Constants (message keys) shared between WebKit and the XPC process.
+
+        * WebInspector/remote/WebInspectorServer.h: Added.
+        * WebInspector/remote/WebInspectorServer.mm: Added.
+        (-[WebInspectorServer init]):
+        (-[WebInspectorServer dealloc]):
+        (-[WebInspectorServer start]):
+        (-[WebInspectorServer stop]):
+        (-[WebInspectorServer isEnabled]):
+        (-[WebInspectorServer xpcConnection]):
+        (-[WebInspectorServer setupXPCConnectionIfNeeded]):
+        (-[WebInspectorServer pushListing]):
+        (-[WebInspectorServer hasActiveDebugSession]):
+        (-[WebInspectorServer setHasActiveDebugSession:]):
+        (-[WebInspectorServer xpcConnection:receivedMessage:userInfo:]):
+        (-[WebInspectorServer xpcConnectionFailed:]):
+        (-[WebInspectorServer didRegisterClient:]):
+        (-[WebInspectorServer didUnregisterClient:]):
+        Singleton to start/stop remote inspection. Handles the connection to the XPC
+        and hands off connections to the connection controller.
+
+        * WebInspector/remote/WebInspectorServerWebViewConnection.h: Added.
+        * WebInspector/remote/WebInspectorServerWebViewConnection.mm: Added.
+        (-[WebInspectorServerWebViewConnection initWithController:connectionIdentifier:destination:identifier:]):
+        (-[WebInspectorServerWebViewConnection setupChannel]):
+        (-[WebInspectorServerWebViewConnection dealloc]):
+        (-[WebInspectorServerWebViewConnection connectionIdentifier]):
+        (-[WebInspectorServerWebViewConnection identifier]):
+        (-[WebInspectorServerWebViewConnection clearChannel]):
+        (-[WebInspectorServerWebViewConnection sendMessageToFrontend:]):
+        (-[WebInspectorServerWebViewConnection sendMessageToBackend:]):
+        (-[WebInspectorServerWebViewConnection receivedData:]):
+        (-[WebInspectorServerWebViewConnection receivedDidClose:]):
+        An individual remote debug session connection.
+
+        * WebInspector/remote/WebInspectorServerWebViewConnectionController.h: Added.
+        * WebInspector/remote/WebInspectorServerWebViewConnectionController.mm: Added.
+        (-[WebInspectorServerWebViewConnectionController initWithServer:]):
+        (-[WebInspectorServerWebViewConnectionController dealloc]):
+        (-[WebInspectorServerWebViewConnectionController closeAllConnections]):
+        (-[WebInspectorServerWebViewConnectionController _listingForWebView:pageId:registry:]):
+        (-[WebInspectorServerWebViewConnectionController _pushListing:]):
+        (-[WebInspectorServerWebViewConnectionController pushListing:]):
+        (-[WebInspectorServerWebViewConnectionController pushListing]):
+        (-[WebInspectorServerWebViewConnectionController _receivedSetup:]):
+        (-[WebInspectorServerWebViewConnectionController _receivedData:]):
+        (-[WebInspectorServerWebViewConnectionController _receivedDidClose:]):
+        (-[WebInspectorServerWebViewConnectionController _receivedGetListing:]):
+        (-[WebInspectorServerWebViewConnectionController _receivedIndicate:]):
+        (-[WebInspectorServerWebViewConnectionController _receivedConnectionDied:]):
+        (-[WebInspectorServerWebViewConnectionController receivedMessage:userInfo:]):
+        (-[WebInspectorServerWebViewConnectionController connectionClosing:]):
+        (-[WebInspectorServerWebViewConnectionController sendMessageToFrontend:userInfo:]):
+        ConnectionController:
+          - Holds all the current ongoing remote debug connections.
+          - Simplifies multi-threaded work on iOS.
+          - Dispatches incoming messages from the remote connection.
+
+        * WebInspector/remote/WebInspectorRemoteChannel.h: Added.
+        * WebInspector/remote/WebInspectorRemoteChannel.mm: Added.
+        (+[WebInspectorRemoteChannel createChannelForPageId:connection:]):
+        (-[WebInspectorRemoteChannel initWithRemote:local:]):
+        (-[WebInspectorRemoteChannel closeFromLocalSide]):
+        (-[WebInspectorRemoteChannel closeFromRemoteSide]):
+        (-[WebInspectorRemoteChannel sendMessageToFrontend:]):
+        (-[WebInspectorRemoteChannel sendMessageToBackend:]):
+        Thin interface between the remote connection and web inspector client.
+        This simplifies breaking the connection from either side, e.g. the
+        page closing, or the remote connection disconnecting.
+
+        * WebInspector/remote/WebInspectorXPCWrapper.h: Added.
+        * WebInspector/remote/WebInspectorXPCWrapper.m: Added.
+        (-[WebInspectorXPCWrapper initWithConnection:]):
+        (-[WebInspectorXPCWrapper close]):
+        (-[WebInspectorXPCWrapper dealloc]):
+        (-[WebInspectorXPCWrapper _deserializeMessage:]):
+        (-[WebInspectorXPCWrapper _handleEvent:]):
+        (-[WebInspectorXPCWrapper sendMessage:userInfo:]):
+        (-[WebInspectorXPCWrapper available]):
+        * WebKit.exp:
+        XPC Connection wrapper handling a simple message format.
+
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (+[WebView sharedWebInspectorServer]):
+        (+[WebView _enableRemoteInspector]):
+        (+[WebView _disableRemoteInspector]):
+        (+[WebView _disableAutoStartRemoteInspector]):
+        (+[WebView _isRemoteInspectorEnabled]):
+        (+[WebView _hasRemoteInspectorSession]):
+        (-[WebView canBeRemotelyInspected]):
+        (-[WebView allowsRemoteInspection]):
+        (-[WebView setAllowsRemoteInspection:]):
+        (-[WebView setIndicatingForRemoteInspector:]):
+        (-[WebView setRemoteInspectorUserInfo:]):
+        (-[WebView remoteInspectorUserInfo]):
+        Remote inspector private API.
+          - Enable / disable globally
+          - Allow / disallow per webview
+          - Optionally attach a userInfo dictionary on the WebView that is published with listing.
+          - Indicate a WebView (implementation to land later)
+
+        (-[WebView _didCommitLoadForFrame:]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveTitle):
+        Pages changed, pushed page listing.
+
 2013-10-25  Mark Rowe  <mrowe@apple.com>
 
         Fix or disable some deprecation warnings.

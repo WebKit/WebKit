@@ -211,6 +211,10 @@
 #import <WebCore/DiskImageCacheIOS.h>
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+#import "WebInspectorServer.h"
+#endif
+
 #if USE(GLIB)
 #import <glib.h>
 #endif
@@ -385,6 +389,10 @@ static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 static const char webViewIsOpen[] = "At least one WebView is still open.";
 #endif
 
+#if ENABLE(REMOTE_INSPECTOR)
+static BOOL autoStartRemoteInspector = YES;
+#endif
+
 @interface NSObject (WebValidateWithoutDelegate)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
 @end
@@ -513,6 +521,10 @@ NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 
 NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStartAcceleratedCompositing";
 NSString * const WebViewWillCloseNotification = @"WebViewWillCloseNotification";
+
+#if ENABLE(REMOTE_INSPECTOR)
+NSString *_WebViewRemoteInspectorHasSessionChangedNotification = @"_WebViewRemoteInspectorHasSessionChangedNotification";
+#endif
 
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
 
@@ -751,6 +763,11 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
         Settings::setDefaultMinDOMTimerInterval(0.004);
         
         Settings::setShouldRespectPriorityInCSSAttributeSetters(shouldRespectPriorityInCSSAttributeSetters());
+
+#if ENABLE(REMOTE_INSPECTOR)
+        if (autoStartRemoteInspector)
+            [WebView _enableRemoteInspector];
+#endif
 
         didOneTimeInitialization = true;
     }
@@ -1246,6 +1263,85 @@ static bool fastDocumentTeardownEnabled()
         _private->inspector = [[WebInspector alloc] initWithWebView:self];
     return _private->inspector;
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
++ (WebInspectorServer *)sharedWebInspectorServer
+{
+    static WebInspectorServer *sharedServer = [[WebInspectorServer alloc] init];
+    return sharedServer;
+}
+
++ (void)_enableRemoteInspector
+{
+    [[WebView sharedWebInspectorServer] start];
+}
+
++ (void)_disableRemoteInspector
+{
+    [[WebView sharedWebInspectorServer] stop];
+}
+
++ (void)_disableAutoStartRemoteInspector
+{
+    autoStartRemoteInspector = NO;
+}
+
++ (BOOL)_isRemoteInspectorEnabled
+{
+    return [[WebView sharedWebInspectorServer] isEnabled];
+}
+
++ (BOOL)_hasRemoteInspectorSession
+{
+    return [[WebView sharedWebInspectorServer] hasActiveDebugSession];
+}
+
+- (BOOL)canBeRemotelyInspected
+{
+#if !PLATFORM(IOS)
+    if (![[self preferences] developerExtrasEnabled])
+        return NO;
+#endif
+
+    return [self allowsRemoteInspection];
+}
+
+- (BOOL)allowsRemoteInspection
+{
+    return _private->allowsRemoteInspection;
+}
+
+- (void)setAllowsRemoteInspection:(BOOL)allow
+{
+    if (_private->allowsRemoteInspection == allow)
+        return;
+
+    _private->allowsRemoteInspection = allow;
+
+    [[WebView sharedWebInspectorServer] pushListing];
+}
+
+- (void)setIndicatingForRemoteInspector:(BOOL)enabled
+{
+    // FIXME: Needs implementation.
+}
+
+- (void)setRemoteInspectorUserInfo:(NSDictionary *)userInfo
+{
+    if ([_private->remoteInspectorUserInfo isEqualToDictionary:userInfo])
+        return;
+
+    [_private->remoteInspectorUserInfo release];
+    _private->remoteInspectorUserInfo = [userInfo copy];
+
+    [[WebView sharedWebInspectorServer] pushListing];
+}
+
+- (NSDictionary *)remoteInspectorUserInfo
+{
+    return _private->remoteInspectorUserInfo;
+}
+#endif
 
 - (WebCore::Page*)page
 {
@@ -1971,6 +2067,9 @@ static inline IMP getMethod(id o, SEL s)
     if (frame == [self mainFrame])
         [self _didChangeValueForKey: _WebMainFrameURLKey];
     [NSApp setWindowsNeedUpdate:YES];
+#if ENABLE(REMOTE_INSPECTOR)
+    [[WebView sharedWebInspectorServer] pushListing];
+#endif
 }
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
