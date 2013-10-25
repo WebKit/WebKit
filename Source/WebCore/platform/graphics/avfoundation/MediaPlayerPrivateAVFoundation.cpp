@@ -63,6 +63,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_seekTo(MediaPlayer::invalidTime())
     , m_requestedRate(1)
     , m_delayCallbacks(0)
+    , m_delayCharacteristicsChangedNotification(0)
     , m_mainThreadCallPending(false)
     , m_assetIsPlayable(false)
     , m_visible(false)
@@ -75,6 +76,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_haveReportedFirstVideoFrame(false)
     , m_playWhenFramesAvailable(false)
     , m_inbandTrackConfigurationPending(false)
+    , m_characteristicsChanged(false)
     , m_seekCount(0)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(%p)", this);
@@ -328,7 +330,7 @@ void MediaPlayerPrivateAVFoundation::setHasVideo(bool b)
 {
     if (m_cachedHasVideo != b) {
         m_cachedHasVideo = b;
-        m_player->characteristicChanged();
+        characteristicsChanged();
     }
 }
 
@@ -336,7 +338,7 @@ void MediaPlayerPrivateAVFoundation::setHasAudio(bool b)
 {
     if (m_cachedHasAudio != b) {
         m_cachedHasAudio = b;
-        m_player->characteristicChanged();
+        characteristicsChanged();
     }
 }
 
@@ -344,8 +346,32 @@ void MediaPlayerPrivateAVFoundation::setHasClosedCaptions(bool b)
 {
     if (m_cachedHasCaptions != b) {
         m_cachedHasCaptions = b;
-        m_player->characteristicChanged();
+        characteristicsChanged();
     }
+}
+
+void MediaPlayerPrivateAVFoundation::characteristicsChanged()
+{
+    if (m_delayCharacteristicsChangedNotification) {
+        m_characteristicsChanged = true;
+        return;
+    }
+
+    m_characteristicsChanged = false;
+    m_player->characteristicChanged();
+}
+
+void MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification(bool delay)
+{
+    if (delay) {
+        m_delayCharacteristicsChangedNotification++;
+        return;
+    }
+    
+    ASSERT(m_delayCharacteristicsChangedNotification);
+    m_delayCharacteristicsChangedNotification--;
+    if (!m_delayCharacteristicsChangedNotification && m_characteristicsChanged)
+        characteristicsChanged();
 }
 
 PassRefPtr<TimeRanges> MediaPlayerPrivateAVFoundation::buffered() const

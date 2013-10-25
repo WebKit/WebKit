@@ -234,6 +234,8 @@ protected:
     void setHasVideo(bool);
     void setHasAudio(bool);
     void setHasClosedCaptions(bool);
+    void characteristicsChanged();
+    void setDelayCharacteristicsChangedNotification(bool);
     void setDelayCallbacks(bool) const;
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(IntSize);
@@ -292,6 +294,7 @@ private:
     double m_seekTo;
     float m_requestedRate;
     mutable int m_delayCallbacks;
+    int m_delayCharacteristicsChangedNotification;
     bool m_mainThreadCallPending;
     bool m_assetIsPlayable;
     bool m_visible;
@@ -304,6 +307,7 @@ private:
     bool m_haveReportedFirstVideoFrame;
     bool m_playWhenFramesAvailable;
     bool m_inbandTrackConfigurationPending;
+    bool m_characteristicsChanged;
     size_t m_seekCount;
 };
 
