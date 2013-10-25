@@ -1,3 +1,9 @@
+2013-10-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unreviewed GTK gardening. Several fast/regions/selection tests are failing in WK2.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         New Mavericks results for editing and fast/html, with MountainLion fallbacks.
