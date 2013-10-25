@@ -1,3 +1,18 @@
+2013-10-25  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Shapes] Update updateShapeAndSegmentsForCurrentLineInFlowThread to deal better with the first lines
+        <https://bugs.webkit.org/show_bug.cgi?id=123275>
+
+        Reviewed by David Hyatt.
+
+        We have a complex condition in updateShapeAndSegmentsForCurrentLineInFlowThread, which is
+        adjusting the first line to the shape's top. This patch adds two boolean to make that clear.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread):
+
 2013-10-25  Antti Koivisto  <antti@apple.com>
 
         Faster way for simple line layout to check if text has fallback fonts
