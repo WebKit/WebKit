@@ -146,10 +146,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-- (void)_setIsWindowOccluded:(BOOL)isWindowOccluded;
-#endif
 @end
 
 @interface WKViewData : NSObject {
@@ -237,11 +233,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _clipsToVisibleRect;
     NSRect _contentPreparationRect;
     BOOL _useContentPreparationRectForVisibleRect;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    BOOL _isWindowOccluded;
     BOOL _windowOcclusionDetectionEnabled;
-#endif
 }
 
 @end
@@ -1941,10 +1933,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
     // update the active state.
     if ([self window]) {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-        if (_data->_windowOcclusionDetectionEnabled)
-            [self _setIsWindowOccluded:([[self window] occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
-#endif
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
         [self _updateWindowVisibility];
@@ -2071,10 +2059,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
-    if (!_data->_windowOcclusionDetectionEnabled)
-        return;
-
-    [self _setIsWindowOccluded:([self.window occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 #endif
 
@@ -2256,17 +2241,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     NSPoint locationInViewCoordinates = [self convertPoint:[event locationInWindow] fromView:nil];
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(locationInViewCoordinates.x, locationInViewCoordinates.y));
-}
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-- (void)_setIsWindowOccluded:(BOOL)isWindowOccluded
-{
-    if (_data->_isWindowOccluded == isWindowOccluded)
-        return;
-    
-    _data->_isWindowOccluded = isWindowOccluded;
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 #endif
 
@@ -2918,15 +2892,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_page->suppressVisibilityUpdates();
 }
 
-- (BOOL)_isWindowOccluded
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return _data->_isWindowOccluded;
-#else
-    return NO;
-#endif
-}
-
 @end
 
 @implementation WKView (Private)
@@ -2982,13 +2947,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_ignoringMouseDraggedEvents = NO;
     _data->_clipsToVisibleRect = NO;
     _data->_useContentPreparationRectForVisibleRect = NO;
+    _data->_windowOcclusionDetectionEnabled = YES;
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    _data->_isWindowOccluded = NO;
-    _data->_windowOcclusionDetectionEnabled = YES;
-#endif
 
     _data->_needsViewFrameInWindowCoordinates = _data->_page->pageGroup()->preferences()->pluginsEnabled();
     _data->_frameOrigin = NSZeroPoint;
@@ -3252,32 +3213,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (BOOL)windowOcclusionDetectionEnabled
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     return _data->_windowOcclusionDetectionEnabled;
-#else
-    return NO;
-#endif
 }
 
 - (void)setWindowOcclusionDetectionEnabled:(BOOL)flag
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if (_data->_windowOcclusionDetectionEnabled == flag)
-        return;
-
     _data->_windowOcclusionDetectionEnabled = flag;
-
-    if (flag) {
-        // When enabling window occlusion detection, update the view's current occluded state
-        // immediately, as the notification only fires when it changes.
-        if (self.window)
-            [self _setIsWindowOccluded:([self.window occlusionState] & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible];
-    } else {
-        // When disabling window occlusion detection, force the view to think it is not occluded,
-        // as it may already be occluded at the time of calling.
-        [self _setIsWindowOccluded:NO];
-    }
-#endif
 }
 
 - (void)setContentAnchor:(WKContentAnchor)contentAnchor

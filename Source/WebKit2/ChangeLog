@@ -1,5 +1,35 @@
 2013-10-24  Gavin Barraclough  <barraclough@apple.com>
 
+        Simplify window occlusion detection code
+        https://bugs.webkit.org/show_bug.cgi?id=123300
+
+        Reviewed by Tim Horton.
+
+        Currently the WKView tries to maintain a copy of the window's occluded state,
+        but forced to NO when occlusion detection is disabled (and capable of handling
+        dectection being dynamically toggled). Simpler to just rely on the actual value
+        from the window, && the enabled setting. Cleaning this up revealed that we're
+        not sending a viewStateDidChange to the WebPageProxy when the occlusion state
+        changes, which we probably should be.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisible):
+            - check the real value of occlusion state from the window.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+            - don't update cached value.
+        (-[WKView _windowDidChangeOcclusionState:]):
+            - don't update cached value, but do send viewStateDidChange to the WebPageProxy.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+            - removed _isWindowOccluded.
+        (-[WKView windowOcclusionDetectionEnabled]):
+        (-[WKView setWindowOcclusionDetectionEnabled:]):
+            - Just toggle the flag - no cached state to update any more.
+        * UIProcess/API/mac/WKViewInternal.h:
+            - removed _isWindowOccluded.
+
+2013-10-24  Gavin Barraclough  <barraclough@apple.com>
+
         SetIsVisible message should be sent to WebPage
         https://bugs.webkit.org/show_bug.cgi?id=123296
 
