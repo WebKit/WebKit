@@ -324,9 +324,8 @@ public:
     bool canScrollView();
     void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
-    void viewStateDidChange(ViewState::Flags);
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
-    void viewInWindowStateDidChange(WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
+    void viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
     bool isInWindow() const { return m_isInWindow; }
     void waitForDidUpdateInWindowState();
 

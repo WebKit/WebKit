@@ -3157,7 +3157,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewInWindowStateDidChange();
+        _data->_page->viewStateDidChange(ViewState::IsInWindow);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 }
@@ -3175,7 +3175,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewInWindowStateDidChange(hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
+        _data->_page->viewStateDidChange(ViewState::IsInWindow, hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 

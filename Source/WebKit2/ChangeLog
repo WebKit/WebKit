@@ -1,3 +1,20 @@
+2013-10-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge viewInWindowStateDidChange into viewStateDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=123351
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView endDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChangesSync]):
+            - viewInWindowStateDidChange -> viewStateDidChange
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - removed viewInWindowStateDidChange, renamed parameter to viewStateDidChange
+        * UIProcess/WebPageProxy.h:
+            - removed viewInWindowStateDidChange, named parameter to viewStateDidChange
+
 2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF for GTK after r158028.

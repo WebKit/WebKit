@@ -964,52 +964,28 @@ void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOf
     m_pageClient->scrollView(scrollRect, scrollOffset);
 }
 
-void WebPageProxy::viewInWindowStateDidChange(WantsReplyOrNot wantsReply)
+void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot wantsReply)
 {
+    // Wants reply currently only applies to the IsInWindow flag, so check only this is set.
+    ASSERT(wantsReply == WantsReplyOrNot::DoesNotWantReply || mayHaveChanged == ViewState::IsInWindow);
+
     if (!isValid())
         return;
 
-    bool isInWindow = m_pageClient->isViewInWindow();
-    if (m_isInWindow != isInWindow) {
-        m_isInWindow = isInWindow;
-        m_process->send(Messages::WebPage::SetIsInWindow(isInWindow, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
-    }
-
-    if (isInWindow) {
-        LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
-        if (m_layerHostingMode != layerHostingMode) {
-            m_layerHostingMode = layerHostingMode;
-            m_drawingArea->layerHostingModeDidChange();
-        }
-    }
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
-    else {
-        // When leaving the current page, close the popover color well.
-        if (m_colorPicker)
-            endColorPicker();
-    }
-#endif
-}
-
-void WebPageProxy::viewStateDidChange(ViewState::Flags flags)
-{
-    if (!isValid())
-        return;
-
-    if (flags & ViewState::WindowIsVisible)
+    if (mayHaveChanged & ViewState::WindowIsVisible)
         process()->send(Messages::WebPage::SetWindowIsVisible(m_pageClient->isWindowVisible()), m_pageID);
 
-    if (flags & ViewState::IsFocused)
+    if (mayHaveChanged & ViewState::IsFocused)
         m_process->send(Messages::WebPage::SetFocused(m_pageClient->isViewFocused()), m_pageID);
 
     // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
     // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
     bool viewWasVisible = m_isVisible;
     
-    if (flags & ViewState::WindowIsActive && !viewWasVisible)
+    if (mayHaveChanged & ViewState::WindowIsActive && !viewWasVisible)
         m_process->send(Messages::WebPage::SetActive(m_pageClient->isViewWindowActive()), m_pageID);
 
-    if (flags & ViewState::IsVisible) {
+    if (mayHaveChanged & ViewState::IsVisible) {
         bool isVisible = m_pageClient->isViewVisible();
         if (isVisible != m_isVisible) {
             m_isVisible = isVisible;
@@ -1030,11 +1006,31 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags flags)
         }
     }
 
-    if (flags & ViewState::WindowIsActive && viewWasVisible)
+    if (mayHaveChanged & ViewState::WindowIsActive && viewWasVisible)
         m_process->send(Messages::WebPage::SetActive(m_pageClient->isViewWindowActive()), m_pageID);
 
-    if (flags & ViewState::IsInWindow)
-        viewInWindowStateDidChange();
+    if (mayHaveChanged & ViewState::IsInWindow) {
+        bool isInWindow = m_pageClient->isViewInWindow();
+        if (m_isInWindow != isInWindow) {
+            m_isInWindow = isInWindow;
+            m_process->send(Messages::WebPage::SetIsInWindow(isInWindow, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
+        }
+
+        if (isInWindow) {
+            LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
+            if (m_layerHostingMode != layerHostingMode) {
+                m_layerHostingMode = layerHostingMode;
+                m_drawingArea->layerHostingModeDidChange();
+            }
+        }
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+        else {
+            // When leaving the current page, close the popover color well.
+            if (m_colorPicker)
+                endColorPicker();
+        }
+#endif
+    }
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState = PageVisibilityStateHidden;
