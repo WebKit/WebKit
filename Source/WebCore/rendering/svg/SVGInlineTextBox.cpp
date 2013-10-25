@@ -370,9 +370,8 @@ void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const 
 {
     ASSERT(m_paintingResource);
 
-    RenderObject& parentRenderer = parent()->renderer();
-    m_paintingResource->postApplyResource(&parentRenderer, context, m_paintingResourceMode, path, /*RenderSVGShape*/ 0);
-    m_paintingResource = 0;
+    m_paintingResource->postApplyResource(parent()->renderer(), context, m_paintingResourceMode, path, /*RenderSVGShape*/ 0);
+    m_paintingResource = nullptr;
 }
 
 bool SVGInlineTextBox::prepareGraphicsContextForTextPainting(GraphicsContext*& context, float scalingFactor, TextRun& textRun, RenderStyle* style)

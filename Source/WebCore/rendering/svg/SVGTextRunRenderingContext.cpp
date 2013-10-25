@@ -169,7 +169,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
             float strokeThickness = context->strokeThickness();
             if (renderer().isSVGInlineText())
                 context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderer()).scalingFactor());
-            activePaintingResource->postApplyResource(&elementRenderer, context, resourceMode, &glyphPath, 0);
+            activePaintingResource->postApplyResource(elementRenderer, context, resourceMode, &glyphPath, 0);
             context->setStrokeThickness(strokeThickness);
         }
 

@@ -241,19 +241,18 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, RenderStyle
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path*, const RenderSVGShape*)
+void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, unsigned short resourceMode, const Path*, const RenderSVGShape*)
 {
-    ASSERT(object);
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
-    FilterData* filterData = m_filter.get(object);
+    FilterData* filterData = m_filter.get(&renderer);
     if (!filterData)
         return;
 
     switch (filterData->state) {
     case FilterData::MarkedForRemoval:
-        m_filter.remove(object);
+        m_filter.remove(&renderer);
         return;
 
     case FilterData::CycleDetected:
@@ -267,7 +266,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 
     case FilterData::PaintingSource:
         if (!filterData->savedContext) {
-            removeClientFromCache(object);
+            removeClientFromCache(&renderer);
             return;
         }
 
@@ -301,7 +300,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
             context->concatCTM(filterData->shearFreeAbsoluteTransform.inverse());
 
             context->scale(FloatSize(1 / filterData->filter->filterResolution().width(), 1 / filterData->filter->filterResolution().height()));
-            context->drawImageBuffer(resultImage, object->style()->colorSpace(), lastEffect->absolutePaintRect());
+            context->drawImageBuffer(resultImage, renderer.style()->colorSpace(), lastEffect->absolutePaintRect());
             context->scale(filterData->filter->filterResolution());
 
             context->concatCTM(filterData->shearFreeAbsoluteTransform);

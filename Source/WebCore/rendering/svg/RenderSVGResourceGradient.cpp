@@ -205,7 +205,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, RenderSty
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderObject* object, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
+void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, unsigned short resourceMode, const Path* path, const RenderSVGShape* shape)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
@@ -214,7 +214,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
 #if USE(CG)
         // CG requires special handling for gradient on text
         GradientData* gradientData;
-        if (m_savedContext && (gradientData = m_gradientMap.get(object))) {
+        if (m_savedContext && (gradientData = m_gradientMap.get(&renderer))) {
             // Restore on-screen drawing context
             context = m_savedContext;
             m_savedContext = 0;
@@ -223,14 +223,14 @@ void RenderSVGResourceGradient::postApplyResource(RenderObject* object, Graphics
             calculateGradientTransform(gradientTransform);
 
             FloatRect targetRect;
-            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, targetRect, object, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform));
+            gradientData->gradient->setGradientSpaceTransform(clipToTextMask(context, m_imageBuffer, targetRect, &renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform));
             context->setFillGradient(gradientData->gradient);
 
             context->fillRect(targetRect);
             m_imageBuffer.clear();
         }
 #else
-        UNUSED_PARAM(object);
+        UNUSED_PARAM(renderer);
 #endif
     } else {
         if (resourceMode & ApplyToFillMode) {

@@ -36,7 +36,7 @@ public:
     virtual void removeClientFromCache(RenderObject*, bool = true) { }
 
     virtual bool applyResource(RenderElement&, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) OVERRIDE;
-    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*);
+    virtual void postApplyResource(RenderElement&, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) OVERRIDE;
     virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE { return FloatRect(); }
 
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }

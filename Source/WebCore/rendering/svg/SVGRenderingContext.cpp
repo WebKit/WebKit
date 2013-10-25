@@ -61,7 +61,7 @@ SVGRenderingContext::~SVGRenderingContext()
 #if ENABLE(FILTERS)
     if (m_renderingFlags & EndFilterLayer) {
         ASSERT(m_filter);
-        m_filter->postApplyResource(m_renderer, m_paintInfo->context, ApplyToDefaultMode, 0, 0);
+        m_filter->postApplyResource(*m_renderer, m_paintInfo->context, ApplyToDefaultMode, 0, 0);
         m_paintInfo->context = m_savedContext;
         m_paintInfo->rect = m_savedPaintRect;
     }
