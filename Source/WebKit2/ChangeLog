@@ -1,3 +1,16 @@
+2013-10-24  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/15312643> Prepare for the mysterious future.
+
+        Reviewed by David Kilzer.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebContentProcess.xcconfig:
+
 2013-10-24  Gavin Barraclough  <barraclough@apple.com>
 
         Fold updateWindowIsVisible into viewStateDidChange
