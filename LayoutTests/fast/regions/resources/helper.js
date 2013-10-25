@@ -224,7 +224,7 @@ function selectContentByIds(fromId, toId) {
     selectContentByRange(fromRect.left, fromRectVerticalCenter, toRect.right, toRectVerticalCenter);
 }
 
-function selectContentByIdsVert(fromId, toId) {
+function selectContentByIdsVertical(fromId, toId) {
     var fromRect = document.getElementById(fromId).getBoundingClientRect();
     var toRect = document.getElementById(toId).getBoundingClientRect();
 

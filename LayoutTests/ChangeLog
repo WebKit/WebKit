@@ -1,3 +1,26 @@
+2013-10-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Rename CSS classes and JS methods in vertical layout tests about selection
+        https://bugs.webkit.org/show_bug.cgi?id=123327
+
+        Reviewed by Mihnea Ovidenie.
+
+        For consistency with Blink we use Vertical instead of Vert in CSS
+        classes and JS methods related to the selection layout tests for CSS
+        Regions.
+
+        * fast/regions/resources/helper.js:
+        (selectContentByIdsVertical):
+        * fast/regions/resources/region-style.css:
+        * fast/regions/selection/selecting-text-ignoring-region-vert-lr-expected.html:
+        * fast/regions/selection/selecting-text-ignoring-region-vert-lr.html:
+        * fast/regions/selection/selecting-text-ignoring-region-vert-rl-expected.html:
+        * fast/regions/selection/selecting-text-ignoring-region-vert-rl.html:
+        * fast/regions/selection/selecting-text-in-2-regions-vert-lr-expected.html:
+        * fast/regions/selection/selecting-text-in-2-regions-vert-lr.html:
+        * fast/regions/selection/selecting-text-in-2-regions-vert-rl-expected.html:
+        * fast/regions/selection/selecting-text-in-2-regions-vert-rl.html:
+
 2013-10-25  Javier Fernandez  <jfernandez@igalia.com>
 
         Unreviewed GTK gardening. Several fast/regions/selection tests are failing in WK2.

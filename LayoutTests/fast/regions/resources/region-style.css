@@ -95,16 +95,16 @@
     background-color: lightgrey;
 }
 
-.descriptionVert {
+.descriptionVertical {
     height: 600px;
 }
 
-.bigBoxVert {
+.bigBoxVertical {
     height: 300px;
     width: 100px;
 }
 
-.greyBigBoxVert {
+.greyBigBoxVertical {
     height: 300px;
     width: 100px;
     background-color: lightgrey;
