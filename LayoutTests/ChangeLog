@@ -1,5 +1,16 @@
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Add Mavericks-specific results for some tests.
+
+        * platform/mac-mountainlion/fast/loader/file-url-mimetypes-expected.txt: Added.
+        * platform/mac-mountainlion/http/tests/xmlhttprequest/head-redirection-expected.txt: Copied from LayoutTests/platform/mac/http/tests/xmlhttprequest/head-redirection-expected.txt.
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt: Added.
+        * platform/mac/http/tests/xmlhttprequest/head-redirection-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Added.
+        * platform/mac/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Added.
+
+2013-10-25  Simon Fraser  <simon.fraser@apple.com>
+
         Mark some CSS filters and SVG ref tests as failing, and two WebGL tests are flakey.
 
         * platform/mac/TestExpectations:
