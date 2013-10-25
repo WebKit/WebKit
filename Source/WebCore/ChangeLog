@@ -1,3 +1,19 @@
+2013-10-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Fix runtime errors caused by mediasource IDL attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=123352
+
+        Reviewed by Eric Carlson.
+
+        Due to http://webkit.org/b/123178, MediaSource classes must add a GenerateIsReachable
+        (and also a JSGenerateToJSObject) attribute to avoid runtime asserts and crashes.
+
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/SourceBufferList.idl:
+        * Modules/mediasource/WebKitMediaSource.idl:
+        * Modules/mediasource/WebKitSourceBufferList.idl:
+
 2013-10-25  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Browser crashed at PlatformGraphicsContext::addDrawLineForText() when trying to upload a video to youtube

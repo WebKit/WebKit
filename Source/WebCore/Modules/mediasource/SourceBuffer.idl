@@ -33,6 +33,7 @@
     NoInterfaceObject,
     ActiveDOMObject,
     EventTarget,
+    JSGenerateToJSObject,
     JSGenerateToNativeObject,
     OperationsNotDeletable
 ] interface SourceBuffer : EventTarget {

@@ -32,7 +32,9 @@
     Conditional=MEDIA_SOURCE,
     NoInterfaceObject,
     EventTarget,
+    JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    GenerateIsReachable=Impl,
     CallWith=ScriptExecutionContext,
     OperationsNotDeletable
 ] interface SourceBufferList : EventTarget {
