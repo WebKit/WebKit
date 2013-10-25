@@ -37,6 +37,7 @@
 
 #include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
+#include "MediaStreamTrackPrivate.h"
 #include "UUID.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -103,11 +104,15 @@ MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStream
     , m_ended(ended)
 {
     ASSERT(m_id.length());
-    for (size_t i = 0; i < audioSources.size(); i++)
+    for (size_t i = 0; i < audioSources.size(); i++) {
         m_audioStreamSources.append(audioSources[i]);
+        m_audioTrackDescriptors.append(MediaStreamTrackPrivate::create(audioSources[i]));
+    }
 
-    for (size_t i = 0; i < videoSources.size(); i++)
+    for (size_t i = 0; i < videoSources.size(); i++) {
         m_videoStreamSources.append(videoSources[i]);
+        m_videoTrackDescriptors.append(MediaStreamTrackPrivate::create(videoSources[i]));
+    }
 }
 
 void MediaStreamDescriptor::setEnded()
@@ -116,6 +121,28 @@ void MediaStreamDescriptor::setEnded()
         m_client->streamDidEnd();
 
     m_ended = true;
+}
+
+void MediaStreamDescriptor::addTrack(PassRefPtr<MediaStreamTrackPrivate> track)
+{
+    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioTrackDescriptors : m_videoTrackDescriptors;
+
+    size_t pos = tracks.find(track);
+    if (pos != notFound)
+        return;
+
+    tracks.append(track);
+}
+
+void MediaStreamDescriptor::removeTrack(PassRefPtr<MediaStreamTrackPrivate> track)
+{
+    Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioTrackDescriptors : m_videoTrackDescriptors;
+
+    size_t pos = tracks.find(track);
+    if (pos == notFound)
+        return;
+
+    tracks.remove(pos);
 }
 
 } // namespace WebCore

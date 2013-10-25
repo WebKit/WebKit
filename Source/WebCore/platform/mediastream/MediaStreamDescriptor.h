@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+class MediaStreamTrackPrivate;
+
 class MediaStreamDescriptorClient : public MediaStreamTrack::Observer {
 public:
     virtual ~MediaStreamDescriptorClient() { }
@@ -63,11 +65,17 @@ public:
 
     String id() const { return m_id; }
 
-    unsigned numberOfAudioStreams() const { return m_audioStreamSources.size(); }
-    MediaStreamSource* audioStreams(unsigned index) const { return m_audioStreamSources[index].get(); }
+    unsigned numberOfAudioSources() const { return m_audioStreamSources.size(); }
+    MediaStreamSource* audioSources(unsigned index) const { return m_audioStreamSources[index].get(); }
 
-    unsigned numberOfVideoStreams() const { return m_videoStreamSources.size(); }
-    MediaStreamSource* videoStreams(unsigned index) const { return m_videoStreamSources[index].get(); }
+    unsigned numberOfVideoSources() const { return m_videoStreamSources.size(); }
+    MediaStreamSource* videoSources(unsigned index) const { return m_videoStreamSources[index].get(); }
+
+    unsigned numberOfAudioTracks() const { return m_audioTrackDescriptors.size(); }
+    MediaStreamTrackPrivate* audioTracks(unsigned index) const { return m_audioTrackDescriptors[index].get(); }
+
+    unsigned numberOfVideoTracks() const { return m_videoTrackDescriptors.size(); }
+    MediaStreamTrackPrivate* videoTracks(unsigned index) const { return m_videoTrackDescriptors[index].get(); }
 
     void addSource(PassRefPtr<MediaStreamSource>);
     void removeSource(PassRefPtr<MediaStreamSource>);
@@ -78,6 +86,9 @@ public:
     bool ended() const { return m_ended; }
     void setEnded();
 
+    void addTrack(PassRefPtr<MediaStreamTrackPrivate>);
+    void removeTrack(PassRefPtr<MediaStreamTrackPrivate>);
+
 private:
     MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended);
 
@@ -85,6 +96,9 @@ private:
     String m_id;
     Vector<RefPtr<MediaStreamSource>> m_audioStreamSources;
     Vector<RefPtr<MediaStreamSource>> m_videoStreamSources;
+
+    Vector<RefPtr<MediaStreamTrackPrivate>> m_audioTrackDescriptors;
+    Vector<RefPtr<MediaStreamTrackPrivate>> m_videoTrackDescriptors;
     bool m_ended;
 };
 

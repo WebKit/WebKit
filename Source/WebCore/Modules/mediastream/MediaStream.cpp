@@ -119,18 +119,18 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     m_descriptor->setClient(this);
 
     RefPtr<MediaStreamTrack> track;
-    size_t numberOfAudioTracks = m_descriptor->numberOfAudioStreams();
+    size_t numberOfAudioTracks = m_descriptor->numberOfAudioTracks();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++) {
-        track = AudioStreamTrack::create(context, m_descriptor->audioStreams(i));
+        track = AudioStreamTrack::create(context, m_descriptor->audioTracks(i));
         track->addObserver(this);
         m_audioTracks.append(track.release());
     }
 
-    size_t numberOfVideoTracks = m_descriptor->numberOfVideoStreams();
+    size_t numberOfVideoTracks = m_descriptor->numberOfVideoTracks();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++) {
-        track = VideoStreamTrack::create(context, m_descriptor->videoStreams(i));
+        track = VideoStreamTrack::create(context, m_descriptor->videoTracks(i));
         track->addObserver(this);
         m_videoTracks.append(track.release());
     }
@@ -308,11 +308,11 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
     RefPtr<MediaStreamTrack> track;
     switch (source->type()) {
     case MediaStreamSource::Audio:
-        track = AudioStreamTrack::create(scriptExecutionContext(), source);
+        track = AudioStreamTrack::create(scriptExecutionContext(), MediaStreamTrackPrivate::create(source));
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::Video:
-        track = VideoStreamTrack::create(scriptExecutionContext(), source);
+        track = VideoStreamTrack::create(scriptExecutionContext(), MediaStreamTrackPrivate::create(source));
         m_videoTracks.append(track);
         break;
     }

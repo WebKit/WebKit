@@ -1988,6 +1988,7 @@ set(WebCore_SOURCES
 
     platform/mediastream/MediaStreamCenter.cpp
     platform/mediastream/MediaStreamDescriptor.cpp
+    platform/mediastream/MediaStreamTrackPrivate.cpp
     platform/mediastream/MediaStreamSource.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp
