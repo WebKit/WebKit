@@ -45,11 +45,14 @@ function TestBuild(repositories, builders, rawRun) {
 
         var labelForThisRepository = shouldIncludeNameInLabel ? repositoryName : '';
         if (previousRevision) {
-            if (labelForThisRepository)
+            if (labelForThisRepository && shouldIncludeNameInLabel)
                 labelForThisRepository += ' ';
             labelForThisRepository += revisionPrefix + previousRevision + '-' + revisionPrefix + currentRevision;
-        } else
-            labelForThisRepository += ' @' + revisionPrefix + currentRevision;
+        } else {
+            if (shouldIncludeNameInLabel)
+                labelForThisRepository += ' @';
+            labelForThisRepository += revisionPrefix + currentRevision;
+        }
 
         var url;
         if (repository) {

@@ -1,5 +1,24 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Merge revision columns in flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=123360
+
+        Reviewed by Simon Fraser.
+
+        Merge revision numbers into one cell separated by /, and clearly label them as "latest revisions".
+        Also add colors for missing & audio failures so that they won't be an empty cell.
+
+        * public/index.html:
+        (TestResultsView._createTestResultHeader): Create a single th for the list of repository names.
+        (TestResultsView._createTestResultRow): Use single td for all revision numbers.
+        * public/js/build.js:
+        (.this.formattedRevision): Don't prefix revision numbers with '@' when we're not in the tooltip.
+        * public/main.css:
+        (.resultsTable .AUDIO a): Added.
+        (.resultsTable .MISSING a): Added.
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         One more build fix. Put each latest revision information in an actual td.
 
         * public/index.html:

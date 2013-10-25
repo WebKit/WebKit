@@ -207,13 +207,19 @@ TestResultsView._linkifiedTestName = function (test) {
 }
 
 TestResultsView._createTestResultHeader = function (labelForFirstColumn, repositories) {
+    var latestResultsLabel = '';
+    if (repositories) {
+        latestResultsLabel = ['Latest results', element('br'),
+            repositories.map(function (repository) { return repository.name; }).join(' / ')];
+    }
+        
     return element('thead', [element('tr', [
         element('th', [labelForFirstColumn]),
         element('th', ['Bug']),
         element('th', ['Expectations']),
-        element('th', ['Slowest'])]
-        .concat(repositories ? repositories.map(function (repository) { return element('th', [repository.name]); }) : [])
-        .concat([element('th')]))]);
+        element('th', ['Slowest']),
+        element('th', latestResultsLabel),
+        element('th')])]);
 }
 
 TestResultsView._createBuildsAndComputeSlownessOfResults = function (builderId, results) {
@@ -274,15 +280,17 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
     else
         slowestTime = '';
 
-    var formattedRevisionCells = [];
+    var latestRevisions = [];
     if (repositories) {
         var build = sortedResults[0].build;
         for (var i = 0; i < repositories.length; i++) {
             var revisionInfo = build.formattedRevision(repositories[i].id);
+            if (latestRevisions.length)
+                latestRevisions.push(' / ');
             if (revisionInfo.url)
-                formattedRevisionCells.push(element('td', [element('a', {'href': revisionInfo.url}, [revisionInfo.label])]));
+                latestRevisions.push(element('a', {'href': revisionInfo.url}, [revisionInfo.label]));
             else
-                formattedRevisionCells.push(element('td', [revisionInfo.label]));
+                latestRevisions.push(revisionInfo.label);
         }
     }
 
@@ -291,7 +299,7 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
         element('td', {'class': 'modifiers'}, formattedModifiers),
         element('td', {'class': 'expected'}, [sortedResults[0].expected]),
         element('td', {'class': 'slowestTime'}, [slowestTime])]
-        .concat(formattedRevisionCells)
+        .concat(element('td', latestRevisions))
         .concat([element('td', cells)]));
 }
 

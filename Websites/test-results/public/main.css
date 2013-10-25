@@ -155,6 +155,14 @@
     background-color: #fc3;
 }
 
+.resultsTable .AUDIO a {
+    background-color: #3cf;
+}
+
+.resultsTable .MISSING a {
+    background-color: #666;
+}
+
 .resultsTable .TEXT.PASS a {
     background-color: #cf3;
 }
