@@ -48,7 +48,7 @@ public:
     static void clientWillBeRemovedFromTree(RenderObject*);
 
     // Called from all SVG renderers destroy() methods - except for RenderSVGResourceContainer.
-    static void clientDestroyed(RenderObject*);
+    static void clientDestroyed(RenderElement&);
 
     // Called from all SVG renderers layout() methods.
     static void clientLayoutChanged(RenderElement&);

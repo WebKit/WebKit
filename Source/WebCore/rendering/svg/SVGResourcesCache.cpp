@@ -167,16 +167,14 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject* renderer)
     cache->removeResourcesFromRenderObject(renderer);
 }
 
-void SVGResourcesCache::clientDestroyed(RenderObject* renderer)
+void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
-    ASSERT(renderer);
-
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(renderer);
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(&renderer);
     if (resources)
-        resources->removeClientFromCache(renderer);
+        resources->removeClientFromCache(&renderer);
 
-    SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
-    cache->removeResourcesFromRenderObject(renderer);
+    SVGResourcesCache* cache = resourcesCacheFromRenderObject(&renderer);
+    cache->removeResourcesFromRenderObject(&renderer);
 }
 
 void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer* resource)
