@@ -1,5 +1,15 @@
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
+        Remove references to OS X 10.7 from Xcode configuration settings.
+
+        Now that we're not building for OS X 10.7 they're no longer needed.
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2013-10-24  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/15312643> Prepare for the mysterious future.
 
         Reviewed by David Kilzer.
