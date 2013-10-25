@@ -99,6 +99,9 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
+    // Return whether the window is visible.
+    virtual bool isWindowVisible() = 0;
+
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
 

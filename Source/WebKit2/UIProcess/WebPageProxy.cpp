@@ -996,6 +996,9 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
     if (!isValid())
         return;
 
+    if (flags & WindowIsVisible)
+        process()->send(Messages::WebPage::SetWindowIsVisible(m_pageClient->isWindowVisible()), m_pageID);
+
     if (flags & ViewIsFocused)
         m_process->send(Messages::WebPage::SetFocused(m_pageClient->isViewFocused()), m_pageID);
 

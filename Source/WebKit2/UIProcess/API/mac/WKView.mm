@@ -1844,12 +1844,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return NSMouseInRect(localPoint, visibleThumbRect, [self isFlipped]);
 }
 
-- (void)_updateWindowVisibility
-{
-    _data->_page->updateWindowIsVisible([[self window] isVisible]);
-}
-
-
 // FIXME: Use AppKit constants for these when they are available.
 static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
 static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
@@ -1935,7 +1929,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if ([self window]) {
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
-        [self _updateWindowVisibility];
+        _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 
         if ([self isDeferringViewInWindowChanges]) {
@@ -1955,7 +1949,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
-        [self _updateWindowVisibility];
+        _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 
         if ([self isDeferringViewInWindowChanges]) {
@@ -2004,13 +1998,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
     _data->_windowHasValidBackingStore = NO;
-
-    [self _updateWindowVisibility];
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
 }
 
 - (void)_windowDidDeminiaturize:(NSNotification *)notification
 {
-    [self _updateWindowVisibility];
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
 }
 
 - (void)_windowDidMove:(NSNotification *)notification
@@ -2027,20 +2020,18 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
-    [self _updateWindowVisibility];
-
     // We want to make sure to update the active state while hidden, so since the view is about to be hidden,
     // we hide it first and then update the active state.
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
     _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
-    [self _updateWindowVisibility];
-
     // We want to make sure to update the active state while hidden, so since the view is about to become visible,
     // we update the active state first and then make it visible.
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
     _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }

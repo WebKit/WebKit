@@ -1,3 +1,31 @@
+2013-10-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Fold updateWindowIsVisible into viewStateDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=123305
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isWindowVisible):
+            - Added accessor to check if window is visible
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidDeminiaturize:]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+            - _updateWindowVisibility -> viewStateDidChange
+        * UIProcess/PageClient.h:
+            - Added accessor to check if winow is visible
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - handle WindowIsVisible
+        * UIProcess/WebPageProxy.h:
+            - added WindowIsVisible
+        * UIProcess/mac/WebPageProxyMac.mm:
+            - removed updateWindowIsVisible
+
 2013-10-24  Anders Carlsson  <andersca@apple.com>
 
         Stop bringing in the std namespace

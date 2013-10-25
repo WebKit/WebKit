@@ -328,6 +328,7 @@ public:
         ViewIsFocused = 1 << 1,
         ViewIsVisible = 1 << 2,
         ViewIsInWindow = 1 << 3,
+        WindowIsVisible = 1 << 4
     };
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
@@ -368,7 +369,6 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
     void viewExposedRectChanged(const WebCore::FloatRect& exposedRect, bool);
     void exposedRectChangedTimerFired(WebCore::Timer<WebPageProxy>*);

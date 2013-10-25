@@ -58,6 +58,7 @@ private:
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();
     virtual bool isViewVisible();
+    virtual bool isWindowVisible();
     virtual bool isViewInWindow();
     virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
     virtual ColorSpaceData colorSpace() OVERRIDE;

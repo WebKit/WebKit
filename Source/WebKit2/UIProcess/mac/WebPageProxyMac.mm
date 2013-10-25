@@ -143,13 +143,6 @@ CGContextRef WebPageProxy::containingWindowGraphicsContext()
     return m_pageClient->containingWindowGraphicsContext();
 }
 
-void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
-{
-    if (!isValid())
-        return;
-    process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
-}
-
 void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     if (!isValid())
