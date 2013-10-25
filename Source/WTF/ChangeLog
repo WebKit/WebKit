@@ -1,5 +1,19 @@
 2013-10-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154655
+
+    2013-08-26  Andy Estes  <aestes@apple.com>
+
+            Don't leak objects in HardAutorelease when OBJC_NO_GC is undefined but
+            Objective-C GC is disabled at runtime.
+
+            Reviewed by Darin Adler.
+
+            * wtf/ObjcRuntimeExtras.h:
+            (HardAutorelease):
+
+2013-10-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r154647
 
     2013-08-23  Andy Estes  <aestes@apple.com>
