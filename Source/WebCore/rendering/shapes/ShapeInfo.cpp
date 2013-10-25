@@ -39,6 +39,20 @@
 #include "Shape.h"
 
 namespace WebCore {
+
+
+bool checkShapeImageOrigin(Document& document, CachedImage& cachedImage)
+{
+    if (cachedImage.isOriginClean(document.securityOrigin()))
+        return true;
+
+    const URL& url = cachedImage.url();
+    String urlString = url.isNull() ? "''" : url.stringCenterEllipsizedToLength();
+    document.addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Unsafe attempt to load URL " + urlString + ".");
+
+    return false;
+}
+
 template<class RenderType>
 const Shape* ShapeInfo<RenderType>::computedShape() const
 {

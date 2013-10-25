@@ -1,3 +1,52 @@
+2013-10-25  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] CORS-enabled fetch for shape image values
+        https://bugs.webkit.org/show_bug.cgi?id=123114
+
+        Reviewed by Andreas Kling.
+
+        Access to shape images is now controlled by CORS CSS shape per
+        http://dev.w3.org/csswg/css-shapes/#shape-outside-property.
+        Previously shape images had to be same-origin.
+
+        Shape image URL access is defined by the same logic that defines
+        canvas tainting: same-origin and data URLs are allowed and images
+        with a "Access-Control-Allow-Origin:" header that's either "*" or
+        that matches the document's origin.
+
+        A PotentiallyCrossOriginEnabled RequestOriginPolicy was added to
+        ResourceLoaderOptions, to indicate that a "potentially CORS-enabled fetch"
+        was to be undertaken. The CSSImageValue::cachedImage() method handles this
+        option by effectively setting the "Origin:" request header (see
+        updateRequestForAccessControl() in CrossOriginAccessControl.cpp).
+        StyleResolver::loadPendingShapeImage() uses the new ResourceLoaderOption.
+
+        The static ShapeInsideInfo and ShapeOutsideInfo isEnabledFor() method
+        now performs the CORS check for image valued shapes. The private
+        isOriginClean() method from CanvasRenderingContext2D has been moved to
+        the CachedImage class so that it can be shared by the Canvas and Shape
+        implementations. It checks the response headers per the CORS spec.
+
+        Test: http/tests/security/shape-image-cors.html
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage): Handle the new ResourceLoaderOption.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingShapeImage): Set the new ResourceLoaderOption.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern): Use the CachedImage::isOriginClean().
+        * loader/ResourceLoaderOptions.h: Added PotentiallyCrossOriginEnabled to RequestOriginPolicy.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::isOriginClean): Migrated from CanvasRenderingContext2D.
+        * loader/cache/CachedImage.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::checkImageOrigin): Do the CORS check and log an error message if neccessary.
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor): Call checkImageOrigin() for images.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::isEnabledFor): Ditto.
+
 2013-10-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Fix runtime errors caused by mediasource IDL attributes.

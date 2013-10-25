@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RenderElement.h"
 #include "ResourceBuffer.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
@@ -583,5 +584,14 @@ void CachedImage::useDiskImageCache()
     m_data->sharedBuffer()->allowToBeMemoryMapped();
 }
 #endif
+
+bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
+{
+    if (!image()->hasSingleSecurityOrigin())
+        return false;
+    if (passesAccessControlCheck(securityOrigin))
+        return true;
+    return !securityOrigin->taintsCanvas(response().url());
+}
 
 } // namespace WebCore

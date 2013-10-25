@@ -1,3 +1,23 @@
+2013-10-25  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] CORS-enabled fetch for shape image values
+        https://bugs.webkit.org/show_bug.cgi?id=123114
+
+        Reviewed by Andreas Kling.
+
+        Verify that images not allowed by CORS don't affect the layout
+        and that same-origin images, data URLs, and images with a
+        "Access-Control-Allow-Origin: *" header do define the layout.
+        Added a simple PHP script that optionally adds the allow origin header.
+
+        Replaced and renamed the original shape same-origin-only test.
+
+        * http/tests/security/resources/image-access-control.php: Added.
+        * http/tests/security/shape-image-cors-expected.html: Added.
+        * http/tests/security/shape-image-cors.html: Added.
+        * http/tests/security/shape-inside-image-origin-expected.txt: Removed.
+        * http/tests/security/shape-inside-image-origin.html: Removed.
+
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Mavericks results with MountainLion variants.
