@@ -30,6 +30,7 @@
 #include "BasicShapes.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "Page.h"
 #include "RenderLayer.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
@@ -199,6 +200,10 @@ void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(con
     ASSERT(renderer);
     absoluteTransform = currentContentTransformation();
 
+    float deviceScaleFactor = 1;
+    if (Page* page = renderer->document()->page())
+        deviceScaleFactor = page->deviceScaleFactor();
+
     // Walk up the render tree, accumulating SVG transforms.
     while (renderer) {
         absoluteTransform = renderer->localToParentTransform() * absoluteTransform;
@@ -219,6 +224,8 @@ void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(con
 
         layer = layer->parent();
     }
+
+    absoluteTransform.scale(deviceScaleFactor);
 }
 
 bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
