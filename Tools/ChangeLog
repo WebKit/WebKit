@@ -1,3 +1,10 @@
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r157815. Don't resolve the path from webkit_base. Use the relative path as is.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.repository_paths):
+
 2013-10-25  Jer Noble  <jer.noble@apple.com>
 
         [WTF] Add a multiplication operator (and a few others) to MediaTime
