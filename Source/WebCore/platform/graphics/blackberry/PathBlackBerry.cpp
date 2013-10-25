@@ -214,21 +214,23 @@ void Path::transform(const AffineTransform& transformation)
 void GraphicsContext::fillPath(const Path& path)
 {
     BlackBerry::Platform::Graphics::Path* pp = path.platformPath();
-    if (!pp->isEmpty()) {
-        BlackBerry::Platform::Graphics::Gradient* platformGradient = fillGradient() ? fillGradient()->platformGradient() : 0;
-        BlackBerry::Platform::Graphics::Pattern* platformPattern = fillPattern() ? fillPattern()->platformPattern(AffineTransform()) : 0;
-        platformContext()->addFillPath(*pp, (BlackBerry::Platform::Graphics::WindRule)m_state.fillRule, platformGradient, platformPattern);
-    }
+    if (pp->isEmpty() || paintingDisabled())
+        return;
+
+    BlackBerry::Platform::Graphics::Gradient* platformGradient = fillGradient() ? fillGradient()->platformGradient() : 0;
+    BlackBerry::Platform::Graphics::Pattern* platformPattern = fillPattern() ? fillPattern()->platformPattern(AffineTransform()) : 0;
+    platformContext()->addFillPath(*pp, (BlackBerry::Platform::Graphics::WindRule)m_state.fillRule, platformGradient, platformPattern);
 }
 
 void GraphicsContext::strokePath(const Path& path)
 {
     BlackBerry::Platform::Graphics::Path* pp = path.platformPath();
-    if (!pp->isEmpty()) {
-        BlackBerry::Platform::Graphics::Gradient* gradient = strokeGradient() ? strokeGradient()->platformGradient() : 0;
-        BlackBerry::Platform::Graphics::Pattern* pattern = strokePattern() ? strokePattern()->platformPattern(AffineTransform()) : 0;
-        platformContext()->addStrokePath(*pp, gradient, pattern);
-    }
+    if (pp->isEmpty() || paintingDisabled())
+        return;
+
+    BlackBerry::Platform::Graphics::Gradient* gradient = strokeGradient() ? strokeGradient()->platformGradient() : 0;
+    BlackBerry::Platform::Graphics::Pattern* pattern = strokePattern() ? strokePattern()->platformPattern(AffineTransform()) : 0;
+    platformContext()->addStrokePath(*pp, gradient, pattern);
 }
 
 void GraphicsContext::drawFocusRing(const Vector<IntRect>&, int, int, const Color&)
@@ -243,6 +245,9 @@ void GraphicsContext::drawFocusRing(const Path&, int, int, const Color&)
 
 void GraphicsContext::drawLine(const IntPoint& from, const IntPoint& to)
 {
+    if (paintingDisabled())
+        return;
+
     platformContext()->addDrawLine(from, to);
 }
 
@@ -252,23 +257,35 @@ void GraphicsContext::updateDocumentMarkerResources()
 
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float width, DocumentMarkerLineStyle style)
 {
+    if (paintingDisabled())
+        return;
+
     platformContext()->addDrawLineForDocumentMarker(pt, width, (BlackBerry::Platform::Graphics::DocumentMarkerLineStyle)style);
 }
 
 void GraphicsContext::drawLineForText(const FloatPoint& pt, float width, bool printing)
 {
+    if (paintingDisabled())
+        return;
+
     platformContext()->addDrawLineForText(pt, width, printing);
 }
 
 // FIXME: don't ignore the winding rule. https://bugs.webkit.org/show_bug.cgi?id=107064
 void GraphicsContext::clip(const Path& path, WindRule)
 {
+    if (paintingDisabled())
+        return;
+
     BlackBerry::Platform::Graphics::Path* pp = path.platformPath();
     pp->applyAsClip(platformContext());
 }
 
 void GraphicsContext::clipPath(const Path& path, WindRule)
 {
+    if (paintingDisabled())
+        return;
+
     if (path.platformPath()->isRectangular())
         platformContext()->clip(path.boundingRect());
     else
@@ -277,11 +294,17 @@ void GraphicsContext::clipPath(const Path& path, WindRule)
 
 void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
+    if (paintingDisabled())
+        return;
+
     clip(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)
 {
+    if (paintingDisabled())
+        return;
+
     BlackBerry::Platform::Graphics::Path* pp = path.platformPath();
     pp->applyAsClipOut(platformContext());
 }

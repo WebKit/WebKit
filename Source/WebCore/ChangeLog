@@ -1,3 +1,30 @@
+2013-10-25  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Browser crashed at PlatformGraphicsContext::addDrawLineForText() when trying to upload a video to youtube
+        https://bugs.webkit.org/show_bug.cgi?id=123349
+
+        Reviewed by George Staikos.
+        Internally reviewed by George Staikos, Konrad Piascik, Eli Fidler and Arvid Nilsson.
+
+        Browser crashed when dereferencing null PlatformGraphicsContext*.
+        In FrameView::paintControlTints(), we intentionally constructed GraphicsContext
+        with null PlatformGraphicsContext* and disabled painting by doing
+        context.setUpdatingControlTints(true). So we should not go further in
+        GraphicsContext::drawLineForText() if painting is disabled.
+        Check paintingDisabled() for the other functions in PathBlackBerry.cpp
+        as well; otherwise, it is likely we will crash at those places.
+
+        * platform/graphics/blackberry/PathBlackBerry.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+
 2013-10-25  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Adding platform implementation of MediaStreamTrack
