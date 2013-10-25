@@ -1,5 +1,148 @@
 2013-10-24  Simon Fraser  <simon.fraser@apple.com>
 
+        More new test results for Mavericks, and MountainLion results where necessary.
+
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-161-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-161-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-19b-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-23-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-23-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-24-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-64-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-68-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/html/css3-modsel-69-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/html/css3-modsel-69-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-161-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-161-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-19b-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-23-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-64-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xhtml/css3-modsel-69-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-161-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-161-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-19b-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-19b-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-23-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-23-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-24-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-64-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-64-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-68-expected.txt.
+        * platform/mac-mountainlion/css3/selectors3/xml/css3-modsel-69-expected.txt: Copied from LayoutTests/platform/mac/css3/selectors3/xml/css3-modsel-69-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1188-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug1188-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug120107-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug12384-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug12384-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1271-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug12908-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug12910-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug131020-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug13169-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-1-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-3-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug138725-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug138725-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug157890-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1818-3-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1818-6-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug18359-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug18359-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug196870-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug222336-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug222467-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug24200-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug24200-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-2-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-2-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-3-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2479-4-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug2479-4-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug26178-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug26178-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug269566-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug277062-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug28928-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug28928-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug28933-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug29314-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug29326-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug29326-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2954-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug30692-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug30692-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug33855-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug33855-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug4382-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4382-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug4527-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug4527-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug46368-1-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-1-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug46368-2-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug46368-2-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug50695-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug51037-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug51037-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug51727-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug51727-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug52505-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug52505-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug55545-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug55545-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug56201-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug59354-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug59354-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug68912-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug68912-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug7342-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug7342-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug8032-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug9024-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug92647-2-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug96334-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug96334-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug99948-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/bugs/bug99948-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/collapsing_borders/bug41262-4-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/collapsing_borders/bug41262-4-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/core/col_widths_fix_autoFixPer-expected.txt: Added.
+        * platform/mac-mountainlion/tables/mozilla/core/margins-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/core/margins-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/dom/tableDom-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/dom/tableDom-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla/other/move_row-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla/other/move_row-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt.
+        * platform/mac-mountainlion/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt: Copied from LayoutTests/platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt.
+        * platform/mac/css3/selectors3/html/css3-modsel-161-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-23-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-64-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/mac/css3/selectors3/html/css3-modsel-69-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-161-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-23-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-64-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-69-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-161-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-19b-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-23-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-24-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-64-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-69-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug55545-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug68912-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/mac/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/mac/tables/mozilla/core/margins-expected.txt:
+        * platform/mac/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/mac/tables/mozilla/other/move_row-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+
+2013-10-24  Simon Fraser  <simon.fraser@apple.com>
+
         Update fast/forms tests for Mavericks, adding results for MountainLion when necessary.
 
         * platform/mac-mountainlion/fast/forms/HTMLOptionElement_label01-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/HTMLOptionElement_label01-expected.txt.
