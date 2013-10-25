@@ -504,7 +504,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses)
         setURL(url);
 
     if (m_frame)
-        m_cachedResourceLoader = m_frame->loader().activeDocumentLoader()->cachedResourceLoader();
+        m_cachedResourceLoader = &m_frame->loader().activeDocumentLoader()->cachedResourceLoader();
     if (!m_cachedResourceLoader)
         m_cachedResourceLoader = CachedResourceLoader::create(nullptr);
     m_cachedResourceLoader->setDocument(this);

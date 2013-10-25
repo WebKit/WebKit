@@ -104,7 +104,7 @@ namespace WebCore {
         const ResourceRequest& request() const;
         ResourceRequest& request();
 
-        CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader.get(); }
+        CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader.get(); }
 
         const SubstituteData& substituteData() const { return m_substituteData; }
 
@@ -312,7 +312,7 @@ namespace WebCore {
         void clearMainResource();
 
         Frame* m_frame;
-        RefPtr<CachedResourceLoader> m_cachedResourceLoader;
+        Ref<CachedResourceLoader> m_cachedResourceLoader;
 
         CachedResourceHandle<CachedRawResource> m_mainResource;
         ResourceLoaderSet m_subresourceLoaders;

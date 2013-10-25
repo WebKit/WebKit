@@ -137,11 +137,11 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
             memoryCache()->revalidationFailed(m_resource);
         }
         
-        if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url(), options())) {
+        if (!m_documentLoader->cachedResourceLoader().canRequest(m_resource->type(), newRequest.url(), options())) {
             cancel();
             return;
         }
-        if (m_resource->type() == CachedResource::ImageResource && m_documentLoader->cachedResourceLoader()->shouldDeferImageLoad(newRequest.url())) {
+        if (m_resource->type() == CachedResource::ImageResource && m_documentLoader->cachedResourceLoader().shouldDeferImageLoad(newRequest.url())) {
             cancel();
             return;
         }
@@ -348,7 +348,7 @@ void SubresourceLoader::notifyDone()
         return;
 
     m_requestCountTracker.clear();
-    m_documentLoader->cachedResourceLoader()->loadDone(m_resource);
+    m_documentLoader->cachedResourceLoader().loadDone(m_resource);
     if (reachedTerminalState())
         return;
     m_documentLoader->removeSubresourceLoader(this);
