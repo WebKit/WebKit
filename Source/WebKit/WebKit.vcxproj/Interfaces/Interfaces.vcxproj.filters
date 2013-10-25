@@ -277,6 +277,15 @@
     <Midl Include="..\..\win\Interfaces\AccessibilityDelegate.idl">
       <Filter>IDL</Filter>
     </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleText.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleText2.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleEditableText.idl">
+      <Filter>IDL\Accessibility2</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfacesPostBuild.cmd" />

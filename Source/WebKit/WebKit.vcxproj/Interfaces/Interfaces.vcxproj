@@ -172,8 +172,11 @@
     <Midl Include="..\..\win\Interfaces\Accessible2\Accessible2.idl" />
     <Midl Include="..\..\win\Interfaces\Accessible2\Accessible2_2.idl" />
     <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleApplication.idl" />
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleEditableText.idl" />
     <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleRelation.idl" />
     <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleStates.idl" />
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleText.idl" />
+    <Midl Include="..\..\win\Interfaces\Accessible2\AccessibleText2.idl" />
     <Midl Include="..\..\win\Interfaces\AccessibleComparable.idl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>

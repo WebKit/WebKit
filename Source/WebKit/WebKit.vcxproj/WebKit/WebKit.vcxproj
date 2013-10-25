@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\win\AccessibleBase.cpp" />
     <ClCompile Include="..\..\win\AccessibleDocument.cpp" />
     <ClCompile Include="..\..\win\AccessibleImage.cpp" />
+    <ClCompile Include="..\..\win\AccessibleTextImpl.cpp" />
     <ClCompile Include="..\..\win\CFDictionaryPropertyBag.cpp" />
     <ClCompile Include="..\..\win\DefaultDownloadDelegate.cpp" />
     <ClCompile Include="..\..\win\DefaultPolicyDelegate.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="..\..\win\AccessibleBase.h" />
     <ClInclude Include="..\..\win\AccessibleDocument.h" />
     <ClInclude Include="..\..\win\AccessibleImage.h" />
+    <ClInclude Include="..\..\win\AccessibleTextImpl.h" />
     <ClInclude Include="..\..\win\CFDictionaryPropertyBag.h" />
     <ClInclude Include="..\..\win\CodeAnalysisConfig.h" />
     <ClInclude Include="..\..\win\COMEnumVariant.h" />
