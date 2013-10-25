@@ -45,8 +45,6 @@
 #include "TextTrackCue.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 MediaControlsApple::MediaControlsApple(Document& document)

@@ -37,7 +37,6 @@
 #include <wtf/text/AtomicString.h>
 
 using namespace WebCore;
-using namespace std;
 
 PassRefPtr<MediaController> MediaController::create(ScriptExecutionContext* context)
 {
@@ -138,7 +137,7 @@ double MediaController::duration() const
         double duration = m_mediaElements[index]->duration();
         if (std::isnan(duration))
             continue;
-        maxDuration = max(maxDuration, duration);
+        maxDuration = std::max(maxDuration, duration);
     }
     return maxDuration;
 }
@@ -150,7 +149,7 @@ double MediaController::currentTime() const
 
     if (m_position == MediaPlayer::invalidTime()) {
         // Some clocks may return times outside the range of [0..duration].
-        m_position = max(0.0, min(duration(), m_clock->currentTime()));
+        m_position = std::max<double>(0, std::min(duration(), m_clock->currentTime()));
         m_clearPositionTimer.startOneShot(0);
     }
 
@@ -162,11 +161,11 @@ void MediaController::setCurrentTime(double time, ExceptionCode& code)
     // When the user agent is to seek the media controller to a particular new playback position, 
     // it must follow these steps:
     // If the new playback position is less than zero, then set it to zero.
-    time = max(0.0, time);
+    time = std::max(0.0, time);
     
     // If the new playback position is greater than the media controller duration, then set it 
     // to the media controller duration.
-    time = min(time, duration());
+    time = std::min(time, duration());
     
     // Set the media controller position to the new playback position.
     m_clock->setCurrentTime(time);
@@ -360,7 +359,7 @@ void MediaController::updateReadyState()
         // slaved media elements.
         newReadyState = m_mediaElements.first()->readyState();
         for (size_t index = 1; index < m_mediaElements.size(); ++index)
-            newReadyState = min(newReadyState, m_mediaElements[index]->readyState());
+            newReadyState = std::min(newReadyState, m_mediaElements[index]->readyState());
     }
 
     if (newReadyState == oldReadyState) 

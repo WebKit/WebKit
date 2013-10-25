@@ -32,8 +32,6 @@
 #include "HitTestResult.h"
 #include "IntSize.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

@@ -60,8 +60,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 PassRefPtr<InjectedScriptHost> InjectedScriptHost::create()

@@ -403,7 +403,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
         RefPtr<MutableStylePropertySet> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
         float currentFontSize = computedFontSize(node);
-        float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
+        float desiredFontSize = std::max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyle->getPropertyCSSValue(CSSPropertyFontSize);
         if (value) {
             element->removeInlineStyleProperty(CSSPropertyFontSize);

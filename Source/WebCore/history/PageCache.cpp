@@ -57,8 +57,6 @@
 #include "DeviceProximityController.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 #if !defined(NDEBUG)
@@ -373,7 +371,7 @@ bool PageCache::canCache(Page* page) const
 void PageCache::setCapacity(int capacity)
 {
     ASSERT(capacity >= 0);
-    m_capacity = max(capacity, 0);
+    m_capacity = std::max(capacity, 0);
 
     prune();
 }

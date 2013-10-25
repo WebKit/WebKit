@@ -37,8 +37,6 @@
 #include "RenderListBox.h"
 #include "RenderObject.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

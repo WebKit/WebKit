@@ -50,8 +50,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static DatabaseTracker* staticTracker = 0;
@@ -141,7 +139,7 @@ bool DatabaseTracker::hasAdequateQuotaForOrigin(SecurityOrigin* origin, unsigned
     unsigned long long usage = usageForOrigin(origin);
 
     // If the database will fit, allow its creation.
-    unsigned long long requirement = usage + max(1UL, estimatedSize);
+    unsigned long long requirement = usage + std::max<unsigned long long>(1, estimatedSize);
     if (requirement < usage) {
         // The estimated size is so big it causes an overflow; don't allow creation.
         err = DatabaseError::DatabaseSizeOverflowed;

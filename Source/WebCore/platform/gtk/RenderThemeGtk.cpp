@@ -677,7 +677,7 @@ IntRect RenderThemeGtk::calculateProgressRect(RenderObject* renderObject, const 
     double animationProgress = renderProgress->animationProgress();
 
     // Never let the progress rect shrink smaller than 2 pixels.
-    int newWidth = max(2, progressRect.width() / progressActivityBlocks);
+    int newWidth = std::max(2, progressRect.width() / progressActivityBlocks);
     int movableWidth = progressRect.width() - newWidth;
     progressRect.setWidth(newWidth);
 

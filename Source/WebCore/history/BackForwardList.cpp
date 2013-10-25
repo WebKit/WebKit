@@ -36,8 +36,6 @@
 #include "PageCache.h"
 #include "SerializedScriptValue.h"
 
-using namespace std;
-
 namespace WebCore {
 
 static const unsigned DefaultCapacity = 100;
@@ -144,7 +142,7 @@ void BackForwardList::backListWithLimit(int limit, HistoryItemVector& list)
 {
     list.clear();
     if (m_current != NoCurrentItemIndex) {
-        unsigned first = max((int)m_current - limit, 0);
+        unsigned first = std::max((int)m_current - limit, 0);
         for (; first < m_current; ++first)
             list.append(m_entries[first]);
     }
@@ -159,7 +157,7 @@ void BackForwardList::forwardListWithLimit(int limit, HistoryItemVector& list)
         
     unsigned lastEntry = m_entries.size() - 1;
     if (m_current < lastEntry) {
-        int last = min(m_current + limit, lastEntry);
+        int last = std::min(m_current + limit, lastEntry);
         limit = m_current + 1;
         for (; limit <= last; ++limit)
             list.append(m_entries[limit]);

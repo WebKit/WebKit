@@ -44,8 +44,6 @@
 #import <notify.h>
 #endif
 
-using std::max;
-
 namespace WebCore {
 
 #if !PLATFORM(IOS)
@@ -140,7 +138,7 @@ void MemoryPressureHandler::respondToMemoryPressure()
 
     unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
 
-    holdOff(max(holdOffTime, s_minimumHoldOffTime));
+    holdOff(std::max(holdOffTime, s_minimumHoldOffTime));
 }
 #endif // !PLATFORM(IOS)
 

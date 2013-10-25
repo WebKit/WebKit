@@ -176,7 +176,7 @@ static inline FilterOperations blendFilterOperations(const AnimationBase* anim, 
     FilterOperations result;
     size_t fromSize = from.operations().size();
     size_t toSize = to.operations().size();
-    size_t size = max(fromSize, toSize);
+    size_t size = std::max(fromSize, toSize);
     for (size_t i = 0; i < size; i++) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
         RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
@@ -699,7 +699,7 @@ private:
 
         OwnPtr<ShadowData> newShadowData;
 
-        int maxLength = max(fromLength, toLength);
+        int maxLength = std::max(fromLength, toLength);
         for (int i = 0; i < maxLength; ++i) {
             const ShadowData* fromShadow = i < fromLength ? fromShadows[i] : 0;
             const ShadowData* toShadow = i < toLength ? toShadows[i] : 0;

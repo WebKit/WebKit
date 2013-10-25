@@ -45,7 +45,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace std;
 
 static const int msecPerMinute = 60 * 1000;
 static const int msecPerSecond = 1000;

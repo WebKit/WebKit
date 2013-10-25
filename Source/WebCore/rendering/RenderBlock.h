@@ -157,7 +157,7 @@ public:
     // compute the region all over again when you already know it.
     LayoutUnit availableLogicalWidthForLine(LayoutUnit position, bool shouldIndentText, RenderRegion* region, LayoutUnit logicalHeight = 0) const
     {
-        return max<LayoutUnit>(0, logicalRightOffsetForLine(position, shouldIndentText, region, logicalHeight)
+        return std::max<LayoutUnit>(0, logicalRightOffsetForLine(position, shouldIndentText, region, logicalHeight)
             - logicalLeftOffsetForLine(position, shouldIndentText, region, logicalHeight));
     }
     LayoutUnit logicalRightOffsetForLine(LayoutUnit position, bool shouldIndentText, RenderRegion* region, LayoutUnit logicalHeight = 0) const 
@@ -333,7 +333,7 @@ public:
     LayoutUnit logicalRightOffsetForContent(RenderRegion*) const;
     LayoutUnit availableLogicalWidthForContent(RenderRegion* region) const
     { 
-        return max<LayoutUnit>(0, logicalRightOffsetForContent(region) - logicalLeftOffsetForContent(region)); }
+        return std::max<LayoutUnit>(0, logicalRightOffsetForContent(region) - logicalLeftOffsetForContent(region)); }
     LayoutUnit startOffsetForContent(RenderRegion* region) const
     {
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForContent(region) : logicalWidth() - logicalRightOffsetForContent(region);

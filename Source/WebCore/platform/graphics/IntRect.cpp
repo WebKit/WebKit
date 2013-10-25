@@ -31,9 +31,6 @@
 #include <algorithm>
 #include <wtf/PrintStream.h>
 
-using std::max;
-using std::min;
-
 namespace WebCore {
 
 IntRect::IntRect(const FloatRect& r)
@@ -64,10 +61,10 @@ bool IntRect::contains(const IntRect& other) const
 
 void IntRect::intersect(const IntRect& other)
 {
-    int l = max(x(), other.x());
-    int t = max(y(), other.y());
-    int r = min(maxX(), other.maxX());
-    int b = min(maxY(), other.maxY());
+    int l = std::max(x(), other.x());
+    int t = std::max(y(), other.y());
+    int r = std::min(maxX(), other.maxX());
+    int b = std::min(maxY(), other.maxY());
 
     // Return a clean empty rectangle for non-intersecting cases.
     if (l >= r || t >= b) {
@@ -93,10 +90,10 @@ void IntRect::unite(const IntRect& other)
         return;
     }
 
-    int l = min(x(), other.x());
-    int t = min(y(), other.y());
-    int r = max(maxX(), other.maxX());
-    int b = max(maxY(), other.maxY());
+    int l = std::min(x(), other.x());
+    int t = std::min(y(), other.y());
+    int r = std::max(maxX(), other.maxX());
+    int b = std::max(maxY(), other.maxY());
 
     m_location.setX(l);
     m_location.setY(t);
@@ -114,10 +111,10 @@ void IntRect::uniteIfNonZero(const IntRect& other)
         return;
     }
 
-    int left = min(x(), other.x());
-    int top = min(y(), other.y());
-    int right = max(maxX(), other.maxX());
-    int bottom = max(maxY(), other.maxY());
+    int left = std::min(x(), other.x());
+    int top = std::min(y(), other.y());
+    int right = std::max(maxX(), other.maxX());
+    int bottom = std::max(maxY(), other.maxY());
 
     m_location.setX(left);
     m_location.setY(top);

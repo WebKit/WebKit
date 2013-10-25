@@ -126,7 +126,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 #endif
 
     [nsurlCache setMemoryCapacity:urlCacheMemoryCapacity];
-    [nsurlCache setDiskCapacity:max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
+    [nsurlCache setDiskCapacity:std::max<unsigned long>(urlCacheDiskCapacity, [nsurlCache diskCapacity])]; // Don't shrink a big disk cache, since that would cause churn.
 }
 
 void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)

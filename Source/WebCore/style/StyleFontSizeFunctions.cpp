@@ -157,8 +157,8 @@ float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, con
     }
 
     // Value is outside the range of the table. Apply the scale factor instead.
-    float minLogicalSize = max(settings->minimumLogicalFontSize(), 1);
-    return max(fontSizeFactors[keywordID - CSSValueXxSmall] * mediumSize, minLogicalSize);
+    float minLogicalSize = std::max(settings->minimumLogicalFontSize(), 1);
+    return std::max(fontSizeFactors[keywordID - CSSValueXxSmall] * mediumSize, minLogicalSize);
 }
 
 template<typename T>

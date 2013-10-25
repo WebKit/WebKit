@@ -143,7 +143,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
         m_timer.clear();
     else {
         m_timer = adoptPtr(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
-        m_timer->startOneShot(max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
+        m_timer->startOneShot(std::max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
     }
 }
 
@@ -167,7 +167,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
     const int bubbleArrowTopOffset = 32;
     double bubbleX = hostX;
     if (hostRect.width() / 2 < bubbleArrowTopOffset)
-        bubbleX = max(hostX + hostRect.width() / 2 - bubbleArrowTopOffset, 0.0);
+        bubbleX = std::max(hostX + hostRect.width() / 2 - bubbleArrowTopOffset, 0.0);
     bubble->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSPrimitiveValue::CSS_PX);
 }
 

@@ -631,7 +631,7 @@ PassRefPtr<MediaControlRewindButtonElement> MediaControlRewindButtonElement::cre
 void MediaControlRewindButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        mediaController()->setCurrentTime(max(0.0, mediaController()->currentTime() - 30), IGNORE_EXCEPTION);
+        mediaController()->setCurrentTime(std::max<double>(0, mediaController()->currentTime() - 30), IGNORE_EXCEPTION);
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);

@@ -187,8 +187,6 @@
 #include "WebVTTElement.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -4121,9 +4119,9 @@ int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percenta
     if (unit.isViewportPercentageWidth())
         return viewPortWidth;
     if (unit.isViewportPercentageMax())
-        return max(viewPortWidth, viewPortHeight);
+        return std::max(viewPortWidth, viewPortHeight);
     if (unit.isViewportPercentageMin())
-        return min(viewPortWidth, viewPortHeight);
+        return std::min(viewPortWidth, viewPortHeight);
 
     ASSERT_NOT_REACHED();
     return 0;

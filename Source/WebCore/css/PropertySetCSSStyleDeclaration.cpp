@@ -31,8 +31,6 @@
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 
-using namespace std;
-
 namespace WebCore {
 
 namespace {

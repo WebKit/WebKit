@@ -33,8 +33,6 @@
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 
-using namespace std;
-
 namespace WebCore {
     
 AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject* renderer)

@@ -30,9 +30,6 @@
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 
-using std::min;
-using std::max;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -57,7 +54,7 @@ void RenderFieldset::computePreferredLogicalWidths()
         if (legendMarginRight.isFixed())
             legendMinWidth += legendMarginRight.value();
 
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, legendMinWidth + borderAndPaddingWidth());
+        m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, legendMinWidth + borderAndPaddingWidth());
     }
 }
 
@@ -117,7 +114,7 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
         // on the legend's margins as we want to still follow the author's cues.
         // Firefox completely ignores the margins in this case which seems wrong.
         legendLogicalTop = (fieldsetBorderBefore - legendLogicalHeight) / 2;
-        collapsedLegendExtent = max<LayoutUnit>(fieldsetBorderBefore, legendLogicalTop + legendLogicalHeight + marginAfterForChild(legend));
+        collapsedLegendExtent = std::max<LayoutUnit>(fieldsetBorderBefore, legendLogicalTop + legendLogicalHeight + marginAfterForChild(legend));
     } else
         collapsedLegendExtent = legendLogicalHeight + marginAfterForChild(legend);
 
@@ -179,11 +176,11 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
         LayoutUnit clipTop = paintRect.y();
-        LayoutUnit clipHeight = max(static_cast<LayoutUnit>(style()->borderTopWidth()), legend->height() - ((legend->height() - borderTop()) / 2));
+        LayoutUnit clipHeight = std::max(static_cast<LayoutUnit>(style()->borderTopWidth()), legend->height() - ((legend->height() - borderTop()) / 2));
         graphicsContext->clipOut(pixelSnappedIntRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
     } else {
         LayoutUnit clipLeft = paintRect.x();
-        LayoutUnit clipWidth = max(static_cast<LayoutUnit>(style()->borderLeftWidth()), legend->width());
+        LayoutUnit clipWidth = std::max(static_cast<LayoutUnit>(style()->borderLeftWidth()), legend->width());
         graphicsContext->clipOut(pixelSnappedIntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
     }
 

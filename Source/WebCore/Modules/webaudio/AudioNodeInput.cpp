@@ -33,8 +33,6 @@
 #include "AudioNodeOutput.h"
 #include <algorithm>
 
-using namespace std;
- 
 namespace WebCore {
 
 AudioNodeInput::AudioNodeInput(AudioNode* node)
@@ -157,11 +155,11 @@ unsigned AudioNodeInput::numberOfChannels() const
         AudioNodeOutput* output = *i;
         // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
         // because the calling of AudioNodeOutput::bus() is not safe here.
-        maxChannels = max(maxChannels, output->numberOfChannels());
+        maxChannels = std::max(maxChannels, output->numberOfChannels());
     }
 
     if (mode == AudioNode::ClampedMax)
-        maxChannels = min(maxChannels, static_cast<unsigned>(node()->channelCount()));
+        maxChannels = std::min(maxChannels, static_cast<unsigned>(node()->channelCount()));
 
     return maxChannels;
 }

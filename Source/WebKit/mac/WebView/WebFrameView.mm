@@ -216,7 +216,7 @@ enum {
 - (float)_verticalPageScrollDistance
 {
     float height = [[self _contentView] bounds].size.height;
-    return max<float>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages());
+    return std::max<float>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages());
 }
 
 static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *supportTypes)
@@ -698,7 +698,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (float)_horizontalPageScrollDistance
 {
     float width = [[self _contentView] bounds].size.width;
-    return max<float>(width * Scrollbar::minFractionToStepWhenPaging(), width - Scrollbar::maxOverlapBetweenPages());
+    return std::max<float>(width * Scrollbar::minFractionToStepWhenPaging(), width - Scrollbar::maxOverlapBetweenPages());
 }
 
 - (BOOL)_pageVertically:(BOOL)up

@@ -31,8 +31,6 @@
 #include "AudioUtilities.h"
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 const float SmoothingTimeConstant = 0.020f; // 20ms
@@ -112,8 +110,8 @@ void DelayDSPKernel::process(const float* source, float* destination, size_t fra
         delayTime = delayProcessor() ? delayProcessor()->delayTime()->finalValue() : m_desiredDelayFrames / sampleRate;
 
         // Make sure the delay time is in a valid range.
-        delayTime = min(maxTime, delayTime);
-        delayTime = max(0.0, delayTime);
+        delayTime = std::min(maxTime, delayTime);
+        delayTime = std::max(0.0, delayTime);
 
         if (m_firstTime) {
             m_currentDelayTime = delayTime;

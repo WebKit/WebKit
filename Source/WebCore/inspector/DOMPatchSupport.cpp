@@ -54,8 +54,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using HTMLNames::bodyTag;
@@ -267,8 +265,8 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
         if (oldIt == oldTable.end() || oldIt->value.size() != 1)
             continue;
 
-        newMap[newIt->value[0]] = make_pair(newList[newIt->value[0]].get(), oldIt->value[0]);
-        oldMap[oldIt->value[0]] = make_pair(oldList[oldIt->value[0]].get(), newIt->value[0]);
+        newMap[newIt->value[0]] = std::make_pair(newList[newIt->value[0]].get(), oldIt->value[0]);
+        oldMap[oldIt->value[0]] = std::make_pair(oldList[oldIt->value[0]].get(), newIt->value[0]);
     }
 
     for (size_t i = 0; newList.size() > 0 && i < newList.size() - 1; ++i) {
@@ -277,8 +275,8 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
 
         size_t j = newMap[i].second + 1;
         if (j < oldMap.size() && !oldMap[j].first && newList[i + 1]->m_sha1 == oldList[j]->m_sha1) {
-            newMap[i + 1] = make_pair(newList[i + 1].get(), j);
-            oldMap[j] = make_pair(oldList[j].get(), i + 1);
+            newMap[i + 1] = std::make_pair(newList[i + 1].get(), j);
+            oldMap[j] = std::make_pair(oldList[j].get(), i + 1);
         }
     }
 
@@ -288,8 +286,8 @@ DOMPatchSupport::diff(const Vector<OwnPtr<Digest>>& oldList, const Vector<OwnPtr
 
         size_t j = newMap[i].second - 1;
         if (!oldMap[j].first && newList[i - 1]->m_sha1 == oldList[j]->m_sha1) {
-            newMap[i - 1] = make_pair(newList[i - 1].get(), j);
-            oldMap[j] = make_pair(oldList[j].get(), i - 1);
+            newMap[i - 1] = std::make_pair(newList[i - 1].get(), j);
+            oldMap[j] = std::make_pair(oldList[j].get(), i - 1);
         }
     }
 

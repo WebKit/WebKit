@@ -75,7 +75,6 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
-using namespace std;
 
 static NSArray *convertMathPairsToNSArray(const AccessibilityObject::AccessibilityMathMultiscriptPairs& pairs, NSString *subscriptKey, NSString *superscriptKey)
 {

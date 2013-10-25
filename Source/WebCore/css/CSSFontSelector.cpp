@@ -57,8 +57,6 @@
 #include "SVGNames.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static unsigned fontSelectorId;
@@ -550,7 +548,7 @@ CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDe
         }
 
         desiredTraitsMaskForComparison = traitsMask;
-        stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), compareFontFaces);
+        std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), compareFontFaces);
         unsigned numCandidates = candidateFontFaces.size();
         for (unsigned i = 0; i < numCandidates; ++i)
             face->appendFontFace(candidateFontFaces[i]);

@@ -881,7 +881,7 @@ void RenderThemeEfl::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
 
     // Calculate min-height of the <select> element.
     int minHeight = style->fontMetrics().height();
-    minHeight = max(minHeight, dropDownBoxMinHeight);
+    minHeight = std::max(minHeight, dropDownBoxMinHeight);
     style->setMinHeight(Length(minHeight, Fixed));
 
     adjustMenuListStyle(styleResolver, style, element);

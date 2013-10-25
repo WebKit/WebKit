@@ -52,9 +52,6 @@
 
 namespace WebCore {
 
-using namespace std;
-using namespace WTF;
-
 class AutocorrectionAlternativeDetails : public AlternativeTextDetails {
 public:
     static PassRefPtr<AutocorrectionAlternativeDetails> create(const String& replacementString)

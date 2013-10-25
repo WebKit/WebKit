@@ -34,8 +34,6 @@
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

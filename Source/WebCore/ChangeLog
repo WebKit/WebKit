@@ -1,3 +1,291 @@
+2013-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Stop bringing in the std namespace
+        https://bugs.webkit.org/show_bug.cgi?id=123273
+
+        Reviewed by Andreas Kling.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::startGrain):
+        (WebCore::AudioBufferSourceNode::totalPitchRate):
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::numberOfChannels):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        (WebCore::AudioScheduledSourceNode::stop):
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::process):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        * Modules/webaudio/OscillatorNode.cpp:
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::dopplerRate):
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::processCurve):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::hasAdequateQuotaForOrigin):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::saturateAdd):
+        * Modules/websockets/WebSocketChannel.cpp:
+        * Modules/websockets/WebSocketFrame.cpp:
+        (WebCore::WebSocketFrame::parseFrame):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        * accessibility/AccessibilityList.cpp:
+        * accessibility/AccessibilityListBox.cpp:
+        * accessibility/AccessibilityListBoxOption.cpp:
+        * accessibility/AccessibilityNodeObject.cpp:
+        * accessibility/AccessibilityObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        * accessibility/AccessibilityTableCell.cpp:
+        * accessibility/AccessibilityTableColumn.cpp:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        * accessibility/AccessibilityTableRow.cpp:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames):
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::setTimeout):
+        (WebCore::setMaximumAge):
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::writeLittleEndian):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::readString):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontFace):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSRadialGradientValue::createGradient):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColorParameters):
+        (WebCore::CSSParser::parseHSLParameters):
+        * css/CSSReflectValue.cpp:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * css/SVGCSSParser.cpp:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::viewportPercentageValue):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        * dom/ContainerNode.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::minimumLayoutDelay):
+        * dom/Node.cpp:
+        (WebCore::Node::compareDocumentPosition):
+        * dom/Range.cpp:
+        (WebCore::Range::toString):
+        (WebCore::Range::textRects):
+        (WebCore::Range::textQuads):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::makePresentationAttributeCacheKey):
+        * dom/Text.cpp:
+        * dom/ViewportArguments.cpp:
+        (WebCore::clampLengthValue):
+        (WebCore::clampScaleValue):
+        (WebCore::ViewportArguments::resolve):
+        (WebCore::computeMinimumScaleFactorForContentContained):
+        (WebCore::restrictMinimumScaleFactorToViewportSize):
+        * editing/AlternativeTextController.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::compositionRange):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextBox):
+        (WebCore::CharacterIterator::string):
+        (WebCore::SearchBuffer::SearchBuffer):
+        (WebCore::SearchBuffer::append):
+        (WebCore::SearchBuffer::prependContext):
+        (WebCore::SearchBuffer::search):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startOfParagraph):
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didReceiveResponse):
+        (WebCore::FileReaderLoader::didReceiveData):
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::backListWithLimit):
+        (WebCore::BackForwardList::forwardListWithLimit):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::setCapacity):
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/FTPDirectoryDocument.cpp:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::getRegion):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        (WebCore::parseColorStringWithCrazyLegacyRules):
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getTextFieldValues):
+        * html/HTMLImageElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::textTrackAddCue):
+        (WebCore::HTMLMediaElement::textTrackRemoveCue):
+        (WebCore::HTMLMediaElement::rewind):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::duration):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        * html/HTMLSourceElement.cpp:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::colSpan):
+        (WebCore::HTMLTableCellElement::rowSpan):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseAttribute):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionStart):
+        (WebCore::HTMLTextFormControlElement::setSelectionEnd):
+        (WebCore::HTMLTextFormControlElement::select):
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        * html/HTMLTrackElement.cpp:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::scale):
+        * html/InputType.cpp:
+        (WebCore::InputType::valueAsDouble):
+        * html/MediaController.cpp:
+        (MediaController::duration):
+        (MediaController::currentTime):
+        (MediaController::setCurrentTime):
+        (MediaController::updateReadyState):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValueAsDouble):
+        (WebCore::NumberInputType::setValueAsDecimal):
+        (WebCore::NumberInputType::createStepRange):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::startSearchEventTimer):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::clampValue):
+        (WebCore::StepRange::parseStep):
+        * html/TimeRanges.cpp:
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        (WebCore::adjustBubblePosition):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::normalizeRect):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        (WebCore::WebGLRenderingContext::validateCompressedTexFuncData):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler):
+        * html/shadow/MediaControlsApple.cpp:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * inspector/ContentSearchUtils.cpp:
+        * inspector/DOMEditor.cpp:
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::diff):
+        * inspector/InjectedScriptHost.cpp:
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/cache/CachedImage.cpp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::adjustWindowRect):
+        * page/EventHandler.cpp:
+        (WebCore::MaximumDurationTracker::~MaximumDurationTracker):
+        * page/FrameTree.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustedDeferredRepaintDelay):
+        (WebCore::FrameView::autoSizeIfEnabled):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computeAutomaticScaleFactor):
+        * page/SpatialNavigation.cpp:
+        (WebCore::entryAndExitPointsForDirection):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFilterOperations):
+        (WebCore::PropertyWrapperShadow::blendMismatchedShadowLists):
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::FloatRect):
+        (WebCore::FloatRect::intersect):
+        (WebCore::FloatRect::uniteEvenIfEmpty):
+        (WebCore::FloatRect::extend):
+        (WebCore::FloatRect::fitToPoints):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        (WebCore::GlyphPageTreeNode::getChild):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::intersect):
+        (WebCore::IntRect::unite):
+        (WebCore::IntRect::uniteIfNonZero):
+        * platform/graphics/LayoutRect.cpp:
+        (WebCore::LayoutRect::intersect):
+        (WebCore::LayoutRect::unite):
+        (WebCore::LayoutRect::uniteIfNonZero):
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyGeneric):
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        * platform/text/TextCodecICU.cpp:
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::fitBelowFloats):
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLine):
+        (WebCore::RenderBlock::availableLogicalWidthForContent):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::computePreferredLogicalWidths):
+        (WebCore::RenderFieldset::layoutSpecialExcludedChild):
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::updateLogicalWidth):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layOutAxis):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::selectionHeight):
+        (WebCore::RootInlineBox::selectionHeightAdjustedForPrecedingBlock):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layout):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize):
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::fontSizeForKeyword):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentTime):
+
 2013-10-24  Andreas Kling  <akling@apple.com>
 
         Uncomplicate some of SVGTextRunRenderingContext.

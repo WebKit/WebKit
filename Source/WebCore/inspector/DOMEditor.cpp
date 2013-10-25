@@ -41,12 +41,8 @@
 #include "InspectorHistory.h"
 #include "Node.h"
 #include "Text.h"
-
 #include "markup.h"
-
 #include <wtf/RefPtr.h>
-
-using namespace std;
 
 namespace WebCore {
 

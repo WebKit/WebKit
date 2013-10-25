@@ -45,8 +45,6 @@
 #include <wtf/text/CString.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static size_t sizeForImmutableStylePropertySetWithPropertyCount(unsigned count)
@@ -367,9 +365,9 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
         values[i] = getPropertyCSSValue(shorthand.properties()[i]);
         if (values[i]) {
             if (values[i]->isBaseValueList())
-                numLayers = max(toCSSValueList(values[i].get())->length(), numLayers);
+                numLayers = std::max(toCSSValueList(values[i].get())->length(), numLayers);
             else
-                numLayers = max<size_t>(1U, numLayers);
+                numLayers = std::max<size_t>(1U, numLayers);
         }
     }
 

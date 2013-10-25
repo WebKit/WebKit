@@ -31,8 +31,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include <math.h>
 
-using namespace WebCore;
-using namespace std;
+namespace WebCore {
 
 TimeRanges::TimeRanges(double start, double end)
 {
@@ -193,4 +192,6 @@ double TimeRanges::totalDuration() const
     for (unsigned n = 0; n < length(); n++)
         total += fabs(end(n, IGNORE_EXCEPTION) - start(n, IGNORE_EXCEPTION));
     return total;
+}
+
 }

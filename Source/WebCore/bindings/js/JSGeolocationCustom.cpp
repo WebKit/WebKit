@@ -38,7 +38,6 @@
 #include "PositionOptions.h"
 
 using namespace JSC;
-using namespace std;
 
 namespace WebCore {
 
@@ -54,7 +53,7 @@ static void setTimeout(PositionOptions* options, const double& timeout)
     // If the value is positive infinity, there's nothing to do.
     if (!(std::isinf(timeout) && (timeout > 0))) {
         // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-        options->setTimeout(max(0, static_cast<int>(timeout)));
+        options->setTimeout(std::max<int>(0, timeout));
     }
 }
 
@@ -65,7 +64,7 @@ static void setMaximumAge(PositionOptions* options, const double& maximumAge)
         options->clearMaximumAge();
     } else {
         // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
-        options->setMaximumAge(max(0, static_cast<int>(maximumAge)));
+        options->setMaximumAge(std::max<int>(0, maximumAge));
     }
 }
 

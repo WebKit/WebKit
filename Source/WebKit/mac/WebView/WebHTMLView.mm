@@ -3984,7 +3984,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1.0f / _WebHTMLViewPrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = (useViewWidth ? [printOperation _web_availablePaperWidth] :  [printOperation _web_availablePaperHeight]) / viewLogicalWidth;
-    return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
+    return userScaleFactor * std::max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order

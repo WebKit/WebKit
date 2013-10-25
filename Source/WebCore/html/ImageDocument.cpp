@@ -46,8 +46,6 @@
 #include "ResourceBuffer.h"
 #include "Settings.h"
 
-using std::min;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -241,7 +239,7 @@ float ImageDocument::scale() const
     float widthScale = (float)windowSize.width() / imageSize.width();
     float heightScale = (float)windowSize.height() / imageSize.height();
 
-    return min(widthScale, heightScale);
+    return std::min(widthScale, heightScale);
 }
 
 void ImageDocument::resizeImageToFit()

@@ -65,7 +65,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace std;
 
 static const int rangeDefaultMinimum = 0;
 static const int rangeDefaultMaximum = 100;
@@ -207,7 +206,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
     // FIXME: We can't use stepUp() for the step value "any". So, we increase
     // or decrease the value by 1/100 of the value range. Is it reasonable?
     const Decimal step = equalIgnoringCase(element().fastGetAttribute(stepAttr), "any") ? (stepRange.maximum() - stepRange.minimum()) / 100 : stepRange.step();
-    const Decimal bigStep = max((stepRange.maximum() - stepRange.minimum()) / 10, step);
+    const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
     if (element().renderer()) {

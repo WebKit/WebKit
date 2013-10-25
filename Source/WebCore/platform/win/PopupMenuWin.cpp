@@ -332,7 +332,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     int itemCount = client()->listSize();
     m_itemHeight = client()->menuStyle().font().fontMetrics().height() + optionSpacingMiddle;
     int naturalHeight = m_itemHeight * itemCount;
-    int popupHeight = min(maxPopupHeight, naturalHeight);
+    int popupHeight = std::min(maxPopupHeight, naturalHeight);
     // The popup should show an integral number of items (i.e. no partial items should be visible)
     popupHeight -= popupHeight % m_itemHeight;
     
@@ -351,7 +351,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
             itemFont.update(m_popupClient->fontSelector());
         }
 
-        popupWidth = max(popupWidth, static_cast<int>(ceilf(itemFont.width(TextRun(text.characters(), text.length())))));
+        popupWidth = std::max(popupWidth, static_cast<int>(ceilf(itemFont.width(TextRun(text.characters(), text.length())))));
     }
 
     if (naturalHeight > maxPopupHeight)
@@ -359,14 +359,14 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
         popupWidth += ScrollbarTheme::theme()->scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
-    popupWidth += max<int>(0, client()->clientPaddingRight() - client()->clientInsetRight()) + max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+    popupWidth += std::max<int>(0, client()->clientPaddingRight() - client()->clientInsetRight()) + std::max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
 
     // Leave room for the border
     popupWidth += 2 * popupWindowBorderWidth;
     popupHeight += 2 * popupWindowBorderWidth;
 
     // The popup should be at least as wide as the control on the page
-    popupWidth = max(rScreenCoords.width() - client()->clientInsetLeft() - client()->clientInsetRight(), popupWidth);
+    popupWidth = std::max(rScreenCoords.width() - client()->clientInsetLeft() - client()->clientInsetRight(), popupWidth);
 
     // Always left-align items in the popup.  This matches popup menus on the mac.
     int popupX = rScreenCoords.x() + client()->clientInsetLeft();
@@ -665,12 +665,12 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         if (itemStyle.isVisible()) {
             int textX = 0;
             if (client()->menuStyle().textDirection() == LTR) {
-                textX = max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
+                textX = std::max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
                 if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent())
                     textX += minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             } else {
                 textX = itemRect.width() - client()->menuStyle().font().width(textRun);
-                textX = min<int>(textX, textX - client()->clientPaddingRight() + client()->clientInsetRight());
+                textX = std::min<int>(textX, textX - client()->clientPaddingRight() + client()->clientInsetRight());
                 if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent())
                     textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             }
@@ -837,7 +837,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
             int visibleItems = this->visibleItems();
             scrollbar()->setEnabled(visibleItems < client()->listSize());
-            scrollbar()->setSteps(1, max(1, visibleItems - 1));
+            scrollbar()->setSteps(1, std::max(1, visibleItems - 1));
             scrollbar()->setProportion(visibleItems, client()->listSize());
 
             break;

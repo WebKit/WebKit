@@ -103,8 +103,6 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
 
 namespace WebCore {
 
-using std::max;
-
 #if ENABLE(CSS_FILTERS)
 class FilterOperations;
 #endif
@@ -525,7 +523,7 @@ public:
     unsigned short borderStartWidth() const;
     unsigned short borderEndWidth() const;
 
-    unsigned short outlineSize() const { return max(0, outlineWidth() + outlineOffset()); }
+    unsigned short outlineSize() const { return std::max(0, outlineWidth() + outlineOffset()); }
     unsigned short outlineWidth() const
     {
         if (m_background->outline().style() == BNONE)

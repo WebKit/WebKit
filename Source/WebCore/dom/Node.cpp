@@ -122,8 +122,6 @@
 #include "InspectorController.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1508,7 +1506,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
         return compareDetachedElementsPosition(this, otherNode);
 
     // Walk the two chains backwards and look for the first difference.
-    for (unsigned i = min(index1, index2); i; --i) {
+    for (unsigned i = std::min(index1, index2); i; --i) {
         Node* child1 = chain1[--index1];
         Node* child2 = chain2[--index2];
         if (child1 != child2) {

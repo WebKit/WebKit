@@ -29,8 +29,6 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // Constants for hybi-10 frame format.
@@ -97,7 +95,7 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(char* data, size_t d
 
     static const uint64_t maxPayloadLength = UINT64_C(0x7FFFFFFFFFFFFFFF);
     size_t maskingKeyLength = masked ? maskingKeyWidthInBytes : 0;
-    if (payloadLength64 > maxPayloadLength || payloadLength64 + maskingKeyLength > numeric_limits<size_t>::max()) {
+    if (payloadLength64 > maxPayloadLength || payloadLength64 + maskingKeyLength > std::numeric_limits<size_t>::max()) {
         errorString = "WebSocket frame length too large: " + String::number(payloadLength64) + " bytes";
         return FrameError;
     }

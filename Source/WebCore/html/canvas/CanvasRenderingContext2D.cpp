@@ -74,8 +74,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1229,10 +1227,10 @@ static IntSize size(HTMLVideoElement* video)
 
 static inline FloatRect normalizeRect(const FloatRect& rect)
 {
-    return FloatRect(min(rect.x(), rect.maxX()),
-        min(rect.y(), rect.maxY()),
-        max(rect.width(), -rect.width()),
-        max(rect.height(), -rect.height()));
+    return FloatRect(std::min(rect.x(), rect.maxX()),
+        std::min(rect.y(), rect.maxY()),
+        std::max(rect.width(), -rect.width()),
+        std::max(rect.height(), -rect.height()));
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y, ExceptionCode& ec)

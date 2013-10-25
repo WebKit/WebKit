@@ -72,8 +72,6 @@
 #include "DeleteButtonController.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -776,8 +774,8 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
         bool indicesIntersect = start <= gapEnd && end >= gapStart;
         int gapLen = gapEnd - gapStart;
         if (indicesIntersect && gapLen > 0) {
-            gapStart = max(gapStart, start);
-            gapEnd = min(gapEnd, end);
+            gapStart = std::max(gapStart, start);
+            gapEnd = std::min(gapEnd, end);
             if (str.isNull())
                 str = textNode->data().substring(start, end - start);
             // remove text in the gap

@@ -69,7 +69,6 @@
 #include <wtf/Vector.h>
 
 using namespace JSC;
-using namespace std;
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
 #define ASSUME_LITTLE_ENDIAN 0
@@ -312,7 +311,7 @@ template <> void writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, uint8_t val
 
 template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, const T* values, uint32_t length)
 {
-    if (length > numeric_limits<uint32_t>::max() / sizeof(T))
+    if (length > std::numeric_limits<uint32_t>::max() / sizeof(T))
         return false;
 
 #if ASSUME_LITTLE_ENDIAN
@@ -821,7 +820,7 @@ private:
         }
 
         // Guard against overflow
-        if (str.length() > (numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
+        if (str.length() > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
             fail();
             return;
         }
@@ -1109,10 +1108,10 @@ public:
                                              const Vector<uint8_t>& buffer)
     {
         if (!buffer.size())
-            return make_pair(jsNull(), UnspecifiedError);
+            return std::make_pair(jsNull(), UnspecifiedError);
         CloneDeserializer deserializer(exec, globalObject, messagePorts, arrayBufferContentsArray, buffer);
         if (!deserializer.isValid())
-            return make_pair(JSValue(), ValidationError);
+            return std::make_pair(JSValue(), ValidationError);
         return deserializer.deserialize();
     }
 
@@ -1283,7 +1282,7 @@ private:
 
     static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length)
     {
-        if (length >= numeric_limits<int32_t>::max() / sizeof(UChar))
+        if (length >= std::numeric_limits<int32_t>::max() / sizeof(UChar))
             return false;
 
         unsigned size = length * sizeof(UChar);
@@ -1748,7 +1747,7 @@ DeserializationResult CloneDeserializer::deserialize()
         objectStartState:
         case ObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), StackOverflowError);
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject->objectPrototype());
             m_gcBuffer.append(outObject);
             outputObjectStack.append(outObject);
@@ -1783,7 +1782,7 @@ DeserializationResult CloneDeserializer::deserialize()
         }
         mapObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), StackOverflowError);
             JSMap* map = JSMap::create(m_exec->vm(), m_globalObject->mapStructure());
             m_gcBuffer.append(map);
             outputObjectStack.append(map);
@@ -1793,7 +1792,7 @@ DeserializationResult CloneDeserializer::deserialize()
         }
         setObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), StackOverflowError);
             JSSet* set = JSSet::create(m_exec->vm(), m_globalObject->setStructure());
             m_gcBuffer.append(set);
             outputObjectStack.append(set);
@@ -1847,10 +1846,10 @@ DeserializationResult CloneDeserializer::deserialize()
     }
     ASSERT(outValue);
     ASSERT(!m_failed);
-    return make_pair(outValue, SuccessfullyCompleted);
+    return std::make_pair(outValue, SuccessfullyCompleted);
 error:
     fail();
-    return make_pair(JSValue(), ValidationError);
+    return std::make_pair(JSValue(), ValidationError);
 }
 
 

@@ -368,7 +368,7 @@ void RenderFlowThread::updateLogicalWidth()
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
-        logicalWidth = max(region->pageLogicalWidth(), logicalWidth);
+        logicalWidth = std::max(region->pageLogicalWidth(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
 
@@ -1132,7 +1132,7 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
         updateRegionsFlowThreadPortionRect();
 
     if (offsetBreakAdjustment)
-        *offsetBreakAdjustment = max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
+        *offsetBreakAdjustment = std::max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
 
     return hasComputedAutoHeight;
 }

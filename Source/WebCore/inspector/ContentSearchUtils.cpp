@@ -39,8 +39,6 @@
 #include <wtf/StdLibExtras.h>
 #include <yarr/Yarr.h>
 
-using namespace std;
-
 namespace WebCore {
 namespace ContentSearchUtils {
 

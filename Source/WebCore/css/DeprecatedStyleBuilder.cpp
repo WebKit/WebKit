@@ -53,8 +53,6 @@
 #include "ShapeValue.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 enum ExpandValueBehavior {SuppressValue = 0, ExpandValue};
@@ -883,7 +881,7 @@ public:
 
         // Overly large font sizes will cause crashes on some platforms (such as Windows).
         // Cap font size here to make sure that doesn't happen.
-        size = min(maximumAllowedFontSize, size);
+        size = std::min(maximumAllowedFontSize, size);
 
         styleResolver->setFontSize(fontDescription, size);
         styleResolver->setFontDescription(fontDescription);

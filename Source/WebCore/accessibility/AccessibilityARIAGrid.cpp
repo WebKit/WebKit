@@ -36,8 +36,6 @@
 #include "AccessibilityTableRow.h"
 #include "RenderObject.h"
 
-using namespace std;
-
 namespace WebCore {
 
 AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)

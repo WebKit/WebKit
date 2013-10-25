@@ -117,9 +117,6 @@
 #include "RequestAnimationFrameCallback.h"
 #endif
 
-using std::min;
-using std::max;
-
 namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
@@ -324,12 +321,12 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
         window.setHeight(pendingChanges.height());
 
     FloatSize minimumSize = page->chrome().client().minimumWindowSize();
-    window.setWidth(min(max(minimumSize.width(), window.width()), screen.width()));
-    window.setHeight(min(max(minimumSize.height(), window.height()), screen.height()));
+    window.setWidth(std::min(std::max(minimumSize.width(), window.width()), screen.width()));
+    window.setHeight(std::min(std::max(minimumSize.height(), window.height()), screen.height()));
 
     // Constrain the window position within the valid screen area.
-    window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));
-    window.setY(max(screen.y(), min(window.y(), screen.maxY() - window.height())));
+    window.setX(std::max(screen.x(), std::min(window.x(), screen.maxX() - window.width())));
+    window.setY(std::max(screen.y(), std::min(window.y(), screen.maxY() - window.height())));
 
     return window;
 }

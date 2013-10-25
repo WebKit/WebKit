@@ -37,8 +37,6 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 
-using namespace std;
-
 namespace WebCore {
     
 using namespace HTMLNames;

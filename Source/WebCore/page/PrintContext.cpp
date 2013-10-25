@@ -188,7 +188,7 @@ float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperS
 
     float maxShrinkToFitScaleFactor = 1 / printingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = (useViewWidth ? availablePaperSize.width() : availablePaperSize.height()) / viewLogicalWidth;
-    return max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
+    return std::max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
 
 void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)

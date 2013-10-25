@@ -33,8 +33,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-using std::swap;
-
 namespace WebCore {
 
 FrameTree::~FrameTree()

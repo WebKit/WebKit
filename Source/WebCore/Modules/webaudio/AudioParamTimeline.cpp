@@ -34,8 +34,6 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 void AudioParamTimeline::setValueAtTime(float value, float time)
@@ -189,9 +187,9 @@ float AudioParamTimeline::valuesForTimeRangeImpl(
     // until we reach the first event time.
     double firstEventTime = m_events[0].time();
     if (firstEventTime > startTime) {
-        double fillToTime = min(endTime, firstEventTime);
+        double fillToTime = std::min(endTime, firstEventTime);
         unsigned fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
-        fillToFrame = min(fillToFrame, numberOfValues);
+        fillToFrame = std::min(fillToFrame, numberOfValues);
         for (; writeIndex < fillToFrame; ++writeIndex)
             values[writeIndex] = defaultValue;
 
@@ -222,9 +220,9 @@ float AudioParamTimeline::valuesForTimeRangeImpl(
         float k = deltaTime > 0 ? 1 / deltaTime : 0;
         double sampleFrameTimeIncr = 1 / sampleRate;
 
-        double fillToTime = min(endTime, time2);
+        double fillToTime = std::min(endTime, time2);
         unsigned fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
-        fillToFrame = min(fillToFrame, numberOfValues);
+        fillToFrame = std::min(fillToFrame, numberOfValues);
 
         ParamEvent::Type nextEventType = nextEvent ? static_cast<ParamEvent::Type>(nextEvent->type()) : ParamEvent::LastType /* unknown */;
 
@@ -316,9 +314,9 @@ float AudioParamTimeline::valuesForTimeRangeImpl(
                     // instead of the next event time.
                     unsigned nextEventFillToFrame = fillToFrame;
                     float nextEventFillToTime = fillToTime;
-                    fillToTime = min(endTime, time1 + duration);
+                    fillToTime = std::min(endTime, time1 + duration);
                     fillToFrame = AudioUtilities::timeToSampleFrame(fillToTime - startTime, sampleRate);
-                    fillToFrame = min(fillToFrame, numberOfValues);
+                    fillToFrame = std::min(fillToFrame, numberOfValues);
 
                     // Index into the curve data using a floating-point value.
                     // We're scaling the number of curve points by the duration (see curvePointsPerFrame).

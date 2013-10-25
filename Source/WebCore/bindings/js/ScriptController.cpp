@@ -56,7 +56,6 @@
 #include <wtf/text/TextPosition.h>
 
 using namespace JSC;
-using namespace std;
 
 namespace WebCore {
 

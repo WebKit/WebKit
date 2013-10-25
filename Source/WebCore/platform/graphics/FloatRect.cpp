@@ -34,12 +34,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 
-using std::max;
-using std::min;
-
 namespace WebCore {
 
-FloatRect::FloatRect(const IntRect& r) : m_location(r.location()), m_size(r.size())
+FloatRect::FloatRect(const IntRect& r)
+    : m_location(r.location())
+    , m_size(r.size())
 {
 }
 
@@ -78,10 +77,10 @@ bool FloatRect::contains(const FloatPoint& point, ContainsMode containsMode) con
 
 void FloatRect::intersect(const FloatRect& other)
 {
-    float l = max(x(), other.x());
-    float t = max(y(), other.y());
-    float r = min(maxX(), other.maxX());
-    float b = min(maxY(), other.maxY());
+    float l = std::max(x(), other.x());
+    float t = std::max(y(), other.y());
+    float r = std::min(maxX(), other.maxX());
+    float b = std::min(maxY(), other.maxY());
 
     // Return a clean empty rectangle for non-intersecting cases.
     if (l >= r || t >= b) {
@@ -109,10 +108,10 @@ void FloatRect::unite(const FloatRect& other)
 
 void FloatRect::uniteEvenIfEmpty(const FloatRect& other)
 {
-    float minX = min(x(), other.x());
-    float minY = min(y(), other.y());
-    float maxX = max(this->maxX(), other.maxX());
-    float maxY = max(this->maxY(), other.maxY());
+    float minX = std::min(x(), other.x());
+    float minY = std::min(y(), other.y());
+    float maxX = std::max(this->maxX(), other.maxX());
+    float maxY = std::max(this->maxY(), other.maxY());
 
     setLocationAndSizeFromEdges(minX, minY, maxX, maxY);
 }
@@ -132,10 +131,10 @@ void FloatRect::uniteIfNonZero(const FloatRect& other)
 
 void FloatRect::extend(const FloatPoint& p)
 {
-    float minX = min(x(), p.x());
-    float minY = min(y(), p.y());
-    float maxX = max(this->maxX(), p.x());
-    float maxY = max(this->maxY(), p.y());
+    float minX = std::min(x(), p.x());
+    float minY = std::min(y(), p.y());
+    float maxX = std::max(this->maxX(), p.x());
+    float maxY = std::max(this->maxY(), p.y());
 
     setLocationAndSizeFromEdges(minX, minY, maxX, maxY);
 }
@@ -161,10 +160,10 @@ FloatRect unionRect(const Vector<FloatRect>& rects)
 
 void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1)
 {
-    float left = min(p0.x(), p1.x());
-    float top = min(p0.y(), p1.y());
-    float right = max(p0.x(), p1.x());
-    float bottom = max(p0.y(), p1.y());
+    float left = std::min(p0.x(), p1.x());
+    float top = std::min(p0.y(), p1.y());
+    float right = std::max(p0.x(), p1.x());
+    float bottom = std::max(p0.y(), p1.y());
 
     setLocationAndSizeFromEdges(left, top, right, bottom);
 }
@@ -175,25 +174,25 @@ namespace {
 template <typename T>
 T min3(const T& v1, const T& v2, const T& v3)
 {
-    return min(min(v1, v2), v3);
+    return std::min(std::min(v1, v2), v3);
 }
 
 template <typename T>
 T max3(const T& v1, const T& v2, const T& v3)
 {
-    return max(max(v1, v2), v3);
+    return std::max(std::max(v1, v2), v3);
 }
 
 template <typename T>
 T min4(const T& v1, const T& v2, const T& v3, const T& v4)
 {
-    return min(min(v1, v2), min(v3, v4));
+    return std::min(std::min(v1, v2), std::min(v3, v4));
 }
 
 template <typename T>
 T max4(const T& v1, const T& v2, const T& v3, const T& v4)
 {
-    return max(max(v1, v2), max(v3, v4));
+    return std::max(std::max(v1, v2), std::max(v3, v4));
 }
 
 } // anonymous namespace

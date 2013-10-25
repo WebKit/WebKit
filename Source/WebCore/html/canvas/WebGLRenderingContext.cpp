@@ -1793,14 +1793,14 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
         case GraphicsContext3D::UNSIGNED_BYTE: {
             const GC3Dubyte* p = static_cast<const GC3Dubyte*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
             break;
         }
         case GraphicsContext3D::UNSIGNED_SHORT: {
             numElements /= sizeof(GC3Dushort);
             const GC3Dushort* p = static_cast<const GC3Dushort*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
             break;
         }
         case GraphicsContext3D::UNSIGNED_INT: {
@@ -1809,7 +1809,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
             numElements /= sizeof(GC3Duint);
             const GC3Duint* p = static_cast<const GC3Duint*>(buffer->data());
             for (GC3Dsizeiptr i = 0; i < numElements; i++)
-                maxIndex = max(maxIndex, static_cast<int>(p[i]));
+                maxIndex = std::max(maxIndex, static_cast<int>(p[i]));
             break;
         }
         default:
@@ -5329,13 +5329,13 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
     case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
         {
-            bytesRequired = max(width, 8) * max(height, 8) / 2;
+            bytesRequired = std::max(width, 8) * std::max(height, 8) / 2;
         }
         break;
     case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
     case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
         {
-            bytesRequired = max(width, 8) * max(height, 8) / 4;
+            bytesRequired = std::max(width, 8) * std::max(height, 8) / 4;
         }
         break;
     default:

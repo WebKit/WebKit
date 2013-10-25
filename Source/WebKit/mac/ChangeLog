@@ -1,3 +1,21 @@
+2013-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Stop bringing in the std namespace
+        https://bugs.webkit.org/show_bug.cgi?id=123273
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _verticalPageScrollDistance]):
+        (-[WebFrameView _horizontalPageScrollDistance]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+        (+[WebView _maxCacheModelInAnyInstance]):
+        (+[WebView _cacheModelChangedNotification:]):
+        (+[WebView _preferencesRemovedNotification:]):
+
 2013-10-22  Dean Jackson  <dino@apple.com>
 
         [WebGL] Implement a software rendering option on Mac

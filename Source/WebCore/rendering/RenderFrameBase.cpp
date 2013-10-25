@@ -80,7 +80,7 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
 
     // make sure minimum preferred width is enforced
     if (isScrollable || !hasFixedWidth) {
-        setWidth(max(width(), childRoot->minPreferredLogicalWidth() + hBorder));
+        setWidth(std::max(width(), childRoot->minPreferredLogicalWidth() + hBorder));
         // update again to pass the new width to the child frame
         updateWidgetPosition();
         childFrameView->layout();
@@ -88,9 +88,9 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
 
     // expand the frame by setting frame height = content height
     if (isScrollable || !hasFixedHeight || childRoot->isFrameSet())
-        setHeight(max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
+        setHeight(std::max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
     if (isScrollable || !hasFixedWidth || childRoot->isFrameSet())
-        setWidth(max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
+        setWidth(std::max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
 
     updateWidgetPosition();
 

@@ -37,8 +37,6 @@
 #include "Page.h"
 #include "RenderImage.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

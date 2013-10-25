@@ -32,8 +32,6 @@
 #include "RenderTheme.h"
 #include "SVGPaint.h"
 
-using namespace std;
-
 namespace WebCore {
 
 bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)

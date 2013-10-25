@@ -40,8 +40,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using std::min;
-
 namespace WebCore {
 
 const size_t ConversionBufferSize = 16384;

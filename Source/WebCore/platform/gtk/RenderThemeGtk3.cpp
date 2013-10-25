@@ -509,8 +509,8 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
                                     NULL);
         innerRect.move(childDisplacementX, childDisplacementY);
     }
-    innerRect.setWidth(max(1, innerRect.width()));
-    innerRect.setHeight(max(1, innerRect.height()));
+    innerRect.setWidth(std::max(1, innerRect.width()));
+    innerRect.setHeight(std::max(1, innerRect.height()));
 
     gtk_style_context_restore(buttonStyleContext);
 
@@ -768,7 +768,7 @@ static gint spinButtonArrowSize(GtkStyleContext* context)
     PangoFontDescription* fontDescription;
     gtk_style_context_get(context, static_cast<GtkStateFlags>(0), "font", &fontDescription, NULL);
     gint fontSize = pango_font_description_get_size(fontDescription);
-    gint arrowSize = max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
+    gint arrowSize = std::max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
     pango_font_description_free(fontDescription);
 
     return arrowSize - arrowSize % 2; // Force even.

@@ -224,7 +224,6 @@
 #include "CaptionUserPreferences.h"
 #endif
 
-using namespace std;
 using namespace WTF;
 using namespace Unicode;
 
@@ -2482,7 +2481,7 @@ int Document::minimumLayoutDelay()
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
     // We'll want to schedule the timer to fire at the minimum layout threshold.
-    return max(0, cLayoutScheduleThreshold - elapsed);
+    return std::max(0, cLayoutScheduleThreshold - elapsed);
 }
 
 int Document::elapsedTime() const

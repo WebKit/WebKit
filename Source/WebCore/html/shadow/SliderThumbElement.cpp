@@ -46,8 +46,6 @@
 #include "ShadowRoot.h"
 #include "StepRange.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -272,7 +270,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
         position -= isLeftToRightDirection ? renderBox()->marginLeft() : renderBox()->marginRight();
     }
 
-    position = max<LayoutUnit>(0, min(position, trackLength));
+    position = std::max<LayoutUnit>(0, std::min(position, trackLength));
     const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
     const Decimal fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));

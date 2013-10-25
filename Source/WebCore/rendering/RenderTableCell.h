@@ -104,7 +104,7 @@ public:
         // Call computedCSSPadding* directly to avoid including implicitPadding.
         if (!document().inQuirksMode() && style()->boxSizing() != BORDER_BOX)
             styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + borderBefore() + borderAfter();
-        return max(styleLogicalHeight, adjustedLogicalHeight);
+        return std::max(styleLogicalHeight, adjustedLogicalHeight);
     }
 
 

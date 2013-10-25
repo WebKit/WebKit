@@ -579,7 +579,7 @@ void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* sty
 
     // Force an odd arrow size here. GTK+ 3.x forces even in this case, but
     // Nodoka-based themes look incorrect with an even arrow size.
-    int width = max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
+    int width = std::max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
     width += -((width % 2) - 1) + gtkStyle->xthickness;
 
     style->setWidth(Length(width, Fixed));

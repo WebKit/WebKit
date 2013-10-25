@@ -64,8 +64,6 @@
 #include "DeleteButtonController.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static void dispatchChildInsertionEvents(Node&);

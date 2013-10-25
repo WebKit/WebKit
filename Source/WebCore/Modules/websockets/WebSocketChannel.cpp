@@ -66,8 +66,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 const double TCPMaximumSegmentLifetime = 2 * 60.0;

@@ -37,8 +37,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
 
-using std::min;
-
 namespace WebCore {
 
 // Always start progress at initialProgressValue. This helps provide feedback as 
@@ -231,7 +229,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     double maxProgressValue = useClampedMaxProgress ? 0.5 : finalProgressValue;
     increment = (maxProgressValue - m_progressValue) * percentOfRemainingBytes;
     m_progressValue += increment;
-    m_progressValue = min(m_progressValue, maxProgressValue);
+    m_progressValue = std::min(m_progressValue, maxProgressValue);
     ASSERT(m_progressValue >= initialProgressValue);
     
     m_totalBytesReceived += bytesReceived;

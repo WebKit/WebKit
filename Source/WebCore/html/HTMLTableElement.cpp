@@ -394,7 +394,7 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
             m_rulesAttr = AllRules;
     } else if (name == cellpaddingAttr) {
         if (!value.isEmpty())
-            m_padding = max(0, value.toInt());
+            m_padding = std::max(0, value.toInt());
         else
             m_padding = 1;
     } else if (name == colsAttr) {

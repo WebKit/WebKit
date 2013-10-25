@@ -187,7 +187,7 @@ void LineWidth::fitBelowFloats()
 
         newLineLeft = m_block.logicalLeftOffsetForLine(floatLogicalBottom, shouldIndentText());
         newLineRight = m_block.logicalRightOffsetForLine(floatLogicalBottom, shouldIndentText());
-        newLineWidth = max(0.0f, newLineRight - newLineLeft);
+        newLineWidth = std::max(0.0f, newLineRight - newLineLeft);
         lastFloatLogicalBottom = floatLogicalBottom;
 
 #if ENABLE(CSS_SHAPES)
@@ -229,7 +229,7 @@ void LineWidth::updateCurrentShapeSegment()
 
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {
-    m_availableWidth = max(0.0f, m_right - m_left) + m_overhangWidth;
+    m_availableWidth = std::max<float>(0, m_right - m_left) + m_overhangWidth;
 }
 
 bool LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace() const

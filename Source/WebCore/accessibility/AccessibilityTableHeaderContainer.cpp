@@ -32,8 +32,6 @@
 #include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 
-using namespace std;
-
 namespace WebCore {
 
 AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer()

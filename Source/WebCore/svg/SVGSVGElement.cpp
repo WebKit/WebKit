@@ -535,7 +535,7 @@ void SVGSVGElement::setCurrentTime(float seconds)
 {
     if (std::isnan(seconds))
         return;
-    seconds = max(seconds, 0.0f);
+    seconds = std::max(seconds, 0.0f);
     m_timeContainer->setElapsed(seconds);
 }
 

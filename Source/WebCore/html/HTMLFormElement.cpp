@@ -48,8 +48,6 @@
 #include <limits>
 #include <wtf/Ref.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -311,7 +309,7 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
         HTMLInputElement& input = toHTMLInputElement(element);
         if (!input.isTextField())
             continue;
-        fieldNamesAndValues.append(make_pair(input.name().string(), input.value()));
+        fieldNamesAndValues.append(std::make_pair(input.name().string(), input.value()));
     }
 }
 

@@ -29,8 +29,6 @@
 #include "CSSPrimitiveValue.h"
 #include <wtf/text/StringBuilder.h>
 
-using namespace std;
-
 namespace WebCore {
 
 String CSSReflectValue::customCSSText() const

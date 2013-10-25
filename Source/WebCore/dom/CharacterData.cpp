@@ -38,8 +38,6 @@
 #include "TextBreakIterator.h"
 #include <wtf/Ref.h>
 
-using namespace std;
-
 namespace WebCore {
 
 void CharacterData::setData(const String& data, ExceptionCode&)
@@ -72,7 +70,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     ASSERT(lengthLimit >= oldLength);
 
     unsigned characterLength = string.length() - offset;
-    unsigned characterLengthLimit = min(characterLength, lengthLimit - oldLength);
+    unsigned characterLengthLimit = std::min(characterLength, lengthLimit - oldLength);
 
     // Check that we are not on an unbreakable boundary.
     // Some text break iterator implementations work best if the passed buffer is as small as possible,

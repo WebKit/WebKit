@@ -77,7 +77,6 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
-using namespace std;
 
 // Cell Tables
 #ifndef NSAccessibilitySelectedCellsAttribute
@@ -3619,7 +3618,7 @@ static RenderObject* rendererForView(NSView* view)
             if (index >= childCount)
                 return nil;
             
-            NSUInteger arrayLength = min(childCount - index, maxCount);
+            NSUInteger arrayLength = std::min(childCount - index, maxCount);
             return [children subarrayWithRange:NSMakeRange(index, arrayLength)];
         } else if (m_object->isTree()) {
             // Tree objects return their rows as their children. We can use the original method in this case.
@@ -3631,7 +3630,7 @@ static RenderObject* rendererForView(NSView* view)
         if (index >= childCount)
             return nil;
         
-        unsigned available = min(childCount - index, maxCount);
+        unsigned available = std::min(childCount - index, maxCount);
         
         NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
         for (unsigned added = 0; added < available; ++index, ++added) {

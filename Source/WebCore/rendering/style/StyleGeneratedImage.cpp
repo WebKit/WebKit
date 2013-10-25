@@ -54,10 +54,10 @@ LayoutSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float m
 
         // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
         if (fixedSize.width() > 0)
-            width = max<LayoutUnit>(1, width);
+            width = std::max<LayoutUnit>(1, width);
 
         if (fixedSize.height() > 0)
-            height = max<LayoutUnit>(1, height);
+            height = std::max<LayoutUnit>(1, height);
 
         return LayoutSize(width, height);
     }

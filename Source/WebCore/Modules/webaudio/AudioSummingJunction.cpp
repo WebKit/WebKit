@@ -32,8 +32,6 @@
 #include "AudioNodeOutput.h"
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 AudioSummingJunction::AudioSummingJunction(AudioContext* context)

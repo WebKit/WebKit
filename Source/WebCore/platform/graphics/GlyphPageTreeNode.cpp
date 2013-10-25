@@ -43,9 +43,6 @@
 
 namespace WebCore {
 
-using std::max;
-using std::min;
-
 HashMap<int, GlyphPageTreeNode*>* GlyphPageTreeNode::roots = 0;
 GlyphPageTreeNode* GlyphPageTreeNode::pageZeroRoot = 0;
 
@@ -229,8 +226,8 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     const FontDataRange& range = segmentedFontData->rangeAt(i);
                     // all this casting is to ensure all the parameters to min and max have the same type,
                     // to avoid ambiguous template parameter errors on Windows
-                    int from = max(0, static_cast<int>(range.from()) - static_cast<int>(start));
-                    int to = 1 + min(static_cast<int>(range.to()) - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
+                    int from = std::max(0, static_cast<int>(range.from()) - static_cast<int>(start));
+                    int to = 1 + std::min(static_cast<int>(range.to()) - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
                     if (from < static_cast<int>(GlyphPage::size) && to > 0) {
                         if (haveGlyphs && !scratchPage) {
                             scratchPage = GlyphPage::createForMixedFontData(this);
@@ -339,7 +336,7 @@ GlyphPageTreeNode* GlyphPageTreeNode::getChild(const FontData* fontData, unsigne
 #endif
     if (fontData) {
         m_children.set(fontData, adoptPtr(child));
-        fontData->setMaxGlyphPageTreeLevel(max(fontData->maxGlyphPageTreeLevel(), child->m_level));
+        fontData->setMaxGlyphPageTreeLevel(std::max(fontData->maxGlyphPageTreeLevel(), child->m_level));
     } else {
         m_systemFallbackChild = adoptPtr(child);
         child->m_isSystemFallback = true;

@@ -182,7 +182,7 @@ public:
 
     ~MaximumDurationTracker()
     {
-        *m_maxDuration = max(*m_maxDuration, monotonicallyIncreasingTime() - m_start);
+        *m_maxDuration = std::max(*m_maxDuration, monotonicallyIncreasingTime() - m_start);
     }
 
 private:

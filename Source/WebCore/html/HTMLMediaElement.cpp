@@ -149,8 +149,6 @@
 #include "UserAgentScripts.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static void setFlags(unsigned& value, unsigned flags)
@@ -197,7 +195,6 @@ static const char* mediaSourceBlobProtocol = "blob";
 #endif
 
 using namespace HTMLNames;
-using namespace std;
 
 typedef HashMap<Document*, HashSet<HTMLMediaElement*>> DocumentElementSetMap;
 static DocumentElementSetMap& documentToElementSetMap()
@@ -276,9 +273,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_volume(1.0f)
     , m_volumeInitialized(false)
     , m_lastSeekTime(0)
-    , m_previousProgressTime(numeric_limits<double>::max())
+    , m_previousProgressTime(std::numeric_limits<double>::max())
     , m_clockTimeAtLastUpdateEvent(0)
-    , m_lastTimeUpdateEventMovieTime(numeric_limits<double>::max())
+    , m_lastTimeUpdateEventMovieTime(std::numeric_limits<double>::max())
     , m_loadState(WaitingForSource)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
@@ -1224,7 +1221,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
             double cueEndTime = potentiallySkippedCues[i].high();
 
             // Consider cues that may have been missed since the last seek time.
-            if (cueStartTime > max(m_lastSeekTime, lastTime) && cueEndTime < movieTime)
+            if (cueStartTime > std::max(m_lastSeekTime, lastTime) && cueEndTime < movieTime)
                 missedCues.append(potentiallySkippedCues[i]);
         }
     }
@@ -1520,7 +1517,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue
 
     // Negative duration cues need be treated in the interval tree as
     // zero-length cues.
-    double endTime = max(cue->startTime(), cue->endTime());
+    double endTime = std::max(cue->startTime(), cue->endTime());
 
     CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
     if (!m_cueTree.contains(interval))
@@ -1532,7 +1529,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> c
 {
     // Negative duration cues need to be treated in the interval tree as
     // zero-length cues.
-    double endTime = max(cue->startTime(), cue->endTime());
+    double endTime = std::max(cue->startTime(), cue->endTime());
 
     CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
     m_cueTree.remove(interval);
@@ -2103,7 +2100,7 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 void HTMLMediaElement::rewind(double timeDelta)
 {
     LOG(Media, "HTMLMediaElement::rewind(%f)", timeDelta);
-    setCurrentTime(max(currentTime() - timeDelta, minTimeSeekable()), IGNORE_EXCEPTION);
+    setCurrentTime(std::max(currentTime() - timeDelta, minTimeSeekable()), IGNORE_EXCEPTION);
 }
 
 void HTMLMediaElement::returnToRealtime()
@@ -2170,11 +2167,11 @@ void HTMLMediaElement::seek(double time, ExceptionCode& ec)
 
     // 5 - If the new playback position is later than the end of the media resource, then let it be the end 
     // of the media resource instead.
-    time = min(time, duration());
+    time = std::min(time, duration());
 
     // 6 - If the new playback position is less than the earliest possible position, let it be that position instead.
     double earliestTime = m_player->startTime();
-    time = max(time, earliestTime);
+    time = std::max(time, earliestTime);
 
     // Ask the media engine for the time value in the movie's time scale before comparing with current time. This
     // is necessary because if the seek time is not equal to currentTime but the delta is less than the movie's
@@ -2377,7 +2374,7 @@ double HTMLMediaElement::duration() const
     if (m_player && m_readyState >= HAVE_METADATA)
         return m_player->duration();
 
-    return numeric_limits<double>::quiet_NaN();
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 bool HTMLMediaElement::paused() const

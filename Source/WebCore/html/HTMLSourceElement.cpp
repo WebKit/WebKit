@@ -34,8 +34,6 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

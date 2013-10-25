@@ -33,8 +33,6 @@
 #include "RenderImage.h"
 #include "RenderView.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -158,7 +156,7 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
-                int r = min(minimumValueForLength(radius, width, renderView), minimumValueForLength(radius, height, renderView));
+                int r = std::min(minimumValueForLength(radius, width, renderView), minimumValueForLength(radius, height, renderView));
                 path.addEllipse(FloatRect(minimumValueForLength(m_coords[0], width, renderView) - r, minimumValueForLength(m_coords[1], height, renderView) - r, 2 * r, 2 * r));
             }
             break;

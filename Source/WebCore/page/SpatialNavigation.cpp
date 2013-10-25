@@ -574,7 +574,7 @@ void entryAndExitPointsForDirection(FocusDirection direction, const LayoutRect& 
             exitPoint.setY(startingRect.maxY());
             entryPoint.setY(potentialRect.y());
         } else {
-            exitPoint.setY(max(startingRect.y(), potentialRect.y()));
+            exitPoint.setY(std::max(startingRect.y(), potentialRect.y()));
             entryPoint.setY(exitPoint.y());
         }
         break;
@@ -587,7 +587,7 @@ void entryAndExitPointsForDirection(FocusDirection direction, const LayoutRect& 
             exitPoint.setX(startingRect.maxX());
             entryPoint.setX(potentialRect.x());
         } else {
-            exitPoint.setX(max(startingRect.x(), potentialRect.x()));
+            exitPoint.setX(std::max(startingRect.x(), potentialRect.x()));
             entryPoint.setX(exitPoint.x());
         }
         break;

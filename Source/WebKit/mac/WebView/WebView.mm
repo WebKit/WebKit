@@ -6071,7 +6071,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
         // This code is here to avoid a PLT regression. We can remove it if we
         // can prove that the overall system gain would justify the regression.
-        cacheMaxDeadCapacity = max(24u, cacheMaxDeadCapacity);
+        cacheMaxDeadCapacity = std::max<unsigned>(24, cacheMaxDeadCapacity);
 
         deadDecodedDataDeletionInterval = 60;
 
@@ -6108,7 +6108,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
 
     // Don't shrink a big disk cache, since that would cause churn.
-    nsurlCacheDiskCapacity = max(nsurlCacheDiskCapacity, [nsurlCache diskCapacity]);
+    nsurlCacheDiskCapacity = std::max(nsurlCacheDiskCapacity, [nsurlCache diskCapacity]);
 
     memoryCache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
@@ -6135,7 +6135,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     WebCacheModel cacheModel = WebCacheModelDocumentViewer;
     NSEnumerator *enumerator = [(NSMutableSet *)allWebViewsSet objectEnumerator];
     while (WebPreferences *preferences = [[enumerator nextObject] preferences])
-        cacheModel = max(cacheModel, [preferences cacheModel]);
+        cacheModel = std::max(cacheModel, [preferences cacheModel]);
     return cacheModel;
 }
 
@@ -6148,7 +6148,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     if (![self _didSetCacheModel] || cacheModel > [self _cacheModel])
         [self _setCacheModel:cacheModel];
     else if (cacheModel < [self _cacheModel])
-        [self _setCacheModel:max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
 }
 
 + (void)_preferencesRemovedNotification:(NSNotification *)notification
@@ -6157,7 +6157,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     ASSERT([preferences isKindOfClass:[WebPreferences class]]);
 
     if ([preferences cacheModel] == [self _cacheModel])
-        [self _setCacheModel:max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
+        [self _setCacheModel:std::max([[WebPreferences standardPreferences] cacheModel], [self _maxCacheModelInAnyInstance])];
 }
 
 - (WebFrame *)_focusedFrame

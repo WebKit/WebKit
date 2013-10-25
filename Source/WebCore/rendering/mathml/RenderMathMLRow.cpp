@@ -64,7 +64,7 @@ void RenderMathMLRow::layout()
         if (child->isRenderMathMLBlock() && toRenderMathMLBlock(child)->unembellishedOperator())
             continue;
         if (child->isBox())
-            stretchLogicalHeight = max<int>(stretchLogicalHeight, roundToInt(toRenderBox(child)->logicalHeight()));
+            stretchLogicalHeight = std::max<int>(stretchLogicalHeight, roundToInt(toRenderBox(child)->logicalHeight()));
     }
     if (!stretchLogicalHeight)
         stretchLogicalHeight = style()->fontSize();

@@ -82,8 +82,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

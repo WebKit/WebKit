@@ -2302,7 +2302,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyOutlineWidth:
             return zoomAdjustedPixelValue(style->outlineWidth(), style.get());
         case CSSPropertyOverflow:
-            return cssValuePool().createValue(max(style->overflowX(), style->overflowY()));
+            return cssValuePool().createValue(std::max(style->overflowX(), style->overflowY()));
         case CSSPropertyOverflowWrap:
             return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyOverflowX:

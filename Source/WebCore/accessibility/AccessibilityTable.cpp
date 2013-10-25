@@ -382,7 +382,7 @@ void AccessibilityTable::addChildren()
             appendedRows.add(row);
         }
     
-        maxColumnCount = max(tableSection->numColumns(), maxColumnCount);
+        maxColumnCount = std::max(tableSection->numColumns(), maxColumnCount);
         tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     

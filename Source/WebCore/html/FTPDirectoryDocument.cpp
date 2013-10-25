@@ -44,8 +44,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -66,7 +64,7 @@ public:
     {
         if ((m_dest - m_buffer) > m_size - len) {
             // Enlarge buffer
-            int newSize = max(m_size * 2, m_size + len);
+            int newSize = std::max(m_size * 2, m_size + len);
             int oldOffset = m_dest - m_buffer;
             m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
             m_dest = m_buffer + oldOffset;

@@ -1,3 +1,13 @@
+2013-10-24  Anders Carlsson  <andersca@apple.com>
+
+        Stop bringing in the std namespace
+        https://bugs.webkit.org/show_bug.cgi?id=123273
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformSetCacheModel):
+
 2013-10-24  Gavin Barraclough  <barraclough@apple.com>
 
         Simplify window occlusion detection code

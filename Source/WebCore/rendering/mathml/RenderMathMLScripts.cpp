@@ -316,9 +316,9 @@ void RenderMathMLScripts::layout()
             LayoutUnit superscriptBaseline = superscript->firstLineBaseline();
             if (superscriptBaseline == -1)
                 superscriptBaseline = superscriptHeight;
-            LayoutUnit minBaseline = max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis + superscriptShiftValue);
+            LayoutUnit minBaseline = std::max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis + superscriptShiftValue);
 
-            topPadding = max<LayoutUnit>(topPadding, minBaseline - baseBaseline);
+            topPadding = std::max<LayoutUnit>(topPadding, minBaseline - baseBaseline);
         }
 
         if (RenderBox* subscript = m_kind == Super ? 0 : subSupPair->firstChildBox()) {
@@ -328,9 +328,9 @@ void RenderMathMLScripts::layout()
                 subscriptBaseline = subscriptHeight;
             LayoutUnit baseExtendUnderBaseline = baseHeight - baseBaseline;
             LayoutUnit subscriptUnderItsBaseline = subscriptHeight - subscriptBaseline;
-            LayoutUnit minExtendUnderBaseline = max<LayoutUnit>(fontSize / 5 + 1 + subscriptUnderItsBaseline, subscriptHeight + subscriptShiftValue - axis);
+            LayoutUnit minExtendUnderBaseline = std::max<LayoutUnit>(fontSize / 5 + 1 + subscriptUnderItsBaseline, subscriptHeight + subscriptShiftValue - axis);
 
-            bottomPadding = max<LayoutUnit>(bottomPadding, minExtendUnderBaseline - baseExtendUnderBaseline);
+            bottomPadding = std::max<LayoutUnit>(bottomPadding, minExtendUnderBaseline - baseExtendUnderBaseline);
         }
     }
 

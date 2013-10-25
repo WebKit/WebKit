@@ -38,8 +38,6 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static void fixNANs(double &x)
@@ -353,8 +351,8 @@ float PannerNode::dopplerRate()
             sourceProjection = -sourceProjection;
 
             double scaledSpeedOfSound = speedOfSound / dopplerFactor;
-            listenerProjection = min(listenerProjection, scaledSpeedOfSound);
-            sourceProjection = min(sourceProjection, scaledSpeedOfSound);
+            listenerProjection = std::min(listenerProjection, scaledSpeedOfSound);
+            sourceProjection = std::min(sourceProjection, scaledSpeedOfSound);
 
             dopplerShift = ((speedOfSound - dopplerFactor * listenerProjection) / (speedOfSound - dopplerFactor * sourceProjection));
             fixNANs(dopplerShift); // avoid illegal values

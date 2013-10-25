@@ -35,8 +35,6 @@
 
 const unsigned RenderingQuantum = 128;
 
-using namespace std;
-
 namespace WebCore {
 
 WaveShaperDSPKernel::WaveShaperDSPKernel(WaveShaperProcessor* processor)
@@ -112,10 +110,10 @@ void WaveShaperDSPKernel::processCurve(const float* source, float* destination, 
 
         // Clip index to the input range of the curve.
         // This takes care of input outside of nominal range -1 -> +1
-        index1 = max(index1, 0);
-        index1 = min(index1, curveLength - 1);
-        index2 = max(index2, 0);
-        index2 = min(index2, curveLength - 1);
+        index1 = std::max(index1, 0);
+        index1 = std::min(index1, curveLength - 1);
+        index2 = std::max(index2, 0);
+        index2 = std::min(index2, curveLength - 1);
 
         double value1 = curveData[index1];
         double value2 = curveData[index2];

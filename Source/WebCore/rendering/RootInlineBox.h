@@ -71,10 +71,10 @@ public:
 
     LayoutUnit selectionTop() const;
     LayoutUnit selectionBottom() const;
-    LayoutUnit selectionHeight() const { return max<LayoutUnit>(0, selectionBottom() - selectionTop()); }
+    LayoutUnit selectionHeight() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTop()); }
 
     LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
-    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const { return max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock()); }
+    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const { return std::max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock()); }
 
     int blockDirectionPointInLine() const;
 

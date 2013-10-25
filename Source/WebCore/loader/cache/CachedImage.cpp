@@ -56,8 +56,6 @@
 #include "DiskImageCacheIOS.h"
 #endif
 
-using std::max;
-
 namespace WebCore {
 
 CachedImage::CachedImage(const ResourceRequest& resourceRequest)

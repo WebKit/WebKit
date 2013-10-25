@@ -1137,7 +1137,7 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
                 int i = toRenderText(r)->textLength();
                 int o = offset;
                 if (n == startNode && o < i)
-                    i = max(0, o);
+                    i = std::max(0, o);
                 while (--i >= 0) {
                     if (chars[i] == '\n')
                         return VisiblePosition(Position(toText(n), i + 1), DOWNSTREAM);

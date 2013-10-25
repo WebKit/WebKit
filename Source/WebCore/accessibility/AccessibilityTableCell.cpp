@@ -34,8 +34,6 @@
 #include "RenderObject.h"
 #include "RenderTableCell.h"
 
-using namespace std;
-
 namespace WebCore {
     
 using namespace HTMLNames;
