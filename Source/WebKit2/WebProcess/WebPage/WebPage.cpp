@@ -2996,10 +2996,9 @@ bool WebPage::windowIsFocused() const
 
 bool WebPage::windowAndWebPageAreFocused() const
 {
-#if PLATFORM(MAC)
     if (!m_windowIsVisible)
         return false;
-#endif
+
     return m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 

@@ -289,4 +289,9 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
     webkitWebViewBaseHandleDownloadRequest(WEBKIT_WEB_VIEW_BASE(m_viewWidget), download);
 }
 
+bool PageClientImpl::isWindowVisible()
+{
+    return webkitWebViewBaseIsWindowVisible(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
 } // namespace WebKit

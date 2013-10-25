@@ -59,7 +59,6 @@ private:
     virtual void deviceScaleFactorDidChange();
     virtual void layerHostingModeDidChange() OVERRIDE;
 
-    virtual void visibilityDidChange();
     virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();
 

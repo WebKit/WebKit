@@ -1,3 +1,35 @@
+2013-10-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK][WK2] Build break after r157967 and r157972
+        https://bugs.webkit.org/show_bug.cgi?id=123325
+
+        Reviewed by Carlos Garcia Campos.
+
+        DrawingArea::visibilityDidChange was removed in favour of a new
+        message called SetIsVisible which is sent to the WebPage. This
+        means that {suspend|resume}Paiting are now implemented in a
+        cross-platform way in WebPage and do not require specific code
+        from the DrawingArea implementations.
+
+        This means that we have to track the toplevel window visibility
+        and notify the WebPage appropriately about its changes.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isWindowVisible):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (toplevelWindowVisibilityEvent):
+        (webkitWebViewBaseSetToplevelOnScreenWindow):
+        (webkitWebViewBaseIsWindowVisible):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::suspendPainting):
+        (WebKit::DrawingAreaImpl::resumePainting):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndWebPageAreFocused):
+
 2013-10-25  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] [WebKit2] CanHandleRequest API test fails

@@ -113,11 +113,13 @@ struct _WebKitWebViewBasePrivate {
     unsigned long toplevelResizeGripVisibilityID;
     unsigned long toplevelFocusInEventID;
     unsigned long toplevelFocusOutEventID;
+    unsigned long toplevelVisibilityEventID;
 
     // View State.
     bool isInWindowActive : 1;
     bool isFocused : 1;
     bool isVisible : 1;
+    bool isWindowVisible : 1;
 
     WebKitWebViewBaseDownloadRequestHandler downloadHandler;
 
@@ -185,6 +187,18 @@ static gboolean toplevelWindowFocusOutEvent(GtkWidget* widget, GdkEventFocus*, W
     return FALSE;
 }
 
+static gboolean toplevelWindowVisibilityEvent(GtkWidget*, GdkEventVisibility* visibilityEvent, WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    bool isWindowVisible = visibilityEvent->state != GDK_VISIBILITY_FULLY_OBSCURED;
+    if (priv->isWindowVisible != isWindowVisible) {
+        priv->isWindowVisible = isWindowVisible;
+        priv->pageProxy->viewStateDidChange(WebPageProxy::WindowIsVisible);
+    }
+
+    return FALSE;
+}
+
 static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webViewBase, GtkWindow* window)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -203,6 +217,10 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
         g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelFocusOutEventID);
         priv->toplevelFocusOutEventID = 0;
     }
+    if (priv->toplevelVisibilityEventID) {
+        g_signal_handler_disconnect(priv->toplevelOnScreenWindow, priv->toplevelVisibilityEventID);
+        priv->toplevelVisibilityEventID = 0;
+    }
 
     priv->toplevelOnScreenWindow = window;
     priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsInWindow);
@@ -220,6 +238,9 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
     priv->toplevelFocusOutEventID =
         g_signal_connect(priv->toplevelOnScreenWindow, "focus-out-event",
                          G_CALLBACK(toplevelWindowFocusOutEvent), webViewBase);
+    priv->toplevelVisibilityEventID =
+        g_signal_connect(priv->toplevelOnScreenWindow, "visibility-notify-event",
+                         G_CALLBACK(toplevelWindowVisibilityEvent), webViewBase);
 }
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
@@ -1098,6 +1119,11 @@ bool webkitWebViewBaseIsVisible(WebKitWebViewBase* webViewBase)
 bool webkitWebViewBaseIsInWindow(WebKitWebViewBase* webViewBase)
 {
     return webViewBase->priv->toplevelOnScreenWindow;
+}
+
+bool webkitWebViewBaseIsWindowVisible(WebKitWebViewBase* webViewBase)
+{
+    return webViewBase->priv->isWindowVisible;
 }
 
 void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase* webViewBase, WebKitWebViewBaseDownloadRequestHandler downloadHandler)
