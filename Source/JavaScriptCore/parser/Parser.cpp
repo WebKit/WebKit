@@ -78,13 +78,13 @@
     consumeOrFail(token, "Expected '", tokenString, "' to ", operation, " a ", production);\
 } while (0)
 
-#define semanticFailureDueToKeyword(forWhat...) do { \
+#define semanticFailureDueToKeyword(...) do { \
     if (strictMode() && m_token.m_type == RESERVED_IF_STRICT) \
-        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", forWhat, " in strict mode"); \
+        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", __VA_ARGS__, " in strict mode"); \
     if (m_token.m_type == RESERVED || m_token.m_type == RESERVED_IF_STRICT) \
-        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", forWhat); \
+        semanticFail("Cannot use the reserved word '", getToken(), "' as a ", __VA_ARGS__); \
     if (m_token.m_type & KeywordTokenFlag) \
-        semanticFail("Cannot use the keyword '", getToken(), "' as a ", forWhat); \
+        semanticFail("Cannot use the keyword '", getToken(), "' as a ", __VA_ARGS__); \
 } while (0)
 
 using namespace std;

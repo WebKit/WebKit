@@ -1,5 +1,11 @@
 2013-10-25  Oliver Hunt  <oliver@apple.com>
 
+        Fix MSVC
+
+        * parser/Parser.cpp:
+
+2013-10-25  Oliver Hunt  <oliver@apple.com>
+
         Improve JSC Parser error messages
         https://bugs.webkit.org/show_bug.cgi?id=123341
 
