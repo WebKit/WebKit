@@ -1,5 +1,16 @@
 2013-10-24  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154642
+
+    2013-08-26  Roger Fong  <roger_fong@apple.com>
+
+            AppleWin build fix following r154627.
+
+            * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+            * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters:
+
+2013-10-24  Lucas Forschler  <lforschler@apple.com>
+
         Merge r154627
 
     2013-08-21  Roger Fong  <roger_fong@apple.com>
