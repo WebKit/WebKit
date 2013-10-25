@@ -65,10 +65,10 @@
         return frameworkLibrary; \
     }
 
-#define SOFT_LINK_FRAMEWORK_IN_CORESERVICES_UMBRELLA(framework) \
+#define SOFT_LINK_FRAMEWORK_IN_UMBRELLA(umbrella, framework) \
     static void* framework##Library() \
     { \
-        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/CoreServices.framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
+        static void* frameworkLibrary = dlopen("/System/Library/Frameworks/" #umbrella ".framework/Frameworks/" #framework ".framework/" #framework, RTLD_NOW); \
         ASSERT_WITH_MESSAGE(frameworkLibrary, "%s", dlerror()); \
         return frameworkLibrary; \
     }
