@@ -1,6 +1,14 @@
 2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
 
-        URTBF from non-Mac platforms after r158028.
+        One more URTBF for GTK after r158028.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseMap):
+        (webkitWebViewBaseUnmap):
+
+2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF for non-Mac platforms after r158028.
 
         * GNUmakefile.list.am:
         * UIProcess/API/gtk/WebKitWebViewBase.cpp:

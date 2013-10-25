@@ -540,7 +540,7 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->isVisible) {
         priv->isVisible = true;
-        priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 
     if (!priv->needsResizeOnMap)
@@ -559,7 +559,7 @@ static void webkitWebViewBaseUnmap(GtkWidget* widget)
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
     if (priv->isVisible) {
         priv->isVisible = false;
-        priv->pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
+        priv->pageProxy->viewStateDidChange(ViewState::IsVisible);
     }
 }
 
