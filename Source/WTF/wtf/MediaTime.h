@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaTime_h
-#define MediaTime_h
+#ifndef WTF_MediaTime_h
+#define WTF_MediaTime_h
 
 #include <wtf/FastMalloc.h>
 
@@ -61,10 +61,14 @@ public:
     double toDouble() const;
 
     MediaTime& operator=(const MediaTime& rhs);
+    MediaTime& operator+=(const MediaTime& rhs) { return *this = *this + rhs; }
+    MediaTime& operator-=(const MediaTime& rhs) { return *this = *this - rhs; }
     MediaTime operator+(const MediaTime& rhs) const;
     MediaTime operator-(const MediaTime& rhs) const;
+    MediaTime operator*(int32_t) const;
     bool operator<(const MediaTime& rhs) const;
     bool operator>(const MediaTime& rhs) const;
+    bool operator!=(const MediaTime& rhs) const;
     bool operator==(const MediaTime& rhs) const;
     bool operator>=(const MediaTime& rhs) const;
     bool operator<=(const MediaTime& rhs) const;
@@ -104,6 +108,8 @@ private:
     int32_t m_timeScale;
     uint32_t m_timeFlags;
 };
+
+inline MediaTime operator*(int32_t lhs, const MediaTime& rhs) { return rhs.operator*(lhs); }
 
 WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
 }
