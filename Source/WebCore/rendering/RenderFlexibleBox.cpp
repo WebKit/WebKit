@@ -39,16 +39,6 @@
 
 namespace WebCore {
 
-// Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely order: values. Instead,
-// we make the two smallest int values invalid order: values (in the css parser code we clamp them to
-// int min + 2).
-struct RenderFlexibleBox::OrderHashTraits : WTF::GenericHashTraits<int> {
-    static const bool emptyValueIsZero = false;
-    static int emptyValue() { return std::numeric_limits<int>::min(); }
-    static void constructDeletedValue(int& slot) { slot = std::numeric_limits<int>::min() + 1; }
-    static bool isDeletedValue(int value) { return value == std::numeric_limits<int>::min() + 1; }
-};
-
 RenderFlexibleBox::OrderIterator::OrderIterator(const RenderFlexibleBox* flexibleBox)
     : m_flexibleBox(flexibleBox)
     , m_currentChild(0)
@@ -56,11 +46,16 @@ RenderFlexibleBox::OrderIterator::OrderIterator(const RenderFlexibleBox* flexibl
 {
 }
 
-void RenderFlexibleBox::OrderIterator::setOrderValues(const OrderHashSet& orderValues)
+void RenderFlexibleBox::OrderIterator::setOrderValues(const OrderValues& orderValues)
 {
     reset();
-    copyToVector(orderValues, m_orderValues);
+    m_orderValues = orderValues;
+    if (m_orderValues.size() < 2)
+        return;
+
     std::sort(m_orderValues.begin(), m_orderValues.end());
+    auto nextElement = std::unique(m_orderValues.begin(), m_orderValues.end());
+    m_orderValues.shrinkCapacity(nextElement - m_orderValues.begin());
 }
 
 RenderBox* RenderFlexibleBox::OrderIterator::first()
@@ -348,7 +343,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     dirtyForLayoutFromPercentageHeightDescendants();
 
     Vector<LineContext> lineContexts;
-    OrderHashSet orderValues;
+    OrderIterator::OrderValues orderValues;
     computeMainAxisPreferredSizes(orderValues);
     m_orderIterator.setOrderValues(orderValues);
 
@@ -908,10 +903,16 @@ LayoutUnit RenderFlexibleBox::computeChildMarginValue(const Length& margin)
     return minimumValueForLength(margin, availableSize);
 }
 
-void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderHashSet& orderValues)
+void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderIterator::OrderValues& orderValues)
 {
+    ASSERT(orderValues.isEmpty());
+
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        orderValues.add(child->style()->order());
+        // Avoid growing the vector for the common-case default value of 0. This optimizes the most common case which is
+        // one or a few values with the default order 0
+        int order = child->style()->order();
+        if (orderValues.isEmpty() || orderValues.last() != order)
+            orderValues.append(order);
 
         if (child->isOutOfFlowPositioned())
             continue;
