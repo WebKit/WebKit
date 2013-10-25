@@ -330,7 +330,7 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_inBecomeFirstResponder = true;
     
     [self _updateSecureInputState];
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+    _data->_page->viewStateDidChange(ViewState::IsFocused);
 
     _data->_inBecomeFirstResponder = false;
     
@@ -358,7 +358,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (!_data->_page->maintainsInactiveSelection())
         _data->_page->clearSelection();
     
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+    _data->_page->viewStateDidChange(ViewState::IsFocused);
 
     _data->_inResignFirstResponder = false;
 
@@ -1927,11 +1927,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
 
-        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
+        ViewState::Flags viewStateChanges = ViewState::WindowIsVisible | ViewState::WindowIsActive | ViewState::IsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
         else
-            viewStateChanges |= WebPageProxy::ViewIsInWindow;
+            viewStateChanges |= ViewState::IsInWindow;
         _data->_page->viewStateDidChange(viewStateChanges);
 
         [self _updateWindowAndViewFrames];
@@ -1945,11 +1945,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
-        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
+        ViewState::Flags viewStateChanges = ViewState::WindowIsVisible | ViewState::WindowIsActive | ViewState::IsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
         else
-            viewStateChanges |= WebPageProxy::ViewIsInWindow;
+            viewStateChanges |= ViewState::IsInWindow;
         _data->_page->viewStateDidChange(viewStateChanges);
 
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
@@ -1971,7 +1971,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
 
@@ -1985,19 +1985,19 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
     _data->_windowHasValidBackingStore = NO;
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
+    _data->_page->viewStateDidChange(ViewState::WindowIsVisible);
 }
 
 - (void)_windowDidDeminiaturize:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
+    _data->_page->viewStateDidChange(ViewState::WindowIsVisible);
 }
 
 - (void)_windowDidMove:(NSNotification *)notification
@@ -2014,12 +2014,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
+    _data->_page->viewStateDidChange(ViewState::WindowIsVisible | ViewState::IsVisible | ViewState::WindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
+    _data->_page->viewStateDidChange(ViewState::WindowIsVisible | ViewState::IsVisible | ViewState::WindowIsActive);
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
@@ -2036,7 +2036,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 #endif
 
@@ -2060,12 +2060,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)viewDidHide
 {
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)viewDidUnhide
 {
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)viewDidChangeBackingProperties
@@ -2081,7 +2081,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
 - (void)_accessibilityRegisterUIProcessTokens

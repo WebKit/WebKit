@@ -991,25 +991,25 @@ void WebPageProxy::viewInWindowStateDidChange(WantsReplyOrNot wantsReply)
 #endif
 }
 
-void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
+void WebPageProxy::viewStateDidChange(ViewState::Flags flags)
 {
     if (!isValid())
         return;
 
-    if (flags & WindowIsVisible)
+    if (flags & ViewState::WindowIsVisible)
         process()->send(Messages::WebPage::SetWindowIsVisible(m_pageClient->isWindowVisible()), m_pageID);
 
-    if (flags & ViewIsFocused)
+    if (flags & ViewState::IsFocused)
         m_process->send(Messages::WebPage::SetFocused(m_pageClient->isViewFocused()), m_pageID);
 
     // We want to make sure to update the active state while hidden, so if the view is hidden then update the active state
     // early (in case it becomes visible), and if the view was visible then update active state later (in case it hides).
     bool viewWasVisible = m_isVisible;
     
-    if (flags & ViewWindowIsActive && !viewWasVisible)
+    if (flags & ViewState::WindowIsActive && !viewWasVisible)
         m_process->send(Messages::WebPage::SetActive(m_pageClient->isViewWindowActive()), m_pageID);
 
-    if (flags & ViewIsVisible) {
+    if (flags & ViewState::IsVisible) {
         bool isVisible = m_pageClient->isViewVisible();
         if (isVisible != m_isVisible) {
             m_isVisible = isVisible;
@@ -1030,10 +1030,10 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         }
     }
 
-    if (flags & ViewWindowIsActive && viewWasVisible)
+    if (flags & ViewState::WindowIsActive && viewWasVisible)
         m_process->send(Messages::WebPage::SetActive(m_pageClient->isViewWindowActive()), m_pageID);
 
-    if (flags & ViewIsInWindow)
+    if (flags & ViewState::IsInWindow)
         viewInWindowStateDidChange();
 
 #if ENABLE(PAGE_VISIBILITY_API)
