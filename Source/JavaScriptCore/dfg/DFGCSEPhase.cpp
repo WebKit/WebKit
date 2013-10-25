@@ -254,11 +254,9 @@ private:
                 break;
             } 
             case PutScopedVar: {
-                if (node->varNumber() != varNumber)
-                    break;
-                if (node->child2() == registers)
+                if (node->child2() == registers && node->varNumber() == varNumber)
                     return node->child3().node();
-                return 0;
+                break;
             }
             case SetLocal: {
                 VariableAccessData* variableAccessData = node->variableAccessData();
@@ -329,11 +327,9 @@ private:
             Node* node = m_currentBlock->at(i);
             switch (node->op()) {
             case PutScopedVar: {
-                if (node->varNumber() != varNumber)
-                    break;
-                if (node->child1() == scope && node->child2() == registers)
+                if (node->child1() == scope && node->child2() == registers && node->varNumber() == varNumber)
                     return node;
-                return 0;
+                break;
             }
                 
             case GetScopedVar: {
