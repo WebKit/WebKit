@@ -64,7 +64,9 @@ using namespace WebCore;
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
     // it causes some bad problems if that clip is cached between calls.
@@ -75,7 +77,8 @@ using namespace WebCore;
     // See these bugs for more information:
     // <rdar://problem/3409315>: REGRESSSION (7B58-7B60)?: Safari draws blank frames on macosx.apple.com perf page
     [self releaseGState];
-    
+#pragma clang diagnostic pop
+
     return self;
 }
 

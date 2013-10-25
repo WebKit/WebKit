@@ -1,3 +1,18 @@
+2013-10-25  Mark Rowe  <mrowe@apple.com>
+
+        Fix or disable some deprecation warnings.
+
+        Reviewed by Darin Adler.
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel cancel:]): On newer OS versions, use the modern API.
+        (-[WebAuthenticationPanel logIn:]): Ditto.
+        (-[WebAuthenticationPanel runAsSheetOnWindow:withChallenge:]): Ditto. Translate the
+        response code in to the form that -sheetDidEnd:responseCode:contextInfo: expects.
+        * WebView/WebClipView.mm:
+        (-[WebClipView initWithFrame:]): Disable deprecation warnings since it's not obvious
+        how to avoid calling -releaseGState here.
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         Remove references to OS X 10.7 from Xcode configuration settings.

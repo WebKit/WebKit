@@ -77,7 +77,11 @@
 
     [panel close];
     if (usingSheet) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [panel.sheetParent endSheet:panel returnCode:NSModalResponseCancel];
+#else
         [[NSApplication sharedApplication] endSheet:panel returnCode:1];
+#endif
     } else {
         [[NSApplication sharedApplication] stopModalWithCode:1];
     }
@@ -93,7 +97,11 @@
 
     [panel close];
     if (usingSheet) {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        [panel.sheetParent endSheet:panel returnCode:NSModalResponseOK];
+#else
         [[NSApplication sharedApplication] endSheet:panel returnCode:0];
+#endif
     } else {
         [[NSApplication sharedApplication] stopModalWithCode:0];
     }
@@ -245,8 +253,15 @@
 
     usingSheet = TRUE;
     challenge = [chall retain];
-    
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [window beginSheet:panel completionHandler:^(NSModalResponse modalResponse) {
+        int returnCode = (modalResponse == NSModalResponseCancel) ? 1 : 0;
+        [self sheetDidEnd:panel returnCode:returnCode contextInfo:NULL];
+    }];
+#else
     [[NSApplication sharedApplication] beginSheet:panel modalForWindow:window modalDelegate:self didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) contextInfo:NULL];
+#endif
 }
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
