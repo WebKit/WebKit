@@ -5,9 +5,9 @@
     "database": {
         "host": "localhost",
         "port": "5432",
-        "username": "safari-test-history",
+        "username": "test-results-user",
         "password": "password",
-        "name": "safari-test-history-db"
+        "name": "test-results-db"
     },
     "masters": [
         "build.webkit.org",

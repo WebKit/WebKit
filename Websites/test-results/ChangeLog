@@ -1,5 +1,20 @@
 2013-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add an instruction on how to setup test-results app
+        https://bugs.webkit.org/show_bug.cgi?id=123321
+
+        Rubber-stamped by Stephanie Lewis.
+
+        Added Install.md and updated config.json accordingly.
+
+        Also moved init-database.sql out of public/include since it doesn't need to be accessible via httpd.
+
+        * Install.md: Added.
+        * config.json:
+        * init-database.sql: Moved from public/include/init-database.sql.
+
+2013-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Move everything except ChangeLog and config.json into public directory.
         https://bugs.webkit.org/show_bug.cgi?id=123319
 
