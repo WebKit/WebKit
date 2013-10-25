@@ -245,11 +245,12 @@ messages -> WebPage LegacyReceiver {
     CancelComposition()
 #endif
 
+    SetWindowIsVisible(bool windowIsVisible)
+
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
 
-    SetWindowIsVisible(bool windowIsVisible)
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     ViewExposedRectChanged(WebCore::FloatRect exposedRect, bool clipsToExposedRect)
     SetMainFrameIsScrollable(bool isScrollable)

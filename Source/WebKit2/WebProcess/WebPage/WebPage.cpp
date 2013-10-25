@@ -231,6 +231,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_artificialPluginInitializationDelayEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_mainFrameIsScrollable(true)
+    , m_windowIsVisible(false)
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     , m_readyToFindPrimarySnapshottedPlugin(false)
     , m_didFindPrimarySnapshottedPlugin(false)
@@ -240,7 +241,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
-    , m_windowIsVisible(false)
     , m_layerHostingMode(parameters.layerHostingMode)
     , m_keyboardEventBeingInterpreted(0)
 #elif PLATFORM(GTK)
@@ -2943,18 +2943,20 @@ void WebPage::sendSetWindowFrame(const FloatRect& windowFrame)
     send(Messages::WebPageProxy::SetWindowFrame(windowFrame));
 }
 
-#if PLATFORM(MAC)
 void WebPage::setWindowIsVisible(bool windowIsVisible)
 {
     m_windowIsVisible = windowIsVisible;
 
     corePage()->focusController().setContainingWindowIsVisible(windowIsVisible);
 
+#if PLATFORM(MAC)
     // Tell all our plug-in views that the window visibility changed.
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setWindowIsVisible(windowIsVisible);
+#endif
 }
 
+#if PLATFORM(MAC)
 void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoordinates, const FloatRect& windowFrameInUnflippedScreenCoordinates, const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;

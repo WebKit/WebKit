@@ -52,6 +52,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
+    void visibilityDidChange();
 #endif
 
     bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
@@ -62,7 +63,6 @@ private:
     virtual void deviceScaleFactorDidChange();
     virtual void layerHostingModeDidChange() OVERRIDE;
 
-    virtual void visibilityDidChange();
     virtual void setBackingStoreIsDiscardable(bool);
     virtual void waitForBackingStoreUpdateOnNextPaint();
 

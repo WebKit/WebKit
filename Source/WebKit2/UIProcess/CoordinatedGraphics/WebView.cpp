@@ -112,6 +112,11 @@ void WebView::setVisible(bool visible)
 
     m_visible = visible;
     m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea()))
+        drawingArea->visibilityDidChange();
+#endif
 }
 
 void WebView::setUserViewportTranslation(double tx, double ty)
@@ -329,6 +334,12 @@ bool WebView::isViewFocused()
 bool WebView::isViewVisible()
 {
     return isVisible();
+}
+
+bool WebView::isWindowVisible()
+{
+    notImplemented();
+    return true;
 }
 
 bool WebView::isViewInWindow()
