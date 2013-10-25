@@ -388,8 +388,6 @@ void TiledCoreAnimationDrawingArea::suspendPainting()
 
     [m_rootLayer.get() setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
-
-    m_webPage->corePage()->suspendScriptedAnimations();
 }
 
 void TiledCoreAnimationDrawingArea::resumePainting()
@@ -403,11 +401,6 @@ void TiledCoreAnimationDrawingArea::resumePainting()
 
     [m_rootLayer.get() setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:m_rootLayer.get() forKey:@"layer"]];
-
-    if (m_webPage->windowIsVisible()) {
-        m_webPage->corePage()->resumeScriptedAnimations();
-        m_webPage->corePage()->resumeAnimatingImages();
-    }
 }
 
 void TiledCoreAnimationDrawingArea::setExposedRect(const FloatRect& exposedRect)

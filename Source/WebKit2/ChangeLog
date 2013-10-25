@@ -1,3 +1,37 @@
+2013-10-24  Gavin Barraclough  <barraclough@apple.com>
+
+        SetIsVisible message should be sent to WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=123296
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/DrawingAreaProxy.h:
+            - remove visibilityDidChange - WebPageProxy now mesages WebPage.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - Send view visibility updates to the WebPage, not the drawing area.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+            - remove visibilityDidChange - WebPageProxy now mesages WebPage.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::suspendPainting):
+        (WebKit::DrawingArea::resumePainting):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+            - Instead of suspendPainting/resumePainting being private in the WebProcess but avaialble to the UIProcess,
+              make them private to the WebProcess but accessible from WebPage.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewIsVisible):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+            - Added SetViewIsVisible message.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+            - Instead of suspendPainting/resumePainting being private in the WebProcess but avaialble to the UIProcess,
+              make them private to the WebProcess but accessible from WebPage.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::suspendPainting):
+        (WebKit::TiledCoreAnimationDrawingArea::resumePainting):
+            - Moved animation suspend code out to WebPage.
+
 2013-10-24  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Mountain Lion build.

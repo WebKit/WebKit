@@ -1851,6 +1851,22 @@ void WebPage::setActive(bool isActive)
 #endif
 }
 
+void WebPage::setViewIsVisible(bool isVisible)
+{
+    if (!isVisible) {
+        m_drawingArea->suspendPainting();
+        m_page->suspendScriptedAnimations();
+    } else {
+        m_drawingArea->resumePainting();
+        // FIXME: this seems redundant; for the view to be visible the window must be visible too!
+        // refactoring for now, will change the logic later.
+        if (m_windowIsVisible) {
+            m_page->resumeScriptedAnimations();
+            m_page->resumeAnimatingImages();
+        }
+    }
+}
+
 void WebPage::setDrawsBackground(bool drawsBackground)
 {
     if (m_drawsBackground == drawsBackground)

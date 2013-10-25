@@ -23,6 +23,7 @@
 messages -> WebPage LegacyReceiver {
     SetActive(bool active)
     SetFocused(bool focused)
+    SetViewIsVisible(bool visible)
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
     SetIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState)
 

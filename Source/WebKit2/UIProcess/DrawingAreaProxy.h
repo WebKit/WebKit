@@ -53,7 +53,6 @@ public:
     virtual void deviceScaleFactorDidChange() = 0;
 
     // FIXME: These should be pure virtual.
-    virtual void visibilityDidChange() { }
     virtual void layerHostingModeDidChange() { }
 
     virtual void setBackingStoreIsDiscardable(bool) { }

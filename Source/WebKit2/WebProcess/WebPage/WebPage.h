@@ -678,6 +678,7 @@ private:
     void tryRestoreScrollPosition();
     void setActive(bool);
     void setFocused(bool);
+    void setViewIsVisible(bool);
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState = false);
