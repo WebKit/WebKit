@@ -1,5 +1,15 @@
 2013-10-25  Andreas Kling  <akling@apple.com>
 
+        SVGResourcesCache::clientStyleChanged() should take a RenderElement&.
+        <https://webkit.org/b/123335>
+
+        This function is always called with an object, and that object
+        is guaranteed to never be a text renderer.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-25  Andreas Kling  <akling@apple.com>
+
         SVG: postApplyResource() should take a RenderElement&.
         <https://webkit.org/b/123334>
 

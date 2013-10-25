@@ -111,7 +111,7 @@ void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
     RenderInline::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(this, diff, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, *style());
 }
 
 void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)

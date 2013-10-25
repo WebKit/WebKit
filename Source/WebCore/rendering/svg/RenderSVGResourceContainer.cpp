@@ -189,10 +189,10 @@ void RenderSVGResourceContainer::registerResource()
     for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
         ASSERT((*it)->hasPendingResources());
         extensions.clearHasPendingResourcesIfPossible(*it);
-        RenderObject* renderer = (*it)->renderer();
+        auto renderer = (*it)->renderer();
         if (!renderer)
             continue;
-        SVGResourcesCache::clientStyleChanged(renderer, StyleDifferenceLayout, renderer->style());
+        SVGResourcesCache::clientStyleChanged(*renderer, StyleDifferenceLayout, *renderer->style());
         renderer->setNeedsLayout();
     }
 }

@@ -119,29 +119,28 @@ static inline bool rendererCanHaveResources(RenderObject* renderer)
     return renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGInlineText();
 }
 
-void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifference diff, const RenderStyle* newStyle)
+void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle& newStyle)
 {
-    ASSERT(renderer);
-    if (diff == StyleDifferenceEqual || !renderer->parent())
+    if (diff == StyleDifferenceEqual || !renderer.parent())
         return;
 
     // In this case the proper SVGFE*Element will decide whether the modified CSS properties require a relayout or repaint.
-    if (renderer->isSVGResourceFilterPrimitive() && (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintIfTextOrBorderOrOutline))
+    if (renderer.isSVGResourceFilterPrimitive() && (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintIfTextOrBorderOrOutline))
         return;
 
     // Dynamic changes of CSS properties like 'clip-path' may require us to recompute the associated resources for a renderer.
     // FIXME: Avoid passing in a useless StyleDifference, but instead compare oldStyle/newStyle to see which resources changed
     // to be able to selectively rebuild individual resources, instead of all of them.
-    if (rendererCanHaveResources(renderer)) {
-        SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
-        cache->removeResourcesFromRenderObject(renderer);
-        cache->addResourcesFromRenderObject(renderer, newStyle);
+    if (rendererCanHaveResources(&renderer)) {
+        SVGResourcesCache* cache = resourcesCacheFromRenderObject(&renderer);
+        cache->removeResourcesFromRenderObject(&renderer);
+        cache->addResourcesFromRenderObject(&renderer, &newStyle);
     }
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(&renderer, false);
 
-    if (renderer->node() && !renderer->node()->isSVGElement())
-        renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    if (renderer.element() && !renderer.element()->isSVGElement())
+        renderer.element()->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject* renderer, const RenderStyle* newStyle)

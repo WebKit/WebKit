@@ -318,7 +318,7 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
     RenderReplaced::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(this, diff, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, *style());
 }
 
 void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
