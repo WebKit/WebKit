@@ -1,3 +1,12 @@
+2013-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Apparently we need results in platform/mac-mountainlion/platform/mac/ for MountionLion.
+
+        * platform/mac-mountainlion/accessibility/aria-readonly-expected.txt: Added.
+        * platform/mac-mountainlion/platform/mac/accessibility/form-control-value-settable-expected.txt: Renamed from LayoutTests/platform/mac-mountainlion/accessibility/form-control-value-settable-expected.txt.
+        * platform/mac-mountainlion/platform/mac/accessibility/press-action-is-first-expected.txt: Renamed from LayoutTests/platform/mac-mountainlion/accessibility/press-action-is-first-expected.txt.
+        * platform/mac-mountainlion/platform/mac/accessibility/role-subrole-roledescription-expected.txt: Renamed from LayoutTests/platform/mac-mountainlion/accessibility/role-subrole-roledescription-expected.txt.
+
 2013-10-25  Antti Koivisto  <antti@apple.com>
 
         fast/frames/seamless/seamless-nested-crash.html asserts on wk2 only
