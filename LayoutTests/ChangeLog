@@ -1,3 +1,17 @@
+2013-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        New results for some accessibility tests.
+
+        * platform/mac-mountainlion/accessibility/form-control-value-settable-expected.txt: Added.
+        * platform/mac-mountainlion/accessibility/lists-expected.txt: Copied from LayoutTests/platform/mac/accessibility/lists-expected.txt.
+        * platform/mac-mountainlion/accessibility/press-action-is-first-expected.txt: Added.
+        * platform/mac-mountainlion/accessibility/role-subrole-roledescription-expected.txt: Added.
+        * platform/mac/accessibility/aria-readonly-expected.txt: Added.
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/platform/mac/accessibility/form-control-value-settable-expected.txt: Added.
+        * platform/mac/platform/mac/accessibility/press-action-is-first-expected.txt: Added.
+        * platform/mac/platform/mac/accessibility/role-subrole-roledescription-expected.txt: Added.
+
 2013-10-25  Oliver Hunt  <oliver@apple.com>
 
         Improve JSC Parser error messages
