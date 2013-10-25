@@ -29,6 +29,7 @@
 
 #import "PlatformClockCM.h"
 
+#import "MediaTimeMac.h"
 #import "SoftLinking.h"
 #import <CoreMedia/CMAudioDeviceClock.h>
 
@@ -82,6 +83,16 @@ double PlatformClockCM::currentTime() const
 {
     CMTime cmTime = CMTimebaseGetTime(m_timebase.get());
     return CMTimeGetSeconds(cmTime);
+}
+
+void PlatformClockCM::setCurrentMediaTime(const MediaTime& time)
+{
+    CMTimebaseSetTime(m_timebase.get(), toCMTime(time));
+}
+
+MediaTime PlatformClockCM::currentMediaTime() const
+{
+    return toMediaTime(CMTimebaseGetTime(m_timebase.get()));
 }
 
 void PlatformClockCM::setPlayRate(double rate)

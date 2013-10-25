@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef MediaTime_h
+#define MediaTime_h
+
 #include <wtf/FastMalloc.h>
 
 #include <cmath>
@@ -107,3 +110,5 @@ WTF_EXPORT_PRIVATE extern MediaTime abs(const MediaTime& rhs);
 
 using WTF::MediaTime;
 using WTF::abs;
+
+#endif

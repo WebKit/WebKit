@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,48 +20,21 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformClockCM_h
-#define PlatformClockCM_h
+#ifndef MediaTimeMac_h
+#define MediaTimeMac_h
 
 #if USE(COREMEDIA)
 
-#include "Clock.h"
+#include <CoreMedia/CMTime.h>
 #include <wtf/MediaTime.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct OpaqueCMTimebase* CMTimebaseRef;
-typedef struct OpaqueCMClock* CMClockRef;
 
 namespace WebCore {
 
-class PlatformClockCM FINAL : public Clock {
-public:
-    PlatformClockCM();
-    PlatformClockCM(CMClockRef);
-
-    virtual void setCurrentTime(double) OVERRIDE;
-    virtual double currentTime() const OVERRIDE;
-
-    void setCurrentMediaTime(const MediaTime&);
-    MediaTime currentMediaTime() const;
-
-    virtual void setPlayRate(double) OVERRIDE;
-    virtual double playRate() const OVERRIDE { return m_rate; }
-
-    virtual void start() OVERRIDE;
-    virtual void stop() OVERRIDE;
-    virtual bool isRunning() const OVERRIDE { return m_running; }
-
-private:
-    void initializeWithTimingSource(CMClockRef);
-
-    RetainPtr<CMTimebaseRef> m_timebase;
-    double m_rate;
-    bool m_running;
-};
+CMTime toCMTime(const MediaTime&);
+MediaTime toMediaTime(const CMTime&);
 
 }
 

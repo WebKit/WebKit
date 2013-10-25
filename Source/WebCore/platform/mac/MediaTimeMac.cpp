@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,51 +20,49 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformClockCM_h
-#define PlatformClockCM_h
+#include "config.h"
+#include "MediaTimeMac.h"
 
 #if USE(COREMEDIA)
 
-#include "Clock.h"
-#include <wtf/MediaTime.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct OpaqueCMTimebase* CMTimebaseRef;
-typedef struct OpaqueCMClock* CMClockRef;
-
 namespace WebCore {
 
-class PlatformClockCM FINAL : public Clock {
-public:
-    PlatformClockCM();
-    PlatformClockCM(CMClockRef);
+MediaTime toMediaTime(const CMTime& cmTime)
+{
+    uint32_t flags = 0;
+    if (CMTIME_IS_VALID(cmTime))
+        flags |= MediaTime::Valid;
+    if (CMTIME_HAS_BEEN_ROUNDED(cmTime))
+        flags |= MediaTime::HasBeenRounded;
+    if (CMTIME_IS_POSITIVE_INFINITY(cmTime))
+        flags |= MediaTime::PositiveInfinite;
+    if (CMTIME_IS_NEGATIVE_INFINITY(cmTime))
+        flags |= MediaTime::NegativeInfinite;
+    if (CMTIME_IS_INDEFINITE(cmTime))
+        flags |= MediaTime::Indefinite;
 
-    virtual void setCurrentTime(double) OVERRIDE;
-    virtual double currentTime() const OVERRIDE;
-
-    void setCurrentMediaTime(const MediaTime&);
-    MediaTime currentMediaTime() const;
-
-    virtual void setPlayRate(double) OVERRIDE;
-    virtual double playRate() const OVERRIDE { return m_rate; }
-
-    virtual void start() OVERRIDE;
-    virtual void stop() OVERRIDE;
-    virtual bool isRunning() const OVERRIDE { return m_running; }
-
-private:
-    void initializeWithTimingSource(CMClockRef);
-
-    RetainPtr<CMTimebaseRef> m_timebase;
-    double m_rate;
-    bool m_running;
-};
-
+    return MediaTime(cmTime.value, cmTime.timescale, flags);
 }
 
-#endif
+CMTime toCMTime(const MediaTime& mediaTime)
+{
+    CMTime time = {mediaTime.timeValue(), mediaTime.timeScale(), 0, 0};
+
+    if (mediaTime.isValid())
+        time.flags |= kCMTimeFlags_Valid;
+    if (mediaTime.hasBeenRounded())
+        time.flags |= kCMTimeFlags_HasBeenRounded;
+    if (mediaTime.isPositiveInfinite())
+        time.flags |= kCMTimeFlags_PositiveInfinity;
+    if (mediaTime.isNegativeInfinite())
+        time.flags |= kCMTimeFlags_NegativeInfinity;
+
+    return time;
+}
+
+}
 
 #endif
