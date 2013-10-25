@@ -284,16 +284,19 @@ def parse_args(args):
     option_group_definitions.append(("Result JSON Options", [
         optparse.make_option("--master-name", help="The name of the buildbot master."),
         optparse.make_option("--builder-name", default="",
-            help=("The name of the builder shown on the waterfall running "
-                  "this script e.g. WebKit.")),
+            help=("The name of the builder shown on the waterfall running this script. e.g. Apple MountainLion Release WK2 (Tests).")),
         optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
-            help=("The name of the builder used in its path, e.g. "
-                  "webkit-rel.")),
+            help=("The name of the builder used in its path, e.g. webkit-rel.")),
+        optparse.make_option("--build-slave", default="DUMMY_BUILD_SLAVE",
+            help=("The name of the buildslave used. e.g. apple-macpro-6.")),
         optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
             help=("The build number of the builder running this script.")),
+        optparse.make_option("--got-revision", default="",
+            help=("The revision number. e.g. 12345")),
         optparse.make_option("--test-results-server", default="",
-            help=("If specified, upload results json files to this appengine "
-                  "server.")),
+            help=("If specified, upload results json files to this appengine server.")),
+        optparse.make_option("--results-server-host", default="",
+            help=("If specified, upload results JSON file to this results server.")),
     ]))
 
     option_parser = optparse.OptionParser()
