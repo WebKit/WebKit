@@ -36,8 +36,8 @@
 #import <wtf/RetainPtr.h>
 
 #ifdef __has_include
-#if __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
-#import <CoreGraphics/CoreGraphicsPrivate.h>
+#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 #endif
 
