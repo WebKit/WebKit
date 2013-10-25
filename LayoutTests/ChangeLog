@@ -1,5 +1,98 @@
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Mavericks results with MountainLion variants.
+
+        * platform/mac-mountainlion/fast/block/margin-collapse/103-expected.txt: Copied from LayoutTests/platform/mac/fast/block/margin-collapse/103-expected.txt.
+        * platform/mac-mountainlion/fast/css/continuationCrash-expected.txt: Copied from LayoutTests/platform/mac/fast/css/continuationCrash-expected.txt.
+        * platform/mac-mountainlion/fast/css/css2-system-fonts-expected.txt: Copied from LayoutTests/platform/mac/fast/css/css2-system-fonts-expected.txt.
+        * platform/mac-mountainlion/fast/css/input-search-padding-expected.txt: Copied from LayoutTests/platform/mac/fast/css/input-search-padding-expected.txt.
+        * platform/mac-mountainlion/fast/css/text-overflow-input-expected.txt: Copied from LayoutTests/platform/mac/fast/css/text-overflow-input-expected.txt.
+        * platform/mac-mountainlion/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt.
+        * platform/mac-mountainlion/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt.
+        * platform/mac-mountainlion/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt.
+        * platform/mac-mountainlion/fast/dom/isindex-001-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/isindex-001-expected.txt.
+        * platform/mac-mountainlion/fast/dom/isindex-002-expected.txt: Copied from LayoutTests/platform/mac/fast/dom/isindex-002-expected.txt.
+        * platform/mac-mountainlion/fast/dynamic/008-expected.txt: Copied from LayoutTests/platform/mac/fast/dynamic/008-expected.txt.
+        * platform/mac-mountainlion/fast/events/context-no-deselect-expected.txt: Copied from LayoutTests/platform/mac/fast/events/context-no-deselect-expected.txt.
+        * platform/mac-mountainlion/fast/frames/take-focus-from-iframe-expected.txt: Copied from LayoutTests/platform/mac/fast/frames/take-focus-from-iframe-expected.txt.
+        * platform/mac-mountainlion/fast/lists/dynamic-marker-crash-expected.txt: Copied from LayoutTests/platform/mac/fast/lists/dynamic-marker-crash-expected.txt.
+        * platform/mac-mountainlion/fast/overflow/overflow-x-y-expected.txt: Copied from LayoutTests/platform/mac/fast/overflow/overflow-x-y-expected.txt.
+        * platform/mac-mountainlion/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt: Copied from LayoutTests/platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt.
+        * platform/mac-mountainlion/fast/parser/document-write-option-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/document-write-option-expected.txt.
+        * platform/mac-mountainlion/fast/parser/entity-comment-in-textarea-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/entity-comment-in-textarea-expected.txt.
+        * platform/mac-mountainlion/fast/parser/open-comment-in-textarea-expected.txt: Copied from LayoutTests/platform/mac/fast/parser/open-comment-in-textarea-expected.txt.
+        * platform/mac-mountainlion/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt.
+        * platform/mac-mountainlion/fast/repaint/subtree-root-skipped-expected.txt: Copied from LayoutTests/platform/mac/fast/repaint/subtree-root-skipped-expected.txt.
+        * platform/mac-mountainlion/fast/replaced/replaced-breaking-expected.txt: Copied from LayoutTests/platform/mac/fast/replaced/replaced-breaking-expected.txt.
+        * platform/mac-mountainlion/fast/replaced/replaced-breaking-mixture-expected.txt: Copied from LayoutTests/platform/mac/fast/replaced/replaced-breaking-mixture-expected.txt.
+        * platform/mac-mountainlion/fast/selectors/064-expected.txt: Copied from LayoutTests/platform/mac/fast/selectors/064-expected.txt.
+        * platform/mac-mountainlion/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt: Copied from LayoutTests/platform/mac/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt.
+        * platform/mac-mountainlion/fast/table/003-expected.txt: Copied from LayoutTests/platform/mac/fast/table/003-expected.txt.
+        * platform/mac-mountainlion/fast/table/colspanMinWidth-expected.txt: Copied from LayoutTests/platform/mac/fast/table/colspanMinWidth-expected.txt.
+        * platform/mac-mountainlion/fast/table/colspanMinWidth-vertical-expected.txt: Copied from LayoutTests/platform/mac/fast/table/colspanMinWidth-vertical-expected.txt.
+        * platform/mac-mountainlion/fast/table/spanOverlapRepaint-expected.txt: Copied from LayoutTests/platform/mac/fast/table/spanOverlapRepaint-expected.txt.
+        * platform/mac-mountainlion/fast/table/text-field-baseline-expected.txt: Copied from LayoutTests/platform/mac/fast/table/text-field-baseline-expected.txt.
+        * platform/mac-mountainlion/fast/text/textIteratorNilRenderer-expected.txt: Copied from LayoutTests/platform/mac/fast/text/textIteratorNilRenderer-expected.txt.
+        * platform/mac-mountainlion/fast/text/updateNewFont-expected.txt: Copied from LayoutTests/platform/mac/fast/text/updateNewFont-expected.txt.
+        * platform/mac-mountainlion/fast/transforms/transformed-focused-text-input-expected.txt: Copied from LayoutTests/platform/mac/fast/transforms/transformed-focused-text-input-expected.txt.
+        * platform/mac-mountainlion/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt: Copied from LayoutTests/platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt.
+        * platform/mac-mountainlion/http/tests/navigation/javascriptlink-frames-expected.txt: Copied from LayoutTests/platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt.
+        * platform/mac-mountainlion/platform/mac/fast/text/systemFont-expected.txt: Copied from LayoutTests/platform/mac/platform/mac/fast/text/systemFont-expected.txt.
+        * platform/mac-mountainlion/platform/mac/fast/text/vertical-no-sideways-expected.txt: Copied from LayoutTests/platform/mac/platform/mac/fast/text/vertical-no-sideways-expected.txt.
+        * platform/mac-mountainlion/plugins/mouse-click-plugin-clears-selection-expected.txt: Copied from LayoutTests/platform/mac/plugins/mouse-click-plugin-clears-selection-expected.txt.
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Copied from LayoutTests/platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt.
+        * platform/mac-mountainlion/svg/custom/inline-svg-in-xhtml-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt.
+        * platform/mac-mountainlion/svg/custom/use-on-symbol-inside-pattern-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt.
+        * platform/mac-mountainlion/svg/hixie/mixed/003-expected.txt: Copied from LayoutTests/platform/mac/svg/hixie/mixed/003-expected.txt.
+        * platform/mac-mountainlion/transforms/2d/zoom-menulist-expected.txt: Copied from LayoutTests/platform/mac/transforms/2d/zoom-menulist-expected.txt.
+        * platform/mac-mountainlion/transforms/3d/general/perspective-non-layer-expected.txt: Copied from LayoutTests/platform/mac/transforms/3d/general/perspective-non-layer-expected.txt.
+        * platform/mac/fast/block/margin-collapse/103-expected.txt:
+        * platform/mac/fast/css/continuationCrash-expected.txt:
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac/fast/css/input-search-padding-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt:
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/mac/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/mac/fast/dom/isindex-001-expected.txt:
+        * platform/mac/fast/dom/isindex-002-expected.txt:
+        * platform/mac/fast/dynamic/008-expected.txt:
+        * platform/mac/fast/events/context-no-deselect-expected.txt:
+        * platform/mac/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/mac/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/mac/fast/overflow/overflow-x-y-expected.txt:
+        * platform/mac/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/mac/fast/parser/document-write-option-expected.txt:
+        * platform/mac/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/mac/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/mac/fast/repaint/subtree-root-skipped-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-expected.txt:
+        * platform/mac/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/mac/fast/selectors/064-expected.txt:
+        * platform/mac/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt:
+        * platform/mac/fast/table/003-expected.txt:
+        * platform/mac/fast/table/colspanMinWidth-expected.txt:
+        * platform/mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/mac/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/mac/fast/table/text-field-baseline-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/fast/text/updateNewFont-expected.txt:
+        * platform/mac/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/mac/platform/mac/fast/text/systemFont-expected.txt:
+        * platform/mac/platform/mac/fast/text/vertical-no-sideways-expected.txt:
+        * platform/mac/plugins/mouse-click-plugin-clears-selection-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/mac/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/mac/svg/custom/use-on-symbol-inside-pattern-expected.txt:
+        * platform/mac/svg/hixie/mixed/003-expected.txt:
+        * platform/mac/transforms/2d/zoom-menulist-expected.txt:
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.txt:
+
+2013-10-25  Simon Fraser  <simon.fraser@apple.com>
+
         New results for some accessibility tests.
 
         * platform/mac-mountainlion/accessibility/form-control-value-settable-expected.txt: Added.
