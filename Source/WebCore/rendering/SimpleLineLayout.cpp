@@ -54,6 +54,11 @@ static inline bool isWhitespace(UChar character)
 
 bool canUseFor(const RenderBlockFlow& flow)
 {
+#if !PLATFORM(MAC)
+    // FIXME: Non-mac platforms are hitting ASSERT(run.charactersLength() >= run.length())
+    // https://bugs.webkit.org/show_bug.cgi?id=123338
+    return false;
+#endif
     if (!flow.firstChild())
         return false;
     // This currently covers <blockflow>#text</blockflow> case.
