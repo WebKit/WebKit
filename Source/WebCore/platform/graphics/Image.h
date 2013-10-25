@@ -99,6 +99,7 @@ public:
 
     virtual bool isSVGImage() const { return false; }
     virtual bool isBitmapImage() const { return false; }
+    virtual bool isPDFDocumentImage() const { return false; }
     virtual bool currentFrameKnownToBeOpaque() = 0;
 
     // Derived classes should override this if they can assure that 
