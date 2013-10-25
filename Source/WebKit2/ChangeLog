@@ -1,3 +1,35 @@
+2013-10-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Move ViewStateFlags out of WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=123323
+
+        Unreviewed
+
+        Rolling out 158026 - landed extra chnages!
+
+        * Shared/ViewState.h: Removed.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]):
+        (-[WKView resignFirstResponder]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidBecomeKey:]):
+        (-[WKView _windowDidResignKey:]):
+        (-[WKView _windowDidMiniaturize:]):
+        (-[WKView _windowDidDeminiaturize:]):
+        (-[WKView _windowDidOrderOffScreen:]):
+        (-[WKView _windowDidOrderOnScreen:]):
+        (-[WKView _windowDidChangeOcclusionState:]):
+        (-[WKView viewDidHide]):
+        (-[WKView viewDidUnhide]):
+        (-[WKView _activeSpaceDidChange:]):
+        (-[WKView endDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewInWindowStateDidChange):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-10-24  Gavin Barraclough  <barraclough@apple.com>
 
         Move ViewStateFlags out of WebPageProxy

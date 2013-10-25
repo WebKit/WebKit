@@ -37,7 +37,6 @@
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "ViewState.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
 #include "WebColorPicker.h"
@@ -324,8 +323,17 @@ public:
     bool canScrollView();
     void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
+    enum {
+        ViewWindowIsActive = 1 << 0,
+        ViewIsFocused = 1 << 1,
+        ViewIsVisible = 1 << 2,
+        ViewIsInWindow = 1 << 3,
+        WindowIsVisible = 1 << 4
+    };
+    typedef unsigned ViewStateFlags;
+    void viewStateDidChange(ViewStateFlags flags);
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
-    void viewStateDidChange(ViewState::Flags, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
+    void viewInWindowStateDidChange(WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
     bool isInWindow() const { return m_isInWindow; }
     void waitForDidUpdateInWindowState();
 

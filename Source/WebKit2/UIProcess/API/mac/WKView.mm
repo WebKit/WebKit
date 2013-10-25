@@ -330,7 +330,7 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_inBecomeFirstResponder = true;
     
     [self _updateSecureInputState];
-    _data->_page->viewStateDidChange(ViewState::IsFocused);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
 
     _data->_inBecomeFirstResponder = false;
     
@@ -358,7 +358,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (!_data->_page->maintainsInactiveSelection())
         _data->_page->clearSelection();
     
-    _data->_page->viewStateDidChange(ViewState::IsFocused);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
 
     _data->_inResignFirstResponder = false;
 
@@ -1927,11 +1927,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _data->_windowHasValidBackingStore = NO;
         [self doWindowDidChangeScreen];
 
-        ViewState::Flags viewStateChanges = ViewState::WindowIsVisible | ViewState::WindowIsActive | ViewState::IsVisible;
+        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
         else
-            viewStateChanges |= ViewState::IsInWindow;
+            viewStateChanges |= WebPageProxy::ViewIsInWindow;
         _data->_page->viewStateDidChange(viewStateChanges);
 
         [self _updateWindowAndViewFrames];
@@ -1945,11 +1945,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
         [self _accessibilityRegisterUIProcessTokens];
     } else {
-        ViewState::Flags viewStateChanges = ViewState::WindowIsVisible | ViewState::WindowIsActive | ViewState::IsVisible;
+        WebPageProxy::ViewStateFlags viewStateChanges = WebPageProxy::WindowIsVisible | WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsVisible;
         if ([self isDeferringViewInWindowChanges])
             _data->_viewInWindowChangeWasDeferred = YES;
         else
-            viewStateChanges |= ViewState::IsInWindow;
+            viewStateChanges |= WebPageProxy::ViewIsInWindow;
         _data->_page->viewStateDidChange(viewStateChanges);
 
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
@@ -1971,7 +1971,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     }
 }
 
@@ -1985,19 +1985,19 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
         [self _updateSecureInputState];
-        _data->_page->viewStateDidChange(ViewState::WindowIsActive);
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
     }
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
 {
     _data->_windowHasValidBackingStore = NO;
-    _data->_page->viewStateDidChange(ViewState::WindowIsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
 }
 
 - (void)_windowDidDeminiaturize:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::WindowIsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible);
 }
 
 - (void)_windowDidMove:(NSNotification *)notification
@@ -2014,12 +2014,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidOrderOffScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::WindowIsVisible | ViewState::IsVisible | ViewState::WindowIsActive);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::WindowIsVisible | ViewState::IsVisible | ViewState::WindowIsActive);
+    _data->_page->viewStateDidChange(WebPageProxy::WindowIsVisible | WebPageProxy::ViewIsVisible | WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
@@ -2036,7 +2036,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 #endif
 
@@ -2060,12 +2060,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)viewDidHide
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 - (void)viewDidUnhide
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 - (void)viewDidChangeBackingProperties
@@ -2081,7 +2081,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 - (void)_accessibilityRegisterUIProcessTokens
@@ -3157,7 +3157,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewStateDidChange(ViewState::IsInWindow);
+        _data->_page->viewInWindowStateDidChange();
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 }
@@ -3175,7 +3175,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_shouldDeferViewInWindowChanges = NO;
 
     if (_data->_viewInWindowChangeWasDeferred) {
-        _data->_page->viewStateDidChange(ViewState::IsInWindow, hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
+        _data->_page->viewInWindowStateDidChange(hasPendingViewInWindowChange ? WebPageProxy::WantsReplyOrNot::DoesWantReply : WebPageProxy::WantsReplyOrNot::DoesNotWantReply);
         _data->_viewInWindowChangeWasDeferred = NO;
     }
 
