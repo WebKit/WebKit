@@ -29,7 +29,7 @@ $_config = NULL;
 function config($key) {
     global $_config;
     if (!$_config)
-        $_config = json_decode(file_get_contents(dirname(__FILE__) . '/config.json'), true);
+        $_config = json_decode(file_get_contents(dirname(__FILE__) . '/../../config.json'), true);
     return $_config[$key];
 }
 
