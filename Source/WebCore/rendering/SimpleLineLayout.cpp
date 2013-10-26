@@ -149,7 +149,10 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
         return false;
 
-    auto primaryFontData = style.font().primaryFont();
+    // We assume that all lines have metrics based purely on the primary font.
+    auto& primaryFontData = *style.font().primaryFont();
+    if (primaryFontData.isLoading())
+        return false;
 
     unsigned length = textRenderer.textLength();
     unsigned consecutiveSpaceCount = 0;
@@ -157,13 +160,14 @@ bool canUseFor(const RenderBlockFlow& flow)
         // This rejects anything with more than one consecutive whitespace, except at the beginning or end.
         // This is because we don't currently do subruns within lines. Fixing this would improve coverage significantly.
         UChar character = textRenderer.characterAt(i);
-        if (isWhitespace(character))
+        if (isWhitespace(character)) {
             ++consecutiveSpaceCount;
-        else {
-            if (consecutiveSpaceCount != i && consecutiveSpaceCount > 1)
-                return false;
-            consecutiveSpaceCount = 0;
+            continue;
         }
+        if (consecutiveSpaceCount != i && consecutiveSpaceCount > 1)
+            return false;
+        consecutiveSpaceCount = 0;
+
         // These would be easy to support.
         if (character == noBreakSpace)
             return false;
@@ -178,7 +182,8 @@ bool canUseFor(const RenderBlockFlow& flow)
                 || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE)
                 return false;
         }
-        if (!primaryFontData->glyphForCharacter(character))
+
+        if (!primaryFontData.glyphForCharacter(character))
             return false;
     }
     return true;

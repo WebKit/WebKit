@@ -115,9 +115,9 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 5 | fontDescription.widthVariant() << 3
                        | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
 
-    RefPtr<SimpleFontData>& fontData = m_fontDataTable.add(hashKey, nullptr).iterator->value;
+    RefPtr<SimpleFontData> fontData = m_fontDataTable.add(hashKey, nullptr).iterator->value;
     if (fontData)
-        return fontData; // No release, because fontData is a reference to a RefPtr that is held in the m_fontDataTable.
+        return fontData.release();
 
     // If we are still loading, then we let the system pick a font.
     if (isLoaded()) {
@@ -170,13 +170,13 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         // and the loader may invoke arbitrary delegate or event handler code.
         fontSelector->beginLoadingFontSoon(m_font.get());
 
-        // This temporary font is not retained and should not be returned.
-        FontCachePurgePreventer fontCachePurgePreventer;
-        SimpleFontData* temporaryFont = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
-        fontData = SimpleFontData::create(temporaryFont->platformData(), true, true);
+        RefPtr<SimpleFontData> fallback = fontSelector->userStandardFont(fontDescription);
+        if (!fallback)
+            fallback = fontCache()->getLastResortFallbackFont(fontDescription);
+        fontData = SimpleFontData::create(fallback->platformData(), /*isCustomFont*/ true, /*isLoading*/ true);
     }
 
-    return fontData; // No release, because fontData is a reference to a RefPtr that is held in the m_fontDataTable.
+    return fontData.release();
 }
 
 #if ENABLE(SVG_FONTS)
