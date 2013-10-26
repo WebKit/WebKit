@@ -58,7 +58,7 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return toWKBackForwardListItem(_list->backItem());
+    return toWKBackForwardListItem(_list->forwardItem());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
