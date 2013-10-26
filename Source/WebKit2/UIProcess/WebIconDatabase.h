@@ -87,8 +87,6 @@ public:
 
     void initializeIconDatabaseClient(const WKIconDatabaseClient*);
 
-    void setPrivateBrowsingEnabled(bool);
-    
 private:
     WebIconDatabase(WebContext*);
 

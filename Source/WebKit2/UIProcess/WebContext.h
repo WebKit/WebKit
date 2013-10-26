@@ -398,8 +398,6 @@ private:
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 
-    void setPrivateBrowsingEnabled(bool);
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // PluginInfoStoreClient:
     virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) OVERRIDE;
