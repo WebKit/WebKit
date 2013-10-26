@@ -28,6 +28,7 @@
 
 #include "CachedResourceHandle.h"
 #include "FontSelector.h"
+#include "SimpleFontData.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -60,7 +61,7 @@ public:
     virtual size_t fallbackFontDataCount() OVERRIDE;
     virtual PassRefPtr<FontData> getFallbackFontData(const FontDescription&, size_t) OVERRIDE;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
-    virtual PassRefPtr<SimpleFontData> userStandardFont(const FontDescription&) OVERRIDE;
+    virtual PassRefPtr<SimpleFontData> userStandardFont(const FontDescription&);
 
     virtual bool resolvesFamilyFor(const FontDescription&) const OVERRIDE;
 

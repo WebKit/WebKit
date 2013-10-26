@@ -1,3 +1,10 @@
+2013-10-26  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fixed broken build.
+        https://bugs.webkit.org/show_bug.cgi?id=123354.
+
+        * css/CSSFontSelector.h:
+
 2013-10-26  Antti Koivisto  <antti@apple.com>
 
         fast/frames/seamless/seamless-nested-crash.html asserts on wk2 only
