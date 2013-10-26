@@ -1,3 +1,17 @@
+2013-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r158069): platform/mac/fast/loader/file-url-mimetypes.html
+        is failing on all Mountain Lion bots.
+
+        * platform/mac-mountainlion/fast/loader/file-url-mimetypes-expected.txt: Removed.
+        * platform/mac-mountainlion/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Copied from LayoutTests/platform/mac-mountainlion/fast/loader/file-url-mimetypes-expected.txt.
+        Mountain Lion results for platform/mac tests need to be in this crazy place apparently.
+
+        * platform/mac/fast/loader/file-url-mimetypes-expected.txt:
+        * platform/mac/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Removed.
+        Mavericks results should be in platform/mac, not platform/mac/platform/mac.
+        Yes, the latter works and takes precedence, but it's wrong.
+
 2013-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Tweak some test expectations.
