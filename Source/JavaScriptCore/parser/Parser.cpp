@@ -199,10 +199,7 @@ template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<
     bool seenNonDirective = false;
     const Identifier* directive = 0;
     unsigned directiveLiteralLength = 0;
-    unsigned startOffset = m_token.m_location.startOffset;
-    unsigned startLineStartOffset = m_token.m_location.lineStartOffset;
-    unsigned oldLastLineNumber = m_lexer->lastLineNumber();
-    unsigned oldLineNumber = m_lexer->lineNumber();
+    auto savePoint = createSavePoint();
     bool hasSetStrict = false;
     while (TreeStatement statement = parseStatement(context, directive, &directiveLiteralLength)) {
         if (mode == CheckForStrictMode && !seenNonDirective) {
@@ -224,10 +221,7 @@ template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements Parser<
                             semanticFail("Cannot declare a variable named 'eval' in strict mode");
                         semanticFailIfFalse(isValidStrictMode(), "Invalid parameters or function name in strict mode");
                     }
-                    m_lexer->setOffset(startOffset, startLineStartOffset);
-                    next();
-                    m_lexer->setLastLineNumber(oldLastLineNumber);
-                    m_lexer->setLineNumber(oldLineNumber);
+                    restoreSavePoint(savePoint);
                     propagateError();
                     continue;
                 }
@@ -1598,10 +1592,7 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
 template <typename LexerType>
 template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLiteral(TreeBuilder& context)
 {
-    int startOffset = m_token.m_data.offset;
-    unsigned oldLineStartOffset = m_lexer->currentLineStartOffset();
-    unsigned oldLastLineNumber = m_lexer->lastLineNumber();
-    unsigned oldLineNumber = m_lexer->lineNumber();
+    auto savePoint = createSavePoint();
     consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of an object literal");
     JSTokenLocation location(tokenLocation());
 
@@ -1615,10 +1606,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
     TreeProperty property = parseProperty<false>(context);
     failIfFalse(property, "Cannot parse object literal property");
     if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
-        m_lexer->setOffset(startOffset, oldLineStartOffset);
-        next();
-        m_lexer->setLastLineNumber(oldLastLineNumber);
-        m_lexer->setLineNumber(oldLineNumber);
+        restoreSavePoint(savePoint);
         return parseStrictObjectLiteral(context);
     }
     TreePropertyList propertyList = context.createPropertyList(location, property);
@@ -1632,10 +1620,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         property = parseProperty<false>(context);
         failIfFalse(property, "Cannot parse object literal property");
         if (!m_syntaxAlreadyValidated && context.getType(property) != PropertyNode::Constant) {
-            m_lexer->setOffset(startOffset, oldLineStartOffset);
-            next();
-            m_lexer->setLastLineNumber(oldLastLineNumber);
-            m_lexer->setLineNumber(oldLineNumber);
+            restoreSavePoint(savePoint);
             return parseStrictObjectLiteral(context);
         }
         tail = context.createPropertyList(propertyLocation, property, tail);

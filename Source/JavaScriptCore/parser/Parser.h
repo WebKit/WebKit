@@ -759,6 +759,32 @@ private:
         return !m_errorMessage.isNull();
     }
 
+    
+    struct SavePoint {
+        int startOffset;
+        unsigned oldLineStartOffset;
+        unsigned oldLastLineNumber;
+        unsigned oldLineNumber;
+    };
+    
+    ALWAYS_INLINE SavePoint createSavePoint()
+    {
+        SavePoint result;
+        result.startOffset = m_token.m_location.startOffset;
+        result.oldLineStartOffset = m_token.m_location.lineStartOffset;
+        result.oldLastLineNumber = m_lexer->lastLineNumber();
+        result.oldLineNumber = m_lexer->lineNumber();
+        return result;
+    }
+    
+    ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
+    {
+        m_lexer->setOffset(savePoint.startOffset, savePoint.oldLineStartOffset);
+        next();
+        m_lexer->setLastLineNumber(savePoint.oldLastLineNumber);
+        m_lexer->setLineNumber(savePoint.oldLineNumber);
+    }
+    
     VM* m_vm;
     const SourceCode* m_source;
     ParserArena* m_arena;
