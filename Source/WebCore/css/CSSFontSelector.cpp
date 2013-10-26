@@ -476,11 +476,6 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     return false;
 }
 
-PassRefPtr<SimpleFontData> CSSFontSelector::userStandardFont(const FontDescription& description)
-{
-    return fontDataForGenericFamily(m_document, description, standardFamily);
-}
-
 PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
     if (m_fontFaces.isEmpty()) {

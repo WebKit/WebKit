@@ -1,3 +1,12 @@
+2013-10-26  Antti Koivisto  <antti@apple.com>
+
+        Revert some accidental changes.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.cpp:
+        * css/CSSFontSelector.h:
+
 2013-10-26  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fixed broken build.

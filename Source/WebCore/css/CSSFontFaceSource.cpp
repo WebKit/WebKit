@@ -170,10 +170,10 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         // and the loader may invoke arbitrary delegate or event handler code.
         fontSelector->beginLoadingFontSoon(m_font.get());
 
-        RefPtr<SimpleFontData> fallback = fontSelector->userStandardFont(fontDescription);
-        if (!fallback)
-            fallback = fontCache()->getLastResortFallbackFont(fontDescription);
-        fontData = SimpleFontData::create(fallback->platformData(), /*isCustomFont*/ true, /*isLoading*/ true);
+        // This temporary font is not retained and should not be returned.
+        FontCachePurgePreventer fontCachePurgePreventer;
+        SimpleFontData* temporaryFont = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
+        fontData = SimpleFontData::create(temporaryFont->platformData(), true, true);
     }
 
     return fontData.release();

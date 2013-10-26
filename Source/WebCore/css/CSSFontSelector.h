@@ -61,7 +61,6 @@ public:
     virtual size_t fallbackFontDataCount() OVERRIDE;
     virtual PassRefPtr<FontData> getFallbackFontData(const FontDescription&, size_t) OVERRIDE;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
-    virtual PassRefPtr<SimpleFontData> userStandardFont(const FontDescription&);
 
     virtual bool resolvesFamilyFor(const FontDescription&) const OVERRIDE;
 
