@@ -54,7 +54,6 @@ webkit_dom_test_callback_get_type (void);
  * @self: A #WebKitDOMTestCallback
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
@@ -65,7 +64,6 @@ webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
  * @arrayParam: A #WebKitDOMFloat32Array
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, WebKitDOMFloat32Array* arrayParam);
@@ -77,7 +75,6 @@ webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, 
  * @strArg: A #gchar
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, WebKitDOMSerializedScriptValue* srzParam, const gchar* strArg);
@@ -88,7 +85,6 @@ webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTe
  * @strArg: A #gchar
  *
  * Returns:
- *
 **/
 WEBKIT_API glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, const gchar* strArg);
@@ -99,7 +95,6 @@ webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallbac
  * @listParam: A #WebKitDOMDOMStringList
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* listParam);
@@ -110,7 +105,6 @@ webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, 
  * @boolParam: A #gboolean
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean boolParam);
@@ -122,7 +116,6 @@ webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboo
  * @testNodeParam: A #WebKitDOMTestNode
  *
  * Returns:
- *
 **/
 WEBKIT_API gboolean
 webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, glong longParam, WebKitDOMTestNode* testNodeParam);

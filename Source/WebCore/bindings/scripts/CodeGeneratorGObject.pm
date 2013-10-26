@@ -885,6 +885,24 @@ sub ParamCanBeNull {
     return 0;
 }
 
+sub GetFunctionDeprecationInformation {
+    my($function, $parentNode) = @_;
+
+    my $version;
+    my $replacement;
+
+    if ($parentNode->extendedAttributes->{"EventTarget"} && $function->signature->name eq "dispatchEvent") {
+        # dispatchEvent is implemented already as part fo the WebKitDOMEventTarget interface.
+        # Mark it as deprecated for now in favor of the interface method, and skip it once
+        # we break the API. All other methods of WebKitDOMEventTarget interface are already
+        # skipped because they receive an EventListener as parameter.
+        $version = "2.4";
+        $replacement = "webkit_dom_event_target_dispatch_event";
+    }
+
+    return ($version, $replacement);
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -894,6 +912,7 @@ sub GenerateFunction {
         return;
     }
 
+    my ($deprecationVersion, $deprecationReplacement) = GetFunctionDeprecationInformation($function, $parentNode);
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
     my $returnType = GetGlibTypeName($functionSigType);
@@ -962,10 +981,24 @@ sub GenerateFunction {
     } elsif ($returnType ne "void") {
         push(@hBody, " * Returns:\n");
     }
-    push(@hBody, " *\n");
+    if ($deprecationVersion) {
+        push(@hBody, " *\n");
+        push(@hBody, " * Deprecated: $deprecationVersion");
+        if ($deprecationReplacement) {
+            push(@hBody, ": Use $deprecationReplacement() instead.");
+        }
+        push(@hBody, "\n");
+    }
     push(@hBody, "**/\n");
 
-    push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n");
+    if ($deprecationVersion && $deprecationReplacement) {
+        push(@hBody, "WEBKIT_DEPRECATED_FOR($deprecationReplacement) ");
+    } elsif ($deprecationVersion) {
+        push(@hBody, "WEBKIT_DEPRECATED ");
+    } else {
+        push(@hBody, "WEBKIT_API ");
+    }
+    push(@hBody, "$returnType\n$functionName($functionSig);\n");
     push(@hBody, "\n");
 
     push(@cBody, "$returnType $functionName($functionSig)\n{\n");

@@ -54,7 +54,6 @@ webkit_dom_test_serialized_script_value_interface_get_type (void);
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -65,7 +64,6 @@ webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSeriali
  * @value: A #WebKitDOMSerializedScriptValue
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API void
 webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
@@ -75,7 +73,6 @@ webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSeriali
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -85,7 +82,6 @@ webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTe
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self);
@@ -96,7 +92,6 @@ webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTest
  * @value: A #WebKitDOMSerializedScriptValue
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API void
 webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value);
@@ -106,7 +101,6 @@ webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTest
  * @self: A #WebKitDOMTestSerializedScriptValueInterface
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self);

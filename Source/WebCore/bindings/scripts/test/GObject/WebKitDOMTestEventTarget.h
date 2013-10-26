@@ -55,7 +55,6 @@ webkit_dom_test_event_target_get_type (void);
  * @index: A #gulong
  *
  * Returns: (transfer none):
- *
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
@@ -68,8 +67,9 @@ webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
  *
  * Returns:
  *
+ * Deprecated: 2.4: Use webkit_dom_event_target_dispatch_event() instead.
 **/
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED_FOR(webkit_dom_event_target_dispatch_event) gboolean
 webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError** error);
 
 G_END_DECLS

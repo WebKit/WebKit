@@ -69,11 +69,12 @@ if ($outType eq "defines") {
     print "    #else\n";
     print "        #define WEBKIT_API __declspec(dllimport)\n";
     print "    #endif\n";
-    print "    #define WEBKIT_OBSOLETE_API WEBKIT_API\n";
     print "#else\n";
     print "    #define WEBKIT_API __attribute__((visibility(\"default\")))\n";
-    print "    #define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))\n";
     print "#endif\n\n";
+    print "#define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED\n";
+    print "#define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)\n";
+    print "\n";
     print "#ifndef WEBKIT_API\n";
     print "    #define WEBKIT_API\n";
     print "#endif\n";
