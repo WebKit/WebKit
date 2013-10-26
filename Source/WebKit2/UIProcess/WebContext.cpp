@@ -428,26 +428,34 @@ void WebContext::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessPro
 void WebContext::willStartUsingPrivateBrowsing()
 {
     const Vector<WebContext*>& contexts = allContexts();
-    for (size_t i = 0, count = contexts.size(); i < count; ++i) {
-#if ENABLE(NETWORK_PROCESS)
-        if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
-            contexts[i]->networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(), 0);
-#endif
-        contexts[i]->sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession());
-    }
+    for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        contexts[i]->setPrivateBrowsingEnabled(true);
 }
 
 void WebContext::willStopUsingPrivateBrowsing()
 {
     const Vector<WebContext*>& contexts = allContexts();
-    for (size_t i = 0, count = contexts.size(); i < count; ++i) {
-#if ENABLE(NETWORK_PROCESS)
-        if (contexts[i]->usesNetworkProcess() && contexts[i]->networkProcess())
-            contexts[i]->networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(), 0);
-#endif
+    for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        contexts[i]->setPrivateBrowsingEnabled(false);
+}
 
-        contexts[i]->sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession());
+void WebContext::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+{
+    m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);
+
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess() && networkProcess()) {
+        if (privateBrowsingEnabled)
+            networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(), 0);
+        else
+            networkProcess()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(), 0);
     }
+#endif // ENABLED(NETWORK_PROCESS)
+
+    if (privateBrowsingEnabled)
+        sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession());
+    else
+        sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession());
 }
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);

@@ -293,4 +293,9 @@ void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
     didChangeIconForPageURL(pageURL);
 }
 
+void WebIconDatabase::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+{
+    m_iconDatabaseImpl->setPrivateBrowsingEnabled(privateBrowsingEnabled);
+}
+
 } // namespace WebKit

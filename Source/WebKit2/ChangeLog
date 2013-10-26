@@ -1,3 +1,20 @@
+2013-10-25  Brady Eidson  <beidson@apple.com>
+
+        WebIconDatabase can miss private browsing state changes.
+        <rdar://problem/15322318> and https://bugs.webkit.org/show_bug.cgi?id=123375
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::willStartUsingPrivateBrowsing): Call setPrivateBrowsingEnabled(true) on each context.
+        (WebKit::WebContext::willStopUsingPrivateBrowsing): Call setPrivateBrowsingEnabled(false) on each context.
+        (WebKit::WebContext::setPrivateBrowsingEnabled): In addition to notifying other processes, notify WebIconDatabase.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setPrivateBrowsingEnabled):
+        * UIProcess/WebIconDatabase.h:
+
 2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
