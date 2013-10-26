@@ -1,5 +1,11 @@
 2013-10-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Crashy WebGL test is crashy.
+
+        * platform/mac/TestExpectations:
+
+2013-10-26  Simon Fraser  <simon.fraser@apple.com>
+
         Skip two WebGL tests that either crash or fail.
 
         * platform/mac/TestExpectations:

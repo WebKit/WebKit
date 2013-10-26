@@ -743,7 +743,7 @@ webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure Timeout 
 webgl/1.0.2/conformance/glsl/functions/glsl-function-smoothstep-gentype.html [ Pass Failure ]
 webgl/1.0.2/conformance/glsl/variables/gl-pointcoord.html [ Pass Failure ]
 webgl/1.0.2/conformance/ogles/GL/operators/operators_009_to_016.html [ Pass Failure ]
-webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Pass Failure ]
+webgl/1.0.2/conformance/ogles/GL/control_flow/control_flow_009_to_010.html [ Crash Pass Failure ]
 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
 webgl/1.0.2/conformance/state/gl-object-get-calls.html [ Failure Pass ]
 webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Failure Pass ]
