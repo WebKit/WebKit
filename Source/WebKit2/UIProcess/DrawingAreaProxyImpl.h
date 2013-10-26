@@ -38,8 +38,6 @@ class Region;
 
 namespace WebKit {
 
-class CoordinatedLayerTreeHostProxy;
-
 class DrawingAreaProxyImpl : public DrawingAreaProxy {
 public:
     explicit DrawingAreaProxyImpl(WebPageProxy*);
