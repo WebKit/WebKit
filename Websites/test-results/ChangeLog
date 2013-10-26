@@ -1,5 +1,17 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Links in new flakiness dashboard could benefit from tooltips
+        https://bugs.webkit.org/show_bug.cgi?id=123381
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add title content attribute on each hyperlink in the builder pane.
+
+        * public/index.html:
+        (TestResultsView._populateBuilderPane):
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Commit the right change.
 
         * public/index.html:

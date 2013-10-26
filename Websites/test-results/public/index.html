@@ -392,8 +392,11 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
         if (!results.length)
             return;
         self._createBuildsAndComputeSlownessOfResults(builderId, results);
-        var externalTestLink = element('a', {'class': 'externalTestLink', 'href': self._urlFromTest(test)});
-        var testName = element('a', {'href':'#'}, [test.name]);
+        var externalTestLink = element('a', {'class': 'externalTestLink',
+            'href': self._urlFromTest(test),
+            'title': 'View the source code of ' + test.name});
+        var testName = element('a', {'href':'#',
+            'title': 'Show results of ' + test.name + ' on all platforms'}, [test.name]);
         testName.onclick = function (event) {
             self.fetchTests([this.textContent]);
             event.preventDefault();
