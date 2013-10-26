@@ -38,7 +38,7 @@ class RenderImageResourceStyleImage : public RenderImageResource {
 public:
     virtual ~RenderImageResourceStyleImage();
 
-    static PassOwnPtr<RenderImageResource> create(StyleImage* styleImage)
+    static PassOwnPtr<RenderImageResource> create(StyleImage& styleImage)
     {
         return adoptPtr(new RenderImageResourceStyleImage(styleImage));
     }
@@ -61,8 +61,8 @@ private:
 
     virtual WrappedImagePtr imagePtr() const OVERRIDE { return m_styleImage->data(); }
 
-    explicit RenderImageResourceStyleImage(StyleImage*);
-    RefPtr<StyleImage> m_styleImage;
+    explicit RenderImageResourceStyleImage(StyleImage&);
+    Ref<StyleImage> m_styleImage;
 };
 
 } // namespace WebCore

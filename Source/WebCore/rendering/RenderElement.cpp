@@ -130,7 +130,7 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
         // doesn't make sense as it should be run once at renderer creation.
         image->setStyleInternal(style);
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
-            image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
+            image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage&>(*styleImage)));
             image->setIsGeneratedContent();
         } else
             image->setImageResource(RenderImageResource::create());

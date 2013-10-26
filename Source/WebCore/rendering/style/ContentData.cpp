@@ -52,7 +52,7 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
     RenderImage* image = new RenderImage(document);
     image->setPseudoStyle(&pseudoStyle);
     if (m_image)
-        image->setImageResource(RenderImageResourceStyleImage::create(m_image.get()));
+        image->setImageResource(RenderImageResourceStyleImage::create(*m_image));
     else
         image->setImageResource(RenderImageResource::create());
     return image;

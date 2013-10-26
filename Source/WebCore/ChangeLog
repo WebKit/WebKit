@@ -1,3 +1,13 @@
+2013-10-26  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderImageResourceStyleImage always has a StyleImage.
+        <https://webkit.org/b/123390>
+
+        Codify the fact that RenderImageResourceStyleImage always wraps an
+        existing StyleImage object.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-26  Antti Koivisto  <antti@apple.com>
 
         Revert some accidental changes.

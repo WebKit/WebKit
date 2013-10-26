@@ -34,10 +34,9 @@
 
 namespace WebCore {
 
-RenderImageResourceStyleImage::RenderImageResourceStyleImage(StyleImage* styleImage)
+RenderImageResourceStyleImage::RenderImageResourceStyleImage(StyleImage& styleImage)
     : m_styleImage(styleImage)
 {
-    ASSERT(m_styleImage);
 }
 
 RenderImageResourceStyleImage::~RenderImageResourceStyleImage()
@@ -49,7 +48,7 @@ void RenderImageResourceStyleImage::initialize(RenderElement* renderer)
     RenderImageResource::initialize(renderer);
 
     if (m_styleImage->isCachedImage())
-        m_cachedImage = static_cast<StyleCachedImage*>(m_styleImage.get())->cachedImage();
+        m_cachedImage = m_styleImage.get().cachedImage();
 
     m_styleImage->addClient(m_renderer);
 }
