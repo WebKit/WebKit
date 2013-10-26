@@ -1,3 +1,12 @@
+2013-10-26  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] clang static analyzer warns about object being autoreleased too many times in +[WKNSArray web_arrayWithImmutableArray:]
+        https://bugs.webkit.org/show_bug.cgi?id=123384
+
+        Reviewed by Mark Rowe.
+
+        * Shared/Cocoa/WKNSArray.h: Annotated -web_initWithImmutableArray: as an init method.
+
 2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the ENABLE(CSS_FILTERS) && USE(COORDINATED_GRAPHICS) build after r157803

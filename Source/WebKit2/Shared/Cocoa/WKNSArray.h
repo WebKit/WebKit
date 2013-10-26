@@ -35,7 +35,7 @@ class ImmutableArray;
 
 + (id)web_arrayWithImmutableArray:(WebKit::ImmutableArray&)array;
 
-- (id)web_initWithImmutableArray:(WebKit::ImmutableArray&)array;
+- (id)web_initWithImmutableArray:(WebKit::ImmutableArray&)array NS_REPLACES_RECEIVER;
 
 @end
 
