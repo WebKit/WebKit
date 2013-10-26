@@ -1164,7 +1164,7 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
     return true;
 }
 
-#if ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
 static void encodeFilterOperation(ArgumentEncoder& encoder, const FilterOperation& filter)
 {
     encoder.encodeEnum(filter.type());
@@ -1305,6 +1305,6 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
 
     return true;
 }
-#endif // ENABLE(CSS_FILTERS)
+#endif // ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
 
 } // namespace CoreIPC

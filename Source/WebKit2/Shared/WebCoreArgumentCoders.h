@@ -291,11 +291,12 @@ template<> struct ArgumentCoder<WebCore::UserScript> {
     static bool decode(ArgumentDecoder&, WebCore::UserScript&);
 };
 
+#if ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
 };
-
+#endif
 
 } // namespace CoreIPC
 

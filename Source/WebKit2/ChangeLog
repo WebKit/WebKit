@@ -1,3 +1,13 @@
+2013-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(CSS_FILTERS) && USE(COORDINATED_GRAPHICS) build after r157803
+        https://bugs.webkit.org/show_bug.cgi?id=123330
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+
 2013-10-25  Brady Eidson  <beidson@apple.com>
 
         WebIconDatabase can miss private browsing state changes.
