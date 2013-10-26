@@ -1,5 +1,11 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Commit the right change.
+
+        * public/index.html:
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         The new flakiness dashboard should sort builder and test names
         https://bugs.webkit.org/show_bug.cgi?id=123363
 

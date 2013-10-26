@@ -516,12 +516,9 @@ fetchManifest(function (response) {
     input.autocompleter = new Autocompleter(input, testNames);
 
     var builderListView = document.getElementById('builderListView');
-    var builders = [];
-    for (var builderId in response['builders'])
-        builders.push(response['builders']);
-    
-    for (var builderId in response['builders'])
-        builderListView.appendChild(element('option', [text(response['builders'][builderId].name)]));
+    TestResultsView._sortObjectsByName(response['builders']).forEach(function (builder) {
+        builderListView.appendChild(element('option', [builder.name]));
+    });
 
     var builderDaysView = document.getElementById('builderDaysView');
     var builderFailureTypeView = document.getElementById('builderFailureTypeView');
