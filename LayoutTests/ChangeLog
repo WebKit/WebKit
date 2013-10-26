@@ -1,3 +1,9 @@
+2013-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip two WebGL tests that either crash or fail.
+
+        * platform/mac/TestExpectations:
+
 2013-10-26  Antti Koivisto  <antti@apple.com>
 
         fast/frames/seamless/seamless-nested-crash.html asserts on wk2 only
