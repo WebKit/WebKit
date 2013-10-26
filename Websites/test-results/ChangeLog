@@ -1,5 +1,12 @@
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. The query results weren't sorted by the latest commit time,
+        yielding wrong set of tests to be listed in the builder pane.
+
+        * public/include/test-results.php:
+
+2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Links in new flakiness dashboard could benefit from tooltips
         https://bugs.webkit.org/show_bug.cgi?id=123381
 
