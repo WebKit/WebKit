@@ -137,13 +137,6 @@ abstract class ResultsJSONWriter {
     abstract protected function pass_for_failure_type(&$results);
 }
 
-class FailingResultsJSONWriter extends ResultsJSONWriter {
-    public function __construct($fp) { parent::__construct($fp); }
-    protected function pass_for_failure_type(&$results) {
-        return $results[0]['actual'] == 'PASS';
-    }
-}
-
 class FlakyResultsJSONWriter extends ResultsJSONWriter {
     public function __construct($fp) { parent::__construct($fp); }
     protected function pass_for_failure_type(&$results) {
@@ -172,6 +165,13 @@ class WrongExpectationsResultsJSONWriter extends ResultsJSONWriter {
         $tokens = explode(' ', $latest_expected_result);
         return array_search($latest_actual_result, $tokens) !== FALSE
             || (($latest_actual_result == 'TEXT' || $latest_actual_result == 'TEXT+IMAGE') && array_search('FAIL', $tokens) !== FALSE);
+    }
+}
+
+class FailingResultsJSONWriter extends WrongExpectationsResultsJSONWriter {
+    public function __construct($fp) { parent::__construct($fp); }
+    protected function pass_for_failure_type(&$results) {
+        return $results[0]['actual'] == 'PASS' || parent::pass_for_failure_type($results);
     }
 }
 

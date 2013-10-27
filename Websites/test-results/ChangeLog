@@ -1,3 +1,17 @@
+2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        New flakiness dashboard shouldn't treat tests with right expectations as failing
+        https://bugs.webkit.org/show_bug.cgi?id=123385
+
+        Reviewed by Alexey Proskuryakov.
+
+        We define failing tests to be tests with wrong expectations whose actual results are not PASS
+        since tests with TEXT, IMAGE, etc... failures do not turn the bots red as long as the expectation
+        of the same type is specified in TestExpectation files.
+
+        * public/include/test-results.php:
+        (FailingResultsJSONWriter): Inherit from WrongExpectationsResultsJSONWriter.
+
 2013-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. The query results weren't sorted by the latest commit time,
