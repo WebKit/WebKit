@@ -36,8 +36,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourcePattern::s_resourceType = PatternResourceType;
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element)
-    : RenderSVGResourceContainer(element)
+RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, PassRef<RenderStyle> style)
+    : RenderSVGResourceContainer(element, std::move(style))
     , m_shouldCollectPatternAttributes(true)
 {
 }

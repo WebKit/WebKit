@@ -75,12 +75,12 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
     return HTMLPlugInImageElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLAppletElement::createRenderer(RenderStyle& style)
+RenderElement* HTMLAppletElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (!canEmbedJava())
-        return RenderElement::createFor(*this, style);
+        return RenderElement::createFor(*this, std::move(style));
 
-    return RenderEmbeddedObject::createForApplet(*this);
+    return RenderEmbeddedObject::createForApplet(*this, std::move(style));
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const

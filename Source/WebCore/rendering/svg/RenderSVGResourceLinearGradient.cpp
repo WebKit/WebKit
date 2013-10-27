@@ -30,8 +30,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceLinearGradient::s_resourceType = LinearGradientResourceType;
 
-RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement& element)
-    : RenderSVGResourceGradient(element)
+RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement& element, PassRef<RenderStyle> style)
+    : RenderSVGResourceGradient(element, std::move(style))
 {
 }
 

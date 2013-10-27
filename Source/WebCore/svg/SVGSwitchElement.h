@@ -41,7 +41,7 @@ private:
 
     virtual bool childShouldCreateRenderer(const Node*) const;
 
-    virtual RenderElement* createRenderer(RenderStyle&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSwitchElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

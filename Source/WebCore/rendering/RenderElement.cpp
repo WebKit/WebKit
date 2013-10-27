@@ -65,27 +65,31 @@ namespace WebCore {
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
 
-RenderElement::RenderElement(Element& element, unsigned baseTypeFlags)
+RenderElement::RenderElement(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
     : RenderObject(element)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
+    , m_hasInitializedStyle(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
+    , m_style(std::move(style))
 {
 }
 
-RenderElement::RenderElement(Document& document, unsigned baseTypeFlags)
+RenderElement::RenderElement(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
     : RenderObject(document)
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
+    , m_hasInitializedStyle(false)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
+    , m_style(std::move(style))
 {
 }
 
 RenderElement::~RenderElement()
 {
-    if (m_style) {
+    if (hasInitializedStyle()) {
         for (const FillLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
             if (StyleImage* backgroundImage = bgLayer->image())
                 backgroundImage->removeClient(this);
@@ -115,77 +119,72 @@ RenderElement::~RenderElement()
     }
 }
 
-RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
+RenderElement* RenderElement::createFor(Element& element, PassRef<RenderStyle> style)
 {
     Document& document = element.document();
 
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
-    const ContentData* contentData = style.contentData();
+    const ContentData* contentData = style.get().contentData();
     if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
-        RenderImage* image = new RenderImage(element);
-        // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
-        // trigger a style change now as the node is not fully attached. Moving this code to style change
-        // doesn't make sense as it should be run once at renderer creation.
-        image->setStyleInternal(style);
+        RenderImage* image = new RenderImage(element, std::move(style));
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage&>(*styleImage)));
             image->setIsGeneratedContent();
         } else
             image->setImageResource(RenderImageResource::create());
-        image->clearStyleInternal();
         return image;
     }
 
     if (element.hasTagName(HTMLNames::rubyTag)) {
-        if (style.display() == INLINE)
-            return new RenderRubyAsInline(element);
-        if (style.display() == BLOCK)
-            return new RenderRubyAsBlock(element);
+        if (style.get().display() == INLINE)
+            return new RenderRubyAsInline(element, std::move(style));
+        if (style.get().display() == BLOCK)
+            return new RenderRubyAsBlock(element, std::move(style));
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
-    if (element.hasTagName(HTMLNames::rtTag) && style.display() == BLOCK)
-        return new RenderRubyText(element);
-    switch (style.display()) {
+    if (element.hasTagName(HTMLNames::rtTag) && style.get().display() == BLOCK)
+        return new RenderRubyText(element, std::move(style));
+    switch (style.get().display()) {
     case NONE:
         return 0;
     case INLINE:
-        return new RenderInline(element);
+        return new RenderInline(element, std::move(style));
     case BLOCK:
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
-        if ((!style.hasAutoColumnCount() || !style.hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
-            return new RenderMultiColumnBlock(element);
-        return new RenderBlockFlow(element);
+        if ((!style.get().hasAutoColumnCount() || !style.get().hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
+            return new RenderMultiColumnBlock(element, std::move(style));
+        return new RenderBlockFlow(element, std::move(style));
     case LIST_ITEM:
-        return new RenderListItem(element);
+        return new RenderListItem(element, std::move(style));
     case TABLE:
     case INLINE_TABLE:
-        return new RenderTable(element);
+        return new RenderTable(element, std::move(style));
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return new RenderTableSection(element);
+        return new RenderTableSection(element, std::move(style));
     case TABLE_ROW:
-        return new RenderTableRow(element);
+        return new RenderTableRow(element, std::move(style));
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return new RenderTableCol(element);
+        return new RenderTableCol(element, std::move(style));
     case TABLE_CELL:
-        return new RenderTableCell(element);
+        return new RenderTableCell(element, std::move(style));
     case TABLE_CAPTION:
-        return new RenderTableCaption(element);
+        return new RenderTableCaption(element, std::move(style));
     case BOX:
     case INLINE_BOX:
-        return new RenderDeprecatedFlexibleBox(element);
+        return new RenderDeprecatedFlexibleBox(element, std::move(style));
     case FLEX:
     case INLINE_FLEX:
-        return new RenderFlexibleBox(element);
+        return new RenderFlexibleBox(element, std::move(style));
     case GRID:
     case INLINE_GRID:
-        return new RenderGrid(element);
+        return new RenderGrid(element, std::move(style));
     }
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -349,6 +348,37 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 }
 #endif
 
+void RenderElement::initializeStyle()
+{
+    styleWillChange(StyleDifferenceEqual, *style());
+
+    m_hasInitializedStyle = true;
+
+    updateFillImages(nullptr, m_style->backgroundLayers());
+    updateFillImages(nullptr, m_style->maskLayers());
+
+    updateImage(nullptr, m_style->borderImage().image());
+    updateImage(nullptr, m_style->maskBoxImage().image());
+
+#if ENABLE(CSS_SHAPES)
+    updateShapeImage(nullptr, m_style->shapeInside());
+    updateShapeImage(nullptr, m_style->shapeOutside());
+#endif
+
+    // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
+    // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
+    if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
+        view().setMaximalOutlineSize(m_style->outlineSize());
+
+    styleDidChange(StyleDifferenceEqual, nullptr);
+
+    // We shouldn't have any text (or other) children that need styleDidChange at this point.
+    ASSERT(!firstChild());
+
+    // It would be nice to assert that !parent() here, but some RenderLayer subrenderers
+    // have their parent set before getting a call to initializeStyle() :|
+}
+
 void RenderElement::setStyle(PassRef<RenderStyle> style)
 {
     if (m_style == &style.get()) {
@@ -363,7 +393,7 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
 
     StyleDifference diff = StyleDifferenceEqual;
     unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
-    if (m_style)
+    if (m_hasInitializedStyle)
         diff = m_style->diff(&style.get(), contextSensitiveProperties);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
@@ -795,7 +825,8 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
 
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    if (m_style) {
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
+    if (oldStyle) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
         bool visibilityChanged = m_style->visibility() != newStyle.visibility()
@@ -859,7 +890,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
 
     bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyle.hasFixedBackgroundImage();
-    bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
+    bool oldStyleSlowScroll = oldStyle && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
 
 #if USE(ACCELERATED_COMPOSITING)
     bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));

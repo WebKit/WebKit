@@ -56,8 +56,8 @@ struct SameSizeAsRenderTableCell : public RenderBlockFlow {
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);
 COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 8, CollapsedBorderValue_should_stay_small);
 
-RenderTableCell::RenderTableCell(Element& element)
-    : RenderBlockFlow(element)
+RenderTableCell::RenderTableCell(Element& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_intrinsicPaddingBefore(0)
@@ -68,8 +68,8 @@ RenderTableCell::RenderTableCell(Element& element)
     updateColAndRowSpanFlags();
 }
 
-RenderTableCell::RenderTableCell(Document& document)
-    : RenderBlockFlow(document)
+RenderTableCell::RenderTableCell(Document& document, PassRef<RenderStyle> style)
+    : RenderBlockFlow(document, std::move(style))
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_hasColSpan(false)
@@ -1377,9 +1377,9 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
 
 RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableCell* newCell = new RenderTableCell(parent->document());
-    newCell->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL));
-    return newCell;
+    auto cell = new RenderTableCell(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL));
+    cell->initializeStyle();
+    return cell;
 }
 
 } // namespace WebCore

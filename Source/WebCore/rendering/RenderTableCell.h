@@ -38,8 +38,8 @@ enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
 class RenderTableCell FINAL : public RenderBlockFlow {
 public:
-    explicit RenderTableCell(Element&);
-    explicit RenderTableCell(Document&);
+    RenderTableCell(Element&, PassRef<RenderStyle>);
+    RenderTableCell(Document&, PassRef<RenderStyle>);
     
     unsigned colSpan() const
     {

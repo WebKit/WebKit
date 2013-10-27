@@ -32,7 +32,7 @@ class SVGStopElement;
 // This class exists mostly so we can hear about gradient stop style changes
 class RenderSVGGradientStop FINAL : public RenderElement {
 public:
-    explicit RenderSVGGradientStop(SVGStopElement&);
+    RenderSVGGradientStop(SVGStopElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGGradientStop();
 
     virtual bool isSVGGradientStop() const { return true; }

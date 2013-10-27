@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document)
-    : RenderFlowThread(document)
+RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document& document, PassRef<RenderStyle> style)
+    : RenderFlowThread(document, std::move(style))
 {
     setFlowThreadState(InsideInFlowThread);
 }
@@ -86,8 +86,8 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     invalidateRegions();
 
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    firstSet = new RenderMultiColumnSet(*this);
-    firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
+    firstSet = new RenderMultiColumnSet(*this, RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
+    firstSet->initializeStyle();
     parentBlock->RenderBlock::addChild(firstSet);
 
     // Even though we aren't placed yet, we can go ahead and set up our size. At this point we're

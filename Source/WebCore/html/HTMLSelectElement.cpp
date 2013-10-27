@@ -343,11 +343,11 @@ bool HTMLSelectElement::canSelectAll() const
     return !usesMenuList();
 }
 
-RenderElement* HTMLSelectElement::createRenderer(RenderStyle&)
+RenderElement* HTMLSelectElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (usesMenuList())
-        return new RenderMenuList(*this);
-    return new RenderListBox(*this);
+        return new RenderMenuList(*this, std::move(style));
+    return new RenderListBox(*this, std::move(style));
 }
 
 bool HTMLSelectElement::childShouldCreateRenderer(const Node* child) const

@@ -1064,7 +1064,7 @@ private:
     void createReflection();
     void removeReflection();
 
-    void updateReflectionStyle();
+    PassRef<RenderStyle> createReflectionStyle();
     bool paintingInsideReflection() const { return m_paintingInsideReflection; }
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
 

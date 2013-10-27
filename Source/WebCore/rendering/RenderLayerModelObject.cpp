@@ -37,13 +37,13 @@ bool RenderLayerModelObject::s_hadLayer = false;
 bool RenderLayerModelObject::s_hadTransform = false;
 bool RenderLayerModelObject::s_layerWasSelfPainting = false;
 
-RenderLayerModelObject::RenderLayerModelObject(Element& element, unsigned baseTypeFlags)
-    : RenderElement(element, baseTypeFlags | RenderLayerModelObjectFlag)
+RenderLayerModelObject::RenderLayerModelObject(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderElement(element, std::move(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
 }
 
-RenderLayerModelObject::RenderLayerModelObject(Document& document, unsigned baseTypeFlags)
-    : RenderElement(document, baseTypeFlags | RenderLayerModelObjectFlag)
+RenderLayerModelObject::RenderLayerModelObject(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderElement(document, std::move(style), baseTypeFlags | RenderLayerModelObjectFlag)
 {
 }
 
@@ -95,7 +95,7 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
 
     // If our z-index changes value or our visibility changes,
     // we need to dirty our stacking context's z-order list.
-    RenderStyle* oldStyle = style();
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
     if (oldStyle) {
         if (parent()) {
             // Do a repaint with the old style first, e.g., for example if we go from

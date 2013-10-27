@@ -1117,8 +1117,8 @@ String listMarkerText(EListStyleType type, int value)
     return builder.toString();
 }
 
-RenderListMarker::RenderListMarker(RenderListItem& listItem)
-    : RenderBox(listItem.document(), 0)
+RenderListMarker::RenderListMarker(RenderListItem& listItem, PassRef<RenderStyle> style)
+    : RenderBox(listItem.document(), std::move(style), 0)
     , m_listItem(listItem)
 {
     // init RenderObject attributes

@@ -43,7 +43,7 @@ public:
 
 class RenderSVGResourceClipper FINAL : public RenderSVGResourceContainer {
 public:
-    explicit RenderSVGResourceClipper(SVGClipPathElement&);
+    RenderSVGResourceClipper(SVGClipPathElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceClipper();
 
     SVGClipPathElement& clipPathElement() const { return toSVGClipPathElement(nodeForNonAnonymous()); }

@@ -34,8 +34,8 @@ class RenderNamedFlowFragment;
 
 class RenderBlockFlow : public RenderBlock {
 public:
-    explicit RenderBlockFlow(Element&);
-    explicit RenderBlockFlow(Document&);
+    RenderBlockFlow(Element&, PassRef<RenderStyle>);
+    RenderBlockFlow(Document&, PassRef<RenderStyle>);
     virtual ~RenderBlockFlow();
         
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;

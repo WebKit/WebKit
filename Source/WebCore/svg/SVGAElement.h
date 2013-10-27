@@ -48,7 +48,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual RenderElement* createRenderer(RenderStyle&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual void defaultEventHandler(Event*);
     

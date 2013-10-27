@@ -781,11 +781,11 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderElement* HTMLElement::createRenderer(RenderStyle& style)
+RenderElement* HTMLElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (hasLocalName(wbrTag))
-        return new RenderLineBreak(*this);
-    return RenderElement::createFor(*this, style);
+        return new RenderLineBreak(*this, std::move(style));
+    return RenderElement::createFor(*this, std::move(style));
 }
 
 HTMLFormElement* HTMLElement::virtualForm() const

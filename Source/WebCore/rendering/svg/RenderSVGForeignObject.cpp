@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element)
-    : RenderSVGBlock(element)
+RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element, PassRef<RenderStyle> style)
+    : RenderSVGBlock(element, std::move(style))
     , m_needsTransformUpdate(true)
 {
 }

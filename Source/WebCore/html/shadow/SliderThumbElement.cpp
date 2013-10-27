@@ -72,8 +72,8 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 
 // --------------------------------
 
-RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element)
-    : RenderBlockFlow(element)
+RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
 {
 }
 
@@ -104,8 +104,8 @@ bool RenderSliderThumb::isSliderThumb() const
 // http://webkit.org/b/62535
 class RenderSliderContainer : public RenderFlexibleBox {
 public:
-    RenderSliderContainer(SliderContainerElement& element)
-        : RenderFlexibleBox(element)
+    RenderSliderContainer(SliderContainerElement& element, PassRef<RenderStyle> style)
+        : RenderFlexibleBox(element, std::move(style))
     {
     }
 
@@ -203,9 +203,9 @@ void SliderThumbElement::setPositionFromValue()
         renderer()->setNeedsLayout();
 }
 
-RenderElement* SliderThumbElement::createRenderer(RenderStyle&)
+RenderElement* SliderThumbElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSliderThumb(*this);
+    return new RenderSliderThumb(*this, std::move(style));
 }
 
 bool SliderThumbElement::isDisabledFormControl() const
@@ -442,9 +442,9 @@ PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document& docu
     return adoptRef(new SliderContainerElement(document));
 }
 
-RenderElement* SliderContainerElement::createRenderer(RenderStyle&)
+RenderElement* SliderContainerElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSliderContainer(*this);
+    return new RenderSliderContainer(*this, std::move(style));
 }
 
 const AtomicString& SliderContainerElement::shadowPseudoId() const

@@ -36,7 +36,7 @@ namespace WebCore {
     
 class RenderMathMLFenced FINAL : public RenderMathMLRow {
 public:
-    explicit RenderMathMLFenced(MathMLInlineContainerElement&);
+    RenderMathMLFenced(MathMLInlineContainerElement&, PassRef<RenderStyle>);
     MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     
 private:

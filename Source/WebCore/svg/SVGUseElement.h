@@ -69,7 +69,7 @@ private:
 
     virtual bool willRecalcStyle(Style::Change);
 
-    virtual RenderElement* createRenderer(RenderStyle&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual void toClipPath(Path&);
 
     void clearResourceReferences();

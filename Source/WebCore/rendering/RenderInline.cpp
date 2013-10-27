@@ -50,15 +50,15 @@ using namespace std;
 
 namespace WebCore {
 
-RenderInline::RenderInline(Element& element)
-    : RenderBoxModelObject(element, RenderInlineFlag)
+RenderInline::RenderInline(Element& element, PassRef<RenderStyle> style)
+    : RenderBoxModelObject(element, std::move(style), RenderInlineFlag)
     , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
 }
 
-RenderInline::RenderInline(Document& document)
-    : RenderBoxModelObject(document, RenderInlineFlag)
+RenderInline::RenderInline(Document& document, PassRef<RenderStyle> style)
+    : RenderBoxModelObject(document, std::move(style), RenderInlineFlag)
     , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
@@ -319,8 +319,8 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         if (auto positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle.get().setPosition(positionedAncestor->style()->position());
 
-        RenderBlock* newBox = new RenderBlockFlow(document());
-        newBox->setStyle(std::move(newStyle));
+        RenderBlock* newBox = new RenderBlockFlow(document(), std::move(newStyle));
+        newBox->initializeStyle();
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);
 
@@ -335,8 +335,8 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderInline* RenderInline::clone() const
 {
-    RenderInline* cloneInline = new RenderInline(*element());
-    cloneInline->setStyle(*style());
+    RenderInline* cloneInline = new RenderInline(*element(), *style());
+    cloneInline->initializeStyle();
     cloneInline->setFlowThreadState(flowThreadState());
     return cloneInline;
 }

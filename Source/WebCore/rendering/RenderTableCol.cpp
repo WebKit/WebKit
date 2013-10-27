@@ -35,8 +35,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableCol::RenderTableCol(Element& element)
-    : RenderBox(element, 0)
+RenderTableCol::RenderTableCol(Element& element, PassRef<RenderStyle> style)
+    : RenderBox(element, std::move(style), 0)
     , m_span(1)
 {
     // init RenderObject attributes
@@ -63,8 +63,8 @@ void RenderTableCol::updateFromElement()
         HTMLTableColElement& tc = static_cast<HTMLTableColElement&>(element());
         m_span = tc.span();
     } else
-        m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
-    if (m_span != oldSpan && style() && parent())
+        m_span = !(hasInitializedStyle() && style()->display() == TABLE_COLUMN_GROUP);
+    if (m_span != oldSpan && hasInitializedStyle() && parent())
         setNeedsLayoutAndPrefWidthsRecalc();
 }
 

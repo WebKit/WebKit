@@ -60,7 +60,7 @@ typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
 
 class RenderFlowThread: public RenderBlockFlow {
 public:
-    explicit RenderFlowThread(Document&);
+    RenderFlowThread(Document&, PassRef<RenderStyle>);
     virtual ~RenderFlowThread() { };
     
     virtual bool isRenderFlowThread() const OVERRIDE FINAL { return true; }

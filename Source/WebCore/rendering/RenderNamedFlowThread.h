@@ -45,7 +45,7 @@ typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread FINAL : public RenderFlowThread {
 public:
-    explicit RenderNamedFlowThread(Document&, PassRefPtr<WebKitNamedFlow>);
+    RenderNamedFlowThread(Document&, PassRef<RenderStyle>, PassRefPtr<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();
 
     const AtomicString& flowThreadName() const;

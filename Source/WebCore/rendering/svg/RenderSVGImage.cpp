@@ -48,8 +48,8 @@
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElement& element)
-    : RenderSVGModelObject(element)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element, PassRef<RenderStyle> style)
+    : RenderSVGModelObject(element, std::move(style))
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(RenderImageResource::create())

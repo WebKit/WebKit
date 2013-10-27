@@ -96,8 +96,8 @@ public:
 #endif
 
 protected:
-    RenderBlock(Element&, unsigned baseTypeFlags);
-    RenderBlock(Document&, unsigned baseTypeFlags);
+    RenderBlock(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderBlock(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
     virtual ~RenderBlock();
 
 public:

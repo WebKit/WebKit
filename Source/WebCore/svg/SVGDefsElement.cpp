@@ -53,9 +53,9 @@ bool SVGDefsElement::isValid() const
     return SVGTests::isValid();
 }
 
-RenderElement* SVGDefsElement::createRenderer(RenderStyle&)
+RenderElement* SVGDefsElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGHiddenContainer(*this);
+    return new RenderSVGHiddenContainer(*this, std::move(style));
 }
 
 }

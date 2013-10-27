@@ -495,7 +495,7 @@ PassRef<RenderStyle> AnimationController::updateAnimations(RenderElement& render
     if (renderer.document().inPageCache())
         return newStyle;
 
-    RenderStyle* oldStyle = renderer.style();
+    RenderStyle* oldStyle = renderer.hasInitializedStyle() ? renderer.style() : nullptr;
 
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.get().animations() && !newStyle.get().transitions()))
         return newStyle;

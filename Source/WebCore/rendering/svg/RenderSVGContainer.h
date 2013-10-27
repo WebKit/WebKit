@@ -42,7 +42,7 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
-    explicit RenderSVGContainer(SVGElement&);
+    RenderSVGContainer(SVGElement&, PassRef<RenderStyle>);
 
     virtual bool isSVGContainer() const OVERRIDE FINAL { return true; }
     virtual const char* renderName() const OVERRIDE { return "RenderSVGContainer"; }

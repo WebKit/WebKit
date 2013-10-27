@@ -42,8 +42,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceMasker::s_resourceType = MaskerResourceType;
 
-RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element)
-    : RenderSVGResourceContainer(element)
+RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, PassRef<RenderStyle> style)
+    : RenderSVGResourceContainer(element, std::move(style))
 {
 }
 

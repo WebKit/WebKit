@@ -101,9 +101,9 @@ bool SVGSymbolElement::selfHasRelativeLengths() const
     return hasAttribute(SVGNames::viewBoxAttr);
 }
 
-RenderElement* SVGSymbolElement::createRenderer(RenderStyle&)
+RenderElement* SVGSymbolElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGHiddenContainer(*this);
+    return new RenderSVGHiddenContainer(*this, std::move(style));
 }
 
 }

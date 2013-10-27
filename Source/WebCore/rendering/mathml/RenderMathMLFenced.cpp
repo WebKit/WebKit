@@ -45,8 +45,8 @@ enum Braces { OpeningBraceChar = 0x28, ClosingBraceChar = 0x29 };
 static const float gSeparatorMarginEndEms = 0.25f;
 static const float gFenceMarginEms = 0.1f;
 
-RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element)
-    : RenderMathMLRow(element)
+RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, PassRef<RenderStyle> style)
+    : RenderMathMLRow(element, std::move(style))
     , m_open(OpeningBraceChar)
     , m_close(ClosingBraceChar)
     , m_closeFenceRenderer(0)
@@ -89,9 +89,9 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, Rend
     newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
         newStyle.get().setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
-    RenderMathMLOperator* newOperator = new RenderMathMLOperator(element(), uChar);
+    RenderMathMLOperator* newOperator = new RenderMathMLOperator(element(), std::move(newStyle), uChar);
     newOperator->setOperatorType(operatorType);
-    newOperator->setStyle(std::move(newStyle));
+    newOperator->initializeStyle();
     return newOperator;
 }
 

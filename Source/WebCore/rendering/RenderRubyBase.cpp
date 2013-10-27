@@ -38,8 +38,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyBase::RenderRubyBase(Document& document)
-    : RenderBlockFlow(document)
+RenderRubyBase::RenderRubyBase(Document& document, PassRef<RenderStyle> style)
+    : RenderBlockFlow(document, std::move(style))
 {
     setInline(false);
 }

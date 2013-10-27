@@ -194,8 +194,8 @@ public:
 #endif
 
 protected:
-    RenderBoxModelObject(Element&, unsigned baseTypeFlags);
-    RenderBoxModelObject(Document&, unsigned baseTypeFlags);
+    RenderBoxModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderBoxModelObject(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
     virtual void willBeDestroyed() OVERRIDE;
 

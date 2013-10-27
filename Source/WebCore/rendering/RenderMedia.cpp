@@ -34,14 +34,14 @@
 
 namespace WebCore {
 
-RenderMedia::RenderMedia(HTMLMediaElement& element)
-    : RenderImage(element)
+RenderMedia::RenderMedia(HTMLMediaElement& element, PassRef<RenderStyle> style)
+    : RenderImage(element, std::move(style))
 {
     setImageResource(RenderImageResource::create());
 }
 
-RenderMedia::RenderMedia(HTMLMediaElement& element, const IntSize& intrinsicSize)
-    : RenderImage(element)
+RenderMedia::RenderMedia(HTMLMediaElement& element, PassRef<RenderStyle> style, const IntSize& intrinsicSize)
+    : RenderImage(element, std::move(style))
 {
     setImageResource(RenderImageResource::create());
     setIntrinsicSize(intrinsicSize);

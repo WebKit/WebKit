@@ -95,8 +95,8 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
         && (documentElementRenderer == bodyElementRenderer->parent());
 }
 
-RenderBox::RenderBox(Element& element, unsigned baseTypeFlags)
-    : RenderBoxModelObject(element, baseTypeFlags)
+RenderBox::RenderBox(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderBoxModelObject(element, std::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
@@ -104,8 +104,8 @@ RenderBox::RenderBox(Element& element, unsigned baseTypeFlags)
     setIsBox();
 }
 
-RenderBox::RenderBox(Document& document, unsigned baseTypeFlags)
-    : RenderBoxModelObject(document, baseTypeFlags)
+RenderBox::RenderBox(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderBoxModelObject(document, std::move(style), baseTypeFlags)
     , m_minPreferredLogicalWidth(-1)
     , m_maxPreferredLogicalWidth(-1)
     , m_inlineBoxWrapper(0)
@@ -268,7 +268,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
 {
     s_hadOverflowClip = hasOverflowClip();
 
-    RenderStyle* oldStyle = style();
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
     if (oldStyle) {
         // The background of the root element or the body element could propagate up to
         // the canvas. Issue full repaint, when our style changes substantially.

@@ -54,9 +54,9 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
     return isURLAllowed();
 }
 
-RenderElement* HTMLFrameElement::createRenderer(RenderStyle&)
+RenderElement* HTMLFrameElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderFrame(*this);
+    return new RenderFrame(*this, std::move(style));
 }
 
 bool HTMLFrameElement::noResize() const

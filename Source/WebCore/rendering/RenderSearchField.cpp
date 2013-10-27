@@ -52,8 +52,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderSearchField::RenderSearchField(HTMLInputElement& element)
-    : RenderTextControlSingleLine(element)
+RenderSearchField::RenderSearchField(HTMLInputElement& element, PassRef<RenderStyle> style)
+    : RenderTextControlSingleLine(element, std::move(style))
     , m_searchPopupIsVisible(false)
     , m_searchPopup(0)
 {

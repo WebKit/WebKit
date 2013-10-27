@@ -69,9 +69,9 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 }
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-RenderElement* HTMLVideoElement::createRenderer(RenderStyle&)
+RenderElement* HTMLVideoElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderVideo(*this);
+    return new RenderVideo(*this, std::move(style));
 }
 #endif
 

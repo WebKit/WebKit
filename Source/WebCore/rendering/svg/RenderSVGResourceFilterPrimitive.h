@@ -39,7 +39,7 @@ class SVGFilterPrimitiveStandardAttributes;
 
 class RenderSVGResourceFilterPrimitive FINAL : public RenderSVGHiddenContainer {
 public:
-    explicit RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&);
+    RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, PassRef<RenderStyle>);
     SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle*);

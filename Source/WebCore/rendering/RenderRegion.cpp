@@ -48,8 +48,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Element& element, RenderFlowThread* flowThread)
-    : RenderBlockFlow(element)
+RenderRegion::RenderRegion(Element& element, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
+    : RenderBlockFlow(element, std::move(style))
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(0)
     , m_isValid(false)
@@ -60,8 +60,8 @@ RenderRegion::RenderRegion(Element& element, RenderFlowThread* flowThread)
 {
 }
 
-RenderRegion::RenderRegion(Document& document, RenderFlowThread* flowThread)
-    : RenderBlockFlow(document)
+RenderRegion::RenderRegion(Document& document, PassRef<RenderStyle> style, RenderFlowThread* flowThread)
+    : RenderBlockFlow(document, std::move(style))
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(0)
     , m_isValid(false)

@@ -45,7 +45,7 @@ public:
 
 class RenderSVGResourcePattern FINAL : public RenderSVGResourceContainer {
 public:
-    explicit RenderSVGResourcePattern(SVGPatternElement&);
+    RenderSVGResourcePattern(SVGPatternElement&, PassRef<RenderStyle>);
     SVGPatternElement& patternElement() const;
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);

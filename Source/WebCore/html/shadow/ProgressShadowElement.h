@@ -58,7 +58,7 @@ public:
 private:
     ProgressInnerElement(Document&);
 
-    virtual RenderElement* createRenderer(RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&);
 };
 

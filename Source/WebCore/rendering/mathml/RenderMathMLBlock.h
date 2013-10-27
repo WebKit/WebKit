@@ -41,8 +41,8 @@ class RenderMathMLOperator;
 
 class RenderMathMLBlock : public RenderFlexibleBox {
 public:
-    explicit RenderMathMLBlock(Element&);
-    explicit RenderMathMLBlock(Document&);
+    RenderMathMLBlock(Element&, PassRef<RenderStyle>);
+    RenderMathMLBlock(Document&, PassRef<RenderStyle>);
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     
@@ -89,8 +89,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())
 
 class RenderMathMLTable FINAL : public RenderTable {
 public:
-    explicit RenderMathMLTable(Element& element)
-        : RenderTable(element)
+    explicit RenderMathMLTable(Element& element, PassRef<RenderStyle> style)
+        : RenderTable(element, std::move(style))
     {
     }
     

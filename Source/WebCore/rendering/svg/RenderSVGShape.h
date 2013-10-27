@@ -67,8 +67,8 @@ private:
 
 class RenderSVGShape : public RenderSVGModelObject {
 public:
-    explicit RenderSVGShape(SVGGraphicsElement&);
-    RenderSVGShape(SVGGraphicsElement&, Path*, bool);
+    RenderSVGShape(SVGGraphicsElement&, PassRef<RenderStyle>);
+    RenderSVGShape(SVGGraphicsElement&, PassRef<RenderStyle>, Path*, bool);
     virtual ~RenderSVGShape();
 
     SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(RenderSVGModelObject::element()); }

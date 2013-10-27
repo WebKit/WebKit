@@ -53,8 +53,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Element& element)
-    : RenderReplaced(element, IntSize())
+RenderImage::RenderImage(Element& element, PassRef<RenderStyle> style)
+    : RenderReplaced(element, std::move(style), IntSize())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)
@@ -62,8 +62,8 @@ RenderImage::RenderImage(Element& element)
     updateAltText();
 }
 
-RenderImage::RenderImage(Document& document)
-    : RenderReplaced(document, IntSize())
+RenderImage::RenderImage(Document& document, PassRef<RenderStyle> style)
+    : RenderReplaced(document, std::move(style), IntSize())
     , m_needsToSetSizeForAltText(false)
     , m_didIncrementVisuallyNonEmptyPixelCount(false)
     , m_isGeneratedContent(false)

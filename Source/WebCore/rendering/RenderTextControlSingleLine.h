@@ -32,7 +32,7 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
-    explicit RenderTextControlSingleLine(HTMLInputElement&);
+    RenderTextControlSingleLine(HTMLInputElement&, PassRef<RenderStyle>);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
     virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const OVERRIDE;
@@ -104,8 +104,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControlSingleLine, isTextField())
 
 class RenderTextControlInnerBlock FINAL : public RenderBlockFlow {
 public:
-    RenderTextControlInnerBlock(Element& element)
-        : RenderBlockFlow(element)
+    RenderTextControlInnerBlock(Element& element, PassRef<RenderStyle> style)
+        : RenderBlockFlow(element, std::move(style))
     {
     }
 

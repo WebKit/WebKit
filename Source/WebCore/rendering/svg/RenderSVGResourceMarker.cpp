@@ -37,8 +37,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceMarker::s_resourceType = MarkerResourceType;
 
-RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element)
-    : RenderSVGResourceContainer(element)
+RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element, PassRef<RenderStyle> style)
+    : RenderSVGResourceContainer(element, std::move(style))
 {
 }
 

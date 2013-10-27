@@ -35,7 +35,7 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton FINAL : public RenderFlexibleBox {
 public:
-    explicit RenderButton(HTMLFormControlElement&);
+    RenderButton(HTMLFormControlElement&, PassRef<RenderStyle>);
     virtual ~RenderButton();
 
     HTMLFormControlElement& formControlElement() const;

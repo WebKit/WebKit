@@ -152,8 +152,8 @@ public:
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
 
 protected:
-    RenderRegion(Element&, RenderFlowThread*);
-    RenderRegion(Document&, RenderFlowThread*);
+    RenderRegion(Element&, PassRef<RenderStyle>, RenderFlowThread*);
+    RenderRegion(Document&, PassRef<RenderStyle>, RenderFlowThread*);
 
     RenderOverflow* ensureOverflowForBox(const RenderBox*);
 

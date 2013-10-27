@@ -36,8 +36,8 @@ namespace WebCore {
     
 class RenderMathMLOperator FINAL : public RenderMathMLBlock {
 public:
-    RenderMathMLOperator(MathMLElement&);
-    RenderMathMLOperator(MathMLElement&, UChar operatorChar);
+    RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>);
+    RenderMathMLOperator(MathMLElement&, PassRef<RenderStyle>, UChar operatorChar);
 
     MathMLElement& element() { return toMathMLElement(nodeForNonAnonymous()); }
 

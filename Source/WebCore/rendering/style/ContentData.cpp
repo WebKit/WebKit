@@ -49,7 +49,8 @@ std::unique_ptr<ContentData> ContentData::clone() const
 
 RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderImage* image = new RenderImage(document);
+    // FIXME: We should find a way to avoid setting the style twice here.
+    RenderImage* image = new RenderImage(document, pseudoStyle);
     image->setPseudoStyle(&pseudoStyle);
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(*m_image));

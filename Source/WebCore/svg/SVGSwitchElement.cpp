@@ -63,9 +63,9 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node* child) const
     return false;
 }
 
-RenderElement* SVGSwitchElement::createRenderer(RenderStyle&)
+RenderElement* SVGSwitchElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGTransformableContainer(*this);
+    return new RenderSVGTransformableContainer(*this, std::move(style));
 }
 
 }

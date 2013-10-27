@@ -1348,9 +1348,9 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE;
 }
 
-RenderElement* Element::createRenderer(RenderStyle& style)
+RenderElement* Element::createRenderer(PassRef<RenderStyle> style)
 {
-    return RenderElement::createFor(*this, style);
+    return RenderElement::createFor(*this, std::move(style));
 }
 
 Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertionPoint)

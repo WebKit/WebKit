@@ -139,12 +139,12 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-RenderElement* SVGAElement::createRenderer(RenderStyle&)
+RenderElement* SVGAElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (parentNode() && parentNode()->isSVGElement() && toSVGElement(parentNode())->isTextContent())
-        return new RenderSVGInline(*this);
+        return new RenderSVGInline(*this, std::move(style));
 
-    return new RenderSVGTransformableContainer(*this);
+    return new RenderSVGTransformableContainer(*this, std::move(style));
 }
 
 void SVGAElement::defaultEventHandler(Event* event)

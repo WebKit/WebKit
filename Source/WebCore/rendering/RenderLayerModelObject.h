@@ -50,8 +50,8 @@ public:
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
 protected:
-    RenderLayerModelObject(Element&, unsigned baseTypeFlags);
-    RenderLayerModelObject(Document&, unsigned baseTypeFlags);
+    RenderLayerModelObject(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderLayerModelObject(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
     void createLayer();
 

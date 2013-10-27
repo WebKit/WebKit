@@ -82,9 +82,9 @@ bool SVGAltGlyphElement::childShouldCreateRenderer(const Node* child) const
     return false;
 }
 
-RenderElement* SVGAltGlyphElement::createRenderer(RenderStyle&)
+RenderElement* SVGAltGlyphElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGTSpan(*this);
+    return new RenderSVGTSpan(*this, std::move(style));
 }
 
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const

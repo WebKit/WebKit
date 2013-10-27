@@ -37,7 +37,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual RenderElement* createRenderer(RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
     virtual void updateWidget(PluginCreationOption) OVERRIDE;

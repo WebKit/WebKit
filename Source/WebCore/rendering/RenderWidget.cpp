@@ -88,8 +88,8 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(HTMLFrameOwnerElement& element)
-    : RenderReplaced(element)
+RenderWidget::RenderWidget(HTMLFrameOwnerElement& element, PassRef<RenderStyle> style)
+    : RenderReplaced(element, std::move(style))
     , m_weakPtrFactory(this)
 {
     setInline(false);
@@ -190,7 +190,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         // If we've already received a layout, apply the calculated space to the
         // widget immediately, but we have to have really been fully constructed (with a non-null
         // style pointer).
-        if (style()) {
+        if (hasInitializedStyle()) {
             if (!needsLayout()) {
                 WeakPtr<RenderWidget> weakThis = createWeakPtr();
                 updateWidgetGeometry();

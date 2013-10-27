@@ -50,8 +50,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(Element& element)
-    : RenderBlock(element, 0)
+RenderTable::RenderTable(Element& element, PassRef<RenderStyle> style)
+    : RenderBlock(element, std::move(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
     , m_firstBody(nullptr)
@@ -70,8 +70,8 @@ RenderTable::RenderTable(Element& element)
     m_columnPos.fill(0, 1);
 }
 
-RenderTable::RenderTable(Document& document)
-    : RenderBlock(document, 0)
+RenderTable::RenderTable(Document& document, PassRef<RenderStyle> style)
+    : RenderBlock(document, std::move(style), 0)
     , m_head(nullptr)
     , m_foot(nullptr)
     , m_firstBody(nullptr)
@@ -1431,9 +1431,9 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTable* newTable = new RenderTable(parent->document());
-    newTable->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE));
-    return newTable;
+    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE));
+    table->initializeStyle();
+    return table;
 }
 
 const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell* cell) const

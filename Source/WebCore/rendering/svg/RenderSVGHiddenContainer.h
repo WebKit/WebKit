@@ -31,7 +31,7 @@ class SVGElement;
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class RenderSVGHiddenContainer : public RenderSVGContainer {
 public:
-    explicit RenderSVGHiddenContainer(SVGElement&);
+    RenderSVGHiddenContainer(SVGElement&, PassRef<RenderStyle>);
 
 protected:
     virtual void layout() OVERRIDE;

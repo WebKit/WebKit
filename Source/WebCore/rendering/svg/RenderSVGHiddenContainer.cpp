@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element)
-    : RenderSVGContainer(element)
+RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement& element, PassRef<RenderStyle> style)
+    : RenderSVGContainer(element, std::move(style))
 {
 }
 

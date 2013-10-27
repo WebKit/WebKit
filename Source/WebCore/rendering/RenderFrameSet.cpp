@@ -44,8 +44,8 @@
 
 namespace WebCore {
 
-RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet)
-    : RenderBox(frameSet, 0)
+RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, PassRef<RenderStyle> style)
+    : RenderBox(frameSet, std::move(style), 0)
     , m_isResizing(false)
     , m_isChildResizing(false)
 {

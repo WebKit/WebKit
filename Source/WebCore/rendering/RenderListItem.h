@@ -32,7 +32,7 @@ class RenderListMarker;
 
 class RenderListItem FINAL : public RenderBlockFlow {
 public:
-    explicit RenderListItem(Element&);
+    RenderListItem(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }

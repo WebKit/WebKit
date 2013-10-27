@@ -36,7 +36,7 @@ namespace WebCore {
 
 class RenderMathMLFraction FINAL : public RenderMathMLBlock {
 public:
-    explicit RenderMathMLFraction(MathMLInlineContainerElement&);
+    RenderMathMLFraction(MathMLInlineContainerElement&, PassRef<RenderStyle>);
 
     MathMLInlineContainerElement& element() { return static_cast<MathMLInlineContainerElement&>(nodeForNonAnonymous()); }
     float lineThickness() const { return m_lineThickness; }

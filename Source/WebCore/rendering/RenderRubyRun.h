@@ -43,7 +43,7 @@ class RenderRubyText;
 
 class RenderRubyRun FINAL : public RenderBlockFlow {
 public:
-    explicit RenderRubyRun(Document&);
+    RenderRubyRun(Document&, PassRef<RenderStyle>);
     virtual ~RenderRubyRun();
 
     bool hasRubyText() const;

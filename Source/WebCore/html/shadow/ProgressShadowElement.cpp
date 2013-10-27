@@ -61,9 +61,9 @@ ProgressInnerElement::ProgressInnerElement(Document& document)
 {
 }
 
-RenderElement* ProgressInnerElement::createRenderer(RenderStyle&)
+RenderElement* ProgressInnerElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderProgress(*this);
+    return new RenderProgress(*this, std::move(style));
 }
 
 bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)

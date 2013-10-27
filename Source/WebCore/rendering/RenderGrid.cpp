@@ -141,8 +141,8 @@ private:
     size_t m_childIndex;
 };
 
-RenderGrid::RenderGrid(Element& element)
-    : RenderBlock(element, 0)
+RenderGrid::RenderGrid(Element& element, PassRef<RenderStyle> style)
+    : RenderBlock(element, std::move(style), 0)
 {
     // All of our children must be block level.
     setChildrenInline(false);

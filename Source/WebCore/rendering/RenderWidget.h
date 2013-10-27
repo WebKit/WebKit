@@ -81,7 +81,7 @@ public:
     virtual void viewCleared() { }
 
 protected:
-    explicit RenderWidget(HTMLFrameOwnerElement&);
+    RenderWidget(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
     virtual void layout() OVERRIDE;

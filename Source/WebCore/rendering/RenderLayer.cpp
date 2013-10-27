@@ -6209,8 +6209,9 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     else if (hasReflection()) {
         if (!m_reflection)
             createReflection();
+        else
+            m_reflection->setStyle(createReflectionStyle());
         FeatureObserver::observe(&renderer().document(), FeatureObserver::Reflection);
-        updateReflectionStyle();
     }
     
     // FIXME: Need to detect a swap from custom to native scrollbars (and vice versa).
@@ -6296,10 +6297,11 @@ void RenderLayer::updateScrollCornerStyle()
     RefPtr<RenderStyle> corner = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (corner) {
         if (!m_scrollCorner) {
-            m_scrollCorner = new RenderScrollbarPart(renderer().document());
+            m_scrollCorner = new RenderScrollbarPart(renderer().document(), corner.releaseNonNull());
             m_scrollCorner->setParent(&renderer());
-        }
-        m_scrollCorner->setStyle(corner.releaseNonNull());
+            m_scrollCorner->initializeStyle();
+        } else
+            m_scrollCorner->setStyle(corner.releaseNonNull());
     } else if (m_scrollCorner) {
         m_scrollCorner->destroy();
         m_scrollCorner = 0;
@@ -6312,10 +6314,11 @@ void RenderLayer::updateResizerStyle()
     RefPtr<RenderStyle> resizer = renderer().hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (resizer) {
         if (!m_resizer) {
-            m_resizer = new RenderScrollbarPart(renderer().document());
+            m_resizer = new RenderScrollbarPart(renderer().document(), resizer.releaseNonNull());
             m_resizer->setParent(&renderer());
-        }
-        m_resizer->setStyle(resizer.releaseNonNull());
+            m_resizer->initializeStyle();
+        } else
+            m_resizer->setStyle(resizer.releaseNonNull());
     } else if (m_resizer) {
         m_resizer->destroy();
         m_resizer = 0;
@@ -6330,8 +6333,9 @@ RenderLayer* RenderLayer::reflectionLayer() const
 void RenderLayer::createReflection()
 {
     ASSERT(!m_reflection);
-    m_reflection = new RenderReplica(renderer().document());
+    m_reflection = new RenderReplica(renderer().document(), createReflectionStyle());
     m_reflection->setParent(&renderer()); // We create a 1-way connection.
+    m_reflection->initializeStyle();
 }
 
 void RenderLayer::removeReflection()
@@ -6344,7 +6348,7 @@ void RenderLayer::removeReflection()
     m_reflection = 0;
 }
 
-void RenderLayer::updateReflectionStyle()
+PassRef<RenderStyle> RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
     newStyle.get().inheritFrom(renderer().style());
@@ -6377,8 +6381,8 @@ void RenderLayer::updateReflectionStyle()
 
     // Map in our mask.
     newStyle.get().setMaskBoxImage(renderer().style()->boxReflect()->mask());
-    
-    m_reflection->setStyle(std::move(newStyle));
+
+    return newStyle;
 }
 
 #if ENABLE(CSS_SHADERS)

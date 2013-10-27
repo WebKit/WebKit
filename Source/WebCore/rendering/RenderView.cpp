@@ -56,8 +56,8 @@
 
 namespace WebCore {
 
-RenderView::RenderView(Document& document)
-    : RenderBlockFlow(document)
+RenderView::RenderView(Document& document, PassRef<RenderStyle> style)
+    : RenderBlockFlow(document, std::move(style))
     , m_frameView(*document.view())
     , m_selectionStart(0)
     , m_selectionEnd(0)

@@ -120,8 +120,8 @@ private:
     int m_ordinalIteration;
 };
 
-RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element)
-    : RenderBlock(element, 0)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, PassRef<RenderStyle> style)
+    : RenderBlock(element, std::move(style), 0)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;
@@ -170,7 +170,7 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
 
 void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderStyle* oldStyle = style();
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
     if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle.lineClamp().isNone())
         clearLineClamp();
 

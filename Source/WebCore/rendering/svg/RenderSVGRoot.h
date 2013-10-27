@@ -36,7 +36,7 @@ class SVGSVGElement;
 
 class RenderSVGRoot FINAL : public RenderReplaced {
 public:
-    explicit RenderSVGRoot(SVGSVGElement&);
+    RenderSVGRoot(SVGSVGElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGRoot();
 
     SVGSVGElement& svgSVGElement() const;

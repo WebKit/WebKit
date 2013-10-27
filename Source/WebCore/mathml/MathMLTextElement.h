@@ -40,7 +40,7 @@ public:
 private:
     MathMLTextElement(const QualifiedName& tagName, Document&);
 
-    virtual RenderElement* createRenderer(RenderStyle&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 };
     

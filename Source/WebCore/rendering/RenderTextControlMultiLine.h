@@ -30,7 +30,7 @@ class HTMLTextAreaElement;
 
 class RenderTextControlMultiLine FINAL : public RenderTextControl {
 public:
-    explicit RenderTextControlMultiLine(HTMLTextAreaElement&);
+    RenderTextControlMultiLine(HTMLTextAreaElement&, PassRef<RenderStyle>);
     virtual ~RenderTextControlMultiLine();
 
     HTMLTextAreaElement& textAreaElement() const;

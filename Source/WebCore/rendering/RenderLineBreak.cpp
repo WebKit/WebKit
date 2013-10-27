@@ -32,8 +32,8 @@ namespace WebCore {
 
 static const int invalidLineHeight = -1;
 
-RenderLineBreak::RenderLineBreak(HTMLElement& element)
-    : RenderBoxModelObject(element, 0)
+RenderLineBreak::RenderLineBreak(HTMLElement& element, PassRef<RenderStyle> style)
+    : RenderBoxModelObject(element, std::move(style), 0)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
     , m_isWBR(element.hasTagName(HTMLNames::wbrTag))

@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element)
-    : RenderSVGShape(element)
+RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, PassRef<RenderStyle> style)
+    : RenderSVGShape(element, std::move(style))
 {
 }
 

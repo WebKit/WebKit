@@ -54,8 +54,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderMenuList::RenderMenuList(HTMLSelectElement& element)
-    : RenderFlexibleBox(element)
+RenderMenuList::RenderMenuList(HTMLSelectElement& element, PassRef<RenderStyle> style)
+    : RenderFlexibleBox(element, std::move(style))
     , m_buttonText(nullptr)
     , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)

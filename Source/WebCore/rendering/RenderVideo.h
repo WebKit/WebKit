@@ -36,7 +36,7 @@ class HTMLVideoElement;
 
 class RenderVideo FINAL : public RenderMedia {
 public:
-    explicit RenderVideo(HTMLVideoElement&);
+    RenderVideo(HTMLVideoElement&, PassRef<RenderStyle>);
     virtual ~RenderVideo();
 
     HTMLVideoElement& videoElement() const;

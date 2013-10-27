@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
 public:
-    explicit RenderSVGInline(SVGGraphicsElement&);
+    RenderSVGInline(SVGGraphicsElement&, PassRef<RenderStyle>);
 
     SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(nodeForNonAnonymous()); }
 

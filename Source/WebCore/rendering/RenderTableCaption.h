@@ -28,7 +28,7 @@ class RenderTable;
 
 class RenderTableCaption FINAL : public RenderBlockFlow {
 public:
-    explicit RenderTableCaption(Element&);
+    RenderTableCaption(Element&, PassRef<RenderStyle>);
     virtual ~RenderTableCaption();
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }

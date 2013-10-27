@@ -86,14 +86,14 @@ RenderBlockFlow::MarginInfo::MarginInfo(RenderBlockFlow& block, LayoutUnit befor
     m_negativeMargin = (m_canCollapseMarginBeforeWithChildren && !block.mustDiscardMarginBefore()) ? block.maxNegativeMarginBefore() : LayoutUnit();
 }
 
-RenderBlockFlow::RenderBlockFlow(Element& element)
-    : RenderBlock(element, RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Element& element, PassRef<RenderStyle> style)
+    : RenderBlock(element, std::move(style), RenderBlockFlowFlag)
 {
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Document& document)
-    : RenderBlock(document, RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Document& document, PassRef<RenderStyle> style)
+    : RenderBlock(document, std::move(style), RenderBlockFlowFlag)
 {
     setChildrenInline(true);
 }
@@ -1627,8 +1627,8 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         parentBlock->markSiblingsWithFloatsForLayout();
     }
 
-    if (renderNamedFlowFragment())
-        renderNamedFlowFragment()->setStyleForNamedFlowFragment(style());
+    if (auto fragment = renderNamedFlowFragment())
+        fragment->setStyle(RenderNamedFlowFragment::createStyle(*style()));
 
     if (diff >= StyleDifferenceRepaint)
         invalidateLineLayoutPath();
@@ -1636,7 +1636,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
 void RenderBlockFlow::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderStyle* oldStyle = style();
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
     s_canPropagateFloatIntoSibling = oldStyle ? !isFloatingOrOutOfFlowPositioned() && !avoidsFloats() : false;
 
     if (oldStyle && parent() && diff == StyleDifferenceLayout && oldStyle->position() != newStyle.position()) {
@@ -2639,8 +2639,8 @@ void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
         return;
 
     if (style()->isDisplayRegionType() && style()->hasFlowFrom()) {
-        RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document());
-        flowFragment->setStyleForNamedFlowFragment(style());
+        RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document(), RenderNamedFlowFragment::createStyle(*style()));
+        flowFragment->initializeStyle();
         setRenderNamedFlowFragment(flowFragment);
         addChild(renderNamedFlowFragment());
     }

@@ -35,8 +35,8 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    explicit RenderImage(Element&);
-    explicit RenderImage(Document&);
+    explicit RenderImage(Element&, PassRef<RenderStyle>);
+    explicit RenderImage(Document&, PassRef<RenderStyle>);
     virtual ~RenderImage();
 
     // Set the style of the object if it's generated content.

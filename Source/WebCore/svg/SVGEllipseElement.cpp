@@ -145,9 +145,9 @@ bool SVGEllipseElement::selfHasRelativeLengths() const
         || ry().isRelative();
 }
 
-RenderElement* SVGEllipseElement::createRenderer(RenderStyle&)
+RenderElement* SVGEllipseElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGEllipse(*this);
+    return new RenderSVGEllipse(*this, std::move(style));
 }
 
 }

@@ -39,8 +39,8 @@ namespace WebCore {
 
 class RenderFullScreenPlaceholder FINAL : public RenderBlockFlow {
 public:
-    RenderFullScreenPlaceholder(RenderFullScreen& owner)
-        : RenderBlockFlow(owner.document())
+    RenderFullScreenPlaceholder(RenderFullScreen& owner, PassRef<RenderStyle> style)
+        : RenderBlockFlow(owner.document(), std::move(style))
         , m_owner(owner) 
     {
     }
@@ -57,8 +57,8 @@ void RenderFullScreenPlaceholder::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-RenderFullScreen::RenderFullScreen(Document& document)
-    : RenderFlexibleBox(document)
+RenderFullScreen::RenderFullScreen(Document& document, PassRef<RenderStyle> style)
+    : RenderFlexibleBox(document, std::move(style))
     , m_placeholder(0)
 {
     setReplaced(false); 
@@ -109,8 +109,8 @@ static PassRef<RenderStyle> createFullScreenStyle()
 
 RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
 {
-    RenderFullScreen* fullscreenRenderer = new RenderFullScreen(document);
-    fullscreenRenderer->setStyle(createFullScreenStyle());
+    RenderFullScreen* fullscreenRenderer = new RenderFullScreen(document, createFullScreenStyle());
+    fullscreenRenderer->initializeStyle();
     if (parent && !parent->isChildAllowed(*fullscreenRenderer, *fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();
         return 0;
@@ -167,22 +167,24 @@ void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
     m_placeholder = placeholder;
 }
 
-void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const LayoutRect& frameRect)
+void RenderFullScreen::createPlaceholder(PassRef<RenderStyle> style, const LayoutRect& frameRect)
 {
-    if (style->width().isAuto())
-        style->setWidth(Length(frameRect.width(), Fixed));
-    if (style->height().isAuto())
-        style->setHeight(Length(frameRect.height(), Fixed));
+    if (style.get().width().isAuto())
+        style.get().setWidth(Length(frameRect.width(), Fixed));
+    if (style.get().height().isAuto())
+        style.get().setHeight(Length(frameRect.height(), Fixed));
 
-    if (!m_placeholder) {
-        m_placeholder = new RenderFullScreenPlaceholder(*this);
-        m_placeholder->setStyle(*style);
-        if (parent()) {
-            parent()->addChild(m_placeholder, this);
-            parent()->setNeedsLayoutAndPrefWidthsRecalc();
-        }
-    } else
-        m_placeholder->setStyle(*style);
+    if (m_placeholder) {
+        m_placeholder->setStyle(std::move(style));
+        return;
+    }
+
+    m_placeholder = new RenderFullScreenPlaceholder(*this, std::move(style));
+    m_placeholder->initializeStyle();
+    if (parent()) {
+        parent()->addChild(m_placeholder, this);
+        parent()->setNeedsLayoutAndPrefWidthsRecalc();
+    }
 }
 
 }

@@ -62,8 +62,8 @@ static RenderMathMLOperator::StretchyCharacter stretchyCharacters[13] = {
     { 0x222b, 0x2320, 0x23ae, 0x2321, 0x0    } // integral sign
 };
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element)
-    : RenderMathMLBlock(element)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(element, std::move(style))
     , m_stretchHeight(0)
     , m_operator(0)
     , m_operatorType(Default)
@@ -71,8 +71,8 @@ RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element)
 {
 }
 
-RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, UChar operatorChar)
-    : RenderMathMLBlock(element)
+RenderMathMLOperator::RenderMathMLOperator(MathMLElement& element, PassRef<RenderStyle> style, UChar operatorChar)
+    : RenderMathMLBlock(element, std::move(style))
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
     , m_operatorType(Default)
@@ -176,10 +176,10 @@ void RenderMathMLOperator::updateFromElement()
     newStyle.get().inheritFrom(style());
     newStyle.get().setDisplay(FLEX);
 
-    RenderMathMLBlock* container = new RenderMathMLBlock(element());
+    RenderMathMLBlock* container = new RenderMathMLBlock(element(), std::move(newStyle));
     // This container doesn't offer any useful information to accessibility.
     container->setIgnoreInAccessibilityTree(true);
-    container->setStyle(std::move(newStyle));
+    container->initializeStyle();
 
     addChild(container);
     RenderText* text;

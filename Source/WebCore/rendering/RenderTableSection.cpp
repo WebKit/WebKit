@@ -83,8 +83,8 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
     }
 }
 
-RenderTableSection::RenderTableSection(Element& element)
-    : RenderBox(element, 0)
+RenderTableSection::RenderTableSection(Element& element, PassRef<RenderStyle> style)
+    : RenderBox(element, std::move(style), 0)
     , m_cCol(0)
     , m_cRow(0)
     , m_outerBorderStart(0)
@@ -97,8 +97,8 @@ RenderTableSection::RenderTableSection(Element& element)
     setInline(false);
 }
 
-RenderTableSection::RenderTableSection(Document& document)
-    : RenderBox(document, 0)
+RenderTableSection::RenderTableSection(Document& document, PassRef<RenderStyle> style)
+    : RenderBox(document, std::move(style), 0)
     , m_cCol(0)
     , m_cRow(0)
     , m_outerBorderStart(0)
@@ -1569,9 +1569,9 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
 
 RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableSection* newSection = new RenderTableSection(parent->document());
-    newSection->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP));
-    return newSection;
+    auto section = new RenderTableSection(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP));
+    section->initializeStyle();
+    return section;
 }
 
 void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsigned effectiveColumn) const

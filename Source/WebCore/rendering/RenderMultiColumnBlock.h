@@ -35,7 +35,7 @@ class RenderMultiColumnFlowThread;
 
 class RenderMultiColumnBlock FINAL : public RenderBlockFlow {
 public:
-    explicit RenderMultiColumnBlock(Element&);
+    RenderMultiColumnBlock(Element&, PassRef<RenderStyle>);
     Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     LayoutUnit columnHeightAvailable() const { return m_columnHeightAvailable; }

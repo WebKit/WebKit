@@ -31,7 +31,7 @@ class Position;
 
 class RenderLineBreak FINAL : public RenderBoxModelObject {
 public:
-    explicit RenderLineBreak(HTMLElement&);
+    RenderLineBreak(HTMLElement&, PassRef<RenderStyle>);
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.

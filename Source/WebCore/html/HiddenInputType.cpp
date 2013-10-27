@@ -72,7 +72,7 @@ bool HiddenInputType::supportsValidation() const
     return false;
 }
 
-RenderElement* HiddenInputType::createRenderer(RenderStyle&) const
+RenderElement* HiddenInputType::createRenderer(PassRef<RenderStyle>) const
 {
     ASSERT_NOT_REACHED();
     return 0;

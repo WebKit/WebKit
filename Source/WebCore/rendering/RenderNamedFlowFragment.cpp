@@ -42,8 +42,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document)
-    : RenderRegion(document, nullptr)
+RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, PassRef<RenderStyle> style)
+    : RenderRegion(document, std::move(style), nullptr)
 {
 }
 
@@ -51,18 +51,18 @@ RenderNamedFlowFragment::~RenderNamedFlowFragment()
 {
 }
 
-void RenderNamedFlowFragment::setStyleForNamedFlowFragment(const RenderStyle* parentStyle)
+PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& parentStyle)
 {
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, BLOCK);
+    auto style = RenderStyle::createAnonymousStyleWithDisplay(&parentStyle, BLOCK);
 
-    newStyle.get().setFlowThread(parentStyle->flowThread());
-    newStyle.get().setRegionThread(parentStyle->regionThread());
-    newStyle.get().setRegionFragment(parentStyle->regionFragment());
+    style.get().setFlowThread(parentStyle.flowThread());
+    style.get().setRegionThread(parentStyle.regionThread());
+    style.get().setRegionFragment(parentStyle.regionFragment());
 #if ENABLE(CSS_SHAPES)
-    newStyle.get().setShapeInside(parentStyle->shapeInside());
+    style.get().setShapeInside(parentStyle.shapeInside());
 #endif
 
-    setStyle(std::move(newStyle));
+    return style;
 }
 
 void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

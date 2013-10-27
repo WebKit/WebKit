@@ -212,9 +212,9 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderElement* FileInputType::createRenderer(RenderStyle&) const
+RenderElement* FileInputType::createRenderer(PassRef<RenderStyle> style) const
 {
-    return new RenderFileUploadControl(element());
+    return new RenderFileUploadControl(element(), std::move(style));
 }
 
 bool FileInputType::canSetStringValue() const

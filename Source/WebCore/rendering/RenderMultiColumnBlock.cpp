@@ -35,8 +35,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element)
-    : RenderBlockFlow(element)
+RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
     , m_flowThread(0)
     , m_columnCount(1)
     , m_columnWidth(0)
@@ -139,8 +139,8 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
 void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_flowThread) {
-        m_flowThread = new RenderMultiColumnFlowThread(document());
-        m_flowThread->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
+        m_flowThread = new RenderMultiColumnFlowThread(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
+        m_flowThread->initializeStyle();
         RenderBlockFlow::addChild(m_flowThread);
     }
     m_flowThread->addChild(newChild, beforeChild);

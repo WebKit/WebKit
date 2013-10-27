@@ -118,16 +118,16 @@ struct RenderFlexibleBox::Violation {
 };
 
 
-RenderFlexibleBox::RenderFlexibleBox(Element& element)
-    : RenderBlock(element, 0)
+RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> style)
+    : RenderBlock(element, std::move(style), 0)
     , m_orderIterator(this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
-RenderFlexibleBox::RenderFlexibleBox(Document& document)
-    : RenderBlock(document, 0)
+RenderFlexibleBox::RenderFlexibleBox(Document& document, PassRef<RenderStyle> style)
+    : RenderBlock(document, std::move(style), 0)
     , m_orderIterator(this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {

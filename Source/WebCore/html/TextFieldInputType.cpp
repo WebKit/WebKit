@@ -201,9 +201,9 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
     return (event->type() == eventNames().textInputEvent && event->eventInterface() == TextEventInterfaceType && static_cast<TextEvent*>(event)->data() == "\n") || InputType::shouldSubmitImplicitly(event);
 }
 
-RenderElement* TextFieldInputType::createRenderer(RenderStyle&) const
+RenderElement* TextFieldInputType::createRenderer(PassRef<RenderStyle> style) const
 {
-    return new RenderTextControlSingleLine(element());
+    return new RenderTextControlSingleLine(element(), std::move(style));
 }
 
 bool TextFieldInputType::needsContainer() const

@@ -601,8 +601,8 @@ public:
 #endif
 
 protected:
-    RenderBox(Element&, unsigned baseTypeFlags);
-    RenderBox(Document&, unsigned baseTypeFlags);
+    RenderBox(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderBox(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
     virtual void willBeDestroyed() OVERRIDE;
 

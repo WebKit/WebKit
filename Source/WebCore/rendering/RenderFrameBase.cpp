@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-RenderFrameBase::RenderFrameBase(HTMLFrameElementBase& element)
-    : RenderWidget(element)
+RenderFrameBase::RenderFrameBase(HTMLFrameElementBase& element, PassRef<RenderStyle> style)
+    : RenderWidget(element, std::move(style))
 {
 }
 

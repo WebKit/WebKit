@@ -480,12 +480,12 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderElement* SVGSVGElement::createRenderer(RenderStyle&)
+RenderElement* SVGSVGElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (isOutermostSVGSVGElement())
-        return new RenderSVGRoot(*this);
+        return new RenderSVGRoot(*this, std::move(style));
 
-    return new RenderSVGViewportContainer(*this);
+    return new RenderSVGViewportContainer(*this, std::move(style));
 }
 
 Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode& rootParent)

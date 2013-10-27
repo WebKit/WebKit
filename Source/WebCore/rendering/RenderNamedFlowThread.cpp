@@ -44,8 +44,8 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRefPtr<WebKitNamedFlow> namedFlow)
-    : RenderFlowThread(document)
+RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderStyle> style, PassRefPtr<WebKitNamedFlow> namedFlow)
+    : RenderFlowThread(document, std::move(style))
     , m_flowThreadChildList(adoptPtr(new FlowThreadChildList()))
     , m_overset(true)
     , m_namedFlow(namedFlow)

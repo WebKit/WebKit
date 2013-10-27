@@ -68,7 +68,7 @@ protected:
 private:
     virtual bool isFilterEffect() const OVERRIDE { return true; }
 
-    virtual RenderElement* createRenderer(RenderStyle&) OVERRIDE;
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE { return false; }
 

@@ -38,7 +38,7 @@ public:
     virtual PassRef<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 protected:
-    explicit RenderTextControl(HTMLTextFormControlElement&);
+    RenderTextControl(HTMLTextFormControlElement&, PassRef<RenderStyle>);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     TextControlInnerTextElement* innerTextElement() const;
@@ -92,8 +92,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderTextControl, isTextControl())
 // anymore.
 class RenderTextControlInnerContainer FINAL : public RenderFlexibleBox {
 public:
-    explicit RenderTextControlInnerContainer(Element& element)
-        : RenderFlexibleBox(element)
+    explicit RenderTextControlInnerContainer(Element& element, PassRef<RenderStyle> style)
+        : RenderFlexibleBox(element, std::move(style))
     { }
     virtual ~RenderTextControlInnerContainer() { }
 

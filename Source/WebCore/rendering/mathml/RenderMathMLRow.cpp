@@ -36,21 +36,21 @@ namespace WebCore {
 
 using namespace MathMLNames;
 
-RenderMathMLRow::RenderMathMLRow(Element& element)
-    : RenderMathMLBlock(element)
+RenderMathMLRow::RenderMathMLRow(Element& element, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(element, std::move(style))
 {
 }
 
-RenderMathMLRow::RenderMathMLRow(Document& document)
-    : RenderMathMLBlock(document)
+RenderMathMLRow::RenderMathMLRow(Document& document, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(document, std::move(style))
 {
 }
 
 // FIXME: Change all these createAnonymous... routines to return a PassOwnPtr<>.
 RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document());
-    newMRow->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
+    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
+    newMRow->initializeStyle();
     return newMRow;
 }
 

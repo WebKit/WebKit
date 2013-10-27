@@ -46,8 +46,8 @@ public:
     virtual void removeChild(RenderObject&) OVERRIDE;
 
 private:
-    RenderMathMLScriptsWrapper(Document& document, WrapperType kind)
-        : RenderMathMLBlock(document)
+    RenderMathMLScriptsWrapper(Document& document, PassRef<RenderStyle> style, WrapperType kind)
+        : RenderMathMLBlock(document, std::move(style))
         , m_kind(kind)
     {
     }
@@ -97,7 +97,7 @@ class RenderMathMLScripts : public RenderMathMLBlock {
 friend class RenderMathMLScriptsWrapper;
 
 public:
-    explicit RenderMathMLScripts(Element&);
+    RenderMathMLScripts(Element&, PassRef<RenderStyle>);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject&) OVERRIDE;
     

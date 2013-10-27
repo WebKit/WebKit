@@ -220,9 +220,9 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderElement* SVGTRefElement::createRenderer(RenderStyle&)
+RenderElement* SVGTRefElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGInline(*this);
+    return new RenderSVGInline(*this, std::move(style));
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node* child) const

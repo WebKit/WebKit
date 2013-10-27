@@ -35,8 +35,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread)
-    : RenderRegionSet(flowThread.document(), flowThread)
+RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, PassRef<RenderStyle> style)
+    : RenderRegionSet(flowThread.document(), std::move(style), flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)

@@ -55,7 +55,7 @@ public:
     virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE FINAL { return FloatRect(); }
 
 protected:
-    explicit RenderSVGResourceGradient(SVGGradientElement&);
+    RenderSVGResourceGradient(SVGGradientElement&, PassRef<RenderStyle>);
 
     void element() const WTF_DELETED_FUNCTION;
 

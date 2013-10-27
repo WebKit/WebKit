@@ -32,7 +32,7 @@ class SVGRadialGradientElement;
 
 class RenderSVGResourceRadialGradient FINAL : public RenderSVGResourceGradient {
 public:
-    explicit RenderSVGResourceRadialGradient(SVGRadialGradientElement&);
+    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, PassRef<RenderStyle>);
     virtual ~RenderSVGResourceRadialGradient();
 
     SVGRadialGradientElement& radialGradientElement() const { return toSVGRadialGradientElement(RenderSVGResourceGradient::gradientElement()); }

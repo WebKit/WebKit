@@ -85,8 +85,8 @@ static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
 
 static RenderBlock* createAnonymousRubyInlineBlock(RenderObject& ruby)
 {
-    RenderBlock* newBlock = new RenderBlockFlow(ruby.document());
-    newBlock->setStyle(RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
+    RenderBlock* newBlock = new RenderBlockFlow(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
+    newBlock->initializeStyle();
     return newBlock;
 }
 
@@ -110,8 +110,8 @@ static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
 
 //=== ruby as inline object ===
 
-RenderRubyAsInline::RenderRubyAsInline(Element& element)
-    : RenderInline(element)
+RenderRubyAsInline::RenderRubyAsInline(Element& element, PassRef<RenderStyle> style)
+    : RenderInline(element, std::move(style))
 {
 }
 
@@ -215,8 +215,8 @@ void RenderRubyAsInline::removeChild(RenderObject& child)
 
 //=== ruby as block object ===
 
-RenderRubyAsBlock::RenderRubyAsBlock(Element& element)
-    : RenderBlockFlow(element)
+RenderRubyAsBlock::RenderRubyAsBlock(Element& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
 {
 }
 

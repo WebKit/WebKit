@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element)
-    : RenderTextControl(element)
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, PassRef<RenderStyle> style)
+    : RenderTextControl(element, std::move(style))
 {
 }
 

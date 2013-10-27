@@ -144,8 +144,8 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Element& element, unsigned baseTypeFlags)
-    : RenderBox(element, baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Element& element, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderBox(element, std::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -160,8 +160,8 @@ RenderBlock::RenderBlock(Element& element, unsigned baseTypeFlags)
 {
 }
 
-RenderBlock::RenderBlock(Document& document, unsigned baseTypeFlags)
-    : RenderBox(document, baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Document& document, PassRef<RenderStyle> style, unsigned baseTypeFlags)
+    : RenderBox(document, std::move(style), baseTypeFlags | RenderBlockFlag)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -239,7 +239,7 @@ void RenderBlock::willBeDestroyed()
 
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderStyle* oldStyle = style();
+    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
 
     setReplaced(newStyle.isDisplayInlineType());
     
@@ -478,7 +478,7 @@ RenderBlock* RenderBlock::clone() const
     } else {
         auto cloneRenderer = element()->createRenderer(*style());
         cloneBlock = toRenderBlock(cloneRenderer);
-        cloneBlock->setStyle(*style());
+        cloneBlock->initializeStyle();
 
         // This takes care of setting the right value of childrenInline in case
         // generated content is added to cloneBlock and 'this' does not have
@@ -1686,12 +1686,12 @@ RenderBoxModelObject& RenderBlock::createReplacementRunIn(RenderBoxModelObject& 
 
     RenderBoxModelObject* newRunIn = 0;
     if (!runIn.isRenderBlockFlow())
-        newRunIn = new RenderBlockFlow(*runIn.element());
+        newRunIn = new RenderBlockFlow(*runIn.element(), *runIn.style());
     else
-        newRunIn = new RenderInline(*runIn.element());
+        newRunIn = new RenderInline(*runIn.element(), *runIn.style());
 
     runIn.element()->setRenderer(newRunIn);
-    newRunIn->setStyle(*runIn.style());
+    newRunIn->initializeStyle();
 
     runIn.moveAllChildrenTo(newRunIn, true);
 
@@ -4751,10 +4751,10 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)
-            newFirstLetter = new RenderInline(document());
+            newFirstLetter = new RenderInline(document(), *pseudoStyle);
         else
-            newFirstLetter = new RenderBlockFlow(document());
-        newFirstLetter->setStyle(*pseudoStyle);
+            newFirstLetter = new RenderBlockFlow(document(), *pseudoStyle);
+        newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
         LayoutStateDisabler layoutStateDisabler(&view());
@@ -4788,10 +4788,10 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderBoxModelObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
-        firstLetter = new RenderInline(document());
+        firstLetter = new RenderInline(document(), *pseudoStyle);
     else
-        firstLetter = new RenderBlockFlow(document());
-    firstLetter->setStyle(*pseudoStyle);
+        firstLetter = new RenderBlockFlow(document(), *pseudoStyle);
+    firstLetter->initializeStyle();
     firstLetterContainer->addChild(firstLetter, currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
@@ -5522,17 +5522,13 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)
 {
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
-    EDisplay newDisplay;
-    RenderBlock* newBox = 0;
-    if (display == FLEX || display == INLINE_FLEX) {
-        newBox = new RenderFlexibleBox(parent->document());
-        newDisplay = FLEX;
-    } else {
-        newBox = new RenderBlockFlow(parent->document());
-        newDisplay = BLOCK;
-    }
+    RenderBlock* newBox;
+    if (display == FLEX || display == INLINE_FLEX)
+        newBox = new RenderFlexibleBox(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
+    else
+        newBox = new RenderBlockFlow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK));
 
-    newBox->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parent->style(), newDisplay));
+    newBox->initializeStyle();
     return newBox;
 }
 
@@ -5541,8 +5537,8 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle.get().inheritColumnPropertiesFrom(parent->style());
 
-    RenderBlock* newBox = new RenderBlockFlow(parent->document());
-    newBox->setStyle(std::move(newStyle));
+    RenderBlock* newBox = new RenderBlockFlow(parent->document(), std::move(newStyle));
+    newBox->initializeStyle();
     return newBox;
 }
 
@@ -5551,8 +5547,8 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle.get().setColumnSpan(ColumnSpanAll);
 
-    RenderBlock* newBox = new RenderBlockFlow(parent->document());
-    newBox->setStyle(std::move(newStyle));
+    RenderBlock* newBox = new RenderBlockFlow(parent->document(), std::move(newStyle));
+    newBox->initializeStyle();
     return newBox;
 }
 

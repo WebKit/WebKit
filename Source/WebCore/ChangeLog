@@ -1,3 +1,40 @@
+2013-10-27  Andreas Kling  <akling@apple.com>
+
+        Renderers should receive their style at construction.
+        <https://webkit.org/b/123396>
+
+        Pass the RenderStyle to all non-text renderer constructors.
+        After construction, initializeStyle() must be called (as a stopgap
+        measure) until we are able to do style-derived initialization
+        without virtual function calls.
+
+        With this change, RenderElement::m_style is never null. Subsequent
+        patches will add enforcement for this and also make style() return
+        a RenderStyle&.
+
+        I'm adding three FIXME's in this patch:
+
+            - createRendererIfNeeded() calls AnimationController to set up
+              the initial style manually instead of asking RenderElement's
+              setAnimatedStyle() to do it. This can probably be done in a
+              nicer way, but it's not clear yet how.
+
+            - ImageContentData::createRenderer() does a bit of unnecessary
+              work. This should be easy to clean up but got too distracting
+              to be part of this patch.
+
+            - Document::createRenderTree() creates the RenderView with an
+              initial dummy RenderStyle. I've done this because resolving
+              the document style assumes we already have a RenderView.
+
+        For styleWillChange() implementations to detect that they are
+        reacting to the initial style, I've added a hasInitializedStyle()
+        function on RenderElement. This will return false until you've
+        called initializeStyle() on the renderer. This should go away
+        along with initializeStyle() eventually.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-26  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Remove WebTiledLayer

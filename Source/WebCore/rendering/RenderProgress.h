@@ -30,7 +30,7 @@ class HTMLProgressElement;
 
 class RenderProgress FINAL : public RenderBlockFlow {
 public:
-    explicit RenderProgress(HTMLElement&);
+    RenderProgress(HTMLElement&, PassRef<RenderStyle>);
     virtual ~RenderProgress();
 
     double position() const { return m_position; }

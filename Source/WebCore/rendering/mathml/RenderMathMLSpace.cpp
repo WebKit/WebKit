@@ -36,8 +36,8 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element)
-    : RenderMathMLBlock(element)
+RenderMathMLSpace::RenderMathMLSpace(MathMLTextElement& element, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(element, std::move(style))
     , m_width(0)
     , m_height(0)
     , m_depth(0)

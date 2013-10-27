@@ -41,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderListItem::RenderListItem(Element& element)
-    : RenderBlockFlow(element)
+RenderListItem::RenderListItem(Element& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
     , m_marker(0)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
@@ -61,9 +61,11 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
         // The marker always inherits from the list item, regardless of where it might end
         // up (e.g., in some deeply nested line box). See CSS3 spec.
         newStyle.get().inheritFrom(style());
-        if (!m_marker)
-            m_marker = new RenderListMarker(*this);
-        m_marker->setStyle(std::move(newStyle));
+        if (!m_marker) {
+            m_marker = new RenderListMarker(*this, std::move(newStyle));
+            m_marker->initializeStyle();
+        } else
+            m_marker->setStyle(std::move(newStyle));
     } else if (m_marker) {
         m_marker->destroy();
         m_marker = 0;

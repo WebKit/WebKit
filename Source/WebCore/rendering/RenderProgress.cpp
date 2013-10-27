@@ -33,8 +33,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderProgress::RenderProgress(HTMLElement& element)
-    : RenderBlockFlow(element)
+RenderProgress::RenderProgress(HTMLElement& element, PassRef<RenderStyle> style)
+    : RenderBlockFlow(element, std::move(style))
     , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationStartTime(0)
     , m_animationRepeatInterval(0)

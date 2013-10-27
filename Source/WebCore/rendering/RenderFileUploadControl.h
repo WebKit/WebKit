@@ -33,7 +33,7 @@ class HTMLInputElement;
 
 class RenderFileUploadControl FINAL : public RenderBlockFlow {
 public:
-    explicit RenderFileUploadControl(HTMLInputElement&);
+    RenderFileUploadControl(HTMLInputElement&, PassRef<RenderStyle>);
     virtual ~RenderFileUploadControl();
 
     String buttonValue();

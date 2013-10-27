@@ -36,7 +36,7 @@ class GridTrack;
 
 class RenderGrid FINAL : public RenderBlock {
 public:
-    explicit RenderGrid(Element&);
+    RenderGrid(Element&, PassRef<RenderStyle>);
     virtual ~RenderGrid();
 
     Element& element() const { return toElement(nodeForNonAnonymous()); }

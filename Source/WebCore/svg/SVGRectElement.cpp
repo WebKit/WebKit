@@ -160,9 +160,9 @@ bool SVGRectElement::selfHasRelativeLengths() const
         || ry().isRelative();
 }
 
-RenderElement* SVGRectElement::createRenderer(RenderStyle&)
+RenderElement* SVGRectElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGRect(*this);
+    return new RenderSVGRect(*this, std::move(style));
 }
 
 }

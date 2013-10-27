@@ -63,7 +63,7 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
-    virtual RenderElement* createRenderer(RenderStyle&);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual bool selfHasRelativeLengths() const;
 

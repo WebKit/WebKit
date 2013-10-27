@@ -27,6 +27,7 @@
 #include "StyleResolveTree.h"
 
 #include "AXObjectCache.h"
+#include "AnimationController.h"
 #include "CSSFontSelector.h"
 #include "Element.h"
 #include "ElementIterator.h"
@@ -236,10 +237,10 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
         nextRenderer = nextSiblingRenderer(element, renderingParentNode);
     }
 
-    RenderElement* newRenderer = element.createRenderer(*style);
+    RenderElement* newRenderer = element.createRenderer(style.releaseNonNull());
     if (!newRenderer)
         return;
-    if (!parentRenderer->isChildAllowed(*newRenderer, *style)) {
+    if (!parentRenderer->isChildAllowed(*newRenderer, *newRenderer->style())) {
         newRenderer->destroy();
         return;
     }
@@ -248,8 +249,14 @@ static void createRendererIfNeeded(Element& element, PassRefPtr<RenderStyle> res
     // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
     newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
 
+    // Code below updateAnimations() can depend on Element::renderer() already being set.
     element.setRenderer(newRenderer);
-    newRenderer->setAnimatableStyle(style.releaseNonNull()); // setAnimatableStyle() can depend on renderer() already being set.
+
+    // FIXME: There's probably a better way to factor this.
+    // This just does what setAnimatedStyle() does, except with setStyleInternal() instead of setStyle().
+    newRenderer->setStyleInternal(newRenderer->animation().updateAnimations(*newRenderer, *newRenderer->style()));
+
+    newRenderer->initializeStyle();
 
 #if ENABLE(FULLSCREEN_API)
     Document& document = element.document();

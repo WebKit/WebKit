@@ -56,8 +56,8 @@ static bool isPrescript(RenderObject* renderObject)
     return renderObject->node() && renderObject->node()->hasTagName(MathMLNames::mprescriptsTag);
 }
 
-RenderMathMLScripts::RenderMathMLScripts(Element& element)
-    : RenderMathMLBlock(element)
+RenderMathMLScripts::RenderMathMLScripts(Element& element, PassRef<RenderStyle> style)
+    : RenderMathMLBlock(element, std::move(style))
     , m_baseWrapper(0)
 {
     // Determine what kind of sub/sup expression we have by element name
@@ -367,8 +367,8 @@ int RenderMathMLScripts::firstLineBaseline() const
 
 RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType type)
 {
-    RenderMathMLScriptsWrapper* newBlock = new RenderMathMLScriptsWrapper(renderObject->document(), type);
-    newBlock->setStyle(RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX));
+    RenderMathMLScriptsWrapper* newBlock = new RenderMathMLScriptsWrapper(renderObject->document(), RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX), type);
+    newBlock->initializeStyle();
     return newBlock;
 }
 

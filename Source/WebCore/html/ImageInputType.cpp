@@ -101,9 +101,9 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderElement* ImageInputType::createRenderer(RenderStyle&) const
+RenderElement* ImageInputType::createRenderer(PassRef<RenderStyle> style) const
 {
-    RenderImage* image = new RenderImage(element());
+    RenderImage* image = new RenderImage(element(), std::move(style));
     image->setImageResource(RenderImageResource::create());
     return image;
 }

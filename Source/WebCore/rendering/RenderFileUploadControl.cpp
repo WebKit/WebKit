@@ -50,8 +50,8 @@ const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
 
-RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input)
-    : RenderBlockFlow(input)
+RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement& input, PassRef<RenderStyle> style)
+    : RenderBlockFlow(input, std::move(style))
     , m_canReceiveDroppedFiles(input.canReceiveDroppedFiles())
 {
 }

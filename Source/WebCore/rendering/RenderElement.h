@@ -31,10 +31,14 @@ class RenderElement : public RenderObject {
 public:
     virtual ~RenderElement();
 
-    static RenderElement* createFor(Element&, RenderStyle&);
+    static RenderElement* createFor(Element&, PassRef<RenderStyle>);
+
+    bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
     RenderStyle* style() const { return m_style.get(); }
     RenderStyle* firstLineStyle() const;
+
+    void initializeStyle();
 
     virtual void setStyle(PassRef<RenderStyle>);
     // Called to update a style that is allowed to trigger animations.
@@ -104,7 +108,6 @@ public:
     // Updates only the local style ptr of the object. Does not update the state of the object,
     // and so only should be called when the style is known not to have changed (or from setStyle).
     void setStyleInternal(PassRef<RenderStyle> style) { m_style = std::move(style); }
-    void clearStyleInternal() { m_style = nullptr; }
 
 protected:
     enum BaseTypeFlags {
@@ -116,8 +119,8 @@ protected:
         RenderBlockFlowFlag = 1 << 5,
     };
 
-    RenderElement(Element&, unsigned baseTypeFlags);
-    RenderElement(Document&, unsigned baseTypeFlags);
+    RenderElement(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);
+    RenderElement(Document&, PassRef<RenderStyle>, unsigned baseTypeFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -162,6 +165,7 @@ private:
 
     unsigned m_baseTypeFlags : 6;
     bool m_ancestorLineBoxDirty : 1;
+    bool m_hasInitializedStyle : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

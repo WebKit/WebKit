@@ -35,7 +35,7 @@ String listMarkerText(EListStyleType, int value);
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker FINAL : public RenderBox {
 public:
-    explicit RenderListMarker(RenderListItem&);
+    RenderListMarker(RenderListItem&, PassRef<RenderStyle>);
     virtual ~RenderListMarker();
 
     const String& text() const { return m_text; }

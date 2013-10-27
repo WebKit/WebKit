@@ -100,9 +100,9 @@ void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderElement* SVGStopElement::createRenderer(RenderStyle&)
+RenderElement* SVGStopElement::createRenderer(PassRef<RenderStyle> style)
 {
-    return new RenderSVGGradientStop(*this);
+    return new RenderSVGGradientStop(*this, std::move(style));
 }
 
 bool SVGStopElement::rendererIsNeeded(const RenderStyle&)

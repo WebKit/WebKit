@@ -54,36 +54,36 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
     return adoptRef(new MathMLInlineContainerElement(tagName, document));
 }
 
-RenderElement* MathMLInlineContainerElement::createRenderer(RenderStyle&)
+RenderElement* MathMLInlineContainerElement::createRenderer(PassRef<RenderStyle> style)
 {
     if (hasLocalName(mrowTag))
-        return new RenderMathMLRow(*this);
+        return new RenderMathMLRow(*this, std::move(style));
     if (hasLocalName(msubTag))
-        return new RenderMathMLScripts(*this);
+        return new RenderMathMLScripts(*this, std::move(style));
     if (hasLocalName(msupTag))
-        return new RenderMathMLScripts(*this);
+        return new RenderMathMLScripts(*this, std::move(style));
     if (hasLocalName(msubsupTag))
-        return new RenderMathMLScripts(*this);
+        return new RenderMathMLScripts(*this, std::move(style));
     if (hasLocalName(mmultiscriptsTag))
-        return new RenderMathMLScripts(*this);
+        return new RenderMathMLScripts(*this, std::move(style));
     if (hasLocalName(moverTag))
-        return new RenderMathMLUnderOver(*this);
+        return new RenderMathMLUnderOver(*this, std::move(style));
     if (hasLocalName(munderTag))
-        return new RenderMathMLUnderOver(*this);
+        return new RenderMathMLUnderOver(*this, std::move(style));
     if (hasLocalName(munderoverTag))
-        return new RenderMathMLUnderOver(*this);
+        return new RenderMathMLUnderOver(*this, std::move(style));
     if (hasLocalName(mfracTag))
-        return new RenderMathMLFraction(*this);
+        return new RenderMathMLFraction(*this, std::move(style));
     if (hasLocalName(msqrtTag))
-        return new RenderMathMLSquareRoot(*this);
+        return new RenderMathMLSquareRoot(*this, std::move(style));
     if (hasLocalName(mrootTag))
-        return new RenderMathMLRoot(*this);
+        return new RenderMathMLRoot(*this, std::move(style));
     if (hasLocalName(mfencedTag))
-        return new RenderMathMLFenced(*this);
+        return new RenderMathMLFenced(*this, std::move(style));
     if (hasLocalName(mtableTag))
-        return new RenderMathMLTable(*this);
+        return new RenderMathMLTable(*this, std::move(style));
 
-    return new RenderMathMLBlock(*this);
+    return new RenderMathMLBlock(*this, std::move(style));
 }
 
 }

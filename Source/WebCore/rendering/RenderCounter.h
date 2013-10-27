@@ -31,7 +31,7 @@ class CounterNode;
 
 class RenderCounter FINAL : public RenderText {
 public:
-    explicit RenderCounter(Document&, const CounterContent&);
+    RenderCounter(Document&, const CounterContent&);
     virtual ~RenderCounter();
 
     static void destroyCounterNodes(RenderObject*);

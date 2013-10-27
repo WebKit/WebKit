@@ -162,10 +162,10 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-RenderElement* SVGGraphicsElement::createRenderer(RenderStyle&)
+RenderElement* SVGGraphicsElement::createRenderer(PassRef<RenderStyle> style)
 {
     // By default, any subclass is expected to do path-based drawing
-    return new RenderSVGPath(*this);
+    return new RenderSVGPath(*this, std::move(style));
 }
 
 void SVGGraphicsElement::toClipPath(Path& path)
