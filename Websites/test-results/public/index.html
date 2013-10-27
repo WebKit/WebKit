@@ -65,6 +65,7 @@ var TestResultsView = new (function () {
     this._slaves = {};
     this._repositories = {};
     this._testCategories = {};
+    this._newBugLinks = [];
 });
 
 TestResultsView.setAvailableTests = function (availableTests) {
@@ -89,6 +90,10 @@ TestResultsView.setRepositories = function (repositories) {
 
 TestResultsView.setTestCategories = function (testCategories) {
     this._testCategories = testCategories;
+}
+
+TestResultsView.setNewBugLinks = function (newBugLinks) {
+    this._newBugLinks = newBugLinks;
 }
 
 TestResultsView.showTooltip = function (anchor, contentElement) {
@@ -190,7 +195,7 @@ TestResultsView._populateTestPane = function(testName, results, section) {
 
     var self = this;
     this._sortObjectsByName(builders).forEach(function (builder) {
-        tbody.appendChild(self._createTestResultRow(builder.name, resultsByBuilder[builder.id], builder, buildTimes, repositories));        
+        tbody.appendChild(self._createTestResultRow(builder.name, resultsByBuilder[builder.id], test, builder, buildTimes, repositories));        
     })
 
     table.appendChild(tbody);
@@ -246,7 +251,7 @@ TestResultsView._createBuildsAndComputeSlownessOfResults = function (builderId, 
     }
 }
 
-TestResultsView._createTestResultRow = function (title, results, builder, buildTimes, repositories) {
+TestResultsView._createTestResultRow = function (title, results, test, builder, buildTimes, repositories) {
     var sortedResults = results.sort(function (result1, result2) { return result2.build.time() - result1.build.time(); });
     var cells = new Array();
 
@@ -283,9 +288,12 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
 
     if (!seenBugLink) {
         // FIXME: Make bug tracker configurable.
-        formattedModifiers.push(element('a',
-            {'href': 'https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Tools%20/%20Tests&form_name=enter_bug&keywords=LayoutTestFailure'},
-            ['File a bug']));
+        for (var i = 0; i < this._newBugLinks.length; i++) {
+            if (i)
+                formattedModifiers.push(' / ');
+            var link = this._newBugLinks[i];
+            formattedModifiers.push(element('a', {'href': link.url.replace(/\$testName/g, test.name)}, link.label));
+        }
     }
 
     var slowestTime = Math.max.apply(Math, results.map(function (result) { return result.roundedTime; }));
@@ -298,6 +306,8 @@ TestResultsView._createTestResultRow = function (title, results, builder, buildT
     if (repositories) {
         var build = sortedResults[0].build;
         for (var i = 0; i < repositories.length; i++) {
+            if (!build.revision(repositories[i].id))
+                continue;
             var revisionInfo = build.formattedRevision(repositories[i].id);
             if (latestRevisions.length)
                 latestRevisions.push(' / ');
@@ -402,7 +412,7 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
             event.preventDefault();
             return false;
         }
-        tbody.appendChild(self._createTestResultRow(element('span', [testName, externalTestLink]), results, builder));
+        tbody.appendChild(self._createTestResultRow(element('span', [testName, externalTestLink]), results, test, builder));
     });
 
     table.appendChild(tbody);
@@ -564,6 +574,7 @@ fetchManifest(function (response) {
     TestResultsView.setSlaves(mapById(response['slaves']));
     TestResultsView.setRepositories(mapById(response['repositories']));
     TestResultsView.setTestCategories(response['testCategories']);
+    TestResultsView.setNewBugLinks(response['newBugLinks']);
     // FIXME: Updating location.href shouldn't be TestResultsView's responsibility.
     var parsedStates = TestResultsView.loadTestsFromLocationHash();
     if (parsedStates['builder']) {

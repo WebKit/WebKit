@@ -17,5 +17,11 @@
         "LayoutTest": {
             "url": "https://trac.webkit.org/browser/trunk/LayoutTests/$testName"
         }
-    }
+    },
+    "newBugLinks": [
+        {
+            "label": "File a bug",
+            "url": "https://bugs.webkit.org/enter_bug.cgi?product=WebKit&component=Tools%20/%20Tests&form_name=enter_bug&keywords=LayoutTestFailure"
+        }
+    ]
 }

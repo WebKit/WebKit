@@ -16,5 +16,6 @@ exit_with_success(array('tests' => $db->fetch_table('tests'),
     'builders' => $builders,
     'slaves' => $db->fetch_table('slaves'),
     'repositories' => $repositories,
-    'testCategories' => config('testCategories')));
+    'testCategories' => config('testCategories'),
+    'newBugLinks' => config('newBugLinks')));
 ?>

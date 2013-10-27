@@ -1,5 +1,23 @@
 2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Make new bug link in flakiness dashboard configurable
+        https://bugs.webkit.org/show_bug.cgi?id=123386
+
+        Reviewed by Alexey Proskuryakov.
+
+        * config.json: Added Bugzilla as the default destination for new bugs.
+        * public/api/manifest.php: Include newBugLinks in the manifest.
+        * public/index.html:
+        (TestResultsView): Initialize _newBugLinks.
+        (TestResultsView.setNewBugLinks): Added.
+        (TestResultsView._populateTestPane):
+        (TestResultsView._createTestResultRow): Replaced the hard-coded Bugzilla URL by the code
+        to generate hyper-links based on _newBugLinks. Also added a nullity check while formatting
+        revision checks so that we don't blow up when some build doesn't contain all revision info.
+        (TestResultsView._populateBuilderPane):
+
+2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         New flakiness dashboard should support substring matching
         https://bugs.webkit.org/show_bug.cgi?id=123393
 
