@@ -40,6 +40,7 @@ bool canUseFor(const RenderBlockFlow&);
 struct Line {
     unsigned textOffset;
     unsigned textLength;
+    float left;
     float width;
 };
 

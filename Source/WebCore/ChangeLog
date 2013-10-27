@@ -1,3 +1,33 @@
+2013-10-27  Antti Koivisto  <antti@apple.com>
+
+        Enable center and right text alignment for simple lines
+        https://bugs.webkit.org/show_bug.cgi?id=123398
+
+        Reviewed by Andreas Kling.
+
+        Support text-align:center and text-align:right on simple line layout path.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            text-align:justify is still not supported.
+
+        (WebCore::SimpleLineLayout::computeLineLeft):
+        (WebCore::SimpleLineLayout::createLines):
+        
+            Do a rounding dance that matches the line boxes.
+
+        * rendering/SimpleLineLayout.h:
+        
+            Add left position to lines.
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::Resolver::Line::rect):
+        
+            We now do rounding during layout.
+
+        (WebCore::SimpleLineLayout::Resolver::Line::baseline):
+
 2013-10-27  Andreas Kling  <akling@apple.com>
 
         Renderers should receive their style at construction.

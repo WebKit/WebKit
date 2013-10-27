@@ -88,8 +88,7 @@ bool canUseFor(const RenderBlockFlow& flow)
             return false;
     }
     const RenderStyle& style = *flow.style();
-    // It shoudn't be hard to support other alignments.
-    if (style.textAlign() != LEFT && style.textAlign() != WEBKIT_LEFT && style.textAlign() != TASTART)
+    if (style.textAlign() == JUSTIFY)
         return false;
     // Non-visible overflow should be pretty easy to support.
     if (style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE)
@@ -211,6 +210,27 @@ static float textWidth(const RenderText& text, unsigned from, unsigned length, f
     return style.font().width(run);
 }
 
+static float computeLineLeft(ETextAlign textAlign, float remainingWidth)
+{
+    switch (textAlign) {
+    case LEFT:
+    case WEBKIT_LEFT:
+    case TASTART:
+        return 0;
+    case RIGHT:
+    case WEBKIT_RIGHT:
+    case TAEND:
+        return std::max<float>(remainingWidth, 0);
+    case CENTER:
+    case WEBKIT_CENTER:
+        return std::max<float>(remainingWidth / 2, 0);
+    case JUSTIFY:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 std::unique_ptr<Lines> createLines(RenderBlockFlow& flow)
 {
     auto lines = std::make_unique<Lines>();
@@ -221,6 +241,7 @@ std::unique_ptr<Lines> createLines(RenderBlockFlow& flow)
     const RenderStyle& style = *flow.style();
     const unsigned textLength = textRenderer.textLength();
 
+    ETextAlign textAlign = style.textAlign();
     float wordTrailingSpaceWidth = style.font().width(TextRun(&space, 1));
 
     LazyLineBreakIterator lineBreakIterator(textRenderer.text(), style.locale());
@@ -268,10 +289,14 @@ std::unique_ptr<Lines> createLines(RenderBlockFlow& flow)
         if (lineStartOffset == lineEndOffset)
             continue;
 
+        float alignedLeft = computeLineLeft(textAlign, lineWidth.availableWidth() - lineWidth.committedWidth());
+        float alignedRight = alignedLeft + lineWidth.committedWidth();
+
         Line line;
         line.textOffset = lineStartOffset;
         line.textLength = lineEndOffset - lineStartOffset;
-        line.width = lineWidth.committedWidth();
+        line.left = floor(alignedLeft);
+        line.width = ceil(alignedRight) - line.left;
 
         lines->append(line);
     }

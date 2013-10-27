@@ -98,15 +98,17 @@ inline LayoutRect Resolver::Line::rect() const
 {
     auto& line = m_resolver.m_lines[m_lineIndex];
 
-    LayoutPoint linePosition(0, m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline - m_resolver.m_ascent);
-    LayoutSize lineSize(ceiledLayoutUnit(line.width), m_resolver.m_ascent + m_resolver.m_descent);
+    LayoutPoint linePosition(line.left, m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline - m_resolver.m_ascent);
+    LayoutSize lineSize(line.width, m_resolver.m_ascent + m_resolver.m_descent);
     return LayoutRect(linePosition + m_resolver.m_contentOffset, lineSize);
 }
 
 inline LayoutPoint Resolver::Line::baseline() const
 {
+    auto& line = m_resolver.m_lines[m_lineIndex];
+
     float baselineY = m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline;
-    return LayoutPoint(0, baselineY) + m_resolver.m_contentOffset;
+    return LayoutPoint(line.left, baselineY) + m_resolver.m_contentOffset;
 }
 
 inline String Resolver::Line::text() const
