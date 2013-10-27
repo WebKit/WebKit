@@ -38,7 +38,6 @@
 #import "SoftLinking.h"
 #import "TiledBacking.h"
 #import "WebLayer.h"
-#import "WebTiledLayer.h"
 #import "WebTiledBackingLayer.h"
 #import <objc/objc-auto.h>
 #import <objc/runtime.h>
@@ -193,7 +192,7 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer
             layerClass = [CATransformLayer class];
             break;
         case LayerTypeWebTiledLayer:
-            layerClass = [WebTiledLayer class];
+            ASSERT_NOT_REACHED();
             break;
         case LayerTypeTiledBackingLayer:
         case LayerTypePageTiledBackingLayer:
@@ -215,15 +214,6 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer
     
     // Clear all the implicit animations on the CALayer
     [m_layer.get() setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
-    
-    // If this is a TiledLayer, set some initial values
-    if (m_layerType == LayerTypeWebTiledLayer) {
-        WebTiledLayer* tiledLayer = static_cast<WebTiledLayer*>(m_layer.get());
-        [tiledLayer setTileSize:CGSizeMake(GraphicsLayerCA::kTiledLayerTileSize, GraphicsLayerCA::kTiledLayerTileSize)];
-        [tiledLayer setLevelsOfDetail:1];
-        [tiledLayer setLevelsOfDetailBias:0];
-        [tiledLayer setContentsGravity:@"bottomLeft"];
-    }
     
     if (usesTiledBackingLayer()) {
         m_customSublayers = adoptPtr(new PlatformCALayerList(1));
@@ -712,21 +702,6 @@ TiledBacking* PlatformCALayerMac::tiledBacking()
 
     WebTiledBackingLayer *tiledBackingLayer = static_cast<WebTiledBackingLayer *>(m_layer.get());
     return [tiledBackingLayer tiledBacking];
-}
-
-void PlatformCALayerMac::synchronouslyDisplayTilesInRect(const FloatRect& rect)
-{
-    if (m_layerType != LayerTypeWebTiledLayer)
-        return;
-
-    WebTiledLayer *tiledLayer = static_cast<WebTiledLayer *>(m_layer.get());
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    BOOL oldCanDrawConcurrently = [tiledLayer canDrawConcurrently];
-    [tiledLayer setCanDrawConcurrently:NO];
-    [tiledLayer displayInRect:rect levelOfDetail:0 options:nil];
-    [tiledLayer setCanDrawConcurrently:oldCanDrawConcurrently];
-    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 AVPlayerLayer *PlatformCALayerMac::playerLayer() const

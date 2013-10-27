@@ -1,3 +1,14 @@
+2013-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Remove WebTiledLayer
+        https://bugs.webkit.org/show_bug.cgi?id=123395
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Remove synchronouslyDisplayTilesInRect.
+
 2013-10-26  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] -[WKBackForwardList forwardItem] returns the back item

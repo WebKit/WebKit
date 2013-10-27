@@ -194,10 +194,6 @@ public:
 #endif // NDEBUG
 #endif // PLATFORM(WIN)
 
-#if PLATFORM(MAC)
-    virtual void synchronouslyDisplayTilesInRect(const FloatRect&) = 0;
-#endif
-
 protected:
     PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
         : m_layerType(layerType)

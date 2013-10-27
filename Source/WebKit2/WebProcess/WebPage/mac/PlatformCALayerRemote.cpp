@@ -467,10 +467,6 @@ TiledBacking* PlatformCALayerRemote::tiledBacking()
     return nullptr;
 }
 
-void PlatformCALayerRemote::synchronouslyDisplayTilesInRect(const FloatRect& rect)
-{
-}
-
 AVPlayerLayer* PlatformCALayerRemote::playerLayer() const
 {
     return nullptr;

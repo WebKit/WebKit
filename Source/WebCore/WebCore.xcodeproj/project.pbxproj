@@ -458,8 +458,6 @@
 		0FB8890E167D30160010CDA5 /* ScrollingStateStickyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */; };
 		0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
-		0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */; };
-		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
 		0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF332A0F2B9A25004B6795 /* WebLayer.mm */; };
 		0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF332B0F2B9A25004B6795 /* WebLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */; };
@@ -6911,8 +6909,6 @@
 		0FB8890C167D30160010CDA5 /* ScrollingStateStickyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingStateStickyNode.cpp; sourceTree = "<group>"; };
 		0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateStickyNode.h; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
-		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
-		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
 		0FCF332A0F2B9A25004B6795 /* WebLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLayer.mm; sourceTree = "<group>"; };
 		0FCF332B0F2B9A25004B6795 /* WebLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLayer.h; sourceTree = "<group>"; };
 		0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFrameBase.cpp; sourceTree = "<group>"; };
@@ -18876,8 +18872,6 @@
 				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
 				0FCF332B0F2B9A25004B6795 /* WebLayer.h */,
 				0FCF332A0F2B9A25004B6795 /* WebLayer.mm */,
-				0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */,
-				0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -24641,7 +24635,6 @@
 				97AABD2514FA09D5007457AE /* WebSocketFrame.h in Headers */,
 				97AABD2714FA09D5007457AE /* WebSocketHandshake.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,
-				0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */,
 				CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */,
 				CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
@@ -27701,7 +27694,6 @@
 				AAF5B7B71524B6C50004CB49 /* WebSocketFrame.cpp in Sources */,
 				97AABD2614FA09D5007457AE /* WebSocketHandshake.cpp in Sources */,
 				0F580FA41496939100FB5BD8 /* WebTiledBackingLayer.mm in Sources */,
-				0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */,
 				1AA7161E149BF2FA0016EC19 /* WebTileLayer.mm in Sources */,
 				CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */,
 				CD61FE691794AADB004101EB /* WebKitSourceBuffer.cpp in Sources */,

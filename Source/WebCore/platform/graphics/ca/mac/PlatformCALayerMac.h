@@ -135,8 +135,6 @@ public:
 
     virtual TiledBacking* tiledBacking() OVERRIDE;
 
-    virtual void synchronouslyDisplayTilesInRect(const FloatRect&) OVERRIDE;
-
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const OVERRIDE;
 
 private:

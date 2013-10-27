@@ -139,8 +139,6 @@ public:
 
     virtual WebCore::TiledBacking* tiledBacking() OVERRIDE;
 
-    virtual void synchronouslyDisplayTilesInRect(const WebCore::FloatRect&) OVERRIDE;
-
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const OVERRIDE;
 
 private:

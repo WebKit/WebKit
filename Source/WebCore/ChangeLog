@@ -1,3 +1,29 @@
+2013-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Remove WebTiledLayer
+        https://bugs.webkit.org/show_bug.cgi?id=123395
+
+        Reviewed by Anders Carlsson.
+
+        Mac doesn't use CATiledLayer at all anymore. We have to keep
+        LayerTypeTiledLayer around for Windows, for now, but we can
+        get rid of WebTiledLayer and some related Mac-specific code.
+
+        No new tests, just removing dead code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove WebTiledLayer.*
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        Remove synchronouslyDisplayTilesInRect, which was only used for WebTiledLayer on Mac.
+        Remove WebTiledLayer instantiation and setup code.
+
+        * platform/graphics/mac/WebTiledLayer.h: Removed.
+        * platform/graphics/mac/WebTiledLayer.mm: Removed.
+
 2013-10-26  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderImageResourceStyleImage always has a StyleImage.
