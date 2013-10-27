@@ -1,5 +1,24 @@
 2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        New flakiness dashboard should support substring matching
+        https://bugs.webkit.org/show_bug.cgi?id=123393
+
+        Reviewed by Alexey Proskuryakov.
+
+        Addressed the use cases by
+        1. Always showing the candidate even when there is exactly one test matching the current value.
+        2. Adding all tests that match the current value upon the user pressing enter key.
+
+        * public/index.html:
+        (fetchManifest): Add all tests that match the current value. Confirm whether the user really
+        want to add all the tests when there are more than 15 tests to add.
+        * public/js/autocompleter.js:
+        (Autocompleter.prototype.filterCandidates): Extracted from _updateCandidates.
+        (Autocompleter.prototype._updateCandidates): Show the candidate window even when there is
+        exactly one test that matches the criteria so that the user can select this test.
+
+2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         New flakiness dashboard shouldn't treat tests with right expectations as failing
         https://bugs.webkit.org/show_bug.cgi?id=123385
 

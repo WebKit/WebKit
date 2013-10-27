@@ -12,6 +12,10 @@ function Autocompleter(inputElement, list) {
     inputElement.addEventListener('keydown', this.navigate.bind(this));
 }
 
+Autocompleter.prototype.filterCandidates = function (filter) {
+    return this._list.filter(function (testName) { return testName.indexOf(filter) >= 0; });
+}
+
 Autocompleter.prototype._ensureCandidateWindow = function () {
     if (this._candidateWindow)
         return;
@@ -28,8 +32,8 @@ Autocompleter.prototype._updateCandidates = function (filter) {
     if (this._currentFilter == filter)
         return false;
 
-    var candidates = this._list.filter(function (testName) { return testName.indexOf(filter) >= 0; });
-    if (candidates.length > 50 || candidates.length == 1)
+    var candidates = this.filterCandidates(filter);
+    if (candidates.length > 50)
         candidates = [];
     this._candidates = candidates;
     this._currentFilter = filter;

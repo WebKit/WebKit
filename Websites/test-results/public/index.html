@@ -518,6 +518,23 @@ fetchManifest(function (response) {
     var input = document.getElementById('testName');
     input.autocompleter = new Autocompleter(input, testNames);
 
+    input.form.onsubmit = function (event) {
+        addTests(input.value);
+        event.preventDefault();
+        return false;
+    }
+
+    function addTests(filter) {
+        var candidates = input.autocompleter.filterCandidates(filter);
+        if (candidates.length > 15) {
+            if (!confirm('Are you sure you want to add ' + candidates.length + ' tests that match this substring?'))
+                return;
+        }
+        for (var i = 0; i < candidates.length; i++)
+            TestResultsView.fetchTest(candidates[i]);
+        TestResultsView.updateLocationHash();
+    }
+
     var builderListView = document.getElementById('builderListView');
     TestResultsView._sortObjectsByName(response['builders']).forEach(function (builder) {
         builderListView.appendChild(element('option', [builder.name]));
