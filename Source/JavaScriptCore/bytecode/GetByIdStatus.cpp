@@ -281,6 +281,7 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, StringImpl
         specificValue = 0;
     result.m_structureSet.add(structure);
     result.m_specificValue = JSValue(specificValue);
+    result.m_state = Simple;
     return result;
 }
 

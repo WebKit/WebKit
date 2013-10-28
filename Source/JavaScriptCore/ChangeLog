@@ -1,3 +1,15 @@
+2013-10-24  Filip Pizlo  <fpizlo@apple.com>
+
+        The GetById->GetByOffset AI-based optimization should actually do things
+        https://bugs.webkit.org/show_bug.cgi?id=123299
+
+        Reviewed by Oliver Hunt.
+        
+        20% speed-up on Octane/gbemu.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor): Actually finish filling in the Status by setting the state. Previously it would remain set to NoInformation, meaning that this whole method was a no-op.
+
 2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
