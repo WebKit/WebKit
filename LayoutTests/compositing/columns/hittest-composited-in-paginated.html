@@ -5,15 +5,15 @@
             testRunner.dumpAsText();
 
         if (window.internals)
-            internals.setPagination(document, "LeftToRightPaginated", 10, 400);
-            
+            internals.setPagination("LeftToRightPaginated", 10, 400);
+
         function dumpLayers()
         {
             var result = "Element at 500, 200: " + document.elementFromPoint(500, 200).classList + "\n";
 
             if (window.testRunner)
                 result += window.internals.layerTreeAsText(document);
-                
+
             document.getElementById('layers').innerText = result;
         }
         

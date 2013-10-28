@@ -19,7 +19,7 @@ function firstListener() {
     checkBatteryStatus();
     if (++firstListenerEvents == 1) {
         battery.addEventListener('chargingchange', secondListener);
-        internals.setBatteryStatus(document, 'chargingchange', charging, chargingTime, dischargingTime, level);
+        internals.setBatteryStatus('chargingchange', charging, chargingTime, dischargingTime, level);
     }
     else if (firstListenerEvents > 2)
         testFailed('Too many events for first listener.');
@@ -40,5 +40,5 @@ function maybeFinishTest() {
 }
 
 battery.addEventListener('chargingchange', firstListener);
-internals.setBatteryStatus(document, 'chargingchange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('chargingchange', charging, chargingTime, dischargingTime, level);
 window.jsTestIsAsync = true;

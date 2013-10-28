@@ -15,7 +15,7 @@ function runNonFastScrollableRegionTest(scale) {
     overlay.style.top = 0;
     overlay.style.opacity = 0.5;
 
-    var rects = window.internals.nonFastScrollableRects(document);
+    var rects = window.internals.nonFastScrollableRects();
     for (var i = 0; i < rects.length; i++) {
         var rect = rects[i];
         var patch = document.createElement("div");

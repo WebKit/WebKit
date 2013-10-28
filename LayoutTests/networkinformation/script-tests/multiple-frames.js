@@ -41,5 +41,5 @@ var childConnection = childFrame.contentWindow.navigator.webkitConnection
 childConnection.addEventListener('webkitnetworkinfochange', childFrameListener);
 connection.addEventListener('webkitnetworkinfochange', mainFrameListener);
 
-internals.setNetworkInformation(document, 'webkitnetworkinfochange', bandwidth, metered);
+internals.setNetworkInformation('webkitnetworkinfochange', bandwidth, metered);
 window.jsTestIsAsync = true;

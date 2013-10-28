@@ -75,7 +75,7 @@
 
     function findBestClickableNode(x, y, width, height)
     {
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height);
         if (adjustedNode && adjustedNode.nodeType == 3) // TEXT node
             adjustedNode = adjustedNode.parentNode;
         return adjustedNode;

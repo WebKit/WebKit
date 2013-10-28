@@ -23,7 +23,7 @@
         document.body.appendChild(fixed);
         document.body.offsetHeight;
         fixed.className = "fixed";
-        var mainThreadScrollingReasons = internals.mainThreadScrollingReasons(document);
+        var mainThreadScrollingReasons = internals.mainThreadScrollingReasons();
         document.getElementById("result").innerText = !mainThreadScrollingReasons ? "PASS" : "FAIL: " + mainThreadScrollingReasons;
         testRunner.notifyDone();
       }, false);

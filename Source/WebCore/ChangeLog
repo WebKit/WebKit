@@ -1,3 +1,68 @@
+2013-10-28  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
+
+        Methods on window.internals shouldn't pass a document.
+        https://bugs.webkit.org/show_bug.cgi?id=107301
+
+        Reviewed by Alexey Proskuryakov.
+
+        Each 'Internals' instance is associated with a 'Document'. So, it
+        is not necessary to pass a document as argument. Only nodesFromRect and
+        layerTreeAsText methods were kept because, in some Layout Tests, the
+        'Document' object is not the same used by Internals::contextDocument.
+
+        * testing/Internals.cpp: Removed 'document' parameter.
+        (WebCore::Internals::animationsAreSuspended):
+        (WebCore::Internals::suspendAnimations):
+        (WebCore::Internals::resumeAnimations):
+        (WebCore::Internals::inspectorHighlightRects):
+        (WebCore::Internals::inspectorHighlightObject):
+        (WebCore::Internals::setScrollViewPosition):
+        (WebCore::Internals::setPagination):
+        (WebCore::Internals::configurationForViewport):
+        (WebCore::Internals::paintControlTints):
+        (WebCore::Internals::setDelegatesScrolling):
+        (WebCore::Internals::touchPositionAdjustedToBestClickableNode):
+        (WebCore::Internals::touchNodeAdjustedToBestClickableNode):
+        (WebCore::Internals::touchPositionAdjustedToBestContextMenuNode):
+        (WebCore::Internals::touchNodeAdjustedToBestContextMenuNode):
+        (WebCore::Internals::bestZoomableAreaForTouchPoint):
+        (WebCore::Internals::lastSpellCheckRequestSequence):
+        (WebCore::Internals::lastSpellCheckProcessedSequence):
+        (WebCore::Internals::wheelEventHandlerCount):
+        (WebCore::Internals::touchEventHandlerCount):
+        (WebCore::Internals::setBatteryStatus):
+        (WebCore::Internals::setNetworkInformation):
+        (WebCore::Internals::setDeviceProximity):
+        (WebCore::Internals::hasSpellingMarker):
+        (WebCore::Internals::hasAutocorrectedMarker):
+        (WebCore::Internals::isOverwriteModeEnabled):
+        (WebCore::Internals::toggleOverwriteModeEnabled):
+        (WebCore::Internals::consoleMessageArgumentCounts):
+        (WebCore::Internals::hasGrammarMarker):
+        (WebCore::Internals::numberOfScrollableAreas):
+        (WebCore::Internals::isPageBoxVisible):
+        (WebCore::Internals::repaintRectsAsText):
+        (WebCore::Internals::scrollingStateTreeAsText):
+        (WebCore::Internals::mainThreadScrollingReasons):
+        (WebCore::Internals::nonFastScrollableRects):
+        (WebCore::Internals::garbageCollectDocumentResources):
+        (WebCore::Internals::insertAuthorCSS):
+        (WebCore::Internals::insertUserCSS):
+        (WebCore::Internals::shortcutIconURLs):
+        (WebCore::Internals::allIconURLs):
+        (WebCore::Internals::setHeaderHeight):
+        (WebCore::Internals::setFooterHeight):
+        (WebCore::Internals::webkitWillEnterFullScreenForElement):
+        (WebCore::Internals::webkitDidEnterFullScreenForElement):
+        (WebCore::Internals::webkitWillExitFullScreenForElement):
+        (WebCore::Internals::webkitDidExitFullScreenForElement):
+        (WebCore::Internals::startTrackingRepaints):
+        (WebCore::Internals::stopTrackingRepaints):
+        (WebCore::Internals::getCurrentCursorInfo):
+        * testing/Internals.h:
+        (WebCore::Internals::setPagination):
+        * testing/Internals.idl:
+
 2013-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Remove HTMLMediaElement.startTime

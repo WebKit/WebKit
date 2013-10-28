@@ -31,13 +31,13 @@
     function suspend()
     {
         if (window.internals)
-            internals.suspendAnimations(document);
+            internals.suspendAnimations();
     }
     
     function resume()
     {
         if (window.internals)
-            internals.resumeAnimations(document);
+            internals.resumeAnimations();
     }
     
     function startTest()

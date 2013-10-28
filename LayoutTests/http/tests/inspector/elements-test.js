@@ -602,7 +602,7 @@ InspectorTest.dumpStyle = function(style, currentIndent)
 function dumpInspectorHighlightRects()
 {
     var rectNames = ["margin", "border", "padding", "content"];
-    var rects = window.internals.inspectorHighlightRects(document);
+    var rects = window.internals.inspectorHighlightRects();
     for (var i = 0; i < rects.length; i++)
     {
         var rectName = (i < rectNames.length ? rectNames[i] : "untitled");
@@ -613,7 +613,7 @@ function dumpInspectorHighlightRects()
 
 function dumpInspectorHighlightedRegions()
 {
-    var highlight = window.internals.inspectorHighlightObject(document);
+    var highlight = window.internals.inspectorHighlightObject();
     if (!highlight.length) {
         output("No highlighted node.");
         return;
@@ -629,7 +629,7 @@ function dumpInspectorHighlightedRegions()
 
 function dumpInspectorHighlightedNode()
 {
-    var highlight = window.internals.inspectorHighlightObject(document);
+    var highlight = window.internals.inspectorHighlightObject();
     if (!highlight.length) {
         output("No highlighted node.");
         return;

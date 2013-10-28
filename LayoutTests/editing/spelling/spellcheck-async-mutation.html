@@ -96,14 +96,14 @@ function doTest(testNo, testData) {
     document.getElementById('container').appendChild(destination);
 
     if (window.internals)
-        lastRequestId = internals.lastSpellCheckRequestSequence(document);
+        lastRequestId = internals.lastSpellCheckRequestSequence();
 
     // A spellcheck request will be invoked.
     doCopyAndPaste(source, destination);
 
     setTimeout(function() {
         if (window.internals)
-            requestId = internals.lastSpellCheckRequestSequence(document);
+            requestId = internals.lastSpellCheckRequestSequence();
         shouldBeGreaterThanOrEqual('requestId', 'lastRequestId + 1');
 
         // Then, tweak
@@ -158,7 +158,7 @@ function waitForSpellCheckRequestDone(requestId, destination, tweakKind, restTry
     }
 
     if (window.internals)
-        var lastProcessedId = internals.lastSpellCheckProcessedSequence(document);
+        var lastProcessedId = internals.lastSpellCheckProcessedSequence();
 
     if (requestId != lastProcessedId) {
         setTimeout(function() {

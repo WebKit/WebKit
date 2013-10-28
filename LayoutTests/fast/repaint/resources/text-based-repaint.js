@@ -8,16 +8,16 @@ function runRepaintTest()
         else if (document.documentElement)
             document.documentElement.offsetTop;
 
-        window.internals.startTrackingRepaints(document);
+        window.internals.startTrackingRepaints();
 
         repaintTest();
 
         // force a style recalc.
         var dummy = document.body.offsetTop;
 
-        var repaintRects = window.internals.repaintRectsAsText(document);
+        var repaintRects = window.internals.repaintRectsAsText();
 
-        window.internals.stopTrackingRepaints(document);
+        window.internals.stopTrackingRepaints();
 
         var pre = document.createElement('pre');
         document.body.appendChild(pre);

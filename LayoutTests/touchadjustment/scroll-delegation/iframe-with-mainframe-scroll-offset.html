@@ -41,7 +41,7 @@
         var y = y - radius;
         var width = radius * 2;
         var height = radius * 2;
-        var zoomableRect = internals.bestZoomableAreaForTouchPoint(x, y, width, height, document);
+        var zoomableRect = internals.bestZoomableAreaForTouchPoint(x, y, width, height);
         return zoomableRect;
     }
 
@@ -59,7 +59,7 @@
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode && internals.setDelegatesScrolling) {
             description('Test iframe with main frame scroll offset case of tap-to-zoom mechanics.');
             window.scrollBy(0,500);
-            internals.setDelegatesScrolling(true, document);
+            internals.setDelegatesScrolling(true);
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
             testDirectTouches();

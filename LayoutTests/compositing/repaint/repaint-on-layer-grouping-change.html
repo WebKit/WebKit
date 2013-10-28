@@ -44,7 +44,7 @@
         document.body.offsetWidth;
         window.setTimeout(function() {
             if (window.internals)
-                window.internals.startTrackingRepaints(document);
+                window.internals.startTrackingRepaints();
             document.body.classList.toggle('changed');
             if (window.testRunner) {
                 document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);

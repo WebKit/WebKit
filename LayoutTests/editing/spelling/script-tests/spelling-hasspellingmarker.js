@@ -11,7 +11,7 @@ function hasMarked(markup)
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
 
-    return internals.hasSpellingMarker(document, 0, 2);
+    return internals.hasSpellingMarker(0, 2);
 }
 
 shouldBeTrue("hasMarked(\"<textarea id='test' cols='80' rows='10'></textarea>\");");

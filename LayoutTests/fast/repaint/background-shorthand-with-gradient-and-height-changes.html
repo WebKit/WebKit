@@ -51,7 +51,7 @@ function start() {
     if (!window.testRunner || !window.internals)
         return;
         
-    window.internals.startTrackingRepaints(document);
+    window.internals.startTrackingRepaints();
     window.testRunner.display();
 }
 
@@ -59,8 +59,8 @@ function logRepaints() {
     if (!window.internals)
         return;
         
-    repaintRects = window.internals.repaintRectsAsText(document);
-    window.internals.stopTrackingRepaints(document);
+    repaintRects = window.internals.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
     shouldNotBe("repaintRects.indexOf('28 84')", "-1");
     shouldNotBe("repaintRects.indexOf('8 84')", "-1");
     finishJSTest();

@@ -56,7 +56,7 @@
                 eventSender.scalePageBy(2.3, 0, 0);
 
             if (window.testRunner) {
-                document.getElementById('results').textContent = window.internals.scrollingStateTreeAsText(document) + '\n' +
+                document.getElementById('results').textContent = window.internals.scrollingStateTreeAsText() + '\n' +
                 internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
 
                 testRunner.notifyDone()

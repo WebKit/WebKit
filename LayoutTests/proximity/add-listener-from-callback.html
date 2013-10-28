@@ -21,7 +21,7 @@ function firstListener(event) {
     checkProximity(event);
     if (++firstListenerEvents == 1) {
         window.addEventListener('webkitdeviceproximity', secondListener);
-        internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+        internals.setDeviceProximity('webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
     }
     else if (firstListenerEvents > 2)
         testFailed('Too many events for first listener.');
@@ -42,7 +42,7 @@ function maybeFinishTest() {
 }
 
 window.addEventListener('webkitdeviceproximity', firstListener);
-internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+internals.setDeviceProximity('webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
 window.jsTestIsAsync = true;
 </script>
 <script src="../resources/js-test-post.js"></script>

@@ -51,7 +51,7 @@ resetText();
 textarea.setSelectionRange(11, 20);
 execDeleteCommand();
 if (window.internals && window.internals.hasSpellingMarker) {
-    if (window.internals.hasSpellingMarker(document, 7,4) == 0 && window.internals.hasSpellingMarker(document, 11,4) == 0) {
+    if (window.internals.hasSpellingMarker(7,4) == 0 && window.internals.hasSpellingMarker(11,4) == 0) {
         document.getElementById('console').innerHTML = 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' has underline.<br>";
@@ -62,7 +62,7 @@ resetText();
 textarea.setSelectionRange(11, 16);
 execDeleteCommand();
 if (window.internals && window.internals.hasSpellingMarker) {
-    if (window.internals.hasSpellingMarker(document, 7,4) == 0 && window.internals.hasSpellingMarker(document, 11,8) == 0) {
+    if (window.internals.hasSpellingMarker(7,4) == 0 && window.internals.hasSpellingMarker(11,8) == 0) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagmeagesga' has underline.<br>";
@@ -73,7 +73,7 @@ resetText();
 textarea.setSelectionRange(15, 20);
 execDeleteCommand();
 if (window.internals && window.internals.hasSpellingMarker) {
-    if (window.internals.hasSpellingMarker(document, 7,8) == 0 && window.internals.hasSpellingMarker(document, 15,4) == 0) {
+    if (window.internals.hasSpellingMarker(7,8) == 0 && window.internals.hasSpellingMarker(15,4) == 0) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesgaesga' has underline.<br>";

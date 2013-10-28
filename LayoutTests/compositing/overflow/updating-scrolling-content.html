@@ -45,7 +45,7 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
           // Scroll all the way to the bottom and change the color of the
           // indicator (which is now outside the overflow clip).
           scroller.scrollTop = 1000;
-          window.internals.startTrackingRepaints(document);
+          window.internals.startTrackingRepaints();
           indicator.style.background = 'green';
 
           // Scroll back up so that the updated (green) indicator is visible.
@@ -53,7 +53,7 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
           scroller.scrollTop = 0;
           layerTree.innerText =
               window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
-          window.internals.stopTrackingRepaints(document);
+          window.internals.stopTrackingRepaints();
       });
   </script>
 </head>

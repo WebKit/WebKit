@@ -21,7 +21,7 @@
         var y = y - radius;
         var width = radius * 2;
         var height = radius * 2;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height);
         if (adjustedNode.nodeType == 3) // TEXT node
             adjustedNode = adjustedNode.parentNode;
         return adjustedNode;

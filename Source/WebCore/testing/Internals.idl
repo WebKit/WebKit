@@ -56,9 +56,9 @@
 
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
-    [RaisesException] void suspendAnimations(Document document);
-    [RaisesException] void resumeAnimations(Document document);
-    [RaisesException] boolean animationsAreSuspended(in Document document);
+    [RaisesException] void suspendAnimations();
+    [RaisesException] void resumeAnimations();
+    [RaisesException] boolean animationsAreSuspended();
     [RaisesException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, double pauseTime, Element element);
     [RaisesException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, double pauseTime, Element element, DOMString pseudoId);
 
@@ -79,20 +79,19 @@
 
     [RaisesException] ClientRect boundingBox(Element element);
 
-    [RaisesException] ClientRectList inspectorHighlightRects(Document document);
-    [RaisesException] DOMString inspectorHighlightObject(Document document);
+    [RaisesException] ClientRectList inspectorHighlightRects();
+    [RaisesException] DOMString inspectorHighlightObject();
 
     [RaisesException] unsigned long markerCountForNode(Node node, DOMString markerType);
     [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
     [RaisesException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     void addTextMatchMarker(Range range, boolean isActive);
 
-    [RaisesException] void setScrollViewPosition(Document document, long x, long y);
+    [RaisesException] void setScrollViewPosition(long x, long y);
 
-    [RaisesException] void setPagination(Document document, DOMString mode, long gap, optional long pageLength);
+    [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);
 
-    [RaisesException] DOMString configurationForViewport(Document document,
-                                       float devicePixelRatio,
+    [RaisesException] DOMString configurationForViewport(float devicePixelRatio,
                                        long deviceWidth,
                                        long deviceHeight,
                                        long availableWidth,
@@ -105,7 +104,7 @@
     [RaisesException] void setEditingValue(Element inputElement, DOMString value);
     [RaisesException] void setAutofilled(Element inputElement, boolean enabled);
 
-    [RaisesException] void paintControlTints(Document document);
+    [RaisesException] void paintControlTints();
 
     [RaisesException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
@@ -114,23 +113,23 @@
     [RaisesException] unsigned long lengthFromRange(Element scope, Range range);
     [RaisesException] DOMString rangeAsText(Range range);
 
-    [RaisesException] void setDelegatesScrolling(boolean enabled, Document document);
+    [RaisesException] void setDelegatesScrolling(boolean enabled);
 #if defined(ENABLE_TOUCH_ADJUSTMENT) && ENABLE_TOUCH_ADJUSTMENT
-    [RaisesException] WebKitPoint touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document document);
-    [RaisesException] Node touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document document);
-    [RaisesException] WebKitPoint touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document);
-    [RaisesException] Node touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document document);
-    [RaisesException] ClientRect bestZoomableAreaForTouchPoint(long x, long y, long width, long height, Document document);
+    [RaisesException] WebKitPoint touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height);
+    [RaisesException] Node touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height);
+    [RaisesException] WebKitPoint touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height);
+    [RaisesException] Node touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height);
+    [RaisesException] ClientRect bestZoomableAreaForTouchPoint(long x, long y, long width, long height);
 #endif
 
-    [RaisesException] long lastSpellCheckRequestSequence(Document document);
-    [RaisesException] long lastSpellCheckProcessedSequence(Document document);
+    [RaisesException] long lastSpellCheckRequestSequence();
+    [RaisesException] long lastSpellCheckProcessedSequence();
 
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);
 
-    [RaisesException] unsigned long wheelEventHandlerCount(Document document);
-    [RaisesException] unsigned long touchEventHandlerCount(Document document);
+    [RaisesException] unsigned long wheelEventHandlerCount();
+    [RaisesException] unsigned long touchEventHandlerCount();
 
     [RaisesException] NodeList nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
@@ -139,9 +138,9 @@
     void emitInspectorDidBeginFrame();
     void emitInspectorDidCancelFrame();
 
-    [RaisesException] boolean hasSpellingMarker(Document document, long from, long length);
-    [RaisesException] boolean hasGrammarMarker(Document document, long from, long length);
-    [RaisesException] boolean hasAutocorrectedMarker(Document document, long from, long length);
+    [RaisesException] boolean hasSpellingMarker(long from, long length);
+    [RaisesException] boolean hasGrammarMarker(long from, long length);
+    [RaisesException] boolean hasAutocorrectedMarker(long from, long length);
     [RaisesException] void setContinuousSpellCheckingEnabled(boolean enabled);
     [RaisesException] void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     [RaisesException] void setAutomaticLinkDetectionEnabled(boolean enabled);
@@ -149,12 +148,12 @@
     [RaisesException] void setAutomaticTextReplacementEnabled(boolean enabled);
     [RaisesException] void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
-    [RaisesException] boolean isOverwriteModeEnabled(Document document);
-    [RaisesException] void toggleOverwriteModeEnabled(Document document);
+    [RaisesException] boolean isOverwriteModeEnabled();
+    [RaisesException] void toggleOverwriteModeEnabled();
 
-    [RaisesException] unsigned long numberOfScrollableAreas(Document document);
+    [RaisesException] unsigned long numberOfScrollableAreas();
 
-    [RaisesException] boolean isPageBoxVisible(Document document, long pageNumber);
+    [RaisesException] boolean isPageBoxVisible(long pageNumber);
 
     readonly attribute InternalSettings settings;
     readonly attribute unsigned long workerThreadCount;
@@ -167,34 +166,34 @@
     const unsigned short LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16;
     [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags);
 
-    [RaisesException] DOMString scrollingStateTreeAsText(Document document);
-    [RaisesException] DOMString mainThreadScrollingReasons(Document document);
-    [RaisesException] ClientRectList nonFastScrollableRects(Document document);
+    [RaisesException] DOMString scrollingStateTreeAsText();
+    [RaisesException] DOMString mainThreadScrollingReasons();
+    [RaisesException] ClientRectList nonFastScrollableRects();
 
-    [RaisesException] DOMString repaintRectsAsText(Document document);
+    [RaisesException] DOMString repaintRectsAsText();
 
-    [RaisesException] void garbageCollectDocumentResources(Document document);
+    [RaisesException] void garbageCollectDocumentResources();
 
     void allowRoundingHacks();
 
-    [RaisesException] void insertAuthorCSS(Document document, DOMString css);
-    [RaisesException] void insertUserCSS(Document document, DOMString css);
+    [RaisesException] void insertAuthorCSS(DOMString css);
+    [RaisesException] void insertUserCSS(DOMString css);
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
-    [RaisesException] void setBatteryStatus(Document document, DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level);
+    [RaisesException] void setBatteryStatus(DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level);
 #endif
 
 #if defined(ENABLE_NETWORK_INFO) && ENABLE_NETWORK_INFO
-    [RaisesException] void setNetworkInformation(Document document, DOMString eventType, double bandwidth, boolean metered);
+    [RaisesException] void setNetworkInformation(DOMString eventType, double bandwidth, boolean metered);
 #endif
 
 #if defined(ENABLE_PROXIMITY_EVENTS) && ENABLE_PROXIMITY_EVENTS
-    [RaisesException] void setDeviceProximity(Document document, DOMString eventType, double value, double min, double max);
+    [RaisesException] void setDeviceProximity(DOMString eventType, double value, double min, double max);
 #endif
 
     [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
     [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
-    [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts(Document document);
+    [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts();
     [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(DOMString url);
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
     [Conditional=INSPECTOR, RaisesException] void setInspectorResourcesDataSizeLimits(long maximumResourcesContentSize, long maximumSingleResourceContentSize);
@@ -202,22 +201,22 @@
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional float pageWidth, optional float pageHeight);
-    DOMString[] shortcutIconURLs(Document document);
-    DOMString[] allIconURLs(Document document);
+    DOMString[] shortcutIconURLs();
+    DOMString[] allIconURLs();
     long numberOfPages(optional double pageWidthInPixels, optional double pageHeightInPixels);
     [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
     [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
     [RaisesException] void setPageScaleFactor(float scaleFactor, long x, long y);
 
-    void setHeaderHeight(Document document, float height);
-    void setFooterHeight(Document document, float height);
+    void setHeaderHeight(float height);
+    void setFooterHeight(float height);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-    void webkitWillEnterFullScreenForElement(Document document, Element element);
-    void webkitDidEnterFullScreenForElement(Document document, Element element);
-    void webkitWillExitFullScreenForElement(Document document, Element element);
-    void webkitDidExitFullScreenForElement(Document document, Element element);
+    void webkitWillEnterFullScreenForElement(Element element);
+    void webkitDidEnterFullScreenForElement(Element element);
+    void webkitWillExitFullScreenForElement(Element element);
+    void webkitDidExitFullScreenForElement(Element element);
 #endif
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);
@@ -231,11 +230,11 @@
 
     // These functions both reset the tracked repaint rects. They are inteded to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
-    [RaisesException] void startTrackingRepaints(Document document);
-    [RaisesException] void stopTrackingRepaints(Document document);
+    [RaisesException] void startTrackingRepaints();
+    [RaisesException] void stopTrackingRepaints();
 
     // Returns a string with information about the mouse cursor used at the specified client location.
-    [RaisesException] DOMString getCurrentCursorInfo(Document document);
+    [RaisesException] DOMString getCurrentCursorInfo();
 
     [RaisesException] DOMString markerTextForListItem(Element element);
 

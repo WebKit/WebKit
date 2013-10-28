@@ -15,5 +15,5 @@ battery.addEventListener('chargingchange', function() {
     finishJSTest();
 });
 
-internals.setBatteryStatus(document, 'chargingchange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('chargingchange', charging, chargingTime, dischargingTime, level);
 window.jsTestIsAsync = true;

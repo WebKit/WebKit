@@ -15,7 +15,7 @@ function firstListener() {
     checkNetworkInformation();
     if (++firstListenerEvents == 1) {
         connection.addEventListener('webkitnetworkinfochange', secondListener);
-        internals.setNetworkInformation(document, 'webkitnetworkinfochange', bandwidth, metered);
+        internals.setNetworkInformation('webkitnetworkinfochange', bandwidth, metered);
     }
     else if (firstListenerEvents > 2)
         testFailed('Too many events for first listener.');
@@ -36,6 +36,6 @@ function maybeFinishTest() {
 }
 
 connection.addEventListener('webkitnetworkinfochange', firstListener);
-internals.setNetworkInformation(document, 'webkitnetworkinfochange', bandwidth, metered);
+internals.setNetworkInformation('webkitnetworkinfochange', bandwidth, metered);
 
 window.jsTestIsAsync = true;

@@ -31,7 +31,7 @@ if (window.testRunner) {
 function runTest(prepare, next) {
     prepare();
     setTimeout(function() {
-        debug('Cursor Info: ' + window.internals.getCurrentCursorInfo(document));
+        debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
         debug('');
         next();
     }, CURSOR_UPDATE_DELAY);

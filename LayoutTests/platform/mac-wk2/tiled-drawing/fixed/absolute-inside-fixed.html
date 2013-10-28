@@ -44,12 +44,12 @@
         window.setTimeout(function() {
           window.scrollTo(0, 200);
           if (window.internals) {
-            document.getElementById('results').innerText = internals.scrollingStateTreeAsText(document);
+            document.getElementById('results').innerText = internals.scrollingStateTreeAsText();
             testRunner.notifyDone();
           }
         }, 10);
       }
-      
+
       window.addEventListener('load', doScroll, false);
     </script>
 </head>

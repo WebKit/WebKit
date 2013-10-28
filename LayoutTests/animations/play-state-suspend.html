@@ -57,7 +57,7 @@
     function suspend()
     {
         if (window.internals)
-            internals.suspendAnimations(document);
+            internals.suspendAnimations();
     }
 
     function unpause()
@@ -69,7 +69,7 @@
     function resume()
     {
         if (window.internals)
-            internals.resumeAnimations(document);
+            internals.resumeAnimations();
     }
 
     function setTimers()

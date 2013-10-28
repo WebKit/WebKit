@@ -49,15 +49,15 @@
     function startTrackingRepaints()
     {
         document.body.offsetTop;
-        window.internals.startTrackingRepaints(document);
+        window.internals.startTrackingRepaints();
         testRunner.display();
         setTimeout(logRepaints, 200);
     }
 
     function logRepaints()
     {
-        repaintRects = window.internals.repaintRectsAsText(document);
-        window.internals.stopTrackingRepaints(document);
+        repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
 
         shouldBeEqualToString("repaintRects", "");
 

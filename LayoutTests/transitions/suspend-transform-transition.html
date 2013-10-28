@@ -34,11 +34,11 @@
     function suspendAndWaitForCompletion()
     {
         if (window.internals)
-            internals.suspendAnimations(document);
+            internals.suspendAnimations();
 
         window.setTimeout(function() {
             if (window.testRunner) {
-                internals.resumeAnimations(document);
+                internals.resumeAnimations();
                 testRunner.notifyDone();
             }
         }, 250);

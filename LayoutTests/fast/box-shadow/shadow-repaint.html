@@ -24,10 +24,10 @@
             if (!window.testRunner || !window.internals)
                 return;
 
-            window.internals.startTrackingRepaints(document);
+            window.internals.startTrackingRepaints();
             document.getElementById('box').classList.add('shadowed');
-            document.getElementById('repaints').textContent = window.internals.repaintRectsAsText(document);
-            window.internals.stopTrackingRepaints(document);
+            document.getElementById('repaints').textContent = window.internals.repaintRectsAsText();
+            window.internals.stopTrackingRepaints();
         }
         
         window.addEventListener('load', doTest, false);

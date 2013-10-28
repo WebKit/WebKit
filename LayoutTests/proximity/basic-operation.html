@@ -17,7 +17,7 @@ window.addEventListener('webkitdeviceproximity', function(e) {
     finishJSTest();
 });
 
-internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+internals.setDeviceProximity('webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
 window.jsTestIsAsync = true;
 </script>
 <script src="../resources/js-test-post.js"></script>

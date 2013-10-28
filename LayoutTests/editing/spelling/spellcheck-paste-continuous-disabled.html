@@ -24,14 +24,14 @@ document.execCommand("InsertText", false, 'p');
 document.execCommand("InsertText", false, 'p');
 document.execCommand("InsertText", false, 'l');
 document.execCommand("InsertText", false, 'e');
-shouldBeTrue('internals.hasSpellingMarker(document, 0, 2)');
+shouldBeTrue('internals.hasSpellingMarker(0, 2)');
 window.getSelection().selectAllChildren(srcNode);
 document.execCommand('Copy');
 
 internals.setContinuousSpellCheckingEnabled(false);
 
 document.execCommand('Paste');
-shouldBeFalse('internals.hasSpellingMarker(document, 0, 2)');
+shouldBeFalse('internals.hasSpellingMarker(0, 2)');
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

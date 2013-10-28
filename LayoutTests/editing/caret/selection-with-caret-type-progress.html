@@ -26,7 +26,7 @@ if (window.eventSender && window.internals) {
     leapForwardAndMove(div.offsetLeft + 20);
     leapForwardAndMove(div.offsetWidth - 10);
 
-    var cursorInfo = window.internals.getCurrentCursorInfo(document);
+    var cursorInfo = window.internals.getCurrentCursorInfo();
     var currentCursorType = cursorInfo.substring(cursorInfo.indexOf('=') + 1, cursorInfo.lastIndexOf(' '));
     shouldBeEqualToString('currentCursorType', 'Progress');
 } else {

@@ -17,7 +17,7 @@
             window.scrollTo(x, y);
 
             if (window.internals)
-                document.getElementById('scrollingTree').innerText += "Attempted scroll to " + x + ", " + y + "\n" + window.internals.scrollingStateTreeAsText(document) + "\n";
+                document.getElementById('scrollingTree').innerText += "Attempted scroll to " + x + ", " + y + "\n" + window.internals.scrollingStateTreeAsText() + "\n";
         }
 
         function doTest()

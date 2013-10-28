@@ -17,7 +17,7 @@ if (window.internals)
 
 function verifyGrammarMarker(destination, ungrammaticalPhrase)
 {
-    if (internals.hasGrammarMarker(document, destination.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length)) {
+    if (internals.hasGrammarMarker(destination.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length)) {
         testPassed("ungrammatical phrase '" + ungrammaticalPhrase + "' on '" + destination.innerHTML + "'");
         return true;
     } else

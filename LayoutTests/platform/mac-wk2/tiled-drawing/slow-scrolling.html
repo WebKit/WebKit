@@ -27,7 +27,7 @@
         function doTest()
         {
             if (window.internals)
-                document.getElementById('reasons').textContent = window.internals.mainThreadScrollingReasons(document);
+                document.getElementById('reasons').textContent = window.internals.mainThreadScrollingReasons();
         }
         window.addEventListener('load', doTest, false);
     </script>

@@ -8,7 +8,7 @@ function print(text)
 
 function dumpConsoleMessageArgumentCounts()
 {
-    var consoleMessageArgumentCounts = window.internals.consoleMessageArgumentCounts(document);
+    var consoleMessageArgumentCounts = window.internals.consoleMessageArgumentCounts();
     if (consoleMessageArgumentCounts.length === 3)
         print("PASSED: found argument counts for 3 messages");
     else

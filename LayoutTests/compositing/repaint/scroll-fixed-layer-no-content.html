@@ -14,13 +14,13 @@
         {
             document.body.offsetHeight;
             if (window.internals)
-                window.internals.startTrackingRepaints(document);
+                window.internals.startTrackingRepaints();
 
             window.scrollTo(0, 1000);
             window.scrollTo(0, 100);
 
             if (window.internals)
-                document.getElementById('repaintRects').textContent = window.internals.repaintRectsAsText(document);
+                document.getElementById('repaintRects').textContent = window.internals.repaintRectsAsText();
         }
     </script>
 </head>

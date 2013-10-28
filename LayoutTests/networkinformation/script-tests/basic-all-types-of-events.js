@@ -16,5 +16,5 @@ connection.addEventListener('webkitnetworkinfochange', function() {
     finishJSTest();
 });
 
-internals.setNetworkInformation(document, 'webkitnetworkinfochange', bandwidth, metered);
+internals.setNetworkInformation('webkitnetworkinfochange', bandwidth, metered);
 window.jsTestIsAsync = true;

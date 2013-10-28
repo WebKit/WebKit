@@ -38,13 +38,13 @@
         }
 
         if (window.internals)
-            internals.setPagination(document, "LeftToRightPaginated", 0);
-            
+            internals.setPagination("LeftToRightPaginated", 0);
+
         function dumpLayers()
         {
             window.setTimeout(function() {
                 if (window.internals)
-                    internals.startTrackingRepaints(document);
+                    internals.startTrackingRepaints();
                 document.getElementById('inner').classList.add('changed');
                 if (window.testRunner) {
                     document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);

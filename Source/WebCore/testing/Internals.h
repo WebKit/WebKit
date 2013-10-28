@@ -98,9 +98,9 @@ public:
 
     // CSS Animation testing.
     unsigned numberOfActiveAnimations() const;
-    bool animationsAreSuspended(Document*, ExceptionCode&) const;
-    void suspendAnimations(Document*, ExceptionCode&) const;
-    void resumeAnimations(Document*, ExceptionCode&) const;
+    bool animationsAreSuspended(ExceptionCode&) const;
+    void suspendAnimations(ExceptionCode&) const;
+    void resumeAnimations(ExceptionCode&) const;
     bool pauseAnimationAtTimeOnElement(const String& animationName, double pauseTime, Element*, ExceptionCode&);
     bool pauseAnimationAtTimeOnPseudoElement(const String& animationName, double pauseTime, Element*, const String& pseudoId, ExceptionCode&);
 
@@ -128,18 +128,18 @@ public:
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
-    PassRefPtr<ClientRectList> inspectorHighlightRects(Document*, ExceptionCode&);
-    String inspectorHighlightObject(Document*, ExceptionCode&);
+    PassRefPtr<ClientRectList> inspectorHighlightRects(ExceptionCode&);
+    String inspectorHighlightObject(ExceptionCode&);
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     void addTextMatchMarker(const Range*, bool isActive);
 
-    void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
-    void setPagination(Document* document, const String& mode, int gap, ExceptionCode& ec) { setPagination(document, mode, gap, 0, ec); }
-    void setPagination(Document*, const String& mode, int gap, int pageLength, ExceptionCode&);
-    String configurationForViewport(Document*, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
+    void setScrollViewPosition(long x, long y, ExceptionCode&);
+    void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
+    void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
+    String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
 
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
     bool elementShouldAutoComplete(Element* inputElement, ExceptionCode&);
@@ -149,30 +149,30 @@ public:
     void setAutofilled(Element*, bool enabled, ExceptionCode&);
     void scrollElementToRect(Element*, long x, long y, long w, long h, ExceptionCode&);
 
-    void paintControlTints(Document*, ExceptionCode&);
+    void paintControlTints(ExceptionCode&);
 
     PassRefPtr<Range> rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode&);
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
     String rangeAsText(const Range*, ExceptionCode&);
 
-    void setDelegatesScrolling(bool enabled, Document*, ExceptionCode&);
+    void setDelegatesScrolling(bool enabled, ExceptionCode&);
 #if ENABLE(TOUCH_ADJUSTMENT)
-    PassRefPtr<WebKitPoint> touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
-    Node* touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
-    PassRefPtr<WebKitPoint> touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document*, ExceptionCode&);
-    Node* touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, Document*, ExceptionCode&);
-    PassRefPtr<ClientRect> bestZoomableAreaForTouchPoint(long x, long y, long width, long height, Document*, ExceptionCode&);
+    PassRefPtr<WebKitPoint> touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, ExceptionCode&);
+    Node* touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, ExceptionCode&);
+    PassRefPtr<WebKitPoint> touchPositionAdjustedToBestContextMenuNode(long x, long y, long width, long height, ExceptionCode&);
+    Node* touchNodeAdjustedToBestContextMenuNode(long x, long y, long width, long height, ExceptionCode&);
+    PassRefPtr<ClientRect> bestZoomableAreaForTouchPoint(long x, long y, long width, long height, ExceptionCode&);
 #endif
 
-    int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
-    int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
+    int lastSpellCheckRequestSequence(ExceptionCode&);
+    int lastSpellCheckProcessedSequence(ExceptionCode&);
 
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 
-    unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
-    unsigned touchEventHandlerCount(Document*, ExceptionCode&);
+    unsigned wheelEventHandlerCount(ExceptionCode&);
+    unsigned touchEventHandlerCount(ExceptionCode&);
 
     PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode&) const;
@@ -180,9 +180,9 @@ public:
     void emitInspectorDidBeginFrame();
     void emitInspectorDidCancelFrame();
 
-    bool hasSpellingMarker(Document*, int from, int length, ExceptionCode&);
-    bool hasGrammarMarker(Document*, int from, int length, ExceptionCode&);
-    bool hasAutocorrectedMarker(Document*, int from, int length, ExceptionCode&);
+    bool hasSpellingMarker(int from, int length, ExceptionCode&);
+    bool hasGrammarMarker(int from, int length, ExceptionCode&);
+    bool hasAutocorrectedMarker(int from, int length, ExceptionCode&);
     void setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&);
     void setAutomaticQuoteSubstitutionEnabled(bool enabled, ExceptionCode&);
     void setAutomaticLinkDetectionEnabled(bool enabled, ExceptionCode&);
@@ -190,23 +190,23 @@ public:
     void setAutomaticTextReplacementEnabled(bool enabled, ExceptionCode&);
     void setAutomaticSpellingCorrectionEnabled(bool enabled, ExceptionCode&);
 
-    bool isOverwriteModeEnabled(Document*, ExceptionCode&);
-    void toggleOverwriteModeEnabled(Document*, ExceptionCode&);
+    bool isOverwriteModeEnabled(ExceptionCode&);
+    void toggleOverwriteModeEnabled(ExceptionCode&);
 
-    unsigned numberOfScrollableAreas(Document*, ExceptionCode&);
+    unsigned numberOfScrollableAreas(ExceptionCode&);
 
-    bool isPageBoxVisible(Document*, int pageNumber, ExceptionCode&);
+    bool isPageBoxVisible(int pageNumber, ExceptionCode&);
 
     static const char* internalsId;
 
     InternalSettings* settings() const;
     unsigned workerThreadCount() const;
 
-    void setBatteryStatus(Document*, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
+    void setBatteryStatus(const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
 
-    void setNetworkInformation(Document*, const String& eventType, double bandwidth, bool metered, ExceptionCode&);
+    void setNetworkInformation(const String& eventType, double bandwidth, bool metered, ExceptionCode&);
 
-    void setDeviceProximity(Document*, const String& eventType, double value, double min, double max, ExceptionCode&);
+    void setDeviceProximity(const String& eventType, double value, double min, double max, ExceptionCode&);
 
     enum {
         // Values need to be kept in sync with Internals.idl.
@@ -218,22 +218,22 @@ public:
     };
     String layerTreeAsText(Document*, unsigned flags, ExceptionCode&) const;
     String layerTreeAsText(Document*, ExceptionCode&) const;
-    String repaintRectsAsText(Document*, ExceptionCode&) const;
-    String scrollingStateTreeAsText(Document*, ExceptionCode&) const;
-    String mainThreadScrollingReasons(Document*, ExceptionCode&) const;
-    PassRefPtr<ClientRectList> nonFastScrollableRects(Document*, ExceptionCode&) const;
+    String repaintRectsAsText(ExceptionCode&) const;
+    String scrollingStateTreeAsText(ExceptionCode&) const;
+    String mainThreadScrollingReasons(ExceptionCode&) const;
+    PassRefPtr<ClientRectList> nonFastScrollableRects(ExceptionCode&) const;
 
-    void garbageCollectDocumentResources(Document*, ExceptionCode&) const;
+    void garbageCollectDocumentResources(ExceptionCode&) const;
 
     void allowRoundingHacks() const;
 
-    void insertAuthorCSS(Document*, const String&, ExceptionCode&) const;
-    void insertUserCSS(Document*, const String&, ExceptionCode&) const;
+    void insertAuthorCSS(const String&, ExceptionCode&) const;
+    void insertUserCSS(const String&, ExceptionCode&) const;
 
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
-    Vector<String> consoleMessageArgumentCounts(Document*) const;
+    Vector<String> consoleMessageArgumentCounts() const;
     PassRefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
     void setInspectorResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
@@ -243,8 +243,8 @@ public:
     String counterValue(Element*);
 
     int pageNumber(Element*, float pageWidth = 800, float pageHeight = 600);
-    Vector<String> shortcutIconURLs(Document*) const;
-    Vector<String> allIconURLs(Document*) const;
+    Vector<String> shortcutIconURLs() const;
+    Vector<String> allIconURLs() const;
 
     int numberOfPages(float pageWidthInPixels = 800, float pageHeightInPixels = 600);
     String pageProperty(String, int, ExceptionCode& = ASSERT_NO_EXCEPTION) const;
@@ -252,14 +252,14 @@ public:
 
     void setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode&);
 
-    void setHeaderHeight(Document*, float);
-    void setFooterHeight(Document*, float);
+    void setHeaderHeight(float);
+    void setFooterHeight(float);
 
 #if ENABLE(FULLSCREEN_API)
-    void webkitWillEnterFullScreenForElement(Document*, Element*);
-    void webkitDidEnterFullScreenForElement(Document*, Element*);
-    void webkitWillExitFullScreenForElement(Document*, Element*);
-    void webkitDidExitFullScreenForElement(Document*, Element*);
+    void webkitWillEnterFullScreenForElement(Element*);
+    void webkitDidEnterFullScreenForElement(Element*);
+    void webkitWillExitFullScreenForElement(Element*);
+    void webkitDidExitFullScreenForElement(Element*);
 #endif
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
@@ -271,15 +271,15 @@ public:
 
     Vector<String> getReferencedFilePaths() const;
 
-    void startTrackingRepaints(Document*, ExceptionCode&);
-    void stopTrackingRepaints(Document*, ExceptionCode&);
+    void startTrackingRepaints(ExceptionCode&);
+    void stopTrackingRepaints(ExceptionCode&);
 
     PassRefPtr<ArrayBuffer> serializeObject(PassRefPtr<SerializedScriptValue>) const;
     PassRefPtr<SerializedScriptValue> deserializeBuffer(PassRefPtr<ArrayBuffer>) const;
 
     void setUsesOverlayScrollbars(bool enabled);
 
-    String getCurrentCursorInfo(Document*, ExceptionCode&);
+    String getCurrentCursorInfo(ExceptionCode&);
 
     String markerTextForListItem(Element*, ExceptionCode&);
 

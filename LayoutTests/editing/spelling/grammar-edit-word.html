@@ -14,12 +14,12 @@ var target = document.getElementById('src');
 target.focus();
 
 evalAndLog('document.execCommand("InsertText", false, "You has the right.")');
-shouldBeTrue('internals.hasGrammarMarker(document, 4, 3)');
+shouldBeTrue('internals.hasGrammarMarker(4, 3)');
 
 debug('Delete the end of this sentence until it becomes "You ha".');
 for (var i = 0; i < 12; ++i)
     evalAndLog('testRunner.execCommand("DeleteBackward")');
-shouldBeFalse('internals.hasGrammarMarker(document, 4, 2)');
+shouldBeFalse('internals.hasGrammarMarker(4, 2)');
 
 internals.settings.setUnifiedTextCheckerEnabled(false);
 </script>

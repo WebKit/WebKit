@@ -1,3 +1,366 @@
+2013-10-28  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
+
+        Methods on window.internals shouldn't pass a document.
+        https://bugs.webkit.org/show_bug.cgi?id=107301
+
+        Reviewed by Alexey Proskuryakov.
+
+        Each 'Internals' instance is associated with a 'Document'. So, it
+        is not necessary to pass a document as argument. Only nodesFromRect and
+        layerTreeAsText methods were kept because, in some Layout Tests, the
+        'Document' object is not the same used by Internals::contextDocument.
+
+        * animations/added-while-suspended.html: Removed 'document' parameter.
+        * animations/play-state-suspend.html:
+        * animations/stop-animation-on-suspend.html:
+        * animations/suspend-resume-animation-events.html:
+        * animations/suspend-resume-animation.html:
+        * animations/suspend-transform-animation.html:
+        * batterystatus/resources/event-after-navigation-new.html:
+        * batterystatus/script-tests/add-listener-from-callback.js:
+        (firstListener):
+        * batterystatus/script-tests/basic-all-types-of-events.js:
+        * batterystatus/script-tests/basic-operation.js:
+        * batterystatus/script-tests/multiple-frames.js:
+        * batterystatus/script-tests/updates.js:
+        (setBatteryStatus):
+        * compositing/columns/ancestor-clipped-in-paginated.html:
+        * compositing/columns/clipped-in-paginated.html:
+        * compositing/columns/composited-columns-vertical-rl.html:
+        * compositing/columns/composited-in-paginated-rl.html:
+        * compositing/columns/composited-in-paginated-writing-mode-rl.html:
+        * compositing/columns/composited-in-paginated.html:
+        * compositing/columns/composited-lr-paginated-repaint.html:
+        * compositing/columns/composited-rl-paginated-repaint.html:
+        * compositing/columns/geometry-map-paginated-assert.html:
+        * compositing/columns/hittest-composited-in-paginated.html:
+        * compositing/columns/rotated-in-paginated.html:
+        * compositing/columns/untransformed-composited-in-paginated.html:
+        * compositing/iframes/iframe-composited-scrolling.html:
+        * compositing/layer-creation/fixed-position-in-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-no-content-scroll-reason.html:
+        * compositing/layer-creation/fixed-position-out-of-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html:
+        * compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html:
+        * compositing/overflow/dynamic-composited-scrolling-status.html:
+        * compositing/overflow/scrolling-without-painting.html:
+        * compositing/overflow/updating-scrolling-content.html:
+        * compositing/repaint/absolute-painted-into-composited-ancestor.html:
+        * compositing/repaint/fixed-background-scroll.html:
+        * compositing/repaint/invalidations-on-composited-layers.html:
+        * compositing/repaint/positioned-movement.html:
+        * compositing/repaint/repaint-on-layer-grouping-change.html:
+        * compositing/repaint/resize-repaint.html:
+        * compositing/repaint/scroll-fixed-layer-no-content.html:
+        * compositing/repaint/scroll-fixed-layer-out-of-view.html:
+        * editing/caret/selection-with-caret-type-progress.html:
+        * editing/execCommand/overtype.html:
+        * editing/selection/block-cursor-overtype-mode.html:
+        * editing/spelling/design-mode-spellcheck-off.html:
+        * editing/spelling/grammar-edit-word-expected.txt:
+        * editing/spelling/grammar-edit-word.html:
+        * editing/spelling/grammar-markers-hidpi.html:
+        * editing/spelling/grammar-markers.html:
+        * editing/spelling/grammar.html:
+        * editing/spelling/script-tests/spellcheck-paste.js:
+        (verifyMarker):
+        * editing/spelling/script-tests/spelling-attribute-at-child.js:
+        (childHasSpellingMarker):
+        * editing/spelling/script-tests/spelling-attribute-change.js:
+        (testSpellCheckingEnabled):
+        * editing/spelling/script-tests/spelling-backspace-between-lines.js:
+        (testWithDelete):
+        (testWithForwardDelete):
+        * editing/spelling/script-tests/spelling-hasspellingmarker.js:
+        (hasMarked):
+        * editing/spelling/spellcheck-async-mutation.html:
+        * editing/spelling/spellcheck-attribute-expected.txt:
+        * editing/spelling/spellcheck-attribute.html:
+        * editing/spelling/spellcheck-paste-continuous-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-continuous-disabled.html:
+        * editing/spelling/spellcheck-paste-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-disabled.html:
+        * editing/spelling/spellcheck-sequencenum.html:
+        * editing/spelling/spelling-attribute-change-expected.txt:
+        * editing/spelling/spelling-backspace-between-lines-expected.txt:
+        * editing/spelling/spelling-linebreak.html:
+        * fast/box-shadow/shadow-repaint.html:
+        * fast/css/webkit-mask-crash-fieldset-legend.html:
+        * fast/css/webkit-mask-crash-figure.html:
+        * fast/css/webkit-mask-crash-table.html:
+        * fast/css/webkit-mask-crash-td-2.html:
+        * fast/css/webkit-mask-crash-td.html:
+        * fast/dom/icon-url-change.html:
+        * fast/dom/icon-url-list-apple-touch.html:
+        * fast/dom/icon-url-list.html:
+        * fast/dom/icon-url-property.html:
+        * fast/events/mouse-cursor-change.html:
+        * fast/events/mouse-cursor-image-set.html:
+        * fast/events/mouse-cursor-multiframecur.html:
+        * fast/events/mouse-cursor-no-mousemove.html:
+        * fast/events/mouse-cursor.html:
+        * fast/events/touch/touch-handler-count-expected.txt:
+        * fast/events/touch/touch-handler-count.html:
+        * fast/events/touch/touch-input-element-change-documents-expected.txt:
+        * fast/events/touch/touch-input-element-change-documents.html:
+        * fast/multicol/hit-test-gap-between-pages-flipped.html:
+        * fast/multicol/hit-test-gap-between-pages.html:
+        * fast/multicol/pagination-h-horizontal-bt.html:
+        * fast/multicol/pagination-h-horizontal-tb.html:
+        * fast/multicol/pagination-h-vertical-lr.html:
+        * fast/multicol/pagination-h-vertical-rl.html:
+        * fast/multicol/pagination-v-horizontal-bt.html:
+        * fast/multicol/pagination-v-horizontal-tb.html:
+        * fast/multicol/pagination-v-vertical-lr.html:
+        * fast/multicol/pagination-v-vertical-rl.html:
+        * fast/multicol/pagination/BottomToTop-bt.html:
+        * fast/multicol/pagination/BottomToTop-lr.html:
+        * fast/multicol/pagination/BottomToTop-rl.html:
+        * fast/multicol/pagination/BottomToTop-tb.html:
+        * fast/multicol/pagination/LeftToRight-bt.html:
+        * fast/multicol/pagination/LeftToRight-lr.html:
+        * fast/multicol/pagination/LeftToRight-rl.html:
+        * fast/multicol/pagination/LeftToRight-tb.html:
+        * fast/multicol/pagination/RightToLeft-bt.html:
+        * fast/multicol/pagination/RightToLeft-lr.html:
+        * fast/multicol/pagination/RightToLeft-rl.html:
+        * fast/multicol/pagination/RightToLeft-tb.html:
+        * fast/multicol/pagination/TopToBottom-bt.html:
+        * fast/multicol/pagination/TopToBottom-lr.html:
+        * fast/multicol/pagination/TopToBottom-rl.html:
+        * fast/multicol/pagination/TopToBottom-tb.html:
+        * fast/multicol/shrink-to-column-height-for-pagination.html:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes.html:
+        * fast/repaint/obscured-background-no-repaint.html:
+        * fast/repaint/resources/text-based-repaint.js:
+        (runRepaintTest):
+        * fast/scrolling/resources/scrollable-area.js:
+        (end):
+        * fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html:
+        * fast/viewport/viewport-1.html:
+        * fast/viewport/viewport-10.html:
+        * fast/viewport/viewport-100.html:
+        * fast/viewport/viewport-101.html:
+        * fast/viewport/viewport-102.html:
+        * fast/viewport/viewport-103.html:
+        * fast/viewport/viewport-104.html:
+        * fast/viewport/viewport-105.html:
+        * fast/viewport/viewport-106.html:
+        * fast/viewport/viewport-107.html:
+        * fast/viewport/viewport-108.html:
+        * fast/viewport/viewport-109.html:
+        * fast/viewport/viewport-11.html:
+        * fast/viewport/viewport-110.html:
+        * fast/viewport/viewport-111.html:
+        * fast/viewport/viewport-112.html:
+        * fast/viewport/viewport-113.html:
+        * fast/viewport/viewport-114.html:
+        * fast/viewport/viewport-115.html:
+        * fast/viewport/viewport-116.html:
+        * fast/viewport/viewport-117.html:
+        * fast/viewport/viewport-118.html:
+        * fast/viewport/viewport-119.html:
+        * fast/viewport/viewport-12.html:
+        * fast/viewport/viewport-120.html:
+        * fast/viewport/viewport-121.html:
+        * fast/viewport/viewport-122.html:
+        * fast/viewport/viewport-123.html:
+        * fast/viewport/viewport-124.html:
+        * fast/viewport/viewport-125.html:
+        * fast/viewport/viewport-126.html:
+        * fast/viewport/viewport-127.html:
+        * fast/viewport/viewport-128.html:
+        * fast/viewport/viewport-129.html:
+        * fast/viewport/viewport-13.html:
+        * fast/viewport/viewport-130.html:
+        * fast/viewport/viewport-131.html:
+        * fast/viewport/viewport-132.html:
+        * fast/viewport/viewport-133.html:
+        * fast/viewport/viewport-134.html:
+        * fast/viewport/viewport-14.html:
+        * fast/viewport/viewport-15.html:
+        * fast/viewport/viewport-16.html:
+        * fast/viewport/viewport-17.html:
+        * fast/viewport/viewport-18.html:
+        * fast/viewport/viewport-19.html:
+        * fast/viewport/viewport-2.html:
+        * fast/viewport/viewport-20.html:
+        * fast/viewport/viewport-21.html:
+        * fast/viewport/viewport-22.html:
+        * fast/viewport/viewport-23.html:
+        * fast/viewport/viewport-24.html:
+        * fast/viewport/viewport-25.html:
+        * fast/viewport/viewport-26.html:
+        * fast/viewport/viewport-27.html:
+        * fast/viewport/viewport-28.html:
+        * fast/viewport/viewport-29.html:
+        * fast/viewport/viewport-3.html:
+        * fast/viewport/viewport-30.html:
+        * fast/viewport/viewport-31.html:
+        * fast/viewport/viewport-32.html:
+        * fast/viewport/viewport-33.html:
+        * fast/viewport/viewport-34.html:
+        * fast/viewport/viewport-35.html:
+        * fast/viewport/viewport-36.html:
+        * fast/viewport/viewport-37.html:
+        * fast/viewport/viewport-38.html:
+        * fast/viewport/viewport-39.html:
+        * fast/viewport/viewport-4.html:
+        * fast/viewport/viewport-40.html:
+        * fast/viewport/viewport-41.html:
+        * fast/viewport/viewport-42.html:
+        * fast/viewport/viewport-43.html:
+        * fast/viewport/viewport-44.html:
+        * fast/viewport/viewport-45.html:
+        * fast/viewport/viewport-46.html:
+        * fast/viewport/viewport-47.html:
+        * fast/viewport/viewport-48.html:
+        * fast/viewport/viewport-49.html:
+        * fast/viewport/viewport-5.html:
+        * fast/viewport/viewport-50.html:
+        * fast/viewport/viewport-51.html:
+        * fast/viewport/viewport-52.html:
+        * fast/viewport/viewport-53.html:
+        * fast/viewport/viewport-54.html:
+        * fast/viewport/viewport-55.html:
+        * fast/viewport/viewport-56.html:
+        * fast/viewport/viewport-57.html:
+        * fast/viewport/viewport-58.html:
+        * fast/viewport/viewport-59.html:
+        * fast/viewport/viewport-6.html:
+        * fast/viewport/viewport-60.html:
+        * fast/viewport/viewport-61.html:
+        * fast/viewport/viewport-62.html:
+        * fast/viewport/viewport-63.html:
+        * fast/viewport/viewport-64.html:
+        * fast/viewport/viewport-65.html:
+        * fast/viewport/viewport-66.html:
+        * fast/viewport/viewport-67.html:
+        * fast/viewport/viewport-68.html:
+        * fast/viewport/viewport-69.html:
+        * fast/viewport/viewport-7.html:
+        * fast/viewport/viewport-70.html:
+        * fast/viewport/viewport-71.html:
+        * fast/viewport/viewport-72.html:
+        * fast/viewport/viewport-73.html:
+        * fast/viewport/viewport-74.html:
+        * fast/viewport/viewport-75.html:
+        * fast/viewport/viewport-76.html:
+        * fast/viewport/viewport-77.html:
+        * fast/viewport/viewport-78.html:
+        * fast/viewport/viewport-79.html:
+        * fast/viewport/viewport-8.html:
+        * fast/viewport/viewport-80.html:
+        * fast/viewport/viewport-81.html:
+        * fast/viewport/viewport-82.html:
+        * fast/viewport/viewport-83.html:
+        * fast/viewport/viewport-84.html:
+        * fast/viewport/viewport-85.html:
+        * fast/viewport/viewport-86.html:
+        * fast/viewport/viewport-87.html:
+        * fast/viewport/viewport-88.html:
+        * fast/viewport/viewport-9.html:
+        * fast/viewport/viewport-90.html:
+        * fast/viewport/viewport-91.html:
+        * fast/viewport/viewport-legacy-handheldfriendly.html:
+        * fast/viewport/viewport-legacy-mobileoptimized-2.html:
+        * fast/viewport/viewport-legacy-mobileoptimized-3.html:
+        * fast/viewport/viewport-legacy-mobileoptimized.html:
+        * fast/viewport/viewport-legacy-ordering-1.html:
+        * fast/viewport/viewport-legacy-ordering-2.html:
+        * fast/viewport/viewport-legacy-ordering-3.html:
+        * fast/viewport/viewport-legacy-ordering-4.html:
+        * fast/viewport/viewport-legacy-ordering-5.html:
+        * fast/viewport/viewport-legacy-ordering-6.html:
+        * fast/viewport/viewport-legacy-ordering-7.html:
+        * fast/viewport/viewport-legacy-ordering-8.html:
+        * fast/viewport/viewport-legacy-ordering-9.html:
+        * fast/viewport/viewport-legacy-xhtmlmp-misplaced-doctype.html:
+        * fast/viewport/viewport-legacy-xhtmlmp-ordering.html:
+        * fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html:
+        * fast/viewport/viewport-legacy-xhtmlmp.html:
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale-control.html:
+        * fast/viewport/viewport-limits-adjusted-for-no-user-scale.html:
+        * fast/viewport/viewport-warnings-1.html:
+        * fast/viewport/viewport-warnings-2.html:
+        * fast/viewport/viewport-warnings-3.html:
+        * fast/viewport/viewport-warnings-4.html:
+        * fast/viewport/viewport-warnings-5.html:
+        * fast/viewport/viewport-warnings-6.html:
+        * fullscreen/video-cursor-auto-hide-expected.txt:
+        * fullscreen/video-cursor-auto-hide.html:
+        * http/tests/inspector-enabled/resources/console-clear-arguments-test.js:
+        (dumpConsoleMessageArgumentCounts):
+        * http/tests/inspector/elements-test.js:
+        * networkinformation/resources/event-after-navigation-new.html:
+        * networkinformation/script-tests/add-listener-from-callback.js:
+        (firstListener):
+        * networkinformation/script-tests/basic-all-types-of-events.js:
+        * networkinformation/script-tests/basic-operation.js:
+        * networkinformation/script-tests/multiple-frames.js:
+        * networkinformation/script-tests/updates.js:
+        (setNetworkInformation):
+        * platform/efl-wk2/editing/spelling/spellcheck-paste-continuous-disabled-expected.txt:
+        * platform/mac-wk2/tiled-drawing/clamp-out-of-bounds-scrolls.html:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-fixed.html:
+        * platform/mac-wk2/tiled-drawing/fixed/absolute-inside-out-of-view-fixed.html:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-in-overflow.html:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex.html:
+        * platform/mac-wk2/tiled-drawing/fixed/fixed-position-out-of-view.html:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-with-header-and-footer.html:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars-zoomed.html:
+        * platform/mac-wk2/tiled-drawing/fixed/four-bars.html:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset-in-view.html:
+        * platform/mac-wk2/tiled-drawing/fixed/negative-scroll-offset.html:
+        * platform/mac-wk2/tiled-drawing/fixed/nested-fixed.html:
+        * platform/mac-wk2/tiled-drawing/fixed/percentage-inside-fixed.html:
+        * platform/mac-wk2/tiled-drawing/header-and-footer-hit-testing-in-frame.html:
+        * platform/mac-wk2/tiled-drawing/header-and-footer-hit-testing-with-page-scale.html:
+        * platform/mac-wk2/tiled-drawing/header-and-footer-hit-testing.html:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-after-scroll.html:
+        * platform/mac-wk2/tiled-drawing/scrolling-tree-slow-scrolling.html:
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-background-toggle.html:
+        * platform/mac-wk2/tiled-drawing/slow-scrolling-hidden-background-toggle.html:
+        * platform/mac-wk2/tiled-drawing/slow-scrolling.html:
+        * platform/mac-wk2/tiled-drawing/sticky/negative-scroll-offset.html:
+        * platform/mac-wk2/tiled-drawing/sticky/sticky-horizontal.html:
+        * platform/mac-wk2/tiled-drawing/sticky/sticky-vertical.html:
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash.html:
+        * platform/mac/editing/spelling/delete-into-misspelled-word.html:
+        * platform/mac/editing/spelling/editing-multiple-words-with-markers.html:
+        * platform/mac/editing/spelling/editing-word-with-marker-1.html:
+        * platform/mac/editing/spelling/editing-word-with-marker-2.html:
+        * platform/mac/editing/spelling/move-cursor-around-misspelled-word.html:
+        * platform/win/editing/spelling/spelling-backspace-between-lines-expected.txt:
+        * printing/page-format-data-expected.txt:
+        * printing/page-format-data.html:
+        * proximity/add-listener-from-callback.html:
+        * proximity/basic-operation.html:
+        * proximity/multiple-frames.html:
+        * proximity/resources/event-after-navigation-new.html:
+        * proximity/updates.html:
+        * scrollingcoordinator/resources/non-fast-scrollable-region-testing.js:
+        (runNonFastScrollableRegionTest):
+        * touchadjustment/big-div.html:
+        * touchadjustment/event-triggered-widgets.html:
+        * touchadjustment/iframe.html:
+        * touchadjustment/nested-shadow-node.html:
+        * touchadjustment/resources/touchadjustment.js:
+        (testTouchPoint):
+        (testTouchPointContextMenu):
+        (adjustTouchPoint):
+        (adjustTouchPointContextMenu):
+        * touchadjustment/scroll-delegation/iframe-with-mainframe-scroll-offset.html:
+        * touchadjustment/scroll-offset.html:
+        * touchadjustment/search-cancel.html:
+        * touchadjustment/zoom-basic.html:
+        * touchadjustment/zoom-fatfinger.html:
+        * transitions/created-while-suspended.html:
+        * transitions/started-while-suspended.html:
+        * transitions/suspend-transform-transition.html:
+        * userscripts/insert-stylesheets.html:
+
 2013-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Remove HTMLMediaElement.startTime

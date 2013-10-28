@@ -47,5 +47,5 @@ var childBattery = childFrame.contentWindow.navigator.webkitBattery
 childBattery.addEventListener('chargingchange', childFrameListener);
 battery.addEventListener('chargingchange', mainFrameListener);
 
-internals.setBatteryStatus(document, 'chargingchange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('chargingchange', charging, chargingTime, dischargingTime, level);
 window.jsTestIsAsync = true;

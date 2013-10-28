@@ -11,7 +11,7 @@ function checkNetworkInformation() {
 }
 
 function setNetworkInformation() {
-    internals.setNetworkInformation(document, 'webkitnetworkinfochange', bandwidth, metered);
+    internals.setNetworkInformation('webkitnetworkinfochange', bandwidth, metered);
 }
 
 function firstListener() {

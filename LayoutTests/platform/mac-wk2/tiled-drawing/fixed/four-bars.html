@@ -55,7 +55,7 @@
         window.setTimeout(function() {
           window.scrollTo(0, 200);
           if (window.testRunner) {
-            document.getElementById('results').innerText = window.internals.scrollingStateTreeAsText(document);
+            document.getElementById('results').innerText = window.internals.scrollingStateTreeAsText();
             testRunner.notifyDone();
           }
         }, 10);

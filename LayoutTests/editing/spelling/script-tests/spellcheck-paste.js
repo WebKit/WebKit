@@ -52,7 +52,7 @@ function verifyMarker(node, expectedMarked)
 
     var ok = true;
     for (var i = 0; ok && i < expectedMarked.length; ++i)
-        ok = internals.hasSpellingMarker(document, expectedMarked[i][0], expectedMarked[i][1]);
+        ok = internals.hasSpellingMarker(expectedMarked[i][0], expectedMarked[i][1]);
 
     if (ok) {
         var nodeContent = node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement ? node.value : node.innerHTML;

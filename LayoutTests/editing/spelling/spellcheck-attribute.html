@@ -59,7 +59,7 @@ function testMarkerForMisspelledWord(id, shouldBeMarked) {
     log("id=" + id + " type=" + inputElement.type + " spellcheck=" + inputElement.spellcheck
         + " parent's spellcheck=" + inputElement.parentNode.spellcheck);
 
-    shouldBe("internals.hasSpellingMarker(document, 0, 2)", shouldBeMarked ? "true" : "false")
+    shouldBe("internals.hasSpellingMarker(0, 2)", shouldBeMarked ? "true" : "false")
 }
 
 // For type="text".

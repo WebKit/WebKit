@@ -17,7 +17,7 @@
     eventSender.keyDown(' ');
 
     if(window.internals) {
-        shouldBeTrue('internals.hasAutocorrectedMarker(document, 5, 10)');
+        shouldBeTrue('internals.hasAutocorrectedMarker(5, 10)');
         shouldBe('document.querySelectorAll("blockquote").length', '1');
         shouldBe('document.querySelector("blockquote").innerText.indexOf("notational")', '18');
     }

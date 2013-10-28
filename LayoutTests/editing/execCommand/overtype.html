@@ -27,7 +27,7 @@ else {
     Markup.dump(element, 'These are the original contents');
 
     selection.collapse(element, 0);
-    internals.toggleOverwriteModeEnabled(document);
+    internals.toggleOverwriteModeEnabled();
 
     document.execCommand("InsertText", false, 'F');
     Markup.dump(element, 'After overwritting the first character');

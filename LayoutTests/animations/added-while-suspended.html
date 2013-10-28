@@ -31,13 +31,13 @@ var animationsYetToEnd = 2;
 function suspend()
 {
     if (window.internals)
-        internals.suspendAnimations(document);
+        internals.suspendAnimations();
 }
 
 function resume()
 {
     if (window.internals)
-        internals.resumeAnimations(document);
+        internals.resumeAnimations();
 }
 
 function animationStarted(event)
@@ -63,7 +63,7 @@ function addDivWithId(id)
 function addFirstBox()
 {
     if (window.internals)
-        log("Animations should be suspended: " + (window.internals.animationsAreSuspended(document) ? "PASS" : "FAIL"));
+        log("Animations should be suspended: " + (window.internals.animationsAreSuspended() ? "PASS" : "FAIL"));
 
     log("*** Adding first box with animation");
     addDivWithId("box");
@@ -86,7 +86,7 @@ function resumeAndContinue()
 function endTest()
 {
     if (window.internals)
-        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended(document) ? "FAIL" : "PASS"));
+        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
     log("*** Animations finished");
     resume(); // Just in case.
     if (window.testRunner)
@@ -99,7 +99,7 @@ function startTest()
     document.addEventListener("webkitAnimationEnd", animationEnded, false);
 
     if (window.internals)
-        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended(document) ? "FAIL" : "PASS"));
+        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
 
     setTimeout(function() {
         log("*** Suspending Animations");

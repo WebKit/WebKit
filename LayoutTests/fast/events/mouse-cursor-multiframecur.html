@@ -35,7 +35,7 @@ function runTests() {
             // Note that we could return structured data which we then validate, but that's a lot more
             // work and is redundant with relying on the expected output anyway.  Better to just dump
             // it and inspect that it matches the description.
-            debug('Cursor Info: ' + window.internals.getCurrentCursorInfo(document));
+            debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
             debug('');
         }
         // This text is redundant with the test output - hide it

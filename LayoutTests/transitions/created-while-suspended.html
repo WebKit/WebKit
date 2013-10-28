@@ -14,13 +14,13 @@ var box;
 function suspend()
 {
     if (window.internals)
-        internals.suspendAnimations(document);
+        internals.suspendAnimations();
 }
 
 function resume()
 {
     if (window.internals)
-        internals.resumeAnimations(document);
+        internals.resumeAnimations();
 }
 
 function transitionEnded(event)
@@ -34,7 +34,7 @@ function suspendAndCreate()
     suspend();
     setTimeout(function() {
         if (window.internals)
-            log("Transitions should be suspended: " + (window.internals.animationsAreSuspended(document) ? "PASS" : "FAIL"));
+            log("Transitions should be suspended: " + (window.internals.animationsAreSuspended() ? "PASS" : "FAIL"));
 
         log("*** Creating the box.")
         box = document.createElement("div");
@@ -55,7 +55,7 @@ function endTest()
     log("*** Resuming Animations/Transitions");
     resume();
     if (window.internals)
-        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended(document) ? "FAIL" : "PASS"));
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
 
     resume(); // Just in case.
     log("*** Test finished");
@@ -68,7 +68,7 @@ function startTest()
     log("*** Starting test.")
 
     if (window.internals)
-        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended(document) ? "FAIL" : "PASS"));
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
 
     suspendAndCreate();
 }

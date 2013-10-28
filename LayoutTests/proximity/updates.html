@@ -9,7 +9,7 @@ description('Tests that updates to the proximity causes new events to fire.');
 var firedEvent;
 function setProximity(value, min, max) {
     firedEvent = {value: value, min: min, max: max};
-    internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+    internals.setDeviceProximity('webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
 }
 
 var deviceProximityEvent;

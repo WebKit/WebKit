@@ -82,9 +82,9 @@
     function testTouch(touchX, touchY, padding, adjustedX, adjustedY, tolerance) {
         var left = touchX - padding / 2;
         var top = touchY - padding / 2;
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(left, top, padding, padding, document);
+        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(left, top, padding, padding);
         shouldBe('adjustedNode.id', 'element.id');
-        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(left, top, padding, padding, document);
+        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(left, top, padding, padding);
         shouldBeCloseTo('adjustedPoint.x', adjustedX, tolerance);
         shouldBeCloseTo('adjustedPoint.y', adjustedY, tolerance);
     }

@@ -35,8 +35,8 @@ battery.addEventListener('levelchange', function() {
     finishJSTest();
 });
 
-internals.setBatteryStatus(document, 'chargingchange', charging, chargingTime, dischargingTime, level);
-internals.setBatteryStatus(document, 'chargingtimechange', charging, chargingTime, dischargingTime, level);
-internals.setBatteryStatus(document, 'dischargingtimechange', charging, chargingTime, dischargingTime, level);
-internals.setBatteryStatus(document, 'levelchange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('chargingchange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('chargingtimechange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('dischargingtimechange', charging, chargingTime, dischargingTime, level);
+internals.setBatteryStatus('levelchange', charging, chargingTime, dischargingTime, level);
 window.jsTestIsAsync = true;

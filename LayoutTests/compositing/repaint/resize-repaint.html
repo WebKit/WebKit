@@ -33,17 +33,17 @@
             }
 
             if (window.internals)
-                window.internals.startTrackingRepaints(document);
+                window.internals.startTrackingRepaints();
 
             for (var i = 0; i < 2; ++i) {
                 var newDiv = document.createElement('div');
                 resizingDiv.appendChild(newDiv);
             }
-            
+
             if (window.internals)
                 document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
         }
-        
+
         window.addEventListener('load', doTest, false);
     </script>
 </head>

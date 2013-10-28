@@ -4,7 +4,7 @@
         function test() {
             if (window.testRunner) {
                 testRunner.dumpAsText();
-                var viewportConfiguation = internals.configurationForViewport(document, 1, 320, 480, 320, 352);
+                var viewportConfiguation = internals.configurationForViewport(1, 320, 480, 320, 352);
                 if (/userScalable true/.test(viewportConfiguation))
                     alert("PASS");
                 else

@@ -38,13 +38,13 @@
         }
 
         if (window.internals)
-            internals.setPagination(document, "RightToLeftPaginated", 0);
-            
+            internals.setPagination("RightToLeftPaginated", 0);
+
         function dumpLayers()
         {
             window.setTimeout(function() {
                 if (window.internals)
-                    internals.startTrackingRepaints(document);
+                    internals.startTrackingRepaints();
 
                 document.getElementById('inner').classList.add('changed');
                 if (window.testRunner) {

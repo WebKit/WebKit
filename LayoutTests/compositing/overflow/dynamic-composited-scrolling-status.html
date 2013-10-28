@@ -27,7 +27,7 @@
       document.body.offsetHeight;
       document.getElementById('content').style.height = '1000px';
       if (window.internals)
-        document.getElementById('result').innerText = window.internals.nonFastScrollableRects(document).length ? "FAIL" : "PASS";
+        document.getElementById('result').innerText = window.internals.nonFastScrollableRects().length ? "FAIL" : "PASS";
     }
 
     window.addEventListener('load', doTest, false);

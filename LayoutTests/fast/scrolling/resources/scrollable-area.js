@@ -23,11 +23,11 @@ function end()
     var result = 0;
 
     if (isDRT) {
-        result = internals.numberOfScrollableAreas(document);
+        result = internals.numberOfScrollableAreas();
         shouldBeTrue(stringify(result == referenceResult));
         if (referenceIntermediateFunction) {
             referenceIntermediateFunction();
-            result = internals.numberOfScrollableAreas(document);
+            result = internals.numberOfScrollableAreas();
             shouldBeTrue(stringify(result == referenceResult2));
         }
 

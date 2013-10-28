@@ -65,7 +65,7 @@ function shouldBeWithin(adjustedPoint, targetArea) {
 
 function testTouchPoint(touchpoint, targetNode, allowTextNodes)
 {
-    var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
+    var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height);
     if (!allowTextNodes && adjustedNode && adjustedNode.nodeType == 3)
         adjustedNode = adjustedNode.parentNode;
     shouldBeNode(adjustedNode, targetNode);
@@ -73,7 +73,7 @@ function testTouchPoint(touchpoint, targetNode, allowTextNodes)
 
 function testTouchPointContextMenu(touchpoint, targetNode, allowTextNodes)
 {
-    var adjustedNode = internals.touchNodeAdjustedToBestContextMenuNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
+    var adjustedNode = internals.touchNodeAdjustedToBestContextMenuNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height);
     if (!allowTextNodes && adjustedNode && adjustedNode.nodeType == 3)
         adjustedNode = adjustedNode.parentNode;
     shouldBeNode(adjustedNode, targetNode);
@@ -81,13 +81,13 @@ function testTouchPointContextMenu(touchpoint, targetNode, allowTextNodes)
 
 function adjustTouchPoint(touchpoint)
 {
-    var adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
+    var adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height);
     return adjustedPoint;
 }
 
 function adjustTouchPointContextMenu(touchpoint)
 {
-    var adjustedPoint = internals.touchPositionAdjustedToBestContextMenuNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height, document);
+    var adjustedPoint = internals.touchPositionAdjustedToBestContextMenuNode(touchpoint.left, touchpoint.top, touchpoint.width, touchpoint.height);
     return adjustedPoint;
 }
 

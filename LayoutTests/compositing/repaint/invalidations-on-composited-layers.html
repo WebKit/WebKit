@@ -46,7 +46,7 @@ This test checks that repaint testing works with composited layers.
           // tracking (we don't want our lists of invalidated rects to be
           // polluted).
           document.body.offsetTop;
-          window.internals.startTrackingRepaints(document);
+          window.internals.startTrackingRepaints();
 
           child.style.background = 'blue';
           parent.style.background = 'green';
@@ -59,7 +59,7 @@ This test checks that repaint testing works with composited layers.
 
           var layerTreeText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
 
-          window.internals.stopTrackingRepaints(document);
+          window.internals.stopTrackingRepaints();
 
           text.innerHTML = layerTreeText;
       });

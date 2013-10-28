@@ -97,7 +97,7 @@
             width: 2 * radius,
             height: 2 * radius
         };
-        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.left, touchBounds.top, touchBounds.width, touchBounds.height, document);
+        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.left, touchBounds.top, touchBounds.width, touchBounds.height);
         targetContainsPoint = containsPoint(targetBounds, adjustedPoint);
         touchContainsPoint = containsPoint(touchBounds, adjustedPoint);
         shouldBeTrue('targetContainsPoint');

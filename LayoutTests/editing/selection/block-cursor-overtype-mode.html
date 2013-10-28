@@ -55,7 +55,7 @@ function verifyBlockCursorLeftPositionAndWidth(elementId, expected)
 
 if (window.testRunner) {
 
-    internals.toggleOverwriteModeEnabled(document);
+    internals.toggleOverwriteModeEnabled();
 
     verifyBlockCursorLeftPositionAndWidth("ltrtext", ["<", "<"]);
     verifyBlockCursorLeftPositionAndWidth("ltrtext-rtl", ["<", "<"]);

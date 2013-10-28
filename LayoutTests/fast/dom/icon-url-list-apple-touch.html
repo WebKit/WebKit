@@ -13,7 +13,7 @@ function runTests() {
     debug('Tests that all favicons and touch icons (if ENABLE(TOUCH_ICON_LOADING)) are in document.iconURLs()');
 
     // Fetch the actual list of icon URLs.
-    var actualURLs = window.internals.allIconURLs(document);
+    var actualURLs = window.internals.allIconURLs();
 
     // Print out the URL list in the document to match it against the expected list.
     // Note that the expected order is reverse to ensure that icons seen later

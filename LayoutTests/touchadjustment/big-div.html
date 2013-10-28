@@ -60,9 +60,9 @@
             width: 2 * radius,
             height: 2 * radius
         };
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchBounds.x, touchBounds.y, touchBounds.width, touchBounds.height, document);
+        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchBounds.x, touchBounds.y, touchBounds.width, touchBounds.height);
         shouldBe('adjustedNode.id', 'element.id');
-        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.x, touchBounds.y, touchBounds.width, touchBounds.height, document);
+        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.x, touchBounds.y, touchBounds.width, touchBounds.height);
 
         shouldBeTrue('adjustedPoint.x >= targetBounds.left');
         shouldBeTrue('adjustedPoint.x <= targetBounds.left + targetBounds.width');
