@@ -35,7 +35,7 @@ public:
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    RenderStyle* style() const { return m_style.get(); }
+    RenderStyle* style() const { return const_cast<RenderStyle*>(&m_style.get()); }
     RenderStyle* firstLineStyle() const;
 
     void initializeStyle();
@@ -170,7 +170,7 @@ private:
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 
-    RefPtr<RenderStyle> m_style;
+    Ref<RenderStyle> m_style;
 
     // FIXME: Get rid of this hack.
     // Store state between styleWillChange and styleDidChange

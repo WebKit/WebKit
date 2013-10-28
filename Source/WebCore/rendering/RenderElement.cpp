@@ -392,7 +392,7 @@ void RenderElement::initializeStyle()
 
 void RenderElement::setStyle(PassRef<RenderStyle> style)
 {
-    if (m_style == &style.get()) {
+    if (&m_style.get() == &style.get()) {
 #if USE(ACCELERATED_COMPOSITING)
         // We need to run through adjustStyleDifference() for iframes, plugins, and canvas so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
@@ -410,19 +410,18 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
 
     styleWillChange(diff, style.get());
-    
-    RefPtr<RenderStyle> oldStyle = m_style.release();
-    m_style = std::move(style);
 
-    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : nullptr, m_style->backgroundLayers());
-    updateFillImages(oldStyle ? oldStyle->maskLayers() : nullptr, m_style->maskLayers());
+    Ref<RenderStyle> oldStyle(m_style.replace(std::move(style)));
 
-    updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style->borderImage().image());
-    updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style->maskBoxImage().image());
+    updateFillImages(oldStyle.get().backgroundLayers(), m_style->backgroundLayers());
+    updateFillImages(oldStyle.get().maskLayers(), m_style->maskLayers());
+
+    updateImage(oldStyle.get().borderImage().image(), m_style->borderImage().image());
+    updateImage(oldStyle.get().maskBoxImage().image(), m_style->maskBoxImage().image());
 
 #if ENABLE(CSS_SHAPES)
-    updateShapeImage(oldStyle ? oldStyle->shapeInside() : nullptr, m_style->shapeInside());
-    updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style->shapeOutside());
+    updateShapeImage(oldStyle.get().shapeInside(), m_style->shapeInside());
+    updateShapeImage(oldStyle.get().shapeOutside(), m_style->shapeOutside());
 #endif
 
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
@@ -432,12 +431,12 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
 
     bool doesNotNeedLayout = !parent();
 
-    styleDidChange(diff, oldStyle.get());
+    styleDidChange(diff, &oldStyle.get());
 
     // Text renderers use their parent style. Notify them about the change.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isText())
-            toRenderText(child)->styleDidChange(diff, oldStyle.get());
+            toRenderText(child)->styleDidChange(diff, &oldStyle.get());
     }
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
@@ -455,9 +454,9 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
         if (updatedDiff == StyleDifferenceLayout)
             setNeedsLayoutAndPrefWidthsRecalc();
         else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
-            setNeedsPositionedMovementLayout(oldStyle.get());
+            setNeedsPositionedMovementLayout(&oldStyle.get());
         else if (updatedDiff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
-            setNeedsPositionedMovementLayout(oldStyle.get());
+            setNeedsPositionedMovementLayout(&oldStyle.get());
             setNeedsSimplifiedNormalFlowLayout();
         } else if (updatedDiff == StyleDifferenceSimplifiedLayout)
             setNeedsSimplifiedNormalFlowLayout();
@@ -950,7 +949,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
         return;
     
     if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
-        RenderCounter::rendererStyleChanged(this, oldStyle, m_style.get());
+        RenderCounter::rendererStyleChanged(this, oldStyle, &m_style.get());
 
         // If the object already needs layout, then setNeedsLayout won't do
         // any work. But if the containing block has changed, then we may need
@@ -1015,7 +1014,7 @@ void RenderElement::willBeRemovedFromTree()
     }
 
     bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll();
-    if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
+    if (repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage())
         view().frameView().removeSlowRepaintObject(this);
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())

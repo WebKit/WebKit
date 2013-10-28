@@ -1,3 +1,16 @@
+2013-10-28  Andreas Kling  <akling@apple.com>
+
+        RenderElement::m_style should be a Ref.
+        <https://webkit.org/b/123401>
+
+        Made RenderElement::m_style a Ref. This codifies the fact that it
+        can never be null after construction.
+
+        Removed a couple of unnecessary null checks that were exposed as
+        compilation failures.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Name all the GLib timeout sources

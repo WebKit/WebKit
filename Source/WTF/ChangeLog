@@ -1,3 +1,14 @@
+2013-10-28  Andreas Kling  <akling@apple.com>
+
+        RenderElement::m_style should be a Ref.
+        <https://webkit.org/b/123401>
+
+        Added a Ref::replace() so we can Indiana Jones the new style in
+        RenderElement::setStyle() while keeping a handle on the old style
+        for a while longer.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

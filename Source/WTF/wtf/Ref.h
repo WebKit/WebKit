@@ -60,9 +60,18 @@ public:
     const T& get() const { return *m_ptr; }
     T& get() { return *m_ptr; }
 
+    template<typename U> PassRef<T> replace(PassRef<U>) WARN_UNUSED_RETURN;
+
 private:
     T* m_ptr;
 };
+
+template<typename T> template<typename U> inline PassRef<T> Ref<T>::replace(PassRef<U> reference)
+{
+    auto oldReference = adoptRef(*m_ptr);
+    m_ptr = &reference.leakRef();
+    return oldReference;
+}
 
 } // namespace WTF
 
