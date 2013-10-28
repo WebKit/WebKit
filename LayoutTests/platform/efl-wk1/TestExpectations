@@ -497,3 +497,6 @@ Bug(EFL) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 Bug(EFL) fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
 Bug(EFL) fast/events/selectstart-by-drag.html [ Failure ]
 Bug(EFL) fast/text/offsetForPosition-complex-fallback.html [ Failure ]
+
+# shader errors, fails to render.
+webkit.org/b/105031 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]

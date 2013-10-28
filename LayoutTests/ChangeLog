@@ -1,3 +1,13 @@
+2013-10-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening.
+
+        fast/canvas/webgl/drawingbuffer-test.html is passing on efl-wk2.
+        Move it to efl-wk1 TestExpectations file.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-10-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Expose title and alternative text for links in image maps
