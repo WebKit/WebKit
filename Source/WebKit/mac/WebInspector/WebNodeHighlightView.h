@@ -26,13 +26,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
+#import <QuartzCore/CAShapeLayer.h>
+#import <WebKit/WAKAppKitStubs.h>
+#import <WebKit/WAKView.h>
+#endif
+
 @class WebNodeHighlight;
 
 @interface WebNodeHighlightView : NSView {
     WebNodeHighlight *_webNodeHighlight;
+#if PLATFORM(IOS)
+    NSMutableArray *_layers; // CAShapeLayers.
+#endif
 }
 - (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight;
 
 - (WebNodeHighlight *)webNodeHighlight;
 - (void)detachFromWebNodeHighlight;
+
+#if PLATFORM(IOS)
+- (void)layoutSublayers:(CALayer *)parentLayer;
+#endif
 @end

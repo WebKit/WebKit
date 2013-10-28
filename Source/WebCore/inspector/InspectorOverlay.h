@@ -123,6 +123,8 @@ public:
 
     Node* highlightedNode() const;
 
+    void didSetSearchingForNode(bool enabled);
+
     PassRefPtr<InspectorObject> buildObjectForHighlightedNode() const;
 
     void freePage();

@@ -319,6 +319,8 @@
 		A5214FC713B975C8000015EF /* WebInspectorRemoteChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5214FC113B975C8000015EF /* WebInspectorRemoteChannel.h */; };
 		A5214FC813B975C8000015EF /* WebInspectorRemoteChannel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5214FC213B975C8000015EF /* WebInspectorRemoteChannel.mm */; };
 		A52209F813C53E75004BA7B1 /* WebInspectorRelayDefinitions.h in Headers */ = {isa = PBXBuildFile; fileRef = A52209F713C53E75004BA7B1 /* WebInspectorRelayDefinitions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A560946614D8AD2600799A8A /* WebIndicateLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = A560946414D8AD2600799A8A /* WebIndicateLayer.h */; };
+		A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A560946514D8AD2600799A8A /* WebIndicateLayer.mm */; };
 		A55E20FF14D7264C0031549E /* WebInspectorServerWebViewConnectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = A55E20FD14D7264C0031549E /* WebInspectorServerWebViewConnectionController.h */; };
 		A55E210014D7264C0031549E /* WebInspectorServerWebViewConnectionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = A55E20FE14D7264C0031549E /* WebInspectorServerWebViewConnectionController.mm */; };
 		A5687BDA135B791A0074CBCB /* WebNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */; };
@@ -343,7 +345,6 @@
 		A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */; };
 		A5DEFC1311D5344B00885273 /* WebApplicationCacheQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */; };
 		A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */; };
-		A5D6871011E63FD7004E7E5D /* WebInspectorClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E8AD581815B15E0032E327 /* WebInspectorClientIOS.mm */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
 		A864B3F6123ED9FA00C2A612 /* MailQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */; };
@@ -657,6 +658,8 @@
 		A5214FC113B975C8000015EF /* WebInspectorRemoteChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorRemoteChannel.h; path = remote/WebInspectorRemoteChannel.h; sourceTree = "<group>"; };
 		A5214FC213B975C8000015EF /* WebInspectorRemoteChannel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebInspectorRemoteChannel.mm; path = remote/WebInspectorRemoteChannel.mm; sourceTree = "<group>"; };
 		A52209F713C53E75004BA7B1 /* WebInspectorRelayDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorRelayDefinitions.h; path = remote/WebInspectorRelayDefinitions.h; sourceTree = "<group>"; };
+		A560946414D8AD2600799A8A /* WebIndicateLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIndicateLayer.h; sourceTree = "<group>"; };
+		A560946514D8AD2600799A8A /* WebIndicateLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIndicateLayer.mm; sourceTree = "<group>"; };
 		A55E20FD14D7264C0031549E /* WebInspectorServerWebViewConnectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorServerWebViewConnectionController.h; path = remote/WebInspectorServerWebViewConnectionController.h; sourceTree = "<group>"; };
 		A55E20FE14D7264C0031549E /* WebInspectorServerWebViewConnectionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebInspectorServerWebViewConnectionController.mm; path = remote/WebInspectorServerWebViewConnectionController.mm; sourceTree = "<group>"; };
 		A5687BD8135B791A0074CBCB /* WebNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNodeHighlighter.h; sourceTree = "<group>"; };
@@ -674,6 +677,7 @@
 		A58A5798143E727000125F50 /* WebOpenPanelResultListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebOpenPanelResultListener.mm; sourceTree = "<group>"; };
 		A5C566BB127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiskImageCacheClientIOS.h; sourceTree = "<group>"; };
 		A5C566BC127A3AE500E8A3FF /* WebDiskImageCacheClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDiskImageCacheClientIOS.mm; sourceTree = "<group>"; };
+		A5D6870E11E63FD7004E7E5D /* WebInspectorClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClientIOS.mm; sourceTree = "<group>"; };
 		A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
 		A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginInternal.h; sourceTree = "<group>"; };
 		A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
@@ -681,7 +685,6 @@
 		A5DEFC0E11D5343E00885273 /* WebDatabaseQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseQuotaManager.mm; sourceTree = "<group>"; };
 		A5DEFC1111D5344B00885273 /* WebApplicationCacheQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheQuotaManager.h; sourceTree = "<group>"; };
 		A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheQuotaManager.mm; sourceTree = "<group>"; };
-		A5D6870E11E63FD7004E7E5D /* WebInspectorClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClientIOS.mm; sourceTree = "<group>"; };
 		A70936AD0B5608DC00CDB48E /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
 		A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MailQuirksUserScript.js; sourceTree = "<group>"; };
@@ -1234,6 +1237,8 @@
 				BC7F889D10C9D30C00D6133D /* WebGeolocationPosition.mm */,
 				BC7F88A410C9D88B00D6133D /* WebGeolocationPositionInternal.h */,
 				5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */,
+				A560946414D8AD2600799A8A /* WebIndicateLayer.h */,
+				A560946514D8AD2600799A8A /* WebIndicateLayer.mm */,
 				5185F62510712B80007AA393 /* WebNavigationData.h */,
 				5185F62710712B97007AA393 /* WebNavigationData.mm */,
 				312E2FE314E48182007CCA18 /* WebNotification.h */,
@@ -1634,6 +1639,7 @@
 				1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */,
 				1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */,
 				1AEA6A500DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.h in Headers */,
+				A560946614D8AD2600799A8A /* WebIndicateLayer.h in Headers */,
 				939810310824BF01008DF038 /* WebNetscapePluginPackage.h in Headers */,
 				9398102B0824BF01008DF038 /* WebNetscapePluginStream.h in Headers */,
 				1A4DF5220EC8C74D006BD4B4 /* WebNetscapePluginView.h in Headers */,
@@ -2051,6 +2057,7 @@
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
 				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
+				A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */,
 				939810C60824BF01008DF038 /* WebNSControlExtras.m in Sources */,
 				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
 				65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */,
@@ -2058,7 +2065,6 @@
 				65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.mm in Sources */,
 				939810C70824BF01008DF038 /* WebNSImageExtras.m in Sources */,
 				934C4A910F01406C009372C0 /* WebNSObjectExtras.mm in Sources */,
-				A5D6871011E63FD7004E7E5D /* WebInspectorClientIOS.mm in Sources */,
 				939810C80824BF01008DF038 /* WebNSPasteboardExtras.mm in Sources */,
 				939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */,
 				939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */,

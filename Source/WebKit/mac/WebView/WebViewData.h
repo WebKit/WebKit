@@ -62,6 +62,9 @@ class Page;
 #if ENABLE(MEDIA_STREAM)
 @protocol WebUserMediaClient;
 #endif
+#if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS)
+@class WebIndicateLayer;
+#endif
 
 extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
@@ -207,6 +210,11 @@ private:
 #if ENABLE(REMOTE_INSPECTOR)
     BOOL allowsRemoteInspection;
     NSDictionary *remoteInspectorUserInfo;
+#if PLATFORM(IOS)
+    WebIndicateLayer *indicateLayer;
+    NSString *hostApplicationBundleId;
+    NSString *hostApplicationName;
+#endif
 #endif
 
 #if USE(GLIB)

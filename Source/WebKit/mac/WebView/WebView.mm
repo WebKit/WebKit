@@ -213,6 +213,9 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import "WebInspectorServer.h"
+#if PLATFORM(IOS)
+#import "WebIndicateLayer.h"
+#endif
 #endif
 
 #if USE(GLIB)
@@ -1323,7 +1326,23 @@ static bool fastDocumentTeardownEnabled()
 
 - (void)setIndicatingForRemoteInspector:(BOOL)enabled
 {
+#if PLATFORM(IOS)
+    ASSERT(WebThreadIsLocked());
+
+    if (enabled) {
+        if (!_private->indicateLayer) {
+            _private->indicateLayer = [[WebIndicateLayer alloc] initWithWebView:self];
+            [_private->indicateLayer setNeedsLayout];
+            [[[self window] hostLayer] addSublayer:_private->indicateLayer];
+        }
+    } else {
+        [_private->indicateLayer removeFromSuperlayer];
+        [_private->indicateLayer release];
+        _private->indicateLayer = nil;
+    }
+#else
     // FIXME: Needs implementation.
+#endif
 }
 
 - (void)setRemoteInspectorUserInfo:(NSDictionary *)userInfo
@@ -1341,7 +1360,34 @@ static bool fastDocumentTeardownEnabled()
 {
     return _private->remoteInspectorUserInfo;
 }
-#endif
+
+#if PLATFORM(IOS)
+- (void)setHostApplicationBundleId:(NSString *)bundleId name:(NSString *)name
+{
+    if (![_private->hostApplicationBundleId isEqualToString:bundleId]) {
+        [_private->hostApplicationBundleId release];
+        _private->hostApplicationBundleId = [bundleId copy];
+    }
+
+    if (![_private->hostApplicationName isEqualToString:name]) {
+        [_private->hostApplicationName release];
+        _private->hostApplicationName = [name copy];
+    }
+
+    [[WebView sharedWebInspectorServer] pushListing];
+}
+
+- (NSString *)hostApplicationBundleId
+{
+    return _private->hostApplicationBundleId;
+}
+
+- (NSString *)hostApplicationName
+{
+    return _private->hostApplicationName;
+}
+#endif // PLATFORM(IOS)
+#endif // ENABLE(REMOTE_INSPECTOR)
 
 - (WebCore::Page*)page
 {

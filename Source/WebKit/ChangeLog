@@ -1,3 +1,12 @@
+2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream remaining PLATFORM(IOS) and ENABLE(REMOTE_INSPECTOR) pieces
+        https://bugs.webkit.org/show_bug.cgi?id=123411
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac

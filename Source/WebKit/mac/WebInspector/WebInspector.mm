@@ -39,6 +39,11 @@
 
 using namespace WebCore;
 
+#if PLATFORM(IOS)
+NSString *WebInspectorDidStartSearchingForNode = @"WebInspectorDidStartSearchingForNode";
+NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingForNode";
+#endif
+
 @implementation WebInspector
 - (id)initWithWebView:(WebView *)webView
 {
@@ -222,6 +227,7 @@ using namespace WebCore;
     _webView = [frame webView];
 }
 
+#if !PLATFORM(IOS)
 - (NSWindow *)window
 {
     // Shiira calls this internal method, return nil since we can't easily return the window
@@ -233,6 +239,7 @@ using namespace WebCore;
 
     return nil;
 }
+#endif
 
 - (void)showWindow:(id)sender
 {

@@ -33,12 +33,51 @@
 #import <WebCore/InspectorController.h>
 #import <wtf/Assertions.h>
 
+#if PLATFORM(IOS)
+#import "WebFramePrivate.h"
+#import "WebHTMLView.h"
+#import "WebView.h"
+#import <QuartzCore/CALayerPrivate.h>
+#import <WebCore/WAKWindow.h>
+#endif
+
 using namespace WebCore;
 
+#if !PLATFORM(IOS)
 @interface WebNodeHighlight (FileInternal)
 - (NSRect)_computeHighlightWindowFrame;
 - (void)_repositionHighlightWindow;
 @end
+#endif
+
+#if PLATFORM(IOS)
+@implementation WebHighlightLayer
+
+- (id)initWithHighlightView:(WebNodeHighlightView *)view webView:(WebView *)webView
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _view = view;
+    _webView = webView;
+    return self;
+}
+
+- (void)layoutSublayers
+{
+    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
+    [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
+
+    [_view layoutSublayers:self];
+}
+
+- (id<CAAction>)actionForKey:(NSString *)key
+{
+    return nil; // Disable all default actions.
+}
+
+@end
+#endif
 
 @implementation WebNodeHighlight
 
@@ -51,6 +90,7 @@ using namespace WebCore;
     _targetView = [targetView retain];
     _inspectorController = inspectorController;
 
+#if !PLATFORM(IOS)
     int styleMask = NSBorderlessWindowMask;
     NSRect contentRect = [NSWindow contentRectForFrameRect:[self _computeHighlightWindowFrame] styleMask:styleMask];
     _highlightWindow = [[NSWindow alloc] initWithContentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
@@ -62,13 +102,26 @@ using namespace WebCore;
     _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
     [_highlightWindow setContentView:_highlightView];
     [_highlightView release];
+#else
+    ASSERT([_targetView isKindOfClass:[WebView class]]);
+    WebView *webView = (WebView *)targetView;
+
+    _highlightView = [[WebNodeHighlightView alloc] initWithWebNodeHighlight:self];
+    _highlightLayer = [[WebHighlightLayer alloc] initWithHighlightView:_highlightView webView:webView];
+    [_highlightLayer setContentsScale:[[_targetView window] screenScale]]; // HiDPI.
+    [_highlightLayer setCanDrawConcurrently:NO];
+#endif
 
     return self;
 }
 
 - (void)dealloc
 {
+#if !PLATFORM(IOS)
     ASSERT(!_highlightWindow);
+#else
+    ASSERT(!_highlightLayer);
+#endif
     ASSERT(!_targetView);
     ASSERT(!_highlightView);
 
@@ -79,6 +132,8 @@ using namespace WebCore;
 {
     ASSERT(_targetView);
     ASSERT([_targetView window]);
+
+#if !PLATFORM(IOS)
     ASSERT(_highlightWindow);
 
     if (!_highlightWindow || !_targetView || ![_targetView window])
@@ -95,6 +150,13 @@ using namespace WebCore;
         [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewFrameDidChangeNotification object:v];
         [notificationCenter addObserver:self selector:@selector(_repositionHighlightWindow) name:NSViewBoundsDidChangeNotification object:v];
     }
+#else
+    ASSERT(_highlightLayer);
+
+    WAKWindow *window = [_targetView window];
+    [[window hostLayer] addSublayer:_highlightLayer];
+    [self setNeedsDisplay];
+#endif
 
     if (_delegate && [_delegate respondsToSelector:@selector(didAttachWebNodeHighlight:)])
         [_delegate didAttachWebNodeHighlight:self];
@@ -107,7 +169,11 @@ using namespace WebCore;
 
 - (void)detach
 {
+#if !PLATFORM(IOS)
     if (!_highlightWindow) {
+#else
+    if (!_highlightLayer) {
+#endif
         ASSERT(!_targetView);
         return;
     }
@@ -115,6 +181,7 @@ using namespace WebCore;
     if (_delegate && [_delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
         [_delegate willDetachWebNodeHighlight:self];
 
+#if !PLATFORM(IOS)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
     [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
@@ -123,6 +190,11 @@ using namespace WebCore;
 
     [_highlightWindow release];
     _highlightWindow = nil;
+#else
+    [_highlightLayer removeFromSuperlayer];
+    [_highlightLayer release];
+    _highlightLayer = nil;
+#endif
 
     [_targetView release];
     _targetView = nil;
@@ -130,6 +202,10 @@ using namespace WebCore;
     // We didn't retain _highlightView, but we do need to tell it to forget about us, so it doesn't
     // try to send our delegate messages after we've been dealloc'ed, e.g.
     [_highlightView detachFromWebNodeHighlight];
+#if PLATFORM(IOS)
+    // iOS did retain the highlightView, and we should release it here.
+    [_highlightView release];
+#endif
     _highlightView = nil;
 }
 
@@ -144,6 +220,7 @@ using namespace WebCore;
     _delegate = delegate;
 }
 
+#if !PLATFORM(IOS)
 - (void)setNeedsUpdateInTargetViewRect:(NSRect)rect
 {
     ASSERT(_targetView);
@@ -158,6 +235,14 @@ using namespace WebCore;
     // This is especially visible when resizing the window, scrolling or with DHTML.
     [_highlightView displayIfNeeded];
 }
+#else
+- (void)setNeedsDisplay
+{
+    [_highlightLayer setNeedsLayout];
+    [_highlightLayer setNeedsDisplay];
+    [_highlightLayer displayIfNeeded];
+}
+#endif
 
 - (NSView *)targetView
 {
@@ -171,6 +256,7 @@ using namespace WebCore;
 
 @end
 
+#if !PLATFORM(IOS)
 @implementation WebNodeHighlight (FileInternal)
 
 - (NSRect)_computeHighlightWindowFrame
@@ -205,3 +291,4 @@ using namespace WebCore;
 }
 
 @end
+#endif

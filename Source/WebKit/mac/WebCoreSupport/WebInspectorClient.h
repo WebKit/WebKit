@@ -97,6 +97,10 @@ public:
     bool canBeRemotelyInspected() const;
 
     WebView *inspectedWebView();
+
+#if PLATFORM(IOS)
+    virtual void didSetSearchingForNode(bool) OVERRIDE FINAL;
+#endif
 #endif
 
 private:
@@ -144,8 +148,10 @@ private:
     virtual void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) OVERRIDE;
     virtual void append(const String& url, const String& content) OVERRIDE;
 
+#if !PLATFORM(IOS)
     WebView* m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_windowController;
     String m_inspectedURL;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+#endif
 };

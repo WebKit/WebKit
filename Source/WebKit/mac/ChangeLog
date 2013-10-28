@@ -1,3 +1,50 @@
+2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream remaining PLATFORM(IOS) and ENABLE(REMOTE_INSPECTOR) pieces
+        https://bugs.webkit.org/show_bug.cgi?id=123411
+
+        Reviewed by Timothy Hatcher.
+
+        Upstream iOS node highlighting and view indication.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebInspector/WebInspector.h:
+        * WebInspector/WebInspector.mm:
+        * WebInspector/WebNodeHighlight.h:
+        * WebInspector/WebNodeHighlight.mm:
+        (-[WebHighlightLayer initWithHighlightView:webView:]):
+        (-[WebHighlightLayer layoutSublayers]):
+        (-[WebHighlightLayer actionForKey:]):
+        (-[WebNodeHighlight initWithTargetView:inspectorController:]):
+        (-[WebNodeHighlight dealloc]):
+        (-[WebNodeHighlight attach]):
+        * WebInspector/WebNodeHighlightView.h:
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView initWithWebNodeHighlight:]):
+        (-[WebNodeHighlightView dealloc]):
+        (-[WebNodeHighlightView _attach:numLayers:]):
+        (findIntersectionOnLineBetweenPoints):
+        (quadIntersection):
+        (layerPathWithHole):
+        (layerPath):
+        (-[WebNodeHighlightView _layoutForNodeHighlight:parent:]):
+        (-[WebNodeHighlightView _layoutForRectsHighlight:parent:]):
+        (-[WebNodeHighlightView layoutSublayers:]):
+        * WebInspector/WebNodeHighlighter.mm:
+        (-[WebNodeHighlighter highlight]):
+        * WebView/WebIndicateLayer.h: Added.
+        * WebView/WebIndicateLayer.mm: Added.
+        (-[WebIndicateLayer layoutSublayers]):
+        (-[WebIndicateLayer actionForKey:]):
+        * WebView/WebView.mm:
+        (-[WebView setIndicatingForRemoteInspector:]):
+        (-[WebView setHostApplicationBundleId:name:]):
+        (-[WebView hostApplicationBundleId]):
+        (-[WebView hostApplicationName]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+
 2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for -webkit-text-decoration-skip: ink

@@ -28,6 +28,11 @@
 
 #import <Foundation/NSObject.h>
 
+#if PLATFORM(IOS)
+extern NSString *WebInspectorDidStartSearchingForNode;
+extern NSString *WebInspectorDidStopSearchingForNode;
+#endif
+
 @class WebView;
 @class WebInspectorFrontend;
 

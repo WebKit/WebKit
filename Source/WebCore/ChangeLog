@@ -1,3 +1,20 @@
+2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream remaining PLATFORM(IOS) and ENABLE(REMOTE_INSPECTOR) pieces
+        https://bugs.webkit.org/show_bug.cgi?id=123411
+
+        Reviewed by Timothy Hatcher.
+
+        Include an InspectorClient hook for when node searching is enabled / disabled.
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::didSetSearchingForNode):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::didSetSearchingForNode):
+        * inspector/InspectorOverlay.h:
+
 2013-10-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Rename applyPageScaleFactorInCompositor to delegatesPageScaling

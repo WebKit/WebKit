@@ -84,6 +84,8 @@ public:
 
     virtual bool supportsFrameInstrumentation() { return false; }
 
+    virtual void didSetSearchingForNode(bool) { }
+
     virtual void getAllocatedObjects(HashSet<const void*>&) { }
     virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&) { }
 

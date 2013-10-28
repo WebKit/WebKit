@@ -1121,6 +1121,8 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString* errorString, bool enabl
             return;
     } else
         hideHighlight(errorString);
+
+    m_overlay->didSetSearchingForNode(m_searchingForNode);
 }
 
 PassOwnPtr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString* errorString, InspectorObject* highlightInspectorObject)

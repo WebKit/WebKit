@@ -314,6 +314,11 @@ Node* InspectorOverlay::highlightedNode() const
     return m_highlightNode.get();
 }
 
+void InspectorOverlay::didSetSearchingForNode(bool enabled)
+{
+    m_client->didSetSearchingForNode(enabled);
+}
+
 void InspectorOverlay::update()
 {
     if (!m_highlightNode && !m_highlightQuad && m_pausedInDebuggerMessage.isNull() && m_size.isEmpty()) {
