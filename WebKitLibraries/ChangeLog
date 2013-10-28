@@ -1,5 +1,19 @@
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r157608
+
+    2013-10-17  Anthony Johnson  <anthony.johnson@flexsim.com>
+
+            Crash fix for Windows XP.
+            https://bugs.webkit.org/show_bug.cgi?id=122790
+
+            Reviewed by Geoffrey Garen.
+
+            * win/tools/vsprops/common.props:
+            Replaced stack and heap sizes of zero with blank stack and heap sizes.
+
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r156302
 
     2013-09-23  Patrick Gansterer  <paroga@webkit.org>
