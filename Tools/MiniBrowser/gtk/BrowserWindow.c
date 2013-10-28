@@ -163,8 +163,10 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
 {
     gdouble progress = webkit_web_view_get_estimated_load_progress(webView);
     gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), progress);
-    if (progress == 1.0)
-        g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
+    if (progress == 1.0) {
+        guint id = g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
+        g_source_set_name_by_id(id, "[WebKit] resetEntryProgress");
+    }
 }
 
 static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *download, BrowserWindow *window)
@@ -311,6 +313,7 @@ static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *wi
     gtk_widget_show(window->fullScreenMessageLabel);
 
     window->fullScreenMessageLabelId = g_timeout_add_seconds(2, (GSourceFunc)fullScreenMessageTimeoutCallback, window);
+    g_source_set_name_by_id(window->fullScreenMessageLabelId, "[WebKit] fullScreenMessageTimeoutCallback");
     gtk_widget_hide(window->toolbar);
     window->searchBarVisible = gtk_widget_get_visible(GTK_WIDGET(window->searchBar));
     browser_search_bar_close(window->searchBar);

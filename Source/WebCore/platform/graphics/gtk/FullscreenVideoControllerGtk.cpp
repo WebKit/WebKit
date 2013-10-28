@@ -170,12 +170,16 @@ void FullscreenVideoControllerGtk::showHud(bool autoHide)
     updateHudPosition();
 
     // Start periodic updates of the progress bar.
-    if (!m_progressBarUpdateId)
+    if (!m_progressBarUpdateId) {
         m_progressBarUpdateId = g_timeout_add(PROGRESS_BAR_UPDATE_INTERVAL, reinterpret_cast<GSourceFunc>(progressBarUpdateCallback), this);
+        g_source_set_name_by_id(m_progressBarUpdateId, "[WebKit] progressBarUpdateCallback");
+    }
 
     // Hide the hud in few seconds, if requested.
-    if (autoHide)
+    if (autoHide) {
         m_hudTimeoutId = g_timeout_add(HUD_AUTO_HIDE_INTERVAL, reinterpret_cast<GSourceFunc>(hideHudCallback), this);
+        g_source_set_name_by_id(m_hudTimeoutId, "[WebKit] hideHudCallback");
+    }
 }
 
 void FullscreenVideoControllerGtk::hideHud()
@@ -446,6 +450,7 @@ void FullscreenVideoControllerGtk::createHud()
     gtk_box_pack_start(GTK_BOX(hbox), item, FALSE, TRUE, 0);
 
     m_progressBarUpdateId = g_timeout_add(PROGRESS_BAR_UPDATE_INTERVAL, reinterpret_cast<GSourceFunc>(progressBarUpdateCallback), this);
+    g_source_set_name_by_id(m_progressBarUpdateId, "[WebKit] progressBarUpdateCallback");
 
     playStateChanged();
 }

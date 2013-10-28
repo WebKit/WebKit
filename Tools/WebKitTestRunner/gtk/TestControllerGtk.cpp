@@ -68,8 +68,10 @@ static gboolean timeoutCallback(gpointer)
 void TestController::platformRunUntil(bool&, double timeout)
 {
     cancelTimeout();
-    if (timeout != m_noTimeout)
+    if (timeout != m_noTimeout) {
         gTimeoutSourceId = g_timeout_add(timeout * 1000, timeoutCallback, 0);
+        g_source_set_name_by_id(gTimeoutSourceId, "[WebKit] timeoutCallback");
+    }
     gtk_main();
 }
 

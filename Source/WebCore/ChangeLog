@@ -1,3 +1,15 @@
+2013-10-28  Bastien Nocera <hadess@hadess.net>
+
+        Name all the GLib timeout sources
+        https://bugs.webkit.org/show_bug.cgi?id=123229
+
+        Reviewed by Anders Carlsson.
+
+        Give a name to GLib timeout sources, this is helpful when
+        profiling WebKitGTK applications.
+
+        No new tests, no change in functionality.
+
 2013-10-28  Philippe Normand  <pnormand@igalia.com>
 
         MediaStreamTrackPrivate's m_client uninitialized

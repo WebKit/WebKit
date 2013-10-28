@@ -169,6 +169,7 @@ bool AcceleratedCompositingContext::renderLayersToWindow(cairo_t* cr, const IntR
         m_needsExtraFlush = false;
         double nextFlush = std::max((1 / gFramesPerSecond) - (currentTime() - m_lastFlushTime), 0.0);
         m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000 * nextFlush, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+        g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
     }
 
     return true;
@@ -269,6 +270,7 @@ void AcceleratedCompositingContext::setRootCompositingLayer(GraphicsLayer* graph
     scheduleLayerFlush();
 
     m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 500, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+    g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
 }
 
 void AcceleratedCompositingContext::setNonCompositedContentsNeedDisplay(const IntRect& rect)
@@ -336,6 +338,7 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
     // starve WebCore timers, which have a lower priority.
     double nextFlush = std::max(gScheduleDelay - (currentTime() - m_lastFlushTime), 0.0);
     m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, nextFlush * 1000, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+    g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
 }
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()

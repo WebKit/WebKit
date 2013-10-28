@@ -60,6 +60,7 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
 
     m_waitToDumpWatchdogTimer = g_timeout_add(waitToDumpWatchdogTimerInterval * 1000,
                                               waitToDumpWatchdogTimerCallback, 0);
+    g_source_set_name_by_id(m_waitToDumpWatchdogTimer, "[WebKit] waitToDumpWatchdogTimerCallback");
 }
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)

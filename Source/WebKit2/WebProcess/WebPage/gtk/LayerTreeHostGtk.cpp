@@ -304,6 +304,7 @@ void LayerTreeHostGtk::layerFlushTimerFired()
         const double targetFPS = 60;
         double nextFlush = std::max((1 / targetFPS) - (currentTime() - m_lastFlushTime), 0.0);
         m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, nextFlush * 1000.0, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+        g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
     }
 }
 
@@ -402,8 +403,10 @@ void LayerTreeHostGtk::scheduleLayerFlush()
         return;
 
     // We use a GLib timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.
-    if (!m_layerFlushTimerCallbackId)
+    if (!m_layerFlushTimerCallbackId) {
         m_layerFlushTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 0, reinterpret_cast<GSourceFunc>(layerFlushTimerFiredCallback), this, 0);
+        g_source_set_name_by_id(m_layerFlushTimerCallbackId, "[WebKit] layerFlushTimerFiredCallback");
+    }
 }
 
 void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)

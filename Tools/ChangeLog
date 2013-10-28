@@ -1,5 +1,15 @@
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
+        Name all the GLib timeout sources
+        https://bugs.webkit.org/show_bug.cgi?id=123229
+
+        Reviewed by Anders Carlsson.
+
+        Give a name to GLib timeout sources, this is helpful when
+        profiling WebKitGTK applications.
+
+2013-10-28  Bastien Nocera <hadess@hadess.net>
+
         Replace 0 timeouts g_timeout_add() by g_idle_add()
         https://bugs.webkit.org/show_bug.cgi?id=123260
 

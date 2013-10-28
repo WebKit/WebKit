@@ -450,6 +450,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     // See also https://bugs.webkit.org/show_bug.cgi?id=117354
     if (newState == GST_STATE_READY && !m_readyTimerHandler) {
         m_readyTimerHandler = g_timeout_add_seconds(gReadyStateTimerInterval, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateReadyStateTimeoutCallback), this);
+        g_source_set_name_by_id(m_readyTimerHandler, "[WebKit] mediaPlayerPrivateReadyStateTimeoutCallback");
     } else if (newState != GST_STATE_READY && m_readyTimerHandler) {
         g_source_remove(m_readyTimerHandler);
         m_readyTimerHandler = 0;

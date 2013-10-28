@@ -393,6 +393,7 @@ gtk_xtbin_new (GtkWidget *parent_widget, String *f)
       g_timeout_add(25,
                       (GSourceFunc)xt_event_polling_timer_callback,
                       xtdisplay);
+    g_source_set_name_by_id(xt_polling_timer_id, "[WebKit] xt_event_polling_timer_callback");
   }
 
   /* Bump up our usage count */

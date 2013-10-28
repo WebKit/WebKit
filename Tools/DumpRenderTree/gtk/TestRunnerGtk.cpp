@@ -314,8 +314,11 @@ void TestRunner::setWaitToDump(bool waitUntilDone)
     static const int timeoutSeconds = 30;
 
     m_waitToDump = waitUntilDone;
-    if (m_waitToDump && shouldSetWaitToDumpWatchdog())
-        setWaitToDumpWatchdog(g_timeout_add_seconds(timeoutSeconds, waitToDumpWatchdogFired, 0));
+    if (m_waitToDump && shouldSetWaitToDumpWatchdog()) {
+        guint id = g_timeout_add_seconds(timeoutSeconds, waitToDumpWatchdogFired, 0);
+        g_source_set_name_by_id(id, "[WebKit] waitToDumpWatchdogFired");
+        setWaitToDumpWatchdog(id);
+    }
 }
 
 int TestRunner::windowCount()

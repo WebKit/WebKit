@@ -43,7 +43,7 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-static gboolean timeout_cb(gpointer)
+static gboolean sharedTimerTimeoutCallback(gpointer)
 {
     if (sharedTimerFiredFunction)
         sharedTimerFiredFunction();
@@ -57,7 +57,8 @@ void setSharedTimerFireInterval(double interval)
     guint intervalInMS = static_cast<guint>(interval * 1000);
 
     stopSharedTimer();
-    sharedTimer = g_timeout_add_full(GDK_PRIORITY_REDRAW, intervalInMS, timeout_cb, 0, 0);
+    sharedTimer = g_timeout_add_full(GDK_PRIORITY_REDRAW, intervalInMS, sharedTimerTimeoutCallback, 0, 0);
+    g_source_set_name_by_id(sharedTimer, "[WebKit] sharedTimerTimeoutCallback");
 }
 
 void stopSharedTimer()
