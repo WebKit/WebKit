@@ -2,14 +2,26 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Welcome to the Buildbot</title>
+<title>WebKit Build Central</title>
+<style>
+    body {
+        font-family: "HelveticaNeue-Light", sans-serif;
+    }
+    
+    h1, h2, h3 {
+        font-family: "HelveticaNeue", sans-serif;
+    }
+</style>
 </head>
 
 <body>
-<h1>Welcome to the Buildbot!</h1>
-
+<h2>Dashboard</h2>
 <ul>
   <li><a href="dashboard">Bot watcher's dashboard</a></li>
+</ul>
+
+<h2>Buildbot Pages</h2>
+<ul>
   <li><a href="console">Console</a> - <a href="console?category=AppleMac">Apple Mac</a>, <a href="console?category=AppleWin">Apple Windows</a>,
   <a href="console?category=GTK">GTK+</a>, <a href="console?category=EFL">EFL</a>
   and <a href="console?category=misc">miscellaneous</a></li>
@@ -19,14 +31,22 @@
   and <a href="waterfall?category=misc">miscellaneous</a></li>
   <li><a href="one_box_per_builder">Latest Build</a> for each builder is here.</li>
   <li><a href="one_line_per_build">Recent Builds</a> are summarized here, one per line.</li>
-  <li><a href="buildslaves">Buildslave</a> information</li>
-  <li><a href="http://webkit-queues.appspot.com/">Early Warning System and Commit Queue Status</a> (External site)</li>
-  <li><a href="http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html">Flakiness dashboard</a> (External site)</li>
-  <li><a href="changes">ChangeSource</a> information.</li>
   <li><a href="results">Test Results</a></li>
+  <li><a href="buildslaves">Buildslave</a> information</li>
+</ul>
+
+<h2>Tests and Performance</h2>
+<ul>
+  <li><a href="http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html">Flakiness dashboard</a> (External site)</li>
   <li><a href="LeaksViewer">Leaks Viewer</a></li>
   <li><a href="TestFailures">Test Failures</a></li>
   <li><a href="http://perf.webkit.org/">WebKit Perf Monitor</a> results submitted by <a href="http://build.webkit.org/waterfall?show=Apple%20Lion%20Release%20%28Perf%29&show=Apple%20MountainLion%20Release%20%28Perf%29&show=Qt%20Linux%2064-bit%20Release%20%28Perf%29&show=Qt%20Linux%2064-bit%20Release%20%28WebKit2%20Perf%29&show=EFL%20Linux%2064-bit%20Release%20WK2%20%28Perf%29">performance bots</a></li>
 </ul>
+
+<h2>Status</h2>
+<ul>
+    <li><a href="http://webkit-queues.appspot.com/">Early Warning System and Commit Queue Status</a> (External site)</li>
+</ul>
+
 </body>
 </html>
