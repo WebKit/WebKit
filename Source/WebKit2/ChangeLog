@@ -1,3 +1,22 @@
+2013-10-27  Brady Eidson  <beidson@apple.com>
+
+        WebIconDatabase can miss private browsing state changes.
+        <rdar://problem/15322318> and https://bugs.webkit.org/show_bug.cgi?id=123375
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::willStartUsingPrivateBrowsing): Call setAnyPageGroupMightHavePrivateBrowsingEnabled(true) on each context.
+        (WebKit::WebContext::willStopUsingPrivateBrowsing): Call setAnyPageGroupMightHavePrivateBrowsingEnabled(false) on each context.
+        (WebKit::WebContext::setPrivateBrowsingEnabled): In addition to notifying other processes about private browsing
+          sessions, notify the context’s WebIconDatabase about the change in value.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::setDatabasePath): Prime the IconDatabase with an initial private browsing value.
+        (WebKit::WebIconDatabase::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        * UIProcess/WebIconDatabase.h:
+
 2013-10-26  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Remove WebTiledLayer
