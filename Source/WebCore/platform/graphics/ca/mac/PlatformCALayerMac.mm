@@ -37,6 +37,7 @@
 #import "PlatformCAFilters.h"
 #import "SoftLinking.h"
 #import "TiledBacking.h"
+#import "TileController.h"
 #import "WebLayer.h"
 #import "WebTiledBackingLayer.h"
 #import <objc/objc-auto.h>
@@ -188,6 +189,10 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer
         case LayerTypeWebLayer:
             layerClass = [WebLayer class];
             break;
+        case LayerTypeSimpleLayer:
+        case LayerTypeTiledBackingTileLayer:
+            layerClass = [WebSimpleLayer class];
+            break;
         case LayerTypeTransformLayer:
             layerClass = [CATransformLayer class];
             break;
@@ -214,13 +219,20 @@ PlatformCALayerMac::PlatformCALayerMac(LayerType layerType, PlatformLayer* layer
     
     // Clear all the implicit animations on the CALayer
     [m_layer.get() setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
-    
+
+    // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
+    if (m_layerType == LayerTypeTiledBackingTileLayer)
+        [m_layer setValue:@YES forKey:@"isTile"];
+
     if (usesTiledBackingLayer()) {
+        WebTiledBackingLayer* tiledBackingLayer = static_cast<WebTiledBackingLayer*>(m_layer.get());
+        TileController* tileController = [tiledBackingLayer createTileController:this];
+
         m_customSublayers = adoptPtr(new PlatformCALayerList(1));
-        CALayer* tileCacheTileContainerLayer = [static_cast<WebTiledBackingLayer *>(m_layer.get()) tileContainerLayer];
-        (*m_customSublayers)[0] = PlatformCALayerMac::create(tileCacheTileContainerLayer, 0);
+        PlatformCALayer* tileCacheTileContainerLayer = tileController->tileContainerLayer();
+        (*m_customSublayers)[0] = tileCacheTileContainerLayer;
     }
-    
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
@@ -692,6 +704,13 @@ void PlatformCALayerMac::setContentsScale(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void PlatformCALayerMac::setEdgeAntialiasingMask(unsigned mask)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer.get() setEdgeAntialiasingMask:mask];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

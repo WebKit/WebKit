@@ -26,13 +26,12 @@
 #ifndef TiledBacking_h
 #define TiledBacking_h
 
-#if PLATFORM(MAC)
-OBJC_CLASS CALayer;
-#endif
-
 namespace WebCore {
 
 class IntRect;
+#if PLATFORM(MAC)
+class PlatformCALayer;
+#endif
 
 enum ScrollingModeIndication {
     MainThreadScrollingBecauseOfStyleIndication,
@@ -90,7 +89,7 @@ public:
     virtual void setScrollingModeIndication(ScrollingModeIndication) = 0;
 
 #if PLATFORM(MAC)
-    virtual CALayer *tiledScrollingIndicatorLayer() = 0;
+    virtual PlatformCALayer* tiledScrollingIndicatorLayer() = 0;
 #endif
 };
 

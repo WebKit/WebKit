@@ -137,6 +137,8 @@ public:
     virtual float contentsScale() const OVERRIDE;
     virtual void setContentsScale(float) OVERRIDE;
 
+    virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE;
+
     virtual WebCore::TiledBacking* tiledBacking() OVERRIDE;
 
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const OVERRIDE;

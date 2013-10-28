@@ -31,6 +31,7 @@
 
 namespace WebCore {
 class IntRect;
+class PlatformCALayer;
 class TileController;
 class TiledBacking;
 }
@@ -39,7 +40,7 @@ class TiledBacking;
     OwnPtr<WebCore::TileController> _tileController;
 }
 
-- (CALayer *)tileContainerLayer;
+- (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer;
 - (WebCore::TiledBacking*)tiledBacking;
 - (void)invalidate;
 

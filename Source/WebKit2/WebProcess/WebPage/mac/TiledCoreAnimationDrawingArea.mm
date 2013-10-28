@@ -672,9 +672,11 @@ TiledBacking* TiledCoreAnimationDrawingArea::mainFrameTiledBacking() const
 void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
 {
     if (showLayer) {
-        if (TiledBacking* tiledBacking = mainFrameTiledBacking())
-            m_debugInfoLayer = tiledBacking->tiledScrollingIndicatorLayer();
-        
+        if (TiledBacking* tiledBacking = mainFrameTiledBacking()) {
+            if (PlatformCALayer* indicatorLayer = tiledBacking->tiledScrollingIndicatorLayer())
+                m_debugInfoLayer = indicatorLayer->platformLayer();
+        }
+
         if (m_debugInfoLayer) {
 #ifndef NDEBUG
             [m_debugInfoLayer.get() setName:@"Debug Info"];

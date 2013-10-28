@@ -655,6 +655,7 @@ void RemoteLayerTreeTransaction::dump() const
             switch (createdLayer.type) {
             case PlatformCALayer::LayerTypeLayer:
             case PlatformCALayer::LayerTypeWebLayer:
+            case PlatformCALayer::LayerTypeSimpleLayer:
                 ts << "layer";
                 break;
             case PlatformCALayer::LayerTypeTransformLayer:
@@ -668,6 +669,9 @@ void RemoteLayerTreeTransaction::dump() const
                 break;
             case PlatformCALayer::LayerTypePageTiledBackingLayer:
                 ts << "page-tiled-backing-layer";
+                break;
+            case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+                ts << "tiled-backing-tile";
                 break;
             case PlatformCALayer::LayerTypeRootLayer:
                 ts << "root-layer";

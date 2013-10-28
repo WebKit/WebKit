@@ -1,3 +1,234 @@
+2013-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Make TileController manipulate PlatformCALayers instead of CALayers
+        https://bugs.webkit.org/show_bug.cgi?id=123279
+
+        Reviewed by Simon Fraser.
+
+        In the interest of making TileController more platform-independent
+        (so that it can be used with the remote layer tree, and maybe Windows),
+        move TileController onto our PlatformCALayer abstraction instead of
+        direct manipulation of CALayers.
+
+        Some fallout from this includes getting rid of special Mac-specific
+        TileController-specific CALayer subclasses, and reworking tile
+        painting to work in a more generic way.
+
+        This is a first step, and doesn't get us all the way to a platform independent
+        TileController, but more patches are forthcoming.
+
+        No new tests, just a (largeish) refactor.
+
+        * WebCore.exp.in:
+        The signature of some methods has changed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove WebTileLayer.*
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::logExposedUnfilledArea):
+        Use the "isTile" key on the CALayer dictionary instead of the layer's
+        class to determine if it's a tile. TileController will set this on a tile
+        when it is created, for now.
+
+        * platform/graphics/TiledBacking.h:
+        tiledScrollingIndicatorLayer() should return a PlatformCALayer.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::platformCALayerIncrementRepaintCount):
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        The PlatformCALayerClient paintContents and incrementRepaintCount callbacks
+        should include the platformCALayer that caused the callback.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        Add LayerTypeSimpleLayer, which is similar to LayerTypeWebLayer
+        except it just calls back its client to paint, instead of doing
+        complicated things with repaint rects. This is so that TileController
+        doesn't re-enter drawLayerContents when asking its GraphicsLayer
+        to paint for each PlatformCALayer (it will be entering drawLayerContents
+        for the first time for each layer). It also happens to be useful
+        for things like the tile controller overlay, which don't need
+        all that complication.
+
+        Add LayerTypeTiledBackingTileLayer, which is used simply to distinguish
+        TileController Tile layers from other LayerTypeSimpleLayers.
+
+        * platform/graphics/ca/mac/LayerPool.h:
+        * platform/graphics/ca/mac/LayerPool.mm:
+        (WebCore::LayerPool::addLayer):
+        (WebCore::LayerPool::takeLayerWithSize):
+        LayerPool should operate on PlatformCALayers now.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::PlatformCALayerMac):
+        Set the "isTile" key on the CALayer to true for TiledBackingTileLayers,
+        so that the scrolling performance logging can tell a tile apart from
+        any other layer, on the scrolling thread, without touching PlatformCALayers
+        or the TileController or any other main-thread data structures.
+
+        (PlatformCALayerMac::setEdgeAntialiasingMask): Added.
+        * platform/graphics/ca/mac/TileController.h:
+        Remove references to Objective-C classes; instead use PlatformCALayer everywhere.
+        TileController is now a PlatformCALayerClient, and the layers it owns are
+        all PlatformCALayers (and it is constructed with a PlatformCALayer, etc.).
+        Hand in the tile debug border color as a WebCore color, instead of a CGColorRef.
+        blankPixelCountForTiles() now operates on a list of PlatformLayers instead of
+        WebTileLayers specifically, since WebTileLayer is gone.
+        Make drawTileMapContents private because WebTileCacheMapLayer no longer exists.
+
+        (WebCore::TileController::platformCALayerDrawsContent):
+        All of the layers who have TileController as their client paint their contents.
+
+        (WebCore::TileController::platformCALayerContentsOpaque):
+        This will only be called for layers which paint via drawLayerContents,
+        so it's OK that we don't special-case the debugging overlay here.
+
+        (WebCore::TileController::owningGraphicsLayer):
+        Return the GraphicsLayer that owns the TileController's main
+        layer, via its conformance to PlatformCALayerClient. This is
+        a bit strange (because it's not strictly a GraphicsLayer, despite
+        always being so at the moment), but is done for clarity inside
+        TileController itself.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        Remove CALayer (WebCALayerDetails), WebTiledScrollingIndicatorLayer,
+        and a bunch of includes that we don't need anymore.
+
+        (WebCore::TileController::create):
+        (WebCore::TileController::TileController):
+        TileController is passed a PlatformCALayer for the tile cache root layer,
+        instead of a WebTiledBackingLayer. It also creates a PlatformCALayer with
+        LayerTypeLayer instead of a bare CALayer for the container layer.
+        It's OK to remove the transaction because it was only used to stop
+        the implicit animation, which PlatformCALayer will do for us.
+
+        (WebCore::TileController::~TileController):
+        Clear the owner of the PlatformCALayers which the TileController previously owned,
+        so they don't try to call back a destroyed TileController.
+
+        (WebCore::TileController::tileCacheLayerBoundsChanged):
+        (WebCore::TileController::setNeedsDisplay):
+        Straightforward adjustments towards use of PlatformCALayer.
+
+        (WebCore::TileController::setTileNeedsDisplayInRect):
+        Adjustments towards use of PlatformCALayer; we need FloatRects so we can
+        pass pointers to PlatformCALayer::setNeedsDisplay.
+
+        (WebCore::TileController::platformCALayerPaintContents):
+        Replace drawLayer with platformCALayerPaintContents, which will be called
+        back from our various WebSimpleLayers. If the PlatformCALayer is our
+        tiled scrolling debug indicator, paint that. Otherwise, it's a tile.
+        Make use of drawLayerContents() to paint the tile contents.
+        Make use of drawRepaintIndicator() to paint the repaint indicator if needed.
+        Move scrolling performance logging code that used to be in WebTileLayer here.
+
+        (WebCore::TileController::platformCALayerDeviceScaleFactor):
+        (WebCore::TileController::platformCALayerShowDebugBorders):
+        (WebCore::TileController::platformCALayerShowRepaintCounter):
+        Forward these to the owning GraphicsLayerCA, because it will have the right answers.
+
+        (WebCore::TileController::setScale):
+        Adjustments towards use of PlatformCALayer; remove some code that Simon
+        caused to be unused in 156291 but did not remove.
+
+        (WebCore::TileController::setAcceleratesDrawing):
+        (WebCore::TileController::setTilesOpaque):
+        (WebCore::TileController::setVisibleRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::setTileDebugBorderWidth):
+        (WebCore::TileController::setTileDebugBorderColor):
+        (WebCore::TileController::bounds):
+        (WebCore::TileController::blankPixelCount):
+        (WebCore::TileController::blankPixelCountForTiles):
+        (WebCore::queueTileForRemoval):
+        (WebCore::TileController::setNeedsRevalidateTiles):
+        (WebCore::TileController::ensureTilesForRect):
+        (WebCore::TileController::retainedTileBackingStoreMemory):
+        Straightforward adjustments towards use of PlatformCALayer.
+
+        (WebCore::TileController::updateTileCoverageMap):
+        Adjustments towards use of PlatformCALayer; rename backgroundColor
+        to visibleRectIndicatorColor, since it's actually a border, not a background.
+
+        (WebCore::TileController::tiledScrollingIndicatorLayer):
+        Create a LayerTypeSimpleLayer PlatformCALayer for the tiled scrolling indicator.
+        It will be asked to paint straightforwardly, like a CALayer would.
+        Create a LayerTypeLayer PlatformCALayer for the visible rect indicator.
+        It doesn't need to paint anything, so it doesn't get an owner.
+
+        (WebCore::TileController::createTileLayer):
+        When creating a new tile layer, adopt it by setting its owner.
+        Otherwise, straightforward adjustments towards use of PlatformCALayer.
+
+        (WebCore::TileController::platformCALayerIncrementRepaintCount):
+        Manage repaint counts for tiles in TileController now.
+
+        (WebCore::TileController::drawTileMapContents):
+        Adjustments towards use of PlatformCALayer.
+
+        * platform/graphics/ca/mac/WebTileLayer.h: Removed.
+        * platform/graphics/ca/mac/WebTileLayer.mm: Removed.
+        We don't need WebTileLayer anymore, tiles are now just WebSimpleLayers
+        owned by TileController. Its behavior has been moved into TileController.
+
+        * platform/graphics/ca/mac/WebTiledBackingLayer.h:
+        * platform/graphics/ca/mac/WebTiledBackingLayer.mm:
+        (-[WebTiledBackingLayer createTileController:]):
+        Add createTileController: so that the WebTiledBackingLayer's owner can
+        hand the TileController the PlatformCALayer for the WebTiledBackingLayer
+        without propagating additional usage of PlatformCALayer::platformCALayer(),
+        which we need to remove in light of the remote layer tree work.
+
+        (-[WebTiledBackingLayer setBorderColor:]):
+
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        Add an empty implementation of setEdgeAntialiasingMask.
+        We'll probably want to implement it before adopting TileController on Windows.
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerPaintContents):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerIncrementRepaintCount):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::LayerClient::platformCALayerPaintContents):
+        (WebCore::LayerClient::platformCALayerIncrementRepaintCount):
+        Adjust for new parameters on PlatformCALayerClient callbacks.
+
+        * platform/graphics/mac/WebLayer.h:
+        Add WebSimpleLayer, which inherits directly from CALayer, and make
+        our standard WebLayer (which is used for compositing layers in web content)
+        inherit from that.
+
+        * platform/graphics/mac/WebLayer.mm:
+        Move most of the behavior of WebLayer onto WebSimpleLayer, except for its
+        complex painting code. That stays as an override on WebLayer.
+
+        (WebCore::drawLayerContents):
+        Use the PlatformCALayer's PlatformLayer - if it exists - to extract
+        fine-grained repaint rects. If it doesn't, we'll just use the CGContext's
+        clip rect as our single repaint rect.
+        Rename platformLayer to platformCALayer for accuracy.
+        Remove special code for CATiledLayer since we ought not use it on Mac anymore.
+
+        (WebCore::drawRepaintIndicator):
+        Factor repaint indicator code out into its own function so that TileController
+        can use it. It can't be called from drawLayerContents for TileController, since
+        the PlatformCALayer that TileController passes in to drawLayerContents is actually
+        that of the tile cache's root layer, not the tile itself.
+        Also, add a custom background color parameter so TileController can override
+        the default green color with its own standard purple.
+
+        (-[WebLayer drawInContext:]):
+        (-[WebSimpleLayer drawInContext:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer drawInContext:]):
+        Removed a param from drawLayerContents because it's trivially acquirable
+        from the PlatformCALayer.
+
 2013-10-24  Sam Weinig  <sam@webkit.org>
 
         Move RenderBlock functions only used by RenderBlockFlow to RenderBlockFlow

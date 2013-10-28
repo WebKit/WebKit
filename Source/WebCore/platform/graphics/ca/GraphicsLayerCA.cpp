@@ -1214,11 +1214,11 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
     // so we don't want to overpaint the repaint counter when called with the TileController's own layer.
     if (m_isPageTiledBackingLayer && platformLayer)
         return false;
-    
+
     return isShowingRepaintCounter();
 }
 
-void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip)
+void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsContext& context, const IntRect& clip)
 {
     paintGraphicsLayerContents(context, clip);
 }

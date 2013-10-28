@@ -149,7 +149,7 @@ bool RemoteLayerBackingStore::display()
     }
 
     context->scale(FloatSize(m_scale, m_scale));
-    drawLayerContents(context->platformContext(), m_layer, FloatRect(FloatPoint(), scaledSize), rectsToPaint, false);
+    drawLayerContents(context->platformContext(), m_layer, rectsToPaint);
     m_dirtyRegion = Region();
 
     m_frontBuffer = m_backBuffer;

@@ -1,3 +1,15 @@
+2013-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Make TileController manipulate PlatformCALayers instead of CALayers
+        https://bugs.webkit.org/show_bug.cgi?id=123279
+
+        Reviewed by Simon Fraser.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerPaintContents):
+        (FullscreenVideoController::LayerClient::platformCALayerIncrementRepaintCount):
+        Adjust for new parameters on PlatformCALayerClient callbacks.
+
 2013-10-23  Alex Christensen  <achristensen@webkit.org>
 
         Separated USE(CA) from USE(ACCELERATED_COMPOSITING) to prepare WinCairo for accelerated compositing.

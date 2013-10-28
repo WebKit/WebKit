@@ -64,10 +64,12 @@ public:
     enum LayerType {
         LayerTypeLayer,
         LayerTypeWebLayer,
+        LayerTypeSimpleLayer,
         LayerTypeTransformLayer,
         LayerTypeWebTiledLayer,
         LayerTypeTiledBackingLayer,
         LayerTypePageTiledBackingLayer,
+        LayerTypeTiledBackingTileLayer,
         LayerTypeRootLayer,
         LayerTypeAVPlayerLayer,
         LayerTypeCustom
@@ -182,6 +184,8 @@ public:
 
     virtual float contentsScale() const = 0;
     virtual void setContentsScale(float) = 0;
+
+    virtual void setEdgeAntialiasingMask(unsigned) = 0;
 
     virtual TiledBacking* tiledBacking() = 0;
 

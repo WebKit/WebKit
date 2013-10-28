@@ -29,6 +29,8 @@
 #include "FloatRect.h"
 #include "IntPointHash.h"
 #include "IntRect.h"
+#include "PlatformCALayer.h"
+#include "PlatformCALayerClient.h"
 #include "TiledBacking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -37,31 +39,25 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS CALayer;
-OBJC_CLASS WebTiledBackingLayer;
-OBJC_CLASS WebTileLayer;
-OBJC_CLASS WebTiledScrollingIndicatorLayer;
-
 namespace WebCore {
 
 class FloatRect;
 class IntPoint;
 class IntRect;
 
-typedef Vector<RetainPtr<WebTileLayer>> WebTileLayerList;
+typedef Vector<RetainPtr<PlatformLayer>> PlatformLayerList;
 
-class TileController : public TiledBacking {
+class TileController : public TiledBacking, public PlatformCALayerClient {
     WTF_MAKE_NONCOPYABLE(TileController);
 
 public:
-    static PassOwnPtr<TileController> create(WebTiledBackingLayer*);
+    static PassOwnPtr<TileController> create(PlatformCALayer*);
     ~TileController();
 
     void tileCacheLayerBoundsChanged();
 
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
-    void drawLayer(WebTileLayer *, CGContextRef);
 
     void setScale(CGFloat);
     CGFloat scale() const { return m_scale; }
@@ -72,27 +68,25 @@ public:
     void setTilesOpaque(bool);
     bool tilesAreOpaque() const { return m_tilesAreOpaque; }
 
-    CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
+    PlatformCALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
 
     void setTileDebugBorderWidth(float);
-    void setTileDebugBorderColor(CGColorRef);
+    void setTileDebugBorderColor(Color);
 
     virtual FloatRect visibleRect() const OVERRIDE { return m_visibleRect; }
 
     unsigned blankPixelCount() const;
-    static unsigned blankPixelCountForTiles(const WebTileLayerList&, const FloatRect&, const IntPoint&);
-
-    // Only public for the WebTileCacheMapLayer.
-    void drawTileMapContents(CGContextRef, CGRect);
+    static unsigned blankPixelCountForTiles(const PlatformLayerList&, const FloatRect&, const IntPoint&);
 
 public:
     // Only public for inline methods in the implementation file.
     typedef IntPoint TileIndex;
     typedef unsigned TileCohort;
     static const TileCohort VisibleTileCohort = UINT_MAX;
+    typedef HashMap<PlatformCALayer*, int> RepaintCountMap;
 
     struct TileInfo {
-        RetainPtr<WebTileLayer> layer;
+        RefPtr<PlatformCALayer> layer;
         TileCohort cohort; // VisibleTileCohort is visible.
         bool hasStaleContent;
         
@@ -103,7 +97,7 @@ public:
     };
 
 private:
-    TileController(WebTiledBackingLayer*);
+    TileController(PlatformCALayer*);
 
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
@@ -127,8 +121,25 @@ private:
     virtual bool unparentsOffscreenTiles() const OVERRIDE { return m_unparentsOffscreenTiles; }
     virtual double retainedTileBackingStoreMemory() const OVERRIDE;
     virtual IntRect tileCoverageRect() const OVERRIDE;
-    virtual CALayer *tiledScrollingIndicatorLayer() OVERRIDE;
+    virtual PlatformCALayer* tiledScrollingIndicatorLayer() OVERRIDE;
     virtual void setScrollingModeIndication(ScrollingModeIndication) OVERRIDE;
+
+    // PlatformCALayerClient
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) OVERRIDE { }
+    virtual bool platformCALayerRespondsToLayoutChanges() const OVERRIDE { return false; }
+    virtual void platformCALayerAnimationStarted(CFTimeInterval) OVERRIDE { }
+    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const OVERRIDE { return GraphicsLayer::CompositingCoordinatesTopDown; }
+    virtual void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const IntRect&) OVERRIDE;
+    virtual bool platformCALayerShowDebugBorders() const OVERRIDE;
+    virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const OVERRIDE;
+    virtual int platformCALayerIncrementRepaintCount(PlatformCALayer*) OVERRIDE;
+
+    virtual bool platformCALayerContentsOpaque() const OVERRIDE { return m_tilesAreOpaque; }
+    virtual bool platformCALayerDrawsContent() const OVERRIDE { return true; }
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer*) OVERRIDE { }
+
+    virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE { }
+    virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
 
     IntRect bounds() const;
 
@@ -166,15 +177,16 @@ private:
 
     void setTileNeedsDisplayInRect(const TileIndex&, TileInfo&, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords);
 
-    WebTileLayer* tileLayerAtIndex(const TileIndex&) const;
-    RetainPtr<WebTileLayer> createTileLayer(const IntRect&);
+    RefPtr<PlatformCALayer> createTileLayer(const IntRect&);
 
-    bool shouldShowRepaintCounters() const;
-    void drawRepaintCounter(WebTileLayer *, CGContextRef);
+    void drawTileMapContents(CGContextRef, CGRect);
 
-    WebTiledBackingLayer* m_tileCacheLayer;
-    RetainPtr<CALayer> m_tileContainerLayer;
-    RetainPtr<WebTiledScrollingIndicatorLayer> m_tiledScrollingIndicatorLayer; // Used for coverage visualization.
+    PlatformCALayerClient* owningGraphicsLayer() const { return m_tileCacheLayer->owner(); }
+
+    PlatformCALayer* m_tileCacheLayer;
+    RefPtr<PlatformCALayer> m_tileContainerLayer;
+    RefPtr<PlatformCALayer> m_tiledScrollingIndicatorLayer; // Used for coverage visualization.
+    RefPtr<PlatformCALayer> m_visibleRectIndicatorLayer;
 
     IntSize m_tileSize;
     FloatRect m_visibleRect;
@@ -188,6 +200,8 @@ private:
     TileMap m_tiles;
     Timer<TileController> m_tileRevalidationTimer;
     Timer<TileController> m_cohortRemovalTimer;
+
+    RepaintCountMap m_tileRepaintCounts;
 
     struct TileCohortInfo {
         TileCohort cohort;
@@ -214,7 +228,7 @@ private:
     bool m_tilesAreOpaque;
     bool m_clipsToExposedRect;
 
-    RetainPtr<CGColorRef> m_tileDebugBorderColor;
+    Color m_tileDebugBorderColor;
     float m_tileDebugBorderWidth;
     ScrollingModeIndication m_indicatorMode;
 };

@@ -126,6 +126,8 @@ public:
     virtual float contentsScale() const OVERRIDE;
     virtual void setContentsScale(float) OVERRIDE;
 
+    virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE { ASSERT_NOT_REACHED(); }
+
     virtual TiledBacking* tiledBacking() OVERRIDE { return nullptr; }
     
     virtual PlatformCALayer* rootLayer() const OVERRIDE;

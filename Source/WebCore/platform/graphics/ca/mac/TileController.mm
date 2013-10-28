@@ -28,54 +28,14 @@
 
 #import "IntRect.h"
 #import "PlatformCALayer.h"
+#import "PlatformCALayerMac.h"
 #import "Region.h"
 #import "LayerPool.h"
 #import "WebLayer.h"
-#import "WebTiledBackingLayer.h"
-#import "WebTileLayer.h"
-#import <QuartzCore/QuartzCore.h>
 #import <wtf/MainThread.h>
-#import <WebCore/BlockExceptions.h>
 #import <utility>
 
 using namespace std;
-
-@interface CALayer (WebCALayerDetails)
-- (void)setAcceleratesDrawing:(BOOL)flag;
-@end
-
-@interface WebTiledScrollingIndicatorLayer : CALayer {
-    WebCore::TileController* _tileController;
-    CALayer *_visibleRectFrameLayer; // Owned by being a sublayer.
-}
-@property (assign) WebCore::TileController* tileController;
-@property (assign) CALayer* visibleRectFrameLayer;
-@end
-
-@implementation WebTiledScrollingIndicatorLayer
-@synthesize tileController = _tileController;
-@synthesize visibleRectFrameLayer = _visibleRectFrameLayer;
-- (id)init
-{
-    if ((self = [super init])) {
-        [self setStyle:[NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"bounds", [NSNull null], @"position", [NSNull null], @"contents", nil] forKey:@"actions"]];
-
-        _visibleRectFrameLayer = [CALayer layer];
-        [_visibleRectFrameLayer setStyle:[NSDictionary dictionaryWithObject:[NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"bounds", [NSNull null], @"position", [NSNull null], @"borderColor", nil] forKey:@"actions"]];
-        [self addSublayer:_visibleRectFrameLayer];
-        [_visibleRectFrameLayer setBorderColor:WebCore::cachedCGColor(WebCore::Color(255, 0, 0), WebCore::ColorSpaceDeviceRGB)];
-        [_visibleRectFrameLayer setBorderWidth:2];
-        return self;
-    }
-    return nil;
-}
-
-- (void)drawInContext:(CGContextRef)context
-{
-    if (_tileController)
-        _tileController->drawTileMapContents(context, [self bounds]);
-}
-@end
 
 namespace WebCore {
     
@@ -87,14 +47,13 @@ enum TileValidationPolicyFlag {
 static const int defaultTileWidth = 512;
 static const int defaultTileHeight = 512;
 
-PassOwnPtr<TileController> TileController::create(WebTiledBackingLayer* tileCacheLayer)
+PassOwnPtr<TileController> TileController::create(PlatformCALayer* rootPlatformLayer)
 {
-    return adoptPtr(new TileController(tileCacheLayer));
+    return adoptPtr(new TileController(rootPlatformLayer));
 }
 
-TileController::TileController(WebTiledBackingLayer* tileCacheLayer)
-    : m_tileCacheLayer(tileCacheLayer)
-    , m_tileContainerLayer(adoptNS([[CALayer alloc] init]))
+TileController::TileController(PlatformCALayer* rootPlatformLayer)
+    : m_tileCacheLayer(rootPlatformLayer)
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileRevalidationTimer(this, &TileController::tileRevalidationTimerFired)
     , m_cohortRemovalTimer(this, &TileController::cohortRemovalTimerFired)
@@ -111,31 +70,27 @@ TileController::TileController(WebTiledBackingLayer* tileCacheLayer)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(ThreadedScrollingIndication)
 {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [m_tileCacheLayer addSublayer:m_tileContainerLayer.get()];
+    m_tileContainerLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeLayer, nullptr);
 #ifndef NDEBUG
-    [m_tileContainerLayer.get() setName:@"TileController Container Layer"];
+    m_tileContainerLayer->setName("TileController Container Layer");
 #endif
-    [CATransaction commit];
+    rootPlatformLayer->appendSublayer(m_tileContainerLayer.get());
 }
 
 TileController::~TileController()
 {
     ASSERT(isMainThread());
 
-    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setTileController:0];
-    }
-    
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        it->value.layer->setOwner(nullptr);
+
     if (m_tiledScrollingIndicatorLayer)
-        [m_tiledScrollingIndicatorLayer.get() setTileController:nil];
+        m_tiledScrollingIndicatorLayer->setOwner(nullptr);
 }
 
 void TileController::tileCacheLayerBoundsChanged()
 {
-    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
+    ASSERT(owningGraphicsLayer()->isCommittingChanges());
     setNeedsRevalidateTiles();
 }
 
@@ -143,7 +98,7 @@ void TileController::setNeedsDisplay()
 {
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setNeedsDisplay];
+        tileInfo.layer->setNeedsDisplay();
     }
 }
 
@@ -180,10 +135,10 @@ void TileController::setNeedsDisplayInRect(const IntRect& rect)
 
 void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& tileInfo, const IntRect& repaintRectInTileCoords, const IntRect& coverageRectInTileCoords)
 {
-    WebTileLayer* tileLayer = tileInfo.layer.get();
+    PlatformCALayer* tileLayer = tileInfo.layer.get();
 
     IntRect tileRect = rectForTileIndex(tileIndex);
-    IntRect tileRepaintRect = tileRect;
+    FloatRect tileRepaintRect = tileRect;
     tileRepaintRect.intersect(repaintRectInTileCoords);
     if (tileRepaintRect.isEmpty())
         return;
@@ -193,69 +148,86 @@ void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileI
     // We could test for intersection with the visible rect. This would reduce painting yet more,
     // but may make scrolling stale tiles into view more frequent.
     if (tileRect.intersects(coverageRectInTileCoords)) {
-        [tileLayer setNeedsDisplayInRect:tileRepaintRect];
+        tileLayer->setNeedsDisplay(&tileRepaintRect);
 
-        if (shouldShowRepaintCounters()) {
-            CGRect bounds = [tileLayer bounds];
-            CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
-            [tileLayer setNeedsDisplayInRect:indicatorRect];
+        if (owningGraphicsLayer()->platformCALayerShowRepaintCounter(0)) {
+            FloatRect indicatorRect(0, 0, 52, 27);
+            tileLayer->setNeedsDisplay(&indicatorRect);
         }
     } else
         tileInfo.hasStaleContent = true;
 }
 
-
-void TileController::drawLayer(WebTileLayer *layer, CGContextRef context)
+void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const IntRect&)
 {
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    if (!platformLayer)
+    if (platformCALayer == m_tiledScrollingIndicatorLayer.get()) {
+        drawTileMapContents(context.platformContext(), m_tiledScrollingIndicatorLayer->bounds());
         return;
+    }
 
-    CGContextSaveGState(context);
+    {
+        GraphicsContextStateSaver stateSaver(context);
 
-    CGPoint layerOrigin = [layer frame].origin;
-    CGContextTranslateCTM(context, -layerOrigin.x, -layerOrigin.y);
-    CGContextScaleCTM(context, m_scale, m_scale);
-    drawLayerContents(context, layer, platformLayer);
+        FloatPoint3D layerOrigin = platformCALayer->position();
+        context.translate(-layerOrigin.x(), -layerOrigin.y());
+        context.scale(FloatSize(m_scale, m_scale));
 
-    CGContextRestoreGState(context);
+        drawLayerContents(context.platformContext(), m_tileCacheLayer);
+    }
 
-    drawRepaintCounter(layer, context);
+    int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
+    if (owningGraphicsLayer()->platformCALayerShowRepaintCounter(0))
+        drawRepaintIndicator(context.platformContext(), platformCALayer, repaintCount, cachedCGColor(m_tileDebugBorderColor, ColorSpaceDeviceRGB));
+
+    if (scrollingPerformanceLoggingEnabled()) {
+        FloatRect visiblePart(platformCALayer->position().x(), platformCALayer->position().y(), platformCALayer->bounds().size().width(), platformCALayer->bounds().size().height());
+        visiblePart.intersect(visibleRect());
+
+        if (repaintCount == 1 && !visiblePart.isEmpty())
+            WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), blankPixelCount());
+    }
+}
+
+float TileController::platformCALayerDeviceScaleFactor()
+{
+    return owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
+}
+
+bool TileController::platformCALayerShowDebugBorders() const
+{
+    return owningGraphicsLayer()->platformCALayerShowDebugBorders();
+}
+
+bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
+{
+    return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
 }
 
 void TileController::setScale(CGFloat scale)
 {
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    ASSERT(platformLayer->owner()->isCommittingChanges());
+    ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
-    float deviceScaleFactor = platformLayer->owner()->platformCALayerDeviceScaleFactor();
+    float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
 
-    // The scale we get is the produce of the page scale factor and device scale factor.
+    // The scale we get is the product of the page scale factor and device scale factor.
     // Divide by the device scale factor so we'll get the page scale factor.
     scale /= deviceScaleFactor;
 
     if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor)
         return;
 
-    Vector<FloatRect> dirtyRects;
-
     m_deviceScaleFactor = deviceScaleFactor;
     m_scale = scale;
-    [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
+
+    TransformationMatrix transform;
+    transform.scale(1 / m_scale);
+    m_tileContainerLayer->setTransform(transform);
 
     // FIXME: we may revalidateTiles twice in this commit.
     revalidateTiles(PruneSecondaryTiles, PruneSecondaryTiles);
 
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setContentsScale:deviceScaleFactor];
-
-        IntRect tileRect = rectForTileIndex(it->key);
-        FloatRect scaledTileRect = tileRect;
-
-        scaledTileRect.scale(1 / m_scale);
-        dirtyRects.append(scaledTileRect);
-    }
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        it->value.layer->setContentsScale(deviceScaleFactor);
 }
 
 void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
@@ -267,7 +239,7 @@ void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
+        tileInfo.layer->setAcceleratesDrawing(m_acceleratesDrawing);
     }
 }
 
@@ -280,13 +252,13 @@ void TileController::setTilesOpaque(bool opaque)
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setOpaque:opaque];
+        tileInfo.layer->setOpaque(opaque);
     }
 }
 
 void TileController::setVisibleRect(const FloatRect& visibleRect)
 {
-    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
+    ASSERT(owningGraphicsLayer()->isCommittingChanges());
     if (m_visibleRect == visibleRect)
         return;
 
@@ -383,7 +355,7 @@ void TileController::setTileCoverage(TileCoverage coverage)
 
 void TileController::revalidateTiles()
 {
-    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
+    ASSERT(owningGraphicsLayer()->isCommittingChanges());
     revalidateTiles(0, 0);
 }
 
@@ -400,25 +372,23 @@ void TileController::setTileDebugBorderWidth(float borderWidth)
     m_tileDebugBorderWidth = borderWidth;
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setBorderWidth:m_tileDebugBorderWidth];
+        tileInfo.layer->setBorderWidth(m_tileDebugBorderWidth);
     }
 }
 
-void TileController::setTileDebugBorderColor(CGColorRef borderColor)
+void TileController::setTileDebugBorderColor(Color borderColor)
 {
     if (m_tileDebugBorderColor == borderColor)
         return;
 
     m_tileDebugBorderColor = borderColor;
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        [tileInfo.layer.get() setBorderColor:m_tileDebugBorderColor.get()];
-    }
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+        it->value.layer->setBorderColor(borderColor);
 }
 
 IntRect TileController::bounds() const
 {
-    return IntRect(IntPoint(), IntSize([m_tileCacheLayer bounds].size));
+    return IntRect(IntPoint(), expandedIntSize(m_tileCacheLayer->bounds().size()));
 }
 
 IntRect TileController::rectForTileIndex(const TileIndex& tileIndex) const
@@ -523,20 +493,22 @@ void TileController::tileRevalidationTimerFired(Timer<TileController>*)
 
 unsigned TileController::blankPixelCount() const
 {
-    WebTileLayerList tiles(m_tiles.size());
+    PlatformLayerList tiles(m_tiles.size());
 
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        tiles.append(it->value.layer);
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        if (PlatformLayer *layer = it->value.layer->platformLayer())
+            tiles.append(layer);
+    }
 
     return blankPixelCountForTiles(tiles, m_visibleRect, IntPoint(0,0));
 }
 
-unsigned TileController::blankPixelCountForTiles(const WebTileLayerList& tiles, const FloatRect& visibleRect, const IntPoint& tileTranslation)
+unsigned TileController::blankPixelCountForTiles(const PlatformLayerList& tiles, const FloatRect& visibleRect, const IntPoint& tileTranslation)
 {
     Region paintedVisibleTiles;
 
-    for (WebTileLayerList::const_iterator it = tiles.begin(), end = tiles.end(); it != end; ++it) {
-        const WebTileLayer* tileLayer = it->get();
+    for (PlatformLayerList::const_iterator it = tiles.begin(), end = tiles.end(); it != end; ++it) {
+        const PlatformLayer* tileLayer = it->get();
 
         FloatRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
         visiblePart.intersect(visibleRect);
@@ -551,11 +523,10 @@ unsigned TileController::blankPixelCountForTiles(const WebTileLayerList& tiles, 
     return uncoveredRegion.totalArea();
 }
 
-static inline void queueTileForRemoval(const TileController::TileIndex& tileIndex, const TileController::TileInfo& tileInfo, Vector<TileController::TileIndex>& tilesToRemove)
+static inline void queueTileForRemoval(const TileController::TileIndex& tileIndex, const TileController::TileInfo& tileInfo, Vector<TileController::TileIndex>& tilesToRemove, TileController::RepaintCountMap& repaintCounts)
 {
-    WebTileLayer* tileLayer = tileInfo.layer.get();
-    [tileLayer removeFromSuperlayer];
-    [tileLayer setTileController:0];
+    tileInfo.layer->removeFromSuperlayer();
+    repaintCounts.remove(tileInfo.layer.get());
     tilesToRemove.append(tileIndex);
 }
 
@@ -564,7 +535,7 @@ void TileController::removeAllTiles()
     Vector<TileIndex> tilesToRemove;
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-        queueTileForRemoval(it->key, it->value, tilesToRemove);
+        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
@@ -581,7 +552,7 @@ void TileController::removeAllSecondaryTiles()
         if (tileInfo.cohort == VisibleTileCohort)
             continue;
 
-        queueTileForRemoval(it->key, it->value, tilesToRemove);
+        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
     }
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
@@ -600,7 +571,7 @@ void TileController::removeTilesInCohort(TileCohort cohort)
         if (tileInfo.cohort != cohort)
             continue;
 
-        queueTileForRemoval(it->key, it->value, tilesToRemove);
+        queueTileForRemoval(it->key, it->value, tilesToRemove, m_tileRepaintCounts);
     }
 
     for (size_t i = 0; i < tilesToRemove.size(); ++i) {
@@ -611,18 +582,11 @@ void TileController::removeTilesInCohort(TileCohort cohort)
 
 void TileController::setNeedsRevalidateTiles()
 {
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    platformLayer->owner()->platformCALayerSetNeedsToRevalidateTiles();
+    owningGraphicsLayer()->platformCALayerSetNeedsToRevalidateTiles();
 }
 
 void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy, TileValidationPolicyFlags backgroundValidationPolicy)
 {
-    // If the underlying PlatformLayer has been destroyed, but the WebTiledBackingLayer hasn't
-    // platformLayer will be null here.
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    if (!platformLayer)
-        return;
-
     FloatRect visibleRect = m_visibleRect;
     IntRect bounds = this->bounds();
 
@@ -655,13 +619,13 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
             TileInfo& tileInfo = it->value;
             TileIndex tileIndex = it->key;
 
-            WebTileLayer* tileLayer = tileInfo.layer.get();
+            PlatformCALayer* tileLayer = tileInfo.layer.get();
             IntRect tileRect = rectForTileIndex(tileIndex);
             if (tileRect.intersects(coverageRectInTileCoords)) {
                 tileInfo.cohort = VisibleTileCohort;
                 if (tileInfo.hasStaleContent) {
                     // FIXME: store a dirty region per layer?
-                    [tileLayer setNeedsDisplay];
+                    tileLayer->setNeedsDisplay();
                     tileInfo.hasStaleContent = false;
                 }
             } else {
@@ -671,7 +635,7 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
                     ++tilesInCohort;
                     
                     if (m_unparentsOffscreenTiles)
-                        [tileInfo.layer.get() removeFromSuperlayer];
+                        tileLayer->removeFromSuperlayer();
                 }
             }
         }
@@ -697,7 +661,7 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
 
     if (m_unparentsOffscreenTiles && (validationPolicy & UnparentAllTiles)) {
         for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
-            [it->value.layer.get() removeFromSuperlayer];
+            it->value.layer->removeFromSuperlayer();
     }
 
     if (m_boundsAtLastRevalidate != bounds) {
@@ -716,7 +680,7 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
                 || index.y() > bottomRightForBounds.y()
                 || index.x() < topLeftForBounds.x()
                 || index.x() > bottomRightForBounds.x())
-                queueTileForRemoval(index, it->value, tilesToRemove);
+                queueTileForRemoval(index, it->value, tilesToRemove, m_tileRepaintCounts);
         }
 
         for (size_t i = 0, size = tilesToRemove.size(); i < size; ++i) {
@@ -788,10 +752,6 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
     if (m_unparentsOffscreenTiles && !m_isInWindow)
         return IntRect();
 
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    if (!platformLayer)
-        return IntRect();
-
     FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
     IntRect rectInTileCoords(enclosingIntRect(scaledRect));
@@ -800,7 +760,6 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
     TileIndex bottomRight;
     getTileIndexRangeForRect(rectInTileCoords, topLeft, bottomRight);
 
-    Vector<FloatRect> dirtyRects;
     TileCohort currCohort = nextTileCohort();
     unsigned tilesInCohort = 0;
 
@@ -821,11 +780,13 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
                 tileInfo.layer = createTileLayer(tileRect);
             else {
                 // We already have a layer for this tile. Ensure that its size is correct.
-                FloatSize tileLayerSize([tileInfo.layer.get() frame].size);
+                FloatSize tileLayerSize(tileInfo.layer->bounds().size());
                 shouldChangeTileLayerFrame = tileLayerSize != FloatSize(tileRect.size());
 
-                if (shouldChangeTileLayerFrame)
-                    [tileInfo.layer.get() setFrame:tileRect];
+                if (shouldChangeTileLayerFrame) {
+                    tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
+                    tileInfo.layer->setPosition(tileRect.location());
+                }
             }
 
             if (newTileType == CoverageType::SecondaryTiles && !tileRect.intersects(m_primaryTileCoverageRect)) {
@@ -833,16 +794,10 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
                 ++tilesInCohort;
             }
 
-            bool shouldParentTileLayer = (!m_unparentsOffscreenTiles || m_isInWindow) && ![tileInfo.layer.get() superlayer];
+            bool shouldParentTileLayer = (!m_unparentsOffscreenTiles || m_isInWindow) && !tileInfo.layer->superlayer();
 
             if (shouldParentTileLayer)
-                [m_tileContainerLayer.get() addSublayer:tileInfo.layer.get()];
-
-            if ((shouldParentTileLayer && [tileInfo.layer.get() needsDisplay]) || shouldChangeTileLayerFrame) {
-                FloatRect scaledTileRect = tileRect;
-                scaledTileRect.scale(1 / m_scale);
-                dirtyRects.append(scaledTileRect);
-            }
+                m_tileContainerLayer->appendSublayer(tileInfo.layer.get());
         }
     }
     
@@ -872,37 +827,34 @@ void TileController::updateTileCoverageMap()
     float indicatorScale = scale * m_scale;
     FloatRect mapBounds = containerBounds;
     mapBounds.scale(indicatorScale, indicatorScale);
-    
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    
-    if (m_clipsToExposedRect)
-        [m_tiledScrollingIndicatorLayer.get() setPosition:m_exposedRect.location() + FloatPoint(2, 2)];
-    else
-        [m_tiledScrollingIndicatorLayer.get() setPosition:CGPointMake(2, 2)];
 
-    [m_tiledScrollingIndicatorLayer.get() setBounds:mapBounds];
-    [m_tiledScrollingIndicatorLayer.get() setNeedsDisplay];
+    if (m_clipsToExposedRect)
+        m_tiledScrollingIndicatorLayer->setPosition(m_exposedRect.location() + FloatPoint(2, 2));
+    else
+        m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
+
+    m_tiledScrollingIndicatorLayer->setBounds(mapBounds);
+    m_tiledScrollingIndicatorLayer->setNeedsDisplay();
 
     visibleRect.scale(indicatorScale, indicatorScale);
     visibleRect.expand(2, 2);
-    [[m_tiledScrollingIndicatorLayer.get() visibleRectFrameLayer] setFrame:visibleRect];
+    m_visibleRectIndicatorLayer->setPosition(visibleRect.location());
+    m_visibleRectIndicatorLayer->setBounds(FloatRect(FloatPoint(), visibleRect.size()));
 
-    Color backgroundColor;
+    Color visibleRectIndicatorColor;
     switch (m_indicatorMode) {
     case MainThreadScrollingBecauseOfStyleIndication:
-        backgroundColor = Color(255, 0, 0);
+        visibleRectIndicatorColor = Color(255, 0, 0);
         break;
     case MainThreadScrollingBecauseOfEventHandlersIndication:
-        backgroundColor = Color(255, 255, 0);
+        visibleRectIndicatorColor = Color(255, 255, 0);
         break;
     case ThreadedScrollingIndication:
-        backgroundColor = Color(0, 200, 0);
+        visibleRectIndicatorColor = Color(0, 200, 0);
         break;
     }
 
-    [[m_tiledScrollingIndicatorLayer.get() visibleRectFrameLayer] setBorderColor:cachedCGColor(backgroundColor, ColorSpaceDeviceRGB)];
-
-    END_BLOCK_OBJC_EXCEPTIONS
+    m_visibleRectIndicatorLayer->setBorderColor(visibleRectIndicatorColor);
 }
 
 IntRect TileController::tileGridExtent() const
@@ -921,10 +873,10 @@ double TileController::retainedTileBackingStoreMemory() const
     
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        if ([tileInfo.layer.get() superlayer]) {
-            CGRect bounds = [tileInfo.layer.get() bounds];
-            double contentsScale = [tileInfo.layer.get() contentsScale];
-            totalBytes += 4 * bounds.size.width * contentsScale * bounds.size.height * contentsScale;
+        if (tileInfo.layer->superlayer()) {
+            FloatRect bounds = tileInfo.layer->bounds();
+            double contentsScale = tileInfo.layer->contentsScale();
+            totalBytes += 4 * bounds.width() * contentsScale * bounds.height() * contentsScale;
         }
     }
 
@@ -939,16 +891,23 @@ IntRect TileController::tileCoverageRect() const
     return coverageRectInLayerCoords;
 }
 
-CALayer *TileController::tiledScrollingIndicatorLayer()
+PlatformCALayer* TileController::tiledScrollingIndicatorLayer()
 {
     if (!m_tiledScrollingIndicatorLayer) {
-        m_tiledScrollingIndicatorLayer = [WebTiledScrollingIndicatorLayer layer];
-        [m_tiledScrollingIndicatorLayer.get() setTileController:this];
-        [m_tiledScrollingIndicatorLayer.get() setOpacity:0.75];
-        [m_tiledScrollingIndicatorLayer.get() setAnchorPoint:CGPointZero];
-        [m_tiledScrollingIndicatorLayer.get() setBorderColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
-        [m_tiledScrollingIndicatorLayer.get() setBorderWidth:1];
-        [m_tiledScrollingIndicatorLayer.get() setPosition:CGPointMake(2, 2)];
+        m_tiledScrollingIndicatorLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeSimpleLayer, this);
+        m_tiledScrollingIndicatorLayer->setOpacity(0.75);
+        m_tiledScrollingIndicatorLayer->setAnchorPoint(FloatPoint3D());
+        m_tiledScrollingIndicatorLayer->setBorderColor(Color::black);
+        m_tiledScrollingIndicatorLayer->setBorderWidth(1);
+        m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
+
+        m_visibleRectIndicatorLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeLayer, nullptr);
+        m_visibleRectIndicatorLayer->setBorderWidth(2);
+        m_visibleRectIndicatorLayer->setAnchorPoint(FloatPoint3D());
+        m_visibleRectIndicatorLayer->setBorderColor(Color(255, 0, 0));
+
+        m_tiledScrollingIndicatorLayer->appendSublayer(m_visibleRectIndicatorLayer.get());
+
         updateTileCoverageMap();
     }
 
@@ -966,88 +925,45 @@ void TileController::setScrollingModeIndication(ScrollingModeIndication scrollin
         updateTileCoverageMap();
 }
 
-WebTileLayer* TileController::tileLayerAtIndex(const TileIndex& index) const
+RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
 {
-    return m_tiles.get(index).layer.get();
-}
+    RefPtr<PlatformCALayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
 
-RetainPtr<WebTileLayer> TileController::createTileLayer(const IntRect& tileRect)
-{
-    RetainPtr<WebTileLayer> layer = LayerPool::sharedPool()->takeLayerWithSize(tileRect.size());
-    if (layer)
-        [layer resetPaintCount];
-    else
-        layer = adoptNS([[WebTileLayer alloc] init]);
-    [layer.get() setAnchorPoint:CGPointZero];
-    [layer.get() setFrame:tileRect];
-    [layer.get() setTileController:this];
-    [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
-    [layer.get() setBorderWidth:m_tileDebugBorderWidth];
-    [layer.get() setEdgeAntialiasingMask:0];
-    [layer.get() setOpaque:m_tilesAreOpaque];
+    if (layer) {
+        m_tileRepaintCounts.remove(layer.get());
+        layer->setOwner(this);
+    } else
+        layer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeTiledBackingTileLayer, this);
+
+    layer->setAnchorPoint(FloatPoint3D());
+    layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
+    layer->setPosition(tileRect.location());
+    layer->setBorderColor(m_tileDebugBorderColor);
+    layer->setBorderWidth(m_tileDebugBorderWidth);
+    layer->setEdgeAntialiasingMask(0);
+    layer->setOpaque(m_tilesAreOpaque);
 #ifndef NDEBUG
-    [layer.get() setName:@"Tile"];
+    layer->setName("Tile");
 #endif
 
-    [layer.get() setContentsScale:m_deviceScaleFactor];
-    [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
+    layer->setContentsScale(m_deviceScaleFactor);
+    layer->setAcceleratesDrawing(m_acceleratesDrawing);
 
-    [layer setNeedsDisplay];
+    layer->setNeedsDisplay();
 
     return layer;
 }
 
-bool TileController::shouldShowRepaintCounters() const
+int TileController::platformCALayerIncrementRepaintCount(PlatformCALayer* platformCALayer)
 {
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-    if (!platformLayer)
-        return false;
+    int repaintCount = 0;
 
-    WebCore::PlatformCALayerClient* layerContents = platformLayer->owner();
-    ASSERT(layerContents);
-    if (!layerContents)
-        return false;
+    if (m_tileRepaintCounts.contains(platformCALayer))
+        repaintCount = m_tileRepaintCounts.get(platformCALayer);
 
-    return layerContents->platformCALayerShowRepaintCounter(0);
-}
+    m_tileRepaintCounts.set(platformCALayer, ++repaintCount);
 
-void TileController::drawRepaintCounter(WebTileLayer *layer, CGContextRef context)
-{
-    unsigned paintCount = [layer incrementPaintCount];
-    if (!shouldShowRepaintCounters())
-        return;
-
-    // FIXME: Some of this code could be shared with WebLayer.
-    char text[16]; // that's a lot of repaints
-    snprintf(text, sizeof(text), "%d", paintCount);
-
-    CGRect indicatorBox = [layer bounds];
-    indicatorBox.size.width = 12 + 10 * strlen(text);
-    indicatorBox.size.height = 27;
-    CGContextSaveGState(context);
-
-    CGContextSetAlpha(context, 0.5f);
-    CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
-
-    CGContextSetFillColorWithColor(context, m_tileDebugBorderColor.get());
-    CGContextFillRect(context, indicatorBox);
-
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
-
-    if (platformLayer->acceleratesDrawing())
-        CGContextSetRGBFillColor(context, 1, 0, 0, 1);
-    else
-        CGContextSetRGBFillColor(context, 1, 1, 1, 1);
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-    CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
-    CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
-#pragma clang diagnostic pop
-
-    CGContextEndTransparencyLayer(context);
-    CGContextRestoreGState(context);
+    return repaintCount;
 }
 
 void TileController::drawTileMapContents(CGContextRef context, CGRect layerBounds)
@@ -1062,7 +978,7 @@ void TileController::drawTileMapContents(CGContextRef context, CGRect layerBound
     
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         const TileInfo& tileInfo = it->value;
-        WebTileLayer* tileLayer = tileInfo.layer.get();
+        PlatformCALayer* tileLayer = tileInfo.layer.get();
 
         CGFloat red = 1;
         CGFloat green = 1;
@@ -1082,7 +998,7 @@ void TileController::drawTileMapContents(CGContextRef context, CGRect layerBound
         } else
             CGContextSetRGBFillColor(context, red, green, blue, 1);
 
-        if ([tileLayer superlayer]) {
+        if (tileLayer->superlayer()) {
             CGContextSetLineWidth(context, 0.5 / contextScale);
             CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
         } else {
@@ -1090,7 +1006,7 @@ void TileController::drawTileMapContents(CGContextRef context, CGRect layerBound
             CGContextSetRGBStrokeColor(context, 0.2, 0.1, 0.9, 1);
         }
 
-        CGRect frame = [tileLayer frame];
+        CGRect frame = CGRectMake(tileLayer->position().x(), tileLayer->position().y(), tileLayer->bounds().size().width(), tileLayer->bounds().size().height());
         CGContextFillRect(context, frame);
         CGContextStrokeRect(context, frame);
     }

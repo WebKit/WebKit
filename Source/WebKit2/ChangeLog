@@ -1,3 +1,28 @@
+2013-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Make TileController manipulate PlatformCALayers instead of CALayers
+        https://bugs.webkit.org/show_bug.cgi?id=123279
+
+        Reviewed by Simon Fraser.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        Support the new LayerTypes.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::setEdgeAntialiasingMask):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Add an empty implementation of setEdgeAntialiasingMask.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::display):
+        Removed a parameter from drawLayerContents.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateDebugInfoLayer):
+        TiledCoreAnimationDrawingArea still operates in terms of CALayers, so
+        grab the PlatformLayer out from TileController's indicator.
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Name all the GLib timeout sources

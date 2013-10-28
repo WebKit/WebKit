@@ -462,6 +462,11 @@ void PlatformCALayerRemote::setContentsScale(float value)
     ensureBackingStore();
 }
 
+void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned)
+{
+    ASSERT_NOT_REACHED();
+}
+
 TiledBacking* PlatformCALayerRemote::tiledBacking()
 {
     return nullptr;

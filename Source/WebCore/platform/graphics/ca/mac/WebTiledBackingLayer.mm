@@ -40,7 +40,6 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    _tileController = TileController::create(self);
 #ifndef NDEBUG
     [self setName:@"WebTiledBackingLayer"];
 #endif
@@ -60,6 +59,13 @@ using namespace WebCore;
 
     ASSERT_NOT_REACHED();
     return nil;
+}
+
+- (TileController*)createTileController:(PlatformCALayer*)rootLayer
+{
+    ASSERT(!_tileController);
+    _tileController = TileController::create(rootLayer);
+    return _tileController.get();
 }
 
 - (id<CAAction>)actionForKey:(NSString *)key
@@ -112,11 +118,6 @@ using namespace WebCore;
     _tileController->setScale(contentsScale);
 }
 
-- (CALayer *)tileContainerLayer
-{
-    return _tileController->tileContainerLayer();
-}
-
 - (WebCore::TiledBacking*)tiledBacking
 {
     return _tileController.get();
@@ -131,7 +132,7 @@ using namespace WebCore;
 
 - (void)setBorderColor:(CGColorRef)borderColor
 {
-    _tileController->setTileDebugBorderColor(borderColor);
+    _tileController->setTileDebugBorderColor(Color(borderColor));
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth

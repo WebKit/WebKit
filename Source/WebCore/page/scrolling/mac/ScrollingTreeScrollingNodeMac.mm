@@ -36,7 +36,7 @@
 #import "ScrollingStateTree.h"
 #import "Settings.h"
 #import "TileController.h"
-#import "WebTileLayer.h"
+#import "WebLayer.h"
 
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
@@ -419,18 +419,16 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
 
     Deque<CALayer*> layerQueue;
     layerQueue.append(m_scrollLayer.get());
-    WebTileLayerList tiles;
+    PlatformLayerList tiles;
 
     while (!layerQueue.isEmpty() && tiles.isEmpty()) {
         CALayer* layer = layerQueue.takeFirst();
         NSArray* sublayers = [[layer sublayers] copy];
 
         // If this layer is the parent of a tile, it is the parent of all of the tiles and nothing else.
-        if ([[sublayers objectAtIndex:0] isKindOfClass:[WebTileLayer class]]) {
-            for (CALayer* sublayer in sublayers) {
-                ASSERT([sublayer isKindOfClass:[WebTileLayer class]]);
-                tiles.append(static_cast<WebTileLayer*>(sublayer));
-            }
+        if ([[[sublayers objectAtIndex:0] valueForKey:@"isTile"] boolValue]) {
+            for (CALayer* sublayer in sublayers)
+                tiles.append(sublayer);
         } else {
             for (CALayer* sublayer in sublayers)
                 layerQueue.append(sublayer);

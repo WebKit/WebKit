@@ -27,13 +27,12 @@
 #include "LayerPool.h"
 
 #include "Logging.h"
-#include "WebTileLayer.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
-    
+
 static const double capacityDecayTime = 5;
-    
+
 LayerPool::LayerPool()
     : m_totalBytes(0)
     , m_maxBytesForPool(48 * 1024 * 1024)
@@ -66,9 +65,9 @@ LayerPool::LayerList& LayerPool::listOfLayersWithSize(const IntSize& size, Acces
     return it->value;
 }
 
-void LayerPool::addLayer(const RetainPtr<WebTileLayer>& layer)
+void LayerPool::addLayer(const RefPtr<PlatformCALayer>& layer)
 {
-    IntSize layerSize([layer.get() bounds].size);
+    IntSize layerSize(expandedIntSize(layer->bounds().size()));
     if (!canReuseLayerWithSize(layerSize))
         return;
 
@@ -79,7 +78,7 @@ void LayerPool::addLayer(const RetainPtr<WebTileLayer>& layer)
     schedulePrune();
 }
 
-RetainPtr<WebTileLayer> LayerPool::takeLayerWithSize(const IntSize& size)
+RefPtr<PlatformCALayer> LayerPool::takeLayerWithSize(const IntSize& size)
 {
     if (!canReuseLayerWithSize(size))
         return nil;

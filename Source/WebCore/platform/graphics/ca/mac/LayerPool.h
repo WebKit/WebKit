@@ -28,14 +28,13 @@
 
 #include "IntSize.h"
 #include "IntSizeHash.h"
+#include "PlatformCALayer.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
-
-@class WebTileLayer;
 
 namespace WebCore {
     
@@ -44,8 +43,8 @@ class LayerPool {
 public:
     static LayerPool* sharedPool();
     
-    void addLayer(const RetainPtr<WebTileLayer>&);
-    RetainPtr<WebTileLayer> takeLayerWithSize(const IntSize&);
+    void addLayer(const RefPtr<PlatformCALayer>&);
+    RefPtr<PlatformCALayer> takeLayerWithSize(const IntSize&);
 
     void drain();
 
@@ -55,7 +54,7 @@ public:
 private:
     LayerPool();
 
-    typedef Deque<RetainPtr<WebTileLayer>> LayerList;
+    typedef Deque<RefPtr<PlatformCALayer>> LayerList;
 
     unsigned decayedCapacity() const;
 
