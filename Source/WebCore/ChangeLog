@@ -1,3 +1,16 @@
+2013-10-28  Anders Carlsson  <andersca@apple.com>
+
+        RunLoop::dispatch should take an std::function
+        https://bugs.webkit.org/show_bug.cgi?id=123407
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::performWork):
+        (WebCore::RunLoop::dispatch):
+        * platform/RunLoop.h:
+
 2013-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Make TileController manipulate PlatformCALayers instead of CALayers

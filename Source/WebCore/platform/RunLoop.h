@@ -57,7 +57,7 @@ public:
     static bool isMain();
     ~RunLoop();
 
-    virtual void dispatch(const Function<void()>&) OVERRIDE;
+    virtual void dispatch(std::function<void ()>) OVERRIDE;
 
     static void run();
     void stop();
@@ -133,7 +133,7 @@ private:
     void performWork();
 
     Mutex m_functionQueueLock;
-    Deque<Function<void()>> m_functionQueue;
+    Deque<std::function<void ()>> m_functionQueue;
 
 #if PLATFORM(WIN)
     static bool registerRunLoopMessageWindowClass();
