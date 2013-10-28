@@ -65,6 +65,7 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(MediaStreamSource* source)
     , m_muted(false)
     , m_enabled(true)
     , m_stopped(false)
+    , m_client(0)
 {
     setSource(source);
 }
