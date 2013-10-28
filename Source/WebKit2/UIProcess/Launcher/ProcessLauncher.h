@@ -67,7 +67,7 @@ public:
         bool executableHeap;
         bool useXPC;
 #endif
-#if PLATFORM(EFL)
+#if PLATFORM(EFL) || PLATFORM(GTK)
 #ifndef NDEBUG
         String processCmdPrefix;
 #endif

@@ -97,11 +97,31 @@ void ProcessLauncher::launchProcess()
 
     realExecutablePath = fileSystemRepresentation(executablePath);
     GOwnPtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
-    char* argv[4];
-    argv[0] = const_cast<char*>(realExecutablePath.data());
-    argv[1] = socket.get();
-    argv[2] = const_cast<char*>(realPluginPath.data());
-    argv[3] = 0;
+
+    unsigned nargs = 4; // size of the argv array for g_spawn_async()
+
+#ifndef NDEBUG
+    Vector<CString> prefixArgs;
+    if (!m_launchOptions.processCmdPrefix.isNull()) {
+        Vector<String> splitArgs;
+        m_launchOptions.processCmdPrefix.split(' ', splitArgs);
+        for (auto it = splitArgs.begin(); it != splitArgs.end(); it++)
+            prefixArgs.append(it->utf8());
+        nargs += prefixArgs.size();
+    }
+#endif
+
+    char** argv = g_newa(char*, nargs);
+    unsigned i = 0;
+#ifndef NDEBUG
+    // If there's a prefix command, put it before the rest of the args.
+    for (auto it = prefixArgs.begin(); it != prefixArgs.end(); it++)
+        argv[i++] = const_cast<char*>(it->data());
+#endif
+    argv[i++] = const_cast<char*>(realExecutablePath.data());
+    argv[i++] = socket.get();
+    argv[i++] = const_cast<char*>(realPluginPath.data());
+    argv[i++] = 0;
 
     GOwnPtr<GError> error;
     if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(sockets[1]), &pid, &error.outPtr())) {

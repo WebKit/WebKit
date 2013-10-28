@@ -25,11 +25,19 @@
 
 #include "config.h"
 #include "WebProcessProxy.h"
+#include <glib.h>
 
 namespace WebKit {
 
-void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions&)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
+#ifndef NDEBUG
+    const char* webProcessCmdPrefix = g_getenv("WEB_PROCESS_CMD_PREFIX");
+    if (webProcessCmdPrefix && *webProcessCmdPrefix)
+        launchOptions.processCmdPrefix = String::fromUTF8(webProcessCmdPrefix);
+#else
+    UNUSED_PARAM(launchOptions);
+#endif
 }
 
 } // namespace WebKit
