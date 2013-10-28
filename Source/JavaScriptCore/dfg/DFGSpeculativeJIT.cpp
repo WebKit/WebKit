@@ -205,17 +205,16 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, 
     if (!m_compileOkay)
         return 0;
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    m_jit.appendExitInfo(JITCompiler::JumpList());
-    OSRExit& exit = m_jit.jitCode()->osrExit[
-        m_jit.jitCode()->appendOSRExit(OSRExit(
-            kind, jsValueSource,
-            m_jit.graph().methodOfGettingAValueProfileFor(node),
-            this, m_stream->size()))];
-    exit.m_watchpointIndex = m_jit.jitCode()->appendWatchpoint(
+    OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
+    m_jit.jitCode()->appendOSRExit(OSRExit(
+        kind, jsValueSource,
+        m_jit.graph().methodOfGettingAValueProfileFor(node),
+        this, m_stream->size()));
+    info.m_watchpointIndex = m_jit.jitCode()->appendWatchpoint(
         JumpReplacementWatchpoint(m_jit.watchpointLabel()));
     if (m_speculationDirection == ForwardSpeculation)
         convertLastOSRExitToForward();
-    return &m_jit.jitCode()->watchpoints[exit.m_watchpointIndex];
+    return &m_jit.jitCode()->watchpoints[info.m_watchpointIndex];
 }
 
 JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)

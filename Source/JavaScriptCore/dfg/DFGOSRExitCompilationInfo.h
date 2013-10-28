@@ -37,7 +37,13 @@
 namespace JSC { namespace DFG {
 
 struct OSRExitCompilationInfo {
+    OSRExitCompilationInfo()
+        : m_watchpointIndex(std::numeric_limits<unsigned>::max())
+    {
+    }
+    
     MacroAssembler::JumpList m_failureJumps;
+    unsigned m_watchpointIndex;
 };
 
 } } // namespace JSC::DFG

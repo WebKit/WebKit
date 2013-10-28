@@ -96,7 +96,6 @@ struct OSRExit : public OSRExitBase {
     unsigned m_patchableCodeOffset;
     
     unsigned m_recoveryIndex;
-    unsigned m_watchpointIndex;
     
     void setPatchableCodeOffset(MacroAssembler::PatchableJump);
     MacroAssembler::Jump getPatchableCodeOffsetAsJump() const;

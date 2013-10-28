@@ -95,8 +95,7 @@ void compileOSRExit(ExecState* exec)
             
             Profiler::OSRExit* profilerExit = compilation->addOSRExit(
                 exitIndex, Profiler::OriginStack(database, codeBlock, exit.m_codeOrigin),
-                exit.m_kind,
-                exit.m_watchpointIndex != std::numeric_limits<unsigned>::max());
+                exit.m_kind, isWatchpoint(exit.m_kind));
             jit.add64(CCallHelpers::TrustedImm32(1), CCallHelpers::AbsoluteAddress(profilerExit->counterAddress()));
         }
         

@@ -197,11 +197,12 @@ public:
         m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
     }
     
-    void appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
+    OSRExitCompilationInfo& appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
     {
         OSRExitCompilationInfo info;
         info.m_failureJumps = jumpsToFail;
         m_exitCompilationInfo.append(info);
+        return m_exitCompilationInfo.last();
     }
 
 #if USE(JSVALUE32_64)
@@ -353,7 +354,7 @@ private:
     Vector<InlineCacheWrapper<JITPutByIdGenerator>, 4> m_putByIds;
     Vector<InRecord, 4> m_ins;
     Vector<JSCallRecord, 4> m_jsCalls;
-    Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
+    SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;
     
     Call m_callArityFixup;

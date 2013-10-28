@@ -35,6 +35,8 @@ enum ExitKind {
     BadExecutable, // We exited because we made an incorrect assumption about what executable we would see.
     BadCache, // We exited because an inline cache was wrong.
     BadWeakConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
+    BadCacheWatchpoint, // Same as BadCache but from a watchpoint.
+    BadWeakConstantCacheWatchpoint, // Same as BadWeakConstantCache but from a watchpoint.
     BadIndexingType, // We exited because an indexing type was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
@@ -53,6 +55,18 @@ enum ExitKind {
 
 const char* exitKindToString(ExitKind);
 bool exitKindIsCountable(ExitKind);
+
+inline bool isWatchpoint(ExitKind kind)
+{
+    switch (kind) {
+    case BadCacheWatchpoint:
+    case BadWeakConstantCacheWatchpoint:
+    case UncountableWatchpoint:
+        return true;
+    default:
+        return false;
+    }
+}
 
 } // namespace JSC
 
