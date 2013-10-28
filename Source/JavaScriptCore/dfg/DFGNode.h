@@ -139,11 +139,6 @@ struct SwitchData {
     bool didUseJumpTable;
 };
 
-struct InlineStartData {
-    unsigned argumentPositionStart;
-    VariableAccessData* calleeVariable;
-};
-
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
@@ -1122,17 +1117,6 @@ struct Node {
         ASSERT(hasResult());
         ASSERT(!m_virtualRegister.isValid());
         m_virtualRegister = virtualRegister;
-    }
-    
-    bool hasInlineStartData()
-    {
-        return op() == InlineStart;
-    }
-    
-    InlineStartData* inlineStartData()
-    {
-        ASSERT(hasInlineStartData());
-        return bitwise_cast<InlineStartData*>(m_opInfo);
     }
     
     bool hasExecutionCounter()

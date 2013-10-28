@@ -1557,37 +1557,6 @@ void SpeculativeJIT::compileMovHintAndCheck(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::compileInlineStart(Node* node)
-{
-    InlineCallFrame* inlineCallFrame = node->codeOrigin.inlineCallFrame;
-    InlineStartData* data = node->inlineStartData();
-    int argumentCountIncludingThis = inlineCallFrame->arguments.size();
-    for (int i = 0; i < argumentCountIncludingThis; ++i) {
-        ArgumentPosition& position = m_jit.graph().m_argumentPositions[
-            data->argumentPositionStart + i];
-        VariableAccessData* variable = position.someVariable();
-        ValueSource source;
-        if (!variable)
-            source = ValueSource(SourceIsDead);
-        else {
-            source = ValueSource::forFlushFormat(
-                variable->machineLocal(),
-                m_jit.graph().m_argumentPositions[data->argumentPositionStart + i].flushFormat());
-        }
-        inlineCallFrame->arguments[i] = source.valueRecovery();
-    }
-    
-    RELEASE_ASSERT(inlineCallFrame->isClosureCall == !!data->calleeVariable);
-    
-    if (inlineCallFrame->isClosureCall) {
-        ValueSource source = ValueSource::forFlushFormat(
-            data->calleeVariable->machineLocal(),
-            data->calleeVariable->flushFormat());
-        inlineCallFrame->calleeRecovery = source.valueRecovery();
-    } else
-        RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());
-}
-
 void SpeculativeJIT::bail()
 {
     m_compileOkay = true;

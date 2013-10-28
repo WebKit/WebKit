@@ -2269,11 +2269,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case InlineStart: {
-        compileInlineStart(node);
-        break;
-    }
-
     case MovHint:
     case ZombieHint: {
         RELEASE_ASSERT_NOT_REACHED();

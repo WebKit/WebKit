@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include "DFGValueSource.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {
@@ -166,35 +167,42 @@ public:
                 virtualRegisterForLocal(allocation[codeBlock()->activationRegister().toLocal()]));
         }
         
-        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
-            InlineCallFrame* inlineCallFrame = *iter;
-            if (!inlineCallFrame->executable->usesArguments())
-                continue;
-            inlineCallFrame->argumentsRegister = virtualRegisterForLocal(
-                allocation[m_graph.argumentsRegisterFor(inlineCallFrame).toLocal()]);
+        for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
+            InlineVariableData data = m_graph.m_inlineVariableData[i];
+            InlineCallFrame* inlineCallFrame = data.inlineCallFrame;
             
-            // SpeculativeJIT::compileInlineStart() will do the same thing that this does,
-            // for cases where usesArguments() is true. That's OK. compileInlineStart() is
-            // designed for cases where the arguments end up having interesting data
-            // representations, but that only happens if they're not captured. And if they
-            // are captured, then we want to make sure everyone agrees on where they landed
-            // in the stack before we start generating any code - since SpeculativeJIT does
-            // not have to generate code in any particular order.
-            for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {
-                VirtualRegister originalRegister = VirtualRegister(
-                    virtualRegisterForArgument(argument).offset() +
-                    inlineCallFrame->stackOffset);
-                VirtualRegister newRegister =
-                    virtualRegisterForLocal(allocation[originalRegister.toLocal()]);
-                inlineCallFrame->arguments[argument] =
-                    ValueRecovery::displacedInJSStack(newRegister, DataFormatJS);
+            if (inlineCallFrame->executable->usesArguments()) {
+                inlineCallFrame->argumentsRegister = virtualRegisterForLocal(
+                    allocation[m_graph.argumentsRegisterFor(inlineCallFrame).toLocal()]);
+
+                RELEASE_ASSERT(
+                    virtualRegisterForLocal(allocation[unmodifiedArgumentsRegister(
+                        m_graph.argumentsRegisterFor(inlineCallFrame)).toLocal()])
+                    == unmodifiedArgumentsRegister(inlineCallFrame->argumentsRegister));
             }
             
-            RELEASE_ASSERT(
-                virtualRegisterForLocal(allocation[
-                    unmodifiedArgumentsRegister(
-                        m_graph.argumentsRegisterFor(inlineCallFrame)).toLocal()])
-                == unmodifiedArgumentsRegister(inlineCallFrame->argumentsRegister));
+            for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {
+                ArgumentPosition& position = m_graph.m_argumentPositions[
+                    data.argumentPositionStart + argument];
+                VariableAccessData* variable = position.someVariable();
+                ValueSource source;
+                if (!variable)
+                    source = ValueSource(SourceIsDead);
+                else {
+                    source = ValueSource::forFlushFormat(
+                        variable->machineLocal(), variable->flushFormat());
+                }
+                inlineCallFrame->arguments[argument] = source.valueRecovery();
+            }
+            
+            RELEASE_ASSERT(inlineCallFrame->isClosureCall == !!data.calleeVariable);
+            if (inlineCallFrame->isClosureCall) {
+                ValueSource source = ValueSource::forFlushFormat(
+                    data.calleeVariable->machineLocal(),
+                    data.calleeVariable->flushFormat());
+                inlineCallFrame->calleeRecovery = source.valueRecovery();
+            } else
+                RELEASE_ASSERT(inlineCallFrame->calleeRecovery.isConstant());
         }
         
         if (symbolTable) {
@@ -223,7 +231,7 @@ public:
             }
         }
         
-        // Finally, fix GetLocalUnlinked's.
+        // Fix GetLocalUnlinked's variable references.
         if (hasGetLocalUnlinked) {
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
                 BasicBlock* block = m_graph.block(blockIndex);

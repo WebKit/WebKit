@@ -586,7 +586,6 @@ private:
             break;
             
         // These gets ignored because it doesn't do anything.
-        case InlineStart:
         case CountExecution:
         case PhantomLocal:
         case Flush:

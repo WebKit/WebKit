@@ -1,5 +1,59 @@
 2013-10-24  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of InlineStart so that I don't have to implement it in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=123302
+
+        Reviewed by Geoffrey Garen.
+        
+        InlineStart was a special instruction that we would insert at the top of inlined code,
+        so that the backend could capture the OSR state of arguments to an inlined call. It used
+        to be that only the backend had this information, so this instruction was sort of an ugly
+        callback from the backend for filling in some data structures.
+        
+        But in the time since when that code was written (two years ago?), we rationalized how
+        variables work. It's now the case that variables that the runtime must know about are
+        treated specially in IR (they are "flushed") and we know how we will represent them even
+        before we get to the backend. The last place that makes changes to their representation
+        is the StackLayoutPhase.
+        
+        So, this patch gets rid of InlineStart, but keeps around the special meta-data that the
+        instruction had. Instead of handling the bookkeeping in the backend, we handle it in
+        StackLayoutPhase. This means that the DFG and FTL can share code for handling this
+        bookkeeping. This also means that now the FTL can compile code blocks that had inlining.
+        
+        Of course, giving the FTL the ability to handle code blocks that had inlining means that
+        we're going to have new bugs. Sure enough, the FTL's linker didn't handle inline call
+        frames. This patch also fixes that.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+
+2013-10-24  Filip Pizlo  <fpizlo@apple.com>
+
         The GetById->GetByOffset AI-based optimization should actually do things
         https://bugs.webkit.org/show_bug.cgi?id=123299
 

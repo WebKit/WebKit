@@ -91,11 +91,6 @@ namespace JSC { namespace DFG {
     /* Marker for an argument being set at the prologue of a function. */\
     macro(SetArgument, 0 | NodeDoesNotExit) \
     \
-    /* Hint that inlining begins here. No code is generated for this node. It's only */\
-    /* used for copying OSR data into inline frame data, to support reification of */\
-    /* call frames of inlined functions. */\
-    macro(InlineStart, NodeMustGenerate | NodeDoesNotExit) \
-    \
     /* Nodes for bitwise operations. */\
     macro(BitAnd, NodeResultInt32 | NodeMustGenerate) \
     macro(BitOr, NodeResultInt32 | NodeMustGenerate) \

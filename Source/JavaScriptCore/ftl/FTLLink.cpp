@@ -57,6 +57,9 @@ void link(State& state)
     // LLVM will create its own jump tables as needed.
     codeBlock->clearSwitchJumpTables();
     
+    if (!state.graph.m_inlineCallFrames->isEmpty())
+        state.jitCode->common.inlineCallFrames = std::move(state.graph.m_inlineCallFrames);
+    
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.
     // FIXME: Except for OSR entry, this is a total kludge - LLVM should just use our

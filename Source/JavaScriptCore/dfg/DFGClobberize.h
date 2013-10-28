@@ -124,7 +124,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Flush:
     case PhantomLocal:
     case SetArgument:
-    case InlineStart:
     case Breakpoint:
     case PhantomArguments:
     case Jump:

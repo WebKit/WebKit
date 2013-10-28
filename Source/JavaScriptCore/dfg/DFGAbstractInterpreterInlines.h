@@ -1541,7 +1541,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case Phantom:
-    case InlineStart:
     case CountExecution:
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:

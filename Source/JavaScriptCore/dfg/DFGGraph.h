@@ -61,6 +61,12 @@ struct StorageAccessData {
     unsigned identifierNumber;
 };
 
+struct InlineVariableData {
+    InlineCallFrame* inlineCallFrame;
+    unsigned argumentPositionStart;
+    VariableAccessData* calleeVariable;
+};
+
 enum AddSpeculationMode {
     DontSpeculateInt32,
     SpeculateInt32AndTruncateConstants,
@@ -789,7 +795,7 @@ public:
     SegmentedVector<StructureTransitionData, 8> m_structureTransitionData;
     SegmentedVector<NewArrayBufferData, 4> m_newArrayBufferData;
     SegmentedVector<SwitchData, 4> m_switchData;
-    SegmentedVector<InlineStartData, 4> m_inlineStartData;
+    Vector<InlineVariableData, 4> m_inlineVariableData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;

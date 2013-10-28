@@ -1304,11 +1304,11 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     unsigned oldIndex = m_currentIndex;
     m_currentIndex = 0;
 
-    InlineStartData* inlineStartData = &m_graph.m_inlineStartData.alloc();
-    inlineStartData->argumentPositionStart = argumentPositionStart;
-    inlineStartData->calleeVariable = 0;
+    InlineVariableData inlineVariableData;
+    inlineVariableData.inlineCallFrame = m_inlineStackTop->m_inlineCallFrame;
+    inlineVariableData.argumentPositionStart = argumentPositionStart;
+    inlineVariableData.calleeVariable = 0;
     
-    addToGraph(InlineStart, OpInfo(inlineStartData));
     RELEASE_ASSERT(
         m_inlineStackTop->m_inlineCallFrame->isClosureCall
         == callLinkStatus.isClosureCall());
@@ -1321,8 +1321,10 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         calleeVariable->mergeShouldNeverUnbox(true);
         scopeVariable->mergeShouldNeverUnbox(true);
         
-        inlineStartData->calleeVariable = calleeVariable;
+        inlineVariableData.calleeVariable = calleeVariable;
     }
+    
+    m_graph.m_inlineVariableData.append(inlineVariableData);
     
     parseCodeBlock();
     
@@ -3370,7 +3372,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             m_inlineCallFrame->executable,
             byteCodeParser->m_codeBlock,
             m_inlineCallFrame,
-            byteCodeParser->m_codeBlock->ownerExecutable(), 
+            byteCodeParser->m_codeBlock->ownerExecutable(),
             codeBlock->ownerExecutable());
         m_inlineCallFrame->stackOffset = inlineCallFrameStart.offset() - JSStack::CallFrameHeaderSize;
         if (callee) {

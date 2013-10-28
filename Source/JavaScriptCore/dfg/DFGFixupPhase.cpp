@@ -907,7 +907,6 @@ private:
         case Flush:
         case PhantomLocal:
         case GetLocalUnlinked:
-        case InlineStart:
         case GetMyScope:
         case GetClosureVar:
         case GetGlobalVar:

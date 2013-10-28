@@ -707,7 +707,6 @@ public:
     
     void compileMovHint(Node*);
     void compileMovHintAndCheck(Node*);
-    void compileInlineStart(Node*);
 
     void nonSpeculativeUInt32ToNumber(Node*);
 
