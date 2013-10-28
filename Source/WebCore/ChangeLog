@@ -1,3 +1,15 @@
+2013-10-27  Andreas Kling  <akling@apple.com>
+
+        Tone down overzealous assertion from r158097.
+
+        RenderElement::initializeStyle() really only cares that there are no
+        text renderers that we should be calling styleDidChange() on.
+
+        Tweak the code to only check that there are no text children.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::initializeStyle):
+
 2013-10-27  Antti Koivisto  <antti@apple.com>
 
         Enable center and right text alignment for simple lines

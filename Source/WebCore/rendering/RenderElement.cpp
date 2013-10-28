@@ -372,8 +372,11 @@ void RenderElement::initializeStyle()
 
     styleDidChange(StyleDifferenceEqual, nullptr);
 
-    // We shouldn't have any text (or other) children that need styleDidChange at this point.
-    ASSERT(!firstChild());
+#if !ASSERT_DISABLED
+    // We shouldn't have any text children that would need styleDidChange at this point.
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+        ASSERT(!child->isText());
+#endif
 
     // It would be nice to assert that !parent() here, but some RenderLayer subrenderers
     // have their parent set before getting a call to initializeStyle() :|
