@@ -382,6 +382,7 @@ IDL_PATH := \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/js \
+    $(WebCore)/crypto \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/fileapi \
@@ -613,6 +614,7 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/crypto/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/css/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/dom/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/fileapi/*.idl) \
@@ -655,7 +657,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/CSSValueKeywords.in \
 	Source/WebCore/dom/DOMExceptions.in \
 	Source/WebCore/css/fullscreen.css \
-	Source/WebCore/css/fullscreenQuickTime.css \
 	Source/WebCore/css/html.css \
 	Source/WebCore/css/make-css-file-arrays.pl \
 	Source/WebCore/css/makegrammar.pl \

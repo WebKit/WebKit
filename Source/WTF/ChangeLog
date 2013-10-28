@@ -1,3 +1,9 @@
+2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Remove unexistent file from compilation.
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Replace 0 timeouts g_timeout_add() by g_idle_add()

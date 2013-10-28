@@ -1,3 +1,10 @@
+2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add crypto idl files to EXTRA_DIST and remove
+        css/fullscreenQuickTime.css that was removed.
+
 2013-10-28  Antti Koivisto  <antti@apple.com>
 
         Prepare simple line layout to support multiple runs per line

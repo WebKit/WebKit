@@ -1,3 +1,9 @@
+2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files to compilation.
+
 2013-10-25  Oliver Hunt  <oliver@apple.com>
 
         Refactor parser rollback logic

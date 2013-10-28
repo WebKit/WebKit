@@ -738,6 +738,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/Shared/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/Network/CustomProtocols/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Storage/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/soup/*.in) \

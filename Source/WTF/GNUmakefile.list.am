@@ -76,7 +76,6 @@ wtf_sources += \
     Source/WTF/wtf/Insertion.h \
     Source/WTF/wtf/ListDump.h \
     Source/WTF/wtf/ListHashSet.h \
-    Source/WTF/wtf/LLVMHeaders.h \
     Source/WTF/wtf/Locker.h \
     Source/WTF/wtf/MD5.cpp \
     Source/WTF/wtf/MD5.h \

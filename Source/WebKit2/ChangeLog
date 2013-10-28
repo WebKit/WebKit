@@ -1,3 +1,14 @@
+2013-10-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add messages.in files in
+        UIProcess/Network/CustomProtocols/ to EXTRA_DIST.
+        * GNUmakefile.list.am: Remove
+        WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp from
+        compilation because it depends on code generated only when
+        database process is enabled.
+
 2013-10-28  Alberto Garcia  <berto@igalia.com>
 
         [WK2] [GTK] Allow running the web process with an arbitrary prefix command
