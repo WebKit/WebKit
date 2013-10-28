@@ -765,7 +765,20 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
         DebuggerCallFrame debuggerCallFrame(callFrame, exceptionValue);
-        bool hasHandler = codeBlock->handlerForBytecodeOffset(bytecodeOffset);
+        bool hasHandler = false;
+        if (!isTermination) {
+            VM* vm = &callFrame->vm();
+            CallFrame* currentFrame = callFrame;
+            CodeBlock* currentCB = codeBlock;
+            unsigned currentOffset = bytecodeOffset;
+            while (currentFrame) {
+                if (currentCB && currentCB->handlerForBytecodeOffset(currentOffset)) {
+                    hasHandler = true;
+                    break;
+                }
+                currentFrame = getCallerInfo(vm, currentFrame, currentOffset, currentCB);
+            }
+        }
         debugger->exception(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), 0, hasHandler);
     }
 

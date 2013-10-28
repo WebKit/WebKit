@@ -89,6 +89,14 @@ InspectorTest.completeTest = function()
     this.sendCommand("Runtime.evaluate", { "expression": "closeTest();"} );
 }
 
+InspectorTest.checkForError = function(responseObject)
+{
+    if (responseObject.error) {
+        InspectorTest.log("PROTOCOL ERROR: " + responseObject.error.message);
+        InspectorTest.completeTest();
+        throw "PROTOCOL ERROR";
+    }
+}
 
 /**
  * @param {string} scriptName
