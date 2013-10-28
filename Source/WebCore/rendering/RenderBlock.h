@@ -329,13 +329,14 @@ public:
 
     virtual void updateFirstLetter();
 
-    virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
+    virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { }
 
     LayoutUnit logicalLeftOffsetForContent(RenderRegion*) const;
     LayoutUnit logicalRightOffsetForContent(RenderRegion*) const;
     LayoutUnit availableLogicalWidthForContent(RenderRegion* region) const
     { 
-        return std::max<LayoutUnit>(0, logicalRightOffsetForContent(region) - logicalLeftOffsetForContent(region)); }
+        return std::max<LayoutUnit>(0, logicalRightOffsetForContent(region) - logicalLeftOffsetForContent(region));
+    }
     LayoutUnit startOffsetForContent(RenderRegion* region) const
     {
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForContent(region) : logicalWidth() - logicalRightOffsetForContent(region);
@@ -553,37 +554,6 @@ private:
 
     Node* nodeForHitTest() const;
 
-    struct FloatWithRect {
-        FloatWithRect(RenderBox& f)
-            : object(f)
-            , rect(LayoutRect(f.x() - f.marginLeft(), f.y() - f.marginTop(), f.width() + f.marginWidth(), f.height() + f.marginHeight()))
-            , everHadLayout(f.everHadLayout())
-        {
-        }
-
-        RenderBox& object;
-        LayoutRect rect;
-        bool everHadLayout;
-    };
-
-    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&) const;
-
-    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
-    {
-        if (isHorizontalWritingMode())
-            return child->x() + child->renderer().marginLeft();
-        else
-            return child->x() + marginBeforeForChild(child->renderer());
-    }
-        
-    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
-    {
-        if (isHorizontalWritingMode())
-            return child->y() + marginBeforeForChild(child->renderer());
-        else
-            return child->y() + child->renderer().marginTop();
-    }
-
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void paintFloats(PaintInfo&, const LayoutPoint&, bool) { }
     virtual void paintInlineChildren(PaintInfo&, const LayoutPoint&) { }
@@ -678,42 +648,11 @@ protected:
     
     void determineLogicalLeftPositionForChild(RenderBox& child, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     
-    // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
-    // then nextPageLogicalTop with ExcludePageBoundary will still move to the top of the next page. nextPageLogicalTop with
-    // IncludePageBoundary set will not.
-    //
-    // For a page height of 800px, the first rule will return 800 if the value passed in is 0. The second rule will simply return 0.
-    enum PageBoundaryRule { ExcludePageBoundary, IncludePageBoundary };
-    LayoutUnit nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
-    bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
-
     virtual ColumnInfo::PaginationUnit paginationUnit() const;
 
-public:
-    LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
-    LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
-    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule = IncludePageBoundary) const;
-    
 protected:
-    bool pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const;
-
-    // A page break is required at some offset due to space shortage in the current fragmentainer.
-    void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage);
-
-    // Update minimum page height required to avoid fragmentation where it shouldn't occur (inside
-    // unbreakable content, between orphans and widows, etc.). This will be used as a hint to the
-    // column balancer to help set a good minimum column height.
-    void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight);
-
-    LayoutUnit adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
-
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
-
-    // This function is called to test a line box that has moved in the block direction to see if it has ended up in a new
-    // region/page/column that has a different available line width than the old one. Used to know when you have to dirty a
-    // line, i.e., that it can't be re-used.
-    bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFlowThread*) const;
 
     virtual bool requiresColumns(int desiredColumnCount) const;
 

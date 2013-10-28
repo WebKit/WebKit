@@ -34,7 +34,23 @@
 #ifndef LineLayoutState_h
 #define LineLayoutState_h
 
+#include "LayoutRect.h"
+#include "RenderBox.h"
+
 namespace WebCore {
+
+struct FloatWithRect {
+    FloatWithRect(RenderBox& f)
+        : object(f)
+        , rect(LayoutRect(f.x() - f.marginLeft(), f.y() - f.marginTop(), f.width() + f.marginWidth(), f.height() + f.marginHeight()))
+        , everHadLayout(f.everHadLayout())
+    {
+    }
+
+    RenderBox& object;
+    LayoutRect rect;
+    bool everHadLayout;
+};
 
 // Like LayoutState for layout(), LineLayoutState keeps track of global information
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
@@ -53,7 +69,8 @@ public:
         , m_checkForFloatsFromLastLine(false)
         , m_isFullLayout(fullLayout)
         , m_usesRepaintBounds(false)
-    { }
+    {
+    }
 
     LineInfo& lineInfo() { return m_lineInfo; }
     const LineInfo& lineInfo() const { return m_lineInfo; }
@@ -67,7 +84,7 @@ public:
     FloatingObject* lastFloat() const { return m_lastFloat; }
     void setLastFloat(FloatingObject* lastFloat) { m_lastFloat = lastFloat; }
 
-    Vector<RenderBlock::FloatWithRect>& floats() { return m_floats; }
+    Vector<FloatWithRect>& floats() { return m_floats; }
 
     unsigned floatIndex() const { return m_floatIndex; }
     void setFloatIndex(unsigned floatIndex) { m_floatIndex = floatIndex; }
@@ -108,7 +125,7 @@ private:
     RootInlineBox* m_endLine;
 
     FloatingObject* m_lastFloat;
-    Vector<RenderBlock::FloatWithRect> m_floats;
+    Vector<FloatWithRect> m_floats;
     unsigned m_floatIndex;
 
     LayoutUnit m_adjustedLogicalLineTop;

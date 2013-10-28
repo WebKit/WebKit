@@ -1565,6 +1565,138 @@ bool RenderBlockFlow::relayoutToAvoidWidows(LayoutStateMaintainer& statePusher)
     return true;
 }
 
+bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
+{
+    ASSERT(view().layoutState() && view().layoutState()->isPaginated());
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread)
+        return true; // Printing and multi-column both make new pages to accommodate content.
+
+    // See if we're in the last region.
+    LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
+    RenderRegion* region = flowThread->regionAtBlockOffset(this, pageOffset, this);
+    if (!region)
+        return false;
+    if (region->isLastRegion())
+        return region->isRenderRegionSet() || region->style()->regionFragment() == BreakRegionFragment
+            || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->logicalTopForFlowThreadContent());
+    return true;
+}
+
+LayoutUnit RenderBlockFlow::adjustForUnsplittableChild(RenderBox& child, LayoutUnit logicalOffset, bool includeMargins)
+{
+    bool checkColumnBreaks = view().layoutState()->isPaginatingColumns();
+    bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
+    bool isUnsplittable = child.isUnsplittableForPagination() || (checkColumnBreaks && child.style()->columnBreakInside() == PBAVOID)
+        || (checkPageBreaks && child.style()->pageBreakInside() == PBAVOID)
+        || (checkRegionBreaks && child.style()->regionBreakInside() == PBAVOID);
+    if (!isUnsplittable)
+        return logicalOffset;
+    LayoutUnit childLogicalHeight = logicalHeightForChild(child) + (includeMargins ? marginBeforeForChild(child) + marginAfterForChild(child) : LayoutUnit());
+    LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
+    bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();
+    updateMinimumPageHeight(logicalOffset, childLogicalHeight);
+    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && childLogicalHeight > pageLogicalHeight)
+        || !hasNextPage(logicalOffset))
+        return logicalOffset;
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
+    if (remainingLogicalHeight < childLogicalHeight) {
+        if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, childLogicalHeight))
+            return logicalOffset;
+        return logicalOffset + remainingLogicalHeight;
+    }
+    return logicalOffset;
+}
+
+bool RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment, LayoutUnit logicalOffset, LayoutUnit minimumLogicalHeight) const
+{
+    bool checkRegion = false;
+    for (LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment); pageLogicalHeight;
+        pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset + adjustment)) {
+        if (minimumLogicalHeight <= pageLogicalHeight)
+            return true;
+        if (!hasNextPage(logicalOffset + adjustment))
+            return false;
+        adjustment += pageLogicalHeight;
+        checkRegion = true;
+    }
+    return !checkRegion;
+}
+
+void RenderBlockFlow::setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage)
+{
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
+        flowThread->setPageBreak(this, offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
+}
+
+void RenderBlockFlow::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight)
+{
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
+        flowThread->updateMinimumPageHeight(this, offsetFromLogicalTopOfFirstPage() + offset, minHeight);
+    else if (ColumnInfo* colInfo = view().layoutState()->m_columnInfo)
+        colInfo->updateMinimumColumnHeight(minHeight);
+}
+
+LayoutUnit RenderBlockFlow::nextPageLogicalTop(LayoutUnit logicalOffset, PageBoundaryRule pageBoundaryRule) const
+{
+    LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
+    if (!pageLogicalHeight)
+        return logicalOffset;
+    
+    // The logicalOffset is in our coordinate space.  We can add in our pushed offset.
+    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset);
+    if (pageBoundaryRule == ExcludePageBoundary)
+        return logicalOffset + (remainingLogicalHeight ? remainingLogicalHeight : pageLogicalHeight);
+    return logicalOffset + remainingLogicalHeight;
+}
+
+LayoutUnit RenderBlockFlow::pageLogicalTopForOffset(LayoutUnit offset) const
+{
+    LayoutUnit firstPageLogicalTop = isHorizontalWritingMode() ? view().layoutState()->m_pageOffset.height() : view().layoutState()->m_pageOffset.width();
+    LayoutUnit blockLogicalTop = isHorizontalWritingMode() ? view().layoutState()->m_layoutOffset.height() : view().layoutState()->m_layoutOffset.width();
+
+    LayoutUnit cumulativeOffset = offset + blockLogicalTop;
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread) {
+        LayoutUnit pageLogicalHeight = view().layoutState()->pageLogicalHeight();
+        if (!pageLogicalHeight)
+            return 0;
+        return cumulativeOffset - roundToInt(cumulativeOffset - firstPageLogicalTop) % roundToInt(pageLogicalHeight);
+    }
+    return flowThread->pageLogicalTopForOffset(cumulativeOffset);
+}
+
+LayoutUnit RenderBlockFlow::pageLogicalHeightForOffset(LayoutUnit offset) const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread)
+        return view().layoutState()->m_pageLogicalHeight;
+    return flowThread->pageLogicalHeightForOffset(offset + offsetFromLogicalTopOfFirstPage());
+}
+
+LayoutUnit RenderBlockFlow::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
+{
+    offset += offsetFromLogicalTopOfFirstPage();
+    
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread) {
+        LayoutUnit pageLogicalHeight = view().layoutState()->m_pageLogicalHeight;
+        LayoutUnit remainingHeight = pageLogicalHeight - intMod(offset, pageLogicalHeight);
+        if (pageBoundaryRule == IncludePageBoundary) {
+            // If includeBoundaryPoint is true the line exactly on the top edge of a
+            // column will act as being part of the previous column.
+            remainingHeight = intMod(remainingHeight, pageLogicalHeight);
+        }
+        return remainingHeight;
+    }
+    
+    return flowThread->pageRemainingLogicalHeightForOffset(offset, pageBoundaryRule);
+}
+
+
 void RenderBlockFlow::layoutLineGridBox()
 {
     if (style()->lineGrid() == RenderStyle::initialLineGrid()) {
@@ -2332,6 +2464,19 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
                 nextBlock->markAllDescendantsWithFloatsForLayout(&floatingBox);
         }
     }
+}
+
+LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObject* child, const LayoutPoint& point) const
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return point;
+    
+    // This is similar to RenderBox::flipForWritingModeForChild. We have to subtract out our left/top offsets twice, since
+    // it's going to get added back in. We hide this complication here so that the calling code looks normal for the unflipped
+    // case.
+    if (isHorizontalWritingMode())
+        return LayoutPoint(point.x(), point.y() + height() - child->renderer().height() - 2 * yPositionForFloatIncludingMargin(child));
+    return LayoutPoint(point.x() + width() - child->renderer().width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
 }
 
 LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTop)

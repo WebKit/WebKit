@@ -1,3 +1,20 @@
+2013-10-24  Sam Weinig  <sam@webkit.org>
+
+        Move RenderBlock functions only used by RenderBlockFlow to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=123318
+
+        Reviewed by David Hyatt.
+
+        * rendering/LineLayoutState.h:
+        Move FloatWithRect from RenderBlock.
+
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        Move pagination and float functions.
+
 2013-10-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add support for order inside grid items
