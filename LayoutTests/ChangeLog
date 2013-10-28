@@ -1,3 +1,17 @@
+2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for -webkit-text-decoration-skip: ink
+        https://bugs.webkit.org/show_bug.cgi?id=123358
+
+        Reviewed by Dean Jackson.
+
+        Adds a test which makes sure that we can parse the
+        -webkit-text-decoration-skip CSS property, as well
+        as values for "ink" and "none". We can use the CSSOM
+        to test the roundtrip of these values
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html: Added.
+
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Expunge Lion and SnowLeopard from TestExpectations.

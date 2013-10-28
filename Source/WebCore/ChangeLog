@@ -1,3 +1,41 @@
+2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for -webkit-text-decoration-skip: ink
+        https://bugs.webkit.org/show_bug.cgi?id=123358
+
+        Reviewed by Dean Jackson.
+
+        Adds initial parsing support for parsing -webkit-text-decoration-skip with
+        values of "none" and "ink". This work is behind the new
+        ENABLE(CSS3_TEXT_DECORATION) compile-time flag.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html
+
+        * Configurations/FeatureDefines.xcconfig: Adding ENABLE(CSS3_TEXT_DECORATION)
+        * css/CSSComputedStyleDeclaration.cpp: Mapping internal representation of text-decoration-skip
+        to a CSSValue
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp: Actually parsing tokens
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTextDecorationSkip):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in: adding -webkit-text-decoration-skip
+        * css/CSSValueKeywords.in: adding ink
+        * css/DeprecatedStyleBuilder.cpp: Mapping from CSSValue to internal representation
+        (WebCore::ApplyPropertyTextDecorationSkip::valueToDecorationSkip):
+        (WebCore::ApplyPropertyTextDecorationSkip::applyValue):
+        (WebCore::ApplyPropertyTextDecorationSkip::createHandler):
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp: decoration-skip uses DeprecatedStyleBuilder
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h: Adding functions for modifying and accessing decoration-skip properties
+        * rendering/style/RenderStyleConstants.h: Definition of internal representation
+        * rendering/style/StyleRareInheritedData.cpp: Setting up constructors and comparators
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h: Holds actual value of internal representation
+
 2013-10-28  Anders Carlsson  <andersca@apple.com>
 
         RunLoop::dispatch should take an std::function

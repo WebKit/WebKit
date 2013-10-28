@@ -1437,6 +1437,21 @@ static PassRefPtr<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorat
 }
 #endif // CSS3_TEXT
 
+#if ENABLE(CSS3_TEXT_DECORATION)
+static PassRefPtr<CSSValue> renderTextDecorationSkipFlagsToCSSValue(TextDecorationSkip textDecorationSkip)
+{
+    switch (textDecorationSkip) {
+    case TextDecorationSkipNone:
+        return cssValuePool().createExplicitInitialValue();
+    case TextDecorationSkipInk:
+        return cssValuePool().createIdentifierValue(CSSValueInk);
+    }
+
+    ASSERT_NOT_REACHED();
+    return cssValuePool().createExplicitInitialValue();
+}
+#endif // CSS3_TEXT_DECORATION
+
 static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepeat yRepeat)
 {
     // For backwards compatibility, if both values are equal, just return one of them. And
@@ -2356,6 +2371,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitTextUnderlinePosition:
             return cssValuePool().createValue(style->textUnderlinePosition());
 #endif // CSS3_TEXT
+#if ENABLE(CSS3_TEXT_DECORATION)
+        case CSSPropertyWebkitTextDecorationSkip:
+            return renderTextDecorationSkipFlagsToCSSValue(style->textDecorationSkip());
+#endif
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:

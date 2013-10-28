@@ -2376,6 +2376,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return parseTextUnderlinePosition(important);
 #endif // CSS3_TEXT
 
+#if ENABLE(CSS3_TEXT_DECORATION)
+    case CSSPropertyWebkitTextDecorationSkip:
+        // none | [ objects || spaces || ink || edges || box-decoration ]
+        return parseTextDecorationSkip(important);
+#endif
+
     case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
         if (id == CSSValueNormal || id == CSSValueReset || id == CSSValueDocument)
             validPrimitive = true;
@@ -9761,6 +9767,26 @@ bool CSSParser::parseTextUnderlinePosition(bool important)
     return false;
 }
 #endif // CSS3_TEXT
+
+#if ENABLE(CSS3_TEXT_DECORATION)
+bool CSSParser::parseTextDecorationSkip(bool important)
+{
+    // The text-decoration-skip property has syntax "none | [ objects || spaces || ink || edges || box-decoration ]".
+    // However, only 'none' and 'ink' are implemented yet, so we will parse syntax "none | ink" for now.
+    CSSParserValue* value = m_valueList->current();
+    do {
+        switch (value->id) {
+        case CSSValueNone:
+        case CSSValueInk:
+            addProperty(CSSPropertyWebkitTextDecorationSkip, cssValuePool().createIdentifierValue(value->id), important);
+            return true;
+        default:
+            break;
+        }
+    } while ((value = m_valueList->next()));
+    return false;
+}
+#endif // CSS3_TEXT_DECORATION
 
 bool CSSParser::parseTextEmphasisStyle(bool important)
 {

@@ -582,6 +582,9 @@ public:
 #else
     TextDecorationStyle textDecorationStyle() const { return TextDecorationStyleSolid; }
 #endif // CSS3_TEXT
+#if ENABLE(CSS3_TEXT_DECORATION)
+    TextDecorationSkip textDecorationSkip() const { return static_cast<TextDecorationSkip>(rareInheritedData->m_textDecorationSkip); }
+#endif
     int wordSpacing() const;
     int letterSpacing() const;
 
@@ -1165,6 +1168,9 @@ public:
     void setTextJustify(TextJustify v) { SET_VAR(rareInheritedData, m_textJustify, v); }
     void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(rareInheritedData, m_textUnderlinePosition, v); }
 #endif // CSS3_TEXT
+#if ENABLE(CSS3_TEXT_DECORATION)
+    void setTextDecorationSkip(TextDecorationSkip skip) { SET_VAR(rareInheritedData, m_textDecorationSkip, skip); }
+#endif
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(Length v);
@@ -1687,6 +1693,9 @@ public:
     static TextJustify initialTextJustify() { return TextJustifyAuto; }
     static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePositionAuto; }
 #endif // CSS3_TEXT
+#if ENABLE(CSS3_TEXT_DECORATION)
+    static TextDecorationSkip initialTextDecorationSkip() { return TextDecorationSkipNone; }
+#endif
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }
     static float initialOpacity() { return 1.0f; }

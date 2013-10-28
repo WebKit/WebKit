@@ -1,3 +1,14 @@
+2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for -webkit-text-decoration-skip: ink
+        https://bugs.webkit.org/show_bug.cgi?id=123358
+
+        Reviewed by Dean Jackson.
+
+        Adding ENABLE(CSS3_TEXT_DECORATION)
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
         Add additional Apple Mavericks test bots.

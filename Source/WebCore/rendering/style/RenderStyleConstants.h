@@ -381,6 +381,14 @@ enum TextJustify {
 };
 #endif // CSS3_TEXT
 
+#if ENABLE(CSS3_TEXT_DECORATION)
+enum TextDecorationSkipItems {
+    TextDecorationSkipNone = 0,
+    TextDecorationSkipInk = 1 << 0
+};
+typedef unsigned TextDecorationSkip;
+#endif
+
 enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID
 };
