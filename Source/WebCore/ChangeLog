@@ -1,3 +1,22 @@
+2013-10-28  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Expose title and alternative text for links in image maps
+        https://bugs.webkit.org/show_bug.cgi?id=84045
+
+        Reviewed by Chris Fleizach.
+
+        Change the way we decide when the title attribute should be
+        used for the accessible description, by not relying in the
+        titleTagShouldBeUsedInDescriptionField() helper function but
+        in whether we have found a visible text for it or not.
+
+        This actually mimics what the Mac port does and so makes possible
+        to share both the layout test and its expected results.
+
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (accessibilityDescription): Update the method to determine
+        whether the title attribute should be used for the description.
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Replace 0 timeouts g_timeout_add() by g_idle_add()

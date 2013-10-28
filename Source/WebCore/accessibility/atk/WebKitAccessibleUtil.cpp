@@ -125,13 +125,23 @@ String accessibilityDescription(AccessibilityObject* coreObject)
     coreObject->accessibilityText(textOrder);
 
     unsigned length = textOrder.size();
+    bool visibleTextAvailable = false;
     for (unsigned k = 0; k < length; k++) {
         const AccessibilityText& text = textOrder[k];
 
         if (text.textSource == AlternativeText)
             return text.text;
 
-        if (text.textSource == TitleTagText && titleTagShouldBeUsedInDescriptionField(coreObject))
+        switch (text.textSource) {
+        case VisibleText:
+        case ChildrenText:
+        case LabelByElementText:
+            visibleTextAvailable = true;
+        default:
+            break;
+        }
+
+        if (text.textSource == TitleTagText && !visibleTextAvailable)
             return text.text;
     }
 
