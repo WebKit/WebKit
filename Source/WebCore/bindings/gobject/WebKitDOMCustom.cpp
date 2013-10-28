@@ -551,3 +551,9 @@ gulong webkit_dom_property_node_list_get_length(void*)
     g_warning("%s: the PropertyNodeList object has been removed from WebKit, this function does nothing.", __func__);
     return 0;
 }
+
+gdouble webkit_dom_html_media_element_get_start_time(WebKitDOMHTMLMediaElement*)
+{
+    g_warning("%s: the HTMLMediaElement:start-time property has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}

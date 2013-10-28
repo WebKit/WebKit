@@ -161,7 +161,6 @@ public:
     virtual double currentTime() const OVERRIDE;
     virtual void setCurrentTime(double, ExceptionCode&) OVERRIDE;
     double initialTime() const;
-    double startTime() const;
     virtual double duration() const OVERRIDE;
     virtual bool paused() const OVERRIDE;
     virtual double defaultPlaybackRate() const OVERRIDE;

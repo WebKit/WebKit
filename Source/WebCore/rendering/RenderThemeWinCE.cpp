@@ -521,7 +521,7 @@ bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {
-        float pt = (mediaElement->currentTime() - mediaElement->startTime()) / mediaElement->duration();
+        float pt = mediaElement->currentTime() / mediaElement->duration();
         FloatRect intRect = r;
         intRect.setX(intRect.x() + intRect.width() * pt - 2);
         intRect.setWidth(5);

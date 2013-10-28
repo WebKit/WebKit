@@ -1,3 +1,18 @@
+2013-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove HTMLMediaElement.startTime
+        https://bugs.webkit.org/show_bug.cgi?id=123264
+
+        Reviewed by Eric Carlson.
+
+        Removed test about startTime.
+
+        Patch by: philipj@opera.com
+        Blink review URL: https://codereview.chromium.org/32583003
+
+        * media/media-startTime-expected.txt: Removed.
+        * media/media-startTime.html: Removed.
+
 2013-10-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening.

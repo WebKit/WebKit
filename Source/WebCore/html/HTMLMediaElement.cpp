@@ -2351,13 +2351,6 @@ void HTMLMediaElement::setCurrentTime(double time, ExceptionCode& ec)
     seek(time, ec);
 }
 
-double HTMLMediaElement::startTime() const
-{
-    if (!m_player)
-        return 0;
-    return m_player->startTime();
-}
-
 double HTMLMediaElement::initialTime() const
 {
     if (m_fragmentStartTime != MediaPlayer::invalidTime())
@@ -3679,7 +3672,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         if (loop() && !m_mediaController) {
             m_sentEndEvent = false;
             //  then seek to the earliest possible position of the media resource and abort these steps.
-            seek(startTime(), IGNORE_EXCEPTION);
+            seek(0, IGNORE_EXCEPTION);
         } else {
             // If the media element does not have a current media controller, and the media element
             // has still ended playback, and the direction of playback is still forwards, and paused
@@ -4996,7 +4989,7 @@ bool HTMLMediaElement::isBlockedOnMediaController() const
     // position relative to the MediaController's timeline or after the end of the media resource 
     // relative to the MediaController's timeline.
     double mediaControllerPosition = m_mediaController->currentTime();
-    if (mediaControllerPosition < startTime() || mediaControllerPosition > startTime() + duration())
+    if (mediaControllerPosition < 0 || mediaControllerPosition > duration())
         return true;
 
     return false;

@@ -458,6 +458,17 @@ WEBKIT_API WebKitDOMNode* webkit_dom_property_node_list_item(void* self, gulong 
 **/
 WEBKIT_API gulong webkit_dom_property_node_list_get_length(void* self);
 
+/**
+ * webkit_dom_html_media_element_get_start_time:
+ * @self: A #HTMLMediaElement
+ *
+ * The HTMLMediaElement:start-time property has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gdouble webkit_dom_html_media_element_get_start_time(WebKitDOMHTMLMediaElement*);
+
 G_END_DECLS
 
 #endif

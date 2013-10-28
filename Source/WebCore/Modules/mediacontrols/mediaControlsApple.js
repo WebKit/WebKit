@@ -539,7 +539,6 @@ Controller.prototype = {
     handleRewindButtonClicked: function(event)
     {
         var newTime = Math.max(
-                               this.video.startTime,
                                this.video.currentTime - this.RewindAmount,
                                this.video.seekable.start(0));
         this.video.currentTime = newTime;
@@ -594,7 +593,7 @@ Controller.prototype = {
         percent = Math.max(Math.min(1, percent), 0);
         this.controls.thumbnail.style.left = percent * 100 + '%';
 
-        var thumbnailTime = this.video.startTime + percent * this.video.duration;
+        var thumbnailTime = percent * this.video.duration;
         for (var i = 0; i < this.video.textTracks.length; ++i) {
             var track = this.video.textTracks[i];
             if (!this.trackHasThumbnails(track))
@@ -725,7 +724,7 @@ Controller.prototype = {
 
     updateDuration: function()
     {
-        this.controls.timeline.min = this.video.startTime;
+        this.controls.timeline.min = 0;
         this.controls.timeline.max = this.video.duration;
     },
 
@@ -781,7 +780,7 @@ Controller.prototype = {
     updateTime: function()
     {
         var currentTime = this.video.currentTime;
-        var timeRemaining = (currentTime - this.video.startTime) - this.video.duration;
+        var timeRemaining = currentTime - this.video.duration;
         this.controls.currentTime.innerText = this.formatTime(currentTime);
         this.controls.timeline.value = this.video.currentTime;
         this.controls.remainingTime.innerText = this.formatTime(timeRemaining);

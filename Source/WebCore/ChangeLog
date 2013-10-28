@@ -1,3 +1,35 @@
+2013-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove HTMLMediaElement.startTime
+        https://bugs.webkit.org/show_bug.cgi?id=123264
+
+        Reviewed by Eric Carlson.
+
+        Patch based on one by: philipj@opera.com
+        Blink review URL: https://codereview.chromium.org/32583003
+
+        startTime has been removed from the HTMLMediaElement and its use
+        in the rest of components.
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handleRewindButtonClicked):
+        (Controller.prototype.handleTimelineMouseMove):
+        (Controller.prototype.updateDuration):
+        (Controller.prototype.updateTime): Removed used of startTime().
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_media_element_get_start_time):
+        * bindings/gobject/WebKitDOMCustom.h:
+        * bindings/gobject/WebKitDOMCustom.symbols: Added phony function.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::isBlockedOnMediaController): Removed
+        use of startTime()
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl: Removed startTime()
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::paintSliderThumb): Removed use of
+        startTime()
+
 2013-10-28  Andreas Kling  <akling@apple.com>
 
         RenderElement::m_style should be a Ref.
