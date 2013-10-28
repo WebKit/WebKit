@@ -1,3 +1,11 @@
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Add additional Apple Mavericks test bots.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Name all the GLib timeout sources

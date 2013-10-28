@@ -12,7 +12,9 @@
                     { "name": "apple-mini-209", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-210", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-218", "platform": "mac-mountainlion"},
-
+                    
+                    { "name": "apple-mini-129", "platform": "mac-mavericks"},
+                    { "name": "apple-mini-130", "platform": "mac-mavericks"},
                     { "name": "apple-macpro-5", "platform": "mac-mavericks" },
                     { "name": "apple-macpro-8", "platform": "mac-mavericks" },
                     
@@ -101,11 +103,11 @@
                     { "name": "Apple Mavericks Release WK1 (Tests)", "type": "Test", "builddir": "mavericks-release-tests-wk1",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["apple-seo-05"]
+                      "slavenames": ["apple-seo-05", "apple-mini-129"]
                     },
                     { "name": "Apple Mavericks Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-release-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["apple-seo-06"]
+                      "slavenames": ["apple-seo-06", "apple-mini-130"]
                     },
                     {
                       "name": "Apple MountainLion Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "mountainlion-release-perf-tests",
