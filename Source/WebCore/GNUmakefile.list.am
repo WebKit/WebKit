@@ -4298,6 +4298,8 @@ webcore_sources += \
 	Source/WebCore/rendering/LineWidth.h \
 	Source/WebCore/rendering/LineWidth.cpp \
 	Source/WebCore/rendering/OverlapTestRequestClient.h \
+	Source/WebCore/rendering/OrderIterator.cpp \
+	Source/WebCore/rendering/OrderIterator.h \
 	Source/WebCore/rendering/Pagination.h \
 	Source/WebCore/rendering/PaintInfo.h \
 	Source/WebCore/rendering/PaintPhase.h \

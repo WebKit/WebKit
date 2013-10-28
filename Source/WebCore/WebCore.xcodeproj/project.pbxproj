@@ -5367,6 +5367,8 @@
 		CDE3A85417F5FCE600C5BE20 /* AudioTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85217F5FCE600C5BE20 /* AudioTrackPrivateAVF.h */; };
 		CDE3A85717F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */; };
 		CDE3A85817F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */; };
+		CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */; };
+		CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE7FC43181904B1002BBB77 /* OrderIterator.h */; };
 		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
 		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
 		CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76331460B462008B31F1 /* Clock.cpp */; };
@@ -12337,6 +12339,8 @@
 		CDE3A85517F6020400C5BE20 /* AudioTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AudioTrackPrivateAVFObjC.mm; path = objc/AudioTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		CDE3A85617F6020400C5BE20 /* AudioTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioTrackPrivateAVFObjC.h; path = objc/AudioTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		CDE6560E17CA6E7600526BA7 /* mediaControlsApple.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = mediaControlsApple.js; sourceTree = "<group>"; };
+		CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OrderIterator.cpp; sourceTree = "<group>"; };
+		CDE7FC43181904B1002BBB77 /* OrderIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderIterator.h; sourceTree = "<group>"; };
 		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformClockCA.cpp; sourceTree = "<group>"; };
 		CDEA762F146084EE008B31F1 /* PlatformClockCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCA.h; sourceTree = "<group>"; };
@@ -20542,6 +20546,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				CDE7FC42181904B1002BBB77 /* OrderIterator.cpp */,
+				CDE7FC43181904B1002BBB77 /* OrderIterator.h */,
 				439046C212DA25CE00AF80A2 /* mathml */,
 				FD08A879175D3926002CD360 /* shapes */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
@@ -24752,6 +24758,7 @@
 				CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */,
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateValue.h in Headers */,
 				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,
+				CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27783,6 +27790,7 @@
 				BC10D76717D8EE6E005E2626 /* RenderBlockFlow.cpp in Sources */,
 				A0CB002417DF82660017896B /* LineWidth.cpp in Sources */,
 				CD3E252318046BCD00E27F56 /* CSSGridTemplateValue.cpp in Sources */,
+				CDE7FC44181904B1002BBB77 /* OrderIterator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,42 @@
+2013-10-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add support for order inside grid items
+        https://bugs.webkit.org/show_bug.cgi?id=123208
+
+        Reviewed by Antti Koivisto.
+
+        Based on Blink r153457 and r153536 by <jchaffraix@chromium.org>
+
+        Added support for sorting grid items by using -webkit-order
+        property. Used OrderIterator to implement it so it had to be moved
+        out of RenderFlexibleBox to be shared with RenderGrid.
+
+        Tests: fast/css-grid-layout/grid-item-order-auto-flow-resolution.html
+               fast/css-grid-layout/grid-item-order-paint-order.html
+
+        * CMakeLists.txt: Added new file.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/OrderIterator.cpp: Added. Ripped out of RenderFlexibleBox.
+        (WebCore::OrderIterator::OrderIterator):
+        (WebCore::OrderIterator::setOrderValues): Use std::move semantics.
+        (WebCore::OrderIterator::first): Use an integer as iterator.
+        (WebCore::OrderIterator::next): Ditto.
+        (WebCore::OrderIterator::reset): Ditto.
+        * rendering/OrderIterator.h: Added.
+        (WebCore::OrderIterator::currentChild):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::RenderGrid):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator):
+        (WebCore::RenderGrid::paintChildren):
+        * rendering/RenderGrid.h:
+
 2013-10-28  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
 
         Methods on window.internals shouldn't pass a document.

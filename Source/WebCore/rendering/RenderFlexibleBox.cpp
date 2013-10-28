@@ -39,58 +39,6 @@
 
 namespace WebCore {
 
-RenderFlexibleBox::OrderIterator::OrderIterator(const RenderFlexibleBox* flexibleBox)
-    : m_flexibleBox(flexibleBox)
-    , m_currentChild(0)
-    , m_orderValuesIterator(0)
-{
-}
-
-void RenderFlexibleBox::OrderIterator::setOrderValues(const OrderValues& orderValues)
-{
-    reset();
-    m_orderValues = orderValues;
-    if (m_orderValues.size() < 2)
-        return;
-
-    std::sort(m_orderValues.begin(), m_orderValues.end());
-    auto nextElement = std::unique(m_orderValues.begin(), m_orderValues.end());
-    m_orderValues.shrinkCapacity(nextElement - m_orderValues.begin());
-}
-
-RenderBox* RenderFlexibleBox::OrderIterator::first()
-{
-    reset();
-    return next();
-}
-
-RenderBox* RenderFlexibleBox::OrderIterator::next()
-{
-    do {
-        if (!m_currentChild) {
-            if (m_orderValuesIterator == m_orderValues.end())
-                return 0;
-            if (m_orderValuesIterator) {
-                ++m_orderValuesIterator;
-                if (m_orderValuesIterator == m_orderValues.end())
-                    return 0;
-            } else
-                m_orderValuesIterator = m_orderValues.begin();
-
-            m_currentChild = m_flexibleBox->firstChildBox();
-        } else
-            m_currentChild = m_currentChild->nextSiblingBox();
-    } while (!m_currentChild || m_currentChild->style()->order() != *m_orderValuesIterator);
-
-    return m_currentChild;
-}
-
-void RenderFlexibleBox::OrderIterator::reset()
-{
-    m_currentChild = 0;
-    m_orderValuesIterator = 0;
-}
-
 struct RenderFlexibleBox::LineContext {
     LineContext(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, size_t numberOfChildren, LayoutUnit maxAscent)
         : crossAxisOffset(crossAxisOffset)
@@ -120,7 +68,7 @@ struct RenderFlexibleBox::Violation {
 
 RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> style)
     : RenderBlock(element, std::move(style), 0)
-    , m_orderIterator(this)
+    , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
@@ -128,7 +76,7 @@ RenderFlexibleBox::RenderFlexibleBox(Element& element, PassRef<RenderStyle> styl
 
 RenderFlexibleBox::RenderFlexibleBox(Document& document, PassRef<RenderStyle> style)
     : RenderBlock(document, std::move(style), 0)
-    , m_orderIterator(this)
+    , m_orderIterator(*this)
     , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
@@ -345,7 +293,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     Vector<LineContext> lineContexts;
     OrderIterator::OrderValues orderValues;
     computeMainAxisPreferredSizes(orderValues);
-    m_orderIterator.setOrderValues(orderValues);
+    m_orderIterator.setOrderValues(std::move(orderValues));
 
     ChildFrameRects oldChildRects;
     appendChildFrameRects(oldChildRects);

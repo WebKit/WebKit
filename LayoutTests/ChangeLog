@@ -1,3 +1,21 @@
+2013-10-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add support for order inside grid items
+        https://bugs.webkit.org/show_bug.cgi?id=123208
+
+        Reviewed by Antti Koivisto.
+
+        From Blink r153536 by <jchaffraix@chromium.org>
+
+        Added a couple of tests to verify that we respect the specified
+        order of grid items both in the auto-placement algorithm and in
+        the final painting.
+
+        * fast/css-grid-layout/grid-item-order-auto-flow-resolution-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-order-auto-flow-resolution.html: Added.
+        * fast/css-grid-layout/grid-item-order-paint-order-expected.html: Added.
+        * fast/css-grid-layout/grid-item-order-paint-order.html: Added.
+
 2013-10-28  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
 
         Methods on window.internals shouldn't pass a document.
