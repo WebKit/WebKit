@@ -1,3 +1,9 @@
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        WebGL flake.
+
+        * platform/mac/TestExpectations:
+
 2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for -webkit-text-decoration-skip: ink
