@@ -462,3 +462,99 @@ fast/forms/color/input-color-onchange-event.html [ Pass ]
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 
+
+########################################
+### START OF (6) Features that are not supported in WebKit2, on Mavericks
+
+# Shared workers disabled with the Network Process
+[ Mavericks ] fast/workers/shared-worker-constructor.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-context-gc.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-event-listener.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-exception.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-frame-lifecycle.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-gc.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-in-iframe.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-lifecycle.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-load-error.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-location.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-messageevent-source.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-name.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-navigator.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-replace-global-constructor.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-replace-self.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-script-error.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-shared.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-simple.html [ Skip ]
+[ Mavericks ] fast/workers/shared-worker-storagequota-query-usage.html [ Skip ]
+[ Mavericks ] fast/workers/worker-crash-with-invalid-location.html [ Skip ]
+[ Mavericks ] http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Skip ]
+[ Mavericks ] http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Skip ]
+[ Mavericks ] http/tests/security/cross-origin-shared-worker-allowed.html [ Skip ]
+[ Mavericks ] http/tests/security/cross-origin-shared-worker.html [ Skip ]
+[ Mavericks ] http/tests/security/same-origin-shared-worker-blocked.html [ Skip ]
+[ Mavericks ] http/tests/security/storage-blocking-loosened-shared-worker.html [ Skip ]
+[ Mavericks ] http/tests/security/storage-blocking-strengthened-shared-worker.html [ Skip ]
+[ Mavericks ] http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html [ Skip ]
+[ Mavericks ] http/tests/websocket/tests/hybi/workers/shared-worker-simple.html [ Skip ]
+[ Mavericks ] http/tests/workers/shared-worker-importScripts.html [ Skip ]
+[ Mavericks ] http/tests/workers/shared-worker-invalid-url.html [ Skip ]
+[ Mavericks ] http/tests/workers/shared-worker-redirect.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-close.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-methods-async.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-methods.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-referer.html [ Skip ]
+[ Mavericks ] http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html [ Skip ]
+[ Mavericks ] js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=115274
+# PPT: testRunner.setPrivateBrowsingEnabled doesn't work with NetworkProcess
+[ Mavericks ] http/tests/security/cookies/first-party-cookie-allow-xslt.xml [ Skip ]
+[ Mavericks ] http/tests/security/cookies/third-party-cookie-blocking-main-frame.html [ Skip ]
+[ Mavericks ] http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
+[ Mavericks ] http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
+[ Mavericks ] http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
+[ Mavericks ] http/tests/security/cross-frame-access-private-browsing.html [ Skip ]
+[ Mavericks ] http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Skip ]
+[ Mavericks ] http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Skip ]
+[ Mavericks ] http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Skip ]
+[ Mavericks ] http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Skip ]
+[ Mavericks ] inspector/console/clients-ignored-in-privatebrowsing.html [ Skip ]
+[ Mavericks ] plugins/private-browsing-mode-2.html [ Skip ]
+[ Mavericks ] plugins/private-browsing-mode.html [ Skip ]
+[ Mavericks ] storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
+[ Mavericks ] storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
+[ Mavericks ] storage/websql/private-browsing-noread-nowrite.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=115282
+# PPT: https loads fail due to self-signed certificate
+[ Mavericks ] http/tests/appcache/different-https-origin-resource-main.html [ Skip ]
+[ Mavericks ] http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ]
+[ Mavericks ] http/tests/misc/dns-prefetch-control.html [ Skip ]
+[ Mavericks ] http/tests/navigation/https-in-page-cache.html [ Skip ]
+[ Mavericks ] http/tests/navigation/ping-cross-origin-from-https.html [ Skip ]
+[ Mavericks ] http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html [ Skip ]
+[ Mavericks ] http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html [ Skip ]
+[ Mavericks ] http/tests/security/mixedContent [ Skip ]
+[ Mavericks ] http/tests/security/originHeader/origin-header-for-https.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-https-always.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-https-default.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-https-never.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-https-origin.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-redirect-link.html [ Skip ]
+[ Mavericks ] http/tests/security/referrer-policy-redirect.html [ Skip ]
+[ Mavericks ] http/tests/ssl [ Skip ]
+
+# testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
+[ Mavericks ] http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+
+# <rdar://problem/12829991>
+# PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
+[ Mavericks ] http/tests/navigation/ping-cookie.html [ Skip ]
+
+# <rdar://problem/13751647> PPT: Status text not passed over IPC
+[ Mavericks ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
+[ Mavericks ] http/tests/xmlhttprequest/web-apps/013.html [ Failure ]
+
+### END OF (6) Features that are not supported in WebKit2, on Mavericks
+########################################

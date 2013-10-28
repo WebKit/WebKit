@@ -1,5 +1,11 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Add skipped or failing expectations for Mavericks WK2.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         WebGL flake.
 
         * platform/mac/TestExpectations:
