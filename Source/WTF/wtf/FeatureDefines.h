@@ -299,6 +299,10 @@
 #endif
 #endif
 
+#if !defined(ENABLE_8BIT_TEXTRUN)
+#define ENABLE_8BIT_TEXTRUN 1
+#endif
+
 #endif /* PLATFORM(GTK) */
 
 /* --------- Blackberry port (QNX) --------- */

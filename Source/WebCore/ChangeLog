@@ -1,3 +1,14 @@
+2013-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Re-enable simple line layout for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=123388
+
+        Reviewed by Andreas Kling.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor): 8-bit TextRun support is now enabled for the GTK port, so the port
+        can use the simple line layout.
+
 2013-10-27  Andreas Kling  <akling@apple.com>
 
         Fix 4 asserting SVG tests after r158097.
