@@ -1,5 +1,17 @@
 2013-10-27  Andreas Kling  <akling@apple.com>
 
+        Fix 4 asserting SVG tests after r158097.
+
+        RenderElement::setStyle() is, quite surprisingly, a virtual function
+        with a single override in RenderSVGBlock.
+        To match the old behavior, we have to rewrite the display type from
+        any inline type to block instead.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::initializeStyle):
+
+2013-10-27  Andreas Kling  <akling@apple.com>
+
         Tone down overzealous assertion from r158097.
 
         RenderElement::initializeStyle() really only cares that there are no

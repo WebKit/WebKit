@@ -350,6 +350,14 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 
 void RenderElement::initializeStyle()
 {
+#if ENABLE(SVG)
+    // FIXME: This logic should be in a less ridiculous place. (This is mirrored from RenderSVGBlock::setStyle().)
+    if (isRenderSVGBlock() && m_style->isDisplayInlineType()) {
+        // SVG text layout code expects us to be a block-level style element.
+        m_style->setDisplay(BLOCK);
+    }
+#endif
+
     styleWillChange(StyleDifferenceEqual, *style());
 
     m_hasInitializedStyle = true;
