@@ -1,3 +1,13 @@
+2013-10-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Rename applyPageScaleFactorInCompositor to delegatesPageScaling
+        https://bugs.webkit.org/show_bug.cgi?id=123417
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+
 2013-10-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for -webkit-text-decoration-skip: ink

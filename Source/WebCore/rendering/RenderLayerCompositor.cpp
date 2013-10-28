@@ -873,7 +873,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
 
     IntRect clipRect = pixelSnappedIntRect(layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
     const Settings& settings = m_renderView.frameView().frame().settings();
-    if (!settings.applyPageScaleFactorInCompositor())
+    if (!settings.delegatesPageScaling())
         clipRect.scale(pageScaleFactor());
     clipRect.intersect(layerBounds);
     overlapMap.add(&layer, clipRect);

@@ -173,7 +173,7 @@ windowFocusRestricted initial=true
 
 diagnosticLoggingEnabled initial=false
 applyDeviceScaleFactorInCompositor initial=true
-applyPageScaleFactorInCompositor initial=false
+delegatesPageScaling initial=false
 plugInSnapshottingEnabled initial=false
 snapshotAllPlugIns initial=false
 autostartOriginPlugInSnapshottingEnabled initial=true

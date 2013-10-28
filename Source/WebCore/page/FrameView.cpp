@@ -3050,7 +3050,7 @@ IntRect FrameView::windowResizerRect() const
 
 float FrameView::visibleContentScaleFactor() const
 {
-    if (!frame().isMainFrame() || !frame().settings().applyPageScaleFactorInCompositor())
+    if (!frame().isMainFrame() || !frame().settings().delegatesPageScaling())
         return 1;
 
     return frame().page()->pageScaleFactor();
