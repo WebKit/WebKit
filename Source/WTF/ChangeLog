@@ -1,3 +1,17 @@
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r156933
+
+    2013-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Turn off FastMalloc on Windows
+            https://bugs.webkit.org/show_bug.cgi?id=122352
+
+            Reviewed by Darin Adler.
+
+            * wtf/Platform.h: Enable USE_SYSTEM_MALLOC when building on
+            Windows to stick to the MSVCRT allocator/deallocator.
+
 2013-10-24  Lucas Forschler  <lforschler@apple.com>
 
         Merge r154655
