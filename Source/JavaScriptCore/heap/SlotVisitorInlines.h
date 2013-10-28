@@ -174,6 +174,7 @@ inline void SlotVisitor::donateAndDrain()
 
 inline void SlotVisitor::copyLater(JSCell* owner, void* ptr, size_t bytes)
 {
+    ASSERT(bytes);
     CopiedBlock* block = CopiedSpace::blockFor(ptr);
     if (block->isOversize()) {
         m_shared.m_copiedSpace->pin(block);
