@@ -31,7 +31,6 @@
 #include "CFDictionaryPropertyBag.h"
 #include "COMPropertyBag.h"
 #include "DOMCoreClasses.h"
-#include "DefaultPolicyDelegate.h"
 #include "HTMLFrameOwnerElement.h"
 #include "MarshallingHelpers.h"
 #include "WebActionPropertyBag.h"
@@ -41,7 +40,7 @@
 #include "WebDownload.h"
 #include "WebEditorClient.h"
 #include "WebError.h"
-#include "WebFrameNetworkingContext.h"
+#include "WebFrameLoaderClient.h"
 #include "WebFramePolicyListener.h"
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
@@ -156,7 +155,7 @@ WebFrame* kit(Frame* frame)
 
     FrameLoaderClient* frameLoaderClient = frame->loader()->client();
     if (frameLoaderClient)
-        return static_cast<WebFrame*>(frameLoaderClient);  // eek, is there a better way than static cast?
+        return static_cast<WebFrameLoaderClient&>(frameLoaderClient)->webFrame();  // eek, is there a better way than static cast?
     return 0;
 }
 
@@ -234,8 +233,7 @@ public:
     WebFramePrivate() 
         : frame(0)
         , webView(0)
-        , m_policyFunction(0)
-    { 
+    {
     }
 
     ~WebFramePrivate() { }
@@ -243,15 +241,12 @@ public:
 
     Frame* frame;
     WebView* webView;
-    FramePolicyFunction m_policyFunction;
-    COMPtr<WebFramePolicyListener> m_policyListener;
 };
 
 // WebFrame ----------------------------------------------------------------
 
 WebFrame::WebFrame()
-    : WebFrameLoaderClient(this)
-    , m_refCount(0)
+    : m_refCount(0)
     , d(new WebFrame::WebFramePrivate)
     , m_quickRedirectComing(false)
     , m_inPrintingMode(false)
@@ -1086,7 +1081,7 @@ PassRefPtr<Frame> WebFrame::init(IWebView* webView, Page* page, HTMLFrameOwnerEl
     d->webView->viewWindow((OLE_HANDLE*)&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
-    RefPtr<Frame> frame = Frame::create(page, ownerElement, this);
+    RefPtr<Frame> frame = Frame::create(page, ownerElement, new WebFrameLoaderClient(this));
     d->frame = frame.get();
     return frame.release();
 }
@@ -1479,6 +1474,7 @@ void WebFrame::frameLoaderDestroyed()
     this->Release();
 }
 
+<<<<<<< .working
 void WebFrame::makeRepresentation(DocumentLoader*)
 {
     notImplemented();
@@ -1935,6 +1931,8 @@ void WebFrame::registerForIconNotification(bool listen)
     d->webView->registerForIconNotification(listen);
 }
 
+=======
+>>>>>>> .merge-right.r154508
 static IntRect printerRect(HDC printDC)
 {
     return IntRect(0, 0, 
@@ -2606,7 +2604,3 @@ void WebFrame::updateBackground()
     coreFrame->view()->updateBackgroundRecursively(backgroundColor, webView()->transparent());
 }
 
-PassRefPtr<FrameNetworkingContext> WebFrame::createNetworkingContext()
-{
-    return WebFrameNetworkingContext::create(core(this), userAgent(url()));
-}

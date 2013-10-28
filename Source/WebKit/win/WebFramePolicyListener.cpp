@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebFramePolicyListener.h"
 
-#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -122,7 +122,7 @@ void WebFramePolicyListener::receivedPolicyDecision(PolicyAction action)
 {
     RefPtr<Frame> frame = m_frame.release();
     if (frame)
-        static_cast<WebFrame*>(frame->loader()->client())->receivedPolicyDecision(action);
+        static_cast<WebFrameLoaderClient*>(frame->loader()->client())->receivedPolicyDecision(action);
 }
 
 void WebFramePolicyListener::invalidate()
