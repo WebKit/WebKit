@@ -3,6 +3,23 @@
         Merge r155471.
         https://bugs.webkit.org/show_bug.cgi?id=123409.
 
+        Missing files from previous merge commit for r155471.
+
+        * inspector-protocol/debugger/resources: Added.
+        * inspector-protocol/debugger/resources/exception.js: Added.
+        (exceptionBasic):
+        (exceptionDOM):
+        (throwString):
+        (throwParam):
+        (exceptionInHostFunction):
+        (catchNested):
+        (noException):
+
+2013-10-28  Mark Lam  <mark.lam@apple.com>
+
+        Merge r155471.
+        https://bugs.webkit.org/show_bug.cgi?id=123409.
+
         Reviewed by Geoffrey Garen.
 
         Re-based test results from merge.
