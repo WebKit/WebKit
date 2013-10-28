@@ -113,7 +113,7 @@ void GtkDragAndDropHelper::handleDragLeave(GdkDragContext* gdkContext, DragExite
     data->context = context;
     data->context->exitedCallback = exitedCallback;
     data->glue = this;
-    g_timeout_add(0, reinterpret_cast<GSourceFunc>(handleDragLeaveLaterCallback), data);
+    g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(handleDragLeaveLaterCallback), data, 0);
 }
 
 static void queryNewDropContextData(DroppingContext* dropContext, GtkWidget* widget, guint time)

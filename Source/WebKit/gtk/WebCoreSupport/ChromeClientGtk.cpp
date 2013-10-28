@@ -335,7 +335,7 @@ void ChromeClient::closeWindowSoon()
     // onload handler, it will need to call FrameLoaderClient::dispatchDidHandleOnloadEvents.
     // Instead of firing the close-web-view signal now, fire it after the caller finishes.
     // This seems to match the Mac/Windows port behavior.
-    m_closeSoonTimer = g_timeout_add(0, reinterpret_cast<GSourceFunc>(emitCloseWebViewSignalLater), m_webView);
+    m_closeSoonTimer = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(emitCloseWebViewSignalLater), m_webView, 0);
 }
 
 bool ChromeClient::canTakeFocus(FocusDirection)
@@ -519,7 +519,7 @@ void ChromeClient::widgetSizeChanged(const IntSize& oldWidgetSize, IntSize newSi
     // WebCore timers by default have a lower priority which leads to more artifacts when opaque
     // resize is on, thus we use g_timeout_add here to force a higher timeout priority.
     if (!m_repaintSoonSourceId)
-        m_repaintSoonSourceId = g_timeout_add(0, reinterpret_cast<GSourceFunc>(repaintEverythingSoonTimeout), this);
+        m_repaintSoonSourceId = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(repaintEverythingSoonTimeout), this, 0);
 }
 
 static void coalesceRectsIfPossible(const IntRect& clipRect, Vector<IntRect>& rects)

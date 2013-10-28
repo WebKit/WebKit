@@ -1,3 +1,25 @@
+2013-10-28  Bastien Nocera <hadess@hadess.net>
+
+        Replace 0 timeouts g_timeout_add() by g_idle_add()
+        https://bugs.webkit.org/show_bug.cgi?id=123260
+
+        Reviewed by Carlos Garcia Campos.
+
+        A zero timeout should be equivalent to using g_idle_add_full(G_PRIORITY_DEFAULT, ...)
+        without the nagging feeling that the wrong API was used.
+
+        No new tests, no change in functionality.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Use g_idle_add() instead
+        of 0-timer.
+        (WebCore::MediaPlayerPrivateGStreamer::videoChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp: Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChanged):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muteChanged):
+        * platform/gtk/GtkDragAndDropHelper.cpp: Ditto.
+        (WebCore::GtkDragAndDropHelper::handleDragLeave):
+
 2013-10-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Re-enable simple line layout for GTK

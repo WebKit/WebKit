@@ -627,7 +627,7 @@ void MediaPlayerPrivateGStreamer::videoChanged()
 {
     if (m_videoTimerHandler)
         g_source_remove(m_videoTimerHandler);
-    m_videoTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoChangeTimeoutCallback), this);
+    m_videoTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoChangeTimeoutCallback), this, 0);
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
@@ -649,7 +649,7 @@ void MediaPlayerPrivateGStreamer::audioChanged()
 {
     if (m_audioTimerHandler)
         g_source_remove(m_audioTimerHandler);
-    m_audioTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioChangeTimeoutCallback), this);
+    m_audioTimerHandler = g_idle_add_full(G_PRIORITY_DEFAULT, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioChangeTimeoutCallback), this, 0);
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()

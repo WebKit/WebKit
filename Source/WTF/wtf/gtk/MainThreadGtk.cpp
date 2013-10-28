@@ -46,7 +46,7 @@ static gboolean timeoutFired(gpointer)
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    g_timeout_add(0, timeoutFired, 0);
+    g_idle_add_full(G_PRIORITY_DEFAULT, timeoutFired, 0, 0);
 }
 
 } // namespace WTF

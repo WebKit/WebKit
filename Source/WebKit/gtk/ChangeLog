@@ -1,3 +1,22 @@
+2013-10-28  Bastien Nocera <hadess@hadess.net>
+
+        Replace 0 timeouts g_timeout_add() by g_idle_add()
+        https://bugs.webkit.org/show_bug.cgi?id=123260
+
+        Reviewed by Carlos Garcia Campos.
+
+        A zero timeout should be equivalent to using g_idle_add_full(G_PRIORITY_DEFAULT, ...)
+        without the nagging feeling that the wrong API was used.
+
+        * WebCoreSupport/ChromeClientGtk.cpp: Use g_idle_add() instead
+        of 0-timer.
+        (WebKit::ChromeClient::closeWindowSoon):
+        (WebKit::ChromeClient::widgetSizeChanged):
+        * WebCoreSupport/GtkAdjustmentWatcher.cpp: Ditto.
+        (WebKit::GtkAdjustmentWatcher::updateAdjustmentsFromScrollbarsLater):
+        * webkit/webkitwebview.cpp: Ditto.
+        (webkit_web_view_get_subresources):
+
 2013-10-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] g-ir-scanner should use the configured C compiler

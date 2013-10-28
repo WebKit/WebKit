@@ -1121,7 +1121,7 @@ static void topLoadingFrameLoadFinished()
         return;
 
     if (WorkQueue::shared()->count())
-        g_timeout_add(0, processWork, 0);
+        g_idle_add_full(G_PRIORITY_DEFAULT, processWork, 0, 0);
     else
         dump();
 }

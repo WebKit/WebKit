@@ -255,7 +255,7 @@ static gboolean sendClick(gpointer)
 
 static JSValueRef scheduleAsynchronousClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    g_timeout_add(0, sendClick, 0);
+    g_idle_add_full(G_PRIORITY_DEFAULT, sendClick, 0, 0);
     return JSValueMakeUndefined(context);
 }
 
@@ -906,7 +906,7 @@ static JSValueRef scheduleAsynchronousKeyDownCallback(JSContextRef context, JSOb
 {
     GdkEvent* pressEvent = createKeyPressEvent(context, argumentCount, arguments, exception);
     if (pressEvent)
-        g_timeout_add(0, sendAsynchronousKeyDown, static_cast<gpointer>(pressEvent));
+        g_idle_add_full(G_PRIORITY_DEFAULT, sendAsynchronousKeyDown, static_cast<gpointer>(pressEvent), 0);
 
     return JSValueMakeUndefined(context);
 }
