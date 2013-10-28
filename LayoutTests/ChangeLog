@@ -1,5 +1,11 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Expunge Lion and SnowLeopard from TestExpectations.
+
+        * platform/mac/TestExpectations:
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Some test expectations for Mavericks.
 
         * platform/mac/TestExpectations:
