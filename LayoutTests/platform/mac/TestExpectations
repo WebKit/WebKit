@@ -566,7 +566,7 @@ webkit.org/b/87748 fast/forms/select/optgroup-clicking.html
 
 webkit.org/b/88672 [ Lion ] svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
 
-webkit.org/b/89680 [ Lion ] fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Failure ]
+webkit.org/b/89680 fast/canvas/canvas-imageSmoothingEnabled-repaint.html [ Pass Failure ]
 
 webkit.org/b/89528 [ Lion ] svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
 webkit.org/b/89528 [ Lion ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
@@ -1025,7 +1025,8 @@ webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-cues-added-once.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-style.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-legacy-api.html
-webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-forced-subtitles-in-band.html
+# Always times out on Mavericks https://bugs.webkit.org/show_bug.cgi?id=123412
+webkit.org/b/103663 [ MountainLion Lion SnowLeopard Mavericks ] media/track/track-forced-subtitles-in-band.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-mode.html
 
 # These two tests often timeout
@@ -1185,7 +1186,7 @@ webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ P
 # Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
-webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ]
+webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ImageOnlyFailure ]
 
 webkit.org/b/118900 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 
