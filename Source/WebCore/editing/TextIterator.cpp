@@ -520,7 +520,7 @@ bool TextIterator::handleTextNode()
         return true;
     }
 
-    if (renderer->simpleLines()) {
+    if (renderer->simpleLineLayout()) {
         if (renderer->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return true;
         // This code aims to produce same results as handleTextBox() below so test results don't change. It does not make much logical sense.

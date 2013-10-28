@@ -1,3 +1,23 @@
+2013-10-28  Antti Koivisto  <antti@apple.com>
+
+        Prepare simple line layout to support multiple runs per line
+        https://bugs.webkit.org/show_bug.cgi?id=123400
+
+        Reviewed by Andreas Kling.
+
+        Bunch of renaming and some refactoring for future support for text runs.
+
+        SimpleLineLayout::Lines -> SimpleLineLayout::Layout and becomes a class instead of a typedef.
+        SimpleLineLayout::Resolver::Line -> SimpleLineLayout::Resolver::Run
+        SimpleLineLayout::createLines() -> SimpleLineLayout::create()
+        RenderBlockFlow::simpleLines() -> RenderBlockFlow::simpleLineLayout()
+        RenderText::simpleLines() -> RenderText::simpleLineLayout()
+        
+        Added resolver construction functions:
+        
+        SimpleLineLayout::runResolver()
+        SimpleLineLayout::lineResolver()
+
 2013-10-28  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Expose title and alternative text for links in image maps

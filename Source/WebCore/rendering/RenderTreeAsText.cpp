@@ -246,7 +246,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         // many test results.
         const RenderText& text = toRenderText(o);
         IntRect linesBox = text.linesBoundingBox();
-        if (text.simpleLines()) {
+        if (text.simpleLineLayout()) {
             int y = linesBox.y();
             if (text.containingBlock()->isTableCell())
                 y -= toRenderTableCell(o.containingBlock())->intrinsicPaddingBefore();
@@ -593,13 +593,13 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
 
     if (o.isText()) {
         auto& text = toRenderText(o);
-        if (auto lines = text.simpleLines()) {
+        if (auto layout = text.simpleLineLayout()) {
             ASSERT(!text.firstTextBox());
-            SimpleLineLayout::Resolver resolver(*lines, toRenderBlockFlow(*text.parent()));
+            auto resolver = runResolver(toRenderBlockFlow(*text.parent()), *layout);
             for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-                auto line = *it;
+                auto run = *it;
                 writeIndent(ts, indent + 1);
-                writeSimpleLine(ts, text, line.rect(), line.text());
+                writeSimpleLine(ts, text, run.rect(), run.text());
             }
         } else {
             for (auto box = text.firstTextBox(); box; box = box->nextTextBox()) {

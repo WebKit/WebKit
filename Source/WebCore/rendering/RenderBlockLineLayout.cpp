@@ -1840,7 +1840,7 @@ void RenderBlockFlow::repaintDirtyFloats(Vector<FloatWithRect>& floats)
 
 void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    ASSERT(!m_simpleLines);
+    ASSERT(!m_simpleLineLayout);
 
     setLogicalHeight(borderAndPaddingBefore());
     
@@ -3517,9 +3517,9 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
 {
-    if (auto lines = simpleLines()) {
+    if (auto layout = simpleLineLayout()) {
         ASSERT(!hasOverflowClip());
-        SimpleLineLayout::collectFlowOverflow(*this, *lines);
+        SimpleLineLayout::collectFlowOverflow(*this, *layout);
         return;
     }
     LayoutUnit endPadding = hasOverflowClip() ? paddingEnd() : LayoutUnit();

@@ -877,7 +877,7 @@ void RenderText::setTextWithOffset(const String& text, unsigned offset, unsigned
     int delta = text.length() - textLength();
     unsigned end = len ? offset + len - 1 : offset;
 
-    m_linesDirty = simpleLines() || m_lineBoxes.dirtyRange(*this, offset, end, delta);
+    m_linesDirty = simpleLineLayout() || m_lineBoxes.dirtyRange(*this, offset, end, delta);
 
     setText(text, force || m_linesDirty);
 }
@@ -1057,11 +1057,11 @@ void RenderText::ensureLineBoxes()
     toRenderBlockFlow(parent())->ensureLineBoxes();
 }
 
-const SimpleLineLayout::Lines* RenderText::simpleLines() const
+const SimpleLineLayout::Layout* RenderText::simpleLineLayout() const
 {
     if (!parent()->isRenderBlockFlow())
         return nullptr;
-    return toRenderBlockFlow(parent())->simpleLines();
+    return toRenderBlockFlow(parent())->simpleLineLayout();
 }
 
 float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
@@ -1114,15 +1114,15 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
 
 IntRect RenderText::linesBoundingBox() const
 {
-    if (auto lines = simpleLines())
-        return SimpleLineLayout::computeTextBoundingBox(*this, *lines);
+    if (auto layout = simpleLineLayout())
+        return SimpleLineLayout::computeTextBoundingBox(*this, *layout);
 
     return m_lineBoxes.boundingBox(*this);
 }
 
 LayoutRect RenderText::linesVisualOverflowBoundingBox() const
 {
-    ASSERT(!simpleLines());
+    ASSERT(!simpleLineLayout());
     return m_lineBoxes.visualOverflowBoundingBox(*this);
 }
 
@@ -1145,7 +1145,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
 LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
-    ASSERT(!simpleLines());
+    ASSERT(!simpleLineLayout());
 
     if (selectionState() == SelectionNone)
         return LayoutRect();
@@ -1187,41 +1187,41 @@ LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* rep
 
 int RenderText::caretMinOffset() const
 {
-    if (auto lines = simpleLines())
-        return SimpleLineLayout::findTextCaretMinimumOffset(*this, *lines);
+    if (auto layout = simpleLineLayout())
+        return SimpleLineLayout::findTextCaretMinimumOffset(*this, *layout);
     return m_lineBoxes.caretMinOffset();
 }
 
 int RenderText::caretMaxOffset() const
 {
-    if (auto lines = simpleLines())
-        return SimpleLineLayout::findTextCaretMaximumOffset(*this, *lines);
+    if (auto layout = simpleLineLayout())
+        return SimpleLineLayout::findTextCaretMaximumOffset(*this, *layout);
     return m_lineBoxes.caretMaxOffset(*this);
 }
 
 unsigned RenderText::countRenderedCharacterOffsetsUntil(unsigned offset) const
 {
-    ASSERT(!simpleLines());
+    ASSERT(!simpleLineLayout());
     return m_lineBoxes.countCharacterOffsetsUntil(offset);
 }
 
 bool RenderText::containsRenderedCharacterOffset(unsigned offset) const
 {
-    ASSERT(!simpleLines());
+    ASSERT(!simpleLineLayout());
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CharacterOffset);
 }
 
 bool RenderText::containsCaretOffset(unsigned offset) const
 {
-    if (auto layout = simpleLines())
+    if (auto layout = simpleLineLayout())
         return SimpleLineLayout::containsTextCaretOffset(*this, *layout, offset);
     return m_lineBoxes.containsOffset(*this, offset, RenderTextLineBoxes::CaretOffset);
 }
 
 bool RenderText::hasRenderedText() const
 {
-    if (auto lines = simpleLines())
-        return SimpleLineLayout::isTextRendered(*this, *lines);
+    if (auto layout = simpleLineLayout())
+        return SimpleLineLayout::isTextRendered(*this, *layout);
     return m_lineBoxes.hasRenderedText();
 }
 

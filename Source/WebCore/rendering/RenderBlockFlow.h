@@ -324,7 +324,7 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    const SimpleLineLayout::Lines* simpleLines() const { return m_simpleLines.get(); }
+    const SimpleLineLayout::Layout* simpleLineLayout() const { return m_simpleLineLayout.get(); }
     void deleteLineBoxesBeforeSimpleLineLayout();
     void ensureLineBoxes();
 
@@ -487,7 +487,7 @@ protected:
     OwnPtr<FloatingObjects> m_floatingObjects;
     OwnPtr<RenderBlockFlowRareData> m_rareData;
     RenderLineBoxList m_lineBoxes;
-    std::unique_ptr<SimpleLineLayout::Lines> m_simpleLines;
+    std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
 
     friend class BreakingContext;
     friend class LineBreaker;

@@ -154,7 +154,7 @@ public:
 
     void ensureLineBoxes();
     void deleteLineBoxesBeforeSimpleLineLayout();
-    const SimpleLineLayout::Lines* simpleLines() const;
+    const SimpleLineLayout::Layout* simpleLineLayout() const;
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);

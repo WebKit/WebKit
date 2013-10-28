@@ -37,16 +37,21 @@ namespace SimpleLineLayout {
 
 bool canUseFor(const RenderBlockFlow&);
 
-struct Line {
+struct Run {
     unsigned textOffset;
     unsigned textLength;
     float left;
     float width;
 };
 
-typedef Vector<Line> Lines;
+struct Layout {
+    Layout() : lineCount(0) { }
 
-std::unique_ptr<Lines> createLines(RenderBlockFlow&);
+    unsigned lineCount;
+    Vector<Run> runs;
+};
+
+std::unique_ptr<Layout> create(RenderBlockFlow&);
 
 }
 }

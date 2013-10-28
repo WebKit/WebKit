@@ -231,9 +231,9 @@ static float computeLineLeft(ETextAlign textAlign, float remainingWidth)
     return 0;
 }
 
-std::unique_ptr<Lines> createLines(RenderBlockFlow& flow)
+std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 {
-    auto lines = std::make_unique<Lines>();
+    auto layout = std::make_unique<Layout>();
 
     RenderText& textRenderer = toRenderText(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
@@ -292,19 +292,20 @@ std::unique_ptr<Lines> createLines(RenderBlockFlow& flow)
         float alignedLeft = computeLineLeft(textAlign, lineWidth.availableWidth() - lineWidth.committedWidth());
         float alignedRight = alignedLeft + lineWidth.committedWidth();
 
-        Line line;
-        line.textOffset = lineStartOffset;
-        line.textLength = lineEndOffset - lineStartOffset;
-        line.left = floor(alignedLeft);
-        line.width = ceil(alignedRight) - line.left;
+        Run run;
+        run.textOffset = lineStartOffset;
+        run.textLength = lineEndOffset - lineStartOffset;
+        run.left = floor(alignedLeft);
+        run.width = ceil(alignedRight) - run.left;
 
-        lines->append(line);
+        layout->runs.append(run);
+        layout->lineCount++;
     }
 
     textRenderer.clearNeedsLayout();
 
-    lines->shrinkToFit();
-    return lines;
+    layout->runs.shrinkToFit();
+    return layout;
 }
 
 }

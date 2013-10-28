@@ -531,7 +531,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         return;
     }
 
-    m_simpleLines = nullptr;
+    m_simpleLineLayout = nullptr;
     layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
@@ -1652,9 +1652,9 @@ void RenderBlockFlow::deleteLines()
     if (containsFloats())
         m_floatingObjects->clearLineBoxTreePointers();
 
-    if (m_simpleLines) {
+    if (m_simpleLineLayout) {
         ASSERT(!m_lineBoxes.firstLineBox());
-        m_simpleLines = nullptr;
+        m_simpleLineLayout = nullptr;
     } else
         m_lineBoxes.deleteLineBoxTree(renderArena());
 
@@ -2438,8 +2438,8 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLines)
-        return SimpleLineLayout::hitTestFlow(*this, *m_simpleLines, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    if (m_simpleLineLayout)
+        return SimpleLineLayout::hitTestFlow(*this, *m_simpleLineLayout, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
@@ -2545,8 +2545,8 @@ int RenderBlockFlow::firstLineBaseline() const
     if (!hasLines())
         return -1;
 
-    if (m_simpleLines)
-        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *m_simpleLines);
+    if (m_simpleLineLayout)
+        return SimpleLineLayout::computeFlowFirstLineBaseline(*this, *m_simpleLineLayout);
 
     ASSERT(firstLineBox());
     return firstLineBox()->logicalTop() + firstLineStyle()->fontMetrics().ascent(firstRootBox()->baselineType());
@@ -2569,8 +2569,8 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
              + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
     }
 
-    if (m_simpleLines)
-        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *m_simpleLines);
+    if (m_simpleLineLayout)
+        return SimpleLineLayout::computeFlowLastLineBaseline(*this, *m_simpleLineLayout);
 
     bool isFirstLine = lastLineBox() == firstLineBox();
     RenderStyle* style = isFirstLine ? firstLineStyle() : this->style();
@@ -2580,7 +2580,7 @@ int RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    ASSERT(!m_simpleLines);
+    ASSERT(!m_simpleLineLayout);
 
     GapRects result;
 
@@ -2939,8 +2939,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLines) {
-        SimpleLineLayout::paintFlow(*this, *m_simpleLines, paintInfo, paintOffset);
+    if (m_simpleLineLayout) {
+        SimpleLineLayout::paintFlow(*this, *m_simpleLineLayout, paintInfo, paintOffset);
         return;
     }
     m_lineBoxes.paint(this, paintInfo, paintOffset);
@@ -3002,8 +3002,8 @@ bool RenderBlockFlow::hasLines() const
 {
     ASSERT(childrenInline());
 
-    if (m_simpleLines)
-        return !m_simpleLines->isEmpty();
+    if (m_simpleLineLayout)
+        return m_simpleLineLayout->lineCount;
 
     return lineBoxes().firstLineBox();
 }
@@ -3012,9 +3012,9 @@ void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUni
 {
     ASSERT(!m_lineBoxes.firstLineBox());
 
-    m_simpleLines = SimpleLineLayout::createLines(*this);
+    m_simpleLineLayout = SimpleLineLayout::create(*this);
 
-    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLines);
+    LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
 
     repaintLogicalTop = lineLayoutTop;
@@ -3034,9 +3034,9 @@ void RenderBlockFlow::ensureLineBoxes()
 {
     m_lineLayoutPath = ForceLineBoxesPath;
 
-    if (!m_simpleLines)
+    if (!m_simpleLineLayout)
         return;
-    m_simpleLines = nullptr;
+    m_simpleLineLayout = nullptr;
 
 #if !ASSERT_DISABLED
     LayoutUnit oldHeight = logicalHeight();

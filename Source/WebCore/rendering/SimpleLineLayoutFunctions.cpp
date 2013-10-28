@@ -45,7 +45,7 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
-void paintFlow(const RenderBlockFlow& flow, const Lines& lines, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
@@ -62,19 +62,19 @@ void paintFlow(const RenderBlockFlow& flow, const Lines& lines, PaintInfo& paint
 
     updateGraphicsContext(context, textPaintStyle);
 
-    Resolver resolver(lines, flow);
+    auto resolver = runResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto line = *it;
-        context.drawText(font, TextRun(line.text()), line.baseline() + paintOffset);
+        auto run = *it;
+        context.drawText(font, TextRun(run.text()), run.baseline() + paintOffset);
     }
 }
 
-bool hitTestFlow(const RenderBlockFlow& flow, const Lines& lines, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (hitTestAction != HitTestForeground)
         return false;
 
-    if (lines.isEmpty())
+    if (layout.runs.isEmpty())
         return false;
 
     RenderStyle& style = *flow.style();
@@ -83,7 +83,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Lines& lines, const HitTestR
 
     RenderText& textRenderer = toRenderText(*flow.firstChild());
 
-    Resolver resolver(lines, flow);
+    auto resolver = lineResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
         auto line = *it;
         auto lineRect = line.rect();
@@ -98,9 +98,9 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Lines& lines, const HitTestR
     return false;
 }
 
-void collectFlowOverflow(RenderBlockFlow& flow, const Lines& lines)
+void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 {
-    Resolver resolver(lines, flow);
+    auto resolver = lineResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
         auto line = *it;
         auto rect = line.rect();
@@ -109,9 +109,9 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Lines& lines)
     }
 }
 
-IntRect computeTextBoundingBox(const RenderText& textRenderer, const Lines& lines)
+IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& layout)
 {
-    Resolver resolver(lines, toRenderBlockFlow(*textRenderer.parent()));
+    auto resolver = lineResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
     auto it = resolver.begin();
     auto end = resolver.end();
     if (it == end)

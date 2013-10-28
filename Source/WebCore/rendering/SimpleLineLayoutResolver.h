@@ -40,9 +40,9 @@ class Resolver {
 public:
     class Iterator;
 
-    class Line {
+    class Run {
     public:
-        Line(const Resolver&, unsigned lineIndex);
+        Run(const Resolver&, unsigned lineIndex);
 
         LayoutRect rect() const;
         LayoutPoint baseline() const;
@@ -62,14 +62,14 @@ public:
         bool operator==(const Iterator&) const;
         bool operator!=(const Iterator&) const;
 
-        Line operator*() const;
+        Run operator*() const;
 
     private:
         const Resolver& m_resolver;
         unsigned m_lineIndex;
     };
 
-    Resolver(const Lines&, const RenderBlockFlow&);
+    Resolver(const RenderBlockFlow&, const Layout&);
 
     unsigned size() const;
 
@@ -79,7 +79,7 @@ public:
     Iterator operator[](unsigned) const;
 
 private:
-    const Lines& m_lines;
+    const Layout& m_layout;
     const String m_string;
     const LayoutUnit m_lineHeight;
     const LayoutUnit m_baseline;
@@ -88,33 +88,36 @@ private:
     const LayoutPoint m_contentOffset;
 };
 
-inline Resolver::Line::Line(const Resolver& resolver, unsigned lineIndex)
+Resolver runResolver(const RenderBlockFlow&, const Layout&);
+Resolver lineResolver(const RenderBlockFlow&, const Layout&);
+
+inline Resolver::Run::Run(const Resolver& resolver, unsigned lineIndex)
     : m_resolver(resolver)
     , m_lineIndex(lineIndex)
 {
 }
 
-inline LayoutRect Resolver::Line::rect() const
+inline LayoutRect Resolver::Run::rect() const
 {
-    auto& line = m_resolver.m_lines[m_lineIndex];
+    auto& run = m_resolver.m_layout.runs[m_lineIndex];
 
-    LayoutPoint linePosition(line.left, m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline - m_resolver.m_ascent);
-    LayoutSize lineSize(line.width, m_resolver.m_ascent + m_resolver.m_descent);
+    LayoutPoint linePosition(run.left, m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline - m_resolver.m_ascent);
+    LayoutSize lineSize(run.width, m_resolver.m_ascent + m_resolver.m_descent);
     return LayoutRect(linePosition + m_resolver.m_contentOffset, lineSize);
 }
 
-inline LayoutPoint Resolver::Line::baseline() const
+inline LayoutPoint Resolver::Run::baseline() const
 {
-    auto& line = m_resolver.m_lines[m_lineIndex];
+    auto& run = m_resolver.m_layout.runs[m_lineIndex];
 
     float baselineY = m_resolver.m_lineHeight * m_lineIndex + m_resolver.m_baseline;
-    return LayoutPoint(line.left, baselineY) + m_resolver.m_contentOffset;
+    return LayoutPoint(run.left, baselineY) + m_resolver.m_contentOffset;
 }
 
-inline String Resolver::Line::text() const
+inline String Resolver::Run::text() const
 {
-    auto& line = m_resolver.m_lines[m_lineIndex];
-    return m_resolver.m_string.substringSharingImpl(line.textOffset, line.textLength);
+    auto& run = m_resolver.m_layout.runs[m_lineIndex];
+    return m_resolver.m_string.substringSharingImpl(run.textOffset, run.textLength);
 }
 
 inline Resolver::Iterator::Iterator(const Resolver& resolver, unsigned lineIndex)
@@ -146,13 +149,13 @@ inline bool Resolver::Iterator::operator!=(const Iterator& other) const
     return !(*this == other);
 }
 
-inline Resolver::Line Resolver::Iterator::operator*() const
+inline Resolver::Run Resolver::Iterator::operator*() const
 {
-    return Line(m_resolver, m_lineIndex);
+    return Run(m_resolver, m_lineIndex);
 }
 
-inline Resolver::Resolver(const Lines& lines, const RenderBlockFlow& flow)
-    : m_lines(lines)
+inline Resolver::Resolver(const RenderBlockFlow& flow, const Layout& layout)
+    : m_layout(layout)
     , m_string(toRenderText(*flow.firstChild()).text())
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
@@ -164,7 +167,7 @@ inline Resolver::Resolver(const Lines& lines, const RenderBlockFlow& flow)
 
 inline unsigned Resolver::size() const
 {
-    return m_lines.size();
+    return m_layout.runs.size();
 }
 
 inline Resolver::Iterator Resolver::begin() const
@@ -187,6 +190,16 @@ inline Resolver::Iterator Resolver::operator[](unsigned index) const
 {
     ASSERT(index < size());
     return Iterator(*this, index);
+}
+
+inline Resolver runResolver(const RenderBlockFlow& flow, const Layout& layout)
+{
+    return Resolver(flow, layout);
+}
+
+inline Resolver lineResolver(const RenderBlockFlow& flow, const Layout& layout)
+{
+    return Resolver(flow, layout);
 }
 
 }
