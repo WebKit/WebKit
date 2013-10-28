@@ -33,7 +33,7 @@ BuildbotQueue = function(buildbot, id, info)
     this.buildbot = buildbot;
     this.id = id;
 
-    this.platform = info.platform || "unknown";
+    this.platform = info.platform.name || "unknown";
     this.debug = info.debug || false;
     this.builder = info.builder || false;
     this.tester = info.tester || false;

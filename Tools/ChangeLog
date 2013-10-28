@@ -1,5 +1,21 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Allow explicit sort order for Dashboard platforms
+        https://bugs.webkit.org/show_bug.cgi?id=123419
+
+        Reviewed by Tim Hatcher.
+        
+        Assign a specific sort order to Dashboard platforms, rather than
+        just using object property order.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (documentReady):
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Tidy up main http://build.webkit.org page
         https://bugs.webkit.org/show_bug.cgi?id=123413
 

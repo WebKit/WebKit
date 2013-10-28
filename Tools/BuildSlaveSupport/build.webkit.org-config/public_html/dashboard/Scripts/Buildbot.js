@@ -41,15 +41,15 @@ BaseObject.addConstructorFunctions(Buildbot);
 
 // Ordered importance/recency.
 Buildbot.Platform = {
-    MacOSXMavericks: "mac-os-x-mavericks",
-    MacOSXMountainLion: "mac-os-x-mountain-lion",
-    MacOSXLion: "mac-os-x-lion",
-    Windows8: "windows-8",
-    Windows7: "windows-7",
-    WindowsXP: "windows-xp",
-    LinuxQt: "linux-qt",
-    LinuxGTK: "linux-gtk",
-    LinuxEFL: "linux-efl",
+    MacOSXMavericks: { name: "mac-os-x-mavericks", order: 10 },
+    MacOSXMountainLion: { name: "mac-os-x-mountain-lion", order: 20 },
+    MacOSXLion: { name : "mac-os-x-lion", order: 30 },
+    Windows8: { name: "windows-8", order: 40 },
+    Windows7: { name: "windows-7", order: 50 },
+    WindowsXP: { name: "windows-xp", order: 60 },
+    LinuxQt: { name : "linux-qt", order: 70 },
+    LinuxGTK: { name : "linux-gtk", order: 80 },
+    LinuxEFL: { name: "linux-efl", order : 90 }
 };
 
 // Ordered importance.
