@@ -1,3 +1,14 @@
+2013-10-29  Dean Jackson  <dino@apple.com>
+
+        Move InlineTextBox's text painting to it's own class
+        https://bugs.webkit.org/show_bug.cgi?id=123355
+
+        Reinstate the LGPL license. I incorrectly told Myles to
+        use another license on these new files.
+
+        * rendering/TextPainter.cpp:
+        * rendering/TextPainter.h:
+
 2013-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move InlineTextBox's text painting to it's own class
