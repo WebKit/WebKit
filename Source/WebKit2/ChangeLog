@@ -1,3 +1,14 @@
+2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed Mac debug build fix after r158183.
+        Remove the duplicated << overloaded operator from RemoteLayerTreeTransaction for printing out
+        a given FloatSize object. The RemoteLayerTreeTransaction inherits from TextStream, which already
+        provides that overloaded operator. Format of the output is a bit different so hopefully nothing
+        breaks further.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+
 2013-10-28  Brady Eidson  <beidson@apple.com>
 
         Refactor IDB factory creation.

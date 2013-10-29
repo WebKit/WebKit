@@ -360,7 +360,6 @@ public:
     RemoteLayerTreeTextStream& operator<<(PlatformCALayer::FilterType);
     RemoteLayerTreeTextStream& operator<<(FloatPoint3D);
     RemoteLayerTreeTextStream& operator<<(Color);
-    RemoteLayerTreeTextStream& operator<<(FloatSize);
     RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<RemoteLayerTreeTransaction::LayerID>& layers);
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
@@ -483,13 +482,6 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(Color color)
 {
     RemoteLayerTreeTextStream& ts = *this;
     ts << color.serialized();
-    return ts;
-}
-
-RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatSize size)
-{
-    RemoteLayerTreeTextStream& ts = *this;
-    ts << size.width() << " " << size.height();
     return ts;
 }
 
