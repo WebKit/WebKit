@@ -1,5 +1,19 @@
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r155717
+
+    2013-09-13  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] Activate FastMalloc hardening
+            https://bugs.webkit.org/show_bug.cgi?id=121307
+
+            Reviewed by Oliver Hunt.
+
+            * wtf/FastMalloc.cpp: 
+            (WTF::SLL_Next): Add workaround for MSVC compiler bug.
+
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r156302
 
     2013-09-23  Patrick Gansterer  <paroga@webkit.org>
