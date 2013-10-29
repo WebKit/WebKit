@@ -1,5 +1,12 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Floating left the header broke other pages, and this CSS has no way to customize
+        per-page.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Remove underlines on the bot names in the header.
         
         * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:

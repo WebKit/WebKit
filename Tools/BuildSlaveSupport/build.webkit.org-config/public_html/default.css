@@ -16,11 +16,6 @@ div.content h1 {
     display: none !important;
 }
 
-body > .header {
-    float: left;
-    margin-bottom: 16px;
-}
-
 small {
   font-size: 9px;
 }
