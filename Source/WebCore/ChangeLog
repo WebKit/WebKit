@@ -1,5 +1,24 @@
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r157298
+
+    2013-10-10  Dean Jackson  <dino@apple.com>
+
+            Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
+            http://webkit.org/b/121033
+
+            Reviewed by Darin Adler.
+
+            Add an ASSERT to detect if an animation client will be removed
+            during the callback dispatch.
+
+            Test: fast/animation/request-animation-frame-remove-client.html
+
+            * platform/graphics/DisplayRefreshMonitor.cpp:
+            (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r155554
 
     2013-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
