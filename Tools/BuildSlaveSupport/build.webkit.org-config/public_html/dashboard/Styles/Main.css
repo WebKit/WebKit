@@ -140,3 +140,7 @@ table.queue-grid tr.platform.linux-gtk img.logo {
     content: -webkit-image-set(url(../Images/GTK.png) 1x);
 }
 
+table.queue-grid tr.platform.linux-efl img.logo {
+    content: url(../Images/EFL.png);
+}
+

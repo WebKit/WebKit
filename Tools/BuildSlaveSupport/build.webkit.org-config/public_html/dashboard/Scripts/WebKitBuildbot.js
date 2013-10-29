@@ -44,7 +44,10 @@ WebKitBuildbot = function()
         "Apple Win 7 Debug (Tests)": {platform: Buildbot.Platform.Windows7, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple Win 7 Release (Tests)": {platform: Buildbot.Platform.Windows7, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "GTK Linux 64-bit Release": {platform: Buildbot.Platform.LinuxGTK, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
-        "GTK Linux 64-bit Release WK1 (Tests)": {platform: Buildbot.Platform.LinuxGTK, tester: true, testCategory: Buildbot.TestCategory.WebKit1}
+        "GTK Linux 64-bit Release WK1 (Tests)": {platform: Buildbot.Platform.LinuxGTK, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "EFL Linux 32-bit Release (32-bit Build)": {platform: Buildbot.Platform.LinuxEFL, builder: true, architecture: Buildbot.BuildArchitecture.ThirtyTwoBit},
+        "EFL Linux 64-bit Release WK1": {platform: Buildbot.Platform.LinuxEFL, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
+        "EFL Linux 64-bit Release WK2": {platform: Buildbot.Platform.LinuxEFL, tester: true, testCategory: Buildbot.TestCategory.WebKit2}
     };
 
     Buildbot.call(this, "http://build.webkit.org/", queueInfo);
