@@ -165,7 +165,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
         Path glyphPath = svgGlyph.pathData;
         glyphPath.transform(glyphPathTransform);
 
-        if (activePaintingResource->applyResource(elementRenderer, &style, context, resourceMode)) {
+        if (activePaintingResource->applyResource(elementRenderer, style, context, resourceMode)) {
             float strokeThickness = context->strokeThickness();
             if (renderer().isSVGInlineText())
                 context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderer()).scalingFactor());

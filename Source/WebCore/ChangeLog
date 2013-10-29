@@ -1,5 +1,16 @@
 2013-10-28  Andreas Kling  <akling@apple.com>
 
+        RenderSVGResource::applyResource() should take a const RenderStyle&.
+        <https://webkit.org/b/123433>
+
+        These functions are always called with an existing RenderStyle object
+        so let them take a const reference instead of a raw pointer.
+        Also sprinkled some missing OVERRIDEs.
+
+        Reviewed by Anders Carlsson.
+
+2013-10-28  Andreas Kling  <akling@apple.com>
+
         Remove unused RenderTextControl::textBaseStyle().
         <https://webkit.org/b/123432>
 

@@ -42,13 +42,13 @@ RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor()
 {
 }
 
-bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
 {
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
 
-    const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
-    ColorSpace colorSpace = style ? style->colorSpace() : ColorSpaceDeviceRGB;
+    const SVGRenderStyle* svgStyle = style.svgStyle();
+    ColorSpace colorSpace = style.colorSpace();
 
     bool isRenderingMask = renderer.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
@@ -69,8 +69,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, RenderS
         context->setAlpha(svgStyle ? svgStyle->strokeOpacity() : 1);
         context->setStrokeColor(m_color, colorSpace);
 
-        if (style)
-            SVGRenderSupport::applyStrokeStyleToContext(context, style, &renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(context, &style, &renderer);
 
         if (resourceMode & ApplyToTextMode)
             context->setTextDrawingMode(TextModeStroke);

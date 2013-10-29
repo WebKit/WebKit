@@ -344,13 +344,13 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
     if (!m_paintingResource)
         return false;
 
-    if (!m_paintingResource->applyResource(renderer, style, context, m_paintingResourceMode)) {
+    if (!m_paintingResource->applyResource(renderer, *style, context, m_paintingResourceMode)) {
         if (fallbackColor.isValid()) {
             RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
 
             m_paintingResource = fallbackResource;
-            m_paintingResource->applyResource(renderer, style, context, m_paintingResourceMode);
+            m_paintingResource->applyResource(renderer, *style, context, m_paintingResourceMode);
         }
     }
 

@@ -137,9 +137,8 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     return m_patternMap.set(object, patternData.release()).iterator->value.get();
 }
 
-bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
 {
-    ASSERT(style);
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
 
@@ -156,7 +155,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, RenderStyl
     // Draw pattern
     context->save();
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
+    const SVGRenderStyle* svgStyle = style.svgStyle();
     ASSERT(svgStyle);
 
     if (resourceMode & ApplyToFillMode) {
@@ -168,7 +167,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, RenderStyl
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
         context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokePattern(patternData->pattern);
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, &renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(context, &style, &renderer);
     }
 
     if (resourceMode & ApplyToTextMode) {

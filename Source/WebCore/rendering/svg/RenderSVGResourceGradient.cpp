@@ -110,9 +110,8 @@ static inline AffineTransform clipToTextMask(GraphicsContext* context,
 }
 #endif
 
-bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, RenderStyle* style, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, unsigned short resourceMode)
 {
-    ASSERT(style);
     ASSERT(context);
     ASSERT(resourceMode != ApplyToDefaultMode);
 
@@ -187,7 +186,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, RenderSty
         context->setTextDrawingMode(resourceMode & ApplyToFillMode ? TextModeFill : TextModeStroke);
     }
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
+    const SVGRenderStyle* svgStyle = style.svgStyle();
     ASSERT(svgStyle);
 
     if (resourceMode & ApplyToFillMode) {
@@ -199,7 +198,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, RenderSty
             gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
         context->setAlpha(svgStyle->strokeOpacity());
         context->setStrokeGradient(gradientData->gradient);
-        SVGRenderSupport::applyStrokeStyleToContext(context, style, &renderer);
+        SVGRenderSupport::applyStrokeStyleToContext(context, &style, &renderer);
     }
 
     return true;

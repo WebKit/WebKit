@@ -55,7 +55,7 @@ public:
     virtual const AffineTransform& localToParentTransform() const;
     AffineTransform markerTransformation(const FloatPoint& origin, float angle, float strokeWidth) const;
 
-    virtual bool applyResource(RenderElement&, RenderStyle*, GraphicsContext*&, unsigned short) OVERRIDE { return false; }
+    virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, unsigned short) OVERRIDE { return false; }
     virtual FloatRect resourceBoundingBox(const RenderObject&) OVERRIDE { return FloatRect(); }
 
     FloatPoint referencePoint() const;

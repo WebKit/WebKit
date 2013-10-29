@@ -126,7 +126,7 @@ bool RenderSVGResourceFilter::fitsInMaximumImageSize(const FloatSize& size, Floa
     return matchesFilterSize;
 }
 
-bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, RenderStyle*, GraphicsContext*& context, unsigned short resourceMode)
+bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, unsigned short resourceMode)
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
